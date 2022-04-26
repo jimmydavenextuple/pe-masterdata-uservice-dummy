@@ -1,0 +1,8 @@
+pluginManagement {
+	repositories {
+		gradlePluginPortal()
+	}
+}
+rootProject.name = 'nfs-master-data-cache-uservice'
+include 'core-near-cache', 'core-near-cache-spring', 'tenant-near-cache', 'tenant-near-cache-spring', 'node-near-cache-spring', 'node-near-cache'
+

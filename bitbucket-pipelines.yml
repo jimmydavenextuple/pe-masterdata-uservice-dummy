@@ -1,0 +1,291 @@
+options:
+  docker: true
+image: openjdk:11
+clone:
+  depth: full
+server:
+  service:
+    name: "nfs-master-data-cache-uservice"
+    path: "services/tenant"
+    health-check-endpoint: "/actuator/health"
+  environments:
+    vapt:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      scale:
+        replicas: 2
+      resources:
+        min:
+          memory: "1024Mi"
+          cpu: 256m
+        max:
+          memory: "1024Mi"
+          cpu: 256m
+    prod:
+      ingress: no
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      scale:
+        replicas: 3
+      resources:
+        min:
+          memory: "1024Mi"
+          cpu: "1000m"
+        max:
+          memory: "1024Mi"
+          cpu: "1000m"
+    test:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      scale:
+        replicas: 2
+      resources:
+        min:
+          memory: "1024Mi"
+          cpu: 256m
+        max:
+          memory: "1024Mi"
+          cpu: 256m
+    dev:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: "1024Mi"
+          cpu: 256m
+        max:
+          memory: "1024Mi"
+          cpu: 256m
+    qa:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 1024Mi
+          cpu: 256m
+        max:
+          memory: 1024Mi
+          cpu: 256m
+    demo:
+      keyvault: yes
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 1024Mi
+          cpu: 256m
+        max:
+          memory: 1024Mi
+          cpu: 256m
+definitions:
+  caches:
+    sonar: ~/.sonar/cache
+    cve: ~/.cve
+  steps:
+    - step: &build
+        name: Build Snapshot
+        caches:
+          - gradle
+          - sonar
+        script:
+          - bash ./gradlew -Pbuild_target=SNAPSHOT clean build spotlessApply spotbugsMain artifactoryPublish
+          - export SPACE=" "
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
+        artifacts:
+          - build/**
+          - service-version.txt
+    - step: &build-release
+        name: Build Release
+        caches:
+          - gradle
+        script:
+          - bash ./gradlew -Pbuild_target=RELEASE clean build artifactoryPublish
+          - export SPACE=" "
+          - bash ./gradlew -Pbuild_target=RELEASE -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
+        artifacts:
+          - build/**
+          - service-version.txt
+    - step: &deploy
+        caches:
+          - gradle
+        services:
+          - docker
+        image: mcr.microsoft.com/azure-cli
+        script:
+          - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
+          - chmod +x ./deployment-scripts/deploy-k8s-service-v3.sh
+          - ./deployment-scripts/deploy-k8s-service-v3.sh
+        after-script:
+          - chmod +x ./deployment-scripts/after-deploy-k8s-service-v3.sh
+          - ./deployment-scripts/after-deploy-k8s-service-v3.sh
+    - step: &pr-build
+        name: PR Build
+        caches:
+          - gradle
+          - sonar
+          - cve
+        script:
+          - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
+          - cp ./deployment-scripts/suppressions.xml ./suppressions.xml
+          - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain
+          - bash ./gradlew -Pbuild_target=SNAPSHOT dependencyCheckAggregate --info
+          - bash ./gradlew -Pbuild_target=SNAPSHOT sonarqube showSonarQubeLink --info
+    - step: &integration-image-build
+        name: Build PR for Integration
+        caches:
+          - gradle
+          - sonar
+        services:
+          - docker
+        script:
+          - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport sonarqube showSonarQubeLink
+          - docker login nextuple-docker.jfrog.io --username $DOCKER_REGISTRY_USERNAME --password $DOCKER_REGISTRY_PASSWORD
+          - TEST_ID="IT-${BITBUCKET_REPO_SLUG}-${BITBUCKET_BUILD_NUMBER}"
+          - export BACKEND_IMAGE_NAME=nextuple-docker.jfrog.io/nfs-master-data-cache-uservice:$TEST_ID
+          - docker build -t $BACKEND_IMAGE_NAME -f ./integration-tests/Dockerfile .
+          - docker push $BACKEND_IMAGE_NAME
+          - echo "$BACKEND_IMAGE_NAME" > docker_image_int
+        artifacts:
+          - "docker_image_int"
+    - step: &integration-setup-environment
+        name: Setup environment
+        image: mcr.microsoft.com/azure-cli
+        services:
+          - docker
+        script:
+          - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
+          - cd infra-automation
+          - git checkout development
+          - cd ..
+          - chmod +x ./infra-automation/integration-environment-setup/v1/setup_environment.sh
+          - DOCKER_IMAGE=$(cat docker_image_int)
+          - ls -la
+          - ./infra-automation/integration-environment-setup/v1/setup_environment.sh "tenant" "${DOCKER_IMAGE}"
+        artifacts:
+          - "vm_public.ip"
+    - step: &integration-kill-environment
+        name: Kill environment
+        image: mcr.microsoft.com/azure-cli
+        services:
+          - docker
+        script:
+          - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
+          - cd infra-automation
+          - git checkout development
+          - cd ..
+          - chmod +x ./infra-automation/integration-environment-setup/v1/kill_environment.sh
+          - ./infra-automation/integration-environment-setup/v1/kill_environment.sh
+        artifacts:
+          - "logs.zip"
+    - step: &integration-run
+        name: Run integration tests
+        caches:
+          - gradle
+        script:
+          - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
+          - cd infra-automation
+          - git checkout development
+          - cd ..
+          - chmod +x ./infra-automation/integration-environment-setup/v1/run_integration_testcases.sh
+          - ./infra-automation/integration-environment-setup/v1/run_integration_testcases.sh "tenant"
+          - apt update
+          - apt install sshpass
+          - apt install curl
+          - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+        after-script:
+          - chmod +x ./infra-automation/integration-environment-setup/v1/clean_environment.sh
+          - ./infra-automation/integration-environment-setup/v1/clean_environment.sh "tenant"
+          - chmod +x ./infra-automation/integration-environment-setup/v1/generate_report.sh
+          - ./infra-automation/integration-environment-setup/v1/generate_report.sh
+        artifacts:
+          - "integration-tests/test-output/**"
+          - "**.zip"
+          - "codecoverage/**"
+pipelines:
+  pull-requests:
+    '{feature/*,development,master,hotfix/*,bugfix/*}':
+      - step: *integration-image-build
+      - step: *integration-setup-environment
+      - step: *integration-run
+      - step: *integration-kill-environment
+    '**':
+      - step: *pr-build
+  tags:
+    '*-SNAPSHOT':
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Dev
+          deployment: dev
+      - step:
+          !!merge <<: *deploy
+          name: Deploy QA
+          trigger: manual
+          deployment: qa
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Test
+          trigger: manual
+          deployment: test
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Demo
+          trigger: manual
+          deployment: demo
+    '*-RELEASE':
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Prod
+          trigger: manual
+          deployment: prod
+  branches:
+    vapt:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy vapt
+          deployment: vapt
+    development:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Dev
+          deployment: dev
+      - step:
+          !!merge <<: *deploy
+          name: Deploy QA
+          trigger: manual
+          deployment: qa
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Test
+          trigger: manual
+          deployment: test
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Demo
+          trigger: manual
+          deployment: demo
+    master:
+      - step: *build-release
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Prod
+          trigger: manual
+          deployment: prod

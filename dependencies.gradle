@@ -1,0 +1,38 @@
+ext.libs = [
+        'springConfigProcess': 'org.springframework.boot:spring-boot-configuration-processor',
+        'lombok':'org.projectlombok:lombok',
+        'mapstruct': 'org.mapstruct:mapstruct-processor:${mapstructVersion}',
+        'logstash': 'net.logstash.logback:logstash-logback-encoder:6.4',
+        'springKafka': 'org.springframework.kafka:spring-kafka:2.5.6.RELEASE',
+
+        //Nextupe
+        'nxCommonUtil': 'com.nextuple.controltower:common-util:1.10.0-${build_target}',
+        'nxCoreCommonLib': 'com.nextuple.core:core-common-lib:1.10.0-${build_target}'
+]
+
+ext.libTests = [
+        'springTest': 'org.springframework.boot:spring-boot-starter-test',
+        'mongo': 'de.flapdoodle.embed:de.flapdoodle.embed.mongo',
+        'hamcrest': 'org.hamcrest:hamcrest-junit:${hamcrestJunitVersion}',
+        'jayway': 'com.jayway.jsonpath:json-path-assert:${jsonpathVersion}',
+        'javakafer' : 'com.github.javafaker:javafaker:1.0.2',
+        'jupiter' : 'org.junit.jupiter:junit-jupiter:5.6.2',
+        'jupiterApi' : 'org.junit.jupiter:junit-jupiter-api:5.3.1',
+        'jupiterEngine': 'org.junit.jupiter:junit-jupiter-engine:5.3.1',
+        'mockito': 'org.mockito:mockito-inline:2.13.0',
+]
+
+
+ext {
+    build_target = project.hasProperty("build_target") ? project.build_target : "SNAPSHOT"
+    springCloudVersion = "2020.0.3"
+    mapstructVersion = "1.3.1.Final"
+    jodaTimeVersion = "2.10.6"
+    fasterxmlJacksonVersion = "2.11.0"
+    javaxValidationVersion = "2.0.1.Final"
+    jsonpathVersion = "2.4.0"
+    hamcrestJunitVersion = "2.0.0.0"
+    lombokVersion = "1.18.12"
+    sourceJdkVersion = JavaVersion.VERSION_1_8
+    targetJdkVersion = JavaVersion.VERSION_11
+}

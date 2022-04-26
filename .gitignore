@@ -17,7 +17,7 @@ dist/
 *.log
 
 # Package files
-*.jar
+#*.jar
 
 # Maven
 target/
@@ -48,3 +48,13 @@ Thumbs.db
 *.mov
 *.wmv
 
+.vscode
+.idea/
+.gradle/
+target/
+build/
+mqjms.log.*
+#.isomorphic-loader-config.lock
+**/bin
+.gradle/**/*
+integration-tests/**/output/*
