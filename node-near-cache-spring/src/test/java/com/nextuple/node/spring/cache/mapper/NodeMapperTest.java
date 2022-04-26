@@ -39,12 +39,27 @@ public class NodeMapperTest {
         genericMapper.cacheKeyToRequest(cacheKey).getNodes().get(0).getNodeNo());
   }
 
-      @Test
-      void responseToCacheValue() {
-          NodeCacheValue cacheValue = testUtil.getNodeCacheValue("123", "node_1");
-          BaseResponse<NodeValidationResponse> baseResponse = testUtil.getBaseResponseOfNodeValidationResponse("123","node_1");
-          assertEquals(cacheValue.getNodeDetails().getNodeName(),genericMapper.responseToCacheValue(baseResponse).getNodeDetails().getNodes().get(0).getNodeName());
-        assertEquals(cacheValue.getNodeDetails().getNodeNo(),genericMapper.responseToCacheValue(baseResponse).getNodeDetails().getNodes().get(0).getNodeNo());
+  @Test
+  void responseToCacheValue() {
+    NodeCacheValue cacheValue = testUtil.getNodeCacheValue("123", "node_1");
+    BaseResponse<NodeValidationResponse> baseResponse =
+        testUtil.getBaseResponseOfNodeValidationResponse("123", "node_1");
+    assertEquals(
+        cacheValue.getNodeDetails().getNodeName(),
+        genericMapper
+            .responseToCacheValue(baseResponse)
+            .getNodeDetails()
+            .getNodes()
+            .get(0)
+            .getNodeName());
+    assertEquals(
+        cacheValue.getNodeDetails().getNodeNo(),
+        genericMapper
+            .responseToCacheValue(baseResponse)
+            .getNodeDetails()
+            .getNodes()
+            .get(0)
+            .getNodeNo());
   }
 
   @Test
