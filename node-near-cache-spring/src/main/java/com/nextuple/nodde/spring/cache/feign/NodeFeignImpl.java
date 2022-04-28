@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
     name = "node-uservice",
-    url = "${spring.application.dependencies.node:http://localhost:8080/}")
+    url = "${spring.application.dependencies.node:http://node-uservice:8080/}")
 public interface NodeFeignImpl
     extends GenericFeignService<NodeValidationRequest, BaseResponse<NodeValidationResponse>> {
   @GetMapping("/nodes")

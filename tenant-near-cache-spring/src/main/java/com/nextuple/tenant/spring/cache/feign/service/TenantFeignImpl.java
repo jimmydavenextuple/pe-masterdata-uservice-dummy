@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
     name = "tenant-uservice",
-    url = "${spring.application.dependencies.tenant:http://localhost:8080/}")
+    url = "${spring.application.dependencies.tenant:http://tenant-uservice:8080/}")
 public interface TenantFeignImpl extends GenericFeignService<String, BaseResponse<TenantDto>> {
   @GetMapping("/tenant/{id}")
   BaseResponse<TenantDto> get(@PathVariable(name = "id") String id);
