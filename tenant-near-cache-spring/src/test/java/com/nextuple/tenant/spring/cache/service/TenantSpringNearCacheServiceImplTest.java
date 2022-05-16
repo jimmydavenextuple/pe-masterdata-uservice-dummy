@@ -67,4 +67,12 @@ class TenantSpringNearCacheServiceImplTest {
     assertNull(tenantSpringNearCacheService.get(cacheKey));
     verify(feignCacheService, times(1)).get(cacheKey);
   }
+
+  @Test
+  void deleteTest() {
+    TenantCacheKey cacheKey = testUtil.getTenantCacheKey("5dc9ae77718224000c992f92");
+    tenantSpringNearCacheService.delete(cacheKey);
+    CacheValue cacheValue = tenantSpringNearCacheService.get(cacheKey);
+    assertNull(cacheValue);
+  }
 }

@@ -67,4 +67,12 @@ public class NodeSpringNearCacheServiceImplTest {
     assertNull(nodeSpringNearCacheService.get(cacheKey));
     verify(feignCacheService, times(1)).get(cacheKey);
   }
+
+  @Test
+  void deleteTest() {
+    NodeCacheKey cacheKey = testUtil.getNodeCacheKey("AM_14021", "NEXTUPLE_GR");
+    nodeSpringNearCacheService.delete(cacheKey);
+    CacheValue cacheValue = nodeSpringNearCacheService.get(cacheKey);
+    assertNull(cacheValue);
+  }
 }

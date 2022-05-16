@@ -7,6 +7,7 @@ import com.nextuple.node.cache.domain.NodeCacheKey;
 import com.nextuple.node.cache.domain.NodeCacheValue;
 import com.nextuple.node.cache.service.NodeNearCacheService;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,5 +21,11 @@ public class NodeSpringNearCacheServiceImpl
   @Override
   public NodeCacheValue get(NodeCacheKey key) {
     return super.get(key);
+  }
+
+  @CacheEvict(cacheManager = "caffeineCacheManager", key = "#key")
+  @Override
+  public void delete(NodeCacheKey key) {
+    super.delete(key);
   }
 }

@@ -17,4 +17,6 @@ public abstract class AbstractGenericSpringLocalCacheServiceImpl<
   public V get(K key) {
     return feignCacheService.get(key);
   }
+
+  public void delete(K key) {}
 }

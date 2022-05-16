@@ -7,6 +7,7 @@ import com.nextuple.tenant.cache.domain.TenantCacheKey;
 import com.nextuple.tenant.cache.domain.TenantCacheValue;
 import com.nextuple.tenant.cache.service.TenantNearCacheService;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,5 +21,11 @@ public class TenantSpringNearCacheServiceImpl
   @Override
   public TenantCacheValue get(TenantCacheKey key) {
     return super.get(key);
+  }
+
+  @CacheEvict(cacheManager = "caffeineCacheManager", key = "#key")
+  @Override
+  public void delete(TenantCacheKey key) {
+    super.delete(key);
   }
 }
