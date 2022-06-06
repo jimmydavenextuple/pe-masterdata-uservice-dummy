@@ -3,6 +3,19 @@ pluginManagement {
 		gradlePluginPortal()
 	}
 }
-rootProject.name = 'nfs-master-data-cache-uservice'
+rootProject.name = 'pe-master-data'
 include 'core-near-cache', 'core-near-cache-spring', 'tenant-near-cache', 'tenant-near-cache-spring', 'node-near-cache-spring', 'node-near-cache'
+include 'nfs-common-api-domain'
+include 'nfs-common-api'
+include 'common-util'
+include 'nfs-common-cache'
+include 'nfs-common-persistence'
+include 'nfs-common-base-cache'
+include 'nfs-common-cache-redis'
+include 'nfs-common-persistence-postgres'
+include 'nfs-common-kafka'
+include 'node-api'
+include 'node-api-domain'
+include 'node-persistence'
+include 'node-persistence-postgres'
 

@@ -1,0 +1,9 @@
+group = 'com.nextuple.common.api'
+version "1.0.0"
+dependencies {
+    implementation(project(":nfs-common-api"))
+    implementation(project(":nfs-common-api-domain"))
+    implementation(project(":node-api-domain"))
+    implementation(project(":nfs-common-persistence"))
+    implementation(project(":node-persistence"))
+}
