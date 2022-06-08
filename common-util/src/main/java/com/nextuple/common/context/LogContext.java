@@ -139,6 +139,14 @@ public class LogContext {
     return put(KAFKA_EVENT_TYPE, kafkaEventType);
   }
 
+  public String getServiceCorrelationId() {
+    return this.get("serviceCorrelationId");
+  }
+
+  public LogContext setServiceCorrelationId(String serviceCorrelationId) {
+    return this.put("serviceCorrelationId", serviceCorrelationId);
+  }
+
   public Long getKafkaEventDate() {
     String epochTimeInString = get(KAFKA_EVENT_DATE);
     if (!ObjectUtils.isEmpty(epochTimeInString)) {

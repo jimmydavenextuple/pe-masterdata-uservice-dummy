@@ -1,14 +1,15 @@
 package com.nextuple.node.postgres.dto;
 
-import java.time.LocalDateTime;
-import javax.persistence.Entity;
+import com.nextuple.common.persistence.postgres.dto.PostgresEntity;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @javax.persistence.Entity
 @IdClass(NodeKey.class)
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Table(name = "mydb")
-public class NodeEntity implements com.nextuple.common.dto.Entity {
+public class NodeEntity implements PostgresEntity {
 
     @Column
     @Id

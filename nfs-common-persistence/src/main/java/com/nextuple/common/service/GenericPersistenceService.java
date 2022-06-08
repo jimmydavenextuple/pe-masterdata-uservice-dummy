@@ -1,4 +1,4 @@
-package com.nextuple.common.dto.service;
+package com.nextuple.common.service;
 
 import java.util.Set;
 

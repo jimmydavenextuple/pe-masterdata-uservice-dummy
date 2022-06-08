@@ -6,16 +6,18 @@ import com.nextuple.node.domain.NodeResponse;
 import com.nextuple.node.mapper.NodeRequestResponseEntityMapper;
 import java.util.function.Function;
 import java.util.logging.Logger;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-@Controller("/node")
+@RestController
+@RequiredArgsConstructor
+@Tag(name = "Node Master Data related APIs")
+@RequestMapping("/node")
 public class NodeController {
 
     @Autowired

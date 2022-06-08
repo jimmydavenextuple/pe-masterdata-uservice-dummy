@@ -1,6 +1,5 @@
 package com.nextuple.common.util;
 
-import com.nextuple.controltower.common.constants.FormatterConstants;
 import org.joda.time.*;
 
 import java.text.DateFormat;
@@ -21,6 +20,12 @@ public class DateUtil {
 
   private static final List<String> DEPRECATED_TIMEZONES;
 
+  public static final String UTC_FORMAT = "UTC";
+  public static final String LONG_DATE_FORMAT_UTC = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+  public static final String LONG_DATE_FORMAT_MILLIS = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+  public static final String LONG_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
+  public static final String SHORT_DATE_FORMAT = "yyyy-MM-dd";
+  
   static {
     DEPRECATED_TIMEZONES =
         Collections.unmodifiableList(
@@ -257,7 +262,7 @@ public class DateUtil {
    * @return
    */
   public static Date getDateUTC(String dateStr) {
-    return getDateByFormat(dateStr, FormatterConstants.LONG_DATE_FORMAT_UTC);
+    return getDateByFormat(dateStr, LONG_DATE_FORMAT_UTC);
   }
 
   /**
@@ -267,7 +272,7 @@ public class DateUtil {
    * @return
    */
   public static Date getDateAndTime(String dateStr) {
-    return getDateByFormat(dateStr, FormatterConstants.LONG_DATE_FORMAT);
+    return getDateByFormat(dateStr, LONG_DATE_FORMAT);
   }
 
   /**
@@ -277,7 +282,7 @@ public class DateUtil {
    * @return
    */
   public static Date getDate(String dateStr) {
-    return getDateByFormat(dateStr, FormatterConstants.SHORT_DATE_FORMAT);
+    return getDateByFormat(dateStr, SHORT_DATE_FORMAT);
   }
 
   /**
@@ -413,9 +418,9 @@ public class DateUtil {
    * @return
    */
   public static Date convertDateToTimeZone(Date date, String timeZone) {
-    SimpleDateFormat sdf = new SimpleDateFormat(FormatterConstants.LONG_DATE_FORMAT);
+    SimpleDateFormat sdf = new SimpleDateFormat(LONG_DATE_FORMAT);
     sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
-    return getDateByFormat(sdf.format(date), FormatterConstants.SHORT_DATE_FORMAT);
+    return getDateByFormat(sdf.format(date), SHORT_DATE_FORMAT);
   }
 
   /**
@@ -455,9 +460,9 @@ public class DateUtil {
    * @return
    */
   public static Date getCurrentUTCTimeStampInDate() {
-    DateFormat dateFormat = new SimpleDateFormat(FormatterConstants.LONG_DATE_FORMAT);
-    dateFormat.setTimeZone(TimeZone.getTimeZone(FormatterConstants.UTC_FORMAT));
-    return getDateByFormat(dateFormat.format(new Date()), FormatterConstants.LONG_DATE_FORMAT);
+    DateFormat dateFormat = new SimpleDateFormat(LONG_DATE_FORMAT);
+    dateFormat.setTimeZone(TimeZone.getTimeZone(UTC_FORMAT));
+    return getDateByFormat(dateFormat.format(new Date()), LONG_DATE_FORMAT);
   }
 
   public static Date convertZoneDateTime(String date, String time, String zone) {
@@ -485,7 +490,7 @@ public class DateUtil {
   public static String convertDateShortForm(Date dt1) {
     String val = "";
     if (dt1 != null) {
-      DateFormat df = new SimpleDateFormat(FormatterConstants.SHORT_DATE_FORMAT);
+      DateFormat df = new SimpleDateFormat(SHORT_DATE_FORMAT);
       val = df.format(dt1);
     }
     return val;
@@ -500,7 +505,7 @@ public class DateUtil {
   public static String convertDateLongForm(Date dt1) {
     String val = "";
     if (dt1 != null) {
-      DateFormat df = new SimpleDateFormat(FormatterConstants.LONG_DATE_FORMAT);
+      DateFormat df = new SimpleDateFormat(LONG_DATE_FORMAT);
       val = df.format(dt1);
     }
     return val;
@@ -515,8 +520,8 @@ public class DateUtil {
   public static String convertDateLongFormUTC(Date dt1) {
     String val = "";
     if (dt1 != null) {
-      DateFormat df = new SimpleDateFormat(FormatterConstants.LONG_DATE_FORMAT_UTC);
-      df.setTimeZone(TimeZone.getTimeZone(FormatterConstants.UTC_FORMAT));
+      DateFormat df = new SimpleDateFormat(LONG_DATE_FORMAT_UTC);
+      df.setTimeZone(TimeZone.getTimeZone(UTC_FORMAT));
       val = df.format(dt1);
     }
     return val;
@@ -528,8 +533,8 @@ public class DateUtil {
    * @return
    */
   public static String getCurrentUTCTimeStampInString() {
-    DateFormat dateFormat = new SimpleDateFormat(FormatterConstants.LONG_DATE_FORMAT);
-    dateFormat.setTimeZone(TimeZone.getTimeZone(FormatterConstants.UTC_FORMAT));
+    DateFormat dateFormat = new SimpleDateFormat(LONG_DATE_FORMAT);
+    dateFormat.setTimeZone(TimeZone.getTimeZone(UTC_FORMAT));
     return dateFormat.format(new Date());
   }
 
@@ -540,8 +545,8 @@ public class DateUtil {
    * @return
    */
   public static String getUTCTimestampFromDate(Date date) {
-    DateFormat dateFormat = new SimpleDateFormat(FormatterConstants.LONG_DATE_FORMAT);
-    dateFormat.setTimeZone(TimeZone.getTimeZone(FormatterConstants.UTC_FORMAT));
+    DateFormat dateFormat = new SimpleDateFormat(LONG_DATE_FORMAT);
+    dateFormat.setTimeZone(TimeZone.getTimeZone(UTC_FORMAT));
     return dateFormat.format(date);
   }
 
@@ -559,8 +564,8 @@ public class DateUtil {
   public static String getUTCTimeInString(
       int year, int month, int day, int hours, int minutes, String timeZone) {
     DateTime dt = new DateTime(year, month, day, hours, minutes, DateTimeZone.forID(timeZone));
-    DateFormat dateFormat = new SimpleDateFormat(FormatterConstants.LONG_DATE_FORMAT);
-    dateFormat.setTimeZone(TimeZone.getTimeZone(FormatterConstants.UTC_FORMAT));
+    DateFormat dateFormat = new SimpleDateFormat(LONG_DATE_FORMAT);
+    dateFormat.setTimeZone(TimeZone.getTimeZone(UTC_FORMAT));
     return dateFormat.format(dt.toDate());
   }
 
@@ -572,8 +577,8 @@ public class DateUtil {
    */
   public static String getUTCTimeInString(long time) {
     DateTime dt = new DateTime(time);
-    DateFormat dateFormat = new SimpleDateFormat(FormatterConstants.LONG_DATE_FORMAT);
-    dateFormat.setTimeZone(TimeZone.getTimeZone(FormatterConstants.UTC_FORMAT));
+    DateFormat dateFormat = new SimpleDateFormat(LONG_DATE_FORMAT);
+    dateFormat.setTimeZone(TimeZone.getTimeZone(UTC_FORMAT));
     return dateFormat.format(dt.toDate());
   }
 
@@ -591,7 +596,7 @@ public class DateUtil {
   public static String getLocalTimeFormatWithOffset(
       int year, int month, int day, int hours, int minutes, String timeZone) {
     DateTime dt = new DateTime(year, month, day, hours, minutes, DateTimeZone.forID(timeZone));
-    DateFormat dateFormat = new SimpleDateFormat(FormatterConstants.LONG_DATE_FORMAT);
+    DateFormat dateFormat = new SimpleDateFormat(LONG_DATE_FORMAT);
     dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
     return dateFormat.format(dt.toDate());
   }

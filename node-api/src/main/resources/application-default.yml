@@ -6,9 +6,9 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/mydb
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: abhishek
+    password: postgres
 
 logging:
   level:

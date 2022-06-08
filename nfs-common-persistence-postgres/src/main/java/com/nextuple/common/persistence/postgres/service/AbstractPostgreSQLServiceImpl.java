@@ -2,7 +2,9 @@ package com.nextuple.common.persistence.postgres.service;
 
 import com.nextuple.common.dto.Entity;
 import com.nextuple.common.dto.key.EntityKey;
-import com.nextuple.common.dto.service.GenericPersistenceService;
+import com.nextuple.common.service.GenericPersistenceService;
+import com.nextuple.common.persistence.postgres.dto.PostgresEntity;
+import com.nextuple.common.persistence.postgres.dto.key.PostgresEntityKey;
 import com.nextuple.common.persistence.postgres.mapper.GenericEntityMapper;
 import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
@@ -15,7 +17,8 @@ import java.util.stream.Collectors;
 
 import static com.nextuple.common.constants.CommonConstants.*;
 
-public abstract class AbstractPostgreSQLServiceImpl<PK, PV, EK extends EntityKey, EV extends Entity> implements GenericPersistenceService<EK, EV> {
+public abstract class AbstractPostgreSQLServiceImpl<PK extends PostgresEntityKey, PV extends PostgresEntity,
+        EK extends EntityKey, EV extends Entity> implements GenericPersistenceService<EK, EV> {
     @Autowired
     CrudRepository<PV, PK> repository;
 
@@ -27,13 +30,13 @@ public abstract class AbstractPostgreSQLServiceImpl<PK, PV, EK extends EntityKey
     @Override
     @Timed(value = "postgres.persistence", extraTags = {OPERATION_TAG_NAME, DB_OPERATION_INSERT})
     public EV create(EK key, EV entity) {
-        return mapper.dtoToEntity(repository.save(mapper.entityToDto(key, entity)));
+        return mapper.dtoToEntity(repository.save(mapper.entityToDto(entity)));
     }
 
     @Override
     @Timed(value = "postgres.persistence", extraTags = {OPERATION_TAG_NAME, DB_OPERATION_UPDATE})
     public EV update(EK key, EV entity) {
-        return mapper.dtoToEntity(repository.save(mapper.entityToDto(key, entity)));
+        return mapper.dtoToEntity(repository.save(mapper.entityToDto(entity)));
     }
 
     @Override

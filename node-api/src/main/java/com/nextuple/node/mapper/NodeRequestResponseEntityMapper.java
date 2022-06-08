@@ -7,7 +7,7 @@ import com.nextuple.node.dto.NodeEntity;
 import com.nextuple.node.dto.key.NodeEntityKey;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface NodeRequestResponseEntityMapper extends GenericRequestResponseMapper<NodeRequest, NodeResponse, NodeEntityKey, NodeEntity> {
 
 }

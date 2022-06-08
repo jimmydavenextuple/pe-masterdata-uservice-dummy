@@ -2,7 +2,7 @@ package com.nextuple.common;
 
 import com.nextuple.common.dto.Entity;
 import com.nextuple.common.dto.key.EntityKey;
-import com.nextuple.common.dto.service.GenericPersistenceService;
+import com.nextuple.common.service.GenericPersistenceService;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;

@@ -4,11 +4,13 @@ import com.nextuple.common.persistence.postgres.mapper.GenericEntityMapper;
 import com.nextuple.node.dto.key.NodeEntityKey;
 import com.nextuple.node.postgres.dto.NodeEntity;
 import com.nextuple.node.postgres.dto.NodeKey;
+import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-public class NodeEntityMapper
-    implements GenericEntityMapper<NodeKey, NodeEntity, NodeEntityKey, com.nextuple.node.dto.NodeEntity> {
-
+@Mapper(componentModel = "spring")
+public interface NodeEntityMapper
+    extends GenericEntityMapper<NodeKey, NodeEntity, NodeEntityKey, com.nextuple.node.dto.NodeEntity> {
+/*
   NodeMapper nodeMapper = Mappers.getMapper(NodeMapper.class);
   @Override
   public NodeEntity entityToDto(NodeEntityKey key, com.nextuple.node.dto.NodeEntity entity) {
@@ -30,5 +32,5 @@ public class NodeEntityMapper
   public NodeEntityKey dtoKeyToEntityKey(NodeKey pgDtoKey) {
 
     return nodeMapper.nodeKeytoEntityKey(pgDtoKey);
-  }
+  }*/
 }

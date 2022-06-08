@@ -7,8 +7,10 @@ import com.nextuple.node.postgres.dto.NodeEntity;
 import com.nextuple.node.postgres.dto.NodeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
 public class NodePersistenceServicePostgreSQLImpl
     extends AbstractPostgreSQLServiceImpl<NodeKey,
     NodeEntity, NodeEntityKey, com.nextuple.node.dto.NodeEntity>

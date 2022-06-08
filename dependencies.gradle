@@ -12,7 +12,7 @@ ext.libs = [
 
 ext.libTests = [
         'springTest': 'org.springframework.boot:spring-boot-starter-test',
-        'mongo': 'de.flapdoodle.embed:de.flapdoodle.embed.mongo',
+//        'mongo': 'de.flapdoodle.embed:de.flapdoodle.embed.mongo',
         'hamcrest': 'org.hamcrest:hamcrest-junit:${hamcrestJunitVersion}',
         'jayway': 'com.jayway.jsonpath:json-path-assert:${jsonpathVersion}',
         'javakafer' : 'com.github.javafaker:javafaker:1.0.2',

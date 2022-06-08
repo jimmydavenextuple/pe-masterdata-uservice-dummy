@@ -1,19 +1,14 @@
 package com.nextuple.node.postgres;
 
-import com.nextuple.common.persistence.postgres.service.AbstractPostgreSQLServiceImpl;
-import com.nextuple.node.dto.key.NodeEntityKey;
 import com.nextuple.node.postgres.dto.NodeEntity;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
+import com.nextuple.node.postgres.dto.NodeKey;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-@Slf4j
-public class NodeRepository
-    extends AbstractPostgreSQLServiceImpl<NodeEntityKey, NodeEntity, NodeEntityKey, NodeEntity> {
+@Repository
+public interface NodeRepository
+    extends CrudRepository<NodeEntity, NodeKey> {
 
-  @Override
-  protected Logger log() {
-    return log;
-  }
 }
 
 

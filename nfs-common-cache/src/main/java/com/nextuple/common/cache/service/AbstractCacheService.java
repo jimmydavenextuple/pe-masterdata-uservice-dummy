@@ -5,7 +5,7 @@ import com.nextuple.common.cache.dto.key.CacheKey;
 import com.nextuple.common.cache.mapper.GenericCacheAndEntityMapper;
 import com.nextuple.common.dto.Entity;
 import com.nextuple.common.dto.key.EntityKey;
-import com.nextuple.common.dto.service.GenericPersistenceService;
+import com.nextuple.common.service.GenericPersistenceService;
 import com.nextuple.common.util.ObjectUtil;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.MeterRegistry;
