@@ -6,4 +6,7 @@ dependencies {
     implementation(project(":node-api-domain"))
     implementation(project(":nfs-common-persistence"))
     implementation(project(":node-persistence"))
+    implementation(project(":node-persistence-postgres"))
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation(project(":common-util"))
 }

@@ -19,16 +19,16 @@ public abstract class AbstractCommonHandler<K extends EntityKey, E extends Entit
     protected GenericPersistenceService<K,E> persistenceService;
 
     @Autowired
-    MeterRegistry registry;
+    protected MeterRegistry registry;
 
     protected abstract Logger log();
 
-    protected E create(K key, E entity) {
+    public E create(K key, E entity) {
         log().trace("Inserting a new record for {} with value {} ", key, entity);
         return persistenceService.create(key, entity);
     }
 
-    protected E update(K key, E entity) {
+    public E update(K key, E entity) {
         log().trace("Updating a new record for {} with value {} ", key, entity);
         return persistenceService.update(key, entity);
     }
@@ -43,7 +43,7 @@ public abstract class AbstractCommonHandler<K extends EntityKey, E extends Entit
         return entity;
     }
 
-    protected void delete(K key) {
+    public void delete(K key) {
         log().trace("Deleting a the record with key {} ", key);
         persistenceService.delete(key);
     }

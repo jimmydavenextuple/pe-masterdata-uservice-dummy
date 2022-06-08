@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 public abstract class AbstractCommonCRUDController<I, O> {
     protected abstract Logger log();
 
-    protected Function<O, ResponseEntity<O>> createResponse(I request) {
+    public Function<O, ResponseEntity<O>> createResponse(I request) {
         return o -> {
             if (o == null) {
                 return ResponseEntity.noContent().build();

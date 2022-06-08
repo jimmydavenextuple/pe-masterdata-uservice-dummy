@@ -1,4 +1,6 @@
 package com.nextuple.common.dto.key;
 
-public interface EntityKey {
+import java.io.Serializable;
+
+public interface EntityKey extends Serializable {
 }
