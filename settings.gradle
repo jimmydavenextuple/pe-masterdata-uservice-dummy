@@ -18,4 +18,5 @@ include 'node-api'
 include 'node-api-domain'
 include 'node-persistence'
 include 'node-persistence-postgres'
+include 'master-data'
 
