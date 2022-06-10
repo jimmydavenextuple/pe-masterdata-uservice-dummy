@@ -6,9 +6,5 @@ bootJar {
 }
 
 dependencies {
-//    // https://mvnrepository.com/artifact/joda-time/joda-time
-//    implementation group: 'joda-time', name: 'joda-time', version: '2.3'
-//// https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core
-//    implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.63'
-
+    implementation "joda-time:joda-time:${jodaTimeVersion}"
 }

@@ -33,6 +33,7 @@ ext {
     jsonpathVersion = "2.4.0"
     hamcrestJunitVersion = "2.0.0.0"
     lombokVersion = "1.18.12"
+//    micrometerPrometheusVersion = "1.5.1"
     sourceJdkVersion = JavaVersion.VERSION_1_8
     targetJdkVersion = JavaVersion.VERSION_11
 }

@@ -17,10 +17,10 @@ public class CurrentThreadContext {
   }
 
   /**
-   * Get {@link com.nextuple.controltower.common.logging.LogContext} from current thread - it initializes new log context if thread doesn't
+   * Get {@link LogContext} from current thread - it initializes new log context if thread doesn't
    * have it
    *
-   * @return {@link com.nextuple.controltower.common.logging.LogContext}
+   * @return {@link LogContext}
    */
   public static final LogContext getLogContext() {
     LogContext logContext = logContextThreadLocal.get();
@@ -34,7 +34,7 @@ public class CurrentThreadContext {
   /**
    * Set new log context
    *
-   * @param logContext {@link com.nextuple.controltower.common.logging.LogContext} to be set
+   * @param logContext {@link LogContext} to be set
    */
   public static final void setLogContext(LogContext logContext) {
     logContextThreadLocal.set(logContext);

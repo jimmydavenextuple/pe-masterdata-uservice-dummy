@@ -35,7 +35,7 @@ public class LogContext {
   private static final Logger logger = LoggerFactory.getLogger(LogContext.class);
   private Map<String, String> requestHeaders;
   private Map<String, String> requestParameters;
-  private Map<String, String> customFields = new HashMap<>();
+  private Map<String, String> customFields;
   private Map<String, Object> kafkaHeaders;
 
   public LogContext put(String key, String value) {
