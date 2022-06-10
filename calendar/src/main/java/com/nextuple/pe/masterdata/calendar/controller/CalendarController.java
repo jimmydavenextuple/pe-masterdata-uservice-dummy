@@ -1,0 +1,89 @@
+package com.nextuple.pe.masterdata.calendar.controller;
+
+import com.nextuple.common.response.BaseResponse;
+import com.nextuple.pe.masterdata.calendar.domain.inbound.CalendarRequest;
+import com.nextuple.pe.masterdata.calendar.domain.outbound.CalendarResponse;
+import com.nextuple.pe.masterdata.calendar.domain.pojo.CalendarDaysStatusInfo;
+import com.nextuple.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.nextuple.pe.masterdata.calendar.exception.CommonServiceException;
+import com.nextuple.pe.masterdata.calendar.service.CalendarService;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/calendar")
+@RequiredArgsConstructor
+public class CalendarController {
+
+  private static final Logger logger = LoggerFactory.getLogger(CalendarController.class);
+  private final CalendarService calendarService;
+
+  @PostMapping
+  public ResponseEntity<BaseResponse<CalendarResponse>> handleCreateCalendar(
+      @Valid @RequestBody CalendarRequest calendarRequest) throws CalendarDomainException {
+    logger.info("Inside handleCreateCalendar() for calendarRequest: {}", calendarRequest);
+    try {
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Calendar created successfully!")
+              .payload(calendarService.processCreateCalendar(calendarRequest))
+              .build());
+    } catch (Exception e) {
+      logger.error("Error in handleCreateCalendar()");
+      throw e;
+    }
+  }
+
+  @GetMapping("/{orgId}/{calendarId}")
+  public ResponseEntity<BaseResponse<CalendarResponse>> handleGetCalendar(
+      @PathVariable String orgId, @PathVariable String calendarId) throws CalendarDomainException {
+    try {
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Calendar details fetched successfully!")
+              .payload(calendarService.processGetCalendar(orgId, calendarId))
+              .build());
+    } catch (Exception e) {
+      logger.error("Error in handleGetCalendar()");
+      throw e;
+    }
+  }
+
+  @GetMapping("/status/{orgId}")
+  public ResponseEntity<BaseResponse<List<CalendarDaysStatusInfo>>>
+      handleGetUpcomingDaysCalendarStatus(
+          @PathVariable String orgId,
+          @RequestParam Optional<String> nodeId,
+          @RequestParam Optional<String> carrierServiceId,
+          @RequestParam Optional<String> serviceOption,
+          @RequestParam Optional<Integer> numberOfDaysInFuture,
+          @RequestParam Optional<String> shippingStage,
+          @RequestParam Optional<String> destinationTimezone)
+          throws CalendarDomainException, CommonServiceException {
+    try {
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Calendar status for upcoming days fetched successfully!")
+              .payload(
+                  calendarService.processGetUpcomingDaysCalendarStatus(
+                      orgId,
+                      nodeId,
+                      carrierServiceId,
+                      serviceOption,
+                      numberOfDaysInFuture,
+                      shippingStage,
+                      destinationTimezone))
+              .build());
+    } catch (Exception e) {
+      logger.error("Error in handleGetUpcomingDaysCalendarStatus()");
+      throw e;
+    }
+  }
+}

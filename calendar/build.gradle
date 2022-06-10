@@ -1,8 +1,7 @@
 
-
 bootJar {
-    mainClassName = 'com.nextuple.pe.masterdata.MasterDataApplication.java'
-    mainClass = 'com.nextuple.pe.masterdata.MasterDataApplication.java'
+    mainClassName = 'com.nextuple.pe.masterdata.calendar.MasterDataCalendarApplication.java'
+    mainClass = 'com.nextuple.pe.masterdata.calendar.MasterDataCalendarApplication.java'
 }
 
 dependencies {
