@@ -1,5 +1,11 @@
 package com.nextuple.pe.masterdata.service.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
+
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.pe.masterdata.controller.CarrierServiceController;
 import com.nextuple.pe.masterdata.domain.inbound.CarrierServiceRequest;
@@ -17,12 +23,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 class CarrierServiceControllerTest {
   @InjectMocks private CarrierServiceController carrierServiceController;

@@ -7,14 +7,11 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 public abstract class AbstractKafkaProducer<K, V> {
 
-    @Autowired
-    private KafkaTemplate<K, V> kafkaTemplate;
+  @Autowired private KafkaTemplate<K, V> kafkaTemplate;
 
-    @Getter
-    @Setter
-    protected String topicName;
+  @Getter @Setter protected String topicName;
 
-    public void sendMessage(K key, V msg) {
-        kafkaTemplate.send(topicName, msg);
-    }
+  public void sendMessage(K key, V msg) {
+    kafkaTemplate.send(topicName, msg);
+  }
 }

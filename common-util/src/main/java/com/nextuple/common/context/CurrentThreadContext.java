@@ -1,6 +1,5 @@
 package com.nextuple.common.context;
 
-
 /**
  * Access thread local contexts - {@link CurrentThreadContext} manages two different thread local
  * variables 1) Log Context - should be used to form log context only 2) Request Context - should be

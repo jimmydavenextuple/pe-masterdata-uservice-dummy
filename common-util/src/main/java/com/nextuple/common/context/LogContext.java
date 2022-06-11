@@ -2,16 +2,15 @@ package com.nextuple.common.context;
 
 import com.nextuple.common.util.DateUtil;
 import com.nextuple.common.util.KafkaUtil;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /** This class will be used to form a context for logging which will be exposed to log file */
 @Builder(toBuilder = true)
@@ -56,7 +55,6 @@ public class LogContext {
     }
     return customFields.getOrDefault(key, defaultIfNotFound);
   }
-
 
   public String getTraceId() {
     return get(TRACE_ID);

@@ -8,4 +8,6 @@ bootJar {
 
 dependencies {
     implementation project(":core-near-cache")
+    implementation group: 'org.springframework.data', name: 'spring-data-redis'
+
 }

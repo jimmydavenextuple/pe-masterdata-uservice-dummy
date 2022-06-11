@@ -7,15 +7,15 @@ import com.nextuple.pe.masterdata.calendar.domain.pojo.CalendarDaysStatusInfo;
 import com.nextuple.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.nextuple.pe.masterdata.calendar.exception.CommonServiceException;
 import com.nextuple.pe.masterdata.calendar.service.CalendarService;
+import java.util.List;
+import java.util.Optional;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/calendar")
@@ -23,7 +23,8 @@ import java.util.Optional;
 public class CalendarController {
 
   private static final Logger logger = LoggerFactory.getLogger(CalendarController.class);
-  private final CalendarService calendarService;
+
+  @Autowired CalendarService calendarService;
 
   @PostMapping
   public ResponseEntity<BaseResponse<CalendarResponse>> handleCreateCalendar(

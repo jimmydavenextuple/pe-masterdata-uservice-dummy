@@ -1,12 +1,11 @@
 package com.nextuple.pe.masterdata.error;
 
 import com.nextuple.common.response.BaseResponse;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)

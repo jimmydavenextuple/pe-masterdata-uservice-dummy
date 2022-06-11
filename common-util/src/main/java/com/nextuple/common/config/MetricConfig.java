@@ -9,8 +9,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MetricConfig {
 
-    @Bean
-    MeterRegistryCustomizer<MeterRegistry> metricsCommonTags() {
-        return registry -> registry.config().commonTags("host", CurrentThreadContext.getLogContext().getHostName());
-    }
+  @Bean
+  MeterRegistryCustomizer<MeterRegistry> metricsCommonTags() {
+    return registry ->
+        registry.config().commonTags("host", CurrentThreadContext.getLogContext().getHostName());
+  }
 }

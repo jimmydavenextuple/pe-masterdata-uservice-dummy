@@ -2,8 +2,8 @@ package com.nextuple.node.data.spring.cache.service;
 
 import static com.nextuple.node.data.spring.cache.service.NodeDataSpringDataNearCacheServiceImpl.NODE_CACHE_NAME;
 
-import com.nextuple.core.NearCacheConstants;
-import com.nextuple.core.NearCacheRegistry;
+import com.nextuple.core.constants.NearCacheConstants;
+import com.nextuple.core.registry.NearCacheRegistry;
 import com.nextuple.core.spring.service.AbstractGenericSpringLocalCacheServiceImpl;
 import com.nextuple.node.data.cache.domain.NodeDataCacheKey;
 import com.nextuple.node.data.cache.domain.NodeDataCacheValue;

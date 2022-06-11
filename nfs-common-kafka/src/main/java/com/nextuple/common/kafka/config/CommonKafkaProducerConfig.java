@@ -7,15 +7,15 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
 @Configuration
-public class CommonKafkaProducerConfig<K,V> {
+public class CommonKafkaProducerConfig<K, V> {
 
-    @Bean
-    public ProducerFactory<K, V> producerFactory(KafkaProducerConsumerProperties configProps) {
-        return new DefaultKafkaProducerFactory<>(configProps.getProducer());
-    }
+  @Bean
+  public ProducerFactory<K, V> producerFactory(KafkaProducerConsumerProperties configProps) {
+    return new DefaultKafkaProducerFactory<>(configProps.getProducer());
+  }
 
-    @Bean
-    public KafkaTemplate<K, V> kafkaTemplate(ProducerFactory<K, V> producerFactory) {
-        return new KafkaTemplate<>(producerFactory);
-    }
+  @Bean
+  public KafkaTemplate<K, V> kafkaTemplate(ProducerFactory<K, V> producerFactory) {
+    return new KafkaTemplate<>(producerFactory);
+  }
 }

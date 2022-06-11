@@ -1,12 +1,11 @@
 package com.nextuple.pe.masterdata.calendar.domain.entity;
 
 import com.nextuple.pe.masterdata.calendar.domain.entity.primarykey.NodeCalendarPK;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 @Entity
 @Data

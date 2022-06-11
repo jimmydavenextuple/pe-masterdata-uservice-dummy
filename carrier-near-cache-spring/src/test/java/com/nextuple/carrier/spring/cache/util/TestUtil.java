@@ -4,7 +4,7 @@ import com.nextuple.carrier.cache.domain.CarrierCacheKey;
 import com.nextuple.carrier.cache.domain.CarrierCacheValue;
 import com.nextuple.carrier.cache.domain.CarrierDetails;
 import com.nextuple.carrier.cache.domain.CarrierServiceResponse;
-import com.nextuple.controltower.common.base.BaseResponse;
+import com.nextuple.common.response.BaseResponse;
 
 public class TestUtil {
 

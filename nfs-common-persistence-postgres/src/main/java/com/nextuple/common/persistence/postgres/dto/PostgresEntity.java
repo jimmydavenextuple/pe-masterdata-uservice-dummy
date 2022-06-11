@@ -5,11 +5,11 @@ import java.time.LocalDateTime;
 
 public interface PostgresEntity extends Serializable {
 
-    LocalDateTime getUpdateTime();
+  LocalDateTime getUpdateTime();
 
-    String getUpdateUser();
+  String getUpdateUser();
 
-    void setUpdateTime(LocalDateTime updateTime);
+  void setUpdateTime(LocalDateTime updateTime);
 
-    void setUpdateUser(String updateUser);
+  void setUpdateUser(String updateUser);
 }

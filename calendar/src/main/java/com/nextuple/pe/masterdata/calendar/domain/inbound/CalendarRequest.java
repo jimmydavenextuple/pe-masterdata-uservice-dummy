@@ -1,15 +1,14 @@
 package com.nextuple.pe.masterdata.calendar.domain.inbound;
 
 import com.nextuple.pe.masterdata.calendar.domain.pojo.ExceptionDays;
+import java.io.Serializable;
+import java.util.List;
+import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.util.List;
 
 @Data
 @Builder

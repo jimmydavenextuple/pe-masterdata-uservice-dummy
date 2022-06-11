@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import com.nextuple.carrier.cache.domain.CarrierCacheValue;
 import com.nextuple.carrier.cache.domain.CarrierServiceResponse;
 import com.nextuple.carrier.spring.cache.util.TestUtil;
-import com.nextuple.controltower.common.base.BaseResponse;
+import com.nextuple.common.response.BaseResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

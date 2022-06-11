@@ -1,13 +1,12 @@
 package com.nextuple.pe.masterdata.calendar.domain.outbound;
 
 import com.nextuple.pe.masterdata.calendar.domain.pojo.ExceptionDays;
+import java.io.Serializable;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.util.List;
 
 @Data
 @Builder

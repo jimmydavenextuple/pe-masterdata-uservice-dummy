@@ -1,8 +1,7 @@
 package com.nextuple.pe.masterdata.calendar.domain.pojo;
 
-import lombok.Data;
-
 import java.io.Serializable;
+import lombok.Data;
 
 @Data
 public class ExceptionDays implements Serializable {

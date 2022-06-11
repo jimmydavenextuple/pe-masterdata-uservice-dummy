@@ -1,6 +1,6 @@
 package com.nextuple.nodecarrier.cache.service;
 
-import com.nextuple.controltower.common.base.BaseResponse;
+import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.service.GenericFeignService;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierResponse;
 

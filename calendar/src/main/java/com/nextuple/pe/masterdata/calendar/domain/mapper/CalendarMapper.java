@@ -12,11 +12,10 @@ import com.nextuple.pe.masterdata.calendar.domain.outbound.CalendarResponse;
 import com.nextuple.pe.masterdata.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.nextuple.pe.masterdata.calendar.domain.outbound.NodeCalendarResponse;
 import com.nextuple.pe.masterdata.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
-
-import java.util.List;
 
 @Mapper(
     unmappedTargetPolicy = ReportingPolicy.IGNORE,

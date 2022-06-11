@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.nextuple.controltower.common.base.BaseResponse;
+import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
 import com.nextuple.node.data.cache.domain.NodeDataCacheKey;
 import com.nextuple.node.data.cache.domain.NodeDataCacheValue;

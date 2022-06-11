@@ -2,15 +2,14 @@ package com.nextuple.pe.masterdata.domain.entity;
 
 import com.nextuple.pe.masterdata.domain.primaryKeys.ItemId;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import java.util.Map;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-
-import javax.persistence.*;
-import java.util.Map;
 
 @Entity
 @IdClass(ItemId.class)

@@ -1,10 +1,9 @@
 package com.nextuple.pe.masterdata.exception.common;
 
 import com.nextuple.pe.masterdata.error.FieldError;
+import java.util.Map;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
-
-import java.util.Map;
 
 @Data
 public class CommonServiceException extends Exception {

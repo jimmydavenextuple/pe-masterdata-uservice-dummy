@@ -1,10 +1,10 @@
 package com.nextuple.common.mapper;
 
-public interface GenericRequestResponseMapper<I, O, EK , EV>{
+public interface GenericRequestResponseMapper<I, O, EK, EV> {
 
-    EK requestToEntityKey(I request);
+  EK requestToEntityKey(I request);
 
-    EV requestToEntity(I request);
+  EV requestToEntity(I request);
 
-    O entityToResponse(EV entity);
+  O entityToResponse(EV entity);
 }

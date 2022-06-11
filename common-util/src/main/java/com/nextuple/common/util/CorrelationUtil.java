@@ -1,14 +1,12 @@
 package com.nextuple.common.util;
 
-import com.nextuple.common.context.CurrentThreadContext;
-import org.springframework.kafka.support.converter.KafkaMessageHeaders;
-import org.springframework.util.ObjectUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.UUID;
-
 import static com.nextuple.common.context.LogContext.CORRELATION_ID;
 
+import com.nextuple.common.context.CurrentThreadContext;
+import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.kafka.support.converter.KafkaMessageHeaders;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Correlation Utility to generate, extract, validate and modify correlation id(s)

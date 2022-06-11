@@ -9,7 +9,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
+    implementation(project(":common-util"))
     implementation(project(":core-near-cache"))
+    implementation(project(":core-near-cache-consumer"))
     implementation(project(":core-near-cache-spring"))
     implementation(project(":node-carrier-near-cache"))
 

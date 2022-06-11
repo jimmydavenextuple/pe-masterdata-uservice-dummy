@@ -1,7 +1,7 @@
 package com.nextuple.carrier.spring.cache.feign;
 
 import com.nextuple.carrier.cache.domain.CarrierServiceResponse;
-import com.nextuple.controltower.common.base.BaseResponse;
+import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.service.GenericFeignService;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

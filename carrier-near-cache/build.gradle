@@ -8,7 +8,6 @@ bootJar {
 group = 'com.nextuple.carrier.near.cache'
 version "1.0.2"
 dependencies {
+    implementation(project(":common-util"))
     implementation(project(":core-near-cache"))
-//    //Nextuple
-//    implementation "com.nextuple.core:core-common-lib:1.9.13-${build_target}"
 }

@@ -1,12 +1,11 @@
 package com.nextuple.pe.masterdata.domain.outbound;
 
+import java.io.Serializable;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.util.Map;
 
 @Data
 @NoArgsConstructor

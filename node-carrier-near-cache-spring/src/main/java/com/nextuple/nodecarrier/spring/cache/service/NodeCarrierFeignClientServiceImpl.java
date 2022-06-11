@@ -1,6 +1,6 @@
 package com.nextuple.nodecarrier.spring.cache.service;
 
-import com.nextuple.controltower.common.base.BaseResponse;
+import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
 import com.nextuple.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierCacheKey;

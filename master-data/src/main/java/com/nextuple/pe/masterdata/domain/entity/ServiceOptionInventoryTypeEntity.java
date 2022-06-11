@@ -1,12 +1,11 @@
 package com.nextuple.pe.masterdata.domain.entity;
 
 import com.nextuple.pe.masterdata.domain.primaryKeys.ServiceToInventoryId;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 @Entity
 @IdClass(ServiceToInventoryId.class)

@@ -10,11 +10,11 @@ package com.nextuple.common.persistence.postgres.mapper;
 
 public interface GenericEntityMapper<PK, PD, EK, EV> {
 
-    PD entityToDto(EV entity);
+  PD entityToDto(EV entity);
 
-    EV dtoToEntity(PD pgDto);
+  EV dtoToEntity(PD pgDto);
 
-    PK entityKeyToDtoKey(EK entityKey);
+  PK entityKeyToDtoKey(EK entityKey);
 
-    EK dtoKeyToEntityKey(PK pgDtoLey);
+  EK dtoKeyToEntityKey(PK pgDtoLey);
 }

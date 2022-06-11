@@ -1,6 +1,6 @@
 package com.nextuple.nodecarrier.spring.cache.feign;
 
-import com.nextuple.controltower.common.base.BaseResponse;
+import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.service.GenericFeignService;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierResponse;
 import org.springframework.cloud.openfeign.FeignClient;

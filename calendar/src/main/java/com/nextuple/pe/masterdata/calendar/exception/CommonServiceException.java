@@ -1,10 +1,9 @@
 package com.nextuple.pe.masterdata.calendar.exception;
 
 import com.nextuple.pe.masterdata.calendar.error.FieldError;
+import java.util.Map;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
-
-import java.util.Map;
 
 @Data
 public class CommonServiceException extends Exception {

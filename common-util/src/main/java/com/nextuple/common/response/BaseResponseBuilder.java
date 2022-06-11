@@ -1,8 +1,6 @@
 package com.nextuple.common.response;
 
-
 import com.nextuple.common.context.CurrentThreadContext;
-
 import java.util.Date;
 
 public class BaseResponseBuilder {

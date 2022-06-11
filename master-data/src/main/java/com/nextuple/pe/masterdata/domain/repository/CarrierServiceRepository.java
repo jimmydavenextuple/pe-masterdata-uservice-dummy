@@ -1,9 +1,8 @@
 package com.nextuple.pe.masterdata.domain.repository;
 
 import com.nextuple.pe.masterdata.domain.entity.CarrierServiceEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CarrierServiceRepository extends JpaRepository<CarrierServiceEntity, String> {
   Optional<CarrierServiceEntity> findCarrierServiceByCarrierIdAndServiceIdAndOrgId(

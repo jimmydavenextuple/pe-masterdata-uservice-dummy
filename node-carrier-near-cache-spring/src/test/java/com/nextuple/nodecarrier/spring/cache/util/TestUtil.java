@@ -1,6 +1,6 @@
 package com.nextuple.nodecarrier.spring.cache.util;
 
-import com.nextuple.controltower.common.base.BaseResponse;
+import com.nextuple.common.response.BaseResponse;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierCacheKey;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierCacheValue;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierDetails;

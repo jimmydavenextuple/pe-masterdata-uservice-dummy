@@ -3,15 +3,14 @@ package com.nextuple.pe.masterdata.calendar.domain.entity;
 import com.nextuple.pe.masterdata.calendar.domain.entity.primarykey.CalendarPK;
 import com.nextuple.pe.masterdata.calendar.domain.pojo.ExceptionDays;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import java.util.List;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-
-import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Data

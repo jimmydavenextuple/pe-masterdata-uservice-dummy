@@ -1,12 +1,11 @@
 package com.nextuple.pe.masterdata.domain.repository;
 
 import com.nextuple.pe.masterdata.domain.entity.TransitEntity;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface TransitRepository extends JpaRepository<TransitEntity, String> {

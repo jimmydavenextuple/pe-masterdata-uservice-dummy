@@ -1,9 +1,8 @@
 package com.nextuple.pe.masterdata.exception.common;
 
-import lombok.Getter;
-
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
 
 /** This is the Control Tower Exception that should be used accross the board. */
 @Getter

@@ -5,14 +5,14 @@ import com.nextuple.common.cache.dto.key.CacheKey;
 import com.nextuple.common.dto.Entity;
 import com.nextuple.common.dto.key.EntityKey;
 
-public interface GenericCacheAndEntityMapper<CK extends CacheKey, CV extends CacheValue, EK extends EntityKey, ED extends Entity> {
+public interface GenericCacheAndEntityMapper<
+    CK extends CacheKey, CV extends CacheValue, EK extends EntityKey, ED extends Entity> {
 
-    EK toEntityKey(CK cacheKey);
+  EK toEntityKey(CK cacheKey);
 
-    ED toEntity(CK cacheKey, CV cacheValue);
+  ED toEntity(CK cacheKey, CV cacheValue);
 
-    CV toCacheValue(ED entity);
+  CV toCacheValue(ED entity);
 
-    CK toCacheKey(ED entity);
-
+  CK toCacheKey(ED entity);
 }

@@ -4,9 +4,9 @@ import com.nextuple.core.cache.domain.CacheKey;
 import com.nextuple.core.cache.domain.CacheValue;
 import com.nextuple.core.cache.service.GenericFeignCacheService;
 import com.nextuple.core.cache.service.GenericNearCacheService;
+import com.nextuple.core.registry.NearCacheRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import com.nextuple.core.NearCacheRegistry;
 
 public abstract class AbstractGenericSpringLocalCacheServiceImpl<
         K extends CacheKey, V extends CacheValue>

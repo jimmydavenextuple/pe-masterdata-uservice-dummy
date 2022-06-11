@@ -5,6 +5,7 @@ import com.nextuple.common.response.error.ErrorType;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.common.util.JsonUtil;
 import feign.FeignException;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,15 +17,14 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Map;
-
 @Component
 @ControllerAdvice
 public class CommonExceptionHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(CommonExceptionHandler.class);
 
-  //TODO - Extract common util into common library module - DateUtil, ErrorResponse, LogContext, KafkaContext, Filter
+  // TODO - Extract common util into common library module - DateUtil, ErrorResponse, LogContext,
+  // KafkaContext, Filter
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(

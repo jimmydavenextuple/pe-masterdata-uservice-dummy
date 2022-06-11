@@ -1,8 +1,8 @@
 package com.nextuple.common.dto;
 
-public interface OrgEntity extends Entity{
+public interface OrgEntity extends Entity {
 
-    String getOrgId();
+  String getOrgId();
 
-    void setOrgId(String orgId);
+  void setOrgId(String orgId);
 }

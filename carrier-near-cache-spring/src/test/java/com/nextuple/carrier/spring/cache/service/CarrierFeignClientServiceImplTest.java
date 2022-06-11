@@ -12,7 +12,7 @@ import com.nextuple.carrier.cache.domain.CarrierCacheValue;
 import com.nextuple.carrier.cache.domain.CarrierServiceResponse;
 import com.nextuple.carrier.spring.cache.feign.CarrierFeignImpl;
 import com.nextuple.carrier.spring.cache.util.TestUtil;
-import com.nextuple.controltower.common.base.BaseResponse;
+import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

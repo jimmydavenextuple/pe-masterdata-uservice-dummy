@@ -1,7 +1,5 @@
 package com.nextuple.common.util;
 
-import org.joda.time.*;
-
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -10,6 +8,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import org.joda.time.*;
 
 /**
  * This class provides all the helper methods for the date
@@ -25,7 +24,7 @@ public class DateUtil {
   public static final String LONG_DATE_FORMAT_MILLIS = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
   public static final String LONG_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
   public static final String SHORT_DATE_FORMAT = "yyyy-MM-dd";
-  
+
   static {
     DEPRECATED_TIMEZONES =
         Collections.unmodifiableList(

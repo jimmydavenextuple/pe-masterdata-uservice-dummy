@@ -1,5 +1,10 @@
 package com.nextuple.pe.masterdata.service.service;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
+
 import com.nextuple.pe.masterdata.domain.TransitDomain;
 import com.nextuple.pe.masterdata.domain.entity.TransitEntity;
 import com.nextuple.pe.masterdata.domain.inbound.TransitDataUpdationRequest;
@@ -8,22 +13,16 @@ import com.nextuple.pe.masterdata.exception.TransitDomainException;
 import com.nextuple.pe.masterdata.exception.common.CommonServiceException;
 import com.nextuple.pe.masterdata.service.TestUtil;
 import com.nextuple.pe.masterdata.service.TransitService;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 class TransitServiceTest {
 

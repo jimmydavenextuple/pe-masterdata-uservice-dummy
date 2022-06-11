@@ -4,13 +4,13 @@ import java.util.Set;
 
 public interface GenericPersistenceService<K, E> {
 
-    E create(K key, E entity);
+  E create(K key, E entity);
 
-    E update(K key, E entity);
+  E update(K key, E entity);
 
-    E get(K key);
+  E get(K key);
 
-    Set<E> getAll(Set<K> keys);
+  Set<E> getAll(Set<K> keys);
 
-    void delete(K key);
+  void delete(K key);
 }

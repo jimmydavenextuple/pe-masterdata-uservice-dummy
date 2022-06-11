@@ -6,14 +6,13 @@ import com.nextuple.pe.masterdata.domain.outbound.ServiceInventoryDto;
 import com.nextuple.pe.masterdata.exception.ServiceInventoryDomainException;
 import com.nextuple.pe.masterdata.exception.common.CommonServiceException;
 import com.nextuple.pe.masterdata.service.ServiceOptionInventoryTypeService;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 
 @RestController
 @RequestMapping("/serviceOption/inventoryType")

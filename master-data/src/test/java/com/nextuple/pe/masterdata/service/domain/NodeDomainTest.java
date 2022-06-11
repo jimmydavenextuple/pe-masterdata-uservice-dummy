@@ -1,22 +1,21 @@
 package com.nextuple.pe.masterdata.service.domain;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import com.nextuple.pe.masterdata.domain.NodeDomain;
 import com.nextuple.pe.masterdata.domain.entity.NodeEntity;
 import com.nextuple.pe.masterdata.domain.repository.NodeRepository;
 import com.nextuple.pe.masterdata.exception.NodeDomainException;
 import com.nextuple.pe.masterdata.service.TestUtil;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 class NodeDomainTest {
 
