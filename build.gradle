@@ -74,11 +74,6 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
-    jar {
-        enabled = true
-        classifier = ''
-    }
-
     bootJar {
         enabled = false
     }
