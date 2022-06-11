@@ -1,0 +1,20 @@
+name: MASTER-DATA BUILD-DEPLOY
+
+on:
+  push:
+    branches: [ development ]
+    paths:
+      - "initial/**"
+      - ".github/workflows/build&deploy.yml"
+
+jobs:
+
+  Build-Deploy:
+    uses: ./.github/workflows/build&deploy.yml
+    with:
+      module: master-data
+    secrets: inherit
+
+
+
+
