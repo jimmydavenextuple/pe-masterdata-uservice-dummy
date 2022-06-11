@@ -1,0 +1,13 @@
+jar {
+    enabled = true
+}
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation project(":nfs-near-cache:core-near-cache")
+    implementation group: 'org.springframework.data', name: 'spring-data-redis'
+
+}

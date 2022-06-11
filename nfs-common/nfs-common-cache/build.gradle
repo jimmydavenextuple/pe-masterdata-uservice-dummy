@@ -1,0 +1,12 @@
+jar {
+    enabled = true
+}
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation(project(":nfs-common:nfs-common-persistence"))
+    implementation(project(":common-util"))
+
+}

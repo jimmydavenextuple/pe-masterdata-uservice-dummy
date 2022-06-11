@@ -9,6 +9,6 @@ group = 'com.nextuple'
 version "1.0.0"
 dependencies {
     implementation(project(":common-util"))
-    implementation(project(":core-near-cache"))
+    implementation(project(":nfs-near-cache:core-near-cache"))
 
 }

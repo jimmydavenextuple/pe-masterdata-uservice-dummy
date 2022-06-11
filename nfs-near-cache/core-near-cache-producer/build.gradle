@@ -1,12 +1,11 @@
-jar.enabled=true
 
-bootJar {
-    enabled = false
+group 'com.nextuple'
+version '1.0.0'
+
+repositories {
+    mavenCentral()
 }
 
-
-group = 'com.nextuple'
-version "1.0.0"
 dependencies {
     implementation(project(":common-util"))
     implementation(project(":nfs-near-cache:core-near-cache"))

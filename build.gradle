@@ -37,7 +37,7 @@ bootJar {
 }
 
 def javaProjects = [
-        project(":core-near-cache"),
+        project(":nfs-near-cache:core-near-cache"),
 ]
 
 subprojects {
