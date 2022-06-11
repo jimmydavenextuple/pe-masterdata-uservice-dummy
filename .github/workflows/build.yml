@@ -37,9 +37,8 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          cd ${{ inputs.module }}
           export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain nextuple --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
-          bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain publish
+          bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain publish -p ${{ inputs.module }}
           aws eks update-kubeconfig --name ${{ secrets.SONAR_CLUSTER }} --region us-east-1
           kubectl port-forward pod/sonarqube-89-community-0 9000:9000 &
           bash ./gradlew -Pbuild_target=SNAPSHOT sonarqube showSonarQubeLink --info

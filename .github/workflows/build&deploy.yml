@@ -74,7 +74,7 @@ jobs:
       checks: write
       pull-requests: write
     needs: Build
-    concurrency: deploy
+    concurrency: ${{ inputs.module }}
     environment: dev
     steps:
       - uses: actions/checkout@v3
