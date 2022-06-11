@@ -1,0 +1,12 @@
+name: PR-POSTAL-CODE-TIMEZONE
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "postal-code-timezone/**"
+    branches: [ development ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml

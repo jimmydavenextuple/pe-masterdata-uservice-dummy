@@ -1,0 +1,12 @@
+name: PR-PROMISE-SOURCING-RULE
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "promise-sourcing-rule/**"
+    branches: [ development ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml

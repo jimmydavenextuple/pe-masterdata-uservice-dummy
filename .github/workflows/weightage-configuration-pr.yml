@@ -1,11 +1,10 @@
-name: PR-BUILD
+name: PR-WEIGHTAGE-CONFIGURATION
 
 on:
   workflow_call:
   pull_request:
     paths:
-      - "initial/**"
-      - ".github/workflows/pr-flow.yml"
+      - "weightage-configuration/**"
     branches: [ development ]
 
 jobs:

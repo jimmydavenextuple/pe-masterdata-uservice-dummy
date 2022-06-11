@@ -1,0 +1,12 @@
+name: PR-MASTER-DATA
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "master-data/**"
+    branches: [ development ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml
