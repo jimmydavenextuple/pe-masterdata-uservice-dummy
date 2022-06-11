@@ -1,0 +1,14 @@
+jar.enabled=true
+
+bootJar {
+    enabled = false
+}
+
+
+group = 'com.nextuple.node.carrier.near.cache'
+version "1.0.4"
+dependencies {
+    implementation(project(":core-near-cache"))
+//    //Nextuple
+//    implementation "com.nextuple.core:core-common-lib:1.9.13-${build_target}"
+}

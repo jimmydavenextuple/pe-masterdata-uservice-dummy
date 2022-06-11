@@ -10,5 +10,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class NodeCacheKey implements CacheKey {
   //  String nodeNo;
+  public NodeCacheKey() {}
+
   NodeTenantDetails nodeTenantDetails;
 }

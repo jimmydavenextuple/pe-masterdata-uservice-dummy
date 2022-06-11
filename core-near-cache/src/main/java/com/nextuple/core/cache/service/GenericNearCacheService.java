@@ -7,4 +7,8 @@ public interface GenericNearCacheService<K extends CacheKey, V extends CacheValu
   V get(K key);
 
   void delete(K key);
+
+  void selfRegister();
+
+  String getEntityName();
 }

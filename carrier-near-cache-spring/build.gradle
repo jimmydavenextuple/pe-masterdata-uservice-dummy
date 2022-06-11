@@ -1,0 +1,21 @@
+bootJar {
+    enabled = false
+}
+
+group = "com.nextuple.carrier.near.cache.spring"
+version "1.0.2"
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    implementation(project(":core-near-cache"))
+    implementation(project(":core-near-cache-spring"))
+    implementation(project(":carrier-near-cache"))
+
+    constraints {
+        implementation('io.github.openfeign:feign-core:11.8') {
+            because 'versions below are vulnerable to CVE-2019-16942'
+        }
+    }
+}
