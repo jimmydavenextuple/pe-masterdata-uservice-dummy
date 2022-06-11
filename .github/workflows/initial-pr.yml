@@ -1,0 +1,13 @@
+name: PR-BUILD
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "initial/**"
+      - ".github/workflows/pr-flow.yml"
+    branches: [ development ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml
