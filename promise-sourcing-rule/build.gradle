@@ -1,5 +1,5 @@
 group = 'com.nextuple'
-version = '0.0.1'
+version = "0.0.1-${build_target}"
 sourceCompatibility = '11'
 bootJar {
     enabled = true
