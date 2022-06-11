@@ -1,5 +1,5 @@
 server:
-  health-check-endpoint: "/greeting"
+  health-check-endpoint: "/actuator/health"
   environments:
     dev:
       replicas: 1
