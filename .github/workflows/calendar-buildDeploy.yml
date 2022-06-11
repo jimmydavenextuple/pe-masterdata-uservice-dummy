@@ -2,16 +2,17 @@ name: CALENDAR BUILD-DEPLOY
 
 on:
   push:
-    branches: [ pe-config-v1 ]
+    branches: [ pe-config-v2 ]
     paths:
       - "calendar/**"
+      - ".github/workflows/calendar-buildDeploy.yml"
 
 jobs:
 
   Build-Deploy:
     uses: ./.github/workflows/build&deploy.yml
     with:
-      module: master-data
+      module: calendar
     secrets: inherit
 
 
