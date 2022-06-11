@@ -1,8 +1,6 @@
-
-
 bootJar {
-    mainClassName = 'com.nextuple.pe.masterdata.MasterDataApplication.java'
-    mainClass = 'com.nextuple.pe.masterdata.MasterDataApplication.java'
+    enabled = true
+    mainClass.set("com.nextuple.pe.masterdata.MasterDataApplication")
 }
 
 dependencies {
