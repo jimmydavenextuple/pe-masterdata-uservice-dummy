@@ -1,0 +1,46 @@
+name: reusable-workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: Enter root directory
+        type: string
+        required: true
+  workflow_call:
+    inputs:
+      module:
+        required: true
+        type: string
+jobs:
+
+  Build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      issues: read
+      checks: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ github.token }}
+      - uses: aws-actions/setup-sam@v1
+      - uses: azure/setup-kubectl@v2.0
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: git-actions-pipeline
+          aws-region: us-east-1
+      - name: Build Analyze & Publish Snapshot
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd ${{ inputs.module }}
+          export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain nextuple --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
+          bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain publish
+          aws eks update-kubeconfig --name ${{ secrets.SONAR_CLUSTER }} --region us-east-1
+          kubectl port-forward pod/sonarqube-89-community-0 9000:9000 &
+          bash ./gradlew -Pbuild_target=SNAPSHOT sonarqube showSonarQubeLink --info
+          fuser -k 9000/tcp

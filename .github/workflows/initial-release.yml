@@ -1,0 +1,15 @@
+name: PROD RELEASE
+
+on:
+  push:
+    tags:
+      - '*RELEASE'
+    paths:
+      - "initial/**"
+      - ".github/workflows/initial-release.yml"
+jobs:
+  Production-Release:
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: initial
+      secrets: inherit
