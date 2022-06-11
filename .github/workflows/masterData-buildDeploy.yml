@@ -2,7 +2,7 @@ name: MASTER-DATA BUILD-DEPLOY
 
 on:
   push:
-    branches: [ development ]
+    branches: [ pe-config-draft ]
     paths:
       - "initial/**"
       - ".github/workflows/build&deploy.yml"
