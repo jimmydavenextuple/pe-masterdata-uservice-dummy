@@ -1,0 +1,13 @@
+group = 'com.nextuple'
+version = '0.0.1'
+sourceCompatibility = '11'
+bootJar {
+    enabled = true
+    mainClass.set("com.nextuple.promise.sourcing.rule.PromiseSourcingRuleApplication")
+}
+
+dependencies {
+    implementation(project(":common-util"))
+    implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
+    runtimeOnly 'org.postgresql:postgresql'
+}

@@ -37,4 +37,6 @@ include 'node-carrier-near-cache'
 include 'node-carrier-near-cache-spring'
 include 'nfs-common'
 include 'nfs-near-cache'
-
+include 'promise-sourcing-rule'
+include 'weightage-configuration'
+include 'postal-code-timezone'
