@@ -2,10 +2,11 @@ name: MASTER-DATA BUILD-DEPLOY
 
 on:
   push:
-    branches: [ pe-config-draft ]
+    branches: [ pe-config-v1 ]
     paths:
-      - "initial/**"
+      - "master-data/**"
       - ".github/workflows/build&deploy.yml"
+      - ".github/workflows/masterData-buildDeploy.yml"
 
 jobs:
 
