@@ -4,7 +4,7 @@ echo $ECR_REGISTRY
 export SERVER_CONFIG_FILE="./manifests/config.yml"
 export REPO=`echo $GITHUB_REPOSITORY | awk -F "/" '{print $2}'`
 export SERVICE_NAME="$REPO-$PROJECT"
-export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version: @@g"`
+export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties -p $PROJECT | grep version | sed -e "s@version: @@g"`
 export SERVICE_CODE=`echo "$VERSION" | cut -d '-' -f1`
 export IMAGE_NAME="$ECR_REGISTRY/$REPO-$PROJECT:$SERVICE_CODE.$COMMIT_HASH"
 

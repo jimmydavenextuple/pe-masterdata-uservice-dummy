@@ -59,7 +59,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           export SERVICE_NAME=`echo "${{ github.repository }}" | awk -F "/" '{print $2}'`
-          export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version: @@g"`
+          export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties -p ${{ inputs.module }} | grep version | sed -e "s@version: @@g"`
           export SERVICE_CODE=`echo "$VERSION" | cut -d '-' -f1`
           export IMAGE_NAME="$ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$SERVICE_CODE.${{ github.sha }}"
           docker build -f Dockerfile -t $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$SERVICE_CODE.${{ github.sha }} ./${{ inputs.module }}
