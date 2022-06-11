@@ -1,16 +1,17 @@
-name: MASTER-DATA BUILD-DEPLOY
+name: PROMISE-SOURCING-RULE BUILD-DEPLOY
 
 on:
   push:
     branches: [ pe-config-v1 ]
     paths:
-      - "master-data/**"
+      - "promise-sourcing-rule/**"
+
 jobs:
 
   Build-Deploy:
     uses: ./.github/workflows/build&deploy.yml
     with:
-      module: master-data
+      module: promise-sourcing-rule
     secrets: inherit
 
 

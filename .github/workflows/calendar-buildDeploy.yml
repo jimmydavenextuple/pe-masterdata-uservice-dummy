@@ -1,10 +1,11 @@
-name: MASTER-DATA BUILD-DEPLOY
+name: CALENDAR BUILD-DEPLOY
 
 on:
   push:
     branches: [ pe-config-v1 ]
     paths:
-      - "master-data/**"
+      - "calendar/**"
+
 jobs:
 
   Build-Deploy:
