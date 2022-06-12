@@ -1,9 +1,10 @@
 package com.nextuple.postal.code.timezone.exception.common;
 
 import com.nextuple.postal.code.timezone.error.FieldError;
-import java.util.Map;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
+
+import java.util.Map;
 
 @Data
 public class CommonServiceException extends Exception {

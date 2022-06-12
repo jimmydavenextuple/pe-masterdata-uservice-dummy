@@ -1,8 +1,5 @@
 package com.nextuple.weightage.configuration.exception;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-
 import com.nextuple.weightage.configuration.error.ErrorResponse;
 import com.nextuple.weightage.configuration.error.ErrorType;
 import com.nextuple.weightage.configuration.exception.common.CommonServiceException;
@@ -18,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 class WeightageConfigurationExceptionHandlerTest {
 

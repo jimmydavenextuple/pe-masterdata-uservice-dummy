@@ -1,8 +1,9 @@
 package com.nextuple.postal.code.timezone.exception.common;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.List;
-import lombok.Getter;
 
 /** This is the Promise Engine Exception that should be used accross the board. */
 @Getter

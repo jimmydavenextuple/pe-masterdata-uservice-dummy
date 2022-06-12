@@ -8,15 +8,15 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(
-    unmappedTargetPolicy = ReportingPolicy.IGNORE,
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface PostalCodeTimezoneMapper {
-  PostalCodeTimezoneEntity convertToPostalCodeTimezoneEntity(
-      PostalCodeTimezoneDto postalCodeTimezoneDto);
+    PostalCodeTimezoneEntity convertToPostalCodeTimezoneEntity(
+            PostalCodeTimezoneDto postalCodeTimezoneDto);
 
-  PostalCodeTimezoneDto convertToPostalCodeTimezoneDto(
-      PostalCodeTimezoneEntity postalCodeTimezoneEntity);
+    PostalCodeTimezoneDto convertToPostalCodeTimezoneDto(
+            PostalCodeTimezoneEntity postalCodeTimezoneEntity);
 
-  PostalCodeTimezoneEntity convertFromCreatePostalCodeTimezoneRequestToEntity(
-      CreatePostalCodeTimezoneRequest createPostalCodeTimezoneRequest);
+    PostalCodeTimezoneEntity convertFromCreatePostalCodeTimezoneRequestToEntity(
+            CreatePostalCodeTimezoneRequest createPostalCodeTimezoneRequest);
 }
