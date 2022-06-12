@@ -40,3 +40,6 @@ include 'nfs-near-cache'
 include 'promise-sourcing-rule'
 include 'weightage-configuration'
 include 'postal-code-timezone'
+include 'carrier-calendar-near-cache'
+include 'carrier-calendar-near-cache-spring'
+
