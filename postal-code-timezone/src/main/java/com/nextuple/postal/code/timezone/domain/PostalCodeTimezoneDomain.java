@@ -13,26 +13,27 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PostalCodeTimezoneDomain {
-  private static final Logger logger = LoggerFactory.getLogger(PostalCodeTimezoneDomain.class);
-  private final PostalCodeTimezoneRepository postalCodeTimezoneRepository;
-  /**
-   * Save Postal Code Timezone
-   *
-   * @param postalCodeTimezoneEntity Entity to be saved
-   * @return Saved Postal Code Timezone
-   * @throws PromiseEngineException
-   */
-  public PostalCodeTimezoneEntity savePostalCodeTimezone(
-      PostalCodeTimezoneEntity postalCodeTimezoneEntity) throws PromiseEngineException {
-    logger.info("-- inside savePostalCodeTimezone domain --");
-    try {
-      return postalCodeTimezoneRepository.save(postalCodeTimezoneEntity);
-    } catch (Exception e) {
-      logger.error(String.valueOf(e), "Unable to save Postal Code Timezone!");
-      throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_SAVE_FAILED,
-          "Unable to save Postal Code Timezone!");
+    private static final Logger logger = LoggerFactory.getLogger(PostalCodeTimezoneDomain.class);
+    private final PostalCodeTimezoneRepository postalCodeTimezoneRepository;
+    /**
+     * Save Postal Code Timezone
+     *
+     * @param postalCodeTimezoneEntity Entity to be saved
+     * @return Saved Postal Code Timezone
+     * @throws PromiseEngineException
+     */
+    public PostalCodeTimezoneEntity savePostalCodeTimezone(
+            PostalCodeTimezoneEntity postalCodeTimezoneEntity)
+            throws PromiseEngineException {
+        logger.info("-- inside savePostalCodeTimezone domain --");
+        try {
+            return postalCodeTimezoneRepository.save(postalCodeTimezoneEntity);
+        } catch (Exception e) {
+            logger.error(String.valueOf(e), "Unable to save Postal Code Timezone!");
+            throw new PromiseEngineException(
+                    ApplicationLayer.DAO_LAYER,
+                    ExceptionCodeMapping.DAO_SAVE_FAILED,
+                    "Unable to save Postal Code Timezone!");
+        }
     }
-  }
 }

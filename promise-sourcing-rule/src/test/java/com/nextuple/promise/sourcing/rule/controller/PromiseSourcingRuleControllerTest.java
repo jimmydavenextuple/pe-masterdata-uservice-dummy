@@ -1,13 +1,5 @@
 package com.nextuple.promise.sourcing.rule.controller;
 
-import static com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
-
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.promise.sourcing.rule.domain.dto.PromiseSourcingRuleDto;
 import com.nextuple.promise.sourcing.rule.domain.inbound.CreatePromiseSourcingRuleRequest;
@@ -17,7 +9,6 @@ import com.nextuple.promise.sourcing.rule.domain.outbound.FetchPromiseSourcingRu
 import com.nextuple.promise.sourcing.rule.exception.common.PromiseEngineException;
 import com.nextuple.promise.sourcing.rule.service.PromiseSourcingRuleService;
 import com.nextuple.promise.sourcing.rule.utils.TestUtil;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,6 +16,16 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+
+import static com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 class PromiseSourcingRuleControllerTest {
 
