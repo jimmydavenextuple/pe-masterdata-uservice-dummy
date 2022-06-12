@@ -7,7 +7,7 @@ buildscript {
             url "https://plugins.gradle.org/m2/"
         }
         maven {
-            url project.properties['artifactory_contextUrl']
+            url "${artifactory_contextUrl}"
             credentials {
                 username "aws"
                 password System.env.CODEARTIFACT_AUTH_TOKEN
@@ -217,7 +217,7 @@ subprojects {
         }
         repositories {
             maven {
-                url 'https://nextuple-577507683874.d.codeartifact.us-east-1.amazonaws.com/maven/promising-engine/'
+                url "${artifactory_contextUrl}"
                 credentials {
                     username "aws"
                     password System.env.CODEARTIFACT_AUTH_TOKEN
