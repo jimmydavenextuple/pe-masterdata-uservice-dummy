@@ -10,3 +10,6 @@ on:
 jobs:
   PR-Analysis:
     uses: ./.github/workflows/pr-flow.yml
+    with:
+      module: promise-sourcing-rule
+    secrets: inherit
