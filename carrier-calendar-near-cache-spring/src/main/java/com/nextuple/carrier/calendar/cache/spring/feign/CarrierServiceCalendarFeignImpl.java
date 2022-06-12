@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface CarrierServiceCalendarFeignImpl
     extends GenericFeignService<String, BaseResponse<List<CarrierCalendarDaysStatusInfo>>> {
 
-  @GetMapping
-  BaseResponse<List<CarrierCalendarDaysStatusInfo>> get(@PathVariable String carrierServiceId);
+  @GetMapping("/{orgId}")
+  BaseResponse<List<CarrierCalendarDaysStatusInfo>> get(@PathVariable String orgId);
 
-  @GetMapping("/com/nextuple/carrier/calendar/cache/spring/status/{orgId}")
+  @GetMapping("/calendar/status/{orgId}")
   BaseResponse<List<CarrierCalendarDaysStatusInfo>> getCarrierServiceCalendar(
       @PathVariable("orgId") String orgId,
       @RequestParam("carrierServiceId") String carrierServiceId,
