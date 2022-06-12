@@ -1,4 +1,4 @@
-package com.nextuple.postal.code.timezone.domain.primaryKeys;
+package com.nextuple.pe.masterdata.domain.primaryKeys;
 
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
@@ -6,11 +6,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@Data
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostalCodeTimezoneEntityPK implements Serializable {
+@Data
+public class NodeCarrierId implements Serializable {
+
+  private String nodeId;
   private String orgId;
-  private String postalCodePrefix;
+  private String carrierServiceId;
+  private String serviceOption;
 }
