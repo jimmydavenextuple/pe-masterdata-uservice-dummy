@@ -1,11 +1,11 @@
 package com.nextuple.pe.masterdata.service;
 
+import com.nextuple.domain.node.NodeCarrierResponse;
 import com.nextuple.pe.masterdata.domain.NodeCarrierDomain;
 import com.nextuple.pe.masterdata.domain.entity.NodeCarrierEntity;
 import com.nextuple.pe.masterdata.domain.inbound.NodeCarrierRequest;
 import com.nextuple.pe.masterdata.domain.inbound.NodeCarrierUpdateRequest;
 import com.nextuple.pe.masterdata.domain.mapper.NodeCarrierMapper;
-import com.nextuple.pe.masterdata.domain.outbound.NodeCarrierResponse;
 import com.nextuple.pe.masterdata.error.FieldError;
 import com.nextuple.pe.masterdata.exception.NodeCarrierDomainException;
 import com.nextuple.pe.masterdata.exception.common.CommonServiceException;

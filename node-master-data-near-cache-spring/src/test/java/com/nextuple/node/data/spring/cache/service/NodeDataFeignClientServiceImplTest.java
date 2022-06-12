@@ -8,9 +8,9 @@ import static org.mockito.Mockito.verify;
 
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
+import com.nextuple.domain.node.NodeResponse;
 import com.nextuple.node.data.cache.domain.NodeDataCacheKey;
 import com.nextuple.node.data.cache.domain.NodeDataCacheValue;
-import com.nextuple.node.data.cache.domain.NodeResponse;
 import com.nextuple.node.data.spring.cache.feign.NodeDataFeignImpl;
 import com.nextuple.node.data.spring.cache.util.TestUtil;
 import org.junit.jupiter.api.Test;

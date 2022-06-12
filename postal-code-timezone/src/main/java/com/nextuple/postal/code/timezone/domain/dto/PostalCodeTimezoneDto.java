@@ -12,12 +12,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostalCodeTimezoneDto {
-    private String orgId;
-    private String postalCodePrefix;
-    private String country;
-    private String state;
-    private String city;
-    private String latitude;
-    private String longitude;
-    private String timeZone;
+  private String orgId;
+  private String postalCodePrefix;
+  private String country;
+  private String state;
+  private String city;
+  private String latitude;
+  private String longitude;
+  private String timeZone;
 }

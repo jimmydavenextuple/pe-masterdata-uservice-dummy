@@ -1,11 +1,11 @@
 package com.nextuple.pe.masterdata.service;
 
+import com.nextuple.domain.node.NodeResponse;
 import com.nextuple.pe.masterdata.domain.NodeDomain;
 import com.nextuple.pe.masterdata.domain.entity.NodeEntity;
 import com.nextuple.pe.masterdata.domain.inbound.NodeRequest;
 import com.nextuple.pe.masterdata.domain.inbound.NodeUpdationRequest;
 import com.nextuple.pe.masterdata.domain.mapper.NodeMapper;
-import com.nextuple.pe.masterdata.domain.outbound.NodeResponse;
 import com.nextuple.pe.masterdata.error.FieldError;
 import com.nextuple.pe.masterdata.exception.NodeDomainException;
 import com.nextuple.pe.masterdata.exception.common.CommonServiceException;

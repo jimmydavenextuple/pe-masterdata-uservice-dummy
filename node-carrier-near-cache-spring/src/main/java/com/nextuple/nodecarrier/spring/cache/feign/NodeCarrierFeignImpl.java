@@ -2,14 +2,14 @@ package com.nextuple.nodecarrier.spring.cache.feign;
 
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.service.GenericFeignService;
-import com.nextuple.nodecarrier.cache.domain.NodeCarrierResponse;
+import com.nextuple.domain.node.NodeCarrierResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
-    name = "promising-sourcing-rule",
-    url = "${spring.application.dependencies.node-carrier:http://promising-sourcing-rule:8080/}")
+    name = "pe-config-master-data",
+    url = "${spring.application.dependencies.node-carrier:http://pe-config-master-data:8080/}")
 public interface NodeCarrierFeignImpl
     extends GenericFeignService<String, BaseResponse<NodeCarrierResponse>> {
 

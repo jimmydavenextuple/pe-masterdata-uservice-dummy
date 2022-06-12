@@ -1,10 +1,10 @@
 package com.nextuple.nodecarrier.spring.cache.util;
 
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.domain.node.NodeCarrierResponse;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierCacheKey;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierCacheValue;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierDetails;
-import com.nextuple.nodecarrier.cache.domain.NodeCarrierResponse;
 
 public class TestUtil {
   public static final String NODE_ID = "Node_Id_01";

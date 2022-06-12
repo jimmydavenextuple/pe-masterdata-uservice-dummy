@@ -5,6 +5,9 @@ bootJar {
 
 dependencies {
     implementation(project(":common-util"))
+    implementation(project(":node:node-api-domain"))
+    implementation(project(":carrier:carrier-api-domain"))
+    implementation(project(":node-carrier:node-carrier-api-domain"))
     implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
     runtimeOnly 'org.postgresql:postgresql'
 }

@@ -6,10 +6,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.domain.node.NodeCarrierResponse;
 import com.nextuple.pe.masterdata.domain.NodeCarrierDomain;
 import com.nextuple.pe.masterdata.domain.entity.NodeCarrierEntity;
 import com.nextuple.pe.masterdata.domain.inbound.NodeCarrierRequest;
-import com.nextuple.pe.masterdata.domain.outbound.NodeCarrierResponse;
 import com.nextuple.pe.masterdata.exception.NodeCarrierDomainException;
 import com.nextuple.pe.masterdata.exception.common.CommonServiceException;
 import com.nextuple.pe.masterdata.service.NodeCarrierService;

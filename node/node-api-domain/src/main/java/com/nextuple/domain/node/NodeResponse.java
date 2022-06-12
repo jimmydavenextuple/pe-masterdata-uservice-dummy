@@ -1,4 +1,4 @@
-package com.nextuple.pe.masterdata.domain.outbound;
+package com.nextuple.domain.node;
 
 import java.io.Serializable;
 import lombok.AllArgsConstructor;

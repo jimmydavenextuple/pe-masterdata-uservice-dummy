@@ -1,7 +1,7 @@
 package com.nextuple.nodecarrier.spring.cache.mapper;
 
+import com.nextuple.domain.node.NodeCarrierResponse;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierDetails;
-import com.nextuple.nodecarrier.cache.domain.NodeCarrierResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;

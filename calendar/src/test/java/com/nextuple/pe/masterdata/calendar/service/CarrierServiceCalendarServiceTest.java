@@ -9,6 +9,7 @@ import com.nextuple.pe.masterdata.calendar.domain.CarrierServiceCalendarDomain;
 import com.nextuple.pe.masterdata.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.nextuple.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.nextuple.pe.masterdata.calendar.util.TestUtil;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -54,7 +55,7 @@ class CarrierServiceCalendarServiceTest {
   @Test
   void processGetCarrierServiceCalendarWithServiceOptionTest() throws CalendarDomainException {
     when(carrierServiceCalendarDomain.getCarrierServiceCalendar(any(), any(), any(), any()))
-        .thenReturn(List.of(testUtil.getCarrierServiceCalendarEntity()));
+        .thenReturn(Collections.singletonList(testUtil.getCarrierServiceCalendarEntity()));
 
     List<CarrierServiceCalendarResponse> resp =
         carrierServiceCalendarService.processGetCarrierServiceCalendar(
@@ -81,7 +82,7 @@ class CarrierServiceCalendarServiceTest {
   @Test
   void processGetCarrierServiceCalendarTest() throws CalendarDomainException {
     when(carrierServiceCalendarDomain.getCarrierServiceCalendar(any(), any(), any()))
-        .thenReturn(List.of(testUtil.getCarrierServiceCalendarEntity()));
+        .thenReturn(Collections.singletonList(testUtil.getCarrierServiceCalendarEntity()));
 
     List<CarrierServiceCalendarResponse> resp =
         carrierServiceCalendarService.processGetCarrierServiceCalendar(

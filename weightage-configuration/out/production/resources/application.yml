@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: "promising-engine-uservice"
+    version: 1.0
+    title: "Promising Engine Service"
+    description: "Promising Engine Service"
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8080
+  tomcat:
+    max-connections: 500
+    threads:
+      min-spare: 50
+      max: 200
+logging:
+  level:
+    org.springframework: WARN
+    root: INFO
+availability:
+  keys: LINE,ORDER
+

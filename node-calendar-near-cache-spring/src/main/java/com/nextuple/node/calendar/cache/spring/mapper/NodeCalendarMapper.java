@@ -1,10 +1,10 @@
 package com.nextuple.node.calendar.cache.spring.mapper;
 
+import com.nextuple.calendar.domain.CalendarDaysStatusInfo;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
 import com.nextuple.node.calendar.cache.domain.NodeCalendarCacheKey;
 import com.nextuple.node.calendar.cache.domain.NodeCalendarCacheValue;
-import com.nextuple.node.calendar.cache.domain.NodeCalendarDaysStatusInfo;
 import java.util.List;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ public class NodeCalendarMapper
         NodeCalendarCacheKey,
         NodeCalendarCacheValue,
         String,
-        BaseResponse<List<NodeCalendarDaysStatusInfo>>> {
+        BaseResponse<List<CalendarDaysStatusInfo>>> {
   public static final DataMapper DATA_MAPPER = Mappers.getMapper(DataMapper.class);
 
   @Override
@@ -30,12 +30,12 @@ public class NodeCalendarMapper
 
   @Override
   public NodeCalendarCacheValue responseToCacheValue(
-      BaseResponse<List<NodeCalendarDaysStatusInfo>> resp) {
+      BaseResponse<List<CalendarDaysStatusInfo>> resp) {
     return NodeCalendarCacheValue.builder().calendarDaysStatusInfo(resp.getPayload()).build();
   }
 
   @Override
-  public BaseResponse<List<NodeCalendarDaysStatusInfo>> cacheValueToResponse(
+  public BaseResponse<List<CalendarDaysStatusInfo>> cacheValueToResponse(
       NodeCalendarCacheValue cacheValue) {
     return null;
   }

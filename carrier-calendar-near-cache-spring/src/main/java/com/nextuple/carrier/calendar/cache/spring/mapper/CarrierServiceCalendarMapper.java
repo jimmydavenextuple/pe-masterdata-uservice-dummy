@@ -1,6 +1,6 @@
 package com.nextuple.carrier.calendar.cache.spring.mapper;
 
-import com.nextuple.carrier.calendar.cache.domain.CarrierCalendarDaysStatusInfo;
+import com.nextuple.calendar.domain.CalendarDaysStatusInfo;
 import com.nextuple.carrier.calendar.cache.domain.CarrierServiceCalendarCacheKey;
 import com.nextuple.carrier.calendar.cache.domain.CarrierServiceCalendarCacheValue;
 import com.nextuple.common.response.BaseResponse;
@@ -15,7 +15,7 @@ public class CarrierServiceCalendarMapper
         CarrierServiceCalendarCacheKey,
         CarrierServiceCalendarCacheValue,
         String,
-        BaseResponse<List<CarrierCalendarDaysStatusInfo>>> {
+        BaseResponse<List<CalendarDaysStatusInfo>>> {
   public static final DataMapper DATA_MAPPER = Mappers.getMapper(DataMapper.class);
 
   @Override
@@ -30,14 +30,14 @@ public class CarrierServiceCalendarMapper
 
   @Override
   public CarrierServiceCalendarCacheValue responseToCacheValue(
-      BaseResponse<List<CarrierCalendarDaysStatusInfo>> resp) {
+      BaseResponse<List<CalendarDaysStatusInfo>> resp) {
     return CarrierServiceCalendarCacheValue.builder()
         .calendarDaysStatusInfo(resp.getPayload())
         .build();
   }
 
   @Override
-  public BaseResponse<List<CarrierCalendarDaysStatusInfo>> cacheValueToResponse(
+  public BaseResponse<List<CalendarDaysStatusInfo>> cacheValueToResponse(
       CarrierServiceCalendarCacheValue cacheValue) {
     return null;
   }

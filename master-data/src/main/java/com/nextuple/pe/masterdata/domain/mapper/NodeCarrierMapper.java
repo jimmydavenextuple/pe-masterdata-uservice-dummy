@@ -1,9 +1,9 @@
 package com.nextuple.pe.masterdata.domain.mapper;
 
+import com.nextuple.domain.node.NodeCarrierResponse;
 import com.nextuple.pe.masterdata.domain.entity.NodeCarrierEntity;
 import com.nextuple.pe.masterdata.domain.inbound.NodeCarrierRequest;
 import com.nextuple.pe.masterdata.domain.inbound.NodeCarrierUpdateRequest;
-import com.nextuple.pe.masterdata.domain.outbound.NodeCarrierResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;

@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.domain.node.NodeCarrierResponse;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierCacheValue;
-import com.nextuple.nodecarrier.cache.domain.NodeCarrierResponse;
 import com.nextuple.nodecarrier.spring.cache.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

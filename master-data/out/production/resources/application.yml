@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: "promising-sourcing-rule"
+    version: 1.0
+    title: "Promising Sourcing Rule Service"
+    description: "Promising Sourcing Rule Service"
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8080
+  tomcat:
+    max-connections: 500
+    threads:
+      min-spare: 50
+      max: 200
+logging:
+  level:
+    org.springframework: WARN
+    root: INFO
