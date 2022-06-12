@@ -1,18 +1,18 @@
-name: COMMON-UTIL BUILD
+name: NFS-COMMON BUILD
 
 on:
   push:
     branches: [ pe-config-v2 ]
     paths:
       - "common-util/**"
-      - ".github/workflows/common-util-build.yml"
+      - ".github/workflows/nfs-common-build.yml"
 
 jobs:
 
   Build-Publish:
     uses: ./.github/workflows/build.yml
     with:
-      module: common-util
+      module: nfs-common
     secrets: inherit
 
 

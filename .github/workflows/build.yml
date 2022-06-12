@@ -3,7 +3,7 @@ name: reusable-workflow
 on:
   workflow_dispatch:
     inputs:
-      service:
+      module:
         description: Enter root directory
         type: string
         required: true
