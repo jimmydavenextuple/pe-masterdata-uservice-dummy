@@ -6,7 +6,6 @@ on:
     paths:
       - "promise-sourcing-rule/**"
       - ".github/workflows/promising-source-rule-buildDeploy.yml"
-      - ".github/workflows/build&deploy.yml"
 
 jobs:
 

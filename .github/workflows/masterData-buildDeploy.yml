@@ -7,7 +7,6 @@ on:
       - "master-data/**"
       - ".github/workflows/masterData-buildDeploy.yml"
 jobs:
-
   Build-Deploy:
     uses: ./.github/workflows/build&deploy.yml
     with:
