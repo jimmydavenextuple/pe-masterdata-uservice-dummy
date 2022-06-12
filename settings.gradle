@@ -43,3 +43,9 @@ include 'postal-code-timezone'
 include 'carrier-calendar-near-cache'
 include 'carrier-calendar-near-cache-spring'
 
+include 'node-calendar-near-cache'
+include 'node-calendar-near-cache-spring'
+include 'node-carrier-calendar-near-cache'
+include 'node-carrier-calendar-near-cache-spring'
+include 'node-carrier-calendar-near-cache-spring'
+

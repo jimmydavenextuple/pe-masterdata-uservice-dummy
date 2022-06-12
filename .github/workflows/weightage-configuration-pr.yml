@@ -10,3 +10,6 @@ on:
 jobs:
   PR-Analysis:
     uses: ./.github/workflows/pr-flow.yml
+    with:
+      module: weightage-configuration
+    secrets: inherit
