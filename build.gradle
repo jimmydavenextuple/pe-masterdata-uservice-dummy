@@ -204,6 +204,10 @@ subprojects {
         }
     }
 
+    jar {
+        enabled = false
+    }
+
 
     publishing {
         publications {
