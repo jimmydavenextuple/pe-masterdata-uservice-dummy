@@ -7,5 +7,6 @@ public class NearCacheConstants {
   public static final String TENANT_ENTITY_NAME = "Tenant";
   public static final String NODE_CARRIER_ENTITY_NAME = "NodeCarrier";
   public static final String CARRIER_ENTITY_NAME = "Carrier";
+  public static final String NODE_CALENDAR_ENTITY_NAME = "NodeCalendar";
   public static final String NODE_CARRIER_CALENDAR_ENTITY_NAME = "NodeCarrierCalendar";
 }
