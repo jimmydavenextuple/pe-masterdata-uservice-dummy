@@ -1,0 +1,21 @@
+name: COMMON-UTIL BUILD
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ pe-config-v2 ]
+    paths:
+      - "common-util/**"
+      - ".github/workflows/common-util-build.yml"
+
+jobs:
+
+  Build-Deploy:
+    uses: ./.github/workflows/build.yml
+    with:
+      module: common-util
+    secrets: inherit
+
+
+
+
