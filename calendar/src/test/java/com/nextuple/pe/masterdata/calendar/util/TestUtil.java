@@ -1,5 +1,6 @@
 package com.nextuple.pe.masterdata.calendar.util;
 
+import com.nextuple.calendar.domain.CalendarDaysStatusInfo;
 import com.nextuple.pe.masterdata.calendar.domain.entity.CalendarEntity;
 import com.nextuple.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
 import com.nextuple.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
@@ -12,8 +13,8 @@ import com.nextuple.pe.masterdata.calendar.domain.outbound.CalendarResponse;
 import com.nextuple.pe.masterdata.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.nextuple.pe.masterdata.calendar.domain.outbound.NodeCalendarResponse;
 import com.nextuple.pe.masterdata.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
-import com.nextuple.pe.masterdata.calendar.domain.pojo.CalendarDaysStatusInfo;
 import com.nextuple.pe.masterdata.calendar.domain.pojo.ExceptionDays;
+import java.util.Collections;
 import java.util.List;
 
 public class TestUtil {
@@ -36,7 +37,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .description(DESCRIPTION)
         .isMondayWorking(Boolean.TRUE)
-        .exceptionDays(List.of(getExceptionDays()))
+        .exceptionDays(Collections.singletonList(getExceptionDays()))
         .build();
   }
 
@@ -46,7 +47,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .description(DESCRIPTION)
         .isMondayWorking(Boolean.TRUE)
-        .exceptionDays(List.of(getExceptionDays()))
+        .exceptionDays(Collections.singletonList(getExceptionDays()))
         .build();
   }
 
@@ -62,7 +63,7 @@ public class TestUtil {
         .isFridayWorking(Boolean.TRUE)
         .isSaturdayWorking(Boolean.TRUE)
         .isSundayWorking(Boolean.FALSE)
-        .exceptionDays(List.of(getExceptionDays()))
+        .exceptionDays(Collections.singletonList(getExceptionDays()))
         .build();
   }
 
@@ -170,6 +171,7 @@ public class TestUtil {
   }
 
   public List<CalendarDaysStatusInfo> getCalendarDaysStatusInfoList() {
-    return List.of(CalendarDaysStatusInfo.builder().date("2022-01-01").isActive(true).build());
+    return Collections.singletonList(
+        CalendarDaysStatusInfo.builder().date("2022-01-01").isActive(true).build());
   }
 }

@@ -1,9 +1,14 @@
 package com.nextuple.pe.masterdata.service;
 
+import com.nextuple.domain.carrier.CarrierServiceResponse;
+import com.nextuple.domain.node.NodeCarrierResponse;
+import com.nextuple.domain.node.NodeResponse;
 import com.nextuple.pe.masterdata.domain.entity.*;
 import com.nextuple.pe.masterdata.domain.inbound.*;
 import com.nextuple.pe.masterdata.domain.outbound.*;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TestUtil {
@@ -32,6 +37,8 @@ public class TestUtil {
   public static Boolean SHIP_ALONE = Boolean.TRUE;
   public static Boolean SHIP_ELIGIBLE = Boolean.TRUE;
   public static Boolean PARCEL_SHIPMENT_ELIGIBLE = Boolean.TRUE;
+
+  private static final String CARRIER_SERVICE_ID_2 = "CarrierServiceId2";
   public static Double HEIGHT = 3.4;
   public static Double WEIGHT = 3.4;
   public static Double LENGTH = 3.4;
@@ -425,5 +432,87 @@ public class TestUtil {
         .serviceOption(SERVICE_OPTION)
         .inventoryType(INVENTORY_TYPE)
         .build();
+  }
+
+  public NodeCarrierRequest getNodeCarrierRequest() {
+    return NodeCarrierRequest.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .processingTime(2)
+        .lastPickupTime("5:00 PM")
+        .build();
+  }
+
+  public NodeCarrierResponse getNodeCarrierResponse() {
+    return NodeCarrierResponse.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .processingTime(2)
+        .lastPickupTime("5:00 PM")
+        .build();
+  }
+
+  public NodeCarrierUpdateRequest getNodeCarrierUpdateRequest() {
+    return NodeCarrierUpdateRequest.builder().processingTime(2).lastPickupTime("5:00 PM").build();
+  }
+
+  public NodeCarrierEntity getNodeCarrierEntity() {
+    NodeCarrierEntity nodeCarrierEntity = new NodeCarrierEntity();
+    nodeCarrierEntity.setNodeId(NODE_ID);
+    nodeCarrierEntity.setOrgId(ORG_ID);
+    nodeCarrierEntity.setCarrierServiceId(CARRIER_SERVICE_ID);
+    nodeCarrierEntity.setServiceOption(SERVICE_OPTION);
+    nodeCarrierEntity.setProcessingTime(2);
+    nodeCarrierEntity.setLastPickupTime("5:00 PM");
+
+    return nodeCarrierEntity;
+  }
+
+  public List<NodeCarrierEntity> getNodeCarrierEntityList() {
+    NodeCarrierEntity nodeCarrierEntity1 = new NodeCarrierEntity();
+    nodeCarrierEntity1.setNodeId(NODE_ID);
+    nodeCarrierEntity1.setOrgId(ORG_ID);
+    nodeCarrierEntity1.setCarrierServiceId(CARRIER_SERVICE_ID);
+    nodeCarrierEntity1.setServiceOption(SERVICE_OPTION);
+    nodeCarrierEntity1.setProcessingTime(2);
+    nodeCarrierEntity1.setLastPickupTime("5:00 PM");
+
+    NodeCarrierEntity nodeCarrierEntity2 = new NodeCarrierEntity();
+    nodeCarrierEntity2.setNodeId(NODE_ID);
+    nodeCarrierEntity2.setOrgId(ORG_ID);
+    nodeCarrierEntity2.setCarrierServiceId(CARRIER_SERVICE_ID_2);
+    nodeCarrierEntity2.setServiceOption(SERVICE_OPTION);
+    nodeCarrierEntity2.setProcessingTime(10);
+    nodeCarrierEntity2.setLastPickupTime("11:00 AM");
+
+    return Arrays.asList(nodeCarrierEntity1, nodeCarrierEntity2);
+  }
+
+  public List<NodeCarrierResponse> getNodeCarrierDtoList() {
+    NodeCarrierResponse nodeCarrierResponse1 =
+        NodeCarrierResponse.builder()
+            .nodeId(NODE_ID)
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .serviceOption(SERVICE_OPTION)
+            .processingTime(2)
+            .lastPickupTime("5:00 PM")
+            .build();
+
+    NodeCarrierResponse nodeCarrierResponse2 =
+        NodeCarrierResponse.builder()
+            .nodeId(NODE_ID)
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID_2)
+            .serviceOption(SERVICE_OPTION)
+            .processingTime(10)
+            .lastPickupTime("11:00 AM")
+            .build();
+
+    return Arrays.asList(nodeCarrierResponse1, nodeCarrierResponse2);
   }
 }

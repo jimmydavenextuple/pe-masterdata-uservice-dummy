@@ -1,4 +1,4 @@
-package com.nextuple.node.carrier.calendar.cache.domain;
+package com.nextuple.calendar.domain;
 
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NodeCarrierCalendarDaysStatusInfo implements Serializable {
+public class CalendarDaysStatusInfo implements Serializable {
 
   private String date;
   private Boolean isActive;

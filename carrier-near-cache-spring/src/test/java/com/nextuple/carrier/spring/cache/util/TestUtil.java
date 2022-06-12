@@ -3,8 +3,8 @@ package com.nextuple.carrier.spring.cache.util;
 import com.nextuple.carrier.cache.domain.CarrierCacheKey;
 import com.nextuple.carrier.cache.domain.CarrierCacheValue;
 import com.nextuple.carrier.cache.domain.CarrierDetails;
-import com.nextuple.carrier.cache.domain.CarrierServiceResponse;
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.domain.carrier.CarrierServiceResponse;
 
 public class TestUtil {
 

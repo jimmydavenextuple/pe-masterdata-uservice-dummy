@@ -1,5 +1,6 @@
 package com.nextuple.node.carrier.calendar.cache.domain;
 
+import com.nextuple.calendar.domain.CalendarDaysStatusInfo;
 import com.nextuple.core.cache.domain.CacheValue;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -11,5 +12,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class NodeCarrierCalendarCacheValue implements CacheValue {
   private static final long serialVersionUID = 2705609994396335116L;
-  private List<NodeCarrierCalendarDaysStatusInfo> calendarDaysStatusInfo;
+  private List<CalendarDaysStatusInfo> calendarDaysStatusInfo;
 }

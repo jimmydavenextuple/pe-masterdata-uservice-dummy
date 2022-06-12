@@ -2,9 +2,9 @@ package com.nextuple.nodecarrier.spring.cache.mapper;
 
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
+import com.nextuple.domain.node.NodeCarrierResponse;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierCacheKey;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierCacheValue;
-import com.nextuple.nodecarrier.cache.domain.NodeCarrierResponse;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 

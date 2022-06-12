@@ -5,18 +5,19 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.calendar.domain.CalendarDaysStatusInfo;
 import com.nextuple.pe.masterdata.calendar.domain.CalendarDomain;
 import com.nextuple.pe.masterdata.calendar.domain.NodeCalendarDomain;
 import com.nextuple.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
 import com.nextuple.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.nextuple.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
 import com.nextuple.pe.masterdata.calendar.domain.outbound.CalendarResponse;
-import com.nextuple.pe.masterdata.calendar.domain.pojo.CalendarDaysStatusInfo;
 import com.nextuple.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.nextuple.pe.masterdata.calendar.exception.CommonServiceException;
 import com.nextuple.pe.masterdata.calendar.util.DateUtil;
 import com.nextuple.pe.masterdata.calendar.util.TestUtil;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -78,7 +79,7 @@ class CalendarServiceTest {
     NodeCalendarEntity entity = testUtil.getNodeCalendarEntity();
     entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(5, "UTC"));
     when(nodeCalendarDomain.getNodeCalendar(any(), any()))
-        .thenReturn(List.of(testUtil.getNodeCalendarEntity(), entity));
+        .thenReturn(Arrays.asList(testUtil.getNodeCalendarEntity(), entity));
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
 
     List<CalendarDaysStatusInfo> resp =
@@ -147,7 +148,7 @@ class CalendarServiceTest {
     entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(5, "UTC"));
     when(carrierServiceCalendarService.getAndFilterCarrierServiceCalendar(
             any(), any(), any(), any()))
-        .thenReturn(List.of(testUtil.getCarrierServiceCalendarEntity(), entity));
+        .thenReturn(Arrays.asList(testUtil.getCarrierServiceCalendarEntity(), entity));
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
 
     List<CalendarDaysStatusInfo> resp =
@@ -200,7 +201,7 @@ class CalendarServiceTest {
     entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(5, "UTC"));
     when(nodeCarrierServiceCalendarService.getAndFilterNodeCarrierServiceCalendar(
             any(), any(), any(), any()))
-        .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarEntity(), entity));
+        .thenReturn(Arrays.asList(testUtil.getNodeCarrierServiceCalendarEntity(), entity));
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
 
     List<CalendarDaysStatusInfo> resp =

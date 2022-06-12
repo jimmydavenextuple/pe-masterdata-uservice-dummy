@@ -9,11 +9,11 @@ import static org.mockito.Mockito.when;
 
 import com.nextuple.carrier.cache.domain.CarrierCacheKey;
 import com.nextuple.carrier.cache.domain.CarrierCacheValue;
-import com.nextuple.carrier.cache.domain.CarrierServiceResponse;
 import com.nextuple.carrier.spring.cache.feign.CarrierFeignImpl;
 import com.nextuple.carrier.spring.cache.util.TestUtil;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
+import com.nextuple.domain.carrier.CarrierServiceResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -1,6 +1,6 @@
 package com.nextuple.carrier.calendar.cache.spring.service;
 
-import com.nextuple.carrier.calendar.cache.domain.CarrierCalendarDaysStatusInfo;
+import com.nextuple.calendar.domain.CalendarDaysStatusInfo;
 import com.nextuple.carrier.calendar.cache.domain.CarrierServiceCalendarCacheKey;
 import com.nextuple.carrier.calendar.cache.domain.CarrierServiceCalendarCacheValue;
 import com.nextuple.carrier.calendar.cache.spring.feign.CarrierServiceCalendarFeignImpl;
@@ -17,7 +17,7 @@ public class CarrierServiceCalendarFeignClientServiceImpl
         CarrierServiceCalendarCacheKey,
         CarrierServiceCalendarCacheValue,
         String,
-        BaseResponse<List<CarrierCalendarDaysStatusInfo>>> {
+        BaseResponse<List<CalendarDaysStatusInfo>>> {
 
   @Autowired CarrierServiceCalendarFeignImpl nodeCalendarFeign;
 
@@ -26,7 +26,7 @@ public class CarrierServiceCalendarFeignClientServiceImpl
           CarrierServiceCalendarCacheKey,
           CarrierServiceCalendarCacheValue,
           String,
-          BaseResponse<List<CarrierCalendarDaysStatusInfo>>>
+          BaseResponse<List<CalendarDaysStatusInfo>>>
       nodeCalendarMapper;
 
   @Override

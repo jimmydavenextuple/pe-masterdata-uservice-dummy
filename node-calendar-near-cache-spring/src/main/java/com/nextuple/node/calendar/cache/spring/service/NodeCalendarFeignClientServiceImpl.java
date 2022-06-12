@@ -1,11 +1,11 @@
 package com.nextuple.node.calendar.cache.spring.service;
 
+import com.nextuple.calendar.domain.CalendarDaysStatusInfo;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
 import com.nextuple.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import com.nextuple.node.calendar.cache.domain.NodeCalendarCacheKey;
 import com.nextuple.node.calendar.cache.domain.NodeCalendarCacheValue;
-import com.nextuple.node.calendar.cache.domain.NodeCalendarDaysStatusInfo;
 import com.nextuple.node.calendar.cache.spring.feign.NodeCalendarFeignImpl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class NodeCalendarFeignClientServiceImpl
         NodeCalendarCacheKey,
         NodeCalendarCacheValue,
         String,
-        BaseResponse<List<NodeCalendarDaysStatusInfo>>> {
+        BaseResponse<List<CalendarDaysStatusInfo>>> {
 
   @Autowired NodeCalendarFeignImpl nodeCalendarFeign;
 
@@ -26,7 +26,7 @@ public class NodeCalendarFeignClientServiceImpl
           NodeCalendarCacheKey,
           NodeCalendarCacheValue,
           String,
-          BaseResponse<List<NodeCalendarDaysStatusInfo>>>
+          BaseResponse<List<CalendarDaysStatusInfo>>>
       nodeCalendarMapper;
 
   @Override

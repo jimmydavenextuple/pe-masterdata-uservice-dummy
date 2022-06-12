@@ -5,11 +5,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.nextuple.domain.carrier.CarrierServiceResponse;
 import com.nextuple.pe.masterdata.domain.CarrierServiceDomain;
 import com.nextuple.pe.masterdata.domain.entity.CarrierServiceEntity;
 import com.nextuple.pe.masterdata.domain.inbound.CarrierServiceRequest;
 import com.nextuple.pe.masterdata.domain.inbound.CarrierServiceUpdateRequest;
-import com.nextuple.pe.masterdata.domain.outbound.CarrierServiceResponse;
 import com.nextuple.pe.masterdata.exception.CarrierServiceDomainException;
 import com.nextuple.pe.masterdata.exception.common.CommonServiceException;
 import com.nextuple.pe.masterdata.service.CarrierServiceService;
