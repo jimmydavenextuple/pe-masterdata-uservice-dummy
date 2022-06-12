@@ -29,6 +29,7 @@ plugins {
     id "org.sonarqube" version "3.0"
     id "com.diffplug.spotless" version "5.7.0"
     id "com.github.spotbugs" version "4.5.1"
+
 }
 
 ext {
@@ -39,13 +40,6 @@ repositories {
     mavenCentral()
 }
 
-bootJar {
-    enabled = false
-}
-
-def javaProjects = [
-        project(":nfs-near-cache:core-near-cache"),
-]
 
 subprojects {
     apply from: "$rootProject.projectDir/dependencies.gradle"
@@ -74,9 +68,7 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
-    bootJar {
-        enabled = false
-    }
+
 
     configurations {
         compileOnly {
@@ -176,32 +168,41 @@ subprojects {
         }
     }
 
-//    artifactoryPublish {
-//        dependsOn jar
-//    }
-//
-//    artifactory {
-//        contextUrl = "${artifactory_contextUrl}"
-//        publish {
-//            repository {
-//                repoKey = 'gradle-dev-local'
-//                username = "${artifactory_user}"
-//                password = "${artifactory_password}"
-//                maven = true
-//            }
-//            defaults {
-//                publications('mavenJava')
-//            }
-//        }
-//        resolve {
-//            repository {
-//                repoKey = 'gradle-dev'
-//                username = "${artifactory_user}"
-//                password = "${artifactory_password}"
-//                maven = true
-//            }
-//        }
-//    }
+    artifactoryPublish.skip = false
+
+    artifactoryPublish {
+        dependsOn jar
+    }
+
+    artifactory {
+        contextUrl = System.env.JFROG_URL
+        publish {
+            repository {
+                repoKey = 'gradle-dev-local'
+                username = System.env.JFROG_USER
+                password = System.env.JFROG_PWD
+                maven = true
+            }
+            defaults {
+                publications('mavenJava')
+            }
+        }
+        resolve {
+            repository {
+                repoKey = 'gradle-dev'
+                username = System.env.JFROG_USER
+                password = System.env.JFROG_PWD
+                maven = true
+            }
+        }
+    }
+
+    configurations {
+        [apiElements, runtimeElements].each {
+            it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+            it.outgoing.artifact(bootJar)
+        }
+    }
 
 
     publishing {
