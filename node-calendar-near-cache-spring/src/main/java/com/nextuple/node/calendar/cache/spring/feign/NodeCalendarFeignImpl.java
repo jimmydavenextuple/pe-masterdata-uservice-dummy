@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface NodeCalendarFeignImpl
     extends GenericFeignService<String, BaseResponse<List<NodeCalendarDaysStatusInfo>>> {
 
-  @GetMapping
+  @GetMapping("/{orgId}")
   BaseResponse<List<NodeCalendarDaysStatusInfo>> get(@PathVariable String orgId);
 
-  @GetMapping("/com/nextuple/node/calendar/cache/spring/status/{orgId}")
+  @GetMapping("/calendar/status/{orgId}")
   BaseResponse<List<NodeCalendarDaysStatusInfo>> getNodeCalendar(
       @PathVariable("orgId") String orgId, @RequestParam("nodeId") String nodeId);
 }
