@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class NodeCarrierServiceCalendarCacheKey implements CacheKey {
+public class NodeCarrierCalendarCacheKey implements CacheKey {
   private static final long serialVersionUID = 4024017030652933137L;
   private String nodeId;
   private String carrierServiceId;

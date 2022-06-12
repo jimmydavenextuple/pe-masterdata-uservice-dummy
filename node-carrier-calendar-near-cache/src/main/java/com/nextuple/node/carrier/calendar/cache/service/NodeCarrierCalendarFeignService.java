@@ -5,5 +5,5 @@ import com.nextuple.core.cache.service.GenericFeignService;
 import com.nextuple.node.carrier.calendar.cache.domain.NodeCarrierCalendarDaysStatusInfo;
 import java.util.List;
 
-public interface CarrierServiceCalendarFeignService
+public interface NodeCarrierCalendarFeignService
     extends GenericFeignService<String, BaseResponse<List<NodeCarrierCalendarDaysStatusInfo>>> {}
