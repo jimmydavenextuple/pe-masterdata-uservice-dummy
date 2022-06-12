@@ -19,7 +19,11 @@ jobs:
       run: |
         bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain -p ${{ inputs.module }}
 #        bash ./gradlew -Pbuild_target=SNAPSHOT dependencyCheckAggregate -p ${{ inputs.module }} --info
-#        bash ./gradlew sonarqube -Dsonar.pullrequest.branch=${{ github.head_ref }} -Dsonar.pullrequest.base=${{ github.base_ref }} -Dsonar.pullrequest.key=${{ github.event.number }} showSonarQubeLink --info
+        bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain publish artifactoryPublish -p ${{ inputs.module }}
+        aws eks update-kubeconfig --name ${{ secrets.SONAR_CLUSTER }} --region us-east-1
+        kubectl port-forward pod/sonarqube-89-community-0 9000:9000 &
+        bash ./gradlew sonarqube -Dsonar.pullrequest.branch=${{ github.head_ref }} -Dsonar.pullrequest.base=${{ github.base_ref }} -Dsonar.pullrequest.key=${{ github.event.number }} showSonarQubeLink --info
+        fuser -k 9000/tcp
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1
       if: always()
