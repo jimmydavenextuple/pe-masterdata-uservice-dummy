@@ -18,7 +18,6 @@ jobs:
     - name: PR-BUILD
       run: |
         bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain -p ${{ inputs.module }}
-#        bash ./gradlew -Pbuild_target=SNAPSHOT dependencyCheckAggregate -p ${{ inputs.module }} --info
         bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain publish artifactoryPublish -p ${{ inputs.module }}
         aws eks update-kubeconfig --name ${{ secrets.SONAR_CLUSTER }} --region us-east-1
         kubectl port-forward pod/sonarqube-89-community-0 9000:9000 &
