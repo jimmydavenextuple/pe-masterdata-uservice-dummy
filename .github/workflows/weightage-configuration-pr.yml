@@ -5,7 +5,7 @@ on:
   pull_request:
     paths:
       - "weightage-configuration/**"
-    branches: [ pe-config-v2 ]
+    branches: [ development ]
 
 jobs:
   PR-Analysis:

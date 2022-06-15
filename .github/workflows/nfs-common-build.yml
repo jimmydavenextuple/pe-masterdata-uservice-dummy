@@ -2,11 +2,9 @@ name: NFS-COMMON BUILD
 
 on:
   push:
-    branches: [ pe-config-v2 ]
+    branches: [ development ]
     paths:
       - "common-util/**"
-      - ".github/workflows/nfs-common-build.yml"
-
 jobs:
 
   Build-Publish:

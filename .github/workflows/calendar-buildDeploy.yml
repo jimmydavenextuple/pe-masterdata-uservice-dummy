@@ -2,11 +2,9 @@ name: CALENDAR BUILD-DEPLOY
 
 on:
   push:
-    branches: [ pe-config-v2 ]
+    branches: [ development ]
     paths:
       - "calendar/**"
-      - ".github/workflows/calendar-buildDeploy.yml"
-
 jobs:
 
   Build-Deploy:

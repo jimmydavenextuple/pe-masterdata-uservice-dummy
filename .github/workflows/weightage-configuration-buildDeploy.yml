@@ -2,10 +2,9 @@ name: WEIGHTAGE-CONFIGURATION BUILD-DEPLOY
 
 on:
   push:
-    branches: [ pe-config-v2 ]
+    branches: [ development ]
     paths:
       - "weightage-configuration/**"
-      - ".github/workflows/weightage-configuration-buildDeploy.yml"
 jobs:
 
   Build-Deploy:

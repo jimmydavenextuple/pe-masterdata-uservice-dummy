@@ -2,11 +2,9 @@ name: COMMON-UTIL BUILD
 
 on:
   push:
-    branches: [ pe-config-v2 ]
+    branches: [ development ]
     paths:
       - "common-util/**"
-      - ".github/workflows/common-util-build.yml"
-
 jobs:
 
   Build-Publish:

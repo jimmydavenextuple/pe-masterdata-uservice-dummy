@@ -2,10 +2,9 @@ name: POSTAL-CODE-TIMEZONE BUILD-DEPLOY
 
 on:
   push:
-    branches: [ pe-config-v2 ]
+    branches: [ development ]
     paths:
       - "postal-code-timezone/**"
-      - ".github/workflows/postal-code-timezone-buildDeploy.yml"
 jobs:
   Build-Deploy:
     uses: ./.github/workflows/build&deploy.yml

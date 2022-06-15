@@ -2,11 +2,9 @@ name: PROMISE-SOURCING-RULE BUILD-DEPLOY
 
 on:
   push:
-    branches: [ pe-config-v2 ]
+    branches: [ development ]
     paths:
       - "promise-sourcing-rule/**"
-      - ".github/workflows/promising-source-rule-buildDeploy.yml"
-
 jobs:
 
   Build-Deploy:
