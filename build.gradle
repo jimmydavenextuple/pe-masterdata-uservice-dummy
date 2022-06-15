@@ -147,11 +147,11 @@ subprojects {
         suppressionFile = 'suppressions.xml'
         autoUpdate = true
         cveValidForHours = 24
-        if (System.getenv("CI") == 'true') {
-            data {
-                directory = "/root/.cve"
-            }
-        }
+//        if (System.getenv("CI") == 'true') {
+//            data {
+//                directory = "/root/.cve"
+//            }
+//        }
     }
 
     spotless {
