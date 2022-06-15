@@ -42,16 +42,13 @@ jobs:
       - name: Build and Analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          JFROG_URL: ${{ secrets.JFROG_URL }}
-          JFROG_USER: ${{ secrets.JFROG_USER }}
-          JFROG_PWD: ${{ secrets.JFROG_PWD }}
         run: |
           export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain nextuple --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
-          bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain publish artifactoryPublish -p ${{ inputs.module }}
-          aws eks update-kubeconfig --name ${{ secrets.SONAR_CLUSTER }} --region us-east-1
-          kubectl port-forward pod/sonarqube-89-community-0 9000:9000 &
-          bash ./gradlew -Pbuild_target=SNAPSHOT sonarqube showSonarQubeLink --info
-          fuser -k 9000/tcp
+          bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain publish -p ${{ inputs.module }}
+#          aws eks update-kubeconfig --name ${{ secrets.SONAR_CLUSTER }} --region us-east-1
+#          kubectl port-forward pod/sonarqube-89-community-0 9000:9000 &
+#          bash ./gradlew -Pbuild_target=SNAPSHOT sonarqube showSonarQubeLink --info
+#          fuser -k 9000/tcp
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
@@ -64,9 +61,9 @@ jobs:
           export SERVICE_NAME=`echo "${{ github.repository }}" | awk -F "/" '{print $2}'`
           export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties -p ${{ inputs.module }} | grep version | sed -e "s@version: @@g"`
           export SERVICE_CODE=`echo "$VERSION" | cut -d '-' -f1`
-          export IMAGE_NAME="$ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$SERVICE_CODE.${{ github.sha }}"
-          docker build -f Dockerfile -t $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$SERVICE_CODE.${{ github.sha }} ./${{ inputs.module }}
-          docker push $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$SERVICE_CODE.${{ github.sha }}
+          export IMAGE_NAME="$ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }}"
+          docker build -f Dockerfile -t $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }} ./${{ inputs.module }}
+          docker push $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }}
 
   Deploy-To-Dev:
     runs-on: ubuntu-latest
