@@ -10,7 +10,25 @@ server:
         max:
           memory: "512Mi"
           cpu: "256m"
-    prod:
+    qa:
+      replicas: 1
+      resources:
+        min:
+          memory: "512Mi"
+          cpu: "256m"
+        max:
+          memory: "512Mi"
+          cpu: "256m"
+    integration:
+      replicas: 1
+      resources:
+        min:
+          memory: "512Mi"
+          cpu: "256m"
+        max:
+          memory: "512Mi"
+          cpu: "256m"
+    perf:
       replicas: 2
       resources:
         min:
