@@ -40,6 +40,9 @@ repositories {
     mavenCentral()
 }
 
+bootJar {
+    enabled = false
+}
 
 subprojects {
     apply from: "$rootProject.projectDir/dependencies.gradle"
@@ -58,8 +61,8 @@ subprojects {
     apply plugin: "com.diffplug.spotless"
     apply plugin: "org.sonatype.gradle.plugins.scan"
 
-    group = 'com.nextuple.core'
-    version = "1.9.12-${build_target}"
+    group = 'com.nextuple'
+    version = "1.0.0-${build_target}"
 
     sourceCompatibility = "${sourceJdkVersion}"
     targetCompatibility = "${targetJdkVersion}"
@@ -106,7 +109,7 @@ subprojects {
         annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
         implementation "org.mapstruct:mapstruct:${mapstructVersion}"
         implementation 'org.springframework.kafka:spring-kafka'
-        implementation "io.micrometer:micrometer-registry-prometheus"
+        api "io.micrometer:micrometer-registry-prometheus"
 
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testImplementation "org.hamcrest:hamcrest-junit:${hamcrestJunitVersion}"
@@ -252,6 +255,10 @@ subprojects {
     }
     generatePomFileForMavenJavaPublication.finalizedBy fixPom
 
-
+    jar {
+         enabled = false
+         enabled = true
+         classifier('')
+    }
 }
 

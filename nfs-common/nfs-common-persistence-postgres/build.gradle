@@ -5,8 +5,6 @@ bootJar {
     enabled = false
 }
 
-group = 'com.nextuple.common.persistence.postgres'
-version "1.0.0"
 dependencies {
     implementation(project(":common-util"))
     implementation(project(":nfs-common:nfs-common-persistence"))

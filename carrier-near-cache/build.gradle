@@ -4,9 +4,6 @@ bootJar {
     enabled = false
 }
 
-
-group = 'com.nextuple.carrier.near.cache'
-version "1.0.2"
 dependencies {
     implementation(project(":common-util"))
     implementation(project(":nfs-near-cache:core-near-cache"))
