@@ -12,10 +12,12 @@ echo "$IMAGE_NAME"
 
 aws sts get-caller-identity
 
-if [ "$ENVIRONMENT" == "dev" ]; then
+if [ "$ENVIRONMENT" == "dev" -o "$ENVIRONMENT" == "qa" ]; then
   export AWS_EKS_NAME="dev-eks-cluster"
-elif [ "$ENVIRONMENT" == "qa" ]; then
-  export AWS_EKS_NAME="qa-eks-cluster"
+elif [ "$ENVIRONMENT" == "stage" ]; then
+  export AWS_EKS_NAME="stage-eks-cluster"
+elif [ "$ENVIRONMENT" == "perf" ]; then
+  export AWS_EKS_NAME="perf-eks-cluster"
 fi
 
 

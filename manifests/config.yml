@@ -19,7 +19,7 @@ server:
         max:
           memory: "512Mi"
           cpu: "256m"
-    integration:
+    stage:
       replicas: 1
       resources:
         min:
