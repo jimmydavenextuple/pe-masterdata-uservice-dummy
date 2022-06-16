@@ -208,7 +208,8 @@ subprojects {
 //    }
 
     jar {
-        enabled = false
+        enabled = true
+        classifier('')
     }
 
 
@@ -254,11 +255,5 @@ subprojects {
         }
     }
     generatePomFileForMavenJavaPublication.finalizedBy fixPom
-
-    jar {
-         enabled = false
-         enabled = true
-         classifier('')
-    }
 }
 

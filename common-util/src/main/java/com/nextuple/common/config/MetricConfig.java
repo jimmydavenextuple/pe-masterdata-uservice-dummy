@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 @Configuration
 public class MetricConfig {
@@ -13,11 +14,13 @@ public class MetricConfig {
   @Bean
   MeterRegistryCustomizer<MeterRegistry> metricsCommonTags() {
     return registry -> {
-      String hostname = "unknown";
-      try {
-        hostname = InetAddress.getLocalHost().getHostName();
-      } catch (UnknownHostException e) {
-        throw new RuntimeException(e);
+      String hostname = System.getenv("HOSTNAME");
+      if (!StringUtils.hasLength(hostname)) {
+        try {
+          hostname = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+          throw new RuntimeException(e);
+        }
       }
       registry.config().commonTags("host", hostname);
     };
