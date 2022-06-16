@@ -58,5 +58,7 @@ spec:
               value: "<CLUSTER_REGION>"
             - name: SPRING_PROFILES_ACTIVE
               value: "<ENVIRONMENT>"
+            - name: SERVICE_NAME
+              value: "<SERVICE_NAME>"
             - name: SERVICE_VERSION
               value: "<SERVICE_VERSION>"
