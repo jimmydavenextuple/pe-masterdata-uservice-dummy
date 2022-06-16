@@ -1,6 +1,6 @@
 spring:
   application:
-    name: "promising-sourcing-rule"
+    name: "promising-master-data"
     version: 1.0
     title: "Promising Sourcing Rule Service"
     description: "Promising Sourcing Rule Service"
