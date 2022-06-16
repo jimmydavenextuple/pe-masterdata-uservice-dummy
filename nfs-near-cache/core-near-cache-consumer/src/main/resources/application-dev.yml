@@ -1,0 +1,21 @@
+spring:
+  kafka:
+    bootstrap-servers: "b-1.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9092,b-2.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9092,b-2.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9092"
+    #    properties:
+    #      security.protocol: SASL_PLAINTEXT
+    #      sasl.mechanism: SCRAM-SHA-256
+    #      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
+    consumer:
+      enable-auto-commit: true
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      topics:
+        master_data_update_event:
+          name: INTERNAL.DEV.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-dev
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+app:
+  environment: "dev"

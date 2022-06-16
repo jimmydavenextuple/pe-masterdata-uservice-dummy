@@ -1,12 +1,8 @@
 jar {
-    enabled = false
+    enabled = true
 }
 bootJar {
     enabled = false
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {

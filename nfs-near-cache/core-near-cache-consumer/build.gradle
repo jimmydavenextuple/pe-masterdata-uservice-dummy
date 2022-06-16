@@ -1,18 +1,10 @@
 jar {
-    enabled = false
+    enabled = true
 }
 bootJar {
     enabled = false
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":nfs-near-cache:core-near-cache"))
-}
-
-test {
-    useJUnitPlatform()
 }
