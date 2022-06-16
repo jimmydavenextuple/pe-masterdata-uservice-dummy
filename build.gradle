@@ -208,7 +208,7 @@ subprojects {
 //    }
 
     jar {
-        enabled = true
+        enabled = false
         classifier('')
     }
 
