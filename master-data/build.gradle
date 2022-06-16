@@ -3,6 +3,14 @@ bootJar {
     mainClass.set("com.nextuple.pe.masterdata.MasterDataApplication")
 }
 
+
+configurations {
+    [apiElements, runtimeElements].each {
+            it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
+}
+
 dependencies {
     implementation(project(":common-util"))
     implementation(project(":node:node-api-domain"))
