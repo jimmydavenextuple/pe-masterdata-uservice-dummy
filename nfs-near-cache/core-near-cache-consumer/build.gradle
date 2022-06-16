@@ -1,18 +1,10 @@
-plugins {
-    id 'java'
+jar {
+    enabled = true
 }
-
-group 'com.nextuple'
-version '1.0.0'
-
-repositories {
-    mavenCentral()
+bootJar {
+    enabled = false
 }
 
 dependencies {
     implementation(project(":nfs-near-cache:core-near-cache"))
-}
-
-test {
-    useJUnitPlatform()
 }

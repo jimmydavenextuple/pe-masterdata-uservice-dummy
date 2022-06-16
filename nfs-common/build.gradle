@@ -1,9 +1,6 @@
 jar {
-    enabled = false
+    enabled = true
 }
 bootJar {
     enabled = false
 }
-
-group = 'com.nextuple'
-version "1.0.0"

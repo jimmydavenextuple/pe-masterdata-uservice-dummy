@@ -1,0 +1,21 @@
+spring:
+  kafka:
+    bootstrap-servers: "b-1.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9092,b-2.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9092,b-2.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9092"
+    #    properties:
+    #      security.protocol: SASL_PLAINTEXT
+    #      sasl.mechanism: SCRAM-SHA-256
+    #      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.DEV.MASTER_DATA_UPDATE_EVENTS
+      properties:
+        acks: all
+        #The retries setting determines how many times the producer will attempt to send a message before marking it as failed.
+        retries: 5
+        #By default, the producer will wait 100ms between retries, but you can control this using the retry.backoff.ms parameter.
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
+app:
+  environment: "dev"

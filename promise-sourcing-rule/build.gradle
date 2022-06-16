@@ -1,6 +1,3 @@
-group = 'com.nextuple'
-version = "0.0.1-${build_target}"
-sourceCompatibility = '11'
 bootJar {
     enabled = true
     mainClass.set("com.nextuple.promise.sourcing.rule.PromiseSourcingRuleApplication")
