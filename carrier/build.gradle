@@ -1,6 +1,3 @@
 bootJar {
     enabled = false
 }
-
-group = 'com.nextuple'
-version "1.0.0"
