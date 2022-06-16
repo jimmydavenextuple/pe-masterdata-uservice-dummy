@@ -89,7 +89,7 @@ public class ItemEntity {
   private String weightUom;
 
   @Column(name = "processing_time")
-  private Long processingTime;
+  private Double processingTime;
 
   @Column(name = "cost")
   private String cost;

@@ -1,10 +1,9 @@
 package com.nextuple.postal.code.timezone.error;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Map;
+import lombok.Data;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

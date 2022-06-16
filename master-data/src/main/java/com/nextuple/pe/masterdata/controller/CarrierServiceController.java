@@ -1,7 +1,7 @@
 package com.nextuple.pe.masterdata.controller;
 
+import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.domain.carrier.CarrierServiceResponse;
 import com.nextuple.pe.masterdata.domain.inbound.CarrierServiceRequest;
 import com.nextuple.pe.masterdata.domain.inbound.CarrierServiceUpdateRequest;
 import com.nextuple.pe.masterdata.exception.CarrierServiceDomainException;

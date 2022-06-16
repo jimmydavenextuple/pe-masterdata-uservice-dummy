@@ -5,7 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-import com.nextuple.domain.node.NodeResponse;
+import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.pe.masterdata.domain.NodeDomain;
 import com.nextuple.pe.masterdata.domain.entity.NodeEntity;
 import com.nextuple.pe.masterdata.domain.inbound.NodeRequest;

@@ -1,9 +1,9 @@
-plugins {
-    id 'java'
+jar {
+    enabled = false
 }
-
-group 'com.nextuple'
-version '1.0.0'
+bootJar {
+    enabled = false
+}
 
 repositories {
     mavenCentral()

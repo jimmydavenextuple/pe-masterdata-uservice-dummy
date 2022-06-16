@@ -1,0 +1,12 @@
+bootJar {
+    enabled = true
+    mainClass.set("com.nextuple.transit.MasterDataTransitApplication")
+}
+
+dependencies {
+    implementation(project(":transit:transit-api-domain"))
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation(project(":common-util"))
+}
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11

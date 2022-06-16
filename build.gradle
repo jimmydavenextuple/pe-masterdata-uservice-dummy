@@ -40,6 +40,10 @@ repositories {
     mavenCentral()
 }
 
+bootJar {
+            enabled = false
+}
+
 
 subprojects {
     apply from: "$rootProject.projectDir/dependencies.gradle"

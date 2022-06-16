@@ -1,6 +1,6 @@
 package com.nextuple.pe.masterdata.domain.mapper;
 
-import com.nextuple.domain.node.NodeResponse;
+import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.pe.masterdata.domain.entity.NodeEntity;
 import com.nextuple.pe.masterdata.domain.inbound.NodeRequest;
 import com.nextuple.pe.masterdata.domain.inbound.NodeUpdationRequest;

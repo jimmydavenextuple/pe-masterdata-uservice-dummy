@@ -7,17 +7,16 @@ import com.nextuple.weightage.configuration.domain.inbound.FetchWeightageRequest
 import com.nextuple.weightage.configuration.domain.inbound.UpdateWeightageConfigurationRequest;
 import com.nextuple.weightage.configuration.exception.common.PromiseEngineException;
 import com.nextuple.weightage.configuration.service.WeightageConfigurationService;
+import java.util.List;
+import java.util.Map;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/weightage")

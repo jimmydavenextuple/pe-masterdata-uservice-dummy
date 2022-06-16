@@ -1,6 +1,6 @@
 package com.nextuple.pe.masterdata.service;
 
-import com.nextuple.domain.node.NodeCarrierResponse;
+import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.nextuple.pe.masterdata.domain.NodeCarrierDomain;
 import com.nextuple.pe.masterdata.domain.entity.NodeCarrierEntity;
 import com.nextuple.pe.masterdata.domain.inbound.NodeCarrierRequest;

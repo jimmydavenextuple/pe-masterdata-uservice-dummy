@@ -34,7 +34,7 @@ public class NodeCarrierRequest implements Serializable {
   private String serviceOption;
 
   @NotNull(message = "processingTime cannot be null")
-  private Integer processingTime;
+  private Double processingTime;
 
   @NotBlank(message = "lastPickupTime cannot be empty")
   @Length(max = 50)

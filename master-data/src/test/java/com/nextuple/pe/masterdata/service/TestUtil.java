@@ -1,8 +1,8 @@
 package com.nextuple.pe.masterdata.service;
 
-import com.nextuple.domain.carrier.CarrierServiceResponse;
-import com.nextuple.domain.node.NodeCarrierResponse;
-import com.nextuple.domain.node.NodeResponse;
+import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
+import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.pe.masterdata.domain.entity.*;
 import com.nextuple.pe.masterdata.domain.inbound.*;
 import com.nextuple.pe.masterdata.domain.outbound.*;
@@ -43,13 +43,13 @@ public class TestUtil {
   public static Double WEIGHT = 3.4;
   public static Double LENGTH = 3.4;
   public static Double VOLUME = 3.4;
-  public static Long PROCESSING_TIME = 0L;
+  public static Double PROCESSING_TIME = 0.0;
   public static Boolean IS_HAZMAT = Boolean.TRUE;
   public static String COST = "cost-1";
   public static String SOURCE_GEOZONE = "source-geozone-1";
   public static String DESTINATION_GEOZONE = "destination-geozone-1";
   public static String CARRIER_SERVICE_ID = "carrier-service-id-1";
-  public static Float TRANSIT_DAYS = Float.valueOf(10);
+  public static Float TRANSIT_DAYS = 10F;
 
   public static final String CARRIER_ID = "carrier-1";
   public static final String SERVICE_ID = "service-1";
@@ -440,7 +440,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption(SERVICE_OPTION)
-        .processingTime(2)
+        .processingTime(2.0)
         .lastPickupTime("5:00 PM")
         .build();
   }
@@ -451,13 +451,13 @@ public class TestUtil {
         .orgId(ORG_ID)
         .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption(SERVICE_OPTION)
-        .processingTime(2)
+        .processingTime(2.0)
         .lastPickupTime("5:00 PM")
         .build();
   }
 
   public NodeCarrierUpdateRequest getNodeCarrierUpdateRequest() {
-    return NodeCarrierUpdateRequest.builder().processingTime(2).lastPickupTime("5:00 PM").build();
+    return NodeCarrierUpdateRequest.builder().processingTime(2.0).lastPickupTime("5:00 PM").build();
   }
 
   public NodeCarrierEntity getNodeCarrierEntity() {
@@ -466,7 +466,7 @@ public class TestUtil {
     nodeCarrierEntity.setOrgId(ORG_ID);
     nodeCarrierEntity.setCarrierServiceId(CARRIER_SERVICE_ID);
     nodeCarrierEntity.setServiceOption(SERVICE_OPTION);
-    nodeCarrierEntity.setProcessingTime(2);
+    nodeCarrierEntity.setProcessingTime(2.0);
     nodeCarrierEntity.setLastPickupTime("5:00 PM");
 
     return nodeCarrierEntity;
@@ -478,7 +478,7 @@ public class TestUtil {
     nodeCarrierEntity1.setOrgId(ORG_ID);
     nodeCarrierEntity1.setCarrierServiceId(CARRIER_SERVICE_ID);
     nodeCarrierEntity1.setServiceOption(SERVICE_OPTION);
-    nodeCarrierEntity1.setProcessingTime(2);
+    nodeCarrierEntity1.setProcessingTime(2.0);
     nodeCarrierEntity1.setLastPickupTime("5:00 PM");
 
     NodeCarrierEntity nodeCarrierEntity2 = new NodeCarrierEntity();
@@ -486,7 +486,7 @@ public class TestUtil {
     nodeCarrierEntity2.setOrgId(ORG_ID);
     nodeCarrierEntity2.setCarrierServiceId(CARRIER_SERVICE_ID_2);
     nodeCarrierEntity2.setServiceOption(SERVICE_OPTION);
-    nodeCarrierEntity2.setProcessingTime(10);
+    nodeCarrierEntity2.setProcessingTime(10.0);
     nodeCarrierEntity2.setLastPickupTime("11:00 AM");
 
     return Arrays.asList(nodeCarrierEntity1, nodeCarrierEntity2);
@@ -499,7 +499,7 @@ public class TestUtil {
             .orgId(ORG_ID)
             .carrierServiceId(CARRIER_SERVICE_ID)
             .serviceOption(SERVICE_OPTION)
-            .processingTime(2)
+            .processingTime(2.0)
             .lastPickupTime("5:00 PM")
             .build();
 
@@ -509,7 +509,7 @@ public class TestUtil {
             .orgId(ORG_ID)
             .carrierServiceId(CARRIER_SERVICE_ID_2)
             .serviceOption(SERVICE_OPTION)
-            .processingTime(10)
+            .processingTime(10.0)
             .lastPickupTime("11:00 AM")
             .build();
 

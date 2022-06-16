@@ -1,7 +1,7 @@
 package com.nextuple.pe.masterdata.controller;
 
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.domain.node.NodeResponse;
+import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.pe.masterdata.domain.inbound.NodeRequest;
 import com.nextuple.pe.masterdata.domain.inbound.NodeUpdationRequest;
 import com.nextuple.pe.masterdata.exception.NodeDomainException;

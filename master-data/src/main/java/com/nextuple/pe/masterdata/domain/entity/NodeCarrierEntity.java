@@ -35,7 +35,7 @@ public class NodeCarrierEntity {
   private String serviceOption;
 
   @Column(name = "processing_time")
-  private Integer processingTime;
+  private Double processingTime;
 
   @Column(name = "last_pickup_time")
   private String lastPickupTime;

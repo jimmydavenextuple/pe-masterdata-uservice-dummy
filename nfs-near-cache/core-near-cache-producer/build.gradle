@@ -1,6 +1,9 @@
-
-group 'com.nextuple'
-version '1.0.0'
+jar {
+    enabled = false
+}
+bootJar {
+    enabled = false
+}
 
 repositories {
     mavenCentral()

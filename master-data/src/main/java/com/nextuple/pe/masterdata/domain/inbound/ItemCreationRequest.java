@@ -71,7 +71,7 @@ public class ItemCreationRequest implements Serializable {
   @Length(max = 50)
   private String weightUom;
 
-  private Long processingTime;
+  @NotNull private Double processingTime;
 
   @Length(max = 50)
   private String cost;

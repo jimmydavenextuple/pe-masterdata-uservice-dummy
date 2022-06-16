@@ -1,0 +1,12 @@
+jar.enabled=true
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation(project(":common-util"))
+    implementation(project(":node:node-api-domain"))
+    implementation(project(":nfs-near-cache:core-near-cache"))
+
+}

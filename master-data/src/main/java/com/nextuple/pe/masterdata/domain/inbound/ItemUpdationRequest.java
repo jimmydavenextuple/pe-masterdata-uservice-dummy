@@ -31,7 +31,7 @@ public class ItemUpdationRequest implements Serializable {
   private String volumeUom;
   private Double weight;
   private String weightUom;
-  private Long processingTime;
+  private Double processingTime;
   private String cost;
   private Boolean isHazmat;
   private String shortDescription;

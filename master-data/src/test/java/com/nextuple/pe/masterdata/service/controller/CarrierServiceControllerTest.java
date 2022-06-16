@@ -6,8 +6,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.domain.carrier.CarrierServiceResponse;
 import com.nextuple.pe.masterdata.controller.CarrierServiceController;
 import com.nextuple.pe.masterdata.domain.inbound.CarrierServiceRequest;
 import com.nextuple.pe.masterdata.domain.inbound.CarrierServiceUpdateRequest;

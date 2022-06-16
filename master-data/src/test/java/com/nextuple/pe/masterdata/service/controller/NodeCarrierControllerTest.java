@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.domain.node.NodeCarrierResponse;
+import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.nextuple.pe.masterdata.controller.NodeCarrierController;
 import com.nextuple.pe.masterdata.exception.NodeCarrierDomainException;
 import com.nextuple.pe.masterdata.exception.common.CommonServiceException;

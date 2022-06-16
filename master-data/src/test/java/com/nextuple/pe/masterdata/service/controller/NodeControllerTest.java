@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.domain.node.NodeResponse;
+import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.pe.masterdata.controller.NodeController;
 import com.nextuple.pe.masterdata.domain.inbound.NodeRequest;
 import com.nextuple.pe.masterdata.domain.inbound.NodeUpdationRequest;

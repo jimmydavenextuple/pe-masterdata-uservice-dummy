@@ -18,7 +18,7 @@ public class NodeCarrierUpdateRequest implements Serializable {
   private static final long serialVersionUID = 708117169845359905L;
 
   @NotNull(message = "processingTime cannot be null")
-  private Integer processingTime;
+  private Double processingTime;
 
   @NotBlank(message = "lastPickupTime cannot be empty")
   @Length(max = 50)
