@@ -1,0 +1,15 @@
+name: PR-NODE-CARRIER
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "node-carrier/**"
+    branches: [ development ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml
+    with:
+      module: node-carrier
+    secrets: inherit

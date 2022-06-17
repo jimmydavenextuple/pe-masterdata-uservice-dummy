@@ -1,15 +1,15 @@
-name: MASTER-DATA BUILD-DEPLOY
+name: NODE-CARRIER BUILD-DEPLOY
 
 on:
   push:
     branches: [ development ]
     paths:
-      - "master-data/**"
+      - "node-carrier/**"
 jobs:
   Build-Deploy:
     uses: ./.github/workflows/build&deploy.yml
     with:
-      module: master-data
+      module: node-carrier
     secrets: inherit
 
 

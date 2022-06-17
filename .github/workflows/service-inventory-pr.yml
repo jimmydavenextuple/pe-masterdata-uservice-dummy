@@ -1,0 +1,15 @@
+name: PR-SERVICE-INVENTORY
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "service-inventory/**"
+    branches: [ development ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml
+    with:
+      module: service-inventory
+    secrets: inherit

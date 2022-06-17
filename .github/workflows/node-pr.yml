@@ -1,0 +1,15 @@
+name: PR-NODE
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "node/**"
+    branches: [ development ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml
+    with:
+      module: node
+    secrets: inherit

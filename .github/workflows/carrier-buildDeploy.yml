@@ -1,0 +1,17 @@
+name: CARRIER BUILD-DEPLOY
+
+on:
+  push:
+    branches: [ development ]
+    paths:
+      - "carrier-builDeploy/**"
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/build&deploy.yml
+    with:
+      module: carrier
+    secrets: inherit
+
+
+
+
