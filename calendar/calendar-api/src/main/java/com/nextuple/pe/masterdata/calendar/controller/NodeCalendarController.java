@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/nodeCalendar")
+@RequestMapping("/node-calendar")
 @RequiredArgsConstructor
 public class NodeCalendarController {
 
