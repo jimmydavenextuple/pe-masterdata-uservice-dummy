@@ -1,0 +1,19 @@
+
+bootJar {
+    enabled(true)
+    mainClass.set("com.nextuple.pe.masterdata.calendar.MasterDataCalendarApplication")
+}
+
+configurations {
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
+}
+
+dependencies {
+    implementation(project(":common-util"))
+    implementation(project(":calendar:calendar-api-domain"))
+    implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
+    runtimeOnly 'org.postgresql:postgresql'
+}

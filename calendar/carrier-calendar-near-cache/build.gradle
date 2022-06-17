@@ -7,5 +7,5 @@ bootJar {
 dependencies {
     implementation(project(":common-util"))
     implementation(project(":nfs-near-cache:core-near-cache"))
-    implementation(project(":calendar-api-domain"))
+    implementation(project(":calendar:calendar-api-domain"))
 }

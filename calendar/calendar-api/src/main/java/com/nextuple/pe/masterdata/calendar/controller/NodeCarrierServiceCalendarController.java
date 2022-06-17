@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/nodeCarrierServiceCalendar")
+@RequestMapping("/node-carrier-service-calendar")
 @RequiredArgsConstructor
 public class NodeCarrierServiceCalendarController {
 
