@@ -1,0 +1,17 @@
+name: ITEM BUILD-DEPLOY
+
+on:
+  push:
+    branches: [ development ]
+    paths:
+      - "item/**"
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/build&deploy.yml
+    with:
+      module: item
+    secrets: inherit
+
+
+
+

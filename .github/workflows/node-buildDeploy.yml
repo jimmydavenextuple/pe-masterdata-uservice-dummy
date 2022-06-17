@@ -1,0 +1,17 @@
+name: NODE BUILD-DEPLOY
+
+on:
+  push:
+    branches: [ development ]
+    paths:
+      - "node/**"
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/build&deploy.yml
+    with:
+      module: node
+    secrets: inherit
+
+
+
+

@@ -1,0 +1,15 @@
+name: PR-ITEM
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "item/**"
+    branches: [ development ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml
+    with:
+      module: item
+    secrets: inherit
