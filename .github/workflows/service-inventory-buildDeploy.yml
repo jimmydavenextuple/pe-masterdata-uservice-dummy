@@ -1,0 +1,17 @@
+name: SERVICE-INVENTORY BUILD-DEPLOY
+
+on:
+  push:
+    branches: [ development ]
+    paths:
+      - "service-inventory/**"
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/build&deploy.yml
+    with:
+      module: service-inventory
+    secrets: inherit
+
+
+
+
