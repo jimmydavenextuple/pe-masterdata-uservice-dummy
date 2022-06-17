@@ -2,6 +2,14 @@ bootJar {
     enabled = true
     mainClass.set("com.nextuple.item.MasterDataItemApplication")
 }
+
+configurations {
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
+}
+
 dependencies {
     implementation(project(":item:item-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'
