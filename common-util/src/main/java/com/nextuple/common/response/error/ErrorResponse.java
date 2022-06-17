@@ -4,6 +4,7 @@ import com.nextuple.common.context.CurrentThreadContext;
 import com.nextuple.common.response.BaseResponse;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -72,6 +73,11 @@ public class ErrorResponse extends BaseResponse<ErrorPayload> {
         this.errorResponse.getPayload().setFields(new HashMap<>());
       }
       this.errorResponse.getPayload().getFields().put(field, fieldError);
+      return this;
+    }
+
+    public ErrorResponseBuilder errorField(Map<String, FieldError> fieldError) {
+      this.errorResponse.getPayload().setFields(fieldError);
       return this;
     }
 

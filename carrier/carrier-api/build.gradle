@@ -1,0 +1,12 @@
+bootJar {
+    enabled = true
+    mainClass.set("com.nextuple.carrier.MasterDataCarrierApplication")
+}
+
+dependencies {
+    implementation(project(":carrier:carrier-api-domain"))
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation(project(":common-util"))
+}
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11

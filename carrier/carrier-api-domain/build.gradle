@@ -4,3 +4,8 @@ jar {
 bootJar {
     enabled = false
 }
+
+dependencies {
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation(project(":common-util"))
+}
