@@ -4,7 +4,7 @@ on:
   push:
     branches: [ development ]
     paths:
-      - "master-data/**"
+      - "transit/**"
 jobs:
   Build-Deploy:
     uses: ./.github/workflows/build&deploy.yml
