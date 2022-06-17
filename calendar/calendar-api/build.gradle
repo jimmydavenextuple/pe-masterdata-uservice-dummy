@@ -1,14 +1,9 @@
-
 bootJar {
-    enabled(true)
-    mainClass.set("com.nextuple.pe.masterdata.calendar.MasterDataCalendarApplication")
+    enabled = false
 }
 
-configurations {
-    [apiElements, runtimeElements].each {
-        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
-        it.outgoing.artifact(bootJar)
-    }
+jar {
+    enabled = true
 }
 
 dependencies {
@@ -17,3 +12,6 @@ dependencies {
     implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
     runtimeOnly 'org.postgresql:postgresql'
 }
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11

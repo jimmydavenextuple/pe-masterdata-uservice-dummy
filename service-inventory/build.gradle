@@ -1,3 +1,11 @@
 bootJar {
-    enabled = false
+    enabled = true
+    mainClass.set("com.nextuple.service.inventory.ServiceInventoryApplication")
+}
+
+configurations {
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
 }
