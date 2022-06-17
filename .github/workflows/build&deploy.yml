@@ -45,10 +45,7 @@ jobs:
         run: |
           export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain nextuple --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
           bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain publish -p ${{ inputs.module }}
-#          aws eks update-kubeconfig --name ${{ secrets.SONAR_CLUSTER }} --region us-east-1
-#          kubectl port-forward pod/sonarqube-89-community-0 9000:9000 &
-#          bash ./gradlew -Pbuild_target=SNAPSHOT sonarqube showSonarQubeLink --info
-#          fuser -k 9000/tcp
+          bash ./gradlew -Pbuild_target=SNAPSHOT -Dsonar.branch={{ github.ref }} sonarqube showSonarQubeLink --info
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
@@ -92,6 +89,35 @@ jobs:
           COMMIT_HASH: ${{ github.sha }}
           ENVIRONMENT: "dev"
           PROJECT: ${{ inputs.module }}
+
+  Deploy-To-QA:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      issues: read
+      contents: read
+      checks: write
+      pull-requests: write
+    needs: Deploy-To-Dev
+    concurrency: ${{ inputs.module }}
+    environment: qa
+    steps:
+      - uses: actions/checkout@v3
+      - uses: azure/setup-kubectl@v2.0
+      - uses: mikefarah/yq@master
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: git-actions-pipeline
+          aws-region: us-east-1
+      - name: Deploy to EKS
+        run: ./deploy-scripts/deploy.sh
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          COMMIT_HASH: ${{ github.sha }}
+          ENVIRONMENT: "qa"
+          PROJECT: ${{ inputs.module }}
+
 
 
 

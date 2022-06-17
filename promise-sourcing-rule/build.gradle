@@ -3,6 +3,13 @@ bootJar {
     mainClass.set("com.nextuple.promise.sourcing.rule.PromiseSourcingRuleApplication")
 }
 
+configurations {
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
+}
+
 dependencies {
     implementation(project(":common-util"))
     implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
