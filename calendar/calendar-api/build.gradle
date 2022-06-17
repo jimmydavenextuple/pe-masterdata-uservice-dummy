@@ -8,14 +8,6 @@ configurations {
         it.outgoing.artifact(bootJar)
     }
 }
-
-configurations {
-    [apiElements, runtimeElements].each {
-        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
-        it.outgoing.artifact(bootJar)
-    }
-}
-
 dependencies {
     implementation(project(":common-util"))
     implementation(project(":calendar:calendar-api-domain"))
