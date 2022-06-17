@@ -59,7 +59,7 @@ jobs:
           export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties -p ${{ inputs.module }} | grep version | sed -e "s@version: @@g"`
           export SERVICE_CODE=`echo "$VERSION" | cut -d '-' -f1`
           export IMAGE_NAME="$ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }}"
-          docker build -f Dockerfile -t $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }} ./${{ inputs.module }}-api
+          docker build -f Dockerfile -t $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }} ./${{ inputs.module }}/{{ inputs.module }}-api
           docker push $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }}
 
   Deploy-To-Dev:
