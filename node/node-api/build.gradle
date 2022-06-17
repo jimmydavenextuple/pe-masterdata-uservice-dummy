@@ -3,13 +3,6 @@ bootJar {
     mainClass.set("com.nextuple.node.MasterDataNodeApplication")
 }
 
-configurations {
-    [apiElements, runtimeElements].each {
-        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
-        it.outgoing.artifact(bootJar)
-    }
-}
-
 dependencies {
     implementation(project(":node:node-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'

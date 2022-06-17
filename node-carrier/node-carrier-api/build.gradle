@@ -2,14 +2,6 @@ bootJar {
     enabled = true
     mainClass.set("com.nextuple.node.carrier.MasterDataNodeCarrierApplication")
 }
-
-configurations {
-    [apiElements, runtimeElements].each {
-        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
-        it.outgoing.artifact(bootJar)
-    }
-}
-
 dependencies {
     implementation(project(":node-carrier:node-carrier-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'
