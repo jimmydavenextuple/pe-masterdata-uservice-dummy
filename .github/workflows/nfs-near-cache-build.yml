@@ -1,0 +1,19 @@
+name: NFS-NEAR-CACHE BUILD
+
+on:
+  push:
+    branches: [ development ]
+    paths:
+      - "nfs-near-cache/**"
+      - ".github/workflows/build.yml"
+jobs:
+
+  Build-Publish:
+    uses: ./.github/workflows/build.yml
+    with:
+      module: nfs-near-cache
+    secrets: inherit
+
+
+
+

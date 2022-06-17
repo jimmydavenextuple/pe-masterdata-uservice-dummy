@@ -1,0 +1,119 @@
+name: manual-workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      module:
+        description: Enter root directory
+        type: string
+        required: true
+jobs:
+
+  Build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      issues: read
+      checks: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ github.token }}
+      - uses: aws-actions/setup-sam@v1
+      - uses: azure/setup-kubectl@v2.0
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: git-actions-pipeline
+          aws-region: us-east-1
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build and Analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain nextuple --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
+          bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain publish -p ${{ inputs.module }}
+          bash ./gradlew -Pbuild_target=SNAPSHOT -Dsonar.branch={{ github.ref }} sonarqube showSonarQubeLink --info
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: "**/**/test-results/**/*.xml"
+      - name: Docker Build & Push
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          export SERVICE_NAME=`echo "${{ github.repository }}" | awk -F "/" '{print $2}'`
+          export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties -p ${{ inputs.module }} | grep version | sed -e "s@version: @@g"`
+          export SERVICE_CODE=`echo "$VERSION" | cut -d '-' -f1`
+          export IMAGE_NAME="$ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }}"
+          docker build -f Dockerfile -t $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }} ./${{ inputs.module }}-api
+          docker push $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }}
+
+  Deploy-To-Dev:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      issues: read
+      contents: read
+      checks: write
+      pull-requests: write
+    needs: Build
+    concurrency: ${{ inputs.module }}
+    environment: dev
+    steps:
+      - uses: actions/checkout@v3
+      - uses: azure/setup-kubectl@v2.0
+      - uses: mikefarah/yq@master
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: git-actions-pipeline
+          aws-region: us-east-1
+      - name: Deploy to EKS
+        run: ./deploy-scripts/deploy.sh
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          COMMIT_HASH: ${{ github.sha }}
+          ENVIRONMENT: "dev"
+          PROJECT: ${{ inputs.module }}
+
+  Deploy-To-QA:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      issues: read
+      contents: read
+      checks: write
+      pull-requests: write
+    needs: Deploy-To-Dev
+    concurrency: ${{ inputs.module }}
+    environment: qa
+    steps:
+      - uses: actions/checkout@v3
+      - uses: azure/setup-kubectl@v2.0
+      - uses: mikefarah/yq@master
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: git-actions-pipeline
+          aws-region: us-east-1
+      - name: Deploy to EKS
+        run: ./deploy-scripts/deploy.sh
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          COMMIT_HASH: ${{ github.sha }}
+          ENVIRONMENT: "qa"
+          PROJECT: ${{ inputs.module }}
+
+
+
+
+
