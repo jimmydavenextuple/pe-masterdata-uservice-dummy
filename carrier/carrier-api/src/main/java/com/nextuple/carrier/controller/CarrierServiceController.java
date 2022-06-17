@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/carrierService")
+@RequestMapping("/carrier-service")
 @RequiredArgsConstructor
 public class CarrierServiceController {
 
