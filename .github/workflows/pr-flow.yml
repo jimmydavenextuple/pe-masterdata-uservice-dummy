@@ -21,7 +21,7 @@ jobs:
       run: |
         bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain -p ${{ inputs.module }}
         bash ./gradlew -Pbuild_target=SNAPSHOT dependencyCheckAggregate -p ${{ inputs.module }} --info
-        bash ./gradlew sonarqube -Dsonar.pullrequest.branch=${{ github.head_ref }} -Dsonar.pullrequest.base=${{ github.base_ref }} -Dsonar.pullrequest.key=${{ github.event.number }} showSonarQubeLink --info
+        bash ./gradlew sonarqube -Dsonar.pullrequest.branch=${{ github.head_ref }} -Dsonar.pullrequest.base=master -Dsonar.pullrequest.key=${{ github.event.number }} showSonarQubeLink --info
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1
       if: always()
