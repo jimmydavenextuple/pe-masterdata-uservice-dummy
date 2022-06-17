@@ -1,0 +1,10 @@
+bootJar {
+    enabled = true
+    mainClass.set("com.nextuple.postal.code.timezone.PostalCodeTimezoneApplication")
+}
+
+dependencies {
+    implementation(project(":common-util"))
+    implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
+    runtimeOnly 'org.postgresql:postgresql'
+}

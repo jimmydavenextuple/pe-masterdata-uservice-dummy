@@ -1,9 +1,6 @@
 bootJar {
-    enabled = false
-}
-
-jar {
-    enabled = true
+    enabled(true)
+    mainClass.set("com.nextuple.pe.masterdata.calendar.MasterDataCalendarApplication")
 }
 
 dependencies {

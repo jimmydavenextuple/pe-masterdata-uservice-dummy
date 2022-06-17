@@ -30,9 +30,6 @@ findProject(':nfs-common:nfs-common-kafka')?.name = 'nfs-common-kafka'
 
 include 'nfs-common'
 include 'nfs-near-cache'
-include 'promise-sourcing-rule'
-include 'weightage-configuration'
-include 'postal-code-timezone'
 
 include 'node'
 include 'node:node-api-domain'
@@ -95,3 +92,12 @@ findProject(':calendar:node-carrier-calendar-near-cache')?.name = 'node-carrier-
 include 'calendar:node-carrier-calendar-near-cache-spring'
 findProject(':calendar:node-carrier-calendar-near-cache-spring')?.name = 'node-carrier-calendar-near-cache-spring'
 
+include 'postal-code-timezone'
+include 'postal-code-timezone:postal-code-timezone-api'
+findProject(':postal-code-timezone:postal-code-timezone-api')?.name = 'postal-code-timezone-api'
+include 'promise-sourcing-rule'
+include 'promise-sourcing-rule:promising-sourcing-rule-api'
+findProject(':promise-sourcing-rule:promising-sourcing-rule-api')?.name = 'promising-sourcing-rule-api'
+include 'weightage-configuration'
+include 'weightage-configuration:weightage-configuration-api'
+findProject(':weightage-configuration:weightage-configuration-api')?.name = 'weightage-configuration-api'
