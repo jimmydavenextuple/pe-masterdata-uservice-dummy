@@ -1,9 +1,6 @@
 bootJar {
-    enabled = false
-}
-
-jar {
     enabled = true
+    mainClass.set("com.nextuple.node.MasterDataNodeApplication")
 }
 
 dependencies {
