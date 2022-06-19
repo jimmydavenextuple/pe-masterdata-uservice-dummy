@@ -5,7 +5,7 @@ on:
     branches: [ development ]
     paths:
       - "transit/**"
-      - ".github/workflows/build&deploy.yml"
+     
 jobs:
   Build-Deploy:
     uses: ./.github/workflows/build&deploy.yml

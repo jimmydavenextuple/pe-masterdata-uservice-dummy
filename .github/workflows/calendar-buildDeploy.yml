@@ -5,7 +5,6 @@ on:
     branches: [ development ]
     paths:
       - "calendar/**"
-      - ".github/workflows/build&deploy.yml"
 jobs:
 
   Build-Deploy:
