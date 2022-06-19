@@ -6,7 +6,7 @@ metadata:
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
     service.beta.kubernetes.io/aws-load-balancer-internal: "true"
-    service.beta.kubernetes.io/aws-load-balancer-name: "<ENVIRONMENT>-<PROJECT>"
+    service.beta.kubernetes.io/aws-load-balancer-name: "<ENVIRONMENT>-<NLB_NAME>"
   labels:
     uservice: <SERVICE_NAME>
     version: "<SERVICE_VERSION>"

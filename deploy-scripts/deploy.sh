@@ -6,6 +6,7 @@ export REPO=`echo $GITHUB_REPOSITORY | awk -F "/" '{print $2}'`
 export SERVICE_NAME="$REPO-$PROJECT"
 export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties -p $PROJECT | grep version | sed -e "s@version: @@g"`
 export SERVICE_CODE=`echo "$VERSION" | cut -d '-' -f1`
+export NLB_NAME=`echo "$ENVIRONMENT-$PROJECT" | cut -c1-31`
 export IMAGE_NAME="$ECR_REGISTRY/$REPO-$PROJECT:$VERSION.$COMMIT_HASH"
 
 echo "$IMAGE_NAME"
@@ -71,7 +72,7 @@ fi
 sed -e "s@<SERVICE_VERSION>@$SERVICE_CODE@g" \
     -e "s@<SERVICE_NAME>@$SERVICE_NAME@g" \
     -e "s@<ENVIRONMENT>@$ENVIRONMENT@g" \
-    -e "s@<PROJECT>@$PROJECT" \
+    -e "s@<NLB_NAME>@$NLB_NAME" \
     -e "s@<COLOR>@$SERVICE_PASSIVE_COLOR@g" \
     ./manifests/service.yaml | kubectl apply -f -
 
