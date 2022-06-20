@@ -18,6 +18,8 @@ jobs:
         java-version: 11
         cache: 'gradle'
     - name: PR-BUILD
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
         bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain -p ${{ inputs.module }}
         bash ./gradlew -Pbuild_target=SNAPSHOT dependencyCheckAggregate -p ${{ inputs.module }} --info
