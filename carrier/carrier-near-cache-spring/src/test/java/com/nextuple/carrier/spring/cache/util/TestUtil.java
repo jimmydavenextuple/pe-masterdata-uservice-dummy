@@ -10,7 +10,7 @@ public class TestUtil {
 
   public static final String ORG_ID = "Org_Id_01";
   public static final String CARRIER_ID = "Carrier_Id_01";
-  public static final String SERVICE_ID = "Service_Id_01";
+  public static final String CARRIER_SERVICE_ID = "Service_Id_01";
   public static final String CARRIER_NAME = "Carrier-01";
   public static final String SERVICE_NAME = "Service-01";
   public static final String SERVICE_OPTIONS = "Standard";
@@ -18,7 +18,7 @@ public class TestUtil {
   private CarrierDetails getCarrierDetails() {
     return CarrierDetails.builder()
         .carrierId(CARRIER_ID)
-        .serviceId(SERVICE_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
         .orgId(ORG_ID)
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
@@ -34,7 +34,7 @@ public class TestUtil {
   private CarrierServiceResponse getCarrierResponse() {
     return CarrierServiceResponse.builder()
         .carrierId(CARRIER_ID)
-        .serviceId(SERVICE_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
         .orgId(ORG_ID)
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
@@ -52,7 +52,7 @@ public class TestUtil {
   public CarrierCacheKey getCarrierCacheKey() {
     return CarrierCacheKey.builder()
         .carrierId(CARRIER_ID)
-        .serviceId(SERVICE_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
         .orgId(ORG_ID)
         .build();
   }

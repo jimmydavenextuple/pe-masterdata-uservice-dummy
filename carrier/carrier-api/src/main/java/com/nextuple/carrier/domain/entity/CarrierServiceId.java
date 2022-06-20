@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 public class CarrierServiceId implements Serializable {
   private String orgId;
   private String carrierId;
-  private String serviceId;
+  private String carrierServiceId;
 }

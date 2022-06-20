@@ -25,7 +25,7 @@ public class CarrierFeignClientServiceImpl
   public CarrierCacheValue get(CarrierCacheKey key) {
     try {
       return carrierMapper.responseToCacheValue(
-          carrierFeign.getCarrier(key.getCarrierId(), key.getServiceId(), key.getOrgId()));
+          carrierFeign.getCarrier(key.getCarrierId(), key.getCarrierServiceId(), key.getOrgId()));
     } catch (RuntimeException e) {
       return null;
     }

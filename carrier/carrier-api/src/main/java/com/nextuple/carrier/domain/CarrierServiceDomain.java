@@ -24,7 +24,7 @@ public class CarrierServiceDomain {
       throw new CarrierServiceDomainException(
           "Error while saving the carrier service",
           carrierServiceEntity.getCarrierId(),
-          carrierServiceEntity.getServiceId(),
+          carrierServiceEntity.getCarrierServiceId(),
           carrierServiceEntity.getOrgId());
     }
   }
@@ -50,7 +50,7 @@ public class CarrierServiceDomain {
       throw new CarrierServiceDomainException(
           "Error while deleting carrier service",
           carrierServiceEntity.getCarrierId(),
-          carrierServiceEntity.getServiceId(),
+          carrierServiceEntity.getCarrierServiceId(),
           carrierServiceEntity.getOrgId());
     }
   }

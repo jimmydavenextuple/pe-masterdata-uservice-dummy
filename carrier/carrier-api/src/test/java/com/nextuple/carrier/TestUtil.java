@@ -8,7 +8,7 @@ import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 public class TestUtil {
   public static final String ORG_ID = "org-1";
   public static final String CARRIER_ID = "carrier-1";
-  public static final String SERVICE_ID = "service-1";
+  public static final String CARRIER_SERVICE_ID = "carrier-service-1";
   public static final String CARRIER_NAME = "carrier-name-1";
   public static final String SERVICE_NAME = "service-name-1";
   public static final String SERVICE_OPTIONS = "service-options-1";
@@ -19,7 +19,7 @@ public class TestUtil {
     return CarrierServiceRequest.builder()
         .orgId(ORG_ID)
         .carrierId(CARRIER_ID)
-        .serviceId(SERVICE_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
         .serviceOptions(SERVICE_OPTIONS)
@@ -30,7 +30,7 @@ public class TestUtil {
     return CarrierServiceResponse.builder()
         .orgId(ORG_ID)
         .carrierId(CARRIER_ID)
-        .serviceId(SERVICE_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
         .serviceOptions(SERVICE_OPTIONS)
@@ -49,7 +49,7 @@ public class TestUtil {
     return CarrierServiceResponse.builder()
         .orgId(ORG_ID)
         .carrierId(CARRIER_ID)
-        .serviceId(SERVICE_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
         .serviceOptions(SERVICE_OPTIONS)
@@ -60,7 +60,7 @@ public class TestUtil {
     return CarrierServiceEntity.builder()
         .orgId(ORG_ID)
         .carrierId(CARRIER_ID)
-        .serviceId(SERVICE_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
         .serviceOptions(SERVICE_OPTIONS)
@@ -71,7 +71,7 @@ public class TestUtil {
     return CarrierServiceEntity.builder()
         .orgId(ORG_ID)
         .carrierId(CARRIER_ID)
-        .serviceId(SERVICE_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
         .carrierName("carrier-name-1")
         .serviceName(SERVICE_NAME)
         .serviceOptions(SERVICE_OPTIONS)
