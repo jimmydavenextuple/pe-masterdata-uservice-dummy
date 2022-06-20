@@ -5,7 +5,6 @@ on:
     branches: [ development ]
     paths:
       - "nfs-near-cache/**"
-      - ".github/workflows/build.yml"
 jobs:
 
   Build-Publish:

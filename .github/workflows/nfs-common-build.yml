@@ -4,7 +4,8 @@ on:
   push:
     branches: [ development ]
     paths:
-      - "common-util/**"
+      - "nfs-common/**"
+      - ".github/workflows/nfs-common-build.yml"
 jobs:
 
   Build-Publish:
