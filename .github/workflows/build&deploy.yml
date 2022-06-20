@@ -99,7 +99,6 @@ jobs:
       checks: write
       pull-requests: write
     needs: Deploy-To-Dev
-    concurrency: ${{ inputs.module }}
     environment: qa
     steps:
       - uses: actions/checkout@v3

@@ -72,7 +72,7 @@ fi
 sed -e "s@<SERVICE_VERSION>@$SERVICE_CODE@g" \
     -e "s@<SERVICE_NAME>@$SERVICE_NAME@g" \
     -e "s@<ENVIRONMENT>@$ENVIRONMENT@g" \
-    -e "s@<NLB_NAME>@$NLB_NAME" \
+    -e "s@<NLB_NAME>@$NLB_NAME@g" \
     -e "s@<COLOR>@$SERVICE_PASSIVE_COLOR@g" \
     ./manifests/service.yaml | kubectl apply -f -
 
