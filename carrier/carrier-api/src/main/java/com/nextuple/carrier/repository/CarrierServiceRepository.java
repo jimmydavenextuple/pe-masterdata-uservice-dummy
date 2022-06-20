@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CarrierServiceRepository extends JpaRepository<CarrierServiceEntity, String> {
-  Optional<CarrierServiceEntity> findCarrierServiceByCarrierIdAndServiceIdAndOrgId(
-      String carrierId, String serviceId, String orgId);
+  Optional<CarrierServiceEntity> findCarrierServiceByCarrierIdAndCarrierServiceIdAndOrgId(
+      String carrierId, String carrierServiceId, String orgId);
 }
