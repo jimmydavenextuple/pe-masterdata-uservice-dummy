@@ -32,7 +32,7 @@ public class CarrierServiceDomain {
   public Optional<CarrierServiceEntity> findCarrierServiceByCarrierIdAndServiceIdAndOrgId(
       String carrierId, String serviceId, String orgId) throws CarrierServiceDomainException {
     try {
-      return carrierServiceRepository.findCarrierServiceByCarrierIdAndServiceIdAndOrgId(
+      return carrierServiceRepository.findCarrierServiceByCarrierIdAndCarrierServiceIdAndOrgId(
           carrierId, serviceId, orgId);
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to find carrier service");
