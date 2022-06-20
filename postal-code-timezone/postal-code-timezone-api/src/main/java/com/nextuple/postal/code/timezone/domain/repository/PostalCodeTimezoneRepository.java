@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostalCodeTimezoneRepository
-        extends JpaRepository<PostalCodeTimezoneEntity, String> {
+    extends JpaRepository<PostalCodeTimezoneEntity, String> {
   PostalCodeTimezoneEntity save(PostalCodeTimezoneEntity postalCodeTimezoneEntity);
 
   PostalCodeTimezoneEntity findByOrgIdAndPostalCodePrefix(String orgId, String postalCodePrefix);

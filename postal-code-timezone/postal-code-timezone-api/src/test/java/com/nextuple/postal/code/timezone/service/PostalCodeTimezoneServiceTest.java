@@ -1,19 +1,5 @@
 package com.nextuple.postal.code.timezone.service;
 
-import com.nextuple.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
-import com.nextuple.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
-import com.nextuple.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
-import com.nextuple.postal.code.timezone.domain.PostalCodeTimezoneDomain;
-import com.nextuple.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
-import com.nextuple.postal.code.timezone.exception.common.PromiseEngineException;
-import com.nextuple.postal.code.timezone.service.PostalCodeTimezoneService;
-import com.nextuple.postal.code.timezone.utils.TestUtil;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import static com.nextuple.postal.code.timezone.utils.PostalCodeTimezoneConstants.ORG_ID;
 import static com.nextuple.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,6 +9,19 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
+
+import com.nextuple.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.nextuple.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
+import com.nextuple.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
+import com.nextuple.postal.code.timezone.domain.PostalCodeTimezoneDomain;
+import com.nextuple.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
+import com.nextuple.postal.code.timezone.exception.common.PromiseEngineException;
+import com.nextuple.postal.code.timezone.utils.TestUtil;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 class PostalCodeTimezoneServiceTest {
   @Mock private PostalCodeTimezoneDomain postalCodeTimezoneDomain;

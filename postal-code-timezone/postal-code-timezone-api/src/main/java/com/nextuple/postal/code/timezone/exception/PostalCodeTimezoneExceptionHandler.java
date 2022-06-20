@@ -21,47 +21,47 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class PostalCodeTimezoneExceptionHandler {
   private static final Pattern ENUM_MSG =
-          Pattern.compile("values accepted for Enum class: \\[[^\\]]*\\]", Pattern.MULTILINE);
+      Pattern.compile("values accepted for Enum class: \\[[^\\]]*\\]", Pattern.MULTILINE);
   private static final Pattern DATE_MSG =
-          Pattern.compile(
-                  "not compatible with any of standard forms \\(\\\"yyyy-MM-dd'T'HH:mm:ss\\.SSSX\\\", "
-                          + "\\\"yyyy-MM-dd'T'HH:mm:ss\\.SSS\\\", "
-                          + "\\\"EEE, dd MMM yyyy HH:mm:ss zzz\\\", "
-                          + "\\\"yyyy-MM-dd\\\"\\)",
-                  Pattern.MULTILINE);
+      Pattern.compile(
+          "not compatible with any of standard forms \\(\\\"yyyy-MM-dd'T'HH:mm:ss\\.SSSX\\\", "
+              + "\\\"yyyy-MM-dd'T'HH:mm:ss\\.SSS\\\", "
+              + "\\\"EEE, dd MMM yyyy HH:mm:ss zzz\\\", "
+              + "\\\"yyyy-MM-dd\\\"\\)",
+          Pattern.MULTILINE);
   private static final Pattern EMPTY_MSG =
-          Pattern.compile("Cannot coerce empty String", Pattern.MULTILINE);
+      Pattern.compile("Cannot coerce empty String", Pattern.MULTILINE);
 
   private static final List<Pattern> PATTERNS_TO_MATCH =
-          new ArrayList<>(Arrays.asList(ENUM_MSG, DATE_MSG, EMPTY_MSG));
+      new ArrayList<>(Arrays.asList(ENUM_MSG, DATE_MSG, EMPTY_MSG));
 
   private static final String BAD_REQUEST = "Bad Request";
 
   @ExceptionHandler(PromiseEngineException.class)
   public ResponseEntity<ErrorResponse> handlePromiseEngineException(PromiseEngineException e) {
     return ResponseEntity.badRequest()
-            .body(
-                    ErrorResponse.builder(ErrorType.ERROR, 0x000001)
-                            .message(e.getMessage() + "[" + e.getExceptionCode().getErrorCode() + "]")
-                            .build());
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0x000001)
+                .message(e.getMessage() + "[" + e.getExceptionCode().getErrorCode() + "]")
+                .build());
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
-          MethodArgumentNotValidException e) {
+      MethodArgumentNotValidException e) {
     ErrorResponse.ErrorResponseBuilder builder =
-            new ErrorResponse.ErrorResponseBuilder(ErrorType.ERROR, 0x000002);
+        new ErrorResponse.ErrorResponseBuilder(ErrorType.ERROR, 0x000002);
     builder.message(BAD_REQUEST);
     e.getBindingResult()
-            .getFieldErrors()
-            .forEach(
-                    x ->
-                            builder.errorField(
-                                    x.getField(),
-                                    FieldError.builder()
-                                            .errorMessage(x.getDefaultMessage())
-                                            .rejectedValue(x.getRejectedValue() + "")
-                                            .build()));
+        .getFieldErrors()
+        .forEach(
+            x ->
+                builder.errorField(
+                    x.getField(),
+                    FieldError.builder()
+                        .errorMessage(x.getDefaultMessage())
+                        .rejectedValue(x.getRejectedValue() + "")
+                        .build()));
     return ResponseEntity.badRequest().body(builder.build());
   }
 
@@ -79,21 +79,21 @@ public class PostalCodeTimezoneExceptionHandler {
         }
       }
       return ResponseEntity.badRequest()
-              .body(
-                      ErrorResponse.builder(ErrorType.ERROR, 0x000003)
-                              .message(BAD_REQUEST)
-                              .errorField(
-                                      invalidFormatCause.getPath().get(0).getFieldName(),
-                                      FieldError.builder()
-                                              .rejectedValue(invalidFormatCause.getValue())
-                                              .errorMessage(message)
-                                              .build())
-                              .build());
+          .body(
+              ErrorResponse.builder(ErrorType.ERROR, 0x000003)
+                  .message(BAD_REQUEST)
+                  .errorField(
+                      invalidFormatCause.getPath().get(0).getFieldName(),
+                      FieldError.builder()
+                          .rejectedValue(invalidFormatCause.getValue())
+                          .errorMessage(message)
+                          .build())
+                  .build());
     }
     return ResponseEntity.badRequest()
-            .body(
-                    ErrorResponse.builder(ErrorType.ERROR, 0x000003)
-                            .message(exception.getMessage())
-                            .build());
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0x000003)
+                .message(exception.getMessage())
+                .build());
   }
 }

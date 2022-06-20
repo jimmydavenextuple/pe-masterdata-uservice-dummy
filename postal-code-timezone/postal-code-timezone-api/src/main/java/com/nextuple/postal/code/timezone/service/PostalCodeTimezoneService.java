@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class PostalCodeTimezoneService {
   private static final Logger logger = LoggerFactory.getLogger(PostalCodeTimezoneService.class);
   private static final PostalCodeTimezoneMapper INSTANCE =
-          Mappers.getMapper(PostalCodeTimezoneMapper.class);
+      Mappers.getMapper(PostalCodeTimezoneMapper.class);
   private final PostalCodeTimezoneDomain postalCodeTimezoneDomain;
 
   /**
@@ -31,7 +31,7 @@ public class PostalCodeTimezoneService {
    * @return PostalCodeTimezoneDto dto
    */
   private PostalCodeTimezoneDto preparePostalCodeTimezoneDto(
-          PostalCodeTimezoneEntity postalCodeTimezoneEntity) {
+      PostalCodeTimezoneEntity postalCodeTimezoneEntity) {
     return INSTANCE.convertToPostalCodeTimezoneDto(postalCodeTimezoneEntity);
   }
 
@@ -43,12 +43,12 @@ public class PostalCodeTimezoneService {
    * @throws PromiseEngineException
    */
   public PostalCodeTimezoneDto createPostalCodeTimezone(CreatePostalCodeTimezoneRequest baseRequest)
-          throws PromiseEngineException {
+      throws PromiseEngineException {
     logger.info("-- inside createPostalCodeTimezone service --");
     PostalCodeTimezoneEntity postalCodeTimezoneEntity =
-            INSTANCE.convertFromCreatePostalCodeTimezoneRequestToEntity(baseRequest);
+        INSTANCE.convertFromCreatePostalCodeTimezoneRequestToEntity(baseRequest);
     return preparePostalCodeTimezoneDto(
-            postalCodeTimezoneDomain.savePostalCodeTimezone(postalCodeTimezoneEntity));
+        postalCodeTimezoneDomain.savePostalCodeTimezone(postalCodeTimezoneEntity));
   }
 
   /**
@@ -61,18 +61,18 @@ public class PostalCodeTimezoneService {
    * @throws PromiseEngineException
    */
   public PostalCodeTimezoneDto getPostalCodeTimezone(String orgId, String postalCodePrefix)
-          throws PromiseEngineException {
+      throws PromiseEngineException {
     logger.info("-- inside getPostalCodeTimezone service --");
     Optional<PostalCodeTimezoneEntity> promiseSourcingRule =
-            Optional.ofNullable(
-                    postalCodeTimezoneDomain.getPostalCodeTimezone(orgId, postalCodePrefix));
+        Optional.ofNullable(
+            postalCodeTimezoneDomain.getPostalCodeTimezone(orgId, postalCodePrefix));
 
     if (promiseSourcingRule.isEmpty()) {
       logger.info("-- Postal Code Timezone not found --");
       throw new PromiseEngineException(
-              ApplicationLayer.SERVICE_LAYER,
-              ExceptionCodeMapping.SERVICE_FIND_FAILED,
-              "Postal Code Timezone not found!");
+          ApplicationLayer.SERVICE_LAYER,
+          ExceptionCodeMapping.SERVICE_FIND_FAILED,
+          "Postal Code Timezone not found!");
     }
 
     return preparePostalCodeTimezoneDto(promiseSourcingRule.get());
@@ -89,17 +89,17 @@ public class PostalCodeTimezoneService {
    * @throws PromiseEngineException
    */
   public PostalCodeTimezoneDto updatePostalCodeTimezone(
-          String orgId, String postalCodePrefix, UpdatePostalCodeTimezoneRequest baseRequest)
-          throws PromiseEngineException {
+      String orgId, String postalCodePrefix, UpdatePostalCodeTimezoneRequest baseRequest)
+      throws PromiseEngineException {
     logger.info("-- inside updatePostalCodeTimezone service --");
     PostalCodeTimezoneEntity postalCodeTimezoneEntityFromDB =
-            INSTANCE.convertToPostalCodeTimezoneEntity(getPostalCodeTimezone(orgId, postalCodePrefix));
+        INSTANCE.convertToPostalCodeTimezoneEntity(getPostalCodeTimezone(orgId, postalCodePrefix));
 
     INSTANCE.insertValuesFromUpdatePostalCodeTimezoneRequestToEntity(
-            baseRequest, postalCodeTimezoneEntityFromDB);
+        baseRequest, postalCodeTimezoneEntityFromDB);
 
     return preparePostalCodeTimezoneDto(
-            postalCodeTimezoneDomain.savePostalCodeTimezone(postalCodeTimezoneEntityFromDB));
+        postalCodeTimezoneDomain.savePostalCodeTimezone(postalCodeTimezoneEntityFromDB));
   }
 
   /**
@@ -112,11 +112,11 @@ public class PostalCodeTimezoneService {
    * @throws PromiseEngineException
    */
   public PostalCodeTimezoneDto deletePostalCodeTimezone(String orgId, String postalCodePrefix)
-          throws PromiseEngineException {
+      throws PromiseEngineException {
     logger.info("-- inside deletePostalCodeTimezone service --");
     PostalCodeTimezoneEntity postalCodeTimezoneEntityFromDB =
-            INSTANCE.convertToPostalCodeTimezoneEntity(getPostalCodeTimezone(orgId, postalCodePrefix));
+        INSTANCE.convertToPostalCodeTimezoneEntity(getPostalCodeTimezone(orgId, postalCodePrefix));
     return preparePostalCodeTimezoneDto(
-            postalCodeTimezoneDomain.deletePostalCodeTimezone(postalCodeTimezoneEntityFromDB));
+        postalCodeTimezoneDomain.deletePostalCodeTimezone(postalCodeTimezoneEntityFromDB));
   }
 }

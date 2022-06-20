@@ -1,9 +1,10 @@
 package com.nextuple.postal.code.timezone.exception;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import com.nextuple.common.response.error.ErrorResponse;
 import com.nextuple.common.response.error.ErrorType;
-import com.nextuple.postal.code.timezone.exception.PostalCodeTimezoneExceptionHandler;
 import com.nextuple.postal.code.timezone.exception.common.ExceptionCodeMapping;
 import com.nextuple.postal.code.timezone.exception.common.PromiseEngineException;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,9 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 class PostalCodeTimezoneExceptionHandlerTest {
 

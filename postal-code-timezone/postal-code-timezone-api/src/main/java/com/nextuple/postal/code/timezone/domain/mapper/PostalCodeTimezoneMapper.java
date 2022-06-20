@@ -10,19 +10,19 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(
-        unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface PostalCodeTimezoneMapper {
   PostalCodeTimezoneEntity convertToPostalCodeTimezoneEntity(
-          PostalCodeTimezoneDto postalCodeTimezoneDto);
+      PostalCodeTimezoneDto postalCodeTimezoneDto);
 
   PostalCodeTimezoneDto convertToPostalCodeTimezoneDto(
-          PostalCodeTimezoneEntity postalCodeTimezoneEntity);
+      PostalCodeTimezoneEntity postalCodeTimezoneEntity);
 
   PostalCodeTimezoneEntity convertFromCreatePostalCodeTimezoneRequestToEntity(
-          CreatePostalCodeTimezoneRequest createPostalCodeTimezoneRequest);
+      CreatePostalCodeTimezoneRequest createPostalCodeTimezoneRequest);
 
   void insertValuesFromUpdatePostalCodeTimezoneRequestToEntity(
-          UpdatePostalCodeTimezoneRequest updatePromiseSourcingRuleRequest,
-          @MappingTarget PostalCodeTimezoneEntity postalCodeTimezoneEntity);
+      UpdatePostalCodeTimezoneRequest updatePromiseSourcingRuleRequest,
+      @MappingTarget PostalCodeTimezoneEntity postalCodeTimezoneEntity);
 }

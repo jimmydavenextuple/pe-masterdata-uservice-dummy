@@ -1,18 +1,17 @@
 package com.nextuple.postal.code.timezone.domain.mapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.nextuple.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.nextuple.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.nextuple.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
 import com.nextuple.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
-import com.nextuple.postal.code.timezone.domain.mapper.PostalCodeTimezoneMapper;
 import com.nextuple.postal.code.timezone.utils.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PostalCodeTimezoneMapperTest {
 

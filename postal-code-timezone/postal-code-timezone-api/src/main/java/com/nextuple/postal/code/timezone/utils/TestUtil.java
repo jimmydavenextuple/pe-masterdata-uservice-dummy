@@ -18,47 +18,47 @@ import org.mapstruct.factory.Mappers;
 
 public class TestUtil {
 
-    private static final PostalCodeTimezoneMapper INSTANCE =
-            Mappers.getMapper(PostalCodeTimezoneMapper.class);
+  private static final PostalCodeTimezoneMapper INSTANCE =
+      Mappers.getMapper(PostalCodeTimezoneMapper.class);
 
-    public CreatePostalCodeTimezoneRequest getCreatePostalCodeTimezoneRequest() {
-        return CreatePostalCodeTimezoneRequest.builder()
-                .orgId(ORG_ID)
-                .postalCodePrefix(POSTAL_CODE_PREFIX)
-                .country(COUNTRY)
-                .state(STATE)
-                .city(CITY)
-                .latitude(LATITUDE)
-                .longitude(LONGITUDE)
-                .timeZone(TIME_ZONE)
-                .build();
-    }
+  public CreatePostalCodeTimezoneRequest getCreatePostalCodeTimezoneRequest() {
+    return CreatePostalCodeTimezoneRequest.builder()
+        .orgId(ORG_ID)
+        .postalCodePrefix(POSTAL_CODE_PREFIX)
+        .country(COUNTRY)
+        .state(STATE)
+        .city(CITY)
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .timeZone(TIME_ZONE)
+        .build();
+  }
 
-    public PostalCodeTimezoneDto getPostalCodeTimezoneDto() {
-        return PostalCodeTimezoneDto.builder()
-                .orgId(ORG_ID)
-                .postalCodePrefix(POSTAL_CODE_PREFIX)
-                .country(COUNTRY)
-                .state(STATE)
-                .city(CITY)
-                .latitude(LATITUDE)
-                .longitude(LONGITUDE)
-                .timeZone(TIME_ZONE)
-                .build();
-    }
+  public PostalCodeTimezoneDto getPostalCodeTimezoneDto() {
+    return PostalCodeTimezoneDto.builder()
+        .orgId(ORG_ID)
+        .postalCodePrefix(POSTAL_CODE_PREFIX)
+        .country(COUNTRY)
+        .state(STATE)
+        .city(CITY)
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .timeZone(TIME_ZONE)
+        .build();
+  }
 
-    public PostalCodeTimezoneEntity getPostalCodeTimezoneEntity() {
-        return INSTANCE.convertToPostalCodeTimezoneEntity(getPostalCodeTimezoneDto());
-    }
+  public PostalCodeTimezoneEntity getPostalCodeTimezoneEntity() {
+    return INSTANCE.convertToPostalCodeTimezoneEntity(getPostalCodeTimezoneDto());
+  }
 
-    public UpdatePostalCodeTimezoneRequest getUpdatePostalCodeTimezoneRequest() {
-        return UpdatePostalCodeTimezoneRequest.builder()
-                .country(COUNTRY)
-                .state(STATE)
-                .city(CITY)
-                .latitude(LATITUDE)
-                .longitude(LONGITUDE)
-                .timeZone(TIME_ZONE)
-                .build();
-    }
+  public UpdatePostalCodeTimezoneRequest getUpdatePostalCodeTimezoneRequest() {
+    return UpdatePostalCodeTimezoneRequest.builder()
+        .country(COUNTRY)
+        .state(STATE)
+        .city(CITY)
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .timeZone(TIME_ZONE)
+        .build();
+  }
 }
