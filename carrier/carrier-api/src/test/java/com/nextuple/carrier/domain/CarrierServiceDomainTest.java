@@ -67,7 +67,7 @@ public class CarrierServiceDomainTest {
 
     Optional<CarrierServiceEntity> carrierServiceEntity1 =
         carrierServiceDomain.findCarrierServiceByCarrierIdAndServiceIdAndOrgId(
-            TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID);
+            TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
     Assertions.assertEquals(carrierServiceEntity, carrierServiceEntity1.get());
 
     verify(carrierServiceRepository, times(1))
@@ -85,7 +85,7 @@ public class CarrierServiceDomainTest {
             CarrierServiceDomainException.class,
             () ->
                 carrierServiceDomain.findCarrierServiceByCarrierIdAndServiceIdAndOrgId(
-                    TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID));
+                    TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
     Assertions.assertEquals("Error while finding carrier service", exception.getMessage());
     verify(carrierServiceRepository, times(1))
         .findCarrierServiceByCarrierIdAndServiceIdAndOrgId(any(), any(), any());

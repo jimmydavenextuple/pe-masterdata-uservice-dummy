@@ -63,7 +63,10 @@ class CarrierServiceServiceTest {
 
     CarrierServiceResponse CarrierServiceResponse =
         carrierServiceService.updateCarrierServiceDetails(
-            TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID, carrierServiceUpdateRequest);
+            TestUtil.CARRIER_ID,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.ORG_ID,
+            carrierServiceUpdateRequest);
     Assertions.assertEquals(testUtil.getCarrierServiceUpdateResponse(), CarrierServiceResponse);
 
     verify(carrierServiceDomain, times(1))
@@ -86,7 +89,7 @@ class CarrierServiceServiceTest {
             () ->
                 carrierServiceService.updateCarrierServiceDetails(
                     TestUtil.CARRIER_ID,
-                    TestUtil.SERVICE_ID,
+                    TestUtil.CARRIER_SERVICE_ID,
                     TestUtil.ORG_ID,
                     carrierServiceUpdateRequest));
     Assertions.assertEquals("Carrier service not found with given details", exception.getMessage());
@@ -106,7 +109,7 @@ class CarrierServiceServiceTest {
 
     CarrierServiceResponse CarrierServiceResponse =
         carrierServiceService.getCarrierServiceDetails(
-            TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID);
+            TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
     Assertions.assertEquals(testUtil.getCarrierServiceUpdateResponse(), CarrierServiceResponse);
     verify(carrierServiceDomain, times(1))
         .findCarrierServiceByCarrierIdAndServiceIdAndOrgId(any(), any(), any());
@@ -123,7 +126,7 @@ class CarrierServiceServiceTest {
             CommonServiceException.class,
             () ->
                 carrierServiceService.getCarrierServiceDetails(
-                    TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID));
+                    TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
     Assertions.assertEquals("Carrier service not found with given details", exception.getMessage());
 
     verify(carrierServiceDomain, times(1))
@@ -139,7 +142,7 @@ class CarrierServiceServiceTest {
 
     CarrierServiceResponse CarrierServiceResponse =
         carrierServiceService.deleteCarrierService(
-            TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID);
+            TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
     Assertions.assertEquals(testUtil.getCarrierServiceResponse(), CarrierServiceResponse);
     verify(carrierServiceDomain, times(1))
         .findCarrierServiceByCarrierIdAndServiceIdAndOrgId(any(), any(), any());
@@ -156,7 +159,7 @@ class CarrierServiceServiceTest {
             CommonServiceException.class,
             () ->
                 carrierServiceService.deleteCarrierService(
-                    TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID));
+                    TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
     Assertions.assertEquals("Carrier service not found with given details", exception.getMessage());
 
     verify(carrierServiceDomain, times(1))

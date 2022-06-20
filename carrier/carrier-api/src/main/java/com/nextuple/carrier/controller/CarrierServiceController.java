@@ -51,17 +51,17 @@ public class CarrierServiceController {
     }
   }
 
-  @GetMapping("/{carrierId}/{serviceId}/{orgId}")
+  @GetMapping("/{carrierId}/{carrierServiceId}/{orgId}")
   public ResponseEntity<BaseResponse<CarrierServiceResponse>> getCarrierServiceDetails(
       @NotBlank @PathVariable String carrierId,
-      @NotBlank @PathVariable String serviceId,
+      @NotBlank @PathVariable String carrierServiceId,
       @NotBlank @PathVariable String orgId)
       throws CarrierServiceDomainException, CommonServiceException {
     logger.info("Processing get CarrierService details");
     try {
 
       CarrierServiceResponse carrierServiceResponse =
-          carrierserviceService.getCarrierServiceDetails(carrierId, serviceId, orgId);
+          carrierserviceService.getCarrierServiceDetails(carrierId, carrierServiceId, orgId);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -74,10 +74,10 @@ public class CarrierServiceController {
     }
   }
 
-  @PutMapping("/{carrierId}/{serviceId}/{orgId}")
+  @PutMapping("/{carrierId}/{carrierServiceId}/{orgId}")
   public ResponseEntity<BaseResponse<CarrierServiceResponse>> updateCarrierServiceDetails(
       @NotBlank @PathVariable String carrierId,
-      @NotBlank @PathVariable String serviceId,
+      @NotBlank @PathVariable String carrierServiceId,
       @NotBlank @PathVariable String orgId,
       @Valid @RequestBody CarrierServiceUpdateRequest carrierServiceUpdateRequest)
       throws CarrierServiceDomainException, CommonServiceException {
@@ -86,7 +86,7 @@ public class CarrierServiceController {
 
       CarrierServiceResponse carrierServiceResponse =
           carrierserviceService.updateCarrierServiceDetails(
-              carrierId, serviceId, orgId, carrierServiceUpdateRequest);
+              carrierId, carrierServiceId, orgId, carrierServiceUpdateRequest);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -99,16 +99,16 @@ public class CarrierServiceController {
     }
   }
 
-  @DeleteMapping("/{carrierId}/{serviceId}/{orgId}")
+  @DeleteMapping("/{carrierId}/{carrierServiceId}/{orgId}")
   public ResponseEntity<BaseResponse<CarrierServiceResponse>> deleteCarrierService(
       @NotBlank @PathVariable String carrierId,
-      @NotBlank @PathVariable String serviceId,
+      @NotBlank @PathVariable String carrierServiceId,
       @NotBlank @PathVariable String orgId)
       throws CarrierServiceDomainException, CommonServiceException {
     logger.info("Processing delete CarrierService");
     try {
       CarrierServiceResponse carrierServiceResponse =
-          carrierserviceService.deleteCarrierService(carrierId, serviceId, orgId);
+          carrierserviceService.deleteCarrierService(carrierId, carrierServiceId, orgId);
 
       return ResponseEntity.ok(
           BaseResponse.builder()

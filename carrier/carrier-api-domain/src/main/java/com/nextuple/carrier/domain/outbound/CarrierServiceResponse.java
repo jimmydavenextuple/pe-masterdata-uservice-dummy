@@ -13,7 +13,7 @@ public class CarrierServiceResponse {
 
   private String orgId;
   private String carrierId;
-  private String serviceId;
+  private String carrierServiceId;
   private String carrierName;
   private String serviceName;
   private String serviceOptions;

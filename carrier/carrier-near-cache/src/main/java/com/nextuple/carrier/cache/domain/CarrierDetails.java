@@ -16,7 +16,7 @@ public class CarrierDetails implements Serializable {
 
   private String carrierId;
 
-  private String serviceId;
+  private String carrierServiceId;
 
   private String carrierName;
 

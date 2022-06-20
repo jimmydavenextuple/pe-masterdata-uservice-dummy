@@ -16,7 +16,9 @@ public interface CarrierFeignImpl
   @GetMapping("/carrier/get")
   BaseResponse<CarrierServiceResponse> get(String request);
 
-  @GetMapping("/carrier-service/{carrierId}/{serviceId}/{orgId}")
+  @GetMapping("/carrier-service/{carrierId}/{carrierServiceId}/{orgId}")
   public BaseResponse<CarrierServiceResponse> getCarrier(
-      @PathVariable String carrierId, @PathVariable String serviceId, @PathVariable String orgId);
+      @PathVariable String carrierId,
+      @PathVariable String carrierServiceId,
+      @PathVariable String orgId);
 }

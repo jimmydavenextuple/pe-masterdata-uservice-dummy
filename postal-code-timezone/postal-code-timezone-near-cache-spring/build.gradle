@@ -1,0 +1,18 @@
+jar.enabled=true
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation(project(":common-util"))
+    implementation(project(":nfs-near-cache:core-near-cache"))
+    implementation(project(":nfs-near-cache:core-near-cache-spring"))
+    implementation(project(":postal-code-timezone:postal-code-timezone-near-cache"))
+
+    constraints {
+        implementation('io.github.openfeign:feign-core:11.8') {
+            because 'versions below are vulnerable to CVE-2019-16942'
+        }
+    }
+}
