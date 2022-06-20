@@ -61,7 +61,7 @@ public class CarrierServiceDomainTest {
   @Test
   void getCarrierServiceDetailsTest() throws CarrierServiceDomainException {
     CarrierServiceEntity carrierServiceEntity = testUtil.getCarrierServiceEntity();
-    when(carrierServiceRepository.findCarrierServiceByCarrierIdAndServiceIdAndOrgId(
+    when(carrierServiceRepository.findCarrierServiceByCarrierIdAndCarrierServiceIdAndOrgId(
             any(), any(), any()))
         .thenReturn(Optional.of(carrierServiceEntity));
 
@@ -71,12 +71,12 @@ public class CarrierServiceDomainTest {
     Assertions.assertEquals(carrierServiceEntity, carrierServiceEntity1.get());
 
     verify(carrierServiceRepository, times(1))
-        .findCarrierServiceByCarrierIdAndServiceIdAndOrgId(any(), any(), any());
+        .findCarrierServiceByCarrierIdAndCarrierServiceIdAndOrgId(any(), any(), any());
   }
 
   @Test
   void getCarrierServiceDetailsTestException() {
-    when(carrierServiceRepository.findCarrierServiceByCarrierIdAndServiceIdAndOrgId(
+    when(carrierServiceRepository.findCarrierServiceByCarrierIdAndCarrierServiceIdAndOrgId(
             any(), any(), any()))
         .thenThrow(new RuntimeException("Error while fetching details"));
 
@@ -88,7 +88,7 @@ public class CarrierServiceDomainTest {
                     TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
     Assertions.assertEquals("Error while finding carrier service", exception.getMessage());
     verify(carrierServiceRepository, times(1))
-        .findCarrierServiceByCarrierIdAndServiceIdAndOrgId(any(), any(), any());
+        .findCarrierServiceByCarrierIdAndCarrierServiceIdAndOrgId(any(), any(), any());
   }
 
   @Test
