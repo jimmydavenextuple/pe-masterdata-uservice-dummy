@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
-    name = "promising-engine-uservice",
-    url = "${spring.application.dependencies.sourcing:http://localhost:8081/}")
+    name = "pe-config-promise-sourcing-rule",
+    url =
+        "${spring.application.dependencies.sourcing:http://pe-config-promise-sourcing-rule:8080/}")
 public interface SourcingRuleFeignImpl
     extends GenericFeignService<
         FetchPromiseSourcingRuleRequest, BaseResponse<FetchPromiseSourcingRuleResponse>> {

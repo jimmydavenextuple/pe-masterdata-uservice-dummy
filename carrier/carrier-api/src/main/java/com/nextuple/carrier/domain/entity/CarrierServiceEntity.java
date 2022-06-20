@@ -28,8 +28,8 @@ public class CarrierServiceEntity {
   private String carrierId;
 
   @Id
-  @Column(name = "service_id")
-  private String serviceId;
+  @Column(name = "carrier_service_id")
+  private String carrierServiceId;
 
   @Column(name = "carrier_name")
   private String carrierName;

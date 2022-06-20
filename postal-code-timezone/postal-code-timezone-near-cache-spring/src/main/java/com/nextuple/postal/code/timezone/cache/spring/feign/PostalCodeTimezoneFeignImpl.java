@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
-    name = "promising-engine-uservice",
-    url = "${spring.application.dependencies.postal:http://promising-engine:8080/}")
+    name = "pe-config-postal-code-timezone",
+    url = "${spring.application.dependencies.postal:http://pe-config-postal-code-timezone:8080/}")
 public interface PostalCodeTimezoneFeignImpl
     extends GenericFeignService<String, BaseResponse<PostalCodeTimezoneDto>> {
 

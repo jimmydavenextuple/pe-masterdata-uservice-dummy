@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
-    name = "promising-engine-uservice",
-    url = "${spring.application.dependencies.weightage:http://localhost:8082/}")
+    name = "pe-config-weightage-configuration",
+    url =
+        "${spring.application.dependencies.weightage:http://pe-config-weightage-configuration:8080/}")
 public interface WeightageConfigurationFeignImpl
     extends GenericFeignService<FetchWeightageRequest, BaseResponse<Map<String, Float>>> {
 

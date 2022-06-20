@@ -74,7 +74,7 @@ class CarrierServiceControllerTest {
 
     ResponseEntity<BaseResponse<CarrierServiceResponse>> responseEntity =
         carrierServiceController.getCarrierServiceDetails(
-            TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID);
+            TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
 
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertEquals(CarrierServiceResponse, responseEntity.getBody().getPayload());
@@ -93,7 +93,7 @@ class CarrierServiceControllerTest {
             Exception.class,
             () ->
                 carrierServiceController.getCarrierServiceDetails(
-                    TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID));
+                    TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
     Assertions.assertEquals("Unable to fetch carrier service details", exception.getMessage());
     verify(carrierServiceService, times(1)).getCarrierServiceDetails(any(), any(), any());
   }
@@ -108,7 +108,10 @@ class CarrierServiceControllerTest {
 
     ResponseEntity<BaseResponse<CarrierServiceResponse>> responseEntity =
         carrierServiceController.updateCarrierServiceDetails(
-            TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID, carrierServiceUpdateRequest);
+            TestUtil.CARRIER_ID,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.ORG_ID,
+            carrierServiceUpdateRequest);
 
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertEquals(
@@ -133,7 +136,7 @@ class CarrierServiceControllerTest {
             () ->
                 carrierServiceController.updateCarrierServiceDetails(
                     TestUtil.CARRIER_ID,
-                    TestUtil.SERVICE_ID,
+                    TestUtil.CARRIER_SERVICE_ID,
                     TestUtil.ORG_ID,
                     carrierServiceUpdateRequest));
     Assertions.assertEquals("Unable to update the carrier service details", exception.getMessage());
@@ -149,7 +152,7 @@ class CarrierServiceControllerTest {
 
     ResponseEntity<BaseResponse<CarrierServiceResponse>> responseEntity =
         carrierServiceController.deleteCarrierService(
-            TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID);
+            TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
 
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertEquals(
@@ -169,7 +172,7 @@ class CarrierServiceControllerTest {
             Exception.class,
             () ->
                 carrierServiceController.deleteCarrierService(
-                    TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID));
+                    TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
     Assertions.assertEquals("Error while deleting carrier service", exception.getMessage());
 
     verify(carrierServiceService, times(1)).deleteCarrierService(any(), any(), any());

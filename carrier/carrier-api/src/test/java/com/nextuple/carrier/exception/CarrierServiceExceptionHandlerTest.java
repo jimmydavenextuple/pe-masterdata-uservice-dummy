@@ -26,7 +26,10 @@ class CarrierServiceExceptionHandlerTest {
   void handleNodeDomainException() {
     CarrierServiceDomainException exception =
         new CarrierServiceDomainException(
-            "Internal Server Error", TestUtil.CARRIER_ID, TestUtil.SERVICE_ID, TestUtil.ORG_ID);
+            "Internal Server Error",
+            TestUtil.CARRIER_ID,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.ORG_ID);
 
     ResponseEntity<ErrorResponse> errorResponseResponseEntity =
         carrierServiceExceptionHandler.handleOtherException(exception);

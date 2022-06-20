@@ -24,7 +24,7 @@ public class CarrierServiceRequest implements Serializable {
 
   @NotBlank
   @Length(max = 50)
-  private String serviceId;
+  private String carrierServiceId;
 
   private String carrierName;
   private String serviceName;
