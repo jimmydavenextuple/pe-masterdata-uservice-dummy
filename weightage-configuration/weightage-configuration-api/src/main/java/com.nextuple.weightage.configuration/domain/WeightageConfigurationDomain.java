@@ -1,7 +1,7 @@
 package com.nextuple.weightage.configuration.domain;
 
+import com.nextuple.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
 import com.nextuple.weightage.configuration.domain.entity.WeightageConfiguration;
-import com.nextuple.weightage.configuration.domain.inbound.FetchWeightageRequest;
 import com.nextuple.weightage.configuration.domain.repository.WeightageConfigurationRepository;
 import com.nextuple.weightage.configuration.exception.common.ApplicationLayer;
 import com.nextuple.weightage.configuration.exception.common.ExceptionCodeMapping;

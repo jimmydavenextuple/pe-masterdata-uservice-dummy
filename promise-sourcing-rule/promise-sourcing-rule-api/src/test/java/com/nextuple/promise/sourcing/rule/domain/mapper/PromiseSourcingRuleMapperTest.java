@@ -2,10 +2,10 @@ package com.nextuple.promise.sourcing.rule.domain.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.nextuple.promise.sourcing.rule.domain.dto.PromiseSourcingRuleDto;
+import com.nextuple.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.UpdatePromiseSourcingRuleRequest;
 import com.nextuple.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
-import com.nextuple.promise.sourcing.rule.domain.inbound.CreatePromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.inbound.UpdatePromiseSourcingRuleRequest;
 import com.nextuple.promise.sourcing.rule.utils.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,15 +72,5 @@ class PromiseSourcingRuleMapperTest {
         INSTANCE.convertFromCreatePromiseSourcingRuleRequestToEntity(
             createPromiseSourcingRuleRequest);
     assertEquals(createPromiseSourcingRuleRequest.getPriority(), received_entity.getPriority());
-  }
-
-  @Test
-  void convertFromUpdatePromiseSourcingRuleRequestToDtoTest() {
-    UpdatePromiseSourcingRuleRequest updatePromiseSourcingRuleRequest =
-        testUtil.getUpdatePromiseSourcingRuleRequest();
-
-    PromiseSourcingRuleDto received_dto =
-        INSTANCE.convertFromUpdatePromiseSourcingRuleRequestToDto(updatePromiseSourcingRuleRequest);
-    assertEquals(updatePromiseSourcingRuleRequest.getPriority(), received_dto.getPriority());
   }
 }

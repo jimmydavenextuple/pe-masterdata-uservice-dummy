@@ -1,7 +1,7 @@
 package com.nextuple.weightage.configuration.spring.cache.util;
 
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.weightage.configuration.cache.domain.FetchWeightageRequest;
+import com.nextuple.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
 import com.nextuple.weightage.configuration.cache.domain.WeightageConfigurationCacheKey;
 import com.nextuple.weightage.configuration.cache.domain.WeightageConfigurationCacheValue;
 import java.util.Collections;

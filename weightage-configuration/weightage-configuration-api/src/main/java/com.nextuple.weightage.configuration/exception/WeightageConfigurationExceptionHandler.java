@@ -1,10 +1,9 @@
 package com.nextuple.weightage.configuration.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.nextuple.weightage.configuration.error.ErrorResponse;
-import com.nextuple.weightage.configuration.error.ErrorType;
-import com.nextuple.weightage.configuration.error.FieldError;
-import com.nextuple.weightage.configuration.exception.common.CommonServiceException;
+import com.nextuple.common.response.error.ErrorResponse;
+import com.nextuple.common.response.error.ErrorType;
+import com.nextuple.common.response.error.FieldError;
 import com.nextuple.weightage.configuration.exception.common.PromiseEngineException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,16 +63,6 @@ public class WeightageConfigurationExceptionHandler {
                         .rejectedValue(x.getRejectedValue() + "")
                         .build()));
     return ResponseEntity.badRequest().body(builder.build());
-  }
-
-  @ExceptionHandler(CommonServiceException.class)
-  public ResponseEntity<ErrorResponse> handleCommonServiceException(CommonServiceException e) {
-    return ResponseEntity.status(e.getHttpStatus())
-        .body(
-            ErrorResponse.builder(ErrorType.ERROR, e.getErrorCode())
-                .message(e.getMessage())
-                .errorField(e.getFieldInfo())
-                .build());
   }
 
   @ExceptionHandler(HttpMessageNotReadableException.class)

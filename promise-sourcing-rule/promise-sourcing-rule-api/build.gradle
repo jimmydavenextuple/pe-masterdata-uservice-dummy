@@ -12,7 +12,10 @@ configurations {
 }
 
 dependencies {
+    implementation(project(":promise-sourcing-rule:promise-sourcing-rule-api-domain"))
     implementation(project(":common-util"))
     implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
     runtimeOnly 'org.postgresql:postgresql'
 }
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11

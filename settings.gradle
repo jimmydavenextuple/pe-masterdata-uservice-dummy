@@ -113,3 +113,8 @@ include 'weightage-configuration:weightage-configuration-near-cache'
 findProject(':weightage-configuration:weightage-configuration-near-cache')?.name = 'weightage-configuration-near-cache'
 include 'weightage-configuration:weightage-configuration-near-cache-spring'
 findProject(':weightage-configuration:weightage-configuration-near-cache-spring')?.name = 'weightage-configuration-near-cache-spring'
+include 'promise-sourcing-rule:promise-sourcing-rule-api-domain'
+findProject(':promise-sourcing-rule:promise-sourcing-rule-api-domain')?.name = 'promise-sourcing-rule-api-domain'
+include 'weightage-configuration:weightage-configuration-api-domain'
+findProject(':weightage-configuration:weightage-configuration-api-domain')?.name = 'weightage-configuration-api-domain'
+

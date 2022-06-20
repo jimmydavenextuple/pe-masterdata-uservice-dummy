@@ -1,7 +1,7 @@
 package com.nextuple.promise.sourcing.rule.domain;
 
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
 import com.nextuple.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
-import com.nextuple.promise.sourcing.rule.domain.inbound.FetchPromiseSourcingRuleRequest;
 import com.nextuple.promise.sourcing.rule.domain.repository.PromiseSourcingRuleRepository;
 import com.nextuple.promise.sourcing.rule.exception.common.ApplicationLayer;
 import com.nextuple.promise.sourcing.rule.exception.common.ExceptionCodeMapping;

@@ -10,8 +10,8 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
 import com.nextuple.weightage.configuration.domain.entity.WeightageConfiguration;
-import com.nextuple.weightage.configuration.domain.inbound.FetchWeightageRequest;
 import com.nextuple.weightage.configuration.domain.repository.WeightageConfigurationRepository;
 import com.nextuple.weightage.configuration.exception.common.PromiseEngineException;
 import com.nextuple.weightage.configuration.utils.TestUtil;

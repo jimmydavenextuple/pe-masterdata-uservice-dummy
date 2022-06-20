@@ -9,11 +9,11 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.promise.sourcing.rule.domain.dto.PromiseSourcingRuleDto;
-import com.nextuple.promise.sourcing.rule.domain.inbound.CreatePromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.inbound.FetchPromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.inbound.UpdatePromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.outbound.FetchPromiseSourcingRuleResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.UpdatePromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.FetchPromiseSourcingRuleResponse;
 import com.nextuple.promise.sourcing.rule.exception.common.PromiseEngineException;
 import com.nextuple.promise.sourcing.rule.service.PromiseSourcingRuleService;
 import com.nextuple.promise.sourcing.rule.utils.TestUtil;

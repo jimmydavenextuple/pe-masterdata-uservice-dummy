@@ -3,9 +3,8 @@ package com.nextuple.promise.sourcing.rule.exception;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import com.nextuple.promise.sourcing.rule.error.ErrorResponse;
-import com.nextuple.promise.sourcing.rule.error.ErrorType;
-import com.nextuple.promise.sourcing.rule.exception.common.CommonServiceException;
+import com.nextuple.common.response.error.ErrorResponse;
+import com.nextuple.common.response.error.ErrorType;
 import com.nextuple.promise.sourcing.rule.exception.common.ExceptionCodeMapping;
 import com.nextuple.promise.sourcing.rule.exception.common.PromiseEngineException;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,17 +48,6 @@ class PromiseSourcingRuleExceptionHandlerTest {
         promiseSourcingRuleExceptionHandler.handleMethodArgumentNotValidException(e);
 
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
-  }
-
-  @Test
-  void handleCommonServiceExceptionTest() {
-    CommonServiceException e = new CommonServiceException("msg", HttpStatus.NOT_FOUND, 1005, null);
-
-    ResponseEntity<ErrorResponse> responseEntity =
-        promiseSourcingRuleExceptionHandler.handleCommonServiceException(e);
-
-    assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
   }
 

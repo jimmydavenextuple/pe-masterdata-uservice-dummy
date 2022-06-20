@@ -1,10 +1,9 @@
 package com.nextuple.promise.sourcing.rule.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.nextuple.promise.sourcing.rule.error.ErrorResponse;
-import com.nextuple.promise.sourcing.rule.error.ErrorType;
-import com.nextuple.promise.sourcing.rule.error.FieldError;
-import com.nextuple.promise.sourcing.rule.exception.common.CommonServiceException;
+import com.nextuple.common.response.error.ErrorResponse;
+import com.nextuple.common.response.error.ErrorType;
+import com.nextuple.common.response.error.FieldError;
 import com.nextuple.promise.sourcing.rule.exception.common.PromiseEngineException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,16 +63,6 @@ public class PromiseSourcingRuleExceptionHandler {
                         .rejectedValue(x.getRejectedValue() + "")
                         .build()));
     return ResponseEntity.badRequest().body(builder.build());
-  }
-
-  @ExceptionHandler(CommonServiceException.class)
-  public ResponseEntity<ErrorResponse> handleCommonServiceException(CommonServiceException e) {
-    return ResponseEntity.status(e.getHttpStatus())
-        .body(
-            ErrorResponse.builder(ErrorType.ERROR, e.getErrorCode())
-                .message(e.getMessage())
-                .errorField(e.getFieldInfo())
-                .build());
   }
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
