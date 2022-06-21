@@ -25,7 +25,7 @@ public class KafkaMockController {
       kafkaTemplate.send(topicName, message);
       return ResponseEntity.ok("Success");
     } catch (Exception e) {
-      logger.error("Failed to add item");
+      logger.error("Failed to produce item master message");
       throw e;
     }
   }
