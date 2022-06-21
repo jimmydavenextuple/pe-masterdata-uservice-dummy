@@ -1,6 +1,5 @@
 package com.nextuple.item.controller;
 
-import com.nextuple.common.util.JsonUtil;
 import com.nextuple.item.domain.events.ItemMasterEvent;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -19,11 +18,11 @@ public class KafkaMockController {
   private static final Logger logger = LoggerFactory.getLogger(KafkaMockController.class);
   private final KafkaTemplate<String, Object> kafkaTemplate;
 
-  @PostMapping("/topics/{topic}")
+  @PostMapping("producer/{topicName}/messages")
   public ResponseEntity<String> produceKafkaMessage(
-      @PathVariable String topic, @RequestBody Object message) {
+      @PathVariable String topicName, @RequestBody ItemMasterEvent message) {
     try {
-      kafkaTemplate.send(topic, message);
+      kafkaTemplate.send(topicName, message);
       return ResponseEntity.ok("Success");
     } catch (Exception e) {
       logger.error("Failed to add item");

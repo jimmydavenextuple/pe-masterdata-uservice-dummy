@@ -10,7 +10,7 @@ spring:
     username: postgres
     password: arihant
   kafka:
-    bootstrap-servers: 127.0.0.1:9092
+    bootstrap-servers: loyalty-temp1-kafka.integration.awshbc.io:9092
     consumer:
       enable-auto-commit: true
       auto-offset-reset: earliest
@@ -21,7 +21,7 @@ spring:
         spring.json.trusted.packages: "*"
       topics:
         item_master:
-          name: ITEM_MASTER_INTEGRATION
+          name: items.promise.bay.v1
           group-id: item-master-local
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer

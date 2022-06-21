@@ -4,7 +4,6 @@ import com.nextuple.item.domain.events.ItemMasterEvent;
 import com.nextuple.item.domain.mapper.ItemMapper;
 import com.nextuple.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
