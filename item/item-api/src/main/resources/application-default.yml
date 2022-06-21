@@ -8,7 +8,7 @@ spring:
     platform: postgres
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: arihant
+    password: postgres
   kafka:
     bootstrap-servers: loyalty-temp1-kafka.integration.awshbc.io:9092
     consumer:
