@@ -16,14 +16,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.nextuple.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.UpdatePromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.FetchPromiseSourcingRuleResponse;
 import com.nextuple.promise.sourcing.rule.domain.PromiseSourcingRuleDomain;
-import com.nextuple.promise.sourcing.rule.domain.dto.PromiseSourcingRuleDto;
 import com.nextuple.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
-import com.nextuple.promise.sourcing.rule.domain.inbound.CreatePromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.inbound.FetchPromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.inbound.UpdatePromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.mapper.PromiseSourcingRuleMapper;
-import com.nextuple.promise.sourcing.rule.domain.outbound.FetchPromiseSourcingRuleResponse;
 import com.nextuple.promise.sourcing.rule.exception.common.PromiseEngineException;
 import com.nextuple.promise.sourcing.rule.utils.TestUtil;
 import java.util.ArrayList;
@@ -31,7 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -41,9 +39,6 @@ class PromiseSourcingRuleServiceTest {
   @Mock private PromiseSourcingRuleDomain promiseSourcingRuleDomain;
 
   @InjectMocks private TestUtil testUtil;
-
-  private static final PromiseSourcingRuleMapper INSTANCE =
-      Mappers.getMapper(PromiseSourcingRuleMapper.class);
 
   @BeforeEach
   void setUp() {

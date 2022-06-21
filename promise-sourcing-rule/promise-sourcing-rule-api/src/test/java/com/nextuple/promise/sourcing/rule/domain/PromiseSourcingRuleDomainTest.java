@@ -15,8 +15,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
 import com.nextuple.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
-import com.nextuple.promise.sourcing.rule.domain.inbound.FetchPromiseSourcingRuleRequest;
 import com.nextuple.promise.sourcing.rule.domain.repository.PromiseSourcingRuleRepository;
 import com.nextuple.promise.sourcing.rule.exception.common.PromiseEngineException;
 import com.nextuple.promise.sourcing.rule.utils.TestUtil;

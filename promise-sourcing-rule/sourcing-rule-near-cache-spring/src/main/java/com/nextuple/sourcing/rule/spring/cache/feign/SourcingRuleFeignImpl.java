@@ -2,8 +2,8 @@ package com.nextuple.sourcing.rule.spring.cache.feign;
 
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.service.GenericFeignService;
-import com.nextuple.sourcing.rule.cache.domain.FetchPromiseSourcingRuleRequest;
-import com.nextuple.sourcing.rule.cache.domain.FetchPromiseSourcingRuleResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.FetchPromiseSourcingRuleResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

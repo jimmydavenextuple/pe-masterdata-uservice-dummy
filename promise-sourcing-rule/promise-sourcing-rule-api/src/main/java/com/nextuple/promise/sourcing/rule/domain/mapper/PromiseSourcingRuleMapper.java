@@ -1,9 +1,9 @@
 package com.nextuple.promise.sourcing.rule.domain.mapper;
 
-import com.nextuple.promise.sourcing.rule.domain.dto.PromiseSourcingRuleDto;
+import com.nextuple.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.UpdatePromiseSourcingRuleRequest;
 import com.nextuple.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
-import com.nextuple.promise.sourcing.rule.domain.inbound.CreatePromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.inbound.UpdatePromiseSourcingRuleRequest;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -34,7 +34,4 @@ public interface PromiseSourcingRuleMapper {
 
   PromiseSourcingRule convertFromCreatePromiseSourcingRuleRequestToEntity(
       CreatePromiseSourcingRuleRequest createPromiseSourcingRuleRequest);
-
-  PromiseSourcingRuleDto convertFromUpdatePromiseSourcingRuleRequestToDto(
-      UpdatePromiseSourcingRuleRequest updatePromiseSourcingRuleRequest);
 }

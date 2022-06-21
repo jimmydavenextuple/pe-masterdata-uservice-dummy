@@ -1,11 +1,11 @@
 package com.nextuple.promise.sourcing.rule.controller;
 
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.promise.sourcing.rule.domain.dto.PromiseSourcingRuleDto;
-import com.nextuple.promise.sourcing.rule.domain.inbound.CreatePromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.inbound.FetchPromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.inbound.UpdatePromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.outbound.FetchPromiseSourcingRuleResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.UpdatePromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.FetchPromiseSourcingRuleResponse;
 import com.nextuple.promise.sourcing.rule.exception.common.PromiseEngineException;
 import com.nextuple.promise.sourcing.rule.service.PromiseSourcingRuleService;
 import java.util.List;
@@ -16,7 +16,15 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/promiseSourcingRule")
@@ -68,7 +76,7 @@ public class PromiseSourcingRuleController {
       @NotBlank @RequestParam String allocationRuleId,
       @NotBlank @RequestParam int priority)
       throws PromiseEngineException {
-    logger.info("Processing get Promise Sourcing Rule by sourcingRuleId request");
+    logger.info("Processing get Promise Sourcing Rule request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
