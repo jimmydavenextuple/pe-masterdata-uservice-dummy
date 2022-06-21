@@ -1,10 +1,10 @@
 package com.nextuple.weightage.configuration.controller;
 
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.weightage.configuration.domain.dto.WeightageConfigurationDto;
-import com.nextuple.weightage.configuration.domain.inbound.CreateWeightageConfigurationRequest;
-import com.nextuple.weightage.configuration.domain.inbound.FetchWeightageRequest;
-import com.nextuple.weightage.configuration.domain.inbound.UpdateWeightageConfigurationRequest;
+import com.nextuple.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
+import com.nextuple.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
+import com.nextuple.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
+import com.nextuple.weightage.configuration.api.domain.inbound.UpdateWeightageConfigurationRequest;
 import com.nextuple.weightage.configuration.exception.common.PromiseEngineException;
 import com.nextuple.weightage.configuration.service.WeightageConfigurationService;
 import java.util.List;

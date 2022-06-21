@@ -9,14 +9,14 @@ import static com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleConsta
 import static com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.SERVICE_OPTION;
 import static com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.STANDARD;
 
-import com.nextuple.promise.sourcing.rule.domain.dto.PromiseSourcingRuleDto;
+import com.nextuple.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.UpdatePromiseSourcingRuleRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.FetchPromiseSourcingRuleResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.pojo.ServiceOptionInfo;
 import com.nextuple.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
-import com.nextuple.promise.sourcing.rule.domain.inbound.CreatePromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.inbound.FetchPromiseSourcingRuleRequest;
-import com.nextuple.promise.sourcing.rule.domain.inbound.UpdatePromiseSourcingRuleRequest;
 import com.nextuple.promise.sourcing.rule.domain.mapper.PromiseSourcingRuleMapper;
-import com.nextuple.promise.sourcing.rule.domain.outbound.FetchPromiseSourcingRuleResponse;
-import com.nextuple.promise.sourcing.rule.domain.pojo.ServiceOptionInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

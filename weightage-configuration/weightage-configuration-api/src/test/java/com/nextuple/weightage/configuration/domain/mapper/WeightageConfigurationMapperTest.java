@@ -2,10 +2,10 @@ package com.nextuple.weightage.configuration.domain.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.nextuple.weightage.configuration.domain.dto.WeightageConfigurationDto;
+import com.nextuple.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
+import com.nextuple.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
+import com.nextuple.weightage.configuration.api.domain.inbound.UpdateWeightageConfigurationRequest;
 import com.nextuple.weightage.configuration.domain.entity.WeightageConfiguration;
-import com.nextuple.weightage.configuration.domain.inbound.CreateWeightageConfigurationRequest;
-import com.nextuple.weightage.configuration.domain.inbound.UpdateWeightageConfigurationRequest;
 import com.nextuple.weightage.configuration.utils.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

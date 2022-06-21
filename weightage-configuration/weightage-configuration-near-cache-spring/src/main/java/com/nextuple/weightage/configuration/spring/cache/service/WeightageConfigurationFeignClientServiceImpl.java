@@ -3,7 +3,7 @@ package com.nextuple.weightage.configuration.spring.cache.service;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
 import com.nextuple.core.spring.service.AbstractGenericFeignClientServiceImpl;
-import com.nextuple.weightage.configuration.cache.domain.FetchWeightageRequest;
+import com.nextuple.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
 import com.nextuple.weightage.configuration.cache.domain.WeightageConfigurationCacheKey;
 import com.nextuple.weightage.configuration.cache.domain.WeightageConfigurationCacheValue;
 import com.nextuple.weightage.configuration.spring.cache.feign.WeightageConfigurationFeignImpl;

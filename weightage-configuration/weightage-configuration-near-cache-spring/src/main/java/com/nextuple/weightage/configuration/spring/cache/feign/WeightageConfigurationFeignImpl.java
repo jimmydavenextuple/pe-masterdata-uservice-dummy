@@ -2,7 +2,7 @@ package com.nextuple.weightage.configuration.spring.cache.feign;
 
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.service.GenericFeignService;
-import com.nextuple.weightage.configuration.cache.domain.FetchWeightageRequest;
+import com.nextuple.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
 import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;

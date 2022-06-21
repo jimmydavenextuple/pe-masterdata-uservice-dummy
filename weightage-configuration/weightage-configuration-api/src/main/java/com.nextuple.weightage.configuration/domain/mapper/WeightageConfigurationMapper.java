@@ -1,9 +1,9 @@
 package com.nextuple.weightage.configuration.domain.mapper;
 
-import com.nextuple.weightage.configuration.domain.dto.WeightageConfigurationDto;
+import com.nextuple.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
+import com.nextuple.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
+import com.nextuple.weightage.configuration.api.domain.inbound.UpdateWeightageConfigurationRequest;
 import com.nextuple.weightage.configuration.domain.entity.WeightageConfiguration;
-import com.nextuple.weightage.configuration.domain.inbound.CreateWeightageConfigurationRequest;
-import com.nextuple.weightage.configuration.domain.inbound.UpdateWeightageConfigurationRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;

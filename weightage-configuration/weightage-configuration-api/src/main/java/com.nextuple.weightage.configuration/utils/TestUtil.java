@@ -5,11 +5,11 @@ import static com.nextuple.weightage.configuration.utils.WeightageConfigurationC
 import static com.nextuple.weightage.configuration.utils.WeightageConfigurationConstants.TYPE;
 import static com.nextuple.weightage.configuration.utils.WeightageConfigurationConstants.WEIGHTAGE;
 
-import com.nextuple.weightage.configuration.domain.dto.WeightageConfigurationDto;
+import com.nextuple.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
+import com.nextuple.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
+import com.nextuple.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
+import com.nextuple.weightage.configuration.api.domain.inbound.UpdateWeightageConfigurationRequest;
 import com.nextuple.weightage.configuration.domain.entity.WeightageConfiguration;
-import com.nextuple.weightage.configuration.domain.inbound.CreateWeightageConfigurationRequest;
-import com.nextuple.weightage.configuration.domain.inbound.FetchWeightageRequest;
-import com.nextuple.weightage.configuration.domain.inbound.UpdateWeightageConfigurationRequest;
 import com.nextuple.weightage.configuration.domain.mapper.WeightageConfigurationMapper;
 import java.util.HashMap;
 import java.util.Map;

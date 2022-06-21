@@ -9,9 +9,9 @@ import static org.mockito.Mockito.when;
 
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
+import com.nextuple.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.nextuple.postal.code.timezone.cache.domain.PostalCodeTimezoneCacheKey;
 import com.nextuple.postal.code.timezone.cache.domain.PostalCodeTimezoneCacheValue;
-import com.nextuple.postal.code.timezone.cache.domain.PostalCodeTimezoneDto;
 import com.nextuple.postal.code.timezone.cache.spring.feign.PostalCodeTimezoneFeignImpl;
 import com.nextuple.postal.code.timezone.cache.spring.service.PostalCodeTimezoneFeignClientServiceImpl;
 import org.junit.jupiter.api.Test;

@@ -3,9 +3,8 @@ package com.nextuple.weightage.configuration.exception;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import com.nextuple.weightage.configuration.error.ErrorResponse;
-import com.nextuple.weightage.configuration.error.ErrorType;
-import com.nextuple.weightage.configuration.exception.common.CommonServiceException;
+import com.nextuple.common.response.error.ErrorResponse;
+import com.nextuple.common.response.error.ErrorType;
 import com.nextuple.weightage.configuration.exception.common.ExceptionCodeMapping;
 import com.nextuple.weightage.configuration.exception.common.PromiseEngineException;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,17 +49,6 @@ class WeightageConfigurationExceptionHandlerTest {
         weightageConfigurationExceptionHandler.handleMethodArgumentNotValidException(e);
 
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
-  }
-
-  @Test
-  void handleCommonServiceExceptionTest() {
-    CommonServiceException e = new CommonServiceException("msg", HttpStatus.NOT_FOUND, 1005, null);
-
-    ResponseEntity<ErrorResponse> responseEntity =
-        weightageConfigurationExceptionHandler.handleCommonServiceException(e);
-
-    assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
   }
 
