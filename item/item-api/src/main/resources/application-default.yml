@@ -23,6 +23,9 @@ spring:
         item_master:
           name: items.promise.bay.v1
           group-id: item-master-local
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 logging:
   level:
