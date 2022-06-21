@@ -80,10 +80,35 @@ public class NodeCarrierService {
   public NodeCarrierResponse getNodeCarrierDetails(
       String nodeId, String orgId, String carrierServiceId, String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
-    Optional<NodeCarrierEntity> nodeCarrierEntity =
-        nodeCarrierDomain.findNodeCarrierDetails(nodeId, orgId, carrierServiceId, serviceOption);
+    List<NodeCarrierEntity> nodeCarrierEntityList =
+        nodeCarrierDomain.filterAndGetNodeCarrierDetails(
+            nodeId, orgId, carrierServiceId, serviceOption);
 
-    if (!nodeCarrierEntity.isPresent()) {
+    NodeCarrierEntity nodeCarrierEntity = new NodeCarrierEntity();
+
+    if (!nodeCarrierEntityList.isEmpty() && nodeCarrierEntityList.size() > 1) {
+      if (carrierServiceId.equals("ALL")) {
+        nodeCarrierEntity =
+            nodeCarrierEntityList.stream()
+                .filter(x -> !"ALL".equals(x.getCarrierServiceId()))
+                .findAny()
+                .orElse(new NodeCarrierEntity());
+      } else {
+        nodeCarrierEntity =
+            nodeCarrierEntityList.stream()
+                .filter(x -> carrierServiceId.equals(x.getCarrierServiceId()))
+                .findAny()
+                .orElse(
+                    nodeCarrierEntityList.stream()
+                        .filter(x -> !"ALL".equals(x.getCarrierServiceId()))
+                        .findAny()
+                        .orElse(new NodeCarrierEntity()));
+      }
+    } else if (nodeCarrierEntityList.size() == 1) {
+      nodeCarrierEntity = nodeCarrierEntityList.get(0);
+    }
+
+    if (nodeCarrierEntityList.isEmpty()) {
       logger.error(NODE_CARRIER_NOT_FOUND_ERROR_MSG);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
@@ -94,7 +119,7 @@ public class NodeCarrierService {
       throw new CommonServiceException(
           NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
     }
-    return INSTANCE.toNodeCarrierDto(nodeCarrierEntity.get());
+    return INSTANCE.toNodeCarrierDto(nodeCarrierEntity);
   }
 
   public NodeCarrierResponse updateNodeCarrier(

@@ -70,8 +70,8 @@ class NodeCarrierServiceTest {
   @Test
   @DisplayName("When node carrier details is fetched successfully")
   void getNodeCarrierDetailsTest() throws NodeCarrierDomainException, CommonServiceException {
-    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
-        .thenReturn(Optional.ofNullable(testUtil.getNodeCarrierEntity()));
+    when(nodeCarrierDomain.filterAndGetNodeCarrierDetails(any(), any(), any(), any()))
+        .thenReturn(List.of(testUtil.getNodeCarrierEntity()));
 
     NodeCarrierResponse nodeCarrierResponse =
         nodeCarrierService.getNodeCarrierDetails(
@@ -81,14 +81,15 @@ class NodeCarrierServiceTest {
             TestUtil.SERVICE_OPTION);
 
     Assertions.assertEquals(testUtil.getNodeCarrierResponse(), nodeCarrierResponse);
-    verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(1)).filterAndGetNodeCarrierDetails(any(), any(), any(), any());
   }
 
   @Test
   @DisplayName("When node carrier to be fetched is not found")
   void getNodeCarrierDetailsNotFoundTest() throws NodeCarrierDomainException {
-    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
-        .thenReturn(Optional.empty());
+    List<NodeCarrierEntity> nodeCarrierEntityList = Collections.<NodeCarrierEntity>emptyList();
+    when(nodeCarrierDomain.filterAndGetNodeCarrierDetails(any(), any(), any(), any()))
+        .thenReturn(nodeCarrierEntityList);
 
     Exception ex =
         Assertions.assertThrows(
@@ -101,7 +102,7 @@ class NodeCarrierServiceTest {
                     TestUtil.SERVICE_OPTION));
 
     Assertions.assertEquals("Node Carrier not found for given details", ex.getMessage());
-    verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(1)).filterAndGetNodeCarrierDetails(any(), any(), any(), any());
   }
 
   @Test

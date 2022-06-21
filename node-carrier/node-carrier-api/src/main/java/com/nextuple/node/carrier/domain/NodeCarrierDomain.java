@@ -45,6 +45,29 @@ public class NodeCarrierDomain {
     }
   }
 
+  public List<NodeCarrierEntity> filterAndGetNodeCarrierDetails(
+      String nodeId, String orgId, String carrierServiceId, String serviceOption)
+      throws NodeCarrierDomainException {
+    List<NodeCarrierEntity> nodeCarrierEntityList;
+    try {
+
+      if ("ALL".equals(carrierServiceId)) {
+        nodeCarrierEntityList =
+            nodeCarrierRepository.findByCarrierServiceIdWithServiceOption(
+                nodeId, orgId, "ALL-" + serviceOption, carrierServiceId);
+      } else {
+        nodeCarrierEntityList =
+            nodeCarrierRepository.findByCarrierServiceIdsWithServiceOption(
+                nodeId, orgId, carrierServiceId, "ALL-" + serviceOption);
+      }
+      return nodeCarrierEntityList;
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to find node carrier details");
+      throw new NodeCarrierDomainException(
+          "Error while finding node carrier", nodeId, orgId, carrierServiceId, serviceOption);
+    }
+  }
+
   public void deleteNodeCarrierEntity(NodeCarrierEntity nodeCarrierEntity)
       throws NodeCarrierDomainException {
     try {
