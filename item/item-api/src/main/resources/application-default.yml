@@ -8,9 +8,9 @@ spring:
     platform: postgres
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: arihant
+    password: postgres
   kafka:
-    bootstrap-servers: loyalty-temp1-kafka.integration.awshbc.io:9092:9092
+    bootstrap-servers: loyalty-temp1-kafka.integration.awshbc.io:9092
     consumer:
       enable-auto-commit: true
       auto-offset-reset: earliest

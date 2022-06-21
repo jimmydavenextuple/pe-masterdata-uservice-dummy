@@ -1,6 +1,7 @@
 package com.nextuple.item;
 
 import com.nextuple.item.domain.entity.ItemEntity;
+import com.nextuple.item.domain.events.ItemMasterEvent;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
 import com.nextuple.item.domain.inbound.ItemUpdationRequest;
 import com.nextuple.item.domain.outbound.ItemResponse;
@@ -157,6 +158,31 @@ public class TestUtil {
         .shipEligible(SHIP_ELIGIBLE)
         .height(HEIGHT)
         .weight(35.5)
+        .volume(VOLUME)
+        .build();
+  }
+
+  public ItemMasterEvent getItemMasterEvent() {
+
+    return ItemMasterEvent.builder()
+        .itemId(ITEM_ID)
+        .orgId(ORG_ID)
+        .uom(UOM)
+        .color(COLOR)
+        .size(SIZE)
+        .length(LENGTH)
+        .shipAlone(SHIP_ALONE)
+        .bopisEligible(BOPIS_ELIGIBLE)
+        .isHazmat(IS_HAZMAT)
+        .cost(COST)
+        .parcelShipmentEligible(PARCEL_SHIPMENT_ELIGIBLE)
+        .sdndEligible(Boolean.TRUE)
+        .expressEligible(Boolean.FALSE)
+        .processingTime(PROCESSING_TIME)
+        .product(PRODUCT)
+        .shipEligible(SHIP_ELIGIBLE)
+        .height(HEIGHT)
+        .weight(WEIGHT)
         .volume(VOLUME)
         .build();
   }
