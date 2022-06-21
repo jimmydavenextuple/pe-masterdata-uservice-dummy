@@ -1,4 +1,4 @@
-package com.nextuple.postal.code.timezone.cache.domain;
+package com.nextuple.postal.code.timezone.api.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.nextuple.postal.code.timezone.domain.inbound;
+package com.nextuple.postal.code.timezone.api.domain.inbound;
 
 import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
