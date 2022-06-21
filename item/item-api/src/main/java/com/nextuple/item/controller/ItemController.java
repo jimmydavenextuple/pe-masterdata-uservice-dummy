@@ -1,7 +1,6 @@
 package com.nextuple.item.controller;
 
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.item.domain.events.ItemMasterEvent;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
 import com.nextuple.item.domain.inbound.ItemUpdationRequest;
 import com.nextuple.item.domain.outbound.ItemResponse;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +29,6 @@ public class ItemController {
 
   private static final Logger logger = LoggerFactory.getLogger(ItemController.class);
   private final ItemService itemService;
-  private final KafkaTemplate<String, Object> kafkaTemplate;
 
   @PostMapping
   public ResponseEntity<BaseResponse<ItemResponse>> addItem(
@@ -115,20 +112,6 @@ public class ItemController {
               .build());
     } catch (Exception e) {
       logger.error("Failed to delete item");
-      throw e;
-    }
-  }
-
-  @PostMapping("/test")
-  public ResponseEntity<String> sendMessage(@RequestBody ItemMasterEvent itemMasterEvent) {
-    try {
-
-
-      kafkaTemplate.send(itemTopic, itemMasterEvent);
-
-      return ResponseEntity.ok("Success");
-    } catch (Exception e) {
-      logger.error("Failed to fetch item details");
       throw e;
     }
   }
