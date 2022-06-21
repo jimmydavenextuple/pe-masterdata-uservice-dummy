@@ -113,3 +113,6 @@ include 'weightage-configuration:weightage-configuration-near-cache'
 findProject(':weightage-configuration:weightage-configuration-near-cache')?.name = 'weightage-configuration-near-cache'
 include 'weightage-configuration:weightage-configuration-near-cache-spring'
 findProject(':weightage-configuration:weightage-configuration-near-cache-spring')?.name = 'weightage-configuration-near-cache-spring'
+include 'postal-code-timezone:postal-code-timezone-api-domain'
+findProject(':postal-code-timezone:postal-code-timezone-api-domain')?.name = 'postal-code-timezone-api-domain'
+
