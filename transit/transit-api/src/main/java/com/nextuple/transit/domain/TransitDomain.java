@@ -40,19 +40,10 @@ public class TransitDomain {
       String carrierServiceId,
       String serviceOption)
       throws TransitDomainException {
-    List<TransitEntity> transitEntities;
     try {
 
-      if ("ALL".equals(carrierServiceId)) {
-        transitEntities =
-            transitRepository.findByCarrierServiceIdWithServiceOption(
-                orgId, sourceGeozone, destinationGeozone, "ALL-" + serviceOption, carrierServiceId);
-      } else {
-        transitEntities =
-            transitRepository.findByCarrierServiceIdsWithServiceOption(
-                orgId, sourceGeozone, destinationGeozone, carrierServiceId, "ALL-" + serviceOption);
-      }
-      return transitEntities;
+      return transitRepository.findByCarrierServiceIdsWithServiceOption(
+          orgId, sourceGeozone, destinationGeozone, carrierServiceId, serviceOption);
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to find transit details");
       throw new TransitDomainException(
