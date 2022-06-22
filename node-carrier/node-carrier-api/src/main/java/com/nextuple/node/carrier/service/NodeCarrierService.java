@@ -80,35 +80,38 @@ public class NodeCarrierService {
   public NodeCarrierResponse getNodeCarrierDetails(
       String nodeId, String orgId, String carrierServiceId, String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
+    String allServiceOption = "ALL-" + serviceOption;
     List<NodeCarrierEntity> nodeCarrierEntityList =
         nodeCarrierDomain.filterAndGetNodeCarrierDetails(
-            nodeId, orgId, carrierServiceId, serviceOption);
+            nodeId, orgId, carrierServiceId, allServiceOption);
 
-    NodeCarrierEntity nodeCarrierEntity = new NodeCarrierEntity();
+    Optional<NodeCarrierEntity> nodeCarrierEntity;
+    if ("ALL".equals(carrierServiceId)) {
+      nodeCarrierEntity =
+          nodeCarrierEntityList.stream()
+              .filter(x -> allServiceOption.equals(x.getCarrierServiceId()))
+              .findFirst();
+    } else {
+      nodeCarrierEntity =
+          nodeCarrierEntityList.stream()
+              .filter(x -> carrierServiceId.equals(x.getCarrierServiceId()))
+              .findFirst();
 
-    if (!nodeCarrierEntityList.isEmpty() && nodeCarrierEntityList.size() > 1) {
-      if (carrierServiceId.equals("ALL")) {
+      if (nodeCarrierEntity.isEmpty()) {
         nodeCarrierEntity =
             nodeCarrierEntityList.stream()
-                .filter(x -> !"ALL".equals(x.getCarrierServiceId()))
-                .findAny()
-                .orElse(new NodeCarrierEntity());
-      } else {
-        nodeCarrierEntity =
-            nodeCarrierEntityList.stream()
-                .filter(x -> carrierServiceId.equals(x.getCarrierServiceId()))
-                .findAny()
-                .orElse(
-                    nodeCarrierEntityList.stream()
-                        .filter(x -> !"ALL".equals(x.getCarrierServiceId()))
-                        .findAny()
-                        .orElse(new NodeCarrierEntity()));
+                .filter(x -> allServiceOption.equals(x.getCarrierServiceId()))
+                .findAny();
       }
-    } else if (nodeCarrierEntityList.size() == 1) {
-      nodeCarrierEntity = nodeCarrierEntityList.get(0);
+    }
+    if (nodeCarrierEntity.isEmpty()) {
+      nodeCarrierEntity =
+          nodeCarrierEntityList.stream()
+              .filter(x -> "ALL".equals(x.getCarrierServiceId()))
+              .findAny();
     }
 
-    if (nodeCarrierEntityList.isEmpty()) {
+    if (nodeCarrierEntity.isEmpty()) {
       logger.error(NODE_CARRIER_NOT_FOUND_ERROR_MSG);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
@@ -119,7 +122,7 @@ public class NodeCarrierService {
       throw new CommonServiceException(
           NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
     }
-    return INSTANCE.toNodeCarrierDto(nodeCarrierEntity);
+    return INSTANCE.toNodeCarrierDto(nodeCarrierEntity.get());
   }
 
   public NodeCarrierResponse updateNodeCarrier(

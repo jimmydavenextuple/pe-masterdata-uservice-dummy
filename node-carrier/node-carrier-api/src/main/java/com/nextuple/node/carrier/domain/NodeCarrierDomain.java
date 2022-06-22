@@ -50,16 +50,10 @@ public class NodeCarrierDomain {
       throws NodeCarrierDomainException {
     List<NodeCarrierEntity> nodeCarrierEntityList;
     try {
+      nodeCarrierEntityList =
+          nodeCarrierRepository.findByCarrierServiceIdsWithServiceOption(
+              nodeId, orgId, carrierServiceId, serviceOption);
 
-      if ("ALL".equals(carrierServiceId)) {
-        nodeCarrierEntityList =
-            nodeCarrierRepository.findByCarrierServiceIdWithServiceOption(
-                nodeId, orgId, "ALL-" + serviceOption, carrierServiceId);
-      } else {
-        nodeCarrierEntityList =
-            nodeCarrierRepository.findByCarrierServiceIdsWithServiceOption(
-                nodeId, orgId, carrierServiceId, "ALL-" + serviceOption);
-      }
       return nodeCarrierEntityList;
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to find node carrier details");
