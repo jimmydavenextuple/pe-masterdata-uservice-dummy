@@ -82,35 +82,33 @@ public class TransitService {
       String serviceOption)
       throws TransitDomainException, CommonServiceException {
 
+    String allServiceOption = "ALL-" + serviceOption;
+
     List<TransitEntity> transitEntities =
         transitDomain.filterAndGetTransitDetails(
-            orgId, sourceGeozone, destinationGeozone, carrierServiceId, serviceOption);
+            orgId, sourceGeozone, destinationGeozone, carrierServiceId, allServiceOption);
 
-    TransitEntity transitEntity = new TransitEntity();
+    Optional<TransitEntity> transitEntity = Optional.empty();
 
-    if (!transitEntities.isEmpty() && transitEntities.size() > 1) {
-      if (carrierServiceId.equals("ALL")) {
-        transitEntity =
-            transitEntities.stream()
-                .filter(x -> !"ALL".equals(x.getCarrierServiceId()))
-                .findAny()
-                .orElse(new TransitEntity());
-      } else {
-        transitEntity =
-            transitEntities.stream()
-                .filter(x -> carrierServiceId.equals(x.getCarrierServiceId()))
-                .findAny()
-                .orElse(
-                    transitEntities.stream()
-                        .filter(x -> !"ALL".equals(x.getCarrierServiceId()))
-                        .findAny()
-                        .orElse(new TransitEntity()));
-      }
-    } else if (transitEntities.size() == 1) {
-      transitEntity = transitEntities.get(0);
+    if (!"ALL".equals(carrierServiceId)) {
+      transitEntity =
+          transitEntities.stream()
+              .filter(x -> carrierServiceId.equals(x.getCarrierServiceId()))
+              .findFirst();
     }
 
-    if (transitEntities.isEmpty()) {
+    if (transitEntity.isEmpty()) {
+      transitEntity =
+          transitEntities.stream()
+              .filter(x -> allServiceOption.equals(x.getCarrierServiceId()))
+              .findAny();
+    }
+    if (transitEntity.isEmpty()) {
+      transitEntity =
+          transitEntities.stream().filter(x -> "ALL".equals(x.getCarrierServiceId())).findAny();
+    }
+
+    if (transitEntity.isEmpty()) {
       logger.info(TRANSIT_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
@@ -123,7 +121,7 @@ public class TransitService {
           TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
 
-    return INSTANCE.toTransitResponse(transitEntity);
+    return INSTANCE.toTransitResponse(transitEntity.get());
   }
 
   public TransitResponse deleteTransitDetails(

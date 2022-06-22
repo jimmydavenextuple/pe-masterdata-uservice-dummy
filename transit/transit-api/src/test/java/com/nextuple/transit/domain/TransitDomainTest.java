@@ -79,29 +79,7 @@ class TransitDomainTest {
   }
 
   @Test
-  void filterAndGetTransitDetailsTest1() throws TransitDomainException {
-    List<TransitEntity> transitEntityList = new ArrayList<>();
-    transitEntityList.add(testUtil.getTransitEntities("ALL"));
-    transitEntityList.add(testUtil.getTransitEntities("ALL-" + TestUtil.SERVICE_OPTION));
-    when(transitRepository.findByCarrierServiceIdWithServiceOption(
-            any(), any(), any(), any(), any()))
-        .thenReturn(transitEntityList);
-
-    List<TransitEntity> transitEntities =
-        transitDomain.filterAndGetTransitDetails(
-            TestUtil.ORG_ID,
-            TestUtil.SOURCE_GEOZONE,
-            TestUtil.DESTINATION_GEOZONE,
-            "ALL",
-            TestUtil.SERVICE_OPTION);
-    Assertions.assertEquals(transitEntityList.size(), transitEntities.size());
-
-    verify(transitRepository, times(1))
-        .findByCarrierServiceIdWithServiceOption(any(), any(), any(), any(), any());
-  }
-
-  @Test
-  void filterAndGetTransitDetailsTest2() throws TransitDomainException {
+  void filterAndGetTransitDetailsTest() throws TransitDomainException {
     List<TransitEntity> transitEntityList = new ArrayList<>();
     transitEntityList.add(testUtil.getTransitEntities("ALL"));
     transitEntityList.add(testUtil.getTransitEntities("ALL-" + TestUtil.SERVICE_OPTION));
