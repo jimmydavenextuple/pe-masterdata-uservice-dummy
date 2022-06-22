@@ -80,10 +80,32 @@ public class NodeCarrierService {
   public NodeCarrierResponse getNodeCarrierDetails(
       String nodeId, String orgId, String carrierServiceId, String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
-    Optional<NodeCarrierEntity> nodeCarrierEntity =
-        nodeCarrierDomain.findNodeCarrierDetails(nodeId, orgId, carrierServiceId, serviceOption);
+    String allServiceOption = "ALL-" + serviceOption;
+    List<NodeCarrierEntity> nodeCarrierEntityList =
+        nodeCarrierDomain.filterAndGetNodeCarrierDetails(
+            nodeId, orgId, carrierServiceId, allServiceOption);
 
-    if (!nodeCarrierEntity.isPresent()) {
+    Optional<NodeCarrierEntity> nodeCarrierEntity = Optional.empty();
+    if (!"ALL".equals(carrierServiceId)) {
+      nodeCarrierEntity =
+          nodeCarrierEntityList.stream()
+              .filter(x -> carrierServiceId.equals(x.getCarrierServiceId()))
+              .findFirst();
+    }
+    if (nodeCarrierEntity.isEmpty()) {
+      nodeCarrierEntity =
+          nodeCarrierEntityList.stream()
+              .filter(x -> allServiceOption.equals(x.getCarrierServiceId()))
+              .findAny();
+    }
+    if (nodeCarrierEntity.isEmpty()) {
+      nodeCarrierEntity =
+          nodeCarrierEntityList.stream()
+              .filter(x -> "ALL".equals(x.getCarrierServiceId()))
+              .findAny();
+    }
+
+    if (nodeCarrierEntity.isEmpty()) {
       logger.error(NODE_CARRIER_NOT_FOUND_ERROR_MSG);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
