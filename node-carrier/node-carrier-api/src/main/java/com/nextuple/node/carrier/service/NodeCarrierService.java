@@ -85,24 +85,18 @@ public class NodeCarrierService {
         nodeCarrierDomain.filterAndGetNodeCarrierDetails(
             nodeId, orgId, carrierServiceId, allServiceOption);
 
-    Optional<NodeCarrierEntity> nodeCarrierEntity;
-    if ("ALL".equals(carrierServiceId)) {
-      nodeCarrierEntity =
-          nodeCarrierEntityList.stream()
-              .filter(x -> allServiceOption.equals(x.getCarrierServiceId()))
-              .findFirst();
-    } else {
+    Optional<NodeCarrierEntity> nodeCarrierEntity = Optional.empty();
+    if (!"ALL".equals(carrierServiceId)) {
       nodeCarrierEntity =
           nodeCarrierEntityList.stream()
               .filter(x -> carrierServiceId.equals(x.getCarrierServiceId()))
               .findFirst();
-
-      if (nodeCarrierEntity.isEmpty()) {
-        nodeCarrierEntity =
-            nodeCarrierEntityList.stream()
-                .filter(x -> allServiceOption.equals(x.getCarrierServiceId()))
-                .findAny();
-      }
+    }
+    if (nodeCarrierEntity.isEmpty()) {
+      nodeCarrierEntity =
+          nodeCarrierEntityList.stream()
+              .filter(x -> allServiceOption.equals(x.getCarrierServiceId()))
+              .findAny();
     }
     if (nodeCarrierEntity.isEmpty()) {
       nodeCarrierEntity =
