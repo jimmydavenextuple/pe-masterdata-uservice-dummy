@@ -6,16 +6,16 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://dev-db.co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
+    url: jdbc:postgresql://qa-db.co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
     username: postgres
     password: postgres
   kafka:
-    bootstrap-servers: "b-1.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9092,b-2.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9092,b-2.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9092"
+    bootstrap-servers: "b-1.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9092,b-2.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9092,b-3.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9092"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       topics:
-        master_data_update_event: INTERNAL.DEV.MASTER_DATA_UPDATE_EVENTS
+        master_data_update_event: INTERNAL.QA.MASTER_DATA_UPDATE_EVENTS
       properties:
         acks: all
         retries: 5
