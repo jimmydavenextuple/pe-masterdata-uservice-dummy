@@ -1,5 +1,6 @@
 package com.nextuple.item.consumer;
 
+import com.nextuple.item.Item;
 import com.nextuple.item.domain.events.ItemMasterEvent;
 import com.nextuple.item.domain.mapper.ItemMapper;
 import com.nextuple.item.service.ItemService;
@@ -26,11 +27,22 @@ public class ItemMasterConsumer {
   private final ItemService itemService;
 
   @KafkaHandler
+  public void onItemConsumption(@Payload Item item, @Headers KafkaMessageHeaders headers) {
+    logger.debug("Inside onItemMasterDataConsumption(), event: {} ", item);
+    try {
+      itemService.createItem(INSTANCE.convertItemToItemCreationRequest(item));
+    } catch (Exception e) {
+      logger.error(
+          "Error while consuming the message: {}, stacktrace: {}", item, e.getStackTrace());
+    }
+  }
+
+  @KafkaHandler
   public void onItemMasterDataConsumption(
       @Payload ItemMasterEvent itemMasterEvent, @Headers KafkaMessageHeaders headers) {
     logger.debug("Inside onItemMasterDataConsumption(), event: {} ", itemMasterEvent);
     try {
-      itemService.createItem(INSTANCE.convertToItemCreationRequest(itemMasterEvent));
+      itemService.createItem(INSTANCE.convertItemMasterEventToItemCreationRequest(itemMasterEvent));
     } catch (Exception e) {
       logger.error(
           "Error while consuming the message: {}, stacktrace: {}",

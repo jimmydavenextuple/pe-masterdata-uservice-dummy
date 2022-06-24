@@ -1,5 +1,6 @@
 package com.nextuple.item.domain.mapper;
 
+import com.nextuple.item.Item;
 import com.nextuple.item.domain.entity.ItemEntity;
 import com.nextuple.item.domain.events.ItemMasterEvent;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
@@ -27,7 +28,22 @@ public interface ItemMapper {
   ItemEntity updateItemEntity(
       ItemUpdationRequest itemUpdationRequest, @MappingTarget ItemEntity existingItemEntity);
 
-  ItemCreationRequest convertToItemCreationRequest(ItemMasterEvent itemMasterEvent);
+  ItemCreationRequest convertItemToItemCreationRequest(Item item);
+
+  @AfterMapping
+  default void afterMappingItem(
+      @MappingTarget ItemCreationRequestBuilder itemCreationRequest, Item item) {
+    Map<String, Boolean> serviceOptionEligibilityMap = new HashMap<>();
+    if (!ObjectUtils.isEmpty(item.getSdndEligible())) {
+      serviceOptionEligibilityMap.put("sdndEligible", item.getSdndEligible());
+    }
+    if (!ObjectUtils.isEmpty(item.getExpressEligible())) {
+      serviceOptionEligibilityMap.put("expressEligible", item.getExpressEligible());
+    }
+    itemCreationRequest.serviceOptionEligibilities(serviceOptionEligibilityMap);
+  }
+
+  ItemCreationRequest convertItemMasterEventToItemCreationRequest(ItemMasterEvent itemMasterEvent);
 
   @AfterMapping
   default void afterMappingItemMasterEvent(
