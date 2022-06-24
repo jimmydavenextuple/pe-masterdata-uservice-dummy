@@ -1,8 +1,8 @@
 package com.nextuple.item.consumer.config;
 
 import com.nextuple.item.Item;
-import com.nextuple.item.consumer.serializer.AvroDeserializer;
-import com.nextuple.item.consumer.serializer.AvroSerializer;
+import com.nextuple.item.consumer.serializer.ItemDeserializer;
+import com.nextuple.item.consumer.serializer.ItemSerializer;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -34,7 +34,7 @@ public class KafkaConfig {
     Map<String, Object> configProps = new HashMap<>();
     configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
     configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-    configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, AvroSerializer.class);
+    configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ItemSerializer.class);
     return new DefaultKafkaProducerFactory<>(configProps);
   }
 
@@ -50,9 +50,9 @@ public class KafkaConfig {
     Map<String, Object> props = new HashMap<>();
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
     props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, AvroDeserializer.class);
+    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ItemDeserializer.class);
     return new DefaultKafkaConsumerFactory<>(
-        props, new StringDeserializer(), new AvroDeserializer<>(Item.class));
+        props, new StringDeserializer(), new ItemDeserializer<>(Item.class));
   }
 
   @Profile("default")
