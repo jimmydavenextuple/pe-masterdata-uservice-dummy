@@ -16,6 +16,10 @@ server:
 
 constants:
   defaultNumberOfDaysInFuture: 10
+auth:
+  filter-enabled: true
+  roles: ADMIN
+  issuer: https://pe-dev-issuer.s3.amazonaws.com/
 
 logging:
   level:

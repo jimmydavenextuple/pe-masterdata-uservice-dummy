@@ -13,6 +13,11 @@ server:
     threads:
       min-spare: 50
       max: 200
+auth:
+  filter-enabled: true
+  roles: ADMIN
+  issuer: https://pe-dev-issuer.s3.amazonaws.com/
+
 logging:
   level:
     org.springframework: WARN
