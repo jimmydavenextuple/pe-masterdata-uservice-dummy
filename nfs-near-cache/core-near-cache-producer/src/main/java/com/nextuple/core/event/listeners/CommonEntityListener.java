@@ -48,7 +48,12 @@ public class CommonEntityListener {
     localCacheUpdateMessage.setEntityName(entityName);
 
     log.debug("Publishing LocalUpdateCacheEvent to Kafka with {}", localCacheUpdateMessage);
-    entityEventProducer.publishEntityEvent(localCacheUpdateMessage);
+    if(entityEventProducer == null) {
+      log.error("Error while connecting to kafka");
+    }
+    else {
+      entityEventProducer.publishEntityEvent(localCacheUpdateMessage);
+    }
   }
 
   private List<Field> getAllFields(Class<?> aClass) {

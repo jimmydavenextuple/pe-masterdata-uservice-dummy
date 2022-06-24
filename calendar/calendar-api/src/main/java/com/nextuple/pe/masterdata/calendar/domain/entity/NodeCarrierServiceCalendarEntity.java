@@ -1,5 +1,6 @@
 package com.nextuple.pe.masterdata.calendar.domain.entity;
 
+import com.nextuple.core.event.listeners.CommonEntityListener;
 import com.nextuple.pe.masterdata.calendar.domain.entity.primarykey.NodeCarrierServiceCalendarPK;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "node_carrier_service_calendars")
 @IdClass(NodeCarrierServiceCalendarPK.class)
+@EntityListeners(CommonEntityListener.class)
 public class NodeCarrierServiceCalendarEntity {
 
   @Id
