@@ -1,0 +1,16 @@
+near-cache:
+  entity:
+    Node:
+      attributes: nodeId , orgId
+    NodeCarrier:
+      attributes: nodeId , orgId, carrierServiceId, serviceOption
+    Carrier:
+      attributes: carrierId, carrierServiceId, orgId
+    NodeCalendar:
+      attributes: nodeId, orgId
+    NodeCarrierCalendar:
+      attributes: nodeId, carrierServiceId, orgId, serviceOption
+    CarrierCalendar:
+      attributes: carrierServiceId, orgId, serviceOption
+    PostalCode:
+      attributes: orgId, postalCodePrefix

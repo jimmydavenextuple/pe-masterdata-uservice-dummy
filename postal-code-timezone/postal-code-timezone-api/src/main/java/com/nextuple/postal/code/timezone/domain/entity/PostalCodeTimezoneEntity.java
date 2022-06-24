@@ -1,7 +1,9 @@
 package com.nextuple.postal.code.timezone.domain.entity;
 
+import com.nextuple.core.event.listeners.CommonEntityListener;
 import com.nextuple.postal.code.timezone.domain.primaryKeys.PostalCodeTimezoneEntityPK;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
@@ -11,6 +13,7 @@ import lombok.Setter;
 
 @Entity
 @IdClass(PostalCodeTimezoneEntityPK.class)
+@EntityListeners(CommonEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor

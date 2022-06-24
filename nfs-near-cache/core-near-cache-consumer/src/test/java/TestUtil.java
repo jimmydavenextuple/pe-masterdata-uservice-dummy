@@ -5,7 +5,7 @@ import java.util.Map;
 public class TestUtil {
 
   public LocalCacheUpdateEvent getLocalCacheUpdateEvent(
-      Map<String, String> message, String entityName) {
+      Map<String, Object> message, String entityName) {
     LocalCacheUpdateEvent localCacheUpdateEvent = new LocalCacheUpdateEvent();
     LocalCacheUpdateMessage localCacheUpdateMessage = new LocalCacheUpdateMessage();
     localCacheUpdateMessage.setMessage(message);

@@ -1,7 +1,9 @@
 package com.nextuple.node.carrier.domain.entity;
 
+import com.nextuple.core.event.listeners.CommonEntityListener;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
@@ -11,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @IdClass(NodeCarrierId.class)
+@EntityListeners(CommonEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
