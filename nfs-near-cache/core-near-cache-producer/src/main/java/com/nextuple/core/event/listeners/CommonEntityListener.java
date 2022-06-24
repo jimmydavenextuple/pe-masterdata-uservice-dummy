@@ -29,14 +29,14 @@ public class CommonEntityListener {
       throws IllegalAccessException, LocalCacheUpdateEventException {
     log.info("Calling afterUpdating method on updating the record!");
 
-    Map<String, String> message = new HashMap<>();
+    Map<String, Object> message = new HashMap<>();
 
     // Getting primary key fields and values
     List<Field> allFields = getAllFields(entity.getClass());
     for (Field field : allFields) {
       if (field.isAnnotationPresent(Id.class)) {
         field.setAccessible(true);
-        message.put(field.getName(), (String) field.get(entity));
+        message.put(field.getName(), field.get(entity));
       }
     }
     // Entity Name Mapping
