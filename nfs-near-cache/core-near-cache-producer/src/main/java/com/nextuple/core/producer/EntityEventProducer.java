@@ -6,6 +6,7 @@ import com.nextuple.core.exception.LocalCacheUpdateEventException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.support.MessageBuilder;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@ConditionalOnProperty(value = "entity-listener.kafka.enabled", havingValue = "true")
 public class EntityEventProducer {
 
   @Autowired KafkaTemplate<String, LocalCacheUpdateEvent> kafkaTemplate;

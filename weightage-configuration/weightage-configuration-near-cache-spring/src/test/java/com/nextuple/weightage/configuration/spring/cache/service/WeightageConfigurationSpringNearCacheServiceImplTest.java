@@ -71,7 +71,7 @@ class WeightageConfigurationSpringNearCacheServiceImplTest {
   @Test
   void deleteTest() {
     WeightageConfigurationCacheKey cacheKey = testUtil.getWeightageConfigurationCacheKey();
-    weightageConfigurationSpringNearCacheService.delete(cacheKey);
+    weightageConfigurationSpringNearCacheService.deleteAll();
     CacheValue cacheValue = weightageConfigurationSpringNearCacheService.get(cacheKey);
     assertNull(cacheValue);
   }

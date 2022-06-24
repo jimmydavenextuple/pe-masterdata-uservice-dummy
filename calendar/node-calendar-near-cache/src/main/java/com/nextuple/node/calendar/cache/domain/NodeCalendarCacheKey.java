@@ -12,5 +12,6 @@ public class NodeCalendarCacheKey implements CacheKey {
   private static final long serialVersionUID = 4024017030652933137L;
   private String nodeId;
   private String orgId;
+
   public NodeCalendarCacheKey() {}
 }

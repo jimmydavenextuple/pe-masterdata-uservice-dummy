@@ -13,3 +13,6 @@ spring:
 logging:
   level:
     com.nextuple: DEBUG
+entity-listener:
+  kafka:
+    enabled: false

@@ -17,3 +17,6 @@ logging:
   level:
     org.springframework: WARN
     root: INFO
+entity-listener:
+  kafka:
+    enabled: true

@@ -16,11 +16,15 @@ import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 public class CommonEntityListener {
 
   @Autowired EntityEventProducer entityEventProducer;
+
+  @Value("${entity-listener.kafka.enabled}")
+  private boolean kafkaEnabledFlag;
 
   @PostPersist
   @PostUpdate
@@ -48,10 +52,7 @@ public class CommonEntityListener {
     localCacheUpdateMessage.setEntityName(entityName);
 
     log.debug("Publishing LocalUpdateCacheEvent to Kafka with {}", localCacheUpdateMessage);
-    if(entityEventProducer == null) {
-      log.error("Error while connecting to kafka");
-    }
-    else {
+    if (kafkaEnabledFlag) {
       entityEventProducer.publishEntityEvent(localCacheUpdateMessage);
     }
   }
