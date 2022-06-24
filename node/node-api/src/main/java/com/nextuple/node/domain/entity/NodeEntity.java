@@ -2,9 +2,12 @@ package com.nextuple.node.domain.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+
+import com.nextuple.core.event.listeners.CommonEntityListener;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @IdClass(NodeId.class)
+@EntityListeners(CommonEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LocalCacheUpdateMessage {
 
-  Map<String, String> message;
+  Map<String, Object> message;
   String entityName;
 }

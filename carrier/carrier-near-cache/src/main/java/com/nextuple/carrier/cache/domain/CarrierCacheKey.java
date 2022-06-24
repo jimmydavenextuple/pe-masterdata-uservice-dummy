@@ -17,4 +17,6 @@ public class CarrierCacheKey implements CacheKey {
   private String carrierServiceId;
 
   private String orgId;
+
+  public CarrierCacheKey() {}
 }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-@KafkaListener(topics = "reflectoring-1", groupId = "class-level")
+@KafkaListener(topics = "${spring.kafka.consumer.topics.master_data_update_event.name}", groupId = "${spring.kafka.consumer.topics.master_data_update_event.group-id}")
 @Slf4j
 public class LocalCacheUpdateEventConsumer {
   private final LocalCacheUpdateService localCacheUpdateService;

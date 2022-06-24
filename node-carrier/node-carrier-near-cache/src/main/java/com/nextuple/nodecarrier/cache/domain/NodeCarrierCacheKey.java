@@ -19,4 +19,6 @@ public class NodeCarrierCacheKey implements CacheKey {
   private String carrierServiceId;
 
   private String serviceOption;
+
+  public NodeCarrierCacheKey() {}
 }
