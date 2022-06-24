@@ -28,7 +28,9 @@ public class SourcingRuleSpringNearCacheServiceImpl
   @Override
   public void selfRegister() {
     registry.registerNearCacheEntity(
-        NearCacheConstants.PROMISE_SOURCING_ENTITY_NAME, SourcingRuleCacheKey.class.getName());
+        NearCacheConstants.PROMISE_SOURCING_ENTITY_NAME,
+        SourcingRuleCacheKey.class.getName(),
+        "full");
   }
 
   @Override
@@ -45,5 +47,11 @@ public class SourcingRuleSpringNearCacheServiceImpl
   @Override
   public void delete(SourcingRuleCacheKey key) {
     super.delete(key);
+  }
+
+  @CacheEvict(cacheManager = "caffeineCacheManager", allEntries = true)
+  @Override
+  public void deleteAll() {
+    super.deleteAll();
   }
 }

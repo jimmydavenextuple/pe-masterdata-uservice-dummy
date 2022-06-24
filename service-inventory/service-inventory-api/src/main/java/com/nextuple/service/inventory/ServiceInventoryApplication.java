@@ -2,8 +2,10 @@ package com.nextuple.service.inventory;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
+@ComponentScan("com.nextuple")
 public class ServiceInventoryApplication {
 
   public static void main(String[] args) {

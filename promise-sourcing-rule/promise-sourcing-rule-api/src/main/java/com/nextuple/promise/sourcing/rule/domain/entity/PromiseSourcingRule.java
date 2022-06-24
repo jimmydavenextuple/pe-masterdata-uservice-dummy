@@ -1,10 +1,12 @@
 package com.nextuple.promise.sourcing.rule.domain.entity;
 
+import com.nextuple.core.event.listeners.CommonEntityListener;
 import com.nextuple.promise.sourcing.rule.domain.primaryKeys.PromiseSourcingRulePK;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Index;
@@ -27,6 +29,7 @@ import org.hibernate.annotations.TypeDef;
             name = "orgId_serviceOption_destinationGeoZone_allocationRuleId",
             columnList = "orgId,serviceOption,destinationGeoZone,allocationRuleId"))
 @TypeDef(name = "json", typeClass = JsonType.class)
+@EntityListeners(CommonEntityListener.class)
 public class PromiseSourcingRule {
   @Id private String orgId;
 

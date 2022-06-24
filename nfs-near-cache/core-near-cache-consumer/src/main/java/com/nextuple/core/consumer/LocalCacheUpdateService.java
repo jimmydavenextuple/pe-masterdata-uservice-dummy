@@ -31,28 +31,35 @@ public class LocalCacheUpdateService {
       throws IllegalAccessException, ClassNotFoundException, NoSuchFieldException,
           InvocationTargetException, NoSuchMethodException, InstantiationException {
     String entity = localCacheUpdateEvent.getLocalCacheUpdateMessage().getEntityName();
-    Map<String, String> message = localCacheUpdateEvent.getLocalCacheUpdateMessage().getMessage();
+    Map<String, Object> message = localCacheUpdateEvent.getLocalCacheUpdateMessage().getMessage();
     for (GenericNearCacheService genericNearCacheService : nearCacheServices) { // NOSONAR
       if (genericNearCacheService.getEntityName().equals(entity)) {
-        String className = nearCacheRegistry.getRegistry(entity);
+        Map<String, String> registryDetails = nearCacheRegistry.getRegistry(entity);
+        String className = (String) registryDetails.keySet().toArray()[0];
+        String dropType = registryDetails.get(className);
 
-        Class<?> c = Class.forName(className);
-        Constructor<?> cons = c.getConstructor();
-        CacheKey cacheKey = (CacheKey) cons.newInstance();
+        if (dropType.equals("full")) {
+          genericNearCacheService.deleteAll();
+        } else {
+          Class<?> c = Class.forName(className);
+          Constructor<?> cons = c.getConstructor();
+          CacheKey cacheKey = (CacheKey) cons.newInstance();
 
-        String path = "near-cache.entity." + entity + ".attributes";
-        String params = env.getProperty(path);
+          String path = "near-cache.entity." + entity + ".attributes";
+          String params = env.getProperty(path);
 
-        List<String> paramsList = new ArrayList<>();
-        if (!ObjectUtils.isEmpty(params)) {
-          paramsList = Arrays.asList(params.split("\\s*,\\s*"));
+          List<String> paramsList = new ArrayList<>();
+          if (!ObjectUtils.isEmpty(params)) {
+            paramsList = Arrays.asList(params.split("\\s*,\\s*"));
+          }
+          for (String param : paramsList) {
+            Field field = c.getDeclaredField(param);
+            field.setAccessible(true);
+            field.set(cacheKey, message.get(param));
+          }
+
+          genericNearCacheService.delete(cacheKey); // NOSONAR
         }
-        for (String param : paramsList) {
-          Field field = c.getDeclaredField(param);
-          field.setAccessible(true);
-          field.set(cacheKey, message.get(param));
-        }
-        genericNearCacheService.delete(cacheKey); // NOSONAR
       }
     }
   }

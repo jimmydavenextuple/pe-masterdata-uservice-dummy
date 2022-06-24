@@ -70,4 +70,13 @@ class NodeCarrierSpringNearCacheServiceImplTest {
     CacheValue cacheValue = nodeCarrierSpringNearCacheService.get(cacheKey);
     assertNull(cacheValue);
   }
+
+  @Test
+  void deleteAllTest() {
+    NodeCarrierCacheKey cacheKey = testUtil.getNodeCarrierCacheKey();
+
+    nodeCarrierSpringNearCacheService.deleteAll();
+    CacheValue cacheValue = nodeCarrierSpringNearCacheService.get(cacheKey);
+    assertNull(cacheValue);
+  }
 }

@@ -11,4 +11,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class SourcingRuleCacheKey implements CacheKey {
   FetchPromiseSourcingRuleRequest fetchPromiseSourcingRuleRequest;
+
+  SourcingRuleCacheKey() {}
 }

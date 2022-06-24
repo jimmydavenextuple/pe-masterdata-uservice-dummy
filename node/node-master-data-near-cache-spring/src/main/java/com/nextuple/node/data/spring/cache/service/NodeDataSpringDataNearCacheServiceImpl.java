@@ -28,7 +28,7 @@ public class NodeDataSpringDataNearCacheServiceImpl
   @Override
   public void selfRegister() {
     registry.registerNearCacheEntity(
-        NearCacheConstants.NODE_ENTITY_NAME, NodeDataCacheKey.class.getName());
+        NearCacheConstants.NODE_ENTITY_NAME, NodeDataCacheKey.class.getName(), "partial");
   }
 
   @Override
@@ -45,5 +45,11 @@ public class NodeDataSpringDataNearCacheServiceImpl
   @Override
   public void delete(NodeDataCacheKey key) {
     super.delete(key);
+  }
+
+  @CacheEvict(cacheManager = "caffeineCacheManager", allEntries = true)
+  @Override
+  public void deleteAll() {
+    super.deleteAll();
   }
 }

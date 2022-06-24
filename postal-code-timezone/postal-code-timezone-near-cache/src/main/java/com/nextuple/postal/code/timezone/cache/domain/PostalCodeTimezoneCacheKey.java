@@ -11,4 +11,6 @@ import lombok.Data;
 public class PostalCodeTimezoneCacheKey implements CacheKey {
   String orgId;
   String postalCodePrefix;
+
+  public PostalCodeTimezoneCacheKey() {}
 }

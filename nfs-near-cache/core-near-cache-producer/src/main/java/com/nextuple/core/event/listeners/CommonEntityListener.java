@@ -16,11 +16,15 @@ import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 public class CommonEntityListener {
 
   @Autowired EntityEventProducer entityEventProducer;
+
+  @Value("${entity-listener.kafka.enabled}")
+  private boolean kafkaEnabledFlag;
 
   @PostPersist
   @PostUpdate
@@ -29,14 +33,14 @@ public class CommonEntityListener {
       throws IllegalAccessException, LocalCacheUpdateEventException {
     log.info("Calling afterUpdating method on updating the record!");
 
-    Map<String, String> message = new HashMap<>();
+    Map<String, Object> message = new HashMap<>();
 
     // Getting primary key fields and values
     List<Field> allFields = getAllFields(entity.getClass());
     for (Field field : allFields) {
       if (field.isAnnotationPresent(Id.class)) {
         field.setAccessible(true);
-        message.put(field.getName(), (String) field.get(entity));
+        message.put(field.getName(), field.get(entity));
       }
     }
     // Entity Name Mapping
@@ -48,7 +52,9 @@ public class CommonEntityListener {
     localCacheUpdateMessage.setEntityName(entityName);
 
     log.debug("Publishing LocalUpdateCacheEvent to Kafka with {}", localCacheUpdateMessage);
-    entityEventProducer.publishEntityEvent(localCacheUpdateMessage);
+    if (kafkaEnabledFlag) {
+      entityEventProducer.publishEntityEvent(localCacheUpdateMessage);
+    }
   }
 
   private List<Field> getAllFields(Class<?> aClass) {
