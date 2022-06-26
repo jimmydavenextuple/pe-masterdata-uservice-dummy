@@ -61,7 +61,7 @@ subprojects {
     apply plugin: "com.diffplug.spotless"
     apply plugin: "org.sonatype.gradle.plugins.scan"
 
-    group = 'com.nextuple'
+    group = 'com.hbc'
     version = "1.0.0-${build_target}"
 
     sourceCompatibility = "${sourceJdkVersion}"
@@ -141,7 +141,7 @@ subprojects {
     spotbugs {
         toolVersion = '4.1.4'
         ignoreFailures = true
-        onlyAnalyze = ['com.nextuple.*']
+        onlyAnalyze = ['com.hbc.*']
         showStackTraces = false
     }
 

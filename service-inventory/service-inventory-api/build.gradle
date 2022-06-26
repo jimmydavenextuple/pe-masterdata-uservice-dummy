@@ -1,6 +1,6 @@
 bootJar {
     enabled = true
-    mainClass.set("com.nextuple.service.inventory.ServiceInventoryApplication")
+    mainClass.set("com.hbc.service.inventory.ServiceInventoryApplication")
 }
 
 configurations {

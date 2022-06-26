@@ -6,8 +6,8 @@ ext.libs = [
         'springKafka': 'org.springframework.kafka:spring-kafka:2.5.6.RELEASE',
 
         //Nextupe
-        'nxCommonUtil': 'com.nextuple.controltower:common-util:1.10.0-${build_target}',
-        'nxCoreCommonLib': 'com.nextuple.core:core-common-lib:1.10.0-${build_target}'
+        'nxCommonUtil': 'com.hbc.controltower:common-util:1.10.0-${build_target}',
+        'nxCoreCommonLib': 'com.hbc.core:core-common-lib:1.10.0-${build_target}'
 ]
 
 ext.libTests = [
