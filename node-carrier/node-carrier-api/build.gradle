@@ -1,6 +1,6 @@
 bootJar {
     enabled = true
-    mainClass.set("com.nextuple.node.carrier.MasterDataNodeCarrierApplication")
+    mainClass.set("com.hbc.node.carrier.MasterDataNodeCarrierApplication")
 }
 
 configurations {
