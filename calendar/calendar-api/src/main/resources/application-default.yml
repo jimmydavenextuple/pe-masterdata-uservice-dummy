@@ -12,7 +12,7 @@ spring:
 
 logging:
   level:
-    com.nextuple: DEBUG
+    com.hbc: DEBUG
 entity-listener:
   kafka:
     enabled: false
