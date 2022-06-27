@@ -1,4 +1,4 @@
-package com.hbc.node.carrier.calendar.cache.spring.feign;
+package com.nextuple.calendar.common;
 
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
 import com.hbc.common.response.BaseResponse;
@@ -12,11 +12,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(
     name = "pe-config-calendar",
     url = "${spring.application.dependencies.calendar:http://pe-config-calendar:8080/}")
-public interface NodeCarrierCalendarFeignImpl
+public interface CalendarCommonFeignImpl
     extends GenericFeignService<String, BaseResponse<List<CalendarDaysStatusInfo>>> {
 
   @GetMapping("/{orgId}")
   BaseResponse<List<CalendarDaysStatusInfo>> get(@PathVariable String orgId);
+
+  @GetMapping("/calendar/status/{orgId}")
+  BaseResponse<List<CalendarDaysStatusInfo>> getNodeCalendar(
+      @PathVariable("orgId") String orgId, @RequestParam("nodeId") String nodeId);
+
+  @GetMapping("/calendar/status/{orgId}")
+  BaseResponse<List<CalendarDaysStatusInfo>> getCarrierServiceCalendar(
+      @PathVariable("orgId") String orgId,
+      @RequestParam("carrierServiceId") String carrierServiceId,
+      @RequestParam("serviceOption") String serviceOption);
 
   @GetMapping("calendar/status/{orgId}")
   BaseResponse<List<CalendarDaysStatusInfo>> getNodeCarrierCalendar(

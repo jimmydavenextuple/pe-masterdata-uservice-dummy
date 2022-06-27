@@ -6,7 +6,7 @@ import com.hbc.core.cache.mapper.GenericMapper;
 import com.hbc.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import com.hbc.node.carrier.calendar.cache.domain.NodeCarrierCalendarCacheKey;
 import com.hbc.node.carrier.calendar.cache.domain.NodeCarrierCalendarCacheValue;
-import com.hbc.node.carrier.calendar.cache.spring.feign.NodeCarrierCalendarFeignImpl;
+import com.nextuple.calendar.common.CalendarCommonFeignImpl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class NodeCarrierCalendarFeignClientServiceImpl
         String,
         BaseResponse<List<CalendarDaysStatusInfo>>> {
 
-  @Autowired NodeCarrierCalendarFeignImpl nodeCarrierCalendarFeign;
+  @Autowired CalendarCommonFeignImpl calendarCommonFeign;
 
   @Autowired
   GenericMapper<
@@ -33,7 +33,7 @@ public class NodeCarrierCalendarFeignClientServiceImpl
   public NodeCarrierCalendarCacheValue get(NodeCarrierCalendarCacheKey key) {
     try {
       return nodeCalendarMapper.responseToCacheValue(
-          nodeCarrierCalendarFeign.getNodeCarrierCalendar(
+          calendarCommonFeign.getNodeCarrierCalendar(
               key.getOrgId(), key.getNodeId(), key.getCarrierServiceId(), key.getServiceOption()));
     } catch (RuntimeException e) {
       return null;
