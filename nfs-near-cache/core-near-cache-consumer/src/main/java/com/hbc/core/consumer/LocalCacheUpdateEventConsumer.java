@@ -4,6 +4,7 @@ import com.hbc.core.event.LocalCacheUpdateEvent;
 import java.lang.reflect.InvocationTargetException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.converter.KafkaMessageHeaders;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(value = "entity-listener.kafka.enabled", havingValue = "true")
 @KafkaListener(
     topics = "${spring.kafka.consumer.topics.master_data_update_event.name}",
     groupId = "${spring.kafka.consumer.topics.master_data_update_event.group-id}")

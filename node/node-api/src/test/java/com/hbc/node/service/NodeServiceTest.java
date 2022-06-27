@@ -5,13 +5,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.node.TestUtil;
 import com.hbc.node.domain.NodeDomain;
 import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.outbound.NodeResponse;
-import com.hbc.node.exception.CommonServiceException;
 import com.hbc.node.exception.NodeDomainException;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;

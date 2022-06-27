@@ -1,5 +1,6 @@
 package com.hbc.transit.service;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.entity.TransitEntity;
@@ -7,7 +8,6 @@ import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.mapper.TransitMapper;
 import com.hbc.transit.domain.outbound.TransitResponse;
-import com.hbc.transit.exception.CommonServiceException;
 import com.hbc.transit.exception.TransitDomainException;
 import java.util.HashMap;
 import java.util.List;

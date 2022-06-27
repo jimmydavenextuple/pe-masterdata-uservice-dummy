@@ -6,12 +6,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
-import com.hbc.node.carrier.exception.CommonServiceException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import java.util.Collections;
 import java.util.List;

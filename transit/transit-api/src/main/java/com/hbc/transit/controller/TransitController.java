@@ -1,10 +1,10 @@
 package com.hbc.transit.controller;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
-import com.hbc.transit.exception.CommonServiceException;
 import com.hbc.transit.exception.TransitDomainException;
 import com.hbc.transit.service.TransitService;
 import javax.validation.Valid;

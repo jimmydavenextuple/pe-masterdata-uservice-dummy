@@ -1,10 +1,10 @@
 package com.hbc.node.carrier.controller;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
-import com.hbc.node.carrier.exception.CommonServiceException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import com.hbc.node.carrier.service.NodeCarrierService;
 import java.util.List;

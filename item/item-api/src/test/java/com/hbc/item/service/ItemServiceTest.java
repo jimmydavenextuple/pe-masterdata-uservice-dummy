@@ -5,12 +5,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.item.TestUtil;
 import com.hbc.item.domain.ItemDomain;
 import com.hbc.item.domain.entity.ItemEntity;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
-import com.hbc.item.exception.CommonServiceException;
 import com.hbc.item.exception.ItemDomainException;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;

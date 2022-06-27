@@ -1,10 +1,10 @@
 package com.hbc.node.controller;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.outbound.NodeResponse;
-import com.hbc.node.exception.CommonServiceException;
 import com.hbc.node.exception.NodeDomainException;
 import com.hbc.node.service.NodeService;
 import javax.validation.Valid;

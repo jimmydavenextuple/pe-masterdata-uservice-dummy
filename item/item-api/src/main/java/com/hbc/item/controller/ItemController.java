@@ -1,10 +1,10 @@
 package com.hbc.item.controller;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
-import com.hbc.item.exception.CommonServiceException;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.service.ItemService;
 import javax.validation.Valid;

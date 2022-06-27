@@ -1,9 +1,9 @@
 package com.hbc.service.inventory.controller;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.service.inventory.domain.inbound.ServiceInventoryRequest;
 import com.hbc.service.inventory.domain.outbound.ServiceInventoryDto;
-import com.hbc.service.inventory.exception.CommonServiceException;
 import com.hbc.service.inventory.exception.ServiceInventoryDomainException;
 import com.hbc.service.inventory.service.ServiceOptionInventoryTypeService;
 import javax.validation.Valid;
