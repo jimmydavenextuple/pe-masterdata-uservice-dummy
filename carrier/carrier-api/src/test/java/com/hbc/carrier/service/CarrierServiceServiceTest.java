@@ -12,7 +12,7 @@ import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.carrier.exception.CarrierServiceDomainException;
-import com.hbc.carrier.exception.CommonServiceException;
+import com.hbc.common.exception.CommonServiceException;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

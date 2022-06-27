@@ -1,5 +1,6 @@
 package com.hbc.item.service;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.item.domain.ItemDomain;
 import com.hbc.item.domain.entity.ItemEntity;
@@ -7,7 +8,6 @@ import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.mapper.ItemMapper;
 import com.hbc.item.domain.outbound.ItemResponse;
-import com.hbc.item.exception.CommonServiceException;
 import com.hbc.item.exception.ItemDomainException;
 import java.util.HashMap;
 import java.util.Map;

@@ -5,12 +5,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.entity.TransitEntity;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
-import com.hbc.transit.exception.CommonServiceException;
 import com.hbc.transit.exception.TransitDomainException;
 import java.util.ArrayList;
 import java.util.Collections;

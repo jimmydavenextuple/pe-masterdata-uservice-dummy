@@ -7,7 +7,7 @@ import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.mapper.CarrierServiceMapper;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.carrier.exception.CarrierServiceDomainException;
-import com.hbc.carrier.exception.CommonServiceException;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import java.util.HashMap;
 import java.util.Map;

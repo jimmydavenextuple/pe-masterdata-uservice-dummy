@@ -1,4 +1,4 @@
-package com.hbc.node.carrier.exception;
+package com.hbc.common.exception;
 
 import com.hbc.common.response.error.FieldError;
 import java.util.Map;

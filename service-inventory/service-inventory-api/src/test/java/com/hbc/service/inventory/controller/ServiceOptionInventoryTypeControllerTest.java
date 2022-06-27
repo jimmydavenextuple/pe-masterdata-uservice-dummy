@@ -5,11 +5,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.service.inventory.TestUtil;
 import com.hbc.service.inventory.domain.inbound.ServiceInventoryRequest;
 import com.hbc.service.inventory.domain.outbound.ServiceInventoryDto;
-import com.hbc.service.inventory.exception.CommonServiceException;
 import com.hbc.service.inventory.exception.ServiceInventoryDomainException;
 import com.hbc.service.inventory.service.ServiceOptionInventoryTypeService;
 import org.junit.jupiter.api.Assertions;
