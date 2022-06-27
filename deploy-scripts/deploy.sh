@@ -49,6 +49,7 @@ sed -e "s@<SERVICE_VERSION>@$SERVICE_CODE@g" \
     -e "s@<SERVICE_NAME>@$SERVICE_NAME@g" \
     -e "s@<IMAGE_NAME>@$IMAGE_NAME@g" \
     -e "s@<ENVIRONMENT>@$ENVIRONMENT@g" \
+    -e "s@<NEW_RELIC_KEY>@$NEW_RELIC_KEY@g" \
     -e "s@<COLOR>@$SERVICE_PASSIVE_COLOR@g" \
     -e "s@<REPLICAS>@$REPLICAS@g" \
     -e "s@<HEALTH_CHECK_PATH>@$HEALTH_CHECK_PATH@g" \
