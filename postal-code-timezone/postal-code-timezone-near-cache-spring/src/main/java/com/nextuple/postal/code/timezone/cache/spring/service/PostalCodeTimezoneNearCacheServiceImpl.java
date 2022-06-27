@@ -29,7 +29,9 @@ public class PostalCodeTimezoneNearCacheServiceImpl
   @Override
   public void selfRegister() {
     registry.registerNearCacheEntity(
-        NearCacheConstants.POSTAL_CODE_ENTITY_NAME, PostalCodeTimezoneCacheKey.class.getName());
+        NearCacheConstants.POSTAL_CODE_ENTITY_NAME,
+        PostalCodeTimezoneCacheKey.class.getName(),
+        "partial");
   }
 
   @Override
@@ -46,5 +48,11 @@ public class PostalCodeTimezoneNearCacheServiceImpl
   @Override
   public void delete(PostalCodeTimezoneCacheKey key) {
     super.delete(key);
+  }
+
+  @CacheEvict(cacheManager = "caffeineCacheManager", allEntries = true)
+  @Override
+  public void deleteAll() {
+    super.deleteAll();
   }
 }

@@ -11,4 +11,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class WeightageConfigurationCacheKey implements CacheKey {
   FetchWeightageRequest fetchWeightageRequest;
+
+  public WeightageConfigurationCacheKey() {}
 }

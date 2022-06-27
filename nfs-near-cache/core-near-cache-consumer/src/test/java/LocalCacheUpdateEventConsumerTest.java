@@ -36,7 +36,7 @@ class LocalCacheUpdateEventConsumerTest {
       throws IllegalAccessException, ClassNotFoundException, NoSuchFieldException,
           InvocationTargetException, NoSuchMethodException, InstantiationException {
 
-    Map<String, String> message = new HashMap<>();
+    Map<String, Object> message = new HashMap<>();
     message.put("nodeId", "Node-1");
     message.put("orgId", "Tenant-1");
     doNothing()
@@ -53,7 +53,7 @@ class LocalCacheUpdateEventConsumerTest {
   void localCacheUpdateConsumerTestException()
       throws IllegalAccessException, ClassNotFoundException, NoSuchFieldException,
           InvocationTargetException, NoSuchMethodException, InstantiationException {
-    Map<String, String> message = new HashMap<>();
+    Map<String, Object> message = new HashMap<>();
     message.put("nodeId", "Node-1");
     message.put("orgId", "Tenant-1");
     doThrow(new RuntimeException("error"))

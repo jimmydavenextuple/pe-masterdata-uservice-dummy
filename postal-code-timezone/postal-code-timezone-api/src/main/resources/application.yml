@@ -24,4 +24,8 @@ logging:
     root: INFO
 availability:
   keys: LINE,ORDER
+entity-listener:
+  kafka:
+    enabled: true
+
 

@@ -30,7 +30,8 @@ public class WeightageConfigurationSpringNearCacheServiceImpl
   public void selfRegister() {
     registry.registerNearCacheEntity(
         NearCacheConstants.WEIGHTAGE_CONFIGURATION_ENTITY_NAME,
-        WeightageConfigurationCacheKey.class.getName());
+        WeightageConfigurationCacheKey.class.getName(),
+        "full");
   }
 
   @Override
@@ -47,5 +48,11 @@ public class WeightageConfigurationSpringNearCacheServiceImpl
   @Override
   public void delete(WeightageConfigurationCacheKey key) {
     super.delete(key);
+  }
+
+  @CacheEvict(cacheManager = "caffeineCacheManager", allEntries = true)
+  @Override
+  public void deleteAll() {
+    super.deleteAll();
   }
 }

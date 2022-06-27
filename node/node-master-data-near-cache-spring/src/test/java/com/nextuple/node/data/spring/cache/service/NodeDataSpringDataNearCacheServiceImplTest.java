@@ -73,4 +73,12 @@ class NodeDataSpringDataNearCacheServiceImplTest {
     CacheValue cacheValue = nodeDataSpringDataNearCacheService.get(cacheKey);
     assertNull(cacheValue);
   }
+
+  @Test
+  void deleteAllTest() {
+    NodeDataCacheKey cacheKey = testUtil.getNodeCacheKey();
+    nodeDataSpringDataNearCacheService.deleteAll();
+    CacheValue cacheValue = nodeDataSpringDataNearCacheService.get(cacheKey);
+    assertNull(cacheValue);
+  }
 }

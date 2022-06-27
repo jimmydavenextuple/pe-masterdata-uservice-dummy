@@ -74,4 +74,12 @@ class SourcingRuleSpringNearCacheServiceImplTest {
     CacheValue cacheValue = sourcingRuleSpringNearCacheService.get(cacheKey);
     assertNull(cacheValue);
   }
+
+  @Test
+  void deleteAllTest() {
+    SourcingRuleCacheKey cacheKey = testUtil.getSourcingRuleCacheKey();
+    sourcingRuleSpringNearCacheService.deleteAll();
+    CacheValue cacheValue = sourcingRuleSpringNearCacheService.get(cacheKey);
+    assertNull(cacheValue);
+  }
 }

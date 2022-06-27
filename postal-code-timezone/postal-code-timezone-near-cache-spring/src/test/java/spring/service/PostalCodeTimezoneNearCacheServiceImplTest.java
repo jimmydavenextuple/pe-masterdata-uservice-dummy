@@ -80,4 +80,12 @@ class PostalCodeTimezoneNearCacheServiceImplTest {
     CacheValue cacheValue = postalCodeTimezoneNearCacheServiceImpl.get(cacheKey);
     assertNull(cacheValue);
   }
+
+  @Test
+  void deleteAllTest() {
+    PostalCodeTimezoneCacheKey cacheKey = testUtil.getPostalCodeTimezoneCacheKey();
+    postalCodeTimezoneNearCacheServiceImpl.deleteAll();
+    CacheValue cacheValue = postalCodeTimezoneNearCacheServiceImpl.get(cacheKey);
+    assertNull(cacheValue);
+  }
 }

@@ -22,4 +22,6 @@ public abstract class AbstractGenericSpringLocalCacheServiceImpl<
   }
 
   public void delete(K key) {}
+
+  public void deleteAll() {}
 }
