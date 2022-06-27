@@ -15,12 +15,6 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     implementation(project(":common-util"))
     implementation(project(":nfs-near-cache:core-near-cache-producer"))
-    implementation(project(":calendar:node-calendar-near-cache"))
-    implementation(project(":calendar:node-calendar-near-cache-spring"))
-    implementation(project(":calendar:carrier-calendar-near-cache"))
-    implementation(project(":calendar:carrier-calendar-near-cache-spring"))
-    implementation(project(":calendar:node-carrier-calendar-near-cache"))
-    implementation(project(":calendar:node-carrier-calendar-near-cache-spring"))
 }
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
