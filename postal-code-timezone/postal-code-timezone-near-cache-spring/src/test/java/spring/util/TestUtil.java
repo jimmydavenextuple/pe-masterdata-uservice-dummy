@@ -1,9 +1,9 @@
 package spring.util;
 
-import com.nextuple.common.response.BaseResponse;
-import com.nextuple.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
-import com.nextuple.postal.code.timezone.cache.domain.PostalCodeTimezoneCacheKey;
-import com.nextuple.postal.code.timezone.cache.domain.PostalCodeTimezoneCacheValue;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.postal.code.timezone.cache.domain.PostalCodeTimezoneCacheKey;
+import com.hbc.postal.code.timezone.cache.domain.PostalCodeTimezoneCacheValue;
 
 public class TestUtil {
   public PostalCodeTimezoneDto getPostalCodeTimezoneDto() {

@@ -1,6 +1,6 @@
 bootJar {
     enabled = true
-    mainClass.set("com.nextuple.promise.sourcing.rule.PromiseSourcingRuleApplication")
+    mainClass.set("com.hbc.promise.sourcing.rule.PromiseSourcingRuleApplication")
 }
 
 
