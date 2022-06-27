@@ -7,7 +7,7 @@ import com.nextuple.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.nextuple.carrier.domain.mapper.CarrierServiceMapper;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.carrier.exception.CarrierServiceDomainException;
-import com.nextuple.carrier.exception.CommonServiceException;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
 import java.util.HashMap;
 import java.util.Map;

@@ -6,12 +6,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.node.TestUtil;
 import com.nextuple.node.domain.inbound.NodeRequest;
 import com.nextuple.node.domain.inbound.NodeUpdationRequest;
 import com.nextuple.node.domain.outbound.NodeResponse;
-import com.nextuple.node.exception.CommonServiceException;
 import com.nextuple.node.exception.NodeDomainException;
 import com.nextuple.node.service.NodeService;
 import org.junit.jupiter.api.Assertions;

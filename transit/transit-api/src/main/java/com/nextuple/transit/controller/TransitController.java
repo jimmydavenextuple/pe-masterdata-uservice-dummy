@@ -1,10 +1,10 @@
 package com.nextuple.transit.controller;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.transit.domain.inbound.TransitDataCreationRequest;
 import com.nextuple.transit.domain.inbound.TransitDataUpdationRequest;
 import com.nextuple.transit.domain.outbound.TransitResponse;
-import com.nextuple.transit.exception.CommonServiceException;
 import com.nextuple.transit.exception.TransitDomainException;
 import com.nextuple.transit.service.TransitService;
 import javax.validation.Valid;

@@ -5,12 +5,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.transit.TestUtil;
 import com.nextuple.transit.domain.inbound.TransitDataCreationRequest;
 import com.nextuple.transit.domain.inbound.TransitDataUpdationRequest;
 import com.nextuple.transit.domain.outbound.TransitResponse;
-import com.nextuple.transit.exception.CommonServiceException;
 import com.nextuple.transit.exception.TransitDomainException;
 import com.nextuple.transit.service.TransitService;
 import org.junit.jupiter.api.Assertions;

@@ -1,5 +1,6 @@
 package com.nextuple.transit.service;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.transit.domain.TransitDomain;
 import com.nextuple.transit.domain.entity.TransitEntity;
@@ -7,7 +8,6 @@ import com.nextuple.transit.domain.inbound.TransitDataCreationRequest;
 import com.nextuple.transit.domain.inbound.TransitDataUpdationRequest;
 import com.nextuple.transit.domain.mapper.TransitMapper;
 import com.nextuple.transit.domain.outbound.TransitResponse;
-import com.nextuple.transit.exception.CommonServiceException;
 import com.nextuple.transit.exception.TransitDomainException;
 import java.util.HashMap;
 import java.util.List;

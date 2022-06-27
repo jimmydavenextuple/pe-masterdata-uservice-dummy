@@ -1,9 +1,9 @@
 package com.nextuple.service.inventory.controller;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.service.inventory.domain.inbound.ServiceInventoryRequest;
 import com.nextuple.service.inventory.domain.outbound.ServiceInventoryDto;
-import com.nextuple.service.inventory.exception.CommonServiceException;
 import com.nextuple.service.inventory.exception.ServiceInventoryDomainException;
 import com.nextuple.service.inventory.service.ServiceOptionInventoryTypeService;
 import javax.validation.Valid;

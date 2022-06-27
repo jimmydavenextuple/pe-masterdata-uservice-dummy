@@ -1,12 +1,12 @@
 package com.nextuple.service.inventory.service;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.service.inventory.domain.ServiceOptionInventoryTypeDomain;
 import com.nextuple.service.inventory.domain.entity.ServiceOptionInventoryTypeEntity;
 import com.nextuple.service.inventory.domain.inbound.ServiceInventoryRequest;
 import com.nextuple.service.inventory.domain.mapper.ServiceInventoryMapper;
 import com.nextuple.service.inventory.domain.outbound.ServiceInventoryDto;
-import com.nextuple.service.inventory.exception.CommonServiceException;
 import com.nextuple.service.inventory.exception.ServiceInventoryDomainException;
 import java.util.HashMap;
 import java.util.Map;

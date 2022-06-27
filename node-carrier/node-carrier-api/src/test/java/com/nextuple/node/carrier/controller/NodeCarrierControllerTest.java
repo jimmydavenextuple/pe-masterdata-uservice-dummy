@@ -5,10 +5,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.node.carrier.TestUtil;
 import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
-import com.nextuple.node.carrier.exception.CommonServiceException;
 import com.nextuple.node.carrier.exception.NodeCarrierDomainException;
 import com.nextuple.node.carrier.service.NodeCarrierService;
 import java.util.List;

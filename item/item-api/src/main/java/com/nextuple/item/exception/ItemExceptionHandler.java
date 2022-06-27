@@ -20,14 +20,4 @@ public class ItemExceptionHandler {
                 .message("Internal Server Error")
                 .build());
   }
-
-  @ExceptionHandler(CommonServiceException.class)
-  public ResponseEntity<ErrorResponse> handleCommonServiceException(CommonServiceException e) {
-    return ResponseEntity.status(e.getHttpStatus())
-        .body(
-            ErrorResponse.builder(ErrorType.ERROR, e.getErrorCode())
-                .message(e.getMessage())
-                .errorField(e.getFieldInfo())
-                .build());
-  }
 }

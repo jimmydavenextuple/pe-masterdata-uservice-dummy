@@ -1,5 +1,6 @@
 package com.nextuple.item.service;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.item.domain.ItemDomain;
 import com.nextuple.item.domain.entity.ItemEntity;
@@ -7,7 +8,6 @@ import com.nextuple.item.domain.inbound.ItemCreationRequest;
 import com.nextuple.item.domain.inbound.ItemUpdationRequest;
 import com.nextuple.item.domain.mapper.ItemMapper;
 import com.nextuple.item.domain.outbound.ItemResponse;
-import com.nextuple.item.exception.CommonServiceException;
 import com.nextuple.item.exception.ItemDomainException;
 import java.util.HashMap;
 import java.util.Map;

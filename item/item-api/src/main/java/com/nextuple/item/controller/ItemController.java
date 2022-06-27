@@ -1,10 +1,10 @@
 package com.nextuple.item.controller;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
 import com.nextuple.item.domain.inbound.ItemUpdationRequest;
 import com.nextuple.item.domain.outbound.ItemResponse;
-import com.nextuple.item.exception.CommonServiceException;
 import com.nextuple.item.exception.ItemDomainException;
 import com.nextuple.item.service.ItemService;
 import javax.validation.Valid;

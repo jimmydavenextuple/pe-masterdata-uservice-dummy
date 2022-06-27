@@ -12,7 +12,7 @@ import com.nextuple.carrier.domain.inbound.CarrierServiceRequest;
 import com.nextuple.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.carrier.exception.CarrierServiceDomainException;
-import com.nextuple.carrier.exception.CommonServiceException;
+import com.nextuple.common.exception.CommonServiceException;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

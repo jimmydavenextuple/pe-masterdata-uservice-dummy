@@ -1,5 +1,6 @@
 package com.nextuple.node.carrier.service;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.node.carrier.domain.NodeCarrierDomain;
 import com.nextuple.node.carrier.domain.entity.NodeCarrierEntity;
@@ -7,7 +8,6 @@ import com.nextuple.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.nextuple.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.nextuple.node.carrier.domain.mapper.NodeCarrierMapper;
 import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
-import com.nextuple.node.carrier.exception.CommonServiceException;
 import com.nextuple.node.carrier.exception.NodeCarrierDomainException;
 import java.util.ArrayList;
 import java.util.HashMap;

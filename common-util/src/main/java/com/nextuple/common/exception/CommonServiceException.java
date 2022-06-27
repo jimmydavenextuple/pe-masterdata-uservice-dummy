@@ -1,4 +1,4 @@
-package com.nextuple.node.exception;
+package com.nextuple.common.exception;
 
 import com.nextuple.common.response.error.FieldError;
 import java.util.Map;

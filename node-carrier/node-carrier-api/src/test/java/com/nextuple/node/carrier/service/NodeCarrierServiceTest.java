@@ -6,12 +6,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.node.carrier.TestUtil;
 import com.nextuple.node.carrier.domain.NodeCarrierDomain;
 import com.nextuple.node.carrier.domain.entity.NodeCarrierEntity;
 import com.nextuple.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
-import com.nextuple.node.carrier.exception.CommonServiceException;
 import com.nextuple.node.carrier.exception.NodeCarrierDomainException;
 import java.util.Collections;
 import java.util.List;

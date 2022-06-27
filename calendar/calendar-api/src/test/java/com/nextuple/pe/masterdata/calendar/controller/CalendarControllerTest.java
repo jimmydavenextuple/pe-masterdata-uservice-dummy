@@ -6,10 +6,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.calendar.domain.CalendarDaysStatusInfo;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.pe.masterdata.calendar.domain.outbound.CalendarResponse;
 import com.nextuple.pe.masterdata.calendar.exception.CalendarDomainException;
-import com.nextuple.pe.masterdata.calendar.exception.CommonServiceException;
 import com.nextuple.pe.masterdata.calendar.service.CalendarService;
 import com.nextuple.pe.masterdata.calendar.util.TestUtil;
 import java.util.List;
