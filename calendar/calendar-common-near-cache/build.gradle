@@ -1,9 +1,8 @@
-bootJar {
-    enabled = false
-}
-
 jar {
     enabled = true
+}
+bootJar {
+    enabled = false
 }
 
 dependencies {
@@ -11,12 +10,8 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
     implementation(project(":common-util"))
-    implementation(project(":nfs-near-cache:core-near-cache"))
-    implementation(project(":nfs-near-cache:core-near-cache-consumer"))
-    implementation(project(":nfs-near-cache:core-near-cache-spring"))
-    implementation(project(":calendar:carrier-calendar-near-cache"))
     implementation(project(":calendar:calendar-api-domain"))
-    api(project(":calendar:calendar-common-near-cache"))
+    implementation(project(":nfs-near-cache:core-near-cache"))
 
     constraints {
         implementation('io.github.openfeign:feign-core:11.8') {

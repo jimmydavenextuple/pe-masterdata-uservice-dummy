@@ -91,6 +91,8 @@ include 'calendar:node-carrier-calendar-near-cache'
 findProject(':calendar:node-carrier-calendar-near-cache')?.name = 'node-carrier-calendar-near-cache'
 include 'calendar:node-carrier-calendar-near-cache-spring'
 findProject(':calendar:node-carrier-calendar-near-cache-spring')?.name = 'node-carrier-calendar-near-cache-spring'
+include 'calendar:calendar-common-near-cache'
+findProject(':calendar:calendar-common-near-cache')?.name = 'calendar-common-near-cache'
 
 include 'postal-code-timezone'
 include 'postal-code-timezone:postal-code-timezone-api'

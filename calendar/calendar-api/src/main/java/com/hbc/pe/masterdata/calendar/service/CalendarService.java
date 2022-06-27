@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -155,6 +156,15 @@ public class CalendarService {
     }
 
     CalendarEntity calendarEntity = calendarDomain.getCalendar(orgId, currentCalendarId);
+    if (ObjectUtils.isEmpty(calendarEntity)) {
+      throw new CommonServiceException(
+          "No Calendar with calendarId = "
+              + currentCalendarId
+              + " found that exist with the association calendar ",
+          HttpStatus.BAD_REQUEST,
+          0xfffff5,
+          Map.of(ORG_ID, FieldError.builder().rejectedValue(orgId).build()));
+    }
     List<String> exceptionDays =
         calendarEntity.getExceptionDays().stream()
             .map(ExceptionDays::getDate)
