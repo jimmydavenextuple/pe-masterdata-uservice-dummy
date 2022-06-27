@@ -156,9 +156,11 @@ public class CalendarService {
     }
 
     CalendarEntity calendarEntity = calendarDomain.getCalendar(orgId, currentCalendarId);
-    if(ObjectUtils.isEmpty(calendarEntity)) {
+    if (ObjectUtils.isEmpty(calendarEntity)) {
       throw new CommonServiceException(
-          "No Calendar with calendarId = " + currentCalendarId + "found that exist with the association calendar ",
+          "No Calendar with calendarId = "
+              + currentCalendarId
+              + "found that exist with the association calendar ",
           HttpStatus.BAD_REQUEST,
           0xfffff5,
           Map.of(ORG_ID, FieldError.builder().rejectedValue(orgId).build()));
