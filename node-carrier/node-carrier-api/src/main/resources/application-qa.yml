@@ -24,4 +24,4 @@ spring:
 
 logging:
   level:
-    com.nextuple: DEBUG
+    com.hbc: DEBUG

@@ -1,6 +1,6 @@
 bootJar {
     enabled = true
-    mainClass.set("com.nextuple.transit.MasterDataTransitApplication")
+    mainClass.set("com.hbc.transit.MasterDataTransitApplication")
 }
 
 configurations {

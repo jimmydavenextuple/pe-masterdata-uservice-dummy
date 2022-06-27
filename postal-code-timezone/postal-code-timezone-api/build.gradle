@@ -1,6 +1,6 @@
 bootJar {
     enabled = true
-    mainClass.set("com.nextuple.postal.code.timezone.PostalCodeTimezoneApplication")
+    mainClass.set("com.hbc.postal.code.timezone.PostalCodeTimezoneApplication")
 }
 
 
@@ -19,3 +19,5 @@ dependencies {
     implementation(project(":nfs-near-cache:core-near-cache-producer"))
     runtimeOnly 'org.postgresql:postgresql'
 }
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
