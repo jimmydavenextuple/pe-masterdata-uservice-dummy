@@ -1,12 +1,12 @@
 package com.hbc.carrier.calendar.cache.spring.service;
 
+import com.hbc.calendar.common.CalendarCommonFeignImpl;
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
 import com.hbc.carrier.calendar.cache.domain.CarrierServiceCalendarCacheKey;
 import com.hbc.carrier.calendar.cache.domain.CarrierServiceCalendarCacheValue;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.core.cache.mapper.GenericMapper;
 import com.hbc.core.spring.service.AbstractGenericFeignClientServiceImpl;
-import com.nextuple.calendar.common.CalendarCommonFeignImpl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

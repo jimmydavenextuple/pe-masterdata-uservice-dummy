@@ -1,4 +1,4 @@
-package com.nextuple.calendar.common;
+package com.hbc.calendar.common;
 
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
 import com.hbc.common.response.BaseResponse;
