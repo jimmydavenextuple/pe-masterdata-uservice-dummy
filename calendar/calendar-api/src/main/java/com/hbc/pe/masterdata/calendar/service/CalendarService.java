@@ -160,7 +160,7 @@ public class CalendarService {
       throw new CommonServiceException(
           "No Calendar with calendarId = "
               + currentCalendarId
-              + "found that exist with the association calendar ",
+              + " found that exist with the association calendar ",
           HttpStatus.BAD_REQUEST,
           0xfffff5,
           Map.of(ORG_ID, FieldError.builder().rejectedValue(orgId).build()));
