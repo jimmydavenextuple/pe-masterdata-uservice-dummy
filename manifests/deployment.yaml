@@ -65,4 +65,4 @@ spec:
             - name: NEW_RELIC_APP_NAME
               value: "<SERVICE_NAME>"
             - name: NEW_RELIC_LICENSE_KEY
-              value: "<NEW_RELIC_KEY>"
+              value: "<NEW_RELIC_LICENSE_KEY>"
