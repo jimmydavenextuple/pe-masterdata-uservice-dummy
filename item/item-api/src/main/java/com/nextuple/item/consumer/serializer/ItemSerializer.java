@@ -1,7 +1,7 @@
 package com.nextuple.item.consumer.serializer;
 
+import com.nextuple.item.Item;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.specific.SpecificRecordBase;
 
 @Slf4j
-public class ItemSerializer<T extends SpecificRecordBase> extends AvroSerializer<T> {}
+public class ItemSerializer<T extends Item> extends AvroSerializer<T> {}
