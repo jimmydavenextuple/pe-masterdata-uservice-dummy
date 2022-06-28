@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -26,14 +27,7 @@ import org.springframework.util.ObjectUtils;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthFilter implements Filter {
-  @Value("${auth.filter-enabled}")
-  private boolean filterEnabled;
-
-  @Value("#{'${auth.roles}'.split(',')}")
-  private List<String> roles;
-
-  @Value("${auth.issuer}")
-  private String issuer;
+  @Autowired AuthProperties authProperties;
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
@@ -46,7 +40,7 @@ public class AuthFilter implements Filter {
     log.debug("-----Inside auth filter-----");
     HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
-    if (filterEnabled) {
+    if (authProperties.isFilterEnabled()) {
       try {
 
         // Clean previous context
@@ -54,9 +48,11 @@ public class AuthFilter implements Filter {
         MDC.clear();
 
         String authorizationHeaderValue = httpServletRequest.getHeader("Authorization");
-        String token = extractJWTToken(authorizationHeaderValue);
-
-        Jwt<Header, Claims> claims = getAllClaimsFromToken(token);
+        Optional<String> tokenString = extractJWTToken(authorizationHeaderValue);
+        if (!tokenString.isPresent()) {
+          throw new AuthFilterException("Authorization header value is empty or null");
+        }
+        Jwt<Header, Claims> claims = getAllClaimsFromToken(tokenString.get());
         log.debug(
             "--------Roles extracted from claims: {}------",
             claims.getBody().get("role").toString());
@@ -68,7 +64,7 @@ public class AuthFilter implements Filter {
 
         // Issuer checks
         String issuerString = claims.getBody().getIssuer();
-        boolean issuerVerified = issuerString.equals(issuer);
+        boolean issuerVerified = issuerString.equals(authProperties.getIssuer());
 
         if (roleVerified && issuerVerified) {
           log.debug("All checks passed");
@@ -78,10 +74,10 @@ public class AuthFilter implements Filter {
           throw new AuthFilterException("Verification failed");
         }
       } catch (AuthFilterException e) {
-        log.error("Authentication failed");
+        log.error("Authentication failed", e);
         throw e;
       } catch (Exception e) {
-        log.error("Error while authenticating the request");
+        log.error("Error while authenticating the request", e);
         throw e;
       }
     } else {
@@ -91,6 +87,7 @@ public class AuthFilter implements Filter {
 
   private boolean verifyRoles(Object roleClaims) {
     boolean verified = false;
+    List<String> roles = authProperties.getRoles();
     if (roleClaims instanceof Collection) {
       for (String role : (List<String>) roleClaims) {
         if (roles.contains(role)) {
@@ -110,15 +107,15 @@ public class AuthFilter implements Filter {
     return Jwts.parser().parseClaimsJwt(withoutSignature);
   }
 
-  private String extractJWTToken(String authorizationHeaderValue) {
+  private Optional<String> extractJWTToken(String authorizationHeaderValue) {
     if (!ObjectUtils.isEmpty(authorizationHeaderValue)) {
       String tokenString = authorizationHeaderValue;
       if (authorizationHeaderValue.startsWith("Bearer ")) {
         tokenString = authorizationHeaderValue.substring("Bearer ".length());
       }
-      return tokenString;
+      return Optional.of(tokenString);
     }
-    return null;
+    return Optional.empty();
   }
 
   @Override
