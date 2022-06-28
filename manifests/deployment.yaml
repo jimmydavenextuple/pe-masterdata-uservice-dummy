@@ -62,3 +62,17 @@ spec:
               value: "<SERVICE_NAME>"
             - name: SERVICE_VERSION
               value: "<SERVICE_VERSION>"
+            - name: NEW_RELIC_APP_NAME
+              value: "<SERVICE_NAME>"
+            - name: NEW_RELIC_LICENSE_KEY
+              value: "<NEW_RELIC_LICENSE_KEY>"
+            - name: KAFKA_USER
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-credentials
+                  key: username
+            - name: KAFKA_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-credentials
+                  key: password

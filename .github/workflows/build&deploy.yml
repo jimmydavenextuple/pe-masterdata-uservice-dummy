@@ -43,14 +43,14 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain nextuple --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
+          export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain hbc --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
           bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain publish -p ${{ inputs.module }}
           bash ./gradlew -Pbuild_target=SNAPSHOT -Dsonar.login=$SONAR_TOKEN sonarqube showSonarQubeLink --info
-#      - name: Publish Test Results
-#        uses: EnricoMi/publish-unit-test-result-action@v1
-#        if: always()
-#        with:
-#          files: "**/**/test-results/**/*.xml"
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: "**/**/test-results/**/*.xml"
       - name: Docker Build & Push
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -59,6 +59,8 @@ jobs:
           export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties -p ${{ inputs.module }} | grep version | sed -e "s@version: @@g"`
           export SERVICE_CODE=`echo "$VERSION" | cut -d '-' -f1`
           export IMAGE_NAME="$ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }}"
+          curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip && unzip newrelic-java.zip
+          cp newrelic/newrelic.jar "./${{ inputs.module }}/${{ inputs.module }}-api" && cp newrelic/newrelic.yml "./${{ inputs.module }}/${{ inputs.module }}-api" && cp entrypoint.sh "./${{ inputs.module }}/${{ inputs.module }}-api"
           docker build -f Dockerfile -t $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }} "./${{ inputs.module }}/${{ inputs.module }}-api"
           docker push $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$VERSION.${{ github.sha }}
 
@@ -86,6 +88,7 @@ jobs:
         run: ./deploy-scripts/deploy.sh
         env:
           ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
           COMMIT_HASH: ${{ github.sha }}
           ENVIRONMENT: "dev"
           PROJECT: ${{ inputs.module }}
@@ -113,6 +116,7 @@ jobs:
         run: ./deploy-scripts/deploy.sh
         env:
           ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
           COMMIT_HASH: ${{ github.sha }}
           ENVIRONMENT: "qa"
           PROJECT: ${{ inputs.module }}
