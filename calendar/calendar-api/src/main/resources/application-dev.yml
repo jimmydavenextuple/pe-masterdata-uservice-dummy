@@ -7,14 +7,14 @@ spring:
   datasource:
     platform: postgres
     url: jdbc:postgresql://dev-db.co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PWD}
+    username: \${POSTGRES_USER}
+    password: \${POSTGRES_PWD}
   kafka:
     bootstrap-servers: "b-1.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9096,b-2.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9096,b-2.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9096"
     properties:
       security.protocol: SASL_SSL
       sasl.mechanism: SCRAM-SHA-512
-      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"${KAFKA_USER}\" password=\"${KAFKA_PWD}\";"
+      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"\${KAFKA_USER}\" password=\"\${KAFKA_PWD}\";"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
