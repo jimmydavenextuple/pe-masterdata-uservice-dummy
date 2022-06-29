@@ -7,10 +7,14 @@ spring:
   datasource:
     platform: postgres
     url: jdbc:postgresql://qa-db.co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
-    username: postgres
-    password: postgres
+    username: \${POSTGRES_USER}
+    password: \${POSTGRES_PWD}
   kafka:
-    bootstrap-servers: "b-1.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9092,b-2.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9092,b-3.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9092"
+    bootstrap-servers: "b-1.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9096,b-2.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9096,b-3.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9096"
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: SCRAM-SHA-512
+      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"\${KAFKA_USER}\" password=\"\${KAFKA_PWD}\";"
     consumer:
       enable-auto-commit: true
       auto-offset-reset: earliest
