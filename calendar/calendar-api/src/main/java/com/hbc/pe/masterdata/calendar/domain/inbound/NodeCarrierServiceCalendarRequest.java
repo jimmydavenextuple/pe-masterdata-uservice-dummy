@@ -13,23 +13,23 @@ import org.hibernate.validator.constraints.Length;
 @Builder
 public class NodeCarrierServiceCalendarRequest {
 
-  @NotBlank(message = "calendarId cannot be blank")
+  @NotBlank(message = "calendarId can't be blank")
   @Length(max = 40)
   private String calendarId;
 
-  @NotBlank(message = "orgId cannot be blank")
+  @NotBlank(message = "orgId can't be blank")
   @Length(max = 40)
   private String orgId;
 
-  @NotBlank(message = "nodeId cannot be blank")
+  @NotBlank(message = "nodeId can't be blank")
   @Length(max = 40)
   private String nodeId;
 
-  @NotBlank(message = "carrierServiceId cannot be blank")
+  @NotBlank(message = "carrierServiceId can't be blank")
   @Length(max = 40)
   private String carrierServiceId;
 
-  @NotBlank(message = "effectiveDate cannot be blank")
+  @NotBlank(message = "effectiveDate can't be blank")
   private String effectiveDate;
 
   private String description;

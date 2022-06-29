@@ -13,15 +13,15 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @Builder
 public class ServiceInventoryRequest implements Serializable {
-  @NotBlank
+  @NotBlank(message = "orgId can't be blank")
   @Length(max = 50)
   private String orgId;
 
-  @NotBlank
+  @NotBlank(message = "serviceOption can't be blank")
   @Length(max = 50)
   private String serviceOption;
 
-  @NotBlank
+  @NotBlank(message = "inventoryType can't be blank")
   @Length(max = 50)
   private String inventoryType;
 }

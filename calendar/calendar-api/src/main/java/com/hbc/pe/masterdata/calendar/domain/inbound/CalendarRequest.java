@@ -16,11 +16,11 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 public class CalendarRequest implements Serializable {
 
-  @NotBlank(message = "calendarId cannot be blank")
+  @NotBlank(message = "calendarId can't be blank")
   @Length(max = 40)
   private String calendarId;
 
-  @NotBlank(message = "orgId cannot be blank")
+  @NotBlank(message = "orgId can't be blank")
   @Length(max = 40)
   private String orgId;
 
