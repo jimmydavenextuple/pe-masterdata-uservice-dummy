@@ -1,0 +1,189 @@
+package com.hbc.weightage.configuration.service;
+
+import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.AVAILABILITY;
+
+import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
+import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
+import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
+import com.hbc.weightage.configuration.api.domain.inbound.UpdateWeightageConfigurationRequest;
+import com.hbc.weightage.configuration.domain.WeightageConfigurationDomain;
+import com.hbc.weightage.configuration.domain.entity.WeightageConfiguration;
+import com.hbc.weightage.configuration.domain.mapper.WeightageConfigurationMapper;
+import com.hbc.weightage.configuration.exception.common.ApplicationLayer;
+import com.hbc.weightage.configuration.exception.common.ExceptionCodeMapping;
+import com.hbc.weightage.configuration.exception.common.PromiseEngineException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class WeightageConfigurationService {
+  @Value("#{'${availability.keys}'.split(',')}")
+  private Set<String> availabilityKeys;
+
+  private static final Logger logger = LoggerFactory.getLogger(WeightageConfigurationService.class);
+  private final WeightageConfigurationDomain weightageConfigurationDomain;
+
+  private static final WeightageConfigurationMapper INSTANCE =
+      Mappers.getMapper(WeightageConfigurationMapper.class);
+
+  /**
+   * Convert WeightageConfiguration entity to WeightageConfigurationDto with all required processing
+   *
+   * @param weightageConfiguration WeightageConfiguration entity
+   * @return WeightageConfigurationDto dto
+   */
+  private WeightageConfigurationDto prepareWeightageConfigurationDto(
+      WeightageConfiguration weightageConfiguration) {
+    return INSTANCE.convertToWeightageConfigurationDto(weightageConfiguration);
+  }
+
+  /**
+   * Fetch Weightage
+   *
+   * @param baseRequest Fetch Weightage Request
+   * @return Map<String, Float> fetchWeightageResponse
+   * @throws PromiseEngineException
+   */
+  public Map<String, Float> fetchWeightage(FetchWeightageRequest baseRequest)
+      throws PromiseEngineException {
+    logger.info("-- inside fetchWeightage service --");
+    List<WeightageConfiguration> weightageConfigurationList =
+        weightageConfigurationDomain.fetchWeightage(baseRequest);
+    if (weightageConfigurationList.isEmpty()) {
+      throw new PromiseEngineException(
+          ApplicationLayer.SERVICE_LAYER,
+          ExceptionCodeMapping.SERVICE_FIND_FAILED,
+          "Weightage Configurations not found!");
+    }
+
+    Map<String, Float> fetchWeightageResponse = new HashMap<>();
+    weightageConfigurationList.forEach(
+        weightageConfiguration ->
+            fetchWeightageResponse.put(
+                weightageConfiguration.getKey(), weightageConfiguration.getWeightage()));
+
+    return fetchWeightageResponse;
+  }
+
+  /**
+   * Create Weightage Configuration
+   *
+   * @param baseRequest for Creating WeightageConfiguration
+   * @return Created Weightage Configuration Dto
+   * @throws PromiseEngineException
+   */
+  public WeightageConfigurationDto createWeightageConfiguration(
+      CreateWeightageConfigurationRequest baseRequest) throws PromiseEngineException {
+    logger.info("-- inside createWeightageConfiguration service --");
+    if (Objects.equals(baseRequest.getType(), AVAILABILITY)
+        && !availabilityKeys.contains(baseRequest.getKey())) {
+      throw new PromiseEngineException(
+          ApplicationLayer.SERVICE_LAYER,
+          ExceptionCodeMapping.SERVICE_UNAUTHORIZED_ACTION,
+          "Invalid key for AVAILABILITY type");
+    }
+
+    WeightageConfiguration weightageConfiguration =
+        INSTANCE.convertCreateWeightageConfigurationRequestToWeightageConfigurationEntity(
+            baseRequest);
+
+    return prepareWeightageConfigurationDto(
+        weightageConfigurationDomain.saveWeightageConfiguration(weightageConfiguration));
+  }
+
+  /**
+   * Get Weightage Configuration
+   *
+   * @param orgId Organisation Id
+   * @param type Type
+   * @param key Key
+   * @return Fetched Weightage Configuration Dto
+   * @throws PromiseEngineException
+   */
+  public WeightageConfigurationDto getWeightageConfiguration(String orgId, String type, String key)
+      throws PromiseEngineException {
+    logger.info("-- inside getWeightageConfiguration service --");
+    Optional<WeightageConfiguration> weightageConfiguration =
+        Optional.ofNullable(
+            weightageConfigurationDomain.getWeightageConfiguration(orgId, type, key));
+    if (weightageConfiguration.isEmpty()) {
+      logger.info("-- Weightage Configuration not found --");
+      throw new PromiseEngineException(
+          ApplicationLayer.SERVICE_LAYER,
+          ExceptionCodeMapping.SERVICE_FIND_FAILED,
+          "Weightage Configuration not found!");
+    }
+    return prepareWeightageConfigurationDto(weightageConfiguration.get());
+  }
+
+  /**
+   * Get Weightage Configuration by key
+   *
+   * @param key Key
+   * @return Fetched List of Weightage Configuration Dto
+   * @throws PromiseEngineException
+   */
+  public List<WeightageConfigurationDto> getWeightageConfigurationsByKey(String key)
+      throws PromiseEngineException {
+    logger.info("-- inside getWeightageConfigurationByKey service --");
+    List<WeightageConfiguration> weightageConfigurationList =
+        weightageConfigurationDomain.getWeightageConfigurationsByKey(key);
+    return weightageConfigurationList.stream()
+        .map(this::prepareWeightageConfigurationDto)
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Updates Weightage Configuration
+   *
+   * @param orgId Organisation Id
+   * @param type Type
+   * @param key Key
+   * @param baseRequest for Updating WeightageConfiguration
+   * @return Returns and evicts data for updated promise sourcing rule entity
+   * @throws PromiseEngineException
+   */
+  public WeightageConfigurationDto updateWeightageConfiguration(
+      String orgId, String type, String key, UpdateWeightageConfigurationRequest baseRequest)
+      throws PromiseEngineException {
+    logger.info("-- inside updateWeightageConfiguration service --");
+    WeightageConfiguration weightageConfigurationFromDB =
+        INSTANCE.convertToWeightageConfigurationEntity(getWeightageConfiguration(orgId, type, key));
+
+    INSTANCE.insertValuesFromUpdateWeightageConfigurationRequestToEntity(
+        baseRequest, weightageConfigurationFromDB);
+
+    return prepareWeightageConfigurationDto(
+        weightageConfigurationDomain.saveWeightageConfiguration(weightageConfigurationFromDB));
+  }
+
+  /**
+   * Delete Weightage Configuration
+   *
+   * @param orgId Organisation Id
+   * @param type Type
+   * @param key Key
+   * @return Returns and deletes data entity
+   * @throws PromiseEngineException
+   */
+  public WeightageConfigurationDto deleteWeightageConfiguration(
+      String orgId, String type, String key) throws PromiseEngineException {
+    logger.info("-- inside deleteWeightageConfiguration service --");
+    WeightageConfiguration weightageConfigurationFromDB =
+        INSTANCE.convertToWeightageConfigurationEntity(getWeightageConfiguration(orgId, type, key));
+    return prepareWeightageConfigurationDto(
+        weightageConfigurationDomain.deleteWeightageConfiguration(weightageConfigurationFromDB));
+  }
+}

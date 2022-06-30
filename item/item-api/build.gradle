@@ -1,6 +1,6 @@
 bootJar {
     enabled = true
-    mainClass.set("com.nextuple.item.MasterDataItemApplication")
+    mainClass.set("com.hbc.item.MasterDataItemApplication")
 }
 
 buildscript {
