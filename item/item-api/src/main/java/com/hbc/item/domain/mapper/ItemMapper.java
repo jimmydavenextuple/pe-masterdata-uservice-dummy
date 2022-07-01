@@ -1,22 +1,17 @@
 package com.hbc.item.domain.mapper;
 
+import com.hbc.item.ItemRecord;
 import com.hbc.item.domain.entity.ItemEntity;
 import com.hbc.item.domain.events.ItemMasterEvent;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemCreationRequest.ItemCreationRequestBuilder;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
-import com.nextuple.item.Item;
-import com.nextuple.item.domain.entity.ItemEntity;
-import com.nextuple.item.domain.events.ItemMasterEvent;
-import com.nextuple.item.domain.inbound.ItemCreationRequest;
-import com.nextuple.item.domain.inbound.ItemCreationRequest.ItemCreationRequestBuilder;
-import com.nextuple.item.domain.inbound.ItemUpdationRequest;
-import com.nextuple.item.domain.outbound.ItemResponse;
 import java.util.HashMap;
 import java.util.Map;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -34,21 +29,23 @@ public interface ItemMapper {
   ItemEntity updateItemEntity(
       ItemUpdationRequest itemUpdationRequest, @MappingTarget ItemEntity existingItemEntity);
 
-  ItemCreationRequest convertItemToItemCreationRequest(Item item);
+  @Mapping(target = "weightUom", source = "weightUOM")
+  ItemCreationRequest convertItemToItemCreationRequest(ItemRecord itemRecord);
 
   @AfterMapping
-  default void afterMappingItem(
-      @MappingTarget ItemCreationRequestBuilder itemCreationRequest, Item item) {
+  default void afterMappingItemRecord(
+      @MappingTarget ItemCreationRequestBuilder itemCreationRequest, ItemRecord itemRecord) {
     Map<String, Boolean> serviceOptionEligibilityMap = new HashMap<>();
-    if (!ObjectUtils.isEmpty(item.getSdndEligible())) {
-      serviceOptionEligibilityMap.put("sdndEligible", item.getSdndEligible());
+    if (!ObjectUtils.isEmpty(itemRecord.getSdndEligible())) {
+      serviceOptionEligibilityMap.put("sdndEligible", itemRecord.getSdndEligible());
     }
-    if (!ObjectUtils.isEmpty(item.getExpressEligible())) {
-      serviceOptionEligibilityMap.put("expressEligible", item.getExpressEligible());
+    if (!ObjectUtils.isEmpty(itemRecord.getExpressEligible())) {
+      serviceOptionEligibilityMap.put("expressEligible", itemRecord.getExpressEligible());
     }
     itemCreationRequest.serviceOptionEligibilities(serviceOptionEligibilityMap);
   }
 
+  @Mapping(target = "weightUom", source = "weightUOM")
   ItemCreationRequest convertItemMasterEventToItemCreationRequest(ItemMasterEvent itemMasterEvent);
 
   @AfterMapping

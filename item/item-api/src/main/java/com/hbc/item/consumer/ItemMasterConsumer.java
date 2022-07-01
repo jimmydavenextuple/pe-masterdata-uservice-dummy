@@ -1,12 +1,9 @@
 package com.hbc.item.consumer;
 
+import com.hbc.item.ItemRecord;
 import com.hbc.item.domain.events.ItemMasterEvent;
 import com.hbc.item.domain.mapper.ItemMapper;
 import com.hbc.item.service.ItemService;
-import com.nextuple.item.Item;
-import com.nextuple.item.domain.events.ItemMasterEvent;
-import com.nextuple.item.domain.mapper.ItemMapper;
-import com.nextuple.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -30,18 +27,19 @@ public class ItemMasterConsumer {
   private final ItemService itemService;
 
   @KafkaHandler
-  public void onItemConsumption(@Payload Item item, @Headers KafkaMessageHeaders headers) {
-    logger.debug("Inside onItemMasterDataConsumption(), event: {} ", item);
+  public void onItemRecordConsumption(
+      @Payload ItemRecord itemRecord, @Headers KafkaMessageHeaders headers) {
+    logger.debug("Inside onItemMasterDataConsumption(), event: {} ", itemRecord);
     try {
-      itemService.createItem(INSTANCE.convertItemToItemCreationRequest(item));
+      itemService.createItem(INSTANCE.convertItemToItemCreationRequest(itemRecord));
     } catch (Exception e) {
       logger.error(
-          "Error while consuming the message: {}, stacktrace: {}", item, e.getStackTrace());
+          "Error while consuming the message: {}, stacktrace: {}", itemRecord, e.getStackTrace());
     }
   }
 
   @KafkaHandler
-  public void onItemMasterDataConsumption(
+  public void onItemMasterEventConsumption(
       @Payload ItemMasterEvent itemMasterEvent, @Headers KafkaMessageHeaders headers) {
     logger.debug("Inside onItemMasterDataConsumption(), event: {} ", itemMasterEvent);
     try {

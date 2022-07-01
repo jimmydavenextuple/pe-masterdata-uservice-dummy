@@ -4,11 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.util.Map;
 import javax.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.generic.GenericDatumWriter;
-import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.EncoderFactory;
+import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.common.serialization.Serializer;
 
@@ -28,7 +27,8 @@ public class AvroSerializer<T extends SpecificRecordBase> implements Serializer<
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         BinaryEncoder binaryEncoder =
             EncoderFactory.get().binaryEncoder(byteArrayOutputStream, null);
-        DatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<>(payload.getSchema());
+        DatumWriter<SpecificRecordBase> datumWriter =
+            new SpecificDatumWriter<>(payload.getSchema());
         datumWriter.write(payload, binaryEncoder);
         binaryEncoder.flush();
         byteArrayOutputStream.close();

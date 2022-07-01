@@ -33,7 +33,7 @@ class ItemMasterConsumerTest {
   void createCarrierServiceTest() throws ItemDomainException {
     when(itemService.createItem(any())).thenReturn(testUtil.getItemResponse());
     ArgumentCaptor<ItemCreationRequest> captor = ArgumentCaptor.forClass(ItemCreationRequest.class);
-    itemMasterConsumer.onItemMasterDataConsumption(testUtil.getItemMasterEvent(), null);
+    itemMasterConsumer.onItemMasterEventConsumption(testUtil.getItemMasterEvent(), null);
 
     verify(itemService, times(1)).createItem(captor.capture());
     Assertions.assertEquals(TestUtil.ITEM_ID, captor.getValue().getItemId());

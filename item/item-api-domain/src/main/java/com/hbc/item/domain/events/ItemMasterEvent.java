@@ -1,6 +1,7 @@
 package com.hbc.item.domain.events;
 
 import java.io.Serializable;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class ItemMasterEvent implements Serializable {
   private String itemSource;
   private String orgId;
   private String uom;
-  private String vendorType;
+  private Boolean isDSVEligible;
   private String product;
   private String color;
   private String size;
@@ -36,7 +37,7 @@ public class ItemMasterEvent implements Serializable {
   private String dimensionUom;
   private String volumeUom;
   private Double weight;
-  private String weightUom;
+  private String weightUOM;
   private Double processingTime;
   private String cost;
   private Boolean isHazmat;
@@ -44,4 +45,5 @@ public class ItemMasterEvent implements Serializable {
   private String departmentNumber;
   private String departmentName;
   private String imageUrl;
+  private Instant lastModifiedDate;
 }

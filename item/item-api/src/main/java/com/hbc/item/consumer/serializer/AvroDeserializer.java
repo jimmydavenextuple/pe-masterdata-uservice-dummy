@@ -2,7 +2,6 @@ package com.hbc.item.consumer.serializer;
 
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -29,7 +28,7 @@ public class AvroDeserializer<T extends SpecificRecordBase> implements Deseriali
     try {
 
       if (bytes != null) {
-        DatumReader<GenericRecord> datumReader =
+        DatumReader<SpecificRecordBase> datumReader =
             new SpecificDatumReader<>(targetType.newInstance().getSchema());
         Decoder decoder = DecoderFactory.get().binaryDecoder(bytes, null);
         returnObject = (T) datumReader.read(null, decoder);

@@ -9,6 +9,8 @@ import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.mapper.ItemMapper;
 import com.hbc.item.domain.outbound.ItemResponse;
 import com.hbc.item.exception.ItemDomainException;
+import java.sql.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @RequiredArgsConstructor
 @Service
@@ -38,7 +41,12 @@ public class ItemService {
       throws ItemDomainException {
 
     ItemEntity itemEntity = INSTANCE.toItemEntity(itemCreationRequest);
-
+    if (!ObjectUtils.isEmpty(itemCreationRequest.getLastModifiedDate())) {
+      itemEntity.setLastModifiedDate(
+          Date.from(
+              Instant.ofEpochSecond(
+                  itemCreationRequest.getLastModifiedDate().getEpochSecond() / 1000)));
+    }
     return INSTANCE.toItemResponse(itemDomain.saveItemEntity(itemEntity));
   }
 

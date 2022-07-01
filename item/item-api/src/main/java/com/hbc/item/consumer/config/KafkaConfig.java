@@ -1,8 +1,8 @@
 package com.hbc.item.consumer.config;
 
-import com.nextuple.item.Item;
-import com.nextuple.item.consumer.serializer.ItemDeserializer;
-import com.nextuple.item.consumer.serializer.ItemSerializer;
+import com.hbc.item.ItemRecord;
+import com.hbc.item.consumer.serializer.ItemDeserializer;
+import com.hbc.item.consumer.serializer.ItemSerializer;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -18,8 +18,12 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.listener.CommonErrorHandler;
+import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
+import org.springframework.kafka.listener.DefaultErrorHandler;
 
 @EnableKafka
 @Configuration
@@ -27,6 +31,11 @@ public class KafkaConfig {
 
   @Value(value = "${spring.kafka.bootstrap-servers}")
   private String bootstrapAddress;
+
+  @Bean
+  public CommonErrorHandler kafkaErrorHandler(KafkaOperations<String, Object> kafkaOperations) {
+    return new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaOperations));
+  }
 
   @Profile("default")
   @Bean
@@ -46,20 +55,21 @@ public class KafkaConfig {
 
   @Profile("default")
   @Bean
-  public ConsumerFactory<String, Item> consumerFactory() {
+  public ConsumerFactory<String, ItemRecord> consumerFactory() {
     Map<String, Object> props = new HashMap<>();
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
     props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ItemDeserializer.class);
     return new DefaultKafkaConsumerFactory<>(
-        props, new StringDeserializer(), new ItemDeserializer<>(Item.class));
+        props, new StringDeserializer(), new ItemDeserializer<>(ItemRecord.class));
   }
 
   @Profile("default")
   @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, Item> kafkaListenerContainerFactory() {
+  public ConcurrentKafkaListenerContainerFactory<String, ItemRecord>
+      kafkaListenerContainerFactory() {
 
-    ConcurrentKafkaListenerContainerFactory<String, Item> factory =
+    ConcurrentKafkaListenerContainerFactory<String, ItemRecord> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
     return factory;

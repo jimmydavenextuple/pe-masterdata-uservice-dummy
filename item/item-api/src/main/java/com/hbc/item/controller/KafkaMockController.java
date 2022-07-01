@@ -1,8 +1,7 @@
 package com.hbc.item.controller;
 
+import com.hbc.item.ItemRecord;
 import com.hbc.item.domain.events.ItemMasterEvent;
-import com.nextuple.item.Item;
-import com.nextuple.item.domain.events.ItemMasterEvent;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +21,9 @@ public class KafkaMockController {
 
   @PostMapping("producer/avro/{topicName}/messages")
   public ResponseEntity<String> produceAvroKafkaMessage(
-      @PathVariable String topicName, @RequestBody Item message) {
+      @PathVariable String topicName, @RequestBody ItemRecord itemRecord) {
     try {
-      kafkaTemplate.send(topicName, message);
+      kafkaTemplate.send(topicName, itemRecord);
       return ResponseEntity.ok("Success");
     } catch (Exception e) {
       logger.error("Failed to produce avro item master message");
@@ -34,9 +33,9 @@ public class KafkaMockController {
 
   @PostMapping("producer/{topicName}/messages")
   public ResponseEntity<String> produceKafkaMessage(
-      @PathVariable String topicName, @RequestBody ItemMasterEvent message) {
+      @PathVariable String topicName, @RequestBody ItemMasterEvent itemMasterEvent) {
     try {
-      kafkaTemplate.send(topicName, message);
+      kafkaTemplate.send(topicName, itemMasterEvent);
       return ResponseEntity.ok("Success");
     } catch (Exception e) {
       logger.error("Failed to produce item master message");

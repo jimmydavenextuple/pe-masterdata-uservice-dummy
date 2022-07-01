@@ -1,6 +1,7 @@
 package com.hbc.item.domain.inbound;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -35,6 +36,8 @@ public class ItemCreationRequest implements Serializable {
 
   @Length(max = 50)
   private String vendorType;
+
+  private Boolean isDSVEligible;
 
   @Length(max = 50)
   private String product;
@@ -92,4 +95,6 @@ public class ItemCreationRequest implements Serializable {
   private String departmentName;
 
   private String imageUrl;
+
+  private Instant lastModifiedDate;
 }
