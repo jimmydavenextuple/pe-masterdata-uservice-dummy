@@ -36,6 +36,7 @@ public class LogContext {
   private Map<String, String> requestParameters;
   private Map<String, String> customFields;
   private Map<String, Object> kafkaHeaders;
+  private static final String AUTHORIZATION = "authorization";
 
   public LogContext put(String key, String value) {
     if (customFields == null) {
@@ -143,6 +144,14 @@ public class LogContext {
 
   public LogContext setServiceCorrelationId(String serviceCorrelationId) {
     return this.put("serviceCorrelationId", serviceCorrelationId);
+  }
+
+  public String getAuthorizationHeader() {
+    return get(AUTHORIZATION);
+  }
+
+  public LogContext setAuthorizationHeader(String authorizationHeader) {
+    return put(AUTHORIZATION, authorizationHeader);
   }
 
   public Long getKafkaEventDate() {
