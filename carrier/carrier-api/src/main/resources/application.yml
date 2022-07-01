@@ -13,6 +13,7 @@ server:
     threads:
       min-spare: 50
       max: 200
+
 logging:
   level:
     org.springframework: WARN
