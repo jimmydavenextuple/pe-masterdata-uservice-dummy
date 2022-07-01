@@ -37,6 +37,7 @@ class AuthFilterTest {
         "Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiSmFuZSBEb2UiLCJlbWFpbCI6ImphbmVAZXhhbXBsZS5jb20iLCJyb2xlIjpbIkFETUlOIiwiR1VFU1QiLCJWRU5ET1IiXSwiaXNzIjoiaHR0cHM6Ly9wZS1kZXYtaXNzdWVyLnMzLmFtYXpvbmF3cy5jb20vIiwic3ViIjoiamFuZSJ9.9xXF0-mG_YTHT9UBOJxlDcWk67NJEDZAHNhFgemZ-VU";
 
     when(authProperties.isFilterEnabled()).thenReturn(true);
+    when(httpServletRequest.getRequestURI()).thenReturn("/node");
     when(authProperties.getRoles()).thenReturn(Arrays.asList("GUEST1", "GUEST2", "ADMIN"));
     when(authProperties.getIssuer()).thenReturn("https://pe-dev-issuer.s3.amazonaws.com/");
     when(httpServletRequest.getHeader("Authorization")).thenReturn(token);
@@ -51,6 +52,7 @@ class AuthFilterTest {
         "Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiSmFuZSBEb2UiLCJlbWFpbCI6ImphbmVAZXhhbXBsZS5jb20iLCJyb2xlIjoiQURNSU4iLCJpc3MiOiJodHRwczovL3BlLWRldi1pc3N1ZXIuczMuYW1hem9uYXdzLmNvbS8iLCJzdWIiOiJqYW5lIn0.VAYlinDMOgpDp_UgHZyxCImvycfHV0cj1H6Imhlg6QY";
 
     when(authProperties.isFilterEnabled()).thenReturn(true);
+    when(httpServletRequest.getRequestURI()).thenReturn("/node");
     when(authProperties.getRoles()).thenReturn(Arrays.asList("GUEST1", "GUEST2", "ADMIN"));
     when(authProperties.getIssuer()).thenReturn("https://pe-dev-issuer.s3.amazonaws.com/");
     when(httpServletRequest.getHeader("Authorization")).thenReturn(token);
@@ -68,11 +70,21 @@ class AuthFilterTest {
   }
 
   @Test
+  void doFilterTestWhenFilterWhenURIStartsWithActuator() throws ServletException, IOException {
+    when(authProperties.isFilterEnabled()).thenReturn(true);
+    when(httpServletRequest.getRequestURI()).thenReturn("/actuator");
+
+    authFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
+    verify(filterChain, times(1)).doFilter(any(), any());
+  }
+
+  @Test
   void doFilterAuthFilterExceptionForInvalidRolesTest() throws ServletException, IOException {
     String token =
         "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiSmFuZSBEb2UiLCJlbWFpbCI6ImphbmVAZXhhbXBsZS5jb20iLCJyb2xlIjpbIklOVkFMSURfUk9MRTEiLCJJTlZBTElEX1JPTEUyIl0sImlzcyI6Imh0dHBzOi8vcGUtZGV2LWlzc3Vlci5zMy5hbWF6b25hd3MuY29tLyIsInN1YiI6ImphbmUifQ.oL-t-7tkSFsMYCUzkzM7x3y2o8En712-tE9w4__YrAU";
 
     when(authProperties.isFilterEnabled()).thenReturn(true);
+    when(httpServletRequest.getRequestURI()).thenReturn("/node");
     when(authProperties.getRoles()).thenReturn(Arrays.asList("GUEST1", "GUEST2", "ADMIN"));
     when(authProperties.getIssuer()).thenReturn("https://pe-dev-issuer.s3.amazonaws.com/");
     when(httpServletRequest.getHeader("Authorization")).thenReturn(token);
@@ -92,6 +104,7 @@ class AuthFilterTest {
         "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiSmFuZSBEb2UiLCJlbWFpbCI6ImphbmVAZXhhbXBsZS5jb20iLCJyb2xlIjpbIkFETUlOIiwiR1VFU1QiLCJWRU5ET1IiXSwiaXNzIjoiaW52YWxpZF9pc3N1ZXIiLCJzdWIiOiJqYW5lIn0.oUKXicOhJbsrc57FjjCbiOBGZ_VVQlp4PkfjBCelDFg";
 
     when(authProperties.isFilterEnabled()).thenReturn(true);
+    when(httpServletRequest.getRequestURI()).thenReturn("/node");
     when(authProperties.getRoles()).thenReturn(Arrays.asList("GUEST1", "GUEST2", "ADMIN"));
     when(authProperties.getIssuer()).thenReturn("https://pe-dev-issuer.s3.amazonaws.com/");
     when(httpServletRequest.getHeader("Authorization")).thenReturn(token);
@@ -109,6 +122,7 @@ class AuthFilterTest {
   void doFilterAuthFilterExceptionForEmptyHeaderValueTest() throws ServletException, IOException {
 
     when(authProperties.isFilterEnabled()).thenReturn(true);
+    when(httpServletRequest.getRequestURI()).thenReturn("/node");
     when(httpServletRequest.getHeader("Authorization")).thenReturn("");
 
     Exception exception =
@@ -125,6 +139,7 @@ class AuthFilterTest {
     String token = "abc-123";
 
     when(authProperties.isFilterEnabled()).thenReturn(true);
+    when(httpServletRequest.getRequestURI()).thenReturn("/node");
     when(httpServletRequest.getHeader("Authorization"))
         .thenThrow(new RuntimeException("Error while authenticating the request"));
 
