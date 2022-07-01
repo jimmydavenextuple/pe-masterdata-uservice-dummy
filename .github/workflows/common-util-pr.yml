@@ -1,0 +1,16 @@
+name: PR-COMMON-UTIL
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "common-util/**"
+      -  ".github/workflows/common-util-pr.yml"
+    branches: [ development ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml
+    with:
+      module: common-util
+    secrets: inherit
