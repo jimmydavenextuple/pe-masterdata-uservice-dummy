@@ -39,6 +39,7 @@ public class AuthFilter implements Filter {
       throws IOException, ServletException {
     log.debug("-----Inside auth filter-----");
     HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+    log.debug("Request URL: {}", httpServletRequest.getRequestURL());
 
     if (authProperties.isFilterEnabled()
         && !httpServletRequest.getRequestURI().startsWith("/actuator")) {
