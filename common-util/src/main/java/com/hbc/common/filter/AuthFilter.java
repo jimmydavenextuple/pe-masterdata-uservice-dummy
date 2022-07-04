@@ -79,7 +79,8 @@ public class AuthFilter implements Filter {
         log.error("Authentication failed", e);
         throw e;
       } catch (Exception e) {
-        log.error("Error while authenticating the request", e);
+        log.error(
+            "Error while authenticating the request : {}", httpServletRequest.getRequestURL(), e);
         throw e;
       }
     } else {
