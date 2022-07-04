@@ -202,9 +202,6 @@ class PromiseSourcingRuleServiceTest {
             PRIORITY,
             updatePromiseSourcingRuleRequest);
     assertEquals(
-        updatePromiseSourcingRuleRequest.getPriority(),
-        updated_promiseSourcingRuleDto.getPriority());
-    assertEquals(
         updatePromiseSourcingRuleRequest.getSourceNodes(),
         updated_promiseSourcingRuleDto.getSourceNodes());
     verify(promiseSourcingRuleDomain, times(1))
