@@ -7,6 +7,10 @@ export SERVICE_NAME="$REPO-$PROJECT"
 export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties -p $PROJECT | grep version | sed -e "s@version: @@g"`
 export SERVICE_CODE=`echo "$VERSION" | cut -d '-' -f1`
 export NLB_NAME=`echo "$ENVIRONMENT-$PROJECT" | cut -c1-31`
+if [ "${NLB_NAME: -1}" == "-" ]; then
+    NLB_NAME=`echo "$NLB_NAME" | sed 's/.$//'`
+fi
+
 export IMAGE_NAME="$ECR_REGISTRY/$REPO-$PROJECT:$SERVICE_CODE.$COMMIT_HASH"
 
 echo "$IMAGE_NAME"

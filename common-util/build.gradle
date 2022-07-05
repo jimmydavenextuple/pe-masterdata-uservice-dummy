@@ -7,4 +7,5 @@ bootJar {
 
 dependencies {
     api "joda-time:joda-time:${jodaTimeVersion}"
+    implementation('io.jsonwebtoken:jjwt:0.2')
 }
