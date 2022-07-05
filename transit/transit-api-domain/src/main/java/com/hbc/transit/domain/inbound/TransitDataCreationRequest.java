@@ -1,6 +1,7 @@
 package com.hbc.transit.domain.inbound;
 
 import java.io.Serializable;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,5 +32,7 @@ public class TransitDataCreationRequest implements Serializable {
   @Length(max = 50)
   private String carrierServiceId;
 
-  @NotNull private Float transitDays;
+  @Min(value = 0, message = "transitDays can't be negative")
+  @NotNull
+  private Float transitDays;
 }

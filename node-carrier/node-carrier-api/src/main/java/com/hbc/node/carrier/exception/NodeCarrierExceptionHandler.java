@@ -20,4 +20,10 @@ public class NodeCarrierExceptionHandler {
                 .message("Internal Server Error")
                 .build());
   }
+
+  @ExceptionHandler(InvalidDataException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidDataException(Exception e) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(ErrorResponse.builder(ErrorType.ERROR, 0x1771).message(e.getMessage()).build());
+  }
 }
