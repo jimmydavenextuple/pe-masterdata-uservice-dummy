@@ -31,7 +31,7 @@ public interface CalendarCommonFeignImpl
   @GetMapping("calendar/status/{orgId}")
   BaseResponse<List<CalendarDaysStatusInfo>> getNodeCarrierCalendar(
       @PathVariable("orgId") String orgId,
-      @PathVariable("nodeId") String nodeId,
+      @RequestParam("nodeId") String nodeId,
       @RequestParam("carrierServiceId") String carrierServiceId,
       @RequestParam("serviceOption") String serviceOption);
 }

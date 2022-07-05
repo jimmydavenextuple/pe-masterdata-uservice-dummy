@@ -16,23 +16,23 @@ import org.hibernate.validator.constraints.Length;
 @Builder
 public class TransitDataCreationRequest implements Serializable {
 
-  @NotBlank
+  @NotBlank(message = "orgId can't be blank")
   @Length(max = 50)
   private String orgId;
 
-  @NotBlank
+  @NotBlank(message = "sourceGeozone can't be blank")
   @Length(max = 50)
   private String sourceGeozone;
 
-  @NotBlank
+  @NotBlank(message = "destinationGeozone can't be blank")
   @Length(max = 50)
   private String destinationGeozone;
 
-  @NotBlank
+  @NotBlank(message = "carrierServiceId can't be blank")
   @Length(max = 50)
   private String carrierServiceId;
 
   @Min(value = 0, message = "transitDays can't be negative")
-  @NotNull
+  @NotNull(message = "transitDays can't be null")
   private Float transitDays;
 }

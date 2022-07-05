@@ -2,7 +2,6 @@ package com.hbc.item.domain.inbound;
 
 import java.io.Serializable;
 import java.util.Map;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,18 +18,18 @@ public class ItemCreationRequest implements Serializable {
 
   private static final long serialVersionUID = 1905122041950251207L;
 
-  @NotBlank
+  @NotBlank(message = "itemId can't be blank")
   @Length(max = 50)
   private String itemId;
 
   @Length(max = 50)
   private String itemSource;
 
-  @NotBlank
+  @NotBlank(message = "orgId can't be blank")
   @Length(max = 50)
   private String orgId;
 
-  @NotBlank
+  @NotBlank(message = "uom can't be blank")
   @Length(max = 50)
   private String uom;
 
@@ -46,15 +45,20 @@ public class ItemCreationRequest implements Serializable {
   @Length(max = 50)
   private String size;
 
-  @NotNull private Boolean shipEligible;
+  @NotNull(message = "shipEligible can't be null")
+  private Boolean shipEligible;
 
-  @NotNull private Boolean parcelShipmentEligible;
+  @NotNull(message = "parcelShipmentEligible can't be null")
+  private Boolean parcelShipmentEligible;
 
-  @NotNull private Boolean bopisEligible;
+  @NotNull(message = "bopisEligible can't be null")
+  private Boolean bopisEligible;
 
-  @NotNull private Map<String, Boolean> serviceOptionEligibilities;
+  @NotNull(message = "serviceOptionEligibilities can't be null")
+  private Map<String, Boolean> serviceOptionEligibilities;
 
-  @NotNull private Boolean shipAlone;
+  @NotNull(message = "shipAlone can't be null")
+  private Boolean shipAlone;
 
   @Min(value = 0, message = "Height can't be negative")
   private Double height;
@@ -82,6 +86,8 @@ public class ItemCreationRequest implements Serializable {
   @NotNull
   @Min(value = 0, message = "processingTime can't be negative")
   private Double processingTime;
+  @NotNull(message = "processingTime can't be null")
+  private Double processingTime;
 
   @Length(max = 50)
   private String cost;
@@ -91,9 +97,9 @@ public class ItemCreationRequest implements Serializable {
   @Length(max = 200)
   private String shortDescription;
 
-  @NotNull private Boolean isWhiteGlove;
+  @NotNull(message = "isWhiteGlove can't be null")
+  private Boolean isWhiteGlove;
 
-  @Min(value = 0, message = "leadTime can't be negative")
   private Long leadTime;
 
   @Length(max = 50)

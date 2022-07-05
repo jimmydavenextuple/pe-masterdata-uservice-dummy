@@ -15,56 +15,61 @@ import org.hibernate.validator.constraints.Length;
 @Builder
 public class NodeRequest implements Serializable {
 
-  @NotBlank
+  @NotBlank(message = "nodeId can't be blank")
   @Length(max = 50)
   private String nodeId;
 
-  @NotBlank
+  @NotBlank(message = "orgId can't be blank")
   @Length(max = 50)
   private String orgId;
 
-  @NotBlank
+  @NotBlank(message = "street can't be blank")
   @Length(max = 50)
   private String street;
 
-  @NotBlank
+  @NotBlank(message = "city can't be blank")
   @Length(max = 50)
   private String city;
 
-  @NotBlank
+  @NotBlank(message = "province can't be blank")
   @Length(max = 50)
   private String province;
 
-  @NotBlank
+  @NotBlank(message = "postalCode can't be blank")
   @Length(max = 50)
   private String postalCode;
 
   @Length(max = 50)
   private String country;
 
-  @NotBlank
+  @NotBlank(message = "latitude can't be blank")
   @Length(max = 50)
   private String latitude;
 
-  @NotBlank
+  @NotBlank(message = "longitude can't be blank")
   @Length(max = 50)
   private String longitude;
 
-  @NotBlank
+  @NotBlank(message = "timezone can't be blank")
   @Length(max = 50)
   private String timezone;
 
-  @NotNull private Boolean shipToHome;
+  @NotNull(message = "shipToHome can't be null")
+  private Boolean shipToHome;
 
-  @NotNull private Boolean sdndEligible;
+  @NotNull(message = "sdndEligible can't be null")
+  private Boolean sdndEligible;
 
-  @NotNull private Boolean bopisEligible;
+  @NotNull(message = "bopisEligible can't be null")
+  private Boolean bopisEligible;
 
-  @NotNull private Boolean expressEligible;
+  @NotNull(message = "expressEligible can't be null")
+  private Boolean expressEligible;
 
-  @NotBlank
+  @NotBlank(message = "nodeType can't be blank")
   @Length(max = 50)
   private String nodeType;
 
-  @NotNull private Boolean isActive;
+  @NotNull(message = "isActive can't be null")
+  private Boolean isActive;
 }

@@ -10,6 +10,7 @@ on:
 jobs:
 
   Build:
+    name: Build ${{ github.event.inputs.module }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -60,6 +61,7 @@ jobs:
           docker push $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$SERVICE_CODE.${{ github.sha }}
 
   Deploy-To-Dev:
+    name: Deploy-To-Dev ${{ github.event.inputs.module }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -89,6 +91,7 @@ jobs:
           PROJECT: ${{ inputs.module }}
 
   Deploy-To-QA:
+    name: Deploy-To-QA ${{ github.event.inputs.module }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
