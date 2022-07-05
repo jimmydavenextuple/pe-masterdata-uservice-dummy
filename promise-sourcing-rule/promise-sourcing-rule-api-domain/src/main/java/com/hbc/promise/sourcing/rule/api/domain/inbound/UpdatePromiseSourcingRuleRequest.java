@@ -7,10 +7,15 @@ import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class UpdatePromiseSourcingRuleRequest implements Serializable {
   private static final long serialVersionUID = 8787181446707914255L;
 
