@@ -3,11 +3,11 @@ package com.hbc.common.filter;
 import java.util.List;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @Data
-@Configuration
 @ConfigurationProperties(prefix = "auth")
+@ConfigurationPropertiesScan
 public class AuthProperties {
 
   private boolean filterEnabled;
