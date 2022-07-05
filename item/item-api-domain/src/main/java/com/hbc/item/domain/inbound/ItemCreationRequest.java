@@ -2,6 +2,7 @@ package com.hbc.item.domain.inbound;
 
 import java.io.Serializable;
 import java.util.Map;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -78,14 +79,13 @@ public class ItemCreationRequest implements Serializable {
   @Length(max = 50)
   private String volumeUom;
 
+  @Min(value = 0, message = "weight can't be negative")
   private Double weight;
 
   @Length(max = 50)
   private String weightUom;
 
-  @NotNull
   @Min(value = 0, message = "processingTime can't be negative")
-  private Double processingTime;
   @NotNull(message = "processingTime can't be null")
   private Double processingTime;
 
@@ -100,6 +100,7 @@ public class ItemCreationRequest implements Serializable {
   @NotNull(message = "isWhiteGlove can't be null")
   private Boolean isWhiteGlove;
 
+  @Min(value=0, message = "leadTime can't be negative")
   private Long leadTime;
 
   @Length(max = 50)
