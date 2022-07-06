@@ -3,7 +3,9 @@ package com.hbc.item.consumer;
 import com.hbc.item.ItemRecord;
 import com.hbc.item.domain.events.ItemMasterEvent;
 import com.hbc.item.domain.mapper.ItemMapper;
+import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.service.ItemService;
+import javax.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -28,27 +30,31 @@ public class ItemMasterConsumer {
 
   @KafkaHandler
   public void onItemRecordConsumption(
-      @Payload ItemRecord itemRecord, @Headers KafkaMessageHeaders headers) {
+      @Payload ItemRecord itemRecord, @Headers KafkaMessageHeaders headers)
+      throws ItemDomainException {
     logger.debug("Inside onItemMasterDataConsumption(), event: {} ", itemRecord);
     try {
       itemService.createItem(INSTANCE.convertItemToItemCreationRequest(itemRecord));
+    } catch (ConstraintViolationException cve) {
+      logger.error(cve.getMessage());
     } catch (Exception e) {
-      logger.error(
-          "Error while consuming the message: {}, stacktrace: {}", itemRecord, e.getStackTrace());
+      logger.error("Error while consuming the avro item feed message");
+      throw e;
     }
   }
 
   @KafkaHandler
   public void onItemMasterEventConsumption(
-      @Payload ItemMasterEvent itemMasterEvent, @Headers KafkaMessageHeaders headers) {
+      @Payload ItemMasterEvent itemMasterEvent, @Headers KafkaMessageHeaders headers)
+      throws ItemDomainException {
     logger.debug("Inside onItemMasterDataConsumption(), event: {} ", itemMasterEvent);
     try {
       itemService.createItem(INSTANCE.convertItemMasterEventToItemCreationRequest(itemMasterEvent));
+    } catch (ConstraintViolationException cve) {
+      logger.error(cve.getMessage());
     } catch (Exception e) {
-      logger.error(
-          "Error while consuming the message: {}, stacktrace: {}",
-          itemMasterEvent,
-          e.getStackTrace());
+      logger.error("Error while consuming the item feed message");
+      throw e;
     }
   }
 }

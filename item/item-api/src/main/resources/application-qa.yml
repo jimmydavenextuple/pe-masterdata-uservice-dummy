@@ -31,6 +31,9 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
+app:
+  consumer-retry-count: 3
+
 logging:
   level:
     com.hbc: DEBUG

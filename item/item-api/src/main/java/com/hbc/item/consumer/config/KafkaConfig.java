@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
+import org.springframework.util.backoff.FixedBackOff;
 
 @EnableKafka
 @Configuration
@@ -32,10 +34,8 @@ public class KafkaConfig {
   @Value(value = "${spring.kafka.bootstrap-servers}")
   private String bootstrapAddress;
 
-  @Bean
-  public CommonErrorHandler kafkaErrorHandler(KafkaOperations<String, Object> kafkaOperations) {
-    return new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaOperations));
-  }
+  @Value(value = "${app.consumer-retry-count}")
+  private long maxRetryCount;
 
   @Profile("default")
   @Bean
@@ -73,5 +73,13 @@ public class KafkaConfig {
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
     return factory;
+  }
+
+  @Bean
+  public CommonErrorHandler kafkaErrorHandler(KafkaOperations<String, Object> kafkaOperations) {
+    return new DefaultErrorHandler(
+        new DeadLetterPublishingRecoverer(
+            kafkaOperations, (cr, e) -> new TopicPartition(cr.topic() + "_ERR", cr.partition())),
+        new FixedBackOff(0L, maxRetryCount));
   }
 }
