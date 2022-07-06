@@ -11,6 +11,7 @@ spring:
     password: postgres
   kafka:
     bootstrap-servers: 127.0.0.1:9092
+    consumer-retry-count: 3
     consumer:
       enable-auto-commit: true
       auto-offset-reset: earliest
@@ -27,9 +28,6 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
-app:
-  consumer-retry-count: 3
 
 logging:
   level:

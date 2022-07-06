@@ -33,7 +33,7 @@ public class AvroSerializer<T extends SpecificRecordBase> implements Serializer<
         binaryEncoder.flush();
         byteArrayOutputStream.close();
         bytes = byteArrayOutputStream.toByteArray();
-        log.info("serialized payload='{}'", DatatypeConverter.printHexBinary(bytes));
+        log.debug("serialized payload='{}'", DatatypeConverter.printHexBinary(bytes));
       }
     } catch (Exception e) {
       log.error("Unable to serialize payload ", e);

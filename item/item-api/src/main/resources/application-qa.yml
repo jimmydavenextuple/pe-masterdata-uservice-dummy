@@ -11,6 +11,7 @@ spring:
     password: \${POSTGRES_PWD}
   kafka:
     bootstrap-servers: "b-1.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9096,b-2.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9096,b-3.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9096"
+    consumer-retry-count: 3
     properties:
       security.protocol: SASL_SSL
       sasl.mechanism: SCRAM-SHA-512
@@ -30,9 +31,6 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
-app:
-  consumer-retry-count: 3
 
 logging:
   level:

@@ -30,7 +30,7 @@ public class KafkaConfig {
   @Value(value = "${spring.kafka.bootstrap-servers}")
   private String bootstrapAddress;
 
-  @Value(value = "${app.consumer-retry-count}")
+  @Value(value = "${spring.kafka.consumer-retry-count}")
   private long maxRetryCount;
 
   @Bean
