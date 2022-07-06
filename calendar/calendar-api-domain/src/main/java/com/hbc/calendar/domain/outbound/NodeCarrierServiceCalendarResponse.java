@@ -1,20 +1,20 @@
-package com.hbc.pe.masterdata.calendar.domain.outbound;
+package com.hbc.calendar.domain.outbound;
 
-import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class NodeCalendarResponse implements Serializable {
+@AllArgsConstructor
+@Builder
+public class NodeCarrierServiceCalendarResponse {
 
   private String calendarId;
   private String orgId;
   private String nodeId;
+  private String carrierServiceId;
   private String effectiveDate;
   private String description;
 }

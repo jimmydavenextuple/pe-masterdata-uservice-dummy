@@ -1,7 +1,7 @@
 package com.hbc.pe.masterdata.calendar.domain.entity;
 
+import com.hbc.calendar.domain.pojo.ExceptionDays;
 import com.hbc.pe.masterdata.calendar.domain.entity.primarykey.CalendarPK;
-import com.hbc.pe.masterdata.calendar.domain.pojo.ExceptionDays;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.util.List;
 import javax.persistence.*;
