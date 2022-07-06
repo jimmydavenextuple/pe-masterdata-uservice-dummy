@@ -15,6 +15,8 @@ public class TestUtil {
   public static String CARRIER_SERVICE_ID = "carrier-service-id-1";
   public static final String SERVICE_OPTION = "serviceOption-1";
 
+  public static final String LAST_PICKUP_TIME = "5:00";
+
   public NodeCarrierRequest getNodeCarrierRequest() {
     return NodeCarrierRequest.builder()
         .nodeId(NODE_ID)
@@ -22,7 +24,7 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption(SERVICE_OPTION)
         .processingTime(2.0)
-        .lastPickupTime("5:00 PM")
+        .lastPickupTime("5:00")
         .build();
   }
 
@@ -33,12 +35,12 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption(SERVICE_OPTION)
         .processingTime(2.0)
-        .lastPickupTime("5:00 PM")
+        .lastPickupTime("5:00")
         .build();
   }
 
   public NodeCarrierUpdateRequest getNodeCarrierUpdateRequest() {
-    return NodeCarrierUpdateRequest.builder().processingTime(2.0).lastPickupTime("5:00 PM").build();
+    return NodeCarrierUpdateRequest.builder().processingTime(2.0).lastPickupTime("5:00").build();
   }
 
   public NodeCarrierEntity getNodeCarrierEntity() {
@@ -48,7 +50,7 @@ public class TestUtil {
     nodeCarrierEntity.setCarrierServiceId(CARRIER_SERVICE_ID);
     nodeCarrierEntity.setServiceOption(SERVICE_OPTION);
     nodeCarrierEntity.setProcessingTime(2.0);
-    nodeCarrierEntity.setLastPickupTime("5:00 PM");
+    nodeCarrierEntity.setLastPickupTime("5:00");
 
     return nodeCarrierEntity;
   }
@@ -60,7 +62,7 @@ public class TestUtil {
     nodeCarrierEntity1.setCarrierServiceId(CARRIER_SERVICE_ID);
     nodeCarrierEntity1.setServiceOption(SERVICE_OPTION);
     nodeCarrierEntity1.setProcessingTime(2.0);
-    nodeCarrierEntity1.setLastPickupTime("5:00 PM");
+    nodeCarrierEntity1.setLastPickupTime("5:00");
 
     NodeCarrierEntity nodeCarrierEntity2 = new NodeCarrierEntity();
     nodeCarrierEntity2.setNodeId(NODE_ID);
@@ -68,7 +70,7 @@ public class TestUtil {
     nodeCarrierEntity2.setCarrierServiceId(CARRIER_SERVICE_ID_2);
     nodeCarrierEntity2.setServiceOption(SERVICE_OPTION);
     nodeCarrierEntity2.setProcessingTime(10.0);
-    nodeCarrierEntity2.setLastPickupTime("11:00 AM");
+    nodeCarrierEntity2.setLastPickupTime("11:00");
 
     return Arrays.asList(nodeCarrierEntity1, nodeCarrierEntity2);
   }
@@ -81,7 +83,7 @@ public class TestUtil {
             .carrierServiceId(CARRIER_SERVICE_ID)
             .serviceOption(SERVICE_OPTION)
             .processingTime(2.0)
-            .lastPickupTime("5:00 PM")
+            .lastPickupTime("5:00")
             .build();
 
     NodeCarrierResponse nodeCarrierResponse2 =
@@ -91,7 +93,7 @@ public class TestUtil {
             .carrierServiceId(CARRIER_SERVICE_ID_2)
             .serviceOption(SERVICE_OPTION)
             .processingTime(10.0)
-            .lastPickupTime("11:00 AM")
+            .lastPickupTime("11:00")
             .build();
 
     return Arrays.asList(nodeCarrierResponse1, nodeCarrierResponse2);

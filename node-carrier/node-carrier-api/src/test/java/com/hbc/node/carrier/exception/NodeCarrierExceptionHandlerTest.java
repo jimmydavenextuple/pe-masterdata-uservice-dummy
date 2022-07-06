@@ -38,4 +38,17 @@ class NodeCarrierExceptionHandlerTest {
     Assertions.assertEquals(
         "Internal Server Error", errorResponseResponseEntity.getBody().getMessage());
   }
+
+  @Test
+  @DisplayName("Test for handling invalid data exception")
+  void handleInvalidDataException() {
+    InvalidDataException exception =
+        new InvalidDataException("Invalid time format", TestUtil.LAST_PICKUP_TIME);
+
+    ResponseEntity<ErrorResponse> errorResponseResponseEntity =
+        nodeCarrierExceptionHandler.handleInvalidDataException(exception);
+
+    Assertions.assertEquals(
+        "Invalid time format", errorResponseResponseEntity.getBody().getMessage());
+  }
 }
