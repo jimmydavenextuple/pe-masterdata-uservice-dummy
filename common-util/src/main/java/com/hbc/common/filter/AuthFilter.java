@@ -39,6 +39,7 @@ public class AuthFilter implements Filter {
       throws IOException, ServletException {
     log.debug("-----Inside auth filter-----");
     HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+    log.debug("Request URL: {}", httpServletRequest.getRequestURL());
 
     if (authProperties.isFilterEnabled()
         && !httpServletRequest.getRequestURI().startsWith("/actuator")) {
@@ -78,7 +79,8 @@ public class AuthFilter implements Filter {
         log.error("Authentication failed", e);
         throw e;
       } catch (Exception e) {
-        log.error("Error while authenticating the request", e);
+        log.error(
+            "Error while authenticating the request : {}", httpServletRequest.getRequestURL(), e);
         throw e;
       }
     } else {
