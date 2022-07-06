@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
 import javax.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -37,7 +38,7 @@ public class ItemService {
   private static final String UOM = "uom";
 
   private final ItemDomain itemDomain;
-  @Autowired private Validator validator;
+  @Autowired Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
   public static final ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
