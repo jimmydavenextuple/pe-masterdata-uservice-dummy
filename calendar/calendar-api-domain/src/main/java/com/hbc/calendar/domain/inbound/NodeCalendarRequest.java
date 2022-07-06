@@ -1,5 +1,6 @@
-package com.hbc.pe.masterdata.calendar.domain.inbound;
+package com.hbc.calendar.domain.inbound;
 
+import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,10 +9,10 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class NodeCarrierServiceCalendarRequest {
+@AllArgsConstructor
+@NoArgsConstructor
+public class NodeCalendarRequest implements Serializable {
 
   @NotBlank(message = "calendarId can't be blank")
   @Length(max = 40)
@@ -24,10 +25,6 @@ public class NodeCarrierServiceCalendarRequest {
   @NotBlank(message = "nodeId can't be blank")
   @Length(max = 40)
   private String nodeId;
-
-  @NotBlank(message = "carrierServiceId can't be blank")
-  @Length(max = 40)
-  private String carrierServiceId;
 
   @NotBlank(message = "effectiveDate can't be blank")
   private String effectiveDate;

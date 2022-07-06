@@ -1,4 +1,4 @@
-package com.hbc.pe.masterdata.calendar.domain.outbound;
+package com.hbc.calendar.domain.outbound;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NodeCarrierServiceCalendarResponse {
+public class CarrierServiceCalendarResponse {
 
   private String calendarId;
   private String orgId;
-  private String nodeId;
   private String carrierServiceId;
+  private String shippingStage;
   private String effectiveDate;
   private String description;
 }

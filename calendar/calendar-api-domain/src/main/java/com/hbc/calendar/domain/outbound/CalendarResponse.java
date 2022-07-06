@@ -1,6 +1,6 @@
-package com.hbc.pe.masterdata.calendar.domain.outbound;
+package com.hbc.calendar.domain.outbound;
 
-import com.hbc.pe.masterdata.calendar.domain.pojo.ExceptionDays;
+import com.hbc.calendar.domain.pojo.ExceptionDays;
 import java.io.Serializable;
 import java.util.List;
 import lombok.AllArgsConstructor;
