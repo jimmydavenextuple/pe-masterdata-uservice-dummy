@@ -1,6 +1,7 @@
 package com.hbc.item.domain.inbound;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Map;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -36,6 +37,8 @@ public class ItemCreationRequest implements Serializable {
 
   @Length(max = 50)
   private String vendorType;
+
+  private Boolean isDSVEligible;
 
   @Length(max = 50)
   private String product;
@@ -100,7 +103,7 @@ public class ItemCreationRequest implements Serializable {
   @NotNull(message = "isWhiteGlove can't be null")
   private Boolean isWhiteGlove;
 
-  @Min(value=0, message = "leadTime can't be negative")
+  @Min(value = 0, message = "leadTime can't be negative")
   private Long leadTime;
 
   @Length(max = 50)
@@ -110,4 +113,6 @@ public class ItemCreationRequest implements Serializable {
   private String departmentName;
 
   private String imageUrl;
+
+  private Instant lastModifiedDate;
 }
