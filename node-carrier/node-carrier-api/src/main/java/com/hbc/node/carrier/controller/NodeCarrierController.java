@@ -5,6 +5,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import com.hbc.node.carrier.service.NodeCarrierService;
 import java.util.List;
@@ -34,7 +35,7 @@ public class NodeCarrierController {
   @PostMapping
   public ResponseEntity<BaseResponse<NodeCarrierResponse>> createNodeCarrier(
       @Valid @RequestBody NodeCarrierRequest nodeCarrierRequest)
-      throws NodeCarrierDomainException, CommonServiceException {
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     logger.info("Processing node carrier creation request");
     try {
       NodeCarrierResponse nodeCarrierResponse =
@@ -81,7 +82,7 @@ public class NodeCarrierController {
       @NotBlank @PathVariable String carrierServiceId,
       @NotBlank @PathVariable String serviceOption,
       @Valid @RequestBody NodeCarrierUpdateRequest nodeCarrierUpdateRequest)
-      throws NodeCarrierDomainException, CommonServiceException {
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     logger.info("Processing update node carrier details");
 
     try {

@@ -1,0 +1,222 @@
+{
+  "type": "record",
+  "doc": "SKU record to be published to Promising Engine destination topic",
+  "name": "ItemRecord",
+  "namespace": "com.hbc.item",
+  "fields": [
+    {
+      "name": "itemId",
+      "doc": "Sku ID",
+      "type": "string"
+    },
+    {
+      "name": "itemSource",
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": "BAY"
+    },
+    {
+      "name": "orgId",
+      "type": "string",
+      "default": "BAY"
+    },
+    {
+      "name": "uom",
+      "type": "string",
+      "default": "EACH"
+    },
+    {
+      "name": "isDSVEligible",
+      "type": [
+        "null",
+        "boolean"
+      ],
+      "default": null
+    },
+    {
+      "name": "product",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "color",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "size",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "shipAlone",
+      "type": [
+        "null",
+        "boolean"
+      ],
+      "default": null
+    },
+    {
+      "name": "shipEligible",
+      "type": "boolean"
+    },
+    {
+      "name": "parcelShipmentEligible",
+      "type": "boolean"
+    },
+    {
+      "name": "bopisEligible",
+      "type": "boolean"
+    },
+    {
+      "name": "expressEligible",
+      "type": "boolean"
+    },
+    {
+      "name": "sdndEligible",
+      "type": "boolean"
+    },
+    {
+      "name": "isWhiteGlove",
+      "type": "boolean"
+    },
+    {
+      "name": "height",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "width",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "length",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "volume",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "dimensionUom",
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": "IN"
+    },
+    {
+      "name": "volumeUom",
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": "CU IN"
+    },
+    {
+      "name": "weight",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "weightUOM",
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": "LB"
+    },
+    {
+      "name": "processingTime",
+      "type": [
+        "null",
+        "long"
+      ],
+      "default": null
+    },
+    {
+      "name": "cost",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "isHazmat",
+      "type": [
+        "null",
+        "boolean"
+      ],
+      "default": null
+    },
+    {
+      "name": "shortDescription",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "departmentNumber",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "departmentName",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "imageUrl",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "lastModifiedDate",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    }
+  ]
+}

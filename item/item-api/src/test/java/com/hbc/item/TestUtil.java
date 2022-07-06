@@ -79,6 +79,7 @@ public class TestUtil {
         .height(HEIGHT)
         .weight(WEIGHT)
         .volume(VOLUME)
+        .isWhiteGlove(Boolean.FALSE)
         .build();
   }
 

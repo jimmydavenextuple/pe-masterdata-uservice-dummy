@@ -1,4 +1,4 @@
-package com.hbc.pe.masterdata.calendar.domain.pojo;
+package com.hbc.calendar.domain.pojo;
 
 import java.io.Serializable;
 import lombok.Data;
