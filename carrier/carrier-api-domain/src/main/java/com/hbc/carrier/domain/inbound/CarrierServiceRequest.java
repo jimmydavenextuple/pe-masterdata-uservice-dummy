@@ -14,20 +14,21 @@ import org.hibernate.validator.constraints.Length;
 @Builder
 public class CarrierServiceRequest implements Serializable {
 
-  @NotBlank
+  @NotBlank(message = "orgId can't be blank")
   @Length(max = 50)
   private String orgId;
 
-  @NotBlank
+  @NotBlank(message = "carrierId can't be blank")
   @Length(max = 50)
   private String carrierId;
 
-  @NotBlank
+  @NotBlank(message = "carrierServiceId can't be blank")
   @Length(max = 50)
   private String carrierServiceId;
 
   private String carrierName;
   private String serviceName;
 
-  @NotBlank private String serviceOptions;
+  @NotBlank(message = "serviceOptions can't be blank")
+  private String serviceOptions;
 }
