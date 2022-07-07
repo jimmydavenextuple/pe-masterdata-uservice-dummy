@@ -30,6 +30,15 @@ public class KafkaConfig {
   @Value(value = "${spring.kafka.bootstrap-servers}")
   private String bootstrapAddress;
 
+  @Value(value = "${spring.kafka.properties.security.protocol}")
+  private String securityProtocol;
+
+  @Value(value = "${spring.kafka.properties.sasl.mechanism}")
+  private String saslMechanism;
+
+  @Value(value = "${spring.kafka.properties.sasl.jaas.config}")
+  private String saslJaasConfig;
+
   @Value(value = "${spring.kafka.consumer-retry-count}")
   private long maxRetryCount;
 
@@ -44,7 +53,9 @@ public class KafkaConfig {
     props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class);
     props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
     props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, ItemMasterEvent.class);
-    props.put("security.protocol", "SSL");
+    props.put("security.protocol", securityProtocol);
+    props.put("sasl.mechanism", saslMechanism);
+    props.put("sasl.jaas.config", saslJaasConfig);
     return new DefaultKafkaConsumerFactory<>(props);
   }
 
