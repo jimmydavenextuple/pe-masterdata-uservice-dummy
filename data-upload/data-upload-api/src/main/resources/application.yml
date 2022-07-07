@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: "data-upload-service"
+    version: 1.0
+    title: "Promising Engine Service"
+    description: "Promising Engine Service"
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8080
+  tomcat:
+    max-connections: 500
+    threads:
+      min-spare: 50
+      max: 200
+logging:
+  level:
+    org.springframework: WARN
+    root: INFO
+feign:
+  httpclient:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+properties:
+  basePath: ""
+  maxSizeInKiloBytes: 10240
+  maxRows: 1000
+
