@@ -1,9 +1,9 @@
 spring:
   application:
-    name: "promising-sourcing-rule"
+    name: "Item-master-data"
     version: 1.0
-    title: "Promising Sourcing Rule Service"
-    description: "Promising Sourcing Rule Service"
+    title: "Item Master Data Service"
+    description: "Item master data service"
   main:
     allow-bean-definition-overriding: true
 server:

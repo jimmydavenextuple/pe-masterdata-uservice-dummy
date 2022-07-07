@@ -1,4 +1,4 @@
-package com.hbc.pe.masterdata.calendar.domain.inbound;
+package com.hbc.calendar.domain.inbound;
 
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

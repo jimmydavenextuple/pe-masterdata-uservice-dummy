@@ -1,7 +1,9 @@
 package com.hbc.item.domain.inbound;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Map;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -36,6 +38,8 @@ public class ItemCreationRequest implements Serializable {
   @Length(max = 50)
   private String vendorType;
 
+  private Boolean isDSVEligible;
+
   @Length(max = 50)
   private String product;
 
@@ -60,9 +64,16 @@ public class ItemCreationRequest implements Serializable {
   @NotNull(message = "shipAlone can't be null")
   private Boolean shipAlone;
 
+  @Min(value = 0, message = "Height can't be negative")
   private Double height;
+
+  @Min(value = 0, message = "width can't be negative")
   private Double width;
+
+  @Min(value = 0, message = "length can't be negative")
   private Double length;
+
+  @Min(value = 0, message = "volume can't be negative")
   private Double volume;
 
   @Length(max = 50)
@@ -71,11 +82,13 @@ public class ItemCreationRequest implements Serializable {
   @Length(max = 50)
   private String volumeUom;
 
+  @Min(value = 0, message = "weight can't be negative")
   private Double weight;
 
   @Length(max = 50)
   private String weightUom;
 
+  @Min(value = 0, message = "processingTime can't be negative")
   @NotNull(message = "processingTime can't be null")
   private Double processingTime;
 
@@ -90,6 +103,7 @@ public class ItemCreationRequest implements Serializable {
   @NotNull(message = "isWhiteGlove can't be null")
   private Boolean isWhiteGlove;
 
+  @Min(value = 0, message = "leadTime can't be negative")
   private Long leadTime;
 
   @Length(max = 50)
@@ -99,4 +113,6 @@ public class ItemCreationRequest implements Serializable {
   private String departmentName;
 
   private String imageUrl;
+
+  private Instant lastModifiedDate;
 }

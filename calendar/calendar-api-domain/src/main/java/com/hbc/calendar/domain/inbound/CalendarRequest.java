@@ -1,6 +1,8 @@
-package com.hbc.pe.masterdata.calendar.domain.inbound;
+package com.hbc.calendar.domain.inbound;
 
+import com.hbc.calendar.domain.pojo.ExceptionDays;
 import java.io.Serializable;
+import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +14,7 @@ import org.hibernate.validator.constraints.Length;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NodeCalendarRequest implements Serializable {
+public class CalendarRequest implements Serializable {
 
   @NotBlank(message = "calendarId can't be blank")
   @Length(max = 40)
@@ -22,12 +24,13 @@ public class NodeCalendarRequest implements Serializable {
   @Length(max = 40)
   private String orgId;
 
-  @NotBlank(message = "nodeId can't be blank")
-  @Length(max = 40)
-  private String nodeId;
-
-  @NotBlank(message = "effectiveDate can't be blank")
-  private String effectiveDate;
-
   private String description;
+  private Boolean isMondayWorking;
+  private Boolean isTuesdayWorking;
+  private Boolean isWednesdayWorking;
+  private Boolean isThursdayWorking;
+  private Boolean isFridayWorking;
+  private Boolean isSaturdayWorking;
+  private Boolean isSundayWorking;
+  private List<ExceptionDays> exceptionDays;
 }
