@@ -33,15 +33,6 @@ public class KafkaConfig {
   @Value(value = "${spring.kafka.properties.security.protocol}")
   private String securityProtocol;
 
-  @Value(value = "${spring.kafka.properties.sasl.mechanism}")
-  private String saslMechanism;
-
-  @Value(value = "${spring.kafka.properties.sasl.jaas.config}")
-  private String saslJaasConfig;
-
-  @Value(value = "${spring.kafka.consumer-retry-count}")
-  private long maxRetryCount;
-
   @Bean
   public ConsumerFactory<String, Object> consumerFactory() {
     Map<String, Object> props = new HashMap<>();
