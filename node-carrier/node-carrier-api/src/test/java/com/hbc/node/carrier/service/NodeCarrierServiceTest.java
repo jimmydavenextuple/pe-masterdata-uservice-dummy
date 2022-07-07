@@ -106,6 +106,24 @@ class NodeCarrierServiceTest {
   }
 
   @Test
+  void getNodeCarrierDetailsInvalidServiceOptionTestException() throws NodeCarrierDomainException {
+    when(nodeCarrierDomain.filterAndGetNodeCarrierDetails(any(), any(), any(), any()))
+            .thenReturn(List.of(testUtil.getNodeCarrierEntity()));
+
+    Exception ex =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () ->
+                            nodeCarrierService.getNodeCarrierDetails(
+                                    TestUtil.NODE_ID,
+                                    TestUtil.ORG_ID,
+                                    TestUtil.CARRIER_SERVICE_ID,
+                                    "Standard"));
+
+    Assertions.assertEquals("Node Carrier not found for given details", ex.getMessage());
+    verify(nodeCarrierDomain, times(1)).filterAndGetNodeCarrierDetails(any(), any(), any(), any());
+  }
+  @Test
   @DisplayName("When node carrier is updated successfully")
   void updateNodeCarrierTest() throws NodeCarrierDomainException, CommonServiceException {
     when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
