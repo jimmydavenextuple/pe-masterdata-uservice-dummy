@@ -30,8 +30,8 @@ public class KafkaConfig {
   @Value(value = "${spring.kafka.bootstrap-servers}")
   private String bootstrapAddress;
 
-  @Value(value = "${spring.kafka.properties.security.protocol}")
-  private String securityProtocol;
+  @Value(value = "${spring.kafka.consumer-retry-count}")
+  private long maxRetryCount;
 
   @Bean
   public ConsumerFactory<String, Object> consumerFactory() {
