@@ -8,29 +8,27 @@ import static com.hbc.upload.utility.common.constants.DataUploadUtilityConstants
 import static com.hbc.upload.utility.common.constants.DataUploadUtilityConstants.PROCESSING_TIME;
 import static com.hbc.upload.utility.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DataUploadUtilityExpectedHeaders {
   private static final Map<String, List<String>> csvExpectedHeadersMap;
 
   static {
-    Map<String, List<String>> map = new HashMap<>();
-
-    map.put(
-        "node-carrier",
-        List.of(
-            ACTION,
-            NODE_ID,
-            ORG_ID,
-            CARRIER_SERVICE_ID,
-            SERVICE_OPTION,
-            PROCESSING_TIME,
-            LAST_PICKUP_TIME));
-
-    csvExpectedHeadersMap = Collections.unmodifiableMap(map);
+    csvExpectedHeadersMap =
+        Map.of(
+            "node-carrier",
+            List.of(
+                ACTION,
+                NODE_ID,
+                ORG_ID,
+                CARRIER_SERVICE_ID,
+                SERVICE_OPTION,
+                PROCESSING_TIME,
+                LAST_PICKUP_TIME));
   }
 
   public static List<String> getCSVExpectedHeaders(String key) {
