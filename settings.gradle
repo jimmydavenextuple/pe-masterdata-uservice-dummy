@@ -122,3 +122,9 @@ findProject(':weightage-configuration:weightage-configuration-near-cache')?.name
 include 'weightage-configuration:weightage-configuration-near-cache-spring'
 findProject(':weightage-configuration:weightage-configuration-near-cache-spring')?.name = 'weightage-configuration-near-cache-spring'
 
+include 'data-upload'
+include 'data-upload:data-upload-common-util'
+findProject(':data-upload:data-upload-common-util')?.name = 'data-upload-common-util'
+include 'data-upload:data-upload-api'
+findProject(':data-upload:data-upload-api')?.name = 'data-upload-api'
+

@@ -1,0 +1,4 @@
+orgId,sourceGeozone,destinationGeozone,carrierServiceId,transitDays
+org,SGZ1,DGZ1,CSI1,1
+org,SGZ2,DGZ2,CSI2,2
+org,SGZ3,DGZ3,CSI3,3
