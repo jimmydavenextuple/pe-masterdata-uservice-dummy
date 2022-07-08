@@ -23,12 +23,12 @@ public class PostalCodeTimezoneNearCacheServiceImpl
 
   public static final String POSTAL_CODE_TIMEZONE_CACHE_NAME = "postal code timezone";
 
-  @Autowired NearCacheRegistry registry;
+  @Autowired NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override
   public void selfRegister() {
-    registry.registerNearCacheEntity(
+    nearCacheRegistry.registerNearCacheEntity(
         NearCacheConstants.POSTAL_CODE_ENTITY_NAME,
         PostalCodeTimezoneCacheKey.class.getName(),
         "partial");

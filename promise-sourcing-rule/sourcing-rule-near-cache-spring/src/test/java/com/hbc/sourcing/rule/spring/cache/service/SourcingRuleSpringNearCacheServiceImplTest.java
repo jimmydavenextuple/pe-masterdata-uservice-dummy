@@ -3,12 +3,15 @@ package com.hbc.sourcing.rule.spring.cache.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.core.cache.domain.CacheValue;
 import com.hbc.core.cache.service.GenericFeignCacheService;
+import com.hbc.core.constants.NearCacheConstants;
+import com.hbc.core.registry.NearCacheRegistry;
 import com.hbc.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import com.hbc.sourcing.rule.cache.domain.SourcingRuleCacheKey;
 import com.hbc.sourcing.rule.cache.domain.SourcingRuleCacheValue;
@@ -36,6 +39,8 @@ class SourcingRuleSpringNearCacheServiceImplTest {
 
   @Mock
   private GenericFeignCacheService<SourcingRuleCacheKey, SourcingRuleCacheValue> feignCacheService;
+
+  @Mock private NearCacheRegistry nearCacheRegistry;
 
   @Test
   void getForValidFetchPromiseSourcingRuleRequestTest() {
@@ -81,5 +86,20 @@ class SourcingRuleSpringNearCacheServiceImplTest {
     sourcingRuleSpringNearCacheService.deleteAll();
     CacheValue cacheValue = sourcingRuleSpringNearCacheService.get(cacheKey);
     assertNull(cacheValue);
+  }
+
+  @Test
+  void selfRegister() {
+    doNothing().when(nearCacheRegistry).registerNearCacheEntity(any(), any(), any());
+    sourcingRuleSpringNearCacheService.selfRegister();
+
+    verify(nearCacheRegistry, times(1)).registerNearCacheEntity(any(), any(), any());
+  }
+
+  @Test
+  void getEntityName() {
+    assertEquals(
+        NearCacheConstants.PROMISE_SOURCING_ENTITY_NAME,
+        sourcingRuleSpringNearCacheService.getEntityName());
   }
 }

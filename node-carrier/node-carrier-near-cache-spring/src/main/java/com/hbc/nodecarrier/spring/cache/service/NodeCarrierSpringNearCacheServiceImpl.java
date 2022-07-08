@@ -20,12 +20,12 @@ public class NodeCarrierSpringNearCacheServiceImpl
 
   public static final String NODE_CARRIER_CACHE_NAME = "node_carrier";
 
-  @Autowired NearCacheRegistry registry;
+  @Autowired NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override
   public void selfRegister() {
-    registry.registerNearCacheEntity(
+    nearCacheRegistry.registerNearCacheEntity(
         NearCacheConstants.NODE_CARRIER_ENTITY_NAME,
         NodeCarrierCacheKey.class.getName(),
         "partial");

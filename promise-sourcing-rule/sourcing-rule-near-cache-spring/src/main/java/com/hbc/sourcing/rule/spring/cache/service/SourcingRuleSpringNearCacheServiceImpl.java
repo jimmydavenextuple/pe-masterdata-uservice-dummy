@@ -22,12 +22,12 @@ public class SourcingRuleSpringNearCacheServiceImpl
 
   public static final String SOURCING_RULE_CACHE_NAME = "sourcingRule";
 
-  @Autowired NearCacheRegistry registry;
+  @Autowired NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override
   public void selfRegister() {
-    registry.registerNearCacheEntity(
+    nearCacheRegistry.registerNearCacheEntity(
         NearCacheConstants.PROMISE_SOURCING_ENTITY_NAME,
         SourcingRuleCacheKey.class.getName(),
         "full");

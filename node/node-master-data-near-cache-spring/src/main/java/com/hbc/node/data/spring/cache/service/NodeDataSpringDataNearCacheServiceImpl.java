@@ -22,12 +22,12 @@ public class NodeDataSpringDataNearCacheServiceImpl
 
   public static final String NODE_CACHE_NAME = "node";
 
-  @Autowired NearCacheRegistry registry;
+  @Autowired NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override
   public void selfRegister() {
-    registry.registerNearCacheEntity(
+    nearCacheRegistry.registerNearCacheEntity(
         NearCacheConstants.NODE_ENTITY_NAME, NodeDataCacheKey.class.getName(), "partial");
   }
 

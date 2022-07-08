@@ -23,12 +23,12 @@ public class WeightageConfigurationSpringNearCacheServiceImpl
 
   public static final String WEIGHTAGE_CONFIGURATION = "weightage configuration";
 
-  @Autowired NearCacheRegistry registry;
+  @Autowired NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override
   public void selfRegister() {
-    registry.registerNearCacheEntity(
+    nearCacheRegistry.registerNearCacheEntity(
         NearCacheConstants.WEIGHTAGE_CONFIGURATION_ENTITY_NAME,
         WeightageConfigurationCacheKey.class.getName(),
         "full");
