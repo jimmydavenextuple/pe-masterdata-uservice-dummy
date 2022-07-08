@@ -1,21 +1,17 @@
 package com.hbc.common.context;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.kafka.support.converter.KafkaMessageHeaders;
-
-
-import java.util.HashMap;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 @ExtendWith(MockitoExtension.class)
 public class LogContextTest {
-
 
   @DisplayName("Should set the request parameters to function argument")
   @Test
@@ -115,5 +111,4 @@ public class LogContextTest {
     assertEquals(headerValue, actual.get("requestHeader_headerName"), "RequestHeader Value");
     assertEquals(headerValue, actual.get("kafkaHeader_headerName"), "KafkaHeader Value");
   }
-
 }

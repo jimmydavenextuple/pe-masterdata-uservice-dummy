@@ -1,14 +1,13 @@
 package com.hbc.common.util;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Description;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.Description;
 
 /**
  * Test class for the Json Util

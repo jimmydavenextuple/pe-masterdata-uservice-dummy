@@ -1,12 +1,12 @@
 package com.hbc.common.error;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import com.hbc.common.response.error.ErrorPayload;
 import com.hbc.common.response.error.ErrorType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ErrorPayloadTest {
   @DisplayName("Should set everything to null with the no parameter constructor")

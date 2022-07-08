@@ -1,20 +1,18 @@
 package com.hbc.common.util;
 
-
-import org.joda.time.LocalDateTime;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import java.util.Date;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Date;
+import java.util.List;
+import org.joda.time.LocalDateTime;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class DateUtilTest {
 
@@ -311,8 +309,7 @@ class DateUtilTest {
   @DisplayName("Test to get utc date time from all the given components ")
   @Test
   void getUTCTimeInString() {
-    String utcString =
-        DateUtil.getUTCTimeInString(2019, 11, 28, 13, 58, "UTC");
+    String utcString = DateUtil.getUTCTimeInString(2019, 11, 28, 13, 58, "UTC");
     /** positive case */
     assertNotNull(utcString);
   }
@@ -330,8 +327,7 @@ class DateUtilTest {
   @DisplayName("Test to get the local time with offset")
   @Test
   void getLocalTimeFormatWithOffset() {
-    String dateStr =
-        DateUtil.getLocalTimeFormatWithOffset(2019, 10, 29, 12, 39, "UTC");
+    String dateStr = DateUtil.getLocalTimeFormatWithOffset(2019, 10, 29, 12, 39, "UTC");
     /** positive case */
     assertNotNull(dateStr);
   }
