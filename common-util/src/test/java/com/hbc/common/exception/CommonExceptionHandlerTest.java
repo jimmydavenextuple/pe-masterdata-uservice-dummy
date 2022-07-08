@@ -16,6 +16,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.io.IOException;
+
 class CommonExceptionHandlerTest {
 
   @InjectMocks private CommonExceptionHandler commonExceptionHandler;
@@ -45,6 +47,25 @@ class CommonExceptionHandlerTest {
     ResponseEntity<ErrorResponse> responseEntity = commonExceptionHandler.handleJsonErrors(e);
 
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
+  }
+
+  @Test
+  void handleCommonServiceExceptionTest() {
+   CommonServiceException commonServiceException =new  CommonServiceException(
+           "error", HttpStatus.BAD_REQUEST, 0x1771, null);
+
+    ResponseEntity<ErrorResponse> responseEntity = commonExceptionHandler.handleCommonServiceException(commonServiceException);
+
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+  }
+
+  @Test
+  void handleIOExceptionTest() {
+    IOException ioException = new IOException();
+
+    ResponseEntity<ErrorResponse> responseEntity = commonExceptionHandler.handleIOException(ioException);
+
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
   }
 }
