@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
+import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -45,6 +46,27 @@ class CommonExceptionHandlerTest {
     ResponseEntity<ErrorResponse> responseEntity = commonExceptionHandler.handleJsonErrors(e);
 
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
+  }
+
+  @Test
+  void handleCommonServiceExceptionTest() {
+    CommonServiceException commonServiceException =
+        new CommonServiceException("error", HttpStatus.BAD_REQUEST, 0x1771, null);
+
+    ResponseEntity<ErrorResponse> responseEntity =
+        commonExceptionHandler.handleCommonServiceException(commonServiceException);
+
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+  }
+
+  @Test
+  void handleIOExceptionTest() {
+    IOException ioException = new IOException();
+
+    ResponseEntity<ErrorResponse> responseEntity =
+        commonExceptionHandler.handleIOException(ioException);
+
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
   }
 }

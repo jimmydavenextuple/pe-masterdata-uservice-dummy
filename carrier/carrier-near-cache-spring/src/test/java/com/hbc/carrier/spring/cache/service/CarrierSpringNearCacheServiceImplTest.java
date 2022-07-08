@@ -3,6 +3,7 @@ package com.hbc.carrier.spring.cache.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,6 +13,8 @@ import com.hbc.carrier.cache.domain.CarrierCacheValue;
 import com.hbc.carrier.spring.cache.util.TestUtil;
 import com.hbc.core.cache.domain.CacheValue;
 import com.hbc.core.cache.service.GenericFeignCacheService;
+import com.hbc.core.constants.NearCacheConstants;
+import com.hbc.core.registry.NearCacheRegistry;
 import com.hbc.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +32,7 @@ class CarrierSpringNearCacheServiceImplTest {
   @Mock private AbstractGenericFeignClientServiceImpl abstractGenericFeignClientService;
 
   @Mock private GenericFeignCacheService<CarrierCacheKey, CarrierCacheValue> feignCacheService;
+  @Mock private NearCacheRegistry nearCacheRegistry;
 
   @Test
   void getValidTest() {
@@ -76,5 +80,19 @@ class CarrierSpringNearCacheServiceImplTest {
     carrierSpringNearCacheService.deleteAll();
     CacheValue cacheValue = carrierSpringNearCacheService.get(cacheKey);
     assertNull(cacheValue);
+  }
+
+  @Test
+  void selfRegisterTest() {
+    doNothing().when(nearCacheRegistry).registerNearCacheEntity(any(), any(), any());
+    carrierSpringNearCacheService.selfRegister();
+
+    verify(nearCacheRegistry, times(1)).registerNearCacheEntity(any(), any(), any());
+  }
+
+  @Test
+  void getEntityName() {
+    assertEquals(
+        NearCacheConstants.CARRIER_ENTITY_NAME, carrierSpringNearCacheService.getEntityName());
   }
 }

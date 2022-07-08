@@ -22,7 +22,6 @@ public class NearCacheEntityNameMapper {
   private NearCacheEntityNameMapper() {}
 
   public static Map<String, String> getEntityMapping() {
-    log.info("registry value before: {}", registry);
     if (registry.isEmpty()) {
       registry.put("NodeEntity", NODE_ENTITY_NAME);
       registry.put("NodeCarrierEntity", NODE_CARRIER_ENTITY_NAME);
@@ -34,7 +33,7 @@ public class NearCacheEntityNameMapper {
       registry.put("WeightageConfiguration", WEIGHTAGE_CONFIGURATION_ENTITY_NAME);
       registry.put("PostalCodeTimezoneEntity", POSTAL_CODE_ENTITY_NAME);
     }
-    log.info("registry value after: {}", registry);
+    log.debug("Registry value : {}", registry);
     return registry;
   }
 }
