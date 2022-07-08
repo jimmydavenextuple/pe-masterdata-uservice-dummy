@@ -18,6 +18,10 @@ spec:
         version: <SERVICE_VERSION>
         color: <COLOR>
     spec:
+      volumes:
+        - hostPath:
+            path: /mnt/s3data
+          name: s3data
       containers:
         - name: <SERVICE_NAME>
           image: "<IMAGE_NAME>"
@@ -66,3 +70,6 @@ spec:
               value: "<SERVICE_NAME>"
             - name: NEW_RELIC_LICENSE_KEY
               value: "<NEW_RELIC_LICENSE_KEY>"
+          volumeMounts:
+            - mountPath: /s3-bucket:shared
+              name: s3data
