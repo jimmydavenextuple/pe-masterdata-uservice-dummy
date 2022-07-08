@@ -1,5 +1,9 @@
 package com.hbc.nodecalendar.spring.cache.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import com.hbc.core.cache.domain.CacheValue;
 import com.hbc.core.cache.service.GenericFeignCacheService;
@@ -14,67 +18,63 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
 public class NodeCalendarSpringNearCacheServiceImplTest {
-    @InjectMocks
-    private NodeCalendarSpringNearCacheService nodeCalendarSpringNearCacheService;
+  @InjectMocks private NodeCalendarSpringNearCacheService nodeCalendarSpringNearCacheService;
 
-    @InjectMocks private TestUtil testUtil;
+  @InjectMocks private TestUtil testUtil;
 
-    @Mock private AbstractGenericFeignClientServiceImpl abstractGenericFeignClientService;
-    @Mock
-    private GenericFeignCacheService<NodeCalendarCacheKey, NodeCalendarCacheValue> feignCacheService;
+  @Mock private AbstractGenericFeignClientServiceImpl abstractGenericFeignClientService;
 
-    @Test
-    void getValidTest() {
-        NodeCalendarCacheKey cacheKey = testUtil.getNodeCalendarCacheKey();
-        NodeCalendarCacheValue cacheValue = testUtil.getNodeCalendarCacheValue();
+  @Mock
+  private GenericFeignCacheService<NodeCalendarCacheKey, NodeCalendarCacheValue> feignCacheService;
 
-        when(feignCacheService.get(any())).thenReturn(cacheValue);
-        when(abstractGenericFeignClientService.get(any())).thenReturn(cacheValue);
+  @Test
+  void getValidTest() {
+    NodeCalendarCacheKey cacheKey = testUtil.getNodeCalendarCacheKey();
+    NodeCalendarCacheValue cacheValue = testUtil.getNodeCalendarCacheValue();
 
-        // First Invocation
-        CacheValue cacheValue1 = nodeCalendarSpringNearCacheService.get(cacheKey);
-        assertEquals(cacheValue, cacheValue1);
+    when(feignCacheService.get(any())).thenReturn(cacheValue);
+    when(abstractGenericFeignClientService.get(any())).thenReturn(cacheValue);
 
-        // Second Invocation
-        CacheValue cacheValue2 = abstractGenericFeignClientService.get(cacheKey);
-        assertEquals(cacheValue, cacheValue2);
+    // First Invocation
+    CacheValue cacheValue1 = nodeCalendarSpringNearCacheService.get(cacheKey);
+    assertEquals(cacheValue, cacheValue1);
 
-        // Third Invocation
-        CacheValue cacheValue3 = abstractGenericFeignClientService.get(cacheKey);
-        assertEquals(cacheValue, cacheValue3);
-        verify(feignCacheService, times(1)).get(cacheKey);
-    }
-    @Test
-    void getInValidTest() {
-        NodeCalendarCacheKey cacheKey = testUtil.getNodeCalendarCacheKey();
+    // Second Invocation
+    CacheValue cacheValue2 = abstractGenericFeignClientService.get(cacheKey);
+    assertEquals(cacheValue, cacheValue2);
 
-        when(feignCacheService.get(any())).thenReturn(null);
-        assertNull(nodeCalendarSpringNearCacheService.get(cacheKey));
-        verify(feignCacheService, times(1)).get(cacheKey);
-    }
+    // Third Invocation
+    CacheValue cacheValue3 = abstractGenericFeignClientService.get(cacheKey);
+    assertEquals(cacheValue, cacheValue3);
+    verify(feignCacheService, times(1)).get(cacheKey);
+  }
 
-    @Test
-    void deleteTest() {
-        NodeCalendarCacheKey cacheKey = testUtil.getNodeCalendarCacheKey();
+  @Test
+  void getInValidTest() {
+    NodeCalendarCacheKey cacheKey = testUtil.getNodeCalendarCacheKey();
 
-        nodeCalendarSpringNearCacheService.delete(cacheKey);
-        CacheValue cacheValue = nodeCalendarSpringNearCacheService.get(cacheKey);
-        assertNull(cacheValue);
-    }
+    when(feignCacheService.get(any())).thenReturn(null);
+    assertNull(nodeCalendarSpringNearCacheService.get(cacheKey));
+    verify(feignCacheService, times(1)).get(cacheKey);
+  }
 
-    @Test
-    void deleteAllTest() {
-        NodeCalendarCacheKey cacheKey = testUtil.getNodeCalendarCacheKey();
+  @Test
+  void deleteTest() {
+    NodeCalendarCacheKey cacheKey = testUtil.getNodeCalendarCacheKey();
 
-        nodeCalendarSpringNearCacheService.deleteAll();
-        CacheValue cacheValue = nodeCalendarSpringNearCacheService.get(cacheKey);
-        assertNull(cacheValue);
-    }
+    nodeCalendarSpringNearCacheService.delete(cacheKey);
+    CacheValue cacheValue = nodeCalendarSpringNearCacheService.get(cacheKey);
+    assertNull(cacheValue);
+  }
+
+  @Test
+  void deleteAllTest() {
+    NodeCalendarCacheKey cacheKey = testUtil.getNodeCalendarCacheKey();
+
+    nodeCalendarSpringNearCacheService.deleteAll();
+    CacheValue cacheValue = nodeCalendarSpringNearCacheService.get(cacheKey);
+    assertNull(cacheValue);
+  }
 }
