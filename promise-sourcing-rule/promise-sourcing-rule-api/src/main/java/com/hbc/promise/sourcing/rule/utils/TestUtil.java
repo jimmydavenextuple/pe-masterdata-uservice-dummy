@@ -23,7 +23,7 @@ import java.util.List;
 import org.mapstruct.factory.Mappers;
 
 public class TestUtil {
-  private final String Node1 = "Node-1";
+  private static final String Node1 = "Node-1";
   private static final PromiseSourcingRuleMapper INSTANCE_PROMISE =
       Mappers.getMapper(PromiseSourcingRuleMapper.class);
 
@@ -97,10 +97,6 @@ public class TestUtil {
   public UpdatePromiseSourcingRuleRequest getUpdatePromiseSourcingRuleRequest() {
     return UpdatePromiseSourcingRuleRequest.builder()
         .sourceNodes(Collections.singleton(Node1))
-        .destinationGeoZone(DESTINATION_GEO_ZONE)
-        .priority(PRIORITY)
-        .serviceOption(SERVICE_OPTION)
-        .allocationRuleId(ALLOCATION_RULE_ID)
         .build();
   }
 

@@ -53,12 +53,6 @@ class PromiseSourcingRuleMapperTest {
         updatePromiseSourcingRuleRequest, mockPromiseSourcingRule);
 
     assertEquals(
-        updatePromiseSourcingRuleRequest.getAllocationRuleId(),
-        mockPromiseSourcingRule.getAllocationRuleId());
-    assertEquals(
-        updatePromiseSourcingRuleRequest.getDestinationGeoZone(),
-        mockPromiseSourcingRule.getDestinationGeoZone());
-    assertEquals(
         updatePromiseSourcingRuleRequest.getSourceNodes(),
         mockPromiseSourcingRule.getSourceNodes());
   }
