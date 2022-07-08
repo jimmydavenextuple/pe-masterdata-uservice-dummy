@@ -22,8 +22,9 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
         bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain -p ${{ inputs.module }}
-        bash ./gradlew -Pbuild_target=SNAPSHOT dependencyCheckAggregate -p ${{ inputs.module }} --info
-        bash ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN -Dsonar.pullrequest.branch=${{ github.head_ref }} -Dsonar.pullrequest.base=master -Dsonar.pullrequest.key=${{ github.event.number }} showSonarQubeLink --info
+        bash ./gradlew -Pbuild_target=SNAPSHOT spotlessApply spotbugsMain test jacocoTestReport
+        bash ./gradlew -Pbuild_target=SNAPSHOT dependencyCheckAggregate --info
+        bash ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN -Dsonar.pullrequest.branch=${{ github.head_ref }} -Dsonar.pullrequest.base=development -Dsonar.pullrequest.key=${{ github.event.number }} showSonarQubeLink --info
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1
       if: always()

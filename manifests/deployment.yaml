@@ -18,6 +18,10 @@ spec:
         version: <SERVICE_VERSION>
         color: <COLOR>
     spec:
+      volumes:
+        - hostPath:
+            path: /mnt/s3data
+          name: s3data
       containers:
         - name: <SERVICE_NAME>
           image: "<IMAGE_NAME>"
@@ -66,23 +70,6 @@ spec:
               value: "<SERVICE_NAME>"
             - name: NEW_RELIC_LICENSE_KEY
               value: "<NEW_RELIC_LICENSE_KEY>"
-            - name: KAFKA_USER
-              valueFrom:
-                secretKeyRef:
-                  name: kafka-credentials
-                  key: username
-            - name: KAFKA_PWD
-              valueFrom:
-                secretKeyRef:
-                  name: kafka-credentials
-                  key: password
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: username
-            - name: POSTGRES_PWD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: password
+          volumeMounts:
+            - mountPath: /s3-bucket:shared
+              name: s3data

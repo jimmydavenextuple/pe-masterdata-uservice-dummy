@@ -1,0 +1,2 @@
+action,orgId,sourceGeozone,destinationGeozone,carrierServiceId,transitDays
+INVALID,org,SGZ1,DGZ1,CSI1,1

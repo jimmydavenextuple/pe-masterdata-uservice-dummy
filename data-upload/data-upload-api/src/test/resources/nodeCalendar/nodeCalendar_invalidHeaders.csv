@@ -1,0 +1,5 @@
+action,invalidHeader,nodeId,orgId,description,effectiveDate
+CREATE,CGY_2022,1957,BAY,Calgary MFC - non peak,2022-02-02
+CREATE,SLC_2022,DC-963-565,BAY,SLC - non peak,2022-01-01
+CREATE,VLC_2022,DC-963-577,BAY,VLC - non peak,2022-01-01
+CREATE,EBTC_2022,DC-963-578,BAY,EBTC - non peak,2022-01-01

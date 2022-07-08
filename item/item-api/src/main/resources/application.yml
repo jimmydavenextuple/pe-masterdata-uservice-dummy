@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:aws-secretsmanager:/secret/\${SPRING_PROFILES_ACTIVE}
   application:
     name: "Item-master-data"
     version: 1.0
