@@ -2,6 +2,7 @@ package com.hbc.nodecarriercalendar.spring.cache.service;
 
 import com.hbc.core.cache.domain.CacheValue;
 import com.hbc.core.cache.service.GenericFeignCacheService;
+import com.hbc.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import com.hbc.node.carrier.calendar.cache.domain.NodeCarrierCalendarCacheKey;
 import com.hbc.node.carrier.calendar.cache.domain.NodeCarrierCalendarCacheValue;
 import com.hbc.node.carrier.calendar.cache.spring.service.NodeCarrierCalendarSpringNearCacheService;
@@ -12,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -23,9 +25,31 @@ public class NodeCarrierCalendarNearCacheServiceImplTest {
 
     @InjectMocks private TestUtil testUtil;
 
+    @Mock private AbstractGenericFeignClientServiceImpl abstractGenericFeignClientService;
     @Mock
     private GenericFeignCacheService<NodeCarrierCalendarCacheKey, NodeCarrierCalendarCacheValue> feignCacheService;
 
+    @Test
+    void getValidTest() {
+        NodeCarrierCalendarCacheKey cacheKey = testUtil.getNodeCarrierCalendarCacheKey();
+        NodeCarrierCalendarCacheValue cacheValue = testUtil.getNodeCarrierCalendarCacheValue();
+
+        when(feignCacheService.get(any())).thenReturn(cacheValue);
+        when(abstractGenericFeignClientService.get(any())).thenReturn(cacheValue);
+
+        // First Invocation
+        CacheValue cacheValue1 = nodeCarrierCalendarSpringNearCacheService.get(cacheKey);
+        assertEquals(cacheValue, cacheValue1);
+
+        // Second Invocation
+        CacheValue cacheValue2 = abstractGenericFeignClientService.get(cacheKey);
+        assertEquals(cacheValue, cacheValue2);
+
+        // Third Invocation
+        CacheValue cacheValue3 = abstractGenericFeignClientService.get(cacheKey);
+        assertEquals(cacheValue, cacheValue3);
+        verify(feignCacheService, times(1)).get(cacheKey);
+    }
     @Test
     void getInValidTest() {
         NodeCarrierCalendarCacheKey cacheKey = testUtil.getNodeCarrierCalendarCacheKey();

@@ -14,15 +14,16 @@ public class TestUtil {
     public static final String SERVICE_OPTION = "Service_Option_01";
 
     public CarrierServiceCalendarCacheValue getCarrierServiceCalendarCacheValue() {
-        CalendarDaysStatusInfo calendarDaysStatusInfo = getCalendarDaysStatusInfo();
-        List<CalendarDaysStatusInfo> calendarDaysStatusInfoList = new ArrayList<CalendarDaysStatusInfo>();
+        List<CalendarDaysStatusInfo> calendarDaysStatusInfoList = getCalendarDaysStatusInfo();
         return CarrierServiceCalendarCacheValue.builder().calendarDaysStatusInfo(calendarDaysStatusInfoList).build();
     }
-    public CalendarDaysStatusInfo getCalendarDaysStatusInfo(){
-        return CalendarDaysStatusInfo.builder()
-                .date("2022-07-07")
-                .isActive(true)
-                .build();
+    public List<CalendarDaysStatusInfo> getCalendarDaysStatusInfo(){
+        List<CalendarDaysStatusInfo> calendarDaysStatusInfoList = new ArrayList<>();
+        CalendarDaysStatusInfo calendarDaysStatusInfo = new CalendarDaysStatusInfo();
+        calendarDaysStatusInfo.setDate("2022-07-07");
+        calendarDaysStatusInfo.setIsActive(true);
+        calendarDaysStatusInfoList.add(calendarDaysStatusInfo);
+        return calendarDaysStatusInfoList;
     }
 
     public BaseResponse<List<CalendarDaysStatusInfo>> getBaseResponseOfListOfCalendarDaysStatusInfo() {

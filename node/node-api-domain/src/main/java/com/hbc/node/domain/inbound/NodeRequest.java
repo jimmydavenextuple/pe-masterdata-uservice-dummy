@@ -39,6 +39,7 @@ public class NodeRequest implements Serializable {
   @Length(max = 50)
   private String postalCode;
 
+  @NotBlank(message = "country can't be blank")
   @Length(max = 50)
   private String country;
 

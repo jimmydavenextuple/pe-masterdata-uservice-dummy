@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -34,6 +35,18 @@ public class NodeCarrierCalendarFeignClientServiceImplTest {
 
     @Mock private CalendarCommonFeignImpl calendarCommonFeign;
 
+    @Test
+    void getTest() {
+        NodeCarrierCalendarCacheKey cacheKey = testUtil.getNodeCarrierCalendarCacheKey();
+        NodeCarrierCalendarCacheValue cacheValue = testUtil.getNodeCarrierCalendarCacheValue();
+
+        when(mapper.responseToCacheValue(any())).thenReturn(cacheValue);
+        when(calendarCommonFeign.getNodeCarrierCalendar(any(), any(),any(),any()))
+                .thenReturn(testUtil.getBaseResponseOfListOfCalendarDaysStatusInfo());
+
+        assertEquals(cacheValue, nodeCarrierCalendarFeignClientService.get(cacheKey));
+        verify(mapper, times(1)).responseToCacheValue(any());
+    }
     @Test
     void getExceptionTest() {
         NodeCarrierCalendarCacheKey invalidCacheKey = testUtil.getNodeCarrierCalendarCacheKey();

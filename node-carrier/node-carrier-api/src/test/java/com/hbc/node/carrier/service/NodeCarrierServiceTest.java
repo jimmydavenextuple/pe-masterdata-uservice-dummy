@@ -236,6 +236,6 @@ class NodeCarrierServiceTest {
         Assertions.assertThrows(
             InvalidDataException.class,
             () -> nodeCarrierService.validateLastPickupTime(lastPickUpTime));
-    Assertions.assertEquals("Invalid time format", ex.getMessage());
+    Assertions.assertEquals("LastPickupTime is invalid", ex.getMessage());
   }
 }
