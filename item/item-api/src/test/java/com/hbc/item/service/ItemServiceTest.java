@@ -12,6 +12,7 @@ import com.hbc.item.domain.entity.ItemEntity;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
 import com.hbc.item.exception.ItemDomainException;
+import java.time.Instant;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,11 +38,25 @@ class ItemServiceTest {
   void addItemTest() throws ItemDomainException {
     ItemEntity itemEntity = testUtil.getItemEntity();
     ItemCreationRequest itemCreationRequest = testUtil.getItemCreationRequest();
+    itemCreationRequest.setLastModifiedDate(Instant.ofEpochSecond(1000L));
     when(itemDomain.saveItemEntity(any(ItemEntity.class))).thenReturn(itemEntity);
 
     ItemResponse received_dto = itemService.createItem(itemCreationRequest);
     Assertions.assertEquals(itemCreationRequest.getItemId(), received_dto.getItemId());
     verify(itemDomain, times(1)).saveItemEntity(any(ItemEntity.class));
+  }
+
+  @Test
+  void addItemExceptionTest() throws ItemDomainException {
+    ItemEntity itemEntity = testUtil.getItemEntity();
+    ItemCreationRequest itemCreationRequest = testUtil.getItemCreationRequest();
+    itemCreationRequest.setUom(null);
+    when(itemDomain.saveItemEntity(any(ItemEntity.class))).thenReturn(itemEntity);
+
+    Exception ex =
+        Assertions.assertThrows(Exception.class, () -> itemService.createItem(itemCreationRequest));
+    Assertions.assertEquals("Error occurred: uom - uom can't be blank", ex.getMessage());
+    verify(itemDomain, times(0)).saveItemEntity(any(ItemEntity.class));
   }
 
   @Test
