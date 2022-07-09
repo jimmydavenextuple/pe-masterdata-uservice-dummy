@@ -22,12 +22,12 @@ public class CarrierSpringNearCacheServiceImpl
 
   public static final String CARRIER_CACHE_NAME = "carrier";
 
-  @Autowired NearCacheRegistry registry;
+  @Autowired NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override
   public void selfRegister() {
-    registry.registerNearCacheEntity(
+    nearCacheRegistry.registerNearCacheEntity(
         NearCacheConstants.CARRIER_ENTITY_NAME, CarrierCacheKey.class.getName(), "partial");
   }
 

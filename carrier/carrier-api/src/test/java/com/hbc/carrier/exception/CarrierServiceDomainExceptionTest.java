@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 class CarrierServiceDomainExceptionTest {
 
   @Test
-  @DisplayName("Testing  CarrierServiceDomainException")
+  @DisplayName("Testing CarrierServiceDomainException")
   void constructTest() {
     CarrierServiceDomainException carrierServiceDomainException =
         new CarrierServiceDomainException(

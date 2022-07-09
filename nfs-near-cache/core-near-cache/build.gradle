@@ -6,3 +6,6 @@ bootJar {
 }
 
 
+dependencies {
+    api "com.openpojo:openpojo:0.8.13"
+}
