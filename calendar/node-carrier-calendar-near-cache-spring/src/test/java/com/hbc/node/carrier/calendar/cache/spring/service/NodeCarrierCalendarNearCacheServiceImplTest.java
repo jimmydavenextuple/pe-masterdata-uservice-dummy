@@ -1,4 +1,4 @@
-package com.hbc.nodecarriercalendar.spring.cache.service;
+package com.hbc.node.carrier.calendar.cache.spring.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -7,11 +7,12 @@ import static org.mockito.Mockito.*;
 
 import com.hbc.core.cache.domain.CacheValue;
 import com.hbc.core.cache.service.GenericFeignCacheService;
+import com.hbc.core.constants.NearCacheConstants;
+import com.hbc.core.registry.NearCacheRegistry;
 import com.hbc.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import com.hbc.node.carrier.calendar.cache.domain.NodeCarrierCalendarCacheKey;
 import com.hbc.node.carrier.calendar.cache.domain.NodeCarrierCalendarCacheValue;
-import com.hbc.node.carrier.calendar.cache.spring.service.NodeCarrierCalendarSpringNearCacheService;
-import com.hbc.nodecarriercalendar.spring.cache.util.TestUtil;
+import com.hbc.node.carrier.calendar.cache.spring.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,6 +31,8 @@ class NodeCarrierCalendarNearCacheServiceImplTest {
   @Mock
   private GenericFeignCacheService<NodeCarrierCalendarCacheKey, NodeCarrierCalendarCacheValue>
       feignCacheService;
+
+  @Mock private NearCacheRegistry nearCacheRegistry;
 
   @Test
   void getValidTest() {
@@ -78,5 +81,20 @@ class NodeCarrierCalendarNearCacheServiceImplTest {
     nodeCarrierCalendarSpringNearCacheService.deleteAll();
     CacheValue cacheValue = nodeCarrierCalendarSpringNearCacheService.get(cacheKey);
     assertNull(cacheValue);
+  }
+
+  @Test
+  void selfRegisterTest() {
+    doNothing().when(nearCacheRegistry).registerNearCacheEntity(any(), any(), any());
+    nodeCarrierCalendarSpringNearCacheService.selfRegister();
+
+    verify(nearCacheRegistry, times(1)).registerNearCacheEntity(any(), any(), any());
+  }
+
+  @Test
+  void getEntityName() {
+    assertEquals(
+        NearCacheConstants.NODE_CARRIER_CALENDAR_ENTITY_NAME,
+        nodeCarrierCalendarSpringNearCacheService.getEntityName());
   }
 }

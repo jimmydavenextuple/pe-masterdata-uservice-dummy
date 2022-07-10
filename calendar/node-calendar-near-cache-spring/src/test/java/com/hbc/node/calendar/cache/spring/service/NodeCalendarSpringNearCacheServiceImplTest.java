@@ -1,4 +1,4 @@
-package com.hbc.nodecalendar.spring.cache.service;
+package com.hbc.node.calendar.cache.spring.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -7,11 +7,12 @@ import static org.mockito.Mockito.*;
 
 import com.hbc.core.cache.domain.CacheValue;
 import com.hbc.core.cache.service.GenericFeignCacheService;
+import com.hbc.core.constants.NearCacheConstants;
+import com.hbc.core.registry.NearCacheRegistry;
 import com.hbc.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import com.hbc.node.calendar.cache.domain.NodeCalendarCacheKey;
 import com.hbc.node.calendar.cache.domain.NodeCalendarCacheValue;
-import com.hbc.node.calendar.cache.spring.service.NodeCalendarSpringNearCacheService;
-import com.hbc.nodecalendar.spring.cache.util.TestUtil;
+import com.hbc.node.calendar.cache.spring.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +29,8 @@ class NodeCalendarSpringNearCacheServiceImplTest {
 
   @Mock
   private GenericFeignCacheService<NodeCalendarCacheKey, NodeCalendarCacheValue> feignCacheService;
+
+  @Mock private NearCacheRegistry nearCacheRegistry;
 
   @Test
   void getValidTest() {
@@ -76,5 +79,20 @@ class NodeCalendarSpringNearCacheServiceImplTest {
     nodeCalendarSpringNearCacheService.deleteAll();
     CacheValue cacheValue = nodeCalendarSpringNearCacheService.get(cacheKey);
     assertNull(cacheValue);
+  }
+
+  @Test
+  void selfRegisterTest() {
+    doNothing().when(nearCacheRegistry).registerNearCacheEntity(any(), any(), any());
+    nodeCalendarSpringNearCacheService.selfRegister();
+
+    verify(nearCacheRegistry, times(1)).registerNearCacheEntity(any(), any(), any());
+  }
+
+  @Test
+  void getEntityName() {
+    assertEquals(
+        NearCacheConstants.NODE_CALENDAR_ENTITY_NAME,
+        nodeCalendarSpringNearCacheService.getEntityName());
   }
 }
