@@ -160,7 +160,7 @@ public class PromiseSourcingRuleService {
                 orgId, serviceOption, destinationGeoZone, allocationRuleId, priority));
 
     if (promiseSourcingRule.isEmpty()) {
-      logger.debug("-- Promise Sourcing Rule not found --");
+      logger.error("-- Promise Sourcing Rule not found --");
       throw new PromiseEngineException(
           ApplicationLayer.SERVICE_LAYER,
           ExceptionCodeMapping.SERVICE_FIND_FAILED,

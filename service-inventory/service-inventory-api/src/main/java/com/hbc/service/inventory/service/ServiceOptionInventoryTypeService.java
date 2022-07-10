@@ -53,7 +53,7 @@ public class ServiceOptionInventoryTypeService {
             .findServiceOptionInventoryTypeEntityByOrgIdAndServiceOption(orgId, serviceOption);
 
     if (serviceOptionInventoryTypeEntity.isEmpty()) {
-      logger.debug(
+      logger.error(
           "ServiceOptionInventoryType not found with given orgId:{} , serviceOption:{}",
           orgId,
           serviceOption);

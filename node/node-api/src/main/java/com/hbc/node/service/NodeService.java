@@ -47,7 +47,7 @@ public class NodeService {
     Optional<NodeEntity> existingNodeEntity = nodeDomain.findNodeByNodeIdAndOrgId(nodeId, orgId);
 
     if (existingNodeEntity.isEmpty()) {
-      logger.debug(NODE_EXCEPTION_MESSAGE);
+      logger.error(NODE_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
@@ -65,7 +65,7 @@ public class NodeService {
     Optional<NodeEntity> nodeEntity = nodeDomain.findNodeByNodeIdAndOrgId(nodeId, orgId);
 
     if (nodeEntity.isEmpty()) {
-      logger.debug(NODE_EXCEPTION_MESSAGE);
+      logger.error(NODE_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
@@ -81,7 +81,7 @@ public class NodeService {
     Optional<NodeEntity> nodeEntity = nodeDomain.findNodeByNodeIdAndOrgId(nodeId, orgId);
 
     if (nodeEntity.isEmpty()) {
-      logger.debug(NODE_EXCEPTION_MESSAGE);
+      logger.error(NODE_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());

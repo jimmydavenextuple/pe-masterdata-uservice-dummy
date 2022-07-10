@@ -54,7 +54,7 @@ public class CarrierServiceService {
             carrierId, serviceId, orgId);
 
     if (carrierServiceEntity.isEmpty()) {
-      logger.debug(CARRIER_SERVICE_EXCEPTION_MESSAGE);
+      logger.error(CARRIER_SERVICE_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(CARRIER_ID, FieldError.builder().rejectedValue(carrierId).build());
@@ -74,7 +74,7 @@ public class CarrierServiceService {
             carrierId, serviceId, orgId);
 
     if (carrierServiceEntity.isEmpty()) {
-      logger.debug(CARRIER_SERVICE_EXCEPTION_MESSAGE);
+      logger.error(CARRIER_SERVICE_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(CARRIER_ID, FieldError.builder().rejectedValue(carrierId).build());
@@ -99,7 +99,7 @@ public class CarrierServiceService {
             carrierId, serviceId, orgId);
 
     if (carrierServiceEntity.isEmpty()) {
-      logger.debug(CARRIER_SERVICE_EXCEPTION_MESSAGE);
+      logger.error(CARRIER_SERVICE_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(CARRIER_ID, FieldError.builder().rejectedValue(carrierId).build());

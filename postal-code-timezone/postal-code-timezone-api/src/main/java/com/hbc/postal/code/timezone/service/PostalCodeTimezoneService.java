@@ -68,7 +68,7 @@ public class PostalCodeTimezoneService {
             postalCodeTimezoneDomain.getPostalCodeTimezone(orgId, postalCodePrefix));
 
     if (promiseSourcingRule.isEmpty()) {
-      logger.debug("-- Postal Code Timezone not found --");
+      logger.error("-- Postal Code Timezone not found --");
       throw new PromiseEngineException(
           ApplicationLayer.SERVICE_LAYER,
           ExceptionCodeMapping.SERVICE_FIND_FAILED,

@@ -119,7 +119,7 @@ public class WeightageConfigurationService {
         Optional.ofNullable(
             weightageConfigurationDomain.getWeightageConfiguration(orgId, type, key));
     if (weightageConfiguration.isEmpty()) {
-      logger.debug("-- Weightage Configuration not found --");
+      logger.error("-- Weightage Configuration not found --");
       throw new PromiseEngineException(
           ApplicationLayer.SERVICE_LAYER,
           ExceptionCodeMapping.SERVICE_FIND_FAILED,
