@@ -2,6 +2,7 @@ package com.hbc.postal.code.timezone.domain.primaryKeys;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.hbc.postal.code.timezone.domain.primarykeys.PostalCodeTimezoneEntityPK;
 import com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants;
 import org.junit.jupiter.api.Test;
 

@@ -1,6 +1,7 @@
 package com.hbc.item;
 
 import com.hbc.item.domain.entity.ItemEntity;
+import com.hbc.item.domain.entity.ItemPK;
 import com.hbc.item.domain.events.ItemMasterEvent;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
@@ -52,6 +53,11 @@ public class TestUtil {
         .height(HEIGHT)
         .weight(WEIGHT)
         .volume(VOLUME)
+        .isDSVEligible(Boolean.TRUE)
+        .departmentName("dName")
+        .departmentNumber("dNumber")
+        .imageUrl("/image")
+        .shortDescription("desc")
         .build();
   }
 
@@ -186,5 +192,19 @@ public class TestUtil {
         .weight(WEIGHT)
         .volume(VOLUME)
         .build();
+  }
+
+  public ItemRecord getItemRecord() {
+    ItemRecord record = new ItemRecord();
+    record.setItemId(TestUtil.ITEM_ID);
+    return record;
+  }
+
+  public ItemPK getItemId() {
+    ItemPK id = new ItemPK();
+    id.setItemId(ITEM_ID);
+    id.setOrgId(ORG_ID);
+    id.setUom(UOM);
+    return id;
   }
 }

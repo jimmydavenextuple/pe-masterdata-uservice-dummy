@@ -2,6 +2,7 @@ package com.hbc.promise.sourcing.rule.domain.primaryKeys;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.hbc.promise.sourcing.rule.domain.primarykeys.PromiseSourcingRulePK;
 import com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants;
 import org.junit.jupiter.api.Test;
 

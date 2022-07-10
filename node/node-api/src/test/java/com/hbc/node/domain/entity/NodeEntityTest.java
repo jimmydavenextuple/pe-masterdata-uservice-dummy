@@ -31,14 +31,14 @@ class NodeEntityTest {
 
   @Test
   void nodeIdNullTest() {
-    NodeId nodeId = new NodeId();
+    NodePK nodeId = new NodePK();
     assertNull(nodeId.getNodeId());
     assertNull(nodeId.getOrgId());
   }
 
   @Test
   void nodeIdTest() {
-    NodeId nodeId = new NodeId(TestUtil.NODE_ID, TestUtil.ORG_ID);
+    NodePK nodeId = new NodePK(TestUtil.NODE_ID, TestUtil.ORG_ID);
     assertNotNull(nodeId.getNodeId());
     assertNotNull(nodeId.getOrgId());
   }

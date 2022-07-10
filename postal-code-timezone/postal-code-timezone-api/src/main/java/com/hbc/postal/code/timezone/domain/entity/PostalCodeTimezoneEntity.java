@@ -1,7 +1,7 @@
 package com.hbc.postal.code.timezone.domain.entity;
 
 import com.hbc.core.event.listeners.CommonEntityListener;
-import com.hbc.postal.code.timezone.domain.primaryKeys.PostalCodeTimezoneEntityPK;
+import com.hbc.postal.code.timezone.domain.primarykeys.PostalCodeTimezoneEntityPK;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;

@@ -5,6 +5,7 @@ import static com.hbc.weightage.configuration.utils.WeightageConfigurationConsta
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.TYPE;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.hbc.weightage.configuration.domain.primarykeys.WeightageConfigurationPK;
 import org.junit.jupiter.api.Test;
 
 class WeightageConfigurationPKTest {

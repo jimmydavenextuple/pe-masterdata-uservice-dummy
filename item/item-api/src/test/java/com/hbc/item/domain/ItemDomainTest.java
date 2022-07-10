@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.item.TestUtil;
 import com.hbc.item.domain.entity.ItemEntity;
+import com.hbc.item.domain.entity.ItemPK;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.repository.ItemRepository;
 import java.util.Optional;
@@ -57,14 +58,27 @@ class ItemDomainTest {
   @Test
   void getItemDetailsTest() throws ItemDomainException {
     ItemEntity itemEntity = testUtil.getItemEntity();
+    ItemPK id = testUtil.getItemId();
     when(itemRepository.findByItemIdAndOrgIdAndUom(any(), any(), any()))
         .thenReturn(Optional.of(itemEntity));
 
     Optional<ItemEntity> optionalItemEntity =
         itemDomain.findItemByItemIdAndOrgIdAndUom(TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM);
     Assertions.assertEquals(itemEntity, optionalItemEntity.get());
+    Assertions.assertEquals(
+        itemEntity.getIsDSVEligible(), optionalItemEntity.get().getIsDSVEligible());
+    Assertions.assertEquals(
+        itemEntity.getDepartmentName(), optionalItemEntity.get().getDepartmentName());
+    Assertions.assertEquals(
+        itemEntity.getDepartmentNumber(), optionalItemEntity.get().getDepartmentNumber());
+    Assertions.assertEquals(itemEntity.getImageUrl(), optionalItemEntity.get().getImageUrl());
+    Assertions.assertEquals(
+        itemEntity.getShortDescription(), optionalItemEntity.get().getShortDescription());
 
     verify(itemRepository, times(1)).findByItemIdAndOrgIdAndUom(any(), any(), any());
+    Assertions.assertEquals(TestUtil.ITEM_ID, id.getItemId());
+    Assertions.assertEquals(TestUtil.ORG_ID, id.getOrgId());
+    Assertions.assertEquals(TestUtil.UOM, id.getUom());
   }
 
   @Test
