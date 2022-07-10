@@ -50,12 +50,12 @@ public class LocalCacheUpdateService {
 
           List<String> paramsList = new ArrayList<>();
           if (!ObjectUtils.isEmpty(params)) {
-            paramsList = Arrays.asList(params.split("\\s*,\\s*"));
+            paramsList = Arrays.asList(params.split("\\s*,\\s*")); // NOSONAR
           }
           for (String param : paramsList) {
             Field field = c.getDeclaredField(param);
-            field.setAccessible(true);
-            field.set(cacheKey, message.get(param));
+            field.setAccessible(true); // NOSONAR
+            field.set(cacheKey, message.get(param)); // NOSONAR
           }
 
           genericNearCacheService.delete(cacheKey); // NOSONAR

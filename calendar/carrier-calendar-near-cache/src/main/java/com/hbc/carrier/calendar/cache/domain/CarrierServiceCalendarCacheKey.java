@@ -14,5 +14,7 @@ public class CarrierServiceCalendarCacheKey implements CacheKey {
   private String orgId;
   private String serviceOption;
 
-  public CarrierServiceCalendarCacheKey() {}
+  public CarrierServiceCalendarCacheKey() {
+    // constructor
+  }
 }

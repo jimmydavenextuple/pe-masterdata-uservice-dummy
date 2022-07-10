@@ -1,4 +1,4 @@
-package com.hbc.weightage.configuration.utils;
+package com.hbc.weightage.configuration;
 
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.KEYS;
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.ORG_ID;

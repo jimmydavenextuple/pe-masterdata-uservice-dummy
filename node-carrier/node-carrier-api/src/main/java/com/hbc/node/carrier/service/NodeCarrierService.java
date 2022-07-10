@@ -43,7 +43,7 @@ public class NodeCarrierService {
 
     validateLastPickupTime(nodeCarrierRequest.getLastPickupTime());
 
-    NodeCarrierEntity nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
+    var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
 
     Optional<NodeCarrierEntity> nodeCarrierEntity1 =
         nodeCarrierDomain.findNodeCarrierDetails(
@@ -81,7 +81,7 @@ public class NodeCarrierService {
   }
 
   public void validateLastPickupTime(String lastPickupTime) throws InvalidDataException {
-    String regex = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+    var regex = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
     if (!lastPickupTime.matches(regex)) {
       throw new InvalidDataException("LastPickupTime is invalid", lastPickupTime);
     }
@@ -176,7 +176,7 @@ public class NodeCarrierService {
       throw new CommonServiceException(
           NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
     }
-    NodeCarrierResponse nodeCarrierResponse = INSTANCE.toNodeCarrierDto(nodeCarrierEntity.get());
+    var nodeCarrierResponse = INSTANCE.toNodeCarrierDto(nodeCarrierEntity.get());
     nodeCarrierDomain.deleteNodeCarrierEntity(nodeCarrierEntity.get());
     return nodeCarrierResponse;
   }

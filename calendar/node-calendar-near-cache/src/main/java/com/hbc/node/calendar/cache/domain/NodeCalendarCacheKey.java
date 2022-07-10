@@ -13,5 +13,7 @@ public class NodeCalendarCacheKey implements CacheKey {
   private String nodeId;
   private String orgId;
 
-  public NodeCalendarCacheKey() {}
+  public NodeCalendarCacheKey() {
+    // constructor
+  }
 }

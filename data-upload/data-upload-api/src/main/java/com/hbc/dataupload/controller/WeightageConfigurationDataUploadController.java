@@ -23,7 +23,7 @@ public class WeightageConfigurationDataUploadController {
   @PostMapping("/weightage")
   public ResponseEntity<BaseResponse<String>> uploadWeightageConfigurationData(
       @NotBlank @RequestParam String fileUri) throws IOException, CommonServiceException {
-    log.info("Processing upload Weightage Configuration Data request");
+    log.debug("Processing upload Weightage Configuration Data request");
     try {
       return weightageConfigurationDataUploadService.uploadWeightageConfigurationData(fileUri);
     } catch (Exception e) {

@@ -23,7 +23,7 @@ public class PostalCodeTimezoneDataUploadController {
   @PostMapping("/postal-code-timezone")
   public ResponseEntity<BaseResponse<String>> uploadPostalCodeTimezoneData(
       @NotBlank @RequestParam String fileUri) throws IOException, CommonServiceException {
-    log.info("Processing upload Postal Code Timezone Data request");
+    log.debug("Processing upload Postal Code Timezone Data request");
     try {
       return postalCodeTimezoneDataUploadUtilityService.uploadPostalCodeTimezoneData(fileUri);
     } catch (Exception e) {

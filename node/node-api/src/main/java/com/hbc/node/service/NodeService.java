@@ -35,7 +35,7 @@ public class NodeService {
 
   public NodeResponse createNode(NodeRequest nodeRequest) throws NodeDomainException {
 
-    NodeEntity nodeEntity = INSTANCE.nodeRequestToNodeEntity(nodeRequest);
+    var nodeEntity = INSTANCE.nodeRequestToNodeEntity(nodeRequest);
 
     return INSTANCE.toNodeResponse(nodeDomain.saveNodeEntity(nodeEntity));
   }
@@ -47,7 +47,7 @@ public class NodeService {
     Optional<NodeEntity> existingNodeEntity = nodeDomain.findNodeByNodeIdAndOrgId(nodeId, orgId);
 
     if (existingNodeEntity.isEmpty()) {
-      logger.info(NODE_EXCEPTION_MESSAGE);
+      logger.error(NODE_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
@@ -65,7 +65,7 @@ public class NodeService {
     Optional<NodeEntity> nodeEntity = nodeDomain.findNodeByNodeIdAndOrgId(nodeId, orgId);
 
     if (nodeEntity.isEmpty()) {
-      logger.info(NODE_EXCEPTION_MESSAGE);
+      logger.error(NODE_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
@@ -81,14 +81,14 @@ public class NodeService {
     Optional<NodeEntity> nodeEntity = nodeDomain.findNodeByNodeIdAndOrgId(nodeId, orgId);
 
     if (nodeEntity.isEmpty()) {
-      logger.info(NODE_EXCEPTION_MESSAGE);
+      logger.error(NODE_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
       throw new CommonServiceException(
           NODE_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-    NodeResponse nodeResponse = INSTANCE.toNodeResponse(nodeEntity.get());
+    var nodeResponse = INSTANCE.toNodeResponse(nodeEntity.get());
     nodeDomain.deleteNode(nodeEntity.get());
     return nodeResponse;
   }

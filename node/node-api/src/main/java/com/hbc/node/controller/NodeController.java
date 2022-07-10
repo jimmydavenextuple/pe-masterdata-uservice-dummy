@@ -33,9 +33,9 @@ public class NodeController {
   @PostMapping
   public ResponseEntity<BaseResponse<NodeResponse>> createNode(
       @Valid @RequestBody NodeRequest nodeRequest) throws NodeDomainException {
-    logger.info("Processing node creation request");
+    logger.debug("Processing node creation request");
     try {
-      NodeResponse nodeResponse = nodeService.createNode(nodeRequest);
+      var nodeResponse = nodeService.createNode(nodeRequest);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -54,10 +54,10 @@ public class NodeController {
       @NotBlank @PathVariable String orgId,
       @Valid @RequestBody NodeUpdationRequest nodeUpdationRequest)
       throws NodeDomainException, CommonServiceException {
-    logger.info("Processing update node details");
+    logger.debug("Processing update node details");
     try {
 
-      NodeResponse nodeResponse = nodeService.updateNodeDetails(nodeId, orgId, nodeUpdationRequest);
+      var nodeResponse = nodeService.updateNodeDetails(nodeId, orgId, nodeUpdationRequest);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -74,10 +74,10 @@ public class NodeController {
   public ResponseEntity<BaseResponse<NodeResponse>> getNodeDetails(
       @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId)
       throws NodeDomainException, CommonServiceException {
-    logger.info("Processing get node details");
+    logger.debug("Processing get node details");
     try {
 
-      NodeResponse nodeResponse = nodeService.getNodeDetails(nodeId, orgId);
+      var nodeResponse = nodeService.getNodeDetails(nodeId, orgId);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -94,10 +94,10 @@ public class NodeController {
   public ResponseEntity<BaseResponse<NodeResponse>> deleteNode(
       @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId)
       throws NodeDomainException, CommonServiceException {
-    logger.info("Processing delete node");
+    logger.debug("Processing delete node");
     try {
 
-      NodeResponse nodeResponse = nodeService.deleteNode(nodeId, orgId);
+      var nodeResponse = nodeService.deleteNode(nodeId, orgId);
 
       return ResponseEntity.ok(
           BaseResponse.builder()

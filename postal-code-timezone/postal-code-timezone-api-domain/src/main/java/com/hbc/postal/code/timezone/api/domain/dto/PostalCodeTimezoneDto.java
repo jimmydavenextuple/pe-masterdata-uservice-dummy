@@ -1,5 +1,6 @@
 package com.hbc.postal.code.timezone.api.domain.dto;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,8 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostalCodeTimezoneDto {
+public class PostalCodeTimezoneDto implements Serializable {
+  private static final long serialVersionUID = -4258901633195345045L;
   private String orgId;
   private String postalCodePrefix;
   private String country;

@@ -1,4 +1,4 @@
-package com.hbc.postal.code.timezone.utils;
+package com.hbc.postal.code.timezone;
 
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.CITY;
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.COUNTRY;

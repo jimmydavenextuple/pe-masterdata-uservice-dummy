@@ -36,10 +36,9 @@ public class NodeCarrierController {
   public ResponseEntity<BaseResponse<NodeCarrierResponse>> createNodeCarrier(
       @Valid @RequestBody NodeCarrierRequest nodeCarrierRequest)
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
-    logger.info("Processing node carrier creation request");
+    logger.debug("Processing node carrier creation request");
     try {
-      NodeCarrierResponse nodeCarrierResponse =
-          nodeCarrierService.createNodeCarrier(nodeCarrierRequest);
+      var nodeCarrierResponse = nodeCarrierService.createNodeCarrier(nodeCarrierRequest);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -59,9 +58,9 @@ public class NodeCarrierController {
       @NotBlank @PathVariable String carrierServiceId,
       @NotBlank @PathVariable String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
-    logger.info("Processing get node carrier details");
+    logger.debug("Processing get node carrier details");
     try {
-      NodeCarrierResponse nodeCarrierResponse =
+      var nodeCarrierResponse =
           nodeCarrierService.getNodeCarrierDetails(nodeId, orgId, carrierServiceId, serviceOption);
 
       return ResponseEntity.ok(
@@ -83,10 +82,10 @@ public class NodeCarrierController {
       @NotBlank @PathVariable String serviceOption,
       @Valid @RequestBody NodeCarrierUpdateRequest nodeCarrierUpdateRequest)
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
-    logger.info("Processing update node carrier details");
+    logger.debug("Processing update node carrier details");
 
     try {
-      NodeCarrierResponse nodeCarrierResponse =
+      var nodeCarrierResponse =
           nodeCarrierService.updateNodeCarrier(
               nodeId, orgId, carrierServiceId, serviceOption, nodeCarrierUpdateRequest);
 
@@ -108,9 +107,9 @@ public class NodeCarrierController {
       @NotBlank @PathVariable String carrierServiceId,
       @NotBlank @PathVariable String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
-    logger.info("Processing delete node carrier");
+    logger.debug("Processing delete node carrier");
     try {
-      NodeCarrierResponse nodeCarrierResponse =
+      var nodeCarrierResponse =
           nodeCarrierService.deleteNodeCarrier(nodeId, orgId, carrierServiceId, serviceOption);
 
       return ResponseEntity.ok(
@@ -130,7 +129,7 @@ public class NodeCarrierController {
       @NotBlank @PathVariable String orgId,
       @NotBlank @PathVariable String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
-    logger.info("Processing get node carrier for nodeId, orgId and serviceOption");
+    logger.debug("Processing get node carrier for nodeId, orgId and serviceOption");
     try {
       List<NodeCarrierResponse> nodeCarrierResponseList =
           nodeCarrierService.getNodeCarrierForNodeIdAOrgIdAndServiceOption(

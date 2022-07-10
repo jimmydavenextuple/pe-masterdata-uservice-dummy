@@ -1,10 +1,10 @@
 package com.hbc.postal.code.timezone.controller;
 
+import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
-import com.hbc.postal.code.timezone.exception.common.PromiseEngineException;
 import com.hbc.postal.code.timezone.service.PostalCodeTimezoneService;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -34,7 +34,7 @@ public class PostalCodeTimezoneController {
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> createPostalCodeTimezone(
       @Valid @RequestBody CreatePostalCodeTimezoneRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("Processing create Postal Code Timezone request");
+    logger.debug("Processing create Postal Code Timezone request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -42,7 +42,7 @@ public class PostalCodeTimezoneController {
               .payload(postalCodeTimezoneService.createPostalCodeTimezone(baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process create Postal Code Timezone request!");
+      logger.error("Failed to process create Postal Code Timezone request!");
       throw e;
     }
   }
@@ -51,7 +51,7 @@ public class PostalCodeTimezoneController {
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> getPostalCodeTimezone(
       @NotBlank @RequestParam String orgId, @NotBlank @RequestParam String postalCodePrefix)
       throws PromiseEngineException {
-    logger.info("Processing get Postal Code Timezone request");
+    logger.debug("Processing get Postal Code Timezone request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -59,7 +59,7 @@ public class PostalCodeTimezoneController {
               .payload(postalCodeTimezoneService.getPostalCodeTimezone(orgId, postalCodePrefix))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process get Postal Code Timezone request!");
+      logger.error("Failed to process get Postal Code Timezone request!");
       throw e;
     }
   }
@@ -70,7 +70,7 @@ public class PostalCodeTimezoneController {
       @NotBlank @RequestParam String postalCodePrefix,
       @Valid @RequestBody UpdatePostalCodeTimezoneRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("Processing update Postal Code Timezone request");
+    logger.debug("Processing update Postal Code Timezone request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -80,7 +80,7 @@ public class PostalCodeTimezoneController {
                       orgId, postalCodePrefix, baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process update Postal Code Timezone request!");
+      logger.error("Failed to process update Postal Code Timezone request!");
       throw e;
     }
   }
@@ -90,7 +90,7 @@ public class PostalCodeTimezoneController {
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> deletePostalCodeTimezone(
       @NotBlank @RequestParam String orgId, @NotBlank @RequestParam String postalCodePrefix)
       throws PromiseEngineException {
-    logger.info("Processing delete Postal Code Timezone request");
+    logger.debug("Processing delete Postal Code Timezone request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -98,7 +98,7 @@ public class PostalCodeTimezoneController {
               .payload(postalCodeTimezoneService.deletePostalCodeTimezone(orgId, postalCodePrefix))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process delete Postal Code Timezone request!");
+      logger.error("Failed to process delete Postal Code Timezone request!");
       throw e;
     }
   }
