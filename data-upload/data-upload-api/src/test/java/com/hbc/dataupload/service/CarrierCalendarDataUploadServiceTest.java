@@ -1,5 +1,6 @@
 package com.hbc.dataupload.service;
 
+import static com.hbc.dataupload.helper.CarrierCalendarDataUploadConstants.CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_HEADERS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -68,8 +69,7 @@ class CarrierCalendarDataUploadServiceTest {
             CommonServiceException.class,
             () -> calendarDataUploadUtilityService.uploadCarrierCalendarData(absolutePath));
 
-    assertEquals(
-        "Carrier Calendar data uploaded file has invalid headers.", exception.getMessage());
+    assertEquals(CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_HEADERS, exception.getMessage());
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
   }
 
