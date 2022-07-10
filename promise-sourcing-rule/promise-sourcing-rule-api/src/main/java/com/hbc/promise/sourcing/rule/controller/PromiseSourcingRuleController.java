@@ -38,7 +38,7 @@ public class PromiseSourcingRuleController {
   public ResponseEntity<BaseResponse<FetchPromiseSourcingRuleResponse>> fetchSourcingRule(
       @Valid @RequestBody FetchPromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("Processing fetch Promise Sourcing Rule request");
+    logger.debug("Processing fetch Promise Sourcing Rule request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -55,7 +55,7 @@ public class PromiseSourcingRuleController {
   public ResponseEntity<BaseResponse<PromiseSourcingRuleDto>> createPromiseSourcingRule(
       @Valid @RequestBody CreatePromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("Processing create Promise Sourcing Rule request");
+    logger.debug("Processing create Promise Sourcing Rule request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -76,7 +76,7 @@ public class PromiseSourcingRuleController {
       @NotBlank @RequestParam String allocationRuleId,
       @NotBlank @RequestParam int priority)
       throws PromiseEngineException {
-    logger.info("Processing get Promise Sourcing Rule request");
+    logger.debug("Processing get Promise Sourcing Rule request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -94,7 +94,7 @@ public class PromiseSourcingRuleController {
   @GetMapping("/{orgId}@oid")
   public ResponseEntity<BaseResponse<List<PromiseSourcingRuleDto>>> getPromiseSourcingRulesByOrgId(
       @NotBlank @PathVariable String orgId) throws PromiseEngineException {
-    logger.info("Processing get Promise Sourcing Rules by orgId request");
+    logger.debug("Processing get Promise Sourcing Rules by orgId request");
     try {
       List<PromiseSourcingRuleDto> promiseSourcingRuleDtoList =
           promiseSourcingRuleService.getPromiseSourcingRulesByOrgId(orgId);
@@ -113,7 +113,7 @@ public class PromiseSourcingRuleController {
   public ResponseEntity<BaseResponse<List<PromiseSourcingRuleDto>>>
       getPromiseSourcingRulesByPriority(@NotBlank @PathVariable int priority)
           throws PromiseEngineException {
-    logger.info("Processing get Promise Sourcing Rules by priority request");
+    logger.debug("Processing get Promise Sourcing Rules by priority request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -135,7 +135,7 @@ public class PromiseSourcingRuleController {
       @NotBlank @RequestParam int priority,
       @Valid @RequestBody UpdatePromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("Processing update Promise Sourcing Rule request");
+    logger.debug("Processing update Promise Sourcing Rule request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -164,7 +164,7 @@ public class PromiseSourcingRuleController {
       @NotBlank @RequestParam String allocationRuleId,
       @NotBlank @RequestParam int priority)
       throws PromiseEngineException {
-    logger.info("Processing delete Promise Sourcing Rule request by sourcingRuleId");
+    logger.debug("Processing delete Promise Sourcing Rule request by sourcingRuleId");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()

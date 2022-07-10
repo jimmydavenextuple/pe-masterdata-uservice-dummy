@@ -31,7 +31,7 @@ public class CommonEntityListener {
   @PostRemove
   public void afterUpdating(Object entity)
       throws IllegalAccessException, LocalCacheUpdateEventException {
-    log.info("Calling afterUpdating method on updating the record!");
+    log.debug("Calling afterUpdating method on updating the record!");
 
     Map<String, Object> message = new HashMap<>();
 

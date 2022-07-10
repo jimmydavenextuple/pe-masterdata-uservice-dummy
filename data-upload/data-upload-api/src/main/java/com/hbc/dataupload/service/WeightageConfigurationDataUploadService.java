@@ -105,7 +105,7 @@ public class WeightageConfigurationDataUploadService {
                     weightageConfigurationFeign.createWeightageConfiguration(
                         createWeightageConfigurationRequest);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 
@@ -121,7 +121,7 @@ public class WeightageConfigurationDataUploadService {
                     weightageConfigurationFeign.updateWeightageConfiguration(
                         orgId, type, key, updateWeightageConfigurationRequest);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 
@@ -130,7 +130,7 @@ public class WeightageConfigurationDataUploadService {
                 BaseResponse<WeightageConfigurationDto> baseResponse =
                     weightageConfigurationFeign.deleteWeightageConfiguration(orgId, type, key);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 

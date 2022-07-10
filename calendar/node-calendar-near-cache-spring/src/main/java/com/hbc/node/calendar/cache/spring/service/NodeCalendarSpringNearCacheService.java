@@ -42,7 +42,7 @@ public class NodeCalendarSpringNearCacheService
 
   @Override
   public NodeCalendarCacheValue get(NodeCalendarCacheKey key) {
-    logger.info("Inside get NodeCalendarCacheValue");
+    logger.debug("Inside get NodeCalendarCacheValue");
     return super.get(key);
   }
 

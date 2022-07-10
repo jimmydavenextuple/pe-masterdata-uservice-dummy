@@ -42,7 +42,7 @@ public class NodeCarrierSpringNearCacheServiceImpl
 
   @Override
   public NodeCarrierCacheValue get(NodeCarrierCacheKey key) {
-    logger.info("Inside get NodeCarrierCacheValue");
+    logger.debug("Inside get NodeCarrierCacheValue");
     return super.get(key);
   }
 

@@ -46,7 +46,7 @@ public class WeightageConfigurationSpringNearCacheServiceImpl
 
   @Override
   public WeightageConfigurationCacheValue get(WeightageConfigurationCacheKey key) {
-    logger.info("Inside get WeightageConfigurationCacheValue");
+    logger.debug("Inside get WeightageConfigurationCacheValue");
     return super.get(key);
   }
 

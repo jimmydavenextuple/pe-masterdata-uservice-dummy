@@ -101,7 +101,7 @@ public class TransitDataUploadService {
                 BaseResponse<TransitResponse> baseResponse =
                     transitFeign.addTransitData(transitDataCreationRequest);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 
@@ -117,7 +117,7 @@ public class TransitDataUploadService {
                         carrierServiceId,
                         transitDataUpdationRequest);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 
@@ -127,7 +127,7 @@ public class TransitDataUploadService {
                     transitFeign.deleteTransitDetails(
                         orgId, sourceGeoZone, destinationGeoZone, carrierServiceId);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 

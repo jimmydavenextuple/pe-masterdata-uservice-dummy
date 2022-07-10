@@ -24,7 +24,7 @@ public class PostalCodeTimezoneDomain {
    */
   public PostalCodeTimezoneEntity savePostalCodeTimezone(
       PostalCodeTimezoneEntity postalCodeTimezoneEntity) throws PromiseEngineException {
-    logger.info("-- inside savePostalCodeTimezone domain --");
+    logger.debug("-- inside savePostalCodeTimezone domain --");
     try {
       return postalCodeTimezoneRepository.save(postalCodeTimezoneEntity);
     } catch (Exception e) {
@@ -47,7 +47,7 @@ public class PostalCodeTimezoneDomain {
    */
   public PostalCodeTimezoneEntity getPostalCodeTimezone(String orgId, String postalCodePrefix)
       throws PromiseEngineException {
-    logger.info("-- inside getPostalCodeTimezone domain --");
+    logger.debug("-- inside getPostalCodeTimezone domain --");
     try {
       return postalCodeTimezoneRepository.findByOrgIdAndPostalCodePrefix(orgId, postalCodePrefix);
     } catch (Exception e) {
@@ -68,7 +68,7 @@ public class PostalCodeTimezoneDomain {
    */
   public PostalCodeTimezoneEntity deletePostalCodeTimezone(
       PostalCodeTimezoneEntity postalCodeTimezoneEntity) throws PromiseEngineException {
-    logger.info("-- inside deletePostalCodeTimezone domain --");
+    logger.debug("-- inside deletePostalCodeTimezone domain --");
     try {
       postalCodeTimezoneRepository.delete(postalCodeTimezoneEntity);
       return postalCodeTimezoneEntity;

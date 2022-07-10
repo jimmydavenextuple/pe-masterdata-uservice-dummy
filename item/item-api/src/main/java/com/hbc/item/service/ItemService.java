@@ -76,7 +76,7 @@ public class ItemService {
         itemDomain.findItemByItemIdAndOrgIdAndUom(itemId, orgId, uom);
 
     if (existingItemEntity.isEmpty()) {
-      logger.info(ITEM_EXCEPTION_MESSAGE);
+      logger.debug(ITEM_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(ITEM_ID, FieldError.builder().rejectedValue(itemId).build());
@@ -96,7 +96,7 @@ public class ItemService {
         itemDomain.findItemByItemIdAndOrgIdAndUom(itemId, orgId, uom);
 
     if (existingItemEntity.isEmpty()) {
-      logger.info(ITEM_EXCEPTION_MESSAGE);
+      logger.debug(ITEM_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(ITEM_ID, FieldError.builder().rejectedValue(itemId).build());
@@ -114,7 +114,7 @@ public class ItemService {
     Optional<ItemEntity> itemEntity = itemDomain.findItemByItemIdAndOrgIdAndUom(itemId, orgId, uom);
 
     if (itemEntity.isEmpty()) {
-      logger.info(ITEM_EXCEPTION_MESSAGE);
+      logger.debug(ITEM_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(ITEM_ID, FieldError.builder().rejectedValue(itemId).build());

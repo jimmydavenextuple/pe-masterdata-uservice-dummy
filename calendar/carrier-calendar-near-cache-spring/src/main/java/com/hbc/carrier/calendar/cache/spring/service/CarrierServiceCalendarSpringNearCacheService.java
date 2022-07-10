@@ -44,7 +44,7 @@ public class CarrierServiceCalendarSpringNearCacheService
 
   @Override
   public CarrierServiceCalendarCacheValue get(CarrierServiceCalendarCacheKey key) {
-    logger.info("Inside get CarrierServiceCalendarCacheValue");
+    logger.debug("Inside get CarrierServiceCalendarCacheValue");
     return super.get(key);
   }
 

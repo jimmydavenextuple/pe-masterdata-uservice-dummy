@@ -115,7 +115,7 @@ public class PromiseSourcingRuleDataUploadService {
                     promiseSourcingRuleFeign.createPromiseSourcingRule(
                         createPromiseSourcingRuleRequest);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 
@@ -132,7 +132,7 @@ public class PromiseSourcingRuleDataUploadService {
                         priority,
                         updatePromiseSourcingRuleRequest);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 
@@ -142,7 +142,7 @@ public class PromiseSourcingRuleDataUploadService {
                     promiseSourcingRuleFeign.deletePromiseSourcingRule(
                         orgId, serviceOption, destinationGeoZone, allocationRuleId, priority);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 

@@ -34,7 +34,7 @@ public class TransitController {
   public ResponseEntity<BaseResponse<TransitResponse>> addTransitData(
       @Valid @RequestBody TransitDataCreationRequest transitDataCreationRequest)
       throws TransitDomainException {
-    logger.info("Processing transit data creation request");
+    logger.debug("Processing transit data creation request");
     try {
       var transitResponse = transitService.addTransitInfo(transitDataCreationRequest);
 
@@ -57,7 +57,7 @@ public class TransitController {
       @NotBlank @PathVariable String carrierServiceId,
       @Valid @RequestBody TransitDataUpdationRequest transitDataUpdationRequest)
       throws TransitDomainException, CommonServiceException {
-    logger.info("Processing update transit data");
+    logger.debug("Processing update transit data");
     try {
 
       var transitResponse =
@@ -87,7 +87,7 @@ public class TransitController {
       @NotBlank @PathVariable String carrierServiceId,
       @NotBlank @PathVariable String serviceOption)
       throws TransitDomainException, CommonServiceException {
-    logger.info("Processing get transit details");
+    logger.debug("Processing get transit details");
     try {
 
       var transitResponse =
@@ -112,7 +112,7 @@ public class TransitController {
       @NotBlank @PathVariable String destinationGeozone,
       @NotBlank @PathVariable String carrierServiceId)
       throws TransitDomainException, CommonServiceException {
-    logger.info("Processing delete transit details");
+    logger.debug("Processing delete transit details");
     try {
 
       var transitResponse =

@@ -34,7 +34,7 @@ public class PostalCodeTimezoneController {
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> createPostalCodeTimezone(
       @Valid @RequestBody CreatePostalCodeTimezoneRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("Processing create Postal Code Timezone request");
+    logger.debug("Processing create Postal Code Timezone request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -51,7 +51,7 @@ public class PostalCodeTimezoneController {
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> getPostalCodeTimezone(
       @NotBlank @RequestParam String orgId, @NotBlank @RequestParam String postalCodePrefix)
       throws PromiseEngineException {
-    logger.info("Processing get Postal Code Timezone request");
+    logger.debug("Processing get Postal Code Timezone request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -70,7 +70,7 @@ public class PostalCodeTimezoneController {
       @NotBlank @RequestParam String postalCodePrefix,
       @Valid @RequestBody UpdatePostalCodeTimezoneRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("Processing update Postal Code Timezone request");
+    logger.debug("Processing update Postal Code Timezone request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -90,7 +90,7 @@ public class PostalCodeTimezoneController {
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> deletePostalCodeTimezone(
       @NotBlank @RequestParam String orgId, @NotBlank @RequestParam String postalCodePrefix)
       throws PromiseEngineException {
-    logger.info("Processing delete Postal Code Timezone request");
+    logger.debug("Processing delete Postal Code Timezone request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()

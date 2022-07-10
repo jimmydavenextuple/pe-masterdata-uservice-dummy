@@ -28,7 +28,7 @@ public class CarrierServiceCalendarController {
       handleCreateCarrierServiceCalendar(
           @Valid @RequestBody CarrierServiceCalendarRequest carrierServiceCalendarRequest)
           throws CalendarDomainException {
-    logger.info(
+    logger.debug(
         "Inside handleCreateCarrierServiceCalendar() for carrierServiceCalendarRequest: {}",
         carrierServiceCalendarRequest);
     try {

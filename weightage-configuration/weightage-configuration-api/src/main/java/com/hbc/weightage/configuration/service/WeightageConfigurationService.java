@@ -58,7 +58,7 @@ public class WeightageConfigurationService {
    */
   public Map<String, Float> fetchWeightage(FetchWeightageRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("-- inside fetchWeightage service --");
+    logger.debug("-- inside fetchWeightage service --");
     List<WeightageConfiguration> weightageConfigurationList =
         weightageConfigurationDomain.fetchWeightage(baseRequest);
     if (weightageConfigurationList.isEmpty()) {
@@ -86,7 +86,7 @@ public class WeightageConfigurationService {
    */
   public WeightageConfigurationDto createWeightageConfiguration(
       CreateWeightageConfigurationRequest baseRequest) throws PromiseEngineException {
-    logger.info("-- inside createWeightageConfiguration service --");
+    logger.debug("-- inside createWeightageConfiguration service --");
     if (Objects.equals(baseRequest.getType(), AVAILABILITY)
         && !availabilityKeys.contains(baseRequest.getKey())) {
       throw new PromiseEngineException(
@@ -114,12 +114,12 @@ public class WeightageConfigurationService {
    */
   public WeightageConfigurationDto getWeightageConfiguration(String orgId, String type, String key)
       throws PromiseEngineException {
-    logger.info("-- inside getWeightageConfiguration service --");
+    logger.debug("-- inside getWeightageConfiguration service --");
     Optional<WeightageConfiguration> weightageConfiguration =
         Optional.ofNullable(
             weightageConfigurationDomain.getWeightageConfiguration(orgId, type, key));
     if (weightageConfiguration.isEmpty()) {
-      logger.info("-- Weightage Configuration not found --");
+      logger.debug("-- Weightage Configuration not found --");
       throw new PromiseEngineException(
           ApplicationLayer.SERVICE_LAYER,
           ExceptionCodeMapping.SERVICE_FIND_FAILED,
@@ -137,7 +137,7 @@ public class WeightageConfigurationService {
    */
   public List<WeightageConfigurationDto> getWeightageConfigurationsByKey(String key)
       throws PromiseEngineException {
-    logger.info("-- inside getWeightageConfigurationByKey service --");
+    logger.debug("-- inside getWeightageConfigurationByKey service --");
     List<WeightageConfiguration> weightageConfigurationList =
         weightageConfigurationDomain.getWeightageConfigurationsByKey(key);
     return weightageConfigurationList.stream()
@@ -158,7 +158,7 @@ public class WeightageConfigurationService {
   public WeightageConfigurationDto updateWeightageConfiguration(
       String orgId, String type, String key, UpdateWeightageConfigurationRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("-- inside updateWeightageConfiguration service --");
+    logger.debug("-- inside updateWeightageConfiguration service --");
     var weightageConfigurationFromDB =
         INSTANCE.convertToWeightageConfigurationEntity(getWeightageConfiguration(orgId, type, key));
 
@@ -180,7 +180,7 @@ public class WeightageConfigurationService {
    */
   public WeightageConfigurationDto deleteWeightageConfiguration(
       String orgId, String type, String key) throws PromiseEngineException {
-    logger.info("-- inside deleteWeightageConfiguration service --");
+    logger.debug("-- inside deleteWeightageConfiguration service --");
     var weightageConfigurationFromDB =
         INSTANCE.convertToWeightageConfigurationEntity(getWeightageConfiguration(orgId, type, key));
     return prepareWeightageConfigurationDto(

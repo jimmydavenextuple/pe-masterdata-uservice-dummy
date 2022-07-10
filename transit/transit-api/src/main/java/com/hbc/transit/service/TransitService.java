@@ -58,7 +58,7 @@ public class TransitService {
             orgId, sourceGeozone, destinationGeozone, carrierServiceId);
 
     if (existingTransitEntity.isEmpty()) {
-      logger.info(TRANSIT_EXCEPTION_MESSAGE);
+      logger.debug(TRANSIT_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(SOURCE_GEOZONE, FieldError.builder().rejectedValue(sourceGeozone).build());
@@ -109,7 +109,7 @@ public class TransitService {
     }
 
     if (transitEntity.isEmpty()) {
-      logger.info(TRANSIT_EXCEPTION_MESSAGE);
+      logger.debug(TRANSIT_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(SOURCE_GEOZONE, FieldError.builder().rejectedValue(sourceGeozone).build());
@@ -132,7 +132,7 @@ public class TransitService {
             orgId, sourceGeozone, destinationGeozone, carrierServiceId);
 
     if (transitEntity.isEmpty()) {
-      logger.info(TRANSIT_EXCEPTION_MESSAGE);
+      logger.debug(TRANSIT_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(SOURCE_GEOZONE, FieldError.builder().rejectedValue(sourceGeozone).build());

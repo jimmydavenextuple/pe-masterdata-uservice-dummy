@@ -31,7 +31,7 @@ public class ServiceOptionInventoryTypeController {
   public ResponseEntity<BaseResponse<ServiceInventoryDto>> createServiceOptionInventoryType(
       @Valid @RequestBody ServiceInventoryRequest serviceToInventoryRequest)
       throws ServiceInventoryDomainException {
-    logger.info("Processing ServiceOptionInventoryTypeMapping creation request");
+    logger.debug("Processing ServiceOptionInventoryTypeMapping creation request");
     try {
       ServiceInventoryDto serviceToInventoryDto =
           serviceOptionInventoryTypeService.createServiceOptionInventoryType(
@@ -52,7 +52,7 @@ public class ServiceOptionInventoryTypeController {
   public ResponseEntity<BaseResponse<ServiceInventoryDto>> getServiceOptionToInventoryMapping(
       @NotBlank @PathVariable String orgId, @NotBlank @PathVariable String serviceOption)
       throws ServiceInventoryDomainException, CommonServiceException {
-    logger.info("Processing get ServiceOptionToInventoryMapping details");
+    logger.debug("Processing get ServiceOptionToInventoryMapping details");
     try {
 
       ServiceInventoryDto serviceToInventoryDto =

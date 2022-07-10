@@ -46,7 +46,7 @@ public class PostalCodeTimezoneNearCacheServiceImpl
 
   @Override
   public PostalCodeTimezoneCacheValue get(PostalCodeTimezoneCacheKey key) {
-    logger.info("Inside get PostalCodeTimezoneCacheValue");
+    logger.debug("Inside get PostalCodeTimezoneCacheValue");
     return super.get(key);
   }
 

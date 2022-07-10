@@ -43,7 +43,7 @@ public class NodeDataSpringDataNearCacheServiceImpl
 
   @Override
   public NodeDataCacheValue get(NodeDataCacheKey key) {
-    logger.info("Inside get NodeDataCacheValue");
+    logger.debug("Inside get NodeDataCacheValue");
     return super.get(key);
   }
 

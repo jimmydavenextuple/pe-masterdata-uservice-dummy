@@ -29,7 +29,7 @@ public class PromiseSourcingRuleDomain {
    */
   public List<PromiseSourcingRule> fetchSourcingRule(FetchPromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("-- inside fetchSourcingRule domain --");
+    logger.debug("-- inside fetchSourcingRule domain --");
     try {
       return promiseSourcingRuleRepository
           .findByServiceOptionInAndOrgIdAndAllocationRuleIdAndDestinationGeoZone(
@@ -55,7 +55,7 @@ public class PromiseSourcingRuleDomain {
    */
   public PromiseSourcingRule savePromiseSourcingRule(PromiseSourcingRule promiseSourcingRule)
       throws PromiseEngineException {
-    logger.info("-- inside savePromiseSourcingRule domain --");
+    logger.debug("-- inside savePromiseSourcingRule domain --");
     try {
       return promiseSourcingRuleRepository.save(promiseSourcingRule);
     } catch (Exception e) {
@@ -86,7 +86,7 @@ public class PromiseSourcingRuleDomain {
       String allocationRuleId,
       int priority)
       throws PromiseEngineException {
-    logger.info("-- inside getPromiseSourcingRule domain --");
+    logger.debug("-- inside getPromiseSourcingRule domain --");
     try {
       return promiseSourcingRuleRepository
           .findByOrgIdAndServiceOptionAndDestinationGeoZoneAndAllocationRuleIdAndPriority(
@@ -107,7 +107,7 @@ public class PromiseSourcingRuleDomain {
    */
   public List<PromiseSourcingRule> getPromiseSourcingRulesByOrgId(String orgId)
       throws PromiseEngineException {
-    logger.info("-- inside getPromiseSourcingRulesByOrgId domain --");
+    logger.debug("-- inside getPromiseSourcingRulesByOrgId domain --");
     try {
       return promiseSourcingRuleRepository.findByOrgId(orgId);
     } catch (Exception e) {
@@ -126,7 +126,7 @@ public class PromiseSourcingRuleDomain {
    */
   public List<PromiseSourcingRule> getPromiseSourcingRulesByPriority(int priority)
       throws PromiseEngineException {
-    logger.info("-- inside getPromiseSourcingRulesByPriority domain --");
+    logger.debug("-- inside getPromiseSourcingRulesByPriority domain --");
     try {
       return promiseSourcingRuleRepository.findByPriority(priority);
     } catch (Exception e) {
@@ -145,7 +145,7 @@ public class PromiseSourcingRuleDomain {
    */
   public PromiseSourcingRule deletePromiseSourcingRule(PromiseSourcingRule promiseSourcingRule)
       throws PromiseEngineException {
-    logger.info("-- inside deletePromiseSourcingRule domain --");
+    logger.debug("-- inside deletePromiseSourcingRule domain --");
     try {
       promiseSourcingRuleRepository.delete(promiseSourcingRule);
       return promiseSourcingRule;

@@ -115,7 +115,7 @@ public class PostalCodeTimezoneDataUploadService {
                     postalCodeTimezoneFeign.createPostalCodeTimezone(
                         createPostalCodeTimezoneRequest);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 
@@ -134,7 +134,7 @@ public class PostalCodeTimezoneDataUploadService {
                     postalCodeTimezoneFeign.updatePostalCodeTimezone(
                         orgId, postalCodePrefix, updatePostalCodeTimezoneRequest);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 
@@ -143,7 +143,7 @@ public class PostalCodeTimezoneDataUploadService {
                 BaseResponse<PostalCodeTimezoneDto> baseResponse =
                     postalCodeTimezoneFeign.deletePostalCodeTimezone(orgId, postalCodePrefix);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 

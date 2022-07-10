@@ -44,7 +44,7 @@ public class PostalCodeTimezoneService {
    */
   public PostalCodeTimezoneDto createPostalCodeTimezone(CreatePostalCodeTimezoneRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("-- inside createPostalCodeTimezone service --");
+    logger.debug("-- inside createPostalCodeTimezone service --");
     var postalCodeTimezoneEntity =
         INSTANCE.convertFromCreatePostalCodeTimezoneRequestToEntity(baseRequest);
     return preparePostalCodeTimezoneDto(
@@ -62,13 +62,13 @@ public class PostalCodeTimezoneService {
    */
   public PostalCodeTimezoneDto getPostalCodeTimezone(String orgId, String postalCodePrefix)
       throws PromiseEngineException {
-    logger.info("-- inside getPostalCodeTimezone service --");
+    logger.debug("-- inside getPostalCodeTimezone service --");
     Optional<PostalCodeTimezoneEntity> promiseSourcingRule =
         Optional.ofNullable(
             postalCodeTimezoneDomain.getPostalCodeTimezone(orgId, postalCodePrefix));
 
     if (promiseSourcingRule.isEmpty()) {
-      logger.info("-- Postal Code Timezone not found --");
+      logger.debug("-- Postal Code Timezone not found --");
       throw new PromiseEngineException(
           ApplicationLayer.SERVICE_LAYER,
           ExceptionCodeMapping.SERVICE_FIND_FAILED,
@@ -91,7 +91,7 @@ public class PostalCodeTimezoneService {
   public PostalCodeTimezoneDto updatePostalCodeTimezone(
       String orgId, String postalCodePrefix, UpdatePostalCodeTimezoneRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("-- inside updatePostalCodeTimezone service --");
+    logger.debug("-- inside updatePostalCodeTimezone service --");
     var postalCodeTimezoneEntityFromDB =
         INSTANCE.convertToPostalCodeTimezoneEntity(getPostalCodeTimezone(orgId, postalCodePrefix));
 
@@ -113,7 +113,7 @@ public class PostalCodeTimezoneService {
    */
   public PostalCodeTimezoneDto deletePostalCodeTimezone(String orgId, String postalCodePrefix)
       throws PromiseEngineException {
-    logger.info("-- inside deletePostalCodeTimezone service --");
+    logger.debug("-- inside deletePostalCodeTimezone service --");
     var postalCodeTimezoneEntityFromDB =
         INSTANCE.convertToPostalCodeTimezoneEntity(getPostalCodeTimezone(orgId, postalCodePrefix));
     return preparePostalCodeTimezoneDto(

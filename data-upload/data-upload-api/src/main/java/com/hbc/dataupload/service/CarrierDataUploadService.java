@@ -102,7 +102,7 @@ public class CarrierDataUploadService {
                 BaseResponse<CarrierServiceResponse> baseResponse =
                     carrierFeign.createCarrierService(carrierServiceRequest);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 
@@ -118,7 +118,7 @@ public class CarrierDataUploadService {
                     carrierFeign.updateCarrierServiceDetails(
                         carrierId, carrierServiceId, orgId, carrierServiceUpdateRequest);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 
@@ -127,7 +127,7 @@ public class CarrierDataUploadService {
                 BaseResponse<CarrierServiceResponse> baseResponse =
                     carrierFeign.deleteCarrierService(carrierId, carrierServiceId, orgId);
                 result = baseResponse.isSuccess();
-                log.info(baseResponse.getMessage());
+                log.debug(baseResponse.getMessage());
                 break;
               }
 

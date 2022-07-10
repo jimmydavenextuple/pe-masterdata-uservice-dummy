@@ -45,7 +45,7 @@ public class SourcingRuleSpringNearCacheServiceImpl
 
   @Override
   public SourcingRuleCacheValue get(SourcingRuleCacheKey key) {
-    logger.info("Inside get SourcingRuleCacheValue");
+    logger.debug("Inside get SourcingRuleCacheValue");
     return super.get(key);
   }
 
