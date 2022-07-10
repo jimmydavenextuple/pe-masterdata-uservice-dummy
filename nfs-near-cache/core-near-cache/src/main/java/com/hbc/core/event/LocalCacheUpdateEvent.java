@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LocalCacheUpdateEvent extends BaseEvent implements Serializable {
-
+  private static final long serialVersionUID = 7486058354271542521L;
   LocalCacheUpdateMessage localCacheUpdateMessage;
 }

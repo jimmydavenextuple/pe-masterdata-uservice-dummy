@@ -25,12 +25,12 @@ public class MultipleCacheManagerConfig {
   private Long maxSize;
 
   @Bean
-  public Caffeine caffeineConfig() {
+  public Caffeine caffeineConfig() {  // NOSONAR
     return Caffeine.newBuilder().maximumSize(maxSize).expireAfterWrite(duration, timeUnit);
   }
 
   @Bean
-  public CacheManager caffeineCacheManager(Caffeine caffeine) {
+  public CacheManager caffeineCacheManager(Caffeine caffeine) {  // NOSONAR
     CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager();
     caffeineCacheManager.setCaffeine(caffeine);
     return caffeineCacheManager;

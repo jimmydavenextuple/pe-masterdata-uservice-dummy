@@ -39,7 +39,7 @@ public class CommonEntityListener {
     List<Field> allFields = getAllFields(entity.getClass());
     for (Field field : allFields) {
       if (field.isAnnotationPresent(Id.class)) {
-        field.setAccessible(true);
+        field.setAccessible(true); // NOSONAR
         message.put(field.getName(), field.get(entity));
       }
     }
