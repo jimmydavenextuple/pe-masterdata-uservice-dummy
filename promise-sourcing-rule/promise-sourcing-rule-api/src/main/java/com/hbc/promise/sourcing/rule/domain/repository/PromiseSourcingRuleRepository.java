@@ -24,5 +24,5 @@ public interface PromiseSourcingRuleRepository extends JpaRepository<PromiseSour
           String serviceOption,
           String destinationGeoZone,
           String allocationRuleId,
-          int Priority);
+          int priority);
 }

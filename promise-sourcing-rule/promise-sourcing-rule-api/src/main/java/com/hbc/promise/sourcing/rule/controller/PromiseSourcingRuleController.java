@@ -1,12 +1,12 @@
 package com.hbc.promise.sourcing.rule.controller;
 
+import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.UpdatePromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.api.domain.outbound.FetchPromiseSourcingRuleResponse;
-import com.hbc.promise.sourcing.rule.exception.common.PromiseEngineException;
 import com.hbc.promise.sourcing.rule.service.PromiseSourcingRuleService;
 import java.util.List;
 import javax.transaction.Transactional;
@@ -38,7 +38,7 @@ public class PromiseSourcingRuleController {
   public ResponseEntity<BaseResponse<FetchPromiseSourcingRuleResponse>> fetchSourcingRule(
       @Valid @RequestBody FetchPromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("Processing fetch Promise Sourcing Rule request");
+    logger.debug("Processing fetch Promise Sourcing Rule request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -46,7 +46,7 @@ public class PromiseSourcingRuleController {
               .payload(promiseSourcingRuleService.fetchSourcingRule(baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process fetch Promise Sourcing Rule request!");
+      logger.error("Failed to process fetch Promise Sourcing Rule request!");
       throw e;
     }
   }
@@ -55,7 +55,7 @@ public class PromiseSourcingRuleController {
   public ResponseEntity<BaseResponse<PromiseSourcingRuleDto>> createPromiseSourcingRule(
       @Valid @RequestBody CreatePromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("Processing create Promise Sourcing Rule request");
+    logger.debug("Processing create Promise Sourcing Rule request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -63,7 +63,7 @@ public class PromiseSourcingRuleController {
               .payload(promiseSourcingRuleService.createPromiseSourcingRule(baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process create Promise Sourcing Rule request!");
+      logger.error("Failed to process create Promise Sourcing Rule request!");
       throw e;
     }
   }
@@ -76,7 +76,7 @@ public class PromiseSourcingRuleController {
       @NotBlank @RequestParam String allocationRuleId,
       @NotBlank @RequestParam int priority)
       throws PromiseEngineException {
-    logger.info("Processing get Promise Sourcing Rule request");
+    logger.debug("Processing get Promise Sourcing Rule request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -86,7 +86,7 @@ public class PromiseSourcingRuleController {
                       orgId, serviceOption, destinationGeoZone, allocationRuleId, priority))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process get Promise Sourcing Rule request!");
+      logger.error("Failed to process get Promise Sourcing Rule request!");
       throw e;
     }
   }
@@ -94,7 +94,7 @@ public class PromiseSourcingRuleController {
   @GetMapping("/{orgId}@oid")
   public ResponseEntity<BaseResponse<List<PromiseSourcingRuleDto>>> getPromiseSourcingRulesByOrgId(
       @NotBlank @PathVariable String orgId) throws PromiseEngineException {
-    logger.info("Processing get Promise Sourcing Rules by orgId request");
+    logger.debug("Processing get Promise Sourcing Rules by orgId request");
     try {
       List<PromiseSourcingRuleDto> promiseSourcingRuleDtoList =
           promiseSourcingRuleService.getPromiseSourcingRulesByOrgId(orgId);
@@ -104,7 +104,7 @@ public class PromiseSourcingRuleController {
               .payload(promiseSourcingRuleDtoList)
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process get Promise Sourcing Rules request!");
+      logger.error("Failed to process get Promise Sourcing Rules request!");
       throw e;
     }
   }
@@ -113,7 +113,7 @@ public class PromiseSourcingRuleController {
   public ResponseEntity<BaseResponse<List<PromiseSourcingRuleDto>>>
       getPromiseSourcingRulesByPriority(@NotBlank @PathVariable int priority)
           throws PromiseEngineException {
-    logger.info("Processing get Promise Sourcing Rules by priority request");
+    logger.debug("Processing get Promise Sourcing Rules by priority request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -121,7 +121,7 @@ public class PromiseSourcingRuleController {
               .payload(promiseSourcingRuleService.getPromiseSourcingRulesByPriority(priority))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process get Promise Sourcing Rules request!");
+      logger.error("Failed to process get Promise Sourcing Rules request!");
       throw e;
     }
   }
@@ -135,7 +135,7 @@ public class PromiseSourcingRuleController {
       @NotBlank @RequestParam int priority,
       @Valid @RequestBody UpdatePromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("Processing update Promise Sourcing Rule request");
+    logger.debug("Processing update Promise Sourcing Rule request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -150,7 +150,7 @@ public class PromiseSourcingRuleController {
                       baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process update Promise Sourcing Rule request!");
+      logger.error("Failed to process update Promise Sourcing Rule request!");
       throw e;
     }
   }
@@ -164,7 +164,7 @@ public class PromiseSourcingRuleController {
       @NotBlank @RequestParam String allocationRuleId,
       @NotBlank @RequestParam int priority)
       throws PromiseEngineException {
-    logger.info("Processing delete Promise Sourcing Rule request by sourcingRuleId");
+    logger.debug("Processing delete Promise Sourcing Rule request by sourcingRuleId");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -174,7 +174,7 @@ public class PromiseSourcingRuleController {
                       orgId, serviceOption, destinationGeoZone, allocationRuleId, priority))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process delete Promise Sourcing Rule request!");
+      logger.error("Failed to process delete Promise Sourcing Rule request!");
       throw e;
     }
   }

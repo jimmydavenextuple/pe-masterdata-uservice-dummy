@@ -10,11 +10,11 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import com.hbc.common.exception.PromiseEngineException;
+import com.hbc.weightage.configuration.TestUtil;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
 import com.hbc.weightage.configuration.domain.entity.WeightageConfiguration;
 import com.hbc.weightage.configuration.domain.repository.WeightageConfigurationRepository;
-import com.hbc.weightage.configuration.exception.common.PromiseEngineException;
-import com.hbc.weightage.configuration.utils.TestUtil;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

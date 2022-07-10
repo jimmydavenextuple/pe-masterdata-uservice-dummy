@@ -7,6 +7,8 @@ import com.hbc.core.constants.NearCacheConstants;
 import com.hbc.core.registry.NearCacheRegistry;
 import com.hbc.core.spring.service.AbstractGenericSpringLocalCacheServiceImpl;
 import javax.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,6 +20,9 @@ public class CarrierServiceCalendarSpringNearCacheService
     extends AbstractGenericSpringLocalCacheServiceImpl<
         CarrierServiceCalendarCacheKey, CarrierServiceCalendarCacheValue>
     implements CarrierServiceCalendarNearCacheService {
+
+  private static final Logger logger =
+      LoggerFactory.getLogger(CarrierServiceCalendarSpringNearCacheService.class);
 
   public static final String NODE_CALENDAR_CACHE_NAME = "node_calendar";
 
@@ -39,6 +44,7 @@ public class CarrierServiceCalendarSpringNearCacheService
 
   @Override
   public CarrierServiceCalendarCacheValue get(CarrierServiceCalendarCacheKey key) {
+    logger.debug("Inside get CarrierServiceCalendarCacheValue");
     return super.get(key);
   }
 

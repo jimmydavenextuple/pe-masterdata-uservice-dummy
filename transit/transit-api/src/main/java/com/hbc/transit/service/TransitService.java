@@ -40,7 +40,7 @@ public class TransitService {
   public TransitResponse addTransitInfo(TransitDataCreationRequest transitDataCreationRequest)
       throws TransitDomainException {
 
-    TransitEntity transitEntity = INSTANCE.toTransitEntity(transitDataCreationRequest);
+    var transitEntity = INSTANCE.toTransitEntity(transitDataCreationRequest);
 
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(transitEntity));
   }
@@ -58,7 +58,7 @@ public class TransitService {
             orgId, sourceGeozone, destinationGeozone, carrierServiceId);
 
     if (existingTransitEntity.isEmpty()) {
-      logger.info(TRANSIT_EXCEPTION_MESSAGE);
+      logger.error(TRANSIT_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(SOURCE_GEOZONE, FieldError.builder().rejectedValue(sourceGeozone).build());
@@ -109,7 +109,7 @@ public class TransitService {
     }
 
     if (transitEntity.isEmpty()) {
-      logger.info(TRANSIT_EXCEPTION_MESSAGE);
+      logger.error(TRANSIT_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(SOURCE_GEOZONE, FieldError.builder().rejectedValue(sourceGeozone).build());
@@ -132,7 +132,7 @@ public class TransitService {
             orgId, sourceGeozone, destinationGeozone, carrierServiceId);
 
     if (transitEntity.isEmpty()) {
-      logger.info(TRANSIT_EXCEPTION_MESSAGE);
+      logger.error(TRANSIT_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(SOURCE_GEOZONE, FieldError.builder().rejectedValue(sourceGeozone).build());
@@ -144,7 +144,7 @@ public class TransitService {
           TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
 
-    TransitResponse transitResponse = INSTANCE.toTransitResponse(transitEntity.get());
+    var transitResponse = INSTANCE.toTransitResponse(transitEntity.get());
     transitDomain.deleteTransitDetails(transitEntity.get());
     return transitResponse;
   }

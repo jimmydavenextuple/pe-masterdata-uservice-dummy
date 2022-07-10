@@ -1,5 +1,6 @@
 package com.hbc.weightage.configuration.api.domain.inbound;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -12,7 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class FetchWeightageRequest {
+public class FetchWeightageRequest implements Serializable {
+  private static final long serialVersionUID = -3470182101752563409L;
+
   @NotBlank(message = "orgId can't be empty.")
   private String orgId;
 

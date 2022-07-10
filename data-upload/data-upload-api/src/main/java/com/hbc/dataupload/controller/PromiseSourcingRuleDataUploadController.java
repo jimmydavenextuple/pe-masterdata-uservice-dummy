@@ -23,7 +23,7 @@ public class PromiseSourcingRuleDataUploadController {
   @PostMapping("/promise-sourcing-rule")
   public ResponseEntity<BaseResponse<String>> uploadPromiseSourcingRuleData(
       @NotBlank @RequestParam String fileUri) throws IOException, CommonServiceException {
-    log.info("Processing upload Promise Sourcing Rule Data request");
+    log.debug("Processing upload Promise Sourcing Rule Data request");
     try {
       return promiseSourcingRuleDataUploadService.uploadPromiseSourcingRuleData(fileUri);
     } catch (Exception e) {

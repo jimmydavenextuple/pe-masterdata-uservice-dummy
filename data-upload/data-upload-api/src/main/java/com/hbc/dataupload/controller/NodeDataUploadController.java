@@ -23,7 +23,7 @@ public class NodeDataUploadController {
   @PostMapping("/node")
   public ResponseEntity<BaseResponse<String>> uploadNodeData(@NotBlank @RequestParam String fileUri)
       throws IOException, CommonServiceException {
-    log.info("Processing upload Node Data request");
+    log.debug("Processing upload Node Data request");
     try {
       return nodeDataUploadService.uploadNodeData(fileUri);
     } catch (Exception e) {

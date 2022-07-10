@@ -33,7 +33,7 @@ public class ItemController {
   @PostMapping
   public ResponseEntity<BaseResponse<ItemResponse>> addItem(
       @Valid @RequestBody ItemCreationRequest itemCreationRequest) throws ItemDomainException {
-    logger.info("Processing item creation request");
+    logger.debug("Processing item creation request");
     try {
 
       return ResponseEntity.ok(
@@ -54,7 +54,7 @@ public class ItemController {
       @NotBlank @PathVariable String uom,
       @Valid @RequestBody ItemUpdationRequest itemUpdationRequest)
       throws ItemDomainException, CommonServiceException {
-    logger.info("Processing update item details");
+    logger.debug("Processing update item details");
     try {
 
       return ResponseEntity.ok(
@@ -74,7 +74,7 @@ public class ItemController {
       @NotBlank @PathVariable String orgId,
       @NotBlank @PathVariable String uom)
       throws ItemDomainException, CommonServiceException {
-    logger.info("Processing get item details");
+    logger.debug("Processing get item details");
     try {
 
       return ResponseEntity.ok(
@@ -94,7 +94,7 @@ public class ItemController {
       @NotBlank @PathVariable String orgId,
       @NotBlank @PathVariable String uom)
       throws ItemDomainException, CommonServiceException {
-    logger.info("Processing delete item");
+    logger.debug("Processing delete item");
     try {
 
       return ResponseEntity.ok(

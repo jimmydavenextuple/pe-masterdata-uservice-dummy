@@ -23,7 +23,7 @@ public class CarrierDataUploadController {
   @PostMapping("/carrier")
   public ResponseEntity<BaseResponse<String>> uploadCarrierData(
       @NotBlank @RequestParam String fileUri) throws IOException, CommonServiceException {
-    log.info("Processing upload Carrier Data request");
+    log.debug("Processing upload Carrier Data request");
     try {
       return carrierDataUploadService.uploadCarrierData(fileUri);
     } catch (Exception e) {

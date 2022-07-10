@@ -20,5 +20,7 @@ public class NodeCarrierCacheKey implements CacheKey {
 
   private String serviceOption;
 
-  public NodeCarrierCacheKey() {}
+  public NodeCarrierCacheKey() {
+    // default constructor}
+  }
 }

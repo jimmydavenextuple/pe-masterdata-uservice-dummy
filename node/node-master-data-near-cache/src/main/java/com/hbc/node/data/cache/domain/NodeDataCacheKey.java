@@ -9,7 +9,9 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class NodeDataCacheKey implements CacheKey {
-  public NodeDataCacheKey() {}
+  public NodeDataCacheKey() {
+    // default constructor
+  }
 
   String nodeId;
   String orgId;

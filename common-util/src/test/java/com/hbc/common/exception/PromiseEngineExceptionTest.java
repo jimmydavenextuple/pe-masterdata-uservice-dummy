@@ -1,7 +1,9 @@
-package com.hbc.promise.sourcing.rule.exception.common;
+package com.hbc.common.exception;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.hbc.common.ApplicationLayer;
+import com.hbc.common.ExceptionCodeMapping;
 import org.junit.jupiter.api.Test;
 
 class PromiseEngineExceptionTest {
