@@ -21,7 +21,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class ServiceOptionInventoryTypeControllerTest {
+class ServiceOptionInventoryTypeControllerTest {
   @InjectMocks private ServiceOptionInventoryTypeController serviceOptionInventoryTypeController;
 
   @InjectMocks private TestUtil testUtil;

@@ -40,7 +40,7 @@ public class TransitService {
   public TransitResponse addTransitInfo(TransitDataCreationRequest transitDataCreationRequest)
       throws TransitDomainException {
 
-    TransitEntity transitEntity = INSTANCE.toTransitEntity(transitDataCreationRequest);
+    var transitEntity = INSTANCE.toTransitEntity(transitDataCreationRequest);
 
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(transitEntity));
   }
@@ -144,7 +144,7 @@ public class TransitService {
           TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
 
-    TransitResponse transitResponse = INSTANCE.toTransitResponse(transitEntity.get());
+    var transitResponse = INSTANCE.toTransitResponse(transitEntity.get());
     transitDomain.deleteTransitDetails(transitEntity.get());
     return transitResponse;
   }

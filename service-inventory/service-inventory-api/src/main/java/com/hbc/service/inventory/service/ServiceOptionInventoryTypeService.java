@@ -35,7 +35,7 @@ public class ServiceOptionInventoryTypeService {
   public ServiceInventoryDto createServiceOptionInventoryType(
       ServiceInventoryRequest serviceToInventoryRequest) throws ServiceInventoryDomainException {
 
-    ServiceOptionInventoryTypeEntity serviceOptionInventoryTypeEntity =
+    var serviceOptionInventoryTypeEntity =
         INSTANCE.serviceInventoryRequestToServiceOptionInventoryTypeEntity(
             serviceToInventoryRequest);
 

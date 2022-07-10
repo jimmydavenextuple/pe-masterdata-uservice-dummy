@@ -36,7 +36,7 @@ public class TransitController {
       throws TransitDomainException {
     logger.info("Processing transit data creation request");
     try {
-      TransitResponse transitResponse = transitService.addTransitInfo(transitDataCreationRequest);
+      var transitResponse = transitService.addTransitInfo(transitDataCreationRequest);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -60,7 +60,7 @@ public class TransitController {
     logger.info("Processing update transit data");
     try {
 
-      TransitResponse transitResponse =
+      var transitResponse =
           transitService.updateTransitDetails(
               orgId,
               sourceGeozone,
@@ -90,7 +90,7 @@ public class TransitController {
     logger.info("Processing get transit details");
     try {
 
-      TransitResponse transitResponse =
+      var transitResponse =
           transitService.getTransitDetails(
               orgId, sourceGeozone, destinationGeozone, carrierServiceId, serviceOption);
 
@@ -115,7 +115,7 @@ public class TransitController {
     logger.info("Processing delete transit details");
     try {
 
-      TransitResponse transitResponse =
+      var transitResponse =
           transitService.deleteTransitDetails(
               orgId, sourceGeozone, destinationGeozone, carrierServiceId);
 
