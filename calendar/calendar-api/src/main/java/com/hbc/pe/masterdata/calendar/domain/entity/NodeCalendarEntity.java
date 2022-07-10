@@ -23,12 +23,12 @@ public class NodeCalendarEntity {
   private String calendarId;
 
   @Id
-  @Column(name = "org_id")
-  private String orgId;
-
-  @Id
   @Column(name = "node_id")
   private String nodeId;
+
+  @Id
+  @Column(name = "org_id")
+  private String orgId;
 
   @Id
   @Column(name = "effective_date")
