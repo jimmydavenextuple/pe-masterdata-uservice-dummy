@@ -38,7 +38,7 @@ public class CarrierServiceService {
   public CarrierServiceResponse createCarrierService(CarrierServiceRequest carrierServiceRequest)
       throws CarrierServiceDomainException {
 
-    CarrierServiceEntity carrierServiceEntity =
+    var carrierServiceEntity =
         INSTANCE.carrierServiceRequestToCarrierServiceEntity(carrierServiceRequest);
 
     return INSTANCE.toCarrierServiceResponse(
@@ -82,8 +82,7 @@ public class CarrierServiceService {
       throw new CommonServiceException(
           CARRIER_SERVICE_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-    CarrierServiceResponse carrierServiceResponse =
-        INSTANCE.toCarrierServiceResponse(carrierServiceEntity.get());
+    var carrierServiceResponse = INSTANCE.toCarrierServiceResponse(carrierServiceEntity.get());
     carrierServiceDomain.deleteCarrierService(carrierServiceEntity.get());
     return carrierServiceResponse;
   }

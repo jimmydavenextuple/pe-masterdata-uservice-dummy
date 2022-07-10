@@ -36,8 +36,7 @@ public class CarrierServiceController {
       throws CarrierServiceDomainException {
     logger.info("Processing CarrierService creation request");
     try {
-      System.out.println(carrierServiceRequest);
-      CarrierServiceResponse carrierServiceResponse =
+      var carrierServiceResponse =
           carrierserviceService.createCarrierService(carrierServiceRequest);
 
       return ResponseEntity.ok(
@@ -60,7 +59,7 @@ public class CarrierServiceController {
     logger.info("Processing get CarrierService details");
     try {
 
-      CarrierServiceResponse carrierServiceResponse =
+      var carrierServiceResponse =
           carrierserviceService.getCarrierServiceDetails(carrierId, carrierServiceId, orgId);
 
       return ResponseEntity.ok(
@@ -84,7 +83,7 @@ public class CarrierServiceController {
     logger.info("Processing update CarrierService details");
     try {
 
-      CarrierServiceResponse carrierServiceResponse =
+      var carrierServiceResponse =
           carrierserviceService.updateCarrierServiceDetails(
               carrierId, carrierServiceId, orgId, carrierServiceUpdateRequest);
 
@@ -107,7 +106,7 @@ public class CarrierServiceController {
       throws CarrierServiceDomainException, CommonServiceException {
     logger.info("Processing delete CarrierService");
     try {
-      CarrierServiceResponse carrierServiceResponse =
+      var carrierServiceResponse =
           carrierserviceService.deleteCarrierService(carrierId, carrierServiceId, orgId);
 
       return ResponseEntity.ok(

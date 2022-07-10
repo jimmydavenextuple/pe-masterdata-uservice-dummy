@@ -35,7 +35,7 @@ public class NodeController {
       @Valid @RequestBody NodeRequest nodeRequest) throws NodeDomainException {
     logger.info("Processing node creation request");
     try {
-      NodeResponse nodeResponse = nodeService.createNode(nodeRequest);
+      var nodeResponse = nodeService.createNode(nodeRequest);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -57,7 +57,7 @@ public class NodeController {
     logger.info("Processing update node details");
     try {
 
-      NodeResponse nodeResponse = nodeService.updateNodeDetails(nodeId, orgId, nodeUpdationRequest);
+      var nodeResponse = nodeService.updateNodeDetails(nodeId, orgId, nodeUpdationRequest);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -77,7 +77,7 @@ public class NodeController {
     logger.info("Processing get node details");
     try {
 
-      NodeResponse nodeResponse = nodeService.getNodeDetails(nodeId, orgId);
+      var nodeResponse = nodeService.getNodeDetails(nodeId, orgId);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -97,7 +97,7 @@ public class NodeController {
     logger.info("Processing delete node");
     try {
 
-      NodeResponse nodeResponse = nodeService.deleteNode(nodeId, orgId);
+      var nodeResponse = nodeService.deleteNode(nodeId, orgId);
 
       return ResponseEntity.ok(
           BaseResponse.builder()

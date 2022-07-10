@@ -38,8 +38,7 @@ public class NodeCarrierController {
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     logger.info("Processing node carrier creation request");
     try {
-      NodeCarrierResponse nodeCarrierResponse =
-          nodeCarrierService.createNodeCarrier(nodeCarrierRequest);
+      var nodeCarrierResponse = nodeCarrierService.createNodeCarrier(nodeCarrierRequest);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -61,7 +60,7 @@ public class NodeCarrierController {
       throws NodeCarrierDomainException, CommonServiceException {
     logger.info("Processing get node carrier details");
     try {
-      NodeCarrierResponse nodeCarrierResponse =
+      var nodeCarrierResponse =
           nodeCarrierService.getNodeCarrierDetails(nodeId, orgId, carrierServiceId, serviceOption);
 
       return ResponseEntity.ok(
@@ -86,7 +85,7 @@ public class NodeCarrierController {
     logger.info("Processing update node carrier details");
 
     try {
-      NodeCarrierResponse nodeCarrierResponse =
+      var nodeCarrierResponse =
           nodeCarrierService.updateNodeCarrier(
               nodeId, orgId, carrierServiceId, serviceOption, nodeCarrierUpdateRequest);
 
@@ -110,7 +109,7 @@ public class NodeCarrierController {
       throws NodeCarrierDomainException, CommonServiceException {
     logger.info("Processing delete node carrier");
     try {
-      NodeCarrierResponse nodeCarrierResponse =
+      var nodeCarrierResponse =
           nodeCarrierService.deleteNodeCarrier(nodeId, orgId, carrierServiceId, serviceOption);
 
       return ResponseEntity.ok(

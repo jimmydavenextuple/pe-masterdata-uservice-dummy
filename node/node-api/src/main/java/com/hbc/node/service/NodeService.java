@@ -35,7 +35,7 @@ public class NodeService {
 
   public NodeResponse createNode(NodeRequest nodeRequest) throws NodeDomainException {
 
-    NodeEntity nodeEntity = INSTANCE.nodeRequestToNodeEntity(nodeRequest);
+    var nodeEntity = INSTANCE.nodeRequestToNodeEntity(nodeRequest);
 
     return INSTANCE.toNodeResponse(nodeDomain.saveNodeEntity(nodeEntity));
   }
@@ -88,7 +88,7 @@ public class NodeService {
       throw new CommonServiceException(
           NODE_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-    NodeResponse nodeResponse = INSTANCE.toNodeResponse(nodeEntity.get());
+    var nodeResponse = INSTANCE.toNodeResponse(nodeEntity.get());
     nodeDomain.deleteNode(nodeEntity.get());
     return nodeResponse;
   }

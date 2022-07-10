@@ -7,7 +7,7 @@ import com.hbc.common.response.error.ErrorData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ErrorDataTest {
+class ErrorDataTest {
 
   @DisplayName("Should set everything to null with the no parameter constructor")
   @Test
