@@ -29,9 +29,9 @@ public class CarrierServiceCalendarService {
   /** Creates a new Carrier Service Calendar */
   public CarrierServiceCalendarResponse processCreateCarrierServiceCalendar(
       CarrierServiceCalendarRequest carrierServiceCalendarRequest) throws CalendarDomainException {
-    CarrierServiceCalendarEntity carrierServiceCalendarEntity =
+    var carrierServiceCalendarEntity =
         INSTANCE.convertToCarrierServiceCalendarEntity(carrierServiceCalendarRequest);
-    CarrierServiceCalendarEntity savedCarrierServiceCalendarEntity =
+    var savedCarrierServiceCalendarEntity =
         carrierServiceCalendarDomain.saveCarrierServiceCalendarEntity(carrierServiceCalendarEntity);
     return INSTANCE.convertToCarrierServiceCalendarResponse(savedCarrierServiceCalendarEntity);
   }

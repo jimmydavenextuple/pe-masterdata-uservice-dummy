@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.Map;
 import javax.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.specific.SpecificDatumWriter;
@@ -24,9 +23,8 @@ public class AvroSerializer<T extends SpecificRecordBase> implements Serializer<
     byte[] bytes = null;
     try {
       if (payload != null) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        BinaryEncoder binaryEncoder =
-            EncoderFactory.get().binaryEncoder(byteArrayOutputStream, null);
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        var binaryEncoder = EncoderFactory.get().binaryEncoder(byteArrayOutputStream, null);
         DatumWriter<SpecificRecordBase> datumWriter =
             new SpecificDatumWriter<>(payload.getSchema());
         datumWriter.write(payload, binaryEncoder);
