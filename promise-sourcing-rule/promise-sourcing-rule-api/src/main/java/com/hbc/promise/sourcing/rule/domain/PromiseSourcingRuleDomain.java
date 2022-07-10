@@ -94,9 +94,7 @@ public class PromiseSourcingRuleDomain {
     } catch (Exception e) {
       logger.error(String.valueOf(e), EXCEPTION_MESSAGE);
       throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_FIND_FAILED,
-          EXCEPTION_MESSAGE);
+          ApplicationLayer.DAO_LAYER, ExceptionCodeMapping.DAO_FIND_FAILED, EXCEPTION_MESSAGE);
     }
   }
 
@@ -115,8 +113,7 @@ public class PromiseSourcingRuleDomain {
     } catch (Exception e) {
       logger.error(String.valueOf(e), EXCEPTION_MESSAGE);
       throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_FIND_FAILED, EXCEPTION_MESSAGE);
+          ApplicationLayer.DAO_LAYER, ExceptionCodeMapping.DAO_FIND_FAILED, EXCEPTION_MESSAGE);
     }
   }
 
@@ -135,9 +132,7 @@ public class PromiseSourcingRuleDomain {
     } catch (Exception e) {
       logger.error(String.valueOf(e), EXCEPTION_MESSAGE);
       throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_FIND_FAILED,
-          EXCEPTION_MESSAGE);
+          ApplicationLayer.DAO_LAYER, ExceptionCodeMapping.DAO_FIND_FAILED, EXCEPTION_MESSAGE);
     }
   }
 

@@ -78,8 +78,7 @@ public class PromiseSourcingRuleService {
           "Promise Sourcing Rules not found!");
     }
 
-    var fetchPromiseSourcingRuleResponse =
-        new FetchPromiseSourcingRuleResponse();
+    var fetchPromiseSourcingRuleResponse = new FetchPromiseSourcingRuleResponse();
     List<ServiceOptionInfo> serviceOptionsForSdnd = new ArrayList<>();
     List<ServiceOptionInfo> serviceOptionsForStandard = new ArrayList<>();
     List<ServiceOptionInfo> serviceOptionsForExpress = new ArrayList<>();
@@ -104,9 +103,9 @@ public class PromiseSourcingRuleService {
                 break;
               }
             default:
-            {
-              logger.error("Invalid service option");
-            }
+              {
+                logger.error("Invalid service option");
+              }
           }
         });
     fetchPromiseSourcingRuleResponse.setSdnd(serviceOptionsForSdnd);

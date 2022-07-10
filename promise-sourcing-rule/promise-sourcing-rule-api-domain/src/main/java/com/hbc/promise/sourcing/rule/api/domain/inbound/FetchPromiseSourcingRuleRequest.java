@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FetchPromiseSourcingRuleRequest implements Serializable {
   private static final long serialVersionUID = -48664604888463354L;
+
   @NotEmpty(message = "serviceOptions can't be empty.")
   private List<String> serviceOptions;
 

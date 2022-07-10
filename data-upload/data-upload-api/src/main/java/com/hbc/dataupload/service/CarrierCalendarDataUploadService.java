@@ -6,8 +6,6 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CAR
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESCRIPTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EFFECTIVE_DATE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.FILE_TYPE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.FILE_URI;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIPPING_STAGE;
 import static com.hbc.dataupload.helper.CarrierCalendarDataUploadConstants.CARRIER_CALENDAR_DATA_UPLOAD_FILE_EMPTY_RECORDS;
@@ -21,24 +19,18 @@ import com.hbc.calendar.domain.inbound.CarrierServiceCalendarRequest;
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
-import com.hbc.common.response.error.FieldError;
-import com.hbc.dataupload.common.headers.DataUploadUtilityExpectedHeaders;
+import com.hbc.dataupload.common.utils.DataUploadUtil;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -60,123 +52,30 @@ public class CarrierCalendarDataUploadService {
 
   public ResponseEntity<BaseResponse<String>> uploadCarrierCalendarData(String fileUri)
       throws CommonServiceException, IOException {
-    long numberOfRowsInFile;
-    List<String> expectedHeaders =
-        DataUploadUtilityExpectedHeaders.getCSVExpectedHeaders("carrier-calendar");
-    final String csvFilePath = basePath.concat(fileUri);
+    Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    Path path = Paths.get(csvFilePath);
+    DataUploadUtil.validateFileType(path, fileUri, CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileSize(
+        path, fileUri, maxSizeInKiloBytes, CARRIER_CALENDAR_DATA_UPLOAD_LARGE_FILE_SIZE);
+    DataUploadUtil.validateFileRows(
+        path, fileUri, maxRows, CARRIER_CALENDAR_DATA_UPLOAD_LARGE_ROW_SIZE);
+    DataUploadUtil.checkForEmptyRecords(
+        path, fileUri, CARRIER_CALENDAR_DATA_UPLOAD_FILE_EMPTY_RECORDS);
 
-    try (Stream<String> stringStream = Files.lines(path)) {
-      numberOfRowsInFile = stringStream.count();
-    }
-
-    double sizeOfFileInKiloBytes = Files.size(path) / 1024.0;
-
-    log.debug("number of records : {}", numberOfRowsInFile);
-    log.debug("fileName : {}", path.getFileName());
-    log.debug("size in kB : {}", sizeOfFileInKiloBytes);
-
-    if (!FILE_TYPE.equals(Files.probeContentType(path))) {
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(FILE_URI, FieldError.builder().rejectedValue(fileUri).build());
-      throw new CommonServiceException(
-          CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE, HttpStatus.BAD_REQUEST, 0x2773, errorMap);
-    }
-
-    if (sizeOfFileInKiloBytes > maxSizeInKiloBytes) {
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          FILE_URI,
-          FieldError.builder()
-              .rejectedValue(fileUri)
-              .errorMessage(
-                  "Actual file size is "
-                      + sizeOfFileInKiloBytes
-                      + " kB, Maximum file size allowed is "
-                      + maxSizeInKiloBytes
-                      + " kB")
-              .build());
-      throw new CommonServiceException(
-          CARRIER_CALENDAR_DATA_UPLOAD_LARGE_FILE_SIZE, HttpStatus.BAD_REQUEST, 0x2774, errorMap);
-    }
-
-    if (numberOfRowsInFile < 2) {
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(FILE_URI, FieldError.builder().rejectedValue(fileUri).build());
-      throw new CommonServiceException(
-          CARRIER_CALENDAR_DATA_UPLOAD_FILE_EMPTY_RECORDS,
-          HttpStatus.BAD_REQUEST,
-          0x2775,
-          errorMap);
-    }
-
-    if (numberOfRowsInFile > maxRows) {
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          FILE_URI,
-          FieldError.builder()
-              .rejectedValue(fileUri)
-              .errorMessage(
-                  "Actual file contains "
-                      + numberOfRowsInFile
-                      + " rows, Maximum number of rows allowed is "
-                      + maxRows)
-              .build());
-      throw new CommonServiceException(
-          CARRIER_CALENDAR_DATA_UPLOAD_LARGE_ROW_SIZE, HttpStatus.BAD_REQUEST, 0x2776, errorMap);
-    }
-
-    Map<String, Boolean> resultMap = csvReader(expectedHeaders, path);
-
-    if (resultMap.get("isAllPassed").equals(true)) {
-      return ResponseEntity.ok(
-          BaseResponse.builder().message("Carrier Calendar Data successfully uploaded!").build());
-    }
-    if (resultMap.get("isAllFailed").equals(true)) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body(BaseResponse.builder().message("Carrier Calendar Data upload failed!").build());
-    }
-    return ResponseEntity.status(HttpStatus.MULTI_STATUS)
-        .body(
-            BaseResponse.builder()
-                .message("Carrier Calendar Data partially uploaded with some rows failed!")
-                .build());
+    Map<String, Boolean> resultMap = csvReader(path);
+    return DataUploadUtil.getResponse(resultMap, "Carrier Calendar");
   }
 
-  private Map<String, Boolean> csvReader(List<String> expectedHeaders, Path path)
-      throws IOException, CommonServiceException {
+  private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
     boolean isAllFailed = true;
     boolean isAllPassed = true;
     boolean result = false;
     Map<String, Boolean> resultMap = new HashMap<>();
 
     try (Reader reader = Files.newBufferedReader(path);
-        CSVParser csvParser =
-            new CSVParser(
-                reader,
-                CSVFormat.DEFAULT
-                    .builder()
-                    .setHeader()
-                    .setIgnoreHeaderCase(true)
-                    .setSkipHeaderRecord(true)
-                    .setTrim(true)
-                    .build())) {
-      if (!csvParser.getHeaderNames().equals(expectedHeaders)) {
-        Map<String, FieldError> errorMap = new HashMap<>();
-        errorMap.put(
-            FILE_URI,
-            FieldError.builder()
-                .rejectedValue(csvParser.getHeaderNames())
-                .actualValue(expectedHeaders)
-                .errorMessage("CSV File Headers are invalid")
-                .build());
-        throw new CommonServiceException(
-            CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_HEADERS,
-            HttpStatus.BAD_REQUEST,
-            0x2777,
-            errorMap);
-      }
+        CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
+      DataUploadUtil.compareHeaders(
+          csvParser, "carrier-calendar", CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_HEADERS);
 
       for (CSVRecord csvRecord : csvParser) {
         long row = csvParser.getCurrentLineNumber();

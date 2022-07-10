@@ -9,7 +9,6 @@ import com.hbc.weightage.configuration.cache.domain.WeightageConfigurationCacheK
 import com.hbc.weightage.configuration.cache.domain.WeightageConfigurationCacheValue;
 import com.hbc.weightage.configuration.cache.service.WeightageConfigurationNearCacheService;
 import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,8 @@ public class WeightageConfigurationSpringNearCacheServiceImpl
         WeightageConfigurationCacheKey, WeightageConfigurationCacheValue>
     implements WeightageConfigurationNearCacheService {
 
-  private static final Logger logger = LoggerFactory.getLogger(WeightageConfigurationSpringNearCacheServiceImpl.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(WeightageConfigurationSpringNearCacheServiceImpl.class);
 
   public static final String WEIGHTAGE_CONFIGURATION = "weightage configuration";
 

@@ -11,5 +11,5 @@ public class PostalCodeTimezoneConstants {
   public static final String TIME_ZONE = "TIMEZONE";
   public static final String STATUS_CODE = "Status code";
 
-  PostalCodeTimezoneConstants(){}
+  PostalCodeTimezoneConstants() {}
 }

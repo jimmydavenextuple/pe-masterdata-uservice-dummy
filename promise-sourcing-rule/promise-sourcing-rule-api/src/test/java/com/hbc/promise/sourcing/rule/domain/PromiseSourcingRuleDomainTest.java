@@ -16,10 +16,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.PromiseEngineException;
+import com.hbc.promise.sourcing.rule.TestUtil;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
 import com.hbc.promise.sourcing.rule.domain.repository.PromiseSourcingRuleRepository;
-import com.hbc.promise.sourcing.rule.TestUtil;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

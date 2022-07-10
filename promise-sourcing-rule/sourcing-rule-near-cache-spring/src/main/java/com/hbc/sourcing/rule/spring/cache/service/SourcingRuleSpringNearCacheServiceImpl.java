@@ -9,7 +9,6 @@ import com.hbc.sourcing.rule.cache.domain.SourcingRuleCacheKey;
 import com.hbc.sourcing.rule.cache.domain.SourcingRuleCacheValue;
 import com.hbc.sourcing.rule.cache.service.SourcingRuleNearCacheService;
 import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,8 @@ public class SourcingRuleSpringNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<SourcingRuleCacheKey, SourcingRuleCacheValue>
     implements SourcingRuleNearCacheService {
 
-  private static final Logger logger = LoggerFactory.getLogger(SourcingRuleSpringNearCacheServiceImpl.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(SourcingRuleSpringNearCacheServiceImpl.class);
 
   public static final String SOURCING_RULE_CACHE_NAME = "sourcingRule";
 

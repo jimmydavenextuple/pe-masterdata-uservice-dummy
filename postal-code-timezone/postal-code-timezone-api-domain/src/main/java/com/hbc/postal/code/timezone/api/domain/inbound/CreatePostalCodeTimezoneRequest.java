@@ -18,7 +18,6 @@ public class CreatePostalCodeTimezoneRequest implements Serializable {
   @NotBlank(message = "postalCodePrefix can't be blank")
   private String postalCodePrefix;
 
-
   @NotBlank(message = "timeZone can't be blank")
   private String timeZone;
 
@@ -36,5 +35,4 @@ public class CreatePostalCodeTimezoneRequest implements Serializable {
 
   @NotBlank(message = "latitude can't be blank")
   private String latitude;
-
 }

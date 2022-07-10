@@ -2,7 +2,6 @@ package com.hbc.promise.sourcing.rule.api.domain.outbound;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hbc.promise.sourcing.rule.api.domain.pojo.ServiceOptionInfo;
-
 import java.io.Serializable;
 import java.util.List;
 import lombok.AllArgsConstructor;

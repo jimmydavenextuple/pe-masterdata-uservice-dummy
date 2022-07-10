@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FetchWeightageRequest implements Serializable {
   private static final long serialVersionUID = -3470182101752563409L;
+
   @NotBlank(message = "orgId can't be empty.")
   private String orgId;
 

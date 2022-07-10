@@ -2,10 +2,8 @@ package com.hbc.common.exception;
 
 import com.hbc.common.ApplicationLayer;
 import com.hbc.common.ExceptionCodeMapping;
-import lombok.Getter;
-
-import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
 
 /** This is the Promise Engine Exception that should be used accross the board. */
 @Getter

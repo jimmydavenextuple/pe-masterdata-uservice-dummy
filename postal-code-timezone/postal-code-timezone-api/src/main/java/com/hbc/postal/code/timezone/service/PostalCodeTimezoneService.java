@@ -43,7 +43,7 @@ public class PostalCodeTimezoneService {
    * @throws PromiseEngineException
    */
   public PostalCodeTimezoneDto createPostalCodeTimezone(CreatePostalCodeTimezoneRequest baseRequest)
-  throws PromiseEngineException{
+      throws PromiseEngineException {
     logger.info("-- inside createPostalCodeTimezone service --");
     var postalCodeTimezoneEntity =
         INSTANCE.convertFromCreatePostalCodeTimezoneRequestToEntity(baseRequest);

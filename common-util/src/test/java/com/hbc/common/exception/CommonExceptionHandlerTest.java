@@ -76,7 +76,7 @@ class CommonExceptionHandlerTest {
     PromiseEngineException e = new PromiseEngineException(null, ExceptionCodeMapping.ACCEPT, "msg");
 
     ResponseEntity<ErrorResponse> responseEntity =
-            commonExceptionHandler.handlePromiseEngineException(e);
+        commonExceptionHandler.handlePromiseEngineException(e);
 
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());

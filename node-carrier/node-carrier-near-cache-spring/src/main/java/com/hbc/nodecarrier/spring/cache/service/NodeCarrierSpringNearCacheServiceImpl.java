@@ -7,7 +7,6 @@ import com.hbc.nodecarrier.cache.domain.NodeCarrierCacheKey;
 import com.hbc.nodecarrier.cache.domain.NodeCarrierCacheValue;
 import com.hbc.nodecarrier.cache.service.NodeCarrierNearCacheService;
 import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,8 @@ public class NodeCarrierSpringNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<NodeCarrierCacheKey, NodeCarrierCacheValue>
     implements NodeCarrierNearCacheService {
 
-  private static final Logger logger = LoggerFactory.getLogger(NodeCarrierSpringNearCacheServiceImpl.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(NodeCarrierSpringNearCacheServiceImpl.class);
   public static final String NODE_CARRIER_CACHE_NAME = "node_carrier";
 
   @Autowired NearCacheRegistry nearCacheRegistry;

@@ -50,7 +50,7 @@ public class LocalCacheUpdateService {
 
           List<String> paramsList = new ArrayList<>();
           if (!ObjectUtils.isEmpty(params)) {
-            paramsList = Arrays.asList(params.split("\\s*,\\s*"));  // NOSONAR
+            paramsList = Arrays.asList(params.split("\\s*,\\s*")); // NOSONAR
           }
           for (String param : paramsList) {
             Field field = c.getDeclaredField(param);

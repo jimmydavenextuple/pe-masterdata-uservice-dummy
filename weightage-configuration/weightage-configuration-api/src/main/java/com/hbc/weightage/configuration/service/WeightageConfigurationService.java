@@ -57,7 +57,7 @@ public class WeightageConfigurationService {
    * @throws PromiseEngineException
    */
   public Map<String, Float> fetchWeightage(FetchWeightageRequest baseRequest)
-      throws PromiseEngineException{
+      throws PromiseEngineException {
     logger.info("-- inside fetchWeightage service --");
     List<WeightageConfiguration> weightageConfigurationList =
         weightageConfigurationDomain.fetchWeightage(baseRequest);
@@ -136,7 +136,7 @@ public class WeightageConfigurationService {
    * @throws PromiseEngineException
    */
   public List<WeightageConfigurationDto> getWeightageConfigurationsByKey(String key)
-      throws PromiseEngineException{
+      throws PromiseEngineException {
     logger.info("-- inside getWeightageConfigurationByKey service --");
     List<WeightageConfiguration> weightageConfigurationList =
         weightageConfigurationDomain.getWeightageConfigurationsByKey(key);
