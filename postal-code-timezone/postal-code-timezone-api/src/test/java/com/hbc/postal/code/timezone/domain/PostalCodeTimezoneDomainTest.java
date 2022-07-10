@@ -10,10 +10,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
 import com.hbc.postal.code.timezone.domain.repository.PostalCodeTimezoneRepository;
-import com.hbc.postal.code.timezone.exception.common.PromiseEngineException;
-import com.hbc.postal.code.timezone.utils.TestUtil;
+import com.hbc.postal.code.timezone.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

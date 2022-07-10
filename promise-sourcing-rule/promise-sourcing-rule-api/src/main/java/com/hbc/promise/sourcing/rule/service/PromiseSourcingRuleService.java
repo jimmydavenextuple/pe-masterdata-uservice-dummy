@@ -4,6 +4,9 @@ import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.E
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.SDND;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.STANDARD;
 
+import com.hbc.common.ApplicationLayer;
+import com.hbc.common.ExceptionCodeMapping;
+import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
@@ -13,9 +16,6 @@ import com.hbc.promise.sourcing.rule.api.domain.pojo.ServiceOptionInfo;
 import com.hbc.promise.sourcing.rule.domain.PromiseSourcingRuleDomain;
 import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
 import com.hbc.promise.sourcing.rule.domain.mapper.PromiseSourcingRuleMapper;
-import com.hbc.promise.sourcing.rule.exception.common.ApplicationLayer;
-import com.hbc.promise.sourcing.rule.exception.common.ExceptionCodeMapping;
-import com.hbc.promise.sourcing.rule.exception.common.PromiseEngineException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -78,7 +78,7 @@ public class PromiseSourcingRuleService {
           "Promise Sourcing Rules not found!");
     }
 
-    FetchPromiseSourcingRuleResponse fetchPromiseSourcingRuleResponse =
+    var fetchPromiseSourcingRuleResponse =
         new FetchPromiseSourcingRuleResponse();
     List<ServiceOptionInfo> serviceOptionsForSdnd = new ArrayList<>();
     List<ServiceOptionInfo> serviceOptionsForStandard = new ArrayList<>();
@@ -86,7 +86,7 @@ public class PromiseSourcingRuleService {
 
     promiseSourcingRuleList.forEach(
         promiseSourcingRule -> {
-          ServiceOptionInfo serviceOptionInfo = getServiceOptionInfo(promiseSourcingRule);
+          var serviceOptionInfo = getServiceOptionInfo(promiseSourcingRule);
           switch (promiseSourcingRule.getServiceOption()) {
             case SDND:
               {
@@ -103,6 +103,10 @@ public class PromiseSourcingRuleService {
                 serviceOptionsForExpress.add(serviceOptionInfo);
                 break;
               }
+            default:
+            {
+              logger.error("Invalid service option");
+            }
           }
         });
     fetchPromiseSourcingRuleResponse.setSdnd(serviceOptionsForSdnd);
@@ -124,7 +128,7 @@ public class PromiseSourcingRuleService {
     if (!StringUtils.hasLength(baseRequest.getAllocationRuleId())) {
       baseRequest.setAllocationRuleId("DEFAULT");
     }
-    PromiseSourcingRule promiseSourcingRule =
+    var promiseSourcingRule =
         INSTANCE.convertFromCreatePromiseSourcingRuleRequestToEntity(baseRequest);
     return preparePromiseSourcingRuleDto(
         promiseSourcingRuleDomain.savePromiseSourcingRule(promiseSourcingRule));
@@ -226,7 +230,7 @@ public class PromiseSourcingRuleService {
       UpdatePromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException {
     logger.info("-- inside updatePromiseSourcingRule service --");
-    PromiseSourcingRule promiseSourcingRuleFromDB =
+    var promiseSourcingRuleFromDB =
         INSTANCE.convertToPromiseSourcingRuleEntity(
             getPromiseSourcingRule(
                 orgId, serviceOption, destinationGeoZone, allocationRuleId, priority));
@@ -259,7 +263,7 @@ public class PromiseSourcingRuleService {
       int priority)
       throws PromiseEngineException {
     logger.info("-- inside deletePromiseSourcingRule service --");
-    PromiseSourcingRule promiseSourcingRuleFromDB =
+    var promiseSourcingRuleFromDB =
         INSTANCE.convertToPromiseSourcingRuleEntity(
             getPromiseSourcingRule(
                 orgId, serviceOption, destinationGeoZone, allocationRuleId, priority));

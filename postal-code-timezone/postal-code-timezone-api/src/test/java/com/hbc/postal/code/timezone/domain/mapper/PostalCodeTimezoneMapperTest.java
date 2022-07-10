@@ -6,7 +6,7 @@ import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
-import com.hbc.postal.code.timezone.utils.TestUtil;
+import com.hbc.postal.code.timezone.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;

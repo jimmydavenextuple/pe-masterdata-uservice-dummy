@@ -3,6 +3,7 @@ package com.hbc.common.exception;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
+import com.hbc.common.ExceptionCodeMapping;
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
 import java.io.IOException;
@@ -67,6 +68,17 @@ class CommonExceptionHandlerTest {
     ResponseEntity<ErrorResponse> responseEntity =
         commonExceptionHandler.handleIOException(ioException);
 
+    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
+  }
+
+  @Test
+  void handlePromiseEngineExceptionTest() {
+    PromiseEngineException e = new PromiseEngineException(null, ExceptionCodeMapping.ACCEPT, "msg");
+
+    ResponseEntity<ErrorResponse> responseEntity =
+            commonExceptionHandler.handlePromiseEngineException(e);
+
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
   }
 }

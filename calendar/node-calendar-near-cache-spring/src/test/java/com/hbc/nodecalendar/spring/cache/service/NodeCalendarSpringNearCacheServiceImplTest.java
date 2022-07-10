@@ -19,7 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class NodeCalendarSpringNearCacheServiceImplTest {
+class NodeCalendarSpringNearCacheServiceImplTest {
   @InjectMocks private NodeCalendarSpringNearCacheService nodeCalendarSpringNearCacheService;
 
   @InjectMocks private TestUtil testUtil;

@@ -1,4 +1,4 @@
-package com.hbc.promise.sourcing.rule.utils;
+package com.hbc.promise.sourcing.rule;
 
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.ALLOCATION_RULE_ID;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.DESTINATION_GEO_ZONE;

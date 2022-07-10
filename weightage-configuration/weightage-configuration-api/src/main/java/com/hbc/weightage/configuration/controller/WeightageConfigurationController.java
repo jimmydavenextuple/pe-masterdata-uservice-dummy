@@ -1,11 +1,11 @@
 package com.hbc.weightage.configuration.controller;
 
+import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.UpdateWeightageConfigurationRequest;
-import com.hbc.weightage.configuration.exception.common.PromiseEngineException;
 import com.hbc.weightage.configuration.service.WeightageConfigurationService;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,7 @@ public class WeightageConfigurationController {
               .payload(weightageConfigurationService.fetchWeightage(baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process fetch Weightage request!");
+      logger.error("Failed to process fetch Weightage request!");
       throw e;
     }
   }
@@ -54,7 +54,7 @@ public class WeightageConfigurationController {
               .payload(weightageConfigurationService.createWeightageConfiguration(baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process create Weightage Configuration request!");
+      logger.error("Failed to process create Weightage Configuration request!");
       throw e;
     }
   }
@@ -73,7 +73,7 @@ public class WeightageConfigurationController {
               .payload(weightageConfigurationService.getWeightageConfiguration(orgId, type, key))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process get Weightage Configuration request!");
+      logger.error("Failed to process get Weightage Configuration request!");
       throw e;
     }
   }
@@ -90,7 +90,7 @@ public class WeightageConfigurationController {
               .payload(weightageConfigurationService.getWeightageConfigurationsByKey(key))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process get Weightage Configuration request!");
+      logger.error("Failed to process get Weightage Configuration request!");
       throw e;
     }
   }
@@ -112,7 +112,7 @@ public class WeightageConfigurationController {
                       orgId, type, key, baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process update Weightage Configuration request!");
+      logger.error("Failed to process update Weightage Configuration request!");
       throw e;
     }
   }
@@ -132,7 +132,7 @@ public class WeightageConfigurationController {
               .payload(weightageConfigurationService.deleteWeightageConfiguration(orgId, type, key))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process delete Weightage Configuration request!");
+      logger.error("Failed to process delete Weightage Configuration request!");
       throw e;
     }
   }

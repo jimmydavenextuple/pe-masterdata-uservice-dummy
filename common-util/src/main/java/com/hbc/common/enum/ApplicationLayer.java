@@ -1,7 +1,8 @@
-package com.hbc.promise.sourcing.rule.exception.common;
+package com.hbc.common;
 
 /** This will indicate the layer in case of throwing any exceptions */
 public enum ApplicationLayer {
   DAO_LAYER,
-  SERVICE_LAYER
+  SERVICE_LAYER,
+  CONTROLLER_LAYER
 }

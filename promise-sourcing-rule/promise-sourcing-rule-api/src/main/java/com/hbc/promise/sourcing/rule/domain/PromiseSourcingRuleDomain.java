@@ -1,11 +1,11 @@
 package com.hbc.promise.sourcing.rule.domain;
 
+import com.hbc.common.ApplicationLayer;
+import com.hbc.common.ExceptionCodeMapping;
+import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
 import com.hbc.promise.sourcing.rule.domain.repository.PromiseSourcingRuleRepository;
-import com.hbc.promise.sourcing.rule.exception.common.ApplicationLayer;
-import com.hbc.promise.sourcing.rule.exception.common.ExceptionCodeMapping;
-import com.hbc.promise.sourcing.rule.exception.common.PromiseEngineException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 public class PromiseSourcingRuleDomain {
   private static final Logger logger = LoggerFactory.getLogger(PromiseSourcingRuleDomain.class);
   private final PromiseSourcingRuleRepository promiseSourcingRuleRepository;
+
+  private static final String EXCEPTION_MESSAGE = "Promise Sourcing Rule not found!";
 
   /**
    * Fetch Promise Sourcing Rule
@@ -90,11 +92,11 @@ public class PromiseSourcingRuleDomain {
           .findByOrgIdAndServiceOptionAndDestinationGeoZoneAndAllocationRuleIdAndPriority(
               orgId, serviceOption, destinationGeoZone, allocationRuleId, priority);
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Promise Sourcing Rule not found!");
+      logger.error(String.valueOf(e), EXCEPTION_MESSAGE);
       throw new PromiseEngineException(
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Promise Sourcing Rule not found!");
+          EXCEPTION_MESSAGE);
     }
   }
 
@@ -111,11 +113,10 @@ public class PromiseSourcingRuleDomain {
     try {
       return promiseSourcingRuleRepository.findByOrgId(orgId);
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Promise Sourcing Rules not found!");
+      logger.error(String.valueOf(e), EXCEPTION_MESSAGE);
       throw new PromiseEngineException(
           ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Promise Sourcing Rules not found!");
+          ExceptionCodeMapping.DAO_FIND_FAILED, EXCEPTION_MESSAGE);
     }
   }
 
@@ -132,11 +133,11 @@ public class PromiseSourcingRuleDomain {
     try {
       return promiseSourcingRuleRepository.findByPriority(priority);
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Promise Sourcing Rules not found!");
+      logger.error(String.valueOf(e), EXCEPTION_MESSAGE);
       throw new PromiseEngineException(
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Promise Sourcing Rules not found!");
+          EXCEPTION_MESSAGE);
     }
   }
 

@@ -16,14 +16,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.UpdateWeightageConfigurationRequest;
-import com.hbc.weightage.configuration.exception.common.PromiseEngineException;
 import com.hbc.weightage.configuration.service.WeightageConfigurationService;
-import com.hbc.weightage.configuration.utils.TestUtil;
+import com.hbc.weightage.configuration.TestUtil;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

@@ -1,17 +1,20 @@
 package com.hbc.promise.sourcing.rule.api.domain.inbound;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @Builder
-public class FetchPromiseSourcingRuleRequest {
-
+@NoArgsConstructor
+public class FetchPromiseSourcingRuleRequest implements Serializable {
+  private static final long serialVersionUID = -48664604888463354L;
   @NotEmpty(message = "serviceOptions can't be empty.")
   private List<String> serviceOptions;
 

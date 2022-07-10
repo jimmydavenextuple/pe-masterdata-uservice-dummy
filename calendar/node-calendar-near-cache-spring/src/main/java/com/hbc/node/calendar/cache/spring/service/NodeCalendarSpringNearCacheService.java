@@ -7,6 +7,9 @@ import com.hbc.node.calendar.cache.domain.NodeCalendarCacheKey;
 import com.hbc.node.calendar.cache.domain.NodeCalendarCacheValue;
 import com.hbc.node.calendar.cache.service.NodeCalendarNearCacheService;
 import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,6 +21,7 @@ public class NodeCalendarSpringNearCacheService
     extends AbstractGenericSpringLocalCacheServiceImpl<NodeCalendarCacheKey, NodeCalendarCacheValue>
     implements NodeCalendarNearCacheService {
 
+  private static final Logger logger = LoggerFactory.getLogger(NodeCalendarSpringNearCacheService.class);
   public static final String NODE_CALENDAR_CACHE_NAME = "node_calendar";
 
   @Autowired NearCacheRegistry nearCacheRegistry;
@@ -38,6 +42,7 @@ public class NodeCalendarSpringNearCacheService
 
   @Override
   public NodeCalendarCacheValue get(NodeCalendarCacheKey key) {
+    logger.info("Inside get NodeCalendarCacheValue");
     return super.get(key);
   }
 

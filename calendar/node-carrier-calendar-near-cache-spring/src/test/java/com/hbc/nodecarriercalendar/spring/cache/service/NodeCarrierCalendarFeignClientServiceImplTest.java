@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class NodeCarrierCalendarFeignClientServiceImplTest {
+class NodeCarrierCalendarFeignClientServiceImplTest {
   @InjectMocks
   private NodeCarrierCalendarFeignClientServiceImpl nodeCarrierCalendarFeignClientService;
 

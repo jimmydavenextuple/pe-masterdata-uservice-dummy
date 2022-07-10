@@ -2,6 +2,9 @@ package com.hbc.weightage.configuration.service;
 
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.AVAILABILITY;
 
+import com.hbc.common.ApplicationLayer;
+import com.hbc.common.ExceptionCodeMapping;
+import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
@@ -9,9 +12,6 @@ import com.hbc.weightage.configuration.api.domain.inbound.UpdateWeightageConfigu
 import com.hbc.weightage.configuration.domain.WeightageConfigurationDomain;
 import com.hbc.weightage.configuration.domain.entity.WeightageConfiguration;
 import com.hbc.weightage.configuration.domain.mapper.WeightageConfigurationMapper;
-import com.hbc.weightage.configuration.exception.common.ApplicationLayer;
-import com.hbc.weightage.configuration.exception.common.ExceptionCodeMapping;
-import com.hbc.weightage.configuration.exception.common.PromiseEngineException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +57,7 @@ public class WeightageConfigurationService {
    * @throws PromiseEngineException
    */
   public Map<String, Float> fetchWeightage(FetchWeightageRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException{
     logger.info("-- inside fetchWeightage service --");
     List<WeightageConfiguration> weightageConfigurationList =
         weightageConfigurationDomain.fetchWeightage(baseRequest);
@@ -95,7 +95,7 @@ public class WeightageConfigurationService {
           "Invalid key for AVAILABILITY type");
     }
 
-    WeightageConfiguration weightageConfiguration =
+    var weightageConfiguration =
         INSTANCE.convertCreateWeightageConfigurationRequestToWeightageConfigurationEntity(
             baseRequest);
 
@@ -136,7 +136,7 @@ public class WeightageConfigurationService {
    * @throws PromiseEngineException
    */
   public List<WeightageConfigurationDto> getWeightageConfigurationsByKey(String key)
-      throws PromiseEngineException {
+      throws PromiseEngineException{
     logger.info("-- inside getWeightageConfigurationByKey service --");
     List<WeightageConfiguration> weightageConfigurationList =
         weightageConfigurationDomain.getWeightageConfigurationsByKey(key);
@@ -159,7 +159,7 @@ public class WeightageConfigurationService {
       String orgId, String type, String key, UpdateWeightageConfigurationRequest baseRequest)
       throws PromiseEngineException {
     logger.info("-- inside updateWeightageConfiguration service --");
-    WeightageConfiguration weightageConfigurationFromDB =
+    var weightageConfigurationFromDB =
         INSTANCE.convertToWeightageConfigurationEntity(getWeightageConfiguration(orgId, type, key));
 
     INSTANCE.insertValuesFromUpdateWeightageConfigurationRequestToEntity(
@@ -181,7 +181,7 @@ public class WeightageConfigurationService {
   public WeightageConfigurationDto deleteWeightageConfiguration(
       String orgId, String type, String key) throws PromiseEngineException {
     logger.info("-- inside deleteWeightageConfiguration service --");
-    WeightageConfiguration weightageConfigurationFromDB =
+    var weightageConfigurationFromDB =
         INSTANCE.convertToWeightageConfigurationEntity(getWeightageConfiguration(orgId, type, key));
     return prepareWeightageConfigurationDto(
         weightageConfigurationDomain.deleteWeightageConfiguration(weightageConfigurationFromDB));

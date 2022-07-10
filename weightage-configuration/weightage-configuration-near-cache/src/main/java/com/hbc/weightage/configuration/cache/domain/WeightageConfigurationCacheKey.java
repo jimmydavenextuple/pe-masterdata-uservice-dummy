@@ -12,5 +12,7 @@ import lombok.Data;
 public class WeightageConfigurationCacheKey implements CacheKey {
   FetchWeightageRequest fetchWeightageRequest;
 
-  public WeightageConfigurationCacheKey() {}
+  public WeightageConfigurationCacheKey() {
+    // default constructor
+  }
 }

@@ -1,12 +1,12 @@
 package com.hbc.promise.sourcing.rule.controller;
 
+import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.UpdatePromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.api.domain.outbound.FetchPromiseSourcingRuleResponse;
-import com.hbc.promise.sourcing.rule.exception.common.PromiseEngineException;
 import com.hbc.promise.sourcing.rule.service.PromiseSourcingRuleService;
 import java.util.List;
 import javax.transaction.Transactional;
@@ -46,7 +46,7 @@ public class PromiseSourcingRuleController {
               .payload(promiseSourcingRuleService.fetchSourcingRule(baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process fetch Promise Sourcing Rule request!");
+      logger.error("Failed to process fetch Promise Sourcing Rule request!");
       throw e;
     }
   }
@@ -63,7 +63,7 @@ public class PromiseSourcingRuleController {
               .payload(promiseSourcingRuleService.createPromiseSourcingRule(baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process create Promise Sourcing Rule request!");
+      logger.error("Failed to process create Promise Sourcing Rule request!");
       throw e;
     }
   }
@@ -86,7 +86,7 @@ public class PromiseSourcingRuleController {
                       orgId, serviceOption, destinationGeoZone, allocationRuleId, priority))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process get Promise Sourcing Rule request!");
+      logger.error("Failed to process get Promise Sourcing Rule request!");
       throw e;
     }
   }
@@ -104,7 +104,7 @@ public class PromiseSourcingRuleController {
               .payload(promiseSourcingRuleDtoList)
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process get Promise Sourcing Rules request!");
+      logger.error("Failed to process get Promise Sourcing Rules request!");
       throw e;
     }
   }
@@ -121,7 +121,7 @@ public class PromiseSourcingRuleController {
               .payload(promiseSourcingRuleService.getPromiseSourcingRulesByPriority(priority))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process get Promise Sourcing Rules request!");
+      logger.error("Failed to process get Promise Sourcing Rules request!");
       throw e;
     }
   }
@@ -150,7 +150,7 @@ public class PromiseSourcingRuleController {
                       baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process update Promise Sourcing Rule request!");
+      logger.error("Failed to process update Promise Sourcing Rule request!");
       throw e;
     }
   }
@@ -174,7 +174,7 @@ public class PromiseSourcingRuleController {
                       orgId, serviceOption, destinationGeoZone, allocationRuleId, priority))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process delete Promise Sourcing Rule request!");
+      logger.error("Failed to process delete Promise Sourcing Rule request!");
       throw e;
     }
   }

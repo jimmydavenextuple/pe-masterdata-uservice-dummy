@@ -18,21 +18,23 @@ public class CreatePostalCodeTimezoneRequest implements Serializable {
   @NotBlank(message = "postalCodePrefix can't be blank")
   private String postalCodePrefix;
 
+
+  @NotBlank(message = "timeZone can't be blank")
+  private String timeZone;
+
   @NotBlank(message = "country can't be blank")
   private String country;
-
-  @NotBlank(message = "state can't be blank")
-  private String state;
 
   @NotBlank(message = "city can't be blank")
   private String city;
 
-  @NotBlank(message = "latitude can't be blank")
-  private String latitude;
+  @NotBlank(message = "state can't be blank")
+  private String state;
 
   @NotBlank(message = "longitude can't be blank")
   private String longitude;
 
-  @NotBlank(message = "timeZone can't be blank")
-  private String timeZone;
+  @NotBlank(message = "latitude can't be blank")
+  private String latitude;
+
 }

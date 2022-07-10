@@ -1,4 +1,4 @@
-package com.hbc.postal.code.timezone.exception.common;
+package com.hbc.common;
 
 import java.util.HashMap;
 import java.util.Map;

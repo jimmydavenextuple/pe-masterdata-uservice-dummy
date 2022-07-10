@@ -19,4 +19,6 @@ public class WeightageConfigurationConstants {
       "Weightage Configuration successfully updated!";
   public static final String WEIGHTAGE_CONFIGURATION_SUCCESSFULLY_DELETED =
       "Weightage Configuration successfully deleted!";
+
+  WeightageConfigurationConstants() {}
 }

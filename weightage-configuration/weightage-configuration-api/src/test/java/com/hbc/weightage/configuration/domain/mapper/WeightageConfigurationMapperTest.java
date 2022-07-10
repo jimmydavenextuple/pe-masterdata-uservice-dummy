@@ -6,7 +6,7 @@ import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.UpdateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.domain.entity.WeightageConfiguration;
-import com.hbc.weightage.configuration.utils.TestUtil;
+import com.hbc.weightage.configuration.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;

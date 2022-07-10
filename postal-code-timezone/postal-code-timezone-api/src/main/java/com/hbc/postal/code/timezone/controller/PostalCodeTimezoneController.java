@@ -1,10 +1,10 @@
 package com.hbc.postal.code.timezone.controller;
 
+import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
-import com.hbc.postal.code.timezone.exception.common.PromiseEngineException;
 import com.hbc.postal.code.timezone.service.PostalCodeTimezoneService;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -42,7 +42,7 @@ public class PostalCodeTimezoneController {
               .payload(postalCodeTimezoneService.createPostalCodeTimezone(baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process create Postal Code Timezone request!");
+      logger.error("Failed to process create Postal Code Timezone request!");
       throw e;
     }
   }
@@ -59,7 +59,7 @@ public class PostalCodeTimezoneController {
               .payload(postalCodeTimezoneService.getPostalCodeTimezone(orgId, postalCodePrefix))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process get Postal Code Timezone request!");
+      logger.error("Failed to process get Postal Code Timezone request!");
       throw e;
     }
   }
@@ -80,7 +80,7 @@ public class PostalCodeTimezoneController {
                       orgId, postalCodePrefix, baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process update Postal Code Timezone request!");
+      logger.error("Failed to process update Postal Code Timezone request!");
       throw e;
     }
   }
@@ -98,7 +98,7 @@ public class PostalCodeTimezoneController {
               .payload(postalCodeTimezoneService.deletePostalCodeTimezone(orgId, postalCodePrefix))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process delete Postal Code Timezone request!");
+      logger.error("Failed to process delete Postal Code Timezone request!");
       throw e;
     }
   }

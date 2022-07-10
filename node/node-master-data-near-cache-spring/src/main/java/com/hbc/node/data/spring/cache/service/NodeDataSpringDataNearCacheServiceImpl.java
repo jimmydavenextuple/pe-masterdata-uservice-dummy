@@ -9,6 +9,9 @@ import com.hbc.node.data.cache.domain.NodeDataCacheKey;
 import com.hbc.node.data.cache.domain.NodeDataCacheValue;
 import com.hbc.node.data.cache.service.NodeDataNearCacheService;
 import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -19,6 +22,8 @@ import org.springframework.stereotype.Service;
 public class NodeDataSpringDataNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<NodeDataCacheKey, NodeDataCacheValue>
     implements NodeDataNearCacheService {
+
+  private static final Logger logger = LoggerFactory.getLogger(NodeDataSpringDataNearCacheServiceImpl.class);
 
   public static final String NODE_CACHE_NAME = "node";
 
@@ -38,6 +43,7 @@ public class NodeDataSpringDataNearCacheServiceImpl
 
   @Override
   public NodeDataCacheValue get(NodeDataCacheKey key) {
+    logger.info("Inside get NodeDataCacheValue");
     return super.get(key);
   }
 

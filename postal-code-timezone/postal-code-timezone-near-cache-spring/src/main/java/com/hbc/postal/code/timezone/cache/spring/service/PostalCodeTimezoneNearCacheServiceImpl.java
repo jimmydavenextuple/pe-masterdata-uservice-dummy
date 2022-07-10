@@ -9,6 +9,9 @@ import com.hbc.postal.code.timezone.cache.domain.PostalCodeTimezoneCacheKey;
 import com.hbc.postal.code.timezone.cache.domain.PostalCodeTimezoneCacheValue;
 import com.hbc.postal.code.timezone.cache.service.PostalCodeTimezoneNearCacheService;
 import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -20,6 +23,8 @@ public class PostalCodeTimezoneNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<
         PostalCodeTimezoneCacheKey, PostalCodeTimezoneCacheValue>
     implements PostalCodeTimezoneNearCacheService {
+
+  private static final Logger logger = LoggerFactory.getLogger(PostalCodeTimezoneNearCacheServiceImpl.class);
 
   public static final String POSTAL_CODE_TIMEZONE_CACHE_NAME = "postal code timezone";
 
@@ -41,6 +46,7 @@ public class PostalCodeTimezoneNearCacheServiceImpl
 
   @Override
   public PostalCodeTimezoneCacheValue get(PostalCodeTimezoneCacheKey key) {
+    logger.info("Inside get PostalCodeTimezoneCacheValue");
     return super.get(key);
   }
 
