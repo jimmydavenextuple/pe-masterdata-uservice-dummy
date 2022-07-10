@@ -14,6 +14,18 @@ public class NodeUpdationRequest implements Serializable {
 
   private String street;
 
+  private Boolean shipToHome;
+
+  private Boolean sdndEligible;
+
+  private Boolean bopisEligible;
+
+  private Boolean expressEligible;
+
+  private String nodeType;
+
+  private Boolean isActive;
+
   private String city;
 
   private String province;
@@ -27,16 +39,4 @@ public class NodeUpdationRequest implements Serializable {
   private String longitude;
 
   private String timezone;
-
-  private Boolean shipToHome;
-
-  private Boolean sdndEligible;
-
-  private Boolean bopisEligible;
-
-  private Boolean expressEligible;
-
-  private String nodeType;
-
-  private Boolean isActive;
 }

@@ -1,7 +1,7 @@
 package com.hbc.postal.code.timezone.service;
 
-import com.hbc.common.ApplicationLayer;
-import com.hbc.common.ExceptionCodeMapping;
+import com.hbc.common.enums.ApplicationLayer;
+import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;

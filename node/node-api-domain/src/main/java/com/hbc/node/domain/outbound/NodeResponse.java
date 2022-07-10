@@ -16,6 +16,11 @@ public class NodeResponse implements Serializable {
   private String orgId;
   private String street;
   private String city;
+  private Boolean sdndEligible;
+  private Boolean bopisEligible;
+  private Boolean expressEligible;
+  private String nodeType;
+  private Boolean isActive;
   private String province;
   private String postalCode;
   private String country;
@@ -23,9 +28,5 @@ public class NodeResponse implements Serializable {
   private String longitude;
   private String timezone;
   private Boolean shipToHome;
-  private Boolean sdndEligible;
-  private Boolean bopisEligible;
-  private Boolean expressEligible;
-  private String nodeType;
-  private Boolean isActive;
+
 }

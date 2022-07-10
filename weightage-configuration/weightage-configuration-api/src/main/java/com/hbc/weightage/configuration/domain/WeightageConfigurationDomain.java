@@ -1,7 +1,7 @@
 package com.hbc.weightage.configuration.domain;
 
-import com.hbc.common.ApplicationLayer;
-import com.hbc.common.ExceptionCodeMapping;
+import com.hbc.common.enums.ApplicationLayer;
+import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
 import com.hbc.weightage.configuration.domain.entity.WeightageConfiguration;

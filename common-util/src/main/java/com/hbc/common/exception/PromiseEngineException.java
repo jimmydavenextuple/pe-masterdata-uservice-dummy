@@ -1,7 +1,7 @@
 package com.hbc.common.exception;
 
-import com.hbc.common.ApplicationLayer;
-import com.hbc.common.ExceptionCodeMapping;
+import com.hbc.common.enums.ApplicationLayer;
+import com.hbc.common.enums.ExceptionCodeMapping;
 import java.util.List;
 import lombok.Getter;
 
