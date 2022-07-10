@@ -1,7 +1,7 @@
 package com.hbc.promise.sourcing.rule.domain;
 
-import com.hbc.common.ApplicationLayer;
-import com.hbc.common.ExceptionCodeMapping;
+import com.hbc.common.enums.ApplicationLayer;
+import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
