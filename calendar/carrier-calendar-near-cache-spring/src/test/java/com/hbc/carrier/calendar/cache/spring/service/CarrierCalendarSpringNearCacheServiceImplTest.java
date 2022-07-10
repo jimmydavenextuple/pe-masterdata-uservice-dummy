@@ -1,4 +1,4 @@
-package com.hbc.carriercalendar.spring.cache.service;
+package com.hbc.carrier.calendar.cache.spring.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -7,10 +7,11 @@ import static org.mockito.Mockito.*;
 
 import com.hbc.carrier.calendar.cache.domain.CarrierServiceCalendarCacheKey;
 import com.hbc.carrier.calendar.cache.domain.CarrierServiceCalendarCacheValue;
-import com.hbc.carrier.calendar.cache.spring.service.CarrierServiceCalendarSpringNearCacheService;
-import com.hbc.carriercalendar.spring.cache.util.TestUtil;
+import com.hbc.carrier.calendar.cache.spring.util.TestUtil;
 import com.hbc.core.cache.domain.CacheValue;
 import com.hbc.core.cache.service.GenericFeignCacheService;
+import com.hbc.core.constants.NearCacheConstants;
+import com.hbc.core.registry.NearCacheRegistry;
 import com.hbc.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class CarrierCalendarSpringNearCacheServiceImplTest {
+class CarrierCalendarSpringNearCacheServiceImplTest {
 
   @InjectMocks
   private CarrierServiceCalendarSpringNearCacheService carrierServiceCalendarSpringNearCacheService;
@@ -31,6 +32,8 @@ public class CarrierCalendarSpringNearCacheServiceImplTest {
   @Mock
   private GenericFeignCacheService<CarrierServiceCalendarCacheKey, CarrierServiceCalendarCacheValue>
       feignCacheService;
+
+  @Mock private NearCacheRegistry nearCacheRegistry;
 
   @Test
   void getValidTest() {
@@ -79,5 +82,20 @@ public class CarrierCalendarSpringNearCacheServiceImplTest {
     carrierServiceCalendarSpringNearCacheService.deleteAll();
     CacheValue cacheValue = carrierServiceCalendarSpringNearCacheService.get(cacheKey);
     assertNull(cacheValue);
+  }
+
+  @Test
+  void selfRegister() {
+    doNothing().when(nearCacheRegistry).registerNearCacheEntity(any(), any(), any());
+    carrierServiceCalendarSpringNearCacheService.selfRegister();
+
+    verify(nearCacheRegistry, times(1)).registerNearCacheEntity(any(), any(), any());
+  }
+
+  @Test
+  void getEntityName() {
+    assertEquals(
+        NearCacheConstants.CARRIER_CALENDAR_ENTITY_NAME,
+        carrierServiceCalendarSpringNearCacheService.getEntityName());
   }
 }

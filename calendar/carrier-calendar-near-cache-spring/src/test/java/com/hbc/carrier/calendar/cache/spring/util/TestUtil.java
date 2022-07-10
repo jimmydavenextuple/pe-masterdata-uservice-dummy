@@ -1,20 +1,20 @@
-package com.hbc.nodecalendar.spring.cache.util;
+package com.hbc.carrier.calendar.cache.spring.util;
 
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
+import com.hbc.carrier.calendar.cache.domain.CarrierServiceCalendarCacheKey;
+import com.hbc.carrier.calendar.cache.domain.CarrierServiceCalendarCacheValue;
 import com.hbc.common.response.BaseResponse;
-import com.hbc.node.calendar.cache.domain.NodeCalendarCacheKey;
-import com.hbc.node.calendar.cache.domain.NodeCalendarCacheValue;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TestUtil {
-
-  public static final String NODE_ID = "Node_Id_01";
   public static final String ORG_ID = "Org_Id_01";
+  public static final String CARRIER_SERVICE_ID = "Carrier_Service_Id_01";
+  public static final String SERVICE_OPTION = "Service_Option_01";
 
-  public NodeCalendarCacheValue getNodeCalendarCacheValue() {
+  public CarrierServiceCalendarCacheValue getCarrierServiceCalendarCacheValue() {
     List<CalendarDaysStatusInfo> calendarDaysStatusInfoList = getCalendarDaysStatusInfo();
-    return NodeCalendarCacheValue.builder()
+    return CarrierServiceCalendarCacheValue.builder()
         .calendarDaysStatusInfo(calendarDaysStatusInfoList)
         .build();
   }
@@ -36,7 +36,11 @@ public class TestUtil {
         .build();
   }
 
-  public NodeCalendarCacheKey getNodeCalendarCacheKey() {
-    return NodeCalendarCacheKey.builder().nodeId(NODE_ID).orgId(ORG_ID).build();
+  public CarrierServiceCalendarCacheKey getCarrierServiceCalendarCacheKey() {
+    return CarrierServiceCalendarCacheKey.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .build();
   }
 }
