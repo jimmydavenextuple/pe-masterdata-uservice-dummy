@@ -18,7 +18,7 @@ import org.hibernate.annotations.TypeDef;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@IdClass(ItemId.class)
+@IdClass(ItemPK.class)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

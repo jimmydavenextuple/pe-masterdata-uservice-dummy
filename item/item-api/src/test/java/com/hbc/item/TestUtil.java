@@ -1,7 +1,7 @@
 package com.hbc.item;
 
 import com.hbc.item.domain.entity.ItemEntity;
-import com.hbc.item.domain.entity.ItemId;
+import com.hbc.item.domain.entity.ItemPK;
 import com.hbc.item.domain.events.ItemMasterEvent;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
@@ -200,8 +200,8 @@ public class TestUtil {
     return record;
   }
 
-  public ItemId getItemId() {
-    ItemId id = new ItemId();
+  public ItemPK getItemId() {
+    ItemPK id = new ItemPK();
     id.setItemId(ITEM_ID);
     id.setOrgId(ORG_ID);
     id.setUom(UOM);

@@ -1,17 +1,16 @@
-package com.hbc.node.domain.entity;
+package com.hbc.item.domain.entity;
 
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class NodeId implements Serializable {
+public class ItemPK implements Serializable {
 
-  private String nodeId;
+  private String itemId;
   private String orgId;
+  private String uom;
 }

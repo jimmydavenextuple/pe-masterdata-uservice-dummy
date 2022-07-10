@@ -1,7 +1,7 @@
 package com.hbc.promise.sourcing.rule.domain.entity;
 
 import com.hbc.core.event.listeners.CommonEntityListener;
-import com.hbc.promise.sourcing.rule.domain.primaryKeys.PromiseSourcingRulePK;
+import com.hbc.promise.sourcing.rule.domain.primarykeys.PromiseSourcingRulePK;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import java.util.Set;
 import javax.persistence.Column;

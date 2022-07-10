@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.item.TestUtil;
 import com.hbc.item.domain.entity.ItemEntity;
-import com.hbc.item.domain.entity.ItemId;
+import com.hbc.item.domain.entity.ItemPK;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.repository.ItemRepository;
 import java.util.Optional;
@@ -58,7 +58,7 @@ class ItemDomainTest {
   @Test
   void getItemDetailsTest() throws ItemDomainException {
     ItemEntity itemEntity = testUtil.getItemEntity();
-    ItemId id = testUtil.getItemId();
+    ItemPK id = testUtil.getItemId();
     when(itemRepository.findByItemIdAndOrgIdAndUom(any(), any(), any()))
         .thenReturn(Optional.of(itemEntity));
 

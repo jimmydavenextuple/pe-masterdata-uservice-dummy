@@ -21,7 +21,7 @@ class CarrierEntityTest {
 
   @Test
   void carrierServiceIdNullDataTest() {
-    CarrierServiceId carrierServiceId = new CarrierServiceId();
+    CarrierServicePK carrierServiceId = new CarrierServicePK();
     assertNull(carrierServiceId.getCarrierServiceId());
     assertNull(carrierServiceId.getCarrierId());
     assertNull(carrierServiceId.getOrgId());
@@ -29,8 +29,8 @@ class CarrierEntityTest {
 
   @Test
   void carrierServiceIdTest() {
-    CarrierServiceId carrierServiceId =
-        new CarrierServiceId(TestUtil.ORG_ID, TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID);
+    CarrierServicePK carrierServiceId =
+        new CarrierServicePK(TestUtil.ORG_ID, TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID);
     assertNotNull(carrierServiceId.getCarrierServiceId());
     assertNotNull(carrierServiceId.getCarrierId());
     assertNotNull(carrierServiceId.getOrgId());
