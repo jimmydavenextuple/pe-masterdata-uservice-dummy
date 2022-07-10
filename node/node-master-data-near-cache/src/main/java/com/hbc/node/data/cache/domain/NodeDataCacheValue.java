@@ -25,5 +25,4 @@ public class NodeDataCacheValue implements CacheValue {
   private Boolean shipToHome;
   private Boolean sdndEligible;
   private Boolean bopisEligible;
-
 }
