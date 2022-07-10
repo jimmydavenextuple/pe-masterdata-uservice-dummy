@@ -1,4 +1,4 @@
-package com.hbc.nodecarriercalendar.spring.cache.util;
+package com.hbc.node.carrier.calendar.cache.spring.util;
 
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
 import com.hbc.common.response.BaseResponse;

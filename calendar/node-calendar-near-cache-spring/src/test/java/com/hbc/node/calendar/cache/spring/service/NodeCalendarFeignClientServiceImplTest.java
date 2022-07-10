@@ -1,4 +1,4 @@
-package com.hbc.carriercalendar.spring.cache.service;
+package com.hbc.node.calendar.cache.spring.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -7,12 +7,11 @@ import static org.mockito.Mockito.*;
 
 import com.hbc.calendar.common.CalendarCommonFeignImpl;
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
-import com.hbc.carrier.calendar.cache.domain.CarrierServiceCalendarCacheKey;
-import com.hbc.carrier.calendar.cache.domain.CarrierServiceCalendarCacheValue;
-import com.hbc.carrier.calendar.cache.spring.service.CarrierServiceCalendarFeignClientServiceImpl;
-import com.hbc.carriercalendar.spring.cache.util.TestUtil;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.core.cache.mapper.GenericMapper;
+import com.hbc.node.calendar.cache.domain.NodeCalendarCacheKey;
+import com.hbc.node.calendar.cache.domain.NodeCalendarCacheValue;
+import com.hbc.node.calendar.cache.spring.util.TestUtil;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,17 +20,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class CarrierCalendarFeignClientServiceImplTest {
+class NodeCalendarFeignClientServiceImplTest {
 
-  @InjectMocks
-  private CarrierServiceCalendarFeignClientServiceImpl carrierServiceCalendarFeignClientService;
+  @InjectMocks private NodeCalendarFeignClientServiceImpl nodeCalendarFeignClientService;
 
   @InjectMocks private TestUtil testUtil;
 
   @Mock
   private GenericMapper<
-          CarrierServiceCalendarCacheKey,
-          CarrierServiceCalendarCacheValue,
+          NodeCalendarCacheKey,
+          NodeCalendarCacheValue,
           String,
           BaseResponse<List<CalendarDaysStatusInfo>>>
       mapper;
@@ -40,23 +38,23 @@ public class CarrierCalendarFeignClientServiceImplTest {
 
   @Test
   void getTest() {
-    CarrierServiceCalendarCacheKey cacheKey = testUtil.getCarrierServiceCalendarCacheKey();
-    CarrierServiceCalendarCacheValue cacheValue = testUtil.getCarrierServiceCalendarCacheValue();
+    NodeCalendarCacheKey cacheKey = testUtil.getNodeCalendarCacheKey();
+    NodeCalendarCacheValue cacheValue = testUtil.getNodeCalendarCacheValue();
 
     when(mapper.responseToCacheValue(any())).thenReturn(cacheValue);
-    when(calendarCommonFeign.getCarrierServiceCalendar(any(), any(), any()))
+    when(calendarCommonFeign.getNodeCalendar(any(), any()))
         .thenReturn(testUtil.getBaseResponseOfListOfCalendarDaysStatusInfo());
 
-    assertEquals(cacheValue, carrierServiceCalendarFeignClientService.get(cacheKey));
+    assertEquals(cacheValue, nodeCalendarFeignClientService.get(cacheKey));
     verify(mapper, times(1)).responseToCacheValue(any());
   }
 
   @Test
   void getExceptionTest() {
-    CarrierServiceCalendarCacheKey invalidCacheKey = testUtil.getCarrierServiceCalendarCacheKey();
+    NodeCalendarCacheKey invalidCacheKey = testUtil.getNodeCalendarCacheKey();
 
     when(mapper.responseToCacheValue(any())).thenThrow(new RuntimeException("Error message"));
-    assertNull(carrierServiceCalendarFeignClientService.get(invalidCacheKey));
+    assertNull(nodeCalendarFeignClientService.get(invalidCacheKey));
     verify(mapper, times(1)).responseToCacheValue(any());
   }
 }
