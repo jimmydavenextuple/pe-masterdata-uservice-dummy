@@ -1,13 +1,11 @@
-package com.hbc.promise.sourcing.rule.domain.primaryKeys;
+package com.hbc.promise.sourcing.rule.domain.primarykeys;
 
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class PromiseSourcingRulePK implements Serializable {

@@ -35,7 +35,7 @@ class ItemEntityTest {
 
   @Test
   void itemIdNullTest() {
-    ItemId itemId = new ItemId();
+    ItemPK itemId = new ItemPK();
     assertNull(itemId.getItemId());
     assertNull(itemId.getOrgId());
     assertNull(itemId.getUom());
@@ -43,7 +43,7 @@ class ItemEntityTest {
 
   @Test
   void itemIdTest() {
-    ItemId itemId = new ItemId(TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM);
+    ItemPK itemId = new ItemPK(TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM);
     assertNotNull(itemId.getItemId());
     assertNotNull(itemId.getOrgId());
     assertNotNull(itemId.getUom());
