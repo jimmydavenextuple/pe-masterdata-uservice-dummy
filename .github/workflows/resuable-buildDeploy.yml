@@ -58,6 +58,7 @@ jobs:
           export IMAGE_NAME="$ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$SERVICE_CODE.${{ github.sha }}"
           curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip && unzip newrelic-java.zip
           cp newrelic/newrelic.jar "./${{ inputs.module }}/${{ inputs.module }}-api" && cp newrelic/newrelic.yml "./${{ inputs.module }}/${{ inputs.module }}-api" && cp entrypoint.sh "./${{ inputs.module }}/${{ inputs.module }}-api"
+          aws ecr describe-repositories --repository-names $SERVICE_NAME-${{ inputs.module }} || aws ecr create-repository --repository-name $SERVICE_NAME-${{ inputs.module }}
           docker build -f Dockerfile -t $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$SERVICE_CODE.${{ github.sha }} "./${{ inputs.module }}/${{ inputs.module }}-api"
           docker push $ECR_REGISTRY/$SERVICE_NAME-${{ inputs.module }}:$SERVICE_CODE.${{ github.sha }}
 
