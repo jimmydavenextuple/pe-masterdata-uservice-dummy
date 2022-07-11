@@ -1,9 +1,13 @@
 bootJar {
     enabled = true
+    mainClass.set("com.hbc.dataupload.DataUploadApplication")
 }
 
-jar {
-    enabled = false
+configurations {
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
 }
 
 dependencies {

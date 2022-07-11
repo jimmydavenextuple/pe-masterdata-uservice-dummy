@@ -108,14 +108,6 @@ class CarrierDataUploadServiceTest {
         Paths.get("src", "test", "resources", "carrier", "carrier_happyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
-    BaseResponse<CarrierServiceResponse> baseResponse = testUtil.getFailedBaseResponseForCarrier();
-    when(carrierFeign.createCarrierService(any(CarrierServiceRequest.class)))
-        .thenReturn(baseResponse);
-    when(carrierFeign.updateCarrierServiceDetails(
-            anyString(), anyString(), anyString(), any(CarrierServiceUpdateRequest.class)))
-        .thenThrow(NullPointerException.class);
-    when(carrierFeign.deleteCarrierService(anyString(), anyString(), anyString()))
-        .thenReturn(baseResponse);
     ResponseEntity<BaseResponse<String>> response =
         carrierDataUploadService.uploadCarrierData(absolutePath);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

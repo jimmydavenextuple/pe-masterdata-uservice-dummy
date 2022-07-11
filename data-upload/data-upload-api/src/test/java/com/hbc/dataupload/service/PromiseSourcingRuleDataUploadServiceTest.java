@@ -129,22 +129,6 @@ class PromiseSourcingRuleDataUploadServiceTest {
             "src", "test", "resources", "promiseSourcingRule", "promiseSourcingRule_happyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
-    BaseResponse<PromiseSourcingRuleDto> baseResponse =
-        testUtil.getFailedBaseResponseForPromiseSourcingRule();
-    when(promiseSourcingRuleFeign.createPromiseSourcingRule(
-            any(CreatePromiseSourcingRuleRequest.class)))
-        .thenReturn(baseResponse);
-    when(promiseSourcingRuleFeign.updatePromiseSourcingRule(
-            anyString(),
-            anyString(),
-            anyString(),
-            anyString(),
-            anyInt(),
-            any(UpdatePromiseSourcingRuleRequest.class)))
-        .thenThrow(NullPointerException.class);
-    when(promiseSourcingRuleFeign.deletePromiseSourcingRule(
-            anyString(), anyString(), anyString(), anyString(), anyInt()))
-        .thenReturn(baseResponse);
     ResponseEntity<BaseResponse<String>> response =
         promiseSourcingRuleDataUploadUtilityService.uploadPromiseSourcingRuleData(absolutePath);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

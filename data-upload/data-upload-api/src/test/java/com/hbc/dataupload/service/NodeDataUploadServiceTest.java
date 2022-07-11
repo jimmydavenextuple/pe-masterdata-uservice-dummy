@@ -94,11 +94,6 @@ class NodeDataUploadServiceTest {
     Path resourceDirectory = Paths.get("src", "test", "resources", "node", "node_happyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
-    BaseResponse<NodeResponse> baseResponse = testUtil.getFailedBaseResponseForNode();
-    when(nodeFeign.createNode(any(NodeRequest.class))).thenReturn(baseResponse);
-    when(nodeFeign.updateNodeDetails(anyString(), anyString(), any(NodeUpdationRequest.class)))
-        .thenThrow(NullPointerException.class);
-    when(nodeFeign.deleteNode(anyString(), anyString())).thenReturn(baseResponse);
     ResponseEntity<BaseResponse<String>> response =
         nodeDataUploadService.uploadNodeData(absolutePath);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
