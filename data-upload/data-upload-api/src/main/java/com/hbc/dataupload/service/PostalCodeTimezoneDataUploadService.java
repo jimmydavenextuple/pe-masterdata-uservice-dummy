@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +75,6 @@ public class PostalCodeTimezoneDataUploadService {
     boolean isAllFailed = true;
     boolean isAllPassed = true;
     boolean result = false;
-    Map<String, Boolean> resultMap = new HashMap<>();
 
     try (Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
@@ -157,7 +155,7 @@ public class PostalCodeTimezoneDataUploadService {
           if (isAllPassed) {
             isAllPassed = false;
           }
-          log.error("Failed to store csv data for row number : {}", row);
+          log.error("Failed to store Postal Code Timezone CSV data for row number : {}", row);
         }
 
         if (isAllPassed) {
@@ -167,9 +165,7 @@ public class PostalCodeTimezoneDataUploadService {
           isAllFailed = !result;
         }
       }
-      resultMap.put("isAllPassed", isAllPassed);
-      resultMap.put("isAllFailed", isAllFailed);
-      return resultMap;
+      return DataUploadUtil.storeToMap(isAllPassed, isAllFailed);
     }
   }
 }

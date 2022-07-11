@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LocalCacheUpdateMessage implements Serializable {
   private static final long serialVersionUID = 8371831680896854461L;
-  private Map<String, Object> message;
+  private Map<String, Object> message; // NOSONAR
   private String entityName;
 }

@@ -3,7 +3,7 @@ package com.hbc.common.exception;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import com.hbc.common.ExceptionCodeMapping;
+import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
 import java.io.IOException;

@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -77,8 +76,8 @@ public class CalendarDataUploadService {
     boolean isAllFailed = true;
     boolean isAllPassed = true;
     boolean result = false;
-    Map<String, Boolean> resultMap = new HashMap<>();
     ObjectMapper mapper = new ObjectMapper();
+
     try (Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = DataUploadUtil.getCSVParserWithSetQuoteMode(reader)) {
       DataUploadUtil.compareHeaders(
@@ -129,7 +128,7 @@ public class CalendarDataUploadService {
           if (isAllPassed) {
             isAllPassed = false;
           }
-          log.error("Failed to store csv data for row number : {}", row);
+          log.error("Failed to store Calendar CSV data for row number : {}", row);
         }
         if (isAllPassed) {
           isAllPassed = result;
@@ -138,9 +137,7 @@ public class CalendarDataUploadService {
           isAllFailed = !result;
         }
       }
-      resultMap.put("isAllPassed", isAllPassed);
-      resultMap.put("isAllFailed", isAllFailed);
-      return resultMap;
+      return DataUploadUtil.storeToMap(isAllPassed, isAllFailed);
     }
   }
 }

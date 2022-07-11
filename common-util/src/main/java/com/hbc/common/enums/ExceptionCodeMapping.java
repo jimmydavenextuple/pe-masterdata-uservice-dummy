@@ -1,4 +1,4 @@
-package com.hbc.common;
+package com.hbc.common.enums;
 
 import java.util.HashMap;
 import java.util.Map;

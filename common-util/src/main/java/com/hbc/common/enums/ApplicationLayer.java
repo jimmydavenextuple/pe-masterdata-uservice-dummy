@@ -1,4 +1,4 @@
-package com.hbc.common;
+package com.hbc.common.enums;
 
 /** This will indicate the layer in case of throwing any exceptions */
 public enum ApplicationLayer {

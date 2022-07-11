@@ -157,8 +157,15 @@ public class DataUploadUtil {
   }
 
   public static Path getPath(String basePath, String fileUri) {
-    Path path = Paths.get(basePath.concat(fileUri));
+    var path = Paths.get(basePath.concat(fileUri));
     log.debug("fileName : {}", path.getFileName());
     return path;
+  }
+
+  public static Map<String, Boolean> storeToMap(boolean isAllPassed, boolean isAllFailed) {
+    Map<String, Boolean> resultMap = new HashMap<>();
+    resultMap.put("isAllPassed", isAllPassed);
+    resultMap.put("isAllFailed", isAllFailed);
+    return resultMap;
   }
 }
