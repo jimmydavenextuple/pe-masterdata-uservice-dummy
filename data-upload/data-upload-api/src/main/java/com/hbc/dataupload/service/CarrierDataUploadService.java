@@ -1,6 +1,7 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
@@ -66,9 +67,9 @@ public class CarrierDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailed = true;
-    boolean isAllPassed = true;
-    boolean result = false;
+    boolean isAllFailedForCarrier = true;
+    boolean isAllPassedForCarrier = true;
+    boolean carrierResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
@@ -99,7 +100,7 @@ public class CarrierDataUploadService {
                         .build();
                 BaseResponse<CarrierServiceResponse> baseResponse =
                     carrierFeign.createCarrierService(carrierServiceRequest);
-                result = baseResponse.isSuccess();
+                carrierResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -115,7 +116,7 @@ public class CarrierDataUploadService {
                 BaseResponse<CarrierServiceResponse> baseResponse =
                     carrierFeign.updateCarrierServiceDetails(
                         carrierId, carrierServiceId, orgId, carrierServiceUpdateRequest);
-                result = baseResponse.isSuccess();
+                carrierResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -124,32 +125,32 @@ public class CarrierDataUploadService {
               {
                 BaseResponse<CarrierServiceResponse> baseResponse =
                     carrierFeign.deleteCarrierService(carrierId, carrierServiceId, orgId);
-                result = baseResponse.isSuccess();
+                carrierResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
 
             default:
               {
-                log.error("action type invalid");
+                log.error(ACTION_INVALID_MESSAGE);
                 break;
               }
           }
         } catch (Exception e) {
-          if (isAllPassed) {
-            isAllPassed = false;
+          if (isAllPassedForCarrier) {
+            isAllPassedForCarrier = false;
           }
           log.error("Failed to store Carrier CSV data for row number : {}", row);
         }
 
-        if (isAllPassed) {
-          isAllPassed = result;
+        if (isAllPassedForCarrier) {
+          isAllPassedForCarrier = carrierResult;
         }
-        if (isAllFailed) {
-          isAllFailed = !result;
+        if (isAllFailedForCarrier) {
+          isAllFailedForCarrier = !carrierResult;
         }
       }
-      return DataUploadUtil.storeToMap(isAllPassed, isAllFailed);
+      return DataUploadUtil.storeToMap(isAllPassedForCarrier, isAllFailedForCarrier);
     }
   }
 }

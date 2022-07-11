@@ -1,6 +1,7 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BOPIS_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
@@ -77,9 +78,9 @@ public class NodeDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailed = true;
-    boolean isAllPassed = true;
-    boolean result = false;
+    boolean isAllFailedForNode = true;
+    boolean isAllPassedForNode = true;
+    boolean nodeResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
@@ -130,7 +131,7 @@ public class NodeDataUploadService {
                         .isActive(isActive)
                         .build();
                 BaseResponse<NodeResponse> baseResponse = nodeFeign.createNode(nodeRequest);
-                result = baseResponse.isSuccess();
+                nodeResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -156,7 +157,7 @@ public class NodeDataUploadService {
                         .build();
                 BaseResponse<NodeResponse> baseResponse =
                     nodeFeign.updateNodeDetails(nodeId, orgId, nodeUpdationRequest);
-                result = baseResponse.isSuccess();
+                nodeResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -164,32 +165,32 @@ public class NodeDataUploadService {
             case DELETE:
               {
                 BaseResponse<NodeResponse> baseResponse = nodeFeign.deleteNode(nodeId, orgId);
-                result = baseResponse.isSuccess();
+                nodeResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
 
             default:
               {
-                log.error("action type invalid");
+                log.error(ACTION_INVALID_MESSAGE);
                 break;
               }
           }
         } catch (Exception e) {
-          if (isAllPassed) {
-            isAllPassed = false;
+          if (isAllPassedForNode) {
+            isAllPassedForNode = false;
           }
           log.error("Failed to store Node CSV data for row number : {}", row);
         }
 
-        if (isAllPassed) {
-          isAllPassed = result;
+        if (isAllPassedForNode) {
+          isAllPassedForNode = nodeResult;
         }
-        if (isAllFailed) {
-          isAllFailed = !result;
+        if (isAllFailedForNode) {
+          isAllFailedForNode = !nodeResult;
         }
       }
-      return DataUploadUtil.storeToMap(isAllPassed, isAllFailed);
+      return DataUploadUtil.storeToMap(isAllPassedForNode, isAllFailedForNode);
     }
   }
 }

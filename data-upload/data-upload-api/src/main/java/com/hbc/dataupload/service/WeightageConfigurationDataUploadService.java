@@ -1,6 +1,7 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DELETE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.KEY;
@@ -68,9 +69,9 @@ public class WeightageConfigurationDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailed = true;
-    boolean isAllPassed = true;
-    boolean result = false;
+    boolean isAllFailedForWeightage = true;
+    boolean isAllPassedForWeightage = true;
+    boolean weightageResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
@@ -102,7 +103,7 @@ public class WeightageConfigurationDataUploadService {
                 BaseResponse<WeightageConfigurationDto> baseResponse =
                     weightageConfigurationFeign.createWeightageConfiguration(
                         createWeightageConfigurationRequest);
-                result = baseResponse.isSuccess();
+                weightageResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -118,7 +119,7 @@ public class WeightageConfigurationDataUploadService {
                 BaseResponse<WeightageConfigurationDto> baseResponse =
                     weightageConfigurationFeign.updateWeightageConfiguration(
                         orgId, type, key, updateWeightageConfigurationRequest);
-                result = baseResponse.isSuccess();
+                weightageResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -127,32 +128,32 @@ public class WeightageConfigurationDataUploadService {
               {
                 BaseResponse<WeightageConfigurationDto> baseResponse =
                     weightageConfigurationFeign.deleteWeightageConfiguration(orgId, type, key);
-                result = baseResponse.isSuccess();
+                weightageResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
 
             default:
               {
-                log.error("action type invalid");
+                log.error(ACTION_INVALID_MESSAGE);
                 break;
               }
           }
         } catch (Exception e) {
-          if (isAllPassed) {
-            isAllPassed = false;
+          if (isAllPassedForWeightage) {
+            isAllPassedForWeightage = false;
           }
           log.error("Failed to store Weightage Configuration CSV data for row number : {}", row);
         }
 
-        if (isAllPassed) {
-          isAllPassed = result;
+        if (isAllPassedForWeightage) {
+          isAllPassedForWeightage = weightageResult;
         }
-        if (isAllFailed) {
-          isAllFailed = !result;
+        if (isAllFailedForWeightage) {
+          isAllFailedForWeightage = !weightageResult;
         }
       }
-      return DataUploadUtil.storeToMap(isAllPassed, isAllFailed);
+      return DataUploadUtil.storeToMap(isAllPassedForWeightage, isAllFailedForWeightage);
     }
   }
 }
