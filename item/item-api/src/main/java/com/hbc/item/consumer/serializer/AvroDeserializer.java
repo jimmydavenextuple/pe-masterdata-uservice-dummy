@@ -21,6 +21,7 @@ public class AvroDeserializer<T extends SpecificRecordBase> implements Deseriali
     // do nothing
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public T deserialize(String topic, byte[] bytes) {
     T returnObject = null;
@@ -29,7 +30,8 @@ public class AvroDeserializer<T extends SpecificRecordBase> implements Deseriali
 
       if (bytes != null) {
         DatumReader<SpecificRecordBase> datumReader =
-            new SpecificDatumReader<>(targetType.newInstance().getSchema());
+            new SpecificDatumReader<>(
+                targetType.getDeclaredConstructor().newInstance().getSchema());
         Decoder decoder = DecoderFactory.get().binaryDecoder(bytes, null);
         returnObject = (T) datumReader.read(null, decoder);
         log.debug("deserialized data='{}'", returnObject.toString());

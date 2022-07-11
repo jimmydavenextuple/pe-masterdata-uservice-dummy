@@ -35,12 +35,11 @@ public class ItemController {
       @Valid @RequestBody ItemCreationRequest itemCreationRequest) throws ItemDomainException {
     logger.debug("Processing item creation request");
     try {
-      ItemResponse itemResponse = itemService.createItem(itemCreationRequest);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item successfully created")
-              .payload(itemResponse)
+              .payload(itemService.createItem(itemCreationRequest))
               .build());
     } catch (Exception e) {
       logger.error("Failed to add item");
@@ -58,13 +57,10 @@ public class ItemController {
     logger.debug("Processing update item details");
     try {
 
-      ItemResponse itemResponse =
-          itemService.updateItemDetails(itemId, orgId, uom, itemUpdationRequest);
-
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item details updated successfully")
-              .payload(itemResponse)
+              .payload(itemService.updateItemDetails(itemId, orgId, uom, itemUpdationRequest))
               .build());
     } catch (Exception e) {
       logger.error("Failed to update item details");
@@ -81,12 +77,10 @@ public class ItemController {
     logger.debug("Processing get item details");
     try {
 
-      ItemResponse itemResponse = itemService.getItemDetails(itemId, orgId, uom);
-
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item details fetched successfully")
-              .payload(itemResponse)
+              .payload(itemService.getItemDetails(itemId, orgId, uom))
               .build());
     } catch (Exception e) {
       logger.error("Failed to fetch item details");
@@ -103,12 +97,10 @@ public class ItemController {
     logger.debug("Processing delete item");
     try {
 
-      ItemResponse itemResponse = itemService.deleteItem(itemId, orgId, uom);
-
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item deleted successfully")
-              .payload(itemResponse)
+              .payload(itemService.deleteItem(itemId, orgId, uom))
               .build());
     } catch (Exception e) {
       logger.error("Failed to delete item");

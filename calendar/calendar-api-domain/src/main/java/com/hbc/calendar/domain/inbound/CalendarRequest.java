@@ -25,12 +25,12 @@ public class CalendarRequest implements Serializable {
   private String orgId;
 
   private String description;
+  private Boolean isFridayWorking;
   private Boolean isMondayWorking;
   private Boolean isTuesdayWorking;
-  private Boolean isWednesdayWorking;
   private Boolean isThursdayWorking;
-  private Boolean isFridayWorking;
   private Boolean isSaturdayWorking;
   private Boolean isSundayWorking;
+  private Boolean isWednesdayWorking;
   private List<ExceptionDays> exceptionDays;
 }

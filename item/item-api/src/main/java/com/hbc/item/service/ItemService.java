@@ -51,7 +51,7 @@ public class ItemService {
         validator.validate(itemCreationRequest);
 
     if (!violations.isEmpty()) {
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
       for (ConstraintViolation<ItemCreationRequest> constraintViolation : violations) {
         sb.append(constraintViolation.getPropertyPath())
             .append(" - ")
@@ -60,7 +60,7 @@ public class ItemService {
       throw new ConstraintViolationException("Error occurred: " + sb, violations);
     }
 
-    ItemEntity itemEntity = INSTANCE.toItemEntity(itemCreationRequest);
+    var itemEntity = INSTANCE.toItemEntity(itemCreationRequest);
     if (!ObjectUtils.isEmpty(itemCreationRequest.getLastModifiedDate())) {
       itemEntity.setLastModifiedDate(
           getLastModifiedDate(itemCreationRequest.getLastModifiedDate()));
@@ -123,7 +123,7 @@ public class ItemService {
           ITEM_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
 
-    ItemResponse itemResponse = INSTANCE.toItemResponse(itemEntity.get());
+    var itemResponse = INSTANCE.toItemResponse(itemEntity.get());
     itemDomain.deleteItem(itemEntity.get());
     return itemResponse;
   }

@@ -18,13 +18,13 @@ public class NodeCalendarRequest implements Serializable {
   @Length(max = 40)
   private String calendarId;
 
-  @NotBlank(message = "orgId can't be blank")
-  @Length(max = 40)
-  private String orgId;
-
   @NotBlank(message = "nodeId can't be blank")
   @Length(max = 40)
   private String nodeId;
+
+  @NotBlank(message = "orgId can't be blank")
+  @Length(max = 40)
+  private String orgId;
 
   @NotBlank(message = "effectiveDate can't be blank")
   private String effectiveDate;
