@@ -28,5 +28,4 @@ public class NodeResponse implements Serializable {
   private String longitude;
   private String timezone;
   private Boolean shipToHome;
-
 }

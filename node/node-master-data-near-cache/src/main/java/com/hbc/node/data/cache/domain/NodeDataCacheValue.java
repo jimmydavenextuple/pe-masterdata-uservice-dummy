@@ -25,5 +25,4 @@ public class NodeDataCacheValue implements CacheValue {
   private Boolean isActive;
   private Boolean bopisEligible;
   private Boolean expressEligible;
-
 }
