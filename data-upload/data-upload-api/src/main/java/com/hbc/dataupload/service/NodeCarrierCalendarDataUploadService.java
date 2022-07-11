@@ -1,6 +1,7 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
@@ -66,9 +67,9 @@ public class NodeCarrierCalendarDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailed = true;
-    boolean isAllPassed = true;
-    boolean result = false;
+    boolean isAllFailedForNodeCarrierCalendar = true;
+    boolean isAllPassedForNodeCarrierCalendar = true;
+    boolean nodeCarrierCalendarResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
@@ -102,26 +103,27 @@ public class NodeCarrierCalendarDataUploadService {
             BaseResponse<NodeCarrierServiceCalendarResponse> baseResponse =
                 calendarFeign.handleCreateNodeCarrierServiceCalendar(
                     nodeCarrierServiceCalendarRequest);
-            result = baseResponse.isSuccess();
+            nodeCarrierCalendarResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else {
-            log.error("action type invalid");
+            log.error(ACTION_INVALID_MESSAGE);
           }
         } catch (Exception e) {
-          if (isAllPassed) {
-            isAllPassed = false;
+          if (isAllPassedForNodeCarrierCalendar) {
+            isAllPassedForNodeCarrierCalendar = false;
           }
           log.error("Failed to store Node Carrier Calendar CSV data for row number : {}", row);
         }
 
-        if (isAllPassed) {
-          isAllPassed = result;
+        if (isAllPassedForNodeCarrierCalendar) {
+          isAllPassedForNodeCarrierCalendar = nodeCarrierCalendarResult;
         }
-        if (isAllFailed) {
-          isAllFailed = !result;
+        if (isAllFailedForNodeCarrierCalendar) {
+          isAllFailedForNodeCarrierCalendar = !nodeCarrierCalendarResult;
         }
       }
-      return DataUploadUtil.storeToMap(isAllPassed, isAllFailed);
+      return DataUploadUtil.storeToMap(
+          isAllPassedForNodeCarrierCalendar, isAllFailedForNodeCarrierCalendar);
     }
   }
 }
