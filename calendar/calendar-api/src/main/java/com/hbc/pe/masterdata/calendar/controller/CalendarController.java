@@ -29,7 +29,7 @@ public class CalendarController {
   @PostMapping
   public ResponseEntity<BaseResponse<CalendarResponse>> handleCreateCalendar(
       @Valid @RequestBody CalendarRequest calendarRequest) throws CalendarDomainException {
-    logger.info("Inside handleCreateCalendar() for calendarRequest: {}", calendarRequest);
+    logger.debug("Inside handleCreateCalendar() for calendarRequest: {}", calendarRequest);
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()

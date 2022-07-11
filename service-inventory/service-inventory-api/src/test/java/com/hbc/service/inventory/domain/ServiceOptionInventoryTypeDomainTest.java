@@ -18,7 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class ServiceOptionInventoryTypeDomainTest {
+class ServiceOptionInventoryTypeDomainTest {
   @InjectMocks private ServiceOptionInventoryTypeDomain serviceOptionInventoryTypeDomain;
   @InjectMocks private TestUtil testUtil;
 

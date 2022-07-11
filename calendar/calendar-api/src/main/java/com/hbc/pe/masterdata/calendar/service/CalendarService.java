@@ -48,8 +48,8 @@ public class CalendarService {
   /** Creates a new Calendar */
   public CalendarResponse processCreateCalendar(CalendarRequest calendarRequest)
       throws CalendarDomainException {
-    CalendarEntity calendarEntity = INSTANCE.convertToCalendarEntity(calendarRequest);
-    CalendarEntity savedCalendarEntity = calendarDomain.saveCalendarEntity(calendarEntity);
+    var calendarEntity = INSTANCE.convertToCalendarEntity(calendarRequest);
+    var savedCalendarEntity = calendarDomain.saveCalendarEntity(calendarEntity);
     return INSTANCE.convertToCalendarResponse(savedCalendarEntity);
   }
 
@@ -74,7 +74,7 @@ public class CalendarService {
     String timezone = nodeId.isPresent() ? NODE_TIMEZONE : destinationTimezone.orElse("UTC");
 
     int numDays = numberOfDaysInFuture.orElseGet(() -> defaultNumberOfDaysInFuture);
-    for (int i = 0; i < numDays; i++) {
+    for (var i = 0; i < numDays; i++) {
       calendarDaysStatusInfoList.add(
           CalendarDaysStatusInfo.builder()
               .date(DateUtil.addDaysToCurrentDate(i, timezone))
@@ -83,7 +83,7 @@ public class CalendarService {
     }
     String startDate = DateUtil.addDaysToCurrentDate(0, timezone);
     String endDate = DateUtil.addDaysToCurrentDate(numDays, timezone);
-    String currentCalendarId = "";
+    var currentCalendarId = "";
     Map<String, String> nextCalendarIds = new HashMap<>();
 
     if (nodeId.isPresent() && carrierServiceId.isEmpty()) {
@@ -155,7 +155,7 @@ public class CalendarService {
                       NodeCarrierServiceCalendarEntity::getCalendarId));
     }
 
-    CalendarEntity calendarEntity = calendarDomain.getCalendar(orgId, currentCalendarId);
+    var calendarEntity = calendarDomain.getCalendar(orgId, currentCalendarId);
     if (ObjectUtils.isEmpty(calendarEntity)) {
       throw new CommonServiceException(
           "No Calendar with calendarId = "
@@ -201,8 +201,7 @@ public class CalendarService {
       throws CalendarDomainException {
     for (CalendarDaysStatusInfo x : calendarDaysStatusInfoList) {
       if (calendarIds.containsKey(x.getDate())) {
-        CalendarEntity calendarEntity =
-            calendarDomain.getCalendar(orgId, calendarIds.get(x.getDate()));
+        var calendarEntity = calendarDomain.getCalendar(orgId, calendarIds.get(x.getDate()));
 
         List<String> exceptionDays =
             calendarEntity.getExceptionDays().stream()

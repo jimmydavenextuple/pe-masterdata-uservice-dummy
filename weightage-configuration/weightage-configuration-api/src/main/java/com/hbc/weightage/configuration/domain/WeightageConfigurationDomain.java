@@ -1,11 +1,11 @@
 package com.hbc.weightage.configuration.domain;
 
+import com.hbc.common.ApplicationLayer;
+import com.hbc.common.ExceptionCodeMapping;
+import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
 import com.hbc.weightage.configuration.domain.entity.WeightageConfiguration;
 import com.hbc.weightage.configuration.domain.repository.WeightageConfigurationRepository;
-import com.hbc.weightage.configuration.exception.common.ApplicationLayer;
-import com.hbc.weightage.configuration.exception.common.ExceptionCodeMapping;
-import com.hbc.weightage.configuration.exception.common.PromiseEngineException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class WeightageConfigurationDomain {
    */
   public List<WeightageConfiguration> fetchWeightage(FetchWeightageRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("-- inside fetchWeightage domain --");
+    logger.debug("-- inside fetchWeightage domain --");
     try {
       return weightageConfigurationRepository.findByKeyInAndOrgIdAndType(
           baseRequest.getKeys(), baseRequest.getOrgId(), baseRequest.getType());
@@ -48,7 +48,7 @@ public class WeightageConfigurationDomain {
    */
   public WeightageConfiguration saveWeightageConfiguration(
       WeightageConfiguration weightageConfiguration) throws PromiseEngineException {
-    logger.info("-- inside saveWeightageConfiguration domain --");
+    logger.debug("-- inside saveWeightageConfiguration domain --");
     try {
       return weightageConfigurationRepository.save(weightageConfiguration);
     } catch (Exception e) {
@@ -71,7 +71,7 @@ public class WeightageConfigurationDomain {
    */
   public WeightageConfiguration getWeightageConfiguration(String orgId, String type, String key)
       throws PromiseEngineException {
-    logger.info("-- inside getWeightageConfiguration domain --");
+    logger.debug("-- inside getWeightageConfiguration domain --");
     try {
       return weightageConfigurationRepository.findByOrgIdAndTypeAndKey(orgId, type, key);
     } catch (Exception e) {
@@ -91,7 +91,7 @@ public class WeightageConfigurationDomain {
    */
   public List<WeightageConfiguration> getWeightageConfigurationsByKey(String key)
       throws PromiseEngineException {
-    logger.info("-- inside getWeightageConfigurationByKey domain --");
+    logger.debug("-- inside getWeightageConfigurationByKey domain --");
     try {
       return weightageConfigurationRepository.findByKey(key);
     } catch (Exception e) {
@@ -111,7 +111,7 @@ public class WeightageConfigurationDomain {
    */
   public WeightageConfiguration deleteWeightageConfiguration(
       WeightageConfiguration weightageConfiguration) throws PromiseEngineException {
-    logger.info("-- inside deleteWeightageConfiguration domain --");
+    logger.debug("-- inside deleteWeightageConfiguration domain --");
     try {
       weightageConfigurationRepository.delete(weightageConfiguration);
       return weightageConfiguration;

@@ -1,5 +1,6 @@
 package com.hbc.common.config;
 
+import com.hbc.common.exception.ConfigException;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -19,7 +20,7 @@ public class MetricConfig {
         try {
           hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-          throw new RuntimeException(e);
+          throw new ConfigException(e.getCause().getMessage());
         }
       }
       registry.config().commonTags("host", hostname);

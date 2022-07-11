@@ -36,7 +36,7 @@ public class EntityEventProducer {
                   .build())
           .addCallback(
               e ->
-                  log.info(
+                  log.debug(
                       "Published LocalCacheUpdate Event into kafka with message: {}, topic is {}, partition is {}",
                       localCacheUpdateEvent.getLocalCacheUpdateMessage(),
                       e.getRecordMetadata().topic(),

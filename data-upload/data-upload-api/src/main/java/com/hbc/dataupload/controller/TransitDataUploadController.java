@@ -23,7 +23,7 @@ public class TransitDataUploadController {
   @PostMapping("/transit")
   public ResponseEntity<BaseResponse<String>> uploadTransitData(
       @NotBlank @RequestParam String fileUri) throws IOException, CommonServiceException {
-    log.info("Processing upload Transit Data request");
+    log.debug("Processing upload Transit Data request");
     try {
       return transitDataUploadService.uploadTransitData(fileUri);
     } catch (Exception e) {

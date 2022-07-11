@@ -8,7 +8,7 @@ import com.hbc.common.response.error.ErrorType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ErrorPayloadTest {
+class ErrorPayloadTest {
   @DisplayName("Should set everything to null with the no parameter constructor")
   @Test
   void noParameterConstructorTest() {

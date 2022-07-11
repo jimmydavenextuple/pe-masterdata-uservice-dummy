@@ -20,7 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class CarrierServiceDomainTest {
+class CarrierServiceDomainTest {
 
   @InjectMocks private CarrierServiceDomain carrierServiceDomain;
   @InjectMocks private TestUtil testUtil;

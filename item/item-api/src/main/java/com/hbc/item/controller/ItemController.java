@@ -33,14 +33,13 @@ public class ItemController {
   @PostMapping
   public ResponseEntity<BaseResponse<ItemResponse>> addItem(
       @Valid @RequestBody ItemCreationRequest itemCreationRequest) throws ItemDomainException {
-    logger.info("Processing item creation request");
+    logger.debug("Processing item creation request");
     try {
-      ItemResponse itemResponse = itemService.createItem(itemCreationRequest);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item successfully created")
-              .payload(itemResponse)
+              .payload(itemService.createItem(itemCreationRequest))
               .build());
     } catch (Exception e) {
       logger.error("Failed to add item");
@@ -55,16 +54,13 @@ public class ItemController {
       @NotBlank @PathVariable String uom,
       @Valid @RequestBody ItemUpdationRequest itemUpdationRequest)
       throws ItemDomainException, CommonServiceException {
-    logger.info("Processing update item details");
+    logger.debug("Processing update item details");
     try {
-
-      ItemResponse itemResponse =
-          itemService.updateItemDetails(itemId, orgId, uom, itemUpdationRequest);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item details updated successfully")
-              .payload(itemResponse)
+              .payload(itemService.updateItemDetails(itemId, orgId, uom, itemUpdationRequest))
               .build());
     } catch (Exception e) {
       logger.error("Failed to update item details");
@@ -78,15 +74,13 @@ public class ItemController {
       @NotBlank @PathVariable String orgId,
       @NotBlank @PathVariable String uom)
       throws ItemDomainException, CommonServiceException {
-    logger.info("Processing get item details");
+    logger.debug("Processing get item details");
     try {
-
-      ItemResponse itemResponse = itemService.getItemDetails(itemId, orgId, uom);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item details fetched successfully")
-              .payload(itemResponse)
+              .payload(itemService.getItemDetails(itemId, orgId, uom))
               .build());
     } catch (Exception e) {
       logger.error("Failed to fetch item details");
@@ -100,15 +94,13 @@ public class ItemController {
       @NotBlank @PathVariable String orgId,
       @NotBlank @PathVariable String uom)
       throws ItemDomainException, CommonServiceException {
-    logger.info("Processing delete item");
+    logger.debug("Processing delete item");
     try {
-
-      ItemResponse itemResponse = itemService.deleteItem(itemId, orgId, uom);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item deleted successfully")
-              .payload(itemResponse)
+              .payload(itemService.deleteItem(itemId, orgId, uom))
               .build());
     } catch (Exception e) {
       logger.error("Failed to delete item");

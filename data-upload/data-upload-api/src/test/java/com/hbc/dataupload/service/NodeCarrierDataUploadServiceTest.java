@@ -1,5 +1,6 @@
 package com.hbc.dataupload.service;
 
+import static com.hbc.dataupload.helper.NodeCarrierDataUploadConstants.NODE_CARRIER_DATA_UPLOAD_INVALID_FILE_HEADERS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -70,8 +71,7 @@ class NodeCarrierDataUploadServiceTest {
             CommonServiceException.class,
             () -> nodeCarrierDataUploadService.uploadNodeCarrierData(absolutePath));
 
-    Assertions.assertEquals(
-        "Node Carrier data uploaded file has invalid headers.", exception.getMessage());
+    Assertions.assertEquals(NODE_CARRIER_DATA_UPLOAD_INVALID_FILE_HEADERS, exception.getMessage());
     Assertions.assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
   }
 

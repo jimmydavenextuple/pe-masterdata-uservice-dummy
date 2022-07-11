@@ -31,9 +31,9 @@ public class NodeCarrierServiceCalendarService {
   public NodeCarrierServiceCalendarResponse processCreateNodeCarrierServiceCalendarResponse(
       NodeCarrierServiceCalendarRequest nodeCarrierServiceCalendarRequest)
       throws CalendarDomainException {
-    NodeCarrierServiceCalendarEntity nodeCarrierServiceCalendarEntity =
+    var nodeCarrierServiceCalendarEntity =
         INSTANCE.convertToNodeCarrierServiceCalendarEntity(nodeCarrierServiceCalendarRequest);
-    NodeCarrierServiceCalendarEntity savedNodeCarrierServiceCalendarEntity =
+    var savedNodeCarrierServiceCalendarEntity =
         nodeCarrierServiceCalendarDomain.saveNodeCarrierServiceCalendarEntity(
             nodeCarrierServiceCalendarEntity);
     return INSTANCE.convertToNodeCarrierServiceCalendarResponse(

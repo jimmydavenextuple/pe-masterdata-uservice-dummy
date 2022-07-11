@@ -24,7 +24,7 @@ public class NodeCalendarController {
   @PostMapping
   public ResponseEntity<BaseResponse<NodeCalendarResponse>> handleCreateNodeCalendar(
       @Valid @RequestBody NodeCalendarRequest nodeCalendarRequest) throws CalendarDomainException {
-    logger.info(
+    logger.debug(
         "Inside handleCreateNodeCalendar() for nodeCalendarRequest: {}", nodeCalendarRequest);
     try {
       return ResponseEntity.ok(
