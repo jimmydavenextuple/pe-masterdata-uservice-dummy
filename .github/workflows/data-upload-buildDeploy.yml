@@ -1,0 +1,18 @@
+name: DATA-UPLOAD BUILD-DEPLOY
+
+on:
+  push:
+    branches: [ development ]
+    paths:
+      - "data-upload/**"
+     
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/build&deploy.yml
+    with:
+      module: data-upload
+    secrets: inherit
+
+
+
+

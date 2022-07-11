@@ -1,0 +1,15 @@
+name: PR-DATA-UPLOAD
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "data-upload/**"
+    branches: [ development ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml
+    with:
+      module: data-upload
+    secrets: inherit
