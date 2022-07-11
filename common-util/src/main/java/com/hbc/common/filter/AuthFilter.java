@@ -54,7 +54,7 @@ public class AuthFilter implements Filter {
         if (!tokenString.isPresent()) {
           throw new AuthFilterException("Authorization header value is empty or null");
         }
-        Jwt<Header, Claims> claims = getAllClaimsFromToken(tokenString.get());
+        Jwt<? extends Header, Claims> claims = getAllClaimsFromToken(tokenString.get());
         log.debug(
             "--------Roles extracted from claims: {}------",
             claims.getBody().get("role").toString());
@@ -104,7 +104,7 @@ public class AuthFilter implements Filter {
     return verified;
   }
 
-  private Jwt<Header, Claims> getAllClaimsFromToken(String token) {
+  private Jwt<? extends Header, Claims> getAllClaimsFromToken(String token) {
     int i = token.lastIndexOf('.');
     String withoutSignature = token.substring(0, i + 1);
     return Jwts.parser().parseClaimsJwt(withoutSignature);
