@@ -27,16 +27,16 @@ class KafkaConfigTest {
   void onItemMasterEventConsumptionTest() throws ItemDomainException {
     ReflectionTestUtils.setField(kafkaConfig, "bootstrapAddress", "");
     ReflectionTestUtils.setField(avroKafkaConfig, "bootstrapAddress", "");
-    ReflectionTestUtils.setField(kafkaConfig, "securityProtocol", "");
-    ReflectionTestUtils.setField(kafkaConfig, "saslMechanism", "");
-    ReflectionTestUtils.setField(kafkaConfig, "saslJaasConfig", "");
+    //    ReflectionTestUtils.setField(kafkaConfig, "securityProtocol", "");
+    //    ReflectionTestUtils.setField(kafkaConfig, "saslMechanism", "");
+    //    ReflectionTestUtils.setField(kafkaConfig, "saslJaasConfig", "");
     ReflectionTestUtils.setField(kafkaConfig, "maxRetryCount", 0L);
     ConsumerFactory<String, Object> res = kafkaConfig.consumerFactory();
 
     ProducerFactory<String, Object> producerFactory = avroKafkaConfig.producerFactory();
     ConsumerFactory<String, ItemRecord> consumerFactory = avroKafkaConfig.consumerFactory();
 
-    Assertions.assertEquals(11, res.getConfigurationProperties().size());
+    Assertions.assertEquals(8, res.getConfigurationProperties().size());
     Assertions.assertEquals(3, producerFactory.getConfigurationProperties().size());
     Assertions.assertEquals(3, consumerFactory.getConfigurationProperties().size());
   }
