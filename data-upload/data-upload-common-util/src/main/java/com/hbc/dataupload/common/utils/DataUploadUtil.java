@@ -65,6 +65,7 @@ public class DataUploadUtil {
 
   public static void validateFileType(Path path, String fileUri, String errorMessage)
       throws IOException, CommonServiceException {
+    log.debug("file type : {}", Files.probeContentType(path));
     if (!FILE_TYPE.equals(Files.probeContentType(path))) {
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(FILE_URI, FieldError.builder().rejectedValue(fileUri).build());
