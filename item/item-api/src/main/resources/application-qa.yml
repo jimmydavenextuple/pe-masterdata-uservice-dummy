@@ -12,10 +12,6 @@ spring:
   kafka:
     bootstrap-servers: "temp-5-kafka-sfcc.integration.awshbc.io:9092"
     consumer-retry-count: 3
-    properties:
-      security.protocol: SASL_SSL
-      sasl.mechanism: SCRAM-SHA-512
-      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"\${KAFKA_USER}\" password=\"\${KAFKA_PWD}\";"
     consumer:
       enable-auto-commit: true
       auto-offset-reset: earliest
