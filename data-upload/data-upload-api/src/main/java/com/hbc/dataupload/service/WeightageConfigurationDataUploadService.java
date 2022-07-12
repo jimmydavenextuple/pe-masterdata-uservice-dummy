@@ -55,8 +55,7 @@ public class WeightageConfigurationDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(
-        path, fileUri, WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(

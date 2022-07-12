@@ -56,7 +56,7 @@ public class TransitDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(path, fileUri, TRANSIT_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, TRANSIT_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, TRANSIT_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(path, fileUri, maxRows, TRANSIT_DATA_UPLOAD_LARGE_ROW_SIZE);
