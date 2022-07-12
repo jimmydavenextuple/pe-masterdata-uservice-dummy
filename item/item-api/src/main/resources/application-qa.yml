@@ -10,7 +10,7 @@ spring:
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
   kafka:
-    bootstrap-servers: "b-1.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9096,b-2.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9096,b-3.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9096"
+    bootstrap-servers: "temp-5-kafka-sfcc.integration.awshbc.io:9092"
     consumer-retry-count: 3
     properties:
       security.protocol: SASL_SSL
@@ -26,7 +26,7 @@ spring:
         spring.json.trusted.packages: "*"
       topics:
         item_master:
-          name: INTERNAL.QA.ITEM_MASTER_INTEGRATION
+          name: items.promise.bay.v1
           group-id: item-master-qa
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer

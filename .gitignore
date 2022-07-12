@@ -58,3 +58,4 @@ mqjms.log.*
 **/bin
 .gradle/**/*
 integration-tests/**/output/*
+.idea/**/*
