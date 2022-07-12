@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 @Service
@@ -166,9 +167,11 @@ public class CalendarService {
           Map.of(ORG_ID, FieldError.builder().rejectedValue(orgId).build()));
     }
     List<String> exceptionDays =
-        calendarEntity.getExceptionDays().stream()
-            .map(ExceptionDays::getDate)
-            .collect(Collectors.toList());
+        CollectionUtils.isEmpty(calendarEntity.getExceptionDays())
+            ? new ArrayList<>()
+            : calendarEntity.getExceptionDays().stream()
+                .map(ExceptionDays::getDate)
+                .collect(Collectors.toList());
     calendarDaysStatusInfoList.forEach(
         info -> {
           info.setIsActive(findWeekInfo(DateUtil.getDayOfWeek(info.getDate()), calendarEntity));
@@ -204,9 +207,11 @@ public class CalendarService {
         var calendarEntity = calendarDomain.getCalendar(orgId, calendarIds.get(x.getDate()));
 
         List<String> exceptionDays =
-            calendarEntity.getExceptionDays().stream()
-                .map(ExceptionDays::getDate)
-                .collect(Collectors.toList());
+            CollectionUtils.isEmpty(calendarEntity.getExceptionDays())
+                ? new ArrayList<>()
+                : calendarEntity.getExceptionDays().stream()
+                    .map(ExceptionDays::getDate)
+                    .collect(Collectors.toList());
         calendarDaysStatusInfoList.stream()
             .filter(info -> info.getDate().compareTo(x.getDate()) >= 0)
             .forEach(
