@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DataUploadUtilityConstants {
-  public static final String FILE_TYPE = "text/csv";
   public static final String CREATE = "CREATE";
   public static final String UPDATE = "UPDATE";
   public static final String DELETE = "DELETE";

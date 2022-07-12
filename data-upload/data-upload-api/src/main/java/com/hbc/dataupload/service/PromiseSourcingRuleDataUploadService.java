@@ -60,8 +60,7 @@ public class PromiseSourcingRuleDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(
-        path, fileUri, PROMISE_SOURCING_RULE_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, PROMISE_SOURCING_RULE_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, PROMISE_SOURCING_RULE_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(
