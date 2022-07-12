@@ -10,6 +10,7 @@ import com.hbc.calendar.domain.outbound.CalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.NodeCalendarDomain;
+import com.hbc.pe.masterdata.calendar.domain.entity.CalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
@@ -81,6 +82,32 @@ class CalendarServiceTest {
     when(nodeCalendarDomain.getNodeCalendar(any(), any()))
         .thenReturn(Arrays.asList(testUtil.getNodeCalendarEntity(), entity));
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
+
+    List<CalendarDaysStatusInfo> resp =
+        calendarService.processGetUpcomingDaysCalendarStatus(
+            TestUtil.ORG_ID,
+            Optional.of(TestUtil.NODE_ID),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty());
+
+    Assertions.assertEquals(10, resp.size());
+    verify(nodeCalendarDomain, times(1)).getNodeCalendar(any(), any());
+    verify(calendarDomain, times(2)).getCalendar(any(), any());
+  }
+
+  @Test
+  void processGetUpcomingDaysTestWithoutExceptionDays()
+      throws CalendarDomainException, CommonServiceException {
+    NodeCalendarEntity entity = testUtil.getNodeCalendarEntity();
+    entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(4, "UTC"));
+    when(nodeCalendarDomain.getNodeCalendar(any(), any()))
+        .thenReturn(Arrays.asList(testUtil.getNodeCalendarEntity(), entity));
+    CalendarEntity calendarEntity = testUtil.getCalendarEntity();
+    calendarEntity.setExceptionDays(null);
+    when(calendarDomain.getCalendar(any(), any())).thenReturn(calendarEntity);
 
     List<CalendarDaysStatusInfo> resp =
         calendarService.processGetUpcomingDaysCalendarStatus(
