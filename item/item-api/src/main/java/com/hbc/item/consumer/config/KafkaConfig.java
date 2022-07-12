@@ -24,7 +24,7 @@ import org.springframework.util.backoff.FixedBackOff;
 
 @EnableKafka
 @Configuration
-@Profile("!default")
+@Profile("default")
 public class KafkaConfig {
 
   @Value(value = "${spring.kafka.bootstrap-servers}")
