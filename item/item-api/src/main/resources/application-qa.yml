@@ -10,23 +10,24 @@ spring:
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
   kafka:
-    bootstrap-servers: "temp-5-kafka-sfcc.integration.awshbc.io:9092"
+    bootstrap-servers: "b-1.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9096,b-2.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9096,b-3.qakafkacluster.gbed4e.c23.kafka.us-east-1.amazonaws.com:9096"
     consumer-retry-count: 3
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: SCRAM-SHA-512
+      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"\${KAFKA_USER}\" password=\"\${KAFKA_PWD}\";"
     consumer:
       enable-auto-commit: true
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      properties:
-        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-        spring.json.trusted.packages: "*"
+      value-deserializer: com.hbc.item.consumer.serializer.ItemDeserializer
       topics:
         item_master:
-          name: items.promise.bay.v1
+          name: qa.items.promise.bay.v1
           group-id: item-master-qa
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: com.hbc.item.consumer.serializer.ItemSerializer
 
 logging:
   level:

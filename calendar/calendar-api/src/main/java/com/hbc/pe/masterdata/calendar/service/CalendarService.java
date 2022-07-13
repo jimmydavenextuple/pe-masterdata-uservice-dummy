@@ -66,24 +66,22 @@ public class CalendarService {
       Optional<String> carrierServiceId,
       Optional<String> serviceOption,
       Optional<Integer> numberOfDaysInFuture,
-      Optional<String> shippingStage,
-      Optional<String> destinationTimezone)
+      Optional<String> shippingStage)
       throws CalendarDomainException, CommonServiceException {
     validateRequestFields(orgId, nodeId, carrierServiceId);
 
     List<CalendarDaysStatusInfo> calendarDaysStatusInfoList = new ArrayList<>();
-    String timezone = nodeId.isPresent() ? NODE_TIMEZONE : destinationTimezone.orElse("UTC");
 
     int numDays = numberOfDaysInFuture.orElseGet(() -> defaultNumberOfDaysInFuture);
-    for (var i = 0; i < numDays; i++) {
+    for (var i = -1; i < numDays; i++) {
       calendarDaysStatusInfoList.add(
           CalendarDaysStatusInfo.builder()
-              .date(DateUtil.addDaysToCurrentDate(i, timezone))
+              .date(DateUtil.addDaysToCurrentDate(i))
               .isActive(Boolean.TRUE)
               .build());
     }
-    String startDate = DateUtil.addDaysToCurrentDate(0, timezone);
-    String endDate = DateUtil.addDaysToCurrentDate(numDays, timezone);
+    String startDate = DateUtil.addDaysToCurrentDate(-1);
+    String endDate = DateUtil.addDaysToCurrentDate(numDays);
     var currentCalendarId = "";
     Map<String, String> nextCalendarIds = new HashMap<>();
 

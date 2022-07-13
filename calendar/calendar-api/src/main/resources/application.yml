@@ -17,7 +17,7 @@ server:
       max: 200
 
 constants:
-  defaultNumberOfDaysInFuture: 10
+  defaultNumberOfDaysInFuture: 45
 
 logging:
   level:

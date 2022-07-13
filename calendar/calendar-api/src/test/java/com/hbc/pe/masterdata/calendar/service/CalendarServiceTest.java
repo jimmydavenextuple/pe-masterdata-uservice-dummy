@@ -78,7 +78,7 @@ class CalendarServiceTest {
   void processGetUpcomingDaysNodeCalendarStatusTest()
       throws CalendarDomainException, CommonServiceException {
     NodeCalendarEntity entity = testUtil.getNodeCalendarEntity();
-    entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(5, "UTC"));
+    entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(5));
     when(nodeCalendarDomain.getNodeCalendar(any(), any()))
         .thenReturn(Arrays.asList(testUtil.getNodeCalendarEntity(), entity));
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
@@ -90,10 +90,9 @@ class CalendarServiceTest {
             Optional.empty(),
             Optional.empty(),
             Optional.empty(),
-            Optional.empty(),
             Optional.empty());
 
-    Assertions.assertEquals(10, resp.size());
+    Assertions.assertEquals(11, resp.size());
     verify(nodeCalendarDomain, times(1)).getNodeCalendar(any(), any());
     verify(calendarDomain, times(2)).getCalendar(any(), any());
   }
@@ -102,7 +101,7 @@ class CalendarServiceTest {
   void processGetUpcomingDaysTestWithoutExceptionDays()
       throws CalendarDomainException, CommonServiceException {
     NodeCalendarEntity entity = testUtil.getNodeCalendarEntity();
-    entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(4, "UTC"));
+    entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(4));
     when(nodeCalendarDomain.getNodeCalendar(any(), any()))
         .thenReturn(Arrays.asList(testUtil.getNodeCalendarEntity(), entity));
     CalendarEntity calendarEntity = testUtil.getCalendarEntity();
@@ -116,10 +115,9 @@ class CalendarServiceTest {
             Optional.empty(),
             Optional.empty(),
             Optional.empty(),
-            Optional.empty(),
             Optional.empty());
 
-    Assertions.assertEquals(10, resp.size());
+    Assertions.assertEquals(11, resp.size());
     verify(nodeCalendarDomain, times(1)).getNodeCalendar(any(), any());
     verify(calendarDomain, times(2)).getCalendar(any(), any());
   }
@@ -135,7 +133,6 @@ class CalendarServiceTest {
                 calendarService.processGetUpcomingDaysCalendarStatus(
                     TestUtil.ORG_ID,
                     Optional.of(TestUtil.NODE_ID),
-                    Optional.empty(),
                     Optional.empty(),
                     Optional.empty(),
                     Optional.empty(),
@@ -160,7 +157,6 @@ class CalendarServiceTest {
                     Optional.empty(),
                     Optional.empty(),
                     Optional.empty(),
-                    Optional.empty(),
                     Optional.empty()));
 
     Assertions.assertEquals("Either nodeId or carrierServiceId must pe provided", cse.getMessage());
@@ -172,7 +168,7 @@ class CalendarServiceTest {
   void processGetUpcomingDaysCarrierServiceCalendarStatusTest()
       throws CalendarDomainException, CommonServiceException {
     CarrierServiceCalendarEntity entity = testUtil.getCarrierServiceCalendarEntity();
-    entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(5, "UTC"));
+    entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(5));
     when(carrierServiceCalendarService.getAndFilterCarrierServiceCalendar(
             any(), any(), any(), any()))
         .thenReturn(Arrays.asList(testUtil.getCarrierServiceCalendarEntity(), entity));
@@ -185,10 +181,9 @@ class CalendarServiceTest {
             Optional.of(TestUtil.CARRIER_SERVICE_ID),
             Optional.empty(),
             Optional.empty(),
-            Optional.empty(),
             Optional.empty());
 
-    Assertions.assertEquals(10, resp.size());
+    Assertions.assertEquals(11, resp.size());
     verify(carrierServiceCalendarService, times(1))
         .getAndFilterCarrierServiceCalendar(any(), any(), any(), any());
     verify(calendarDomain, times(2)).getCalendar(any(), any());
@@ -211,7 +206,6 @@ class CalendarServiceTest {
                     Optional.of(TestUtil.CARRIER_SERVICE_ID),
                     Optional.empty(),
                     Optional.empty(),
-                    Optional.empty(),
                     Optional.empty()));
 
     Assertions.assertEquals(
@@ -225,7 +219,7 @@ class CalendarServiceTest {
   void processGetUpcomingDaysNodeCarrierServiceCalendarStatusTest()
       throws CalendarDomainException, CommonServiceException {
     NodeCarrierServiceCalendarEntity entity = testUtil.getNodeCarrierServiceCalendarEntity();
-    entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(5, "UTC"));
+    entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(5));
     when(nodeCarrierServiceCalendarService.getAndFilterNodeCarrierServiceCalendar(
             any(), any(), any(), any()))
         .thenReturn(Arrays.asList(testUtil.getNodeCarrierServiceCalendarEntity(), entity));
@@ -238,10 +232,9 @@ class CalendarServiceTest {
             Optional.of(TestUtil.CARRIER_SERVICE_ID),
             Optional.empty(),
             Optional.empty(),
-            Optional.empty(),
             Optional.empty());
 
-    Assertions.assertEquals(10, resp.size());
+    Assertions.assertEquals(11, resp.size());
     verify(nodeCarrierServiceCalendarService, times(1))
         .getAndFilterNodeCarrierServiceCalendar(any(), any(), any(), any());
     verify(calendarDomain, times(2)).getCalendar(any(), any());
@@ -262,7 +255,6 @@ class CalendarServiceTest {
                     TestUtil.ORG_ID,
                     Optional.of(TestUtil.NODE_ID),
                     Optional.of(TestUtil.CARRIER_SERVICE_ID),
-                    Optional.empty(),
                     Optional.empty(),
                     Optional.empty(),
                     Optional.empty()));

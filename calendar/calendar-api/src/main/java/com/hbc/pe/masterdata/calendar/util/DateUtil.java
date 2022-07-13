@@ -21,9 +21,9 @@ public class DateUtil {
     return val;
   }
 
-  public static String addDaysToCurrentDate(int toAddDays, String timezone) {
+  public static String addDaysToCurrentDate(int toAddDays) {
     var dt = new DateTime();
-    var added = dt.withZone(DateTimeZone.forID(timezone)).plusDays(toAddDays);
+    var added = dt.withZone(DateTimeZone.forID("UTC")).plusDays(toAddDays);
 
     return added.toString("yyyy-MM-dd");
   }

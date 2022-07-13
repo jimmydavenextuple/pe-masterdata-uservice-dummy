@@ -23,7 +23,7 @@ public class TestUtil {
   public static final String ORG_ID = "Bay";
   public static final String NODE_ID = "N001";
   public static final String DESCRIPTION = "Yearly";
-  public static final String EXCEPTION_DATE = DateUtil.addDaysToCurrentDate(4, "UTC");
+  public static final String EXCEPTION_DATE = DateUtil.addDaysToCurrentDate(4);
   public static final String EFFECTIVE_DATE = "2022-01-01";
   public static final String EXCEPTION_REASON = "Public Holiday";
   public static final String CARRIER_SERVICE_ID = "Puro-Post";

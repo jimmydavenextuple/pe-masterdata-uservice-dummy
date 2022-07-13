@@ -1,8 +1,8 @@
 package com.hbc.item.config;
 
 import com.hbc.item.TestUtil;
-import com.hbc.item.consumer.serializer.AvroDeserializer;
-import com.hbc.item.consumer.serializer.AvroSerializer;
+import com.hbc.item.consumer.serializer.ItemDeserializer;
+import com.hbc.item.consumer.serializer.ItemSerializer;
 import com.hbc.item.exception.ItemDomainException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-class AvroSerializerTest {
+class ItemSerializerTest {
 
-  @InjectMocks private AvroSerializer avroSerializer;
+  @InjectMocks private ItemSerializer itemSerializer;
 
-  @InjectMocks private AvroDeserializer avroDeserializer;
+  @InjectMocks private ItemDeserializer itemDeserializer;
 
   @InjectMocks private TestUtil testUtil;
 
@@ -25,8 +25,8 @@ class AvroSerializerTest {
 
   @Test
   void onItemMasterEventConsumptionTest() throws ItemDomainException {
-    avroSerializer.serialize("topic", testUtil.getItemRecord());
-    avroDeserializer.deserialize("topic", "".getBytes());
+    itemSerializer.serialize("topic", testUtil.getItemRecord());
+    itemDeserializer.deserialize("topic", "".getBytes());
 
     Assertions.assertTrue(Boolean.TRUE);
   }
