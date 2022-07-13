@@ -114,18 +114,6 @@ class TransitDataUploadServiceTest {
         Paths.get("src", "test", "resources", "transit", "transit_happyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
-    BaseResponse<TransitResponse> baseResponse = testUtil.getFailedBaseResponseForTransit();
-    when(transitFeign.addTransitData(any(TransitDataCreationRequest.class)))
-        .thenReturn(baseResponse);
-    when(transitFeign.updateTransitData(
-            anyString(),
-            anyString(),
-            anyString(),
-            anyString(),
-            any(TransitDataUpdationRequest.class)))
-        .thenThrow(NullPointerException.class);
-    when(transitFeign.deleteTransitDetails(anyString(), anyString(), anyString(), anyString()))
-        .thenReturn(baseResponse);
     ResponseEntity<BaseResponse<String>> response =
         transitDataUploadService.uploadTransitData(absolutePath);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

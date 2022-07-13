@@ -4,8 +4,8 @@ import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.E
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.SDND;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.STANDARD;
 
-import com.hbc.common.ApplicationLayer;
-import com.hbc.common.ExceptionCodeMapping;
+import com.hbc.common.enums.ApplicationLayer;
+import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
@@ -53,7 +53,7 @@ public class PromiseSourcingRuleService {
    * @return ServiceOptionInfo object
    */
   private ServiceOptionInfo getServiceOptionInfo(PromiseSourcingRule promiseSourcingRule) {
-    ServiceOptionInfo serviceOptionInfo = new ServiceOptionInfo();
+    var serviceOptionInfo = new ServiceOptionInfo();
     serviceOptionInfo.setSourceNodes(promiseSourcingRule.getSourceNodes());
     serviceOptionInfo.setPriority(promiseSourcingRule.getPriority());
     return serviceOptionInfo;

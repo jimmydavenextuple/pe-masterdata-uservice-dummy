@@ -114,16 +114,6 @@ class PostalCodeTimezoneDataUploadServiceTest {
             "src", "test", "resources", "postalCodeTimezone", "postalCodeTimezone_happyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
-    BaseResponse<PostalCodeTimezoneDto> baseResponse =
-        testUtil.getFailedBaseResponseForPostalCodeTimezone();
-    when(postalCodeTimezoneFeign.createPostalCodeTimezone(
-            any(CreatePostalCodeTimezoneRequest.class)))
-        .thenReturn(baseResponse);
-    when(postalCodeTimezoneFeign.updatePostalCodeTimezone(
-            anyString(), anyString(), any(UpdatePostalCodeTimezoneRequest.class)))
-        .thenThrow(NullPointerException.class);
-    when(postalCodeTimezoneFeign.deletePostalCodeTimezone(anyString(), anyString()))
-        .thenReturn(baseResponse);
     ResponseEntity<BaseResponse<String>> response =
         postalCodeTimezoneDataUploadService.uploadPostalCodeTimezoneData(absolutePath);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

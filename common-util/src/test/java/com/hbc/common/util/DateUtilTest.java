@@ -29,6 +29,8 @@ class DateUtilTest {
 
     /** check the negative use case */
     assertFalse(DateUtil.isDateBefore(null, dt1));
+
+    assertFalse(DateUtil.isDateBefore(null, null));
   }
 
   @DisplayName("Test to check if the date dt1 is after date dt2 ")
@@ -43,6 +45,8 @@ class DateUtilTest {
 
     /** check the negative use case */
     assertFalse(DateUtil.isDateAfter(null, dt1));
+
+    assertFalse(DateUtil.isDateAfter(null, null));
   }
 
   @DisplayName("Test to check if the date is before today")
@@ -90,6 +94,8 @@ class DateUtilTest {
 
     /** check the negative use case */
     assertFalse(DateUtil.isSameDayIgnoreTime(dt1, dt3));
+
+    assertFalse(DateUtil.isSameDayIgnoreTime(null, null));
   }
 
   @DisplayName("Test to get the currentDate ")
@@ -264,6 +270,9 @@ class DateUtilTest {
     String str = DateUtil.convertDateShortForm(new Date());
     /** positive case */
     assertNotNull(str);
+
+    /** negative case */
+    assertEquals("", DateUtil.convertDateShortForm(null));
   }
 
   @DisplayName("Test to convert the date long form ")

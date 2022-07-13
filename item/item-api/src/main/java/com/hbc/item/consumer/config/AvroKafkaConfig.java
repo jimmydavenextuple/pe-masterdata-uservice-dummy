@@ -29,7 +29,7 @@ import org.springframework.util.backoff.FixedBackOff;
 
 @EnableKafka
 @Configuration
-@Profile("default")
+@Profile({"dev", "qa"})
 public class AvroKafkaConfig {
 
   @Value(value = "${spring.kafka.bootstrap-servers}")

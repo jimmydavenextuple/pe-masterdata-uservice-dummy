@@ -1,6 +1,5 @@
 package com.hbc.dataupload.common.utils;
 
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.FILE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.FILE_URI;
 
 import com.hbc.common.exception.CommonServiceException;
@@ -22,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.QuoteMode;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -63,9 +63,12 @@ public class DataUploadUtil {
                 .build());
   }
 
-  public static void validateFileType(Path path, String fileUri, String errorMessage)
+  public static void validateFileType(String fileUri, String errorMessage)
       throws IOException, CommonServiceException {
-    if (!FILE_TYPE.equals(Files.probeContentType(path))) {
+    String fileType = FilenameUtils.getExtension(fileUri);
+    log.debug("file type : {}", fileType);
+
+    if (!fileType.equals("csv")) {
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(FILE_URI, FieldError.builder().rejectedValue(fileUri).build());
       throw new CommonServiceException(errorMessage, HttpStatus.BAD_REQUEST, 0x2773, errorMap);
@@ -157,8 +160,15 @@ public class DataUploadUtil {
   }
 
   public static Path getPath(String basePath, String fileUri) {
-    Path path = Paths.get(basePath.concat(fileUri));
+    var path = Paths.get(basePath.concat(fileUri));
     log.debug("fileName : {}", path.getFileName());
     return path;
+  }
+
+  public static Map<String, Boolean> storeToMap(boolean isAllPassed, boolean isAllFailed) {
+    Map<String, Boolean> resultMap = new HashMap<>();
+    resultMap.put("isAllPassed", isAllPassed);
+    resultMap.put("isAllFailed", isAllFailed);
+    return resultMap;
   }
 }

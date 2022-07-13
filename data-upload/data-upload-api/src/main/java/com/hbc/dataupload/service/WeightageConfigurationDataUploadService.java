@@ -1,6 +1,7 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DELETE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.KEY;
@@ -25,7 +26,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,8 +55,7 @@ public class WeightageConfigurationDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(
-        path, fileUri, WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(
@@ -69,10 +68,9 @@ public class WeightageConfigurationDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailed = true;
-    boolean isAllPassed = true;
-    boolean result = false;
-    Map<String, Boolean> resultMap = new HashMap<>();
+    boolean isAllFailedForWeightage = true;
+    boolean isAllPassedForWeightage = true;
+    boolean weightageResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
@@ -104,7 +102,7 @@ public class WeightageConfigurationDataUploadService {
                 BaseResponse<WeightageConfigurationDto> baseResponse =
                     weightageConfigurationFeign.createWeightageConfiguration(
                         createWeightageConfigurationRequest);
-                result = baseResponse.isSuccess();
+                weightageResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -120,7 +118,7 @@ public class WeightageConfigurationDataUploadService {
                 BaseResponse<WeightageConfigurationDto> baseResponse =
                     weightageConfigurationFeign.updateWeightageConfiguration(
                         orgId, type, key, updateWeightageConfigurationRequest);
-                result = baseResponse.isSuccess();
+                weightageResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -129,34 +127,32 @@ public class WeightageConfigurationDataUploadService {
               {
                 BaseResponse<WeightageConfigurationDto> baseResponse =
                     weightageConfigurationFeign.deleteWeightageConfiguration(orgId, type, key);
-                result = baseResponse.isSuccess();
+                weightageResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
 
             default:
               {
-                log.error("action type invalid");
+                log.error(ACTION_INVALID_MESSAGE);
                 break;
               }
           }
         } catch (Exception e) {
-          if (isAllPassed) {
-            isAllPassed = false;
+          if (isAllPassedForWeightage) {
+            isAllPassedForWeightage = false;
           }
-          log.error("Failed to store csv data for row number : {}", row);
+          log.error("Failed to store Weightage Configuration CSV data for row number : {}", row);
         }
 
-        if (isAllPassed) {
-          isAllPassed = result;
+        if (isAllPassedForWeightage) {
+          isAllPassedForWeightage = weightageResult;
         }
-        if (isAllFailed) {
-          isAllFailed = !result;
+        if (isAllFailedForWeightage) {
+          isAllFailedForWeightage = !weightageResult;
         }
       }
-      resultMap.put("isAllPassed", isAllPassed);
-      resultMap.put("isAllFailed", isAllFailed);
-      return resultMap;
+      return DataUploadUtil.storeToMap(isAllPassedForWeightage, isAllFailedForWeightage);
     }
   }
 }

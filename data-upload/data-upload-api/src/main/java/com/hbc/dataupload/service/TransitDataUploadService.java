@@ -1,6 +1,7 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DELETE;
@@ -26,7 +27,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +56,7 @@ public class TransitDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(path, fileUri, TRANSIT_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, TRANSIT_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, TRANSIT_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(path, fileUri, maxRows, TRANSIT_DATA_UPLOAD_LARGE_ROW_SIZE);
@@ -67,10 +67,9 @@ public class TransitDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailed = true;
-    boolean isAllPassed = true;
-    boolean result = false;
-    Map<String, Boolean> resultMap = new HashMap<>();
+    boolean isAllFailedForTransit = true;
+    boolean isAllPassedForTransit = true;
+    boolean transitResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
@@ -100,7 +99,7 @@ public class TransitDataUploadService {
                         .build();
                 BaseResponse<TransitResponse> baseResponse =
                     transitFeign.addTransitData(transitDataCreationRequest);
-                result = baseResponse.isSuccess();
+                transitResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -116,7 +115,7 @@ public class TransitDataUploadService {
                         destinationGeoZone,
                         carrierServiceId,
                         transitDataUpdationRequest);
-                result = baseResponse.isSuccess();
+                transitResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -126,34 +125,32 @@ public class TransitDataUploadService {
                 BaseResponse<TransitResponse> baseResponse =
                     transitFeign.deleteTransitDetails(
                         orgId, sourceGeoZone, destinationGeoZone, carrierServiceId);
-                result = baseResponse.isSuccess();
+                transitResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
 
             default:
               {
-                log.error("action type invalid");
+                log.error(ACTION_INVALID_MESSAGE);
                 break;
               }
           }
         } catch (Exception e) {
-          if (isAllPassed) {
-            isAllPassed = false;
+          if (isAllPassedForTransit) {
+            isAllPassedForTransit = false;
           }
-          log.error("Failed to store csv data for row number : {}", row);
+          log.error("Failed to store Transit CSV data for row number : {}", row);
         }
 
-        if (isAllPassed) {
-          isAllPassed = result;
+        if (isAllPassedForTransit) {
+          isAllPassedForTransit = transitResult;
         }
-        if (isAllFailed) {
-          isAllFailed = !result;
+        if (isAllFailedForTransit) {
+          isAllFailedForTransit = !transitResult;
         }
       }
-      resultMap.put("isAllPassed", isAllPassed);
-      resultMap.put("isAllFailed", isAllFailed);
-      return resultMap;
+      return DataUploadUtil.storeToMap(isAllPassedForTransit, isAllFailedForTransit);
     }
   }
 }

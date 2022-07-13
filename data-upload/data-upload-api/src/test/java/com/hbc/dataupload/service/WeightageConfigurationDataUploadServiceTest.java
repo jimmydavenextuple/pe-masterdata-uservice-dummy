@@ -131,17 +131,6 @@ class WeightageConfigurationDataUploadServiceTest {
             "weightageConfiguration_happyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
-    BaseResponse<WeightageConfigurationDto> baseResponse =
-        testUtil.getFailedBaseResponseForWeightageConfiguration();
-    when(weightageConfigurationFeign.createWeightageConfiguration(
-            any(CreateWeightageConfigurationRequest.class)))
-        .thenReturn(baseResponse);
-    when(weightageConfigurationFeign.updateWeightageConfiguration(
-            anyString(), anyString(), anyString(), any(UpdateWeightageConfigurationRequest.class)))
-        .thenThrow(NullPointerException.class);
-    when(weightageConfigurationFeign.deleteWeightageConfiguration(
-            anyString(), anyString(), anyString()))
-        .thenReturn(baseResponse);
     ResponseEntity<BaseResponse<String>> response =
         weightageConfigurationDataUploadService.uploadWeightageConfigurationData(absolutePath);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

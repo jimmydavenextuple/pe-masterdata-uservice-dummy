@@ -1,6 +1,7 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
@@ -29,7 +30,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,8 +59,7 @@ public class PostalCodeTimezoneDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(
-        path, fileUri, POSTAL_CODE_TIMEZONE_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, POSTAL_CODE_TIMEZONE_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, POSTAL_CODE_TIMEZONE_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(
@@ -73,10 +72,9 @@ public class PostalCodeTimezoneDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailed = true;
-    boolean isAllPassed = true;
-    boolean result = false;
-    Map<String, Boolean> resultMap = new HashMap<>();
+    boolean isAllFailedForPostalCode = true;
+    boolean isAllPassedForPostalCode = true;
+    boolean postalCodeResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
@@ -114,7 +112,7 @@ public class PostalCodeTimezoneDataUploadService {
                 BaseResponse<PostalCodeTimezoneDto> baseResponse =
                     postalCodeTimezoneFeign.createPostalCodeTimezone(
                         createPostalCodeTimezoneRequest);
-                result = baseResponse.isSuccess();
+                postalCodeResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -133,7 +131,7 @@ public class PostalCodeTimezoneDataUploadService {
                 BaseResponse<PostalCodeTimezoneDto> baseResponse =
                     postalCodeTimezoneFeign.updatePostalCodeTimezone(
                         orgId, postalCodePrefix, updatePostalCodeTimezoneRequest);
-                result = baseResponse.isSuccess();
+                postalCodeResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -142,34 +140,32 @@ public class PostalCodeTimezoneDataUploadService {
               {
                 BaseResponse<PostalCodeTimezoneDto> baseResponse =
                     postalCodeTimezoneFeign.deletePostalCodeTimezone(orgId, postalCodePrefix);
-                result = baseResponse.isSuccess();
+                postalCodeResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
 
             default:
               {
-                log.error("action type invalid");
+                log.error(ACTION_INVALID_MESSAGE);
                 break;
               }
           }
         } catch (Exception e) {
-          if (isAllPassed) {
-            isAllPassed = false;
+          if (isAllPassedForPostalCode) {
+            isAllPassedForPostalCode = false;
           }
-          log.error("Failed to store csv data for row number : {}", row);
+          log.error("Failed to store Postal Code Timezone CSV data for row number : {}", row);
         }
 
-        if (isAllPassed) {
-          isAllPassed = result;
+        if (isAllPassedForPostalCode) {
+          isAllPassedForPostalCode = postalCodeResult;
         }
-        if (isAllFailed) {
-          isAllFailed = !result;
+        if (isAllFailedForPostalCode) {
+          isAllFailedForPostalCode = !postalCodeResult;
         }
       }
-      resultMap.put("isAllPassed", isAllPassed);
-      resultMap.put("isAllFailed", isAllFailed);
-      return resultMap;
+      return DataUploadUtil.storeToMap(isAllPassedForPostalCode, isAllFailedForPostalCode);
     }
   }
 }

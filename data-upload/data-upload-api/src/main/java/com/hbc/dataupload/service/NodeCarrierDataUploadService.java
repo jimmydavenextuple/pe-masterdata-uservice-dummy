@@ -1,6 +1,7 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DELETE;
@@ -27,7 +28,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +56,7 @@ public class NodeCarrierDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(path, fileUri, NODE_CARRIER_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, NODE_CARRIER_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, NODE_CARRIER_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(
@@ -68,10 +68,9 @@ public class NodeCarrierDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailed = true;
-    boolean isAllPassed = true;
-    boolean result = false;
-    Map<String, Boolean> resultMap = new HashMap<>();
+    boolean isAllFailedForNodeCarrier = true;
+    boolean isAllPassedForNodeCarrier = true;
+    boolean nodeCarrierResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
@@ -104,7 +103,7 @@ public class NodeCarrierDataUploadService {
                         .build();
                 BaseResponse<NodeCarrierResponse> baseResponse =
                     nodeCarrierFeign.createNodeCarrier(nodeCarrierRequest);
-                result = baseResponse.isSuccess();
+                nodeCarrierResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -119,7 +118,7 @@ public class NodeCarrierDataUploadService {
                 BaseResponse<NodeCarrierResponse> baseResponse =
                     nodeCarrierFeign.updateNodeCarrier(
                         nodeId, orgId, carrierServiceId, serviceOption, nodeCarrierUpdateRequest);
-                result = baseResponse.isSuccess();
+                nodeCarrierResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
@@ -129,34 +128,32 @@ public class NodeCarrierDataUploadService {
                 BaseResponse<NodeCarrierResponse> baseResponse =
                     nodeCarrierFeign.deleteNodeCarrier(
                         nodeId, orgId, carrierServiceId, serviceOption);
-                result = baseResponse.isSuccess();
+                nodeCarrierResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
                 break;
               }
 
             default:
               {
-                log.error("action type invalid");
+                log.error(ACTION_INVALID_MESSAGE);
                 break;
               }
           }
         } catch (Exception e) {
-          if (isAllPassed) {
-            isAllPassed = false;
+          if (isAllPassedForNodeCarrier) {
+            isAllPassedForNodeCarrier = false;
           }
-          log.error("Failed to store csv data for row number : {}", row);
+          log.error("Failed to store Node Carrier CSV data for row number : {}", row);
         }
 
-        if (isAllPassed) {
-          isAllPassed = result;
+        if (isAllPassedForNodeCarrier) {
+          isAllPassedForNodeCarrier = nodeCarrierResult;
         }
-        if (isAllFailed) {
-          isAllFailed = !result;
+        if (isAllFailedForNodeCarrier) {
+          isAllFailedForNodeCarrier = !nodeCarrierResult;
         }
       }
-      resultMap.put("isAllPassed", isAllPassed);
-      resultMap.put("isAllFailed", isAllFailed);
-      return resultMap;
+      return DataUploadUtil.storeToMap(isAllPassedForNodeCarrier, isAllFailedForNodeCarrier);
     }
   }
 }

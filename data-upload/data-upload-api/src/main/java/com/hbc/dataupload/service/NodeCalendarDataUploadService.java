@@ -1,6 +1,7 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESCRIPTION;
@@ -23,7 +24,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +53,7 @@ public class NodeCalendarDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(path, fileUri, NODE_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, NODE_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, NODE_CALENDAR_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(
@@ -66,10 +66,9 @@ public class NodeCalendarDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailed = true;
-    boolean isAllPassed = true;
-    boolean result = false;
-    Map<String, Boolean> resultMap = new HashMap<>();
+    boolean isAllFailedForNodeCalendar = true;
+    boolean isAllPassedForNodeCalendar = true;
+    boolean nodeCalendarResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
@@ -98,28 +97,26 @@ public class NodeCalendarDataUploadService {
                     .build();
             BaseResponse<NodeCalendarResponse> baseResponse =
                 calendarFeign.handleCreateNodeCalendar(nodeCalendarRequest);
-            result = baseResponse.isSuccess();
+            nodeCalendarResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else {
-            log.error("action type invalid");
+            log.error(ACTION_INVALID_MESSAGE);
           }
         } catch (Exception e) {
-          if (isAllPassed) {
-            isAllPassed = false;
+          if (isAllPassedForNodeCalendar) {
+            isAllPassedForNodeCalendar = false;
           }
-          log.error("Failed to store csv data for row number : {}", row);
+          log.error("Failed to store Node Calendar data for row number : {}", row);
         }
 
-        if (isAllPassed) {
-          isAllPassed = result;
+        if (isAllPassedForNodeCalendar) {
+          isAllPassedForNodeCalendar = nodeCalendarResult;
         }
-        if (isAllFailed) {
-          isAllFailed = !result;
+        if (isAllFailedForNodeCalendar) {
+          isAllFailedForNodeCalendar = !nodeCalendarResult;
         }
       }
-      resultMap.put("isAllPassed", isAllPassed);
-      resultMap.put("isAllFailed", isAllFailed);
-      return resultMap;
+      return DataUploadUtil.storeToMap(isAllPassedForNodeCalendar, isAllFailedForNodeCalendar);
     }
   }
 }

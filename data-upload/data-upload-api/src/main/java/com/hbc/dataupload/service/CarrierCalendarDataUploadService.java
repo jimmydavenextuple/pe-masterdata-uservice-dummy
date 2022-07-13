@@ -1,6 +1,7 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
@@ -24,7 +25,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +54,7 @@ public class CarrierCalendarDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(path, fileUri, CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, CARRIER_CALENDAR_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(
@@ -67,10 +67,9 @@ public class CarrierCalendarDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailed = true;
-    boolean isAllPassed = true;
-    boolean result = false;
-    Map<String, Boolean> resultMap = new HashMap<>();
+    boolean isAllFailedForCarrierCalendar = true;
+    boolean isAllPassedForCarrierCalendar = true;
+    boolean carrierCalendar = false;
 
     try (Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
@@ -101,28 +100,27 @@ public class CarrierCalendarDataUploadService {
                     .build();
             BaseResponse<CarrierServiceCalendarResponse> baseResponse =
                 calendarFeign.handleCreateCarrierServiceCalendar(carrierServiceCalendarRequest);
-            result = baseResponse.isSuccess();
+            carrierCalendar = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else {
-            log.error("action type invalid");
+            log.error(ACTION_INVALID_MESSAGE);
           }
         } catch (Exception e) {
-          if (isAllPassed) {
-            isAllPassed = false;
+          if (isAllPassedForCarrierCalendar) {
+            isAllPassedForCarrierCalendar = false;
           }
-          log.error("Failed to store csv data for row number : {}", row);
+          log.error("Failed to store Carrier Calendar CSV data for row number : {}", row);
         }
 
-        if (isAllPassed) {
-          isAllPassed = result;
+        if (isAllPassedForCarrierCalendar) {
+          isAllPassedForCarrierCalendar = carrierCalendar;
         }
-        if (isAllFailed) {
-          isAllFailed = !result;
+        if (isAllFailedForCarrierCalendar) {
+          isAllFailedForCarrierCalendar = !carrierCalendar;
         }
       }
-      resultMap.put("isAllPassed", isAllPassed);
-      resultMap.put("isAllFailed", isAllFailed);
-      return resultMap;
+      return DataUploadUtil.storeToMap(
+          isAllPassedForCarrierCalendar, isAllFailedForCarrierCalendar);
     }
   }
 }
