@@ -22,6 +22,18 @@ spec:
         - hostPath:
             path: /mnt/s3data
           name: s3data
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: uservice
+                      operator: In
+                      values:
+                        - <SERVICE_NAME>
+                topologyKey: failure-domain.beta.kubernetes.io/zone
+              weight: 100
       containers:
         - name: <SERVICE_NAME>
           image: "<IMAGE_NAME>"

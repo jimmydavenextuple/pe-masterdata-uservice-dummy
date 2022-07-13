@@ -29,11 +29,11 @@ server:
           memory: "512Mi"
           cpu: "256m"
     perf:
-      replicas: 2
+      replicas: 3
       resources:
         min:
-          memory: "1024Mi"
-          cpu: "500m"
+          memory: "512Mi"
+          cpu: "256m"
         max:
-          memory: "1024Mi"
-          cpu: "500m"
+          memory: "512Mi"
+          cpu: "256m"

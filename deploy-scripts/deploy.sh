@@ -22,7 +22,7 @@ if [ "$ENVIRONMENT" == "dev" -o "$ENVIRONMENT" == "qa" ]; then
 elif [ "$ENVIRONMENT" == "stage" ]; then
   export AWS_EKS_NAME="stage-eks-cluster"
 elif [ "$ENVIRONMENT" == "perf" ]; then
-  export AWS_EKS_NAME="perf-eks-cluster"
+  export AWS_EKS_NAME="promise-engine-eks-perf"
 fi
 
 
