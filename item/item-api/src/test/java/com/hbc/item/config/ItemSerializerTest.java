@@ -1,5 +1,6 @@
 package com.hbc.item.config;
 
+import com.hbc.item.ItemRecord;
 import com.hbc.item.TestUtil;
 import com.hbc.item.consumer.serializer.ItemDeserializer;
 import com.hbc.item.consumer.serializer.ItemSerializer;
@@ -25,9 +26,16 @@ class ItemSerializerTest {
 
   @Test
   void onItemMasterEventConsumptionTest() throws ItemDomainException {
-    itemSerializer.serialize("topic", testUtil.getItemRecord());
+    byte[] res = itemSerializer.serialize("topic", null);
+    itemDeserializer.deserialize("topic", null);
+    ItemRecord record = testUtil.getItemRecord();
+    itemSerializer.serialize("topic", record);
+    record.setOrgId(null);
+    itemSerializer.serialize("topic", record);
+    itemSerializer.configure(null, true);
+    itemSerializer.close();
     itemDeserializer.deserialize("topic", "".getBytes());
 
-    Assertions.assertTrue(Boolean.TRUE);
+    Assertions.assertNull(res);
   }
 }

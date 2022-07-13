@@ -43,7 +43,7 @@ public class CalendarService {
   private static final String NODE_ID = "nodeId";
   private static final String CARRIER_SERVICE_ID = "carrierServiceId";
 
-  @Value("${constants.defaultNumberOfDaysInFuture}")
+  @Value("${constants.default-number-of-days-in-future}")
   private Integer defaultNumberOfDaysInFuture;
 
   /** Creates a new Calendar */

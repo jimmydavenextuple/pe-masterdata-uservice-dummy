@@ -6,6 +6,7 @@ import com.hbc.item.domain.events.ItemMasterEvent;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -197,6 +198,9 @@ public class TestUtil {
   public ItemRecord getItemRecord() {
     ItemRecord record = new ItemRecord();
     record.setItemId(TestUtil.ITEM_ID);
+    record.setOrgId(TestUtil.ORG_ID);
+    record.setUom(TestUtil.UOM);
+    record.setLastModifiedDate(Instant.ofEpochSecond(1000L));
     return record;
   }
 
