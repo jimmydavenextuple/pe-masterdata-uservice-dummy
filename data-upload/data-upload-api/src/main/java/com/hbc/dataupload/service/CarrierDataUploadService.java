@@ -56,7 +56,7 @@ public class CarrierDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(path, fileUri, CARRIER_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, CARRIER_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, CARRIER_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(path, fileUri, maxRows, CARRIER_DATA_UPLOAD_LARGE_ROW_SIZE);

@@ -54,7 +54,7 @@ public class CarrierCalendarDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(path, fileUri, CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, CARRIER_CALENDAR_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(

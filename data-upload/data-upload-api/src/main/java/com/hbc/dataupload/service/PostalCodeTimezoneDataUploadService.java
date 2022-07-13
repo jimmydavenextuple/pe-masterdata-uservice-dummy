@@ -59,8 +59,7 @@ public class PostalCodeTimezoneDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(
-        path, fileUri, POSTAL_CODE_TIMEZONE_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, POSTAL_CODE_TIMEZONE_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, POSTAL_CODE_TIMEZONE_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(

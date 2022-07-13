@@ -53,8 +53,7 @@ public class NodeCarrierCalendarDataUploadService {
       throws CommonServiceException, IOException {
     Path path = DataUploadUtil.getPath(basePath, fileUri);
 
-    DataUploadUtil.validateFileType(
-        path, fileUri, NODE_CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
+    DataUploadUtil.validateFileType(fileUri, NODE_CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
         path, fileUri, maxSizeInKiloBytes, NODE_CARRIER_CALENDAR_DATA_UPLOAD_LARGE_FILE_SIZE);
     DataUploadUtil.validateFileRows(
