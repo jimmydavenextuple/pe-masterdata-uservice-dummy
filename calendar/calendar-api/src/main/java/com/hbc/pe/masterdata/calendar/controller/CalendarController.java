@@ -65,8 +65,7 @@ public class CalendarController {
           @RequestParam Optional<String> carrierServiceId,
           @RequestParam Optional<String> serviceOption,
           @RequestParam Optional<Integer> numberOfDaysInFuture,
-          @RequestParam Optional<String> shippingStage,
-          @RequestParam Optional<String> destinationTimezone)
+          @RequestParam Optional<String> shippingStage)
           throws CalendarDomainException, CommonServiceException {
     try {
       return ResponseEntity.ok(
@@ -79,8 +78,7 @@ public class CalendarController {
                       carrierServiceId,
                       serviceOption,
                       numberOfDaysInFuture,
-                      shippingStage,
-                      destinationTimezone))
+                      shippingStage))
               .build());
     } catch (Exception e) {
       logger.error("Error in handleGetUpcomingDaysCalendarStatus()");

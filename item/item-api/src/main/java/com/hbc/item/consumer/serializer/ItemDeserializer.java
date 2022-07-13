@@ -1,12 +1,44 @@
 package com.hbc.item.consumer.serializer;
 
 import com.hbc.item.ItemRecord;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.avro.io.*;
+import org.apache.avro.specific.SpecificDatumReader;
+import org.apache.avro.specific.SpecificRecordBase;
+import org.apache.kafka.common.serialization.Deserializer;
 
 @Slf4j
-public class ItemDeserializer<T extends ItemRecord> extends AvroDeserializer<T> {
+public class ItemDeserializer<T extends SpecificRecordBase> implements Deserializer<T> {
 
-  public ItemDeserializer(Class<T> targetType) {
-    super(targetType);
+  @Override
+  public void configure(Map configs, boolean isKey) {
+    // do nothing
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public T deserialize(String topic, byte[] bytes) {
+    T returnObject = null;
+
+    try {
+
+      if (bytes != null) {
+        DatumReader<SpecificRecordBase> datumReader =
+            new SpecificDatumReader<>(ItemRecord.getClassSchema());
+        Decoder decoder = DecoderFactory.get().binaryDecoder(bytes, null);
+        returnObject = (T) datumReader.read(null, decoder);
+        log.debug("deserialized data='{}'", returnObject.toString());
+      }
+    } catch (Exception e) {
+      log.error("Unable to Deserialize bytes[] ", e);
+    }
+
+    return returnObject;
+  }
+
+  @Override
+  public void close() {
+    // do nothing
   }
 }
