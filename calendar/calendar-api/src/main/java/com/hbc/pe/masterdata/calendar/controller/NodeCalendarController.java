@@ -26,7 +26,7 @@ public class NodeCalendarController {
   public ResponseEntity<BaseResponse<NodeCalendarResponse>> handleCreateNodeCalendar(
       @Valid @RequestBody NodeCalendarRequest nodeCalendarRequest)
       throws CalendarDomainException, CommonServiceException {
-    logger.info(
+    logger.debug(
         "Inside handleCreateNodeCalendar() for nodeCalendarRequest: {}", nodeCalendarRequest);
     try {
       return ResponseEntity.ok(
