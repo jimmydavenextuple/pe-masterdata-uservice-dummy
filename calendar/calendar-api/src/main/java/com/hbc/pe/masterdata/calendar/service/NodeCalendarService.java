@@ -61,7 +61,7 @@ public class NodeCalendarService {
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(CALENDAR_ID, FieldError.builder().rejectedValue(calendarId).build());
       throw new CommonServiceException(
-              "Cannot create a node calendar as calendarId/orgId is invalid", HttpStatus.NOT_FOUND, 0x1771, errorMap);
+              "Cannot create a node-calendar as calendarId/orgId is invalid", HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
   }
 }
