@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import org.springframework.util.ObjectUtils;
 @RequiredArgsConstructor
 public class LocalCacheUpdateService {
 
+  private static final Logger logger = LoggerFactory.getLogger(LocalCacheUpdateService.class);
   private final List<GenericNearCacheService> nearCacheServices; // NOSONAR
 
   @Autowired NearCacheRegistry nearCacheRegistry;
@@ -36,6 +39,8 @@ public class LocalCacheUpdateService {
       if (genericNearCacheService.getEntityName().equals(entity)) {
         Map<String, String> registryDetails = nearCacheRegistry.getRegistry(entity);
         String className = (String) registryDetails.keySet().toArray()[0];
+
+        logger.debug("Class name :{}", className);
         String dropType = registryDetails.get(className);
 
         if (dropType.equals("full")) {
@@ -48,15 +53,19 @@ public class LocalCacheUpdateService {
           String path = "near-cache.entity." + entity + ".attributes";
           String params = env.getProperty(path);
 
+          logger.debug("Params list :{}", params);
+
           List<String> paramsList = new ArrayList<>();
           if (!ObjectUtils.isEmpty(params)) {
-            paramsList = Arrays.asList(params.split("\\s*,\\s*"));
+            paramsList = Arrays.asList(params.split("\\s*,\\s*")); // NOSONAR
           }
           for (String param : paramsList) {
             Field field = c.getDeclaredField(param);
-            field.setAccessible(true);
-            field.set(cacheKey, message.get(param));
+            field.setAccessible(true); // NOSONAR
+            field.set(cacheKey, message.get(param)); // NOSONAR
           }
+
+          logger.debug("Cache key :{}", cacheKey);
 
           genericNearCacheService.delete(cacheKey); // NOSONAR
         }

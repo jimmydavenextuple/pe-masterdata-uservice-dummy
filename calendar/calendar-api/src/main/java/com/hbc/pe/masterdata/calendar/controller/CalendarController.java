@@ -1,10 +1,10 @@
 package com.hbc.pe.masterdata.calendar.controller;
 
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
+import com.hbc.calendar.domain.inbound.CalendarRequest;
+import com.hbc.calendar.domain.outbound.CalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
-import com.hbc.pe.masterdata.calendar.domain.inbound.CalendarRequest;
-import com.hbc.pe.masterdata.calendar.domain.outbound.CalendarResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.service.CalendarService;
 import java.util.List;
@@ -30,7 +30,7 @@ public class CalendarController {
   @PostMapping
   public ResponseEntity<BaseResponse<CalendarResponse>> handleCreateCalendar(
       @Valid @RequestBody CalendarRequest calendarRequest) throws CalendarDomainException {
-    logger.info("Inside handleCreateCalendar() for calendarRequest: {}", calendarRequest);
+    logger.debug("Inside handleCreateCalendar() for calendarRequest: {}", calendarRequest);
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -66,8 +66,7 @@ public class CalendarController {
           @RequestParam Optional<String> carrierServiceId,
           @RequestParam Optional<String> serviceOption,
           @RequestParam Optional<Integer> numberOfDaysInFuture,
-          @RequestParam Optional<String> shippingStage,
-          @RequestParam Optional<String> destinationTimezone)
+          @RequestParam Optional<String> shippingStage)
           throws CalendarDomainException, CommonServiceException {
     try {
       return ResponseEntity.ok(
@@ -80,8 +79,7 @@ public class CalendarController {
                       carrierServiceId,
                       serviceOption,
                       numberOfDaysInFuture,
-                      shippingStage,
-                      destinationTimezone))
+                      shippingStage))
               .build());
     } catch (Exception e) {
       logger.error("Error in handleGetUpcomingDaysCalendarStatus()");

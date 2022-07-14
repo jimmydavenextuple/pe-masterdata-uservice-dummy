@@ -1,0 +1,30 @@
+bootJar {
+    enabled = true
+    mainClass.set("com.hbc.dataupload.DataUploadApplication")
+}
+
+configurations {
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
+}
+
+dependencies {
+    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.apache.commons:commons-csv'
+    implementation(project(":data-upload:data-upload-common-util"))
+    implementation(project(":node:node-api-domain"))
+    implementation(project(":node-carrier:node-carrier-api-domain"))
+    implementation(project(":carrier:carrier-api-domain"))
+    implementation(project(":promise-sourcing-rule:promise-sourcing-rule-api-domain"))
+    implementation(project(":postal-code-timezone:postal-code-timezone-api-domain"))
+    implementation(project(":transit:transit-api-domain"))
+    implementation(project(":weightage-configuration:weightage-configuration-api-domain"))
+    implementation(project(":calendar:calendar-api-domain"))
+    implementation(project(":common-util"))
+}
+
+test {
+    useJUnitPlatform()
+}

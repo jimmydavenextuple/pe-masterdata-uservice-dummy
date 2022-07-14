@@ -8,6 +8,7 @@ import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.mapper.NodeCarrierMapper;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 
 import java.util.*;
@@ -36,9 +37,11 @@ public class NodeCarrierService {
   public static final NodeCarrierMapper INSTANCE = Mappers.getMapper(NodeCarrierMapper.class);
 
   public NodeCarrierResponse createNodeCarrier(NodeCarrierRequest nodeCarrierRequest)
-      throws NodeCarrierDomainException, CommonServiceException {
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
 
-    NodeCarrierEntity nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
+    validateLastPickupTime(nodeCarrierRequest.getLastPickupTime());
+
+    var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
 
     Optional<NodeCarrierEntity> nodeCarrierEntity1 =
         nodeCarrierDomain.findNodeCarrierDetails(
@@ -73,6 +76,13 @@ public class NodeCarrierService {
     }
 
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
+  }
+
+  public void validateLastPickupTime(String lastPickupTime) throws InvalidDataException {
+    var regex = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+    if (!lastPickupTime.matches(regex)) {
+      throw new InvalidDataException("LastPickupTime is invalid", lastPickupTime);
+    }
   }
 
   public NodeCarrierResponse getNodeCarrierDetails(
@@ -123,7 +133,9 @@ public class NodeCarrierService {
       String carrierServiceId,
       String serviceOption,
       NodeCarrierUpdateRequest nodeCarrierUpdateRequest)
-      throws NodeCarrierDomainException, CommonServiceException {
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+
+    validateLastPickupTime(nodeCarrierUpdateRequest.getLastPickupTime());
 
     Optional<NodeCarrierEntity> existingNodeEntity =
         nodeCarrierDomain.findNodeCarrierDetails(nodeId, orgId, carrierServiceId, serviceOption);
@@ -162,7 +174,7 @@ public class NodeCarrierService {
       throw new CommonServiceException(
           NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
     }
-    NodeCarrierResponse nodeCarrierResponse = INSTANCE.toNodeCarrierDto(nodeCarrierEntity.get());
+    var nodeCarrierResponse = INSTANCE.toNodeCarrierDto(nodeCarrierEntity.get());
     nodeCarrierDomain.deleteNodeCarrierEntity(nodeCarrierEntity.get());
     return nodeCarrierResponse;
   }

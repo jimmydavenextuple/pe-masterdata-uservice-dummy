@@ -1,19 +1,19 @@
 package com.hbc.pe.masterdata.calendar.util;
 
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
+import com.hbc.calendar.domain.inbound.CalendarRequest;
+import com.hbc.calendar.domain.inbound.CarrierServiceCalendarRequest;
+import com.hbc.calendar.domain.inbound.NodeCalendarRequest;
+import com.hbc.calendar.domain.inbound.NodeCarrierServiceCalendarRequest;
+import com.hbc.calendar.domain.outbound.CalendarResponse;
+import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
+import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
+import com.hbc.calendar.domain.pojo.ExceptionDays;
 import com.hbc.pe.masterdata.calendar.domain.entity.CalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
-import com.hbc.pe.masterdata.calendar.domain.inbound.CalendarRequest;
-import com.hbc.pe.masterdata.calendar.domain.inbound.CarrierServiceCalendarRequest;
-import com.hbc.pe.masterdata.calendar.domain.inbound.NodeCalendarRequest;
-import com.hbc.pe.masterdata.calendar.domain.inbound.NodeCarrierServiceCalendarRequest;
-import com.hbc.pe.masterdata.calendar.domain.outbound.CalendarResponse;
-import com.hbc.pe.masterdata.calendar.domain.outbound.CarrierServiceCalendarResponse;
-import com.hbc.pe.masterdata.calendar.domain.outbound.NodeCalendarResponse;
-import com.hbc.pe.masterdata.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
-import com.hbc.pe.masterdata.calendar.domain.pojo.ExceptionDays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class TestUtil {
   public static final String ORG_ID = "Bay";
   public static final String NODE_ID = "N001";
   public static final String DESCRIPTION = "Yearly";
-  public static final String EXCEPTION_DATE = DateUtil.addDaysToCurrentDate(4, "UTC");
+  public static final String EXCEPTION_DATE = DateUtil.addDaysToCurrentDate(4);
   public static final String EFFECTIVE_DATE = "2022-01-01";
   public static final String EXCEPTION_REASON = "Public Holiday";
   public static final String CARRIER_SERVICE_ID = "Puro-Post";

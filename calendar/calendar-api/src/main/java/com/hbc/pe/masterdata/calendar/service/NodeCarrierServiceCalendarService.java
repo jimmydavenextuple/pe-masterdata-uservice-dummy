@@ -3,14 +3,16 @@ package com.hbc.pe.masterdata.calendar.service;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
+import com.hbc.calendar.domain.inbound.NodeCarrierServiceCalendarRequest;
+import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.pe.masterdata.calendar.domain.NodeCarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.entity.CalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
-import com.hbc.pe.masterdata.calendar.domain.inbound.NodeCarrierServiceCalendarRequest;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
-import com.hbc.pe.masterdata.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -36,11 +38,13 @@ public class NodeCarrierServiceCalendarService {
   /** Creates a new Node Carrier Service Calendar */
   public NodeCarrierServiceCalendarResponse processCreateNodeCarrierServiceCalendarResponse(
       NodeCarrierServiceCalendarRequest nodeCarrierServiceCalendarRequest)
+      throws CalendarDomainException {
+    var nodeCarrierServiceCalendarEntity =
       throws CalendarDomainException, CommonServiceException {
     validateCalendarId(nodeCarrierServiceCalendarRequest.getCalendarId(), nodeCarrierServiceCalendarRequest.getOrgId());
     NodeCarrierServiceCalendarEntity nodeCarrierServiceCalendarEntity =
         INSTANCE.convertToNodeCarrierServiceCalendarEntity(nodeCarrierServiceCalendarRequest);
-    NodeCarrierServiceCalendarEntity savedNodeCarrierServiceCalendarEntity =
+    var savedNodeCarrierServiceCalendarEntity =
         nodeCarrierServiceCalendarDomain.saveNodeCarrierServiceCalendarEntity(
             nodeCarrierServiceCalendarEntity);
     return INSTANCE.convertToNodeCarrierServiceCalendarResponse(

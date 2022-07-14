@@ -12,5 +12,7 @@ public class PostalCodeTimezoneCacheKey implements CacheKey {
   String orgId;
   String postalCodePrefix;
 
-  public PostalCodeTimezoneCacheKey() {}
+  public PostalCodeTimezoneCacheKey() {
+    // constructor
+  }
 }

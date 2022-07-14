@@ -3,11 +3,14 @@ package com.hbc.node.data.spring.cache.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.hbc.core.cache.domain.CacheValue;
 import com.hbc.core.cache.service.GenericFeignCacheService;
+import com.hbc.core.constants.NearCacheConstants;
+import com.hbc.core.registry.NearCacheRegistry;
 import com.hbc.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import com.hbc.node.data.cache.domain.NodeDataCacheKey;
 import com.hbc.node.data.cache.domain.NodeDataCacheValue;
@@ -34,6 +37,8 @@ class NodeDataSpringDataNearCacheServiceImplTest {
   @InjectMocks private TestUtil testUtil;
 
   @Mock private GenericFeignCacheService<NodeDataCacheKey, NodeDataCacheValue> feignCacheService;
+
+  @Mock private NearCacheRegistry nearCacheRegistry;
 
   @Test
   void getTestForValidData() {
@@ -80,5 +85,19 @@ class NodeDataSpringDataNearCacheServiceImplTest {
     nodeDataSpringDataNearCacheService.deleteAll();
     CacheValue cacheValue = nodeDataSpringDataNearCacheService.get(cacheKey);
     assertNull(cacheValue);
+  }
+
+  @Test
+  void selfRegister() {
+    doNothing().when(nearCacheRegistry).registerNearCacheEntity(any(), any(), any());
+    nodeDataSpringDataNearCacheService.selfRegister();
+
+    verify(nearCacheRegistry, times(1)).registerNearCacheEntity(any(), any(), any());
+  }
+
+  @Test
+  void getEntityName() {
+    assertEquals(
+        NearCacheConstants.NODE_ENTITY_NAME, nodeDataSpringDataNearCacheService.getEntityName());
   }
 }

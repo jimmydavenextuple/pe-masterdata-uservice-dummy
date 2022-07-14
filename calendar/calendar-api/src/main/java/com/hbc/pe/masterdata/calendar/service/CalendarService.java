@@ -1,6 +1,9 @@
 package com.hbc.pe.masterdata.calendar.service;
 
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
+import com.hbc.calendar.domain.inbound.CalendarRequest;
+import com.hbc.calendar.domain.outbound.CalendarResponse;
+import com.hbc.calendar.domain.pojo.ExceptionDays;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
@@ -9,10 +12,7 @@ import com.hbc.pe.masterdata.calendar.domain.entity.CalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
-import com.hbc.pe.masterdata.calendar.domain.inbound.CalendarRequest;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
-import com.hbc.pe.masterdata.calendar.domain.outbound.CalendarResponse;
-import com.hbc.pe.masterdata.calendar.domain.pojo.ExceptionDays;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.util.DateUtil;
 import java.util.*;
@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 @Service
@@ -43,14 +44,14 @@ public class CalendarService {
   private static final String CARRIER_SERVICE_ID = "carrierServiceId";
   private static final String CALENDAR_ID = "calendarId";
 
-  @Value("${constants.defaultNumberOfDaysInFuture}")
+  @Value("${constants.default-number-of-days-in-future}")
   private Integer defaultNumberOfDaysInFuture;
 
   /** Creates a new Calendar */
   public CalendarResponse processCreateCalendar(CalendarRequest calendarRequest)
       throws CalendarDomainException {
-    CalendarEntity calendarEntity = INSTANCE.convertToCalendarEntity(calendarRequest);
-    CalendarEntity savedCalendarEntity = calendarDomain.saveCalendarEntity(calendarEntity);
+    var calendarEntity = INSTANCE.convertToCalendarEntity(calendarRequest);
+    var savedCalendarEntity = calendarDomain.saveCalendarEntity(calendarEntity);
     return INSTANCE.convertToCalendarResponse(savedCalendarEntity);
   }
 
@@ -67,25 +68,23 @@ public class CalendarService {
       Optional<String> carrierServiceId,
       Optional<String> serviceOption,
       Optional<Integer> numberOfDaysInFuture,
-      Optional<String> shippingStage,
-      Optional<String> destinationTimezone)
+      Optional<String> shippingStage)
       throws CalendarDomainException, CommonServiceException {
     validateRequestFields(orgId, nodeId, carrierServiceId);
 
     List<CalendarDaysStatusInfo> calendarDaysStatusInfoList = new ArrayList<>();
-    String timezone = nodeId.isPresent() ? NODE_TIMEZONE : destinationTimezone.orElse("UTC");
 
     int numDays = numberOfDaysInFuture.orElseGet(() -> defaultNumberOfDaysInFuture);
-    for (int i = 0; i < numDays; i++) {
+    for (var i = -1; i < numDays; i++) {
       calendarDaysStatusInfoList.add(
           CalendarDaysStatusInfo.builder()
-              .date(DateUtil.addDaysToCurrentDate(i, timezone))
+              .date(DateUtil.addDaysToCurrentDate(i))
               .isActive(Boolean.TRUE)
               .build());
     }
-    String startDate = DateUtil.addDaysToCurrentDate(0, timezone);
-    String endDate = DateUtil.addDaysToCurrentDate(numDays, timezone);
-    String currentCalendarId = "";
+    String startDate = DateUtil.addDaysToCurrentDate(-1);
+    String endDate = DateUtil.addDaysToCurrentDate(numDays);
+    var currentCalendarId = "";
     Map<String, String> nextCalendarIds = new HashMap<>();
 
     if (nodeId.isPresent() && carrierServiceId.isEmpty()) {
@@ -157,7 +156,7 @@ public class CalendarService {
                       NodeCarrierServiceCalendarEntity::getCalendarId));
     }
 
-    CalendarEntity calendarEntity = calendarDomain.getCalendar(orgId, currentCalendarId);
+    var calendarEntity = calendarDomain.getCalendar(orgId, currentCalendarId);
     if (ObjectUtils.isEmpty(calendarEntity)) {
       throw new CommonServiceException(
           "No Calendar with calendarId = "
@@ -168,9 +167,11 @@ public class CalendarService {
           Map.of(ORG_ID, FieldError.builder().rejectedValue(orgId).build()));
     }
     List<String> exceptionDays =
-        calendarEntity.getExceptionDays().stream()
-            .map(ExceptionDays::getDate)
-            .collect(Collectors.toList());
+        CollectionUtils.isEmpty(calendarEntity.getExceptionDays())
+            ? new ArrayList<>()
+            : calendarEntity.getExceptionDays().stream()
+                .map(ExceptionDays::getDate)
+                .collect(Collectors.toList());
     calendarDaysStatusInfoList.forEach(
         info -> {
           info.setIsActive(findWeekInfo(DateUtil.getDayOfWeek(info.getDate()), calendarEntity));
@@ -203,13 +204,14 @@ public class CalendarService {
       throws CalendarDomainException {
     for (CalendarDaysStatusInfo x : calendarDaysStatusInfoList) {
       if (calendarIds.containsKey(x.getDate())) {
-        CalendarEntity calendarEntity =
-            calendarDomain.getCalendar(orgId, calendarIds.get(x.getDate()));
+        var calendarEntity = calendarDomain.getCalendar(orgId, calendarIds.get(x.getDate()));
 
         List<String> exceptionDays =
-            calendarEntity.getExceptionDays().stream()
-                .map(ExceptionDays::getDate)
-                .collect(Collectors.toList());
+            CollectionUtils.isEmpty(calendarEntity.getExceptionDays())
+                ? new ArrayList<>()
+                : calendarEntity.getExceptionDays().stream()
+                    .map(ExceptionDays::getDate)
+                    .collect(Collectors.toList());
         calendarDaysStatusInfoList.stream()
             .filter(info -> info.getDate().compareTo(x.getDate()) >= 0)
             .forEach(

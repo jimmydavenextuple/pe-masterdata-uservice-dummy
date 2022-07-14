@@ -9,6 +9,7 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import com.hbc.node.carrier.service.NodeCarrierService;
 import java.util.List;
@@ -34,7 +35,8 @@ class NodeCarrierControllerTest {
 
   @Test
   @DisplayName("When node carrier is created successfully and response is 200 OK")
-  void createNodeCarrierTest() throws NodeCarrierDomainException, CommonServiceException {
+  void createNodeCarrierTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     when(nodeCarrierService.createNodeCarrier(any())).thenReturn(testUtil.getNodeCarrierResponse());
 
     ResponseEntity<BaseResponse<NodeCarrierResponse>> response =
@@ -50,7 +52,8 @@ class NodeCarrierControllerTest {
 
   @Test
   @DisplayName("When there is somme error in creating node carrier")
-  void createNodeCarrierExceptionTest() throws NodeCarrierDomainException, CommonServiceException {
+  void createNodeCarrierExceptionTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     when(nodeCarrierService.createNodeCarrier(any()))
         .thenThrow(new RuntimeException("Failed to create node carrier details"));
 
@@ -106,7 +109,8 @@ class NodeCarrierControllerTest {
 
   @Test
   @DisplayName("When node carrier is updated successfully and response is 200 OK")
-  void updateNodeCarrierTest() throws NodeCarrierDomainException, CommonServiceException {
+  void updateNodeCarrierTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     when(nodeCarrierService.updateNodeCarrier(any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getNodeCarrierResponse());
 
@@ -128,7 +132,8 @@ class NodeCarrierControllerTest {
 
   @Test
   @DisplayName("When there is somme error in updating node carrier")
-  void updateNodeCarrierExceptionTest() throws NodeCarrierDomainException, CommonServiceException {
+  void updateNodeCarrierExceptionTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     when(nodeCarrierService.updateNodeCarrier(any(), any(), any(), any(), any()))
         .thenThrow(new RuntimeException("Failed to update node carrier details"));
 

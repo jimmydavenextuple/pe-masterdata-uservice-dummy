@@ -1,5 +1,6 @@
 package com.hbc.item.domain.entity;
 
+import com.hbc.common.base.BaseEntity;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.util.Map;
 import javax.persistence.Column;
@@ -10,19 +11,21 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@IdClass(ItemId.class)
+@IdClass(ItemPK.class)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 @Table(name = "item")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-public class ItemEntity {
+public class ItemEntity extends BaseEntity {
 
   @Id
   @Column(name = "item_id")
@@ -41,6 +44,9 @@ public class ItemEntity {
 
   @Column(name = "vendor_type")
   private String vendorType;
+
+  @Column(name = "is_dsv_eligible")
+  private Boolean isDSVEligible;
 
   @Column(name = "product")
   private String product;

@@ -20,7 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class ServiceOptionInventoryTypeServiceTest {
+class ServiceOptionInventoryTypeServiceTest {
   @InjectMocks private ServiceOptionInventoryTypeService serviceOptionInventoryTypeService;
 
   @InjectMocks private TestUtil testUtil;

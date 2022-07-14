@@ -18,4 +18,6 @@ public class PromiseSourcingRuleConstants {
   public static final String DESTINATION_GEO_ZONE = "IST";
   public static final String ALLOCATION_RULE_ID = "NXT";
   public static final String SERVICE_OPTION = SDND;
+
+  PromiseSourcingRuleConstants() {}
 }

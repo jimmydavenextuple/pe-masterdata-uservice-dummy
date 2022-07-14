@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:aws-secretsmanager:/secret/\${SPRING_PROFILES_ACTIVE}
   application:
     name: "master-data-calendar-uservice"
     version: 1.0
@@ -15,7 +17,7 @@ server:
       max: 200
 
 constants:
-  defaultNumberOfDaysInFuture: 10
+  default-number-of-days-in-future: 45
 
 logging:
   level:

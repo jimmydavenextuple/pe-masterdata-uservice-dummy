@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
 import com.hbc.common.response.error.FieldError;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -95,6 +96,25 @@ public class CommonExceptionHandler {
             ErrorResponse.builder(ErrorType.ERROR, e.getErrorCode())
                 .message(e.getMessage())
                 .errorField(e.getFieldInfo())
+                .build());
+  }
+
+  @ExceptionHandler(IOException.class)
+  public ResponseEntity<ErrorResponse> handleIOException(IOException e) {
+    return ResponseEntity.badRequest()
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0x2772)
+                .message("File not found!")
+                .errorField("fileUri", FieldError.builder().rejectedValue(e.getMessage()).build())
+                .build());
+  }
+
+  @ExceptionHandler(PromiseEngineException.class)
+  public ResponseEntity<ErrorResponse> handlePromiseEngineException(PromiseEngineException e) {
+    return ResponseEntity.badRequest()
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0x000001)
+                .message(e.getMessage() + "[" + e.getExceptionCode().getErrorCode() + "]")
                 .build());
   }
 }

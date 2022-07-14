@@ -1,0 +1,62 @@
+package com.hbc.dataupload.common.constants;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class DataUploadUtilityConstants {
+  public static final String CREATE = "CREATE";
+  public static final String UPDATE = "UPDATE";
+  public static final String DELETE = "DELETE";
+  public static final String ACTION = "action";
+  public static final String ORG_ID = "orgId";
+  public static final String CARRIER_SERVICE_ID = "carrierServiceId";
+  public static final String NODE_ID = "nodeId";
+  public static final String SERVICE_OPTION = "serviceOption";
+  public static final String PROCESSING_TIME = "processingTime";
+  public static final String LAST_PICKUP_TIME = "lastPickupTime";
+  public static final String FILE_URI = "fileUri";
+  public static final String SOURCE_GEO_ZONE = "sourceGeozone";
+  public static final String DESTINATION_GEO_ZONE = "destinationGeozone";
+  public static final String TRANSIT_DAYS = "transitDays";
+  public static final String STREET = "street";
+  public static final String CITY = "city";
+  public static final String PROVINCE = "province";
+  public static final String POSTAL_CODE = "postalCode";
+  public static final String COUNTRY = "country";
+  public static final String LATITUDE = "latitude";
+  public static final String LONGITUDE = "longitude";
+  public static final String TIMEZONE = "timezone";
+  public static final String SHIP_TO_HOME = "shipToHome";
+  public static final String SDND_ELIGIBLE = "sdndEligible";
+  public static final String BOPIS_ELIGIBLE = "bopisEligible";
+  public static final String EXPRESS_ELIGIBLE = "expressEligible";
+  public static final String NODE_TYPE = "nodeType";
+  public static final String IS_ACTIVE = "isActive";
+  public static final String SOURCE_NODES = "sourceNodes";
+  public static final String PRIORITY = "priority";
+  public static final String ALLOCATION_RULE_ID = "allocationRuleId";
+  public static final String CARRIER_ID = "carrierId";
+  public static final String CARRIER_NAME = "carrierName";
+  public static final String SERVICE_NAME = "serviceName";
+  public static final String SERVICE_OPTIONS = "serviceOptions";
+  public static final String POSTAL_CODE_PREFIX = "postalCodePrefix";
+  public static final String STATE = "state";
+  public static final String TIMEZONE1 = "timeZone";
+  public static final String TYPE = "type";
+  public static final String KEY = "key";
+  public static final String WEIGHTAGE = "weightage";
+  public static final String CALENDAR_ID = "calendarId";
+  public static final String DESCRIPTION = "description";
+  public static final String IS_MONDAY_WORKING = "isMondayWorking";
+  public static final String IS_TUESDAY_WORKING = "isTuesdayWorking";
+  public static final String IS_WEDNESDAY_WORKING = "isWednesdayWorking";
+  public static final String IS_THURSDAY_WORKING = "isThursdayWorking";
+  public static final String IS_FRIDAY_WORKING = "isFridayWorking";
+  public static final String IS_SATURDAY_WORKING = "isSaturdayWorking";
+  public static final String IS_SUNDAY_WORKING = "isSundayWorking";
+  public static final String EXCEPTION_DAYS = "exceptionDays";
+  public static final String EFFECTIVE_DATE = "effectiveDate";
+  public static final String SHIPPING_STAGE = "shippingStage";
+  public static final String ACTION_INVALID_MESSAGE = "action type invalid";
+}

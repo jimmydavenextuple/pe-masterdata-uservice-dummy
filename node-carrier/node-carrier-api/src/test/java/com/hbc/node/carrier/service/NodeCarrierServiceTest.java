@@ -12,6 +12,7 @@ import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +36,8 @@ class NodeCarrierServiceTest {
 
   @Test
   @DisplayName("When node carrier is created successfully")
-  void createNodeCarrierTest() throws NodeCarrierDomainException, CommonServiceException {
+  void createNodeCarrierTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
     when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
         .thenReturn(Optional.empty());
@@ -125,7 +127,8 @@ class NodeCarrierServiceTest {
   }
   @Test
   @DisplayName("When node carrier is updated successfully")
-  void updateNodeCarrierTest() throws NodeCarrierDomainException, CommonServiceException {
+  void updateNodeCarrierTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
         .thenReturn(Optional.ofNullable(testUtil.getNodeCarrierEntity()));
     when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
@@ -242,5 +245,15 @@ class NodeCarrierServiceTest {
     Assertions.assertEquals("Node Carrier not found for given details", ex.getMessage());
     verify(nodeCarrierDomain, times(1))
         .findNodeCarrierByNodeIdAOrgIdAndServiceOption(any(), any(), any());
+  }
+
+  @Test
+  void validateLastPickupTimeTest() {
+    String lastPickUpTime = "14:89";
+    Exception ex =
+        Assertions.assertThrows(
+            InvalidDataException.class,
+            () -> nodeCarrierService.validateLastPickupTime(lastPickUpTime));
+    Assertions.assertEquals("LastPickupTime is invalid", ex.getMessage());
   }
 }

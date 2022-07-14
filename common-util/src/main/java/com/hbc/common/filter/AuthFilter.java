@@ -39,6 +39,7 @@ public class AuthFilter implements Filter {
       throws IOException, ServletException {
     log.debug("-----Inside auth filter-----");
     HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+    log.debug("Request URL: {}", httpServletRequest.getRequestURL());
 
     if (authProperties.isFilterEnabled()
         && !httpServletRequest.getRequestURI().startsWith("/actuator")) {
@@ -53,7 +54,7 @@ public class AuthFilter implements Filter {
         if (!tokenString.isPresent()) {
           throw new AuthFilterException("Authorization header value is empty or null");
         }
-        Jwt<Header, Claims> claims = getAllClaimsFromToken(tokenString.get());
+        Jwt<? extends Header, Claims> claims = getAllClaimsFromToken(tokenString.get());
         log.debug(
             "--------Roles extracted from claims: {}------",
             claims.getBody().get("role").toString());
@@ -78,7 +79,8 @@ public class AuthFilter implements Filter {
         log.error("Authentication failed", e);
         throw e;
       } catch (Exception e) {
-        log.error("Error while authenticating the request", e);
+        log.error(
+            "Error while authenticating the request : {}", httpServletRequest.getRequestURL(), e);
         throw e;
       }
     } else {
@@ -102,7 +104,7 @@ public class AuthFilter implements Filter {
     return verified;
   }
 
-  private Jwt<Header, Claims> getAllClaimsFromToken(String token) {
+  private Jwt<? extends Header, Claims> getAllClaimsFromToken(String token) {
     int i = token.lastIndexOf('.');
     String withoutSignature = token.substring(0, i + 1);
     return Jwts.parser().parseClaimsJwt(withoutSignature);

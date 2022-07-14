@@ -22,12 +22,6 @@ public class NodeDataMapper
 
   @Override
   public String cacheKeyToRequest(NodeDataCacheKey cacheKey) {
-    //    ObjectMapper mapper = new ObjectMapper();
-    //    mapper.wri
-    //    Map<String, String> params = new HashMap<>();
-    //    params.put("nodeId", cacheKey.getNodeId());
-    //    params.put("orgId", cacheKey.getOrgId());
-    //    return params;
     return null;
   }
 

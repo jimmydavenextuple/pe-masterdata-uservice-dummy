@@ -9,6 +9,8 @@ import com.hbc.weightage.configuration.cache.domain.WeightageConfigurationCacheK
 import com.hbc.weightage.configuration.cache.domain.WeightageConfigurationCacheValue;
 import com.hbc.weightage.configuration.cache.service.WeightageConfigurationNearCacheService;
 import javax.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -21,14 +23,17 @@ public class WeightageConfigurationSpringNearCacheServiceImpl
         WeightageConfigurationCacheKey, WeightageConfigurationCacheValue>
     implements WeightageConfigurationNearCacheService {
 
+  private static final Logger logger =
+      LoggerFactory.getLogger(WeightageConfigurationSpringNearCacheServiceImpl.class);
+
   public static final String WEIGHTAGE_CONFIGURATION = "weightage configuration";
 
-  @Autowired NearCacheRegistry registry;
+  @Autowired NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override
   public void selfRegister() {
-    registry.registerNearCacheEntity(
+    nearCacheRegistry.registerNearCacheEntity(
         NearCacheConstants.WEIGHTAGE_CONFIGURATION_ENTITY_NAME,
         WeightageConfigurationCacheKey.class.getName(),
         "full");
@@ -41,6 +46,7 @@ public class WeightageConfigurationSpringNearCacheServiceImpl
 
   @Override
   public WeightageConfigurationCacheValue get(WeightageConfigurationCacheKey key) {
+    logger.debug("Inside get WeightageConfigurationCacheValue");
     return super.get(key);
   }
 

@@ -6,9 +6,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
+import com.hbc.calendar.domain.outbound.CalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
-import com.hbc.pe.masterdata.calendar.domain.outbound.CalendarResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.service.CalendarService;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
@@ -95,7 +95,7 @@ class CalendarControllerTest {
   void handleGetUpcomingDaysCalendarStatusTest()
       throws CalendarDomainException, CommonServiceException {
     when(calendarService.processGetUpcomingDaysCalendarStatus(
-            any(), any(), any(), any(), any(), any(), any()))
+            any(), any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getCalendarDaysStatusInfoList());
 
     ResponseEntity<BaseResponse<List<CalendarDaysStatusInfo>>> resp =
@@ -105,14 +105,13 @@ class CalendarControllerTest {
             Optional.empty(),
             Optional.empty(),
             Optional.empty(),
-            Optional.empty(),
             Optional.empty());
 
     Assertions.assertEquals(HttpStatus.OK, resp.getStatusCode());
     Assertions.assertEquals(
         Boolean.TRUE, Objects.requireNonNull(resp.getBody()).getPayload().get(0).getIsActive());
     verify(calendarService, times(1))
-        .processGetUpcomingDaysCalendarStatus(any(), any(), any(), any(), any(), any(), any());
+        .processGetUpcomingDaysCalendarStatus(any(), any(), any(), any(), any(), any());
   }
 
   @Test
@@ -120,7 +119,7 @@ class CalendarControllerTest {
       throws CalendarDomainException, CommonServiceException {
 
     when(calendarService.processGetUpcomingDaysCalendarStatus(
-            any(), any(), any(), any(), any(), any(), any()))
+            any(), any(), any(), any(), any(), any()))
         .thenThrow(new NullPointerException("error"));
 
     Exception ex =
@@ -133,11 +132,10 @@ class CalendarControllerTest {
                     Optional.empty(),
                     Optional.empty(),
                     Optional.empty(),
-                    Optional.empty(),
                     Optional.empty()));
 
     Assertions.assertEquals("error", ex.getMessage());
     verify(calendarService, times(1))
-        .processGetUpcomingDaysCalendarStatus(any(), any(), any(), any(), any(), any(), any());
+        .processGetUpcomingDaysCalendarStatus(any(), any(), any(), any(), any(), any());
   }
 }

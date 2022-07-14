@@ -3,12 +3,12 @@ package com.hbc.pe.masterdata.calendar.service;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
+import com.hbc.calendar.domain.inbound.CarrierServiceCalendarRequest;
+import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.pe.masterdata.calendar.domain.CarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.entity.CalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
-import com.hbc.pe.masterdata.calendar.domain.inbound.CarrierServiceCalendarRequest;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
-import com.hbc.pe.masterdata.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,11 +34,13 @@ public class CarrierServiceCalendarService {
 
   /** Creates a new Carrier Service Calendar */
   public CarrierServiceCalendarResponse processCreateCarrierServiceCalendar(
+      CarrierServiceCalendarRequest carrierServiceCalendarRequest) throws CalendarDomainException {
+    var carrierServiceCalendarEntity =
       CarrierServiceCalendarRequest carrierServiceCalendarRequest) throws CalendarDomainException, CommonServiceException {
     validateCalendarId(carrierServiceCalendarRequest.getCalendarId(), carrierServiceCalendarRequest.getOrgId());
     CarrierServiceCalendarEntity carrierServiceCalendarEntity =
         INSTANCE.convertToCarrierServiceCalendarEntity(carrierServiceCalendarRequest);
-    CarrierServiceCalendarEntity savedCarrierServiceCalendarEntity =
+    var savedCarrierServiceCalendarEntity =
         carrierServiceCalendarDomain.saveCarrierServiceCalendarEntity(carrierServiceCalendarEntity);
     return INSTANCE.convertToCarrierServiceCalendarResponse(savedCarrierServiceCalendarEntity);
   }

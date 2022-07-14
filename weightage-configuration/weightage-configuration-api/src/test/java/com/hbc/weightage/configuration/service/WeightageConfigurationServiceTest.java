@@ -13,6 +13,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.PromiseEngineException;
+import com.hbc.weightage.configuration.TestUtil;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
@@ -20,8 +22,6 @@ import com.hbc.weightage.configuration.api.domain.inbound.UpdateWeightageConfigu
 import com.hbc.weightage.configuration.domain.WeightageConfigurationDomain;
 import com.hbc.weightage.configuration.domain.entity.WeightageConfiguration;
 import com.hbc.weightage.configuration.domain.mapper.WeightageConfigurationMapper;
-import com.hbc.weightage.configuration.exception.common.PromiseEngineException;
-import com.hbc.weightage.configuration.utils.TestUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

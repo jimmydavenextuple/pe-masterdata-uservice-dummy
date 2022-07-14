@@ -10,5 +10,5 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class WeightageConfigurationCacheValue implements CacheValue {
-  Map<String, Float> weightageConfigurationResponse;
+  private Map<String, Float> weightageConfigurationResponse;
 }

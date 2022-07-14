@@ -35,7 +35,7 @@ public class ServiceOptionInventoryTypeService {
   public ServiceInventoryDto createServiceOptionInventoryType(
       ServiceInventoryRequest serviceToInventoryRequest) throws ServiceInventoryDomainException {
 
-    ServiceOptionInventoryTypeEntity serviceOptionInventoryTypeEntity =
+    var serviceOptionInventoryTypeEntity =
         INSTANCE.serviceInventoryRequestToServiceOptionInventoryTypeEntity(
             serviceToInventoryRequest);
 
@@ -53,7 +53,7 @@ public class ServiceOptionInventoryTypeService {
             .findServiceOptionInventoryTypeEntityByOrgIdAndServiceOption(orgId, serviceOption);
 
     if (serviceOptionInventoryTypeEntity.isEmpty()) {
-      logger.info(
+      logger.error(
           "ServiceOptionInventoryType not found with given orgId:{} , serviceOption:{}",
           orgId,
           serviceOption);

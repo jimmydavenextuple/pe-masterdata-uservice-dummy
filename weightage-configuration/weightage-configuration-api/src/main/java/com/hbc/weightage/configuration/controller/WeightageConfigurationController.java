@@ -1,11 +1,11 @@
 package com.hbc.weightage.configuration.controller;
 
+import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.UpdateWeightageConfigurationRequest;
-import com.hbc.weightage.configuration.exception.common.PromiseEngineException;
 import com.hbc.weightage.configuration.service.WeightageConfigurationService;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +29,7 @@ public class WeightageConfigurationController {
   @PostMapping
   public ResponseEntity<BaseResponse<Map<String, Float>>> fetchWeightage(
       @Valid @RequestBody FetchWeightageRequest baseRequest) throws PromiseEngineException {
-    logger.info("Processing fetch Weightage request");
+    logger.debug("Processing fetch Weightage request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -37,7 +37,7 @@ public class WeightageConfigurationController {
               .payload(weightageConfigurationService.fetchWeightage(baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process fetch Weightage request!");
+      logger.error("Failed to process fetch Weightage request!");
       throw e;
     }
   }
@@ -46,7 +46,7 @@ public class WeightageConfigurationController {
   public ResponseEntity<BaseResponse<WeightageConfigurationDto>> createWeightageConfiguration(
       @Valid @RequestBody CreateWeightageConfigurationRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("Processing create Weightage Configuration request");
+    logger.debug("Processing create Weightage Configuration request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -54,7 +54,7 @@ public class WeightageConfigurationController {
               .payload(weightageConfigurationService.createWeightageConfiguration(baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process create Weightage Configuration request!");
+      logger.error("Failed to process create Weightage Configuration request!");
       throw e;
     }
   }
@@ -65,7 +65,7 @@ public class WeightageConfigurationController {
       @NotBlank @RequestParam String type,
       @NotBlank @RequestParam String key)
       throws PromiseEngineException {
-    logger.info("Processing get Weightage Configuration by weightageId request");
+    logger.debug("Processing get Weightage Configuration by weightageId request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -73,7 +73,7 @@ public class WeightageConfigurationController {
               .payload(weightageConfigurationService.getWeightageConfiguration(orgId, type, key))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process get Weightage Configuration request!");
+      logger.error("Failed to process get Weightage Configuration request!");
       throw e;
     }
   }
@@ -82,7 +82,7 @@ public class WeightageConfigurationController {
   public ResponseEntity<BaseResponse<List<WeightageConfigurationDto>>>
       getWeightageConfigurationsByKey(@NotBlank @PathVariable String key)
           throws PromiseEngineException {
-    logger.info("Processing get Weightage Configuration by weightageId request");
+    logger.debug("Processing get Weightage Configuration by weightageId request");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -90,7 +90,7 @@ public class WeightageConfigurationController {
               .payload(weightageConfigurationService.getWeightageConfigurationsByKey(key))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process get Weightage Configuration request!");
+      logger.error("Failed to process get Weightage Configuration request!");
       throw e;
     }
   }
@@ -102,7 +102,7 @@ public class WeightageConfigurationController {
       @NotBlank @RequestParam String key,
       @Valid @RequestBody UpdateWeightageConfigurationRequest baseRequest)
       throws PromiseEngineException {
-    logger.info("Processing update Weightage Configuration request by weightageId");
+    logger.debug("Processing update Weightage Configuration request by weightageId");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -112,7 +112,7 @@ public class WeightageConfigurationController {
                       orgId, type, key, baseRequest))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process update Weightage Configuration request!");
+      logger.error("Failed to process update Weightage Configuration request!");
       throw e;
     }
   }
@@ -124,7 +124,7 @@ public class WeightageConfigurationController {
       @NotBlank @RequestParam String type,
       @NotBlank @RequestParam String key)
       throws PromiseEngineException {
-    logger.info("Processing delete Weightage Configuration request by tenant id");
+    logger.debug("Processing delete Weightage Configuration request by tenant id");
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -132,7 +132,7 @@ public class WeightageConfigurationController {
               .payload(weightageConfigurationService.deleteWeightageConfiguration(orgId, type, key))
               .build());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Failed to process delete Weightage Configuration request!");
+      logger.error("Failed to process delete Weightage Configuration request!");
       throw e;
     }
   }

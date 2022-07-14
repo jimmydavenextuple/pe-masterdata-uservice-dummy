@@ -2,11 +2,11 @@ package com.hbc.promise.sourcing.rule.domain.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.hbc.promise.sourcing.rule.TestUtil;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.UpdatePromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
-import com.hbc.promise.sourcing.rule.utils.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -52,12 +52,6 @@ class PromiseSourcingRuleMapperTest {
     INSTANCE.insertValuesFromUpdatePromiseSourcingRuleRequestToEntity(
         updatePromiseSourcingRuleRequest, mockPromiseSourcingRule);
 
-    assertEquals(
-        updatePromiseSourcingRuleRequest.getAllocationRuleId(),
-        mockPromiseSourcingRule.getAllocationRuleId());
-    assertEquals(
-        updatePromiseSourcingRuleRequest.getDestinationGeoZone(),
-        mockPromiseSourcingRule.getDestinationGeoZone());
     assertEquals(
         updatePromiseSourcingRuleRequest.getSourceNodes(),
         mockPromiseSourcingRule.getSourceNodes());

@@ -3,12 +3,13 @@ package com.hbc.pe.masterdata.calendar.service;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
+import com.hbc.calendar.domain.inbound.NodeCalendarRequest;
+import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.pe.masterdata.calendar.domain.NodeCalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.entity.CalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.inbound.NodeCalendarRequest;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
-import com.hbc.pe.masterdata.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 
 import java.util.HashMap;
@@ -36,6 +37,9 @@ public class NodeCalendarService {
 
   /** Creates a new Node Calendar */
   public NodeCalendarResponse processCreateNodeCalendar(NodeCalendarRequest nodeCalendarRequest)
+      throws CalendarDomainException {
+    var nodeCalendarEntity = INSTANCE.convertToNodeCalendarEntity(nodeCalendarRequest);
+    var savedNodeCalendarEntity = nodeCalendarDomain.saveNodeCalendarEntity(nodeCalendarEntity);
           throws CalendarDomainException, CommonServiceException {
     validateCalendarId(nodeCalendarRequest.getCalendarId(), nodeCalendarRequest.getOrgId());
     NodeCalendarEntity nodeCalendarEntity =

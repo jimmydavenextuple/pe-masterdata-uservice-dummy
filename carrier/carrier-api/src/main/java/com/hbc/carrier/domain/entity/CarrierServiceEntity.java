@@ -13,7 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@IdClass(CarrierServiceId.class)
+@IdClass(CarrierServicePK.class)
 @EntityListeners(CommonEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor

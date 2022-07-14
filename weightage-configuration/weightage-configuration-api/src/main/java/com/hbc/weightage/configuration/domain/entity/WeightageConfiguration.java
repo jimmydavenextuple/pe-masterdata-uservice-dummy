@@ -1,7 +1,7 @@
 package com.hbc.weightage.configuration.domain.entity;
 
 import com.hbc.core.event.listeners.CommonEntityListener;
-import com.hbc.weightage.configuration.domain.primaryKeys.WeightageConfigurationPK;
+import com.hbc.weightage.configuration.domain.primarykeys.WeightageConfigurationPK;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;
