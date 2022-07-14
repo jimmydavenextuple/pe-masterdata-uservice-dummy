@@ -1,16 +1,20 @@
 package com.hbc.pe.masterdata.calendar.service;
 
+import com.hbc.calendar.domain.inbound.CarrierServiceCalendarRequest;
+import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
-import com.hbc.calendar.domain.inbound.CarrierServiceCalendarRequest;
-import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.pe.masterdata.calendar.domain.CarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.entity.CalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -34,11 +38,11 @@ public class CarrierServiceCalendarService {
 
   /** Creates a new Carrier Service Calendar */
   public CarrierServiceCalendarResponse processCreateCarrierServiceCalendar(
-      CarrierServiceCalendarRequest carrierServiceCalendarRequest) throws CalendarDomainException {
+      CarrierServiceCalendarRequest carrierServiceCalendarRequest)
+      throws CalendarDomainException, CommonServiceException {
+    validateCalendarId(
+        carrierServiceCalendarRequest.getCalendarId(), carrierServiceCalendarRequest.getOrgId());
     var carrierServiceCalendarEntity =
-      CarrierServiceCalendarRequest carrierServiceCalendarRequest) throws CalendarDomainException, CommonServiceException {
-    validateCalendarId(carrierServiceCalendarRequest.getCalendarId(), carrierServiceCalendarRequest.getOrgId());
-    CarrierServiceCalendarEntity carrierServiceCalendarEntity =
         INSTANCE.convertToCarrierServiceCalendarEntity(carrierServiceCalendarRequest);
     var savedCarrierServiceCalendarEntity =
         carrierServiceCalendarDomain.saveCarrierServiceCalendarEntity(carrierServiceCalendarEntity);
@@ -98,16 +102,19 @@ public class CarrierServiceCalendarService {
   }
 
   public void validateCalendarId(String calendarId, String orgId)
-          throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, CommonServiceException {
     CalendarEntity calendarEntity = calendarDomain.getCalendar(orgId, calendarId);
 
-    if(ObjectUtils.isEmpty(calendarEntity)){
+    if (ObjectUtils.isEmpty(calendarEntity)) {
       logger.info("Cannot create a carrier service calendar as calendarId/orgId is invalid");
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(CALENDAR_ID, FieldError.builder().rejectedValue(calendarId).build());
       throw new CommonServiceException(
-              "Cannot create a carrier service calendar as calendarId/orgId is invalid", HttpStatus.NOT_FOUND, 0x1771, errorMap);
+          "Cannot create a carrier service calendar as calendarId/orgId is invalid",
+          HttpStatus.NOT_FOUND,
+          0x1771,
+          errorMap);
     }
   }
 }

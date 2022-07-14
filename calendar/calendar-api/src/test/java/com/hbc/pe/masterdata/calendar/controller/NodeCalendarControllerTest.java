@@ -48,7 +48,8 @@ class NodeCalendarControllerTest {
   }
 
   @Test
-  void handleCreateNodeCalendarExceptionTest() throws CalendarDomainException, CommonServiceException {
+  void handleCreateNodeCalendarExceptionTest()
+      throws CalendarDomainException, CommonServiceException {
 
     when(nodeCalendarService.processCreateNodeCalendar(any()))
         .thenThrow(new NullPointerException("error"));

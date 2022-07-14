@@ -71,26 +71,28 @@ class CalendarServiceTest {
     Assertions.assertEquals(TestUtil.EXCEPTION_DATE, resp.getExceptionDays().get(0).getDate());
     verify(calendarDomain, times(2)).getCalendar(any(), any());
   }
+
   @Test
   void processValidateCalendarIdTest() throws CalendarDomainException, CommonServiceException {
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
 
-            calendarService.validateCalendarId(TestUtil.CALENDAR_ID, TestUtil.ORG_ID);
+    calendarService.validateCalendarId(TestUtil.CALENDAR_ID, TestUtil.ORG_ID);
 
     verify(calendarDomain, times(1)).getCalendar(any(), any());
   }
+
   @Test
-  void processValidateCalendarIdTestException() throws CalendarDomainException, CommonServiceException {
+  void processValidateCalendarIdTestException()
+      throws CalendarDomainException, CommonServiceException {
     when(calendarDomain.getCalendar(any(), any())).thenReturn(null);
     Exception exception =
-            Assertions.assertThrows(
-                    CommonServiceException.class,
-                    () ->
-                            calendarService.validateCalendarId(
-                                    TestUtil.CALENDAR_ID, TestUtil.ORG_ID));
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> calendarService.validateCalendarId(TestUtil.CALENDAR_ID, TestUtil.ORG_ID));
     Assertions.assertEquals("Calendar does not exists", exception.getMessage());
     verify(calendarDomain, times(1)).getCalendar(any(), any());
   }
+
   @Test
   void processGetUpcomingDaysNodeCalendarStatusTest()
       throws CalendarDomainException, CommonServiceException {

@@ -13,8 +13,6 @@ import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,6 +48,7 @@ class NodeCalendarServiceTest {
     Assertions.assertEquals(TestUtil.DESCRIPTION, Objects.requireNonNull(resp.getDescription()));
     verify(nodeCalendarDomain, times(1)).saveNodeCalendarEntity(any());
   }
+
   @Test
   void processValidateCalendarIdTest() throws CalendarDomainException, CommonServiceException {
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
@@ -58,18 +57,19 @@ class NodeCalendarServiceTest {
 
     verify(calendarDomain, times(1)).getCalendar(any(), any());
   }
+
   @Test
-  void processValidateCalendarIdTestException() throws CalendarDomainException, CommonServiceException {
+  void processValidateCalendarIdTestException() throws CalendarDomainException {
     when(calendarDomain.getCalendar(any(), any())).thenReturn(null);
     Exception exception =
-            Assertions.assertThrows(
-                    CommonServiceException.class,
-                    () ->
-                            nodeCalendarService.validateCalendarId(
-                                    TestUtil.CALENDAR_ID, TestUtil.ORG_ID));
-    Assertions.assertEquals("Cannot create a node calendar as calendarId/orgId is invalid", exception.getMessage());
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> nodeCalendarService.validateCalendarId(TestUtil.CALENDAR_ID, TestUtil.ORG_ID));
+    Assertions.assertEquals(
+        "Cannot create a node calendar as calendarId/orgId is invalid", exception.getMessage());
     verify(calendarDomain, times(1)).getCalendar(any(), any());
   }
+
   @Test
   void processGetNodeCalendarTest() throws CalendarDomainException {
     when(nodeCalendarDomain.getNodeCalendar(any(), any()))

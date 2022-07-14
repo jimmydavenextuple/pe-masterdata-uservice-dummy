@@ -58,7 +58,7 @@ public class CalendarService {
   /** Get Calendar details by calendarId and OrgId */
   public CalendarResponse processGetCalendar(String orgId, String calendarId)
       throws CalendarDomainException, CommonServiceException {
-    validateCalendarId(calendarId,orgId);
+    validateCalendarId(calendarId, orgId);
     return INSTANCE.convertToCalendarResponse(calendarDomain.getCalendar(orgId, calendarId));
   }
 
@@ -295,16 +295,16 @@ public class CalendarService {
   }
 
   public void validateCalendarId(String calendarId, String orgId)
-          throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, CommonServiceException {
     CalendarEntity calendarEntity = calendarDomain.getCalendar(orgId, calendarId);
 
-    if(ObjectUtils.isEmpty(calendarEntity)){
+    if (ObjectUtils.isEmpty(calendarEntity)) {
       logger.info("Calendar does not exists");
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(CALENDAR_ID, FieldError.builder().rejectedValue(calendarId).build());
       throw new CommonServiceException(
-              "Calendar does not exists", HttpStatus.NOT_FOUND, 0x1771, errorMap);
+          "Calendar does not exists", HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
   }
 

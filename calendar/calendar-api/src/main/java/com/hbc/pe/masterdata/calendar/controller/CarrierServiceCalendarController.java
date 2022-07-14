@@ -28,9 +28,10 @@ public class CarrierServiceCalendarController {
   public ResponseEntity<BaseResponse<CarrierServiceCalendarResponse>>
       handleCreateCarrierServiceCalendar(
           @Valid @RequestBody CarrierServiceCalendarRequest carrierServiceCalendarRequest)
-          throws CalendarDomainException {
-    logger.debug(
           throws CalendarDomainException, CommonServiceException {
+    logger.info(
+        "Inside  handleCreateCarrierServiceCalendar() for carrierServiceCalendarRequest: {}",
+        carrierServiceCalendarRequest);
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
