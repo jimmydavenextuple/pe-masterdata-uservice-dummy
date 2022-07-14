@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +45,7 @@ public class CalendarController {
 
   @GetMapping("/{orgId}/{calendarId}")
   public ResponseEntity<BaseResponse<CalendarResponse>> handleGetCalendar(
-      @PathVariable String orgId, @PathVariable String calendarId) throws CalendarDomainException {
+      @PathVariable String orgId, @PathVariable String calendarId) throws CalendarDomainException, CommonServiceException {
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
