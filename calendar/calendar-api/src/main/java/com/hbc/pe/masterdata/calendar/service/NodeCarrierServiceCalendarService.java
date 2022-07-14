@@ -104,7 +104,7 @@ public class NodeCarrierServiceCalendarService {
     CalendarEntity calendarEntity = calendarDomain.getCalendar(orgId, calendarId);
 
     if (ObjectUtils.isEmpty(calendarEntity)) {
-      logger.info("Cannot create a node carrier service calendar as calendarId/orgId is invalid");
+      logger.error("Cannot create a node carrier service calendar as calendarId/orgId is invalid");
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(CALENDAR_ID, FieldError.builder().rejectedValue(calendarId).build());

@@ -1,7 +1,9 @@
 package com.hbc.pe.masterdata.calendar.service;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
 import com.hbc.calendar.domain.outbound.CalendarResponse;

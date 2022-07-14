@@ -299,7 +299,7 @@ public class CalendarService {
     CalendarEntity calendarEntity = calendarDomain.getCalendar(orgId, calendarId);
 
     if (ObjectUtils.isEmpty(calendarEntity)) {
-      logger.info("Calendar does not exists");
+      logger.error("Calendar does not exists");
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(CALENDAR_ID, FieldError.builder().rejectedValue(calendarId).build());
