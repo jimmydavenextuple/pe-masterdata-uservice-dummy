@@ -101,7 +101,7 @@ public class NodeCarrierServiceCalendarService {
 
   public void validateCalendarId(String calendarId, String orgId)
       throws CalendarDomainException, CommonServiceException {
-    CalendarEntity calendarEntity = calendarDomain.getCalendar(orgId, calendarId);
+    var calendarEntity = calendarDomain.getCalendar(orgId, calendarId);
 
     if (ObjectUtils.isEmpty(calendarEntity)) {
       logger.error("Cannot create a node carrier service calendar as calendarId/orgId is invalid");

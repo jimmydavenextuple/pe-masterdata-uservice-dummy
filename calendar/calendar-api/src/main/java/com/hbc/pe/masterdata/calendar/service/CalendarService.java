@@ -296,7 +296,7 @@ public class CalendarService {
 
   public void validateCalendarId(String calendarId, String orgId)
       throws CalendarDomainException, CommonServiceException {
-    CalendarEntity calendarEntity = calendarDomain.getCalendar(orgId, calendarId);
+    var calendarEntity = calendarDomain.getCalendar(orgId, calendarId);
 
     if (ObjectUtils.isEmpty(calendarEntity)) {
       logger.error("Calendar does not exists");
