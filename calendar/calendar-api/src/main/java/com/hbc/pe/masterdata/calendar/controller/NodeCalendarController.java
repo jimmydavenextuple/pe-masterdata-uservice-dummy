@@ -4,6 +4,7 @@ import com.hbc.calendar.domain.inbound.NodeCalendarRequest;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.service.NodeCalendarService;
 import java.util.List;
 import javax.validation.Valid;
@@ -23,7 +24,7 @@ public class NodeCalendarController {
 
   @PostMapping
   public ResponseEntity<BaseResponse<NodeCalendarResponse>> handleCreateNodeCalendar(
-      @Valid @RequestBody NodeCalendarRequest nodeCalendarRequest) throws CalendarDomainException {
+      @Valid @RequestBody NodeCalendarRequest nodeCalendarRequest) throws CalendarDomainException, DateException {
     logger.debug(
         "Inside handleCreateNodeCalendar() for nodeCalendarRequest: {}", nodeCalendarRequest);
     try {

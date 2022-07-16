@@ -2,10 +2,15 @@ package com.hbc.pe.masterdata.calendar.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.Date;
 import java.util.TimeZone;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+
 
 public class DateUtil {
 
@@ -31,5 +36,19 @@ public class DateUtil {
   public static int getDayOfWeek(String date) {
     var dt = DateTime.parse(date);
     return dt.getDayOfWeek();
+  }
+
+  public static boolean validateDate(String date){
+    boolean valid = false;
+    try {
+      LocalDate.parse(date,
+              DateTimeFormatter.ofPattern("uuuu-M-d")
+                      .withResolverStyle(ResolverStyle.STRICT)
+      );
+      valid = true;
+    } catch (DateTimeParseException e) {
+      valid = false;
+    }
+    return valid;
   }
 }

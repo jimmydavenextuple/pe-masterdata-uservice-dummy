@@ -6,6 +6,7 @@ import com.hbc.calendar.domain.outbound.CalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.service.CalendarService;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +29,7 @@ public class CalendarController {
 
   @PostMapping
   public ResponseEntity<BaseResponse<CalendarResponse>> handleCreateCalendar(
-      @Valid @RequestBody CalendarRequest calendarRequest) throws CalendarDomainException {
+      @Valid @RequestBody CalendarRequest calendarRequest) throws CalendarDomainException, DateException {
     logger.debug("Inside handleCreateCalendar() for calendarRequest: {}", calendarRequest);
     try {
       return ResponseEntity.ok(

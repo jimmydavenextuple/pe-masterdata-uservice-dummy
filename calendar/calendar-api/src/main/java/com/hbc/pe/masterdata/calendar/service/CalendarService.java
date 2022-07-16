@@ -14,6 +14,7 @@ import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateUtil;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,7 +49,14 @@ public class CalendarService {
 
   /** Creates a new Calendar */
   public CalendarResponse processCreateCalendar(CalendarRequest calendarRequest)
-      throws CalendarDomainException {
+      throws CalendarDomainException, DateException {
+    if(!DateUtil.validateDate(calendarRequest.getExceptionDays().get(0).getDate())){
+      throw new DateException(
+              "Invalid Date",
+              calendarRequest.getCalendarId(),
+              calendarRequest.getOrgId()
+      );
+    }
     var calendarEntity = INSTANCE.convertToCalendarEntity(calendarRequest);
     var savedCalendarEntity = calendarDomain.saveCalendarEntity(calendarEntity);
     return INSTANCE.convertToCalendarResponse(savedCalendarEntity);

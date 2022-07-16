@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.hbc.pe.masterdata.calendar.exception.DateException;
+import com.hbc.pe.masterdata.calendar.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -30,7 +33,14 @@ public class NodeCarrierServiceCalendarService {
   /** Creates a new Node Carrier Service Calendar */
   public NodeCarrierServiceCalendarResponse processCreateNodeCarrierServiceCalendarResponse(
       NodeCarrierServiceCalendarRequest nodeCarrierServiceCalendarRequest)
-      throws CalendarDomainException {
+          throws CalendarDomainException, DateException {
+    if(!DateUtil.validateDate(nodeCarrierServiceCalendarRequest.getEffectiveDate())){
+      throw new DateException(
+              "Invalid Date",
+              nodeCarrierServiceCalendarRequest.getCalendarId(),
+              nodeCarrierServiceCalendarRequest.getOrgId()
+      );
+    }
     var nodeCarrierServiceCalendarEntity =
         INSTANCE.convertToNodeCarrierServiceCalendarEntity(nodeCarrierServiceCalendarRequest);
     var savedNodeCarrierServiceCalendarEntity =

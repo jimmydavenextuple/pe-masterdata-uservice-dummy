@@ -15,6 +15,7 @@ import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateUtil;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ class CalendarServiceTest {
   }
 
   @Test
-  void processCreateCalendarTest() throws CalendarDomainException {
+  void processCreateCalendarTest() throws CalendarDomainException, DateException {
     when(calendarDomain.saveCalendarEntity(any())).thenReturn(testUtil.getCalendarEntity());
 
     CalendarResponse resp = calendarService.processCreateCalendar(testUtil.getCalendarRequest());

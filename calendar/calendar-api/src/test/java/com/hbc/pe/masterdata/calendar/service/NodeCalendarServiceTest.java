@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.pe.masterdata.calendar.domain.NodeCalendarDomain;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +31,7 @@ class NodeCalendarServiceTest {
   }
 
   @Test
-  void processCreateNodeCalendarTest() throws CalendarDomainException {
+  void processCreateNodeCalendarTest() throws CalendarDomainException, DateException {
     when(nodeCalendarDomain.saveNodeCalendarEntity(any()))
         .thenReturn(testUtil.getNodeCalendarEntity());
 

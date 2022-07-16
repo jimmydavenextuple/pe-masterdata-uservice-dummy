@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.pe.masterdata.calendar.domain.CarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +33,7 @@ class CarrierServiceCalendarServiceTest {
   }
 
   @Test
-  void processCreateCarrierServiceCalendarTest() throws CalendarDomainException {
+  void processCreateCarrierServiceCalendarTest() throws CalendarDomainException, DateException {
     when(carrierServiceCalendarDomain.saveCarrierServiceCalendarEntity(any()))
         .thenReturn(testUtil.getCarrierServiceCalendarEntity());
 

@@ -10,6 +10,7 @@ import com.hbc.calendar.domain.outbound.CalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.service.CalendarService;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.List;
@@ -36,7 +37,7 @@ class CalendarControllerTest {
   }
 
   @Test
-  void handleCreateCalendarTest() throws CalendarDomainException {
+  void handleCreateCalendarTest() throws CalendarDomainException, DateException {
     when(calendarService.processCreateCalendar(any())).thenReturn(testUtil.getCalendarResponse());
 
     ResponseEntity<BaseResponse<CalendarResponse>> resp =
@@ -49,7 +50,7 @@ class CalendarControllerTest {
   }
 
   @Test
-  void handleCreateCalendarExceptionTest() throws CalendarDomainException {
+  void handleCreateCalendarExceptionTest() throws CalendarDomainException, DateException {
 
     when(calendarService.processCreateCalendar(any())).thenThrow(new NullPointerException("error"));
 

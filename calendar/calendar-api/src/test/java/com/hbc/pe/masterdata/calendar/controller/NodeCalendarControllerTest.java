@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.service.NodeCalendarService;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.List;
@@ -33,7 +34,7 @@ class NodeCalendarControllerTest {
   }
 
   @Test
-  void handleCreateNodeCalendarTest() throws CalendarDomainException {
+  void handleCreateNodeCalendarTest() throws CalendarDomainException, DateException {
     when(nodeCalendarService.processCreateNodeCalendar(any()))
         .thenReturn(testUtil.getNodeCalendarResponse());
 
@@ -47,7 +48,7 @@ class NodeCalendarControllerTest {
   }
 
   @Test
-  void handleCreateNodeCalendarExceptionTest() throws CalendarDomainException {
+  void handleCreateNodeCalendarExceptionTest() throws CalendarDomainException, DateException {
 
     when(nodeCalendarService.processCreateNodeCalendar(any()))
         .thenThrow(new NullPointerException("error"));
