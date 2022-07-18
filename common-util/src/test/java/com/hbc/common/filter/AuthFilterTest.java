@@ -77,8 +77,6 @@ class AuthFilterTest {
     when(authProperties.isFilterEnabled()).thenReturn(true);
     when(httpServletRequest.getRequestURI()).thenReturn("/node");
     when(authProperties.getClaims()).thenReturn(claims);
-    when(authProperties.getIssuer())
-        .thenReturn("https://cognito-idp.us-east-1.amazonaws.com/us-east-1_SRg9eldJN");
     when(httpServletRequest.getHeader("Authorization")).thenReturn(token);
 
     Exception exception =

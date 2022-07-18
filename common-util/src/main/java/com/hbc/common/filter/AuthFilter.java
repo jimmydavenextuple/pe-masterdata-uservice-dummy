@@ -55,7 +55,7 @@ public class AuthFilter implements Filter {
         }
         Jwt<? extends Header, Claims> claims = getAllClaimsFromToken(tokenString.get());
 
-        // Check all Claims
+        // Claims and Issuer check
         boolean allVerified = verifyAllClaimsAndIssuer(claims);
 
         if (allVerified) {
@@ -81,23 +81,20 @@ public class AuthFilter implements Filter {
   private boolean verifyAllClaimsAndIssuer(Jwt<? extends Header, Claims> claims) {
     try {
       // Claims check
-      boolean claimsVerified = true;
       Map<String, String> claimsMap = authProperties.getClaims();
       for (String claim : claimsMap.keySet()) {
         String userPassedClaimValue = claims.getBody().get(claim).toString();
         log.debug("--------Claim {}: {}------", claim, userPassedClaimValue);
         String actualClaimValue = authProperties.getClaims().get(claim);
-        if (!userPassedClaimValue.equals(actualClaimValue)) {
-          claimsVerified = false;
-          break;
+        if (!actualClaimValue.equals(userPassedClaimValue)) {
+          return false;
         }
       }
 
       // Issuer check
       String issuerString = claims.getBody().getIssuer();
       log.debug("--------Issuer extracted from claims: {}------", issuerString);
-      boolean issuerVerified = issuerString.equals(authProperties.getIssuer());
-      return claimsVerified && issuerVerified;
+      return authProperties.getIssuer().equals(issuerString);
     } catch (NullPointerException e) {
       throw new AuthFilterException("Required claims not found");
     }
