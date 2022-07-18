@@ -61,25 +61,28 @@ class ItemMasterConsumerTest {
         () -> itemMasterConsumer.onItemMasterEventConsumption(testUtil.getItemMasterEvent(), null));
   }
 
-  @Test
-  void onItemRecordConsumptionTest() throws ItemDomainException {
-    when(itemService.createItem(any())).thenReturn(testUtil.getItemResponse());
-    ArgumentCaptor<ItemCreationRequest> captor = ArgumentCaptor.forClass(ItemCreationRequest.class);
-    itemMasterConsumer.onItemRecordConsumption(testUtil.getItemRecord(), null);
+  //  @Test
+  //  void onItemRecordConsumptionTest() throws ItemDomainException {
+  //    when(itemService.createItem(any())).thenReturn(testUtil.getItemResponse());
+  //    ArgumentCaptor<ItemCreationRequest> captor =
+  // ArgumentCaptor.forClass(ItemCreationRequest.class);
+  //    itemMasterConsumer.onItemRecordConsumption(testUtil.getItemRecord(), null);
+  //
+  //    verify(itemService, times(1)).createItem(captor.capture());
+  //    Assertions.assertEquals(TestUtil.ITEM_ID, captor.getValue().getItemId());
+  //  }
 
-    verify(itemService, times(1)).createItem(captor.capture());
-    Assertions.assertEquals(TestUtil.ITEM_ID, captor.getValue().getItemId());
-  }
-
-  @Test
-  void onItemRecordConsumptionExceptionTest1() throws ItemDomainException {
-    when(itemService.createItem(any())).thenThrow(new ConstraintViolationException("error", null));
-    ArgumentCaptor<ItemCreationRequest> captor = ArgumentCaptor.forClass(ItemCreationRequest.class);
-    itemMasterConsumer.onItemRecordConsumption(testUtil.getItemRecord(), null);
-
-    verify(itemService, times(1)).createItem(captor.capture());
-    Assertions.assertEquals(TestUtil.ITEM_ID, captor.getValue().getItemId());
-  }
+  //  @Test
+  //  void onItemRecordConsumptionExceptionTest1() throws ItemDomainException {
+  //    when(itemService.createItem(any())).thenThrow(new ConstraintViolationException("error",
+  // null));
+  //    ArgumentCaptor<ItemCreationRequest> captor =
+  // ArgumentCaptor.forClass(ItemCreationRequest.class);
+  //    itemMasterConsumer.onItemRecordConsumption(testUtil.getItemRecord(), null);
+  //
+  //    verify(itemService, times(1)).createItem(captor.capture());
+  //    Assertions.assertEquals(TestUtil.ITEM_ID, captor.getValue().getItemId());
+  //  }
 
   @Test
   void onItemRecordConsumptionTest2() throws ItemDomainException {
