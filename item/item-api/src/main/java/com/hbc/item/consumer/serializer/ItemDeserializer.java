@@ -2,6 +2,7 @@ package com.hbc.item.consumer.serializer;
 
 import com.hbc.item.ItemRecord;
 import java.util.Map;
+import javax.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.io.*;
 import org.apache.avro.specific.SpecificDatumReader;
@@ -22,7 +23,7 @@ public class ItemDeserializer<T extends SpecificRecordBase> implements Deseriali
     T returnObject = null;
 
     try {
-
+      log.debug("binary message='{}'", DatatypeConverter.printHexBinary(bytes));
       if (bytes != null) {
         DatumReader<SpecificRecordBase> datumReader =
             new SpecificDatumReader<>(ItemRecord.getClassSchema());
