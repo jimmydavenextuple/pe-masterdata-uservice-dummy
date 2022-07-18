@@ -5,16 +5,12 @@ bootJar {
 
 buildscript {
     repositories {
+        mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
     }
-    dependencies {
-        classpath "com.commercehub.gradle.plugin:gradle-avro-plugin:0.22.0"
-    }
 }
-
-apply plugin: "com.commercehub.gradle.plugin.avro"
 
 configurations {
     [apiElements, runtimeElements].each {
@@ -27,20 +23,10 @@ dependencies {
     implementation(project(":item:item-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
-    implementation "org.apache.avro:avro:1.11.0"
+    implementation "org.apache.avro:avro:1.8.2"
+    implementation 'org.apache.avro:avro-tools:1.8.2'
     implementation "org.springframework.kafka:spring-kafka:2.8.7"
     implementation(project(":common-util"))
-}
-
-generateAvroJava {
-    source("${projectDir}/src/main/resources/avro")
-    outputDir = file("${projectDir}/build/generated")
-}
-
-spotless {
-    java {
-        targetExclude("build/generated/**/*.java")
-    }
 }
 
 sourceCompatibility = JavaVersion.VERSION_11

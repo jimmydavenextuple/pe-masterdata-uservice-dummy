@@ -6,9 +6,9 @@ import com.hbc.item.domain.events.ItemMasterEvent;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import org.joda.time.DateTime;
 
 public class TestUtil {
 
@@ -200,7 +200,7 @@ public class TestUtil {
     record.setItemId(TestUtil.ITEM_ID);
     record.setOrgId(TestUtil.ORG_ID);
     record.setUom(TestUtil.UOM);
-    record.setLastModifiedDate(Instant.ofEpochSecond(1000L));
+    record.setLastModifiedDate(new DateTime());
     return record;
   }
 

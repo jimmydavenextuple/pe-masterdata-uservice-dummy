@@ -3,6 +3,7 @@ package com.hbc.item.consumer;
 import com.hbc.item.ItemRecord;
 import com.hbc.item.domain.events.ItemMasterEvent;
 import com.hbc.item.domain.mapper.ItemMapper;
+import com.hbc.item.domain.mapper.ItemRecordMapper;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.service.ItemService;
 import javax.validation.ConstraintViolationException;
@@ -26,6 +27,7 @@ public class ItemMasterConsumer {
 
   private static final Logger logger = LoggerFactory.getLogger(ItemMasterConsumer.class);
   public static final ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
+  public static final ItemRecordMapper ItemINSTANCE = Mappers.getMapper(ItemRecordMapper.class);
   private final ItemService itemService;
 
   @KafkaHandler
@@ -34,7 +36,7 @@ public class ItemMasterConsumer {
       throws ItemDomainException {
     logger.debug("Inside onItemMasterDataConsumption(), event: {} ", itemRecord);
     try {
-      itemService.createItem(INSTANCE.convertItemToItemCreationRequest(itemRecord));
+      itemService.createItem(ItemINSTANCE.convertItemToItemCreationRequest(itemRecord));
     } catch (ConstraintViolationException cve) {
       logger.error(cve.getMessage());
     } catch (Exception e) {

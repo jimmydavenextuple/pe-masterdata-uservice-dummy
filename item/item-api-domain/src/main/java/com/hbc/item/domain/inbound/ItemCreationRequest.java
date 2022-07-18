@@ -1,7 +1,6 @@
 package com.hbc.item.domain.inbound;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.Map;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -11,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.joda.time.DateTime;
 
 @Data
 @AllArgsConstructor
@@ -114,5 +114,5 @@ public class ItemCreationRequest implements Serializable {
 
   private String imageUrl;
 
-  private Instant lastModifiedDate;
+  private DateTime lastModifiedDate;
 }

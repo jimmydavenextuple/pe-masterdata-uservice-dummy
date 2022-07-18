@@ -12,8 +12,8 @@ import com.hbc.item.domain.entity.ItemEntity;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
 import com.hbc.item.exception.ItemDomainException;
-import java.time.Instant;
 import java.util.Optional;
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class ItemServiceTest {
   void addItemTest() throws ItemDomainException {
     ItemEntity itemEntity = testUtil.getItemEntity();
     ItemCreationRequest itemCreationRequest = testUtil.getItemCreationRequest();
-    itemCreationRequest.setLastModifiedDate(Instant.ofEpochSecond(1000L));
+    itemCreationRequest.setLastModifiedDate(new DateTime());
     when(itemDomain.saveItemEntity(any(ItemEntity.class))).thenReturn(itemEntity);
 
     ItemResponse received_dto = itemService.createItem(itemCreationRequest);
