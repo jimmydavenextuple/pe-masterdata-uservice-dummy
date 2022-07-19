@@ -6,9 +6,8 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -55,20 +54,11 @@ public class AuthFilter implements Filter {
           throw new AuthFilterException("Authorization header value is empty or null");
         }
         Jwt<? extends Header, Claims> claims = getAllClaimsFromToken(tokenString.get());
-        log.debug(
-            "--------Roles extracted from claims: {}------",
-            claims.getBody().get("role").toString());
-        log.debug("--------Issuer extracted from claims: {}------", claims.getBody().getIssuer());
 
-        // Role checks
-        Object roleClaims = claims.getBody().get("role");
-        boolean roleVerified = verifyRoles(roleClaims);
+        // Claims and Issuer check
+        boolean allVerified = verifyAllClaimsAndIssuer(claims);
 
-        // Issuer checks
-        String issuerString = claims.getBody().getIssuer();
-        boolean issuerVerified = issuerString.equals(authProperties.getIssuer());
-
-        if (roleVerified && issuerVerified) {
+        if (allVerified) {
           log.debug("All checks passed");
           CurrentThreadContext.getLogContext().setAuthorizationHeader(authorizationHeaderValue);
           chain.doFilter(request, response);
@@ -76,11 +66,11 @@ public class AuthFilter implements Filter {
           throw new AuthFilterException("Verification failed");
         }
       } catch (AuthFilterException e) {
-        log.error("Authentication failed", e);
+        log.error(
+            "Authentication failed for the request: {}", httpServletRequest.getRequestURL(), e);
         throw e;
       } catch (Exception e) {
-        log.error(
-            "Error while authenticating the request : {}", httpServletRequest.getRequestURL(), e);
+        log.error("Error while getting the response", e);
         throw e;
       }
     } else {
@@ -88,20 +78,26 @@ public class AuthFilter implements Filter {
     }
   }
 
-  private boolean verifyRoles(Object roleClaims) {
-    boolean verified = false;
-    List<String> roles = authProperties.getRoles();
-    if (roleClaims instanceof Collection) {
-      for (String role : (List<String>) roleClaims) {
-        if (roles.contains(role)) {
-          verified = true;
-          break;
+  private boolean verifyAllClaimsAndIssuer(Jwt<? extends Header, Claims> claims) {
+    try {
+      // Claims check
+      Map<String, String> claimsMap = authProperties.getClaims();
+      for (String claim : claimsMap.keySet()) {
+        String userPassedClaimValue = claims.getBody().get(claim).toString();
+        log.debug("--------Claim {}: {}------", claim, userPassedClaimValue);
+        String actualClaimValue = authProperties.getClaims().get(claim);
+        if (!actualClaimValue.equals(userPassedClaimValue)) {
+          return false;
         }
       }
-    } else if (roleClaims instanceof String) {
-      verified = roles.contains(roleClaims);
+
+      // Issuer check
+      String issuerString = claims.getBody().getIssuer();
+      log.debug("--------Issuer extracted from claims: {}------", issuerString);
+      return authProperties.getIssuer().equals(issuerString);
+    } catch (NullPointerException e) {
+      throw new AuthFilterException("Required claims not found");
     }
-    return verified;
   }
 
   private Jwt<? extends Header, Claims> getAllClaimsFromToken(String token) {
