@@ -1,11 +1,11 @@
 package com.hbc.item.consumer;
 
-import com.hbc.item.ItemRecord;
 import com.hbc.item.domain.events.ItemMasterEvent;
 import com.hbc.item.domain.mapper.ItemMapper;
 import com.hbc.item.domain.mapper.ItemRecordMapper;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.service.ItemService;
+import com.hbc.streams.promising.messages.PromisingRecord;
 import javax.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -32,7 +32,7 @@ public class ItemMasterConsumer {
 
   @KafkaHandler
   public void onItemRecordConsumption(
-      @Payload ItemRecord itemRecord, @Headers KafkaMessageHeaders headers)
+      @Payload PromisingRecord itemRecord, @Headers KafkaMessageHeaders headers)
       throws ItemDomainException {
     logger.debug("Inside onItemMasterDataConsumption(), event: {} ", itemRecord);
     try {

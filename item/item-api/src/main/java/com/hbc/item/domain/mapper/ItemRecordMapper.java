@@ -1,8 +1,8 @@
 package com.hbc.item.domain.mapper;
 
-import com.hbc.item.ItemRecord;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemCreationRequest.ItemCreationRequestBuilder;
+import com.hbc.streams.promising.messages.PromisingRecord;
 import java.util.HashMap;
 import java.util.Map;
 import org.mapstruct.AfterMapping;
@@ -20,11 +20,11 @@ import org.springframework.util.ObjectUtils;
 public interface ItemRecordMapper {
 
   @Mapping(target = "weightUom", source = "weightUOM")
-  ItemCreationRequest convertItemToItemCreationRequest(ItemRecord itemRecord);
+  ItemCreationRequest convertItemToItemCreationRequest(PromisingRecord itemRecord);
 
   @AfterMapping
   default void afterMappingItemRecord(
-      @MappingTarget ItemCreationRequestBuilder itemCreationRequest, ItemRecord itemRecord) {
+      @MappingTarget ItemCreationRequestBuilder itemCreationRequest, PromisingRecord itemRecord) {
     Map<String, Boolean> serviceOptionEligibilityMap = new HashMap<>();
     if (!ObjectUtils.isEmpty(itemRecord.getSdndEligible())) {
       serviceOptionEligibilityMap.put("sdndEligible", itemRecord.getSdndEligible());

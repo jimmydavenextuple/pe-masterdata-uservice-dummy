@@ -6,6 +6,7 @@ import com.hbc.item.domain.events.ItemMasterEvent;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
+import com.hbc.streams.promising.messages.PromisingRecord;
 import java.util.HashMap;
 import java.util.Map;
 import org.joda.time.DateTime;
@@ -195,8 +196,8 @@ public class TestUtil {
         .build();
   }
 
-  public ItemRecord getItemRecord() {
-    ItemRecord record = new ItemRecord();
+  public PromisingRecord getItemRecord() {
+    PromisingRecord record = new PromisingRecord();
     record.setItemId(TestUtil.ITEM_ID);
     record.setOrgId(TestUtil.ORG_ID);
     record.setUom(TestUtil.UOM);
