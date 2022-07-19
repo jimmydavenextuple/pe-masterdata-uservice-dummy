@@ -1,0 +1,15 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://dev-db.co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
+    username: \${POSTGRES_USER}
+    password: \${POSTGRES_PWD}
+
+logging:
+  level:
+    com.hbc: DEBUG
