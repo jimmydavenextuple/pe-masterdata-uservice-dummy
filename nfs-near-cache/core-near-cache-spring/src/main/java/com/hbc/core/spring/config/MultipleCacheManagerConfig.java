@@ -43,7 +43,7 @@ public class MultipleCacheManagerConfig {
   private CaffeineCache buildCache(String cacheName, Long maxSize, Long ttl) {
     Caffeine<Object, Object> cacheBuilder = Caffeine.newBuilder();
     cacheBuilder.maximumSize(maxSize);
-    cacheBuilder.expireAfterWrite(ttl, TimeUnit.SECONDS);
+    cacheBuilder.expireAfterWrite(ttl, TimeUnit.HOURS);
     return new CaffeineCache(cacheName, cacheBuilder.build());
   }
 }
