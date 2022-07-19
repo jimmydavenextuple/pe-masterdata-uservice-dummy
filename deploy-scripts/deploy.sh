@@ -2,6 +2,11 @@
 
 echo $ECR_REGISTRY
 export SERVER_CONFIG_FILE="./manifests/config.yml"
+
+if [ -e "./$PROJECT/config.yml" ]; then
+  SERVER_CONFIG_FILE="./$PROJECT/config.yml"
+fi
+
 export REPO=`echo $GITHUB_REPOSITORY | awk -F "/" '{print $2}'`
 export SERVICE_NAME="$REPO-$PROJECT"
 export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties -p $PROJECT | grep version | sed -e "s@version: @@g"`
@@ -22,7 +27,7 @@ if [ "$ENVIRONMENT" == "dev" -o "$ENVIRONMENT" == "qa" ]; then
 elif [ "$ENVIRONMENT" == "stage" ]; then
   export AWS_EKS_NAME="stage-eks-cluster"
 elif [ "$ENVIRONMENT" == "perf" ]; then
-  export AWS_EKS_NAME="perf-eks-cluster"
+  export AWS_EKS_NAME="promise-engine-eks-perf"
 fi
 
 
@@ -43,11 +48,18 @@ fi
 echo "Currently running deployment color : $SERVICE_ACTIVE_COLOR"
 
 export HEALTH_CHECK_PATH=`yq -e eval ".server.health-check-endpoint" $SERVER_CONFIG_FILE`
+export CUSTOM_JAVA_OPTS=`yq -e eval ".server.environments.$ENVIRONMENT.java-opts" $SERVER_CONFIG_FILE`
 export REPLICAS=`yq -e eval ".server.environments.$ENVIRONMENT.replicas" $SERVER_CONFIG_FILE`
 export MIN_MEM_REQUIRED=`yq -e eval ".server.environments.$ENVIRONMENT.resources.min.memory" $SERVER_CONFIG_FILE`
 export MAX_MEM_REQUIRED=`yq -e eval ".server.environments.$ENVIRONMENT.resources.max.memory" $SERVER_CONFIG_FILE`
 export MIN_CPU_REQUIRED=`yq -e eval ".server.environments.$ENVIRONMENT.resources.min.cpu" $SERVER_CONFIG_FILE`
 export MAX_CPU_REQUIRED=`yq -e eval ".server.environments.$ENVIRONMENT.resources.max.cpu" $SERVER_CONFIG_FILE`
+
+if [ "$CUSTOM_JAVA_OPTS" = 'null' ]; then
+  export REPLACE_JAVA_OPTS_COMMENT_WITH="#JAVA_OPTS"
+else
+  export REPLACE_JAVA_OPTS_COMMENT_WITH=""
+fi
 
 sed -e "s@<SERVICE_VERSION>@$SERVICE_CODE@g" \
     -e "s@<SERVICE_NAME>@$SERVICE_NAME@g" \
@@ -56,6 +68,8 @@ sed -e "s@<SERVICE_VERSION>@$SERVICE_CODE@g" \
     -e "s@<NEW_RELIC_LICENSE_KEY>@$NEW_RELIC_LICENSE_KEY@g" \
     -e "s@<COLOR>@$SERVICE_PASSIVE_COLOR@g" \
     -e "s@<REPLICAS>@$REPLICAS@g" \
+    -e "s@<CUSTOM_JAVA_OPTS>@$CUSTOM_JAVA_OPTS@g" \
+    -e "s@#JAVA_OPTS@$REPLACE_JAVA_OPTS_COMMENT_WITH@g" \
     -e "s@<HEALTH_CHECK_PATH>@$HEALTH_CHECK_PATH@g" \
     -e "s@<MIN_MEM>@$MIN_MEM_REQUIRED@g" \
     -e "s@<MAX_MEM>@$MAX_MEM_REQUIRED@g" \
