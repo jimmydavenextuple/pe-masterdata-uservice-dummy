@@ -53,27 +53,27 @@ public class ItemCreationRequest implements Serializable {
 
   private Boolean shipAlone;
 
-  private Double height;
-
   private Double width;
 
-  private Double length;
+  private Double height;
 
   private Double volume;
 
   private String dimensionUom;
 
-  private String volumeUom;
+  private Double length;
 
-  private Double weight;
+  private String volumeUom;
 
   private String weightUom;
 
-  private Double processingTime;
-
   private String cost;
 
+  private Double weight;
+
   private Boolean isHazmat;
+
+  private Double processingTime;
 
   private String shortDescription;
 
