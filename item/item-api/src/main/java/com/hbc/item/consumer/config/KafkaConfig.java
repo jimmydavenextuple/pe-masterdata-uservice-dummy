@@ -22,9 +22,10 @@ public class KafkaConfig {
   private long maxRetryCount;
 
   @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, PromisingRecord> kafkaListenerContainerFactory(
-      KafkaOperations<String, Object> kafkaOperations,
-      ConsumerFactory<String, Object> consumerFactory) {
+  public ConcurrentKafkaListenerContainerFactory<String, PromisingRecord>
+      kafkaListenerContainerFactory(
+          KafkaOperations<String, Object> kafkaOperations,
+          ConsumerFactory<String, Object> consumerFactory) {
 
     ConcurrentKafkaListenerContainerFactory<String, PromisingRecord> factory =
         new ConcurrentKafkaListenerContainerFactory<>();

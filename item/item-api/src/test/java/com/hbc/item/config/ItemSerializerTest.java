@@ -3,7 +3,6 @@ package com.hbc.item.config;
 import com.hbc.item.TestUtil;
 import com.hbc.item.consumer.serializer.ItemDeserializer;
 import com.hbc.item.consumer.serializer.ItemSerializer;
-import com.hbc.item.exception.ItemDomainException;
 import com.hbc.streams.promising.messages.PromisingRecord;
 import javax.xml.bind.DatatypeConverter;
 import org.junit.jupiter.api.Assertions;
@@ -16,8 +15,7 @@ class ItemSerializerTest {
 
   @InjectMocks private ItemSerializer itemSerializer;
 
-  @InjectMocks
-  private ItemDeserializer<PromisingRecord> itemDeserializer;
+  @InjectMocks private ItemDeserializer<PromisingRecord> itemDeserializer;
 
   @InjectMocks private TestUtil testUtil;
 
