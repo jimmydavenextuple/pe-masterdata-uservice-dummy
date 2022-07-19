@@ -1,0 +1,30 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://promise-engine-postgres-stage.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
+    username: \${POSTGRES_USER}
+    password: \${POSTGRES_PWD}
+  kafka:
+    bootstrap-servers: "temp-5-kafka.integration.awshbc.io:9094"
+    consumer-retry-count: 3
+    consumer:
+      enable-auto-commit: true
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: com.hbc.item.consumer.serializer.ItemDeserializer
+      topics:
+        item_master:
+          name: dev.items.promise.bay.v1
+          group-id: item-master-dev
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.hbc.item.consumer.serializer.ItemSerializer
+
+logging:
+  level:
+    com.hbc: DEBUG
