@@ -14,7 +14,7 @@ spring:
     consumer-retry-count: 3
     consumer:
       enable-auto-commit: true
-      auto-offset-reset: latest
+      auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: com.hbc.item.consumer.serializer.ItemDeserializer
       topics:
