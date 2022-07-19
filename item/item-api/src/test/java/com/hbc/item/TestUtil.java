@@ -202,6 +202,33 @@ public class TestUtil {
     record.setOrgId(TestUtil.ORG_ID);
     record.setUom(TestUtil.UOM);
     record.setLastModifiedDate(new DateTime());
+    record.setColor("");
+    record.setBopisEligible(Boolean.TRUE);
+    record.setCost("");
+    record.setDepartmentName("");
+    record.setDepartmentNumber("");
+    record.setIsDSVEligible(Boolean.TRUE);
+    record.setExpressEligible(Boolean.TRUE);
+    record.setIsWhiteGlove(Boolean.TRUE);
+    record.setHeight(0.0);
+    record.setParcelShipmentEligible(Boolean.TRUE);
+    record.setBopisEligible(Boolean.TRUE);
+    record.setShipAlone(Boolean.TRUE);
+    record.setSdndEligible(Boolean.TRUE);
+    record.setItemSource("");
+    record.setShipEligible(Boolean.TRUE);
+    record.setIsHazmat(Boolean.FALSE);
+    record.setDimensionUom("");
+    record.setLastModifiedDate(new DateTime());
+    record.setWeight(0.0);
+    record.setHeight(0.0);
+    record.setLength(0.0);
+    record.setWeightUOM("");
+    record.setProduct("");
+    record.setSize("");
+    record.setVolumeUom("");
+    record.setShortDescription("");
+    record.setImageUrl("");
     return record;
   }
 
