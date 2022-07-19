@@ -1,10 +1,10 @@
 package com.hbc.item.config;
 
-import com.hbc.item.ItemRecord;
 import com.hbc.item.TestUtil;
 import com.hbc.item.consumer.serializer.ItemDeserializer;
 import com.hbc.item.consumer.serializer.ItemSerializer;
-import com.hbc.item.exception.ItemDomainException;
+import com.hbc.streams.promising.messages.PromisingRecord;
+import javax.xml.bind.DatatypeConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ class ItemSerializerTest {
 
   @InjectMocks private ItemSerializer itemSerializer;
 
-  @InjectMocks private ItemDeserializer itemDeserializer;
+  @InjectMocks private ItemDeserializer<PromisingRecord> itemDeserializer;
 
   @InjectMocks private TestUtil testUtil;
 
@@ -25,10 +25,10 @@ class ItemSerializerTest {
   }
 
   @Test
-  void onItemMasterEventConsumptionTest() throws ItemDomainException {
+  void onItemMasterEventConsumptionTest() {
     byte[] res = itemSerializer.serialize("topic", null);
     itemDeserializer.deserialize("topic", null);
-    ItemRecord record = testUtil.getItemRecord();
+    PromisingRecord record = testUtil.getItemRecord();
     itemSerializer.serialize("topic", record);
     record.setOrgId(null);
     itemSerializer.serialize("topic", record);
@@ -37,5 +37,16 @@ class ItemSerializerTest {
     itemDeserializer.deserialize("topic", "".getBytes());
 
     Assertions.assertNull(res);
+  }
+
+  @Test
+  void onItemMasterEventConsumptionTest1() {
+    PromisingRecord avro =
+        itemDeserializer.deserialize(
+            "",
+            DatatypeConverter.parseHexBinary(
+                "10383534333038383302064241590642415908454143480200021A3036303030383534333037393802065245440210345F4D656469756D0200010101010100000000000204494E020A435520494E0002044C4200000200022443617375616C20436F74746F6E20506F6C6F02063330370000C0868AB4C260"));
+    System.out.println(avro);
+    Assertions.assertTrue(Boolean.TRUE);
   }
 }

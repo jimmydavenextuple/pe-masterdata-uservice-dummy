@@ -1,8 +1,10 @@
 package com.hbc.item.consumer.serializer;
 
-import com.hbc.item.ItemRecord;
+import com.hbc.streams.promising.messages.PromisingRecord;
 import java.util.Map;
+import javax.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -22,13 +24,15 @@ public class ItemDeserializer<T extends SpecificRecordBase> implements Deseriali
     T returnObject = null;
 
     try {
-
       if (bytes != null) {
-        DatumReader<SpecificRecordBase> datumReader =
-            new SpecificDatumReader<>(ItemRecord.getClassSchema());
+        log.debug("data='{}'", DatatypeConverter.printHexBinary(bytes));
+
+        DatumReader<GenericRecord> datumReader =
+            new SpecificDatumReader<>(PromisingRecord.getClassSchema());
         Decoder decoder = DecoderFactory.get().binaryDecoder(bytes, null);
+
         returnObject = (T) datumReader.read(null, decoder);
-        log.debug("deserialized data='{}'", returnObject.toString());
+        log.debug("deserialized data='{}'", returnObject);
       }
     } catch (Exception e) {
       log.error("Unable to Deserialize bytes[] ", e);
