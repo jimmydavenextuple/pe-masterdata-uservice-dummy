@@ -78,6 +78,8 @@ spec:
               value: "<SERVICE_NAME>"
             - name: NEW_RELIC_LICENSE_KEY
               value: "<NEW_RELIC_LICENSE_KEY>"
+#JAVA_OPTS            - name: CUSTOM_JAVA_OPTS
+#JAVA_OPTS              value: "<CUSTOM_JAVA_OPTS>"
           volumeMounts:
             - mountPath: /s3-bucket:shared
               name: s3data
