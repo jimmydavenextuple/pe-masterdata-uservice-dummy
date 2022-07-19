@@ -24,7 +24,6 @@ public class ItemDeserializer<T extends SpecificRecordBase> implements Deseriali
     T returnObject = null;
 
     try {
-      log.debug("binary message='{}'", DatatypeConverter.printHexBinary(bytes));
       if (bytes != null) {
         log.debug("data='{}'", DatatypeConverter.printHexBinary(bytes));
 

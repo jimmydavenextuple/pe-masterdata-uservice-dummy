@@ -28,21 +28,6 @@ public interface ItemMapper {
   ItemEntity updateItemEntity(
       ItemUpdationRequest itemUpdationRequest, @MappingTarget ItemEntity existingItemEntity);
 
-  //  ItemCreationRequest convertItemToItemCreationRequest(ItemRecord itemRecord);
-  //
-  //  @AfterMapping
-  //  default void afterMappingItemRecord(
-  //      @MappingTarget ItemCreationRequestBuilder itemCreationRequest, ItemRecord itemRecord) {
-  //    Map<String, Boolean> serviceOptionEligibilityMap = new HashMap<>();
-  //    if (!ObjectUtils.isEmpty(itemRecord.getSdndEligible())) {
-  //      serviceOptionEligibilityMap.put("sdndEligible", itemRecord.getSdndEligible());
-  //    }
-  //    if (!ObjectUtils.isEmpty(itemRecord.getExpressEligible())) {
-  //      serviceOptionEligibilityMap.put("expressEligible", itemRecord.getExpressEligible());
-  //    }
-  //    itemCreationRequest.serviceOptionEligibilities(serviceOptionEligibilityMap);
-  //  }
-
   @Mapping(target = "weightUom", source = "weightUOM")
   ItemCreationRequest convertItemMasterEventToItemCreationRequest(ItemMasterEvent itemMasterEvent);
 
