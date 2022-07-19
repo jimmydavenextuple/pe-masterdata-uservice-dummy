@@ -11,16 +11,16 @@ spring:
     password: \${POSTGRES_PWD}
   kafka:
     bootstrap-servers: "temp-5-kafka.integration.awshbc.io:9094"
-    consumer-retry-count: 3
+    consumer-retry-count: 1
     consumer:
       enable-auto-commit: true
-      auto-offset-reset: earliest
+      auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: com.hbc.item.consumer.serializer.ItemDeserializer
       topics:
         item_master:
-          name: dev.items.promise.bay.v1
-          group-id: item-master-dev
+          name: items.promise.bay.pref.v1
+          group-id: item-master-pref
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.hbc.item.consumer.serializer.ItemSerializer
