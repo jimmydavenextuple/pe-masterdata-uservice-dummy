@@ -23,9 +23,9 @@ public class CacheProperties {
     defaultMap.put("node_calendar", CACHE_PROPERTY_VALUE);
     defaultMap.put("carrier_calendar", CACHE_PROPERTY_VALUE);
     defaultMap.put("node_carrier_calendar", CACHE_PROPERTY_VALUE);
-    defaultMap.put("postal code timezone", CACHE_PROPERTY_VALUE);
-    defaultMap.put("sourcingRule", CACHE_PROPERTY_VALUE);
-    defaultMap.put("weightage configuration", CACHE_PROPERTY_VALUE);
+    defaultMap.put("postal_code_timezone", CACHE_PROPERTY_VALUE);
+    defaultMap.put("sourcing_rule", CACHE_PROPERTY_VALUE);
+    defaultMap.put("weightage_configuration", CACHE_PROPERTY_VALUE);
     return defaultMap;
   }
 }
