@@ -228,7 +228,6 @@ public class TestUtil {
     record.setSize("");
     record.setVolumeUom("");
     record.setShortDescription("");
-    record.setImageUrl("");
     return record;
   }
 

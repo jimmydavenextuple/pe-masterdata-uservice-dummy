@@ -11,7 +11,7 @@ spring:
     password: postgres
   kafka:
     bootstrap-servers: "localhost:9092"
-    consumer-retry-count: 3
+    consumer-retry-count: 1
     consumer:
       enable-auto-commit: true
       auto-offset-reset: earliest

@@ -1,14 +1,11 @@
 package com.hbc.item.domain.mapper;
 
+import java.util.Objects;
 import org.mapstruct.Mapper;
 
 @Mapper
 public interface CharSequenceMapper {
   default String map(CharSequence charSequence) {
-    return charSequence.toString();
-  }
-
-  default CharSequence map(String string) {
-    return string;
+    return Objects.isNull(charSequence) ? null : charSequence.toString();
   }
 }
