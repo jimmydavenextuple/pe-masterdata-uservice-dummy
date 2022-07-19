@@ -10,7 +10,7 @@ spring:
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
   kafka:
-    bootstrap-servers: "b-1.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9096,b-2.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9096,b-2.devkafkacluster.jhsucn.c23.kafka.us-east-1.amazonaws.com:9096"
+    bootstrap-servers: "temp-5-kafka.integration.awshbc.io:9094"
     consumer-retry-count: 3
     properties:
       security.protocol: SASL_SSL
