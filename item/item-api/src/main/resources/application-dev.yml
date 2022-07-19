@@ -11,7 +11,7 @@ spring:
     password: \${POSTGRES_PWD}
   kafka:
     bootstrap-servers: "temp-5-kafka.integration.awshbc.io:9094"
-    consumer-retry-count: 3
+    consumer-retry-count: 1
     consumer:
       enable-auto-commit: true
       auto-offset-reset: latest
