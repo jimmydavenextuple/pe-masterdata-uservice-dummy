@@ -42,6 +42,7 @@ public class CalendarService {
   private static final String ORG_ID = "orgId";
   private static final String NODE_ID = "nodeId";
   private static final String CARRIER_SERVICE_ID = "carrierServiceId";
+  private static final String CALENDAR_ID = "calendarId";
 
   @Value("${constants.default-number-of-days-in-future}")
   private Integer defaultNumberOfDaysInFuture;
@@ -56,7 +57,8 @@ public class CalendarService {
 
   /** Get Calendar details by calendarId and OrgId */
   public CalendarResponse processGetCalendar(String orgId, String calendarId)
-      throws CalendarDomainException {
+      throws CalendarDomainException, CommonServiceException {
+    validateCalendarId(calendarId, orgId);
     return INSTANCE.convertToCalendarResponse(calendarDomain.getCalendar(orgId, calendarId));
   }
 
@@ -290,6 +292,20 @@ public class CalendarService {
               FieldError.builder().rejectedValue(nodeId).build()));
     }
     return calendarId;
+  }
+
+  public void validateCalendarId(String calendarId, String orgId)
+      throws CalendarDomainException, CommonServiceException {
+    var calendarEntity = calendarDomain.getCalendar(orgId, calendarId);
+
+    if (ObjectUtils.isEmpty(calendarEntity)) {
+      logger.error("Calendar does not exists");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(CALENDAR_ID, FieldError.builder().rejectedValue(calendarId).build());
+      throw new CommonServiceException(
+          "Calendar does not exists", HttpStatus.NOT_FOUND, 0x1771, errorMap);
+    }
   }
 
   private boolean findWeekInfo(int x, CalendarEntity calendarEntity) {

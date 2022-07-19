@@ -2,6 +2,7 @@ package com.hbc.pe.masterdata.calendar.controller;
 
 import com.hbc.calendar.domain.inbound.NodeCarrierServiceCalendarRequest;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.service.NodeCarrierServiceCalendarService;
@@ -27,7 +28,7 @@ public class NodeCarrierServiceCalendarController {
   public ResponseEntity<BaseResponse<NodeCarrierServiceCalendarResponse>>
       handleCreateNodeCarrierServiceCalendar(
           @Valid @RequestBody NodeCarrierServiceCalendarRequest nodeCarrierServiceCalendarRequest)
-          throws CalendarDomainException {
+          throws CalendarDomainException, CommonServiceException {
     logger.debug(
         "Inside handleCreateNodeCarrierServiceCalendar() for nodeCarrierServiceCalendarRequest: {}",
         nodeCarrierServiceCalendarRequest);

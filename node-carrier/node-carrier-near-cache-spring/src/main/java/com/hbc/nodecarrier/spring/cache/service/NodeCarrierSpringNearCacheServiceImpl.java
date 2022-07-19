@@ -49,6 +49,7 @@ public class NodeCarrierSpringNearCacheServiceImpl
   @CacheEvict(cacheManager = "caffeineCacheManager", key = "#key")
   @Override
   public void delete(NodeCarrierCacheKey key) {
+    logger.debug("Inside delete method");
     super.delete(key);
   }
 
