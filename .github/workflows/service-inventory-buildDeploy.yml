@@ -5,6 +5,9 @@ on:
     branches: [ development ]
     paths:
       - "service-inventory/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/workflows/build&deploy.yml"
      
 jobs:
   Build-Deploy:
