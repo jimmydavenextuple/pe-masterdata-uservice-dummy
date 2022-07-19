@@ -120,6 +120,62 @@ jobs:
           COMMIT_HASH: ${{ github.sha }}
           ENVIRONMENT: "qa"
           PROJECT: ${{ inputs.module }}
+  Deploy-To-STAGE:
+    name: Deploy-To-STAGE ${{ github.event.inputs.module }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      issues: read
+      contents: read
+      checks: write
+      pull-requests: write
+    needs: Deploy-To-QA
+    environment: stage
+    steps:
+      - uses: actions/checkout@v3
+      - uses: azure/setup-kubectl@v2.0
+      - uses: mikefarah/yq@master
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: git-actions-pipeline
+          aws-region: us-east-1
+      - name: Deploy to EKS
+        run: ./deploy-scripts/deploy.sh
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
+          COMMIT_HASH: ${{ github.sha }}
+          ENVIRONMENT: "stage"
+          PROJECT: ${{ inputs.module }}
+  Deploy-To-PERF:
+    name: Deploy-To-PERF ${{ github.event.inputs.module }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      issues: read
+      contents: read
+      checks: write
+      pull-requests: write
+    needs: Deploy-To-QA
+    environment: perf
+    steps:
+      - uses: actions/checkout@v3
+      - uses: azure/setup-kubectl@v2.0
+      - uses: mikefarah/yq@master
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: git-actions-pipeline
+          aws-region: us-east-1
+      - name: Deploy to EKS
+        run: ./deploy-scripts/deploy.sh
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
+          COMMIT_HASH: ${{ github.sha }}
+          ENVIRONMENT: "perf"
+          PROJECT: ${{ inputs.module }}
 
 
 
