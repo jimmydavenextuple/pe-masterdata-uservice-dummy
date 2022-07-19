@@ -11,7 +11,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
-import org.springframework.util.ObjectUtils;
 
 @Mapper(
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
@@ -26,12 +25,8 @@ public interface ItemRecordMapper {
   default void afterMappingItemRecord(
       @MappingTarget ItemCreationRequestBuilder itemCreationRequest, PromisingRecord itemRecord) {
     Map<String, Boolean> serviceOptionEligibilityMap = new HashMap<>();
-    if (!ObjectUtils.isEmpty(itemRecord.getSdndEligible())) {
-      serviceOptionEligibilityMap.put("sdndEligible", itemRecord.getSdndEligible());
-    }
-    if (!ObjectUtils.isEmpty(itemRecord.getExpressEligible())) {
-      serviceOptionEligibilityMap.put("expressEligible", itemRecord.getExpressEligible());
-    }
+    serviceOptionEligibilityMap.put("sdndEligible", itemRecord.getSdndEligible());
+    serviceOptionEligibilityMap.put("expressEligible", itemRecord.getExpressEligible());
     itemCreationRequest.serviceOptionEligibilities(serviceOptionEligibilityMap);
   }
 }
