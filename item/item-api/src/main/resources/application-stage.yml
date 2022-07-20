@@ -28,3 +28,5 @@ spring:
 logging:
   level:
     com.hbc: DEBUG
+auth:
+  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_HExeMsLrg
