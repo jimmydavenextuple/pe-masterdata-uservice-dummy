@@ -20,7 +20,7 @@ server:
           memory: "512Mi"
           cpu: "256m"
     stage:
-      replicas: 1
+      replicas: 3
       resources:
         min:
           memory: "512Mi"
@@ -29,7 +29,8 @@ server:
           memory: "512Mi"
           cpu: "256m"
     perf:
-      replicas: 2
+      java-opts: "-Xms768m -Xmx768m"
+      replicas: 3
       resources:
         min:
           memory: "1024Mi"

@@ -1,6 +1,6 @@
 package com.hbc.item.consumer.config;
 
-import com.hbc.item.ItemRecord;
+import com.hbc.streams.promising.messages.PromisingRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,11 +22,12 @@ public class KafkaConfig {
   private long maxRetryCount;
 
   @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, ItemRecord> kafkaListenerContainerFactory(
-      KafkaOperations<String, Object> kafkaOperations,
-      ConsumerFactory<String, Object> consumerFactory) {
+  public ConcurrentKafkaListenerContainerFactory<String, PromisingRecord>
+      kafkaListenerContainerFactory(
+          KafkaOperations<String, Object> kafkaOperations,
+          ConsumerFactory<String, Object> consumerFactory) {
 
-    ConcurrentKafkaListenerContainerFactory<String, ItemRecord> factory =
+    ConcurrentKafkaListenerContainerFactory<String, PromisingRecord> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory);
     factory.setCommonErrorHandler(kafkaErrorHandler(kafkaOperations));

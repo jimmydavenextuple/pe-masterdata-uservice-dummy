@@ -1,11 +1,11 @@
 package com.hbc.item.domain.events;
 
 import java.io.Serializable;
-import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.DateTime;
 
 @Data
 @AllArgsConstructor
@@ -45,5 +45,5 @@ public class ItemMasterEvent implements Serializable {
   private String departmentNumber;
   private String departmentName;
   private String imageUrl;
-  private Instant lastModifiedDate;
+  private DateTime lastModifiedDate;
 }

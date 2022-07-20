@@ -1,7 +1,7 @@
 package com.hbc.item.controller;
 
-import com.hbc.item.ItemRecord;
 import com.hbc.item.domain.events.ItemMasterEvent;
+import com.hbc.streams.promising.messages.PromisingRecord;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class KafkaMockController {
 
   @PostMapping("producer/avro/{topicName}/messages")
   public ResponseEntity<String> produceAvroKafkaMessage(
-      @PathVariable String topicName, @RequestBody ItemRecord itemRecord) {
+      @PathVariable String topicName, @RequestBody PromisingRecord itemRecord) {
     try {
       kafkaTemplate.send(topicName, itemRecord);
       return ResponseEntity.ok("Success");
