@@ -41,14 +41,13 @@ public class NodeCarrierServiceCalendarService {
   /** Creates a new Node Carrier Service Calendar */
   public NodeCarrierServiceCalendarResponse processCreateNodeCarrierServiceCalendarResponse(
       NodeCarrierServiceCalendarRequest nodeCarrierServiceCalendarRequest)
-      throws CalendarDomainException, DateException {
+      throws CalendarDomainException, DateException, CommonServiceException {
     if (!DateUtil.validateDate(nodeCarrierServiceCalendarRequest.getEffectiveDate())) {
       throw new DateException(
           "Invalid Date",
           nodeCarrierServiceCalendarRequest.getCalendarId(),
           nodeCarrierServiceCalendarRequest.getOrgId());
     }
-      throws CalendarDomainException, CommonServiceException {
     validateCalendarId(
         nodeCarrierServiceCalendarRequest.getCalendarId(),
         nodeCarrierServiceCalendarRequest.getOrgId());

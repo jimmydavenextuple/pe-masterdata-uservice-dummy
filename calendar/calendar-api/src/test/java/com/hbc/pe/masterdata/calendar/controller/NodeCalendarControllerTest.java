@@ -35,8 +35,8 @@ class NodeCalendarControllerTest {
   }
 
   @Test
-  void handleCreateNodeCalendarTest() throws CalendarDomainException, DateException {
-  void handleCreateNodeCalendarTest() throws CalendarDomainException, CommonServiceException {
+  void handleCreateNodeCalendarTest()
+      throws CalendarDomainException, DateException, CommonServiceException {
     when(nodeCalendarService.processCreateNodeCalendar(any()))
         .thenReturn(testUtil.getNodeCalendarResponse());
 
@@ -50,10 +50,8 @@ class NodeCalendarControllerTest {
   }
 
   @Test
-  void handleCreateNodeCalendarExceptionTest() throws CalendarDomainException, DateException {
   void handleCreateNodeCalendarExceptionTest()
-      throws CalendarDomainException, CommonServiceException {
-
+      throws CalendarDomainException, CommonServiceException, DateException {
     when(nodeCalendarService.processCreateNodeCalendar(any()))
         .thenThrow(new NullPointerException("error"));
 

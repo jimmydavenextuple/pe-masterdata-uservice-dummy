@@ -40,15 +40,13 @@ public class CarrierServiceCalendarService {
   /** Creates a new Carrier Service Calendar */
   public CarrierServiceCalendarResponse processCreateCarrierServiceCalendar(
       CarrierServiceCalendarRequest carrierServiceCalendarRequest)
-      throws CalendarDomainException, DateException {
+      throws CalendarDomainException, CommonServiceException, DateException {
     if (!DateUtil.validateDate(carrierServiceCalendarRequest.getEffectiveDate())) {
       throw new DateException(
           "Invalid Date",
           carrierServiceCalendarRequest.getCalendarId(),
           carrierServiceCalendarRequest.getOrgId());
     }
-      CarrierServiceCalendarRequest carrierServiceCalendarRequest)
-      throws CalendarDomainException, CommonServiceException {
     validateCalendarId(
         carrierServiceCalendarRequest.getCalendarId(), carrierServiceCalendarRequest.getOrgId());
     var carrierServiceCalendarEntity =

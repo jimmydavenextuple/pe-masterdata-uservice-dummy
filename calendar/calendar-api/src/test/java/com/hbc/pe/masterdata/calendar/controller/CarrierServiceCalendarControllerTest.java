@@ -36,9 +36,8 @@ class CarrierServiceCalendarControllerTest {
   }
 
   @Test
-  void handleCreateCarrierServiceCalendarTest() throws CalendarDomainException, DateException {
   void handleCreateCarrierServiceCalendarTest()
-      throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, DateException, CommonServiceException {
     when(carrierServiceCalendarService.processCreateCarrierServiceCalendar(any()))
         .thenReturn(testUtil.getCarrierServiceCalendarResponse());
 
@@ -54,10 +53,7 @@ class CarrierServiceCalendarControllerTest {
 
   @Test
   void handleCreateCarrierServiceCalendarExceptionTest()
-      throws CalendarDomainException, CommonServiceException {
-  void handleCreateCarrierServiceCalendarExceptionTest()
-      throws CalendarDomainException, DateException {
-
+      throws CalendarDomainException, CommonServiceException, DateException {
     when(carrierServiceCalendarService.processCreateCarrierServiceCalendar(any()))
         .thenThrow(new NullPointerException("error"));
 

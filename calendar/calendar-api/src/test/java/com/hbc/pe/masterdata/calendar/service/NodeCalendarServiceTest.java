@@ -34,8 +34,8 @@ class NodeCalendarServiceTest {
   }
 
   @Test
-  void processCreateNodeCalendarTest() throws CalendarDomainException, DateException {
-  void processCreateNodeCalendarTest() throws CalendarDomainException, CommonServiceException {
+  void processCreateNodeCalendarTest()
+      throws CalendarDomainException, DateException, CommonServiceException {
     when(nodeCalendarDomain.saveNodeCalendarEntity(any()))
         .thenReturn(testUtil.getNodeCalendarEntity());
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());

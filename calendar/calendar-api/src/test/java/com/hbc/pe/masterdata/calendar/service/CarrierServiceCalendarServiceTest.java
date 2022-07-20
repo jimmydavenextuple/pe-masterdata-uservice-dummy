@@ -36,9 +36,8 @@ class CarrierServiceCalendarServiceTest {
   }
 
   @Test
-  void processCreateCarrierServiceCalendarTest() throws CalendarDomainException, DateException {
   void processCreateCarrierServiceCalendarTest()
-      throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, DateException, CommonServiceException {
     when(carrierServiceCalendarDomain.saveCarrierServiceCalendarEntity(any()))
         .thenReturn(testUtil.getCarrierServiceCalendarEntity());
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());

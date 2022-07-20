@@ -29,8 +29,7 @@ public class NodeCarrierServiceCalendarController {
   public ResponseEntity<BaseResponse<NodeCarrierServiceCalendarResponse>>
       handleCreateNodeCarrierServiceCalendar(
           @Valid @RequestBody NodeCarrierServiceCalendarRequest nodeCarrierServiceCalendarRequest)
-          throws CalendarDomainException, CommonServiceException {
-          throws CalendarDomainException, DateException {
+          throws CalendarDomainException, CommonServiceException, DateException {
     logger.debug(
         "Inside handleCreateNodeCarrierServiceCalendar() for nodeCarrierServiceCalendarRequest: {}",
         nodeCarrierServiceCalendarRequest);

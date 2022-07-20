@@ -33,9 +33,8 @@ public class NodeCalendarService {
 
   /** Creates a new Node Calendar */
   public NodeCalendarResponse processCreateNodeCalendar(NodeCalendarRequest nodeCalendarRequest)
-      throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, CommonServiceException, DateException {
     validateCalendarId(nodeCalendarRequest.getCalendarId(), nodeCalendarRequest.getOrgId());
-      throws CalendarDomainException, DateException {
     if (!DateUtil.validateDate(nodeCalendarRequest.getEffectiveDate())) {
       throw new DateException(
           "Invalid Date", nodeCalendarRequest.getCalendarId(), nodeCalendarRequest.getOrgId());
