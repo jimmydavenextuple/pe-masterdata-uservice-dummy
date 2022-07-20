@@ -1,0 +1,17 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
+    username: \${POSTGRES_USER}
+    password: \${POSTGRES_PWD}
+
+logging:
+  level:
+    com.hbc: DEBUG
+auth:
+  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Pk3rFdZm1

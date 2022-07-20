@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
@@ -36,6 +37,8 @@ class CarrierServiceCalendarControllerTest {
 
   @Test
   void handleCreateCarrierServiceCalendarTest() throws CalendarDomainException, DateException {
+  void handleCreateCarrierServiceCalendarTest()
+      throws CalendarDomainException, CommonServiceException {
     when(carrierServiceCalendarService.processCreateCarrierServiceCalendar(any()))
         .thenReturn(testUtil.getCarrierServiceCalendarResponse());
 
@@ -50,6 +53,8 @@ class CarrierServiceCalendarControllerTest {
   }
 
   @Test
+  void handleCreateCarrierServiceCalendarExceptionTest()
+      throws CalendarDomainException, CommonServiceException {
   void handleCreateCarrierServiceCalendarExceptionTest()
       throws CalendarDomainException, DateException {
 

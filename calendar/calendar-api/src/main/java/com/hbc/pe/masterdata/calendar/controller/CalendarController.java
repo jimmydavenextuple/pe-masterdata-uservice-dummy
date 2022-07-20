@@ -46,7 +46,8 @@ public class CalendarController {
 
   @GetMapping("/{orgId}/{calendarId}")
   public ResponseEntity<BaseResponse<CalendarResponse>> handleGetCalendar(
-      @PathVariable String orgId, @PathVariable String calendarId) throws CalendarDomainException {
+      @PathVariable String orgId, @PathVariable String calendarId)
+      throws CalendarDomainException, CommonServiceException {
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()

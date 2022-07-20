@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
@@ -36,6 +37,8 @@ class NodeCarrierServiceCalendarControllerTest {
 
   @Test
   void handleNodeCreateCarrierServiceCalendarTest() throws CalendarDomainException, DateException {
+  void handleNodeCreateCarrierServiceCalendarTest()
+      throws CalendarDomainException, CommonServiceException {
     when(nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(any()))
         .thenReturn(testUtil.getNodeCarrierServiceCalendarResponse());
 
@@ -53,6 +56,8 @@ class NodeCarrierServiceCalendarControllerTest {
   @Test
   void handleNodeCreateCarrierServiceCalendarExceptionTest()
       throws CalendarDomainException, DateException {
+  void handleNodeCreateCarrierServiceCalendarExceptionTest()
+      throws CalendarDomainException, CommonServiceException {
 
     when(nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(any()))
         .thenThrow(new NullPointerException("error"));

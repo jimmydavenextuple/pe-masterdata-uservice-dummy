@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -115,7 +116,8 @@ public class NodeCarrierService {
               .findAny();
     }
 
-    if (nodeCarrierEntity.isEmpty()) {
+    if (nodeCarrierEntity.isEmpty()
+        || !Objects.equals(nodeCarrierEntity.get().getServiceOption(), serviceOption)) {
       logger.error(NODE_CARRIER_NOT_FOUND_ERROR_MSG);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());

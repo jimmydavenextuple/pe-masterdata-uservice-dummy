@@ -6,6 +6,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
+import com.hbc.common.exception.CommonServiceException;
+import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.NodeCarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
@@ -23,6 +25,7 @@ import org.mockito.MockitoAnnotations;
 class NodeCarrierServiceCalendarServiceTest {
 
   @Mock private NodeCarrierServiceCalendarDomain nodeCarrierServiceCalendarDomain;
+  @Mock private CalendarDomain calendarDomain;
   @InjectMocks private NodeCarrierServiceCalendarService nodeCarrierServiceCalendarService;
   @InjectMocks private TestUtil testUtil;
 
@@ -33,9 +36,11 @@ class NodeCarrierServiceCalendarServiceTest {
 
   @Test
   void processCreateNodeCarrierServiceCalendarTest() throws CalendarDomainException, DateException {
+  void processCreateNodeCarrierServiceCalendarTest()
+      throws CalendarDomainException, CommonServiceException {
     when(nodeCarrierServiceCalendarDomain.saveNodeCarrierServiceCalendarEntity(any()))
         .thenReturn(testUtil.getNodeCarrierServiceCalendarEntity());
-
+    when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
     NodeCarrierServiceCalendarResponse resp =
         nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
             testUtil.getNodeCarrierServiceCalendarRequest());
@@ -49,6 +54,30 @@ class NodeCarrierServiceCalendarServiceTest {
         TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.getEffectiveDate()));
     Assertions.assertEquals(TestUtil.DESCRIPTION, Objects.requireNonNull(resp.getDescription()));
     verify(nodeCarrierServiceCalendarDomain, times(1)).saveNodeCarrierServiceCalendarEntity(any());
+  }
+
+  @Test
+  void processValidateCalendarIdTest() throws CalendarDomainException, CommonServiceException {
+    when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
+
+    nodeCarrierServiceCalendarService.validateCalendarId(TestUtil.CALENDAR_ID, TestUtil.ORG_ID);
+
+    verify(calendarDomain, times(1)).getCalendar(any(), any());
+  }
+
+  @Test
+  void processValidateCalendarIdTestException() throws CalendarDomainException {
+    when(calendarDomain.getCalendar(any(), any())).thenReturn(null);
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                nodeCarrierServiceCalendarService.validateCalendarId(
+                    TestUtil.CALENDAR_ID, TestUtil.ORG_ID));
+    Assertions.assertEquals(
+        "Cannot create a node carrier service calendar as calendarId/orgId is invalid",
+        exception.getMessage());
+    verify(calendarDomain, times(1)).getCalendar(any(), any());
   }
 
   @Test

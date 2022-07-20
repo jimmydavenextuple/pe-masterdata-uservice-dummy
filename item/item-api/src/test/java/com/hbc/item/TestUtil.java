@@ -6,9 +6,10 @@ import com.hbc.item.domain.events.ItemMasterEvent;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
-import java.time.Instant;
+import com.hbc.streams.promising.messages.PromisingRecord;
 import java.util.HashMap;
 import java.util.Map;
+import org.joda.time.DateTime;
 
 public class TestUtil {
 
@@ -195,12 +196,38 @@ public class TestUtil {
         .build();
   }
 
-  public ItemRecord getItemRecord() {
-    ItemRecord record = new ItemRecord();
+  public PromisingRecord getItemRecord() {
+    PromisingRecord record = new PromisingRecord();
     record.setItemId(TestUtil.ITEM_ID);
     record.setOrgId(TestUtil.ORG_ID);
     record.setUom(TestUtil.UOM);
-    record.setLastModifiedDate(Instant.ofEpochSecond(1000L));
+    record.setLastModifiedDate(new DateTime());
+    record.setColor("");
+    record.setBopisEligible(Boolean.TRUE);
+    record.setCost("");
+    record.setDepartmentName("");
+    record.setDepartmentNumber("");
+    record.setIsDSVEligible(Boolean.TRUE);
+    record.setExpressEligible(Boolean.TRUE);
+    record.setIsWhiteGlove(Boolean.TRUE);
+    record.setHeight(0.0);
+    record.setParcelShipmentEligible(Boolean.TRUE);
+    record.setBopisEligible(Boolean.TRUE);
+    record.setShipAlone(Boolean.TRUE);
+    record.setSdndEligible(Boolean.TRUE);
+    record.setItemSource("");
+    record.setShipEligible(Boolean.TRUE);
+    record.setIsHazmat(Boolean.FALSE);
+    record.setDimensionUom("");
+    record.setLastModifiedDate(new DateTime());
+    record.setWeight(0.0);
+    record.setHeight(0.0);
+    record.setLength(0.0);
+    record.setWeightUOM("");
+    record.setProduct("");
+    record.setSize("");
+    record.setVolumeUom("");
+    record.setShortDescription("");
     return record;
   }
 

@@ -64,7 +64,7 @@ class CalendarControllerTest {
   }
 
   @Test
-  void handleGetCalendarTest() throws CalendarDomainException {
+  void handleGetCalendarTest() throws CalendarDomainException, CommonServiceException {
     when(calendarService.processGetCalendar(any(), any()))
         .thenReturn(testUtil.getCalendarResponse());
 
@@ -78,7 +78,7 @@ class CalendarControllerTest {
   }
 
   @Test
-  void handleGetCalendarExceptionTest() throws CalendarDomainException {
+  void handleGetCalendarExceptionTest() throws CalendarDomainException, CommonServiceException {
 
     when(calendarService.processGetCalendar(any(), any()))
         .thenThrow(new NullPointerException("error"));

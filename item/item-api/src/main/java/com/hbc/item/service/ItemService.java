@@ -9,8 +9,6 @@ import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.mapper.ItemMapper;
 import com.hbc.item.domain.outbound.ItemResponse;
 import com.hbc.item.exception.ItemDomainException;
-import java.time.Instant;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -62,8 +60,7 @@ public class ItemService {
 
     var itemEntity = INSTANCE.toItemEntity(itemCreationRequest);
     if (!ObjectUtils.isEmpty(itemCreationRequest.getLastModifiedDate())) {
-      itemEntity.setLastModifiedDate(
-          getLastModifiedDate(itemCreationRequest.getLastModifiedDate()));
+      itemEntity.setLastModifiedDate(itemCreationRequest.getLastModifiedDate().toDate());
     }
     return INSTANCE.toItemResponse(itemDomain.saveItemEntity(itemEntity));
   }
@@ -126,9 +123,5 @@ public class ItemService {
     var itemResponse = INSTANCE.toItemResponse(itemEntity.get());
     itemDomain.deleteItem(itemEntity.get());
     return itemResponse;
-  }
-
-  private Date getLastModifiedDate(Instant time) {
-    return Date.from(Instant.ofEpochSecond(time.getEpochSecond() / 1000));
   }
 }

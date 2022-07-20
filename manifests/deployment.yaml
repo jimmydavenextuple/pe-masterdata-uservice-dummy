@@ -22,6 +22,14 @@ spec:
         - hostPath:
             path: /mnt/s3data
           name: s3data
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              uservice: <SERVICE_NAME>
+              color: <COLOR>
       containers:
         - name: <SERVICE_NAME>
           image: "<IMAGE_NAME>"
@@ -70,6 +78,8 @@ spec:
               value: "<SERVICE_NAME>"
             - name: NEW_RELIC_LICENSE_KEY
               value: "<NEW_RELIC_LICENSE_KEY>"
+#JAVA_OPTS            - name: CUSTOM_JAVA_OPTS
+#JAVA_OPTS              value: "<CUSTOM_JAVA_OPTS>"
           volumeMounts:
             - mountPath: /s3-bucket:shared
               name: s3data
