@@ -5,10 +5,9 @@ import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.pe.masterdata.calendar.domain.NodeCalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
-import java.util.List;
-
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateUtil;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
@@ -22,13 +21,10 @@ public class NodeCalendarService {
 
   /** Creates a new Node Calendar */
   public NodeCalendarResponse processCreateNodeCalendar(NodeCalendarRequest nodeCalendarRequest)
-          throws CalendarDomainException, DateException {
-    if(!DateUtil.validateDate(nodeCalendarRequest.getEffectiveDate())){
+      throws CalendarDomainException, DateException {
+    if (!DateUtil.validateDate(nodeCalendarRequest.getEffectiveDate())) {
       throw new DateException(
-              "Invalid Date",
-              nodeCalendarRequest.getCalendarId(),
-              nodeCalendarRequest.getOrgId()
-      );
+          "Invalid Date", nodeCalendarRequest.getCalendarId(), nodeCalendarRequest.getOrgId());
     }
     var nodeCalendarEntity = INSTANCE.convertToNodeCalendarEntity(nodeCalendarRequest);
     var savedNodeCalendarEntity = nodeCalendarDomain.saveNodeCalendarEntity(nodeCalendarEntity);

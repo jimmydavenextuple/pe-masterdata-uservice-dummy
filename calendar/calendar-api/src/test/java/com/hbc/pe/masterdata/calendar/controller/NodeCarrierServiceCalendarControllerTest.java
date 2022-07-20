@@ -51,7 +51,8 @@ class NodeCarrierServiceCalendarControllerTest {
   }
 
   @Test
-  void handleNodeCreateCarrierServiceCalendarExceptionTest() throws CalendarDomainException, DateException {
+  void handleNodeCreateCarrierServiceCalendarExceptionTest()
+      throws CalendarDomainException, DateException {
 
     when(nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(any()))
         .thenThrow(new NullPointerException("error"));

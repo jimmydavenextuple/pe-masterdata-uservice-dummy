@@ -28,14 +28,14 @@ public class CalendarExceptionHandler {
   }
 
   @ExceptionHandler(DateException.class)
-  public ResponseEntity<ErrorResponse> handleDateException(DateException e){
+  public ResponseEntity<ErrorResponse> handleDateException(DateException e) {
     return ResponseEntity.badRequest()
-            .body(
-                    ErrorResponse.builder(ErrorType.ERROR, 0xfffff1)
-                            .message(e.getMessage())
-                            .errorField(
-                                    "calendarId", FieldError.builder().rejectedValue(e.getCalendarId()).build())
-                            .errorField("orgId", FieldError.builder().rejectedValue(e.getOrgId()).build())
-                            .build());
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0xfffff1)
+                .message(e.getMessage())
+                .errorField(
+                    "calendarId", FieldError.builder().rejectedValue(e.getCalendarId()).build())
+                .errorField("orgId", FieldError.builder().rejectedValue(e.getOrgId()).build())
+                .build());
   }
 }
