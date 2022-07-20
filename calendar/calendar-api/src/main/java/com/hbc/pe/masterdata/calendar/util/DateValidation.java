@@ -14,27 +14,27 @@ import org.springframework.stereotype.Component;
 public class DateValidation {
 
   public boolean validateDate(String date) {
-    boolean valid = false;
+    var valid = Boolean.FALSE;
     try {
       LocalDate.parse(
           date, DateTimeFormatter.ofPattern("uuuu-M-d").withResolverStyle(ResolverStyle.STRICT));
-      valid = true;
+      valid = Boolean.TRUE;
     } catch (DateTimeParseException e) {
-      valid = false;
+      valid = Boolean.FALSE;
     }
     return valid;
   }
 
   public boolean validateExceptionDays(List<ExceptionDays> exceptionDays) {
-    boolean valid = false;
-    for (int i = 0; i < exceptionDays.size(); i++) {
+    var valid = Boolean.FALSE;
+    for (var i = 0; i < exceptionDays.size(); i++) {
       try {
         LocalDate.parse(
             exceptionDays.get(i).getDate(),
             DateTimeFormatter.ofPattern("uuuu-M-d").withResolverStyle(ResolverStyle.STRICT));
-        valid = true;
+        valid = Boolean.TRUE;
       } catch (DateTimeParseException e) {
-        valid = false;
+        valid = Boolean.FALSE;
         break;
       }
     }
