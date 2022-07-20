@@ -24,10 +24,13 @@ aws sts get-caller-identity
 
 if [ "$ENVIRONMENT" == "dev" -o "$ENVIRONMENT" == "qa" ]; then
   export AWS_EKS_NAME="dev-eks-cluster"
+  export ENV_TAG="development"
 elif [ "$ENVIRONMENT" == "stage" ]; then
   export AWS_EKS_NAME="stage-eks-cluster"
+  export ENV_TAG="stage"
 elif [ "$ENVIRONMENT" == "perf" ]; then
   export AWS_EKS_NAME="promise-engine-eks-perf"
+  export ENV_TAG="stage"
 fi
 
 
@@ -92,6 +95,7 @@ sed -e "s@<SERVICE_VERSION>@$SERVICE_CODE@g" \
     -e "s@<SERVICE_NAME>@$SERVICE_NAME@g" \
     -e "s@<ENVIRONMENT>@$ENVIRONMENT@g" \
     -e "s@<NLB_NAME>@$NLB_NAME@g" \
+    -e "s@<ENV_TAG>@$ENV_TAG@g" \
     -e "s@<COLOR>@$SERVICE_PASSIVE_COLOR@g" \
     ./manifests/service.yaml | kubectl apply -f -
 
