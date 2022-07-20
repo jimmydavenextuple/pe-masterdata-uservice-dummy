@@ -5,6 +5,10 @@ on:
     branches: [ development ]
     paths:
       - "item/**"
+      - "node/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/workflows/build&deploy.yml"
      
 jobs:
   Build-Deploy:
