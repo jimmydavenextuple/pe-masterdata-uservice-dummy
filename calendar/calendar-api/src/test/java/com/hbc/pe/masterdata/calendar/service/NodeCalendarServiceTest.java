@@ -11,6 +11,7 @@ import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.NodeCalendarDomain;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
+import com.hbc.pe.masterdata.calendar.util.DateValidation;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +26,7 @@ class NodeCalendarServiceTest {
 
   @Mock private NodeCalendarDomain nodeCalendarDomain;
   @Mock private CalendarDomain calendarDomain;
+  @Mock private DateValidation dateValidation;
   @InjectMocks private NodeCalendarService nodeCalendarService;
   @InjectMocks private TestUtil testUtil;
 
@@ -38,6 +40,7 @@ class NodeCalendarServiceTest {
       throws CalendarDomainException, DateException, CommonServiceException {
     when(nodeCalendarDomain.saveNodeCalendarEntity(any()))
         .thenReturn(testUtil.getNodeCalendarEntity());
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
     NodeCalendarResponse resp =
         nodeCalendarService.processCreateNodeCalendar(testUtil.getNodeCalendarRequest());
@@ -49,6 +52,17 @@ class NodeCalendarServiceTest {
         TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.getEffectiveDate()));
     Assertions.assertEquals(TestUtil.DESCRIPTION, Objects.requireNonNull(resp.getDescription()));
     verify(nodeCalendarDomain, times(1)).saveNodeCalendarEntity(any());
+  }
+
+  @Test
+  void processCreateNodeCalendarWithInvalidDateTest()
+      throws CalendarDomainException, DateException {
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.FALSE);
+    Exception exception =
+        Assertions.assertThrows(
+            DateException.class,
+            () -> nodeCalendarService.processCreateNodeCalendar(testUtil.getNodeCalendarRequest()));
+    Assertions.assertEquals("Invalid Date", exception.getMessage());
   }
 
   @Test

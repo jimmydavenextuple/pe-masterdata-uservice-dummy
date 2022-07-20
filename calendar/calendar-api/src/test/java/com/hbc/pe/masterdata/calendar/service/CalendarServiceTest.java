@@ -17,6 +17,7 @@ import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEn
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateUtil;
+import com.hbc.pe.masterdata.calendar.util.DateValidation;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ class CalendarServiceTest {
   @Mock private NodeCalendarDomain nodeCalendarDomain;
   @Mock private CarrierServiceCalendarService carrierServiceCalendarService;
   @Mock private NodeCarrierServiceCalendarService nodeCarrierServiceCalendarService;
+  @Mock private DateValidation dateValidation;
   @InjectMocks private CalendarService calendarService;
   @InjectMocks private TestUtil testUtil;
 
@@ -49,7 +51,7 @@ class CalendarServiceTest {
   @Test
   void processCreateCalendarTest() throws CalendarDomainException, DateException {
     when(calendarDomain.saveCalendarEntity(any())).thenReturn(testUtil.getCalendarEntity());
-
+    when(dateValidation.validateExceptionDays(any())).thenReturn(Boolean.TRUE);
     CalendarResponse resp = calendarService.processCreateCalendar(testUtil.getCalendarRequest());
 
     Assertions.assertEquals(TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.getCalendarId()));
@@ -58,6 +60,16 @@ class CalendarServiceTest {
     Assertions.assertEquals(Boolean.TRUE, Objects.requireNonNull(resp.getIsMondayWorking()));
     Assertions.assertEquals(TestUtil.EXCEPTION_DATE, resp.getExceptionDays().get(0).getDate());
     verify(calendarDomain, times(1)).saveCalendarEntity(any());
+  }
+
+  @Test
+  void processCreateCalendarWithInvalidDateTest() throws CalendarDomainException, DateException {
+    when(dateValidation.validateExceptionDays(any())).thenReturn(Boolean.FALSE);
+    Exception exception =
+        Assertions.assertThrows(
+            DateException.class,
+            () -> calendarService.processCreateCalendar(testUtil.getCalendarRequest()));
+    Assertions.assertEquals("Invalid Date", exception.getMessage());
   }
 
   @Test

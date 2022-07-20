@@ -16,6 +16,7 @@ import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateUtil;
+import com.hbc.pe.masterdata.calendar.util.DateValidation;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class CalendarService {
   private final CalendarDomain calendarDomain;
   private final NodeCalendarDomain nodeCalendarDomain;
   private final CarrierServiceCalendarService carrierServiceCalendarService;
+  private final DateValidation dateValidation;
   private final NodeCarrierServiceCalendarService nodeCarrierServiceCalendarService;
   // will need to get via node master data feign client
   private static final String NODE_TIMEZONE = "America/Chicago";
@@ -51,7 +53,7 @@ public class CalendarService {
   /** Creates a new Calendar */
   public CalendarResponse processCreateCalendar(CalendarRequest calendarRequest)
       throws CalendarDomainException, DateException {
-    if (!DateUtil.validateExceptionDays(calendarRequest.getExceptionDays())) {
+    if (!dateValidation.validateExceptionDays(calendarRequest.getExceptionDays())) {
       throw new DateException(
           "Invalid Date", calendarRequest.getCalendarId(), calendarRequest.getOrgId());
     }

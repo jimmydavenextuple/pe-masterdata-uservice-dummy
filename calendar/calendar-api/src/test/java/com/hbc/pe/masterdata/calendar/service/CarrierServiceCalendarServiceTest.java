@@ -11,6 +11,7 @@ import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.CarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
+import com.hbc.pe.masterdata.calendar.util.DateValidation;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,7 @@ class CarrierServiceCalendarServiceTest {
 
   @Mock private CarrierServiceCalendarDomain carrierServiceCalendarDomain;
   @Mock private CalendarDomain calendarDomain;
+  @Mock private DateValidation dateValidation;
   @InjectMocks private CarrierServiceCalendarService carrierServiceCalendarService;
   @InjectMocks private TestUtil testUtil;
 
@@ -40,6 +42,7 @@ class CarrierServiceCalendarServiceTest {
       throws CalendarDomainException, DateException, CommonServiceException {
     when(carrierServiceCalendarDomain.saveCarrierServiceCalendarEntity(any()))
         .thenReturn(testUtil.getCarrierServiceCalendarEntity());
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
     CarrierServiceCalendarResponse resp =
         carrierServiceCalendarService.processCreateCarrierServiceCalendar(
@@ -55,6 +58,19 @@ class CarrierServiceCalendarServiceTest {
         TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.getEffectiveDate()));
     Assertions.assertEquals(TestUtil.DESCRIPTION, Objects.requireNonNull(resp.getDescription()));
     verify(carrierServiceCalendarDomain, times(1)).saveCarrierServiceCalendarEntity(any());
+  }
+
+  @Test
+  void processCreateCarrierServiceCalendarWithInvalidDateTest()
+      throws CalendarDomainException, DateException {
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.FALSE);
+    Exception exception =
+        Assertions.assertThrows(
+            DateException.class,
+            () ->
+                carrierServiceCalendarService.processCreateCarrierServiceCalendar(
+                    testUtil.getCarrierServiceCalendarRequest()));
+    Assertions.assertEquals("Invalid Date", exception.getMessage());
   }
 
   @Test

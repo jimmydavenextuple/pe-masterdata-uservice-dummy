@@ -10,7 +10,7 @@ import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
-import com.hbc.pe.masterdata.calendar.util.DateUtil;
+import com.hbc.pe.masterdata.calendar.util.DateValidation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +34,7 @@ public class CarrierServiceCalendarService {
   private static final CalendarMapper INSTANCE = Mappers.getMapper(CalendarMapper.class);
   private final CarrierServiceCalendarDomain carrierServiceCalendarDomain;
   private final CalendarDomain calendarDomain;
+  private final DateValidation dateValidation;
   private static final String ORG_ID = "orgId";
   private static final String CALENDAR_ID = "calendarId";
 
@@ -41,7 +42,7 @@ public class CarrierServiceCalendarService {
   public CarrierServiceCalendarResponse processCreateCarrierServiceCalendar(
       CarrierServiceCalendarRequest carrierServiceCalendarRequest)
       throws CalendarDomainException, CommonServiceException, DateException {
-    if (!DateUtil.validateDate(carrierServiceCalendarRequest.getEffectiveDate())) {
+    if (!dateValidation.validateDate(carrierServiceCalendarRequest.getEffectiveDate())) {
       throw new DateException(
           "Invalid Date",
           carrierServiceCalendarRequest.getCalendarId(),

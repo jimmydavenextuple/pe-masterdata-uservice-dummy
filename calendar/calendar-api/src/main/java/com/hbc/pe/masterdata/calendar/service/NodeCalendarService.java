@@ -9,7 +9,7 @@ import com.hbc.pe.masterdata.calendar.domain.NodeCalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
-import com.hbc.pe.masterdata.calendar.util.DateUtil;
+import com.hbc.pe.masterdata.calendar.util.DateValidation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +27,7 @@ public class NodeCalendarService {
   private static final CalendarMapper INSTANCE = Mappers.getMapper(CalendarMapper.class);
   private static final Logger logger = LoggerFactory.getLogger(NodeCalendarService.class);
   private final NodeCalendarDomain nodeCalendarDomain;
+  private final DateValidation dateValidation;
   private final CalendarDomain calendarDomain;
   private static final String ORG_ID = "orgId";
   private static final String CALENDAR_ID = "calendarId";
@@ -34,11 +35,11 @@ public class NodeCalendarService {
   /** Creates a new Node Calendar */
   public NodeCalendarResponse processCreateNodeCalendar(NodeCalendarRequest nodeCalendarRequest)
       throws CalendarDomainException, CommonServiceException, DateException {
-    validateCalendarId(nodeCalendarRequest.getCalendarId(), nodeCalendarRequest.getOrgId());
-    if (!DateUtil.validateDate(nodeCalendarRequest.getEffectiveDate())) {
+    if (!dateValidation.validateDate(nodeCalendarRequest.getEffectiveDate())) {
       throw new DateException(
           "Invalid Date", nodeCalendarRequest.getCalendarId(), nodeCalendarRequest.getOrgId());
     }
+    validateCalendarId(nodeCalendarRequest.getCalendarId(), nodeCalendarRequest.getOrgId());
     var nodeCalendarEntity = INSTANCE.convertToNodeCalendarEntity(nodeCalendarRequest);
     var savedNodeCalendarEntity = nodeCalendarDomain.saveNodeCalendarEntity(nodeCalendarEntity);
     return INSTANCE.convertToNodeCalendarResponse(savedNodeCalendarEntity);

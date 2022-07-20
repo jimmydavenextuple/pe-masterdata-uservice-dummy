@@ -11,6 +11,7 @@ import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.NodeCarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
+import com.hbc.pe.masterdata.calendar.util.DateValidation;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.List;
 import java.util.Objects;
@@ -26,6 +27,7 @@ class NodeCarrierServiceCalendarServiceTest {
 
   @Mock private NodeCarrierServiceCalendarDomain nodeCarrierServiceCalendarDomain;
   @Mock private CalendarDomain calendarDomain;
+  @Mock private DateValidation dateValidation;
   @InjectMocks private NodeCarrierServiceCalendarService nodeCarrierServiceCalendarService;
   @InjectMocks private TestUtil testUtil;
 
@@ -39,6 +41,7 @@ class NodeCarrierServiceCalendarServiceTest {
       throws CalendarDomainException, DateException, CommonServiceException {
     when(nodeCarrierServiceCalendarDomain.saveNodeCarrierServiceCalendarEntity(any()))
         .thenReturn(testUtil.getNodeCarrierServiceCalendarEntity());
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
     NodeCarrierServiceCalendarResponse resp =
         nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
@@ -53,6 +56,19 @@ class NodeCarrierServiceCalendarServiceTest {
         TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.getEffectiveDate()));
     Assertions.assertEquals(TestUtil.DESCRIPTION, Objects.requireNonNull(resp.getDescription()));
     verify(nodeCarrierServiceCalendarDomain, times(1)).saveNodeCarrierServiceCalendarEntity(any());
+  }
+
+  @Test
+  void processCreateNodeCarrierServiceCalendarWithInvalidDateTest()
+      throws CalendarDomainException, DateException {
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.FALSE);
+    Exception exception =
+        Assertions.assertThrows(
+            DateException.class,
+            () ->
+                nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
+                    testUtil.getNodeCarrierServiceCalendarRequest()));
+    Assertions.assertEquals("Invalid Date", exception.getMessage());
   }
 
   @Test
