@@ -7,14 +7,11 @@ import lombok.EqualsAndHashCode;
 @Data
 public class CalenderServiceException extends Exception {
 
-  final String calendarId;
   final String orgId;
   final String carrierServiceId;
 
-  public CalenderServiceException(
-      String message, Throwable cause, String calendarId, String orgId, String carrierServiceId) {
-    super(message, cause);
-    this.calendarId = calendarId;
+  public CalenderServiceException(String message, String orgId, String carrierServiceId) {
+    super(message);
     this.orgId = orgId;
     this.carrierServiceId = carrierServiceId;
   }

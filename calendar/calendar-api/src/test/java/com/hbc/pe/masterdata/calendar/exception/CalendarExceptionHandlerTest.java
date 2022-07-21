@@ -37,8 +37,7 @@ class CalendarExceptionHandlerTest {
 
   @Test
   void handleCalenderServiceException() {
-    CalenderServiceException e =
-        new CalenderServiceException("error", null, TestUtil.CALENDAR_ID, null, null);
+    CalenderServiceException e = new CalenderServiceException("error", TestUtil.ORG_ID, null);
 
     ResponseEntity<ErrorResponse> responseEntity =
         calendarExceptionHandler.handleCalenderServiceException(e);

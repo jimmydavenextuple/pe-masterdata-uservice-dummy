@@ -84,8 +84,7 @@ public class CarrierServiceCalendarService {
             carrierServiceCalendarDomain.getCarrierServiceCalendar(
                 orgId, carrierServiceId, carrierServiceOption, shippingStage.orElse("ALL"));
         if (CollectionUtils.isEmpty(entityList))
-          throw new CalenderServiceException(
-              "Calender doesn't exist", null, null, orgId, carrierServiceId);
+          throw new CalenderServiceException("Calender doesn't exist", orgId, carrierServiceId);
         filteredList =
             "ALL".equals(carrierServiceId)
                 ? new ArrayList<>()
@@ -98,8 +97,7 @@ public class CarrierServiceCalendarService {
             carrierServiceCalendarDomain.getCarrierServiceCalendar(
                 orgId, carrierServiceId, shippingStage.orElse("ALL"));
         if (CollectionUtils.isEmpty(entityList))
-          throw new CalenderServiceException(
-              "Calender doesn't exist", null, null, orgId, carrierServiceId);
+          throw new CalenderServiceException("Calender doesn't exist", orgId, carrierServiceId);
         filteredList = getFilteredEntityList(carrierServiceId, entityList);
       }
       return CollectionUtils.isEmpty(filteredList) ? entityList : filteredList;

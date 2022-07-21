@@ -35,8 +35,6 @@ public class CalendarExceptionHandler {
         .body(
             ErrorResponse.builder(ErrorType.ERROR, 0xfffff1)
                 .message(e.getMessage())
-                .errorField(
-                    CALENDAR_ID, FieldError.builder().rejectedValue(e.getCalendarId()).build())
                 .errorField("orgId", FieldError.builder().rejectedValue(e.getOrgId()).build())
                 .errorField(
                     "carrierServiceId",
