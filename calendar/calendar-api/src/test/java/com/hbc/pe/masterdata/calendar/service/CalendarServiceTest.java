@@ -15,6 +15,7 @@ import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.CalenderServiceException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateUtil;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
@@ -110,7 +111,7 @@ class CalendarServiceTest {
 
   @Test
   void processGetUpcomingDaysNodeCalendarStatusTest()
-      throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, CommonServiceException, CalenderServiceException {
     NodeCalendarEntity entity = testUtil.getNodeCalendarEntity();
     entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(5));
     when(nodeCalendarDomain.getNodeCalendar(any(), any()))
@@ -133,7 +134,7 @@ class CalendarServiceTest {
 
   @Test
   void processGetUpcomingDaysTestWithoutExceptionDays()
-      throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, CommonServiceException, CalenderServiceException {
     NodeCalendarEntity entity = testUtil.getNodeCalendarEntity();
     entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(4));
     when(nodeCalendarDomain.getNodeCalendar(any(), any()))
@@ -200,7 +201,7 @@ class CalendarServiceTest {
 
   @Test
   void processGetUpcomingDaysCarrierServiceCalendarStatusTest()
-      throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, CommonServiceException, CalenderServiceException {
     CarrierServiceCalendarEntity entity = testUtil.getCarrierServiceCalendarEntity();
     entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(5));
     when(carrierServiceCalendarService.getAndFilterCarrierServiceCalendar(
@@ -225,7 +226,7 @@ class CalendarServiceTest {
 
   @Test
   void processGetUpcomingDaysCarrierServiceCalendarStatusExceptionTest()
-      throws CalendarDomainException {
+      throws CalendarDomainException, CalenderServiceException {
     when(carrierServiceCalendarService.getAndFilterCarrierServiceCalendar(
             any(), any(), any(), any()))
         .thenReturn(new ArrayList<>());
@@ -251,7 +252,7 @@ class CalendarServiceTest {
 
   @Test
   void processGetUpcomingDaysNodeCarrierServiceCalendarStatusTest()
-      throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, CommonServiceException, CalenderServiceException {
     NodeCarrierServiceCalendarEntity entity = testUtil.getNodeCarrierServiceCalendarEntity();
     entity.setEffectiveDate(DateUtil.addDaysToCurrentDate(5));
     when(nodeCarrierServiceCalendarService.getAndFilterNodeCarrierServiceCalendar(
