@@ -6,9 +6,9 @@ import lombok.Data;
 
 @Data
 public class ExceptionDays implements Serializable {
-  @NotBlank(message = "Date can't be null")
+  @NotBlank(message = "Date can't be blank")
   private String date;
 
-  @NotBlank(message = "Reason can't be null")
+  @NotBlank(message = "Reason can't be blank")
   private String reason;
 }
