@@ -20,8 +20,4 @@ logging:
     org.springframework: WARN
     root: INFO
 
-dataupload:
-  base-path: "/s3-bucket/"
-  maxsize-in-kilobytes: 10240
-  max-rows: 1000
 

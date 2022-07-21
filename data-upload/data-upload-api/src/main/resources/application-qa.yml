@@ -13,3 +13,8 @@ spring:
 logging:
   level:
     com.hbc: DEBUG
+
+dataupload:
+  base-path: "/s3-bucket/"
+  maxsize-in-kilobytes: 10240
+  max-rows: 1000
