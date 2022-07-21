@@ -17,8 +17,10 @@ import com.hbc.promise.sourcing.rule.domain.PromiseSourcingRuleDomain;
 import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
 import com.hbc.promise.sourcing.rule.domain.mapper.PromiseSourcingRuleMapper;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -127,6 +129,29 @@ public class PromiseSourcingRuleService {
     if (!StringUtils.hasLength(baseRequest.getAllocationRuleId())) {
       baseRequest.setAllocationRuleId("DEFAULT");
     }
+
+    String destinationGeoZone = baseRequest.getDestinationGeoZone();
+    String orgId = baseRequest.getOrgId();
+    String serviceOption = baseRequest.getServiceOption();
+    String allocationRuleId = baseRequest.getAllocationRuleId();
+    Set<String> sourceNodes = baseRequest.getSourceNodes();
+
+    List<PromiseSourcingRule> promiseSourcingRules =
+        promiseSourcingRuleDomain.fetchSourcingRule(
+            serviceOption, orgId, allocationRuleId, destinationGeoZone);
+    Set<String> definedSourceNodes =
+        promiseSourcingRules.stream()
+            .parallel()
+            .map(PromiseSourcingRule::getSourceNodes)
+            .flatMap(Set::stream)
+            .collect(Collectors.toSet());
+    if (!Collections.disjoint(sourceNodes, definedSourceNodes)) {
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.SERVICE_INVALID_INPUT,
+          "Promise Source Rule already exists! ");
+    }
+
     var promiseSourcingRule =
         INSTANCE.convertFromCreatePromiseSourcingRuleRequestToEntity(baseRequest);
     return preparePromiseSourcingRuleDto(

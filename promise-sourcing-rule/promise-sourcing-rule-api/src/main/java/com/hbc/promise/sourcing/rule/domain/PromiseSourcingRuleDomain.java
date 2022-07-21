@@ -47,6 +47,30 @@ public class PromiseSourcingRuleDomain {
   }
 
   /**
+   * @param serviceOption Service option
+   * @param orgId Org id
+   * @param allocationId Allocation Id
+   * @param destinationGeoZone Destination GeoZone
+   * @return List of Promise Sourcing Rules
+   * @throws PromiseEngineException
+   */
+  public List<PromiseSourcingRule> fetchSourcingRule(
+      String serviceOption, String orgId, String allocationId, String destinationGeoZone)
+      throws PromiseEngineException {
+    logger.debug("-- inside fetchSourcingRule domain --");
+    try {
+      return promiseSourcingRuleRepository
+          .findByServiceOptionAndOrgIdAndAllocationRuleIdAndDestinationGeoZone(
+              serviceOption, orgId, allocationId, destinationGeoZone);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to find Promise Sourcing Rule!");
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Unable to find Promise Sourcing Rule!");
+    }
+  }
+  /**
    * Save Promise sourcing rule
    *
    * @param promiseSourcingRule Entity to be saved
