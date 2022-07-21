@@ -13,7 +13,7 @@ public class CalendarDataUploadConstants {
   public static final String CALENDAR_DATA_UPLOAD_LARGE_FILE_SIZE =
       "Calendar data uploaded file has size greater than 10240 kB.";
   public static final String CALENDAR_DATA_UPLOAD_LARGE_ROW_SIZE =
-      "Calendar data uploaded file has more than 1000 rows.";
+      "Calendar data uploaded file has exceeded maximum file size limit.";
   public static final String CALENDAR_DATA_UPLOAD_INVALID_FILE_HEADERS =
       "Calendar data uploaded file has invalid headers.";
 }
