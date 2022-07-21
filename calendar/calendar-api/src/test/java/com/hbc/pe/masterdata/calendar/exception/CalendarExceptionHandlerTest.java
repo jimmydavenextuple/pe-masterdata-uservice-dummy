@@ -36,6 +36,19 @@ class CalendarExceptionHandlerTest {
   }
 
   @Test
+  void handleCalenderServiceException() {
+    CalenderServiceException e =
+        new CalenderServiceException("error", null, TestUtil.CALENDAR_ID, null, null);
+
+    ResponseEntity<ErrorResponse> responseEntity =
+        calendarExceptionHandler.handleCalenderServiceException(e);
+
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    assertEquals(
+        ErrorType.ERROR, Objects.requireNonNull(responseEntity.getBody()).getPayload().getType());
+  }
+
+  @Test
   void handleDateExceptionException() {
     DateException e = new DateException("error", TestUtil.CALENDAR_ID, TestUtil.ORG_ID);
 

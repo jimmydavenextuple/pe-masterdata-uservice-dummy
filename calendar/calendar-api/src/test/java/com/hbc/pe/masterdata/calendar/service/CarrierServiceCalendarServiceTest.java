@@ -10,9 +10,11 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.CarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.CalenderServiceException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -98,7 +100,8 @@ class CarrierServiceCalendarServiceTest {
   }
 
   @Test
-  void processGetCarrierServiceCalendarWithServiceOptionTest() throws CalendarDomainException {
+  void processGetCarrierServiceCalendarWithServiceOptionTest()
+      throws CalendarDomainException, CalenderServiceException {
     when(carrierServiceCalendarDomain.getCarrierServiceCalendar(any(), any(), any(), any()))
         .thenReturn(Collections.singletonList(testUtil.getCarrierServiceCalendarEntity()));
 
@@ -125,7 +128,24 @@ class CarrierServiceCalendarServiceTest {
   }
 
   @Test
-  void processGetCarrierServiceCalendarTest() throws CalendarDomainException {
+  void processGetCarrierServiceCalendarWithServiceOptionTest_Exception()
+      throws CalendarDomainException, CalenderServiceException {
+    when(carrierServiceCalendarDomain.getCarrierServiceCalendar(any(), any(), any(), any()))
+        .thenReturn(new ArrayList<>());
+
+    Assertions.assertThrows(
+        CalenderServiceException.class,
+        () ->
+            carrierServiceCalendarService.processGetCarrierServiceCalendar(
+                TestUtil.ORG_ID,
+                TestUtil.CARRIER_SERVICE_ID,
+                Optional.of(TestUtil.SERVICE_OPTION),
+                Optional.empty()));
+  }
+
+  @Test
+  void processGetCarrierServiceCalendarTest()
+      throws CalendarDomainException, CalenderServiceException {
     when(carrierServiceCalendarDomain.getCarrierServiceCalendar(any(), any(), any()))
         .thenReturn(Collections.singletonList(testUtil.getCarrierServiceCalendarEntity()));
 
@@ -144,6 +164,20 @@ class CarrierServiceCalendarServiceTest {
         TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.get(0).getEffectiveDate()));
     Assertions.assertEquals(
         TestUtil.DESCRIPTION, Objects.requireNonNull(resp.get(0).getDescription()));
+    verify(carrierServiceCalendarDomain, times(1)).getCarrierServiceCalendar(any(), any(), any());
+  }
+
+  @Test
+  void processGetCarrierServiceCalendarTest_Exception()
+      throws CalendarDomainException, CalenderServiceException {
+    when(carrierServiceCalendarDomain.getCarrierServiceCalendar(any(), any(), any()))
+        .thenReturn(new ArrayList<>());
+
+    Assertions.assertThrows(
+        CalenderServiceException.class,
+        () ->
+            carrierServiceCalendarService.processGetCarrierServiceCalendar(
+                TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, Optional.empty(), Optional.empty()));
     verify(carrierServiceCalendarDomain, times(1)).getCarrierServiceCalendar(any(), any(), any());
   }
 }

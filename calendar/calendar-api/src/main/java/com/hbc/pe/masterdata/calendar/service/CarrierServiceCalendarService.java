@@ -9,6 +9,7 @@ import com.hbc.pe.masterdata.calendar.domain.CarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.CalenderServiceException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class CarrierServiceCalendarService {
       String carrierServiceId,
       Optional<String> serviceOption,
       Optional<String> shippingStage)
-      throws CalendarDomainException {
+      throws CalendarDomainException, CalenderServiceException {
     return INSTANCE.convertToCarrierServiceCalendarResponseList(
         getAndFilterCarrierServiceCalendar(orgId, carrierServiceId, serviceOption, shippingStage));
   }
@@ -73,7 +74,7 @@ public class CarrierServiceCalendarService {
       String carrierServiceId,
       Optional<String> serviceOption,
       Optional<String> shippingStage)
-      throws CalendarDomainException {
+      throws CalendarDomainException, CalenderServiceException {
     List<CarrierServiceCalendarEntity> entityList;
     List<CarrierServiceCalendarEntity> filteredList;
     try {
@@ -82,6 +83,9 @@ public class CarrierServiceCalendarService {
         entityList =
             carrierServiceCalendarDomain.getCarrierServiceCalendar(
                 orgId, carrierServiceId, carrierServiceOption, shippingStage.orElse("ALL"));
+        if (CollectionUtils.isEmpty(entityList))
+          throw new CalenderServiceException(
+              "Calender doesn't exist", null, null, orgId, carrierServiceId);
         filteredList =
             "ALL".equals(carrierServiceId)
                 ? new ArrayList<>()
@@ -93,6 +97,9 @@ public class CarrierServiceCalendarService {
         entityList =
             carrierServiceCalendarDomain.getCarrierServiceCalendar(
                 orgId, carrierServiceId, shippingStage.orElse("ALL"));
+        if (CollectionUtils.isEmpty(entityList))
+          throw new CalenderServiceException(
+              "Calender doesn't exist", null, null, orgId, carrierServiceId);
         filteredList = getFilteredEntityList(carrierServiceId, entityList);
       }
       return CollectionUtils.isEmpty(filteredList) ? entityList : filteredList;

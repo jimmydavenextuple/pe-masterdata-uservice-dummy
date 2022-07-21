@@ -10,6 +10,7 @@ import com.hbc.calendar.domain.outbound.CalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.CalenderServiceException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.service.CalendarService;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
@@ -94,7 +95,7 @@ class CalendarControllerTest {
 
   @Test
   void handleGetUpcomingDaysCalendarStatusTest()
-      throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, CommonServiceException, CalenderServiceException {
     when(calendarService.processGetUpcomingDaysCalendarStatus(
             any(), any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getCalendarDaysStatusInfoList());
@@ -117,7 +118,7 @@ class CalendarControllerTest {
 
   @Test
   void handleGetUpcomingDaysCalendarStatusExceptionTest()
-      throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, CommonServiceException, CalenderServiceException {
 
     when(calendarService.processGetUpcomingDaysCalendarStatus(
             any(), any(), any(), any(), any(), any()))

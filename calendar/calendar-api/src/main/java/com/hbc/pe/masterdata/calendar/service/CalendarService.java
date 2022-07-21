@@ -14,6 +14,7 @@ import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.CalenderServiceException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateUtil;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
@@ -76,7 +77,7 @@ public class CalendarService {
       Optional<String> serviceOption,
       Optional<Integer> numberOfDaysInFuture,
       Optional<String> shippingStage)
-      throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, CommonServiceException, CalenderServiceException {
     validateRequestFields(orgId, nodeId, carrierServiceId);
 
     List<CalendarDaysStatusInfo> calendarDaysStatusInfoList = new ArrayList<>();
