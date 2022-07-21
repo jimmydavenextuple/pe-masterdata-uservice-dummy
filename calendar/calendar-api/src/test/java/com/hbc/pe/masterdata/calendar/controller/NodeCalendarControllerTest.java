@@ -9,6 +9,7 @@ import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.service.NodeCalendarService;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.List;
@@ -34,7 +35,8 @@ class NodeCalendarControllerTest {
   }
 
   @Test
-  void handleCreateNodeCalendarTest() throws CalendarDomainException, CommonServiceException {
+  void handleCreateNodeCalendarTest()
+      throws CalendarDomainException, DateException, CommonServiceException {
     when(nodeCalendarService.processCreateNodeCalendar(any()))
         .thenReturn(testUtil.getNodeCalendarResponse());
 
@@ -49,8 +51,7 @@ class NodeCalendarControllerTest {
 
   @Test
   void handleCreateNodeCalendarExceptionTest()
-      throws CalendarDomainException, CommonServiceException {
-
+      throws CalendarDomainException, CommonServiceException, DateException {
     when(nodeCalendarService.processCreateNodeCalendar(any()))
         .thenThrow(new NullPointerException("error"));
 

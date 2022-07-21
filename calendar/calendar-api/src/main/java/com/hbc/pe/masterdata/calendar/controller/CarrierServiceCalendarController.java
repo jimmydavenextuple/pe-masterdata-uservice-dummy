@@ -5,6 +5,7 @@ import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.service.CarrierServiceCalendarService;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +29,8 @@ public class CarrierServiceCalendarController {
   public ResponseEntity<BaseResponse<CarrierServiceCalendarResponse>>
       handleCreateCarrierServiceCalendar(
           @Valid @RequestBody CarrierServiceCalendarRequest carrierServiceCalendarRequest)
-          throws CalendarDomainException, CommonServiceException {
+          throws CalendarDomainException, CommonServiceException, DateException {
+
     logger.debug(
         "Inside  handleCreateCarrierServiceCalendar() for carrierServiceCalendarRequest: {}",
         carrierServiceCalendarRequest);
