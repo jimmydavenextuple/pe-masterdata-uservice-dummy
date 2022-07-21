@@ -25,7 +25,7 @@ public class SourcingRuleSpringNearCacheServiceImpl
   private static final Logger logger =
       LoggerFactory.getLogger(SourcingRuleSpringNearCacheServiceImpl.class);
 
-  public static final String SOURCING_RULE_CACHE_NAME = "sourcingRule";
+  public static final String SOURCING_RULE_CACHE_NAME = "sourcing_rule";
 
   @Autowired NearCacheRegistry nearCacheRegistry;
 

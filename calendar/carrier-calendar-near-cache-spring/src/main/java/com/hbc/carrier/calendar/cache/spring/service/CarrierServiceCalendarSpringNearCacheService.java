@@ -15,7 +15,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 @Service
-@CacheConfig(cacheNames = CarrierServiceCalendarSpringNearCacheService.NODE_CALENDAR_CACHE_NAME)
+@CacheConfig(cacheNames = CarrierServiceCalendarSpringNearCacheService.CARRIER_CALENDAR_CACHE_NAME)
 public class CarrierServiceCalendarSpringNearCacheService
     extends AbstractGenericSpringLocalCacheServiceImpl<
         CarrierServiceCalendarCacheKey, CarrierServiceCalendarCacheValue>
@@ -24,7 +24,7 @@ public class CarrierServiceCalendarSpringNearCacheService
   private static final Logger logger =
       LoggerFactory.getLogger(CarrierServiceCalendarSpringNearCacheService.class);
 
-  public static final String NODE_CALENDAR_CACHE_NAME = "node_calendar";
+  public static final String CARRIER_CALENDAR_CACHE_NAME = "carrier_calendar";
 
   @Autowired NearCacheRegistry nearCacheRegistry;
 

@@ -26,7 +26,7 @@ public class PostalCodeTimezoneNearCacheServiceImpl
   private static final Logger logger =
       LoggerFactory.getLogger(PostalCodeTimezoneNearCacheServiceImpl.class);
 
-  public static final String POSTAL_CODE_TIMEZONE_CACHE_NAME = "postal code timezone";
+  public static final String POSTAL_CODE_TIMEZONE_CACHE_NAME = "postal_code_timezone";
 
   @Autowired NearCacheRegistry nearCacheRegistry;
 
