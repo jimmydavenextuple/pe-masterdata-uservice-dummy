@@ -132,7 +132,9 @@ class CalendarDataUploadServiceTest {
             CommonServiceException.class,
             () -> calendarDataUploadService.uploadCalendarData(absolutePath));
 
-    assertEquals("Calendar data uploaded file has more than 1000 rows.", exception.getMessage());
+    assertEquals(
+        "Calendar data uploaded file has exceeded maximum file size limit.",
+        exception.getMessage());
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
   }
 

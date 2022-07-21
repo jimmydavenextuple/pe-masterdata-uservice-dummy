@@ -12,7 +12,7 @@ public class NodeCarrierDataUploadConstants {
   public static final String NODE_CARRIER_DATA_UPLOAD_LARGE_FILE_SIZE =
       "Node Carrier data uploaded file has size greater than 10240 kB.";
   public static final String NODE_CARRIER_DATA_UPLOAD_LARGE_ROW_SIZE =
-      "Node Carrier data uploaded file has more than 1000 rows.";
+      "Node Carrier data uploaded file has exceeded maximum file size limit.";
   public static final String NODE_CARRIER_DATA_UPLOAD_INVALID_FILE_HEADERS =
       "Node Carrier data uploaded file has invalid headers.";
 }

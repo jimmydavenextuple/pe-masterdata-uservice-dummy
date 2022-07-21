@@ -12,7 +12,7 @@ public class PostalCodeTimezoneDataUploadConstants {
   public static final String POSTAL_CODE_TIMEZONE_DATA_UPLOAD_LARGE_FILE_SIZE =
       "Postal Code Timezone data uploaded file has size greater than 10240 kB.";
   public static final String POSTAL_CODE_TIMEZONE_DATA_UPLOAD_LARGE_ROW_SIZE =
-      "Postal Code Timezone data uploaded file has more than 1000 rows.";
+      "Postal Code Timezone data uploaded file has exceeded maximum file size limit.";
   public static final String POSTAL_CODE_TIMEZONE_DATA_UPLOAD_INVALID_FILE_HEADERS =
       "Postal Code Timezone data uploaded file has invalid headers.";
   public static final String POSTAL_CODE_TIMEZONE_DATA_UPLOAD_SUCCESS =
