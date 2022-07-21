@@ -6,6 +6,7 @@ import com.hbc.calendar.domain.outbound.CalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.CalenderServiceException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.service.CalendarService;
 import java.util.List;
@@ -69,7 +70,7 @@ public class CalendarController {
           @RequestParam Optional<String> serviceOption,
           @RequestParam Optional<Integer> numberOfDaysInFuture,
           @RequestParam Optional<String> shippingStage)
-          throws CalendarDomainException, CommonServiceException {
+          throws CalendarDomainException, CommonServiceException, CalenderServiceException {
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()

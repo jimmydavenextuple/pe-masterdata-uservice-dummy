@@ -26,7 +26,7 @@ public class WeightageConfigurationSpringNearCacheServiceImpl
   private static final Logger logger =
       LoggerFactory.getLogger(WeightageConfigurationSpringNearCacheServiceImpl.class);
 
-  public static final String WEIGHTAGE_CONFIGURATION = "weightage configuration";
+  public static final String WEIGHTAGE_CONFIGURATION = "weightage_configuration";
 
   @Autowired NearCacheRegistry nearCacheRegistry;
 

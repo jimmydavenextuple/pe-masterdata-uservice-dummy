@@ -12,7 +12,7 @@ public class TransitDataUploadConstants {
   public static final String TRANSIT_DATA_UPLOAD_LARGE_FILE_SIZE =
       "Transit data uploaded file has size greater than 10240 kB.";
   public static final String TRANSIT_DATA_UPLOAD_LARGE_ROW_SIZE =
-      "Transit data uploaded file has more than 1000 rows.";
+      "Transit data uploaded file has exceeded maximum file size limit.";
   public static final String TRANSIT_DATA_UPLOAD_INVALID_FILE_HEADERS =
       "Transit data uploaded file has invalid headers.";
   public static final String TRANSIT_DATA_UPLOAD_SUCCESS = "Transit Data successfully uploaded!";
