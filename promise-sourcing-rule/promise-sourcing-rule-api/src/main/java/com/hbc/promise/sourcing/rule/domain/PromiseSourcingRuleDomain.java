@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PromiseSourcingRuleDomain {
   private static final Logger logger = LoggerFactory.getLogger(PromiseSourcingRuleDomain.class);
+  public static final String SOURCING_RULE_ERROR_MESSAGE = "Unable to find Promise Sourcing Rule!";
   private final PromiseSourcingRuleRepository promiseSourcingRuleRepository;
 
   private static final String EXCEPTION_MESSAGE = "Promise Sourcing Rule not found!";
@@ -38,14 +39,38 @@ public class PromiseSourcingRuleDomain {
               baseRequest.getAllocationRuleId(),
               baseRequest.getDestinationGeoZone());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Unable to find Promise Sourcing Rule!");
+      logger.error(String.valueOf(e), SOURCING_RULE_ERROR_MESSAGE);
       throw new PromiseEngineException(
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Unable to find Promise Sourcing Rule!");
+          SOURCING_RULE_ERROR_MESSAGE);
     }
   }
 
+  /**
+   * @param serviceOption Service option
+   * @param orgId Org id
+   * @param allocationId Allocation Id
+   * @param destinationGeoZone Destination GeoZone
+   * @return List of Promise Sourcing Rules
+   * @throws PromiseEngineException
+   */
+  public List<PromiseSourcingRule> fetchSourcingRule(
+      String serviceOption, String orgId, String allocationId, String destinationGeoZone)
+      throws PromiseEngineException {
+    logger.debug("-- inside fetchSourcingRule domain --");
+    try {
+      return promiseSourcingRuleRepository
+          .findByServiceOptionAndOrgIdAndAllocationRuleIdAndDestinationGeoZone(
+              serviceOption, orgId, allocationId, destinationGeoZone);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), SOURCING_RULE_ERROR_MESSAGE);
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          SOURCING_RULE_ERROR_MESSAGE);
+    }
+  }
   /**
    * Save Promise sourcing rule
    *
