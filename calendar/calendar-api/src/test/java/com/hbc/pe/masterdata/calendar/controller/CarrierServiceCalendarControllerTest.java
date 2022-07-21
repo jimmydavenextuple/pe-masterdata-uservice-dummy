@@ -9,6 +9,7 @@ import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.service.CarrierServiceCalendarService;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.List;
@@ -36,7 +37,7 @@ class CarrierServiceCalendarControllerTest {
 
   @Test
   void handleCreateCarrierServiceCalendarTest()
-      throws CalendarDomainException, CommonServiceException {
+      throws CalendarDomainException, DateException, CommonServiceException {
     when(carrierServiceCalendarService.processCreateCarrierServiceCalendar(any()))
         .thenReturn(testUtil.getCarrierServiceCalendarResponse());
 
@@ -52,8 +53,7 @@ class CarrierServiceCalendarControllerTest {
 
   @Test
   void handleCreateCarrierServiceCalendarExceptionTest()
-      throws CalendarDomainException, CommonServiceException {
-
+      throws CalendarDomainException, CommonServiceException, DateException {
     when(carrierServiceCalendarService.processCreateCarrierServiceCalendar(any()))
         .thenThrow(new NullPointerException("error"));
 

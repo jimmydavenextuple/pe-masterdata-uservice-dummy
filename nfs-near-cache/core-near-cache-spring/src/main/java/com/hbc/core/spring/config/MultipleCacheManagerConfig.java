@@ -1,38 +1,49 @@
 package com.hbc.core.spring.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.caffeine.CaffeineCacheManager;
+import org.springframework.cache.caffeine.CaffeineCache;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableCaching
 @ConditionalOnProperty(value = "near-cache.enabled", havingValue = "true")
+@RequiredArgsConstructor
 public class MultipleCacheManagerConfig {
-
-  @Value("${near-cache.duration:24}")
-  private Long duration;
-
-  @Value("${near-cache.timeUnit:HOURS}")
-  private TimeUnit timeUnit;
-
-  @Value("${near-cache.maxSize:5000}")
-  private Long maxSize;
+  private final CacheProperties cacheProperties;
 
   @Bean
-  public Caffeine caffeineConfig() { // NOSONAR
-    return Caffeine.newBuilder().maximumSize(maxSize).expireAfterWrite(duration, timeUnit);
+  public CacheManager caffeineCacheManager() { // NOSONAR
+    List<CaffeineCache> caches = new ArrayList<>();
+    Map<String, String> map;
+    if (cacheProperties.getCacheMap() == null) {
+      map = cacheProperties.setCacheDefaults();
+    } else {
+      map = cacheProperties.getCacheMap();
+    }
+    for (Map.Entry<String, String> entry : map.entrySet()) {
+      String[] properties = entry.getValue().split(",");
+      caches.add(
+          buildCache(entry.getKey(), Long.parseLong(properties[0]), Long.parseLong(properties[1])));
+    }
+    SimpleCacheManager cacheManager = new SimpleCacheManager();
+    cacheManager.setCaches(caches);
+    return cacheManager;
   }
 
-  @Bean
-  public CacheManager caffeineCacheManager(Caffeine caffeine) { // NOSONAR
-    CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager();
-    caffeineCacheManager.setCaffeine(caffeine);
-    return caffeineCacheManager;
+  private CaffeineCache buildCache(String cacheName, Long maxSize, Long ttl) {
+    Caffeine<Object, Object> cacheBuilder = Caffeine.newBuilder();
+    cacheBuilder.maximumSize(maxSize);
+    cacheBuilder.expireAfterWrite(ttl, TimeUnit.HOURS);
+    return new CaffeineCache(cacheName, cacheBuilder.build());
   }
 }
