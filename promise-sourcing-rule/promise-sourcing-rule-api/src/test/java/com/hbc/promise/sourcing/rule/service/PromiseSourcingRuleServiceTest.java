@@ -28,6 +28,7 @@ import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -123,6 +124,31 @@ class PromiseSourcingRuleServiceTest {
             testUtil.getPromiseSourcingRuleCreationRequest());
     assertEquals(createPromiseSourcingRuleRequest.getPriority(), received_dto.getPriority());
     verify(promiseSourcingRuleDomain, times(1))
+        .savePromiseSourcingRule(any(PromiseSourcingRule.class));
+  }
+
+  @Test
+  void createPromiseSourcingRuleAndSourcingRuleAlreadyExist() throws PromiseEngineException {
+    PromiseSourcingRule promiseSourcingRule = testUtil.getPromiseSourcingRule();
+    CreatePromiseSourcingRuleRequest createPromiseSourcingRuleRequest =
+        CreatePromiseSourcingRuleRequest.builder()
+            .serviceOption(SDND)
+            .sourceNodes(Collections.singleton("Node-1"))
+            .destinationGeoZone(DESTINATION_GEO_ZONE)
+            .priority(PRIORITY)
+            .orgId(ORG_ID)
+            .build();
+
+    when(promiseSourcingRuleDomain.fetchSourcingRule(
+            anyString(), anyString(), anyString(), anyString()))
+        .thenReturn(List.of(promiseSourcingRule));
+
+    Assertions.assertThrows(
+        PromiseEngineException.class,
+        () ->
+            promiseSourcingRuleService.createPromiseSourcingRule(
+                testUtil.getPromiseSourcingRuleCreationRequest()));
+    verify(promiseSourcingRuleDomain, times(0))
         .savePromiseSourcingRule(any(PromiseSourcingRule.class));
   }
 

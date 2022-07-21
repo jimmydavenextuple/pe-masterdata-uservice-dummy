@@ -185,4 +185,21 @@ class PromiseSourcingRuleDomainTest {
     assertEquals(ORG_ID, received_entity.getOrgId());
     verify(promiseSourcingRuleRepository, times(1)).delete(promiseSourcingRule);
   }
+
+  @Test
+  void fetchSourcingRuleTest() throws PromiseEngineException {
+
+    PromiseSourcingRule promiseSourcingRule = testUtil.getPromiseSourcingRule();
+    when(promiseSourcingRuleRepository
+            .findByServiceOptionAndOrgIdAndAllocationRuleIdAndDestinationGeoZone(
+                anyString(), anyString(), anyString(), anyString()))
+        .thenReturn(List.of(promiseSourcingRule));
+    List<PromiseSourcingRule> received_entity =
+        promiseSourcingRuleDomain.fetchSourcingRule(
+            SERVICE_OPTION, ORG_ID, ALLOCATION_RULE_ID, DESTINATION_GEO_ZONE);
+    assertEquals(ORG_ID, received_entity.get(0).getOrgId());
+    verify(promiseSourcingRuleRepository, times(1))
+        .findByServiceOptionAndOrgIdAndAllocationRuleIdAndDestinationGeoZone(
+            anyString(), anyString(), anyString(), anyString());
+  }
 }

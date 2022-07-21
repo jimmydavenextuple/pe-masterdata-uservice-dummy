@@ -18,6 +18,9 @@ public interface PromiseSourcingRuleRepository extends JpaRepository<PromiseSour
       String allocationRuleId,
       String destinationGeoZone);
 
+  List<PromiseSourcingRule> findByServiceOptionAndOrgIdAndAllocationRuleIdAndDestinationGeoZone(
+      String serviceOption, String orgId, String allocationRuleId, String destinationGeoZone);
+
   PromiseSourcingRule
       findByOrgIdAndServiceOptionAndDestinationGeoZoneAndAllocationRuleIdAndPriority(
           String orgId,
