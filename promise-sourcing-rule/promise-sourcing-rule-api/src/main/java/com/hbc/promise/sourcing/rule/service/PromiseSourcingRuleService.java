@@ -144,6 +144,16 @@ public class PromiseSourcingRuleService {
         promiseSourcingRuleDomain.savePromiseSourcingRule(promiseSourcingRule));
   }
 
+  /**
+   * Validate if for given parameters , rules exists or not
+   *
+   * @param destinationGeoZone Destination GeoZone
+   * @param orgId Org Id
+   * @param serviceOption Service option
+   * @param allocationRuleId Allocation Rule Id
+   * @param sourceNodes Source Nodes
+   * @throws PromiseEngineException
+   */
   private void validateSourcingRules(
       String destinationGeoZone,
       String orgId,
