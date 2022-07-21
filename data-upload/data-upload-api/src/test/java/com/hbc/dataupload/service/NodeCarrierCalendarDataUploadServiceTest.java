@@ -156,7 +156,7 @@ class NodeCarrierCalendarDataUploadServiceTest {
             () -> calendarDataUploadUtilityService.uploadNodeCarrierCalendarData(absolutePath));
 
     assertEquals(
-        "Node Carrier Calendar data uploaded file has more than 1000 rows.",
+        "Node Carrier Calendar data uploaded file has exceeded maximum file size limit.",
         exception.getMessage());
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
   }

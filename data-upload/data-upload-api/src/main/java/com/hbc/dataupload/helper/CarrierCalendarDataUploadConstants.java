@@ -12,7 +12,7 @@ public class CarrierCalendarDataUploadConstants {
   public static final String CARRIER_CALENDAR_DATA_UPLOAD_LARGE_FILE_SIZE =
       "Carrier Calendar data uploaded file has size greater than 10240 kB.";
   public static final String CARRIER_CALENDAR_DATA_UPLOAD_LARGE_ROW_SIZE =
-      "Carrier Calendar data uploaded file has more than 1000 rows.";
+      "Carrier Calendar data uploaded file has exceeded maximum file size limit.";
   public static final String CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_HEADERS =
       "Carrier Calendar data uploaded file has invalid headers.";
 }

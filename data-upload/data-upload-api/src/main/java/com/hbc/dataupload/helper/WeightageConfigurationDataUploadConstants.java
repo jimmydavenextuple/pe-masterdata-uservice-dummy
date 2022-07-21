@@ -12,7 +12,7 @@ public class WeightageConfigurationDataUploadConstants {
   public static final String WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_LARGE_FILE_SIZE =
       "Weightage Configuration data uploaded file has size greater than 10240 kB.";
   public static final String WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_LARGE_ROW_SIZE =
-      "Weightage Configuration data uploaded file has more than 1000 rows.";
+      "Weightage Configuration data uploaded file has exceeded maximum file size limit.";
   public static final String WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_INVALID_FILE_HEADERS =
       "Weightage Configuration data uploaded file has invalid headers.";
   public static final String WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_SUCCESS =

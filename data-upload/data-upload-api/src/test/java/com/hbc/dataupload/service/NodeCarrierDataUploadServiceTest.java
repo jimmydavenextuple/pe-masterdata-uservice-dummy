@@ -139,7 +139,8 @@ class NodeCarrierDataUploadServiceTest {
             () -> nodeCarrierDataUploadService.uploadNodeCarrierData(absolutePath));
 
     Assertions.assertEquals(
-        "Node Carrier data uploaded file has more than 1000 rows.", exception.getMessage());
+        "Node Carrier data uploaded file has exceeded maximum file size limit.",
+        exception.getMessage());
     Assertions.assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
   }
 
