@@ -17,7 +17,6 @@ import com.hbc.promise.sourcing.rule.domain.PromiseSourcingRuleDomain;
 import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
 import com.hbc.promise.sourcing.rule.domain.mapper.PromiseSourcingRuleMapper;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,6 +26,7 @@ import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 @Service
@@ -136,6 +136,21 @@ public class PromiseSourcingRuleService {
     String allocationRuleId = baseRequest.getAllocationRuleId();
     Set<String> sourceNodes = baseRequest.getSourceNodes();
 
+    validateSourcingRules(destinationGeoZone, orgId, serviceOption, allocationRuleId, sourceNodes);
+
+    var promiseSourcingRule =
+        INSTANCE.convertFromCreatePromiseSourcingRuleRequestToEntity(baseRequest);
+    return preparePromiseSourcingRuleDto(
+        promiseSourcingRuleDomain.savePromiseSourcingRule(promiseSourcingRule));
+  }
+
+  private void validateSourcingRules(
+      String destinationGeoZone,
+      String orgId,
+      String serviceOption,
+      String allocationRuleId,
+      Set<String> sourceNodes)
+      throws PromiseEngineException {
     List<PromiseSourcingRule> promiseSourcingRules =
         promiseSourcingRuleDomain.fetchSourcingRule(
             serviceOption, orgId, allocationRuleId, destinationGeoZone);
@@ -145,17 +160,16 @@ public class PromiseSourcingRuleService {
             .map(PromiseSourcingRule::getSourceNodes)
             .flatMap(Set::stream)
             .collect(Collectors.toSet());
-    if (!Collections.disjoint(sourceNodes, definedSourceNodes)) {
+
+    Set<String> nodesWithAlreadyExistingRules =
+        definedSourceNodes.stream().filter(sourceNodes::contains).collect(Collectors.toSet());
+
+    if (!CollectionUtils.isEmpty(nodesWithAlreadyExistingRules)) {
       throw new PromiseEngineException(
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.SERVICE_INVALID_INPUT,
-          "Promise Source Rule already exists! ");
+          "The nodes " + nodesWithAlreadyExistingRules + " are already part of different rules! ");
     }
-
-    var promiseSourcingRule =
-        INSTANCE.convertFromCreatePromiseSourcingRuleRequestToEntity(baseRequest);
-    return preparePromiseSourcingRuleDto(
-        promiseSourcingRuleDomain.savePromiseSourcingRule(promiseSourcingRule));
   }
 
   /**
