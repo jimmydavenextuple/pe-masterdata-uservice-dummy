@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -29,10 +30,12 @@ public class DateValidation {
     var valid = Boolean.FALSE;
     for (var i = 0; i < exceptionDays.size(); i++) {
       try {
-        LocalDate.parse(
-            exceptionDays.get(i).getDate(),
-            DateTimeFormatter.ofPattern("uuuu-M-d").withResolverStyle(ResolverStyle.STRICT));
-        valid = Boolean.TRUE;
+        if (Objects.nonNull(exceptionDays.get(i).getDate())) {
+          LocalDate.parse(
+              exceptionDays.get(i).getDate(),
+              DateTimeFormatter.ofPattern("uuuu-M-d").withResolverStyle(ResolverStyle.STRICT));
+          valid = Boolean.TRUE;
+        }
       } catch (DateTimeParseException e) {
         valid = Boolean.FALSE;
         break;
