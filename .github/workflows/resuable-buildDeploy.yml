@@ -83,6 +83,9 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE }}
           role-session-name: git-actions-pipeline
           aws-region: us-east-1
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
       - name: Deploy to EKS
         run: ./deploy-scripts/deploy.sh
         env:
@@ -112,6 +115,9 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE }}
           role-session-name: git-actions-pipeline
           aws-region: us-east-1
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
       - name: Deploy to EKS
         run: ./deploy-scripts/deploy.sh
         env:
@@ -140,6 +146,9 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE }}
           role-session-name: git-actions-pipeline
           aws-region: us-east-1
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
       - name: Deploy to EKS
         run: ./deploy-scripts/deploy.sh
         env:
@@ -168,6 +177,9 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE }}
           role-session-name: git-actions-pipeline
           aws-region: us-east-1
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
       - name: Deploy to EKS
         run: ./deploy-scripts/deploy.sh
         env:
