@@ -49,12 +49,14 @@ public class NodeCalendarSpringNearCacheService
   @CacheEvict(cacheManager = "caffeineCacheManager", key = "#key")
   @Override
   public void delete(NodeCalendarCacheKey key) {
+    logger.debug("Inside delete method of nodeCalendarCache");
     super.delete(key);
   }
 
   @CacheEvict(cacheManager = "caffeineCacheManager", allEntries = true)
   @Override
   public void deleteAll() {
+    logger.debug("Inside deleteAll method of nodeCalendarCache");
     super.deleteAll();
   }
 }
