@@ -3,6 +3,7 @@ package com.hbc.calendar.domain.inbound;
 import com.hbc.calendar.domain.pojo.ExceptionDays;
 import java.io.Serializable;
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,5 +33,5 @@ public class CalendarRequest implements Serializable {
   private Boolean isSaturdayWorking;
   private Boolean isSundayWorking;
   private Boolean isWednesdayWorking;
-  private List<ExceptionDays> exceptionDays;
+  private List<@Valid ExceptionDays> exceptionDays;
 }

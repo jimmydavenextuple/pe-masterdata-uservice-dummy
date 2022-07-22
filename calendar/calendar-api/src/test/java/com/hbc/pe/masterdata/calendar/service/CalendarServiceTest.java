@@ -70,7 +70,7 @@ class CalendarServiceTest {
         Assertions.assertThrows(
             DateException.class,
             () -> calendarService.processCreateCalendar(testUtil.getCalendarRequest()));
-    Assertions.assertEquals("Invalid Date", exception.getMessage());
+    Assertions.assertEquals("Date is invalid / missing", exception.getMessage());
   }
 
   @Test

@@ -34,7 +34,7 @@ public class CarrierServiceCalendarSpringNearCacheService
     nearCacheRegistry.registerNearCacheEntity(
         NearCacheConstants.CARRIER_CALENDAR_ENTITY_NAME,
         CarrierServiceCalendarCacheKey.class.getName(),
-        "partial");
+        "full");
   }
 
   @Override
@@ -51,12 +51,14 @@ public class CarrierServiceCalendarSpringNearCacheService
   @CacheEvict(cacheManager = "caffeineCacheManager", key = "#key")
   @Override
   public void delete(CarrierServiceCalendarCacheKey key) {
+    logger.debug("Inside delete method of carrierCalendarCache");
     super.delete(key);
   }
 
   @CacheEvict(cacheManager = "caffeineCacheManager", allEntries = true)
   @Override
   public void deleteAll() {
+    logger.debug("Inside deleteAll method of carrierCalendarCache");
     super.deleteAll();
   }
 }

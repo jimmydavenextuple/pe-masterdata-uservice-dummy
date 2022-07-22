@@ -54,9 +54,10 @@ public class CalendarService {
   /** Creates a new Calendar */
   public CalendarResponse processCreateCalendar(CalendarRequest calendarRequest)
       throws CalendarDomainException, DateException {
-    if (!dateValidation.validateExceptionDays(calendarRequest.getExceptionDays())) {
+    if (Objects.nonNull(calendarRequest.getExceptionDays())
+        && !dateValidation.validateExceptionDays(calendarRequest.getExceptionDays())) {
       throw new DateException(
-          "Invalid Date", calendarRequest.getCalendarId(), calendarRequest.getOrgId());
+          "Date is invalid / missing", calendarRequest.getCalendarId(), calendarRequest.getOrgId());
     }
     var calendarEntity = INSTANCE.convertToCalendarEntity(calendarRequest);
     var savedCalendarEntity = calendarDomain.saveCalendarEntity(calendarEntity);
