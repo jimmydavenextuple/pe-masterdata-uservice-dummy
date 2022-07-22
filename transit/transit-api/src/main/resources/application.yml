@@ -8,6 +8,10 @@ spring:
     description: "Promising Sourcing Rule Service"
   main:
     allow-bean-definition-overriding: true
+  jpa:
+    properties:
+      hibernate:
+        generate_statistics: true
 server:
   port: 8080
   tomcat:
@@ -20,3 +24,4 @@ logging:
   level:
     org.springframework: WARN
     root: INFO
+    org.hibernate.stat: DEBUG

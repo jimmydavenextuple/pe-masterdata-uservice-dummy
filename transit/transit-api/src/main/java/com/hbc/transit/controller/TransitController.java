@@ -7,8 +7,10 @@ import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.transit.exception.TransitDomainException;
 import com.hbc.transit.service.TransitService;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -126,6 +129,29 @@ public class TransitController {
               .build());
     } catch (Exception e) {
       logger.error("Failed to delete transit details");
+      throw e;
+    }
+  }
+
+  @GetMapping("/{orgId}/{destinationGeozone}")
+  public ResponseEntity<BaseResponse<List<TransitResponse>>> getTransitDetailsList(
+      @NotBlank @PathVariable String orgId,
+      @NotBlank @PathVariable String destinationGeozone,
+      @NotNull @RequestParam List<String> sourceGeozones)
+      throws TransitDomainException {
+    logger.debug("Processing get transit details list");
+    try {
+
+      var transitResponse =
+          transitService.getListOfTransitDetails(orgId, destinationGeozone, sourceGeozones);
+
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("List of transit details fetched successfully")
+              .payload(transitResponse)
+              .build());
+    } catch (Exception e) {
+      logger.error("Failed to fetch transit details list");
       throw e;
     }
   }

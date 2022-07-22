@@ -23,4 +23,11 @@ public interface TransitRepository extends JpaRepository<TransitEntity, String> 
 
   Optional<TransitEntity> findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
       String orgId, String sourceGeozone, String destinationGeozone, String carrierServiceId);
+
+  @Query(
+      value =
+          "SELECT * FROM transit_data t WHERE t.org_id = ?1 AND t.destination_geozone = ?2  AND t.source_geozone IN ?3 ",
+      nativeQuery = true)
+  List<TransitEntity> findByOrgIdAndServiceOptionAndDestinationGeozoneAndSourceGeoZones(
+      String orgId, String destinationGeozone, List<String> sourceGeozones);
 }
