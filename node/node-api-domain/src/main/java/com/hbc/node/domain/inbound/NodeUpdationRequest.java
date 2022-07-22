@@ -19,25 +19,28 @@ public class NodeUpdationRequest implements Serializable {
   @Length(max = 50)
   private String street;
 
-  @NotBlank(message = "city can't be blank")
-  @Length(max = 50)
-  private String city;
-
   @NotBlank(message = "timezone can't be blank")
   @Length(max = 50)
   private String timezone;
 
+  @NotBlank(message = "city can't be blank")
+  @Length(max = 50)
+  private String city;
+
   @NotNull(message = "shipToHome can't be null")
   private Boolean shipToHome;
-
-  @NotNull(message = "sdndEligible can't be null")
-  private Boolean sdndEligible;
 
   @NotNull(message = "bopisEligible can't be null")
   private Boolean bopisEligible;
 
   @NotNull(message = "expressEligible can't be null")
   private Boolean expressEligible;
+
+  @NotNull(message = "sdndEligible can't be null")
+  private Boolean sdndEligible;
+
+  @NotNull(message = "isActive can't be null")
+  private Boolean isActive;
 
   @NotBlank(message = "nodeType can't be blank")
   @Length(max = 50)
@@ -47,13 +50,13 @@ public class NodeUpdationRequest implements Serializable {
   @Length(max = 50)
   private String province;
 
-  @NotBlank(message = "postalCode can't be blank")
-  @Length(max = 50)
-  private String postalCode;
-
   @NotBlank(message = "country can't be blank")
   @Length(max = 50)
   private String country;
+
+  @NotBlank(message = "postalCode can't be blank")
+  @Length(max = 50)
+  private String postalCode;
 
   @NotBlank(message = "latitude can't be blank")
   @Length(max = 50)
@@ -62,7 +65,4 @@ public class NodeUpdationRequest implements Serializable {
   @NotBlank(message = "longitude can't be blank")
   @Length(max = 50)
   private String longitude;
-
-  @NotNull(message = "isActive can't be null")
-  private Boolean isActive;
 }
