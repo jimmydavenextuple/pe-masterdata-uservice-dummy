@@ -91,7 +91,7 @@ public class TransitDomain {
       String orgId, String destinationGeozone, List<String> sourceGeozones)
       throws TransitDomainException {
     try {
-      return transitRepository.findByOrgIdAndServiceOptionAndDestinationGeozoneAndSourceGeoZones(
+      return transitRepository.findByOrgIdAndDestinationGeozoneAndSourceGeoZones(
           orgId, destinationGeozone, sourceGeozones);
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to fetch transit list");
