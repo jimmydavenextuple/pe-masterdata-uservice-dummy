@@ -132,7 +132,7 @@ class TransitDomainTest {
   }
 
   @Test
-  void nodeDeletionTestException() {
+  void transitDeletionTestException() {
     doThrow(new RuntimeException("Error while deleting transit details"))
         .when(transitRepository)
         .delete(any());
@@ -145,5 +145,40 @@ class TransitDomainTest {
                     testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS)));
     Assertions.assertEquals("Error while deleting transit details", exception.getMessage());
     verify(transitRepository, times(1)).delete(any());
+  }
+
+  @Test
+  void getListOfTransitDetailsTest() throws TransitDomainException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    when(transitRepository.findByOrgIdAndDestinationGeozoneAndSourceGeoZones(any(), any(), any()))
+        .thenReturn(List.of(transitEntity));
+
+    List<TransitEntity> transitEntityList =
+        transitDomain.fetchTransitList(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE, List.of(TestUtil.SOURCE_GEOZONE));
+    Assertions.assertEquals(transitEntity, transitEntityList.get(0));
+
+    verify(transitRepository, times(1))
+        .findByOrgIdAndDestinationGeozoneAndSourceGeoZones(any(), any(), any());
+  }
+
+  @Test
+  void getListOfTransitDetailsTestException() throws TransitDomainException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    when(transitRepository.findByOrgIdAndDestinationGeozoneAndSourceGeoZones(any(), any(), any()))
+        .thenThrow(new RuntimeException("Error while fetching transit list"));
+
+    Exception exception =
+        assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitDomain.fetchTransitList(
+                    TestUtil.ORG_ID,
+                    TestUtil.DESTINATION_GEOZONE,
+                    List.of(TestUtil.SOURCE_GEOZONE)));
+    Assertions.assertEquals("Error while fetching transit list", exception.getMessage());
+
+    verify(transitRepository, times(1))
+        .findByOrgIdAndDestinationGeozoneAndSourceGeoZones(any(), any(), any());
   }
 }

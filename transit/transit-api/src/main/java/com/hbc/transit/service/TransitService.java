@@ -148,4 +148,14 @@ public class TransitService {
     transitDomain.deleteTransitDetails(transitEntity.get());
     return transitResponse;
   }
+
+  public List<TransitResponse> getListOfTransitDetails(
+      String orgId, String destinationGeozone, List<String> sourceGeozones)
+      throws TransitDomainException {
+
+    List<TransitEntity> transitEntities =
+        transitDomain.fetchTransitList(orgId, destinationGeozone, sourceGeozones);
+
+    return INSTANCE.toTransitResponseList(transitEntities);
+  }
 }
