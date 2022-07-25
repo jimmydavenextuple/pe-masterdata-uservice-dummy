@@ -48,7 +48,7 @@ public interface TransitFeign {
       @PathVariable(name = "carrierServiceId") String carrierServiceId);
 
   @GetMapping("/transit/{orgId}/{destinationGeozone}/")
-  BaseResponse<TransitResponse> getTransitDetailsList(
+  BaseResponse<List<TransitResponse>> getTransitDetailsList(
       @PathVariable String orgId,
       @PathVariable String destinationGeozone,
       @RequestParam List<String> sourceGeozones);
