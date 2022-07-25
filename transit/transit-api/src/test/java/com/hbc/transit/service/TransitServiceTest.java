@@ -203,4 +203,17 @@ class TransitServiceTest {
     Assertions.assertEquals("Transit data not found with given details", exception.getMessage());
     verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
   }
+
+  @Test
+  void getListOfTransitDetailsTest() throws TransitDomainException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    when(transitDomain.fetchTransitList(any(), any(), any())).thenReturn(List.of(transitEntity));
+
+    List<TransitResponse> transitResponse =
+        transitService.getListOfTransitDetails(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE, List.of(TestUtil.SOURCE_GEOZONE));
+    Assertions.assertEquals(
+        transitEntity.getTransitDays(), transitResponse.get(0).getTransitDays());
+    verify(transitDomain, times(1)).fetchTransitList(any(), any(), any());
+  }
 }

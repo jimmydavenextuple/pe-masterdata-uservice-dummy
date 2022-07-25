@@ -4,6 +4,7 @@ import com.hbc.transit.domain.entity.TransitEntity;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -21,4 +22,6 @@ public interface TransitMapper {
   TransitEntity updateTransitEntity(
       TransitDataUpdationRequest transitDataUpdationRequest,
       @MappingTarget TransitEntity updatedTransitEntity);
+
+  List<TransitResponse> toTransitResponseList(List<TransitEntity> transitEntity);
 }

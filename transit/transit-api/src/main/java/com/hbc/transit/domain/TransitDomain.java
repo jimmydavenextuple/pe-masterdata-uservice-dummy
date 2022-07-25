@@ -86,4 +86,17 @@ public class TransitDomain {
           transitEntity.getCarrierServiceId());
     }
   }
+
+  public List<TransitEntity> fetchTransitList(
+      String orgId, String destinationGeozone, List<String> sourceGeozones)
+      throws TransitDomainException {
+    try {
+      return transitRepository.findByOrgIdAndDestinationGeozoneAndSourceGeoZones(
+          orgId, destinationGeozone, sourceGeozones);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to fetch transit list");
+      throw new TransitDomainException(
+          "Error while fetching transit list", orgId, null, destinationGeozone, null);
+    }
+  }
 }
