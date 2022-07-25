@@ -13,6 +13,7 @@ import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.transit.exception.TransitDomainException;
 import com.hbc.transit.service.TransitService;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -186,5 +187,38 @@ class TransitControllerTest {
     Assertions.assertEquals("Failed to delete transit details", exception.getMessage());
 
     verify(transitService, times(1)).deleteTransitDetails(any(), any(), any(), any());
+  }
+
+  @Test
+  void getTransitDetailsListTest() throws TransitDomainException {
+    when(transitService.getListOfTransitDetails(any(), any(), any()))
+        .thenReturn(List.of(testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS)));
+
+    ResponseEntity<BaseResponse<List<TransitResponse>>> responseEntity =
+        transitController.getTransitDetailsList(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE, List.of(TestUtil.SOURCE_GEOZONE));
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals(
+        testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS),
+        responseEntity.getBody().getPayload().get(0));
+
+    verify(transitService, times(1)).getListOfTransitDetails(any(), any(), any());
+  }
+
+  @Test
+  void getTransitDetailsListTestException() throws TransitDomainException {
+    when(transitService.getListOfTransitDetails(any(), any(), any()))
+        .thenThrow(new RuntimeException("Failed to fetch transit list"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                transitController.getTransitDetailsList(
+                    TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE, List.of(TestUtil.SOURCE_GEOZONE)));
+    Assertions.assertEquals("Failed to fetch transit list", exception.getMessage());
+
+    verify(transitService, times(1)).getListOfTransitDetails(any(), any(), any());
   }
 }
