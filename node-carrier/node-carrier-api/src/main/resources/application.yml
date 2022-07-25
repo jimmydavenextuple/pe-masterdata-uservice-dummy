@@ -43,8 +43,8 @@ management:
         enabled: false
       newrelic:
         enabled: true
-        api-key: ${NEW_RELIC_API_KEY}
-        account-id: ${NEW_RELIC_ACCOUNT_ID}
+        api-key: \${NEW_RELIC_API_KEY}
+        account-id: \${NEW_RELIC_ACCOUNT_ID}
     distribution:
       percentiles-histogram:
         http:
