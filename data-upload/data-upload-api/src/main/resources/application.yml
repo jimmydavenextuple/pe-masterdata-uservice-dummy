@@ -20,4 +20,32 @@ logging:
     org.springframework: WARN
     root: INFO
 
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: false
+    metrics:
+      enabled: true
+    loggers:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: false
+      newrelic:
+        enabled: true
+        api-key: \${NEW_RELIC_API_KEY}
+        account-id: \${NEW_RELIC_ACCOUNT_ID}
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+        persistence: true
+        cache: true
