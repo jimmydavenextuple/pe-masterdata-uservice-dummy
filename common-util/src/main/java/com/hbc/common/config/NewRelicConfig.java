@@ -1,12 +1,9 @@
-package com.hbc.service.inventory.config;
+package com.hbc.common.config;
 
-import com.newrelic.telemetry.Attributes;
 import com.newrelic.telemetry.micrometer.NewRelicRegistry;
 import com.newrelic.telemetry.micrometer.NewRelicRegistryConfig;
 import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.core.instrument.util.NamedThreadFactory;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleMetricsExportAutoConfiguration;
@@ -27,13 +24,9 @@ import org.springframework.context.annotation.Profile;
 @Profile("!default")
 public class NewRelicConfig {
   @Bean
-  public NewRelicRegistry newRelicMeterRegistry(NewRelicRegistryConfig config)
-      throws UnknownHostException {
+  public NewRelicRegistry newRelicMeterRegistry(NewRelicRegistryConfig config) {
     NewRelicRegistry newRelicRegistry =
-        NewRelicRegistry.builder(config)
-            .commonAttributes(
-                new Attributes().put("host", InetAddress.getLocalHost().getHostName()))
-            .build();
+        NewRelicRegistry.builder(config).build();
     newRelicRegistry.config().meterFilter(MeterFilter.ignoreTags("plz_ignore_me"));
     newRelicRegistry.start(new NamedThreadFactory("newrelic.micrometer.registry"));
     return newRelicRegistry;
