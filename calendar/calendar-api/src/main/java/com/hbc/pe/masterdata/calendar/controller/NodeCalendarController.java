@@ -30,10 +30,13 @@ public class NodeCalendarController {
     logger.debug(
         "Inside handleCreateNodeCalendar() for nodeCalendarRequest: {}", nodeCalendarRequest);
     try {
+      NodeCalendarResponse nodeCalendarResponse =
+          nodeCalendarService.processCreateNodeCalendar(nodeCalendarRequest);
+      logger.info("Response after creation of node calendar:{}", nodeCalendarResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Node calendar created successfully!")
-              .payload(nodeCalendarService.processCreateNodeCalendar(nodeCalendarRequest))
+              .payload(nodeCalendarResponse)
               .build());
     } catch (Exception e) {
       logger.error("Error in handleCreateNodeCalendar()");

@@ -48,10 +48,14 @@ public class WeightageConfigurationController {
       throws PromiseEngineException {
     logger.debug("Processing create Weightage Configuration request");
     try {
+      WeightageConfigurationDto weightageConfigurationDto =
+          weightageConfigurationService.createWeightageConfiguration(baseRequest);
+      logger.info(
+          "Response after addition of weightage configuration :{}", weightageConfigurationDto);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Weightage Configuration successfully created!")
-              .payload(weightageConfigurationService.createWeightageConfiguration(baseRequest))
+              .payload(weightageConfigurationDto)
               .build());
     } catch (Exception e) {
       logger.error("Failed to process create Weightage Configuration request!");
@@ -104,12 +108,15 @@ public class WeightageConfigurationController {
       throws PromiseEngineException {
     logger.debug("Processing update Weightage Configuration request by weightageId");
     try {
+      WeightageConfigurationDto weightageConfigurationDto =
+          weightageConfigurationService.updateWeightageConfiguration(orgId, type, key, baseRequest);
+      logger.info(
+          "Response after updation of weightage configuration :{}", weightageConfigurationDto);
+
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Weightage Configuration successfully updated!")
-              .payload(
-                  weightageConfigurationService.updateWeightageConfiguration(
-                      orgId, type, key, baseRequest))
+              .payload(weightageConfigurationDto)
               .build());
     } catch (Exception e) {
       logger.error("Failed to process update Weightage Configuration request!");
@@ -126,10 +133,14 @@ public class WeightageConfigurationController {
       throws PromiseEngineException {
     logger.debug("Processing delete Weightage Configuration request by tenant id");
     try {
+      WeightageConfigurationDto weightageConfigurationDto =
+          weightageConfigurationService.deleteWeightageConfiguration(orgId, type, key);
+      logger.info(
+          "Response after deletion of weightage configuration :{}", weightageConfigurationDto);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Weightage Configuration successfully deleted!")
-              .payload(weightageConfigurationService.deleteWeightageConfiguration(orgId, type, key))
+              .payload(weightageConfigurationDto)
               .build());
     } catch (Exception e) {
       logger.error("Failed to process delete Weightage Configuration request!");

@@ -34,10 +34,12 @@ public class CalendarController {
       throws CalendarDomainException, DateException {
     logger.debug("Inside handleCreateCalendar() for calendarRequest: {}", calendarRequest);
     try {
+      CalendarResponse calendarResponse = calendarService.processCreateCalendar(calendarRequest);
+      logger.info("Response after creation of calendar :{}", calendarResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Calendar created successfully!")
-              .payload(calendarService.processCreateCalendar(calendarRequest))
+              .payload(calendarResponse)
               .build());
     } catch (Exception e) {
       logger.error("Error in handleCreateCalendar()");
