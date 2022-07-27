@@ -12,6 +12,6 @@ spring:
 
 logging:
   level:
-    com.hbc: DEBUG
+    root: INFO
 auth:
   issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Pk3rFdZm1
