@@ -136,7 +136,7 @@ subprojects {
         implementation "com.github.ben-manes.caffeine:caffeine"
 
         //micrometer new relic
-        implementation 'com.newrelic.telemetry:micrometer-registry-new-relic:0.5.0'
+        implementation 'com.newrelic.telemetry:micrometer-registry-new-relic:0.9.0'
         implementation 'io.micrometer:micrometer-core:1.6.4'
 
     }

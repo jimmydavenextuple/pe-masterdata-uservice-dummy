@@ -1,10 +1,10 @@
 package com.hbc.service.inventory.config;
 
 import com.newrelic.telemetry.Attributes;
-import io.micrometer.NewRelicRegistryConfig;
+import com.newrelic.telemetry.micrometer.NewRelicRegistry;
+import com.newrelic.telemetry.micrometer.NewRelicRegistryConfig;
 import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.core.instrument.util.NamedThreadFactory;
-import io.micrometer.newrelic.NewRelicRegistry;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration;
@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Profile;
 @ConditionalOnClass(NewRelicRegistry.class)
 @Profile("!default")
 public class NewRelicConfig {
-
   @Bean
   public NewRelicRegistry newRelicMeterRegistry(NewRelicRegistryConfig config)
       throws UnknownHostException {
