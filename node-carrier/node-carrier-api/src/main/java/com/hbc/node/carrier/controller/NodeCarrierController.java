@@ -39,7 +39,7 @@ public class NodeCarrierController {
     logger.debug("Processing node carrier creation request");
     try {
       var nodeCarrierResponse = nodeCarrierService.createNodeCarrier(nodeCarrierRequest);
-
+      logger.info("Response after creation of node-carrier :{}", nodeCarrierResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Node Carrier successfully created")
@@ -88,7 +88,7 @@ public class NodeCarrierController {
       var nodeCarrierResponse =
           nodeCarrierService.updateNodeCarrier(
               nodeId, orgId, carrierServiceId, serviceOption, nodeCarrierUpdateRequest);
-
+      logger.info("Response after updation of node-carrier :{}", nodeCarrierResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Node Carrier updated successfully")
@@ -111,7 +111,7 @@ public class NodeCarrierController {
     try {
       var nodeCarrierResponse =
           nodeCarrierService.deleteNodeCarrier(nodeId, orgId, carrierServiceId, serviceOption);
-
+      logger.info("Response after deletion of node-carrier :{}", nodeCarrierResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Node Carrier deleted successfully")
