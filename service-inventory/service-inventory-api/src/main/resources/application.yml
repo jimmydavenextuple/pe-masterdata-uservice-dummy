@@ -30,7 +30,7 @@ management:
     health:
       show-details: always
     prometheus:
-      enabled: false
+      enabled: true
     metrics:
       enabled: true
     loggers:
