@@ -30,4 +30,22 @@ class NewRelicConfigTest {
   void customNewRelicConfig() {
     Assertions.assertDoesNotThrow(() -> newRelicConfig.customNewRelicConfig());
   }
+
+  @Test
+  void apiKeyTest() {
+    Assertions.assertDoesNotThrow(() -> newRelicConfig.customNewRelicConfig().apiKey());
+  }
+
+  @Test
+  void getTest1() {
+    Assertions.assertDoesNotThrow(() -> newRelicConfig.customNewRelicConfig().get("apiKey"));
+  }
+  @Test
+  void getTest2() {
+    Assertions.assertDoesNotThrow(() -> newRelicConfig.customNewRelicConfig().get("key"));
+  }
+  @Test
+  void serviceNameTest() {
+    Assertions.assertDoesNotThrow(() -> newRelicConfig.customNewRelicConfig().serviceName());
+  }
 }
