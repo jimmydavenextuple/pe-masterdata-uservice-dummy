@@ -36,6 +36,7 @@ public class NodeController {
     logger.debug("Processing node creation request");
     try {
       var nodeResponse = nodeService.createNode(nodeRequest);
+      logger.info("Response after creation of node :{}", nodeResponse);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -58,6 +59,7 @@ public class NodeController {
     try {
 
       var nodeResponse = nodeService.updateNodeDetails(nodeId, orgId, nodeUpdationRequest);
+      logger.info("Response after updation of node :{}", nodeResponse);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -98,6 +100,7 @@ public class NodeController {
     try {
 
       var nodeResponse = nodeService.deleteNode(nodeId, orgId);
+      logger.info("Response after deletion of node :{}", nodeResponse);
 
       return ResponseEntity.ok(
           BaseResponse.builder()

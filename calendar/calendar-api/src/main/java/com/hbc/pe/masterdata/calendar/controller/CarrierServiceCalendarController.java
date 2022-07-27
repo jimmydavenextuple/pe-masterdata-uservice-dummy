@@ -36,12 +36,14 @@ public class CarrierServiceCalendarController {
         "Inside  handleCreateCarrierServiceCalendar() for carrierServiceCalendarRequest: {}",
         carrierServiceCalendarRequest);
     try {
+      var calendarResponse =
+          carrierServiceCalendarService.processCreateCarrierServiceCalendar(
+              carrierServiceCalendarRequest);
+      logger.info("Response after creation of carrier service calendar:{}", calendarResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Carrier service calendar created successfully!")
-              .payload(
-                  carrierServiceCalendarService.processCreateCarrierServiceCalendar(
-                      carrierServiceCalendarRequest))
+              .payload(calendarResponse)
               .build());
     } catch (Exception e) {
       logger.error("Error in handleCreateCarrierServiceCalendar()");

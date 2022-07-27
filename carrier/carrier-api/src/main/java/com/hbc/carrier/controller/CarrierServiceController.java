@@ -38,7 +38,7 @@ public class CarrierServiceController {
     try {
       var carrierServiceResponse =
           carrierserviceService.createCarrierService(carrierServiceRequest);
-
+      logger.info("Response after creation of carrier :{}", carrierServiceResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Carrier Service successfully created")
@@ -86,6 +86,7 @@ public class CarrierServiceController {
       var carrierServiceResponse =
           carrierserviceService.updateCarrierServiceDetails(
               carrierId, carrierServiceId, orgId, carrierServiceUpdateRequest);
+      logger.info("Response after updation of carrier :{}", carrierServiceResponse);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -108,7 +109,7 @@ public class CarrierServiceController {
     try {
       var carrierServiceResponse =
           carrierserviceService.deleteCarrierService(carrierId, carrierServiceId, orgId);
-
+      logger.info("Response after deletion of carrier :{}", carrierServiceResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("CarrierService deleted successfully")
