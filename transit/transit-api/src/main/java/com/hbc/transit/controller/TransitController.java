@@ -40,7 +40,7 @@ public class TransitController {
     logger.debug("Processing transit data creation request");
     try {
       var transitResponse = transitService.addTransitInfo(transitDataCreationRequest);
-
+      logger.info("Response after addition of transit data :{}", transitResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Transit data successfully added")
@@ -70,6 +70,7 @@ public class TransitController {
               destinationGeozone,
               carrierServiceId,
               transitDataUpdationRequest);
+      logger.info("Response after updation of transit data :{}", transitResponse);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -121,6 +122,7 @@ public class TransitController {
       var transitResponse =
           transitService.deleteTransitDetails(
               orgId, sourceGeozone, destinationGeozone, carrierServiceId);
+      logger.info("Response after deletion of transit data :{}", transitResponse);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
