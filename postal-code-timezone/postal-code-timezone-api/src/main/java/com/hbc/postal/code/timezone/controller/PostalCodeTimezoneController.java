@@ -38,7 +38,7 @@ public class PostalCodeTimezoneController {
     try {
       PostalCodeTimezoneDto postalCodeTimezoneDto =
           postalCodeTimezoneService.createPostalCodeTimezone(baseRequest);
-      System.out.println(postalCodeTimezoneDto.getPostalCodePrefix());
+      logger.info("Response after creation of postal-code timezone :{}", postalCodeTimezoneDto);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Postal Code Timezone successfully created!")
