@@ -59,7 +59,7 @@ public class PromiseSourcingRuleController {
     try {
       PromiseSourcingRuleDto promiseSourcingRuleDto =
           promiseSourcingRuleService.createPromiseSourcingRule(baseRequest);
-      logger.info("Response after creation of postal-code timezone :{}", promiseSourcingRuleDto);
+      logger.info("Response after creation of promise sourcing rule :{}", promiseSourcingRuleDto);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Promise Sourcing Rule successfully created!")
@@ -143,7 +143,7 @@ public class PromiseSourcingRuleController {
       PromiseSourcingRuleDto promiseSourcingRuleDto =
           promiseSourcingRuleService.updatePromiseSourcingRule(
               orgId, serviceOption, destinationGeoZone, allocationRuleId, priority, baseRequest);
-      logger.info("Response after updation of postal-code timezone :{}", promiseSourcingRuleDto);
+      logger.info("Response after updation of promise sourcing rule :{}", promiseSourcingRuleDto);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Promise Sourcing Rule successfully updated!")
@@ -169,7 +169,7 @@ public class PromiseSourcingRuleController {
       PromiseSourcingRuleDto promiseSourcingRuleDto =
           promiseSourcingRuleService.deletePromiseSourcingRule(
               orgId, serviceOption, destinationGeoZone, allocationRuleId, priority);
-      logger.info("Response after deletion of postal-code timezone :{}", promiseSourcingRuleDto);
+      logger.info("Response after deletion of promise sourcing rule :{}", promiseSourcingRuleDto);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Promise Sourcing Rule successfully deleted!")
