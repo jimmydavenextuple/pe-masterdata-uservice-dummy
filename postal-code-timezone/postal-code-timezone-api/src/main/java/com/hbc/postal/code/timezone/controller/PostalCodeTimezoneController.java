@@ -36,8 +36,7 @@ public class PostalCodeTimezoneController {
       throws PromiseEngineException {
     logger.debug("Processing create Postal Code Timezone request");
     try {
-      PostalCodeTimezoneDto postalCodeTimezoneDto =
-          postalCodeTimezoneService.createPostalCodeTimezone(baseRequest);
+      var postalCodeTimezoneDto = postalCodeTimezoneService.createPostalCodeTimezone(baseRequest);
       logger.info("Response after creation of postal-code timezone :{}", postalCodeTimezoneDto);
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -75,7 +74,7 @@ public class PostalCodeTimezoneController {
       throws PromiseEngineException {
     logger.debug("Processing update Postal Code Timezone request");
     try {
-      PostalCodeTimezoneDto postalCodeTimezoneDto =
+      var postalCodeTimezoneDto =
           postalCodeTimezoneService.updatePostalCodeTimezone(orgId, postalCodePrefix, baseRequest);
       logger.info("Response after updation of postal-code timezone :{}", postalCodeTimezoneDto);
       return ResponseEntity.ok(
@@ -96,7 +95,7 @@ public class PostalCodeTimezoneController {
       throws PromiseEngineException {
     logger.debug("Processing delete Postal Code Timezone request");
     try {
-      PostalCodeTimezoneDto postalCodeTimezoneDto =
+      var postalCodeTimezoneDto =
           postalCodeTimezoneService.deletePostalCodeTimezone(orgId, postalCodePrefix);
       logger.info("Response after deletion of postal-code timezone :{}", postalCodeTimezoneDto);
       return ResponseEntity.ok(

@@ -34,7 +34,7 @@ public class CalendarController {
       throws CalendarDomainException, DateException {
     logger.debug("Inside handleCreateCalendar() for calendarRequest: {}", calendarRequest);
     try {
-      CalendarResponse calendarResponse = calendarService.processCreateCalendar(calendarRequest);
+      var calendarResponse = calendarService.processCreateCalendar(calendarRequest);
       logger.info("Response after creation of calendar :{}", calendarResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()

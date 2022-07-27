@@ -36,7 +36,7 @@ public class CarrierServiceCalendarController {
         "Inside  handleCreateCarrierServiceCalendar() for carrierServiceCalendarRequest: {}",
         carrierServiceCalendarRequest);
     try {
-      CarrierServiceCalendarResponse calendarResponse =
+      var calendarResponse =
           carrierServiceCalendarService.processCreateCarrierServiceCalendar(
               carrierServiceCalendarRequest);
       logger.info("Response after creation of carrier service calendar:{}", calendarResponse);

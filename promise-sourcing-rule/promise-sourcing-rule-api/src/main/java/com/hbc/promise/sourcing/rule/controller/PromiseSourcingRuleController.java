@@ -57,7 +57,7 @@ public class PromiseSourcingRuleController {
       throws PromiseEngineException {
     logger.debug("Processing create Promise Sourcing Rule request");
     try {
-      PromiseSourcingRuleDto promiseSourcingRuleDto =
+      var promiseSourcingRuleDto =
           promiseSourcingRuleService.createPromiseSourcingRule(baseRequest);
       logger.info("Response after creation of promise sourcing rule :{}", promiseSourcingRuleDto);
       return ResponseEntity.ok(
@@ -140,7 +140,7 @@ public class PromiseSourcingRuleController {
       throws PromiseEngineException {
     logger.debug("Processing update Promise Sourcing Rule request");
     try {
-      PromiseSourcingRuleDto promiseSourcingRuleDto =
+      var promiseSourcingRuleDto =
           promiseSourcingRuleService.updatePromiseSourcingRule(
               orgId, serviceOption, destinationGeoZone, allocationRuleId, priority, baseRequest);
       logger.info("Response after updation of promise sourcing rule :{}", promiseSourcingRuleDto);
@@ -166,7 +166,7 @@ public class PromiseSourcingRuleController {
       throws PromiseEngineException {
     logger.debug("Processing delete Promise Sourcing Rule request by sourcingRuleId");
     try {
-      PromiseSourcingRuleDto promiseSourcingRuleDto =
+      var promiseSourcingRuleDto =
           promiseSourcingRuleService.deletePromiseSourcingRule(
               orgId, serviceOption, destinationGeoZone, allocationRuleId, priority);
       logger.info("Response after deletion of promise sourcing rule :{}", promiseSourcingRuleDto);

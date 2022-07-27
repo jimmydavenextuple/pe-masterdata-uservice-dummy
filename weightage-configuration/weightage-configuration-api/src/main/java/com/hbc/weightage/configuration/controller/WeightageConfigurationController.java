@@ -48,7 +48,7 @@ public class WeightageConfigurationController {
       throws PromiseEngineException {
     logger.debug("Processing create Weightage Configuration request");
     try {
-      WeightageConfigurationDto weightageConfigurationDto =
+      var weightageConfigurationDto =
           weightageConfigurationService.createWeightageConfiguration(baseRequest);
       logger.info(
           "Response after addition of weightage configuration :{}", weightageConfigurationDto);
@@ -108,7 +108,7 @@ public class WeightageConfigurationController {
       throws PromiseEngineException {
     logger.debug("Processing update Weightage Configuration request by weightageId");
     try {
-      WeightageConfigurationDto weightageConfigurationDto =
+      var weightageConfigurationDto =
           weightageConfigurationService.updateWeightageConfiguration(orgId, type, key, baseRequest);
       logger.info(
           "Response after updation of weightage configuration :{}", weightageConfigurationDto);
@@ -133,7 +133,7 @@ public class WeightageConfigurationController {
       throws PromiseEngineException {
     logger.debug("Processing delete Weightage Configuration request by tenant id");
     try {
-      WeightageConfigurationDto weightageConfigurationDto =
+      var weightageConfigurationDto =
           weightageConfigurationService.deleteWeightageConfiguration(orgId, type, key);
       logger.info(
           "Response after deletion of weightage configuration :{}", weightageConfigurationDto);

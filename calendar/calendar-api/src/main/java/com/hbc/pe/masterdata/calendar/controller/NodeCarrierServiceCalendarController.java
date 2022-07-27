@@ -34,7 +34,7 @@ public class NodeCarrierServiceCalendarController {
         "Inside handleCreateNodeCarrierServiceCalendar() for nodeCarrierServiceCalendarRequest: {}",
         nodeCarrierServiceCalendarRequest);
     try {
-      NodeCarrierServiceCalendarResponse nodeCarrierServiceCalendarResponse =
+      var nodeCarrierServiceCalendarResponse =
           nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
               nodeCarrierServiceCalendarRequest);
       logger.info(
