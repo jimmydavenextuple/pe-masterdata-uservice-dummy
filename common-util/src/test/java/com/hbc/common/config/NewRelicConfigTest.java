@@ -1,6 +1,5 @@
 package com.hbc.common.config;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.newrelic.telemetry.micrometer.NewRelicRegistryConfig;
@@ -40,10 +39,12 @@ class NewRelicConfigTest {
   void getTest1() {
     Assertions.assertDoesNotThrow(() -> newRelicConfig.customNewRelicConfig().get("apiKey"));
   }
+
   @Test
   void getTest2() {
     Assertions.assertDoesNotThrow(() -> newRelicConfig.customNewRelicConfig().get("key"));
   }
+
   @Test
   void serviceNameTest() {
     Assertions.assertDoesNotThrow(() -> newRelicConfig.customNewRelicConfig().serviceName());
