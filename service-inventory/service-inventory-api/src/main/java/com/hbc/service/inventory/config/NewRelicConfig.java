@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Duration;
 
 @Configuration
 @AutoConfigureBefore({
@@ -35,8 +36,32 @@ public class NewRelicConfig {
                                         .put("host", InetAddress.getLocalHost().getHostName()))
                         .build();
         newRelicRegistry.config().meterFilter(MeterFilter.ignoreTags("plz_ignore_me"));
-        newRelicRegistry.config().meterFilter(MeterFilter.denyNameStartsWith("jvm.threads"));
+//        newRelicRegistry.config().meterFilter(MeterFilter.denyNameStartsWith("jvm.threads"));
         newRelicRegistry.start(new NamedThreadFactory("newrelic.micrometer.registry"));
         return newRelicRegistry;
+    }
+
+    @Bean
+    public NewRelicRegistryConfig customNewRelicConfig() {
+        return new NewRelicRegistryConfig() {
+            @Override
+            public String get(String key) {
+                if (key.contains("apiKey")) {
+                    return apiKey();
+                }
+                return null;
+            }
+            @Override
+            public String apiKey() {
+                return "NRAK-1SXGWQPYIBS52F9G80OSPOR5GVS";
+            }
+
+
+            @Override
+            public String serviceName() {
+                return "local-service-inventory";
+            }
+
+        };
     }
 }
