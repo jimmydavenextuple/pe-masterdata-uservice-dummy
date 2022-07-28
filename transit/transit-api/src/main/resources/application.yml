@@ -24,7 +24,6 @@ logging:
   level:
     org.springframework: WARN
     root: INFO
-    org.hibernate.stat: DEBUG
 
 management:
   endpoints:
