@@ -23,7 +23,8 @@ server:
 logging:
   level:
     org.springframework: WARN
-    root: INFO
+    root: WARN
+    com.hbc: INFO
 
 management:
   endpoints:
