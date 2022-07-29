@@ -93,6 +93,6 @@ jobs:
       - Postal-Code-Timezone
     uses: ./.github/workflows/release-flow.yml
     with:
-      module: atp-app-full-consumer-redis
+      module: weightage-configuration
     secrets: inherit
 
