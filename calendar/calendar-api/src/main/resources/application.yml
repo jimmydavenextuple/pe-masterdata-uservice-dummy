@@ -22,7 +22,8 @@ constants:
 logging:
   level:
     org.springframework: WARN
-    root: INFO
+    root: WARN
+    com.hbc: INFO
 entity-listener:
   kafka:
     enabled: true
