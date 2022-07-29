@@ -1,12 +1,12 @@
 spring:
   jpa:
     database: POSTGRESQL
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
+    url: jdbc:postgresql://promise-engine-postgres-prod.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/pe
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
 

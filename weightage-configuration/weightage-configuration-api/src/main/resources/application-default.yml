@@ -12,7 +12,7 @@ spring:
 
 logging:
   level:
-    com.hbc: DEBUG
+    com.hbc: INFO
 entity-listener:
   kafka:
     enabled: false
