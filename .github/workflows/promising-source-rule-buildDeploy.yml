@@ -7,7 +7,7 @@ on:
       - "promise-sourcing-rule/**"
       - "deploy-scripts/**"
       - "manifests/**"
-      - ".github/workflows/build&deploy.yml"
+      - ".github/**"
 jobs:
 
   Build-Deploy:

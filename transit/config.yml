@@ -38,3 +38,13 @@ server:
         max:
           memory: "2048Mi"
           cpu: "1000m"
+    prod:
+      java-opts: "-Xms1536m -Xmx1536m"
+      replicas: 3
+      resources:
+        min:
+          memory: "2048Mi"
+          cpu: "1000m"
+        max:
+          memory: "2048Mi"
+          cpu: "1000m"

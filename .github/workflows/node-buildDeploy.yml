@@ -7,7 +7,7 @@ on:
       - "node/**"
       - "deploy-scripts/**"
       - "manifests/**"
-      - ".github/workflows/build&deploy.yml"
+      - ".github/**"
      
 jobs:
   Build-Deploy:
