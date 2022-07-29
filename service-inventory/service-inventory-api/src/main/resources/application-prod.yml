@@ -15,4 +15,4 @@ logging:
     root: WARN
     com.hbc: INFO
 auth:
-  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Pk3rFdZm1
+  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_phMvZ9Tci
