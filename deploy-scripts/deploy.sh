@@ -45,6 +45,9 @@ elif [ "$ENVIRONMENT" == "stage" ]; then
 elif [ "$ENVIRONMENT" == "perf" ]; then
   export AWS_EKS_NAME="promise-engine-eks-perf"
   export ENV_TAG="stage"
+elif [ "$ENVIRONMENT" == "prod" ]; then
+  export AWS_EKS_NAME="promise-engine-eks-prod"
+  export ENV_TAG="production"
 fi
 
 

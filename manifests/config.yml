@@ -38,3 +38,13 @@ server:
         max:
           memory: "1024Mi"
           cpu: "500m"
+    prod:
+      java-opts: "-Xms768m -Xmx768m"
+      replicas: 3
+      resources:
+        min:
+          memory: "1024Mi"
+          cpu: "500m"
+        max:
+          memory: "1024Mi"
+          cpu: "500m"
