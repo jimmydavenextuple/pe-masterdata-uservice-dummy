@@ -161,7 +161,9 @@ public class WeightageConfigurationService {
     logger.debug("-- inside updateWeightageConfiguration service --");
     var weightageConfigurationFromDB =
         INSTANCE.convertToWeightageConfigurationEntity(getWeightageConfiguration(orgId, type, key));
-
+    logger.info(
+        "Response before updation of weightage configuration :{}",
+        INSTANCE.convertToWeightageConfigurationDto(weightageConfigurationFromDB));
     INSTANCE.insertValuesFromUpdateWeightageConfigurationRequestToEntity(
         baseRequest, weightageConfigurationFromDB);
 
@@ -183,6 +185,9 @@ public class WeightageConfigurationService {
     logger.debug("-- inside deleteWeightageConfiguration service --");
     var weightageConfigurationFromDB =
         INSTANCE.convertToWeightageConfigurationEntity(getWeightageConfiguration(orgId, type, key));
+    logger.info(
+        "Response before deletion of weightage configuration :{}",
+        INSTANCE.convertToWeightageConfigurationDto(weightageConfigurationFromDB));
     return prepareWeightageConfigurationDto(
         weightageConfigurationDomain.deleteWeightageConfiguration(weightageConfigurationFromDB));
   }

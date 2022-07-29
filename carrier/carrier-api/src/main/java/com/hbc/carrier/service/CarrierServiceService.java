@@ -82,6 +82,9 @@ public class CarrierServiceService {
       throw new CommonServiceException(
           CARRIER_SERVICE_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
+    logger.info(
+        "Response before deletion of carrier :{}",
+        INSTANCE.toCarrierServiceResponse(carrierServiceEntity.get()));
     var carrierServiceResponse = INSTANCE.toCarrierServiceResponse(carrierServiceEntity.get());
     carrierServiceDomain.deleteCarrierService(carrierServiceEntity.get());
     return carrierServiceResponse;
@@ -107,7 +110,9 @@ public class CarrierServiceService {
       throw new CommonServiceException(
           CARRIER_SERVICE_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-
+    logger.info(
+        "Response before updation of carrier :{}",
+        INSTANCE.toCarrierServiceResponse(carrierServiceEntity.get()));
     INSTANCE.updateCarrierServiceEntity(carrierServiceUpdateRequest, carrierServiceEntity.get());
     return INSTANCE.toCarrierServiceResponse(
         carrierServiceDomain.saveCarrierServiceEntity(carrierServiceEntity.get()));
