@@ -155,7 +155,9 @@ public class NodeCarrierService {
       throw new CommonServiceException(
           NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
     }
-
+    logger.info(
+        "Response before updation of node-carrier :{}",
+        INSTANCE.toNodeCarrierDto(existingNodeEntity.get()));
     INSTANCE.updateNodeCarrierEntity(nodeCarrierUpdateRequest, existingNodeEntity.get());
     return INSTANCE.toNodeCarrierDto(
         nodeCarrierDomain.saveNodeCarrierEntity(existingNodeEntity.get()));
@@ -178,6 +180,9 @@ public class NodeCarrierService {
       throw new CommonServiceException(
           NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
     }
+    logger.info(
+        "Response before deletion of node-carrier :{}",
+        INSTANCE.toNodeCarrierDto(nodeCarrierEntity.get()));
     var nodeCarrierResponse = INSTANCE.toNodeCarrierDto(nodeCarrierEntity.get());
     nodeCarrierDomain.deleteNodeCarrierEntity(nodeCarrierEntity.get());
     return nodeCarrierResponse;

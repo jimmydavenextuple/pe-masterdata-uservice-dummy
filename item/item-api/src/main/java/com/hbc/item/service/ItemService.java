@@ -81,7 +81,9 @@ public class ItemService {
       throw new CommonServiceException(
           ITEM_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-
+    logger.info(
+        "Response before updating of item data :{}",
+        INSTANCE.toItemResponse(existingItemEntity.get()));
     INSTANCE.updateItemEntity(itemUpdationRequest, existingItemEntity.get());
     return INSTANCE.toItemResponse(itemDomain.saveItemEntity(existingItemEntity.get()));
   }
@@ -119,7 +121,8 @@ public class ItemService {
       throw new CommonServiceException(
           ITEM_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-
+    logger.info(
+        "Response before deleting of item data :{}", INSTANCE.toItemResponse(itemEntity.get()));
     var itemResponse = INSTANCE.toItemResponse(itemEntity.get());
     itemDomain.deleteItem(itemEntity.get());
     return itemResponse;

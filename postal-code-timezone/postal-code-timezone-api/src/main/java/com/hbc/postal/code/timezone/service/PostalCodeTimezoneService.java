@@ -95,6 +95,9 @@ public class PostalCodeTimezoneService {
     var postalCodeTimezoneEntityFromDB =
         INSTANCE.convertToPostalCodeTimezoneEntity(getPostalCodeTimezone(orgId, postalCodePrefix));
 
+    logger.info(
+        "Response before updation of postal-code timezone :{}",
+        INSTANCE.convertToPostalCodeTimezoneDto(postalCodeTimezoneEntityFromDB));
     INSTANCE.insertValuesFromUpdatePostalCodeTimezoneRequestToEntity(
         baseRequest, postalCodeTimezoneEntityFromDB);
 
@@ -116,6 +119,9 @@ public class PostalCodeTimezoneService {
     logger.debug("-- inside deletePostalCodeTimezone service --");
     var postalCodeTimezoneEntityFromDB =
         INSTANCE.convertToPostalCodeTimezoneEntity(getPostalCodeTimezone(orgId, postalCodePrefix));
+    logger.info(
+        "Response before deletion of postal-code timezone :{}",
+        INSTANCE.convertToPostalCodeTimezoneDto(postalCodeTimezoneEntityFromDB));
     return preparePostalCodeTimezoneDto(
         postalCodeTimezoneDomain.deletePostalCodeTimezone(postalCodeTimezoneEntityFromDB));
   }

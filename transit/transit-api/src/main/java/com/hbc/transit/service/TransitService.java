@@ -69,7 +69,9 @@ public class TransitService {
       throw new CommonServiceException(
           TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-
+    logger.info(
+        "Response before updation of transit data :{}",
+        INSTANCE.toTransitResponse(existingTransitEntity.get()));
     INSTANCE.updateTransitEntity(transitDataUpdationRequest, existingTransitEntity.get());
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(existingTransitEntity.get()));
   }
@@ -143,7 +145,7 @@ public class TransitService {
       throw new CommonServiceException(
           TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-
+    logger.info("Response before deletion of transit data :{}", transitEntity.get());
     var transitResponse = INSTANCE.toTransitResponse(transitEntity.get());
     transitDomain.deleteTransitDetails(transitEntity.get());
     return transitResponse;

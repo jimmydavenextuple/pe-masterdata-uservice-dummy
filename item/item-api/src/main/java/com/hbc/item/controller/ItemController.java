@@ -56,11 +56,12 @@ public class ItemController {
       throws ItemDomainException, CommonServiceException {
     logger.debug("Processing update item details");
     try {
-
+      var itemResponse = itemService.updateItemDetails(itemId, orgId, uom, itemUpdationRequest);
+      logger.info("Response after updating of item data :{}", itemResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item details updated successfully")
-              .payload(itemService.updateItemDetails(itemId, orgId, uom, itemUpdationRequest))
+              .payload(itemResponse)
               .build());
     } catch (Exception e) {
       logger.error("Failed to update item details");
@@ -96,11 +97,13 @@ public class ItemController {
       throws ItemDomainException, CommonServiceException {
     logger.debug("Processing delete item");
     try {
+      var itemResponse = itemService.deleteItem(itemId, orgId, uom);
+      logger.info("Response after deleting of item data :{}", itemResponse);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item deleted successfully")
-              .payload(itemService.deleteItem(itemId, orgId, uom))
+              .payload(itemResponse)
               .build());
     } catch (Exception e) {
       logger.error("Failed to delete item");

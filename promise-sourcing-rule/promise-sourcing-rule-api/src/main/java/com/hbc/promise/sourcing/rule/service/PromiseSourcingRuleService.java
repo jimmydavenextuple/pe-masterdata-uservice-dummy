@@ -282,7 +282,9 @@ public class PromiseSourcingRuleService {
         INSTANCE.convertToPromiseSourcingRuleEntity(
             getPromiseSourcingRule(
                 orgId, serviceOption, destinationGeoZone, allocationRuleId, priority));
-
+    logger.info(
+        "Response before updation of promise sourcing rule :{}",
+        INSTANCE.convertToPromiseSourcingRuleDto(promiseSourcingRuleFromDB));
     INSTANCE.insertValuesFromUpdatePromiseSourcingRuleRequestToEntity(
         baseRequest, promiseSourcingRuleFromDB);
 
@@ -315,6 +317,9 @@ public class PromiseSourcingRuleService {
         INSTANCE.convertToPromiseSourcingRuleEntity(
             getPromiseSourcingRule(
                 orgId, serviceOption, destinationGeoZone, allocationRuleId, priority));
+    logger.info(
+        "Response before deletion of promise sourcing rule :{}",
+        INSTANCE.convertToPromiseSourcingRuleDto(promiseSourcingRuleFromDB));
     return preparePromiseSourcingRuleDto(
         promiseSourcingRuleDomain.deletePromiseSourcingRule(promiseSourcingRuleFromDB));
   }

@@ -54,7 +54,7 @@ public class NodeService {
       throw new CommonServiceException(
           NODE_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-
+    logger.info("Response before updation of node :{}", existingNodeEntity.get());
     INSTANCE.updateNodeEntity(nodeUpdationRequest, existingNodeEntity.get());
     return INSTANCE.toNodeResponse(nodeDomain.saveNodeEntity(existingNodeEntity.get()));
   }
@@ -88,6 +88,7 @@ public class NodeService {
       throw new CommonServiceException(
           NODE_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
+    logger.info("Response before deletion of node :{}", INSTANCE.toNodeResponse(nodeEntity.get()));
     var nodeResponse = INSTANCE.toNodeResponse(nodeEntity.get());
     nodeDomain.deleteNode(nodeEntity.get());
     return nodeResponse;
