@@ -65,12 +65,11 @@ public class AuthFilter implements Filter {
         } else {
           throw new AuthFilterException("Verification failed");
         }
-      } catch (AuthFilterException e) {
-        log.error(
-            "Authentication failed for the request: {}", httpServletRequest.getRequestURL(), e);
-        throw e;
       } catch (Exception e) {
-        log.error("Error while getting the response", e);
+        log.error(
+            "Error while getting the response for the url: {}",
+            httpServletRequest.getRequestURL(),
+            e);
         throw e;
       }
     } else {
