@@ -8,7 +8,10 @@ class AuthFilterExceptionTest {
 
   @Test
   void constructTest() {
-    AuthFilterException authFilterException = new AuthFilterException("test");
+    Throwable throwable = new Throwable();
+    AuthFilterException authFilterException =
+        new AuthFilterException("test", throwable, true, false);
     assertEquals("test", authFilterException.getMessage());
+    assertEquals(throwable, authFilterException.getCause());
   }
 }
