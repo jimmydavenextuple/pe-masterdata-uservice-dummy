@@ -51,8 +51,7 @@ public class AuthFilter implements Filter {
         String authorizationHeaderValue = httpServletRequest.getHeader("Authorization");
         Optional<String> tokenString = extractJWTToken(authorizationHeaderValue);
         if (!tokenString.isPresent()) {
-          throw new AuthFilterException(
-              "Authorization header value is empty or null", null, true, false);
+          throw new AuthFilterException("Authorization header value is empty or null");
         }
         Jwt<? extends Header, Claims> claims = getAllClaimsFromToken(tokenString.get());
 
@@ -64,7 +63,7 @@ public class AuthFilter implements Filter {
           CurrentThreadContext.getLogContext().setAuthorizationHeader(authorizationHeaderValue);
           chain.doFilter(request, response);
         } else {
-          throw new AuthFilterException("Verification failed", null, true, false);
+          throw new AuthFilterException("Verification failed");
         }
       } catch (Exception e) {
         log.error(
@@ -96,7 +95,7 @@ public class AuthFilter implements Filter {
       log.debug("--------Issuer extracted from claims: {}------", issuerString);
       return authProperties.getIssuer().equals(issuerString);
     } catch (NullPointerException e) {
-      throw new AuthFilterException("Required claims not found", null, true, false);
+      throw new AuthFilterException("Required claims not found");
     }
   }
 
