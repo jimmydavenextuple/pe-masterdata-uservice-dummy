@@ -43,9 +43,9 @@ public class CsvUtilityController {
     }
   }
 
-
   @GetMapping(value = "/carrier-services/{carrierServiceId}/transit-times/download")
-  public ResponseEntity<BaseResponse<String>> downloadTransitTimesDataCSV(HttpServletRequest request, HttpServletResponse response) {
+  public ResponseEntity<BaseResponse<String>> downloadTransitTimesDataCSV(
+      HttpServletRequest request, HttpServletResponse response) {
 
     String msg = "Download transit times request registered successfully";
     return ResponseEntity.ok().body(BaseResponse.builder().message(msg).build());
