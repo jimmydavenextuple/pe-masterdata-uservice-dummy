@@ -15,6 +15,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
@@ -25,6 +26,10 @@ class CommonExceptionHandlerTest {
   @BeforeEach
   void init() {
     MockitoAnnotations.openMocks(this);
+    ReflectionTestUtils.setField(
+        commonExceptionHandler,
+        "slf4jLogger",
+        org.slf4j.LoggerFactory.getLogger(CommonExceptionHandler.class));
   }
 
   @Test
@@ -79,6 +84,16 @@ class CommonExceptionHandlerTest {
         commonExceptionHandler.handlePromiseEngineException(e);
 
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
+  }
+
+  @Test
+  void handleRuntimeExceptionTest() {
+    IndexOutOfBoundsException e = new IndexOutOfBoundsException();
+
+    ResponseEntity<ErrorResponse> responseEntity = commonExceptionHandler.handleRuntimeException(e);
+
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
   }
 }
