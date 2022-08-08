@@ -2,11 +2,16 @@ package com.hbc.common.exception;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.JsonMappingException.Reference;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -51,6 +56,34 @@ class CommonExceptionHandlerTest {
 
     ResponseEntity<ErrorResponse> responseEntity = commonExceptionHandler.handleJsonErrors(e);
 
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
+  }
+
+  @Test
+  void handleJsonErrorsInvalidFormatExceptionTest() {
+    InvalidFormatException cause = mock(InvalidFormatException.class);
+    Reference reference = mock(Reference.class);
+
+    List<Reference> referenceList = new ArrayList<>();
+    referenceList.add(reference);
+    when(cause.getPath()).thenReturn(referenceList);
+    when(cause.getMessage()).thenReturn("Cannot coerce empty String");
+    when(reference.getFieldName()).thenReturn("ExampleField");
+    HttpMessageNotReadableException e = new HttpMessageNotReadableException("msg", cause);
+
+    ResponseEntity<ErrorResponse> responseEntity = commonExceptionHandler.handleJsonErrors(e);
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
+
+    when(cause.getMessage()).thenReturn("values accepted for Enum class:");
+    responseEntity = commonExceptionHandler.handleJsonErrors(e);
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
+
+    when(cause.getMessage())
+        .thenReturn("not compatible with any of standard forms 2022-01-01'T'12:12:12");
+    responseEntity = commonExceptionHandler.handleJsonErrors(e);
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
   }
