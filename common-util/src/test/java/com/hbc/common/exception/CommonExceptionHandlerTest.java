@@ -2,10 +2,13 @@ package com.hbc.common.exception;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.hbc.common.context.CurrentThreadContext;
+import com.hbc.common.context.LogContext;
 import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
@@ -17,6 +20,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
@@ -136,7 +140,12 @@ class CommonExceptionHandlerTest {
   void logErrorTest() {
     Map<String, String> metaData = new HashMap<>();
     metaData.put("key1", "value1");
+    LogContext mockLogCtx = mock(LogContext.class);
 
-    commonExceptionHandler.logError(null, "error occurrred", metaData, "Params");
+    try (MockedStatic mocked = mockStatic(CurrentThreadContext.class)) {
+      mocked.when(CurrentThreadContext::getLogContext).thenReturn(mockLogCtx);
+      commonExceptionHandler.logError(null, "error occurrred", metaData, "Params");
+      mocked.verify(CurrentThreadContext::getLogContext);
+    }
   }
 }
