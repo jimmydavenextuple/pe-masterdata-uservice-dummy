@@ -11,7 +11,9 @@ import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -128,5 +130,13 @@ class CommonExceptionHandlerTest {
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
+  }
+
+  @Test
+  void logErrorTest() {
+    Map<String, String> metaData = new HashMap<>();
+    metaData.put("key1", "value1");
+
+    commonExceptionHandler.logError(null, "error occurrred", metaData, "Params");
   }
 }
