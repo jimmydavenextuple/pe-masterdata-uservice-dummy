@@ -1,6 +1,8 @@
 package com.hbc.promise.sourcing.rule.service;
 
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.EXPRESS;
+import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.MHF;
+import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.NEXTDAY;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.SDND;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.STANDARD;
 
@@ -32,6 +34,7 @@ import org.springframework.util.StringUtils;
 @Service
 @RequiredArgsConstructor
 public class PromiseSourcingRuleService {
+
   private static final Logger logger = LoggerFactory.getLogger(PromiseSourcingRuleService.class);
   private static final PromiseSourcingRuleMapper INSTANCE =
       Mappers.getMapper(PromiseSourcingRuleMapper.class);
@@ -84,35 +87,37 @@ public class PromiseSourcingRuleService {
     List<ServiceOptionInfo> serviceOptionsForSdnd = new ArrayList<>();
     List<ServiceOptionInfo> serviceOptionsForStandard = new ArrayList<>();
     List<ServiceOptionInfo> serviceOptionsForExpress = new ArrayList<>();
+    List<ServiceOptionInfo> serviceOptionsForNextday = new ArrayList<>();
+    List<ServiceOptionInfo> serviceOptionsForMhf = new ArrayList<>();
 
     promiseSourcingRuleList.forEach(
         promiseSourcingRule -> {
           var serviceOptionInfo = getServiceOptionInfo(promiseSourcingRule);
           switch (promiseSourcingRule.getServiceOption()) {
             case SDND:
-              {
-                serviceOptionsForSdnd.add(serviceOptionInfo);
-                break;
-              }
+              serviceOptionsForSdnd.add(serviceOptionInfo);
+              break;
             case STANDARD:
-              {
-                serviceOptionsForStandard.add(serviceOptionInfo);
-                break;
-              }
+              serviceOptionsForStandard.add(serviceOptionInfo);
+              break;
             case EXPRESS:
-              {
-                serviceOptionsForExpress.add(serviceOptionInfo);
-                break;
-              }
+              serviceOptionsForExpress.add(serviceOptionInfo);
+              break;
+            case NEXTDAY:
+              serviceOptionsForNextday.add(serviceOptionInfo);
+              break;
+            case MHF:
+              serviceOptionsForMhf.add(serviceOptionInfo);
+              break;
             default:
-              {
-                logger.error("Invalid service option");
-              }
+              logger.error("Invalid service option");
           }
         });
     fetchPromiseSourcingRuleResponse.setSdnd(serviceOptionsForSdnd);
     fetchPromiseSourcingRuleResponse.setStandard(serviceOptionsForStandard);
     fetchPromiseSourcingRuleResponse.setExpress(serviceOptionsForExpress);
+    fetchPromiseSourcingRuleResponse.setNextday(serviceOptionsForNextday);
+    fetchPromiseSourcingRuleResponse.setMhf(serviceOptionsForMhf);
     return fetchPromiseSourcingRuleResponse;
   }
 
