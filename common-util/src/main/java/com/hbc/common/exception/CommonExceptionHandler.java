@@ -130,7 +130,6 @@ public class CommonExceptionHandler {
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleRuntimeException(Exception e) {
-    MDC.put("exception_class", e.getClass().getName());
     logError(e, e.getMessage(), EMPTY_MAP);
     return ResponseEntity.internalServerError()
         .body(ErrorResponse.builder(ErrorType.ERROR, 0x000001).message(e.getMessage()).build());
@@ -141,6 +140,7 @@ public class CommonExceptionHandler {
     logStatement(
         () -> {
           if (t != null) {
+            MDC.put("exception_class", t.getClass().getName());
             slf4jLogger.error("Exception thrown : ", t);
           }
           slf4jLogger.error(message, params);
