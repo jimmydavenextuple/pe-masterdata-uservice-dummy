@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://dev-db.co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe-hotfix
+    username: \${POSTGRES_USER}
+    password: \${POSTGRES_PWD}
+
+logging:
+  level:
+    com.hbc: DEBUG
+
+dataupload:
+  base-path: "/s3-bucket/"
+  maxsize-in-kilobytes: 10240
+  max-rows: 1000
