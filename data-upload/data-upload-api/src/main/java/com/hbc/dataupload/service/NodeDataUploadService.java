@@ -11,6 +11,8 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXP
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.IS_ACTIVE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.MHF_ELIGIBLE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NEXTDAY_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
@@ -38,6 +40,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -101,10 +104,17 @@ public class NodeDataUploadService {
           String latitude = csvRecord.get(LATITUDE);
           String longitude = csvRecord.get(LONGITUDE);
           String timezone = csvRecord.get(TIMEZONE);
+          Map<String, Boolean> serviceOptionEligibilities = new HashMap<>();
+          serviceOptionEligibilities.put(
+              SDND_ELIGIBLE, Boolean.valueOf(csvRecord.get(SDND_ELIGIBLE)));
+          serviceOptionEligibilities.put(
+              EXPRESS_ELIGIBLE, Boolean.valueOf(csvRecord.get(EXPRESS_ELIGIBLE)));
+          serviceOptionEligibilities.put(
+              NEXTDAY_ELIGIBLE, Boolean.valueOf(csvRecord.get(NEXTDAY_ELIGIBLE)));
+          serviceOptionEligibilities.put(
+              MHF_ELIGIBLE, Boolean.valueOf(csvRecord.get(MHF_ELIGIBLE)));
           Boolean shipToHome = Boolean.valueOf(csvRecord.get(SHIP_TO_HOME));
-          Boolean sdndEligible = Boolean.valueOf(csvRecord.get(SDND_ELIGIBLE));
           Boolean bopisEligible = Boolean.valueOf(csvRecord.get(BOPIS_ELIGIBLE));
-          Boolean expressEligible = Boolean.valueOf(csvRecord.get(EXPRESS_ELIGIBLE));
           String nodeType = csvRecord.get(NODE_TYPE);
           Boolean isActive = Boolean.valueOf(csvRecord.get(IS_ACTIVE));
 
@@ -124,9 +134,8 @@ public class NodeDataUploadService {
                         .longitude(longitude)
                         .timezone(timezone)
                         .shipToHome(shipToHome)
-                        .sdndEligible(sdndEligible)
+                        .serviceOptionEligibilities(serviceOptionEligibilities)
                         .bopisEligible(bopisEligible)
-                        .expressEligible(expressEligible)
                         .nodeType(nodeType)
                         .isActive(isActive)
                         .build();
@@ -149,9 +158,8 @@ public class NodeDataUploadService {
                         .longitude(longitude)
                         .timezone(timezone)
                         .shipToHome(shipToHome)
-                        .sdndEligible(sdndEligible)
+                        .serviceOptionEligibilities(serviceOptionEligibilities)
                         .bopisEligible(bopisEligible)
-                        .expressEligible(expressEligible)
                         .nodeType(nodeType)
                         .isActive(isActive)
                         .build();

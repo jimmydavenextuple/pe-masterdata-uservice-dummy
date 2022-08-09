@@ -1,2 +1,2 @@
-action,nodeId,orgId,street,city,province,postalCode,country,latitude,longitude,timezone,shipToHome,sdndEligible,bopisEligible,expressEligible,nodeType,isActive
-INVALID,node,org,street,0,city0,province0,postalCode0,country0,latitude0,longitude0,timezone0,,true,true,false,true,nodeType0,true
+action,nodeId,orgId,street,city,province,postalCode,country,latitude,longitude,timezone,shipToHome,sdndEligible,bopisEligible,expressEligible,nodeType,isActive,nextdayEligible,mhfEligible
+INVALID,node,org,street,0,city0,province0,postalCode0,country0,latitude0,longitude0,timezone0,,true,true,false,true,nodeType0,true,true,false
