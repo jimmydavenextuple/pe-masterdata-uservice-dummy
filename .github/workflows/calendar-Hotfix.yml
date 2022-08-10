@@ -2,7 +2,7 @@ name: CALENDAR HOTFIX
 
 on:
   push:
-    branches: [ hotfix-only-test ]
+    branches: [ hotfix ]
     paths:
       - "calendar/**"
       - "deploy-scripts/**"
