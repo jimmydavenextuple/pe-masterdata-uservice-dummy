@@ -1,4 +1,4 @@
-name: HOTFIX BUILD-DEPLOY
+name: NODE-CARRIER HOTFIX
 
 on:
   push:
