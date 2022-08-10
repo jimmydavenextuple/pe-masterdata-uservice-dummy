@@ -19,7 +19,7 @@ spring:
       value-deserializer: com.hbc.item.consumer.serializer.ItemDeserializer
       topics:
         item_master:
-          name: items.promise.bay.v1
+          name: items.promise.bay.hotfix.v1
           group-id: item-master-hotfix
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
