@@ -38,6 +38,15 @@ server:
         max:
           memory: "1024Mi"
           cpu: "500m"
+    hotfix:
+      replicas: 1
+      resources:
+        min:
+          memory: "512Mi"
+          cpu: "256m"
+        max:
+          memory: "512Mi"
+          cpu: "256m"
     prod:
       java-opts: "-Xms768m -Xmx768m"
       replicas: 3
