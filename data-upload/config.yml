@@ -39,7 +39,6 @@ server:
           memory: "1024Mi"
           cpu: "500m"
     hotfix:
-      nlb: "no"
       replicas: 1
       resources:
         min:
