@@ -9,8 +9,11 @@ import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.common.response.BaseResponse;
+import java.util.List;
 import javax.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -33,4 +36,8 @@ public interface CalendarFeign {
   @PostMapping("/node-carrier-service-calendar")
   BaseResponse<NodeCarrierServiceCalendarResponse> handleCreateNodeCarrierServiceCalendar(
       @Valid @RequestBody NodeCarrierServiceCalendarRequest nodeCarrierServiceCalendarRequest);
+
+  @GetMapping("/carrier-service-calendar/{orgId}/{carrierServiceId}")
+  BaseResponse<List<CarrierServiceCalendarResponse>> handleGetCarrierServiceCalendar(
+      @PathVariable String orgId, @PathVariable String carrierServiceId);
 }

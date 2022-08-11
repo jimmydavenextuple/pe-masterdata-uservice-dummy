@@ -24,6 +24,10 @@ logging:
 entity-listener:
   kafka:
     enabled: true
+pagination:
+  pageNo: 1
+  pageSize: 15
+  sortBy: carrierId
 
 management:
   endpoints:

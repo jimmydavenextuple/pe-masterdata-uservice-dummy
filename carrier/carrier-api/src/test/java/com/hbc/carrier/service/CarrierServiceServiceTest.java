@@ -1,5 +1,6 @@
 package com.hbc.carrier.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,9 +11,11 @@ import com.hbc.carrier.domain.CarrierServiceDomain;
 import com.hbc.carrier.domain.entity.CarrierServiceEntity;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
+import com.hbc.carrier.domain.mapper.CarrierServiceMapper;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.carrier.exception.CarrierServiceDomainException;
 import com.hbc.common.exception.CommonServiceException;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
 
 class CarrierServiceServiceTest {
 
@@ -28,6 +32,7 @@ class CarrierServiceServiceTest {
   @InjectMocks private TestUtil testUtil;
 
   @Mock private CarrierServiceDomain carrierServiceDomain;
+  @Mock private CarrierServiceMapper carrierServiceMapper;
 
   @BeforeEach
   void setUp() {
@@ -43,7 +48,7 @@ class CarrierServiceServiceTest {
 
     CarrierServiceResponse dto =
         carrierServiceService.createCarrierService(testUtil.getCarrierServiceRequest());
-    Assertions.assertEquals(carrierServiceRequest.getCarrierId(), dto.getCarrierId());
+    assertEquals(carrierServiceRequest.getCarrierId(), dto.getCarrierId());
     verify(carrierServiceDomain, times(1))
         .saveCarrierServiceEntity(any(CarrierServiceEntity.class));
   }
@@ -67,7 +72,7 @@ class CarrierServiceServiceTest {
             TestUtil.CARRIER_SERVICE_ID,
             TestUtil.ORG_ID,
             carrierServiceUpdateRequest);
-    Assertions.assertEquals(testUtil.getCarrierServiceUpdateResponse(), CarrierServiceResponse);
+    assertEquals(testUtil.getCarrierServiceUpdateResponse(), CarrierServiceResponse);
 
     verify(carrierServiceDomain, times(1))
         .saveCarrierServiceEntity(any(CarrierServiceEntity.class));
@@ -92,7 +97,7 @@ class CarrierServiceServiceTest {
                     TestUtil.CARRIER_SERVICE_ID,
                     TestUtil.ORG_ID,
                     carrierServiceUpdateRequest));
-    Assertions.assertEquals("Carrier service not found with given details", exception.getMessage());
+    assertEquals("Carrier service not found with given details", exception.getMessage());
 
     verify(carrierServiceDomain, times(0))
         .saveCarrierServiceEntity(any(CarrierServiceEntity.class));
@@ -110,7 +115,7 @@ class CarrierServiceServiceTest {
     CarrierServiceResponse CarrierServiceResponse =
         carrierServiceService.getCarrierServiceDetails(
             TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
-    Assertions.assertEquals(testUtil.getCarrierServiceUpdateResponse(), CarrierServiceResponse);
+    assertEquals(testUtil.getCarrierServiceUpdateResponse(), CarrierServiceResponse);
     verify(carrierServiceDomain, times(1))
         .findCarrierServiceByCarrierIdAndServiceIdAndOrgId(any(), any(), any());
   }
@@ -127,7 +132,7 @@ class CarrierServiceServiceTest {
             () ->
                 carrierServiceService.getCarrierServiceDetails(
                     TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
-    Assertions.assertEquals("Carrier service not found with given details", exception.getMessage());
+    assertEquals("Carrier service not found with given details", exception.getMessage());
 
     verify(carrierServiceDomain, times(1))
         .findCarrierServiceByCarrierIdAndServiceIdAndOrgId(any(), any(), any());
@@ -143,7 +148,7 @@ class CarrierServiceServiceTest {
     CarrierServiceResponse CarrierServiceResponse =
         carrierServiceService.deleteCarrierService(
             TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
-    Assertions.assertEquals(testUtil.getCarrierServiceResponse(), CarrierServiceResponse);
+    assertEquals(testUtil.getCarrierServiceResponse(), CarrierServiceResponse);
     verify(carrierServiceDomain, times(1))
         .findCarrierServiceByCarrierIdAndServiceIdAndOrgId(any(), any(), any());
   }
@@ -160,9 +165,30 @@ class CarrierServiceServiceTest {
             () ->
                 carrierServiceService.deleteCarrierService(
                     TestUtil.CARRIER_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
-    Assertions.assertEquals("Carrier service not found with given details", exception.getMessage());
+    assertEquals("Carrier service not found with given details", exception.getMessage());
 
     verify(carrierServiceDomain, times(1))
         .findCarrierServiceByCarrierIdAndServiceIdAndOrgId(any(), any(), any());
+  }
+
+  @Test
+  void getCarrierServiceListTest() throws CarrierServiceDomainException {
+    List<CarrierServiceResponse> carrierServiceResponseList =
+        testUtil.getCarrierServiceResponseList();
+
+    when(carrierServiceDomain.findCarrierServiceListByOrgId(any(), any(), any(), any(), any()))
+        .thenReturn(
+            testUtil.createPageCarrierServiceResponse(
+                2, carrierServiceResponseList, carrierServiceResponseList.size()));
+
+    Page<CarrierServiceResponse> carrierServiceResponsePage =
+        carrierServiceService.getCarrierServiceList(
+            TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, Optional.of(TestUtil.SORT_ORDER_DESC));
+
+    assertEquals(2, (int) carrierServiceResponsePage.getTotalElements());
+    assertEquals(2, carrierServiceResponsePage.getTotalPages());
+    assertEquals(carrierServiceResponseList.size(), carrierServiceResponsePage.getContent().size());
+    verify(carrierServiceDomain, times(1))
+        .findCarrierServiceListByOrgId(any(), any(), any(), any(), any());
   }
 }

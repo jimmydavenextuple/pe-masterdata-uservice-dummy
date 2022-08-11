@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -116,5 +117,12 @@ public class CarrierServiceService {
     INSTANCE.updateCarrierServiceEntity(carrierServiceUpdateRequest, carrierServiceEntity.get());
     return INSTANCE.toCarrierServiceResponse(
         carrierServiceDomain.saveCarrierServiceEntity(carrierServiceEntity.get()));
+  }
+
+  public Page<CarrierServiceResponse> getCarrierServiceList(
+      String orgId, Integer pageNo, Integer pageSize, String sortBy, Optional<String> sortOrder)
+      throws CarrierServiceDomainException {
+    return carrierServiceDomain.findCarrierServiceListByOrgId(
+        orgId, pageNo, pageSize, sortBy, sortOrder);
   }
 }
