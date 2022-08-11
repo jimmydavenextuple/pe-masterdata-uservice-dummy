@@ -57,7 +57,6 @@ import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -132,12 +131,11 @@ public class TestUtil {
   }
 
   public Map<String, Boolean> getServiceOptionEligibilities() {
-    Map<String, Boolean> serviceOptionEligibilities = new HashMap<>();
-    serviceOptionEligibilities.put(SDND_ELIGIBLE, Boolean.TRUE);
-    serviceOptionEligibilities.put(EXPRESS_ELIGIBLE, Boolean.TRUE);
-    serviceOptionEligibilities.put(NEXTDAY_ELIGIBLE, Boolean.TRUE);
-    serviceOptionEligibilities.put(MHF_ELIGIBLE, Boolean.TRUE);
-    return serviceOptionEligibilities;
+    return Map.of(
+        SDND_ELIGIBLE, Boolean.TRUE,
+        EXPRESS_ELIGIBLE, Boolean.TRUE,
+        NEXTDAY_ELIGIBLE, Boolean.TRUE,
+        MHF_ELIGIBLE, Boolean.TRUE);
   }
 
   public BaseResponse<NodeResponse> getSuccessfulBaseResponseForNode() {

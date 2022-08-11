@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -104,15 +103,12 @@ public class NodeDataUploadService {
           String latitude = csvRecord.get(LATITUDE);
           String longitude = csvRecord.get(LONGITUDE);
           String timezone = csvRecord.get(TIMEZONE);
-          Map<String, Boolean> serviceOptionEligibilities = new HashMap<>();
-          serviceOptionEligibilities.put(
-              SDND_ELIGIBLE, Boolean.valueOf(csvRecord.get(SDND_ELIGIBLE)));
-          serviceOptionEligibilities.put(
-              EXPRESS_ELIGIBLE, Boolean.valueOf(csvRecord.get(EXPRESS_ELIGIBLE)));
-          serviceOptionEligibilities.put(
-              NEXTDAY_ELIGIBLE, Boolean.valueOf(csvRecord.get(NEXTDAY_ELIGIBLE)));
-          serviceOptionEligibilities.put(
-              MHF_ELIGIBLE, Boolean.valueOf(csvRecord.get(MHF_ELIGIBLE)));
+          Map<String, Boolean> serviceOptionEligibilities =
+              Map.of(
+                  SDND_ELIGIBLE, Boolean.valueOf(csvRecord.get(SDND_ELIGIBLE)),
+                  EXPRESS_ELIGIBLE, Boolean.valueOf(csvRecord.get(EXPRESS_ELIGIBLE)),
+                  NEXTDAY_ELIGIBLE, Boolean.valueOf(csvRecord.get(NEXTDAY_ELIGIBLE)),
+                  MHF_ELIGIBLE, Boolean.valueOf(csvRecord.get(MHF_ELIGIBLE)));
           Boolean shipToHome = Boolean.valueOf(csvRecord.get(SHIP_TO_HOME));
           Boolean bopisEligible = Boolean.valueOf(csvRecord.get(BOPIS_ELIGIBLE));
           String nodeType = csvRecord.get(NODE_TYPE);
