@@ -1,4 +1,4 @@
-package com.hbc.jobs.framework.common.domain.pojo;
+package com.hbc.common.base;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
