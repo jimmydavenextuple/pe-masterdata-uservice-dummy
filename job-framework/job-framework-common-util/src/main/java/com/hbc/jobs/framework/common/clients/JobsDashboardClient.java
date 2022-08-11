@@ -1,10 +1,11 @@
 package com.hbc.jobs.framework.common.clients;
 
+import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
-import com.hbc.jobs.framework.common.domain.pojo.PagePayload;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -48,14 +49,12 @@ public interface JobsDashboardClient {
       @RequestParam(name = "days", required = false) Optional<Integer> days,
       @RequestParam(name = "sortField", required = false) Optional<String> sortField,
       @RequestParam(name = "sortOrder", required = false) Optional<String> sortOrder,
-      @RequestParam("pageNo") int pageNo,
-      @RequestParam("pageSize") int pageSize);
+      @RequestParam(name = "pageNo", required = false) int pageNo,
+      @RequestParam(name = "pageSize", required = false) int pageSize);
 
   @GetMapping("/org/{orgId}/jobs/{jobId}/results")
-  BaseResponse<PagePayload<RecordStatusDto>> getJobRecordsByFilter(
+  BaseResponse<List<RecordStatusDto>> getJobRecords(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotEmpty @NotNull @PathVariable("jobId") String jobId,
-      @RequestParam(name = "status", required = false) Optional<String> status,
-      @RequestParam("pageNo") int pageNo,
-      @RequestParam("pageSize") int pageSize);
+      @RequestParam(name = "status", required = false) Optional<String> status);
 }
