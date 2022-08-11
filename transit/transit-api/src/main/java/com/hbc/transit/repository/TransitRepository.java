@@ -30,4 +30,6 @@ public interface TransitRepository extends JpaRepository<TransitEntity, String> 
       nativeQuery = true)
   List<TransitEntity> findByOrgIdAndDestinationGeozoneAndSourceGeoZones(
       String orgId, String destinationGeozone, List<String> sourceGeozones);
+
+  List<TransitEntity> findByOrgIdAndCarrierServiceId(String orgId, String carrierServiceId);
 }

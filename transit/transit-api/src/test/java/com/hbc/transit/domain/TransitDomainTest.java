@@ -181,4 +181,34 @@ class TransitDomainTest {
     verify(transitRepository, times(1))
         .findByOrgIdAndDestinationGeozoneAndSourceGeoZones(any(), any(), any());
   }
+
+  @Test
+  void fetchTransitEntityListTest() throws TransitDomainException {
+    TransitEntity transitEntity =
+        testUtil.getTransitEntity1(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+    when(transitRepository.findByOrgIdAndCarrierServiceId(any(), any()))
+        .thenReturn(List.of(transitEntity));
+
+    List<TransitEntity> transitEntities =
+        transitDomain.fetchTransitEntityList(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertEquals(transitEntity, transitEntities.get(0));
+
+    verify(transitRepository, times(1)).findByOrgIdAndCarrierServiceId(any(), any());
+  }
+
+  @Test
+  void fetchTransitEntityListTestException() throws TransitDomainException {
+    when(transitRepository.findByOrgIdAndCarrierServiceId(any(), any()))
+        .thenThrow(new RuntimeException("Error while fetching transit list"));
+
+    Exception exception =
+        assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitDomain.fetchTransitEntityList(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+    Assertions.assertEquals("Error while fetching transit list", exception.getMessage());
+
+    verify(transitRepository, times(1)).findByOrgIdAndCarrierServiceId(any(), any());
+  }
 }

@@ -2,6 +2,7 @@ package com.hbc.transit.controller;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -154,6 +155,25 @@ public class TransitController {
               .build());
     } catch (Exception e) {
       logger.error("Failed to fetch transit details list");
+      throw e;
+    }
+  }
+
+  @GetMapping("transit-entries/{orgId}/{carrierServiceId}")
+  public ResponseEntity<BaseResponse<TransitTimeEntriesDto>> getTransitTimeEntries(
+      @PathVariable String orgId, @PathVariable String carrierServiceId)
+      throws TransitDomainException {
+    logger.debug("Processing get transit time entries");
+    try {
+      TransitTimeEntriesDto transitTimeEntriesDto =
+          transitService.getTransitTimeEntries(orgId, carrierServiceId);
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Transit time entries fetched successfully")
+              .payload(transitTimeEntriesDto)
+              .build());
+    } catch (Exception e) {
+      logger.error("Failed to fetch transit time entries");
       throw e;
     }
   }

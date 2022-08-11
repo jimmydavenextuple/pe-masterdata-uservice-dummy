@@ -8,6 +8,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.transit.TestUtil;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -220,5 +221,36 @@ class TransitControllerTest {
     Assertions.assertEquals("Failed to fetch transit list", exception.getMessage());
 
     verify(transitService, times(1)).getListOfTransitDetails(any(), any(), any());
+  }
+
+  @Test
+  void getTransitTimeEntriesTest() throws TransitDomainException {
+    when(transitService.getTransitTimeEntries(any(), any()))
+        .thenReturn(
+            testUtil.getTransitTimeEntriesDto(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+
+    ResponseEntity<BaseResponse<TransitTimeEntriesDto>> response =
+        transitController.getTransitTimeEntries(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(TestUtil.ORG_ID, response.getBody().getPayload().getOrgId());
+
+    verify(transitService, times(1)).getTransitTimeEntries(any(), any());
+  }
+
+  @Test
+  void getTransitTimeEntriesTestException() throws TransitDomainException {
+    when(transitService.getTransitTimeEntries(any(), any()))
+        .thenThrow(new RuntimeException("Failed to fetch transit time entries"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                transitController.getTransitTimeEntries(
+                    TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+    Assertions.assertEquals("Failed to fetch transit time entries", exception.getMessage());
+
+    verify(transitService, times(1)).getTransitTimeEntries(any(), any());
   }
 }
