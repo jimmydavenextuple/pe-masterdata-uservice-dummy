@@ -1,8 +1,8 @@
 package com.hbc.jobs.framework.common.clients;
 
+import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
-import com.hbc.jobs.framework.common.domain.pojo.PagePayload;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.List;
 import javax.validation.Valid;

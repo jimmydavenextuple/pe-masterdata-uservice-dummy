@@ -1,0 +1,337 @@
+package com.hbc.jobs.consumers.controller;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.hbc.common.base.PagePayload;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.jobs.consumers.common.TestUtil;
+import com.hbc.jobs.consumers.exception.JobException;
+import com.hbc.jobs.consumers.service.JobService;
+import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
+import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.CollectionUtils;
+
+class JobControllerTest {
+
+  @InjectMocks private JobController jobController;
+
+  @InjectMocks private TestUtil testUtil;
+
+  @Mock private JobService jobService;
+
+  @BeforeEach
+  public void init() {
+    MockitoAnnotations.openMocks(this);
+    MockMvcBuilders.standaloneSetup(jobController).build();
+  }
+
+  @Test
+  void getJobRecordsByFilterSuccess() throws JobException {
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
+    ReflectionTestUtils.setField(
+        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
+
+    Optional<String> status = Optional.of(ApiStatusEnum.SUCCESS.toString());
+    List<RecordStatusDto> recordStatusList = testUtil.createRecordStatusDtoList(TestUtil.ORG_ID);
+
+    when(jobService.getJobResults(any(), any(), any())).thenReturn(recordStatusList);
+    ResponseEntity<BaseResponse<List<RecordStatusDto>>> response =
+        jobController.getJobRecordsByFilter(TestUtil.ORG_ID, TestUtil.JOB_ID, status);
+    List<RecordStatusDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
+    Assertions.assertFalse(CollectionUtils.isEmpty(responsePage));
+    Assertions.assertEquals(recordStatusList.size(), responsePage.size(), "Paginated data");
+  }
+
+  @Test
+  void getJobRecordsByFilterFails() throws JobException {
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
+    ReflectionTestUtils.setField(
+        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
+
+    String jobId = "jobId1";
+    when(jobService.getJobResults(any(), any(), any()))
+        .thenThrow(new JobException("Exception while retrieving the job records", jobId, null));
+
+    JobException exception =
+        assertThrows(
+            JobException.class,
+            () ->
+                jobController.getJobRecordsByFilter(
+                    TestUtil.ORG_ID, TestUtil.JOB_ID, Optional.of("SUCCESS")));
+
+    Assertions.assertEquals(jobId, exception.getJobId(), "Job Id");
+  }
+
+  @Test
+  void createJobSuccess() throws JobException {
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
+    ReflectionTestUtils.setField(
+        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
+
+    JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
+    when(jobService.createJob(any())).thenReturn(job);
+
+    ResponseEntity<BaseResponse<JobDto>> response = jobController.createJob(job);
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
+
+    verify(jobService, times(1)).createJob(any());
+  }
+
+  @Test
+  void createJobDuplicateJobException() throws JobException {
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
+    ReflectionTestUtils.setField(
+        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
+
+    JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 5);
+
+    when(jobService.createJob(any()))
+        .thenThrow(
+            new JobException("Job already exists for the same job Id", job.getJobId(), null));
+
+    JobException exception = assertThrows(JobException.class, () -> jobController.createJob(job));
+
+    Assertions.assertEquals(
+        "Job already exists for the same job Id", exception.getMessage(), "Expected Error");
+  }
+
+  @Test
+  void createJobDuplicateRuntimeException() throws JobException {
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
+    ReflectionTestUtils.setField(
+        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
+
+    JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
+
+    when(jobService.createJob(any()))
+        .thenThrow(new JobException("Exception while updating the job ", job.getJobId(), null));
+
+    JobException exception = assertThrows(JobException.class, () -> jobController.createJob(job));
+
+    Assertions.assertEquals(
+        "Exception while updating the job ", exception.getMessage(), "Expected Error");
+  }
+
+  @Test
+  void getJobSuccess() throws JobException {
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
+    ReflectionTestUtils.setField(
+        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
+
+    JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 5);
+    when(jobService.getJob(any(), any())).thenReturn(job);
+
+    ResponseEntity<BaseResponse<JobDto>> response =
+        jobController.getJob(TestUtil.ORG_ID, job.getJobId());
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
+
+    verify(jobService, times(1)).getJob(any(), any());
+  }
+
+  @Test
+  void getJobNotFoundException() throws JobException {
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
+    ReflectionTestUtils.setField(
+        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
+
+    String jobId = "job123";
+    when(jobService.getJob(any(), any()))
+        .thenThrow(new JobException("Job is not found!", jobId, null));
+
+    JobException exception =
+        assertThrows(JobException.class, () -> jobController.getJob(TestUtil.ORG_ID, jobId));
+
+    Assertions.assertEquals("Job is not found!", exception.getMessage(), "Expected Error");
+  }
+
+  @Test
+  void getJobCTEException() throws JobException {
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
+    ReflectionTestUtils.setField(
+        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
+
+    String jobId = "job123";
+    when(jobService.getJob(any(), any()))
+        .thenThrow(new JobException("Error while retrieving the job", jobId, null));
+
+    JobException exception =
+        assertThrows(JobException.class, () -> jobController.getJob(TestUtil.ORG_ID, jobId));
+
+    Assertions.assertEquals(
+        "Error while retrieving the job", exception.getMessage(), "Expected Error");
+
+    Assertions.assertEquals(jobId, exception.getJobId(), "Job Id");
+  }
+
+  @Test
+  void getJobsByFilterSuccess() throws JobException {
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
+    ReflectionTestUtils.setField(
+        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
+
+    Optional<Integer> pageNo = Optional.of(1);
+    Optional<Integer> pageSize = Optional.of(1);
+
+    List<JobDto> jobDtoList = testUtil.createJobDtoList();
+    Page<JobDto> pageResp = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
+
+    when(jobService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
+        .thenReturn(pageResp);
+
+    ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
+        jobController.getJobsByFilter(
+            TestUtil.ORG_ID,
+            Optional.of(TestUtil.JOB_TYPE),
+            Optional.of(3),
+            Optional.empty(),
+            Optional.empty(),
+            pageNo,
+            pageSize);
+    PagePayload<JobDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
+    Assertions.assertEquals(
+        2, (int) responsePage.getPagination().getTotalPages(), "Pagination Total pages");
+    Assertions.assertEquals(
+        jobDtoList.size(), (int) responsePage.getPagination().getTotalRecords(), "Total Elements");
+    Assertions.assertEquals(
+        1, (int) responsePage.getPagination().getCurrentPage(), "Current page number");
+    Assertions.assertEquals(jobDtoList.size(), responsePage.getData().size(), "Paginated data");
+    Assertions.assertNull(responsePage.getPagination().getPrevious(), "Previous Uri");
+    Assertions.assertEquals(
+        Boolean.TRUE,
+        Objects.nonNull(responsePage.getPagination().getNext()),
+        "Next Uri should not be null");
+  }
+
+  @Test
+  void getJobsByFilterLastPageSuccess() throws JobException {
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
+    ReflectionTestUtils.setField(
+        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
+
+    Optional<Integer> pageNo = Optional.of(2);
+    Optional<Integer> pageSize = Optional.of(1);
+
+    List<JobDto> jobDtoList = testUtil.createJobDtoList();
+    Page<JobDto> pageResp = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
+
+    when(jobService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
+        .thenReturn(pageResp);
+
+    ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
+        jobController.getJobsByFilter(
+            TestUtil.ORG_ID,
+            Optional.of(TestUtil.JOB_TYPE),
+            Optional.of(3),
+            Optional.empty(),
+            Optional.empty(),
+            pageNo,
+            pageSize);
+    PagePayload<JobDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
+    Assertions.assertEquals(
+        2, (int) responsePage.getPagination().getTotalPages(), "Pagination Total pages");
+    Assertions.assertEquals(
+        jobDtoList.size(), (int) responsePage.getPagination().getTotalRecords(), "Total Elements");
+    Assertions.assertEquals(
+        2, (int) responsePage.getPagination().getCurrentPage(), "Current page number");
+    Assertions.assertEquals(jobDtoList.size(), responsePage.getData().size(), "Paginated data");
+    Assertions.assertNull(responsePage.getPagination().getNext(), "Next Uri");
+    Assertions.assertEquals(
+        Boolean.TRUE,
+        Objects.nonNull(responsePage.getPagination().getPrevious()),
+        "Previous Uri should not be null");
+  }
+
+  @Test
+  void getJobsByFilterPageNoNotAllowed() {
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
+    ReflectionTestUtils.setField(
+        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
+
+    JobException exception =
+        assertThrows(
+            JobException.class,
+            () ->
+                jobController.getJobsByFilter(
+                    TestUtil.ORG_ID,
+                    Optional.empty(),
+                    Optional.of(3),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.of(0),
+                    Optional.of(1)));
+
+    Assertions.assertEquals(
+        "PageNo can not be less than one", exception.getMessage(), "Exception message");
+
+    Assertions.assertEquals(0, exception.getPageNo().intValue(), "Exception pageNo");
+  }
+
+  @Test
+  void getJobsByFilterException() throws JobException {
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
+    ReflectionTestUtils.setField(
+        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
+
+    when(jobService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
+        .thenThrow(new JobException("Exception while retrieving the list of jobs", null, 1));
+
+    JobException exception =
+        assertThrows(
+            JobException.class,
+            () ->
+                jobController.getJobsByFilter(
+                    TestUtil.ORG_ID,
+                    Optional.empty(),
+                    Optional.of(3),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty()));
+
+    Assertions.assertEquals(
+        "Exception while retrieving the list of jobs", exception.getMessage(), "Exception message");
+
+    Assertions.assertEquals(1, exception.getPageNo().intValue(), "Exception pageNo");
+  }
+}
