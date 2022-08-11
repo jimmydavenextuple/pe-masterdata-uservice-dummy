@@ -112,3 +112,11 @@ findProject(':data-upload:data-upload-common-util')?.name = 'data-upload-common-
 include 'data-upload:data-upload-api'
 findProject(':data-upload:data-upload-api')?.name = 'data-upload-api'
 
+include 'job-framework'
+include 'job-framework:jobs-dashboard'
+findProject(':job-framework:jobs-dashboard')?.name = 'jobs-dashboard'
+include 'job-framework:jobs-consumer'
+findProject(':job-framework:jobs-consumer')?.name = 'jobs-consumer'
+include 'job-framework:job-framework-common-util'
+findProject(':job-framework:job-framework-common-util')?.name = 'job-framework-common-util'
+
