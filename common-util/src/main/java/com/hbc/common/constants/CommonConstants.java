@@ -12,5 +12,6 @@ public class CommonConstants {
   public static final String DB_OPERATION_INSERT = "INSERT";
   public static final String DB_OPERATION_UPDATE = "UPDATE";
   public static final String DB_OPERATION_DELETE = "DELETE";
+  public static final String HEADER_USER = "X-User";
   public static final String AUTHORIZATION_HEADER = "Authorization";
 }
