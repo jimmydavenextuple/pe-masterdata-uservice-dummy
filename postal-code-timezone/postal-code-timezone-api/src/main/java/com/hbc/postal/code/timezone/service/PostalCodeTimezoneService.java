@@ -3,13 +3,18 @@ package com.hbc.postal.code.timezone.service;
 import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.domain.PostalCodeTimezoneDomain;
 import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
 import com.hbc.postal.code.timezone.domain.mapper.PostalCodeTimezoneMapper;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -124,5 +129,33 @@ public class PostalCodeTimezoneService {
         INSTANCE.convertToPostalCodeTimezoneDto(postalCodeTimezoneEntityFromDB));
     return preparePostalCodeTimezoneDto(
         postalCodeTimezoneDomain.deletePostalCodeTimezone(postalCodeTimezoneEntityFromDB));
+  }
+
+  public List<PostalCodePrefixDto> fetchPostalCodePrefixList(String orgId)
+      throws PromiseEngineException {
+    List<PostalCodeTimezoneEntity> postalCodeTimezoneEntities =
+        postalCodeTimezoneDomain.getPostalCodeTimezoneForOrgId(orgId);
+
+    List<PostalCodePrefixDto> postalCodePrefixDtoList = new ArrayList<>();
+    Set<String> visitedStates = new HashSet<>();
+
+    for (PostalCodeTimezoneEntity postalCodeTimezoneEntity : postalCodeTimezoneEntities) {
+      if (!visitedStates.contains(postalCodeTimezoneEntity.getState())) {
+        PostalCodePrefixDto postalCodePrefixDto = new PostalCodePrefixDto();
+        List<String> postalCodePrefixList = new ArrayList<>();
+
+        for (PostalCodeTimezoneEntity postalCodeTimezoneEntity1 : postalCodeTimezoneEntities) {
+          if (postalCodeTimezoneEntity1.getState().equals(postalCodeTimezoneEntity.getState())) {
+            postalCodePrefixList.add(postalCodeTimezoneEntity1.getPostalCodePrefix());
+          }
+        }
+
+        postalCodePrefixDto.setState(postalCodeTimezoneEntity.getState());
+        postalCodePrefixDto.setPostalCodePrefix(postalCodePrefixList);
+        postalCodePrefixDtoList.add(postalCodePrefixDto);
+        visitedStates.add(postalCodeTimezoneEntity.getState());
+      }
+    }
+    return postalCodePrefixDtoList;
   }
 }
