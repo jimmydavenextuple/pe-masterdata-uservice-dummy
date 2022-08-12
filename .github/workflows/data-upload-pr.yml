@@ -5,7 +5,7 @@ on:
   pull_request:
     paths:
       - "data-upload/**"
-    branches: [ development ]
+    branches: [ development, hotfix ]
 
 jobs:
   PR-Analysis:

@@ -5,7 +5,7 @@ on:
   pull_request:
     paths:
       - "service-inventory/**"
-    branches: [ development ]
+    branches: [ development, hotfix ]
 
 jobs:
   PR-Analysis:

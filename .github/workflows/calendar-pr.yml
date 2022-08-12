@@ -5,7 +5,7 @@ on:
   pull_request:
     paths:
       - "calendar/**"
-    branches: [ development ]
+    branches: [ development, hotfix ]
 
 jobs:
   PR-Analysis:

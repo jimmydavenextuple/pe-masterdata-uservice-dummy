@@ -5,7 +5,7 @@ on:
   pull_request:
     paths:
       - "postal-code-timezone/**"
-    branches: [ development ]
+    branches: [ development, hotfix ]
 
 jobs:
   PR-Analysis:
