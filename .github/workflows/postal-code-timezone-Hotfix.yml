@@ -1,0 +1,20 @@
+name: POSTAL-CODE-TIMEZONE HOTFIX
+
+on:
+  push:
+    branches: [ hotfix ]
+    paths:
+      - "postal-code-timezone/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/Build&Deploy_Hotfix.yml
+    with:
+      module: postal-code-timezone
+    secrets: inherit
+
+
+
+

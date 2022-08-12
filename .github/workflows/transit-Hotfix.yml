@@ -1,0 +1,21 @@
+name: TRANSIT HOTFIX
+
+on:
+  push:
+    branches: [ hotfix ]
+    paths:
+      - "transit/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+     
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/Build&Deploy_Hotfix.yml
+    with:
+      module: transit
+    secrets: inherit
+
+
+
+

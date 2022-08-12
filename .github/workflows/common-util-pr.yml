@@ -6,7 +6,7 @@ on:
     paths:
       - "common-util/**"
       -  ".github/workflows/common-util-pr.yml"
-    branches: [ development ]
+    branches: [ development, hotfix ]
 
 jobs:
   PR-Analysis:

@@ -1,0 +1,22 @@
+name: ITEM HOTFIX
+
+on:
+  push:
+    branches: [ hotfix ]
+    paths:
+      - "item/**"
+      - "node/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+     
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/Build&Deploy_Hotfix.yml
+    with:
+      module: item
+    secrets: inherit
+
+
+
+
