@@ -165,8 +165,7 @@ public class TransitController {
       throws TransitDomainException {
     logger.debug("Processing get transit time entries");
     try {
-      TransitTimeEntriesDto transitTimeEntriesDto =
-          transitService.getTransitTimeEntries(orgId, carrierServiceId);
+      var transitTimeEntriesDto = transitService.getTransitTimeEntries(orgId, carrierServiceId);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Transit time entries fetched successfully")

@@ -68,7 +68,7 @@ public class CarrierServiceDomain {
       throws CarrierServiceDomainException {
     try {
       Pageable pageable = null;
-      Sort sort =
+      var sort =
           Sort.by(
               Sort.Direction.fromOptionalString(sortOrder.orElse(""))
                   .orElse(Sort.DEFAULT_DIRECTION),

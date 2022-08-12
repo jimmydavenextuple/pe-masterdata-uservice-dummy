@@ -141,7 +141,7 @@ public class PostalCodeTimezoneService {
 
     for (PostalCodeTimezoneEntity postalCodeTimezoneEntity : postalCodeTimezoneEntities) {
       if (!visitedStates.contains(postalCodeTimezoneEntity.getState())) {
-        PostalCodePrefixDto postalCodePrefixDto = new PostalCodePrefixDto();
+        var postalCodePrefixDto = new PostalCodePrefixDto();
         List<String> postalCodePrefixList = new ArrayList<>();
 
         for (PostalCodeTimezoneEntity postalCodeTimezoneEntity1 : postalCodeTimezoneEntities) {

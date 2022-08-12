@@ -156,7 +156,7 @@ public class CarrierServiceController {
               sortOrder);
 
       PagePayload<CarrierServiceResponse> pagePayload = new PagePayload<>();
-      PagePayload.Pagination pagination = new PagePayload.Pagination();
+      var pagination = new PagePayload.Pagination();
       pagination.setTotalRecords((int) carrierServiceResponses.getTotalElements());
       pagination.setTotalPages(carrierServiceResponses.getTotalPages());
       pagination.setCurrentPage(pageNo.orElse(defaultPageNo));
