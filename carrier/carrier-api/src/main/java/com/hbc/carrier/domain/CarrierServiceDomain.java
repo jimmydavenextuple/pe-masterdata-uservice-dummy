@@ -67,13 +67,12 @@ public class CarrierServiceDomain {
       String orgId, Integer pageNo, Integer pageSize, String sortBy, Optional<String> sortOrder)
       throws CarrierServiceDomainException {
     try {
-      Pageable pageable = null;
       var sort =
           Sort.by(
               Sort.Direction.fromOptionalString(sortOrder.orElse(""))
                   .orElse(Sort.DEFAULT_DIRECTION),
               sortBy);
-      pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+      Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
       return carrierServiceRepository
           .findCarrierServicesByOrgId(orgId, pageable)
           .map(INSTANCE::toCarrierServiceResponse);
