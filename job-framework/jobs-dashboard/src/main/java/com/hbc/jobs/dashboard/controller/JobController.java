@@ -75,7 +75,7 @@ public class JobController {
   @PostMapping(
       path = "/org/{orgId}/jobs",
       produces = APPLICATION_JSON_VALUE,
-      consumes = APPLICATION_JSON_VALUE)
+      consumes = "text/plain;charset=UTF-8")
   public ResponseEntity<BaseResponse<JobDto>> processJobJsonOffline(
       @RequestParam @NotNull @Valid JobTypeEnum jobType,
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
@@ -171,7 +171,8 @@ public class JobController {
       }
 
       PagePayload<JobDto> pageResp =
-          jobService.getJobsByJobInfo(orgId, jobType, days, sortField, sortOrder, requiredPageNo, requiredPageSize);
+          jobService.getJobsByJobInfo(
+              orgId, jobType, days, sortField, sortOrder, requiredPageNo, requiredPageSize);
 
       return ResponseEntity.ok()
           .body(
