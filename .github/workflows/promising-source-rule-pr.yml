@@ -5,7 +5,7 @@ on:
   pull_request:
     paths:
       - "promise-sourcing-rule/**"
-    branches: [ development ]
+    branches: [ development, hotfix ]
 
 jobs:
   PR-Analysis:

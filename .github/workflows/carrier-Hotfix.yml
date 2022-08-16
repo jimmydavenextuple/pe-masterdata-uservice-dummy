@@ -1,0 +1,21 @@
+name: CARRIER HOTFIX
+
+on:
+  push:
+    branches: [ hotfix ]
+    paths:
+      - "carrier/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+     
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/Build&Deploy_Hotfix.yml
+    with:
+      module: carrier
+    secrets: inherit
+
+
+
+
