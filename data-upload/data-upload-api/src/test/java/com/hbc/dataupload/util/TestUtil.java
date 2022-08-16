@@ -6,12 +6,16 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CAR
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESTINATION_GEO_ZONE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXPRESS_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.MHF_ELIGIBLE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NEXTDAY_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SDND_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_NODES;
@@ -54,6 +58,7 @@ import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -113,17 +118,24 @@ public class TestUtil {
         .bopisEligible(true)
         .city(CITY)
         .country(COUNTRY)
-        .expressEligible(false)
         .nodeType(NODE_TYPE)
         .isActive(true)
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .postalCode(POSTAL_CODE)
-        .sdndEligible(false)
+        .serviceOptionEligibilities(getServiceOptionEligibilities())
         .province(PROVINCE)
         .shipToHome(true)
         .timezone(TIME_ZONE)
         .build();
+  }
+
+  public Map<String, Boolean> getServiceOptionEligibilities() {
+    return Map.of(
+        SDND_ELIGIBLE, Boolean.TRUE,
+        EXPRESS_ELIGIBLE, Boolean.TRUE,
+        NEXTDAY_ELIGIBLE, Boolean.TRUE,
+        MHF_ELIGIBLE, Boolean.TRUE);
   }
 
   public BaseResponse<NodeResponse> getSuccessfulBaseResponseForNode() {
