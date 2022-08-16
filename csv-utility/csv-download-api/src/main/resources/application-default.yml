@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 2048KB
+      max-request-size: 3072KB
   jpa:
     database: POSTGRESQL
     show-sql: true
