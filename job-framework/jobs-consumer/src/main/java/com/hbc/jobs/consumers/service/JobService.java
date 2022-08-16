@@ -43,20 +43,20 @@ public class JobService {
   private final JobDashboardService jobDashboardService;
 
   /**
-   * @param record
+   * @param recordDto
    * @throws JobException
    */
-  public void processRecord(RecordDto record) throws JobException {
+  public void processRecord(RecordDto recordDto) throws JobException {
     log.info("Inside processRecord service");
 
     try {
-      RecordStatusDto recordStatus = getRecordStatus(record);
+      RecordStatusDto recordStatus = getRecordStatus(recordDto);
       publishRecordStatusToKafka(recordStatus);
       log.info("Inside processRecord service ends");
     } catch (Exception e) {
       log.error("Error while processing the job record.", e);
       throw new JobException(
-          "Exception while processing the job record", e, record.getJob().getJobId(), null);
+          "Exception while processing the job record", e, recordDto.getJob().getJobId(), null);
     }
   }
 
@@ -77,25 +77,26 @@ public class JobService {
   }
 
   /**
-   * @param record
+   * @param recordDto
    * @return
    * @throws JobException
    */
-  public RecordStatusDto getRecordStatus(RecordDto record) throws JobException {
+  public RecordStatusDto getRecordStatus(RecordDto recordDto)
+      throws JobException, InvalidJobTypeException {
     log.info("Inside getRecordStatus service");
 
     try {
       FeignClientMapper feignClientMapper =
-          feignClientMapperFactory.getMapper(record.getJob().getJobType());
+          feignClientMapperFactory.getMapper(recordDto.getJob().getJobType());
       if (Objects.isNull(feignClientMapper)) {
         throw new InvalidJobTypeException(
-            "Job type is not correct", record.getJob().getJobType().toString());
+            "Job type is not correct", recordDto.getJob().getJobType().toString());
       }
-      return feignClientMapper.getResponseFromAPI(record);
+      return feignClientMapper.getResponseFromAPI(recordDto);
     } catch (Exception e) {
       log.error("Error while retrieving the job record", e);
       throw new JobException(
-          "Exception while retrieving the job record", e, record.getJob().getJobId(), null);
+          "Exception while retrieving the job record", e, recordDto.getJob().getJobId(), null);
     }
   }
 

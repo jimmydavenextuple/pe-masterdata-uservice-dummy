@@ -1,13 +1,10 @@
 package com.hbc.jobs.consumers.service;
 
-import com.hbc.common.response.error.ErrorResponse;
-import com.hbc.common.util.JsonUtil;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
-import feign.FeignException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -24,8 +21,8 @@ public class NodeCarrierMapper implements FeignClientMapper {
   @Setter private JobTypeEnum jobTypeEnum;
 
   @Override
-  public Object getDTOFromCustomMapper(String record) {
-    String[] rows = record.split("\n");
+  public Object getDTOFromCustomMapper(String stringRecord) {
+    String[] rows = stringRecord.split("\n");
     String[] header = rows[0].split(",");
     String[] data = rows[1].split(",");
 
@@ -77,12 +74,8 @@ public class NodeCarrierMapper implements FeignClientMapper {
       log.error("Unable to map an object!");
       throw new NodeCarrierMapperException(
           "Error while mapping an object to the expected object", jobTypeEnum);
-    } catch (FeignException e) {
-      log.error("Error while mapping to DTO", e);
-      ErrorResponse errorResponse = JsonUtil.convertToObject(e.contentUTF8(), ErrorResponse.class);
-      throw new NodeCarrierMapperException(errorResponse.getMessage(), e, jobTypeEnum);
     } catch (Exception e) {
-      log.error("Error while mapping to DTO", e);
+      log.error("Error while mapping to DTO");
       throw new NodeCarrierMapperException(
           "Exception while mapping an object to expected object", e, jobTypeEnum);
     }

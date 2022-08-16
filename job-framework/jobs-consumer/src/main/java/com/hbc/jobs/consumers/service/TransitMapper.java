@@ -1,13 +1,10 @@
 package com.hbc.jobs.consumers.service;
 
-import com.hbc.common.response.error.ErrorResponse;
-import com.hbc.common.util.JsonUtil;
 import com.hbc.jobs.consumers.exception.TransitMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.transit.domain.feign.TransitFeign;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
-import feign.FeignException;
 import java.util.Map;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +24,7 @@ public class TransitMapper implements FeignClientMapper {
   @Setter private JobTypeEnum jobTypeEnum;
 
   @Override
-  public Object getDTOFromCustomMapper(String record) {
+  public Object getDTOFromCustomMapper(String stringRecord) {
     return null;
   }
 
@@ -45,12 +42,8 @@ public class TransitMapper implements FeignClientMapper {
       log.error("Unable to map an object!");
       throw new TransitMapperException(
           "Error while mapping an object to the expected object", jobTypeEnum);
-    } catch (FeignException e) {
-      log.error("Error while mapping to DTO", e);
-      ErrorResponse errorResponse = JsonUtil.convertToObject(e.contentUTF8(), ErrorResponse.class);
-      throw new TransitMapperException(errorResponse.getMessage(), e, jobTypeEnum);
     } catch (Exception e) {
-      log.error("Error while mapping to DTO", e);
+      log.error("Error while mapping to DTO");
       throw new TransitMapperException(
           "Exception while mapping an object to expected object", e, jobTypeEnum);
     }

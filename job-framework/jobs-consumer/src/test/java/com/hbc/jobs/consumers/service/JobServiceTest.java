@@ -52,6 +52,7 @@ class JobServiceTest {
 
   @Mock private FeignClientMapperFactory feignClientMapperFactory;
 
+  @Mock private NodeCarrierMapper nodeCarrierMapper;
   @Mock private JobRecordDomain jobRecordDomain;
 
   @Mock private JobDomain jobDomain;
@@ -101,6 +102,40 @@ class JobServiceTest {
       verify(jobDashboardService, times(1)).publishJobRecord(any());
       verify(feignClientMapperFactory, times(1)).getMapper(any());
     }
+  }
+
+  @Test
+  void getRecordStatus() throws JobException {
+    RecordDto record = new RecordDto();
+    record.setJob(testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2));
+    when(feignClientMapperFactory.getMapper(any())).thenReturn(nodeCarrierMapper);
+    when(nodeCarrierMapper.getResponseFromAPI(any()))
+        .thenReturn(
+            testUtil.createRecordStatus(
+                TestUtil.JOB_ID,
+                TestUtil.ORG_ID,
+                ApiStatusEnum.SUCCESS,
+                HttpStatus.OK,
+                "",
+                JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+                2));
+
+    jobService.processRecord(record);
+
+    verify(feignClientMapperFactory, times(1)).getMapper(any());
+    verify(nodeCarrierMapper, times(1)).getResponseFromAPI(any());
+  }
+
+  @Test
+  void getRecordStatusInvalidJobType() {
+    RecordDto record = new RecordDto();
+    record.setJob(testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2));
+    when(feignClientMapperFactory.getMapper(any())).thenReturn(null);
+
+    Exception exception =
+        Assertions.assertThrows(JobException.class, () -> jobService.processRecord(record));
+
+    Assertions.assertNotNull(exception);
   }
 
   @Nested

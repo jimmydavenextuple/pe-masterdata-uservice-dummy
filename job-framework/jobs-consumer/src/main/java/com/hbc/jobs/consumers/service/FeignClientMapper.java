@@ -62,25 +62,25 @@ public interface FeignClientMapper {
     return objectMapper.readValue(jsonData, dtoClass);
   }
 
-  default RecordStatusDto getResponseFromAPI(RecordDto record) {
+  default RecordStatusDto getResponseFromAPI(RecordDto recordDto) {
     log.info("Inside getResponseFromAPI service");
 
     RecordStatusDto recordStatusDto = new RecordStatusDto();
     recordStatusDto.setCorrelationId(CurrentThreadContext.getLogContext().getCorrelationId());
     recordStatusDto.setServiceCorrelationId(
         CurrentThreadContext.getLogContext().getServiceCorrelationId());
-    recordStatusDto.setJobId(record.getJob().getJobId());
-    recordStatusDto.setOrgId(record.getJob().getOrgId());
-    recordStatusDto.setRecordNo(record.getRecordId());
-    recordStatusDto.setJobType(record.getJob().getJobType());
-    recordStatusDto.setTotalRecordsInJob(record.getJob().getTotalRecords());
+    recordStatusDto.setJobId(recordDto.getJob().getJobId());
+    recordStatusDto.setOrgId(recordDto.getJob().getOrgId());
+    recordStatusDto.setRecordNo(recordDto.getRecordId());
+    recordStatusDto.setJobType(recordDto.getJob().getJobType());
+    recordStatusDto.setTotalRecordsInJob(recordDto.getJob().getTotalRecords());
     Stopwatch stopwatch = null;
     Object dtoFromRecord = null;
     stopwatch = Stopwatch.createStarted();
     try {
-      dtoFromRecord = getDtoFromRecord(record);
+      dtoFromRecord = getDtoFromRecord(recordDto);
 
-      ResponseEntity<?> response = callApi(dtoFromRecord, record.getInputs());
+      ResponseEntity<?> response = callApi(dtoFromRecord, recordDto.getInputs());
 
       stopwatch.stop();
       recordStatusDto.setResponseBodyPresent(response.hasBody());
@@ -110,25 +110,26 @@ public interface FeignClientMapper {
     return recordStatusDto;
   }
 
-  default Object getDtoFromRecord(RecordDto record)
+  default Object getDtoFromRecord(RecordDto recordDto)
       throws FeignClientMapperException, IOException, TransitMapperException,
           NodeCarrierMapperException {
-    switch (record.getRecordType()) {
+    switch (recordDto.getRecordType()) {
       case JSON:
-        return getDTOFromJson(record.getRecordData(), mapTODto());
+        return getDTOFromJson(recordDto.getRecordData(), mapTODto());
       case CSV:
       case XLSX:
-        return getDTOFromCustomMapper(record.getRecordData());
+        return getDTOFromCustomMapper(recordDto.getRecordData());
     }
     log.error("Error while comparing the record type");
-    throw new FeignClientMapperException("Incorrect record data type", record.getRecordType());
+    throw new FeignClientMapperException("Incorrect record data type", recordDto.getRecordType());
   }
 
-  Object getDTOFromCustomMapper(String record);
+  Object getDTOFromCustomMapper(String stringRecord);
 
-  default <T> Object getDTOFromCSV(String record, Class<T> dtoClass) {
+  default <T> Object getDTOFromCSV(String stringRecord, Class<T> dtoClass) {
     Reader reader =
-        new InputStreamReader(new ByteArrayInputStream(record.getBytes(StandardCharsets.UTF_8)));
+        new InputStreamReader(
+            new ByteArrayInputStream(stringRecord.getBytes(StandardCharsets.UTF_8)));
 
     CSVParser parser = new CSVParserBuilder().withSeparator(',').withIgnoreQuotations(true).build();
 
@@ -138,7 +139,7 @@ public interface FeignClientMapper {
     HeaderColumnNameTranslateMappingStrategy<T> strategy =
         new HeaderColumnNameTranslateMappingStrategy<>();
     strategy.setType(dtoClass);
-    String[] headerColumns = record.split("\n")[0].split(",");
+    String[] headerColumns = stringRecord.split("\n")[0].split(",");
     Map<String, String> columnMapping = getColumnNameMapping(headerColumns);
     strategy.setColumnMapping(columnMapping);
     CsvToBean<T> csvToBean = new CsvToBean<>();
@@ -156,8 +157,8 @@ public interface FeignClientMapper {
         .collect(Collectors.toMap(Function.identity(), Function.identity()));
   }
 
-  Class mapTODto() throws TransitMapperException, NodeCarrierMapperException;
+  Class mapTODto() throws TransitMapperException, NodeCarrierMapperException; // NOSONAR
 
-  ResponseEntity<?> callApi(Object dtoFromJson, RecordInputDto inputs)
+  ResponseEntity<?> callApi(Object dtoFromJson, RecordInputDto inputs) // NOSONAR
       throws TransitMapperException, NodeCarrierMapperException;
 }

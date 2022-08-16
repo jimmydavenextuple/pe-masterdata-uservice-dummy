@@ -168,7 +168,7 @@ public class JobController {
               requiredPageNo,
               requiredPageSize);
 
-      PagePayload<JobDto> pagePayload = new PagePayload();
+      PagePayload<JobDto> pagePayload = new PagePayload<>();
       PagePayload.Pagination pagination = new PagePayload.Pagination();
       pagination.setTotalRecords((int) pageResp.getTotalElements());
       pagination.setTotalPages(pageResp.getTotalPages());

@@ -26,18 +26,18 @@ public class TaskConsumer {
 
   @KafkaHandler(isDefault = true)
   public void receiveRecordFromDashboardProducer(
-      @Payload RecordDto record, @Headers KafkaMessageHeaders headers) throws JobException {
+      @Payload RecordDto recordDto, @Headers KafkaMessageHeaders headers) throws JobException {
     log.info("Inside receiveRecordFromDashboardProducer service");
 
     try {
-      jobService.processRecord(record);
+      jobService.processRecord(recordDto);
       log.info("receiveRecordFromDashboardProducer service ends");
     } catch (Exception e) {
       log.error("Error while receiving the job record from the kafka producer", e);
       throw new JobException(
           "Exception while receiving the job record from the kafka producer",
           e,
-          record.getJob().getJobId(),
+          recordDto.getJob().getJobId(),
           null);
     }
   }
