@@ -3,6 +3,8 @@ package com.hbc.promise.sourcing.rule;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.ALLOCATION_RULE_ID;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.DESTINATION_GEO_ZONE;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.EXPRESS;
+import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.MHF;
+import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.NEXTDAY;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.ORG_ID;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.PRIORITY;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.SDND;
@@ -54,23 +56,53 @@ public class TestUtil {
     promiseSourcingRule1.setAllocationRuleId(ALLOCATION_RULE_ID);
 
     PromiseSourcingRule promiseSourcingRule2 = new PromiseSourcingRule();
-    promiseSourcingRule1.setPriority(PRIORITY);
-    promiseSourcingRule1.setOrgId(ORG_ID);
+    promiseSourcingRule2.setPriority(PRIORITY);
+    promiseSourcingRule2.setOrgId(ORG_ID);
     promiseSourcingRule2.setSourceNodes(Collections.singleton("Node-2"));
-    promiseSourcingRule1.setDestinationGeoZone(DESTINATION_GEO_ZONE);
+    promiseSourcingRule2.setDestinationGeoZone(DESTINATION_GEO_ZONE);
     promiseSourcingRule2.setServiceOption(STANDARD);
-    promiseSourcingRule1.setAllocationRuleId(ALLOCATION_RULE_ID);
+    promiseSourcingRule2.setAllocationRuleId(ALLOCATION_RULE_ID);
 
     PromiseSourcingRule promiseSourcingRule3 = new PromiseSourcingRule();
-    promiseSourcingRule1.setPriority(PRIORITY);
-    promiseSourcingRule1.setOrgId(ORG_ID);
+    promiseSourcingRule3.setPriority(PRIORITY);
+    promiseSourcingRule3.setOrgId(ORG_ID);
     promiseSourcingRule3.setSourceNodes(Collections.singleton("Node-3"));
-    promiseSourcingRule1.setDestinationGeoZone(DESTINATION_GEO_ZONE);
+    promiseSourcingRule3.setDestinationGeoZone(DESTINATION_GEO_ZONE);
     promiseSourcingRule3.setServiceOption(EXPRESS);
-    promiseSourcingRule1.setAllocationRuleId(ALLOCATION_RULE_ID);
+    promiseSourcingRule3.setAllocationRuleId(ALLOCATION_RULE_ID);
+
+    PromiseSourcingRule promiseSourcingRule4 = new PromiseSourcingRule();
+    promiseSourcingRule4.setPriority(PRIORITY);
+    promiseSourcingRule4.setOrgId(ORG_ID);
+    promiseSourcingRule4.setSourceNodes(Collections.singleton("Node-4"));
+    promiseSourcingRule4.setDestinationGeoZone(DESTINATION_GEO_ZONE);
+    promiseSourcingRule4.setServiceOption(NEXTDAY);
+    promiseSourcingRule4.setAllocationRuleId(ALLOCATION_RULE_ID);
+
+    PromiseSourcingRule promiseSourcingRule5 = new PromiseSourcingRule();
+    promiseSourcingRule5.setPriority(PRIORITY);
+    promiseSourcingRule5.setOrgId(ORG_ID);
+    promiseSourcingRule5.setSourceNodes(Collections.singleton("Node-5"));
+    promiseSourcingRule5.setDestinationGeoZone(DESTINATION_GEO_ZONE);
+    promiseSourcingRule5.setServiceOption(MHF);
+    promiseSourcingRule5.setAllocationRuleId(ALLOCATION_RULE_ID);
+
+    PromiseSourcingRule promiseSourcingRule6 = new PromiseSourcingRule();
+    promiseSourcingRule6.setPriority(PRIORITY);
+    promiseSourcingRule6.setOrgId(ORG_ID);
+    promiseSourcingRule6.setSourceNodes(Collections.singleton("Dummy"));
+    promiseSourcingRule6.setDestinationGeoZone(DESTINATION_GEO_ZONE);
+    promiseSourcingRule6.setServiceOption("Unknown");
+    promiseSourcingRule6.setAllocationRuleId(ALLOCATION_RULE_ID);
 
     Collections.addAll(
-        promiseSourcingRuleList, promiseSourcingRule1, promiseSourcingRule2, promiseSourcingRule3);
+        promiseSourcingRuleList,
+        promiseSourcingRule1,
+        promiseSourcingRule2,
+        promiseSourcingRule3,
+        promiseSourcingRule4,
+        promiseSourcingRule5,
+        promiseSourcingRule6);
     return promiseSourcingRuleList;
   }
 
