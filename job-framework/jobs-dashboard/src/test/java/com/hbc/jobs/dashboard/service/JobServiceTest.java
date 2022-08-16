@@ -23,6 +23,7 @@ import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import feign.FeignException;
 import feign.Request;
 import feign.Request.HttpMethod;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -67,6 +68,9 @@ class JobServiceTest {
   private final String UPLOAD_PROCESSING_LEAD_TIME_LIST =
       "[{\"nodeId\": \"node-1\",\"orgId\": \"BAY\",\"carrierServiceId\": \"ALL-SDND\",\"serviceOption\": \"SDND\",\"processingTime\": 20.32,\"lastPickupTime\": \"12:22\"}]";
 
+  private final String UPLOAD_PROCESSING_LEAD_TIME_LIST_WITH_INPUTS =
+      "[{\"nodeId\": \"node-1\",\"orgId\": \"BAY\",\"carrierServiceId\": \"ALL-SDND\",\"serviceOption\": \"SDND\",\"processingTime\": 20.32,\"lastPickupTime\": \"12:22\",\"inputs\": {\"retryCount\" : \"7\"}}]";
+
   private static final String ERRONEOUS_JSON_LIST =
       "[{\"nodeId\": ,\"orgId\": \"BAY\",\"carrierServiceId\": \"ALL-SDND\",\"serviceOption\": \"SDND\"}]";
 
@@ -106,6 +110,57 @@ class JobServiceTest {
       Assertions.assertEquals(0, jobDto.getFailureCount(), "Job Id");
       Assertions.assertEquals(1, jobDto.getTotalRecords(), "Job Total Records");
       verify(kafkaTemplate, times(1)).send(any(Message.class));
+      verify(jobsConsumerClient, times(1)).createJob(any());
+    }
+
+    @Test
+    void processJobOfflineCsvFile() throws JobException, IOException {
+      MultipartFile inputFile = mock(MultipartFile.class);
+      String csvFileContent =
+          "nodeId,orgId,serviceOptions,processingTime (in hrs)\n"
+              + "1554,BAY,SDND,2\n"
+              + "1560,BAY,SDND,2\n"
+              + "1101,BAY,SDND,2\n"
+              + "1518,BAY,NEXTDAY,6\n"
+              + "1634,BAY,EXPRESS,30.92\n"
+              + "\n"
+              + "1125,BAY,EXPRESS,19.90\n"
+              + "1114,BAY,SDND,24.97";
+
+      when(inputFile.getInputStream())
+          .thenReturn(
+              new ByteArrayInputStream(csvFileContent.getBytes()),
+              new ByteArrayInputStream(csvFileContent.getBytes()),
+              new ByteArrayInputStream(csvFileContent.getBytes()));
+
+      when(inputFile.getBytes()).thenReturn(UPLOAD_PROCESSING_LEAD_TIME_LIST.getBytes());
+      when(inputFile.getOriginalFilename()).thenReturn("testName.csv");
+      JobDto job =
+          testUtil.createJob(
+              "jobId1",
+              TestUtil.ORG_ID,
+              JobStatusEnum.SUBMITTED,
+              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+
+      when(jobsConsumerClient.createJob(any()))
+          .thenReturn(
+              BaseResponse.builder()
+                  .message("Retrieved job" + " id " + " " + "successfully!!")
+                  .payload(job)
+                  .build());
+
+      ListenableFuture<SendResult<String, Object>> future = mock(ListenableFuture.class);
+      doNothing().when(future).addCallback(any());
+      when(kafkaTemplate.send(any(Message.class))).thenReturn(future);
+
+      JobDto jobDto =
+          jobService.processJobOffline(
+              inputFile, TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+
+      Assertions.assertEquals(0, jobDto.getFailureCount(), "Job Id");
+      Assertions.assertEquals(7, jobDto.getTotalRecords(), "Job Total Records");
+      verify(kafkaTemplate, times(7)).send(any(Message.class));
       verify(jobsConsumerClient, times(1)).createJob(any());
     }
 
@@ -395,6 +450,45 @@ class JobServiceTest {
       Assertions.assertEquals(1, jobDto.getTotalRecords(), "Job Id");
       verify(kafkaTemplate, times(1)).send(any(Message.class));
       verify(jobsConsumerClient, times(1)).createJob(any());
+    }
+
+    @Test
+    void processJobJsonOfflineUpdateExistingJob() throws JobException {
+
+      JobDto job =
+          testUtil.createJob(
+              "jobId1",
+              TestUtil.ORG_ID,
+              JobStatusEnum.SUBMITTED,
+              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+
+      when(jobsConsumerClient.getJob(any(), any()))
+          .thenReturn(
+              BaseResponse.builder()
+                  .message("Retrieved job" + " id " + " " + "successfully!!")
+                  .payload(job)
+                  .build());
+
+      ListenableFuture<SendResult<String, Object>> future = mock(ListenableFuture.class);
+
+      doNothing().when(future).addCallback(any());
+      when(kafkaTemplate.send(any(Message.class))).thenReturn(future);
+
+      JobDto jobDto =
+          jobService.processJobJsonOffline(
+              UPLOAD_PROCESSING_LEAD_TIME_LIST_WITH_INPUTS,
+              TestUtil.ORG_ID,
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+              Optional.of("jobId1"));
+      jobDto.setJobId("jobId1");
+      jobDto.setTotalRecords(1);
+
+      Assertions.assertEquals(0, jobDto.getFailureCount(), "Job Id");
+
+      Assertions.assertEquals(1, jobDto.getTotalRecords(), "Job Id");
+      verify(kafkaTemplate, times(1)).send(any(Message.class));
+      verify(jobsConsumerClient, times(1)).getJob(any(), any());
     }
 
     @Test
