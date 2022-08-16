@@ -104,7 +104,7 @@ public class JobController {
    * @return
    * @throws JobException
    */
-  @GetMapping(path = "/org/{orgId}/jobs/{jobId}", produces = "application/json;charset=UTF-8")
+  @GetMapping(path = "/org/{orgId}/jobs/{jobId}")
   public ResponseEntity<BaseResponse<JobDto>> getJob(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotEmpty @NotNull @PathVariable String jobId)
