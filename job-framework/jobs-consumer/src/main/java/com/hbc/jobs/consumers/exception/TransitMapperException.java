@@ -8,10 +8,6 @@ public class TransitMapperException extends Exception {
 
   private final JobTypeEnum jobType;
 
-  public TransitMapperException(JobTypeEnum jobType) {
-    this.jobType = jobType;
-  }
-
   public TransitMapperException(String message, JobTypeEnum jobType) {
     super(message);
     this.jobType = jobType;

@@ -36,6 +36,11 @@ class TransitMapperTest {
   }
 
   @Test
+  void getDTOFromCustomMapper() {
+    Assertions.assertNull(transitMapper.getDTOFromCustomMapper(""));
+  }
+
+  @Test
   void mapToDto() throws TransitMapperException {
     transitMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
     Class res = transitMapper.mapTODto();
