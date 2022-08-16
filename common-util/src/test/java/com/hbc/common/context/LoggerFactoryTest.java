@@ -27,11 +27,13 @@ class LoggerFactoryTest {
         Logger logger_temp1 = LoggerFactory.getLogger("LoggerTest");
         org.slf4j.Logger logger_temp2 = LoggerFactory.getSlf4jLogger("Logger");
         org.slf4j.Logger logger_temp3 = LoggerFactory.getSlf4jLogger(LoggerFactoryTest.class);
+        Map<String, String> metaData = new HashMap<>();
+        metaData.put("key","value");
         CommonServiceException commonServiceException = new CommonServiceException(ERROR,HttpStatus.BAD_REQUEST, 400, new HashMap<>());
         logger.error(ERROR, EMPTY_MAP);
         logger.error(commonServiceException);
         logger.error(commonServiceException, EMPTY_MAP);
-        logger.error(EMPTY_MAP, ERROR, EMPTY_MAP);
+        logger.error(metaData, ERROR, EMPTY_MAP);
         logger.error(commonServiceException, EMPTY_MAP, ERROR, EMPTY_MAP);
         logger.error(commonServiceException,ERROR, EMPTY_MAP);
         logger.debug("debug", EMPTY_MAP);
