@@ -2,7 +2,7 @@ name: NFS-NEAR-CACHE BUILD
 
 on:
   push:
-    branches: [ development ]
+    branches: [ development, hotfix ]
     paths:
       - "nfs-near-cache/**"
 jobs:

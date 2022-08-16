@@ -1,0 +1,21 @@
+name: NODE HOTFIX
+
+on:
+  push:
+    branches: [ hotfix ]
+    paths:
+      - "node/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+     
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/Build&Deploy_Hotfix.yml
+    with:
+      module: node
+    secrets: inherit
+
+
+
+

@@ -2,6 +2,29 @@
 
 echo $ECR_REGISTRY
 export SERVER_CONFIG_FILE="./manifests/config.yml"
+export BUILD_TARGET="SNAPSHOT"
+
+aws sts get-caller-identity
+
+if [ "$ENVIRONMENT" == "dev" -o "$ENVIRONMENT" == "qa" ]; then
+  export AWS_EKS_NAME="dev-eks-cluster"
+  export ENV_TAG="development"
+elif [ "$ENVIRONMENT" == "stage" ]; then
+  export AWS_EKS_NAME="stage-eks-cluster"
+  export ENV_TAG="stage"
+elif [ "$ENVIRONMENT" == "perf" ]; then
+  export AWS_EKS_NAME="promise-engine-eks-perf"
+  export ENV_TAG="stage"
+elif [ "$ENVIRONMENT" == "hotfix" ]; then
+  export AWS_EKS_NAME="dev-eks-cluster"
+  export ENV_TAG="development"
+  export BUILD_TARGET="HOTFIX"
+elif [ "$ENVIRONMENT" == "prod" ]; then
+  export AWS_EKS_NAME="promise-engine-eks-prod"
+  export ENV_TAG="production"
+fi
+
+aws eks update-kubeconfig --name $AWS_EKS_NAME --region us-east-1
 
 if [ -e "./$PROJECT/config.yml" ]; then
   SERVER_CONFIG_FILE="./$PROJECT/config.yml"
@@ -13,7 +36,7 @@ export SERVICE_NAME="$REPO-$PROJECT"
 
 
 if [ -z "$TAG" ]; then
-    export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties -p $PROJECT | grep version | sed -e "s@version: @@g"`
+    export VERSION=`bash ./gradlew -Pbuild_target=$BUILD_TARGET -q properties -p $PROJECT | grep version | sed -e "s@version: @@g"`
 else
     export VERSION=$(echo $TAG | cut -d "v" -f2)
     echo "Received version from git tag : ${VERSION}"
@@ -34,25 +57,6 @@ if [ "${NLB_NAME: -1}" == "-" ]; then
     NLB_NAME=`echo "$NLB_NAME" | sed 's/.$//'`
 fi
 
-aws sts get-caller-identity
-
-if [ "$ENVIRONMENT" == "dev" -o "$ENVIRONMENT" == "qa" ]; then
-  export AWS_EKS_NAME="dev-eks-cluster"
-  export ENV_TAG="development"
-elif [ "$ENVIRONMENT" == "stage" ]; then
-  export AWS_EKS_NAME="stage-eks-cluster"
-  export ENV_TAG="stage"
-elif [ "$ENVIRONMENT" == "perf" ]; then
-  export AWS_EKS_NAME="promise-engine-eks-perf"
-  export ENV_TAG="stage"
-elif [ "$ENVIRONMENT" == "prod" ]; then
-  export AWS_EKS_NAME="promise-engine-eks-prod"
-  export ENV_TAG="production"
-fi
-
-
-aws eks update-kubeconfig --name $AWS_EKS_NAME --region us-east-1
-
 
 export COLOR1="blue"
 export COLOR2="green"
@@ -68,6 +72,7 @@ fi
 echo "Currently running deployment color : $SERVICE_ACTIVE_COLOR"
 
 export HEALTH_CHECK_PATH=`yq -e eval ".server.health-check-endpoint" $SERVER_CONFIG_FILE`
+export NLB_NEEDED=`yq -e eval ".server.environments.$ENVIRONMENT.nlb" $SERVER_CONFIG_FILE`
 export CUSTOM_JAVA_OPTS=`yq -e eval ".server.environments.$ENVIRONMENT.java-opts" $SERVER_CONFIG_FILE`
 export REPLICAS=`yq -e eval ".server.environments.$ENVIRONMENT.replicas" $SERVER_CONFIG_FILE`
 export MIN_MEM_REQUIRED=`yq -e eval ".server.environments.$ENVIRONMENT.resources.min.memory" $SERVER_CONFIG_FILE`
@@ -79,6 +84,12 @@ if [ "$CUSTOM_JAVA_OPTS" = 'null' ]; then
   export REPLACE_JAVA_OPTS_COMMENT_WITH="#JAVA_OPTS"
 else
   export REPLACE_JAVA_OPTS_COMMENT_WITH=""
+fi
+
+if [ "$NLB_NEEDED" = 'null' ]; then
+  export REPLACE_NLB_COMMENT_WITH=""
+else
+  export REPLACE_NLB_COMMENT_WITH="#NLB"
 fi
 
 sed -e "s@<SERVICE_VERSION>@$SERVICE_CODE@g" \
@@ -111,6 +122,7 @@ fi
 sed -e "s@<SERVICE_VERSION>@$SERVICE_CODE@g" \
     -e "s@<SERVICE_NAME>@$SERVICE_NAME@g" \
     -e "s@<ENVIRONMENT>@$ENVIRONMENT@g" \
+    -e "s@#NLB@$REPLACE_NLB_COMMENT_WITH@g" \
     -e "s@<NLB_NAME>@$NLB_NAME@g" \
     -e "s@<ENV_TAG>@$ENV_TAG@g" \
     -e "s@<COLOR>@$SERVICE_PASSIVE_COLOR@g" \

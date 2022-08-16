@@ -2,7 +2,7 @@ name: COMMON-UTIL BUILD
 
 on:
   push:
-    branches: [ development ]
+    branches: [ development, hotfix ]
     paths:
       - "common-util/**"
 jobs:
