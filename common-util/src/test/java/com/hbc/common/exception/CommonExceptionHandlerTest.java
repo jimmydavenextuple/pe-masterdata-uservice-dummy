@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.hbc.common.context.CurrentThreadContext;
 import com.hbc.common.context.LogContext;
+import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
@@ -40,7 +41,7 @@ class CommonExceptionHandlerTest {
     ReflectionTestUtils.setField(
         commonExceptionHandler,
         "slf4jLogger",
-        org.slf4j.LoggerFactory.getLogger(CommonExceptionHandler.class));
+        LoggerFactory.getLogger(CommonExceptionHandler.class));
   }
 
   @Test
@@ -136,16 +137,4 @@ class CommonExceptionHandlerTest {
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
   }
 
-  @Test
-  void logErrorTest() {
-    Map<String, String> metaData = new HashMap<>();
-    metaData.put("key1", "value1");
-    LogContext mockLogCtx = mock(LogContext.class);
-
-    try (MockedStatic mocked = mockStatic(CurrentThreadContext.class)) {
-      mocked.when(CurrentThreadContext::getLogContext).thenReturn(mockLogCtx);
-      commonExceptionHandler.logError(null, "error occurrred", metaData, "Params");
-      mocked.verify(CurrentThreadContext::getLogContext);
-    }
-  }
 }
