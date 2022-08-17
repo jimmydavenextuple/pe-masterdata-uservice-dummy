@@ -30,13 +30,13 @@ spring:
 
 jobs-framework:
   result-publish:
-    topic-name: jobs-result-local
+    topic-name: INTERNAL.DEV.JOBS.RESULT
   result-consumer:
-    topic-name: jobs-result-local
-    group-id: jobs-result-consumer-async-local
+    topic-name: INTERNAL.DEV.JOBS.RESULT
+    group-id: jobs-result-consumer-async
   record-consumer:
-    topic-name: jobs-task-local
-    group-id: jobs-task-consumer-async-local
+    topic-name: INTERNAL.DEV.JOBS.TASK
+    group-id: jobs-task-consumer-async
 pagination:
   default-page-no: 1
   default-page-size: 15
