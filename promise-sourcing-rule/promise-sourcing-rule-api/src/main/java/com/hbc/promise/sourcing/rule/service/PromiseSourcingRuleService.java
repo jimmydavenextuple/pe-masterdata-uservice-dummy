@@ -1,10 +1,5 @@
 package com.hbc.promise.sourcing.rule.service;
 
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.EXPRESS;
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.NEXTDAY;
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.SDND;
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.STANDARD;
-
 import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
@@ -19,6 +14,7 @@ import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
 import com.hbc.promise.sourcing.rule.domain.mapper.PromiseSourcingRuleMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -82,37 +78,24 @@ public class PromiseSourcingRuleService {
           "Promise Sourcing Rules not found!");
     }
 
-    var fetchPromiseSourcingRuleResponse = new FetchPromiseSourcingRuleResponse();
-    List<ServiceOptionInfo> serviceOptionsForSdnd = new ArrayList<>();
-    List<ServiceOptionInfo> serviceOptionsForStandard = new ArrayList<>();
-    List<ServiceOptionInfo> serviceOptionsForExpress = new ArrayList<>();
-    List<ServiceOptionInfo> serviceOptionsForNextday = new ArrayList<>();
+    Map<String, List<ServiceOptionInfo>> serviceOptionPromiseRules =
+        promiseSourcingRuleList.stream()
+            .collect(
+                Collectors.groupingBy(
+                    PromiseSourcingRule::getServiceOption,
+                    Collectors.mapping(this::getServiceOptionInfo, Collectors.toList())));
 
-    promiseSourcingRuleList.forEach(
-        promiseSourcingRule -> {
-          var serviceOptionInfo = getServiceOptionInfo(promiseSourcingRule);
-          switch (promiseSourcingRule.getServiceOption()) {
-            case SDND:
-              serviceOptionsForSdnd.add(serviceOptionInfo);
-              break;
-            case STANDARD:
-              serviceOptionsForStandard.add(serviceOptionInfo);
-              break;
-            case EXPRESS:
-              serviceOptionsForExpress.add(serviceOptionInfo);
-              break;
-            case NEXTDAY:
-              serviceOptionsForNextday.add(serviceOptionInfo);
-              break;
-            default:
-              logger.error("Invalid service option");
-          }
-        });
-    fetchPromiseSourcingRuleResponse.setSdnd(serviceOptionsForSdnd);
-    fetchPromiseSourcingRuleResponse.setStandard(serviceOptionsForStandard);
-    fetchPromiseSourcingRuleResponse.setExpress(serviceOptionsForExpress);
-    fetchPromiseSourcingRuleResponse.setNextday(serviceOptionsForNextday);
-    return fetchPromiseSourcingRuleResponse;
+    baseRequest
+        .getServiceOptions()
+        .forEach(
+            x -> {
+              if (!serviceOptionPromiseRules.containsKey(x)) {
+                serviceOptionPromiseRules.put(x, new ArrayList<>());
+              }
+            });
+    return FetchPromiseSourcingRuleResponse.builder()
+        .serviceOptionSourcingRules(serviceOptionPromiseRules)
+        .build();
   }
 
   /**

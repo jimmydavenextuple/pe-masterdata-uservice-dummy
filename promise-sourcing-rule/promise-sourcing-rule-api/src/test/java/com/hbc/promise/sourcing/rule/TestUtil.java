@@ -21,10 +21,11 @@ import com.hbc.promise.sourcing.rule.domain.mapper.PromiseSourcingRuleMapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.mapstruct.factory.Mappers;
 
 public class TestUtil {
-  private static final String Node1 = "Node-1";
+  public static final String Node1 = "Node-1";
   private static final PromiseSourcingRuleMapper INSTANCE_PROMISE =
       Mappers.getMapper(PromiseSourcingRuleMapper.class);
 
@@ -78,32 +79,35 @@ public class TestUtil {
     promiseSourcingRule4.setServiceOption(NEXTDAY);
     promiseSourcingRule4.setAllocationRuleId(ALLOCATION_RULE_ID);
 
-    PromiseSourcingRule promiseSourcingRule5 = new PromiseSourcingRule();
-    promiseSourcingRule5.setPriority(PRIORITY);
-    promiseSourcingRule5.setOrgId(ORG_ID);
-    promiseSourcingRule5.setSourceNodes(Collections.singleton("Dummy"));
-    promiseSourcingRule5.setDestinationGeoZone(DESTINATION_GEO_ZONE);
-    promiseSourcingRule5.setServiceOption("Unknown");
-    promiseSourcingRule5.setAllocationRuleId(ALLOCATION_RULE_ID);
-
     Collections.addAll(
         promiseSourcingRuleList,
         promiseSourcingRule1,
         promiseSourcingRule2,
         promiseSourcingRule3,
-        promiseSourcingRule4,
-        promiseSourcingRule5);
+        promiseSourcingRule4);
     return promiseSourcingRuleList;
   }
 
   public FetchPromiseSourcingRuleResponse getFetchPromiseSourcingRuleResponse() {
     return FetchPromiseSourcingRuleResponse.builder()
-        .sdnd(
-            Collections.singletonList(
-                ServiceOptionInfo.builder()
-                    .priority(PRIORITY)
-                    .sourceNodes(Collections.singleton(Node1))
-                    .build()))
+        .serviceOptionSourcingRules(
+            Map.of(
+                SDND,
+                List.of(
+                    ServiceOptionInfo.builder()
+                        .priority(PRIORITY)
+                        .sourceNodes(Collections.singleton(Node1))
+                        .build()),
+                STANDARD,
+                new ArrayList<>(),
+                EXPRESS,
+                new ArrayList<>(),
+                NEXTDAY,
+                List.of(
+                    ServiceOptionInfo.builder()
+                        .priority(PRIORITY)
+                        .sourceNodes(Collections.singleton(Node1 + "2"))
+                        .build())))
         .build();
   }
 
@@ -112,7 +116,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .allocationRuleId(ALLOCATION_RULE_ID)
         .destinationGeoZone(DESTINATION_GEO_ZONE)
-        .serviceOptions(List.of(SDND, STANDARD, EXPRESS))
+        .serviceOptions(List.of(SDND, STANDARD, EXPRESS, NEXTDAY, "UNKNOWN"))
         .build();
   }
 
