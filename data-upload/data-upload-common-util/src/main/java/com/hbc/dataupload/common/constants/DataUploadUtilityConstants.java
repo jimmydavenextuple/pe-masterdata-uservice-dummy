@@ -31,7 +31,6 @@ public class DataUploadUtilityConstants {
   public static final String SDND_ELIGIBLE = "sdndEligible";
   public static final String BOPIS_ELIGIBLE = "bopisEligible";
   public static final String NEXTDAY_ELIGIBLE = "nextdayEligible";
-  public static final String MHF_ELIGIBLE = "mhfEligible";
   public static final String EXPRESS_ELIGIBLE = "expressEligible";
   public static final String NODE_TYPE = "nodeType";
   public static final String IS_ACTIVE = "isActive";

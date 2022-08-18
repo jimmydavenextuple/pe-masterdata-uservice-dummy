@@ -11,7 +11,6 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXP
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.IS_ACTIVE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.MHF_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NEXTDAY_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
@@ -107,8 +106,7 @@ public class NodeDataUploadService {
               Map.of(
                   SDND_ELIGIBLE, Boolean.valueOf(csvRecord.get(SDND_ELIGIBLE)),
                   EXPRESS_ELIGIBLE, Boolean.valueOf(csvRecord.get(EXPRESS_ELIGIBLE)),
-                  NEXTDAY_ELIGIBLE, Boolean.valueOf(csvRecord.get(NEXTDAY_ELIGIBLE)),
-                  MHF_ELIGIBLE, Boolean.valueOf(csvRecord.get(MHF_ELIGIBLE)));
+                  NEXTDAY_ELIGIBLE, Boolean.valueOf(csvRecord.get(NEXTDAY_ELIGIBLE)));
           Boolean shipToHome = Boolean.valueOf(csvRecord.get(SHIP_TO_HOME));
           Boolean bopisEligible = Boolean.valueOf(csvRecord.get(BOPIS_ELIGIBLE));
           String nodeType = csvRecord.get(NODE_TYPE);

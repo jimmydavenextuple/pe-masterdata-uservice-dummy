@@ -9,7 +9,6 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DES
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXPRESS_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.MHF_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NEXTDAY_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
@@ -134,8 +133,7 @@ public class TestUtil {
     return Map.of(
         SDND_ELIGIBLE, Boolean.TRUE,
         EXPRESS_ELIGIBLE, Boolean.TRUE,
-        NEXTDAY_ELIGIBLE, Boolean.TRUE,
-        MHF_ELIGIBLE, Boolean.TRUE);
+        NEXTDAY_ELIGIBLE, Boolean.TRUE);
   }
 
   public BaseResponse<NodeResponse> getSuccessfulBaseResponseForNode() {
