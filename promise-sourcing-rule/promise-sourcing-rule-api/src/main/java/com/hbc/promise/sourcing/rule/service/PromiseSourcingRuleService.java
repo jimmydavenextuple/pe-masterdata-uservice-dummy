@@ -78,6 +78,7 @@ public class PromiseSourcingRuleService {
           "Promise Sourcing Rules not found!");
     }
 
+    // group by service options
     Map<String, List<ServiceOptionInfo>> serviceOptionPromiseRules =
         promiseSourcingRuleList.stream()
             .collect(
@@ -85,6 +86,7 @@ public class PromiseSourcingRuleService {
                     PromiseSourcingRule::getServiceOption,
                     Collectors.mapping(this::getServiceOptionInfo, Collectors.toList())));
 
+    // set an empty list for the service options for which promise rule is not found
     baseRequest
         .getServiceOptions()
         .forEach(
