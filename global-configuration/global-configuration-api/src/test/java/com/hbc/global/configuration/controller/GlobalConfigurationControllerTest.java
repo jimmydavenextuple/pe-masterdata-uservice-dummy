@@ -64,7 +64,7 @@ class GlobalConfigurationControllerTest {
     when(configurationService.fetchValue(anyString(), anyString(), anyString()))
         .thenThrow(new RuntimeException());
     Assertions.assertThrows(
-            RuntimeException.class,
+        RuntimeException.class,
         () -> configurationController.fetchValue(TestUtil.ORGID, TestUtil.TYPE, TestUtil.KEY));
   }
 

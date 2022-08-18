@@ -76,7 +76,8 @@ class GlobalConfigurationServiceTest {
         Assertions.assertDoesNotThrow(
             () -> globalConfigurationService.createGlobalConfig(testUtil.getCreateRequest()));
     verify(globalConfigurationDomain, times(1))
-            .saveGlobalConfiguration(any(GlobalConfiguration.class));  }
+        .saveGlobalConfiguration(any(GlobalConfiguration.class));
+  }
 
   @Test
   @DisplayName("Configuration doesn't Exist")
