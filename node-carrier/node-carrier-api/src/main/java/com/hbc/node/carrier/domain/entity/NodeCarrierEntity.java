@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.DateTime;
 
 @Entity
 @IdClass(NodeCarrierId.class)
@@ -41,4 +42,13 @@ public class NodeCarrierEntity {
 
   @Column(name = "last_pickup_time")
   private String lastPickupTime;
+
+  @Column(name= "buffer_hours")
+  private Double bufferHours;
+
+  @Column(name = "buffer_start_date")
+  private DateTime bufferStartDate;
+
+  @Column(name = "buffer_end_date")
+  private DateTime bufferEndDate;
 }
