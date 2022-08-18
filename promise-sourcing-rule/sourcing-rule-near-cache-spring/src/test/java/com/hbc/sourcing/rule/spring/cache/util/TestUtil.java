@@ -6,8 +6,8 @@ import com.hbc.promise.sourcing.rule.api.domain.outbound.FetchPromiseSourcingRul
 import com.hbc.promise.sourcing.rule.api.domain.pojo.ServiceOptionInfo;
 import com.hbc.sourcing.rule.cache.domain.SourcingRuleCacheKey;
 import com.hbc.sourcing.rule.cache.domain.SourcingRuleCacheValue;
-import com.sun.tools.javac.util.List;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public class TestUtil {
