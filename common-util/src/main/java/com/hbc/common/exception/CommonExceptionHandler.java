@@ -1,7 +1,8 @@
 package com.hbc.common.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.hbc.common.context.CurrentThreadContext;
+import com.hbc.common.context.Logger;
+import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
 import com.hbc.common.response.error.FieldError;
@@ -13,11 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,8 +25,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class CommonExceptionHandler {
   private static final Map<String, String> EMPTY_MAP = Collections.emptyMap();
-  private static org.slf4j.Logger slf4jLogger =
-      org.slf4j.LoggerFactory.getLogger(CommonExceptionHandler.class);
+  private static Logger slf4jLogger = LoggerFactory.getLogger(CommonExceptionHandler.class);
   private static final Pattern ENUM_MSG =
       Pattern.compile("values accepted for Enum class: \\[[^\\]]*\\]", Pattern.MULTILINE);
   private static final Pattern DATE_MSG =
@@ -66,7 +64,7 @@ public class CommonExceptionHandler {
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<ErrorResponse> handleJsonErrors(HttpMessageNotReadableException exception) {
-    logError(exception, exception.getMessage(), EMPTY_MAP);
+    slf4jLogger.error(exception, exception.getMessage(), EMPTY_MAP);
     Throwable cause = exception.getCause();
     if (cause instanceof InvalidFormatException) {
       InvalidFormatException invalidFormatCause = (InvalidFormatException) cause;
@@ -99,7 +97,7 @@ public class CommonExceptionHandler {
 
   @ExceptionHandler(CommonServiceException.class)
   public ResponseEntity<ErrorResponse> handleCommonServiceException(CommonServiceException e) {
-    logError(e, e.getMessage(), EMPTY_MAP);
+    slf4jLogger.error(e, e.getMessage(), EMPTY_MAP);
     return ResponseEntity.status(e.getHttpStatus())
         .body(
             ErrorResponse.builder(ErrorType.ERROR, e.getErrorCode())
@@ -110,7 +108,7 @@ public class CommonExceptionHandler {
 
   @ExceptionHandler(IOException.class)
   public ResponseEntity<ErrorResponse> handleIOException(IOException e) {
-    logError(e, e.getMessage(), EMPTY_MAP);
+    slf4jLogger.error(e, e.getMessage(), EMPTY_MAP);
     return ResponseEntity.badRequest()
         .body(
             ErrorResponse.builder(ErrorType.ERROR, 0x2772)
@@ -121,6 +119,7 @@ public class CommonExceptionHandler {
 
   @ExceptionHandler(PromiseEngineException.class)
   public ResponseEntity<ErrorResponse> handlePromiseEngineException(PromiseEngineException e) {
+    slf4jLogger.error(e, e.getMessage(), EMPTY_MAP);
     return ResponseEntity.badRequest()
         .body(
             ErrorResponse.builder(ErrorType.ERROR, 0x000001)
@@ -130,45 +129,8 @@ public class CommonExceptionHandler {
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleRuntimeException(Exception e) {
-    logError(e, e.getMessage(), EMPTY_MAP);
+    slf4jLogger.error(e, e.getMessage(), EMPTY_MAP);
     return ResponseEntity.internalServerError()
         .body(ErrorResponse.builder(ErrorType.ERROR, 0x000001).message(e.getMessage()).build());
-  }
-
-  public void logError(
-      Throwable t, String message, Map<String, String> metadata, Object... params) {
-    logStatement(
-        () -> {
-          if (t != null) {
-            MDC.put("exception_class", t.getClass().getName());
-            slf4jLogger.error("Exception thrown : ", t);
-          }
-          slf4jLogger.error(message, params);
-        },
-        metadata);
-  }
-
-  private void logStatement(Runnable statement, Map<String, String> metadata) {
-    populateLogContext();
-    attachMetadata(metadata);
-    statement.run();
-    clearMetadata(metadata);
-  }
-
-  private void populateLogContext() {
-    // Populate MDC with fields from LogContext
-    CurrentThreadContext.getLogContext().toMap().forEach(MDC::put);
-  }
-
-  private void attachMetadata(Map<String, String> metadata) {
-    if (!CollectionUtils.isEmpty(metadata)) {
-      metadata.forEach((key, value) -> MDC.put("metadata_" + key, value));
-    }
-  }
-
-  private void clearMetadata(Map<String, String> metadata) {
-    if (!CollectionUtils.isEmpty(metadata)) {
-      metadata.forEach((key, value) -> MDC.remove("metadata_" + key));
-    }
   }
 }
