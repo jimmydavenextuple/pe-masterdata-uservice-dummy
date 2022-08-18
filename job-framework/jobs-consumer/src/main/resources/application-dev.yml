@@ -37,8 +37,3 @@ jobs-framework:
   record-consumer:
     topic-name: INTERNAL.DEV.JOBS.TASK
     group-id: jobs-task-consumer-async
-pagination:
-  default-page-no: 1
-  default-page-size: 15
-  default-sort-field: created_date
-  default-sort-order: ASC

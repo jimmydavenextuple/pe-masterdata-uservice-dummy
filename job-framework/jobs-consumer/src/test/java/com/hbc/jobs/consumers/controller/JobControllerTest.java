@@ -31,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 class JobControllerTest {
 
@@ -188,7 +189,8 @@ class JobControllerTest {
     Assertions.assertEquals(
         1, (int) responsePage.getPagination().getCurrentPage(), "Current page number");
     Assertions.assertEquals(jobDtoList.size(), responsePage.getData().size(), "Paginated data");
-    Assertions.assertNull(responsePage.getPagination().getPrevious(), "Previous Uri");
+    Assertions.assertTrue(
+        ObjectUtils.isEmpty(responsePage.getPagination().getPrevious()), "Previous Uri");
     Assertions.assertEquals(
         Boolean.TRUE,
         Objects.nonNull(responsePage.getPagination().getNext()),
@@ -217,7 +219,7 @@ class JobControllerTest {
     Assertions.assertEquals(
         2, (int) responsePage.getPagination().getCurrentPage(), "Current page number");
     Assertions.assertEquals(jobDtoList.size(), responsePage.getData().size(), "Paginated data");
-    Assertions.assertNull(responsePage.getPagination().getNext(), "Next Uri");
+    Assertions.assertTrue(ObjectUtils.isEmpty(responsePage.getPagination().getNext()), "Next Uri");
     Assertions.assertEquals(
         Boolean.TRUE,
         Objects.nonNull(responsePage.getPagination().getPrevious()),

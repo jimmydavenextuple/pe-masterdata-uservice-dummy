@@ -9,7 +9,7 @@ public class UriBuilder {
   /**
    * @param jobType
    * @param days
-   * @param sortField
+   * @param sortBy
    * @param sortOrder
    * @param currentPageNo
    * @param pageSize
@@ -21,7 +21,7 @@ public class UriBuilder {
   public static String buildUriForPagination(
       Optional<String> jobType,
       Optional<Integer> days,
-      String sortField,
+      String sortBy,
       String sortOrder,
       int currentPageNo,
       int pageSize,
@@ -29,36 +29,18 @@ public class UriBuilder {
       String uriType) {
     if (uriType.equalsIgnoreCase("next")) {
       if (currentPageNo >= totalPages) {
-        return null;
+        return "";
       }
-      return "/jobs?jobType="
-          + jobType.orElse("")
-          + "&days="
-          + days.orElse(0)
-          + "&sortField="
-          + sortField
-          + "&sortOrder="
-          + sortOrder
-          + "&pageNo="
-          + (currentPageNo + 1)
-          + "&pageSize="
-          + pageSize;
+      return String.format(
+          "/jobs?jobType=%s&days=%s&sortBy=%s&sortOrder=%s&pageNo=%s&pageSize=%s",
+          jobType.orElse(""), days.orElse(0), sortBy, sortOrder, (currentPageNo + 1), pageSize);
     } else {
       if (currentPageNo == 1) {
-        return null;
+        return "";
       }
-      return "/jobs?jobType="
-          + jobType.orElse("")
-          + "&days="
-          + days.orElse(0)
-          + "&sortField="
-          + sortField
-          + "&sortOrder="
-          + sortOrder
-          + "&pageNo="
-          + (currentPageNo - 1)
-          + "&pageSize="
-          + pageSize;
+      return String.format(
+          "/jobs?jobType=%s&days=%s&sortBy=%s&sortOrder=%s&pageNo=%s&pageSize=%s",
+          jobType.orElse(""), days.orElse(0), sortBy, sortOrder, (currentPageNo - 1), pageSize);
     }
   }
 }

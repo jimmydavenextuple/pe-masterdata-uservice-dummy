@@ -51,20 +51,15 @@ public class JobController {
       @RequestParam(required = false) Optional<String> status)
       throws JobException {
     log.debug("--Inside getJobRecordsByFilter controller--");
-    try {
 
-      List<RecordStatusDto> pageResp = jobService.getJobResults(orgId, jobId, status);
+    List<RecordStatusDto> pageResp = jobService.getJobResults(orgId, jobId, status);
 
-      return ResponseEntity.ok()
-          .body(
-              BaseResponse.builder()
-                  .payload(pageResp)
-                  .message("Retrieval of the job information is successful")
-                  .build());
-    } catch (Exception e) {
-      log.error("Error while Fetching Jobs by params - getJobRecordsByFilter()", e);
-      throw e;
-    }
+    return ResponseEntity.ok()
+        .body(
+            BaseResponse.builder()
+                .payload(pageResp)
+                .message("Retrieval of the job information is successful")
+                .build());
   }
 
   /**
@@ -80,14 +75,9 @@ public class JobController {
       throws JobException {
     log.info("-- Inside createJob controller --");
 
-    try {
-      JobDto job = jobService.createJob(jobDto);
-      return ResponseEntity.ok(
-          BaseResponse.builder().message("Job successfully created").payload(job).build());
-    } catch (Exception e) {
-      log.error("Creation of a job failed!", e);
-      throw e;
-    }
+    JobDto job = jobService.createJob(jobDto);
+    return ResponseEntity.ok(
+        BaseResponse.builder().message("Job successfully created").payload(job).build());
   }
 
   /**
@@ -103,20 +93,12 @@ public class JobController {
       throws JobException {
     log.info("-- Inside getJob controller --");
 
-    try {
-      JobDto job = jobService.getJob(jobId, orgId);
+    JobDto job = jobService.getJob(jobId, orgId);
 
-      log.info("Job successfully retrieved : {}", jobId);
+    log.info("Job successfully retrieved : {}", jobId);
 
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Retrieval of the job is successful")
-              .payload(job)
-              .build());
-    } catch (Exception e) {
-      log.error("Failed to process get job by jobId request!!", e);
-      throw e;
-    }
+    return ResponseEntity.ok(
+        BaseResponse.builder().message("Retrieval of the job is successful").payload(job).build());
   }
 
   /**
@@ -130,67 +112,63 @@ public class JobController {
       @NotEmpty @NotNull @PathVariable("orgId") String orgId, JobFilters jobFilters)
       throws JobException {
     log.debug("--Inside getJobsByFilter()--");
-    try {
 
-      int requiredPageNo = jobFilters.getPageNo();
-      int requiredPageSize = jobFilters.getPageSize();
+    int requiredPageNo = jobFilters.getPageNo();
+    int requiredPageSize = jobFilters.getPageSize();
 
-      if (requiredPageNo < 1) {
-        throw new JobException("PageNo can not be less than one", null, requiredPageNo);
-      }
-
-      Page<JobDto> pageResp =
-          jobService.getJobs(
-              orgId,
-              jobFilters.getJobType(),
-              jobFilters.getDays(),
-              jobFilters.getSortBy(),
-              jobFilters.getSortOrder(),
-              requiredPageNo,
-              requiredPageSize);
-
-      PagePayload<JobDto> pagePayload = new PagePayload<>();
-      PagePayload.Pagination pagination = new PagePayload.Pagination();
-      pagination.setTotalRecords((int) pageResp.getTotalElements());
-      pagination.setTotalPages(pageResp.getTotalPages());
-      pagination.setCurrentPage(requiredPageNo);
-      pagination.setSortBy(jobFilters.getSortBy());
-      pagination.setSortOrder(jobFilters.getSortOrder());
-      pagePayload.setData(pageResp.getContent());
-      pagePayload.setPagination(pagination);
-
-      String nextUri =
-          UriBuilder.buildUriForPagination(
-              jobFilters.getJobType(),
-              jobFilters.getDays(),
-              jobFilters.getSortBy(),
-              jobFilters.getSortOrder(),
-              requiredPageNo,
-              requiredPageSize,
-              pageResp.getTotalPages(),
-              "next");
-      String previousUri =
-          UriBuilder.buildUriForPagination(
-              jobFilters.getJobType(),
-              jobFilters.getDays(),
-              jobFilters.getSortBy(),
-              jobFilters.getSortOrder(),
-              requiredPageNo,
-              requiredPageSize,
-              pageResp.getTotalPages(),
-              "previous");
-      pagination.setNext(nextUri);
-      pagination.setPrevious(previousUri);
-
-      return ResponseEntity.ok()
-          .body(
-              BaseResponse.builder()
-                  .payload(pagePayload)
-                  .message("Retrieval of the jobs by params is successful")
-                  .build());
-    } catch (Exception e) {
-      log.error("Error while Fetching Jobs by params - getJobsByFilter()", e);
-      throw e;
+    if (requiredPageNo < 1) {
+      throw new JobException("PageNo can not be less than one", null, requiredPageNo);
     }
+
+    Page<JobDto> pageResp =
+        jobService.getJobs(
+            orgId,
+            jobFilters.getJobType(),
+            jobFilters.getDays(),
+            jobFilters.getSortBy(),
+            jobFilters.getSortOrder(),
+            requiredPageNo,
+            requiredPageSize);
+
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords((int) pageResp.getTotalElements());
+    pagination.setTotalPages(pageResp.getTotalPages());
+    pagination.setCurrentPage(requiredPageNo);
+    pagination.setSortBy(jobFilters.getSortBy());
+    pagination.setSortOrder(jobFilters.getSortOrder());
+
+    PagePayload<JobDto> pagePayload = new PagePayload<>();
+    pagePayload.setData(pageResp.getContent());
+    pagePayload.setPagination(pagination);
+
+    String nextUri =
+        UriBuilder.buildUriForPagination(
+            jobFilters.getJobType(),
+            jobFilters.getDays(),
+            jobFilters.getSortBy(),
+            jobFilters.getSortOrder(),
+            requiredPageNo,
+            requiredPageSize,
+            pageResp.getTotalPages(),
+            "next");
+    String previousUri =
+        UriBuilder.buildUriForPagination(
+            jobFilters.getJobType(),
+            jobFilters.getDays(),
+            jobFilters.getSortBy(),
+            jobFilters.getSortOrder(),
+            requiredPageNo,
+            requiredPageSize,
+            pageResp.getTotalPages(),
+            "previous");
+    pagination.setNext(nextUri);
+    pagination.setPrevious(previousUri);
+
+    return ResponseEntity.ok()
+        .body(
+            BaseResponse.builder()
+                .payload(pagePayload)
+                .message("Retrieval of the jobs by params is successful")
+                .build());
   }
 }
