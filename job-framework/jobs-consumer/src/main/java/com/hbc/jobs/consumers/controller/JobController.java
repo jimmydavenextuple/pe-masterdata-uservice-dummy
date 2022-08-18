@@ -6,7 +6,9 @@ import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.service.JobService;
+import com.hbc.jobs.consumers.util.UriBuilder;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +16,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,15 +34,6 @@ public class JobController {
   public JobController(JobService jobService) {
     this.jobService = jobService;
   }
-
-  @Value("${pagination.default-page-no}")
-  private Integer defaultPageNo;
-
-  @Value("${pagination.default-page-size}")
-  private Integer defaultPageSize;
-
-  @Value("${pagination.default-sort-field}")
-  private String defaultSortField;
 
   /**
    * @param orgId
@@ -129,30 +121,19 @@ public class JobController {
 
   /**
    * @param orgId
-   * @param jobType
-   * @param days
-   * @param sortField
-   * @param sortOrder
-   * @param pageNo
-   * @param pageSize
+   * @param jobFilters
    * @return
    * @throws JobException
    */
   @GetMapping(value = "/org/{orgId}/jobs", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<PagePayload<JobDto>>> getJobsByFilter(
-      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
-      @RequestParam(required = false, name = "jobType") Optional<String> jobType,
-      @RequestParam(required = false, name = "days") Optional<Integer> days,
-      @RequestParam(required = false, name = "sortField") Optional<String> sortField,
-      @RequestParam(required = false, name = "sortOrder") Optional<String> sortOrder,
-      @RequestParam(required = false, name = "pageNo") Optional<Integer> pageNo,
-      @RequestParam(required = false, name = "pageSize") Optional<Integer> pageSize)
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId, JobFilters jobFilters)
       throws JobException {
     log.debug("--Inside getJobsByFilter()--");
     try {
 
-      int requiredPageNo = pageNo.orElse(defaultPageNo);
-      int requiredPageSize = pageSize.orElse(defaultPageSize);
+      int requiredPageNo = jobFilters.getPageNo();
+      int requiredPageSize = jobFilters.getPageSize();
 
       if (requiredPageNo < 1) {
         throw new JobException("PageNo can not be less than one", null, requiredPageNo);
@@ -161,10 +142,10 @@ public class JobController {
       Page<JobDto> pageResp =
           jobService.getJobs(
               orgId,
-              jobType,
-              days,
-              sortField.orElse(defaultSortField),
-              sortOrder,
+              jobFilters.getJobType(),
+              jobFilters.getDays(),
+              jobFilters.getSortBy(),
+              jobFilters.getSortOrder(),
               requiredPageNo,
               requiredPageSize);
 
@@ -173,25 +154,27 @@ public class JobController {
       pagination.setTotalRecords((int) pageResp.getTotalElements());
       pagination.setTotalPages(pageResp.getTotalPages());
       pagination.setCurrentPage(requiredPageNo);
+      pagination.setSortBy(jobFilters.getSortBy());
+      pagination.setSortOrder(jobFilters.getSortOrder());
       pagePayload.setData(pageResp.getContent());
       pagePayload.setPagination(pagination);
 
       String nextUri =
-          buildUriForPagination(
-              jobType,
-              days,
-              sortField,
-              sortOrder,
+          UriBuilder.buildUriForPagination(
+              jobFilters.getJobType(),
+              jobFilters.getDays(),
+              jobFilters.getSortBy(),
+              jobFilters.getSortOrder(),
               requiredPageNo,
               requiredPageSize,
               pageResp.getTotalPages(),
               "next");
       String previousUri =
-          buildUriForPagination(
-              jobType,
-              days,
-              sortField,
-              sortOrder,
+          UriBuilder.buildUriForPagination(
+              jobFilters.getJobType(),
+              jobFilters.getDays(),
+              jobFilters.getSortBy(),
+              jobFilters.getSortOrder(),
               requiredPageNo,
               requiredPageSize,
               pageResp.getTotalPages(),
@@ -208,62 +191,6 @@ public class JobController {
     } catch (Exception e) {
       log.error("Error while Fetching Jobs by params - getJobsByFilter()", e);
       throw e;
-    }
-  }
-
-  /**
-   * @param jobType
-   * @param days
-   * @param sortField
-   * @param sortOrder
-   * @param currentPageNo
-   * @param pageSize
-   * @param totalPages
-   * @param uriType
-   * @return
-   */
-  @SuppressWarnings("squid:S107")
-  private String buildUriForPagination(
-      Optional<String> jobType,
-      Optional<Integer> days,
-      Optional<String> sortField,
-      Optional<String> sortOrder,
-      int currentPageNo,
-      int pageSize,
-      int totalPages,
-      String uriType) {
-    if (uriType.equalsIgnoreCase("next")) {
-      if (currentPageNo >= totalPages) {
-        return null;
-      }
-      return "/jobs?jobType="
-          + jobType.orElse("")
-          + "&days="
-          + days.orElse(0)
-          + "&sortField="
-          + sortField.orElse(defaultSortField)
-          + "&sortOrder="
-          + sortOrder.orElse("DESC")
-          + "&pageNo="
-          + (currentPageNo + 1)
-          + "&pageSize="
-          + pageSize;
-    } else {
-      if (currentPageNo == 1) {
-        return null;
-      }
-      return "/jobs?jobType="
-          + jobType.orElse("")
-          + "&days="
-          + days.orElse(0)
-          + "&sortField="
-          + sortField.orElse(defaultSortField)
-          + "&sortOrder="
-          + sortOrder.orElse("DESC")
-          + "&pageNo="
-          + (currentPageNo - 1)
-          + "&pageSize="
-          + pageSize;
     }
   }
 }

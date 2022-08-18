@@ -269,7 +269,7 @@ public class JobService {
       Optional<String> jobType,
       Optional<Integer> days,
       String sortField,
-      Optional<String> sortOrder,
+      String sortOrder,
       int pageNo,
       int pageSize)
       throws JobException {

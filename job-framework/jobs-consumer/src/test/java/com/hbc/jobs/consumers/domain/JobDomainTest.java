@@ -131,7 +131,7 @@ class JobDomainTest {
             Optional.of("testType"),
             Optional.of(new Date()),
             TestUtil.DEFAULT_SORT_FIELD,
-            Optional.empty(),
+            TestUtil.DEFAULT_SORT_ORDER,
             1,
             2);
 

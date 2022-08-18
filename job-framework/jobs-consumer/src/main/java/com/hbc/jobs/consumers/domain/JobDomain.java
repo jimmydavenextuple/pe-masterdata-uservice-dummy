@@ -73,13 +73,12 @@ public class JobDomain {
       Optional<String> jobType,
       Optional<Date> pastDays,
       String sortField,
-      Optional<String> sortOrder,
+      String sortOrder,
       int pageNo,
       int pageSize) {
     Sort sort =
         Sort.by(
-            Sort.Direction.fromOptionalString(sortOrder.orElse("")).orElse(Sort.DEFAULT_DIRECTION),
-            sortField);
+            Sort.Direction.fromOptionalString(sortOrder).orElse(Sort.DEFAULT_DIRECTION), sortField);
 
     Pageable element = PageRequest.of(pageNo - 1, pageSize, sort);
     Page<JobEntity> entityPage =

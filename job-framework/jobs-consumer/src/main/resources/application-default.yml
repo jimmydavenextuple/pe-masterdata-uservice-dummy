@@ -34,11 +34,6 @@ jobs-framework:
   record-consumer:
     topic-name: jobs-task-local
     group-id: jobs-task-consumer-async-local
-pagination:
-  default-page-no: 1
-  default-page-size: 15
-  default-sort-field: created_date
-  default-sort-order: ASC
 logging:
   level:
     com.hbc: INFO

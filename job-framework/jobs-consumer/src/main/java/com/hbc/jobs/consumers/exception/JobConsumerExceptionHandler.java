@@ -95,15 +95,23 @@ public class JobConsumerExceptionHandler {
                 .build());
   }
 
-  @ExceptionHandler(TransitMapperException.class)
-  public ResponseEntity<Object> handleCapacityMapperException(TransitMapperException e) {
+  @ExceptionHandler(FeignClientMapperException.class)
+  public ResponseEntity<ErrorResponse> handleFeignClientMapperException(
+      FeignClientMapperException e) {
     return ResponseEntity.badRequest()
         .body(ErrorResponse.builder(ErrorType.ERROR, 0xffffd3).message(e.getMessage()).build());
   }
 
-  @ExceptionHandler(NodeCarrierMapperException.class)
-  public ResponseEntity<Object> handleCapacityMapperException(NodeCarrierMapperException e) {
+  @ExceptionHandler(TransitMapperException.class)
+  public ResponseEntity<ErrorResponse> handleTransitMapperException(TransitMapperException e) {
     return ResponseEntity.badRequest()
         .body(ErrorResponse.builder(ErrorType.ERROR, 0xffffd4).message(e.getMessage()).build());
+  }
+
+  @ExceptionHandler(NodeCarrierMapperException.class)
+  public ResponseEntity<ErrorResponse> handleNodeCarrierMapperException(
+      NodeCarrierMapperException e) {
+    return ResponseEntity.badRequest()
+        .body(ErrorResponse.builder(ErrorType.ERROR, 0xffffd5).message(e.getMessage()).build());
   }
 }

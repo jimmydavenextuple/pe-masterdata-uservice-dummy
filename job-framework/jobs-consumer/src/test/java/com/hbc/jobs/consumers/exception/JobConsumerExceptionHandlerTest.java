@@ -77,8 +77,17 @@ class JobConsumerExceptionHandlerTest {
     TransitMapperException e = mock(TransitMapperException.class);
     when(e.getMessage()).thenReturn(msg);
 
-    ResponseEntity<Object> responseEntity = handler.handleCapacityMapperException(e);
-    verifyResponse(e, responseEntity);
+    ResponseEntity<ErrorResponse> responseEntity = handler.handleTransitMapperException(e);
+    verifyErrorResponse(e, responseEntity);
+  }
+
+  @Test
+  void handleFeignClientMapperException() {
+    FeignClientMapperException e = mock(FeignClientMapperException.class);
+    when(e.getMessage()).thenReturn(msg);
+
+    ResponseEntity<ErrorResponse> responseEntity = handler.handleFeignClientMapperException(e);
+    verifyErrorResponse(e, responseEntity);
   }
 
   @Test
@@ -86,8 +95,17 @@ class JobConsumerExceptionHandlerTest {
     NodeCarrierMapperException e = mock(NodeCarrierMapperException.class);
     when(e.getMessage()).thenReturn(msg);
 
-    ResponseEntity<Object> responseEntity = handler.handleCapacityMapperException(e);
-    verifyResponse(e, responseEntity);
+    ResponseEntity<ErrorResponse> responseEntity = handler.handleNodeCarrierMapperException(e);
+    verifyErrorResponse(e, responseEntity);
+  }
+
+  private void verifyErrorResponse(Exception e, ResponseEntity<ErrorResponse> responseEntity) {
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    assertEquals(400, responseEntity.getStatusCodeValue());
+    assertEquals(
+        ErrorResponse.class.toString(),
+        Objects.requireNonNull(responseEntity.getBody()).getClass().toString());
+    verify(e, times(1)).getMessage();
   }
 
   @Test

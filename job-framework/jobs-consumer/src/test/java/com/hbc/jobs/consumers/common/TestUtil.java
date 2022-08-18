@@ -10,6 +10,7 @@ import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.enums.RecordDataTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
@@ -22,6 +23,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import org.springframework.data.domain.Page;
@@ -38,6 +40,12 @@ public class TestUtil {
   public static final String JOB_ID = "JobId1";
 
   public static final String DEFAULT_SORT_FIELD = "created_date";
+
+  public static final String DEFAULT_SORT_ORDER = "ASC";
+
+  public static final int DEFAULT_PAGE_NO = 1;
+
+  public static final int DEFAULT_PAGE_SIZE = 15;
 
   public JobRecordEntity getJobRecordEntity() {
     return JobRecordMapper.INSTANCE.toJobRecordEntity(
@@ -352,5 +360,17 @@ public class TestUtil {
     transitResponse.setCarrierServiceId("ALL-SDND");
     transitResponse.setTransitDays(2F);
     return transitResponse;
+  }
+
+  public JobFilters getJobFilters() {
+    JobFilters jobFilters = new JobFilters();
+    jobFilters.setDays(Optional.empty());
+    jobFilters.setJobType(Optional.empty());
+    jobFilters.setSortBy(DEFAULT_SORT_FIELD);
+    jobFilters.setSortOrder(DEFAULT_SORT_ORDER);
+    jobFilters.setPageNo(DEFAULT_PAGE_NO);
+    jobFilters.setPageSize(DEFAULT_PAGE_SIZE);
+
+    return jobFilters;
   }
 }

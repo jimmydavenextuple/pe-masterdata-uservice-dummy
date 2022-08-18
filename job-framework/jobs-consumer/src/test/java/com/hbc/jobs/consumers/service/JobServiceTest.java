@@ -323,7 +323,7 @@ class JobServiceTest {
               Optional.empty(),
               Optional.of(2),
               TestUtil.DEFAULT_SORT_FIELD,
-              Optional.empty(),
+              TestUtil.DEFAULT_SORT_ORDER,
               pageNo,
               pageSize);
 
@@ -347,7 +347,7 @@ class JobServiceTest {
                       Optional.empty(),
                       Optional.of(2),
                       TestUtil.DEFAULT_SORT_FIELD,
-                      Optional.empty(),
+                      TestUtil.DEFAULT_SORT_ORDER,
                       2,
                       5));
 

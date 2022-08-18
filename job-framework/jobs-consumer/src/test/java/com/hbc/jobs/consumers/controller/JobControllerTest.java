@@ -15,6 +15,7 @@ import com.hbc.jobs.consumers.service.JobService;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +29,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.CollectionUtils;
 
@@ -48,10 +48,6 @@ class JobControllerTest {
 
   @Test
   void getJobRecordsByFilterSuccess() throws JobException {
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
-    ReflectionTestUtils.setField(
-        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
 
     Optional<String> status = Optional.of(ApiStatusEnum.SUCCESS.toString());
     List<RecordStatusDto> recordStatusList = testUtil.createRecordStatusDtoList(TestUtil.ORG_ID);
@@ -68,10 +64,6 @@ class JobControllerTest {
 
   @Test
   void getJobRecordsByFilterFails() throws JobException {
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
-    ReflectionTestUtils.setField(
-        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
 
     String jobId = "jobId1";
     when(jobService.getJobResults(any(), any(), any()))
@@ -89,10 +81,6 @@ class JobControllerTest {
 
   @Test
   void createJobSuccess() throws JobException {
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
-    ReflectionTestUtils.setField(
-        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
 
     JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
     when(jobService.createJob(any())).thenReturn(job);
@@ -106,10 +94,6 @@ class JobControllerTest {
 
   @Test
   void createJobDuplicateJobException() throws JobException {
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
-    ReflectionTestUtils.setField(
-        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
 
     JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 5);
 
@@ -125,10 +109,6 @@ class JobControllerTest {
 
   @Test
   void createJobDuplicateRuntimeException() throws JobException {
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
-    ReflectionTestUtils.setField(
-        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
 
     JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
 
@@ -143,10 +123,6 @@ class JobControllerTest {
 
   @Test
   void getJobSuccess() throws JobException {
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
-    ReflectionTestUtils.setField(
-        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
 
     JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 5);
     when(jobService.getJob(any(), any())).thenReturn(job);
@@ -161,10 +137,6 @@ class JobControllerTest {
 
   @Test
   void getJobNotFoundException() throws JobException {
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
-    ReflectionTestUtils.setField(
-        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
 
     String jobId = "job123";
     when(jobService.getJob(any(), any()))
@@ -178,10 +150,6 @@ class JobControllerTest {
 
   @Test
   void getJobCTEException() throws JobException {
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
-    ReflectionTestUtils.setField(
-        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
 
     String jobId = "job123";
     when(jobService.getJob(any(), any()))
@@ -198,10 +166,6 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterSuccess() throws JobException {
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
-    ReflectionTestUtils.setField(
-        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
 
     Optional<Integer> pageNo = Optional.of(1);
     Optional<Integer> pageSize = Optional.of(1);
@@ -213,14 +177,7 @@ class JobControllerTest {
         .thenReturn(pageResp);
 
     ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
-        jobController.getJobsByFilter(
-            TestUtil.ORG_ID,
-            Optional.of(TestUtil.JOB_TYPE),
-            Optional.of(3),
-            Optional.empty(),
-            Optional.empty(),
-            pageNo,
-            pageSize);
+        jobController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters());
     PagePayload<JobDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
@@ -240,14 +197,8 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterLastPageSuccess() throws JobException {
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
-    ReflectionTestUtils.setField(
-        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
-
-    Optional<Integer> pageNo = Optional.of(2);
-    Optional<Integer> pageSize = Optional.of(1);
-
+    JobFilters jobFilters = testUtil.getJobFilters();
+    jobFilters.setPageNo(2);
     List<JobDto> jobDtoList = testUtil.createJobDtoList();
     Page<JobDto> pageResp = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
 
@@ -255,14 +206,7 @@ class JobControllerTest {
         .thenReturn(pageResp);
 
     ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
-        jobController.getJobsByFilter(
-            TestUtil.ORG_ID,
-            Optional.of(TestUtil.JOB_TYPE),
-            Optional.of(3),
-            Optional.empty(),
-            Optional.empty(),
-            pageNo,
-            pageSize);
+        jobController.getJobsByFilter(TestUtil.ORG_ID, jobFilters);
     PagePayload<JobDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
@@ -282,23 +226,11 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterPageNoNotAllowed() {
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
-    ReflectionTestUtils.setField(
-        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
-
+    JobFilters jobFilters = testUtil.getJobFilters();
+    jobFilters.setPageNo(0);
     JobException exception =
         assertThrows(
-            JobException.class,
-            () ->
-                jobController.getJobsByFilter(
-                    TestUtil.ORG_ID,
-                    Optional.empty(),
-                    Optional.of(3),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.of(0),
-                    Optional.of(1)));
+            JobException.class, () -> jobController.getJobsByFilter(TestUtil.ORG_ID, jobFilters));
 
     Assertions.assertEquals(
         "PageNo can not be less than one", exception.getMessage(), "Exception message");
@@ -308,10 +240,6 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterException() throws JobException {
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1, Integer.class);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 10, Integer.class);
-    ReflectionTestUtils.setField(
-        jobController, "defaultSortField", TestUtil.DEFAULT_SORT_FIELD, String.class);
 
     when(jobService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenThrow(new JobException("Exception while retrieving the list of jobs", null, 1));
@@ -319,15 +247,7 @@ class JobControllerTest {
     JobException exception =
         assertThrows(
             JobException.class,
-            () ->
-                jobController.getJobsByFilter(
-                    TestUtil.ORG_ID,
-                    Optional.empty(),
-                    Optional.of(3),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty()));
+            () -> jobController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters()));
 
     Assertions.assertEquals(
         "Exception while retrieving the list of jobs", exception.getMessage(), "Exception message");
