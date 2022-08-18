@@ -73,10 +73,6 @@ class PromiseSourcingRuleServiceTest {
         "Node-4",
         fetchPromiseSourcingRuleResponse.getNextday().get(0).getSourceNodes().toArray()[0],
         PROMISE_SOURCING_RULE_SUCCESSFULLY_FETCHED);
-    assertEquals(
-        "Node-5",
-        fetchPromiseSourcingRuleResponse.getMhf().get(0).getSourceNodes().toArray()[0],
-        PROMISE_SOURCING_RULE_SUCCESSFULLY_FETCHED);
     verify(promiseSourcingRuleDomain, times(1)).fetchSourcingRule(any());
   }
 

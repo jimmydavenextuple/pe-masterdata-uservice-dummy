@@ -3,7 +3,6 @@ package com.hbc.promise.sourcing.rule;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.ALLOCATION_RULE_ID;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.DESTINATION_GEO_ZONE;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.EXPRESS;
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.MHF;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.NEXTDAY;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.ORG_ID;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.PRIORITY;
@@ -82,18 +81,10 @@ public class TestUtil {
     PromiseSourcingRule promiseSourcingRule5 = new PromiseSourcingRule();
     promiseSourcingRule5.setPriority(PRIORITY);
     promiseSourcingRule5.setOrgId(ORG_ID);
-    promiseSourcingRule5.setSourceNodes(Collections.singleton("Node-5"));
+    promiseSourcingRule5.setSourceNodes(Collections.singleton("Dummy"));
     promiseSourcingRule5.setDestinationGeoZone(DESTINATION_GEO_ZONE);
-    promiseSourcingRule5.setServiceOption(MHF);
+    promiseSourcingRule5.setServiceOption("Unknown");
     promiseSourcingRule5.setAllocationRuleId(ALLOCATION_RULE_ID);
-
-    PromiseSourcingRule promiseSourcingRule6 = new PromiseSourcingRule();
-    promiseSourcingRule6.setPriority(PRIORITY);
-    promiseSourcingRule6.setOrgId(ORG_ID);
-    promiseSourcingRule6.setSourceNodes(Collections.singleton("Dummy"));
-    promiseSourcingRule6.setDestinationGeoZone(DESTINATION_GEO_ZONE);
-    promiseSourcingRule6.setServiceOption("Unknown");
-    promiseSourcingRule6.setAllocationRuleId(ALLOCATION_RULE_ID);
 
     Collections.addAll(
         promiseSourcingRuleList,
@@ -101,8 +92,7 @@ public class TestUtil {
         promiseSourcingRule2,
         promiseSourcingRule3,
         promiseSourcingRule4,
-        promiseSourcingRule5,
-        promiseSourcingRule6);
+        promiseSourcingRule5);
     return promiseSourcingRuleList;
   }
 

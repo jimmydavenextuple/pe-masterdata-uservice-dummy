@@ -1,7 +1,6 @@
 package com.hbc.promise.sourcing.rule.service;
 
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.EXPRESS;
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.MHF;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.NEXTDAY;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.SDND;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.STANDARD;
@@ -88,7 +87,6 @@ public class PromiseSourcingRuleService {
     List<ServiceOptionInfo> serviceOptionsForStandard = new ArrayList<>();
     List<ServiceOptionInfo> serviceOptionsForExpress = new ArrayList<>();
     List<ServiceOptionInfo> serviceOptionsForNextday = new ArrayList<>();
-    List<ServiceOptionInfo> serviceOptionsForMhf = new ArrayList<>();
 
     promiseSourcingRuleList.forEach(
         promiseSourcingRule -> {
@@ -106,9 +104,6 @@ public class PromiseSourcingRuleService {
             case NEXTDAY:
               serviceOptionsForNextday.add(serviceOptionInfo);
               break;
-            case MHF:
-              serviceOptionsForMhf.add(serviceOptionInfo);
-              break;
             default:
               logger.error("Invalid service option");
           }
@@ -117,7 +112,6 @@ public class PromiseSourcingRuleService {
     fetchPromiseSourcingRuleResponse.setStandard(serviceOptionsForStandard);
     fetchPromiseSourcingRuleResponse.setExpress(serviceOptionsForExpress);
     fetchPromiseSourcingRuleResponse.setNextday(serviceOptionsForNextday);
-    fetchPromiseSourcingRuleResponse.setMhf(serviceOptionsForMhf);
     return fetchPromiseSourcingRuleResponse;
   }
 

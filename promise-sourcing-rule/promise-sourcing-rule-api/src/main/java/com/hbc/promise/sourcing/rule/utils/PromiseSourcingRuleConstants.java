@@ -5,7 +5,6 @@ public class PromiseSourcingRuleConstants {
   public static final String STANDARD = "STANDARD";
   public static final String EXPRESS = "EXPRESS";
   public static final String NEXTDAY = "NEXTDAY";
-  public static final String MHF = "MHF";
   public static final String STATUS_CODE = "Status code";
   public static final String PROMISE_SOURCING_RULE_SUCCESSFULLY_CREATED =
       "Promise Sourcing Rule successfully created!";

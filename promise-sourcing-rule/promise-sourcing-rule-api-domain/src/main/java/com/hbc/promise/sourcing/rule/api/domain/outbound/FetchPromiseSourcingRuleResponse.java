@@ -20,5 +20,4 @@ public class FetchPromiseSourcingRuleResponse implements Serializable {
   private List<ServiceOptionInfo> express;
   private List<ServiceOptionInfo> standard;
   private List<ServiceOptionInfo> nextday;
-  private List<ServiceOptionInfo> mhf;
 }
