@@ -9,6 +9,9 @@ import com.hbc.global.configuration.api.domain.inbound.UpdateGlobalConfiguration
 import com.hbc.global.configuration.domain.GlobalConfigurationDomain;
 import com.hbc.global.configuration.domain.entity.GlobalConfiguration;
 import com.hbc.global.configuration.mapper.GlobalConfigMapper;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -16,127 +19,110 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class GlobalConfigurationService {
 
   private static final Logger logger = LoggerFactory.getLogger(GlobalConfigurationService.class);
   private final GlobalConfigurationDomain globalConfigurationDomain;
-    private static final String ORG_ID = "orgId";
-    private static final String KEY = "key";
-    private static final String TYPE = "type";
+  private static final String ORG_ID = "orgId";
+  private static final String KEY = "key";
+  private static final String TYPE = "type";
 
-    private static final String GLOBAL_CONFIG_NOT_FOUND_ERROR_MSG =
-            "Global Configuration not found for given details";
+  private static final String GLOBAL_CONFIG_NOT_FOUND_ERROR_MSG =
+      "Global Configuration not found for given details";
 
-    public static final GlobalConfigMapper INSTANCE = Mappers.getMapper(GlobalConfigMapper.class);
+  public static final GlobalConfigMapper INSTANCE = Mappers.getMapper(GlobalConfigMapper.class);
 
-    public GlobalConfigurationDto fetchValue(String orgId,String type,String key) throws PromiseEngineException, CommonServiceException {
+  public GlobalConfigurationDto fetchValue(String orgId, String type, String key)
+      throws PromiseEngineException {
 
-   List<GlobalConfiguration> globalConfigurations =
-            globalConfigurationDomain.findByKeyInAndOrgIdAndType(
-                     List.of(key,"ALL"), orgId, type);
-
-      Optional<GlobalConfiguration> globalConfiguration = Optional.empty();
-
-      if (!"ALL".equals(key)) {
-          globalConfiguration =
-                  globalConfigurations.stream()
-                          .filter(x -> key.equals(x.getKey()))
-                          .findFirst();
-      }
-      if (globalConfiguration.isEmpty()) {
-          globalConfiguration =
-                  globalConfigurations.stream()
-                          .filter(x -> "ALL".equals(x.getKey()))
-                          .findAny();
-      }
-      if (globalConfiguration.isEmpty()) {
-          logger.error(GLOBAL_CONFIG_NOT_FOUND_ERROR_MSG);
-          Map<String, FieldError> errorMap = new HashMap<>();
-          errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
-          errorMap.put(
-                  TYPE, FieldError.builder().rejectedValue(type).build());
-          errorMap.put(KEY, FieldError.builder().rejectedValue(key).build());
-          throw new CommonServiceException(
-                  GLOBAL_CONFIG_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
-      }
-      return INSTANCE.toGlobalConfigurationDto(globalConfiguration.get());
+    Optional<GlobalConfiguration> globalConfiguration =
+        globalConfigurationDomain.getGlobalConfiguration(orgId, type, key);
+    if (globalConfiguration.isEmpty()) {
+      return GlobalConfigurationDto.builder()
+          .key(key)
+          .orgId(orgId)
+          .type(type)
+          .value("UNDEFINED")
+          .build();
+    }
+    return INSTANCE.toGlobalConfigurationDto(globalConfiguration.get());
   }
 
+  public GlobalConfigurationDto createGlobalConfig(
+      CreateGlobalConfigurationRequest globalConfigurationRequest)
+      throws PromiseEngineException, CommonServiceException {
+    Optional<GlobalConfiguration> globalConfiguration =
+        globalConfigurationDomain.getGlobalConfiguration(
+            globalConfigurationRequest.getOrgId(),
+            globalConfigurationRequest.getType(),
+            globalConfigurationRequest.getKey());
 
-  public GlobalConfigurationDto createGlobalConfig(CreateGlobalConfigurationRequest globalConfigurationRequest) throws PromiseEngineException, CommonServiceException {
-      Optional<GlobalConfiguration> globalConfiguration =
-              globalConfigurationDomain.getGlobalConfiguration(
-                     globalConfigurationRequest.getOrgId(),globalConfigurationRequest.getType(),globalConfigurationRequest.getKey());
+    if (globalConfiguration.isPresent()) {
+      logger.error(
+          "Global Configuration already exists for orgId:{} , type:{}, key:{}",
+          globalConfigurationRequest.getOrgId(),
+          globalConfigurationRequest.getType(),
+          globalConfigurationRequest.getKey());
+      Map<String, FieldError> errorMap = new HashMap<>();
 
-      if(globalConfiguration.isPresent()){
-          logger.error(
-                  "Global Configuration already exists for orgId:{} , type:{}, key:{}",
-                  globalConfigurationRequest.getOrgId(),globalConfigurationRequest.getType(),globalConfigurationRequest.getKey());
-          Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          ORG_ID,
+          FieldError.builder().rejectedValue(globalConfigurationRequest.getOrgId()).build());
+      errorMap.put(
+          TYPE, FieldError.builder().rejectedValue(globalConfigurationRequest.getType()).build());
+      errorMap.put(
+          KEY, FieldError.builder().rejectedValue(globalConfigurationRequest.getKey()).build());
+      throw new CommonServiceException(
+          "Global Configuration already exists for the given details",
+          HttpStatus.BAD_REQUEST,
+          0x1772,
+          errorMap);
+    }
 
-          errorMap.put(
-                  ORG_ID, FieldError.builder().rejectedValue(globalConfigurationRequest.getOrgId()).build());
-          errorMap.put(
-                  TYPE, FieldError.builder().rejectedValue(globalConfigurationRequest.getType()).build());
-          errorMap.put(KEY, FieldError.builder().rejectedValue(globalConfigurationRequest.getKey()).build());
-          throw new CommonServiceException(
-                  "Global Configuration already exists for the given details",
-                  HttpStatus.BAD_REQUEST,
-                  0x1772,
-                  errorMap);
-      }
-
-      return INSTANCE.toGlobalConfigurationDto(globalConfigurationDomain.saveGlobalConfiguration(INSTANCE.toGlobalConfiguration(globalConfigurationRequest)));
+    return INSTANCE.toGlobalConfigurationDto(
+        globalConfigurationDomain.saveGlobalConfiguration(
+            INSTANCE.toGlobalConfiguration(globalConfigurationRequest)));
   }
 
-    public GlobalConfigurationDto updateGlobalConfiguration(String orgId, String type, String key, UpdateGlobalConfigurationRequest baseRequest) throws PromiseEngineException, CommonServiceException {
+  public GlobalConfigurationDto updateGlobalConfiguration(
+      String orgId, String type, String key, UpdateGlobalConfigurationRequest baseRequest)
+      throws PromiseEngineException, CommonServiceException {
 
-        Optional<GlobalConfiguration> globalConfiguration =
-                globalConfigurationDomain.getGlobalConfiguration(
-                        orgId, type,key);
+    Optional<GlobalConfiguration> globalConfiguration =
+        globalConfigurationDomain.getGlobalConfiguration(orgId, type, key);
 
-
-
-        if (globalConfiguration.isEmpty()) {
-            logger.error(GLOBAL_CONFIG_NOT_FOUND_ERROR_MSG);
-            Map<String, FieldError> errorMap = new HashMap<>();
-            errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
-            errorMap.put(
-                    TYPE, FieldError.builder().rejectedValue(type).build());
-            errorMap.put(KEY, FieldError.builder().rejectedValue(key).build());
-            throw new CommonServiceException(
-                    GLOBAL_CONFIG_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
-        }
-        return INSTANCE.toGlobalConfigurationDto(globalConfigurationDomain.saveGlobalConfiguration(INSTANCE.toGlobalConfiguration(orgId,type,key,baseRequest)));
+    if (globalConfiguration.isEmpty()) {
+      logger.error(GLOBAL_CONFIG_NOT_FOUND_ERROR_MSG);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(TYPE, FieldError.builder().rejectedValue(type).build());
+      errorMap.put(KEY, FieldError.builder().rejectedValue(key).build());
+      throw new CommonServiceException(
+          GLOBAL_CONFIG_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
     }
-    public GlobalConfigurationDto deleteGlobalConfiguration(String orgId, String type, String key) throws PromiseEngineException, CommonServiceException {
+    return INSTANCE.toGlobalConfigurationDto(
+        globalConfigurationDomain.saveGlobalConfiguration(
+            INSTANCE.toGlobalConfiguration(orgId, type, key, baseRequest)));
+  }
 
-        Optional<GlobalConfiguration> globalConfiguration =
-                globalConfigurationDomain.getGlobalConfiguration(
-                        orgId, type,key);
+  public GlobalConfigurationDto deleteGlobalConfiguration(String orgId, String type, String key)
+      throws PromiseEngineException, CommonServiceException {
 
+    Optional<GlobalConfiguration> globalConfiguration =
+        globalConfigurationDomain.getGlobalConfiguration(orgId, type, key);
 
-
-        if (globalConfiguration.isEmpty()) {
-            logger.error(GLOBAL_CONFIG_NOT_FOUND_ERROR_MSG);
-            Map<String, FieldError> errorMap = new HashMap<>();
-            errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
-            errorMap.put(
-                    TYPE, FieldError.builder().rejectedValue(type).build());
-            errorMap.put(KEY, FieldError.builder().rejectedValue(key).build());
-            throw new CommonServiceException(
-                    GLOBAL_CONFIG_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
-        }
-        globalConfigurationDomain.deleteGlobalConfiguration(globalConfiguration.get());
-        return INSTANCE.toGlobalConfigurationDto(globalConfiguration.get());
+    if (globalConfiguration.isEmpty()) {
+      logger.error(GLOBAL_CONFIG_NOT_FOUND_ERROR_MSG);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(TYPE, FieldError.builder().rejectedValue(type).build());
+      errorMap.put(KEY, FieldError.builder().rejectedValue(key).build());
+      throw new CommonServiceException(
+          GLOBAL_CONFIG_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
     }
-
+    globalConfigurationDomain.deleteGlobalConfiguration(globalConfiguration.get());
+    return INSTANCE.toGlobalConfigurationDto(globalConfiguration.get());
+  }
 }

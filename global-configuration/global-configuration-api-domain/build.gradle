@@ -1,19 +1,10 @@
-plugins {
-    id 'java'
+jar {
+    enabled = true
 }
-
-group 'com.hbc'
-version '1.0.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
+bootJar {
+    enabled = false
 }
-
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-}
-
-test {
-    useJUnitPlatform()
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation(project(":common-util"))
 }

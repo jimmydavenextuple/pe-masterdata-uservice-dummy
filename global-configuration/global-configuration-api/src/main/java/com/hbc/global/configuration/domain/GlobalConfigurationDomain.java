@@ -5,13 +5,12 @@ import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.global.configuration.domain.entity.GlobalConfiguration;
 import com.hbc.global.configuration.repository.GlobalConfigurationRepository;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,15 +41,15 @@ public class GlobalConfigurationDomain {
   }
 
   public List<GlobalConfiguration> findByKeyInAndOrgIdAndType(
-          List<String> keys, String orgId, String type) throws PromiseEngineException {
+      List<String> keys, String orgId, String type) throws PromiseEngineException {
     logger.debug("-- inside findByKeyInAndOrgIdAndType  --");
     try {
-      return globalConfigurationRepository.findByKeyInAndOrgIdAndType(keys,orgId, type);
+      return globalConfigurationRepository.findByKeyInAndOrgIdAndType(keys, orgId, type);
     } catch (Exception e) {
       throw new PromiseEngineException(
-              ApplicationLayer.DAO_LAYER,
-              ExceptionCodeMapping.DAO_FIND_FAILED,
-              "Unable to find Global Configurations");
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Unable to find Global Configurations");
     }
   }
 
@@ -64,21 +63,21 @@ public class GlobalConfigurationDomain {
       throw new PromiseEngineException(
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Unable to find Global Configuration");
+          "Unable to save Global Configuration");
     }
   }
 
   /** Save Global Configuration */
   public void deleteGlobalConfiguration(GlobalConfiguration globalConfiguration)
-          throws PromiseEngineException {
+      throws PromiseEngineException {
     logger.debug("-- inside saveGlobalConfiguration  --");
     try {
-       globalConfigurationRepository.delete(globalConfiguration);
+      globalConfigurationRepository.delete(globalConfiguration);
     } catch (Exception e) {
       throw new PromiseEngineException(
-              ApplicationLayer.DAO_LAYER,
-              ExceptionCodeMapping.DAO_FIND_FAILED,
-              "Unable to find Global Configuration");
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Unable to delete Global Configuration");
     }
   }
 }

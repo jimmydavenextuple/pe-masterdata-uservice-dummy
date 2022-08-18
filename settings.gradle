@@ -1,7 +1,7 @@
 pluginManagement {
-	repositories {
-		gradlePluginPortal()
-	}
+    repositories {
+        gradlePluginPortal()
+    }
 }
 rootProject.name = 'pe-master-data'
 include 'nfs-near-cache:core-near-cache'
@@ -111,12 +111,11 @@ include 'data-upload:data-upload-common-util'
 findProject(':data-upload:data-upload-common-util')?.name = 'data-upload-common-util'
 include 'data-upload:data-upload-api'
 findProject(':data-upload:data-upload-api')?.name = 'data-upload-api'
+
 include 'global-configuration'
-include 'global-configuration'
-include 'global-configuration:global-configuration-api-domain'
-findProject(':global-configuration:global-configuration-api-domain')?.name = 'global-configuration-api-domain'
 include 'global-configuration:global-configuration-api'
 findProject(':global-configuration:global-configuration-api')?.name = 'global-configuration-api'
-include 'global-configuration:global-configuration-near-cache'
-findProject(':global-configuration:global-configuration-near-cache')?.name = 'global-configuration-near-cache'
+include 'global-configuration:global-configuration-api-domain'
+findProject(':global-configuration:global-configuration-api-domain')?.name = 'global-configuration-api-domain'
+
 

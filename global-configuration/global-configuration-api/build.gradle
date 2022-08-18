@@ -1,6 +1,6 @@
 bootJar {
     enabled = true
-    mainClass.set("com.hbc.weightage.configuration.GlobalConfigurationApplication")
+    mainClass.set("com.hbc.global.configuration.GlobalConfigurationApplication")
 }
 
 configurations {
