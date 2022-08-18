@@ -1,0 +1,11 @@
+jar.enabled=true
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation(project(":global-configuration:global-configuration-api-domain"))
+    implementation(project(":common-util"))
+    implementation(project(":nfs-near-cache:core-near-cache"))
+}
