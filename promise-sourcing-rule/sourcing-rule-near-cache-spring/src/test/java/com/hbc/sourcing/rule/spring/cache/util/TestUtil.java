@@ -6,8 +6,10 @@ import com.hbc.promise.sourcing.rule.api.domain.outbound.FetchPromiseSourcingRul
 import com.hbc.promise.sourcing.rule.api.domain.pojo.ServiceOptionInfo;
 import com.hbc.sourcing.rule.cache.domain.SourcingRuleCacheKey;
 import com.hbc.sourcing.rule.cache.domain.SourcingRuleCacheValue;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class TestUtil {
@@ -30,11 +32,24 @@ public class TestUtil {
 
   public FetchPromiseSourcingRuleResponse getFetchPromiseSourcingRuleResponse() {
     return FetchPromiseSourcingRuleResponse.builder()
-        .express(
-            Collections.singletonList(getServiceOptionInfo(1, Collections.singleton("Node-1"))))
-        .sdnd(Collections.singletonList(getServiceOptionInfo(1, Collections.singleton("Node-1"))))
-        .standard(
-            Collections.singletonList(getServiceOptionInfo(1, Collections.singleton("Node-1"))))
+        .serviceOptionSourcingRules(
+            Map.of(
+                "SDND",
+                java.util.List.of(
+                    ServiceOptionInfo.builder()
+                        .priority(1)
+                        .sourceNodes(Collections.singleton("N1"))
+                        .build()),
+                "STANDARD",
+                new ArrayList<>(),
+                "EXPRESS",
+                new ArrayList<>(),
+                "NEXTDAY",
+                java.util.List.of(
+                    ServiceOptionInfo.builder()
+                        .priority(1)
+                        .sourceNodes(Collections.singleton("N2"))
+                        .build())))
         .build();
   }
 
