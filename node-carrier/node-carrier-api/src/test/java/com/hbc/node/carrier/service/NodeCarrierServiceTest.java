@@ -53,6 +53,20 @@ class NodeCarrierServiceTest {
   }
 
   @Test
+  @DisplayName("When bufferEndDate is before current date")
+  void createNodeCarrierBufferEndDateExceptionTest()
+          throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+    NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest2();
+    Exception ex =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest));
+
+    Assertions.assertEquals(
+            "bufferEndDate cannot be before the current date.", ex.getMessage());
+  }
+
+  @Test
   @DisplayName("When node carrier to be created already exists")
   void createNodeCarrierTestException() throws NodeCarrierDomainException {
     NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
@@ -146,6 +160,23 @@ class NodeCarrierServiceTest {
     verify(nodeCarrierDomain, times(1)).saveNodeCarrierEntity(any());
   }
 
+  @Test
+  @DisplayName("When bufferEndDate is before current date")
+  void updateNodeCarrierBufferEndDateExceptionTest()
+          throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+    NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest2();
+    Exception ex =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () -> nodeCarrierService.updateNodeCarrier(testUtil.NODE_ID,
+                            testUtil.ORG_ID,
+                            testUtil.CARRIER_SERVICE_ID,
+                            testUtil.SERVICE_OPTION,
+                            testUtil.getNodeCarrierUpdateRequest2()));
+
+    Assertions.assertEquals(
+            "bufferEndDate cannot be before the current date.", ex.getMessage());
+  }
   @Test
   @DisplayName("When node carrier to be updated is not found")
   void updateNodeCarrierNotFoundTest() throws NodeCarrierDomainException {

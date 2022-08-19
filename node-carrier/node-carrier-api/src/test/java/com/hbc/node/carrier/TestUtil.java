@@ -5,6 +5,7 @@ import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class TestUtil {
@@ -28,6 +29,20 @@ public class TestUtil {
         .build();
   }
 
+  public NodeCarrierRequest getNodeCarrierRequest2() {
+    Date bEndDate = new Date();
+
+    return NodeCarrierRequest.builder()
+            .nodeId(NODE_ID)
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .serviceOption(SERVICE_OPTION)
+            .processingTime(2.0)
+            .lastPickupTime("5:00")
+            .bufferEndDate(bEndDate)
+            .build();
+  }
+
   public NodeCarrierResponse getNodeCarrierResponse() {
     return NodeCarrierResponse.builder()
         .nodeId(NODE_ID)
@@ -41,6 +56,12 @@ public class TestUtil {
 
   public NodeCarrierUpdateRequest getNodeCarrierUpdateRequest() {
     return NodeCarrierUpdateRequest.builder().processingTime(2.0).lastPickupTime("5:00").build();
+  }
+
+  public NodeCarrierUpdateRequest getNodeCarrierUpdateRequest2() {
+    Date bEndDate = new Date();
+    return NodeCarrierUpdateRequest.builder().processingTime(2.0).lastPickupTime("5:00")
+            .bufferEndDate(bEndDate).build();
   }
 
   public NodeCarrierEntity getNodeCarrierEntity() {
