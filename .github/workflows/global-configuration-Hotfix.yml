@@ -1,0 +1,21 @@
+name: GLOBAL-CONFIGURATION HOTFIX
+
+on:
+  push:
+    branches: [ hotfix ]
+    paths:
+      - "global-configuration/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+jobs:
+
+  Build-Deploy:
+    uses: ./.github/workflows/Build&Deploy_Hotfix.yml
+    with:
+      module: global-configuration
+    secrets: inherit
+
+
+
+
