@@ -94,8 +94,7 @@ public class CsvUploadUtilityService {
             processingLeadTimesRaw -> {
               NodeCarrierRequest nodeCarrierRequest =
                   INSTANCE.convertToNodeCarrierRequest(processingLeadTimesRaw);
-              nodeCarrierRequest.setCarrierServiceId("ALL-SDND");
-              nodeCarrierRequest.setLastPickupTime("00:00");
+              nodeCarrierRequest.setCarrierServiceId("");
               return nodeCarrierRequest;
             })
         .collect(Collectors.toList());

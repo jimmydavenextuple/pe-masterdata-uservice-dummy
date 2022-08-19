@@ -40,44 +40,11 @@ public class NodeCarrierService {
   public static final NodeCarrierMapper INSTANCE = Mappers.getMapper(NodeCarrierMapper.class);
 
   public NodeCarrierResponse createNodeCarrier(NodeCarrierRequest nodeCarrierRequest)
-      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+      throws NodeCarrierDomainException, InvalidDataException {
 
     validateLastPickupTime(nodeCarrierRequest.getLastPickupTime());
 
     var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
-
-    Optional<NodeCarrierEntity> nodeCarrierEntity1 =
-        nodeCarrierDomain.findNodeCarrierDetails(
-            nodeCarrierEntity.getNodeId(),
-            nodeCarrierEntity.getOrgId(),
-            nodeCarrierEntity.getCarrierServiceId(),
-            nodeCarrierEntity.getServiceOption());
-
-    if (nodeCarrierEntity1.isPresent()) {
-      logger.error(
-          "Node Carrier already exists for nodeId:{} , orgId:{}, carrierServiceId:{}, serviceOption:{}",
-          nodeCarrierEntity.getNodeId(),
-          nodeCarrierEntity.getOrgId(),
-          nodeCarrierEntity.getCarrierServiceId(),
-          nodeCarrierEntity.getServiceOption());
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          NODE_ID, FieldError.builder().rejectedValue(nodeCarrierEntity.getNodeId()).build());
-      errorMap.put(
-          ORG_ID, FieldError.builder().rejectedValue(nodeCarrierEntity.getOrgId()).build());
-      errorMap.put(
-          CARRIER_SERVICE_ID,
-          FieldError.builder().rejectedValue(nodeCarrierEntity.getCarrierServiceId()).build());
-      errorMap.put(
-          SERVICE_OPTION,
-          FieldError.builder().rejectedValue(nodeCarrierEntity.getServiceOption()).build());
-      throw new CommonServiceException(
-          "Node Carrier already exists for the given details",
-          HttpStatus.BAD_REQUEST,
-          0x1772,
-          errorMap);
-    }
-
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
   }
 

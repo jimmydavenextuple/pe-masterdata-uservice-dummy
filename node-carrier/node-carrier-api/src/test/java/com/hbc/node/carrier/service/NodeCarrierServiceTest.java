@@ -39,8 +39,6 @@ class NodeCarrierServiceTest {
   void createNodeCarrierTest()
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
-    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
-        .thenReturn(Optional.empty());
     when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
         .thenReturn(testUtil.getNodeCarrierEntity());
 
@@ -50,23 +48,6 @@ class NodeCarrierServiceTest {
     Assertions.assertEquals(
         nodeCarrierRequest.getCarrierServiceId(), nodeCarrierResponse.getCarrierServiceId());
     verify(nodeCarrierDomain, times(1)).saveNodeCarrierEntity(any());
-  }
-
-  @Test
-  @DisplayName("When node carrier to be created already exists")
-  void createNodeCarrierTestException() throws NodeCarrierDomainException {
-    NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
-    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
-        .thenReturn(Optional.of(testUtil.getNodeCarrierEntity()));
-
-    Exception ex =
-        Assertions.assertThrows(
-            CommonServiceException.class,
-            () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest));
-
-    Assertions.assertEquals("Node Carrier already exists for the given details", ex.getMessage());
-    verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
-    verify(nodeCarrierDomain, times(0)).saveNodeCarrierEntity(any());
   }
 
   @Test

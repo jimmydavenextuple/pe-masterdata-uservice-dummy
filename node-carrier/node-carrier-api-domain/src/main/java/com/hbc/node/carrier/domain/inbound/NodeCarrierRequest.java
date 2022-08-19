@@ -26,7 +26,6 @@ public class NodeCarrierRequest implements Serializable {
   @Length(max = 50)
   private String orgId;
 
-  @NotBlank(message = "carrierServiceId cannot be empty")
   @Length(max = 50)
   private String carrierServiceId;
 
@@ -38,7 +37,6 @@ public class NodeCarrierRequest implements Serializable {
   @Min(value = 0, message = "processingTime can't be negative")
   private Double processingTime;
 
-  @NotBlank(message = "lastPickupTime cannot be empty")
   @Length(max = 50)
   private String lastPickupTime;
 }
