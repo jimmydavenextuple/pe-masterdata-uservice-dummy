@@ -31,7 +31,7 @@ public class TestUtil {
 
   public NodeCarrierRequest getNodeCarrierRequest2() {
     Date bEndDate = new Date();
-
+    bEndDate.setTime(1000);
     return NodeCarrierRequest.builder()
             .nodeId(NODE_ID)
             .orgId(ORG_ID)
@@ -60,6 +60,7 @@ public class TestUtil {
 
   public NodeCarrierUpdateRequest getNodeCarrierUpdateRequest2() {
     Date bEndDate = new Date();
+    bEndDate.setTime(1000);
     return NodeCarrierUpdateRequest.builder().processingTime(2.0).lastPickupTime("5:00")
             .bufferEndDate(bEndDate).build();
   }
