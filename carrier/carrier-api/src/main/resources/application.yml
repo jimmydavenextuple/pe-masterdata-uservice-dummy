@@ -28,6 +28,7 @@ pagination:
   pageNo: 1
   pageSize: 15
   sortBy: carrierId
+  sortOrder: ASC
 
 management:
   endpoints:

@@ -11,7 +11,6 @@ import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.feign.TransitFeign;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
@@ -32,14 +31,13 @@ public class CarrierTransitTimeService {
       Mappers.getMapper(CarrierTransitTimeMapper.class);
 
   public PagePayload<CarrierTransitDto> getCarrierTransitTimeList(
-      String orgId, Integer pageNo, Integer pageSize, String sortBy, Optional<String> sortOrder) {
+      String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder) {
     PagePayload<CarrierTransitDto> carrierTransitDtoPagePayload = new PagePayload<>();
     List<CarrierTransitDto> responseList = new ArrayList<>();
 
     PagePayload<CarrierServiceResponse> carrierResponse =
         carrierFeign
-            .getCarrierServiceListWithPagination(
-                orgId, pageNo, pageSize, sortBy, sortOrder.orElse(""))
+            .getCarrierServiceListWithPagination(orgId, pageNo, pageSize, sortBy, sortOrder)
             .getPayload();
 
     List<CarrierServiceResponse> carrierServiceResponseList = carrierResponse.getData();
@@ -61,22 +59,30 @@ public class CarrierTransitTimeService {
                   carrierServiceResponse.getOrgId(), carrierServiceResponse.getCarrierServiceId())
               .getPayload();
 
-      CarrierTransitDto carrierTransitDto = new CarrierTransitDto();
-      carrierTransitDto.setOrgId(carrierServiceResponse.getOrgId());
-      carrierTransitDto.setCarrierId(carrierServiceResponse.getCarrierId());
-      carrierTransitDto.setCarrierServiceId(carrierServiceResponse.getCarrierServiceId());
-      carrierTransitDto.setCarrierName(carrierServiceResponse.getCarrierName());
-      carrierTransitDto.setServiceName(carrierServiceResponse.getServiceName());
-      carrierTransitDto.setIsCarrierActive(
-          !carrierServiceCalendarResponseList.isEmpty()
-              && transitTimeEntries.getTotalRecords() > 0);
-      carrierTransitDto.setIsCalendarAssigned(!carrierServiceCalendarResponseList.isEmpty());
-      carrierTransitDto.setCarrierServiceCalendars(
-          INSTANCE.toCarrierServiceCalendars(carrierServiceCalendarResponseList));
-      responseList.add(carrierTransitDto);
+      responseList.add(
+          setCarrierTransitDto(
+              carrierServiceResponse, carrierServiceCalendarResponseList, transitTimeEntries));
     }
     carrierTransitDtoPagePayload.setPagination(carrierResponse.getPagination());
     carrierTransitDtoPagePayload.setData(responseList);
     return carrierTransitDtoPagePayload;
+  }
+
+  private CarrierTransitDto setCarrierTransitDto(
+      CarrierServiceResponse carrierServiceResponse,
+      List<CarrierServiceCalendarResponse> carrierServiceCalendarResponseList,
+      TransitTimeEntriesDto transitTimeEntries) {
+    CarrierTransitDto carrierTransitDto = new CarrierTransitDto();
+    carrierTransitDto.setOrgId(carrierServiceResponse.getOrgId());
+    carrierTransitDto.setCarrierId(carrierServiceResponse.getCarrierId());
+    carrierTransitDto.setCarrierServiceId(carrierServiceResponse.getCarrierServiceId());
+    carrierTransitDto.setCarrierName(carrierServiceResponse.getCarrierName());
+    carrierTransitDto.setServiceName(carrierServiceResponse.getServiceName());
+    carrierTransitDto.setIsCarrierActive(
+        !carrierServiceCalendarResponseList.isEmpty() && transitTimeEntries.getTotalRecords() > 0);
+    carrierTransitDto.setIsCalendarAssigned(!carrierServiceCalendarResponseList.isEmpty());
+    carrierTransitDto.setCarrierServiceCalendars(
+        INSTANCE.toCarrierServiceCalendars(carrierServiceCalendarResponseList));
+    return carrierTransitDto;
   }
 }

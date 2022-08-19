@@ -164,12 +164,10 @@ public class TransitService {
 
   public TransitTimeEntriesDto getTransitTimeEntries(String orgId, String carrierServiceId)
       throws TransitDomainException {
-    List<TransitEntity> transitEntityList =
-        transitDomain.fetchTransitEntityList(orgId, carrierServiceId);
     return TransitTimeEntriesDto.builder()
         .orgId(orgId)
         .carrierServiceId(carrierServiceId)
-        .totalRecords(transitEntityList.size())
+        .totalRecords(transitDomain.fetchTransitEntitiesCount(orgId, carrierServiceId))
         .build();
   }
 }

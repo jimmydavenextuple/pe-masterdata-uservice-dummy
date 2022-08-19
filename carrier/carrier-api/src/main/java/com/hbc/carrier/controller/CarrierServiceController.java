@@ -3,12 +3,13 @@ package com.hbc.carrier.controller;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
+import com.hbc.carrier.domain.pojo.PageParams;
 import com.hbc.carrier.exception.CarrierServiceDomainException;
 import com.hbc.carrier.service.CarrierServiceService;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
-import java.util.Optional;
+import com.hbc.common.util.PaginationUtil;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -43,6 +43,9 @@ public class CarrierServiceController {
 
   @Value("${pagination.sortBy}")
   private String defaultSortBy;
+
+  @Value("${pagination.sortOrder}")
+  private String defaultSortOrder;
 
   @PostMapping
   public ResponseEntity<BaseResponse<CarrierServiceResponse>> createCarrierService(
@@ -137,72 +140,60 @@ public class CarrierServiceController {
 
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<CarrierServiceResponse>>>
-      getCarrierServiceListWithPagination(
-          @PathVariable String orgId,
-          @RequestParam(required = false) Optional<Integer> pageNo,
-          @RequestParam(required = false) Optional<Integer> pageSize,
-          @RequestParam(required = false) Optional<String> sortBy,
-          @RequestParam(required = false) Optional<String> sortOrder)
-          throws CarrierServiceDomainException {
+      getCarrierServiceListWithPagination(@PathVariable String orgId, PageParams pageParams)
+          throws CarrierServiceDomainException, CommonServiceException {
     logger.debug("Processing get carrier service list by orgId");
-    try {
+    Page<CarrierServiceResponse> carrierServiceResponses =
+        carrierserviceService.getCarrierServiceList(
+            orgId,
+            pageParams.getPageNo().orElse(defaultPageNo),
+            pageParams.getPageSize().orElse(defaultPageSize),
+            pageParams.getSortBy().orElse(defaultSortBy),
+            pageParams.getSortOrder().orElse(defaultSortOrder));
 
-      Page<CarrierServiceResponse> carrierServiceResponses =
-          carrierserviceService.getCarrierServiceList(
-              orgId,
-              pageNo.orElse(defaultPageNo),
-              pageSize.orElse(defaultPageSize),
-              sortBy.orElse(defaultSortBy),
-              sortOrder);
+    PagePayload<CarrierServiceResponse> pagePayload =
+        setCarrierServicePagePayload(carrierServiceResponses, pageParams);
 
-      PagePayload<CarrierServiceResponse> pagePayload = new PagePayload<>();
-      var pagination = new PagePayload.Pagination();
-      pagination.setTotalRecords((int) carrierServiceResponses.getTotalElements());
-      pagination.setTotalPages(carrierServiceResponses.getTotalPages());
-      pagination.setCurrentPage(pageNo.orElse(defaultPageNo));
-      pagination.setSortOrder(sortOrder.orElse("ASC"));
-      pagination.setSortBy(sortBy.orElse(defaultSortBy));
-      pagePayload.setData(carrierServiceResponses.getContent());
-      pagePayload.setPagination(pagination);
-
-      String nextUri =
-          buildUriForPagination(
-              pageNo.orElse(defaultPageNo),
-              pageSize.orElse(defaultPageSize),
-              carrierServiceResponses.getTotalPages(),
-              "next");
-      String previousUri =
-          buildUriForPagination(
-              pageNo.orElse(defaultPageNo),
-              pageSize.orElse(defaultPageSize),
-              carrierServiceResponses.getTotalPages(),
-              "previous");
-      pagination.setNext(nextUri);
-      pagination.setPrevious(previousUri);
-
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("CarrierService list fetched successfully")
-              .payload(pagePayload)
-              .build());
-    } catch (Exception e) {
-      logger.error("Failed to fetch carrier service list");
-      throw e;
-    }
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("CarrierService list fetched successfully")
+            .payload(pagePayload)
+            .build());
   }
 
-  private String buildUriForPagination(
-      int currentPageNo, int pageSize, int totalPages, String uriType) {
-    if (uriType.equalsIgnoreCase("next")) {
-      if (currentPageNo >= totalPages) {
-        return null;
-      }
-      return "/{orgId}?pageNo=" + (currentPageNo + 1) + "&pageSize=" + pageSize;
-    } else {
-      if (currentPageNo == 1) {
-        return null;
-      }
-      return "/{orgId}?pageNo=" + (currentPageNo - 1) + "&pageSize=" + pageSize;
-    }
+  private PagePayload<CarrierServiceResponse> setCarrierServicePagePayload(
+      Page<CarrierServiceResponse> carrierServiceResponses, PageParams pageParams) {
+    PagePayload<CarrierServiceResponse> pagePayload = new PagePayload<>();
+    var pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords((int) carrierServiceResponses.getTotalElements());
+    pagination.setTotalPages(carrierServiceResponses.getTotalPages());
+    pagination.setCurrentPage(pageParams.getPageNo().orElse(defaultPageNo));
+    pagination.setSortOrder(pageParams.getSortOrder().orElse(defaultSortOrder));
+    pagination.setSortBy(pageParams.getSortBy().orElse(defaultSortBy));
+
+    String nextUri =
+        PaginationUtil.buildUriForPagination(
+            pageParams.getPageNo().orElse(defaultPageNo),
+            carrierServiceResponses.getTotalPages(),
+            "next",
+            String.format(
+                "/{orgId}?pageNo=%d&pageSize=%d",
+                (pageParams.getPageNo().orElse(defaultPageNo) + 1),
+                pageParams.getPageSize().orElse(defaultPageSize)));
+    String previousUri =
+        PaginationUtil.buildUriForPagination(
+            pageParams.getPageNo().orElse(defaultPageNo),
+            carrierServiceResponses.getTotalPages(),
+            "previous",
+            String.format(
+                "/{orgId}?pageNo=%d&pageSize=%d",
+                (pageParams.getPageNo().orElse(defaultPageNo) - 1),
+                pageParams.getPageSize().orElse(defaultPageSize)));
+    pagination.setNext(nextUri);
+    pagination.setPrevious(previousUri);
+    pagePayload.setPagination(pagination);
+    pagePayload.setData(carrierServiceResponses.getContent());
+
+    return pagePayload;
   }
 }

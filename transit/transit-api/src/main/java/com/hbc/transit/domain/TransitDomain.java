@@ -100,14 +100,14 @@ public class TransitDomain {
     }
   }
 
-  public List<TransitEntity> fetchTransitEntityList(String orgId, String carrierServiceId)
+  public Integer fetchTransitEntitiesCount(String orgId, String carrierServiceId)
       throws TransitDomainException {
     try {
-      return transitRepository.findByOrgIdAndCarrierServiceId(orgId, carrierServiceId);
+      return transitRepository.findTransitCountByOrgIdAndCarrierServiceId(orgId, carrierServiceId);
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Unable to fetch transit list");
+      logger.error(String.valueOf(e), "Unable to fetch transit entities count");
       throw new TransitDomainException(
-          "Error while fetching transit list", orgId, null, null, carrierServiceId);
+          "Error while fetching transit entities count", orgId, null, null, carrierServiceId);
     }
   }
 }

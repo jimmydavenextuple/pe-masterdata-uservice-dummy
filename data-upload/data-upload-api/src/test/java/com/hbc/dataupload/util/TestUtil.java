@@ -44,6 +44,7 @@ import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.pojo.ExceptionDays;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
+import com.hbc.carrier.domain.pojo.PageParams;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.common.response.BaseResponse;
@@ -59,6 +60,7 @@ import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -554,5 +556,18 @@ public class TestUtil {
     carrierServiceCalendars.setCalendarId(calendarId);
     carrierServiceCalendars.setEffectiveDate(effectiveDate);
     return carrierServiceCalendars;
+  }
+
+  public PageParams getPageParams(
+      Optional<Integer> pageNo,
+      Optional<Integer> pageSize,
+      Optional<String> sortBy,
+      Optional<String> sortOrder) {
+    PageParams pageParams = new PageParams();
+    pageParams.setPageNo(pageNo);
+    pageParams.setPageSize(pageSize);
+    pageParams.setSortBy(sortBy);
+    pageParams.setSortOrder(sortOrder);
+    return pageParams;
   }
 }

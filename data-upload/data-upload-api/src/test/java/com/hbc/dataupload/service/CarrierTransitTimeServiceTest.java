@@ -12,7 +12,6 @@ import com.hbc.common.base.PagePayload;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
 import com.hbc.dataupload.util.TestUtil;
 import com.hbc.transit.domain.feign.TransitFeign;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,7 +41,7 @@ class CarrierTransitTimeServiceTest {
 
     PagePayload<CarrierTransitDto> response =
         carrierTransitTimeService.getCarrierTransitTimeList(
-            TestUtil.ORG_ID, 1, 1, "carrierId", Optional.of("DESC"));
+            TestUtil.ORG_ID, 1, 1, "carrierId", "DESC");
 
     assertEquals(2, response.getPagination().getTotalPages());
     assertEquals(1, response.getPagination().getCurrentPage());
@@ -71,7 +70,7 @@ class CarrierTransitTimeServiceTest {
 
     PagePayload<CarrierTransitDto> response =
         carrierTransitTimeService.getCarrierTransitTimeList(
-            TestUtil.ORG_ID, 1, 1, "carrierId", Optional.empty());
+            TestUtil.ORG_ID, 1, 1, "carrierId", "ASC");
 
     assertEquals(2, response.getPagination().getTotalPages());
     assertEquals(1, response.getPagination().getCurrentPage());

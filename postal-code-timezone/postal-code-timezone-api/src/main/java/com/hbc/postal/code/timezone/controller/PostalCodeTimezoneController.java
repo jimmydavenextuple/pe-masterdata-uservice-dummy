@@ -117,18 +117,13 @@ public class PostalCodeTimezoneController {
       @PathVariable String orgId) throws PromiseEngineException {
     logger.debug("Processing get state and postal code prefixes list");
 
-    try {
-      List<PostalCodePrefixDto> responseList =
-          postalCodeTimezoneService.fetchPostalCodePrefixList(orgId);
+    List<PostalCodePrefixDto> responseList =
+        postalCodeTimezoneService.fetchPostalCodePrefixList(orgId);
 
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("State and Postal Code Prefix list fetched successfully")
-              .payload(responseList)
-              .build());
-    } catch (Exception e) {
-      logger.error("Failed to fetch state and postal code prefix list");
-      throw e;
-    }
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("State and Postal Code Prefix list fetched successfully")
+            .payload(responseList)
+            .build());
   }
 }

@@ -237,20 +237,4 @@ class TransitControllerTest {
 
     verify(transitService, times(1)).getTransitTimeEntries(any(), any());
   }
-
-  @Test
-  void getTransitTimeEntriesTestException() throws TransitDomainException {
-    when(transitService.getTransitTimeEntries(any(), any()))
-        .thenThrow(new RuntimeException("Failed to fetch transit time entries"));
-
-    Exception exception =
-        Assertions.assertThrows(
-            Exception.class,
-            () ->
-                transitController.getTransitTimeEntries(
-                    TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
-    Assertions.assertEquals("Failed to fetch transit time entries", exception.getMessage());
-
-    verify(transitService, times(1)).getTransitTimeEntries(any(), any());
-  }
 }

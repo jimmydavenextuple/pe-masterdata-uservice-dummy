@@ -164,16 +164,11 @@ public class TransitController {
       @PathVariable String orgId, @PathVariable String carrierServiceId)
       throws TransitDomainException {
     logger.debug("Processing get transit time entries");
-    try {
-      var transitTimeEntriesDto = transitService.getTransitTimeEntries(orgId, carrierServiceId);
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Transit time entries fetched successfully")
-              .payload(transitTimeEntriesDto)
-              .build());
-    } catch (Exception e) {
-      logger.error("Failed to fetch transit time entries");
-      throw e;
-    }
+    var transitTimeEntriesDto = transitService.getTransitTimeEntries(orgId, carrierServiceId);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Transit time entries fetched successfully")
+            .payload(transitTimeEntriesDto)
+            .build());
   }
 }

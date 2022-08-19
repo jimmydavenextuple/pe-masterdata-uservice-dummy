@@ -172,7 +172,7 @@ class CarrierServiceServiceTest {
   }
 
   @Test
-  void getCarrierServiceListTest() throws CarrierServiceDomainException {
+  void getCarrierServiceListTest() throws CarrierServiceDomainException, CommonServiceException {
     List<CarrierServiceResponse> carrierServiceResponseList =
         testUtil.getCarrierServiceResponseList();
 
@@ -183,12 +183,26 @@ class CarrierServiceServiceTest {
 
     Page<CarrierServiceResponse> carrierServiceResponsePage =
         carrierServiceService.getCarrierServiceList(
-            TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, Optional.of(TestUtil.SORT_ORDER_DESC));
+            TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, TestUtil.SORT_ORDER_DESC);
 
     assertEquals(2, (int) carrierServiceResponsePage.getTotalElements());
     assertEquals(2, carrierServiceResponsePage.getTotalPages());
     assertEquals(carrierServiceResponseList.size(), carrierServiceResponsePage.getContent().size());
     verify(carrierServiceDomain, times(1))
+        .findCarrierServiceListByOrgId(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getCarrierServiceListTestException() throws CarrierServiceDomainException {
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                carrierServiceService.getCarrierServiceList(
+                    TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "invalid sort order"));
+
+    assertEquals("Invalid sort order, consider giving either ASC or DESC", exception.getMessage());
+    verify(carrierServiceDomain, times(0))
         .findCarrierServiceListByOrgId(any(), any(), any(), any(), any());
   }
 }

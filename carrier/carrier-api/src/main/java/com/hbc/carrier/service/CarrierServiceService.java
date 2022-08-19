@@ -28,6 +28,8 @@ public class CarrierServiceService {
 
   private static final String ORG_ID = "orgId";
 
+  private static final String SORT_ORDER = "sortOrder";
+
   private static final String CARRIER_SERVICE_EXCEPTION_MESSAGE =
       "Carrier service not found with given details";
   private static final String SERVICE_ID = "serviceId";
@@ -120,9 +122,20 @@ public class CarrierServiceService {
   }
 
   public Page<CarrierServiceResponse> getCarrierServiceList(
-      String orgId, Integer pageNo, Integer pageSize, String sortBy, Optional<String> sortOrder)
-      throws CarrierServiceDomainException {
-    return carrierServiceDomain.findCarrierServiceListByOrgId(
-        orgId, pageNo, pageSize, sortBy, sortOrder);
+      String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
+      throws CarrierServiceDomainException, CommonServiceException {
+    if (sortOrder.equals("ASC") || sortOrder.equals("DESC")) {
+      return carrierServiceDomain.findCarrierServiceListByOrgId(
+          orgId, pageNo, pageSize, sortBy, sortOrder);
+    } else {
+      logger.error("Invalid sort order");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(SORT_ORDER, FieldError.builder().rejectedValue(sortOrder).build());
+      throw new CommonServiceException(
+          "Invalid sort order, consider giving either ASC or DESC",
+          HttpStatus.BAD_REQUEST,
+          0x1771,
+          errorMap);
+    }
   }
 }

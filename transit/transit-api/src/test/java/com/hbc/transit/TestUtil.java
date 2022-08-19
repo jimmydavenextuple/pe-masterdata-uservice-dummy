@@ -62,14 +62,4 @@ public class TestUtil {
         .totalRecords(2)
         .build();
   }
-
-  public TransitEntity getTransitEntity1(String orgId, String carrierServiceId) {
-    return TransitEntity.builder()
-        .orgId(orgId)
-        .sourceGeozone(SOURCE_GEOZONE)
-        .destinationGeozone(DESTINATION_GEOZONE)
-        .carrierServiceId(carrierServiceId)
-        .transitDays(TRANSIT_DAYS)
-        .build();
-  }
 }

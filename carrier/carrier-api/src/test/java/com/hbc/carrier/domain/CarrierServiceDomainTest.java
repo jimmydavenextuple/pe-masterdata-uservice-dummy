@@ -133,7 +133,7 @@ class CarrierServiceDomainTest {
 
     Page<CarrierServiceResponse> response =
         carrierServiceDomain.findCarrierServiceListByOrgId(
-            TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, Optional.empty());
+            TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, TestUtil.SORT_ORDER_ASC);
 
     Assertions.assertEquals(carrierServiceEntityList.size(), response.getContent().size());
     Assertions.assertEquals(2, response.getTotalPages());
@@ -156,7 +156,7 @@ class CarrierServiceDomainTest {
 
     Page<CarrierServiceResponse> response =
         carrierServiceDomain.findCarrierServiceListByOrgId(
-            TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, Optional.of(TestUtil.SORT_ORDER_DESC));
+            TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, TestUtil.SORT_ORDER_DESC);
 
     Assertions.assertEquals(carrierServiceEntityList.size(), response.getContent().size());
     Assertions.assertEquals(2, response.getTotalPages());
@@ -180,7 +180,7 @@ class CarrierServiceDomainTest {
             CarrierServiceDomainException.class,
             () ->
                 carrierServiceDomain.findCarrierServiceListByOrgId(
-                    TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, Optional.empty()));
+                    TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, TestUtil.SORT_ORDER_ASC));
     Assertions.assertEquals("Error while finding carrier service list", exception.getMessage());
     verify(carrierServiceRepository, times(1))
         .findCarrierServicesByOrgId(anyString(), any(Pageable.class));

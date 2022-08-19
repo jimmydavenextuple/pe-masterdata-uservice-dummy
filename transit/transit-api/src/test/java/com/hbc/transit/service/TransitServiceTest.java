@@ -220,22 +220,20 @@ class TransitServiceTest {
 
   @Test
   void getTransitTimeEntriesTest() throws TransitDomainException {
-    TransitEntity transitEntity =
-        testUtil.getTransitEntity1(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
-    when(transitDomain.fetchTransitEntityList(any(), any())).thenReturn(List.of(transitEntity));
+    when(transitDomain.fetchTransitEntitiesCount(any(), any())).thenReturn(5);
 
     TransitTimeEntriesDto transitResponse =
         transitService.getTransitTimeEntries(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
 
     Assertions.assertEquals(TestUtil.ORG_ID, transitResponse.getOrgId());
-    Assertions.assertEquals(1, transitResponse.getTotalRecords());
+    Assertions.assertEquals(5, transitResponse.getTotalRecords());
 
-    verify(transitDomain, times(1)).fetchTransitEntityList(any(), any());
+    verify(transitDomain, times(1)).fetchTransitEntitiesCount(any(), any());
   }
 
   @Test
   void getTransitTimeZeroEntriesTest() throws TransitDomainException {
-    when(transitDomain.fetchTransitEntityList(any(), any())).thenReturn(new ArrayList<>());
+    when(transitDomain.fetchTransitEntitiesCount(any(), any())).thenReturn(0);
 
     TransitTimeEntriesDto transitResponse =
         transitService.getTransitTimeEntries(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
@@ -243,6 +241,6 @@ class TransitServiceTest {
     Assertions.assertEquals(TestUtil.ORG_ID, transitResponse.getOrgId());
     Assertions.assertEquals(0, transitResponse.getTotalRecords());
 
-    verify(transitDomain, times(1)).fetchTransitEntityList(any(), any());
+    verify(transitDomain, times(1)).fetchTransitEntitiesCount(any(), any());
   }
 }

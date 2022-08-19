@@ -64,15 +64,15 @@ public class CarrierServiceDomain {
   }
 
   public Page<CarrierServiceResponse> findCarrierServiceListByOrgId(
-      String orgId, Integer pageNo, Integer pageSize, String sortBy, Optional<String> sortOrder)
+      String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
       throws CarrierServiceDomainException {
     try {
-      var sort =
-          Sort.by(
-              Sort.Direction.fromOptionalString(sortOrder.orElse(""))
-                  .orElse(Sort.DEFAULT_DIRECTION),
-              sortBy);
-      Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+      Pageable pageable = null;
+      if (sortOrder.equals("ASC")) {
+        pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).ascending());
+      } else {
+        pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).descending());
+      }
       return carrierServiceRepository
           .findCarrierServicesByOrgId(orgId, pageable)
           .map(INSTANCE::toCarrierServiceResponse);

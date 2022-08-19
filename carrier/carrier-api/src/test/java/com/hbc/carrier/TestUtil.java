@@ -4,8 +4,10 @@ import com.hbc.carrier.domain.entity.CarrierServiceEntity;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
+import com.hbc.carrier.domain.pojo.PageParams;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,7 @@ public class TestUtil {
   public static final String SERVICE_OPTIONS = "service-options-1";
   public static final String SORT_BY = "carrierId";
   public static final String SORT_ORDER_DESC = "DESC";
+  public static final String SORT_ORDER_ASC = "ASC";
   private static final String CARRIER_ID_2 = "carrier-2";
 
   public CarrierServiceRequest getCarrierServiceRequest() {
@@ -198,5 +201,18 @@ public class TestUtil {
         return null;
       }
     };
+  }
+
+  public PageParams getPageParams(
+      Optional<Integer> pageNo,
+      Optional<Integer> pageSize,
+      Optional<String> sortBy,
+      Optional<String> sortOrder) {
+    PageParams pageParams = new PageParams();
+    pageParams.setPageNo(pageNo);
+    pageParams.setPageSize(pageSize);
+    pageParams.setSortBy(sortBy);
+    pageParams.setSortOrder(sortOrder);
+    return pageParams;
   }
 }
