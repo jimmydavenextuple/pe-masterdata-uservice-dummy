@@ -1,6 +1,7 @@
 package com.hbc.node.carrier.domain.outbound;
 
 import java.io.Serializable;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,4 +26,10 @@ public class NodeCarrierResponse implements Serializable {
   private Double processingTime;
 
   private String lastPickupTime;
+
+  private Double bufferHours;
+
+  private Date bufferStartDate;
+
+  private Date bufferEndDate;
 }
