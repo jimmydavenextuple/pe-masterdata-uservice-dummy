@@ -25,8 +25,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class CommonExceptionHandler {
   private static final Map<String, String> EMPTY_MAP = Collections.emptyMap();
-  private static Logger slf4jLogger =
-      LoggerFactory.getLogger(CommonExceptionHandler.class);
+  private static Logger slf4jLogger = LoggerFactory.getLogger(CommonExceptionHandler.class);
   private static final Pattern ENUM_MSG =
       Pattern.compile("values accepted for Enum class: \\[[^\\]]*\\]", Pattern.MULTILINE);
   private static final Pattern DATE_MSG =
