@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
-    name = "jobs-dashboard-uservice",
+    name = "pe-config-job-framework-jobs-dashboard",
     url =
         "${spring.application.dependencies.job.framework:http://pe-config-job-framework-jobs-dashboard:8080/}")
 public interface JobsDashboardClient {

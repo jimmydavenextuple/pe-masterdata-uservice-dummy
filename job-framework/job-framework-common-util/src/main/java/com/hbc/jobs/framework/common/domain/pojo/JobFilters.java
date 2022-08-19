@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 public class JobFilters {
   private Optional<String> jobType = Optional.empty();
   private Optional<Integer> days = Optional.empty();
-  private String sortBy = "created_date";
-  private String sortOrder = "ASC";
-  private Integer pageNo = 1;
-  private Integer pageSize = 15;
+  private Optional<String> sortBy = Optional.empty();
+  private Optional<String> sortOrder = Optional.empty();
+  private Optional<Integer> pageNo = Optional.empty();
+  private Optional<Integer> pageSize = Optional.empty();
 }

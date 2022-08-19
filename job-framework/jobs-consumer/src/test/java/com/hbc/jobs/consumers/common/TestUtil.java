@@ -39,13 +39,13 @@ public class TestUtil {
   public static final String JOB_TYPE = JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES.name();
   public static final String JOB_ID = "JobId1";
 
-  public static final String DEFAULT_SORT_FIELD = "created_date";
+  public static final Optional<String> DEFAULT_SORT_FIELD = Optional.of("created_date");
 
-  public static final String DEFAULT_SORT_ORDER = "ASC";
+  public static final Optional<String> DEFAULT_SORT_ORDER = Optional.of("ASC");
 
-  public static final int DEFAULT_PAGE_NO = 1;
+  public static final Optional<Integer> DEFAULT_PAGE_NO = Optional.of(1);
 
-  public static final int DEFAULT_PAGE_SIZE = 15;
+  public static final Optional<Integer> DEFAULT_PAGE_SIZE = Optional.of(15);
 
   public JobRecordEntity getJobRecordEntity() {
     return JobRecordMapper.INSTANCE.toJobRecordEntity(

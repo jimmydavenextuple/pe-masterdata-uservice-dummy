@@ -278,7 +278,7 @@ public class JobService {
     Optional<Date> pastDays = Optional.empty();
 
     if (days.isPresent()) {
-      pastDays = Optional.ofNullable(DateUtil.addDaysToDate(new Date(), -days.get() + 1));
+      pastDays = Optional.ofNullable(DateUtil.addDaysToDate(new Date(), -days.get()));
     }
 
     try {

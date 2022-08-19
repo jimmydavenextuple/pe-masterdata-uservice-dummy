@@ -29,6 +29,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -199,8 +200,12 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterLastPageSuccess() throws JobException {
+    ReflectionTestUtils.setField(jobController, "defaultSortBy", "created_date");
+    ReflectionTestUtils.setField(jobController, "defaultSortOrder", "ASC");
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 15);
     JobFilters jobFilters = testUtil.getJobFilters();
-    jobFilters.setPageNo(2);
+    jobFilters.setPageNo(Optional.of(2));
     List<JobDto> jobDtoList = testUtil.createJobDtoList();
     Page<JobDto> pageResp = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
 
@@ -228,8 +233,12 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterPageNoNotAllowed() {
+    ReflectionTestUtils.setField(jobController, "defaultSortBy", "created_date");
+    ReflectionTestUtils.setField(jobController, "defaultSortOrder", "ASC");
+    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1);
+    ReflectionTestUtils.setField(jobController, "defaultPageSize", 15);
     JobFilters jobFilters = testUtil.getJobFilters();
-    jobFilters.setPageNo(0);
+    jobFilters.setPageNo(Optional.of(0));
     JobException exception =
         assertThrows(
             JobException.class, () -> jobController.getJobsByFilter(TestUtil.ORG_ID, jobFilters));

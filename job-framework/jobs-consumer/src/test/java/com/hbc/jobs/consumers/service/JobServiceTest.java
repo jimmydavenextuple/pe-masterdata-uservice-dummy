@@ -322,8 +322,8 @@ class JobServiceTest {
               TestUtil.ORG_ID,
               Optional.empty(),
               Optional.of(2),
-              TestUtil.DEFAULT_SORT_FIELD,
-              TestUtil.DEFAULT_SORT_ORDER,
+              TestUtil.DEFAULT_SORT_FIELD.orElse(""),
+              TestUtil.DEFAULT_SORT_ORDER.orElse(""),
               pageNo,
               pageSize);
 
@@ -346,8 +346,8 @@ class JobServiceTest {
                       TestUtil.ORG_ID,
                       Optional.empty(),
                       Optional.of(2),
-                      TestUtil.DEFAULT_SORT_FIELD,
-                      TestUtil.DEFAULT_SORT_ORDER,
+                      TestUtil.DEFAULT_SORT_FIELD.orElse(""),
+                      TestUtil.DEFAULT_SORT_ORDER.orElse(""),
                       2,
                       5));
 

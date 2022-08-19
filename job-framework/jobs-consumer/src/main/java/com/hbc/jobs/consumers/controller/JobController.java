@@ -10,12 +10,14 @@ import com.hbc.jobs.consumers.util.UriBuilder;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,18 @@ public class JobController {
   public JobController(JobService jobService) {
     this.jobService = jobService;
   }
+
+  @Value("${job-filters.sort-by}")
+  private String defaultSortBy;
+
+  @Value("${job-filters.sort-order}")
+  private String defaultSortOrder;
+
+  @Value("${job-filters.page-no}")
+  private int defaultPageNo;
+
+  @Value("${job-filters.page-size}")
+  private int defaultPageSize;
 
   /**
    * @param orgId
@@ -113,8 +127,10 @@ public class JobController {
       throws JobException {
     log.debug("--Inside getJobsByFilter()--");
 
-    int requiredPageNo = jobFilters.getPageNo();
-    int requiredPageSize = jobFilters.getPageSize();
+    int requiredPageNo = jobFilters.getPageNo().orElse(defaultPageNo);
+    int requiredPageSize = jobFilters.getPageSize().orElse(defaultPageSize);
+    String requiredSortByField = jobFilters.getSortBy().orElse(defaultSortBy);
+    String requiredSortOrder = jobFilters.getSortOrder().orElse(defaultSortOrder);
 
     if (requiredPageNo < 1) {
       throw new JobException("PageNo can not be less than one", null, requiredPageNo);
@@ -125,8 +141,8 @@ public class JobController {
             orgId,
             jobFilters.getJobType(),
             jobFilters.getDays(),
-            jobFilters.getSortBy(),
-            jobFilters.getSortOrder(),
+            requiredSortByField,
+            requiredSortOrder,
             requiredPageNo,
             requiredPageSize);
 
@@ -134,19 +150,20 @@ public class JobController {
     pagination.setTotalRecords((int) pageResp.getTotalElements());
     pagination.setTotalPages(pageResp.getTotalPages());
     pagination.setCurrentPage(requiredPageNo);
-    pagination.setSortBy(jobFilters.getSortBy());
-    pagination.setSortOrder(jobFilters.getSortOrder());
+    pagination.setSortBy(requiredSortByField);
+    pagination.setSortOrder(requiredSortOrder);
 
     PagePayload<JobDto> pagePayload = new PagePayload<>();
     pagePayload.setData(pageResp.getContent());
     pagePayload.setPagination(pagination);
+    pagePayload.setAggregation(Collections.emptyList());
 
     String nextUri =
         UriBuilder.buildUriForPagination(
             jobFilters.getJobType(),
             jobFilters.getDays(),
-            jobFilters.getSortBy(),
-            jobFilters.getSortOrder(),
+            requiredSortByField,
+            requiredSortOrder,
             requiredPageNo,
             requiredPageSize,
             pageResp.getTotalPages(),
@@ -155,8 +172,8 @@ public class JobController {
         UriBuilder.buildUriForPagination(
             jobFilters.getJobType(),
             jobFilters.getDays(),
-            jobFilters.getSortBy(),
-            jobFilters.getSortOrder(),
+            requiredSortByField,
+            requiredSortOrder,
             requiredPageNo,
             requiredPageSize,
             pageResp.getTotalPages(),
