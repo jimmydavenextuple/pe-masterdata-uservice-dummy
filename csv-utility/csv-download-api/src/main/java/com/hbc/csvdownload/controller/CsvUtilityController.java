@@ -52,6 +52,7 @@ public class CsvUtilityController {
       HttpServletRequest request, HttpServletResponse response)
       throws InvalidTemplateTypeException {
     log.debug("Inside download transit times data as csv");
+    /**TODO need to add service layer logic */
     downloadCSVTemplate("transitTime",request,response);
   }
 
@@ -63,6 +64,7 @@ public class CsvUtilityController {
       @PathVariable String orgId,
       @RequestParam MultipartFile csvFile) {
     log.debug("--Inside uploadTransitTimesCSV API--");
+    /**TODO need to add service layer logic */
     String msg = "Job to upload transit times submitted successfully";
     return ResponseEntity.ok().body(BaseResponse.builder().message(msg).build());
   }
@@ -75,18 +77,21 @@ public class CsvUtilityController {
       @PathVariable String orgId,
       @RequestParam MultipartFile csvFile) {
     log.debug("--Inside uploadLeadProcessingTimeCSV API--");
+    /**TODO need to add service layer logic */
     String msg = "Job to upload processing lead times submitted successfully";
     return ResponseEntity.ok().body(BaseResponse.builder().message(msg).build());
   }
 
   @GetMapping(
       path = "/org/{orgId}/jobs/{jobId}/download")
-  public void downloadErrorLogsByFilters(
+  public void downloadLogsByFilters(
       @PathVariable String orgId,
       @PathVariable String jobId,
       @RequestParam(required = false) Optional<String> status,
       HttpServletRequest request, HttpServletResponse response)
       throws InvalidTemplateTypeException {
+    log.debug("Inside download logs by filters");
+    /**TODO need to add service layer logic */
     downloadCSVTemplate("transitTime", request, response);
   }
 }
