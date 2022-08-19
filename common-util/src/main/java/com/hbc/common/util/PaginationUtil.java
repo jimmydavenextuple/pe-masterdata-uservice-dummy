@@ -1,10 +1,10 @@
 package com.hbc.common.util;
 
-public class PaginationUtil {
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-  private PaginationUtil() {
-    // Use static methods
-  }
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class PaginationUtil {
 
   public static String buildUriForPagination(
       int currentPageNo, int totalPages, String uriType, String uri) {

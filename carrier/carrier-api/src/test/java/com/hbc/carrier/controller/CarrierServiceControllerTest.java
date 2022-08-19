@@ -10,6 +10,7 @@ import com.hbc.carrier.TestUtil;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
+import com.hbc.carrier.domain.pojo.PageProperties;
 import com.hbc.carrier.exception.CarrierServiceDomainException;
 import com.hbc.carrier.service.CarrierServiceService;
 import com.hbc.common.base.PagePayload;
@@ -19,15 +20,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
 
+@ExtendWith(MockitoExtension.class)
 class CarrierServiceControllerTest {
   @InjectMocks private CarrierServiceController carrierServiceController;
 
@@ -35,14 +36,7 @@ class CarrierServiceControllerTest {
 
   @Mock private CarrierServiceService carrierServiceService;
 
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
-    ReflectionTestUtils.setField(carrierServiceController, "defaultPageNo", 1);
-    ReflectionTestUtils.setField(carrierServiceController, "defaultPageSize", 15);
-    ReflectionTestUtils.setField(carrierServiceController, "defaultSortBy", "carrierId");
-    ReflectionTestUtils.setField(carrierServiceController, "defaultSortOrder", "ASC");
-  }
+  @Mock private PageProperties pageProperties;
 
   @Test
   void createCarrierServiceTest() throws CarrierServiceDomainException {
@@ -241,6 +235,10 @@ class CarrierServiceControllerTest {
     List<CarrierServiceResponse> carrierServiceResponseList =
         testUtil.getCarrierServiceResponseList();
 
+    when(pageProperties.getPageNo()).thenReturn(1);
+    when(pageProperties.getPageSize()).thenReturn(15);
+    when(pageProperties.getSortBy()).thenReturn("carrierId");
+    when(pageProperties.getSortOrder()).thenReturn("ASC");
     when(carrierServiceService.getCarrierServiceList(any(), any(), any(), any(), any()))
         .thenReturn(
             testUtil.createPageCarrierServiceResponse(

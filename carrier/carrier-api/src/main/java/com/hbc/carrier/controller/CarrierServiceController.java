@@ -4,6 +4,7 @@ import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.carrier.domain.pojo.PageParams;
+import com.hbc.carrier.domain.pojo.PageProperties;
 import com.hbc.carrier.exception.CarrierServiceDomainException;
 import com.hbc.carrier.service.CarrierServiceService;
 import com.hbc.common.base.PagePayload;
@@ -15,7 +16,6 @@ import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,18 +34,7 @@ public class CarrierServiceController {
 
   private static final Logger logger = LoggerFactory.getLogger(CarrierServiceController.class);
   private final CarrierServiceService carrierserviceService;
-
-  @Value("${pagination.pageNo}")
-  private Integer defaultPageNo;
-
-  @Value("${pagination.pageSize}")
-  private Integer defaultPageSize;
-
-  @Value("${pagination.sortBy}")
-  private String defaultSortBy;
-
-  @Value("${pagination.sortOrder}")
-  private String defaultSortOrder;
+  private final PageProperties pageProperties;
 
   @PostMapping
   public ResponseEntity<BaseResponse<CarrierServiceResponse>> createCarrierService(
@@ -146,10 +135,10 @@ public class CarrierServiceController {
     Page<CarrierServiceResponse> carrierServiceResponses =
         carrierserviceService.getCarrierServiceList(
             orgId,
-            pageParams.getPageNo().orElse(defaultPageNo),
-            pageParams.getPageSize().orElse(defaultPageSize),
-            pageParams.getSortBy().orElse(defaultSortBy),
-            pageParams.getSortOrder().orElse(defaultSortOrder));
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            pageParams.getPageSize().orElse(pageProperties.getPageSize()),
+            pageParams.getSortBy().orElse(pageProperties.getSortBy()),
+            pageParams.getSortOrder().orElse(pageProperties.getSortOrder()));
 
     PagePayload<CarrierServiceResponse> pagePayload =
         setCarrierServicePagePayload(carrierServiceResponses, pageParams);
@@ -167,28 +156,28 @@ public class CarrierServiceController {
     var pagination = new PagePayload.Pagination();
     pagination.setTotalRecords((int) carrierServiceResponses.getTotalElements());
     pagination.setTotalPages(carrierServiceResponses.getTotalPages());
-    pagination.setCurrentPage(pageParams.getPageNo().orElse(defaultPageNo));
-    pagination.setSortOrder(pageParams.getSortOrder().orElse(defaultSortOrder));
-    pagination.setSortBy(pageParams.getSortBy().orElse(defaultSortBy));
+    pagination.setCurrentPage(pageParams.getPageNo().orElse(pageProperties.getPageNo()));
+    pagination.setSortOrder(pageParams.getSortOrder().orElse(pageProperties.getSortOrder()));
+    pagination.setSortBy(pageParams.getSortBy().orElse(pageProperties.getSortBy()));
 
     String nextUri =
         PaginationUtil.buildUriForPagination(
-            pageParams.getPageNo().orElse(defaultPageNo),
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
             carrierServiceResponses.getTotalPages(),
             "next",
             String.format(
                 "/{orgId}?pageNo=%d&pageSize=%d",
-                (pageParams.getPageNo().orElse(defaultPageNo) + 1),
-                pageParams.getPageSize().orElse(defaultPageSize)));
+                (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
+                pageParams.getPageSize().orElse(pageProperties.getPageSize())));
     String previousUri =
         PaginationUtil.buildUriForPagination(
-            pageParams.getPageNo().orElse(defaultPageNo),
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
             carrierServiceResponses.getTotalPages(),
             "previous",
             String.format(
                 "/{orgId}?pageNo=%d&pageSize=%d",
-                (pageParams.getPageNo().orElse(defaultPageNo) - 1),
-                pageParams.getPageSize().orElse(defaultPageSize)));
+                (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
+                pageParams.getPageSize().orElse(pageProperties.getPageSize())));
     pagination.setNext(nextUri);
     pagination.setPrevious(previousUri);
     pagePayload.setPagination(pagination);
