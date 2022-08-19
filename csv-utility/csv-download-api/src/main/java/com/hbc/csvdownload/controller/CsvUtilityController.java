@@ -3,6 +3,7 @@ package com.hbc.csvdownload.controller;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -43,33 +44,49 @@ public class CsvUtilityController {
     }
   }
 
-  @GetMapping(value = "/carrier-services/{carrierServiceId}/transit-times/download")
-  public ResponseEntity<BaseResponse<String>> downloadTransitTimesDataCSV(
-      HttpServletRequest request, HttpServletResponse response) {
-
-    String msg = "Download transit times request registered successfully";
-    return ResponseEntity.ok().body(BaseResponse.builder().message(msg).build());
+  @GetMapping(value = "/org/{orgId}/download/carrier-services/{carrierServiceId}/transit-time")
+  public void downloadTransitTimesDataCSV(
+      @PathVariable String orgId,
+      @RequestParam String region1,
+      @RequestParam String region2,
+      HttpServletRequest request, HttpServletResponse response)
+      throws InvalidTemplateTypeException {
+    log.debug("Inside download transit times data as csv");
+    downloadCSVTemplate("transitTime",request,response);
   }
 
   @PostMapping(
-      path = "/upload/transit-times",
+      path = "/org/{orgId}/upload/transit-times",
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<BaseResponse<String>> uploadTransitTimesCSV(
-      @RequestParam(required = true) MultipartFile csvFile) {
+      @PathVariable String orgId,
+      @RequestParam MultipartFile csvFile) {
     log.debug("--Inside uploadTransitTimesCSV API--");
     String msg = "Job to upload transit times submitted successfully";
     return ResponseEntity.ok().body(BaseResponse.builder().message(msg).build());
   }
 
   @PostMapping(
-      path = "/upload/processing-lead-times",
+      path = "/org/{orgId}/upload/processing-lead-times",
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<BaseResponse<String>> uploadLeadProcessingTimeCSV(
-      @RequestParam(required = true) MultipartFile csvFile) {
+      @PathVariable String orgId,
+      @RequestParam MultipartFile csvFile) {
     log.debug("--Inside uploadLeadProcessingTimeCSV API--");
-    String msg = "Job to upload processing lead times is submitted successfully";
+    String msg = "Job to upload processing lead times submitted successfully";
     return ResponseEntity.ok().body(BaseResponse.builder().message(msg).build());
+  }
+
+  @GetMapping(
+      path = "/org/{orgId}/jobs/{jobId}/download")
+  public void downloadErrorLogsByFilters(
+      @PathVariable String orgId,
+      @PathVariable String jobId,
+      @RequestParam(required = false) Optional<String> status,
+      HttpServletRequest request, HttpServletResponse response)
+      throws InvalidTemplateTypeException {
+    downloadCSVTemplate("transitTime", request, response);
   }
 }
