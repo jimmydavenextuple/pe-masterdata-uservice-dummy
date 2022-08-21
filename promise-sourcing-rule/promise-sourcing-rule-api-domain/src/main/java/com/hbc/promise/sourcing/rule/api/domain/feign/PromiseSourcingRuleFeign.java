@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
         "${spring.application.dependencies.promise-sourcing-rule:http://pe-config-promise-sourcing-rule:8080/}")
 public interface PromiseSourcingRuleFeign {
 
-  @PostMapping("/promiseSourcingRule")
+  @PostMapping("/promise-sourcing-rule")
   BaseResponse<PromiseSourcingRuleDto> createPromiseSourcingRule(
       @Valid @RequestBody CreatePromiseSourcingRuleRequest baseRequest);
 
-  @GetMapping("/promiseSourcingRule")
+  @GetMapping("/promise-sourcing-rule")
   BaseResponse<PromiseSourcingRuleDto> getPromiseSourcingRule(
       @NotBlank @RequestParam String orgId,
       @NotBlank @RequestParam String serviceOption,
@@ -32,7 +32,7 @@ public interface PromiseSourcingRuleFeign {
       @NotBlank @RequestParam String allocationRuleId,
       @NotBlank @RequestParam int priority);
 
-  @PutMapping("/promiseSourcingRule")
+  @PutMapping("/promise-sourcing-rule")
   BaseResponse<PromiseSourcingRuleDto> updatePromiseSourcingRule(
       @NotBlank @RequestParam String orgId,
       @NotBlank @RequestParam String serviceOption,
@@ -41,7 +41,7 @@ public interface PromiseSourcingRuleFeign {
       @NotBlank @RequestParam int priority,
       @Valid @RequestBody UpdatePromiseSourcingRuleRequest baseRequest);
 
-  @DeleteMapping("/promiseSourcingRule")
+  @DeleteMapping("/promise-sourcing-rule")
   BaseResponse<PromiseSourcingRuleDto> deletePromiseSourcingRule(
       @NotBlank @RequestParam String orgId,
       @NotBlank @RequestParam String serviceOption,

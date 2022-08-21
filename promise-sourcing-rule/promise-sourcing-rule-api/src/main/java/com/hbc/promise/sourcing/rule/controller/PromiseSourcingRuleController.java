@@ -27,14 +27,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/promiseSourcingRule")
+@RequestMapping("/promise-sourcing-rule")
 @RequiredArgsConstructor
 public class PromiseSourcingRuleController {
 
   private static final Logger logger = LoggerFactory.getLogger(PromiseSourcingRuleController.class);
   private final PromiseSourcingRuleService promiseSourcingRuleService;
 
-  @PostMapping("/fetchRules")
+  @PostMapping("/fetch-rules")
   public ResponseEntity<BaseResponse<FetchPromiseSourcingRuleResponse>> fetchSourcingRule(
       @Valid @RequestBody FetchPromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException {
