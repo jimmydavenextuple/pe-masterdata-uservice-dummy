@@ -1,0 +1,21 @@
+name: COMMON-CONFIGURATION HOTFIX
+
+on:
+  push:
+    branches: [ hotfix ]
+    paths:
+      - "common-configuration/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+jobs:
+
+  Build-Deploy:
+    uses: ./.github/workflows/Build&Deploy_Hotfix.yml
+    with:
+      module: common-configuration
+    secrets: inherit
+
+
+
+
