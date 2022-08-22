@@ -119,3 +119,11 @@ findProject(':csv-utility:csv-download-common-util')?.name = 'csv-download-commo
 include 'csv-utility:csv-download-api'
 findProject(':csv-utility:csv-download-api')?.name = 'csv-download-api'
 
+include 'job-framework'
+include 'job-framework:jobs-dashboard'
+findProject(':job-framework:jobs-dashboard')?.name = 'jobs-dashboard'
+include 'job-framework:jobs-consumer'
+findProject(':job-framework:jobs-consumer')?.name = 'jobs-consumer'
+include 'job-framework:job-framework-common-util'
+findProject(':job-framework:job-framework-common-util')?.name = 'job-framework-common-util'
+
