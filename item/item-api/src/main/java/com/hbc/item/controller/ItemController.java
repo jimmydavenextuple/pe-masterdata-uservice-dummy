@@ -125,7 +125,7 @@ public class ItemController {
 
       return itemService.getListOfItemDetails(itemList, orgId, uom);
     } catch (Exception e) {
-      logger.error("Failed to fetch item details");
+      logger.error("Failed to fetch list of item details");
       throw e;
     }
   }

@@ -22,6 +22,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class ItemControllerTest {
 
   @InjectMocks private ItemController itemController;
@@ -152,4 +155,39 @@ class ItemControllerTest {
 
     verify(itemService, times(1)).deleteItem(any(), any(), any());
   }
+
+  @Test
+  void getItemDetailsListByItemIdAndOrgIdAndUomTest()
+          throws ItemDomainException, CommonServiceException {
+    ItemResponse itemResponse = testUtil.getItemResponse();
+    List<ItemResponse> itemResponseList = new ArrayList<>();
+    List<String> itemList = new ArrayList<>();
+    itemList.add(TestUtil.ITEM_ID);
+    itemResponseList.add(itemResponse);
+    when(itemService.getListOfItemDetails(any(), any(), any())).thenReturn(itemResponseList);
+
+    List<ItemResponse> responseEntity =
+            itemController.getItemDetailsList(TestUtil.ORG_ID, TestUtil.UOM, itemList);
+
+    Assertions.assertEquals(1, responseEntity.size());
+
+    verify(itemService, times(1)).getListOfItemDetails(any(), any(), any());
+  }
+
+
+  @Test
+  void getItemDetailsListByItemIdAndOrgIdAndUomExceptionTest()
+          throws ItemDomainException, CommonServiceException {
+    when(itemService.getListOfItemDetails(any(), any(), any()))
+            .thenThrow(new RuntimeException("Failed to fetch list of item details"));
+    List<String> itemList = new ArrayList<>();
+    itemList.add(TestUtil.ITEM_ID);
+    Exception exception =
+            Assertions.assertThrows(
+                    Exception.class,
+                    () -> itemController.getItemDetailsList(TestUtil.ORG_ID, TestUtil.UOM, itemList));
+    Assertions.assertEquals("Failed to fetch list of item details", exception.getMessage());
+    verify(itemService, times(1)).getListOfItemDetails(any(), any(), any());
+  }
+
 }
