@@ -35,8 +35,8 @@ public interface JobsConsumerClient {
       @RequestParam(name = "days", required = false) Integer days,
       @RequestParam(name = "sortField", required = false) String sortField,
       @RequestParam(name = "sortOrder", required = false) String sortOrder,
-      @RequestParam("pageNo") int pageNo,
-      @RequestParam("pageSize") int pageSize);
+      @RequestParam(name = "pageNo", required = false) int pageNo,
+      @RequestParam(name = "pageSize", required = false) int pageSize);
 
   @GetMapping("/org/{orgId}/jobs/{jobId}/results")
   BaseResponse<List<RecordStatusDto>> getJobRecordsByFilter(
