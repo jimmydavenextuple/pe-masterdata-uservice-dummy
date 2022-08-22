@@ -21,7 +21,7 @@ import org.springframework.http.HttpStatus;
 @ExtendWith(MockitoExtension.class)
 class CsvUtilityControllerTest {
 
-  @InjectMocks private CsvUtilityController csvUtilityController;
+  @InjectMocks private CsvDownloadUtilityController csvDownloadUtilityController;
 
   @Test
   void downloadCSVTemplate() throws IOException, InvalidTemplateTypeException {
@@ -60,8 +60,8 @@ class CsvUtilityControllerTest {
 
     when(response.getOutputStream()).thenReturn(servletOutputStream);
 
-    csvUtilityController.downloadCSVTemplate("transitTime", request, response);
-    csvUtilityController.downloadCSVTemplate("processingLeadTime", request, response);
+    csvDownloadUtilityController.downloadCSVTemplate("transitTime", request, response);
+    csvDownloadUtilityController.downloadCSVTemplate("processingLeadTime", request, response);
     verify(response, times(2)).getOutputStream();
   }
 
@@ -73,7 +73,9 @@ class CsvUtilityControllerTest {
     Exception exception =
         Assertions.assertThrows(
             InvalidTemplateTypeException.class,
-            () -> csvUtilityController.downloadCSVTemplate("transitTime1", request, response));
+            () ->
+                csvDownloadUtilityController.downloadCSVTemplate(
+                    "transitTime1", request, response));
 
     Assertions.assertNotNull(exception);
   }
@@ -113,7 +115,7 @@ class CsvUtilityControllerTest {
 
     when(response.getOutputStream()).thenThrow(new IOException("Unexpected error"));
 
-    csvUtilityController.downloadCSVTemplate("transitTime", request, response);
+    csvDownloadUtilityController.downloadCSVTemplate("transitTime", request, response);
     verify(response, times(1)).getOutputStream();
   }
 }
