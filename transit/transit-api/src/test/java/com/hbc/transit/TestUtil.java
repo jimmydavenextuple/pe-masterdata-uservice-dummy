@@ -1,5 +1,6 @@
 package com.hbc.transit;
 
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -51,6 +52,14 @@ public class TestUtil {
         .destinationGeozone(DESTINATION_GEOZONE)
         .carrierServiceId(CARRIER_SERVICE_ID)
         .transitDays(transitDays)
+        .build();
+  }
+
+  public TransitTimeEntriesDto getTransitTimeEntriesDto(String orgId, String carrierServiceId) {
+    return TransitTimeEntriesDto.builder()
+        .orgId(orgId)
+        .carrierServiceId(carrierServiceId)
+        .totalRecords(2)
         .build();
   }
 }
