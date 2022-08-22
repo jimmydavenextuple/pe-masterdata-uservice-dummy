@@ -17,6 +17,7 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.Collections;
 import java.util.List;
@@ -255,14 +256,7 @@ class JobControllerTest {
         .thenReturn(pagePayloadJobDto);
 
     ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
-        jobController.getJobsByFilter(
-            TestUtil.ORG_ID,
-            Optional.of(TestUtil.JOB_TYPE_UPLOAD_TRANSIT_TIMES.name()),
-            Optional.of(3),
-            Optional.empty(),
-            Optional.empty(),
-            Optional.of(1),
-            Optional.of(1));
+        jobController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters());
     PagePayload<JobDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     verify(jobService, times(1))
@@ -284,15 +278,7 @@ class JobControllerTest {
     JobException exception =
         assertThrows(
             JobException.class,
-            () ->
-                jobController.getJobsByFilter(
-                    TestUtil.ORG_ID,
-                    Optional.of(TestUtil.JOB_TYPE_UPLOAD_TRANSIT_TIMES.name()),
-                    Optional.of(3),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.of(1),
-                    Optional.of(2)));
+            () -> jobController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters()));
 
     Assertions.assertEquals(
         "Error while retrieving the jobs", exception.getMessage(), "Exception Message");
@@ -303,21 +289,15 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterPageNoNotAllowedException() throws JobException {
+    JobFilters jobFilters = testUtil.getJobFilters();
+    jobFilters.setJobType(Optional.of(TestUtil.JOB_TYPE_UPLOAD_TRANSIT_TIMES.name()));
+    jobFilters.setPageNo(Optional.of(0));
     when(jobService.getJobsByJobInfo(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenThrow(new RuntimeException());
 
     JobException exception =
         assertThrows(
-            JobException.class,
-            () ->
-                jobController.getJobsByFilter(
-                    TestUtil.ORG_ID,
-                    Optional.of(TestUtil.JOB_TYPE_UPLOAD_TRANSIT_TIMES.name()),
-                    Optional.of(3),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.of(0),
-                    Optional.of(2)));
+            JobException.class, () -> jobController.getJobsByFilter(TestUtil.ORG_ID, jobFilters));
 
     Assertions.assertEquals(
         "PageNo can not be less than one", exception.getMessage(), "Exception Message");

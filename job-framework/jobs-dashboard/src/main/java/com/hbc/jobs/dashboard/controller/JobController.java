@@ -9,6 +9,7 @@ import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.dashboard.service.JobService;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.List;
 import java.util.Optional;
@@ -46,9 +47,6 @@ public class JobController {
   @Value("${pagination.default-page-size}")
   private Integer defaultPageSize;
 
-  @Value("${pagination.default-sort-field}")
-  private String defaultSortField;
-
   @PostMapping(
       path = "/org/{orgId}/jobs",
       produces = APPLICATION_JSON_VALUE,
@@ -58,18 +56,13 @@ public class JobController {
       @RequestParam @NotNull @Valid JobTypeEnum jobType,
       @RequestParam("file") MultipartFile csvFile)
       throws JobException {
-    log.info("Processing offline job request");
+    log.debug("Processing offline job request");
 
-    try {
-      JobDto jobDto = jobService.processJobOffline(csvFile, orgId, jobType);
+    JobDto jobDto = jobService.processJobOffline(csvFile, orgId, jobType);
 
-      log.info("Processing offline job request ends");
+    log.debug("Processing offline job request ends");
 
-      return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
-    } catch (Exception e) {
-      log.error("Processing offline job file failed!", e);
-      throw e;
-    }
+    return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
   }
 
   @PostMapping(
@@ -81,18 +74,13 @@ public class JobController {
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestBody String request)
       throws JobException {
-    log.info("Processing offline job json request");
+    log.debug("Processing offline job json request");
 
-    try {
-      JobDto jobDto = jobService.processJobJsonOffline(request, orgId, jobType, Optional.empty());
+    JobDto jobDto = jobService.processJobJsonOffline(request, orgId, jobType, Optional.empty());
 
-      log.info("Processing offline job json request ends");
+    log.debug("Processing offline job json request ends");
 
-      return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
-    } catch (Exception e) {
-      log.error("Processing offline job json request failed!", e);
-      throw e;
-    }
+    return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
   }
 
   @PutMapping(
@@ -105,19 +93,14 @@ public class JobController {
       @RequestBody String request,
       @PathVariable String jobId)
       throws JobException {
-    log.info("Processing offline job json request");
+    log.debug("Processing offline job json request");
 
-    try {
-      JobDto jobDto =
-          jobService.processJobJsonOffline(request, orgId, jobType, Optional.ofNullable(jobId));
+    JobDto jobDto =
+        jobService.processJobJsonOffline(request, orgId, jobType, Optional.ofNullable(jobId));
 
-      log.info("Processing offline job json request ends");
+    log.debug("Processing offline job json request ends");
 
-      return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
-    } catch (Exception e) {
-      log.error("Processing offline job json request failed!", e);
-      throw e;
-    }
+    return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
   }
 
   @GetMapping(path = "/org/{orgId}/jobs/{jobId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -125,12 +108,12 @@ public class JobController {
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotEmpty @NotNull @PathVariable String jobId)
       throws JobException {
-    log.info("Inside getJob method");
+    log.debug("Inside getJob method");
 
     try {
       JobDto job = jobService.getJob(orgId, jobId);
 
-      log.info("Job successfully retrieved : {}", jobId);
+      log.debug("Job successfully retrieved : {}", jobId);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -144,35 +127,34 @@ public class JobController {
   }
 
   /**
-   * @param jobType
-   * @param pageNo
-   * @param pageSize
+   * @param orgId
+   * @param jobFilters
    * @return
    * @throws JobException
    */
   @GetMapping(path = "/org/{orgId}/jobs/filters", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<PagePayload<JobDto>>> getJobsByFilter(
-      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
-      @RequestParam(required = false) Optional<String> jobType,
-      @RequestParam(required = false) Optional<Integer> days,
-      @RequestParam(required = false) Optional<String> sortField,
-      @RequestParam(required = false) Optional<String> sortOrder,
-      @RequestParam Optional<Integer> pageNo,
-      @RequestParam Optional<Integer> pageSize)
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId, JobFilters jobFilters)
       throws JobException {
     log.debug("--Inside getJobsByFilter()--");
     try {
-      int requiredPageNo = pageNo.orElse(defaultPageNo);
-      int requiredPageSize = pageNo.orElse(defaultPageSize);
+      int requiredPageNo = jobFilters.getPageNo().orElse(defaultPageNo);
+      int requiredPageSize = jobFilters.getPageSize().orElse(defaultPageSize);
 
       if (requiredPageNo < 1) {
-        JobTypeEnum jobTypeEnum = jobType.map(JobTypeEnum::valueOf).orElse(null);
+        JobTypeEnum jobTypeEnum = jobFilters.getJobType().map(JobTypeEnum::valueOf).orElse(null);
         throw new JobException("PageNo can not be less than one", null, jobTypeEnum);
       }
 
       PagePayload<JobDto> pageResp =
           jobService.getJobsByJobInfo(
-              orgId, jobType, days, sortField, sortOrder, requiredPageNo, requiredPageSize);
+              orgId,
+              jobFilters.getJobType(),
+              jobFilters.getDays(),
+              jobFilters.getSortBy(),
+              jobFilters.getSortOrder(),
+              requiredPageNo,
+              requiredPageSize);
 
       return ResponseEntity.ok()
           .body(

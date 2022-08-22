@@ -6,6 +6,7 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
 import com.hbc.jobs.framework.common.domain.pojo.Metadata;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import org.springframework.data.domain.Page;
@@ -29,7 +31,16 @@ public class TestUtil {
       JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES;
   public static final JobTypeEnum JOB_TYPE_UPLOAD_TRANSIT_TIMES = JobTypeEnum.UPLOAD_TRANSIT_TIMES;
   public static final String JOB_ID = "JobId1";
-  public static final String PRIMARY_REFERENCE = "primary_reference";
+
+  public static final String JOB_TYPE = JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES.name();
+
+  public static final Optional<String> DEFAULT_SORT_FIELD = Optional.of("created_date");
+
+  public static final Optional<String> DEFAULT_SORT_ORDER = Optional.of("ASC");
+
+  public static final Optional<Integer> DEFAULT_PAGE_NO = Optional.of(1);
+
+  public static final Optional<Integer> DEFAULT_PAGE_SIZE = Optional.of(15);
 
   public JobDto createJob(
       String jobId,
@@ -309,5 +320,17 @@ public class TestUtil {
         };
 
     return pageResponse;
+  }
+
+  public JobFilters getJobFilters() {
+    JobFilters jobFilters = new JobFilters();
+    jobFilters.setDays(Optional.empty());
+    jobFilters.setJobType(Optional.empty());
+    jobFilters.setSortBy(DEFAULT_SORT_FIELD);
+    jobFilters.setSortOrder(DEFAULT_SORT_ORDER);
+    jobFilters.setPageNo(DEFAULT_PAGE_NO);
+    jobFilters.setPageSize(DEFAULT_PAGE_SIZE);
+
+    return jobFilters;
   }
 }

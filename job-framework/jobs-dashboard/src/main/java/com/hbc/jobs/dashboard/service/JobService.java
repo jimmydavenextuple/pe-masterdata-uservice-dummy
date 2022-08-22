@@ -66,7 +66,7 @@ public class JobService {
    */
   public JobDto processJobOffline(MultipartFile inputFile, String orgId, JobTypeEnum jobType)
       throws JobException {
-    log.info("Inside processJobOffline service");
+    log.debug("Inside processJobOffline service");
 
     try {
       RecordDataTypeEnum fileType = getFileType(inputFile);
@@ -196,7 +196,7 @@ public class JobService {
    * @param fileType
    */
   private void publishToKafka(int recordId, String data, JobDto job, RecordDataTypeEnum fileType) {
-    log.info("Inside publish to kafka method");
+    log.debug("Inside publish to kafka method");
     RecordDto recordDto = new RecordDto();
     recordDto.setRecordId(recordId);
     recordDto.setRecordData(data);
@@ -211,13 +211,13 @@ public class JobService {
             .build();
 
     try {
-      log.info("Publishing to kafka");
+      log.debug("Publishing to kafka");
       kafkaTemplate
           .send(message)
           .addCallback(
               e -> log.error("JobService::publishToKafka():success to publish record dto", e),
               e -> log.error("JobService::publishToKafka():failed to publish record dto", e));
-      log.info("Publish to kafka method ends");
+      log.debug("Publish to kafka method ends");
     } catch (Exception e) {
       log.error("JobService::publishToKafka():failed to publish record dto", e);
       throw e;
@@ -274,7 +274,7 @@ public class JobService {
    * @throws JobException
    */
   public JobDto getJob(String orgId, String jobId) throws JobException {
-    log.info("Inside getJob service");
+    log.debug("Inside getJob service");
 
     try {
       BaseResponse<JobDto> baseResponse = jobsConsumerClient.getJob(orgId, jobId);
@@ -340,7 +340,7 @@ public class JobService {
   public JobDto processJobJsonOffline(
       String request, String orgId, JobTypeEnum jobType, Optional<String> jobId)
       throws JobException {
-    log.info("Inside processJobOffline service");
+    log.debug("Inside processJobOffline service");
 
     try {
       List<String> jsonList = parseJSON(request);

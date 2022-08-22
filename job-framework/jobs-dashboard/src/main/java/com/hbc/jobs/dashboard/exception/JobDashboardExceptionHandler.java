@@ -45,4 +45,10 @@ public class JobDashboardExceptionHandler {
                         .build())
                 .build());
   }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorResponse> handleCommonExceptions(Exception e) {
+    return ResponseEntity.badRequest()
+        .body(ErrorResponse.builder(ErrorType.ERROR, 0xfffff8).message(e.getMessage()).build());
+  }
 }
