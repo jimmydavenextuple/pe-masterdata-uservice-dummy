@@ -20,5 +20,7 @@ public class PagePayload<T> {
     private Integer totalPages;
     private Integer currentPage;
     private Integer totalRecords;
+    private String sortOrder;
+    private String sortBy;
   }
 }
