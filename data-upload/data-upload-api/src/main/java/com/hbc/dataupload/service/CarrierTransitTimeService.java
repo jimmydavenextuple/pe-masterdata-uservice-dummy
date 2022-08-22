@@ -72,7 +72,7 @@ public class CarrierTransitTimeService {
       CarrierServiceResponse carrierServiceResponse,
       List<CarrierServiceCalendarResponse> carrierServiceCalendarResponseList,
       TransitTimeEntriesDto transitTimeEntries) {
-    CarrierTransitDto carrierTransitDto = new CarrierTransitDto();
+    var carrierTransitDto = new CarrierTransitDto();
     carrierTransitDto.setOrgId(carrierServiceResponse.getOrgId());
     carrierTransitDto.setCarrierId(carrierServiceResponse.getCarrierId());
     carrierTransitDto.setCarrierServiceId(carrierServiceResponse.getCarrierServiceId());
