@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface SourcingRuleFeignImpl
     extends GenericFeignService<
         FetchPromiseSourcingRuleRequest, BaseResponse<FetchPromiseSourcingRuleResponse>> {
-  @PostMapping("/promiseSourcingRule/fetchRules")
+  @PostMapping("/promise-sourcing-rule/fetch-rules")
   BaseResponse<FetchPromiseSourcingRuleResponse> get(
       @RequestBody FetchPromiseSourcingRuleRequest baseRequest);
 }

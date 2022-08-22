@@ -14,10 +14,12 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.postal.code.timezone.TestUtil;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.service.PostalCodeTimezoneService;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -163,5 +165,33 @@ class PostalCodeTimezoneControllerTest {
           postalCodeTimezoneController.deletePostalCodeTimezone(ORG_ID, POSTAL_CODE_PREFIX);
         });
     verify(postalCodeTimezoneService, times(1)).deletePostalCodeTimezone(anyString(), anyString());
+  }
+
+  @Test
+  void getPostalCodePrefixListTest() throws PromiseEngineException {
+    PostalCodePrefixDto postalCodePrefixDto = testUtil.getPostalCodePrefixDto();
+    when(postalCodeTimezoneService.fetchPostalCodePrefixList(anyString()))
+        .thenReturn(List.of(postalCodePrefixDto));
+
+    ResponseEntity<BaseResponse<List<PostalCodePrefixDto>>> responseEntity =
+        postalCodeTimezoneController.getPostalCodePrefixList(ORG_ID);
+
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), STATUS_CODE);
+    assertEquals(postalCodePrefixDto, responseEntity.getBody().getPayload().get(0));
+    verify(postalCodeTimezoneService, times(1)).fetchPostalCodePrefixList(anyString());
+  }
+
+  @Test
+  void getPostalCodePrefixListExceptionTest() throws PromiseEngineException {
+    when(postalCodeTimezoneService.fetchPostalCodePrefixList(anyString()))
+        .thenThrow(PromiseEngineException.class);
+
+    assertThrows(
+        PromiseEngineException.class,
+        () -> {
+          postalCodeTimezoneController.getPostalCodePrefixList(ORG_ID);
+        });
+
+    verify(postalCodeTimezoneService, times(1)).fetchPostalCodePrefixList(anyString());
   }
 }

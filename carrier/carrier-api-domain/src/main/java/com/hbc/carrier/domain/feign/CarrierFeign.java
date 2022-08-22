@@ -3,6 +3,7 @@ package com.hbc.carrier.domain.feign;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
+import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
     name = "pe-config-carrier",
@@ -40,4 +42,12 @@ public interface CarrierFeign {
       @NotBlank @PathVariable String carrierId,
       @NotBlank @PathVariable String carrierServiceId,
       @NotBlank @PathVariable String orgId);
+
+  @GetMapping("/carrier-service/{orgId}")
+  BaseResponse<PagePayload<CarrierServiceResponse>> getCarrierServiceListWithPagination(
+      @PathVariable String orgId,
+      @RequestParam(required = false) Integer pageNo,
+      @RequestParam(required = false) Integer pageSize,
+      @RequestParam(required = false) String sortBy,
+      @RequestParam(required = false) String sortOrder);
 }

@@ -11,6 +11,7 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXP
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.IS_ACTIVE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NEXTDAY_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
@@ -101,10 +102,13 @@ public class NodeDataUploadService {
           String latitude = csvRecord.get(LATITUDE);
           String longitude = csvRecord.get(LONGITUDE);
           String timezone = csvRecord.get(TIMEZONE);
+          Map<String, Boolean> serviceOptionEligibilities =
+              Map.of(
+                  SDND_ELIGIBLE, Boolean.valueOf(csvRecord.get(SDND_ELIGIBLE)),
+                  EXPRESS_ELIGIBLE, Boolean.valueOf(csvRecord.get(EXPRESS_ELIGIBLE)),
+                  NEXTDAY_ELIGIBLE, Boolean.valueOf(csvRecord.get(NEXTDAY_ELIGIBLE)));
           Boolean shipToHome = Boolean.valueOf(csvRecord.get(SHIP_TO_HOME));
-          Boolean sdndEligible = Boolean.valueOf(csvRecord.get(SDND_ELIGIBLE));
           Boolean bopisEligible = Boolean.valueOf(csvRecord.get(BOPIS_ELIGIBLE));
-          Boolean expressEligible = Boolean.valueOf(csvRecord.get(EXPRESS_ELIGIBLE));
           String nodeType = csvRecord.get(NODE_TYPE);
           Boolean isActive = Boolean.valueOf(csvRecord.get(IS_ACTIVE));
 
@@ -124,9 +128,8 @@ public class NodeDataUploadService {
                         .longitude(longitude)
                         .timezone(timezone)
                         .shipToHome(shipToHome)
-                        .sdndEligible(sdndEligible)
+                        .serviceOptionEligibilities(serviceOptionEligibilities)
                         .bopisEligible(bopisEligible)
-                        .expressEligible(expressEligible)
                         .nodeType(nodeType)
                         .isActive(isActive)
                         .build();
@@ -149,9 +152,8 @@ public class NodeDataUploadService {
                         .longitude(longitude)
                         .timezone(timezone)
                         .shipToHome(shipToHome)
-                        .sdndEligible(sdndEligible)
+                        .serviceOptionEligibilities(serviceOptionEligibilities)
                         .bopisEligible(bopisEligible)
-                        .expressEligible(expressEligible)
                         .nodeType(nodeType)
                         .isActive(isActive)
                         .build();

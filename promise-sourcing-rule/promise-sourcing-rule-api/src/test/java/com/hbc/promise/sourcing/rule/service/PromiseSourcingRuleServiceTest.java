@@ -2,11 +2,13 @@ package com.hbc.promise.sourcing.rule.service;
 
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.ALLOCATION_RULE_ID;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.DESTINATION_GEO_ZONE;
+import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.EXPRESS;
+import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.NEXTDAY;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.ORG_ID;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.PRIORITY;
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.PROMISE_SOURCING_RULE_SUCCESSFULLY_FETCHED;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.SDND;
 import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.SERVICE_OPTION;
+import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.STANDARD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,6 +30,7 @@ import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,17 +61,33 @@ class PromiseSourcingRuleServiceTest {
     FetchPromiseSourcingRuleResponse fetchPromiseSourcingRuleResponse =
         promiseSourcingRuleService.fetchSourcingRule(fetchPromiseSourcingRuleRequest);
     assertEquals(
-        "Node-1",
-        fetchPromiseSourcingRuleResponse.getSdnd().get(0).getSourceNodes().toArray()[0],
-        PROMISE_SOURCING_RULE_SUCCESSFULLY_FETCHED);
+        Set.of("Node-1"),
+        fetchPromiseSourcingRuleResponse
+            .getServiceOptionSourcingRules()
+            .get(SDND)
+            .get(0)
+            .getSourceNodes());
     assertEquals(
-        "Node-2",
-        fetchPromiseSourcingRuleResponse.getStandard().get(0).getSourceNodes().toArray()[0],
-        PROMISE_SOURCING_RULE_SUCCESSFULLY_FETCHED);
+        Set.of("Node-2"),
+        fetchPromiseSourcingRuleResponse
+            .getServiceOptionSourcingRules()
+            .get(STANDARD)
+            .get(0)
+            .getSourceNodes());
     assertEquals(
-        "Node-3",
-        fetchPromiseSourcingRuleResponse.getExpress().get(0).getSourceNodes().toArray()[0],
-        PROMISE_SOURCING_RULE_SUCCESSFULLY_FETCHED);
+        Set.of("Node-3"),
+        fetchPromiseSourcingRuleResponse
+            .getServiceOptionSourcingRules()
+            .get(EXPRESS)
+            .get(0)
+            .getSourceNodes());
+    assertEquals(
+        Set.of("Node-4"),
+        fetchPromiseSourcingRuleResponse
+            .getServiceOptionSourcingRules()
+            .get(NEXTDAY)
+            .get(0)
+            .getSourceNodes());
     verify(promiseSourcingRuleDomain, times(1)).fetchSourcingRule(any());
   }
 
