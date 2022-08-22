@@ -30,4 +30,10 @@ public interface TransitRepository extends JpaRepository<TransitEntity, String> 
       nativeQuery = true)
   List<TransitEntity> findByOrgIdAndDestinationGeozoneAndSourceGeoZones(
       String orgId, String destinationGeozone, List<String> sourceGeozones);
+
+  @Query(
+      value =
+          "SELECT COUNT(*) FROM transit_data t WHERE t.org_id = ?1 AND t.carrier_service_id = ?2",
+      nativeQuery = true)
+  Integer findTransitCountByOrgIdAndCarrierServiceId(String orgId, String carrierServiceId);
 }

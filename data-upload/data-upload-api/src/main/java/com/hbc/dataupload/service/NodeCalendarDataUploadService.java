@@ -96,7 +96,7 @@ public class NodeCalendarDataUploadService {
                     .description(description)
                     .build();
             BaseResponse<NodeCalendarResponse> baseResponse =
-                calendarFeign.handleCreateNodeCalendar(nodeCalendarRequest);
+                calendarFeign.createNodeCalendar(nodeCalendarRequest);
             nodeCalendarResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else {
