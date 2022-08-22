@@ -4,6 +4,7 @@ import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.outbound.NodeResponse;
+import java.util.Map;
 
 public class TestUtil {
 
@@ -32,16 +33,15 @@ public class TestUtil {
         .bopisEligible(BOPIS_ELIGIBLE)
         .city(CITY)
         .country(COUNTRY)
-        .expressEligible(EXPRESS_ELIGIBLE)
         .nodeType(NODE_TYPE)
         .isActive(IS_ACTIVE)
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .postalCode(POSTAL_CODE)
-        .sdndEligible(SDND_ELIGIBLE)
         .province(PROVINCE)
         .shipToHome(SHIP_TO_TIME)
         .timezone(TIME_ZONE)
+        .serviceOptionEligibilities(getServiceOptionEligibilities())
         .build();
   }
 
@@ -53,16 +53,15 @@ public class TestUtil {
         .bopisEligible(BOPIS_ELIGIBLE)
         .city(CITY)
         .country(COUNTRY)
-        .expressEligible(EXPRESS_ELIGIBLE)
         .nodeType(NODE_TYPE)
         .isActive(IS_ACTIVE)
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .postalCode(POSTAL_CODE)
-        .sdndEligible(SDND_ELIGIBLE)
         .province(PROVINCE)
         .shipToHome(SHIP_TO_TIME)
         .timezone(TIME_ZONE)
+        .serviceOptionEligibilities(getServiceOptionEligibilities())
         .build();
   }
 
@@ -74,16 +73,15 @@ public class TestUtil {
         .bopisEligible(BOPIS_ELIGIBLE)
         .city(CITY)
         .country(COUNTRY)
-        .expressEligible(EXPRESS_ELIGIBLE)
         .nodeType(NODE_TYPE)
         .isActive(IS_ACTIVE)
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .postalCode(POSTAL_CODE)
-        .sdndEligible(SDND_ELIGIBLE)
         .province(PROVINCE)
         .shipToHome(SHIP_TO_TIME)
         .timezone(TIME_ZONE)
+        .serviceOptionEligibilities(getServiceOptionEligibilities())
         .build();
   }
 
@@ -103,16 +101,15 @@ public class TestUtil {
         .bopisEligible(BOPIS_ELIGIBLE)
         .city("city-2")
         .country(COUNTRY)
-        .expressEligible(EXPRESS_ELIGIBLE)
         .nodeType(NODE_TYPE)
         .isActive(Boolean.FALSE)
         .latitude("3526.5262")
         .longitude(LONGITUDE)
         .postalCode(POSTAL_CODE)
-        .sdndEligible(SDND_ELIGIBLE)
         .province(PROVINCE)
         .shipToHome(SHIP_TO_TIME)
         .timezone(TIME_ZONE)
+        .serviceOptionEligibilities(getServiceOptionEligibilities())
         .build();
   }
 
@@ -124,16 +121,22 @@ public class TestUtil {
         .bopisEligible(BOPIS_ELIGIBLE)
         .city("city-2")
         .country(COUNTRY)
-        .expressEligible(EXPRESS_ELIGIBLE)
         .nodeType(NODE_TYPE)
         .isActive(Boolean.FALSE)
         .latitude("3526.5262")
         .longitude(LONGITUDE)
         .postalCode(POSTAL_CODE)
-        .sdndEligible(SDND_ELIGIBLE)
         .province(PROVINCE)
         .shipToHome(SHIP_TO_TIME)
         .timezone(TIME_ZONE)
+        .serviceOptionEligibilities(getServiceOptionEligibilities())
         .build();
+  }
+
+  public Map<String, Boolean> getServiceOptionEligibilities() {
+    return Map.of(
+        "sdndEligible", Boolean.TRUE,
+        "expressEligible", Boolean.TRUE,
+        "nextdayEligible", Boolean.TRUE);
   }
 }
