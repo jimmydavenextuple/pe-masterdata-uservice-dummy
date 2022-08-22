@@ -99,7 +99,7 @@ public class CarrierCalendarDataUploadService {
                     .effectiveDate(effectiveDate)
                     .build();
             BaseResponse<CarrierServiceCalendarResponse> baseResponse =
-                calendarFeign.handleCreateCarrierServiceCalendar(carrierServiceCalendarRequest);
+                calendarFeign.createCarrierServiceCalendar(carrierServiceCalendarRequest);
             carrierCalendar = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else {

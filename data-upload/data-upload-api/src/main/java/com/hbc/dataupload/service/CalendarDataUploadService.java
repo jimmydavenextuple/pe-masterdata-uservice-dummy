@@ -119,7 +119,7 @@ public class CalendarDataUploadService {
                     .exceptionDays(exceptionDaysList)
                     .build();
             BaseResponse<CalendarResponse> baseResponse =
-                calendarFeign.handleCreateCalendar(calendarRequest);
+                calendarFeign.createCalendar(calendarRequest);
             calendarResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else {

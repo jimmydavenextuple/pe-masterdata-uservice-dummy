@@ -99,4 +99,15 @@ public class TransitDomain {
           "Error while fetching transit list", orgId, null, destinationGeozone, null);
     }
   }
+
+  public Integer fetchTransitEntitiesCount(String orgId, String carrierServiceId)
+      throws TransitDomainException {
+    try {
+      return transitRepository.findTransitCountByOrgIdAndCarrierServiceId(orgId, carrierServiceId);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to fetch transit entities count");
+      throw new TransitDomainException(
+          "Error while fetching transit entities count", orgId, null, null, carrierServiceId);
+    }
+  }
 }

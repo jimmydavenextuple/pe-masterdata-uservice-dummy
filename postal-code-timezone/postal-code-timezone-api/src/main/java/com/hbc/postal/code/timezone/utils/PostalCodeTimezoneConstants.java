@@ -3,6 +3,7 @@ package com.hbc.postal.code.timezone.utils;
 public class PostalCodeTimezoneConstants {
   public static final String ORG_ID = "ABC";
   public static final String POSTAL_CODE_PREFIX = "XYZ";
+  public static final String POSTAL_CODE_PREFIX_2 = "ABC";
   public static final String COUNTRY = "CANADA";
   public static final String STATE = "ONTARIO";
   public static final String CITY = "TORONTO";
