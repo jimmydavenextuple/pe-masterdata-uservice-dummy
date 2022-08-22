@@ -48,7 +48,7 @@ class CarrierCalendarDataUploadServiceTest {
 
     BaseResponse<CarrierServiceCalendarResponse> baseResponse =
         testUtil.getBaseResponseOfCarrierCalendar();
-    when(calendarFeign.handleCreateCarrierServiceCalendar(any())).thenReturn(baseResponse);
+    when(calendarFeign.createCarrierServiceCalendar(any())).thenReturn(baseResponse);
 
     ResponseEntity<BaseResponse<String>> response =
         calendarDataUploadUtilityService.uploadCarrierCalendarData(absolutePath);
@@ -178,7 +178,7 @@ class CarrierCalendarDataUploadServiceTest {
 
     BaseResponse<CarrierServiceCalendarResponse> baseResponse =
         testUtil.getBaseResponseOfCarrierCalendar();
-    when(calendarFeign.handleCreateCarrierServiceCalendar(any())).thenReturn(baseResponse);
+    when(calendarFeign.createCarrierServiceCalendar(any())).thenReturn(baseResponse);
 
     ResponseEntity<BaseResponse<String>> response =
         calendarDataUploadUtilityService.uploadCarrierCalendarData(absolutePath);

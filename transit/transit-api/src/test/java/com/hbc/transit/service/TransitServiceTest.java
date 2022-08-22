@@ -8,6 +8,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.TransitDomain;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -215,5 +216,31 @@ class TransitServiceTest {
     Assertions.assertEquals(
         transitEntity.getTransitDays(), transitResponse.get(0).getTransitDays());
     verify(transitDomain, times(1)).fetchTransitList(any(), any(), any());
+  }
+
+  @Test
+  void getTransitTimeEntriesTest() throws TransitDomainException {
+    when(transitDomain.fetchTransitEntitiesCount(any(), any())).thenReturn(5);
+
+    TransitTimeEntriesDto transitResponse =
+        transitService.getTransitTimeEntries(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertEquals(TestUtil.ORG_ID, transitResponse.getOrgId());
+    Assertions.assertEquals(5, transitResponse.getTotalRecords());
+
+    verify(transitDomain, times(1)).fetchTransitEntitiesCount(any(), any());
+  }
+
+  @Test
+  void getTransitTimeZeroEntriesTest() throws TransitDomainException {
+    when(transitDomain.fetchTransitEntitiesCount(any(), any())).thenReturn(0);
+
+    TransitTimeEntriesDto transitResponse =
+        transitService.getTransitTimeEntries(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertEquals(TestUtil.ORG_ID, transitResponse.getOrgId());
+    Assertions.assertEquals(0, transitResponse.getTotalRecords());
+
+    verify(transitDomain, times(1)).fetchTransitEntitiesCount(any(), any());
   }
 }
