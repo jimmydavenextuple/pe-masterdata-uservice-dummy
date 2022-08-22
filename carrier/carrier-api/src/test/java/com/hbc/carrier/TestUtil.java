@@ -21,7 +21,7 @@ public class TestUtil {
   public static final String SERVICE_NAME = "service-name-1";
   public static final String SERVICE_OPTIONS = "service-options-1";
   public static final String SORT_BY = "carrierId";
-  public static final String SORT_ORDER_DESC = "DESC";
+  public static final String SORT_ORDER_DESC = "desc";
   public static final String SORT_ORDER_ASC = "ASC";
   private static final String CARRIER_ID_2 = "carrier-2";
 

@@ -46,7 +46,7 @@ public class CarrierTransitTimeService {
       try {
         carrierServiceCalendarResponseList =
             calendarFeign
-                .handleGetCarrierServiceCalendar(
+                .getCarrierServiceCalendar(
                     carrierServiceResponse.getOrgId(), carrierServiceResponse.getCarrierServiceId())
                 .getPayload();
       } catch (RuntimeException e) {

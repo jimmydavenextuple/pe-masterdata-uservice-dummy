@@ -22,22 +22,22 @@ import org.springframework.web.bind.annotation.RequestBody;
     url = "${spring.application.dependencies.calendar:http://pe-config-calendar:8080/}")
 public interface CalendarFeign {
   @PostMapping("/calendar")
-  BaseResponse<CalendarResponse> handleCreateCalendar(
+  BaseResponse<CalendarResponse> createCalendar(
       @Valid @RequestBody CalendarRequest calendarRequest);
 
   @PostMapping("/node-calendar")
-  BaseResponse<NodeCalendarResponse> handleCreateNodeCalendar(
+  BaseResponse<NodeCalendarResponse> createNodeCalendar(
       @Valid @RequestBody NodeCalendarRequest nodeCalendarRequest);
 
   @PostMapping("/carrier-service-calendar")
-  BaseResponse<CarrierServiceCalendarResponse> handleCreateCarrierServiceCalendar(
+  BaseResponse<CarrierServiceCalendarResponse> createCarrierServiceCalendar(
       @Valid @RequestBody CarrierServiceCalendarRequest carrierServiceCalendarRequest);
 
   @PostMapping("/node-carrier-service-calendar")
-  BaseResponse<NodeCarrierServiceCalendarResponse> handleCreateNodeCarrierServiceCalendar(
+  BaseResponse<NodeCarrierServiceCalendarResponse> createNodeCarrierServiceCalendar(
       @Valid @RequestBody NodeCarrierServiceCalendarRequest nodeCarrierServiceCalendarRequest);
 
   @GetMapping("/carrier-service-calendar/{orgId}/{carrierServiceId}")
-  BaseResponse<List<CarrierServiceCalendarResponse>> handleGetCarrierServiceCalendar(
+  BaseResponse<List<CarrierServiceCalendarResponse>> getCarrierServiceCalendar(
       @PathVariable String orgId, @PathVariable String carrierServiceId);
 }

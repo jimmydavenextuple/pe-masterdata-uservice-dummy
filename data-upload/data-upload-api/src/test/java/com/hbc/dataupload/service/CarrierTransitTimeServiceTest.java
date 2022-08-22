@@ -33,8 +33,7 @@ class CarrierTransitTimeServiceTest {
 
     when(carrierFeign.getCarrierServiceListWithPagination(any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getCarrierServiceListWithPaginationBaseResponse());
-    when(calendarFeign.handleGetCarrierServiceCalendar(
-            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID))
+    when(calendarFeign.getCarrierServiceCalendar(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID))
         .thenReturn(testUtil.getCarrierServiceCalendarBaseResponse());
     when(transitFeign.getTransitTimeEntries(any(), any()))
         .thenReturn(testUtil.getTransitTimeEntriesDtoBaseResponse(5));
@@ -53,7 +52,7 @@ class CarrierTransitTimeServiceTest {
 
     verify(carrierFeign, times(1))
         .getCarrierServiceListWithPagination(any(), any(), any(), any(), any());
-    verify(calendarFeign, times(2)).handleGetCarrierServiceCalendar(any(), any());
+    verify(calendarFeign, times(2)).getCarrierServiceCalendar(any(), any());
     verify(transitFeign, times(2)).getTransitTimeEntries(any(), any());
   }
 
@@ -62,8 +61,7 @@ class CarrierTransitTimeServiceTest {
 
     when(carrierFeign.getCarrierServiceListWithPagination(any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getCarrierServiceListWithPaginationBaseResponse());
-    when(calendarFeign.handleGetCarrierServiceCalendar(
-            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID))
+    when(calendarFeign.getCarrierServiceCalendar(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID))
         .thenThrow(new RuntimeException("Carrier Calendar not found"));
     when(transitFeign.getTransitTimeEntries(any(), any()))
         .thenReturn(testUtil.getTransitTimeEntriesDtoBaseResponse(0));
@@ -82,7 +80,7 @@ class CarrierTransitTimeServiceTest {
 
     verify(carrierFeign, times(1))
         .getCarrierServiceListWithPagination(any(), any(), any(), any(), any());
-    verify(calendarFeign, times(2)).handleGetCarrierServiceCalendar(any(), any());
+    verify(calendarFeign, times(2)).getCarrierServiceCalendar(any(), any());
     verify(transitFeign, times(2)).getTransitTimeEntries(any(), any());
   }
 }

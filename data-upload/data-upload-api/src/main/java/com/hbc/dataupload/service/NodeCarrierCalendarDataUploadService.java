@@ -100,8 +100,7 @@ public class NodeCarrierCalendarDataUploadService {
                     .effectiveDate(effectiveDate)
                     .build();
             BaseResponse<NodeCarrierServiceCalendarResponse> baseResponse =
-                calendarFeign.handleCreateNodeCarrierServiceCalendar(
-                    nodeCarrierServiceCalendarRequest);
+                calendarFeign.createNodeCarrierServiceCalendar(nodeCarrierServiceCalendarRequest);
             nodeCarrierCalendarResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else {

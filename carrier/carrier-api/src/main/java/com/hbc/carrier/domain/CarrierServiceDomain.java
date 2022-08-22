@@ -68,7 +68,7 @@ public class CarrierServiceDomain {
       throws CarrierServiceDomainException {
     try {
       Pageable pageable = null;
-      if (sortOrder.equals("ASC")) {
+      if (sortOrder.equalsIgnoreCase("ASC")) {
         pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).ascending());
       } else {
         pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).descending());

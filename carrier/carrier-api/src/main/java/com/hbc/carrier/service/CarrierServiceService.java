@@ -124,7 +124,7 @@ public class CarrierServiceService {
   public Page<CarrierServiceResponse> getCarrierServiceList(
       String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
       throws CarrierServiceDomainException, CommonServiceException {
-    if (sortOrder.equals("ASC") || sortOrder.equals("DESC")) {
+    if (sortOrder.equalsIgnoreCase("ASC") || sortOrder.equalsIgnoreCase("DESC")) {
       return carrierServiceDomain.findCarrierServiceListByOrgId(
           orgId, pageNo, pageSize, sortBy, sortOrder);
     } else {
