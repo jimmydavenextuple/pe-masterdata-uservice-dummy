@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -135,27 +136,25 @@ public class PostalCodeTimezoneService {
       throws PromiseEngineException {
     List<PostalCodeTimezoneEntity> postalCodeTimezoneEntities =
         postalCodeTimezoneDomain.getPostalCodeTimezoneForOrgId(orgId);
-
-    List<PostalCodePrefixDto> postalCodePrefixDtoList = new ArrayList<>();
     Set<String> visitedStates = new HashSet<>();
+    return postalCodeTimezoneEntities.stream()
+        .filter(pte -> !visitedStates.contains(pte.getState()))
+        .map(pte -> this.postalCodePrefixDto(pte, postalCodeTimezoneEntities, visitedStates))
+        .collect(Collectors.toList());
+  }
 
-    for (PostalCodeTimezoneEntity postalCodeTimezoneEntity : postalCodeTimezoneEntities) {
-      if (!visitedStates.contains(postalCodeTimezoneEntity.getState())) {
-        var postalCodePrefixDto = new PostalCodePrefixDto();
-        List<String> postalCodePrefixList = new ArrayList<>();
-
-        for (PostalCodeTimezoneEntity postalCodeTimezoneEntity1 : postalCodeTimezoneEntities) {
-          if (postalCodeTimezoneEntity1.getState().equals(postalCodeTimezoneEntity.getState())) {
-            postalCodePrefixList.add(postalCodeTimezoneEntity1.getPostalCodePrefix());
-          }
-        }
-
-        postalCodePrefixDto.setState(postalCodeTimezoneEntity.getState());
-        postalCodePrefixDto.setPostalCodePrefix(postalCodePrefixList);
-        postalCodePrefixDtoList.add(postalCodePrefixDto);
-        visitedStates.add(postalCodeTimezoneEntity.getState());
-      }
-    }
-    return postalCodePrefixDtoList;
+  private PostalCodePrefixDto postalCodePrefixDto(
+      PostalCodeTimezoneEntity postalCodeTimezoneEntity,
+      List<PostalCodeTimezoneEntity> list,
+      Set<String> visitedStates) {
+    var postalCodePrefixDto = new PostalCodePrefixDto();
+    List<String> postalCodePrefixList = new ArrayList<>();
+    list.stream()
+        .filter(pte -> pte.getState().equals(postalCodeTimezoneEntity.getState()))
+        .forEach(pte -> postalCodePrefixList.add(pte.getPostalCodePrefix()));
+    postalCodePrefixDto.setState(postalCodeTimezoneEntity.getState());
+    postalCodePrefixDto.setPostalCodePrefix(postalCodePrefixList);
+    visitedStates.add(postalCodeTimezoneEntity.getState());
+    return postalCodePrefixDto;
   }
 }
