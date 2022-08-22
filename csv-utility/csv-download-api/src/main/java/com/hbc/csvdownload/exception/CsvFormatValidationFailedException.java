@@ -1,12 +1,19 @@
 package com.hbc.csvdownload.exception;
 
+import lombok.Data;
+
+@Data
 public class CsvFormatValidationFailedException extends Exception {
 
-  public CsvFormatValidationFailedException(String message) {
+  private final String columnName;
+
+  public CsvFormatValidationFailedException(String message, String columnName) {
     super(message);
+    this.columnName = columnName;
   }
 
-  public CsvFormatValidationFailedException(String message, Throwable cause) {
+  public CsvFormatValidationFailedException(String message, Throwable cause, String columnName) {
     super(message, cause);
+    this.columnName = columnName;
   }
 }

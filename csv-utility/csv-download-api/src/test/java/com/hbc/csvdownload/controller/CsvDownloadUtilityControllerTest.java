@@ -1,20 +1,12 @@
 package com.hbc.csvdownload.controller;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.hbc.common.response.BaseResponse;
-import com.hbc.csvdownload.common.TestUtil;
-import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
-import com.hbc.csvdownload.exception.CsvParsingException;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
-import com.hbc.csvdownload.exception.JobSubmissionException;
-import com.hbc.csvdownload.exception.JsonParsingException;
-import com.hbc.csvdownload.service.CsvUploadUtilityService;
 import java.io.IOException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -23,19 +15,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
-class CsvUtilityControllerTest {
+class CsvDownloadUtilityControllerTest {
 
-  @Mock private CsvUploadUtilityService csvUploadUtilityService;
-
-  @InjectMocks private CsvUtilityController csvUtilityController;
+  @InjectMocks private CsvDownloadUtilityController csvDownloadUtilityController;
 
   @Test
   void downloadCSVTemplate() throws IOException, InvalidTemplateTypeException {
@@ -74,8 +60,8 @@ class CsvUtilityControllerTest {
 
     when(response.getOutputStream()).thenReturn(servletOutputStream);
 
-    csvUtilityController.downloadCSVTemplate("transitTime", request, response);
-    csvUtilityController.downloadCSVTemplate("processingLeadTime", request, response);
+    csvDownloadUtilityController.downloadCSVTemplate("transitTime", request, response);
+    csvDownloadUtilityController.downloadCSVTemplate("processingLeadTime", request, response);
     verify(response, times(2)).getOutputStream();
   }
 
@@ -87,7 +73,9 @@ class CsvUtilityControllerTest {
     Exception exception =
         Assertions.assertThrows(
             InvalidTemplateTypeException.class,
-            () -> csvUtilityController.downloadCSVTemplate("transitTime1", request, response));
+            () ->
+                csvDownloadUtilityController.downloadCSVTemplate(
+                    "transitTime1", request, response));
 
     Assertions.assertNotNull(exception);
   }
@@ -127,38 +115,7 @@ class CsvUtilityControllerTest {
 
     when(response.getOutputStream()).thenThrow(new IOException("Unexpected error"));
 
-    csvUtilityController.downloadCSVTemplate("transitTime", request, response);
+    csvDownloadUtilityController.downloadCSVTemplate("transitTime", request, response);
     verify(response, times(1)).getOutputStream();
-  }
-
-  @Test
-  void uploadProcessingLeadTimes()
-      throws CsvParsingException, CsvFormatValidationFailedException, JobSubmissionException,
-          JsonParsingException {
-    MultipartFile csvFile = mock(MultipartFile.class);
-    when(csvUploadUtilityService.uploadProcessingLeadTimesCsv(any(), any()))
-        .thenReturn("Job to bulk upload processing lead times is submitted successfully");
-
-    ResponseEntity<BaseResponse<String>> res =
-        csvUtilityController.uploadProcessingLeadTimes(TestUtil.ORG_ID, csvFile);
-    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
-    Assertions.assertNotNull(res.getBody());
-    Assertions.assertNotNull(res.getBody().getPayload());
-    Assertions.assertFalse(ObjectUtils.isEmpty(res.getBody().getPayload()));
-  }
-
-  @Test
-  void uploadProcessingLeadTimesException()
-      throws CsvParsingException, CsvFormatValidationFailedException, JobSubmissionException,
-          JsonParsingException {
-    MultipartFile csvFile = mock(MultipartFile.class);
-    when(csvUploadUtilityService.uploadProcessingLeadTimesCsv(any(), any()))
-        .thenThrow(new CsvParsingException("Invalid CSV template"));
-
-    Exception exception =
-        Assertions.assertThrows(
-            CsvParsingException.class,
-            () -> csvUtilityController.uploadProcessingLeadTimes(TestUtil.ORG_ID, csvFile));
-    Assertions.assertNotNull(exception);
   }
 }

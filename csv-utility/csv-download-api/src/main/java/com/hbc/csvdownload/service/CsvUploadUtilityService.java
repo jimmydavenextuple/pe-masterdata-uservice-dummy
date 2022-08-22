@@ -6,24 +6,36 @@ import com.hbc.csvdownload.domain.mapper.ProcessingLeadTimeMapper;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
+import com.hbc.csvdownload.exception.JobServiceException;
 import com.hbc.csvdownload.exception.JobSubmissionException;
+import com.hbc.csvdownload.exception.JobUpdationException;
 import com.hbc.csvdownload.exception.JsonParsingException;
 import com.hbc.csvdownload.util.CsvUtil;
+import com.hbc.csvdownload.util.StringUtil;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
+import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +46,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class CsvUploadUtilityService {
 
   private final JobsDashboardClient jobsDashboardClient;
+  private final JobService jobService;
 
   public static final ProcessingLeadTimeMapper INSTANCE =
       Mappers.getMapper(ProcessingLeadTimeMapper.class);
@@ -47,7 +60,7 @@ public class CsvUploadUtilityService {
 
     /** validate csv headers */
     if (!CsvUtil.validateCsvHeader(csvFile, expectedHeaders)) {
-      throw new CsvFormatValidationFailedException("Invalid csv template");
+      throw new CsvFormatValidationFailedException("Invalid csv template", null);
     }
 
     /** CSV data parsed and map to NodeCarrierRequest object */
@@ -58,7 +71,7 @@ public class CsvUploadUtilityService {
 
     /** check if the list that is formed is empty */
     if (CollectionUtils.isEmpty(nodeCarrierRequestList)) {
-      throw new CsvFormatValidationFailedException("CSV file can not be empty");
+      throw new CsvFormatValidationFailedException("CSV file can not be empty", null);
     }
 
     /** form job request string */
@@ -124,7 +137,119 @@ public class CsvUploadUtilityService {
           .build();
     } catch (Exception e) {
       log.error("Unexpected error occurred while parsing the CSV Content to Bean", e);
-      throw new CsvFormatValidationFailedException("Error in parsing the csv file", e);
+      throw new CsvFormatValidationFailedException("Error in parsing the csv file", e, null);
+    }
+  }
+
+  public String uploadTransitTimesCsv(String orgId, MultipartFile csvFile)
+      throws IOException, CsvException, CsvFormatValidationFailedException, JsonParsingException,
+          JobServiceException, JobUpdationException {
+
+    InputStreamReader inputStreamReader = new InputStreamReader(csvFile.getInputStream());
+    CSVReader csvReader = new CSVReader(inputStreamReader);
+    List<String[]> csvFileContents = csvReader.readAll();
+    csvReader.close();
+
+    // Extract orgId header and value
+    String[] orgIdRow = csvFileContents.remove(0);
+    String orgIdHeader = orgIdRow[0];
+
+    // Extract carrierServiceId header and value
+    String[] carrierServiceIdRow = csvFileContents.remove(0);
+    String carrierServiceIdHeader = carrierServiceIdRow[0];
+
+    // Extract destination/sourceFsa header and sourceFsa values
+    String[] sFsaListWithHeader = csvFileContents.remove(0);
+
+    // validate csv the headers
+    validateHeaders(orgIdHeader, carrierServiceIdHeader, sFsaListWithHeader[0]);
+
+    // store orgId and carrierServiceId into variables
+    String orgIdValue = orgIdRow[1];
+    String carrierServiceIdValue = sFsaListWithHeader[1];
+    int size = csvFileContents.get(0).length;
+    List<String> sFsaListWithOutHeader = Arrays.asList(sFsaListWithHeader).subList(1, size);
+
+    List<TransitDataCreationRequest> transitDataCreationRequestList = new ArrayList<>();
+    csvFileContents.stream()
+        .filter(row -> row.length != 0)
+        .forEach(
+            row -> {
+              AtomicInteger integer = new AtomicInteger(0);
+              String destinationSfa = row[integer.getAndIncrement()];
+              transitDataCreationRequestList.addAll(
+                  createTransitDataCreationRequestObjects(
+                      orgIdValue,
+                      sFsaListWithOutHeader,
+                      carrierServiceIdValue,
+                      row,
+                      destinationSfa,
+                      integer));
+            });
+
+    String jobRequest = StringUtil.createJobRequest(transitDataCreationRequestList, orgId);
+
+    JobDto job =
+        jobService.createJob(
+            orgId, transitDataCreationRequestList.size(), JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+
+    updateJob(orgId, job.getJobId(), jobRequest, JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+
+    return "Job to upload Transit times received successfully";
+  }
+
+  @Async
+  private void updateJob(String orgId, String jobId, String jobRequest, JobTypeEnum jobType)
+      throws JobUpdationException {
+    log.debug("-- Inside update job method --");
+    try {
+
+      jobsDashboardClient.processJobJsonOffline(orgId, jobType, jobRequest, jobId);
+      log.debug("Job updated successfully");
+    } catch (Exception e) {
+      log.error("Error while updating the job to upload transit times", e);
+      throw new JobUpdationException(
+          "Error while updating the job to upload transit times", e, orgId, jobId, jobType.name());
+    }
+  }
+
+  private List<TransitDataCreationRequest> createTransitDataCreationRequestObjects(
+      String orgId,
+      List<String> sFsaList,
+      String carrierServiceIdValue,
+      String[] row,
+      String destinationSfa,
+      AtomicInteger integer) {
+    return sFsaList.stream()
+        .map(
+            sFsa -> {
+              TransitDataCreationRequest transitDataCreationRequest =
+                  new TransitDataCreationRequest();
+              transitDataCreationRequest.setOrgId(orgId);
+              transitDataCreationRequest.setCarrierServiceId(carrierServiceIdValue);
+              transitDataCreationRequest.setDestinationGeozone(destinationSfa);
+              transitDataCreationRequest.setSourceGeozone(sFsa);
+              transitDataCreationRequest.setTransitDays(
+                  Float.valueOf(row[integer.getAndIncrement()]));
+              return transitDataCreationRequest;
+            })
+        .collect(Collectors.toList());
+  }
+
+  private void validateHeaders(String orgIdHeader, String carrierServiceIdHeader, String fsaHeader)
+      throws CsvFormatValidationFailedException {
+    if (!orgIdHeader.equals("orgId")) {
+      log.error("Invalid header orgId");
+      throw new CsvFormatValidationFailedException("Invalid header orgId", orgIdHeader);
+    }
+    if (!carrierServiceIdHeader.equals("Carrier Service:")) {
+      log.error("Invalid header carrierServiceIdHeader");
+      throw new CsvFormatValidationFailedException(
+          "Invalid header carrierServiceIdHeader", carrierServiceIdHeader);
+    }
+    if (!fsaHeader.equals("Destination FSA / Source FSA ->")) {
+      log.error("Invalid header fsaHeader");
+      throw new CsvFormatValidationFailedException("Invalid header fsaHeader", fsaHeader);
     }
   }
 }

@@ -6,10 +6,14 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
+import com.hbc.csvdownload.exception.JobServiceException;
 import com.hbc.csvdownload.exception.JobSubmissionException;
+import com.hbc.csvdownload.exception.JobUpdationException;
 import com.hbc.csvdownload.exception.JsonParsingException;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
+import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
 import feign.Request;
 import feign.Request.HttpMethod;
@@ -29,6 +33,8 @@ import org.springframework.web.multipart.MultipartFile;
 class CsvUploadUtilityServiceTest {
 
   @Mock private JobsDashboardClient jobsDashboardClient;
+
+  @Mock private JobService jobService;
   @InjectMocks private CsvUploadUtilityService csvUploadUtilityService;
   @InjectMocks private TestUtil testUtil;
 
@@ -182,5 +188,154 @@ class CsvUploadUtilityServiceTest {
             JobSubmissionException.class,
             () -> csvUploadUtilityService.uploadProcessingLeadTimesCsv(TestUtil.ORG_ID, csvFile));
     Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void uploadTransitTimesCsv()
+      throws IOException, JobServiceException, CsvFormatValidationFailedException,
+          JobUpdationException, CsvException, JsonParsingException {
+    MultipartFile csvFile = mock(MultipartFile.class);
+
+    String csvFileContent =
+        "orgId,BAY,,,,,,,,,\n"
+            + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+            + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
+            + "DFSA1,10,9.96,9.96\n"
+            + "DFSA2,10,9,9.9\n"
+            + "DFSA3,10,9,9\n";
+
+    when(csvFile.getInputStream())
+        .thenReturn(
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()));
+
+    JobDto jobDto = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
+
+    when(jobService.createJob(TestUtil.ORG_ID, 9, JobTypeEnum.UPLOAD_TRANSIT_TIMES))
+        .thenReturn(jobDto);
+
+    when(jobsDashboardClient.processJobJsonOffline(any(), any(), any(), any()))
+        .thenReturn(BaseResponse.builder().payload(jobDto).build());
+
+    String res = csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile);
+
+    Assertions.assertFalse(ObjectUtils.isEmpty(res));
+    verify(jobsDashboardClient, times(1)).processJobJsonOffline(any(), any(), any(), any());
+    verify(jobService, times(1)).createJob(TestUtil.ORG_ID, 9, JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+  }
+
+  @Test
+  void uploadTransitTimesCsvInvalidOrgIdHeader() throws IOException {
+    MultipartFile csvFile = mock(MultipartFile.class);
+
+    String csvFileContent =
+        "orgIds,BAY,,,,,,,,,\n"
+            + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+            + "Destination FSA / Source FSA ->,SFSA1,SFSA2\n"
+            + "DFSA1,10,9.96\n"
+            + "DFSA2,10,9\n"
+            + "DFSA3,10,9\n";
+
+    when(csvFile.getInputStream())
+        .thenReturn(
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CsvFormatValidationFailedException.class,
+            () -> csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void uploadTransitTimesCsvInvalidCarrierServiceIdHeader() throws IOException {
+    MultipartFile csvFile = mock(MultipartFile.class);
+
+    String csvFileContent =
+        "orgId,BAY,,,,,,,,,\n"
+            + "Carrier Service,ALL-Standard,,,,,,,,,\n"
+            + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
+            + "DFSA1,10,9.96,9.96\n"
+            + "DFSA2,10,9,9.9\n"
+            + "DFSA3,10,9,9\n";
+
+    when(csvFile.getInputStream())
+        .thenReturn(
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CsvFormatValidationFailedException.class,
+            () -> csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void uploadTransitTimesCsvInvalidFsaHeader() throws IOException {
+    MultipartFile csvFile = mock(MultipartFile.class);
+
+    String csvFileContent =
+        "orgId,BAY,,,,,,,,,\n"
+            + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+            + "Destination FSA / Source FSA >,SFSA1,SFSA2,SFSA3\n"
+            + "DFSA1,10,9.96,9.96\n"
+            + "DFSA2,10,9,9.9\n"
+            + "DFSA3,10,9,9\n";
+
+    when(csvFile.getInputStream())
+        .thenReturn(
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CsvFormatValidationFailedException.class,
+            () -> csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void uploadTransitTimesCsvException() throws IOException, JobServiceException {
+    MultipartFile csvFile = mock(MultipartFile.class);
+
+    String csvFileContent =
+        "orgId,BAY,,,,,,,,,\n"
+            + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+            + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
+            + "DFSA1,10,9.96,9.96\n"
+            + "DFSA2,10,9,9.9\n"
+            + "DFSA3,10,9,9\n";
+
+    when(csvFile.getInputStream())
+        .thenReturn(
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()));
+
+    JobDto jobDto = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
+
+    when(jobService.createJob(TestUtil.ORG_ID, 9, JobTypeEnum.UPLOAD_TRANSIT_TIMES))
+        .thenReturn(jobDto);
+
+    when(jobsDashboardClient.processJobJsonOffline(any(), any(), any(), any()))
+        .thenThrow(new RuntimeException("Error while updating the job"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            JobUpdationException.class,
+            () -> csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile));
+
+    Assertions.assertNotNull(exception);
+    verify(jobsDashboardClient, times(1)).processJobJsonOffline(any(), any(), any(), any());
+    verify(jobService, times(1)).createJob(TestUtil.ORG_ID, 9, JobTypeEnum.UPLOAD_TRANSIT_TIMES);
   }
 }
