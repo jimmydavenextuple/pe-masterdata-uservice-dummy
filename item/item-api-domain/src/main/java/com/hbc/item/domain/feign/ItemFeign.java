@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @FeignClient(
     name = "pe-config-item",
@@ -38,4 +41,10 @@ public interface ItemFeign {
       @PathVariable(name = "itemId") String itemId,
       @PathVariable(name = "orgId") String orgId,
       @PathVariable(name = "uom") String uom);
+
+  @GetMapping("/item/{orgId}/{uom}")
+  List<ItemResponse> getItemDetailsList(
+          @PathVariable(name = "orgId") String orgId,
+          @PathVariable(name = "uom") String uom,
+          @RequestParam List<String> itemList);
 }

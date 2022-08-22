@@ -12,6 +12,9 @@ import com.hbc.item.domain.entity.ItemEntity;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
 import com.hbc.item.exception.ItemDomainException;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
@@ -147,5 +150,41 @@ class ItemServiceTest {
     Assertions.assertEquals("Item not found with given details", exception.getMessage());
 
     verify(itemDomain, times(1)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
+  }
+
+  @Test
+  void getItemDetailsListByItemIdAndOrgIdAndUomTest()
+          throws ItemDomainException, CommonServiceException {
+    ItemEntity itemEntity = testUtil.getItemEntity();
+    List<ItemEntity> itemEntityList = new ArrayList<>();
+    itemEntityList.add(itemEntity);
+    List<String> itemList = new ArrayList<>();
+    itemList.add(TestUtil.ITEM_ID);
+    List<ItemResponse> itemResponseList = new ArrayList<>();
+    itemResponseList.add(testUtil.getItemResponse());
+    when(itemDomain.findItemLisyByItemIdAndOrgIdAndUom(any(), any(), any()))
+            .thenReturn(itemEntityList);
+
+    List<ItemResponse> itemResponse =
+            itemService.getListOfItemDetails(itemList, TestUtil.ORG_ID, TestUtil.UOM);
+    Assertions.assertEquals(itemResponseList, itemResponse);
+    verify(itemDomain, times(1)).findItemLisyByItemIdAndOrgIdAndUom(any(), any(), any());
+  }
+
+  @Test
+  void getItemDetailsListByItemIdAndOrgIdAndUomTestException() throws ItemDomainException {
+    List<ItemEntity> itemEntityList = new ArrayList<>();
+    List<String> itemList = new ArrayList<>();
+    itemList.add(TestUtil.ITEM_ID);
+    when(itemDomain.findItemLisyByItemIdAndOrgIdAndUom(any(), any(), any()))
+            .thenReturn(itemEntityList);
+
+    Exception exception =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () -> itemService.getListOfItemDetails(itemList, TestUtil.ORG_ID, TestUtil.UOM));
+    Assertions.assertEquals("Items not found with given details", exception.getMessage());
+
+    verify(itemDomain, times(1)).findItemLisyByItemIdAndOrgIdAndUom(any(), any(), any());
   }
 }
