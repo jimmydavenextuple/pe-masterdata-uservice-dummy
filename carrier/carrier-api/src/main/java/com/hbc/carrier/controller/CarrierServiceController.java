@@ -143,7 +143,7 @@ public class CarrierServiceController {
             pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
 
     PagePayload<CarrierServiceResponse> pagePayload =
-        setCarrierServicePagePayload(carrierServiceResponses, pageParams);
+        setCarrierServicePagePayload(carrierServiceResponses, pageParams, orgId);
 
     return ResponseEntity.ok(
         BaseResponse.builder()
@@ -153,7 +153,7 @@ public class CarrierServiceController {
   }
 
   private PagePayload<CarrierServiceResponse> setCarrierServicePagePayload(
-      Page<CarrierServiceResponse> carrierServiceResponses, PageParams pageParams) {
+      Page<CarrierServiceResponse> carrierServiceResponses, PageParams pageParams, String orgId) {
     PagePayload<CarrierServiceResponse> pagePayload = new PagePayload<>();
     var pagination = new PagePayload.Pagination();
     pagination.setTotalRecords((int) carrierServiceResponses.getTotalElements());
@@ -168,7 +168,8 @@ public class CarrierServiceController {
             carrierServiceResponses.getTotalPages(),
             "next",
             String.format(
-                "/{orgId}?pageNo=%d&pageSize=%d",
+                "/%s?pageNo=%d&pageSize=%d",
+                orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
     String previousUri =
@@ -177,7 +178,8 @@ public class CarrierServiceController {
             carrierServiceResponses.getTotalPages(),
             "previous",
             String.format(
-                "/{orgId}?pageNo=%d&pageSize=%d",
+                "/%s?pageNo=%d&pageSize=%d",
+                orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
     pagination.setNext(nextUri);

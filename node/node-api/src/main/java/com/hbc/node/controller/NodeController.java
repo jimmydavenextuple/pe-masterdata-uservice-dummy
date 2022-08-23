@@ -136,7 +136,7 @@ public class NodeController {
             pageParams.getSortBy().orElse(DEFAULT_SORT_BY),
             pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
 
-    PagePayload<NodeDto> pagePayload = setNodePagePayload(nodeDtoPage, pageParams);
+    PagePayload<NodeDto> pagePayload = setNodePagePayload(nodeDtoPage, pageParams, orgId);
 
     return ResponseEntity.ok(
         BaseResponse.builder()
@@ -146,7 +146,7 @@ public class NodeController {
   }
 
   private PagePayload<NodeDto> setNodePagePayload(
-      Page<NodeDto> nodeDtoPage, PageParams pageParams) {
+      Page<NodeDto> nodeDtoPage, PageParams pageParams, @NotBlank String orgId) {
     PagePayload<NodeDto> pagePayload = new PagePayload<>();
     var pagination = new PagePayload.Pagination();
     pagination.setTotalRecords((int) nodeDtoPage.getTotalElements());
@@ -161,7 +161,8 @@ public class NodeController {
             nodeDtoPage.getTotalPages(),
             "next",
             String.format(
-                "/{orgId}?pageNo=%d&pageSize=%d",
+                "/%s?pageNo=%d&pageSize=%d",
+                orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
     String previousUri =
@@ -170,7 +171,8 @@ public class NodeController {
             nodeDtoPage.getTotalPages(),
             "previous",
             String.format(
-                "/{orgId}?pageNo=%d&pageSize=%d",
+                "/%s?pageNo=%d&pageSize=%d",
+                orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
     pagination.setNext(nextUri);

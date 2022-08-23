@@ -44,7 +44,8 @@ public class NodeServiceOptionController {
             nodeServiceOptionDto.getPagination().getTotalPages(),
             "next",
             String.format(
-                "/ui/node-service-option/orgId/{orgId}?pageNo=%d&pageSize=%d",
+                "/data-upload/ui/node-service-option/orgId/%s?pageNo=%d&pageSize=%d",
+                orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
 
@@ -54,7 +55,8 @@ public class NodeServiceOptionController {
             nodeServiceOptionDto.getPagination().getTotalPages(),
             "previous",
             String.format(
-                "/ui/node-service-option/orgId/{orgId}?pageNo=%d&pageSize=%d",
+                "/data-upload/ui/node-service-option/orgId/%s?pageNo=%d&pageSize=%d",
+                orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
 
