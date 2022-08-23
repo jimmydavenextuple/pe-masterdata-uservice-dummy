@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +57,7 @@ public class PromiseSourcingRuleDataUploadService {
 
   public ResponseEntity<BaseResponse<String>> uploadPromiseSourcingRuleData(String fileUri)
       throws CommonServiceException, IOException {
-    Path path = DataUploadUtil.getPath(basePath, fileUri);
+    var path = DataUploadUtil.getPath(basePath, fileUri);
 
     DataUploadUtil.validateFileType(fileUri, PROMISE_SOURCING_RULE_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
@@ -73,12 +72,12 @@ public class PromiseSourcingRuleDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailedForSourcing = true;
-    boolean isAllPassedForSourcing = true;
-    boolean sourcingResult = false;
+    var isAllFailedForSourcing = true;
+    var isAllPassedForSourcing = true;
+    var sourcingResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
-        CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
+        var csvParser = DataUploadUtil.getCSVParser(reader)) {
       DataUploadUtil.compareHeaders(
           csvParser, "promiseSourcingRule", PROMISE_SOURCING_RULE_DATA_UPLOAD_INVALID_FILE_HEADERS);
 
@@ -94,13 +93,13 @@ public class PromiseSourcingRuleDataUploadService {
           Set<String> sourceNodesSet =
               new HashSet<>(
                   Arrays.asList(sourceNodes.substring(1, sourceNodes.length() - 1).split(",")));
-          int priority = Integer.parseInt(csvRecord.get(PRIORITY));
+          var priority = Integer.parseInt(csvRecord.get(PRIORITY));
           String allocationRuleId = csvRecord.get(ALLOCATION_RULE_ID);
 
           switch (action) {
             case CREATE:
               {
-                CreatePromiseSourcingRuleRequest createPromiseSourcingRuleRequest =
+                var createPromiseSourcingRuleRequest =
                     CreatePromiseSourcingRuleRequest.builder()
                         .orgId(orgId)
                         .serviceOption(serviceOption)
@@ -119,7 +118,7 @@ public class PromiseSourcingRuleDataUploadService {
 
             case UPDATE:
               {
-                UpdatePromiseSourcingRuleRequest updatePromiseSourcingRuleRequest =
+                var updatePromiseSourcingRuleRequest =
                     UpdatePromiseSourcingRuleRequest.builder().sourceNodes(sourceNodesSet).build();
                 BaseResponse<PromiseSourcingRuleDto> baseResponse =
                     promiseSourcingRuleFeign.updatePromiseSourcingRule(
