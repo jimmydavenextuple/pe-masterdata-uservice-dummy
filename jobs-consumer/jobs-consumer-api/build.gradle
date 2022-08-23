@@ -1,0 +1,20 @@
+bootJar {
+    enabled = false
+    mainClass.set("com.hbc.jobs.consumers.JobsConsumersServiceApplication")
+}
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
+    implementation "org.springframework.kafka:spring-kafka:2.8.7"
+    implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
+    implementation(project(":common-util"))
+    implementation(project(":jobs-dashboard:job-framework-common-util"))
+    implementation(project(":node-carrier:node-carrier-api-domain"))
+    implementation(project(":transit:transit-api-domain"))
+    implementation group: 'com.opencsv', name: 'opencsv', version: '5.2'
+}

@@ -47,7 +47,7 @@ public class CommonEntityListener {
     String entityName =
         NearCacheEntityNameMapper.getEntityMapping().get(entity.getClass().getSimpleName());
     // Publishing to kafka
-    LocalCacheUpdateMessage localCacheUpdateMessage = new LocalCacheUpdateMessage();
+    var localCacheUpdateMessage = new LocalCacheUpdateMessage();
     localCacheUpdateMessage.setMessage(message);
     localCacheUpdateMessage.setEntityName(entityName);
 
