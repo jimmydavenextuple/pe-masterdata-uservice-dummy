@@ -4,6 +4,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.node.data.cache.domain.NodeDataCacheKey;
 import com.hbc.node.data.cache.domain.NodeDataCacheValue;
 import com.hbc.node.domain.outbound.NodeResponse;
+import java.util.Map;
 
 public class TestUtil {
 
@@ -19,7 +20,7 @@ public class TestUtil {
     nodeDataCacheValue.setNodeId("node-1");
     nodeDataCacheValue.setOrgId("org-1");
     nodeDataCacheValue.setBopisEligible(Boolean.TRUE);
-    nodeDataCacheValue.setExpressEligible(Boolean.TRUE);
+    nodeDataCacheValue.setServiceOptionEligibilities(getServiceOptionEligibilities());
     return nodeDataCacheValue;
   }
 
@@ -29,9 +30,16 @@ public class TestUtil {
     nodeResponse.setNodeId("node-1");
     nodeResponse.setOrgId("org-1");
     nodeResponse.setBopisEligible(Boolean.TRUE);
-    nodeResponse.setExpressEligible(Boolean.TRUE);
+    nodeResponse.setServiceOptionEligibilities(getServiceOptionEligibilities());
     baseResponse.setMessage("Node details fetched successfully");
     baseResponse.setPayload(nodeResponse);
     return baseResponse;
+  }
+
+  public Map<String, Boolean> getServiceOptionEligibilities() {
+    return Map.of(
+        "sdndEligible", Boolean.TRUE,
+        "expressEligible", Boolean.TRUE,
+        "nextdayEligible", Boolean.TRUE);
   }
 }

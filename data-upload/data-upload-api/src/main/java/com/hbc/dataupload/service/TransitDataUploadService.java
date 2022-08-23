@@ -30,7 +30,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +53,7 @@ public class TransitDataUploadService {
 
   public ResponseEntity<BaseResponse<String>> uploadTransitData(String fileUri)
       throws CommonServiceException, IOException {
-    Path path = DataUploadUtil.getPath(basePath, fileUri);
+    var path = DataUploadUtil.getPath(basePath, fileUri);
 
     DataUploadUtil.validateFileType(fileUri, TRANSIT_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
@@ -67,12 +66,12 @@ public class TransitDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailedForTransit = true;
-    boolean isAllPassedForTransit = true;
-    boolean transitResult = false;
+    var isAllFailedForTransit = true;
+    var isAllPassedForTransit = true;
+    var transitResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
-        CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
+        var csvParser = DataUploadUtil.getCSVParser(reader)) {
       DataUploadUtil.compareHeaders(csvParser, "transit", TRANSIT_DATA_UPLOAD_INVALID_FILE_HEADERS);
 
       for (CSVRecord csvRecord : csvParser) {
@@ -84,12 +83,12 @@ public class TransitDataUploadService {
           String sourceGeoZone = csvRecord.get(SOURCE_GEO_ZONE);
           String destinationGeoZone = csvRecord.get(DESTINATION_GEO_ZONE);
           String carrierServiceId = csvRecord.get(CARRIER_SERVICE_ID);
-          Float transitDays = Float.valueOf(csvRecord.get(TRANSIT_DAYS));
+          var transitDays = Float.valueOf(csvRecord.get(TRANSIT_DAYS));
 
           switch (action) {
             case CREATE:
               {
-                TransitDataCreationRequest transitDataCreationRequest =
+                var transitDataCreationRequest =
                     TransitDataCreationRequest.builder()
                         .orgId(orgId)
                         .sourceGeozone(sourceGeoZone)
@@ -106,7 +105,7 @@ public class TransitDataUploadService {
 
             case UPDATE:
               {
-                TransitDataUpdationRequest transitDataUpdationRequest =
+                var transitDataUpdationRequest =
                     TransitDataUpdationRequest.builder().transitDays(transitDays).build();
                 BaseResponse<TransitResponse> baseResponse =
                     transitFeign.updateTransitData(

@@ -1,6 +1,7 @@
 package com.hbc.node.domain.inbound;
 
 import java.io.Serializable;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,13 +19,11 @@ public class NodeUpdationRequest implements Serializable {
 
   private String timezone;
 
+  private Map<String, Boolean> serviceOptionEligibilities;
+
   private Boolean shipToHome;
 
-  private Boolean sdndEligible;
-
   private Boolean bopisEligible;
-
-  private Boolean expressEligible;
 
   private String nodeType;
 

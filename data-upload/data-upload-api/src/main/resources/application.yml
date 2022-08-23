@@ -20,6 +20,9 @@ logging:
     org.springframework: WARN
     root: WARN
     com.hbc: INFO
+pagination:
+  pageNo: 1
+  pageSize: 15
 
 management:
   endpoints:
@@ -50,7 +53,3 @@ management:
             requests: true
         persistence: true
         cache: true
-
-pagination:
-  pageNo: 1
-  pageSize: 15

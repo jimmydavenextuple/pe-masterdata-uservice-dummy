@@ -10,7 +10,7 @@ import com.hbc.promise.sourcing.rule.api.domain.outbound.FetchPromiseSourcingRul
 import com.hbc.sourcing.rule.cache.domain.SourcingRuleCacheKey;
 import com.hbc.sourcing.rule.cache.domain.SourcingRuleCacheValue;
 import com.hbc.sourcing.rule.spring.cache.util.TestUtil;
-import com.sun.tools.javac.util.List;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -5,6 +5,7 @@ import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
 import com.hbc.postal.code.timezone.domain.repository.PostalCodeTimezoneRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +79,19 @@ public class PostalCodeTimezoneDomain {
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.DAO_DELETE_FAILED,
           "Unable to delete Postal Code Timezone!");
+    }
+  }
+
+  public List<PostalCodeTimezoneEntity> getPostalCodeTimezoneForOrgId(String orgId)
+      throws PromiseEngineException {
+    try {
+      return postalCodeTimezoneRepository.findByOrgId(orgId);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Postal Code Timezone not found for a given orgId.");
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Postal Code Timezone not found for a given orgId.");
     }
   }
 }

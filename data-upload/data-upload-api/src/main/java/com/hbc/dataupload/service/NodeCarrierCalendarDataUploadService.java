@@ -28,7 +28,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +50,7 @@ public class NodeCarrierCalendarDataUploadService {
 
   public ResponseEntity<BaseResponse<String>> uploadNodeCarrierCalendarData(String fileUri)
       throws CommonServiceException, IOException {
-    Path path = DataUploadUtil.getPath(basePath, fileUri);
+    var path = DataUploadUtil.getPath(basePath, fileUri);
 
     DataUploadUtil.validateFileType(fileUri, NODE_CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
@@ -66,12 +65,12 @@ public class NodeCarrierCalendarDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailedForNodeCarrierCalendar = true;
-    boolean isAllPassedForNodeCarrierCalendar = true;
-    boolean nodeCarrierCalendarResult = false;
+    var isAllFailedForNodeCarrierCalendar = true;
+    var isAllPassedForNodeCarrierCalendar = true;
+    var nodeCarrierCalendarResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
-        CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
+        var csvParser = DataUploadUtil.getCSVParser(reader)) {
       DataUploadUtil.compareHeaders(
           csvParser,
           "node-carrier-calendar",
@@ -90,7 +89,7 @@ public class NodeCarrierCalendarDataUploadService {
           String effectiveDate = csvRecord.get(EFFECTIVE_DATE);
 
           if (action.equals(CREATE)) {
-            NodeCarrierServiceCalendarRequest nodeCarrierServiceCalendarRequest =
+            var nodeCarrierServiceCalendarRequest =
                 NodeCarrierServiceCalendarRequest.builder()
                     .calendarId(calendarId)
                     .orgId(orgId)
@@ -100,8 +99,7 @@ public class NodeCarrierCalendarDataUploadService {
                     .effectiveDate(effectiveDate)
                     .build();
             BaseResponse<NodeCarrierServiceCalendarResponse> baseResponse =
-                calendarFeign.handleCreateNodeCarrierServiceCalendar(
-                    nodeCarrierServiceCalendarRequest);
+                calendarFeign.createNodeCarrierServiceCalendar(nodeCarrierServiceCalendarRequest);
             nodeCarrierCalendarResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else {

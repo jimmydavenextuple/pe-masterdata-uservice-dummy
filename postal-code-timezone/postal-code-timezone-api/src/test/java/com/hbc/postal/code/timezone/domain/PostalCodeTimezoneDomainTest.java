@@ -14,6 +14,7 @@ import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.postal.code.timezone.TestUtil;
 import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
 import com.hbc.postal.code.timezone.domain.repository.PostalCodeTimezoneRepository;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -89,5 +90,36 @@ class PostalCodeTimezoneDomainTest {
         postalCodeTimezoneDomain.deletePostalCodeTimezone(postalCodeTimezoneEntity);
     assertEquals(ORG_ID, received_entity.getOrgId());
     verify(postalCodeTimezoneRepository, times(1)).delete(postalCodeTimezoneEntity);
+  }
+
+  @Test
+  void getPostalCodeTimezoneForOrgIdTest() throws PromiseEngineException {
+    PostalCodeTimezoneEntity postalCodeTimezoneEntity = testUtil.getPostalCodeTimezoneEntity();
+
+    when(postalCodeTimezoneRepository.findByOrgId(anyString()))
+        .thenReturn(List.of(postalCodeTimezoneEntity));
+
+    List<PostalCodeTimezoneEntity> postalCodeTimezoneEntities =
+        postalCodeTimezoneDomain.getPostalCodeTimezoneForOrgId(ORG_ID);
+
+    assertEquals(1, postalCodeTimezoneEntities.size());
+    assertEquals(postalCodeTimezoneEntity.getState(), postalCodeTimezoneEntities.get(0).getState());
+    verify(postalCodeTimezoneRepository, times(1)).findByOrgId(anyString());
+  }
+
+  @Test
+  void getPostalCodeTimezoneForOrgIdExceptionTest() {
+    when(postalCodeTimezoneRepository.findByOrgId(anyString()))
+        .thenThrow(NullPointerException.class);
+
+    Exception ex =
+        assertThrows(
+            PromiseEngineException.class,
+            () -> {
+              postalCodeTimezoneDomain.getPostalCodeTimezoneForOrgId(ORG_ID);
+            });
+
+    assertEquals("Postal Code Timezone not found for a given orgId.", ex.getMessage());
+    verify(postalCodeTimezoneRepository, times(1)).findByOrgId(anyString());
   }
 }
