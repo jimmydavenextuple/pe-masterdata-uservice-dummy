@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.common.configuration.TestUtil;
 import com.hbc.common.configuration.api.domain.dto.CommonConfigurationDto;
-import com.hbc.common.configuration.api.domain.inbound.UpdateCommonConfigurationRequest;
 import com.hbc.common.configuration.domain.CommonConfigurationDomain;
 import com.hbc.common.configuration.domain.entity.CommonConfiguration;
 import com.hbc.common.exception.CommonServiceException;
@@ -56,24 +55,10 @@ class CommonConfigurationServiceTest {
   }
 
   @Test
-  @DisplayName("Configuration Already Exist")
-  void createCommonConfig_Test1() throws PromiseEngineException {
-    when(commonConfigurationDomain.getCommonConfiguration(anyString(), anyString(), anyString()))
-        .thenReturn(Optional.of(testUtil.getCommonConfiguration()));
-
-    Assertions.assertThrows(
-        CommonServiceException.class,
-        () -> commonConfigurationService.createCommonConfig(testUtil.getCreateRequest()));
-  }
-
-  @Test
   void createCommonConfig_Test2() throws PromiseEngineException {
-    when(commonConfigurationDomain.getCommonConfiguration(anyString(), anyString(), anyString()))
-        .thenReturn(Optional.empty());
 
-    CommonConfigurationDto configurationDto =
-        Assertions.assertDoesNotThrow(
-            () -> commonConfigurationService.createCommonConfig(testUtil.getCreateRequest()));
+    Assertions.assertDoesNotThrow(
+        () -> commonConfigurationService.createCommonConfig(testUtil.getCreateRequest()));
     verify(commonConfigurationDomain, times(1))
         .saveCommonConfiguration(any(CommonConfiguration.class));
   }
@@ -86,12 +71,7 @@ class CommonConfigurationServiceTest {
         .thenReturn(Optional.empty());
     Assertions.assertThrows(
         CommonServiceException.class,
-        () ->
-            commonConfigurationService.updateCommonConfiguration(
-                TestUtil.ORGID,
-                TestUtil.TYPE,
-                TestUtil.KEY,
-                UpdateCommonConfigurationRequest.builder().value("SHIP").build()));
+        () -> commonConfigurationService.updateCommonConfiguration(testUtil.getCreateRequest()));
   }
 
   @Test
@@ -100,12 +80,7 @@ class CommonConfigurationServiceTest {
         .thenReturn(Optional.of(testUtil.getCommonConfiguration()));
 
     Assertions.assertDoesNotThrow(
-        () ->
-            commonConfigurationService.updateCommonConfiguration(
-                TestUtil.ORGID,
-                TestUtil.TYPE,
-                TestUtil.KEY,
-                UpdateCommonConfigurationRequest.builder().value("SHIP").build()));
+        () -> commonConfigurationService.updateCommonConfiguration(testUtil.getCreateRequest()));
 
     verify(commonConfigurationDomain, times(1))
         .saveCommonConfiguration(any(CommonConfiguration.class));

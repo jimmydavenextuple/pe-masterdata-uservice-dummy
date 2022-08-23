@@ -2,7 +2,6 @@ package com.hbc.common.configuration.service;
 
 import com.hbc.common.configuration.api.domain.dto.CommonConfigurationDto;
 import com.hbc.common.configuration.api.domain.inbound.CreateCommonConfigurationRequest;
-import com.hbc.common.configuration.api.domain.inbound.UpdateCommonConfigurationRequest;
 import com.hbc.common.configuration.domain.CommonConfigurationDomain;
 import com.hbc.common.configuration.domain.entity.CommonConfiguration;
 import com.hbc.common.configuration.mapper.CommonConfigMapper;
@@ -36,9 +35,9 @@ public class CommonConfigurationService {
   public CommonConfigurationDto fetchValue(String orgId, String type, String key)
       throws PromiseEngineException {
 
-    Optional<CommonConfiguration> globalConfiguration =
+    Optional<CommonConfiguration> commonConfiguration =
         configurationDomain.getCommonConfiguration(orgId, type, key);
-    if (globalConfiguration.isEmpty()) {
+    if (commonConfiguration.isEmpty()) {
       return CommonConfigurationDto.builder()
           .key(key)
           .orgId(orgId)
@@ -46,41 +45,12 @@ public class CommonConfigurationService {
           .value("UNDEFINED")
           .build();
     }
-    return INSTANCE.toCommonMasterConfigurationDto(globalConfiguration.get());
+    return INSTANCE.toCommonMasterConfigurationDto(commonConfiguration.get());
   }
 
   public CommonConfigurationDto createCommonConfig(
       CreateCommonConfigurationRequest createCommonConfigurationRequest)
-      throws PromiseEngineException, CommonServiceException {
-    Optional<CommonConfiguration> globalConfiguration =
-        configurationDomain.getCommonConfiguration(
-            createCommonConfigurationRequest.getOrgId(),
-            createCommonConfigurationRequest.getType(),
-            createCommonConfigurationRequest.getKey());
-
-    if (globalConfiguration.isPresent()) {
-      logger.error(
-          "Common Configuration already exists for orgId:{} , type:{}, key:{}",
-          createCommonConfigurationRequest.getOrgId(),
-          createCommonConfigurationRequest.getType(),
-          createCommonConfigurationRequest.getKey());
-      Map<String, FieldError> errorMap = new HashMap<>();
-
-      errorMap.put(
-          ORG_ID,
-          FieldError.builder().rejectedValue(createCommonConfigurationRequest.getOrgId()).build());
-      errorMap.put(
-          TYPE,
-          FieldError.builder().rejectedValue(createCommonConfigurationRequest.getType()).build());
-      errorMap.put(
-          KEY,
-          FieldError.builder().rejectedValue(createCommonConfigurationRequest.getKey()).build());
-      throw new CommonServiceException(
-          "Common Configuration already exists for the given details",
-          HttpStatus.BAD_REQUEST,
-          0x1772,
-          errorMap);
-    }
+      throws PromiseEngineException {
 
     return INSTANCE.toCommonMasterConfigurationDto(
         configurationDomain.saveCommonConfiguration(
@@ -88,42 +58,43 @@ public class CommonConfigurationService {
   }
 
   public CommonConfigurationDto updateCommonConfiguration(
-      String orgId, String type, String key, UpdateCommonConfigurationRequest baseRequest)
+      CreateCommonConfigurationRequest baseRequest)
       throws PromiseEngineException, CommonServiceException {
-
-    Optional<CommonConfiguration> globalConfiguration =
+    String orgId = baseRequest.getOrgId();
+    String type = baseRequest.getType();
+    String key = baseRequest.getKey();
+    Optional<CommonConfiguration> commonConfiguration =
         configurationDomain.getCommonConfiguration(orgId, type, key);
 
-    if (globalConfiguration.isEmpty()) {
-      logger.error(COMMON_CONFIG_NOT_FOUND_ERROR_MSG);
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
-      errorMap.put(TYPE, FieldError.builder().rejectedValue(type).build());
-      errorMap.put(KEY, FieldError.builder().rejectedValue(key).build());
-      throw new CommonServiceException(
-          COMMON_CONFIG_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
+    if (commonConfiguration.isEmpty()) {
+      throwException(orgId, type, key);
     }
     return INSTANCE.toCommonMasterConfigurationDto(
         configurationDomain.saveCommonConfiguration(
-            INSTANCE.toCommonMasterConfiguration(orgId, type, key, baseRequest)));
+            INSTANCE.toCommonMasterConfiguration(baseRequest)));
   }
 
   public CommonConfigurationDto deleteCommonConfiguration(String orgId, String type, String key)
       throws PromiseEngineException, CommonServiceException {
 
-    Optional<CommonConfiguration> globalConfiguration =
+    Optional<CommonConfiguration> commonConfiguration =
         configurationDomain.getCommonConfiguration(orgId, type, key);
 
-    if (globalConfiguration.isEmpty()) {
-      logger.error(COMMON_CONFIG_NOT_FOUND_ERROR_MSG);
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
-      errorMap.put(TYPE, FieldError.builder().rejectedValue(type).build());
-      errorMap.put(KEY, FieldError.builder().rejectedValue(key).build());
-      throw new CommonServiceException(
-          COMMON_CONFIG_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
+    if (commonConfiguration.isEmpty()) {
+      throwException(orgId, type, key);
     }
-    configurationDomain.deleteCommonConfiguration(globalConfiguration.get());
-    return INSTANCE.toCommonMasterConfigurationDto(globalConfiguration.get());
+    configurationDomain.deleteCommonConfiguration(commonConfiguration.get());
+    return INSTANCE.toCommonMasterConfigurationDto(commonConfiguration.get());
+  }
+
+  private static void throwException(String orgId, String type, String key)
+      throws CommonServiceException {
+    logger.error(COMMON_CONFIG_NOT_FOUND_ERROR_MSG);
+    Map<String, FieldError> errorMap = new HashMap<>();
+    errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+    errorMap.put(TYPE, FieldError.builder().rejectedValue(type).build());
+    errorMap.put(KEY, FieldError.builder().rejectedValue(key).build());
+    throw new CommonServiceException(
+        COMMON_CONFIG_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1774, errorMap);
   }
 }

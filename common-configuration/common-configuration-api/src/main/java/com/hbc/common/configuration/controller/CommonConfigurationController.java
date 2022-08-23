@@ -2,7 +2,6 @@ package com.hbc.common.configuration.controller;
 
 import com.hbc.common.configuration.api.domain.dto.CommonConfigurationDto;
 import com.hbc.common.configuration.api.domain.inbound.CreateCommonConfigurationRequest;
-import com.hbc.common.configuration.api.domain.inbound.UpdateCommonConfigurationRequest;
 import com.hbc.common.configuration.service.CommonConfigurationService;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
@@ -36,60 +35,39 @@ public class CommonConfigurationController {
       @PathVariable String orgId, @RequestParam String type, @RequestParam String key)
       throws PromiseEngineException {
     logger.debug("Processing Common Configuration fetch request");
-    try {
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Common Configuration successfully fetched!")
-              .payload(commonConfigurationService.fetchValue(orgId, type, key))
-              .build());
-    } catch (Exception e) {
-      logger.error("Failed to process fetch Common Configuration request!");
-      throw e;
-    }
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Common Configuration successfully fetched!")
+            .payload(commonConfigurationService.fetchValue(orgId, type, key))
+            .build());
   }
 
   @PostMapping
   public ResponseEntity<BaseResponse<CommonConfigurationDto>> createCommonConfiguration(
       @Valid @RequestBody CreateCommonConfigurationRequest baseRequest)
-      throws PromiseEngineException, CommonServiceException {
+      throws PromiseEngineException {
     logger.debug("Processing create Common Configuration request");
-    try {
-      var globalConfigurationDto = commonConfigurationService.createCommonConfig(baseRequest);
 
-      return ResponseEntity.status(HttpStatus.CREATED)
-          .body(
-              BaseResponse.builder()
-                  .message("Common Configuration successfully created!")
-                  .payload(globalConfigurationDto)
-                  .build());
-    } catch (Exception e) {
-      logger.error("Failed to process create Common Configuration request!");
-      throw e;
-    }
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(
+            BaseResponse.builder()
+                .message("Common Configuration successfully created!")
+                .payload(commonConfigurationService.createCommonConfig(baseRequest))
+                .build());
   }
 
-  @PutMapping("/orgId/{orgId}")
+  @PutMapping
   public ResponseEntity<BaseResponse<CommonConfigurationDto>> updateCommonConfiguration(
-      @PathVariable String orgId,
-      @RequestParam("type") String type,
-      @RequestParam("key") String key,
-      @Valid @RequestBody UpdateCommonConfigurationRequest baseRequest)
+      @Valid @RequestBody CreateCommonConfigurationRequest baseRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("Processing update Common Configuration request");
-    try {
-      var commonConfigurationDto =
-          commonConfigurationService.updateCommonConfiguration(orgId, type, key, baseRequest);
-      logger.info("Response after updation of common configuration :{}", commonConfigurationDto);
 
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Common Configuration successfully updated!")
-              .payload(commonConfigurationDto)
-              .build());
-    } catch (Exception e) {
-      logger.error("Failed to process update Common Configuration request!");
-      throw e;
-    }
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Common Configuration successfully updated!")
+            .payload(commonConfigurationService.updateCommonConfiguration(baseRequest))
+            .build());
   }
 
   @DeleteMapping("/orgId/{orgId}")
@@ -103,18 +81,11 @@ public class CommonConfigurationController {
         orgId,
         type,
         key);
-    try {
-      var commonConfigurationDto =
-          commonConfigurationService.deleteCommonConfiguration(orgId, type, key);
-      logger.info("Response after deletion of common configuration :{}", commonConfigurationDto);
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Common Configuration successfully deleted!")
-              .payload(commonConfigurationDto)
-              .build());
-    } catch (Exception e) {
-      logger.error("Failed to process delete Common Configuration request!");
-      throw e;
-    }
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Common Configuration successfully deleted!")
+            .payload(commonConfigurationService.deleteCommonConfiguration(orgId, type, key))
+            .build());
   }
 }

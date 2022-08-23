@@ -7,8 +7,8 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.configuration.TestUtil;
 import com.hbc.common.configuration.api.domain.dto.CommonConfigurationDto;
 import com.hbc.common.configuration.api.domain.inbound.CreateCommonConfigurationRequest;
-import com.hbc.common.configuration.api.domain.inbound.UpdateCommonConfigurationRequest;
 import com.hbc.common.configuration.service.CommonConfigurationService;
+import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
@@ -30,7 +30,7 @@ class CommonConfigurationControllerTest {
   @InjectMocks private TestUtil testUtil;
 
   @Test
-  void createCommonConfiguration_Test() throws PromiseEngineException, CommonServiceException {
+  void createCommonConfiguration_Test() throws PromiseEngineException {
     when(configurationService.createCommonConfig(any(CreateCommonConfigurationRequest.class)))
         .thenReturn(testUtil.getCommonConfigurationDto());
     Assertions.assertDoesNotThrow(
@@ -38,12 +38,11 @@ class CommonConfigurationControllerTest {
   }
 
   @Test
-  void createCommonConfiguration_TestException()
-      throws PromiseEngineException, CommonServiceException {
+  void createCommonConfiguration_TestException() throws PromiseEngineException {
     when(configurationService.createCommonConfig(any(CreateCommonConfigurationRequest.class)))
-        .thenThrow(new CommonServiceException(HttpStatus.BAD_GATEWAY, null, null));
+        .thenThrow(new PromiseEngineException(ApplicationLayer.SERVICE_LAYER, null, null));
     Assertions.assertThrows(
-        CommonServiceException.class,
+        PromiseEngineException.class,
         () -> configurationController.createCommonConfiguration(testUtil.getCreateRequest()));
   }
 
@@ -70,31 +69,21 @@ class CommonConfigurationControllerTest {
   @Test
   void updateCommonConfiguration_Test() throws PromiseEngineException, CommonServiceException {
     when(configurationService.updateCommonConfiguration(
-            anyString(), anyString(), anyString(), any(UpdateCommonConfigurationRequest.class)))
+            any(CreateCommonConfigurationRequest.class)))
         .thenReturn(testUtil.getCommonConfigurationDto());
     Assertions.assertDoesNotThrow(
-        () ->
-            configurationController.updateCommonConfiguration(
-                TestUtil.ORGID,
-                TestUtil.TYPE,
-                TestUtil.KEY,
-                UpdateCommonConfigurationRequest.builder().value("PICK").build()));
+        () -> configurationController.updateCommonConfiguration(testUtil.getCreateRequest()));
   }
 
   @Test
   void updateCommonConfiguration_TestException()
       throws PromiseEngineException, CommonServiceException {
     when(configurationService.updateCommonConfiguration(
-            anyString(), anyString(), anyString(), any(UpdateCommonConfigurationRequest.class)))
+            any(CreateCommonConfigurationRequest.class)))
         .thenThrow(new CommonServiceException(HttpStatus.BAD_GATEWAY, null, null));
     Assertions.assertThrows(
         CommonServiceException.class,
-        () ->
-            configurationController.updateCommonConfiguration(
-                TestUtil.ORGID,
-                TestUtil.TYPE,
-                TestUtil.KEY,
-                UpdateCommonConfigurationRequest.builder().value("PICK").build()));
+        () -> configurationController.updateCommonConfiguration(testUtil.getCreateRequest()));
   }
 
   @Test
