@@ -11,9 +11,4 @@ public class InvalidTemplateTypeException extends Exception {
     super(message);
     this.templateType = templateType;
   }
-
-  public InvalidTemplateTypeException(String message, Throwable cause, String templateType) {
-    super(message, cause);
-    this.templateType = templateType;
-  }
 }
