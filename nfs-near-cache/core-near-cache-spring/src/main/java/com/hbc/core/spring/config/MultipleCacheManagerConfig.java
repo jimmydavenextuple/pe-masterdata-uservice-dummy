@@ -35,7 +35,7 @@ public class MultipleCacheManagerConfig {
       caches.add(
           buildCache(entry.getKey(), Long.parseLong(properties[0]), Long.parseLong(properties[1])));
     }
-    SimpleCacheManager cacheManager = new SimpleCacheManager();
+    var cacheManager = new SimpleCacheManager();
     cacheManager.setCaches(caches);
     return cacheManager;
   }
