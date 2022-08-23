@@ -8,18 +8,26 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.node.TestUtil;
 import com.hbc.node.domain.NodeDomain;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.node.exception.NodeDomainException;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 class NodeServiceTest {
 
@@ -122,5 +130,40 @@ class NodeServiceTest {
     Assertions.assertEquals("Node not found with given details", exception.getMessage());
 
     verify(nodeDomain, times(1)).findNodeByNodeIdAndOrgId(any(), any());
+  }
+
+  @Test
+  void getNodeListByOrgIdTest() throws NodeDomainException, CommonServiceException {
+    List<NodeDto> nodeDtoList = testUtil.getNodeDtoList();
+
+    Pageable pageable = PageRequest.of(1, 1, Sort.by(TestUtil.SORT_BY).ascending());
+    Page<NodeDto> nodeDtoPage = new PageImpl<>(nodeDtoList, pageable, nodeDtoList.size());
+
+    when(nodeDomain.getNodeByOrgId(any(), any(), any(), any(), any())).thenReturn(nodeDtoPage);
+
+    Page<NodeDto> response =
+        nodeService.getNodeListByOrgId(TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "ASC");
+
+    Assertions.assertEquals(nodeDtoList.size(), response.getContent().size());
+    Assertions.assertEquals(2, response.getTotalPages());
+    Assertions.assertEquals(1, response.getPageable().getPageSize());
+    Assertions.assertEquals(2, response.getTotalElements());
+    Assertions.assertEquals("nodeId: ASC", response.getSort().toString());
+
+    verify(nodeDomain, Mockito.times(1)).getNodeByOrgId(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getNodeListByOrgIdExceptionTest() throws NodeDomainException {
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                nodeService.getNodeListByOrgId(
+                    TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "invalid sort order"));
+
+    Assertions.assertEquals(
+        "Invalid sort order, consider giving either ASC or DESC", exception.getMessage());
+    verify(nodeDomain, Mockito.times(0)).getNodeByOrgId(any(), any(), any(), any(), any());
   }
 }

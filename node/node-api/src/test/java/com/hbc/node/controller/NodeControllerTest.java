@@ -6,14 +6,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.base.PagePayload;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.TestUtil;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.outbound.NodeResponse;
+import com.hbc.node.domain.pojo.PageProperties;
 import com.hbc.node.exception.NodeDomainException;
 import com.hbc.node.service.NodeService;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +36,7 @@ class NodeControllerTest {
   @InjectMocks private TestUtil testUtil;
 
   @Mock private NodeService nodeService;
+  @Mock private PageProperties pageProperties;
 
   @BeforeEach
   void setUp() {
@@ -148,5 +155,88 @@ class NodeControllerTest {
     Assertions.assertEquals("Error while deleting node", exception.getMessage());
 
     verify(nodeService, times(1)).deleteNode(any(), any());
+  }
+
+  @Test
+  void getNodeListTest() throws NodeDomainException, CommonServiceException {
+    List<NodeDto> nodeDtoList = testUtil.getNodeDtoList();
+
+    when(nodeService.getNodeListByOrgId(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeDtoPage(2, nodeDtoList, nodeDtoList.size()));
+
+    ResponseEntity<BaseResponse<PagePayload<NodeDto>>> response =
+        nodeController.getNodeList(
+            TestUtil.ORG_ID,
+            testUtil.getPageParams(
+                Optional.of(2),
+                Optional.of(1),
+                Optional.of(TestUtil.SORT_BY),
+                Optional.of(TestUtil.SORT_ORDER_DESC)));
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
+    Assertions.assertEquals(
+        2,
+        (int) response.getBody().getPayload().getPagination().getTotalPages(),
+        "Pagination Total pages");
+    Assertions.assertEquals(
+        nodeDtoList.size(),
+        (int) response.getBody().getPayload().getPagination().getTotalRecords(),
+        "Total Elements");
+    Assertions.assertEquals(
+        2,
+        (int) response.getBody().getPayload().getPagination().getCurrentPage(),
+        "Current page number");
+    Assertions.assertEquals(
+        nodeDtoList.size(), response.getBody().getPayload().getData().size(), "Paginated data");
+    Assertions.assertEquals(
+        "", response.getBody().getPayload().getPagination().getNext(), "Next Uri should be empty");
+    Assertions.assertEquals(
+        Boolean.TRUE,
+        Objects.nonNull(response.getBody().getPayload().getPagination().getPrevious()),
+        "Previous Uri should not be null");
+
+    verify(nodeService, times(1)).getNodeListByOrgId(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getNodeListDefaultTest() throws NodeDomainException, CommonServiceException {
+    List<NodeDto> nodeDtoList = testUtil.getNodeDtoList();
+
+    when(pageProperties.getPageNo()).thenReturn(1);
+    when(pageProperties.getPageSize()).thenReturn(15);
+    when(nodeService.getNodeListByOrgId(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeDtoPage(2, nodeDtoList, nodeDtoList.size()));
+
+    ResponseEntity<BaseResponse<PagePayload<NodeDto>>> response =
+        nodeController.getNodeList(
+            TestUtil.ORG_ID,
+            testUtil.getPageParams(
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()));
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
+    Assertions.assertEquals(
+        2,
+        (int) response.getBody().getPayload().getPagination().getTotalPages(),
+        "Pagination Total pages");
+    Assertions.assertEquals(
+        nodeDtoList.size(),
+        (int) response.getBody().getPayload().getPagination().getTotalRecords(),
+        "Total Elements");
+    Assertions.assertEquals(
+        1,
+        (int) response.getBody().getPayload().getPagination().getCurrentPage(),
+        "Current page number");
+    Assertions.assertEquals(
+        nodeDtoList.size(), response.getBody().getPayload().getData().size(), "Paginated data");
+    Assertions.assertEquals(
+        "",
+        response.getBody().getPayload().getPagination().getPrevious(),
+        "Previous Uri should be empty");
+    Assertions.assertEquals(
+        Boolean.TRUE,
+        Objects.nonNull(response.getBody().getPayload().getPagination().getNext()),
+        "Next Uri should not be null");
+
+    verify(nodeService, times(1)).getNodeListByOrgId(any(), any(), any(), any(), any());
   }
 }

@@ -1,6 +1,8 @@
 package com.hbc.node.carrier.domain;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -39,7 +41,7 @@ class NodeCarrierDomainTest {
     NodeCarrierEntity nodeCarrier =
         nodeCarrierDomain.saveNodeCarrierEntity(testUtil.getNodeCarrierEntity());
 
-    Assertions.assertEquals(nodeCarrierEntity, nodeCarrier);
+    assertEquals(nodeCarrierEntity, nodeCarrier);
     verify(nodeCarrierRepository, times(1)).save(any());
   }
 
@@ -53,7 +55,7 @@ class NodeCarrierDomainTest {
             NodeCarrierDomainException.class,
             () -> nodeCarrierDomain.saveNodeCarrierEntity(testUtil.getNodeCarrierEntity()));
 
-    Assertions.assertEquals("Error while saving the node carrier", ex.getMessage());
+    assertEquals("Error while saving the node carrier", ex.getMessage());
     verify(nodeCarrierRepository, times(1)).save(any());
   }
 
@@ -72,7 +74,7 @@ class NodeCarrierDomainTest {
             TestUtil.CARRIER_SERVICE_ID,
             TestUtil.SERVICE_OPTION);
 
-    Assertions.assertEquals(nodeCarrierEntity, nodeCarrier.get());
+    assertEquals(nodeCarrierEntity, nodeCarrier.get());
     verify(nodeCarrierRepository, times(1))
         .findByNodeIdAndOrgIdAndCarrierServiceIdAndServiceOption(any(), any(), any(), any());
   }
@@ -94,7 +96,7 @@ class NodeCarrierDomainTest {
                     TestUtil.CARRIER_SERVICE_ID,
                     TestUtil.SERVICE_OPTION));
 
-    Assertions.assertEquals("Error while finding node carrier", ex.getMessage());
+    assertEquals("Error while finding node carrier", ex.getMessage());
     verify(nodeCarrierRepository, times(1))
         .findByNodeIdAndOrgIdAndCarrierServiceIdAndServiceOption(any(), any(), any(), any());
   }
@@ -119,7 +121,7 @@ class NodeCarrierDomainTest {
             NodeCarrierDomainException.class,
             () -> nodeCarrierDomain.deleteNodeCarrierEntity(testUtil.getNodeCarrierEntity()));
 
-    Assertions.assertEquals("Error while deleting node carrier", ex.getMessage());
+    assertEquals("Error while deleting node carrier", ex.getMessage());
     verify(nodeCarrierRepository, times(1)).delete(any());
   }
 
@@ -134,8 +136,8 @@ class NodeCarrierDomainTest {
         nodeCarrierDomain.findNodeCarrierByNodeIdAOrgIdAndServiceOption(
             TestUtil.NODE_ID, TestUtil.ORG_ID, TestUtil.SERVICE_OPTION);
 
-    Assertions.assertEquals(2, nodeCarrierEntities.size());
-    Assertions.assertEquals(nodeCarrierEntityList, nodeCarrierEntities);
+    assertEquals(2, nodeCarrierEntities.size());
+    assertEquals(nodeCarrierEntityList, nodeCarrierEntities);
     verify(nodeCarrierRepository, times(1))
         .findByNodeIdAndOrgIdAndServiceOption(any(), any(), any());
   }
@@ -153,8 +155,46 @@ class NodeCarrierDomainTest {
                 nodeCarrierDomain.findNodeCarrierByNodeIdAOrgIdAndServiceOption(
                     TestUtil.NODE_ID, TestUtil.ORG_ID, TestUtil.SERVICE_OPTION));
 
-    Assertions.assertEquals("Error while finding node carrier list", ex.getMessage());
+    assertEquals("Error while finding node carrier list", ex.getMessage());
     verify(nodeCarrierRepository, times(1))
         .findByNodeIdAndOrgIdAndServiceOption(any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("When node carrier list is fetched successfully by node id and org id")
+  void findNodeCarrierByNodeIdAndOrgIdTest() throws NodeCarrierDomainException {
+    List<NodeCarrierEntity> nodeCarrierEntityList = testUtil.getNodeCarrierEntityList2();
+    when(nodeCarrierRepository.findByNodeIdAOrgIdAndBlankCarrierServiceId(anyString(), anyString()))
+        .thenReturn(nodeCarrierEntityList);
+
+    List<NodeCarrierEntity> responseNodeCarrierList =
+        nodeCarrierDomain.findNodeCarrierByNodeIdAndOrgId(TestUtil.NODE_ID, TestUtil.ORG_ID);
+
+    assertEquals(nodeCarrierEntityList.size(), responseNodeCarrierList.size());
+    assertEquals(TestUtil.NODE_ID, responseNodeCarrierList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, responseNodeCarrierList.get(0).getOrgId());
+    assertEquals("", responseNodeCarrierList.get(0).getCarrierServiceId());
+    assertEquals(nodeCarrierEntityList, responseNodeCarrierList);
+
+    verify(nodeCarrierRepository, times(1))
+        .findByNodeIdAOrgIdAndBlankCarrierServiceId(anyString(), anyString());
+  }
+
+  @Test
+  @DisplayName("When there is some error in finding node carrier list by node id and org id")
+  void findNodeCarrierByNodeIdAndOrgIdTestException() {
+    when(nodeCarrierRepository.findByNodeIdAOrgIdAndBlankCarrierServiceId(anyString(), anyString()))
+        .thenThrow(new RuntimeException("Error while fetching details"));
+
+    Exception ex =
+        Assertions.assertThrows(
+            NodeCarrierDomainException.class,
+            () ->
+                nodeCarrierDomain.findNodeCarrierByNodeIdAndOrgId(
+                    TestUtil.NODE_ID, TestUtil.ORG_ID));
+
+    assertEquals("Error while fetching node carrier list for nodeId and orgId", ex.getMessage());
+    verify(nodeCarrierRepository, times(1))
+        .findByNodeIdAOrgIdAndBlankCarrierServiceId(anyString(), anyString());
   }
 }

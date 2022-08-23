@@ -26,7 +26,6 @@ public class NodeCarrierRequest implements Serializable {
   @Length(max = 50)
   private String orgId;
 
-  @NotBlank(message = "carrierServiceId cannot be empty")
   @Length(max = 50)
   private String carrierServiceId;
 

@@ -1,6 +1,8 @@
 package com.hbc.node.carrier.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -253,5 +255,22 @@ class NodeCarrierServiceTest {
             InvalidDataException.class,
             () -> nodeCarrierService.validateLastPickupTime(lastPickUpTime));
     Assertions.assertEquals("LastPickupTime is invalid", ex.getMessage());
+  }
+
+  @Test
+  void getNodeCarrierForNodeIdAndOrgIdTest() throws NodeCarrierDomainException {
+    List<NodeCarrierEntity> nodeCarrierEntityList = testUtil.getNodeCarrierEntityList2();
+    when(nodeCarrierDomain.findNodeCarrierByNodeIdAndOrgId(anyString(), anyString()))
+        .thenReturn(nodeCarrierEntityList);
+
+    List<NodeCarrierResponse> nodeCarrierResponseList =
+        nodeCarrierService.getNodeCarrierForNodeIdAndOrgId(TestUtil.NODE_ID, TestUtil.ORG_ID);
+
+    assertEquals(nodeCarrierEntityList.size(), nodeCarrierResponseList.size());
+    assertEquals(TestUtil.NODE_ID, nodeCarrierResponseList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, nodeCarrierResponseList.get(0).getOrgId());
+    assertEquals("", nodeCarrierResponseList.get(0).getCarrierServiceId());
+
+    verify(nodeCarrierDomain, times(1)).findNodeCarrierByNodeIdAndOrgId(anyString(), anyString());
   }
 }

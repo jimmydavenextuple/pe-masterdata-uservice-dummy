@@ -1,10 +1,15 @@
 package com.hbc.node.controller;
 
+import com.hbc.common.base.PagePayload;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.common.util.PaginationUtil;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.outbound.NodeResponse;
+import com.hbc.node.domain.pojo.PageProperties;
 import com.hbc.node.exception.NodeDomainException;
 import com.hbc.node.service.NodeService;
 import javax.validation.Valid;
@@ -12,6 +17,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +34,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class NodeController {
 
   private static final Logger logger = LoggerFactory.getLogger(NodeController.class);
+  private static final String DEFAULT_SORT_BY = "nodeId";
+  private static final String DEFAULT_SORT_ORDER = "ASC";
   private final NodeService nodeService;
+  private final PageProperties pageProperties;
 
   @PostMapping
   public ResponseEntity<BaseResponse<NodeResponse>> createNode(
@@ -111,5 +120,64 @@ public class NodeController {
       logger.error("Failed to delete node");
       throw e;
     }
+  }
+
+  @GetMapping("/{orgId}")
+  public ResponseEntity<BaseResponse<PagePayload<NodeDto>>> getNodeList(
+      @NotBlank @PathVariable String orgId, PageParams pageParams)
+      throws NodeDomainException, CommonServiceException {
+    logger.debug("Processing get node list for an orgId");
+
+    Page<NodeDto> nodeDtoPage =
+        nodeService.getNodeListByOrgId(
+            orgId,
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            pageParams.getPageSize().orElse(pageProperties.getPageSize()),
+            pageParams.getSortBy().orElse(DEFAULT_SORT_BY),
+            pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
+
+    PagePayload<NodeDto> pagePayload = setNodePagePayload(nodeDtoPage, pageParams);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node List fetched successfully")
+            .payload(pagePayload)
+            .build());
+  }
+
+  private PagePayload<NodeDto> setNodePagePayload(
+      Page<NodeDto> nodeDtoPage, PageParams pageParams) {
+    PagePayload<NodeDto> pagePayload = new PagePayload<>();
+    var pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords((int) nodeDtoPage.getTotalElements());
+    pagination.setTotalPages(nodeDtoPage.getTotalPages());
+    pagination.setCurrentPage(pageParams.getPageNo().orElse(pageProperties.getPageNo()));
+    pagination.setSortOrder(pageParams.getSortOrder().orElse(DEFAULT_SORT_BY));
+    pagination.setSortBy(pageParams.getSortBy().orElse(DEFAULT_SORT_ORDER));
+
+    String nextUri =
+        PaginationUtil.buildUriForPagination(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            nodeDtoPage.getTotalPages(),
+            "next",
+            String.format(
+                "/{orgId}?pageNo=%d&pageSize=%d",
+                (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
+                pageParams.getPageSize().orElse(pageProperties.getPageSize())));
+    String previousUri =
+        PaginationUtil.buildUriForPagination(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            nodeDtoPage.getTotalPages(),
+            "previous",
+            String.format(
+                "/{orgId}?pageNo=%d&pageSize=%d",
+                (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
+                pageParams.getPageSize().orElse(pageProperties.getPageSize())));
+    pagination.setNext(nextUri);
+    pagination.setPrevious(previousUri);
+    pagePayload.setPagination(pagination);
+    pagePayload.setData(nodeDtoPage.getContent());
+
+    return pagePayload;
   }
 }
