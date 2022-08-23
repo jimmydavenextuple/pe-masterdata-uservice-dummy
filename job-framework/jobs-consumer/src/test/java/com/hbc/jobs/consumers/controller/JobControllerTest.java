@@ -16,6 +16,7 @@ import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
+import com.hbc.jobs.framework.common.domain.pojo.PageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +30,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -41,6 +41,8 @@ class JobControllerTest {
   @InjectMocks private TestUtil testUtil;
 
   @Mock private JobService jobService;
+
+  @Mock private PageProperties pageProperties;
 
   @BeforeEach
   public void init() {
@@ -169,11 +171,13 @@ class JobControllerTest {
   @Test
   void getJobsByFilterSuccess() throws JobException {
 
-    Optional<Integer> pageNo = Optional.of(1);
-    Optional<Integer> pageSize = Optional.of(1);
-
     List<JobDto> jobDtoList = testUtil.createJobDtoList();
     Page<JobDto> pageResp = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
+
+    when(pageProperties.getPageNo()).thenReturn(1);
+    when(pageProperties.getPageSize()).thenReturn(15);
+    when(pageProperties.getSortBy()).thenReturn("created_date");
+    when(pageProperties.getSortOrder()).thenReturn("ASC");
 
     when(jobService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenReturn(pageResp);
@@ -200,15 +204,16 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterLastPageSuccess() throws JobException {
-    ReflectionTestUtils.setField(jobController, "defaultSortBy", "created_date");
-    ReflectionTestUtils.setField(jobController, "defaultSortOrder", "ASC");
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 15);
+
     JobFilters jobFilters = testUtil.getJobFilters();
     jobFilters.setPageNo(Optional.of(2));
     List<JobDto> jobDtoList = testUtil.createJobDtoList();
     Page<JobDto> pageResp = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
 
+    when(pageProperties.getPageNo()).thenReturn(1);
+    when(pageProperties.getPageSize()).thenReturn(15);
+    when(pageProperties.getSortBy()).thenReturn("created_date");
+    when(pageProperties.getSortOrder()).thenReturn("ASC");
     when(jobService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenReturn(pageResp);
 
@@ -233,10 +238,11 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterPageNoNotAllowed() {
-    ReflectionTestUtils.setField(jobController, "defaultSortBy", "created_date");
-    ReflectionTestUtils.setField(jobController, "defaultSortOrder", "ASC");
-    ReflectionTestUtils.setField(jobController, "defaultPageNo", 1);
-    ReflectionTestUtils.setField(jobController, "defaultPageSize", 15);
+
+    when(pageProperties.getPageNo()).thenReturn(1);
+    when(pageProperties.getPageSize()).thenReturn(15);
+    when(pageProperties.getSortBy()).thenReturn("created_date");
+    when(pageProperties.getSortOrder()).thenReturn("ASC");
     JobFilters jobFilters = testUtil.getJobFilters();
     jobFilters.setPageNo(Optional.of(0));
     JobException exception =
@@ -251,7 +257,10 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterException() throws JobException {
-
+    when(pageProperties.getPageNo()).thenReturn(1);
+    when(pageProperties.getPageSize()).thenReturn(15);
+    when(pageProperties.getSortBy()).thenReturn("created_date");
+    when(pageProperties.getSortOrder()).thenReturn("ASC");
     when(jobService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenThrow(new JobException("Exception while retrieving the list of jobs", null, 1));
 

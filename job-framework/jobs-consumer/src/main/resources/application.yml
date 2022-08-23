@@ -53,3 +53,8 @@ management:
             requests: true
         persistence: true
         cache: true
+pagination:
+  pageNo: 1
+  pageSize: 15
+  sortBy: created_date
+  sortOrder: ASC

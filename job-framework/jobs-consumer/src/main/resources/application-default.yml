@@ -34,11 +34,6 @@ jobs-framework:
   record-consumer:
     topic-name: jobs-task-local
     group-id: jobs-task-consumer-async-local
-job-filters:
-  sort-by: created_date
-  sort-order: ASC
-  page-no: 1
-  page-size: 15
 logging:
   level:
     com.hbc: INFO

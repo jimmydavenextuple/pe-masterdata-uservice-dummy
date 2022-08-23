@@ -9,6 +9,7 @@ import com.hbc.jobs.consumers.service.JobService;
 import com.hbc.jobs.consumers.util.UriBuilder;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
+import com.hbc.jobs.framework.common.domain.pojo.PageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.Collections;
 import java.util.List;
@@ -16,8 +17,8 @@ import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,24 +31,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class JobController {
   private final JobService jobService;
 
-  public JobController(JobService jobService) {
-    this.jobService = jobService;
-  }
-
-  @Value("${job-filters.sort-by}")
-  private String defaultSortBy;
-
-  @Value("${job-filters.sort-order}")
-  private String defaultSortOrder;
-
-  @Value("${job-filters.page-no}")
-  private int defaultPageNo;
-
-  @Value("${job-filters.page-size}")
-  private int defaultPageSize;
+  private final PageProperties pageProperties;
 
   /**
    * @param orgId
@@ -127,10 +115,10 @@ public class JobController {
       throws JobException {
     log.debug("--Inside getJobsByFilter()--");
 
-    int requiredPageNo = jobFilters.getPageNo().orElse(defaultPageNo);
-    int requiredPageSize = jobFilters.getPageSize().orElse(defaultPageSize);
-    String requiredSortByField = jobFilters.getSortBy().orElse(defaultSortBy);
-    String requiredSortOrder = jobFilters.getSortOrder().orElse(defaultSortOrder);
+    int requiredPageNo = jobFilters.getPageNo().orElse(pageProperties.getPageNo());
+    int requiredPageSize = jobFilters.getPageSize().orElse(pageProperties.getPageSize());
+    String requiredSortByField = jobFilters.getSortBy().orElse(pageProperties.getSortBy());
+    String requiredSortOrder = jobFilters.getSortOrder().orElse(pageProperties.getSortOrder());
 
     if (requiredPageNo < 1) {
       throw new JobException("PageNo can not be less than one", null, requiredPageNo);
