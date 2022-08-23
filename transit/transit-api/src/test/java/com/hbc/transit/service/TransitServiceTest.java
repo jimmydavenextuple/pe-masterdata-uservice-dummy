@@ -243,4 +243,34 @@ class TransitServiceTest {
 
     verify(transitDomain, times(1)).fetchTransitEntitiesCount(any(), any());
   }
+
+  @Test
+  void getListOfTransitDetailsWithoutSourcingNodesTest() throws TransitDomainException, CommonServiceException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    when(transitDomain.fetchTransitListWithoutSourcingNodes(any(), any())).thenReturn(List.of(transitEntity));
+
+    List<TransitResponse> transitResponse =
+            transitService.getListOfTransitDetailsWithoutSourcingNodes(
+                    TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
+    Assertions.assertEquals(
+            transitEntity.getTransitDays(), transitResponse.get(0).getTransitDays());
+    verify(transitDomain, times(1)).fetchTransitListWithoutSourcingNodes(any(), any());
+  }
+
+  @Test
+  void getTransitDetailsWithoutSourcingNodesTestException() throws TransitDomainException {
+    List<TransitEntity> transitEntityList = Collections.<TransitEntity>emptyList();
+    when(transitDomain.fetchTransitListWithoutSourcingNodes(any(), any()))
+            .thenReturn(transitEntityList);
+
+    Exception exception =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () ->
+                            transitService.getListOfTransitDetailsWithoutSourcingNodes(
+                                    TestUtil.ORG_ID,
+                                    TestUtil.DESTINATION_GEOZONE));
+    Assertions.assertEquals("Transit data not found with given details", exception.getMessage());
+    verify(transitDomain, times(1)).fetchTransitListWithoutSourcingNodes(any(), any());
+  }
 }

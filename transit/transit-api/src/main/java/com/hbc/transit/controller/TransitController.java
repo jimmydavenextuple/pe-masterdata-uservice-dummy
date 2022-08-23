@@ -171,4 +171,19 @@ public class TransitController {
             .payload(transitTimeEntriesDto)
             .build());
   }
+
+  @GetMapping("/batch-transit/{orgId}/{destinationGeozone}")
+  public List<TransitResponse> getTransitDetailsListWithoutSourceNodes(
+          @NotBlank @PathVariable String orgId,
+          @NotBlank @PathVariable String destinationGeozone)
+          throws TransitDomainException, CommonServiceException {
+    logger.debug("Processing get transit details list");
+    try {
+         return transitService.getListOfTransitDetailsWithoutSourcingNodes(orgId, destinationGeozone);
+    } catch (Exception e) {
+      logger.error("Failed to fetch transit details list");
+      throw e;
+    }
+  }
+
 }
