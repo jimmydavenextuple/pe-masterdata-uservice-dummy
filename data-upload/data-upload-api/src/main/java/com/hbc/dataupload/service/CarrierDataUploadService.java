@@ -31,7 +31,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +53,7 @@ public class CarrierDataUploadService {
 
   public ResponseEntity<BaseResponse<String>> uploadCarrierData(String fileUri)
       throws CommonServiceException, IOException {
-    Path path = DataUploadUtil.getPath(basePath, fileUri);
+    var path = DataUploadUtil.getPath(basePath, fileUri);
 
     DataUploadUtil.validateFileType(fileUri, CARRIER_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
@@ -67,12 +66,12 @@ public class CarrierDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailedForCarrier = true;
-    boolean isAllPassedForCarrier = true;
-    boolean carrierResult = false;
+    var isAllFailedForCarrier = true;
+    var isAllPassedForCarrier = true;
+    var carrierResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
-        CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
+        var csvParser = DataUploadUtil.getCSVParser(reader)) {
       DataUploadUtil.compareHeaders(csvParser, "carrier", CARRIER_DATA_UPLOAD_INVALID_FILE_HEADERS);
       for (CSVRecord csvRecord : csvParser) {
         long row = csvParser.getCurrentLineNumber();
@@ -89,7 +88,7 @@ public class CarrierDataUploadService {
           switch (action) {
             case CREATE:
               {
-                CarrierServiceRequest carrierServiceRequest =
+                var carrierServiceRequest =
                     CarrierServiceRequest.builder()
                         .orgId(orgId)
                         .carrierId(carrierId)
@@ -107,7 +106,7 @@ public class CarrierDataUploadService {
 
             case UPDATE:
               {
-                CarrierServiceUpdateRequest carrierServiceUpdateRequest =
+                var carrierServiceUpdateRequest =
                     CarrierServiceUpdateRequest.builder()
                         .carrierName(carrierName)
                         .serviceName(serviceName)

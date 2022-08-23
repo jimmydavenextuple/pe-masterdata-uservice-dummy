@@ -28,7 +28,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +51,7 @@ public class CarrierCalendarDataUploadService {
 
   public ResponseEntity<BaseResponse<String>> uploadCarrierCalendarData(String fileUri)
       throws CommonServiceException, IOException {
-    Path path = DataUploadUtil.getPath(basePath, fileUri);
+    var path = DataUploadUtil.getPath(basePath, fileUri);
 
     DataUploadUtil.validateFileType(fileUri, CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
@@ -67,12 +66,12 @@ public class CarrierCalendarDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailedForCarrierCalendar = true;
-    boolean isAllPassedForCarrierCalendar = true;
-    boolean carrierCalendar = false;
+    var isAllFailedForCarrierCalendar = true;
+    var isAllPassedForCarrierCalendar = true;
+    var carrierCalendar = false;
 
     try (Reader reader = Files.newBufferedReader(path);
-        CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
+        var csvParser = DataUploadUtil.getCSVParser(reader)) {
       DataUploadUtil.compareHeaders(
           csvParser, "carrier-calendar", CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_HEADERS);
 
@@ -89,7 +88,7 @@ public class CarrierCalendarDataUploadService {
           String effectiveDate = csvRecord.get(EFFECTIVE_DATE);
 
           if (action.equals(CREATE)) {
-            CarrierServiceCalendarRequest carrierServiceCalendarRequest =
+            var carrierServiceCalendarRequest =
                 CarrierServiceCalendarRequest.builder()
                     .calendarId(calendarId)
                     .orgId(orgId)
