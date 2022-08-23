@@ -1,6 +1,7 @@
 package com.hbc.nodecarrier.cache.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,4 +24,10 @@ public class NodeCarrierDetails implements Serializable {
   private Double processingTime;
 
   private String lastPickupTime;
+
+  private Double bufferHours;
+
+  private Date bufferStartDate;
+
+  private Date bufferEndDate;
 }
