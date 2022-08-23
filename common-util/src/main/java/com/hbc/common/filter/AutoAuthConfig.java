@@ -25,7 +25,7 @@ public class AutoAuthConfig {
 
   @Bean
   public AuthProperties authProperties() {
-    AuthProperties authProperties = new AuthProperties();
+    var authProperties = new AuthProperties();
     authProperties.setFilterEnabled(filterEnabled);
     authProperties.setClaims(claims);
     authProperties.setIssuer(issuer);

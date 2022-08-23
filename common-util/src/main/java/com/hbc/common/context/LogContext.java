@@ -165,7 +165,7 @@ public class LogContext {
   }
 
   public Long getKafkaEventDate() {
-    String epochTimeInString = get(KAFKA_EVENT_DATE);
+    var epochTimeInString = get(KAFKA_EVENT_DATE);
     if (!ObjectUtils.isEmpty(epochTimeInString)) {
       return Long.parseLong(epochTimeInString);
     }
@@ -205,7 +205,7 @@ public class LogContext {
     }
 
     try {
-      Date parsedDate = DateUtil.getDateAndTime(date);
+      var parsedDate = DateUtil.getDateAndTime(date);
       if (parsedDate != null) {
         return put(KAFKA_EVENT_DATE, parsedDate.getTime() + "");
       }
@@ -214,7 +214,7 @@ public class LogContext {
     }
 
     try {
-      Date parsedDate = DateUtil.getDateUTC(date);
+      var parsedDate = DateUtil.getDateUTC(date);
       if (parsedDate != null) {
         return put(KAFKA_EVENT_DATE, parsedDate.getTime() + "");
       }

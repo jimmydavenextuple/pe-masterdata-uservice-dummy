@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Profile;
 public class NewRelicConfig {
   @Bean
   public NewRelicRegistry newRelicMeterRegistry(NewRelicRegistryConfig config) {
-    NewRelicRegistry newRelicRegistry = NewRelicRegistry.builder(config).build();
+    var newRelicRegistry = NewRelicRegistry.builder(config).build();
     newRelicRegistry.config().meterFilter(MeterFilter.ignoreTags("plz_ignore_me"));
     newRelicRegistry.start(new NamedThreadFactory("newrelic.micrometer.registry"));
     return newRelicRegistry;
