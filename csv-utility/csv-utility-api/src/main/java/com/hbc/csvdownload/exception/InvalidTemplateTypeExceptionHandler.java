@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class InvalidTemplateTypeExceptionHandler {
 
   @ExceptionHandler(InvalidTemplateTypeException.class)
-  public ResponseEntity<ErrorResponse> handleCalendarDomainException(
+  public ResponseEntity<ErrorResponse> handleInvalidTemplateTypeException(
       InvalidTemplateTypeException e) {
     return ResponseEntity.badRequest()
         .body(
