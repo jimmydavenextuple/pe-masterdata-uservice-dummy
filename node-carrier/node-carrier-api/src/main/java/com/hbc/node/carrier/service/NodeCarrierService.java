@@ -11,7 +11,6 @@ import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,6 @@ public class NodeCarrierService {
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
 
     validateLastPickupTime(nodeCarrierRequest.getLastPickupTime());
-    validateBufferEndDate(nodeCarrierRequest.getBufferEndDate());
     var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
 
     Optional<NodeCarrierEntity> nodeCarrierEntity1 =
@@ -80,14 +78,6 @@ public class NodeCarrierService {
     }
 
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
-  }
-
-  private void validateBufferEndDate(Date bufferEndDate) throws CommonServiceException {
-    var currentDate = new Date();
-    if (bufferEndDate != null && bufferEndDate.before(currentDate)) {
-      throw new CommonServiceException(
-          "bufferEndDate cannot be before the current date.", HttpStatus.NOT_FOUND, 0x1773, null);
-    }
   }
 
   public void validateLastPickupTime(String lastPickupTime) throws InvalidDataException {
@@ -149,7 +139,6 @@ public class NodeCarrierService {
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
 
     validateLastPickupTime(nodeCarrierUpdateRequest.getLastPickupTime());
-    validateBufferEndDate(nodeCarrierUpdateRequest.getBufferEndDate());
     Optional<NodeCarrierEntity> existingNodeEntity =
         nodeCarrierDomain.findNodeCarrierDetails(nodeId, orgId, carrierServiceId, serviceOption);
 
