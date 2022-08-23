@@ -27,7 +27,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +50,7 @@ public class NodeCalendarDataUploadService {
 
   public ResponseEntity<BaseResponse<String>> uploadNodeCalendarData(String fileUri)
       throws CommonServiceException, IOException {
-    Path path = DataUploadUtil.getPath(basePath, fileUri);
+    var path = DataUploadUtil.getPath(basePath, fileUri);
 
     DataUploadUtil.validateFileType(fileUri, NODE_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
@@ -66,12 +65,12 @@ public class NodeCalendarDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailedForNodeCalendar = true;
-    boolean isAllPassedForNodeCalendar = true;
-    boolean nodeCalendarResult = false;
+    var isAllFailedForNodeCalendar = true;
+    var isAllPassedForNodeCalendar = true;
+    var nodeCalendarResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
-        CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
+        var csvParser = DataUploadUtil.getCSVParser(reader)) {
       DataUploadUtil.compareHeaders(
           csvParser, "node-calendar", NODE_CALENDAR_DATA_UPLOAD_INVALID_FILE_HEADERS);
 
@@ -87,7 +86,7 @@ public class NodeCalendarDataUploadService {
           String description = csvRecord.get(DESCRIPTION);
 
           if (action.equals(CREATE)) {
-            NodeCalendarRequest nodeCalendarRequest =
+            var nodeCalendarRequest =
                 NodeCalendarRequest.builder()
                     .calendarId(calendarId)
                     .orgId(orgId)
@@ -96,7 +95,7 @@ public class NodeCalendarDataUploadService {
                     .description(description)
                     .build();
             BaseResponse<NodeCalendarResponse> baseResponse =
-                calendarFeign.handleCreateNodeCalendar(nodeCalendarRequest);
+                calendarFeign.createNodeCalendar(nodeCalendarRequest);
             nodeCalendarResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else {

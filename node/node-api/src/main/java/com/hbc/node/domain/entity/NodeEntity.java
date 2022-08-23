@@ -1,6 +1,8 @@
 package com.hbc.node.domain.entity;
 
 import com.hbc.core.event.listeners.CommonEntityListener;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -11,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 @Entity
 @IdClass(NodePK.class)
@@ -20,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @Table(name = "node")
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class NodeEntity {
 
   @Id
@@ -54,17 +59,15 @@ public class NodeEntity {
   @Column(name = "timezone")
   private String timezone;
 
+  @Type(type = "jsonb")
+  @Column(columnDefinition = "jsonb", name = "service_option_eligibilities")
+  private Map<String, Boolean> serviceOptionEligibilities;
+
   @Column(name = "ship_to_home")
   private Boolean shipToHome;
 
-  @Column(name = "sdnd_eligible")
-  private Boolean sdndEligible;
-
-  @Column(name = "bopis_eligilble")
+  @Column(name = "bopis_eligible")
   private Boolean bopisEligible;
-
-  @Column(name = "express_eligible")
-  private Boolean expressEligible;
 
   @Column(name = "node_type")
   private String nodeType;

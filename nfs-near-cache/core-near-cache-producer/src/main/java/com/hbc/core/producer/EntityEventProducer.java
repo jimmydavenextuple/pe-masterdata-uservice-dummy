@@ -25,7 +25,7 @@ public class EntityEventProducer {
   public void publishEntityEvent(LocalCacheUpdateMessage localCacheUpdateMessage)
       throws LocalCacheUpdateEventException {
 
-    LocalCacheUpdateEvent localCacheUpdateEvent = new LocalCacheUpdateEvent();
+    var localCacheUpdateEvent = new LocalCacheUpdateEvent();
     localCacheUpdateEvent.setLocalCacheUpdateMessage(localCacheUpdateMessage);
 
     try {

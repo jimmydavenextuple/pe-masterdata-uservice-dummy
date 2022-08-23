@@ -1,6 +1,7 @@
 package com.hbc.node.data.cache.domain;
 
 import com.hbc.core.cache.domain.CacheValue;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,10 +20,9 @@ public class NodeDataCacheValue implements CacheValue {
   private String province;
   private String postalCode;
   private String country;
-  private Boolean expressEligible;
   private String nodeType;
   private Boolean isActive;
+  private Map<String, Boolean> serviceOptionEligibilities;
   private Boolean shipToHome;
-  private Boolean sdndEligible;
   private Boolean bopisEligible;
 }
