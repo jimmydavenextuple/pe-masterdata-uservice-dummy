@@ -31,6 +31,6 @@ public class TestUtil {
   }
 
   public CommonConfigurationDto getCommonConfigurationDto() {
-    return INSTANCE.toCommonMasterConfigurationDto(getCommonConfiguration());
+    return INSTANCE.toCommonConfigurationDto(getCommonConfiguration());
   }
 }

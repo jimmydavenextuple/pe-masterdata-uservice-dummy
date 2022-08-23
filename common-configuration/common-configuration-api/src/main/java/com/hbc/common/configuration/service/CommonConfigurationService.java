@@ -38,23 +38,35 @@ public class CommonConfigurationService {
     Optional<CommonConfiguration> commonConfiguration =
         configurationDomain.getCommonConfiguration(orgId, type, key);
     if (commonConfiguration.isEmpty()) {
-      return CommonConfigurationDto.builder()
-          .key(key)
-          .orgId(orgId)
-          .type(type)
-          .value("UNDEFINED")
-          .build();
+      return getCommonResponse(orgId, type, key);
     }
-    return INSTANCE.toCommonMasterConfigurationDto(commonConfiguration.get());
+    return INSTANCE.toCommonConfigurationDto(commonConfiguration.get());
+  }
+
+  /**
+   * Return the response with value as "UNDEFINED" if no record found
+   *
+   * @param orgId Org Id
+   * @param type Type
+   * @param key Key
+   * @return CommonConfigurationDto
+   */
+  private static CommonConfigurationDto getCommonResponse(String orgId, String type, String key) {
+    return CommonConfigurationDto.builder()
+        .key(key)
+        .orgId(orgId)
+        .type(type)
+        .value("UNDEFINED")
+        .build();
   }
 
   public CommonConfigurationDto createCommonConfig(
       CreateCommonConfigurationRequest createCommonConfigurationRequest)
       throws PromiseEngineException {
 
-    return INSTANCE.toCommonMasterConfigurationDto(
+    return INSTANCE.toCommonConfigurationDto(
         configurationDomain.saveCommonConfiguration(
-            INSTANCE.toCommonMasterConfiguration(createCommonConfigurationRequest)));
+            INSTANCE.fromCommonConfigurationRequest(createCommonConfigurationRequest)));
   }
 
   public CommonConfigurationDto updateCommonConfiguration(
@@ -67,11 +79,11 @@ public class CommonConfigurationService {
         configurationDomain.getCommonConfiguration(orgId, type, key);
 
     if (commonConfiguration.isEmpty()) {
-      throwException(orgId, type, key);
+      throwCommonServiceException(orgId, type, key);
     }
-    return INSTANCE.toCommonMasterConfigurationDto(
+    return INSTANCE.toCommonConfigurationDto(
         configurationDomain.saveCommonConfiguration(
-            INSTANCE.toCommonMasterConfiguration(baseRequest)));
+            INSTANCE.fromCommonConfigurationRequest(baseRequest)));
   }
 
   public CommonConfigurationDto deleteCommonConfiguration(String orgId, String type, String key)
@@ -81,13 +93,13 @@ public class CommonConfigurationService {
         configurationDomain.getCommonConfiguration(orgId, type, key);
 
     if (commonConfiguration.isEmpty()) {
-      throwException(orgId, type, key);
+      throwCommonServiceException(orgId, type, key);
     }
     configurationDomain.deleteCommonConfiguration(commonConfiguration.get());
-    return INSTANCE.toCommonMasterConfigurationDto(commonConfiguration.get());
+    return INSTANCE.toCommonConfigurationDto(commonConfiguration.get());
   }
 
-  private static void throwException(String orgId, String type, String key)
+  private static void throwCommonServiceException(String orgId, String type, String key)
       throws CommonServiceException {
     logger.error(COMMON_CONFIG_NOT_FOUND_ERROR_MSG);
     Map<String, FieldError> errorMap = new HashMap<>();

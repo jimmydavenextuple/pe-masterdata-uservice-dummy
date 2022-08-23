@@ -11,9 +11,8 @@ import org.mapstruct.ReportingPolicy;
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface CommonConfigMapper {
-  CommonConfigurationDto toCommonMasterConfigurationDto(
-      CommonConfiguration globalConfigurationEntity);
+  CommonConfigurationDto toCommonConfigurationDto(CommonConfiguration commonConfiguration);
 
-  CommonConfiguration toCommonMasterConfiguration(
-      CreateCommonConfigurationRequest createGlobalConfigurationRequest);
+  CommonConfiguration fromCommonConfigurationRequest(
+      CreateCommonConfigurationRequest commonConfigurationRequest);
 }
