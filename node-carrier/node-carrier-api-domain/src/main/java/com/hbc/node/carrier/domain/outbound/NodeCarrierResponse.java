@@ -29,7 +29,7 @@ public class NodeCarrierResponse implements Serializable {
 
   private Double bufferHours;
 
-  private Date bufferStartDate;
-
   private Date bufferEndDate;
+
+  private Date bufferStartDate;
 }

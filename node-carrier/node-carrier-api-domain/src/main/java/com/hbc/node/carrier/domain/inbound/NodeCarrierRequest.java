@@ -43,10 +43,10 @@ public class NodeCarrierRequest implements Serializable {
   @Length(max = 50)
   private String lastPickupTime;
 
-  @Min(value = 0, message = "bufferHours cannot be negative")
-  private Double bufferHours;
-
   private Date bufferStartDate;
 
   private Date bufferEndDate;
+
+  private Double bufferHours;
+
 }
