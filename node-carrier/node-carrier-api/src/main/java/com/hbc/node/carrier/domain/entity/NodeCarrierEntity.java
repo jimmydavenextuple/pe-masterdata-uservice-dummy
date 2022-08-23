@@ -1,6 +1,7 @@
 package com.hbc.node.carrier.domain.entity;
 
 import com.hbc.core.event.listeners.CommonEntityListener;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -41,4 +42,13 @@ public class NodeCarrierEntity {
 
   @Column(name = "last_pickup_time")
   private String lastPickupTime;
+
+  @Column(name = "buffer_hours")
+  private Double bufferHours;
+
+  @Column(name = "buffer_start_date")
+  private Date bufferStartDate;
+
+  @Column(name = "buffer_end_date")
+  private Date bufferEndDate;
 }
