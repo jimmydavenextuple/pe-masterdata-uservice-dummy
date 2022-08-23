@@ -43,7 +43,6 @@ public class NodeCarrierService {
       throws NodeCarrierDomainException, InvalidDataException {
 
     validateLastPickupTime(nodeCarrierRequest.getLastPickupTime());
-
     var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
   }
@@ -107,7 +106,6 @@ public class NodeCarrierService {
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
 
     validateLastPickupTime(nodeCarrierUpdateRequest.getLastPickupTime());
-
     Optional<NodeCarrierEntity> existingNodeEntity =
         nodeCarrierDomain.findNodeCarrierDetails(nodeId, orgId, carrierServiceId, serviceOption);
 

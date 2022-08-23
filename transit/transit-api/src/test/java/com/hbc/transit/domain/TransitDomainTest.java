@@ -181,4 +181,31 @@ class TransitDomainTest {
     verify(transitRepository, times(1))
         .findByOrgIdAndDestinationGeozoneAndSourceGeoZones(any(), any(), any());
   }
+
+  @Test
+  void fetchTransitEntitiesCountTest() throws TransitDomainException {
+    when(transitRepository.findTransitCountByOrgIdAndCarrierServiceId(any(), any())).thenReturn(2);
+
+    Integer transitEntitiesCount =
+        transitDomain.fetchTransitEntitiesCount(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertEquals(2, transitEntitiesCount);
+    verify(transitRepository, times(1)).findTransitCountByOrgIdAndCarrierServiceId(any(), any());
+  }
+
+  @Test
+  void fetchTransitEntitiesCountTestException() throws TransitDomainException {
+    when(transitRepository.findTransitCountByOrgIdAndCarrierServiceId(any(), any()))
+        .thenThrow(new RuntimeException("Error while fetching transit entities count"));
+
+    Exception exception =
+        assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitDomain.fetchTransitEntitiesCount(
+                    TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+
+    Assertions.assertEquals("Error while fetching transit entities count", exception.getMessage());
+    verify(transitRepository, times(1)).findTransitCountByOrgIdAndCarrierServiceId(any(), any());
+  }
 }

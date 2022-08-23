@@ -1,6 +1,7 @@
 package com.hbc.node.domain.inbound;
 
 import java.io.Serializable;
+import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -55,17 +56,14 @@ public class NodeRequest implements Serializable {
   @Length(max = 50)
   private String timezone;
 
+  @NotNull(message = "serviceOptionEligibilities can't be null")
+  private Map<String, Boolean> serviceOptionEligibilities;
+
   @NotNull(message = "shipToHome can't be null")
   private Boolean shipToHome;
 
-  @NotNull(message = "sdndEligible can't be null")
-  private Boolean sdndEligible;
-
   @NotNull(message = "bopisEligible can't be null")
   private Boolean bopisEligible;
-
-  @NotNull(message = "expressEligible can't be null")
-  private Boolean expressEligible;
 
   @NotBlank(message = "nodeType can't be blank")
   @Length(max = 50)

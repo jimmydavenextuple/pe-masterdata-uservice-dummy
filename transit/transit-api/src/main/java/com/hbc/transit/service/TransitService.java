@@ -3,6 +3,7 @@ package com.hbc.transit.service;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.transit.domain.TransitDomain;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
@@ -159,5 +160,14 @@ public class TransitService {
         transitDomain.fetchTransitList(orgId, destinationGeozone, sourceGeozones);
 
     return INSTANCE.toTransitResponseList(transitEntities);
+  }
+
+  public TransitTimeEntriesDto getTransitTimeEntries(String orgId, String carrierServiceId)
+      throws TransitDomainException {
+    return TransitTimeEntriesDto.builder()
+        .orgId(orgId)
+        .carrierServiceId(carrierServiceId)
+        .totalRecords(transitDomain.fetchTransitEntitiesCount(orgId, carrierServiceId))
+        .build();
   }
 }

@@ -9,8 +9,11 @@ import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.common.response.BaseResponse;
+import java.util.List;
 import javax.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -19,18 +22,22 @@ import org.springframework.web.bind.annotation.RequestBody;
     url = "${spring.application.dependencies.calendar:http://pe-config-calendar:8080/}")
 public interface CalendarFeign {
   @PostMapping("/calendar")
-  BaseResponse<CalendarResponse> handleCreateCalendar(
+  BaseResponse<CalendarResponse> createCalendar(
       @Valid @RequestBody CalendarRequest calendarRequest);
 
   @PostMapping("/node-calendar")
-  BaseResponse<NodeCalendarResponse> handleCreateNodeCalendar(
+  BaseResponse<NodeCalendarResponse> createNodeCalendar(
       @Valid @RequestBody NodeCalendarRequest nodeCalendarRequest);
 
   @PostMapping("/carrier-service-calendar")
-  BaseResponse<CarrierServiceCalendarResponse> handleCreateCarrierServiceCalendar(
+  BaseResponse<CarrierServiceCalendarResponse> createCarrierServiceCalendar(
       @Valid @RequestBody CarrierServiceCalendarRequest carrierServiceCalendarRequest);
 
   @PostMapping("/node-carrier-service-calendar")
-  BaseResponse<NodeCarrierServiceCalendarResponse> handleCreateNodeCarrierServiceCalendar(
+  BaseResponse<NodeCarrierServiceCalendarResponse> createNodeCarrierServiceCalendar(
       @Valid @RequestBody NodeCarrierServiceCalendarRequest nodeCarrierServiceCalendarRequest);
+
+  @GetMapping("/carrier-service-calendar/{orgId}/{carrierServiceId}")
+  BaseResponse<List<CarrierServiceCalendarResponse>> getCarrierServiceCalendar(
+      @PathVariable String orgId, @PathVariable String carrierServiceId);
 }

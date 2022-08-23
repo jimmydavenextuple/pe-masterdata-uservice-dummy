@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,8 @@ public class CarrierServiceService {
   private static final String CARRIER_ID = "carrierId";
 
   private static final String ORG_ID = "orgId";
+
+  private static final String SORT_ORDER = "sortOrder";
 
   private static final String CARRIER_SERVICE_EXCEPTION_MESSAGE =
       "Carrier service not found with given details";
@@ -116,5 +119,23 @@ public class CarrierServiceService {
     INSTANCE.updateCarrierServiceEntity(carrierServiceUpdateRequest, carrierServiceEntity.get());
     return INSTANCE.toCarrierServiceResponse(
         carrierServiceDomain.saveCarrierServiceEntity(carrierServiceEntity.get()));
+  }
+
+  public Page<CarrierServiceResponse> getCarrierServiceList(
+      String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
+      throws CarrierServiceDomainException, CommonServiceException {
+    if (sortOrder.equalsIgnoreCase("ASC") || sortOrder.equalsIgnoreCase("DESC")) {
+      return carrierServiceDomain.findCarrierServiceListByOrgId(
+          orgId, pageNo, pageSize, sortBy, sortOrder);
+    } else {
+      logger.error("Invalid sort order");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(SORT_ORDER, FieldError.builder().rejectedValue(sortOrder).build());
+      throw new CommonServiceException(
+          "Invalid sort order, consider giving either ASC or DESC",
+          HttpStatus.BAD_REQUEST,
+          0x1771,
+          errorMap);
+    }
   }
 }

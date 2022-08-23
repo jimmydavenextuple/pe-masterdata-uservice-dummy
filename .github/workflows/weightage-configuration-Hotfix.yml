@@ -1,0 +1,21 @@
+name: WEIGHTAGE-CONFIGURATION HOTFIX
+
+on:
+  push:
+    branches: [ hotfix ]
+    paths:
+      - "weightage-configuration/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+jobs:
+
+  Build-Deploy:
+    uses: ./.github/workflows/Build&Deploy_Hotfix.yml
+    with:
+      module: weightage-configuration
+    secrets: inherit
+
+
+
+
