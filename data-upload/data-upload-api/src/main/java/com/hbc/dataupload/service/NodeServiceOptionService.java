@@ -35,8 +35,7 @@ public class NodeServiceOptionService {
       List<NodeCarrierResponse> nodeCarrierResponse =
           nodeCarrierFeign.getNodeCarrierList(node.getNodeId(), node.getOrgId()).getPayload();
 
-      NodeServiceOptionDto nodeServiceOptionDto =
-          setNodeServiceOptionDto(node, nodeCarrierResponse);
+      var nodeServiceOptionDto = setNodeServiceOptionDto(node, nodeCarrierResponse);
       responseList.add(nodeServiceOptionDto);
     }
     nodeServiceOptionDtoPagePayload.setPagination(nodeResponse.getPagination());
