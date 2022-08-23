@@ -53,6 +53,24 @@ class NodeCarrierServiceTest {
   }
 
   @Test
+  @DisplayName("When node carrier is created successfully")
+  void createNodeCarrierWithValidBufferEndDateTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+    NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest3();
+    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
+        .thenReturn(Optional.empty());
+    when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
+        .thenReturn(testUtil.getNodeCarrierEntity());
+
+    NodeCarrierResponse nodeCarrierResponse =
+        nodeCarrierService.createNodeCarrier(nodeCarrierRequest);
+
+    Assertions.assertEquals(
+        nodeCarrierRequest.getCarrierServiceId(), nodeCarrierResponse.getCarrierServiceId());
+    verify(nodeCarrierDomain, times(1)).saveNodeCarrierEntity(any());
+  }
+
+  @Test
   @DisplayName("When node carrier to be created already exists")
   void createNodeCarrierTestException() throws NodeCarrierDomainException {
     NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
