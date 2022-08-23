@@ -22,7 +22,7 @@ public class CurrentThreadContext {
    * @return {@link LogContext}
    */
   public static final LogContext getLogContext() {
-    LogContext logContext = logContextThreadLocal.get();
+    var logContext = logContextThreadLocal.get();
     if (logContext == null) {
       logContext = LogContext.builder().build();
       logContextThreadLocal.set(logContext);

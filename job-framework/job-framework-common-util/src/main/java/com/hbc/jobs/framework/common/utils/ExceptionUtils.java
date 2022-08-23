@@ -23,7 +23,7 @@ public class ExceptionUtils {
     }
 
     if (!ObjectUtils.isEmpty(e.contentUTF8())) {
-      ErrorResponse errorResponse = JsonUtil.convertToObject(e.contentUTF8(), ErrorResponse.class);
+      var errorResponse = JsonUtil.convertToObject(e.contentUTF8(), ErrorResponse.class);
       if (errorResponse == null) {
         errorResponse =
             ErrorResponse.builder(ErrorType.ERROR, UPSTREAM_ERROR_CODE)
