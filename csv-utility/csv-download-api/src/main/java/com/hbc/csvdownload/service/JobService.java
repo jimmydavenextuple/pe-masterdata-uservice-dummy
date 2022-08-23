@@ -46,6 +46,9 @@ public class JobService {
       log.error("Feign exception when creating job", e);
       ErrorResponse errorResponse = ExceptionUtils.parseFeignException(e);
       throw new JobServiceException(errorResponse.getMessage(), e, jobTypeEnum.name());
+    } catch (Exception e) {
+      log.error("Error while creating the job", e);
+      throw new JobServiceException("Error while creating the job", e, jobTypeEnum.name());
     }
   }
 }
