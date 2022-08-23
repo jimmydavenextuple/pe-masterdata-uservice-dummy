@@ -1,5 +1,6 @@
 package com.hbc.transit.domain.entity;
 
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -37,4 +38,13 @@ public class TransitEntity {
 
   @Column(name = "transit_days")
   private Float transitDays;
+
+  @Column(name = "buffer_days")
+  private Double bufferDays;
+
+  @Column(name = "bufferStartDate")
+  private Date bufferStartDate;
+
+  @Column(name = "bufferEndDate")
+  private Date bufferEndDate;
 }
