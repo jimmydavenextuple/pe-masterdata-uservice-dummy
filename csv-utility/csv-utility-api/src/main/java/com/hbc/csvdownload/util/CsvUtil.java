@@ -16,7 +16,7 @@ public class CsvUtil {
   public static boolean validateCsvHeader(MultipartFile csvFile, String[] expectedHeaders)
       throws CsvParsingException {
     Predicate<String[]> isCommentedLine = predicateToFilterCommentedLine();
-    try (CSVReader csvReader = new CSVReader(new InputStreamReader(csvFile.getInputStream()))) {
+    try (var csvReader = new CSVReader(new InputStreamReader(csvFile.getInputStream()))) {
       String[] csvHeaders = csvReader.readNext();
       while (isCommentedLine.test(csvHeaders)) {
         csvHeaders = csvReader.readNext();
@@ -39,8 +39,8 @@ public class CsvUtil {
    */
   public static int getCommentedLinesCount(
       MultipartFile csvFile, Predicate<String[]> commentLineFilter) throws CsvParsingException {
-    int countedCommentedLines = 0;
-    try (CSVReader csvReader = new CSVReader(new InputStreamReader(csvFile.getInputStream()))) {
+    var countedCommentedLines = 0;
+    try (var csvReader = new CSVReader(new InputStreamReader(csvFile.getInputStream()))) {
       boolean foundCommentedLine;
       String[] csvLine;
       do {

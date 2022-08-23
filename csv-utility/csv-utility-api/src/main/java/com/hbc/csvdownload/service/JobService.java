@@ -1,7 +1,6 @@
 package com.hbc.csvdownload.service;
 
 import com.hbc.common.context.CurrentThreadContext;
-import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.csvdownload.exception.JobServiceException;
 import com.hbc.jobs.framework.common.clients.JobsConsumerClient;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
@@ -26,7 +25,7 @@ public class JobService {
 
   public JobDto createJob(String orgId, int totalTasks, JobTypeEnum jobTypeEnum)
       throws JobServiceException {
-    JobDto job = new JobDto();
+    var job = new JobDto();
     job.setJobId(UUID.randomUUID().toString());
     job.setTotalRecords(totalTasks);
     job.setJobType(jobTypeEnum);
@@ -36,7 +35,8 @@ public class JobService {
     job.setStatus(JobStatusEnum.SUBMITTED);
     job.setOrgId(orgId);
     job.setUserId(CurrentThreadContext.getLogContext().getUsername());
-    AuditLog auditLog = new AuditLog();
+
+    var auditLog = new AuditLog();
     auditLog.setStatus(JobStatusEnum.SUBMITTED);
     auditLog.setTimeStamp(new Date());
     job.setAuditLog(Collections.singletonList(auditLog));
@@ -44,7 +44,7 @@ public class JobService {
       return jobsConsumerClient.createJob(job).getPayload();
     } catch (FeignException e) {
       log.error("Feign exception when creating job", e);
-      ErrorResponse errorResponse = ExceptionUtils.parseFeignException(e);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
       throw new JobServiceException(errorResponse.getMessage(), e, jobTypeEnum.name());
     } catch (Exception e) {
       log.error("Error while creating the job", e);

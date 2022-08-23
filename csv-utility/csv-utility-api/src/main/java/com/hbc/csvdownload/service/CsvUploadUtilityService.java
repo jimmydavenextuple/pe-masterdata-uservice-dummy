@@ -1,6 +1,5 @@
 package com.hbc.csvdownload.service;
 
-import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.util.JsonUtil;
 import com.hbc.csvdownload.domain.mapper.ProcessingLeadTimeMapper;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
@@ -92,7 +91,7 @@ public class CsvUploadUtilityService {
       return "Job to bulk upload processing lead times is submitted successfully";
     } catch (FeignException e) {
       log.error("Feign exception while submitting job", e);
-      ErrorResponse errorResponse = ExceptionUtils.parseFeignException(e);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
       throw new JobSubmissionException(errorResponse.getMessage(), e, orgId);
     } catch (Exception e) {
       log.error("Error while submitting job to job framework", e);
@@ -105,8 +104,7 @@ public class CsvUploadUtilityService {
     return processingLeadTimesRawCsvToBean.stream()
         .map(
             processingLeadTimesRaw -> {
-              NodeCarrierRequest nodeCarrierRequest =
-                  INSTANCE.convertToNodeCarrierRequest(processingLeadTimesRaw);
+              var nodeCarrierRequest = INSTANCE.convertToNodeCarrierRequest(processingLeadTimesRaw);
               nodeCarrierRequest.setCarrierServiceId("ALL-SDND");
               nodeCarrierRequest.setLastPickupTime("00:00");
               return nodeCarrierRequest;
@@ -145,8 +143,8 @@ public class CsvUploadUtilityService {
       throws IOException, CsvException, CsvFormatValidationFailedException, JsonParsingException,
           JobServiceException, JobUpdationException {
 
-    InputStreamReader inputStreamReader = new InputStreamReader(csvFile.getInputStream());
-    CSVReader csvReader = new CSVReader(inputStreamReader);
+    var inputStreamReader = new InputStreamReader(csvFile.getInputStream());
+    var csvReader = new CSVReader(inputStreamReader);
     List<String[]> csvFileContents = csvReader.readAll();
     csvReader.close();
 
@@ -175,7 +173,7 @@ public class CsvUploadUtilityService {
         .filter(row -> row.length != 0)
         .forEach(
             row -> {
-              AtomicInteger integer = new AtomicInteger(0);
+              var integer = new AtomicInteger(0);
               String destinationSfa = row[integer.getAndIncrement()];
               transitDataCreationRequestList.addAll(
                   createTransitDataCreationRequestObjects(
@@ -187,7 +185,7 @@ public class CsvUploadUtilityService {
                       integer));
             });
 
-    String jobRequest = StringUtil.createJobRequest(transitDataCreationRequestList, orgId);
+    var jobRequest = StringUtil.createJobRequest(transitDataCreationRequestList, orgId);
 
     JobDto job =
         jobService.createJob(
@@ -223,8 +221,7 @@ public class CsvUploadUtilityService {
     return sFsaList.stream()
         .map(
             sFsa -> {
-              TransitDataCreationRequest transitDataCreationRequest =
-                  new TransitDataCreationRequest();
+              var transitDataCreationRequest = new TransitDataCreationRequest();
               transitDataCreationRequest.setOrgId(orgId);
               transitDataCreationRequest.setCarrierServiceId(carrierServiceIdValue);
               transitDataCreationRequest.setDestinationGeozone(destinationSfa);
