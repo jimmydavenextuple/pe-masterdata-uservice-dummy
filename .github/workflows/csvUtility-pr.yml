@@ -1,0 +1,15 @@
+name: PR-CSV-UTILITY
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "csv-utility/**"
+    branches: [ development, hotfix ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml
+    with:
+      module: csv-utility
+    secrets: inherit
