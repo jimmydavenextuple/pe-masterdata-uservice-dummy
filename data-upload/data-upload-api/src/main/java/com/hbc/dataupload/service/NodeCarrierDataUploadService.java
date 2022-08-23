@@ -31,7 +31,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +53,7 @@ public class NodeCarrierDataUploadService {
 
   public ResponseEntity<BaseResponse<String>> uploadNodeCarrierData(String fileUri)
       throws CommonServiceException, IOException {
-    Path path = DataUploadUtil.getPath(basePath, fileUri);
+    var path = DataUploadUtil.getPath(basePath, fileUri);
 
     DataUploadUtil.validateFileType(fileUri, NODE_CARRIER_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
@@ -68,12 +67,12 @@ public class NodeCarrierDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailedForNodeCarrier = true;
-    boolean isAllPassedForNodeCarrier = true;
-    boolean nodeCarrierResult = false;
+    var isAllFailedForNodeCarrier = true;
+    var isAllPassedForNodeCarrier = true;
+    var nodeCarrierResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
-        CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
+        var csvParser = DataUploadUtil.getCSVParser(reader)) {
       DataUploadUtil.compareHeaders(
           csvParser, "node-carrier", NODE_CARRIER_DATA_UPLOAD_INVALID_FILE_HEADERS);
 
@@ -86,13 +85,13 @@ public class NodeCarrierDataUploadService {
           String orgId = csvRecord.get(ORG_ID);
           String carrierServiceId = csvRecord.get(CARRIER_SERVICE_ID);
           String serviceOption = csvRecord.get(SERVICE_OPTION);
-          Double processingTime = Double.valueOf(csvRecord.get(PROCESSING_TIME));
+          var processingTime = Double.valueOf(csvRecord.get(PROCESSING_TIME));
           String lastPickupTime = csvRecord.get(LAST_PICKUP_TIME);
 
           switch (action) {
             case CREATE:
               {
-                NodeCarrierRequest nodeCarrierRequest =
+                var nodeCarrierRequest =
                     NodeCarrierRequest.builder()
                         .nodeId(nodeId)
                         .orgId(orgId)
@@ -110,7 +109,7 @@ public class NodeCarrierDataUploadService {
 
             case UPDATE:
               {
-                NodeCarrierUpdateRequest nodeCarrierUpdateRequest =
+                var nodeCarrierUpdateRequest =
                     NodeCarrierUpdateRequest.builder()
                         .processingTime(processingTime)
                         .lastPickupTime(lastPickupTime)
