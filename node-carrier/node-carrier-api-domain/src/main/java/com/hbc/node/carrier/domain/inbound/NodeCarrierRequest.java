@@ -1,6 +1,7 @@
 package com.hbc.node.carrier.domain.inbound;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -41,4 +42,10 @@ public class NodeCarrierRequest implements Serializable {
   @NotBlank(message = "lastPickupTime cannot be empty")
   @Length(max = 50)
   private String lastPickupTime;
+
+  private Date bufferStartDate;
+
+  private Date bufferEndDate;
+
+  private Double bufferHours;
 }
