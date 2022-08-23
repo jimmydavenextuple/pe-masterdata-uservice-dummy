@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 @ExtendWith(MockitoExtension.class)
-class CsvUtilityControllerTest {
+class CsvDownloadUtilityControllerTest {
 
   @InjectMocks private CsvDownloadUtilityController csvDownloadUtilityController;
 

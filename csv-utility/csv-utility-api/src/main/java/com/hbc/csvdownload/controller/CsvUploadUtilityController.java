@@ -23,8 +23,8 @@ public class CsvUploadUtilityController {
   public ResponseEntity<BaseResponse<String>> uploadTransitTimesCSV(
       @PathVariable String orgId, @RequestParam MultipartFile csvFile) {
     logger.debug("--Inside uploadTransitTimesCSV API--");
-    /** TODO need to add service layer logic */
-    String msg = "Job to upload transit times submitted successfully";
+    // need to add service layer logic
+    var msg = "Job to upload transit times submitted successfully";
     return ResponseEntity.ok().body(BaseResponse.builder().message(msg).build());
   }
 
@@ -35,8 +35,8 @@ public class CsvUploadUtilityController {
   public ResponseEntity<BaseResponse<String>> uploadLeadProcessingTimeCSV(
       @PathVariable String orgId, @RequestParam MultipartFile csvFile) {
     logger.debug("--Inside uploadLeadProcessingTimeCSV API--");
-    /** TODO need to add service layer logic */
-    String msg = "Job to upload processing lead times submitted successfully";
+    // need to add service layer logic
+    var msg = "Job to upload processing lead times submitted successfully";
     return ResponseEntity.ok().body(BaseResponse.builder().message(msg).build());
   }
 }

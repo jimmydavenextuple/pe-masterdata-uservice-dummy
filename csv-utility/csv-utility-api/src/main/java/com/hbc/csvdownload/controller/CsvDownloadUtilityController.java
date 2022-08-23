@@ -49,7 +49,7 @@ public class CsvDownloadUtilityController {
       HttpServletResponse response)
       throws InvalidTemplateTypeException {
     log.debug("Inside download transit times data as csv");
-    /** TODO need to add service layer logic */
+    // need to add service layer logic
     downloadCSVTemplate("transitTime", request, response);
   }
 
@@ -62,7 +62,7 @@ public class CsvDownloadUtilityController {
       HttpServletResponse response)
       throws InvalidTemplateTypeException {
     log.debug("Inside download logs by filters");
-    /** TODO need to add service layer logic */
+    // need to add service layer logic
     downloadCSVTemplate("transitTime", request, response);
   }
 }
