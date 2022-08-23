@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import java.io.IOException;
+import java.util.Optional;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -116,6 +117,67 @@ class CsvDownloadUtilityControllerTest {
     when(response.getOutputStream()).thenThrow(new IOException("Unexpected error"));
 
     csvDownloadUtilityController.downloadCSVTemplate("transitTime", request, response);
+    verify(response, times(1)).getOutputStream();
+  }
+
+  @Test
+  void downloadTransitTimesDataCSV() throws IOException, InvalidTemplateTypeException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    String transitTimesTemplate =
+        "orgId,BAY,,,,,,,,,\n"
+            + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+            + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3,SFSA4,SFSA5,SFSA6,SFSA7,SFSA8,SFSA9,SFSA10\n"
+            + "DFSA1,10,9.96,9.96,9.96,9.96,7,7,8.09,7,7\n"
+            + "DFSA2,10,9,9,9,9,7.81,7.81,7.89,7.89,7.89\n"
+            + "DFSA3,10,9,9,9,9,9.5,9.5,7,7.89,7.89\n"
+            + "DFSA4,10,9.96,9.96,9.96,9.96,8.09,8.09,7.89,8.09,8.09\n"
+            + "DFSA5,10,9.96,9.96,9.96,9.96,7.81,7.81,7.89,7.89,7.89\n"
+            + "DFSA6,10,9.96,9.96,9.96,9.96,7,7,8.09,8.09,8.09\n"
+            + "DFSA7,10,10,10,10,10,7.81,7.81,7.89,7.89,7.89\n"
+            + "DFSA8,10,9.96,9.96,9.96,9.96,7.81,7.81,8.09,6,6\n"
+            + "DFSA9,10,9.5,9.5,9.5,9.5,8.09,8.09,7.89,8.09,8.09\n"
+            + "DFSA10,8,8,8,8,8,8.09,8.09,6,7,7";
+
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    doNothing().when(response).setContentLength(transitTimesTemplate.length());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    csvDownloadUtilityController.downloadTransitTimesDataCSV(
+        "BAY", "C-Id", "SR01", "DR01", request, response);
+    verify(response, times(1)).getOutputStream();
+  }
+
+  @Test
+  void downloadLogsByFilters() throws IOException, InvalidTemplateTypeException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    String transitTimesTemplate =
+        "orgId,BAY,,,,,,,,,\n"
+            + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+            + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3,SFSA4,SFSA5,SFSA6,SFSA7,SFSA8,SFSA9,SFSA10\n"
+            + "DFSA1,10,9.96,9.96,9.96,9.96,7,7,8.09,7,7\n"
+            + "DFSA2,10,9,9,9,9,7.81,7.81,7.89,7.89,7.89\n"
+            + "DFSA3,10,9,9,9,9,9.5,9.5,7,7.89,7.89\n"
+            + "DFSA4,10,9.96,9.96,9.96,9.96,8.09,8.09,7.89,8.09,8.09\n"
+            + "DFSA5,10,9.96,9.96,9.96,9.96,7.81,7.81,7.89,7.89,7.89\n"
+            + "DFSA6,10,9.96,9.96,9.96,9.96,7,7,8.09,8.09,8.09\n"
+            + "DFSA7,10,10,10,10,10,7.81,7.81,7.89,7.89,7.89\n"
+            + "DFSA8,10,9.96,9.96,9.96,9.96,7.81,7.81,8.09,6,6\n"
+            + "DFSA9,10,9.5,9.5,9.5,9.5,8.09,8.09,7.89,8.09,8.09\n"
+            + "DFSA10,8,8,8,8,8,8.09,8.09,6,7,7";
+
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    doNothing().when(response).setContentLength(transitTimesTemplate.length());
+
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    csvDownloadUtilityController.downloadLogsByFilters(
+        "BAY", "C-Id", Optional.empty(), request, response);
     verify(response, times(1)).getOutputStream();
   }
 }
