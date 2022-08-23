@@ -10,14 +10,15 @@ import com.hbc.jobs.dashboard.service.JobService;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
+import com.hbc.jobs.framework.common.domain.pojo.PageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,21 +32,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class JobController {
 
   private final JobService jobService;
 
+  private final PageProperties pageProperties;
   private static final String MESSAGE = "Job successfully created!";
-
-  public JobController(JobService jobService) {
-    this.jobService = jobService;
-  }
-
-  @Value("${pagination.default-page-no}")
-  private Integer defaultPageNo;
-
-  @Value("${pagination.default-page-size}")
-  private Integer defaultPageSize;
 
   @PostMapping(
       path = "/org/{orgId}/jobs",
@@ -58,7 +51,7 @@ public class JobController {
       throws JobException {
     log.debug("Processing offline job request");
 
-    JobDto jobDto = jobService.processJobOffline(csvFile, orgId, jobType);
+    var jobDto = jobService.processJobOffline(csvFile, orgId, jobType);
 
     log.debug("Processing offline job request ends");
 
@@ -76,7 +69,7 @@ public class JobController {
       throws JobException {
     log.debug("Processing offline job json request");
 
-    JobDto jobDto = jobService.processJobJsonOffline(request, orgId, jobType, Optional.empty());
+    var jobDto = jobService.processJobJsonOffline(request, orgId, jobType, Optional.empty());
 
     log.debug("Processing offline job json request ends");
 
@@ -95,7 +88,7 @@ public class JobController {
       throws JobException {
     log.debug("Processing offline job json request");
 
-    JobDto jobDto =
+    var jobDto =
         jobService.processJobJsonOffline(request, orgId, jobType, Optional.ofNullable(jobId));
 
     log.debug("Processing offline job json request ends");
@@ -137,35 +130,30 @@ public class JobController {
       @NotEmpty @NotNull @PathVariable("orgId") String orgId, JobFilters jobFilters)
       throws JobException {
     log.debug("--Inside getJobsByFilter()--");
-    try {
-      int requiredPageNo = jobFilters.getPageNo().orElse(defaultPageNo);
-      int requiredPageSize = jobFilters.getPageSize().orElse(defaultPageSize);
+    int requiredPageNo = jobFilters.getPageNo().orElse(pageProperties.getPageNo());
+    int requiredPageSize = jobFilters.getPageSize().orElse(pageProperties.getPageSize());
 
-      if (requiredPageNo < 1) {
-        JobTypeEnum jobTypeEnum = jobFilters.getJobType().map(JobTypeEnum::valueOf).orElse(null);
-        throw new JobException("PageNo can not be less than one", null, jobTypeEnum);
-      }
-
-      PagePayload<JobDto> pageResp =
-          jobService.getJobsByJobInfo(
-              orgId,
-              jobFilters.getJobType(),
-              jobFilters.getDays(),
-              jobFilters.getSortBy(),
-              jobFilters.getSortOrder(),
-              requiredPageNo,
-              requiredPageSize);
-
-      return ResponseEntity.ok()
-          .body(
-              BaseResponse.builder()
-                  .payload(pageResp)
-                  .message("Retrieval of jobs is successful")
-                  .build());
-    } catch (Exception e) {
-      log.error("Error while Fetching Jobs by params - getJobsByFilter()", e);
-      throw e;
+    if (requiredPageNo < 1) {
+      var jobTypeEnum = jobFilters.getJobType().map(JobTypeEnum::valueOf).orElse(null);
+      throw new JobException("PageNo can not be less than one", null, jobTypeEnum);
     }
+
+    PagePayload<JobDto> pageResp =
+        jobService.getJobsByJobInfo(
+            orgId,
+            jobFilters.getJobType(),
+            jobFilters.getDays(),
+            jobFilters.getSortBy(),
+            jobFilters.getSortOrder(),
+            requiredPageNo,
+            requiredPageSize);
+
+    return ResponseEntity.ok()
+        .body(
+            BaseResponse.builder()
+                .payload(pageResp)
+                .message("Retrieval of jobs is successful")
+                .build());
   }
 
   /**
@@ -185,19 +173,14 @@ public class JobController {
       @RequestParam(required = false) Optional<String> status)
       throws JobException {
     log.debug("--Inside getJobRecordsByFilter()--");
-    try {
 
-      List<RecordStatusDto> pageResp = jobService.getJobResults(orgId, jobId, status);
+    List<RecordStatusDto> pageResp = jobService.getJobResults(orgId, jobId, status);
 
-      return ResponseEntity.ok()
-          .body(
-              BaseResponse.builder()
-                  .payload(pageResp)
-                  .message("Retrieval of job records is successful")
-                  .build());
-    } catch (Exception e) {
-      log.error("Error while Fetching Jobs records information - getJobRecordsByFilter()", e);
-      throw e;
-    }
+    return ResponseEntity.ok()
+        .body(
+            BaseResponse.builder()
+                .payload(pageResp)
+                .message("Retrieval of job records is successful")
+                .build());
   }
 }

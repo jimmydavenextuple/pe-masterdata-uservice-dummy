@@ -27,6 +27,3 @@ spring:
 jobs-framework:
   kafka-publish:
     topic-name: jobs-task-local
-pagination:
-  default-page-no: 1
-  default-page-size: 15

@@ -18,6 +18,7 @@ import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
+import com.hbc.jobs.framework.common.domain.pojo.PageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +41,8 @@ class JobControllerTest {
   @InjectMocks private JobController jobController;
 
   @Mock private JobService jobService;
+
+  @Mock private PageProperties pageProperties;
 
   @InjectMocks private TestUtil testUtil;
 
@@ -251,7 +254,8 @@ class JobControllerTest {
         testUtil.createJobList(TestUtil.JOB_TYPE_UPLOAD_TRANSIT_TIMES.name(), TestUtil.ORG_ID);
     PagePayload<JobDto> pagePayloadJobDto =
         testUtil.createPagePayloadJobDto(jobList, jobList.size(), jobList.size(), 1);
-
+    when(pageProperties.getPageNo()).thenReturn(1);
+    when(pageProperties.getPageSize()).thenReturn(15);
     when(jobService.getJobsByJobInfo(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenReturn(pagePayloadJobDto);
 
@@ -270,6 +274,8 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterException() throws JobException {
+    when(pageProperties.getPageNo()).thenReturn(1);
+    when(pageProperties.getPageSize()).thenReturn(15);
     when(jobService.getJobsByJobInfo(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenThrow(
             new JobException(
@@ -292,6 +298,8 @@ class JobControllerTest {
     JobFilters jobFilters = testUtil.getJobFilters();
     jobFilters.setJobType(Optional.of(TestUtil.JOB_TYPE_UPLOAD_TRANSIT_TIMES.name()));
     jobFilters.setPageNo(Optional.of(0));
+    when(pageProperties.getPageNo()).thenReturn(1);
+    when(pageProperties.getPageSize()).thenReturn(15);
     when(jobService.getJobsByJobInfo(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenThrow(new RuntimeException());
 

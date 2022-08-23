@@ -31,8 +31,3 @@ spring:
 jobs-framework:
   kafka-publish:
     topic-name: INTERNAL.DEV.JOBS.TASK
-pagination:
-  default-page-no: 1
-  default-page-size: 15
-  default-sort-field: created_date
-  default-sort-order: ASC
