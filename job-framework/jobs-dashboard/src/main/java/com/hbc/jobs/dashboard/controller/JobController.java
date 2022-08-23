@@ -103,7 +103,6 @@ public class JobController {
       throws JobException {
     log.debug("Inside getJob method");
 
-    try {
       JobDto job = jobService.getJob(orgId, jobId);
 
       log.debug("Job successfully retrieved : {}", jobId);
@@ -113,10 +112,7 @@ public class JobController {
               .payload(job)
               .message("Retrieval of the job is successful")
               .build());
-    } catch (Exception e) {
-      log.error("Failed to process get job by jobId request!!", e);
-      throw e;
-    }
+
   }
 
   /**
