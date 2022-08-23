@@ -2,11 +2,11 @@ package com.hbc.dataupload.controller;
 
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.pojo.PageParams;
+import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
 import com.hbc.dataupload.domian.dto.NodeServiceOptionDto;
 import com.hbc.dataupload.service.NodeServiceOptionService;
-import com.hbc.node.domain.pojo.PageProperties;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

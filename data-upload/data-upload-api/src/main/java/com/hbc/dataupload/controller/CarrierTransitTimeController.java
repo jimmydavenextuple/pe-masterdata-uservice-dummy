@@ -1,8 +1,8 @@
 package com.hbc.dataupload.controller;
 
-import com.hbc.carrier.domain.pojo.PageProperties;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.pojo.PageParams;
+import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;

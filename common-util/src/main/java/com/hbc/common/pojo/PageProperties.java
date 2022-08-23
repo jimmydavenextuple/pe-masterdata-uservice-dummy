@@ -1,4 +1,4 @@
-package com.hbc.carrier.domain.pojo;
+package com.hbc.common.pojo;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

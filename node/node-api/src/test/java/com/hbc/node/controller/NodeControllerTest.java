@@ -8,13 +8,13 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.TestUtil;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.outbound.NodeResponse;
-import com.hbc.node.domain.pojo.PageProperties;
 import com.hbc.node.exception.NodeDomainException;
 import com.hbc.node.service.NodeService;
 import java.util.List;
