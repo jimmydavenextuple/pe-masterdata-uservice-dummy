@@ -34,15 +34,16 @@ public class TestUtil {
     Date bEndDate = new Date();
     bEndDate.setTime(1000);
     return NodeCarrierRequest.builder()
-            .nodeId(NODE_ID)
-            .orgId(ORG_ID)
-            .carrierServiceId(CARRIER_SERVICE_ID)
-            .serviceOption(SERVICE_OPTION)
-            .processingTime(2.0)
-            .lastPickupTime("5:00")
-            .bufferEndDate(bEndDate)
-            .build();
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .processingTime(2.0)
+        .lastPickupTime("5:00")
+        .bufferEndDate(bEndDate)
+        .build();
   }
+
   public NodeCarrierRequest getNodeCarrierRequest3() {
     Calendar c1 = Calendar.getInstance();
     c1.set(Calendar.MONTH, 11);
@@ -51,14 +52,14 @@ public class TestUtil {
     Date bEndDate = c1.getTime();
 
     return NodeCarrierRequest.builder()
-            .nodeId(NODE_ID)
-            .orgId(ORG_ID)
-            .carrierServiceId(CARRIER_SERVICE_ID)
-            .serviceOption(SERVICE_OPTION)
-            .processingTime(2.0)
-            .lastPickupTime("5:00")
-            .bufferEndDate(bEndDate)
-            .build();
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .processingTime(2.0)
+        .lastPickupTime("5:00")
+        .bufferEndDate(bEndDate)
+        .build();
   }
 
   public NodeCarrierResponse getNodeCarrierResponse() {
@@ -79,8 +80,11 @@ public class TestUtil {
   public NodeCarrierUpdateRequest getNodeCarrierUpdateRequest2() {
     Date bEndDate = new Date();
     bEndDate.setTime(1000);
-    return NodeCarrierUpdateRequest.builder().processingTime(2.0).lastPickupTime("5:00")
-            .bufferEndDate(bEndDate).build();
+    return NodeCarrierUpdateRequest.builder()
+        .processingTime(2.0)
+        .lastPickupTime("5:00")
+        .bufferEndDate(bEndDate)
+        .build();
   }
 
   public NodeCarrierEntity getNodeCarrierEntity() {

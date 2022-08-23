@@ -85,8 +85,8 @@ public class NodeCarrierService {
   private void validateBufferEndDate(Date bufferEndDate) throws CommonServiceException {
     var currentDate = new Date();
     if (bufferEndDate != null && bufferEndDate.before(currentDate)) {
-        throw new CommonServiceException(
-            "bufferEndDate cannot be before the current date.", HttpStatus.NOT_FOUND, 0x1773, null);
+      throw new CommonServiceException(
+          "bufferEndDate cannot be before the current date.", HttpStatus.NOT_FOUND, 0x1773, null);
     }
   }
 

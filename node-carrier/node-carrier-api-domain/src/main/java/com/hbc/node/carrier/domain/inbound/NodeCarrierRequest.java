@@ -48,5 +48,4 @@ public class NodeCarrierRequest implements Serializable {
   private Date bufferEndDate;
 
   private Double bufferHours;
-
 }
