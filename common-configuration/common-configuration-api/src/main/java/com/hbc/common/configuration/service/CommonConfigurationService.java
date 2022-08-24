@@ -38,26 +38,9 @@ public class CommonConfigurationService {
     Optional<CommonConfiguration> commonConfiguration =
         configurationDomain.getCommonConfiguration(orgId, type, key);
     if (commonConfiguration.isEmpty()) {
-      return getCommonResponse(orgId, type, key);
+      return null;
     }
     return INSTANCE.toCommonConfigurationDto(commonConfiguration.get());
-  }
-
-  /**
-   * Return the response with value as "UNDEFINED" if no record found
-   *
-   * @param orgId Org Id
-   * @param type Type
-   * @param key Key
-   * @return CommonConfigurationDto
-   */
-  private static CommonConfigurationDto getCommonResponse(String orgId, String type, String key) {
-    return CommonConfigurationDto.builder()
-        .key(key)
-        .orgId(orgId)
-        .type(type)
-        .value("UNDEFINED")
-        .build();
   }
 
   public CommonConfigurationDto createCommonConfig(

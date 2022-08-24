@@ -30,7 +30,7 @@ class CommonConfigurationServiceTest {
   @Mock private CommonConfigurationDomain commonConfigurationDomain;
 
   @Test
-  @DisplayName("No Result Found, Return Undefined Result")
+  @DisplayName("No Result Found, Return null Result")
   void fetchValue_Test() throws PromiseEngineException {
     when(commonConfigurationDomain.getCommonConfiguration(anyString(), anyString(), anyString()))
         .thenReturn(Optional.empty());
@@ -39,7 +39,7 @@ class CommonConfigurationServiceTest {
             () ->
                 commonConfigurationService.fetchValue(
                     TestUtil.ORGID, TestUtil.KEY, TestUtil.ORGID));
-    Assertions.assertEquals("UNDEFINED", configurationDto.getValue());
+    Assertions.assertNull(configurationDto);
   }
 
   @Test
