@@ -143,6 +143,8 @@ public class CsvUploadUtilityService {
       throws IOException, CsvException, CsvFormatValidationFailedException, JsonParsingException,
           JobServiceException, JobUpdationException {
 
+    // validate file type
+
     var inputStreamReader = new InputStreamReader(csvFile.getInputStream());
     var csvReader = new CSVReader(inputStreamReader);
     List<String[]> csvFileContents = csvReader.readAll();
