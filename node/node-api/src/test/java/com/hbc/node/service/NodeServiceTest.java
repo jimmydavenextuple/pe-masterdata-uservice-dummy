@@ -142,7 +142,30 @@ class NodeServiceTest {
     when(nodeDomain.getNodeByOrgId(any(), any(), any(), any(), any())).thenReturn(nodeDtoPage);
 
     Page<NodeDto> response =
-        nodeService.getNodeListByOrgId(TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "ASC");
+        nodeService.getNodeListByOrgId(
+            TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, TestUtil.SORT_ORDER_DESC);
+
+    Assertions.assertEquals(nodeDtoList.size(), response.getContent().size());
+    Assertions.assertEquals(2, response.getTotalPages());
+    Assertions.assertEquals(1, response.getPageable().getPageSize());
+    Assertions.assertEquals(2, response.getTotalElements());
+    Assertions.assertEquals("nodeId: ASC", response.getSort().toString());
+
+    verify(nodeDomain, Mockito.times(1)).getNodeByOrgId(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getNodeListByOrgIdDefaultSortOrderTest() throws NodeDomainException, CommonServiceException {
+    List<NodeDto> nodeDtoList = testUtil.getNodeDtoList();
+
+    Pageable pageable = PageRequest.of(1, 1, Sort.by(TestUtil.SORT_BY).ascending());
+    Page<NodeDto> nodeDtoPage = new PageImpl<>(nodeDtoList, pageable, nodeDtoList.size());
+
+    when(nodeDomain.getNodeByOrgId(any(), any(), any(), any(), any())).thenReturn(nodeDtoPage);
+
+    Page<NodeDto> response =
+        nodeService.getNodeListByOrgId(
+            TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, TestUtil.DEFAULT_SORT_ORDER);
 
     Assertions.assertEquals(nodeDtoList.size(), response.getContent().size());
     Assertions.assertEquals(2, response.getTotalPages());

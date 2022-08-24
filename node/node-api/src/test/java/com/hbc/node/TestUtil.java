@@ -31,6 +31,7 @@ public class TestUtil {
   public static final String TIME_ZONE = "America/Toronto";
   public static final String SORT_BY = "nodeId";
   public static final String SORT_ORDER_DESC = "DESC";
+  public static final String DEFAULT_SORT_ORDER = "ASC";
   public static Boolean SHIP_TO_TIME = Boolean.TRUE;
   public static Boolean BOPIS_ELIGIBLE = Boolean.TRUE;
   public static Boolean SDND_ELIGIBLE = Boolean.TRUE;
