@@ -42,7 +42,8 @@ public class CarrierTransitTimeController {
             carrierTransitDto.getPagination().getTotalPages(),
             "next",
             String.format(
-                "/ui/carrier-transit-time/orgId/{orgId}?pageNo=%d&pageSize=%d",
+                "/data-upload/ui/carrier-transit-time/orgId/%s?pageNo=%d&pageSize=%d",
+                orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
 
@@ -52,7 +53,8 @@ public class CarrierTransitTimeController {
             carrierTransitDto.getPagination().getTotalPages(),
             "previous",
             String.format(
-                "/ui/carrier-transit-time/orgId/{orgId}?pageNo=%d&pageSize=%d",
+                "/data-upload/ui/carrier-transit-time/orgId/%s?pageNo=%d&pageSize=%d",
+                orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
 
