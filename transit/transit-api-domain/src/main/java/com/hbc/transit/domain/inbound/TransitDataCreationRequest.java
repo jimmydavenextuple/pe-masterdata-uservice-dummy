@@ -1,6 +1,7 @@
 package com.hbc.transit.domain.inbound;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -35,4 +36,10 @@ public class TransitDataCreationRequest implements Serializable {
   @Min(value = 0, message = "transitDays can't be negative")
   @NotNull(message = "transitDays can't be null")
   private Float transitDays;
+
+  private Date bufferStartDate;
+
+  private Date bufferEndDate;
+
+  private Double bufferDays;
 }
