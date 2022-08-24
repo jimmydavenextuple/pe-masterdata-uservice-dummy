@@ -1,0 +1,15 @@
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation(project(":common-util"))
+    implementation(project(":jobs-dashboard:job-framework-common-util"))
+    implementation "org.springframework.kafka:spring-kafka:2.8.7"
+    implementation group: 'com.opencsv', name: 'opencsv', version: '5.2'
+}
