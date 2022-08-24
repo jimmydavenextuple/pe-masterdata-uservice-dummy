@@ -1,0 +1,21 @@
+name: JOBS-CONSUMER BUILD-DEPLOY
+
+on:
+  push:
+    branches: [ development ]
+    paths:
+      - "jobs-consumer/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+     
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/build&deploy.yml
+    with:
+      module: jobs-consumer
+    secrets: inherit
+
+
+
+

@@ -33,7 +33,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +56,7 @@ public class PostalCodeTimezoneDataUploadService {
 
   public ResponseEntity<BaseResponse<String>> uploadPostalCodeTimezoneData(String fileUri)
       throws CommonServiceException, IOException {
-    Path path = DataUploadUtil.getPath(basePath, fileUri);
+    var path = DataUploadUtil.getPath(basePath, fileUri);
 
     DataUploadUtil.validateFileType(fileUri, POSTAL_CODE_TIMEZONE_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
@@ -72,12 +71,12 @@ public class PostalCodeTimezoneDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailedForPostalCode = true;
-    boolean isAllPassedForPostalCode = true;
-    boolean postalCodeResult = false;
+    var isAllFailedForPostalCode = true;
+    var isAllPassedForPostalCode = true;
+    var postalCodeResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
-        CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
+        var csvParser = DataUploadUtil.getCSVParser(reader)) {
       DataUploadUtil.compareHeaders(
           csvParser, "postalCodeTimezone", POSTAL_CODE_TIMEZONE_DATA_UPLOAD_INVALID_FILE_HEADERS);
 
@@ -98,7 +97,7 @@ public class PostalCodeTimezoneDataUploadService {
           switch (action) {
             case CREATE:
               {
-                CreatePostalCodeTimezoneRequest createPostalCodeTimezoneRequest =
+                var createPostalCodeTimezoneRequest =
                     CreatePostalCodeTimezoneRequest.builder()
                         .orgId(orgId)
                         .postalCodePrefix(postalCodePrefix)
@@ -119,7 +118,7 @@ public class PostalCodeTimezoneDataUploadService {
 
             case UPDATE:
               {
-                UpdatePostalCodeTimezoneRequest updatePostalCodeTimezoneRequest =
+                var updatePostalCodeTimezoneRequest =
                     UpdatePostalCodeTimezoneRequest.builder()
                         .country(country)
                         .state(state)

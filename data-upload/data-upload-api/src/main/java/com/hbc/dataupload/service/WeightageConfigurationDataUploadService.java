@@ -29,7 +29,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +52,7 @@ public class WeightageConfigurationDataUploadService {
 
   public ResponseEntity<BaseResponse<String>> uploadWeightageConfigurationData(String fileUri)
       throws CommonServiceException, IOException {
-    Path path = DataUploadUtil.getPath(basePath, fileUri);
+    var path = DataUploadUtil.getPath(basePath, fileUri);
 
     DataUploadUtil.validateFileType(fileUri, WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
@@ -68,12 +67,12 @@ public class WeightageConfigurationDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailedForWeightage = true;
-    boolean isAllPassedForWeightage = true;
-    boolean weightageResult = false;
+    var isAllFailedForWeightage = true;
+    var isAllPassedForWeightage = true;
+    var weightageResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
-        CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
+        var csvParser = DataUploadUtil.getCSVParser(reader)) {
       DataUploadUtil.compareHeaders(
           csvParser,
           "weightageConfiguration",
@@ -87,12 +86,12 @@ public class WeightageConfigurationDataUploadService {
           String orgId = csvRecord.get(ORG_ID);
           String type = csvRecord.get(TYPE);
           String key = csvRecord.get(KEY);
-          Float weightage = Float.valueOf(csvRecord.get(WEIGHTAGE));
+          var weightage = Float.valueOf(csvRecord.get(WEIGHTAGE));
 
           switch (action) {
             case CREATE:
               {
-                CreateWeightageConfigurationRequest createWeightageConfigurationRequest =
+                var createWeightageConfigurationRequest =
                     CreateWeightageConfigurationRequest.builder()
                         .orgId(orgId)
                         .type(type)
@@ -109,7 +108,7 @@ public class WeightageConfigurationDataUploadService {
 
             case UPDATE:
               {
-                UpdateWeightageConfigurationRequest updateWeightageConfigurationRequest =
+                var updateWeightageConfigurationRequest =
                     UpdateWeightageConfigurationRequest.builder()
                         .type(type)
                         .key(key)

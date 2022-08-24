@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -46,8 +45,7 @@ public class CommonExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
       MethodArgumentNotValidException e) {
-    ErrorResponse.ErrorResponseBuilder builder =
-        new ErrorResponse.ErrorResponseBuilder(ErrorType.ERROR, 0x000002);
+    var builder = new ErrorResponse.ErrorResponseBuilder(ErrorType.ERROR, 0x000002);
     builder.message(BAD_REQUEST);
     e.getBindingResult()
         .getFieldErrors()
@@ -70,7 +68,7 @@ public class CommonExceptionHandler {
       InvalidFormatException invalidFormatCause = (InvalidFormatException) cause;
       String message = invalidFormatCause.getMessage();
       for (Pattern pattern : PATTERNS_TO_MATCH) {
-        Matcher matcher = pattern.matcher(message);
+        var matcher = pattern.matcher(message);
         if (matcher.find()) {
           message = matcher.group(0);
           break;
