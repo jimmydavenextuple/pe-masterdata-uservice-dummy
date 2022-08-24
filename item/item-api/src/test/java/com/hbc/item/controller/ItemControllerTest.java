@@ -13,6 +13,8 @@ import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.service.ItemService;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,9 +23,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 class ItemControllerTest {
 
@@ -158,7 +157,7 @@ class ItemControllerTest {
 
   @Test
   void getItemDetailsListByItemIdAndOrgIdAndUomTest()
-          throws ItemDomainException, CommonServiceException {
+      throws ItemDomainException, CommonServiceException {
     ItemResponse itemResponse = testUtil.getItemResponse();
     List<ItemResponse> itemResponseList = new ArrayList<>();
     List<String> itemList = new ArrayList<>();
@@ -167,27 +166,25 @@ class ItemControllerTest {
     when(itemService.getListOfItemDetails(any(), any(), any())).thenReturn(itemResponseList);
 
     List<ItemResponse> responseEntity =
-            itemController.getItemDetailsList(TestUtil.ORG_ID, TestUtil.UOM, itemList);
+        itemController.getItemDetailsList(TestUtil.ORG_ID, TestUtil.UOM, itemList);
 
     Assertions.assertEquals(1, responseEntity.size());
 
     verify(itemService, times(1)).getListOfItemDetails(any(), any(), any());
   }
 
-
   @Test
   void getItemDetailsListByItemIdAndOrgIdAndUomExceptionTest()
-          throws ItemDomainException, CommonServiceException {
+      throws ItemDomainException, CommonServiceException {
     when(itemService.getListOfItemDetails(any(), any(), any()))
-            .thenThrow(new RuntimeException("Failed to fetch list of item details"));
+        .thenThrow(new RuntimeException("Failed to fetch list of item details"));
     List<String> itemList = new ArrayList<>();
     itemList.add(TestUtil.ITEM_ID);
     Exception exception =
-            Assertions.assertThrows(
-                    Exception.class,
-                    () -> itemController.getItemDetailsList(TestUtil.ORG_ID, TestUtil.UOM, itemList));
+        Assertions.assertThrows(
+            Exception.class,
+            () -> itemController.getItemDetailsList(TestUtil.ORG_ID, TestUtil.UOM, itemList));
     Assertions.assertEquals("Failed to fetch list of item details", exception.getMessage());
     verify(itemService, times(1)).getListOfItemDetails(any(), any(), any());
   }
-
 }

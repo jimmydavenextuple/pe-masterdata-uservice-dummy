@@ -13,7 +13,6 @@ import com.hbc.item.domain.entity.ItemEntity;
 import com.hbc.item.domain.entity.ItemPK;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.repository.ItemRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -127,20 +126,20 @@ class ItemDomainTest {
     List<ItemEntity> itemEntityList = new ArrayList<>();
     itemEntityList.add(itemEntity);
     when(itemRepository.findItemListByItemIdAndOrgIdAndUom(any(), any(), any()))
-            .thenReturn(itemEntityList);
+        .thenReturn(itemEntityList);
 
     List<ItemEntity> optionalItemEntity =
-            itemDomain.findItemLisyByItemIdAndOrgIdAndUom(itemList, TestUtil.ORG_ID, TestUtil.UOM);
+        itemDomain.findItemLisyByItemIdAndOrgIdAndUom(itemList, TestUtil.ORG_ID, TestUtil.UOM);
     Assertions.assertEquals(itemEntityList, optionalItemEntity);
     Assertions.assertEquals(
-            itemEntity.getIsDSVEligible(), optionalItemEntity.get(0).getIsDSVEligible());
+        itemEntity.getIsDSVEligible(), optionalItemEntity.get(0).getIsDSVEligible());
     Assertions.assertEquals(
-            itemEntity.getDepartmentName(), optionalItemEntity.get(0).getDepartmentName());
+        itemEntity.getDepartmentName(), optionalItemEntity.get(0).getDepartmentName());
     Assertions.assertEquals(
-            itemEntity.getDepartmentNumber(), optionalItemEntity.get(0).getDepartmentNumber());
+        itemEntity.getDepartmentNumber(), optionalItemEntity.get(0).getDepartmentNumber());
     Assertions.assertEquals(itemEntity.getImageUrl(), optionalItemEntity.get(0).getImageUrl());
     Assertions.assertEquals(
-            itemEntity.getShortDescription(), optionalItemEntity.get(0).getShortDescription());
+        itemEntity.getShortDescription(), optionalItemEntity.get(0).getShortDescription());
 
     verify(itemRepository, times(1)).findItemListByItemIdAndOrgIdAndUom(any(), any(), any());
     Assertions.assertEquals(TestUtil.ITEM_ID, id.getItemId());

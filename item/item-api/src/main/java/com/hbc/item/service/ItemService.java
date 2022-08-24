@@ -133,10 +133,10 @@ public class ItemService {
   }
 
   public List<ItemResponse> getListOfItemDetails(List<String> itemList, String orgId, String uom)
-          throws ItemDomainException, CommonServiceException {
+      throws ItemDomainException, CommonServiceException {
 
     List<ItemEntity> existingItemEntity =
-            itemDomain.findItemLisyByItemIdAndOrgIdAndUom(itemList, orgId, uom);
+        itemDomain.findItemLisyByItemIdAndOrgIdAndUom(itemList, orgId, uom);
 
     if (existingItemEntity.isEmpty()) {
       logger.error(ITEM_EXCEPTION_MESSAGE);
@@ -145,7 +145,7 @@ public class ItemService {
       errorMap.put(ITEM_LIST, FieldError.builder().rejectedValue(itemList).build());
       errorMap.put(UOM, FieldError.builder().rejectedValue(uom).build());
       throw new CommonServiceException(
-              ITEM_LIST_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1772, errorMap);
+          ITEM_LIST_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1772, errorMap);
     }
 
     return INSTANCE.toItemResponseList(existingItemEntity);

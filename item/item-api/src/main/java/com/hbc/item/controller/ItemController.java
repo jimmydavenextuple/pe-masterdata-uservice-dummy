@@ -7,6 +7,7 @@ import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.service.ItemService;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/item")
@@ -116,10 +115,10 @@ public class ItemController {
 
   @GetMapping("/{orgId}/{uom}")
   public List<ItemResponse> getItemDetailsList(
-          @NotBlank @PathVariable String orgId,
-          @NotBlank @PathVariable String uom,
-          @NotBlank @RequestParam List<String> itemList)
-          throws ItemDomainException, CommonServiceException {
+      @NotBlank @PathVariable String orgId,
+      @NotBlank @PathVariable String uom,
+      @NotBlank @RequestParam List<String> itemList)
+      throws ItemDomainException, CommonServiceException {
     logger.debug("Processing get item details");
     try {
 
