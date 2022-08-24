@@ -24,7 +24,7 @@ class CORSFilterTest {
   @InjectMocks CORSFilter corsFilter;
 
   @Test
-  void init() throws ServletException, IOException {
+  void doFilterSuccessTest() throws ServletException, IOException {
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
     MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
     MockFilterChain mockFilterChain = new MockFilterChain();
@@ -55,7 +55,75 @@ class CORSFilterTest {
   }
 
   @Test
-  void doFilter() {
+  void doFilterCommittedIsTrueTest() throws ServletException, IOException {
+    MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+    MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+    MockFilterChain mockFilterChain = new MockFilterChain();
+
+    String headerKey = "headerKey";
+    String headerValue = "headerValue";
+    String correlationId = "correlationId";
+
+    mockHttpServletRequest.addHeader(headerKey, headerValue);
+    mockHttpServletRequest.addHeader(correlationId, correlationId);
+    mockHttpServletResponse.setCommitted(true);
+
+    corsFilter.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
+
+    assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Origin"));
+    assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Headers"));
+    assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Methods"));
+  }
+
+  @Test
+  void doFilterNullEnvTest() {
+    MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+    MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+
+    String headerKey = "headerKey";
+    String headerValue = "headerValue";
+    String correlationId = "correlationId";
+
+    mockHttpServletRequest.addHeader(headerKey, headerValue);
+    mockHttpServletRequest.addHeader(correlationId, correlationId);
+    mockHttpServletResponse.setCommitted(false);
+    CorrelationUtil.setServiceCorrelationId(correlationId);
+
+    ReflectionTestUtils.setField(corsFilter, "environment", null);
+
+    assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Origin"));
+    assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Headers"));
+    assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Methods"));
+  }
+
+  @Test
+  void doFilterCROSNotDisabledEnvTest() {
+    MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+    MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+
+    String headerKey = "headerKey";
+    String headerValue = "headerValue";
+    String correlationId = "correlationId";
+
+    mockHttpServletRequest.addHeader(headerKey, headerValue);
+    mockHttpServletRequest.addHeader(correlationId, correlationId);
+    mockHttpServletResponse.setCommitted(false);
+    CorrelationUtil.setServiceCorrelationId(correlationId);
+    String[] profiles = {"prod"};
+
+    MockEnvironment environment = new MockEnvironment();
+
+    environment.setActiveProfiles(profiles);
+
+    ReflectionTestUtils.setField(corsFilter, "environment", null);
+
+    assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Origin"));
+    assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Headers"));
+    assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Methods"));
+  }
+
+  @Test
+  void init() {
     MockFilterConfig mockFilterConfig = new MockFilterConfig();
 
     assertDoesNotThrow(() -> corsFilter.init(mockFilterConfig));

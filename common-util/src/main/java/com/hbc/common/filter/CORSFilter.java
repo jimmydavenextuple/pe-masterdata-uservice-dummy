@@ -41,7 +41,7 @@ public class CORSFilter implements Filter {
               .filter(x -> corsDisabledEnv.contains(x))
               .findAny();
       if (devOptional.isPresent()) {
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        var httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.setHeader( // NOSONAR
             "Access-Control-Allow-Origin", "*");
         httpServletResponse.setHeader("Access-Control-Allow-Headers", "*");
