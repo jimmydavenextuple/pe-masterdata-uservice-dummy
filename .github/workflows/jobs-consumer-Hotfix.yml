@@ -1,0 +1,21 @@
+name: JOBS-CONSUMER HOTFIX
+
+on:
+  push:
+    branches: [ hotfix ]
+    paths:
+      - "jobs-consumer/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+     
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/Build&Deploy_Hotfix.yml
+    with:
+      module: jobs-consumer
+    secrets: inherit
+
+
+
+
