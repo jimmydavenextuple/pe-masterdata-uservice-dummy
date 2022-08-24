@@ -42,9 +42,9 @@ public class TransitEntity {
   @Column(name = "buffer_days")
   private Double bufferDays;
 
-  @Column(name = "bufferStartDate")
+  @Column(name = "buffer_Start_Date")
   private Date bufferStartDate;
 
-  @Column(name = "bufferEndDate")
+  @Column(name = "buffer_End_Date")
   private Date bufferEndDate;
 }
