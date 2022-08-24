@@ -239,29 +239,31 @@ class TransitControllerTest {
   }
 
   @Test
-  void getTransitDetailsListWithoutSourcingNodesTest() throws TransitDomainException, CommonServiceException {
+  void getTransitDetailsListWithoutSourcingNodesTest()
+      throws TransitDomainException, CommonServiceException {
     when(transitService.getListOfTransitDetailsWithoutSourcingNodes(any(), any()))
-            .thenReturn(List.of(testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS)));
+        .thenReturn(List.of(testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS)));
 
     List<TransitResponse> responseEntity =
-            transitController.getTransitDetailsListWithoutSourceNodes(
-                    TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
+        transitController.getTransitDetailsListWithoutSourceNodes(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
 
     Assertions.assertEquals(1, responseEntity.size());
     verify(transitService, times(1)).getListOfTransitDetailsWithoutSourcingNodes(any(), any());
   }
 
   @Test
-  void getTransitDetailsListWithoutSourcingNodesTestException() throws TransitDomainException, CommonServiceException {
+  void getTransitDetailsListWithoutSourcingNodesTestException()
+      throws TransitDomainException, CommonServiceException {
     when(transitService.getListOfTransitDetailsWithoutSourcingNodes(any(), any()))
-            .thenThrow(new RuntimeException("Failed to fetch transit list"));
+        .thenThrow(new RuntimeException("Failed to fetch transit list"));
 
     Exception exception =
-            Assertions.assertThrows(
-                    Exception.class,
-                    () ->
-                            transitController.getTransitDetailsListWithoutSourceNodes(
-                                    TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE));
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                transitController.getTransitDetailsListWithoutSourceNodes(
+                    TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE));
     Assertions.assertEquals("Failed to fetch transit list", exception.getMessage());
 
     verify(transitService, times(1)).getListOfTransitDetailsWithoutSourcingNodes(any(), any());

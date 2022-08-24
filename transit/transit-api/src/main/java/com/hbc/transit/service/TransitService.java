@@ -172,19 +172,19 @@ public class TransitService {
   }
 
   public List<TransitResponse> getListOfTransitDetailsWithoutSourcingNodes(
-          String orgId, String destinationGeozone)
-          throws TransitDomainException, CommonServiceException {
+      String orgId, String destinationGeozone)
+      throws TransitDomainException, CommonServiceException {
 
     List<TransitEntity> transitEntities =
-            transitDomain.fetchTransitListWithoutSourcingNodes(orgId, destinationGeozone);
+        transitDomain.fetchTransitListWithoutSourcingNodes(orgId, destinationGeozone);
 
     if (transitEntities.isEmpty()) {
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(
-              DESTINATION_GEOZONE, FieldError.builder().rejectedValue(destinationGeozone).build());
+          DESTINATION_GEOZONE, FieldError.builder().rejectedValue(destinationGeozone).build());
       throw new CommonServiceException(
-              TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
+          TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
 
     return INSTANCE.toTransitResponseList(transitEntities);
