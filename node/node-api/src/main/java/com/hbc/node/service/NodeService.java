@@ -1,5 +1,8 @@
 package com.hbc.node.service;
 
+import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+import static com.hbc.common.constants.CommonConstants.DESC_SORT_ORDER;
+
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.node.domain.NodeDomain;
@@ -100,7 +103,8 @@ public class NodeService {
   public Page<NodeDto> getNodeListByOrgId(
       String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
       throws NodeDomainException, CommonServiceException {
-    if (sortOrder.equalsIgnoreCase("ASC") || sortOrder.equalsIgnoreCase("DESC")) {
+    if (sortOrder.equalsIgnoreCase(DEFAULT_SORT_ORDER)
+        || sortOrder.equalsIgnoreCase(DESC_SORT_ORDER)) {
       return nodeDomain.getNodeByOrgId(orgId, pageNo, pageSize, sortBy, sortOrder);
     } else {
       logger.error("Invalid sort order");

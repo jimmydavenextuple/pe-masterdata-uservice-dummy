@@ -1,5 +1,8 @@
 package com.hbc.dataupload.controller;
 
+import static com.hbc.common.constants.CommonConstants.CARRIER_DEFAULT_SORT_BY;
+import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.pojo.PageParams;
 import com.hbc.common.pojo.PageProperties;
@@ -20,10 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class CarrierTransitTimeController {
-
-  private static final String DEFAULT_SORT_BY = "carrierId";
-  private static final String DEFAULT_SORT_ORDER = "ASC";
-
   private final PageProperties pageProperties;
 
   private final CarrierTransitTimeService carrierTransitTimeService;
@@ -36,7 +35,7 @@ public class CarrierTransitTimeController {
             orgId,
             pageParams.getPageNo().orElse(pageProperties.getPageNo()),
             pageParams.getPageSize().orElse(pageProperties.getPageSize()),
-            pageParams.getSortBy().orElse(DEFAULT_SORT_BY),
+            pageParams.getSortBy().orElse(CARRIER_DEFAULT_SORT_BY),
             pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
 
     String nextUri =

@@ -1,11 +1,14 @@
 package com.hbc.dataupload.controller;
 
+import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+import static com.hbc.common.constants.CommonConstants.NODE_DEFAULT_SORT_BY;
+
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.pojo.PageParams;
 import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
-import com.hbc.dataupload.domian.dto.NodeServiceOptionDto;
+import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
 import com.hbc.dataupload.service.NodeServiceOptionService;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j
 @RequiredArgsConstructor
 public class NodeServiceOptionController {
-  private static final String DEFAULT_SORT_BY = "nodeId";
-  private static final String DEFAULT_SORT_ORDER = "ASC";
   private final NodeServiceOptionService nodeServiceOptionService;
   private final PageProperties pageProperties;
 
@@ -35,7 +36,7 @@ public class NodeServiceOptionController {
             orgId,
             pageParams.getPageNo().orElse(pageProperties.getPageNo()),
             pageParams.getPageSize().orElse(pageProperties.getPageSize()),
-            pageParams.getSortBy().orElse(DEFAULT_SORT_BY),
+            pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY),
             pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
 
     String nextUri =

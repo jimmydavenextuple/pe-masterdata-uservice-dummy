@@ -88,7 +88,7 @@ public class NodeCarrierDomain {
   public List<NodeCarrierEntity> findNodeCarrierByNodeIdAndOrgId(String nodeId, String orgId)
       throws NodeCarrierDomainException {
     try {
-      return nodeCarrierRepository.findByNodeIdAOrgIdAndBlankCarrierServiceId(nodeId, orgId);
+      return nodeCarrierRepository.findByNodeIdAndOrgIdAndCarrierServiceId(nodeId, orgId, "");
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to find node carrier list");
       throw new NodeCarrierDomainException(

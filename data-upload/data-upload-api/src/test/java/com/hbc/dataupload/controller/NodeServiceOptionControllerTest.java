@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
-import com.hbc.dataupload.domian.dto.NodeServiceOptionDto;
+import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
 import com.hbc.dataupload.service.NodeServiceOptionService;
 import com.hbc.dataupload.util.TestUtil;
 import java.util.Optional;

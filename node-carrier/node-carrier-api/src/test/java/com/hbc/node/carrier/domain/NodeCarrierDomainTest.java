@@ -164,7 +164,8 @@ class NodeCarrierDomainTest {
   @DisplayName("When node carrier list is fetched successfully by node id and org id")
   void findNodeCarrierByNodeIdAndOrgIdTest() throws NodeCarrierDomainException {
     List<NodeCarrierEntity> nodeCarrierEntityList = testUtil.getNodeCarrierEntityList2();
-    when(nodeCarrierRepository.findByNodeIdAOrgIdAndBlankCarrierServiceId(anyString(), anyString()))
+    when(nodeCarrierRepository.findByNodeIdAndOrgIdAndCarrierServiceId(
+            anyString(), anyString(), anyString()))
         .thenReturn(nodeCarrierEntityList);
 
     List<NodeCarrierEntity> responseNodeCarrierList =
@@ -177,13 +178,14 @@ class NodeCarrierDomainTest {
     assertEquals(nodeCarrierEntityList, responseNodeCarrierList);
 
     verify(nodeCarrierRepository, times(1))
-        .findByNodeIdAOrgIdAndBlankCarrierServiceId(anyString(), anyString());
+        .findByNodeIdAndOrgIdAndCarrierServiceId(anyString(), anyString(), anyString());
   }
 
   @Test
   @DisplayName("When there is some error in finding node carrier list by node id and org id")
   void findNodeCarrierByNodeIdAndOrgIdTestException() {
-    when(nodeCarrierRepository.findByNodeIdAOrgIdAndBlankCarrierServiceId(anyString(), anyString()))
+    when(nodeCarrierRepository.findByNodeIdAndOrgIdAndCarrierServiceId(
+            anyString(), anyString(), anyString()))
         .thenThrow(new RuntimeException("Error while fetching details"));
 
     Exception ex =
@@ -195,6 +197,6 @@ class NodeCarrierDomainTest {
 
     assertEquals("Error while fetching node carrier list for nodeId and orgId", ex.getMessage());
     verify(nodeCarrierRepository, times(1))
-        .findByNodeIdAOrgIdAndBlankCarrierServiceId(anyString(), anyString());
+        .findByNodeIdAndOrgIdAndCarrierServiceId(anyString(), anyString(), anyString());
   }
 }

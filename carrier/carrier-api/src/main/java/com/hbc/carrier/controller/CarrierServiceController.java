@@ -1,5 +1,8 @@
 package com.hbc.carrier.controller;
 
+import static com.hbc.common.constants.CommonConstants.CARRIER_DEFAULT_SORT_BY;
+import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
@@ -31,8 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/carrier-service")
 @RequiredArgsConstructor
 public class CarrierServiceController {
-  private static final String DEFAULT_SORT_BY = "carrierId";
-  private static final String DEFAULT_SORT_ORDER = "ASC";
 
   private static final Logger logger = LoggerFactory.getLogger(CarrierServiceController.class);
   private final CarrierServiceService carrierserviceService;
@@ -139,7 +140,7 @@ public class CarrierServiceController {
             orgId,
             pageParams.getPageNo().orElse(pageProperties.getPageNo()),
             pageParams.getPageSize().orElse(pageProperties.getPageSize()),
-            pageParams.getSortBy().orElse(DEFAULT_SORT_BY),
+            pageParams.getSortBy().orElse(CARRIER_DEFAULT_SORT_BY),
             pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
 
     PagePayload<CarrierServiceResponse> pagePayload =
@@ -160,7 +161,7 @@ public class CarrierServiceController {
     pagination.setTotalPages(carrierServiceResponses.getTotalPages());
     pagination.setCurrentPage(pageParams.getPageNo().orElse(pageProperties.getPageNo()));
     pagination.setSortOrder(pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
-    pagination.setSortBy(pageParams.getSortBy().orElse(DEFAULT_SORT_BY));
+    pagination.setSortBy(pageParams.getSortBy().orElse(CARRIER_DEFAULT_SORT_BY));
 
     String nextUri =
         PaginationUtil.buildUriForPagination(

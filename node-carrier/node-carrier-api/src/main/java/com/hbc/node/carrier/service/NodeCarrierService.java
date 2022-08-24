@@ -216,11 +216,7 @@ public class NodeCarrierService {
       throws NodeCarrierDomainException {
     List<NodeCarrierEntity> nodeCarrierEntity =
         nodeCarrierDomain.findNodeCarrierByNodeIdAndOrgId(nodeId, orgId);
-    List<NodeCarrierResponse> nodeCarrierResponseList = new ArrayList<>();
 
-    nodeCarrierEntity.forEach(
-        nodeCarrier -> nodeCarrierResponseList.add(INSTANCE.toNodeCarrierDto(nodeCarrier)));
-
-    return nodeCarrierResponseList;
+    return INSTANCE.toNodeCarrierResponseList(nodeCarrierEntity);
   }
 }

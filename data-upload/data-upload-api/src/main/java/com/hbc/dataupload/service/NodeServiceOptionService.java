@@ -1,7 +1,7 @@
 package com.hbc.dataupload.service;
 
 import com.hbc.common.base.PagePayload;
-import com.hbc.dataupload.domian.dto.NodeServiceOptionDto;
+import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.domain.dto.NodeDto;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,24 +25,26 @@ public class NodeServiceOptionService {
   public PagePayload<NodeServiceOptionDto> getNodeServiceOption(
       String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder) {
     PagePayload<NodeServiceOptionDto> nodeServiceOptionDtoPagePayload = new PagePayload<>();
-    List<NodeServiceOptionDto> responseList = new ArrayList<>();
 
     PagePayload<NodeDto> nodeResponse =
         nodeFeign.getNodeList(orgId, pageNo, pageSize, sortBy, sortOrder).getPayload();
 
     List<NodeDto> nodeResponseList = nodeResponse.getData();
 
-    for (NodeDto node : nodeResponseList) {
-      List<NodeCarrierResponse> nodeCarrierResponse =
-          nodeCarrierFeign.getNodeCarrierList(node.getNodeId(), node.getOrgId()).getPayload();
+    List<NodeServiceOptionDto> responseList =
+        nodeResponseList.stream().map(this::makeFeignClientCall).collect(Collectors.toList());
 
-      var nodeServiceOptionDto = setNodeServiceOptionDto(node, nodeCarrierResponse);
-      responseList.add(nodeServiceOptionDto);
-    }
     nodeServiceOptionDtoPagePayload.setPagination(nodeResponse.getPagination());
     nodeServiceOptionDtoPagePayload.setData(responseList);
 
     return nodeServiceOptionDtoPagePayload;
+  }
+
+  private NodeServiceOptionDto makeFeignClientCall(NodeDto node) {
+    List<NodeCarrierResponse> nodeCarrierResponse =
+        nodeCarrierFeign.getNodeCarrierList(node.getNodeId(), node.getOrgId()).getPayload();
+
+    return setNodeServiceOptionDto(node, nodeCarrierResponse);
   }
 
   private NodeServiceOptionDto setNodeServiceOptionDto(
@@ -60,12 +63,8 @@ public class NodeServiceOptionService {
   }
 
   private Boolean computeIsActive(List<NodeCarrierResponse> nodeCarrierResponse) {
-    for (NodeCarrierResponse nodeCarrier : nodeCarrierResponse) {
-      if (nodeCarrier.getProcessingTime() > 0) {
-        return true;
-      }
-    }
-    return false;
+    return nodeCarrierResponse.stream()
+        .anyMatch(nodeCarrier -> nodeCarrier.getProcessingTime() > 0);
   }
 
   private Map<String, Double> getProcessingTime(List<NodeCarrierResponse> nodeCarrierResponse) {

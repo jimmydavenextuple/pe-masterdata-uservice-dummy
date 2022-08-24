@@ -1,4 +1,4 @@
-package com.hbc.dataupload.domian.dto;
+package com.hbc.dataupload.domain.dto;
 
 import java.io.Serializable;
 import java.util.List;

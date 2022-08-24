@@ -20,9 +20,6 @@ public interface NodeCarrierRepository extends JpaRepository<NodeCarrierEntity, 
   List<NodeCarrierEntity> findByCarrierServiceIdsWithServiceOption(
       String nodeId, String orgId, String carrierServiceId1, String carrierServiceId2);
 
-  @Query(
-      value =
-          "SELECT * FROM node_carrier t WHERE t.node_id = ?1 AND t.org_id = ?2 AND t.carrier_service_id = ''",
-      nativeQuery = true)
-  List<NodeCarrierEntity> findByNodeIdAOrgIdAndBlankCarrierServiceId(String nodeId, String orgId);
+  List<NodeCarrierEntity> findByNodeIdAndOrgIdAndCarrierServiceId(
+      String nodeId, String orgId, String carrierServiceId);
 }

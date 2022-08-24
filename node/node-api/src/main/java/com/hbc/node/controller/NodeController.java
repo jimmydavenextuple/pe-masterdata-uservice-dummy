@@ -1,5 +1,8 @@
 package com.hbc.node.controller;
 
+import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+import static com.hbc.common.constants.CommonConstants.NODE_DEFAULT_SORT_BY;
+
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.pojo.PageParams;
@@ -34,8 +37,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class NodeController {
 
   private static final Logger logger = LoggerFactory.getLogger(NodeController.class);
-  private static final String DEFAULT_SORT_BY = "nodeId";
-  private static final String DEFAULT_SORT_ORDER = "ASC";
   private final NodeService nodeService;
   private final PageProperties pageProperties;
 
@@ -133,7 +134,7 @@ public class NodeController {
             orgId,
             pageParams.getPageNo().orElse(pageProperties.getPageNo()),
             pageParams.getPageSize().orElse(pageProperties.getPageSize()),
-            pageParams.getSortBy().orElse(DEFAULT_SORT_BY),
+            pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY),
             pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
 
     PagePayload<NodeDto> pagePayload = setNodePagePayload(nodeDtoPage, pageParams, orgId);
@@ -152,7 +153,7 @@ public class NodeController {
     pagination.setTotalRecords((int) nodeDtoPage.getTotalElements());
     pagination.setTotalPages(nodeDtoPage.getTotalPages());
     pagination.setCurrentPage(pageParams.getPageNo().orElse(pageProperties.getPageNo()));
-    pagination.setSortOrder(pageParams.getSortOrder().orElse(DEFAULT_SORT_BY));
+    pagination.setSortOrder(pageParams.getSortOrder().orElse(NODE_DEFAULT_SORT_BY));
     pagination.setSortBy(pageParams.getSortBy().orElse(DEFAULT_SORT_ORDER));
 
     String nextUri =

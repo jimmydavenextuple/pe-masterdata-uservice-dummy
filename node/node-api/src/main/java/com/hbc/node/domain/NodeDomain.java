@@ -1,5 +1,7 @@
 package com.hbc.node.domain;
 
+import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.mapper.NodeMapper;
@@ -60,7 +62,7 @@ public class NodeDomain {
       throws NodeDomainException {
     try {
       Pageable pageable = null;
-      if (sortOrder.equalsIgnoreCase("ASC")) {
+      if (sortOrder.equalsIgnoreCase(DEFAULT_SORT_ORDER)) {
         pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).ascending());
       } else {
         pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).descending());
