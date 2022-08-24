@@ -210,13 +210,13 @@ class TransitDomainTest {
   }
 
   @Test
-  void getListOfTransitDetailsWithoutSourcingNodesTest() throws TransitDomainException {
+  void getListOfTransitDetailsForDestinationGeoZoneTest() throws TransitDomainException {
     TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
     when(transitRepository.findByOrgIdAndDestinationGeozone(any(), any()))
         .thenReturn(List.of(transitEntity));
 
     List<TransitEntity> transitEntityList =
-        transitDomain.fetchTransitListWithoutSourcingNodes(
+        transitDomain.fetchTransitListForDestinationGeoZone(
             TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
     Assertions.assertEquals(transitEntity, transitEntityList.get(0));
 
@@ -224,7 +224,7 @@ class TransitDomainTest {
   }
 
   @Test
-  void getListOfTransitDetailsWithoutSourcingNodesTestException() {
+  void getListOfTransitDetailsForDestinationGeoZoneTestException() {
     when(transitRepository.findByOrgIdAndDestinationGeozone(any(), any()))
         .thenThrow(new RuntimeException("Error while fetching transit list"));
 
@@ -232,7 +232,7 @@ class TransitDomainTest {
         assertThrows(
             TransitDomainException.class,
             () ->
-                transitDomain.fetchTransitListWithoutSourcingNodes(
+                transitDomain.fetchTransitListForDestinationGeoZone(
                     TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE));
     Assertions.assertEquals("Error while fetching transit list", exception.getMessage());
 

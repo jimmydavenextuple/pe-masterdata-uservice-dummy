@@ -171,12 +171,12 @@ public class TransitService {
         .build();
   }
 
-  public List<TransitResponse> getListOfTransitDetailsWithoutSourcingNodes(
+  public List<TransitResponse> getListOfTransitDetailsForDestinationGeoZone(
       String orgId, String destinationGeozone)
       throws TransitDomainException, CommonServiceException {
 
     List<TransitEntity> transitEntities =
-        transitDomain.fetchTransitListWithoutSourcingNodes(orgId, destinationGeozone);
+        transitDomain.fetchTransitListForDestinationGeoZone(orgId, destinationGeozone);
 
     if (transitEntities.isEmpty()) {
       Map<String, FieldError> errorMap = new HashMap<>();

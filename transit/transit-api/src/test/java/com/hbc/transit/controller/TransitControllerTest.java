@@ -239,33 +239,33 @@ class TransitControllerTest {
   }
 
   @Test
-  void getTransitDetailsListWithoutSourcingNodesTest()
+  void getTransitDetailsListForDestinationGeoZoneTest()
       throws TransitDomainException, CommonServiceException {
-    when(transitService.getListOfTransitDetailsWithoutSourcingNodes(any(), any()))
+    when(transitService.getListOfTransitDetailsForDestinationGeoZone(any(), any()))
         .thenReturn(List.of(testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS)));
 
     List<TransitResponse> responseEntity =
-        transitController.getTransitDetailsListWithoutSourceNodes(
+        transitController.getTransitDetailsListForDestinationGeoZone(
             TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
 
     Assertions.assertEquals(1, responseEntity.size());
-    verify(transitService, times(1)).getListOfTransitDetailsWithoutSourcingNodes(any(), any());
+    verify(transitService, times(1)).getListOfTransitDetailsForDestinationGeoZone(any(), any());
   }
 
   @Test
-  void getTransitDetailsListWithoutSourcingNodesTestException()
+  void getTransitDetailsListForDestinationGeoZoneTestException()
       throws TransitDomainException, CommonServiceException {
-    when(transitService.getListOfTransitDetailsWithoutSourcingNodes(any(), any()))
+    when(transitService.getListOfTransitDetailsForDestinationGeoZone(any(), any()))
         .thenThrow(new RuntimeException("Failed to fetch transit list"));
 
     Exception exception =
         Assertions.assertThrows(
             Exception.class,
             () ->
-                transitController.getTransitDetailsListWithoutSourceNodes(
+                transitController.getTransitDetailsListForDestinationGeoZone(
                     TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE));
     Assertions.assertEquals("Failed to fetch transit list", exception.getMessage());
 
-    verify(transitService, times(1)).getListOfTransitDetailsWithoutSourcingNodes(any(), any());
+    verify(transitService, times(1)).getListOfTransitDetailsForDestinationGeoZone(any(), any());
   }
 }

@@ -245,33 +245,33 @@ class TransitServiceTest {
   }
 
   @Test
-  void getListOfTransitDetailsWithoutSourcingNodesTest()
+  void getListOfTransitDetailsForDestinationGeoZoneTest()
       throws TransitDomainException, CommonServiceException {
     TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
-    when(transitDomain.fetchTransitListWithoutSourcingNodes(any(), any()))
+    when(transitDomain.fetchTransitListForDestinationGeoZone(any(), any()))
         .thenReturn(List.of(transitEntity));
 
     List<TransitResponse> transitResponse =
-        transitService.getListOfTransitDetailsWithoutSourcingNodes(
+        transitService.getListOfTransitDetailsForDestinationGeoZone(
             TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
     Assertions.assertEquals(
         transitEntity.getTransitDays(), transitResponse.get(0).getTransitDays());
-    verify(transitDomain, times(1)).fetchTransitListWithoutSourcingNodes(any(), any());
+    verify(transitDomain, times(1)).fetchTransitListForDestinationGeoZone(any(), any());
   }
 
   @Test
-  void getTransitDetailsWithoutSourcingNodesTestException() throws TransitDomainException {
+  void getTransitDetailsForDestinationGeoZoneTestException() throws TransitDomainException {
     List<TransitEntity> transitEntityList = Collections.<TransitEntity>emptyList();
-    when(transitDomain.fetchTransitListWithoutSourcingNodes(any(), any()))
+    when(transitDomain.fetchTransitListForDestinationGeoZone(any(), any()))
         .thenReturn(transitEntityList);
 
     Exception exception =
         Assertions.assertThrows(
             CommonServiceException.class,
             () ->
-                transitService.getListOfTransitDetailsWithoutSourcingNodes(
+                transitService.getListOfTransitDetailsForDestinationGeoZone(
                     TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE));
     Assertions.assertEquals("Transit data not found with given details", exception.getMessage());
-    verify(transitDomain, times(1)).fetchTransitListWithoutSourcingNodes(any(), any());
+    verify(transitDomain, times(1)).fetchTransitListForDestinationGeoZone(any(), any());
   }
 }
