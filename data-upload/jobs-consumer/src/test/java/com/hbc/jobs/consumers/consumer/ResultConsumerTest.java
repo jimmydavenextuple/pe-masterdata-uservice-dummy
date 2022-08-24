@@ -10,7 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.hbc.jobs.consumers.exception.JobException;
-import com.hbc.jobs.consumers.service.JobService;
+import com.hbc.jobs.consumers.service.JobConsumerService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,27 +21,27 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ResultConsumerTest {
 
-  @Mock private JobService jobService;
+  @Mock private JobConsumerService jobConsumerService;
 
   @InjectMocks private ResultConsumer resultConsumer;
 
   @Test
   void receiveResultFromAnotherConsumer() throws JobException {
-    doNothing().when(jobService).updateJobStatus(any());
+    doNothing().when(jobConsumerService).updateJobStatus(any());
 
     assertDoesNotThrow(() -> resultConsumer.receiveResultFromAnotherConsumer(null, null));
-    verify(jobService, times(1)).updateJobStatus(any());
+    verify(jobConsumerService, times(1)).updateJobStatus(any());
   }
 
   @Test
   void receiveResultFromAnotherConsumerError() throws JobException {
-    doThrow(RuntimeException.class).when(jobService).updateJobStatus(any());
+    doThrow(RuntimeException.class).when(jobConsumerService).updateJobStatus(any());
 
     JobException e =
         assertThrows(
             JobException.class, () -> resultConsumer.receiveResultFromAnotherConsumer(null, null));
     Assertions.assertEquals("Exception while persisting the job record", e.getMessage());
     assertNull(e.getJobId());
-    verify(jobService, times(1)).updateJobStatus(any());
+    verify(jobConsumerService, times(1)).updateJobStatus(any());
   }
 }

@@ -1,7 +1,7 @@
 package com.hbc.jobs.consumers.consumer;
 
 import com.hbc.jobs.consumers.exception.JobException;
-import com.hbc.jobs.consumers.service.JobService;
+import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
@@ -18,10 +18,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TaskConsumer {
 
-  private final JobService jobService;
+  private final JobConsumerService jobConsumerService;
 
-  public TaskConsumer(JobService jobService) {
-    this.jobService = jobService;
+  public TaskConsumer(JobConsumerService jobConsumerService) {
+    this.jobConsumerService = jobConsumerService;
   }
 
   @KafkaHandler(isDefault = true)
@@ -30,7 +30,7 @@ public class TaskConsumer {
     log.info("Inside receiveRecordFromDashboardProducer service");
 
     try {
-      jobService.processRecord(recordDto);
+      jobConsumerService.processRecord(recordDto);
       log.info("receiveRecordFromDashboardProducer service ends");
     } catch (Exception e) {
       log.error("Error while receiving the job record from the kafka producer", e);

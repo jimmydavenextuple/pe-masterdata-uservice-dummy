@@ -8,9 +8,9 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.dashboard.service.JobService;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
-import com.hbc.jobs.framework.common.domain.pojo.PageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.List;
 import java.util.Optional;
@@ -33,11 +33,11 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-public class JobController {
+public class JobDashboardController {
 
   private final JobService jobService;
 
-  private final PageProperties pageProperties;
+  private final DefaultPageProperties defaultPageProperties;
   private static final String MESSAGE = "Job successfully created!";
 
   @PostMapping(
@@ -122,8 +122,8 @@ public class JobController {
       @NotEmpty @NotNull @PathVariable("orgId") String orgId, JobFilters jobFilters)
       throws JobException {
     log.debug("--Inside getJobsByFilter()--");
-    int requiredPageNo = jobFilters.getPageNo().orElse(pageProperties.getPageNo());
-    int requiredPageSize = jobFilters.getPageSize().orElse(pageProperties.getPageSize());
+    int requiredPageNo = jobFilters.getPageNo().orElse(defaultPageProperties.getPageNo());
+    int requiredPageSize = jobFilters.getPageSize().orElse(defaultPageProperties.getPageSize());
 
     if (requiredPageNo < 1) {
       var jobTypeEnum = jobFilters.getJobType().map(JobTypeEnum::valueOf).orElse(null);

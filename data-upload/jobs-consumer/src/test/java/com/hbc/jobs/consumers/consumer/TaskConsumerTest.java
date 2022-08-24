@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.jobs.consumers.exception.JobException;
-import com.hbc.jobs.consumers.service.JobService;
+import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import org.junit.jupiter.api.Assertions;
@@ -25,16 +25,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class TaskConsumerTest {
 
-  @Mock private JobService jobService;
+  @Mock private JobConsumerService jobConsumerService;
 
   @InjectMocks private TaskConsumer taskConsumer;
 
   @Test
   void receiveRecordFromDashboardProducer() throws JobException {
-    doNothing().when(jobService).processRecord(any());
+    doNothing().when(jobConsumerService).processRecord(any());
 
     assertDoesNotThrow(() -> taskConsumer.receiveRecordFromDashboardProducer(null, null));
-    verify(jobService, times(1)).processRecord(any());
+    verify(jobConsumerService, times(1)).processRecord(any());
   }
 
   @Test
@@ -42,7 +42,7 @@ class TaskConsumerTest {
     RecordDto record = mock(RecordDto.class);
 
     when(record.getJob()).thenReturn(mock(JobDto.class));
-    doThrow(RuntimeException.class).when(jobService).processRecord(any());
+    doThrow(RuntimeException.class).when(jobConsumerService).processRecord(any());
 
     JobException e =
         assertThrows(
@@ -51,6 +51,6 @@ class TaskConsumerTest {
     Assertions.assertEquals(
         "Exception while receiving the job record from the kafka producer", e.getMessage());
     assertNull(e.getJobId());
-    verify(jobService, times(1)).processRecord(any());
+    verify(jobConsumerService, times(1)).processRecord(any());
   }
 }

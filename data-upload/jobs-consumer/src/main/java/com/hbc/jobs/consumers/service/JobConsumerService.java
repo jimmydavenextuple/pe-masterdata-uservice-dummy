@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class JobService {
+public class JobConsumerService {
 
   private final FeignClientMapperFactory feignClientMapperFactory;
 

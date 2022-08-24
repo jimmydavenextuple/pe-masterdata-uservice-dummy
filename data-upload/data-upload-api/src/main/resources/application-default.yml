@@ -39,3 +39,7 @@ jobs-framework:
   record-consumer:
     topic-name: jobs-task-local
     group-id: jobs-task-consumer-async-local
+dataupload:
+  base-path: "/s3-bucket/"
+  maxsize-in-kilobytes: 10240
+  max-rows: 1000

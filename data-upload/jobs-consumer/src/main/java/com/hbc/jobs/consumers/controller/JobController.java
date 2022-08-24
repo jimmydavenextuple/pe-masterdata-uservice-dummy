@@ -5,11 +5,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.consumers.exception.JobException;
-import com.hbc.jobs.consumers.service.JobService;
+import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.consumers.util.UriBuilder;
+import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
-import com.hbc.jobs.framework.common.domain.pojo.PageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.Collections;
 import java.util.List;
@@ -33,9 +33,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class JobController {
-  private final JobService jobService;
+  private final JobConsumerService jobConsumerService;
 
-  private final PageProperties pageProperties;
+  private final DefaultPageProperties defaultPageProperties;
 
   /**
    * @param orgId
@@ -54,7 +54,7 @@ public class JobController {
       throws JobException {
     log.debug("--Inside getJobRecordsByFilter controller--");
 
-    List<RecordStatusDto> pageResp = jobService.getJobResults(orgId, jobId, status);
+    List<RecordStatusDto> pageResp = jobConsumerService.getJobResults(orgId, jobId, status);
 
     return ResponseEntity.ok()
         .body(
@@ -77,7 +77,7 @@ public class JobController {
       throws JobException {
     log.info("-- Inside createJob controller --");
 
-    JobDto job = jobService.createJob(jobDto);
+    JobDto job = jobConsumerService.createJob(jobDto);
     return ResponseEntity.ok(
         BaseResponse.builder().message("Job successfully created").payload(job).build());
   }
@@ -95,7 +95,7 @@ public class JobController {
       throws JobException {
     log.info("-- Inside getJob controller --");
 
-    JobDto job = jobService.getJob(jobId, orgId);
+    JobDto job = jobConsumerService.getJob(jobId, orgId);
 
     log.info("Job successfully retrieved : {}", jobId);
 
@@ -115,17 +115,18 @@ public class JobController {
       throws JobException {
     log.debug("--Inside getJobsByFilter()--");
 
-    int requiredPageNo = jobFilters.getPageNo().orElse(pageProperties.getPageNo());
-    int requiredPageSize = jobFilters.getPageSize().orElse(pageProperties.getPageSize());
-    String requiredSortByField = jobFilters.getSortBy().orElse(pageProperties.getSortBy());
-    String requiredSortOrder = jobFilters.getSortOrder().orElse(pageProperties.getSortOrder());
+    int requiredPageNo = jobFilters.getPageNo().orElse(defaultPageProperties.getPageNo());
+    int requiredPageSize = jobFilters.getPageSize().orElse(defaultPageProperties.getPageSize());
+    String requiredSortByField = jobFilters.getSortBy().orElse(defaultPageProperties.getSortBy());
+    String requiredSortOrder =
+        jobFilters.getSortOrder().orElse(defaultPageProperties.getSortOrder());
 
     if (requiredPageNo < 1) {
       throw new JobException("PageNo can not be less than one", null, requiredPageNo);
     }
 
     Page<JobDto> pageResp =
-        jobService.getJobs(
+        jobConsumerService.getJobs(
             orgId,
             jobFilters.getJobType(),
             jobFilters.getDays(),

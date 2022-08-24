@@ -11,12 +11,12 @@ import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.consumers.common.TestUtil;
 import com.hbc.jobs.consumers.exception.JobException;
-import com.hbc.jobs.consumers.service.JobService;
+import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
-import com.hbc.jobs.framework.common.domain.pojo.PageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.List;
 import java.util.Objects;
@@ -40,9 +40,9 @@ class JobControllerTest {
 
   @InjectMocks private TestUtil testUtil;
 
-  @Mock private JobService jobService;
+  @Mock private JobConsumerService jobConsumerService;
 
-  @Mock private PageProperties pageProperties;
+  @Mock private DefaultPageProperties defaultPageProperties;
 
   @BeforeEach
   public void init() {
@@ -56,7 +56,7 @@ class JobControllerTest {
     Optional<String> status = Optional.of(ApiStatusEnum.SUCCESS.toString());
     List<RecordStatusDto> recordStatusList = testUtil.createRecordStatusDtoList(TestUtil.ORG_ID);
 
-    when(jobService.getJobResults(any(), any(), any())).thenReturn(recordStatusList);
+    when(jobConsumerService.getJobResults(any(), any(), any())).thenReturn(recordStatusList);
     ResponseEntity<BaseResponse<List<RecordStatusDto>>> response =
         jobController.getJobRecordsByFilter(TestUtil.ORG_ID, TestUtil.JOB_ID, status);
     List<RecordStatusDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
@@ -70,7 +70,7 @@ class JobControllerTest {
   void getJobRecordsByFilterFails() throws JobException {
 
     String jobId = "jobId1";
-    when(jobService.getJobResults(any(), any(), any()))
+    when(jobConsumerService.getJobResults(any(), any(), any()))
         .thenThrow(new JobException("Exception while retrieving the job records", jobId, null));
 
     JobException exception =
@@ -87,13 +87,13 @@ class JobControllerTest {
   void createJobSuccess() throws JobException {
 
     JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
-    when(jobService.createJob(any())).thenReturn(job);
+    when(jobConsumerService.createJob(any())).thenReturn(job);
 
     ResponseEntity<BaseResponse<JobDto>> response = jobController.createJob(job);
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
 
-    verify(jobService, times(1)).createJob(any());
+    verify(jobConsumerService, times(1)).createJob(any());
   }
 
   @Test
@@ -101,7 +101,7 @@ class JobControllerTest {
 
     JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 5);
 
-    when(jobService.createJob(any()))
+    when(jobConsumerService.createJob(any()))
         .thenThrow(
             new JobException("Job already exists for the same job Id", job.getJobId(), null));
 
@@ -116,7 +116,7 @@ class JobControllerTest {
 
     JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
 
-    when(jobService.createJob(any()))
+    when(jobConsumerService.createJob(any()))
         .thenThrow(new JobException("Exception while updating the job ", job.getJobId(), null));
 
     JobException exception = assertThrows(JobException.class, () -> jobController.createJob(job));
@@ -129,21 +129,21 @@ class JobControllerTest {
   void getJobSuccess() throws JobException {
 
     JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 5);
-    when(jobService.getJob(any(), any())).thenReturn(job);
+    when(jobConsumerService.getJob(any(), any())).thenReturn(job);
 
     ResponseEntity<BaseResponse<JobDto>> response =
         jobController.getJob(TestUtil.ORG_ID, job.getJobId());
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
 
-    verify(jobService, times(1)).getJob(any(), any());
+    verify(jobConsumerService, times(1)).getJob(any(), any());
   }
 
   @Test
   void getJobNotFoundException() throws JobException {
 
     String jobId = "job123";
-    when(jobService.getJob(any(), any()))
+    when(jobConsumerService.getJob(any(), any()))
         .thenThrow(new JobException("Job is not found!", jobId, null));
 
     JobException exception =
@@ -156,7 +156,7 @@ class JobControllerTest {
   void getJobCTEException() throws JobException {
 
     String jobId = "job123";
-    when(jobService.getJob(any(), any()))
+    when(jobConsumerService.getJob(any(), any()))
         .thenThrow(new JobException("Error while retrieving the job", jobId, null));
 
     JobException exception =
@@ -174,12 +174,12 @@ class JobControllerTest {
     List<JobDto> jobDtoList = testUtil.createJobDtoList();
     Page<JobDto> pageResp = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
 
-    when(pageProperties.getPageNo()).thenReturn(1);
-    when(pageProperties.getPageSize()).thenReturn(15);
-    when(pageProperties.getSortBy()).thenReturn("created_date");
-    when(pageProperties.getSortOrder()).thenReturn("ASC");
+    when(defaultPageProperties.getPageNo()).thenReturn(1);
+    when(defaultPageProperties.getPageSize()).thenReturn(15);
+    when(defaultPageProperties.getSortBy()).thenReturn("created_date");
+    when(defaultPageProperties.getSortOrder()).thenReturn("ASC");
 
-    when(jobService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
+    when(jobConsumerService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenReturn(pageResp);
 
     ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
@@ -210,11 +210,11 @@ class JobControllerTest {
     List<JobDto> jobDtoList = testUtil.createJobDtoList();
     Page<JobDto> pageResp = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
 
-    when(pageProperties.getPageNo()).thenReturn(1);
-    when(pageProperties.getPageSize()).thenReturn(15);
-    when(pageProperties.getSortBy()).thenReturn("created_date");
-    when(pageProperties.getSortOrder()).thenReturn("ASC");
-    when(jobService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
+    when(defaultPageProperties.getPageNo()).thenReturn(1);
+    when(defaultPageProperties.getPageSize()).thenReturn(15);
+    when(defaultPageProperties.getSortBy()).thenReturn("created_date");
+    when(defaultPageProperties.getSortOrder()).thenReturn("ASC");
+    when(jobConsumerService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenReturn(pageResp);
 
     ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
@@ -239,10 +239,10 @@ class JobControllerTest {
   @Test
   void getJobsByFilterPageNoNotAllowed() {
 
-    when(pageProperties.getPageNo()).thenReturn(1);
-    when(pageProperties.getPageSize()).thenReturn(15);
-    when(pageProperties.getSortBy()).thenReturn("created_date");
-    when(pageProperties.getSortOrder()).thenReturn("ASC");
+    when(defaultPageProperties.getPageNo()).thenReturn(1);
+    when(defaultPageProperties.getPageSize()).thenReturn(15);
+    when(defaultPageProperties.getSortBy()).thenReturn("created_date");
+    when(defaultPageProperties.getSortOrder()).thenReturn("ASC");
     JobFilters jobFilters = testUtil.getJobFilters();
     jobFilters.setPageNo(Optional.of(0));
     JobException exception =
@@ -257,11 +257,11 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterException() throws JobException {
-    when(pageProperties.getPageNo()).thenReturn(1);
-    when(pageProperties.getPageSize()).thenReturn(15);
-    when(pageProperties.getSortBy()).thenReturn("created_date");
-    when(pageProperties.getSortOrder()).thenReturn("ASC");
-    when(jobService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
+    when(defaultPageProperties.getPageNo()).thenReturn(1);
+    when(defaultPageProperties.getPageSize()).thenReturn(15);
+    when(defaultPageProperties.getSortBy()).thenReturn("created_date");
+    when(defaultPageProperties.getSortOrder()).thenReturn("ASC");
+    when(jobConsumerService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenThrow(new JobException("Exception while retrieving the list of jobs", null, 1));
 
     JobException exception =

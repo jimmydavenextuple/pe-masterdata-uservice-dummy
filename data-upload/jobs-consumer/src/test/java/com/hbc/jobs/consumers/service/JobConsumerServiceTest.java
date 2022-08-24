@@ -44,9 +44,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.CollectionUtils;
 
-class JobServiceTest {
+class JobConsumerServiceTest {
 
-  @InjectMocks private JobService jobService;
+  @InjectMocks private JobConsumerService jobConsumerService;
 
   @InjectMocks private TestUtil testUtil;
 
@@ -62,7 +62,7 @@ class JobServiceTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    MockMvcBuilders.standaloneSetup(jobService).build();
+    MockMvcBuilders.standaloneSetup(jobConsumerService).build();
   }
 
   @Nested
@@ -79,7 +79,7 @@ class JobServiceTest {
       when(feignClientMapperFactory.getMapper(any())).thenReturn(feignClientMapper);
       doNothing().when(jobDashboardService).publishJobRecord(any());
 
-      Assertions.assertDoesNotThrow(() -> jobService.processRecord(record));
+      Assertions.assertDoesNotThrow(() -> jobConsumerService.processRecord(record));
       verify(jobDashboardService, times(1)).publishJobRecord(any());
       verify(feignClientMapperFactory, times(1)).getMapper(any());
     }
@@ -96,7 +96,8 @@ class JobServiceTest {
       doThrow(RuntimeException.class).when(jobDashboardService).publishJobRecord(any());
 
       JobException e =
-          Assertions.assertThrows(JobException.class, () -> jobService.processRecord(record));
+          Assertions.assertThrows(
+              JobException.class, () -> jobConsumerService.processRecord(record));
       Assertions.assertEquals("Exception while processing the job record", e.getMessage());
       Assertions.assertNull(e.getJobId());
       verify(jobDashboardService, times(1)).publishJobRecord(any());
@@ -120,7 +121,7 @@ class JobServiceTest {
                 JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
                 2));
 
-    jobService.processRecord(record);
+    jobConsumerService.processRecord(record);
 
     verify(feignClientMapperFactory, times(1)).getMapper(any());
     verify(nodeCarrierMapper, times(1)).getResponseFromAPI(any());
@@ -133,7 +134,7 @@ class JobServiceTest {
     when(feignClientMapperFactory.getMapper(any())).thenReturn(null);
 
     Exception exception =
-        Assertions.assertThrows(JobException.class, () -> jobService.processRecord(record));
+        Assertions.assertThrows(JobException.class, () -> jobConsumerService.processRecord(record));
 
     Assertions.assertNotNull(exception);
   }
@@ -143,18 +144,18 @@ class JobServiceTest {
 
     @Test
     void updateJobStatus() throws JobRecordDomainException, JobException {
-      JobService jobService =
+      JobConsumerService jobConsumerService =
           spy(
-              new JobService(
+              new JobConsumerService(
                   feignClientMapperFactory, jobRecordDomain, jobDomain, jobDashboardService));
 
-      doNothing().when(jobService).updateJob(any(), anyInt());
+      doNothing().when(jobConsumerService).updateJob(any(), anyInt());
       JobRecordEntity jobRecordEntity = mock(JobRecordEntity.class);
       RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
 
       when(jobRecordDomain.create(any())).thenReturn(jobRecordEntity);
 
-      Assertions.assertDoesNotThrow(() -> jobService.updateJobStatus(recordStatusDto));
+      Assertions.assertDoesNotThrow(() -> jobConsumerService.updateJobStatus(recordStatusDto));
       verify(jobRecordDomain, times(1)).create(any());
     }
 
@@ -166,7 +167,7 @@ class JobServiceTest {
 
       JobException e =
           Assertions.assertThrows(
-              JobException.class, () -> jobService.updateJobStatus(recordStatusDto));
+              JobException.class, () -> jobConsumerService.updateJobStatus(recordStatusDto));
       Assertions.assertEquals("Exception while persisting the job record", e.getMessage());
       Assertions.assertNull(e.getJobId());
       verify(jobRecordDomain, times(1)).create(any());
@@ -186,7 +187,8 @@ class JobServiceTest {
           testUtil.createRecordStatusDtoList(TestUtil.ORG_ID);
       when(jobRecordDomain.findConsumerJobsByJobParam(TestUtil.ORG_ID, jobId, status))
           .thenReturn(recordStatusDtoList);
-      List<RecordStatusDto> pageResponse = jobService.getJobResults(TestUtil.ORG_ID, jobId, status);
+      List<RecordStatusDto> pageResponse =
+          jobConsumerService.getJobResults(TestUtil.ORG_ID, jobId, status);
 
       Assertions.assertFalse(CollectionUtils.isEmpty(pageResponse));
       verify(jobRecordDomain, times(1)).findConsumerJobsByJobParam(any(), any(), any());
@@ -201,7 +203,7 @@ class JobServiceTest {
       JobException exception =
           Assertions.assertThrows(
               JobException.class,
-              () -> jobService.getJobResults(TestUtil.ORG_ID, "JobId1", status));
+              () -> jobConsumerService.getJobResults(TestUtil.ORG_ID, "JobId1", status));
 
       Assertions.assertEquals(
           "Exception while retrieving the job records", exception.getMessage(), "Expected Error");
@@ -221,7 +223,7 @@ class JobServiceTest {
 
       when(jobDomain.save(any())).thenReturn(jobEntity);
 
-      JobDto job1 = jobService.createJob(job);
+      JobDto job1 = jobConsumerService.createJob(job);
 
       Assertions.assertEquals(jobEntity.getJobId(), job1.getJobId(), "JobId");
     }
@@ -233,7 +235,7 @@ class JobServiceTest {
       when(jobDomain.findJobByJobIdAndOrgId(job.getJobId(), TestUtil.ORG_ID)).thenReturn(jobEntity);
 
       JobException exception =
-          Assertions.assertThrows(JobException.class, () -> jobService.createJob(job));
+          Assertions.assertThrows(JobException.class, () -> jobConsumerService.createJob(job));
 
       Assertions.assertEquals(
           "Exception while creating the job ", exception.getMessage(), "Expected Error");
@@ -245,7 +247,7 @@ class JobServiceTest {
       when(jobDomain.findJobByJobIdAndOrgId(any(), any())).thenThrow(new RuntimeException());
 
       JobException exception =
-          Assertions.assertThrows(JobException.class, () -> jobService.createJob(job));
+          Assertions.assertThrows(JobException.class, () -> jobConsumerService.createJob(job));
 
       Assertions.assertEquals(
           "Exception while creating the job ", exception.getMessage(), "Expected Error");
@@ -263,7 +265,7 @@ class JobServiceTest {
       JobEntity jobEntity = JobMapper.INSTANCE.toJobEntity(job);
       when(jobDomain.findJobByJobIdAndOrgId(job.getJobId(), TestUtil.ORG_ID)).thenReturn(jobEntity);
 
-      JobDto job1 = jobService.getJob(job.getJobId(), TestUtil.ORG_ID);
+      JobDto job1 = jobConsumerService.getJob(job.getJobId(), TestUtil.ORG_ID);
 
       Assertions.assertEquals(job.getJobId(), job1.getJobId(), "JobId");
     }
@@ -275,7 +277,7 @@ class JobServiceTest {
 
       JobException exception =
           Assertions.assertThrows(
-              JobException.class, () -> jobService.getJob(job.getJobId(), TestUtil.ORG_ID));
+              JobException.class, () -> jobConsumerService.getJob(job.getJobId(), TestUtil.ORG_ID));
 
       Assertions.assertEquals(
           "Exception while retrieving the job by jobId",
@@ -292,7 +294,7 @@ class JobServiceTest {
 
       JobException exception =
           Assertions.assertThrows(
-              JobException.class, () -> jobService.getJob(job.getJobId(), TestUtil.ORG_ID));
+              JobException.class, () -> jobConsumerService.getJob(job.getJobId(), TestUtil.ORG_ID));
 
       Assertions.assertEquals(
           "Exception while retrieving the job by jobId",
@@ -318,7 +320,7 @@ class JobServiceTest {
           .thenReturn(page);
 
       Page<JobDto> pageResponse =
-          jobService.getJobs(
+          jobConsumerService.getJobs(
               TestUtil.ORG_ID,
               Optional.empty(),
               Optional.of(2),
@@ -342,7 +344,7 @@ class JobServiceTest {
           Assertions.assertThrows(
               JobException.class,
               () ->
-                  jobService.getJobs(
+                  jobConsumerService.getJobs(
                       TestUtil.ORG_ID,
                       Optional.empty(),
                       Optional.of(2),
@@ -376,7 +378,7 @@ class JobServiceTest {
               2);
       when(jobDomain.save(any())).thenReturn(jobEntity);
       when(jobDomain.findJobByJobIdAndOrgId(any(), any())).thenReturn(jobEntity);
-      jobService.updateJob(recordStatus, jobEntity.getTotalRecords());
+      jobConsumerService.updateJob(recordStatus, jobEntity.getTotalRecords());
 
       AuditLog auditLog = new AuditLog();
       auditLog.setStatus(JobStatusEnum.RUNNING);
@@ -432,7 +434,7 @@ class JobServiceTest {
       when(jobDomain.save(any())).thenReturn(null);
 
       Assertions.assertThrows(
-          JobException.class, () -> jobService.updateJob(recordStatusDto, retryCount));
+          JobException.class, () -> jobConsumerService.updateJob(recordStatusDto, retryCount));
     }
 
     @Test
@@ -451,7 +453,7 @@ class JobServiceTest {
               2);
       when(jobDomain.save(any())).thenReturn(jobEntity);
       when(jobDomain.findJobByJobIdAndOrgId(any(), any())).thenReturn(jobEntity);
-      jobService.updateJob(recordStatus, jobEntity.getTotalRecords());
+      jobConsumerService.updateJob(recordStatus, jobEntity.getTotalRecords());
 
       jobEntity.setStatus(JobStatusEnum.RUNNING);
 
@@ -515,7 +517,7 @@ class JobServiceTest {
       JobException exception =
           Assertions.assertThrows(
               JobException.class,
-              () -> jobService.updateJob(recordStatus, jobEntity.getTotalRecords()));
+              () -> jobConsumerService.updateJob(recordStatus, jobEntity.getTotalRecords()));
 
       Assertions.assertEquals(
           "Attempt to update job with wrong version", exception.getMessage(), "Expected Error");
@@ -539,7 +541,7 @@ class JobServiceTest {
       JobException exception =
           Assertions.assertThrows(
               JobException.class,
-              () -> jobService.updateJob(recordStatus, jobEntity.getTotalRecords()));
+              () -> jobConsumerService.updateJob(recordStatus, jobEntity.getTotalRecords()));
 
       Assertions.assertEquals(
           "Exception while updating job entity", exception.getMessage(), "Expected Error");

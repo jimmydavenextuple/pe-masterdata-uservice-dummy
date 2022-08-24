@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "pagination")
-public class PageProperties {
+@ConfigurationProperties(prefix = "page-properties")
+public class DefaultPageProperties {
 
   private Integer pageNo;
   private Integer pageSize;

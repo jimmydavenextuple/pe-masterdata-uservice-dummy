@@ -1,7 +1,7 @@
 package com.hbc.jobs.consumers.consumer;
 
 import com.hbc.jobs.consumers.exception.JobException;
-import com.hbc.jobs.consumers.service.JobService;
+import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
@@ -18,10 +18,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ResultConsumer {
 
-  private final JobService jobService;
+  private final JobConsumerService jobConsumerService;
 
-  public ResultConsumer(JobService jobService) {
-    this.jobService = jobService;
+  public ResultConsumer(JobConsumerService jobConsumerService) {
+    this.jobConsumerService = jobConsumerService;
   }
 
   @KafkaHandler(isDefault = true)
@@ -31,7 +31,7 @@ public class ResultConsumer {
     log.debug("Inside receiveResultFromAnotherConsumer service");
 
     try {
-      jobService.updateJobStatus(recordStatus);
+      jobConsumerService.updateJobStatus(recordStatus);
     } catch (Exception e) {
       log.error("Error while receiving the job from kafka", e);
       throw new JobException("Exception while persisting the job record", e, null, null);

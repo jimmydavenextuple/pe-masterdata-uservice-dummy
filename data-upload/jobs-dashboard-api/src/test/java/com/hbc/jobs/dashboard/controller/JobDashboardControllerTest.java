@@ -16,9 +16,9 @@ import com.hbc.jobs.dashboard.service.JobService;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
+import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
-import com.hbc.jobs.framework.common.domain.pojo.PageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.Collections;
 import java.util.List;
@@ -36,20 +36,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
-class JobControllerTest {
+class JobDashboardControllerTest {
 
-  @InjectMocks private JobController jobController;
+  @InjectMocks private JobDashboardController jobDashboardController;
 
   @Mock private JobService jobService;
 
-  @Mock private PageProperties pageProperties;
+  @Mock private DefaultPageProperties defaultPageProperties;
 
   @InjectMocks private TestUtil testUtil;
 
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    MockMvcBuilders.standaloneSetup(jobController).build();
+    MockMvcBuilders.standaloneSetup(jobDashboardController).build();
   }
 
   @Test
@@ -60,7 +60,7 @@ class JobControllerTest {
             csvFile, TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES))
         .thenReturn(new JobDto());
     ResponseEntity<BaseResponse<JobDto>> responseEntity =
-        jobController.processJobOffline(
+        jobDashboardController.processJobOffline(
             TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, csvFile);
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Status code");
   }
@@ -80,7 +80,7 @@ class JobControllerTest {
         assertThrows(
             JobException.class,
             () ->
-                jobController.processJobOffline(
+                jobDashboardController.processJobOffline(
                     TestUtil.JOB_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, csvFile));
 
     Assertions.assertEquals(
@@ -105,7 +105,7 @@ class JobControllerTest {
                 TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES));
 
     ResponseEntity<BaseResponse<JobDto>> responseEntity =
-        jobController.processJobJsonOffline(
+        jobDashboardController.processJobJsonOffline(
             JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, TestUtil.ORG_ID, request);
 
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -127,7 +127,7 @@ class JobControllerTest {
         Assertions.assertThrows(
             JobException.class,
             () ->
-                jobController.processJobJsonOffline(
+                jobDashboardController.processJobJsonOffline(
                     JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, TestUtil.ORG_ID, request));
 
     Assertions.assertNotNull(exception);
@@ -142,7 +142,7 @@ class JobControllerTest {
 
     when(jobService.processJobJsonOffline(any(), any(), any(), any())).thenReturn(new JobDto());
     ResponseEntity<BaseResponse<JobDto>> responseEntity =
-        jobController.processJobJsonOffline(
+        jobDashboardController.processJobJsonOffline(
             TestUtil.ORG_ID,
             TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES,
             TestUtil.ORG_ID,
@@ -157,7 +157,7 @@ class JobControllerTest {
 
     when(jobService.processJobJsonOffline(any(), any(), any(), any())).thenReturn(new JobDto());
     ResponseEntity<BaseResponse<JobDto>> responseEntity =
-        jobController.processJobJsonOffline(
+        jobDashboardController.processJobJsonOffline(
             TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, "", "");
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Status code");
 
@@ -176,7 +176,7 @@ class JobControllerTest {
         assertThrows(
             JobException.class,
             () ->
-                jobController.processJobJsonOffline(
+                jobDashboardController.processJobJsonOffline(
                     TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, "", ""));
 
     Assertions.assertEquals(
@@ -201,7 +201,7 @@ class JobControllerTest {
         assertThrows(
             JobException.class,
             () ->
-                jobController.processJobJsonOffline(
+                jobDashboardController.processJobJsonOffline(
                     TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, "", ""));
 
     Assertions.assertEquals(
@@ -224,7 +224,7 @@ class JobControllerTest {
 
     when(jobService.getJob(TestUtil.ORG_ID, jobId)).thenReturn(job);
     ResponseEntity<BaseResponse<JobDto>> responseEntity =
-        jobController.getJob(TestUtil.ORG_ID, jobId);
+        jobDashboardController.getJob(TestUtil.ORG_ID, jobId);
     JobDto jobResponse = Objects.requireNonNull(responseEntity.getBody()).getPayload();
 
     verify(jobService, times(1)).getJob(TestUtil.ORG_ID, jobId);
@@ -240,7 +240,8 @@ class JobControllerTest {
         .thenThrow(new JobException("Error while retrieving the job", jobId, null));
 
     JobException exception =
-        assertThrows(JobException.class, () -> jobController.getJob(TestUtil.ORG_ID, jobId));
+        assertThrows(
+            JobException.class, () -> jobDashboardController.getJob(TestUtil.ORG_ID, jobId));
 
     Assertions.assertEquals(
         "Error while retrieving the job", exception.getMessage(), "Exception message");
@@ -254,13 +255,13 @@ class JobControllerTest {
         testUtil.createJobList(TestUtil.JOB_TYPE_UPLOAD_TRANSIT_TIMES.name(), TestUtil.ORG_ID);
     PagePayload<JobDto> pagePayloadJobDto =
         testUtil.createPagePayloadJobDto(jobList, jobList.size(), jobList.size(), 1);
-    when(pageProperties.getPageNo()).thenReturn(1);
-    when(pageProperties.getPageSize()).thenReturn(15);
+    when(defaultPageProperties.getPageNo()).thenReturn(1);
+    when(defaultPageProperties.getPageSize()).thenReturn(15);
     when(jobService.getJobsByJobInfo(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenReturn(pagePayloadJobDto);
 
     ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
-        jobController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters());
+        jobDashboardController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters());
     PagePayload<JobDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     verify(jobService, times(1))
@@ -274,8 +275,8 @@ class JobControllerTest {
 
   @Test
   void getJobsByFilterException() throws JobException {
-    when(pageProperties.getPageNo()).thenReturn(1);
-    when(pageProperties.getPageSize()).thenReturn(15);
+    when(defaultPageProperties.getPageNo()).thenReturn(1);
+    when(defaultPageProperties.getPageSize()).thenReturn(15);
     when(jobService.getJobsByJobInfo(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenThrow(
             new JobException(
@@ -284,7 +285,8 @@ class JobControllerTest {
     JobException exception =
         assertThrows(
             JobException.class,
-            () -> jobController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters()));
+            () ->
+                jobDashboardController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters()));
 
     Assertions.assertEquals(
         "Error while retrieving the jobs", exception.getMessage(), "Exception Message");
@@ -298,14 +300,15 @@ class JobControllerTest {
     JobFilters jobFilters = testUtil.getJobFilters();
     jobFilters.setJobType(Optional.of(TestUtil.JOB_TYPE_UPLOAD_TRANSIT_TIMES.name()));
     jobFilters.setPageNo(Optional.of(0));
-    when(pageProperties.getPageNo()).thenReturn(1);
-    when(pageProperties.getPageSize()).thenReturn(15);
+    when(defaultPageProperties.getPageNo()).thenReturn(1);
+    when(defaultPageProperties.getPageSize()).thenReturn(15);
     when(jobService.getJobsByJobInfo(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenThrow(new RuntimeException());
 
     JobException exception =
         assertThrows(
-            JobException.class, () -> jobController.getJobsByFilter(TestUtil.ORG_ID, jobFilters));
+            JobException.class,
+            () -> jobDashboardController.getJobsByFilter(TestUtil.ORG_ID, jobFilters));
 
     Assertions.assertEquals(
         "PageNo can not be less than one", exception.getMessage(), "Exception Message");
@@ -323,7 +326,7 @@ class JobControllerTest {
     when(jobService.getJobResults(any(), any(), any())).thenReturn(recordStatusDtos);
 
     ResponseEntity<BaseResponse<List<RecordStatusDto>>> response =
-        jobController.getJobRecordsByFilter(
+        jobDashboardController.getJobRecordsByFilter(
             TestUtil.ORG_ID, TestUtil.JOB_ID, Optional.of("SUCCESS"));
     List<RecordStatusDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
@@ -345,7 +348,7 @@ class JobControllerTest {
         assertThrows(
             JobException.class,
             () ->
-                jobController.getJobRecordsByFilter(
+                jobDashboardController.getJobRecordsByFilter(
                     TestUtil.ORG_ID, TestUtil.JOB_ID, Optional.of("SUCCESS")));
 
     Assertions.assertEquals(
