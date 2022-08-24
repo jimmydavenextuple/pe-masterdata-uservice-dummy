@@ -76,9 +76,10 @@ class CORSFilterTest {
   }
 
   @Test
-  void doFilterNullEnvTest() {
+  void doFilterNullEnvTest() throws ServletException, IOException {
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
     MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+    MockFilterChain mockFilterChain = new MockFilterChain();
 
     String headerKey = "headerKey";
     String headerValue = "headerValue";
@@ -91,15 +92,18 @@ class CORSFilterTest {
 
     ReflectionTestUtils.setField(corsFilter, "environment", null);
 
+    corsFilter.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
+
     assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Origin"));
     assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Headers"));
     assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Methods"));
   }
 
   @Test
-  void doFilterCROSNotDisabledEnvTest() {
+  void doFilterCROSNotDisabledEnvTest() throws ServletException, IOException {
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
     MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+    MockFilterChain mockFilterChain = new MockFilterChain();
 
     String headerKey = "headerKey";
     String headerValue = "headerValue";
@@ -116,6 +120,8 @@ class CORSFilterTest {
     environment.setActiveProfiles(profiles);
 
     ReflectionTestUtils.setField(corsFilter, "environment", null);
+
+    corsFilter.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
 
     assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Origin"));
     assertNull(mockHttpServletResponse.getHeader("Access-Control-Allow-Headers"));
