@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CarrierServiceController {
 
   private static final Logger logger = LoggerFactory.getLogger(CarrierServiceController.class);
+  private static final String PAGINATION_URL = "/%s?pageNo=%d&pageSize=%d";
   private final CarrierServiceService carrierserviceService;
   private final PageProperties pageProperties;
 
@@ -169,7 +170,7 @@ public class CarrierServiceController {
             carrierServiceResponses.getTotalPages(),
             "next",
             String.format(
-                "/%s?pageNo=%d&pageSize=%d",
+                PAGINATION_URL,
                 orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
@@ -179,7 +180,7 @@ public class CarrierServiceController {
             carrierServiceResponses.getTotalPages(),
             "previous",
             String.format(
-                "/%s?pageNo=%d&pageSize=%d",
+                PAGINATION_URL,
                 orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));

@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class NodeController {
 
   private static final Logger logger = LoggerFactory.getLogger(NodeController.class);
+  private static final String PAGINATION_URL = "/%s?pageNo=%d&pageSize=%d";
   private final NodeService nodeService;
   private final PageProperties pageProperties;
 
@@ -162,7 +163,7 @@ public class NodeController {
             nodeDtoPage.getTotalPages(),
             "next",
             String.format(
-                "/%s?pageNo=%d&pageSize=%d",
+                PAGINATION_URL,
                 orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
@@ -172,7 +173,7 @@ public class NodeController {
             nodeDtoPage.getTotalPages(),
             "previous",
             String.format(
-                "/%s?pageNo=%d&pageSize=%d",
+                PAGINATION_URL,
                 orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
