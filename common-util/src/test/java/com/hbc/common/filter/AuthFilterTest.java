@@ -68,6 +68,16 @@ class AuthFilterTest {
   }
 
   @Test
+  void doFilterTestWhenFilterWhenRequestIsOptions() throws ServletException, IOException {
+    when(authProperties.isFilterEnabled()).thenReturn(true);
+    when(httpServletRequest.getRequestURI()).thenReturn("/node");
+    when(httpServletRequest.getMethod()).thenReturn("options");
+
+    authFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
+    verify(filterChain, times(1)).doFilter(any(), any());
+  }
+
+  @Test
   void doFilterAuthFilterExceptionForInvalidClaimsTest() throws ServletException, IOException {
     String token =
         "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjJGOUFGODk3LUI2OTEtNEQzMC05M0E5LUE1OEZFMDQ2MERGMiJ9.eyJzY29wZSI6InNmY2MtcmVzb3VyY2VzL2VzdCIsImlhdCI6MTY1ODEyOTY3NCwiZXhwIjoxNjU5NDI1Njc0LCJhdWQiOiJwcm9taXNlLWVuZ2luZSIsImlzcyI6Imh0dHBzOi8vY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb20vdXMtZWFzdC0xX1NSZzllbGRKTiJ9.L7KdFcmzo0beUM5bLQu8BJ7hzPsM5pp0rkumugnQn5zUYOZnTvzWOUZ2n2FUvyJUgSBGltjZkUjEZsyM31HjkjgCgr3q2kV58JMKjmzNKHz0V2f0e07xg_ipHT9vTTDcyPouu2dIlq6C0eGR2OpSWpbbO8Dgi3sycDQzAlmG35y3C36FZ9eNmWSSgSDEwVND9n1DbjbSz0sgfGRcJihaKMNvPJ2hAiIvOk31pM3WKDiN0cQPYcCFF98UAtBoTo5WoJ3CoDGE6wslDw_hcsqsLuxLSJ1dCFLxsjvqDJq7GVxqjUB-sQXr4d6H5KHDaqOBOXQADYZgVZohDB3BTqbkXj2PJIWU7llCyWcrwKFIWTRY3XZTsQbRuzfzomOmAYDPlrMrACDEYdFsjRHCd17spuDuZA6Af6P2HF3WP6OatkLZbdIXIDCY_bucCJ8VO_-vmnSvigF_Sb_NJuCvW5WhL7LiRjXHcD1IdEAK66BW-BvG3K0KeALZAH89TWIGx8QUizkVCwWlGBk7CH6G8HnfLwEQQx_MuVqCz7kVIGZvvNJUoGEfTntiMnCwpTtAC2HP-RakDSrL1W7jeNJhKaJzWeGQgoS54cZ2x1b0N6TlOKBw1B_ODu2AOGrESD_N9vtPPUOyrb86JSrI6uG9R9mHt44ij1F9BbUxfEledLOxtNY";

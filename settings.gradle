@@ -1,7 +1,7 @@
 pluginManagement {
-	repositories {
-		gradlePluginPortal()
-	}
+    repositories {
+        gradlePluginPortal()
+    }
 }
 rootProject.name = 'pe-master-data'
 include 'nfs-near-cache:core-near-cache'
@@ -120,4 +120,11 @@ findProject(':jobs-dashboard:job-framework-common-util')?.name = 'job-framework-
 include 'jobs-consumer'
 include 'jobs-consumer:jobs-consumer-api'
 findProject(':jobs-consumer:jobs-consumer-api')?.name = 'jobs-consumer-api'
+
+include 'common-configuration'
+include 'common-configuration:common-configuration-api'
+findProject(':common-configuration:common-configuration-api')?.name = 'common-configuration-api'
+include 'common-configuration:common-configuration-api-domain'
+findProject(':common-configuration:common-configuration-api-domain')?.name = 'common-configuration-api-domain'
+
 
