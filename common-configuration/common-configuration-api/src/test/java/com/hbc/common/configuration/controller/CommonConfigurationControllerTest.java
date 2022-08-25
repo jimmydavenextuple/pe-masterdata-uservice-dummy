@@ -81,7 +81,7 @@ class CommonConfigurationControllerTest {
             any(CreateCommonConfigurationRequest.class)))
         .thenThrow(new PromiseEngineException(ApplicationLayer.SERVICE_LAYER, null, null));
     Assertions.assertThrows(
-            PromiseEngineException.class,
+        PromiseEngineException.class,
         () -> configurationController.updateCommonConfiguration(testUtil.getCreateRequest()));
   }
 
