@@ -36,7 +36,7 @@ import org.springframework.util.ObjectUtils;
 
 class JobControllerTest {
 
-  @InjectMocks private JobController jobController;
+  @InjectMocks private JobsConsumerController jobsConsumerController;
 
   @InjectMocks private TestUtil testUtil;
 
@@ -47,7 +47,7 @@ class JobControllerTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    MockMvcBuilders.standaloneSetup(jobController).build();
+    MockMvcBuilders.standaloneSetup(jobsConsumerController).build();
   }
 
   @Test
@@ -58,7 +58,7 @@ class JobControllerTest {
 
     when(jobConsumerService.getJobResults(any(), any(), any())).thenReturn(recordStatusList);
     ResponseEntity<BaseResponse<List<RecordStatusDto>>> response =
-        jobController.getJobRecordsByFilter(TestUtil.ORG_ID, TestUtil.JOB_ID, status);
+        jobsConsumerController.getJobRecordsByFilter(TestUtil.ORG_ID, TestUtil.JOB_ID, status);
     List<RecordStatusDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
@@ -77,7 +77,7 @@ class JobControllerTest {
         assertThrows(
             JobException.class,
             () ->
-                jobController.getJobRecordsByFilter(
+                jobsConsumerController.getJobRecordsByFilter(
                     TestUtil.ORG_ID, TestUtil.JOB_ID, Optional.of("SUCCESS")));
 
     Assertions.assertEquals(jobId, exception.getJobId(), "Job Id");
@@ -89,7 +89,7 @@ class JobControllerTest {
     JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
     when(jobConsumerService.createJob(any())).thenReturn(job);
 
-    ResponseEntity<BaseResponse<JobDto>> response = jobController.createJob(job);
+    ResponseEntity<BaseResponse<JobDto>> response = jobsConsumerController.createJob(job);
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
 
@@ -105,7 +105,7 @@ class JobControllerTest {
         .thenThrow(
             new JobException("Job already exists for the same job Id", job.getJobId(), null));
 
-    JobException exception = assertThrows(JobException.class, () -> jobController.createJob(job));
+    JobException exception = assertThrows(JobException.class, () -> jobsConsumerController.createJob(job));
 
     Assertions.assertEquals(
         "Job already exists for the same job Id", exception.getMessage(), "Expected Error");
@@ -119,7 +119,7 @@ class JobControllerTest {
     when(jobConsumerService.createJob(any()))
         .thenThrow(new JobException("Exception while updating the job ", job.getJobId(), null));
 
-    JobException exception = assertThrows(JobException.class, () -> jobController.createJob(job));
+    JobException exception = assertThrows(JobException.class, () -> jobsConsumerController.createJob(job));
 
     Assertions.assertEquals(
         "Exception while updating the job ", exception.getMessage(), "Expected Error");
@@ -132,7 +132,7 @@ class JobControllerTest {
     when(jobConsumerService.getJob(any(), any())).thenReturn(job);
 
     ResponseEntity<BaseResponse<JobDto>> response =
-        jobController.getJob(TestUtil.ORG_ID, job.getJobId());
+        jobsConsumerController.getJob(TestUtil.ORG_ID, job.getJobId());
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
 
@@ -147,7 +147,7 @@ class JobControllerTest {
         .thenThrow(new JobException("Job is not found!", jobId, null));
 
     JobException exception =
-        assertThrows(JobException.class, () -> jobController.getJob(TestUtil.ORG_ID, jobId));
+        assertThrows(JobException.class, () -> jobsConsumerController.getJob(TestUtil.ORG_ID, jobId));
 
     Assertions.assertEquals("Job is not found!", exception.getMessage(), "Expected Error");
   }
@@ -160,7 +160,7 @@ class JobControllerTest {
         .thenThrow(new JobException("Error while retrieving the job", jobId, null));
 
     JobException exception =
-        assertThrows(JobException.class, () -> jobController.getJob(TestUtil.ORG_ID, jobId));
+        assertThrows(JobException.class, () -> jobsConsumerController.getJob(TestUtil.ORG_ID, jobId));
 
     Assertions.assertEquals(
         "Error while retrieving the job", exception.getMessage(), "Expected Error");
@@ -183,7 +183,7 @@ class JobControllerTest {
         .thenReturn(pageResp);
 
     ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
-        jobController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters());
+        jobsConsumerController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters());
     PagePayload<JobDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
@@ -218,7 +218,7 @@ class JobControllerTest {
         .thenReturn(pageResp);
 
     ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
-        jobController.getJobsByFilter(TestUtil.ORG_ID, jobFilters);
+        jobsConsumerController.getJobsByFilter(TestUtil.ORG_ID, jobFilters);
     PagePayload<JobDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
@@ -247,7 +247,7 @@ class JobControllerTest {
     jobFilters.setPageNo(Optional.of(0));
     JobException exception =
         assertThrows(
-            JobException.class, () -> jobController.getJobsByFilter(TestUtil.ORG_ID, jobFilters));
+            JobException.class, () -> jobsConsumerController.getJobsByFilter(TestUtil.ORG_ID, jobFilters));
 
     Assertions.assertEquals(
         "PageNo can not be less than one", exception.getMessage(), "Exception message");
@@ -267,7 +267,7 @@ class JobControllerTest {
     JobException exception =
         assertThrows(
             JobException.class,
-            () -> jobController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters()));
+            () -> jobsConsumerController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters()));
 
     Assertions.assertEquals(
         "Exception while retrieving the list of jobs", exception.getMessage(), "Exception message");

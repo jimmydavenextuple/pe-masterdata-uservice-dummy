@@ -157,7 +157,7 @@ public class JobDashboardController {
    * @throws JobException
    */
   @GetMapping(
-      path = "/org/{orgId}/jobs/{jobId}/results",
+      path = "/org/{orgId}/jobs-dashboard/{jobId}/results",
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<List<RecordStatusDto>>> getJobRecordsByFilter(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,

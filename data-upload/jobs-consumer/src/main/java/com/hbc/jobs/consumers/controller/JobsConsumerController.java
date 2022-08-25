@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-public class JobController {
+public class JobsConsumerController {
   private final JobConsumerService jobConsumerService;
 
   private final DefaultPageProperties defaultPageProperties;

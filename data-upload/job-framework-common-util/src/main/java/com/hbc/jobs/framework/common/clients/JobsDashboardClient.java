@@ -51,7 +51,7 @@ public interface JobsDashboardClient {
       @RequestParam(name = "pageNo", required = false) int pageNo,
       @RequestParam(name = "pageSize", required = false) int pageSize);
 
-  @GetMapping("/org/{orgId}/jobs/{jobId}/results")
+  @GetMapping("/org/{orgId}/jobs-dashboard/{jobId}/results")
   BaseResponse<List<RecordStatusDto>> getJobRecords(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotEmpty @NotNull @PathVariable("jobId") String jobId,
