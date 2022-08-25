@@ -36,10 +36,10 @@ public class CommonConfigFeignClientServiceImpl
           commonConfigFeign.fetchValue(key.getOrgId(), key.getType(), key.getKey());
 
       if (Objects.isNull(response.getPayload())) {
-        CommonConfigCacheValue commonConfigCacheValue =
+        CommonConfigCacheValue var =
             CommonConfigCacheValue.builder().commonConfigDetails(null).build();
-        commonConfigCacheValue.setDummy(true);
-        return commonConfigCacheValue;
+        var.setDummy(true);
+        return var;
       }
       return commonConfigMapper.responseToCacheValue(response);
     } catch (RuntimeException e) {
