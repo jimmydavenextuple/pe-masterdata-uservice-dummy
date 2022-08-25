@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
-import com.hbc.dataupload.domain.dto.CarrierTransitDto;
-import com.hbc.dataupload.service.CarrierTransitTimeService;
+import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
+import com.hbc.dataupload.service.NodeServiceOptionService;
 import com.hbc.dataupload.util.TestUtil;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -22,25 +22,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
-class CarrierTransitTimeControllerTest {
+class NodeServiceOptionControllerTest {
 
-  @InjectMocks private CarrierTransitTimeController carrierTransitTimeController;
+  @InjectMocks private NodeServiceOptionController nodeServiceOptionController;
 
-  @Mock private CarrierTransitTimeService carrierTransitTimeService;
+  @Mock private NodeServiceOptionService nodeServiceOptionService;
 
   @InjectMocks private TestUtil testUtil;
+
   @Mock private PageProperties pageProperties;
 
   @Test
-  void getCarrierTransitTimeListTest() {
-    when(carrierTransitTimeService.getCarrierTransitTimeList(any(), any(), any(), any(), any()))
-        .thenReturn(testUtil.getCarrierTransitPagePayload(2));
+  void getNodeServiceOptionTest() {
+    when(nodeServiceOptionService.getNodeServiceOption(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeServiceOptionPagePayload(2));
 
-    ResponseEntity<BaseResponse<PagePayload<CarrierTransitDto>>> response =
-        carrierTransitTimeController.getCarrierTransitTimeList(
+    ResponseEntity<BaseResponse<PagePayload<NodeServiceOptionDto>>> response =
+        nodeServiceOptionController.getNodeServiceOption(
             TestUtil.ORG_ID,
             testUtil.getPageParams(
-                Optional.of(2), Optional.of(1), Optional.of("carrierId"), Optional.of("DESC")));
+                Optional.of(2), Optional.of(1), Optional.of("nodeId"), Optional.of("DESC")));
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(2, response.getBody().getPayload().getData().size());
@@ -50,19 +51,19 @@ class CarrierTransitTimeControllerTest {
     assertNotNull(response.getBody().getPayload().getPagination().getPrevious());
     assertEquals("", response.getBody().getPayload().getPagination().getNext());
 
-    verify(carrierTransitTimeService, times(1))
-        .getCarrierTransitTimeList(any(), any(), any(), any(), any());
+    verify(nodeServiceOptionService, times(1))
+        .getNodeServiceOption(any(), any(), any(), any(), any());
   }
 
   @Test
-  void getCarrierTransitTimeListDefaultTest() {
+  void getNodeServiceOptionDefaultsTest() {
     when(pageProperties.getPageNo()).thenReturn(1);
     when(pageProperties.getPageSize()).thenReturn(15);
-    when(carrierTransitTimeService.getCarrierTransitTimeList(any(), any(), any(), any(), any()))
-        .thenReturn(testUtil.getCarrierTransitPagePayload(1));
+    when(nodeServiceOptionService.getNodeServiceOption(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeServiceOptionPagePayload(1));
 
-    ResponseEntity<BaseResponse<PagePayload<CarrierTransitDto>>> response =
-        carrierTransitTimeController.getCarrierTransitTimeList(
+    ResponseEntity<BaseResponse<PagePayload<NodeServiceOptionDto>>> response =
+        nodeServiceOptionController.getNodeServiceOption(
             TestUtil.ORG_ID,
             testUtil.getPageParams(
                 Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()));
@@ -75,7 +76,7 @@ class CarrierTransitTimeControllerTest {
     assertNotNull(response.getBody().getPayload().getPagination().getNext());
     assertEquals("", response.getBody().getPayload().getPagination().getPrevious());
 
-    verify(carrierTransitTimeService, times(1))
-        .getCarrierTransitTimeList(any(), any(), any(), any(), any());
+    verify(nodeServiceOptionService, times(1))
+        .getNodeServiceOption(any(), any(), any(), any(), any());
   }
 }
