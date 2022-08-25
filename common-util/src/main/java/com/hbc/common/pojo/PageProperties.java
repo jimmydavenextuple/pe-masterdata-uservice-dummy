@@ -1,4 +1,4 @@
-package com.hbc.carrier.domain.pojo;
+package com.hbc.common.pojo;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,6 +11,4 @@ public class PageProperties {
 
   private Integer pageNo;
   private Integer pageSize;
-  private String sortBy;
-  private String sortOrder;
 }

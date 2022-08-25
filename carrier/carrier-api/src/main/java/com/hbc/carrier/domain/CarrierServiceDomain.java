@@ -1,5 +1,7 @@
 package com.hbc.carrier.domain;
 
+import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+
 import com.hbc.carrier.domain.entity.CarrierServiceEntity;
 import com.hbc.carrier.domain.mapper.CarrierServiceMapper;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
@@ -68,7 +70,7 @@ public class CarrierServiceDomain {
       throws CarrierServiceDomainException {
     try {
       Pageable pageable = null;
-      if (sortOrder.equalsIgnoreCase("ASC")) {
+      if (sortOrder.equalsIgnoreCase(DEFAULT_SORT_ORDER)) {
         pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).ascending());
       } else {
         pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).descending());

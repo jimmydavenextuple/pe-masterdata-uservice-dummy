@@ -145,4 +145,19 @@ public class NodeCarrierController {
       throw e;
     }
   }
+
+  @GetMapping("/{nodeId}/{orgId}")
+  public ResponseEntity<BaseResponse<List<NodeCarrierResponse>>> getNodeCarrierList(
+      @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId)
+      throws NodeCarrierDomainException {
+    logger.debug("Processing get node carrier for nodeId and orgId");
+    List<NodeCarrierResponse> nodeCarrierResponseList =
+        nodeCarrierService.getNodeCarrierForNodeIdAndOrgId(nodeId, orgId);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier list fetched successfully")
+            .payload(nodeCarrierResponseList)
+            .build());
+  }
 }
