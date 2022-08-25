@@ -53,17 +53,7 @@ public class CommonConfigurationService {
   }
 
   public CommonConfigurationDto updateCommonConfiguration(
-      CreateCommonConfigurationRequest baseRequest)
-      throws PromiseEngineException, CommonServiceException {
-    String orgId = baseRequest.getOrgId();
-    String type = baseRequest.getType();
-    String key = baseRequest.getKey();
-    Optional<CommonConfiguration> commonConfiguration =
-        configurationDomain.getCommonConfiguration(orgId, type, key);
-
-    if (commonConfiguration.isEmpty()) {
-      throwCommonServiceException(orgId, type, key);
-    }
+      CreateCommonConfigurationRequest baseRequest) throws PromiseEngineException {
     return INSTANCE.toCommonConfigurationDto(
         configurationDomain.saveCommonConfiguration(
             INSTANCE.fromCommonConfigurationRequest(baseRequest)));

@@ -67,7 +67,7 @@ class CommonConfigurationControllerTest {
   }
 
   @Test
-  void updateCommonConfiguration_Test() throws PromiseEngineException, CommonServiceException {
+  void updateCommonConfiguration_Test() throws PromiseEngineException {
     when(configurationService.updateCommonConfiguration(
             any(CreateCommonConfigurationRequest.class)))
         .thenReturn(testUtil.getCommonConfigurationDto());
@@ -76,13 +76,12 @@ class CommonConfigurationControllerTest {
   }
 
   @Test
-  void updateCommonConfiguration_TestException()
-      throws PromiseEngineException, CommonServiceException {
+  void updateCommonConfiguration_TestException() throws PromiseEngineException {
     when(configurationService.updateCommonConfiguration(
             any(CreateCommonConfigurationRequest.class)))
-        .thenThrow(new CommonServiceException(HttpStatus.BAD_GATEWAY, null, null));
+        .thenThrow(RuntimeException.class);
     Assertions.assertThrows(
-        CommonServiceException.class,
+        RuntimeException.class,
         () -> configurationController.updateCommonConfiguration(testUtil.getCreateRequest()));
   }
 

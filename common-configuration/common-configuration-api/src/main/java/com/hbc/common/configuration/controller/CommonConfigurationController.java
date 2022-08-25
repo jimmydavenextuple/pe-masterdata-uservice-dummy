@@ -60,7 +60,7 @@ public class CommonConfigurationController {
   @PutMapping
   public ResponseEntity<BaseResponse<CommonConfigurationDto>> updateCommonConfiguration(
       @Valid @RequestBody CreateCommonConfigurationRequest baseRequest)
-      throws PromiseEngineException, CommonServiceException {
+      throws PromiseEngineException {
     logger.debug("Processing update Common Configuration request");
 
     return ResponseEntity.ok(

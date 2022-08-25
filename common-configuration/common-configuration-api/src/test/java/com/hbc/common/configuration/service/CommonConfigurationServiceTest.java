@@ -64,20 +64,7 @@ class CommonConfigurationServiceTest {
   }
 
   @Test
-  @DisplayName("Configuration doesn't Exist")
-  void updateCommonConfiguration_Test1() throws PromiseEngineException {
-
-    when(commonConfigurationDomain.getCommonConfiguration(anyString(), anyString(), anyString()))
-        .thenReturn(Optional.empty());
-    Assertions.assertThrows(
-        CommonServiceException.class,
-        () -> commonConfigurationService.updateCommonConfiguration(testUtil.getCreateRequest()));
-  }
-
-  @Test
   void updateCommonConfiguration_Test2() throws PromiseEngineException {
-    when(commonConfigurationDomain.getCommonConfiguration(anyString(), anyString(), anyString()))
-        .thenReturn(Optional.of(testUtil.getCommonConfiguration()));
 
     Assertions.assertDoesNotThrow(
         () -> commonConfigurationService.updateCommonConfiguration(testUtil.getCreateRequest()));
