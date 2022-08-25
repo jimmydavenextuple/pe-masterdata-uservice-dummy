@@ -1,6 +1,7 @@
 package com.hbc.core.constants;
 
 public class NearCacheConstants {
+
   private NearCacheConstants() {}
 
   public static final String NODE_ENTITY_NAME = "Node";
@@ -12,4 +13,5 @@ public class NearCacheConstants {
   public static final String PROMISE_SOURCING_ENTITY_NAME = "PromiseSourcing";
   public static final String WEIGHTAGE_CONFIGURATION_ENTITY_NAME = "WeightageConfiguration";
   public static final String POSTAL_CODE_ENTITY_NAME = "PostalCode";
+  public static final String COMMON_CONFIG_ENTITY_NAME = "CommonConfiguration";
 }
