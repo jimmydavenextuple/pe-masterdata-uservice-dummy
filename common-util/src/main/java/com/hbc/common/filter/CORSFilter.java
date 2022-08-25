@@ -2,7 +2,6 @@ package com.hbc.common.filter;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -12,7 +11,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
@@ -23,9 +21,6 @@ import org.springframework.stereotype.Component;
 public class CORSFilter implements Filter {
 
   @Autowired Environment environment;
-
-  @Value("${env.cors-disabled:default,dev,qa,perf,stage}")
-  private List<String> corsDisabledEnv;
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
@@ -41,7 +36,7 @@ public class CORSFilter implements Filter {
       Optional<String> devOptional =
           Arrays.stream(environment.getActiveProfiles())
               .map(String::toLowerCase)
-              .filter(x -> corsDisabledEnv.contains(x))
+              .filter(x -> "dev".equalsIgnoreCase(x) || "default".equalsIgnoreCase(x))
               .findAny();
       if (devOptional.isPresent()) {
         var httpServletResponse = (HttpServletResponse) response;

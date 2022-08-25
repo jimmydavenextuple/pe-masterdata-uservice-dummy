@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.hbc.common.util.CorrelationUtil;
 import java.io.IOException;
-import java.util.List;
 import javax.servlet.ServletException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,15 +36,13 @@ class CORSFilterTest {
     mockHttpServletRequest.addHeader(correlationId, correlationId);
     mockHttpServletResponse.setCommitted(false);
     CorrelationUtil.setServiceCorrelationId(correlationId);
-    String[] profiles = {"default"};
+    String[] profiles = {"default", "dev"};
 
     MockEnvironment environment = new MockEnvironment();
 
     environment.setActiveProfiles(profiles);
 
     ReflectionTestUtils.setField(corsFilter, "environment", environment);
-    ReflectionTestUtils.setField(
-        corsFilter, "corsDisabledEnv", List.of("default", "dev", "qa", "perf", "stage"));
 
     corsFilter.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
 
