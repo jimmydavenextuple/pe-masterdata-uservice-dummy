@@ -79,7 +79,7 @@ class CommonConfigurationControllerTest {
   void updateCommonConfiguration_TestException() throws PromiseEngineException {
     when(configurationService.updateCommonConfiguration(
             any(CreateCommonConfigurationRequest.class)))
-        .thenThrow(new RuntimeException.class);
+        .thenThrow(new RuntimeException());
     Assertions.assertThrows(
         RuntimeException.class,
         () -> configurationController.updateCommonConfiguration(testUtil.getCreateRequest()));
