@@ -193,6 +193,28 @@ class CarrierServiceServiceTest {
   }
 
   @Test
+  void getCarrierServiceListDefaultSortOrderTest()
+      throws CarrierServiceDomainException, CommonServiceException {
+    List<CarrierServiceResponse> carrierServiceResponseList =
+        testUtil.getCarrierServiceResponseList();
+
+    when(carrierServiceDomain.findCarrierServiceListByOrgId(any(), any(), any(), any(), any()))
+        .thenReturn(
+            testUtil.createPageCarrierServiceResponse(
+                2, carrierServiceResponseList, carrierServiceResponseList.size()));
+
+    Page<CarrierServiceResponse> carrierServiceResponsePage =
+        carrierServiceService.getCarrierServiceList(
+            TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, TestUtil.SORT_ORDER_ASC);
+
+    assertEquals(2, (int) carrierServiceResponsePage.getTotalElements());
+    assertEquals(2, carrierServiceResponsePage.getTotalPages());
+    assertEquals(carrierServiceResponseList.size(), carrierServiceResponsePage.getContent().size());
+    verify(carrierServiceDomain, times(1))
+        .findCarrierServiceListByOrgId(any(), any(), any(), any(), any());
+  }
+
+  @Test
   void getCarrierServiceListTestException() throws CarrierServiceDomainException {
     Exception exception =
         Assertions.assertThrows(
