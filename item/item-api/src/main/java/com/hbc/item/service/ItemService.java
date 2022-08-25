@@ -132,11 +132,11 @@ public class ItemService {
     return itemResponse;
   }
 
-  public List<ItemResponse> getListOfItemDetails(List<String> itemList, String orgId, String uom)
+  public List<ItemResponse> getItemList(List<String> itemList, String orgId, String uom)
       throws ItemDomainException, CommonServiceException {
 
     List<ItemEntity> existingItemEntity =
-        itemDomain.findItemLisyByItemIdAndOrgIdAndUom(itemList, orgId, uom);
+        itemDomain.findItemListByItemIdsAndOrgIdAndUom(itemList, orgId, uom);
 
     if (existingItemEntity.isEmpty()) {
       logger.error(ITEM_EXCEPTION_MESSAGE);

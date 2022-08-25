@@ -156,35 +156,35 @@ class ItemControllerTest {
   }
 
   @Test
-  void getItemDetailsListByItemIdAndOrgIdAndUomTest()
+  void getItemListByItemIdAndOrgIdAndUomTest()
       throws ItemDomainException, CommonServiceException {
     ItemResponse itemResponse = testUtil.getItemResponse();
     List<ItemResponse> itemResponseList = new ArrayList<>();
     List<String> itemList = new ArrayList<>();
     itemList.add(TestUtil.ITEM_ID);
     itemResponseList.add(itemResponse);
-    when(itemService.getListOfItemDetails(any(), any(), any())).thenReturn(itemResponseList);
+    when(itemService.getItemList(any(), any(), any())).thenReturn(itemResponseList);
 
     List<ItemResponse> responseEntity =
-        itemController.getItemDetailsList(TestUtil.ORG_ID, TestUtil.UOM, itemList);
+        itemController.getItemList(TestUtil.ORG_ID, TestUtil.UOM, itemList);
 
     Assertions.assertEquals(1, responseEntity.size());
 
-    verify(itemService, times(1)).getListOfItemDetails(any(), any(), any());
+    verify(itemService, times(1)).getItemList(any(), any(), any());
   }
 
   @Test
-  void getItemDetailsListByItemIdAndOrgIdAndUomExceptionTest()
+  void getItemListByItemIdAndOrgIdAndUomExceptionTest()
       throws ItemDomainException, CommonServiceException {
-    when(itemService.getListOfItemDetails(any(), any(), any()))
+    when(itemService.getItemList(any(), any(), any()))
         .thenThrow(new RuntimeException("Failed to fetch list of item details"));
     List<String> itemList = new ArrayList<>();
     itemList.add(TestUtil.ITEM_ID);
     Exception exception =
         Assertions.assertThrows(
             Exception.class,
-            () -> itemController.getItemDetailsList(TestUtil.ORG_ID, TestUtil.UOM, itemList));
+            () -> itemController.getItemList(TestUtil.ORG_ID, TestUtil.UOM, itemList));
     Assertions.assertEquals("Failed to fetch list of item details", exception.getMessage());
-    verify(itemService, times(1)).getListOfItemDetails(any(), any(), any());
+    verify(itemService, times(1)).getItemList(any(), any(), any());
   }
 }

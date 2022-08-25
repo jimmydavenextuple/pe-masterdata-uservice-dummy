@@ -119,7 +119,7 @@ class ItemDomainTest {
   }
 
   @Test
-  void getItemDetailsListTest() throws ItemDomainException {
+  void getItemListTest() throws ItemDomainException {
     ItemEntity itemEntity = testUtil.getItemEntity();
     ItemPK id = testUtil.getItemId();
     List<String> itemList = new ArrayList<>();
@@ -129,7 +129,7 @@ class ItemDomainTest {
         .thenReturn(itemEntityList);
 
     List<ItemEntity> optionalItemEntity =
-        itemDomain.findItemLisyByItemIdAndOrgIdAndUom(itemList, TestUtil.ORG_ID, TestUtil.UOM);
+        itemDomain.findItemListByItemIdsAndOrgIdAndUom(itemList, TestUtil.ORG_ID, TestUtil.UOM);
     Assertions.assertEquals(itemEntityList, optionalItemEntity);
     Assertions.assertEquals(
         itemEntity.getIsDSVEligible(), optionalItemEntity.get(0).getIsDSVEligible());

@@ -55,7 +55,7 @@ public class ItemDomain {
     }
   }
 
-  public List<ItemEntity> findItemLisyByItemIdAndOrgIdAndUom(
+  public List<ItemEntity> findItemListByItemIdsAndOrgIdAndUom(
       List<String> itemList, String orgId, String uom) throws ItemDomainException {
 
     try {

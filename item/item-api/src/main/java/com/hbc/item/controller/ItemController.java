@@ -114,7 +114,7 @@ public class ItemController {
   }
 
   @GetMapping("/{orgId}/{uom}")
-  public List<ItemResponse> getItemDetailsList(
+  public List<ItemResponse> getItemList(
       @NotBlank @PathVariable String orgId,
       @NotBlank @PathVariable String uom,
       @NotBlank @RequestParam List<String> itemList)
@@ -122,7 +122,7 @@ public class ItemController {
     logger.debug("Processing get item details");
     try {
 
-      return itemService.getListOfItemDetails(itemList, orgId, uom);
+      return itemService.getItemList(itemList, orgId, uom);
     } catch (Exception e) {
       logger.error("Failed to fetch list of item details");
       throw e;

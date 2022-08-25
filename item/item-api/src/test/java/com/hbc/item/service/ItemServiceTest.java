@@ -152,7 +152,7 @@ class ItemServiceTest {
   }
 
   @Test
-  void getItemDetailsListByItemIdAndOrgIdAndUomTest()
+  void getItemListByItemIdAndOrgIdAndUomTest()
       throws ItemDomainException, CommonServiceException {
     ItemEntity itemEntity = testUtil.getItemEntity();
     List<ItemEntity> itemEntityList = new ArrayList<>();
@@ -161,29 +161,29 @@ class ItemServiceTest {
     itemList.add(TestUtil.ITEM_ID);
     List<ItemResponse> itemResponseList = new ArrayList<>();
     itemResponseList.add(testUtil.getItemResponse());
-    when(itemDomain.findItemLisyByItemIdAndOrgIdAndUom(any(), any(), any()))
+    when(itemDomain.findItemListByItemIdsAndOrgIdAndUom(any(), any(), any()))
         .thenReturn(itemEntityList);
 
     List<ItemResponse> itemResponse =
-        itemService.getListOfItemDetails(itemList, TestUtil.ORG_ID, TestUtil.UOM);
+        itemService.getItemList(itemList, TestUtil.ORG_ID, TestUtil.UOM);
     Assertions.assertEquals(itemResponseList, itemResponse);
-    verify(itemDomain, times(1)).findItemLisyByItemIdAndOrgIdAndUom(any(), any(), any());
+    verify(itemDomain, times(1)).findItemListByItemIdsAndOrgIdAndUom(any(), any(), any());
   }
 
   @Test
-  void getItemDetailsListByItemIdAndOrgIdAndUomTestException() throws ItemDomainException {
+  void getItemListByItemIdAndOrgIdAndUomTestException() throws ItemDomainException {
     List<ItemEntity> itemEntityList = new ArrayList<>();
     List<String> itemList = new ArrayList<>();
     itemList.add(TestUtil.ITEM_ID);
-    when(itemDomain.findItemLisyByItemIdAndOrgIdAndUom(any(), any(), any()))
+    when(itemDomain.findItemListByItemIdsAndOrgIdAndUom(any(), any(), any()))
         .thenReturn(itemEntityList);
 
     Exception exception =
         Assertions.assertThrows(
             CommonServiceException.class,
-            () -> itemService.getListOfItemDetails(itemList, TestUtil.ORG_ID, TestUtil.UOM));
+            () -> itemService.getItemList(itemList, TestUtil.ORG_ID, TestUtil.UOM));
     Assertions.assertEquals("Items not found with given details", exception.getMessage());
 
-    verify(itemDomain, times(1)).findItemLisyByItemIdAndOrgIdAndUom(any(), any(), any());
+    verify(itemDomain, times(1)).findItemListByItemIdsAndOrgIdAndUom(any(), any(), any());
   }
 }
