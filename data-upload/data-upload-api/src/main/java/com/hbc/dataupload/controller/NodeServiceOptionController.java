@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j
 @RequiredArgsConstructor
 public class NodeServiceOptionController {
+  private static final String PAGINATION_URL =
+      "/data-upload/ui/node-service-option/orgId/%s?pageNo=%d&pageSize=%d";
   private final NodeServiceOptionService nodeServiceOptionService;
   private final PageProperties pageProperties;
 
@@ -45,7 +47,7 @@ public class NodeServiceOptionController {
             nodeServiceOptionDto.getPagination().getTotalPages(),
             "next",
             String.format(
-                "/data-upload/ui/node-service-option/orgId/%s?pageNo=%d&pageSize=%d",
+                PAGINATION_URL,
                 orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
@@ -56,7 +58,7 @@ public class NodeServiceOptionController {
             nodeServiceOptionDto.getPagination().getTotalPages(),
             "previous",
             String.format(
-                "/data-upload/ui/node-service-option/orgId/%s?pageNo=%d&pageSize=%d",
+                PAGINATION_URL,
                 orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));

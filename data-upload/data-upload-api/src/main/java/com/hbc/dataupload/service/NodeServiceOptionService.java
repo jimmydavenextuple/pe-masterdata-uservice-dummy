@@ -32,7 +32,7 @@ public class NodeServiceOptionService {
     List<NodeDto> nodeResponseList = nodeResponse.getData();
 
     List<NodeServiceOptionDto> responseList =
-        nodeResponseList.stream().map(this::makeFeignClientCall).collect(Collectors.toList());
+        nodeResponseList.stream().map(this::getNodeServiceOptionDto).collect(Collectors.toList());
 
     nodeServiceOptionDtoPagePayload.setPagination(nodeResponse.getPagination());
     nodeServiceOptionDtoPagePayload.setData(responseList);
@@ -40,7 +40,7 @@ public class NodeServiceOptionService {
     return nodeServiceOptionDtoPagePayload;
   }
 
-  private NodeServiceOptionDto makeFeignClientCall(NodeDto node) {
+  private NodeServiceOptionDto getNodeServiceOptionDto(NodeDto node) {
     List<NodeCarrierResponse> nodeCarrierResponse =
         nodeCarrierFeign.getNodeCarrierList(node.getNodeId(), node.getOrgId()).getPayload();
 
@@ -56,13 +56,13 @@ public class NodeServiceOptionService {
         .street(node.getStreet())
         .city(node.getCity())
         .province(node.getProvince())
-        .isActive(computeIsActive(nodeCarrierResponse))
+        .isActive(isActive(nodeCarrierResponse))
         .serviceOptions(getServiceOptions(nodeCarrierResponse))
         .processingTime(getProcessingTime(nodeCarrierResponse))
         .build();
   }
 
-  private Boolean computeIsActive(List<NodeCarrierResponse> nodeCarrierResponse) {
+  private Boolean isActive(List<NodeCarrierResponse> nodeCarrierResponse) {
     return nodeCarrierResponse.stream()
         .anyMatch(nodeCarrier -> nodeCarrier.getProcessingTime() > 0);
   }

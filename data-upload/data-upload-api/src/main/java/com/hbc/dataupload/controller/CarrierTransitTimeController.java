@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class CarrierTransitTimeController {
+  private static final String PAGINATION_URL =
+      "/data-upload/ui/carrier-transit-time/orgId/%s?pageNo=%d&pageSize=%d";
   private final PageProperties pageProperties;
 
   private final CarrierTransitTimeService carrierTransitTimeService;
@@ -44,7 +46,7 @@ public class CarrierTransitTimeController {
             carrierTransitDto.getPagination().getTotalPages(),
             "next",
             String.format(
-                "/data-upload/ui/carrier-transit-time/orgId/%s?pageNo=%d&pageSize=%d",
+                PAGINATION_URL,
                 orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
@@ -55,7 +57,7 @@ public class CarrierTransitTimeController {
             carrierTransitDto.getPagination().getTotalPages(),
             "previous",
             String.format(
-                "/data-upload/ui/carrier-transit-time/orgId/%s?pageNo=%d&pageSize=%d",
+                PAGINATION_URL,
                 orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
