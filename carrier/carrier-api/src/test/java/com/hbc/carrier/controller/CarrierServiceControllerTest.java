@@ -10,11 +10,11 @@ import com.hbc.carrier.TestUtil;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
-import com.hbc.carrier.domain.pojo.PageProperties;
 import com.hbc.carrier.exception.CarrierServiceDomainException;
 import com.hbc.carrier.service.CarrierServiceService;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import java.util.List;
 import java.util.Objects;
@@ -237,8 +237,6 @@ class CarrierServiceControllerTest {
 
     when(pageProperties.getPageNo()).thenReturn(1);
     when(pageProperties.getPageSize()).thenReturn(15);
-    when(pageProperties.getSortBy()).thenReturn("carrierId");
-    when(pageProperties.getSortOrder()).thenReturn("ASC");
     when(carrierServiceService.getCarrierServiceList(any(), any(), any(), any(), any()))
         .thenReturn(
             testUtil.createPageCarrierServiceResponse(

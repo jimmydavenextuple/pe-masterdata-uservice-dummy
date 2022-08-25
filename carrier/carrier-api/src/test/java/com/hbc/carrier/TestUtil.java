@@ -4,7 +4,7 @@ import com.hbc.carrier.domain.entity.CarrierServiceEntity;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
-import com.hbc.carrier.domain.pojo.PageParams;
+import com.hbc.common.pojo.PageParams;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;

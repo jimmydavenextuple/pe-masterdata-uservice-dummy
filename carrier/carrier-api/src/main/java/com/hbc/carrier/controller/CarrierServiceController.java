@@ -1,14 +1,17 @@
 package com.hbc.carrier.controller;
 
+import static com.hbc.common.constants.CommonConstants.CARRIER_DEFAULT_SORT_BY;
+import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
-import com.hbc.carrier.domain.pojo.PageParams;
-import com.hbc.carrier.domain.pojo.PageProperties;
 import com.hbc.carrier.exception.CarrierServiceDomainException;
 import com.hbc.carrier.service.CarrierServiceService;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.pojo.PageParams;
+import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
 import javax.validation.Valid;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CarrierServiceController {
 
   private static final Logger logger = LoggerFactory.getLogger(CarrierServiceController.class);
+  private static final String PAGINATION_URL = "/%s?pageNo=%d&pageSize=%d";
   private final CarrierServiceService carrierserviceService;
   private final PageProperties pageProperties;
 
@@ -137,8 +141,8 @@ public class CarrierServiceController {
             orgId,
             pageParams.getPageNo().orElse(pageProperties.getPageNo()),
             pageParams.getPageSize().orElse(pageProperties.getPageSize()),
-            pageParams.getSortBy().orElse(pageProperties.getSortBy()),
-            pageParams.getSortOrder().orElse(pageProperties.getSortOrder()));
+            pageParams.getSortBy().orElse(CARRIER_DEFAULT_SORT_BY),
+            pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
 
     PagePayload<CarrierServiceResponse> pagePayload =
         setCarrierServicePagePayload(carrierServiceResponses, pageParams, orgId);
@@ -157,8 +161,8 @@ public class CarrierServiceController {
     pagination.setTotalRecords((int) carrierServiceResponses.getTotalElements());
     pagination.setTotalPages(carrierServiceResponses.getTotalPages());
     pagination.setCurrentPage(pageParams.getPageNo().orElse(pageProperties.getPageNo()));
-    pagination.setSortOrder(pageParams.getSortOrder().orElse(pageProperties.getSortOrder()));
-    pagination.setSortBy(pageParams.getSortBy().orElse(pageProperties.getSortBy()));
+    pagination.setSortOrder(pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
+    pagination.setSortBy(pageParams.getSortBy().orElse(CARRIER_DEFAULT_SORT_BY));
 
     String nextUri =
         PaginationUtil.buildUriForPagination(
@@ -166,7 +170,7 @@ public class CarrierServiceController {
             carrierServiceResponses.getTotalPages(),
             "next",
             String.format(
-                "/%s?pageNo=%d&pageSize=%d",
+                PAGINATION_URL,
                 orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
@@ -176,7 +180,7 @@ public class CarrierServiceController {
             carrierServiceResponses.getTotalPages(),
             "previous",
             String.format(
-                "/%s?pageNo=%d&pageSize=%d",
+                PAGINATION_URL,
                 orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
