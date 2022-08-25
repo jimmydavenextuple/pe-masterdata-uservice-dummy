@@ -23,7 +23,7 @@ class CORSFilterTest {
   @InjectMocks CORSFilter corsFilter;
 
   @Test
-  void doFilterSuccessTest() throws ServletException, IOException {
+  void doFilterSuccessTestForDefaultEnv() throws ServletException, IOException {
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
     MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
     MockFilterChain mockFilterChain = new MockFilterChain();
@@ -36,7 +36,36 @@ class CORSFilterTest {
     mockHttpServletRequest.addHeader(correlationId, correlationId);
     mockHttpServletResponse.setCommitted(false);
     CorrelationUtil.setServiceCorrelationId(correlationId);
-    String[] profiles = {"default", "dev"};
+    String[] profiles = {"default"};
+
+    MockEnvironment environment = new MockEnvironment();
+
+    environment.setActiveProfiles(profiles);
+
+    ReflectionTestUtils.setField(corsFilter, "environment", environment);
+
+    corsFilter.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
+
+    assertEquals("*", mockHttpServletResponse.getHeader("Access-Control-Allow-Origin"));
+    assertEquals("*", mockHttpServletResponse.getHeader("Access-Control-Allow-Headers"));
+    assertEquals("*", mockHttpServletResponse.getHeader("Access-Control-Allow-Methods"));
+  }
+
+  @Test
+  void doFilterSuccessTestForDevEnv() throws ServletException, IOException {
+    MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+    MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+    MockFilterChain mockFilterChain = new MockFilterChain();
+
+    String headerKey = "headerKey";
+    String headerValue = "headerValue";
+    String correlationId = "correlationId";
+
+    mockHttpServletRequest.addHeader(headerKey, headerValue);
+    mockHttpServletRequest.addHeader(correlationId, correlationId);
+    mockHttpServletResponse.setCommitted(false);
+    CorrelationUtil.setServiceCorrelationId(correlationId);
+    String[] profiles = {"dev"};
 
     MockEnvironment environment = new MockEnvironment();
 
@@ -116,7 +145,7 @@ class CORSFilterTest {
 
     environment.setActiveProfiles(profiles);
 
-    ReflectionTestUtils.setField(corsFilter, "environment", null);
+    ReflectionTestUtils.setField(corsFilter, "environment", environment);
 
     corsFilter.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
 
