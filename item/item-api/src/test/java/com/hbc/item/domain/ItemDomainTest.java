@@ -125,7 +125,7 @@ class ItemDomainTest {
     List<String> itemList = new ArrayList<>();
     List<ItemEntity> itemEntityList = new ArrayList<>();
     itemEntityList.add(itemEntity);
-    when(itemRepository.findItemListByItemIdAndOrgIdAndUom(any(), any(), any()))
+    when(itemRepository.findByOrgIdAndUomAndItemIdIn(any(), any(), any()))
         .thenReturn(itemEntityList);
 
     List<ItemEntity> optionalItemEntity =
@@ -141,7 +141,7 @@ class ItemDomainTest {
     Assertions.assertEquals(
         itemEntity.getShortDescription(), optionalItemEntity.get(0).getShortDescription());
 
-    verify(itemRepository, times(1)).findItemListByItemIdAndOrgIdAndUom(any(), any(), any());
+    verify(itemRepository, times(1)).findByOrgIdAndUomAndItemIdIn(any(), any(), any());
     Assertions.assertEquals(TestUtil.ITEM_ID, id.getItemId());
     Assertions.assertEquals(TestUtil.ORG_ID, id.getOrgId());
     Assertions.assertEquals(TestUtil.UOM, id.getUom());

@@ -59,7 +59,7 @@ public class ItemDomain {
       List<String> itemList, String orgId, String uom) throws ItemDomainException {
 
     try {
-      return itemRepository.findItemListByItemIdAndOrgIdAndUom(orgId, uom, itemList);
+      return itemRepository.findByOrgIdAndUomAndItemIdIn(orgId, uom, itemList);
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to find item list");
       throw new ItemDomainException("Error while finding item list", null, orgId, uom);
