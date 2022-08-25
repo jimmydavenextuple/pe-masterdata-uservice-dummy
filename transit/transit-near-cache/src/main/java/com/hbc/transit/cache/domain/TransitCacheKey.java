@@ -9,7 +9,9 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class TransitCacheKey implements CacheKey {
-  public TransitCacheKey() {}
+  public TransitCacheKey() {
+    // default constructor
+  }
 
   private String orgId;
 
