@@ -126,5 +126,10 @@ include 'common-configuration:common-configuration-api'
 findProject(':common-configuration:common-configuration-api')?.name = 'common-configuration-api'
 include 'common-configuration:common-configuration-api-domain'
 findProject(':common-configuration:common-configuration-api-domain')?.name = 'common-configuration-api-domain'
+include 'common-configuration:common-configuration-near-cache'
+findProject(':common-configuration:common-configuration-near-cache')?.name = 'common-configuration-near-cache'
+include 'common-configuration:common-configuration-near-cache-spring'
+findProject(':common-configuration:common-configuration-near-cache-spring')?.name = 'common-configuration-near-cache-spring'
+
 
 
