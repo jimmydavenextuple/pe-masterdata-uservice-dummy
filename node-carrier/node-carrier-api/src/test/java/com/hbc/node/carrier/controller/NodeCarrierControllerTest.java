@@ -71,7 +71,7 @@ class NodeCarrierControllerTest {
   @DisplayName(
       "When node carrier is created/updated successfully with buffer data and response is 200 OK")
   void createOrUpdateBufferTest()
-      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+      throws NodeCarrierDomainException {
     when(nodeCarrierService.createOrUpdateBufferData(any()))
         .thenReturn(testUtil.getNodeCarrierResponse2());
 
@@ -89,7 +89,7 @@ class NodeCarrierControllerTest {
   @Test
   @DisplayName("When there is somme error in creating or updating buffer data in node carrier")
   void createOrUpdateBufferExceptionTest()
-      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+      throws NodeCarrierDomainException {
     when(nodeCarrierService.createOrUpdateBufferData(any()))
         .thenThrow(new RuntimeException("Failed to create or update node carrier buffer details"));
 

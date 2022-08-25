@@ -55,7 +55,7 @@ public class NodeCarrierController {
   @PostMapping("/buffer")
   public ResponseEntity<BaseResponse<NodeCarrierResponse>> createOrUpdateBuffer(
       @Valid @RequestBody NodeCarrierBufferRequest nodeCarrierBufferRequest)
-      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+      throws NodeCarrierDomainException {
     logger.debug("Processing buffer data creation or updation");
     try {
       var nodeCarrierResponse =
