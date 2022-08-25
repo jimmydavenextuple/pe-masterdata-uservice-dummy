@@ -68,6 +68,44 @@ class NodeCarrierControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "When node carrier is created/updated successfully with buffer data and response is 200 OK")
+  void createOrUpdateBufferTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+    when(nodeCarrierService.createOrUpdateBufferData(any()))
+        .thenReturn(testUtil.getNodeCarrierResponse2());
+
+    ResponseEntity<BaseResponse<NodeCarrierResponse>> response =
+        nodeCarrierController.createOrUpdateBuffer(testUtil.getNodeCarrierBufferRequest2());
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.NODE_ID, Objects.requireNonNull(response.getBody()).getPayload().getNodeId());
+    Assertions.assertEquals(
+        TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().getOrgId());
+    verify(nodeCarrierService, times(1)).createOrUpdateBufferData(any());
+  }
+
+  @Test
+  @DisplayName("When there is somme error in creating or updating buffer data in node carrier")
+  void createOrUpdateBufferExceptionTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+    when(nodeCarrierService.createOrUpdateBufferData(any()))
+        .thenThrow(new RuntimeException("Failed to create or update node carrier buffer details"));
+
+    Exception ex =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                nodeCarrierController.createOrUpdateBuffer(
+                    testUtil.getNodeCarrierBufferRequest2()));
+
+    Assertions.assertEquals(
+        "Failed to create or update node carrier buffer details", ex.getMessage());
+    verify(nodeCarrierService, times(1)).createOrUpdateBufferData(any());
+  }
+
+  @Test
   @DisplayName("When node carrier is fetched successfully and response is 200 OK")
   void getNodeCarrierTest() throws NodeCarrierDomainException, CommonServiceException {
     when(nodeCarrierService.getNodeCarrierDetails(any(), any(), any(), any()))

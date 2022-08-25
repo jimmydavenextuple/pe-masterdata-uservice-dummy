@@ -4,6 +4,7 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.mapper.NodeCarrierMapper;
@@ -77,6 +78,31 @@ public class NodeCarrierService {
           errorMap);
     }
 
+    return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
+  }
+
+  public NodeCarrierResponse createOrUpdateBufferData(
+      NodeCarrierBufferRequest nodeCarrierBufferRequest)
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+
+    var nodeCarrierEntity = INSTANCE.nodeCarrierBufferRequestToEntity(nodeCarrierBufferRequest);
+
+    Optional<NodeCarrierEntity> existingNodeEntity =
+        nodeCarrierDomain.findNodeCarrierDetails(
+            nodeCarrierEntity.getNodeId(),
+            nodeCarrierEntity.getOrgId(),
+            "",
+            nodeCarrierEntity.getServiceOption());
+
+    if (existingNodeEntity.isPresent()) {
+      INSTANCE.updateNodeCarrierEntityWithBuffer(
+          nodeCarrierBufferRequest, existingNodeEntity.get());
+      return INSTANCE.toNodeCarrierDto(
+          nodeCarrierDomain.saveNodeCarrierEntity(existingNodeEntity.get()));
+    }
+    nodeCarrierEntity.setProcessingTime(0.0);
+    nodeCarrierEntity.setLastPickupTime("0");
+    nodeCarrierEntity.setCarrierServiceId("");
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
   }
 

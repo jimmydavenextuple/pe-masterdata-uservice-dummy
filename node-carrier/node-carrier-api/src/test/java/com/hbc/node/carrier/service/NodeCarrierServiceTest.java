@@ -12,6 +12,7 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
@@ -87,6 +88,24 @@ class NodeCarrierServiceTest {
     Assertions.assertEquals("Node Carrier already exists for the given details", ex.getMessage());
     verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
     verify(nodeCarrierDomain, times(0)).saveNodeCarrierEntity(any());
+  }
+
+  @Test
+  @DisplayName("When node carrier is created successfully with buffer data")
+  void createOrUpdateNodeCarrierWithBufferDataTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+    NodeCarrierBufferRequest nodeCarrierBufferRequest = testUtil.getNodeCarrierBufferRequest2();
+    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
+        .thenReturn(Optional.empty());
+    when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
+        .thenReturn(testUtil.getNodeCarrierEntity());
+
+    NodeCarrierResponse nodeCarrierResponse =
+        nodeCarrierService.createOrUpdateBufferData(nodeCarrierBufferRequest);
+
+    Assertions.assertEquals(
+        testUtil.getNodeCarrierResponse2().getNodeId(), nodeCarrierResponse.getNodeId());
+    verify(nodeCarrierDomain, times(1)).saveNodeCarrierEntity(any());
   }
 
   @Test
