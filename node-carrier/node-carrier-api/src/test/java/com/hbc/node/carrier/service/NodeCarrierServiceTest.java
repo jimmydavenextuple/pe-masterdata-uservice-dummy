@@ -109,6 +109,25 @@ class NodeCarrierServiceTest {
   }
 
   @Test
+  @DisplayName("When node carrier buffer data is updated successfully")
+  void updateNodeCarrierBufferDataTest()
+          throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
+            .thenReturn(Optional.ofNullable(testUtil.getNodeCarrierEntity()));
+    when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
+            .thenReturn(testUtil.getNodeCarrierEntity());
+
+    NodeCarrierResponse nodeCarrierResponse =
+            nodeCarrierService.createOrUpdateBufferData(
+                    testUtil.getNodeCarrierBufferRequest2());
+
+    Assertions.assertEquals(testUtil.getNodeCarrierResponse(), nodeCarrierResponse);
+
+    verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(1)).saveNodeCarrierEntity(any());
+  }
+
+  @Test
   @DisplayName("When node carrier details is fetched successfully")
   void getNodeCarrierDetailsTest() throws NodeCarrierDomainException, CommonServiceException {
     when(nodeCarrierDomain.filterAndGetNodeCarrierDetails(any(), any(), any(), any()))

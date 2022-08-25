@@ -83,7 +83,7 @@ public class NodeCarrierService {
 
   public NodeCarrierResponse createOrUpdateBufferData(
       NodeCarrierBufferRequest nodeCarrierBufferRequest)
-      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+      throws NodeCarrierDomainException {
 
     var nodeCarrierEntity = INSTANCE.nodeCarrierBufferRequestToEntity(nodeCarrierBufferRequest);
 
