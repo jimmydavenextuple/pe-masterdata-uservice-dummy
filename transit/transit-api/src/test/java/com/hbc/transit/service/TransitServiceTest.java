@@ -10,6 +10,7 @@ import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.transit.exception.TransitDomainException;
@@ -39,6 +40,8 @@ class TransitServiceTest {
 
   @Test
   void addTransitDetailsTest() throws TransitDomainException {
+    TransitDataCreationRequest transitDataCreationRequest =
+        testUtil.getTransitDataCreationRequest(testUtil.TRANSIT_DAYS);
     when(transitDomain.saveTransitEntity(any(TransitEntity.class)))
         .thenReturn(testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS));
 
@@ -48,14 +51,16 @@ class TransitServiceTest {
     Assertions.assertEquals(
         testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS).getCarrierServiceId(),
         transitResponse.getCarrierServiceId());
+    Assertions.assertEquals(
+        transitDataCreationRequest.getBufferDays(), transitResponse.getBufferDays());
     verify(transitDomain, times(1)).saveTransitEntity(any(TransitEntity.class));
   }
 
   @Test
   void updateTransitDetailsTest() throws TransitDomainException, CommonServiceException {
     TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
-    TransitDataUpdationRequest transitDataUpdationRequest = new TransitDataUpdationRequest();
-    transitDataUpdationRequest.setTransitDays(13.5F);
+    TransitDataUpdationRequest transitDataUpdationRequest =
+        testUtil.getTransitDataUpdationRequest(13.5F);
     when(transitDomain.findTransitDetails(any(), any(), any(), any()))
         .thenReturn(Optional.of(transitEntity));
     when(transitDomain.saveTransitEntity(any())).thenReturn(testUtil.getTransitEntity(13.5F));
@@ -174,7 +179,7 @@ class TransitServiceTest {
 
   @Test
   void deleteTransitDetailsTest() throws TransitDomainException, CommonServiceException {
-    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    TransitEntity transitEntity = testUtil.getTransitEntity2(TestUtil.TRANSIT_DAYS);
     when(transitDomain.findTransitDetails(any(), any(), any(), any()))
         .thenReturn(Optional.of(transitEntity));
 
@@ -184,7 +189,7 @@ class TransitServiceTest {
             TestUtil.SOURCE_GEOZONE,
             TestUtil.DESTINATION_GEOZONE,
             TestUtil.CARRIER_SERVICE_ID);
-    Assertions.assertEquals(testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS), transitResponse);
+    Assertions.assertEquals(testUtil.getTransitResponse2(TestUtil.TRANSIT_DAYS), transitResponse);
     verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
   }
 
@@ -242,5 +247,36 @@ class TransitServiceTest {
     Assertions.assertEquals(0, transitResponse.getTotalRecords());
 
     verify(transitDomain, times(1)).fetchTransitEntitiesCount(any(), any());
+  }
+
+  @Test
+  void getListOfTransitDetailsForDestinationGeoZoneTest()
+      throws TransitDomainException, CommonServiceException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    when(transitDomain.fetchTransitListForDestinationGeoZone(any(), any()))
+        .thenReturn(List.of(transitEntity));
+
+    List<TransitResponse> transitResponse =
+        transitService.getListOfTransitDetailsForDestinationGeoZone(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
+    Assertions.assertEquals(
+        transitEntity.getTransitDays(), transitResponse.get(0).getTransitDays());
+    verify(transitDomain, times(1)).fetchTransitListForDestinationGeoZone(any(), any());
+  }
+
+  @Test
+  void getTransitDetailsForDestinationGeoZoneTestException() throws TransitDomainException {
+    List<TransitEntity> transitEntityList = Collections.<TransitEntity>emptyList();
+    when(transitDomain.fetchTransitListForDestinationGeoZone(any(), any()))
+        .thenReturn(transitEntityList);
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                transitService.getListOfTransitDetailsForDestinationGeoZone(
+                    TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE));
+    Assertions.assertEquals("Transit data not found with given details", exception.getMessage());
+    verify(transitDomain, times(1)).fetchTransitListForDestinationGeoZone(any(), any());
   }
 }

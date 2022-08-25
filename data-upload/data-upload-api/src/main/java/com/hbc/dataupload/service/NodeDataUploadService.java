@@ -42,7 +42,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -66,7 +65,7 @@ public class NodeDataUploadService {
 
   public ResponseEntity<BaseResponse<String>> uploadNodeData(String fileUri)
       throws CommonServiceException, IOException {
-    Path path = DataUploadUtil.getPath(basePath, fileUri);
+    var path = DataUploadUtil.getPath(basePath, fileUri);
 
     DataUploadUtil.validateFileType(fileUri, NODE_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
@@ -79,12 +78,12 @@ public class NodeDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailedForNode = true;
-    boolean isAllPassedForNode = true;
-    boolean nodeResult = false;
+    var isAllFailedForNode = true;
+    var isAllPassedForNode = true;
+    var nodeResult = false;
 
     try (Reader reader = Files.newBufferedReader(path);
-        CSVParser csvParser = DataUploadUtil.getCSVParser(reader)) {
+        var csvParser = DataUploadUtil.getCSVParser(reader)) {
       DataUploadUtil.compareHeaders(csvParser, "node", NODE_DATA_UPLOAD_INVALID_FILE_HEADERS);
 
       for (CSVRecord csvRecord : csvParser) {
@@ -107,15 +106,15 @@ public class NodeDataUploadService {
                   SDND_ELIGIBLE, Boolean.valueOf(csvRecord.get(SDND_ELIGIBLE)),
                   EXPRESS_ELIGIBLE, Boolean.valueOf(csvRecord.get(EXPRESS_ELIGIBLE)),
                   NEXTDAY_ELIGIBLE, Boolean.valueOf(csvRecord.get(NEXTDAY_ELIGIBLE)));
-          Boolean shipToHome = Boolean.valueOf(csvRecord.get(SHIP_TO_HOME));
-          Boolean bopisEligible = Boolean.valueOf(csvRecord.get(BOPIS_ELIGIBLE));
+          var shipToHome = Boolean.valueOf(csvRecord.get(SHIP_TO_HOME));
+          var bopisEligible = Boolean.valueOf(csvRecord.get(BOPIS_ELIGIBLE));
           String nodeType = csvRecord.get(NODE_TYPE);
-          Boolean isActive = Boolean.valueOf(csvRecord.get(IS_ACTIVE));
+          var isActive = Boolean.valueOf(csvRecord.get(IS_ACTIVE));
 
           switch (action) {
             case CREATE:
               {
-                NodeRequest nodeRequest =
+                var nodeRequest =
                     NodeRequest.builder()
                         .nodeId(nodeId)
                         .orgId(orgId)
@@ -141,7 +140,7 @@ public class NodeDataUploadService {
 
             case UPDATE:
               {
-                NodeUpdationRequest nodeUpdationRequest =
+                var nodeUpdationRequest =
                     NodeUpdationRequest.builder()
                         .street(street)
                         .city(city)
