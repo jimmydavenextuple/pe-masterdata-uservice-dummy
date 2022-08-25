@@ -38,7 +38,7 @@ public class TransitDataNearCacheServiceImpl
 
   @Override
   public String getEntityName() {
-    return NearCacheConstants.NODE_ENTITY_NAME;
+    return NearCacheConstants.TRANSIT_ENTITY_NAME;
   }
 
   @Override
