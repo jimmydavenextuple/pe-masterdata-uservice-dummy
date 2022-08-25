@@ -32,6 +32,7 @@ public class CommonConfigMapper
   public CommonConfigCacheValue responseToCacheValue(BaseResponse<CommonConfigurationDto> resp) {
     return CommonConfigCacheValue.builder()
         .commonConfigDetails(DATA_MAPPER.convertToCommonConfigCacheValue(resp.getPayload()))
+
         .build();
   }
 
