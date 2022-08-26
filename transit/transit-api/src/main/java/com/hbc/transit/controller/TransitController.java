@@ -159,7 +159,7 @@ public class TransitController {
     }
   }
 
-  @GetMapping("transit-entries/{orgId}/{carrierServiceId}")
+  @GetMapping("/transit-entries/{orgId}/{carrierServiceId}")
   public ResponseEntity<BaseResponse<TransitTimeEntriesDto>> getTransitTimeEntries(
       @PathVariable String orgId, @PathVariable String carrierServiceId)
       throws TransitDomainException {
@@ -170,5 +170,18 @@ public class TransitController {
             .message("Transit time entries fetched successfully")
             .payload(transitTimeEntriesDto)
             .build());
+  }
+
+  @GetMapping("/batch-transit/{orgId}/{destinationGeozone}")
+  public List<TransitResponse> getTransitDetailsListForDestinationGeoZone(
+      @NotBlank @PathVariable String orgId, @NotBlank @PathVariable String destinationGeozone)
+      throws TransitDomainException, CommonServiceException {
+    logger.debug("Processing get transit details list");
+    try {
+      return transitService.getListOfTransitDetailsForDestinationGeoZone(orgId, destinationGeozone);
+    } catch (Exception e) {
+      logger.error("Failed to fetch transit details list");
+      throw e;
+    }
   }
 }
