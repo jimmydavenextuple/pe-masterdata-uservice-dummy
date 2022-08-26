@@ -1,5 +1,8 @@
 package com.hbc.carrier.service;
 
+import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+import static com.hbc.common.constants.CommonConstants.DESC_SORT_ORDER;
+
 import com.hbc.carrier.domain.CarrierServiceDomain;
 import com.hbc.carrier.domain.entity.CarrierServiceEntity;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
@@ -124,7 +127,8 @@ public class CarrierServiceService {
   public Page<CarrierServiceResponse> getCarrierServiceList(
       String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
       throws CarrierServiceDomainException, CommonServiceException {
-    if (sortOrder.equalsIgnoreCase("ASC") || sortOrder.equalsIgnoreCase("DESC")) {
+    if (sortOrder.equalsIgnoreCase(DEFAULT_SORT_ORDER)
+        || sortOrder.equalsIgnoreCase(DESC_SORT_ORDER)) {
       return carrierServiceDomain.findCarrierServiceListByOrgId(
           orgId, pageNo, pageSize, sortBy, sortOrder);
     } else {

@@ -6,8 +6,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.hbc.carrier.domain.pojo.PageProperties;
 import com.hbc.common.base.PagePayload;
+import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
 import com.hbc.dataupload.service.CarrierTransitTimeService;
@@ -58,8 +58,6 @@ class CarrierTransitTimeControllerTest {
   void getCarrierTransitTimeListDefaultTest() {
     when(pageProperties.getPageNo()).thenReturn(1);
     when(pageProperties.getPageSize()).thenReturn(15);
-    when(pageProperties.getSortBy()).thenReturn("carrierId");
-    when(pageProperties.getSortOrder()).thenReturn("ASC");
     when(carrierTransitTimeService.getCarrierTransitTimeList(any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getCarrierTransitPagePayload(1));
 

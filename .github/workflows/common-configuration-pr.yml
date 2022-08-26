@@ -1,0 +1,15 @@
+name: PR-COMMON-CONFIGURATION
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "common-configuration/**"
+    branches: [ development, hotfix ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml
+    with:
+      module: common-configuration
+    secrets: inherit

@@ -1,14 +1,25 @@
 package com.hbc.node;
 
+import com.hbc.common.pojo.PageParams;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.outbound.NodeResponse;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 public class TestUtil {
 
   public static final String NODE_ID = "node-1";
+  public static final String NODE_ID_2 = "node-2";
   public static final String ORG_ID = "org-1";
   public static final String STREET = "street-1";
   public static final String CITY = "city-1";
@@ -18,6 +29,9 @@ public class TestUtil {
   public static final String LATITUDE = "43.769912";
   public static final String LONGITUDE = "-79.296678";
   public static final String TIME_ZONE = "America/Toronto";
+  public static final String SORT_BY = "nodeId";
+  public static final String SORT_ORDER_DESC = "DESC";
+  public static final String DEFAULT_SORT_ORDER = "ASC";
   public static Boolean SHIP_TO_TIME = Boolean.TRUE;
   public static Boolean BOPIS_ELIGIBLE = Boolean.TRUE;
   public static Boolean SDND_ELIGIBLE = Boolean.TRUE;
@@ -131,6 +145,143 @@ public class TestUtil {
         .timezone(TIME_ZONE)
         .serviceOptionEligibilities(getServiceOptionEligibilities())
         .build();
+  }
+
+  public NodeEntity getNodeEntity2() {
+    return NodeEntity.builder()
+        .nodeId(NODE_ID_2)
+        .orgId(ORG_ID)
+        .street(STREET)
+        .bopisEligible(BOPIS_ELIGIBLE)
+        .city(CITY)
+        .country(COUNTRY)
+        .nodeType(NODE_TYPE)
+        .isActive(IS_ACTIVE)
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .postalCode(POSTAL_CODE)
+        .province(PROVINCE)
+        .shipToHome(SHIP_TO_TIME)
+        .timezone(TIME_ZONE)
+        .serviceOptionEligibilities(getServiceOptionEligibilities())
+        .build();
+  }
+
+  public List<NodeEntity> getNodeEntityList() {
+    return Arrays.asList(getNodeEntity(), getNodeEntity2());
+  }
+
+  public List<NodeDto> getNodeDtoList() {
+    return Arrays.asList(getNodeDto(NODE_ID), getNodeDto(NODE_ID_2));
+  }
+
+  private NodeDto getNodeDto(String nodeId) {
+    return NodeDto.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .street(STREET)
+        .city(CITY)
+        .nodeType(NODE_TYPE)
+        .province(PROVINCE)
+        .build();
+  }
+
+  public Page<NodeDto> getNodeDtoPage(
+      int totalPages, List<NodeDto> nodeDtoList, int totalElements) {
+    return new Page<NodeDto>() {
+      @Override
+      public int getTotalPages() {
+        return totalPages;
+      }
+
+      @Override
+      public long getTotalElements() {
+        return totalElements;
+      }
+
+      @Override
+      public <U> Page<U> map(Function<? super NodeDto, ? extends U> converter) {
+        return null;
+      }
+
+      @Override
+      public int getNumber() {
+        return 0;
+      }
+
+      @Override
+      public int getSize() {
+        return 0;
+      }
+
+      @Override
+      public int getNumberOfElements() {
+        return 0;
+      }
+
+      @Override
+      public List<NodeDto> getContent() {
+        return nodeDtoList;
+      }
+
+      @Override
+      public boolean hasContent() {
+        return false;
+      }
+
+      @Override
+      public Sort getSort() {
+        return null;
+      }
+
+      @Override
+      public boolean isFirst() {
+        return false;
+      }
+
+      @Override
+      public boolean isLast() {
+        return false;
+      }
+
+      @Override
+      public boolean hasNext() {
+        return false;
+      }
+
+      @Override
+      public boolean hasPrevious() {
+        return false;
+      }
+
+      @Override
+      public Pageable nextPageable() {
+        return null;
+      }
+
+      @Override
+      public Pageable previousPageable() {
+        return null;
+      }
+
+      @Override
+      public Iterator<NodeDto> iterator() {
+        return null;
+      }
+    };
+  }
+
+  public PageParams getPageParams(
+      Optional<Integer> pageNo,
+      Optional<Integer> pageSize,
+      Optional<String> sortBy,
+      Optional<String> sortOrder) {
+    PageParams pageParams = new PageParams();
+    pageParams.setPageNo(pageNo);
+    pageParams.setPageSize(pageSize);
+    pageParams.setSortBy(sortBy);
+    pageParams.setSortOrder(sortOrder);
+    return pageParams;
   }
 
   public Map<String, Boolean> getServiceOptionEligibilities() {

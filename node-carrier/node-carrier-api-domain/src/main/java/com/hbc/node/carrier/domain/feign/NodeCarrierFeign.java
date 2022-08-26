@@ -4,6 +4,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -44,4 +45,8 @@ public interface NodeCarrierFeign {
       @NotBlank @PathVariable String orgId,
       @NotBlank @PathVariable String carrierServiceId,
       @NotBlank @PathVariable String serviceOption);
+
+  @GetMapping("/node/carrier/{nodeId}/{orgId}")
+  BaseResponse<List<NodeCarrierResponse>> getNodeCarrierList(
+      @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId);
 }

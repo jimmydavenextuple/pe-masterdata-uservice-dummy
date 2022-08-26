@@ -1,4 +1,4 @@
-package com.hbc.carrier.domain.pojo;
+package com.hbc.common.pojo;
 
 import java.util.Optional;
 import lombok.AllArgsConstructor;
