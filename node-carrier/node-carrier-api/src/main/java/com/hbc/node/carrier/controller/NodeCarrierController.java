@@ -53,12 +53,12 @@ public class NodeCarrierController {
   }
 
   @PutMapping("/buffer")
-  public ResponseEntity<BaseResponse<NodeCarrierResponse>> UpdateBuffer(
+  public ResponseEntity<BaseResponse<NodeCarrierResponse>> updateBuffer(
       @Valid @RequestBody NodeCarrierBufferRequest nodeCarrierBufferRequest)
       throws NodeCarrierDomainException, CommonServiceException {
     logger.debug("Processing buffer data creation or updation");
     try {
-      var nodeCarrierResponse = nodeCarrierService.UpdateBufferData(nodeCarrierBufferRequest);
+      var nodeCarrierResponse = nodeCarrierService.updateBufferData(nodeCarrierBufferRequest);
       logger.info("Response after creation or updation of buffer data : {}", nodeCarrierResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()

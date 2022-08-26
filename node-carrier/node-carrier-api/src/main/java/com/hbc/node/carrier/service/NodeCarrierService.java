@@ -81,7 +81,7 @@ public class NodeCarrierService {
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
   }
 
-  public NodeCarrierResponse UpdateBufferData(NodeCarrierBufferRequest nodeCarrierBufferRequest)
+  public NodeCarrierResponse updateBufferData(NodeCarrierBufferRequest nodeCarrierBufferRequest)
       throws NodeCarrierDomainException, CommonServiceException {
 
     var nodeCarrierEntity = INSTANCE.nodeCarrierBufferRequestToEntity(nodeCarrierBufferRequest);

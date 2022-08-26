@@ -70,33 +70,33 @@ class NodeCarrierControllerTest {
   @Test
   @DisplayName("When node carrier is updated successfully with buffer data and response is 200 OK")
   void createOrUpdateBufferTest() throws NodeCarrierDomainException, CommonServiceException {
-    when(nodeCarrierService.UpdateBufferData(any())).thenReturn(testUtil.getNodeCarrierResponse2());
+    when(nodeCarrierService.updateBufferData(any())).thenReturn(testUtil.getNodeCarrierResponse2());
 
     ResponseEntity<BaseResponse<NodeCarrierResponse>> response =
-        nodeCarrierController.UpdateBuffer(testUtil.getNodeCarrierBufferRequest2());
+        nodeCarrierController.updateBuffer(testUtil.getNodeCarrierBufferRequest2());
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     Assertions.assertEquals(
         TestUtil.NODE_ID, Objects.requireNonNull(response.getBody()).getPayload().getNodeId());
     Assertions.assertEquals(
         TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().getOrgId());
-    verify(nodeCarrierService, times(1)).UpdateBufferData(any());
+    verify(nodeCarrierService, times(1)).updateBufferData(any());
   }
 
   @Test
   @DisplayName("When there is somme error in updating buffer data in node carrier")
   void createOrUpdateBufferExceptionTest()
       throws NodeCarrierDomainException, CommonServiceException {
-    when(nodeCarrierService.UpdateBufferData(any()))
+    when(nodeCarrierService.updateBufferData(any()))
         .thenThrow(new RuntimeException("Failed to update node carrier buffer details"));
 
     Exception ex =
         Assertions.assertThrows(
             Exception.class,
-            () -> nodeCarrierController.UpdateBuffer(testUtil.getNodeCarrierBufferRequest2()));
+            () -> nodeCarrierController.updateBuffer(testUtil.getNodeCarrierBufferRequest2()));
 
     Assertions.assertEquals("Failed to update node carrier buffer details", ex.getMessage());
-    verify(nodeCarrierService, times(1)).UpdateBufferData(any());
+    verify(nodeCarrierService, times(1)).updateBufferData(any());
   }
 
   @Test

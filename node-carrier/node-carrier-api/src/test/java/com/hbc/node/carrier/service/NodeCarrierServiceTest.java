@@ -99,12 +99,30 @@ class NodeCarrierServiceTest {
         .thenReturn(testUtil.getNodeCarrierEntity());
 
     NodeCarrierResponse nodeCarrierResponse =
-        nodeCarrierService.UpdateBufferData(testUtil.getNodeCarrierBufferRequest2());
+        nodeCarrierService.updateBufferData(testUtil.getNodeCarrierBufferRequest2());
 
     Assertions.assertEquals(testUtil.getNodeCarrierResponse(), nodeCarrierResponse);
 
     verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
     verify(nodeCarrierDomain, times(1)).saveNodeCarrierEntity(any());
+  }
+
+  @Test
+  @DisplayName("When node carrier to be updated is not found")
+  void updateNodeCarrierNotFoundToUpdateBufferDataTest() throws NodeCarrierDomainException {
+    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
+            .thenReturn(Optional.empty());
+
+    Exception ex =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () ->
+                            nodeCarrierService.updateBufferData(
+                                    testUtil.getNodeCarrierBufferRequest2()));
+
+    Assertions.assertEquals("Node Carrier not found for given details", ex.getMessage());
+    verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(0)).saveNodeCarrierEntity(any());
   }
 
   @Test
