@@ -15,17 +15,14 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @Builder
 public class TransitBufferCreationRequest implements Serializable {
-  @NotBlank(message = "orgId can't be blank")
-  @Length(max = 50)
-  private String orgId;
 
   @NotBlank(message = "sourceGeozone can't be blank")
   @Length(max = 50)
   private String sourceGeozone;
 
-  @NotBlank(message = "destinationGeozone can't be blank")
+  @NotBlank(message = "orgId can't be blank")
   @Length(max = 50)
-  private String destinationGeozone;
+  private String orgId;
 
   @NotBlank(message = "carrierServiceId can't be blank")
   @Length(max = 50)
@@ -33,6 +30,10 @@ public class TransitBufferCreationRequest implements Serializable {
 
   @Min(value = 0, message = "transitDays can't be negative")
   private Float transitDays;
+
+  @NotBlank(message = "destinationGeozone can't be blank")
+  @Length(max = 50)
+  private String destinationGeozone;
 
   private Double bufferDays;
 
