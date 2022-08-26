@@ -23,6 +23,11 @@ dependencies {
     implementation(project(":weightage-configuration:weightage-configuration-api-domain"))
     implementation(project(":calendar:calendar-api-domain"))
     implementation(project(":common-util"))
+    implementation(project(":data-upload:jobs-consumer"))
+    implementation(project(":data-upload:jobs-dashboard-api"))
+    implementation(project(":data-upload:job-framework-common-util"))
+    implementation "org.springframework.kafka:spring-kafka:2.8.7"
+
 }
 
 test {
