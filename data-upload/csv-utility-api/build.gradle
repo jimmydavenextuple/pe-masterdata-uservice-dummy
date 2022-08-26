@@ -3,7 +3,7 @@ bootJar {
     mainClass.set("com.hbc.csvdownload.CsvUtilityApplication")
 }
 dependencies {
-    implementation(project(":csv-utility:csv-download-common-util"))
+    implementation(project(":data-upload:csv-utility-common-util"))
     runtimeOnly 'org.postgresql:postgresql'
     implementation(project(":common-util"))
 }

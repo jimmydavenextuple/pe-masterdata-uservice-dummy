@@ -3,6 +3,7 @@ package com.hbc.csvdownload.controller;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.response.BaseResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,9 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@RequiredArgsConstructor
 public class CsvUploadUtilityController {
 
-  private static Logger logger = LoggerFactory.getLogger(CsvUploadUtilityController.class);
+  private static final Logger logger = LoggerFactory.getLogger(CsvUploadUtilityController.class);
 
   @PostMapping(
       path = "/org/{orgId}/upload/transit-times",
