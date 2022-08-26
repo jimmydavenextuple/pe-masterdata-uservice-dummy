@@ -105,7 +105,8 @@ class JobControllerTest {
         .thenThrow(
             new JobException("Job already exists for the same job Id", job.getJobId(), null));
 
-    JobException exception = assertThrows(JobException.class, () -> jobsConsumerController.createJob(job));
+    JobException exception =
+        assertThrows(JobException.class, () -> jobsConsumerController.createJob(job));
 
     Assertions.assertEquals(
         "Job already exists for the same job Id", exception.getMessage(), "Expected Error");
@@ -119,7 +120,8 @@ class JobControllerTest {
     when(jobConsumerService.createJob(any()))
         .thenThrow(new JobException("Exception while updating the job ", job.getJobId(), null));
 
-    JobException exception = assertThrows(JobException.class, () -> jobsConsumerController.createJob(job));
+    JobException exception =
+        assertThrows(JobException.class, () -> jobsConsumerController.createJob(job));
 
     Assertions.assertEquals(
         "Exception while updating the job ", exception.getMessage(), "Expected Error");
@@ -147,7 +149,8 @@ class JobControllerTest {
         .thenThrow(new JobException("Job is not found!", jobId, null));
 
     JobException exception =
-        assertThrows(JobException.class, () -> jobsConsumerController.getJob(TestUtil.ORG_ID, jobId));
+        assertThrows(
+            JobException.class, () -> jobsConsumerController.getJob(TestUtil.ORG_ID, jobId));
 
     Assertions.assertEquals("Job is not found!", exception.getMessage(), "Expected Error");
   }
@@ -160,7 +163,8 @@ class JobControllerTest {
         .thenThrow(new JobException("Error while retrieving the job", jobId, null));
 
     JobException exception =
-        assertThrows(JobException.class, () -> jobsConsumerController.getJob(TestUtil.ORG_ID, jobId));
+        assertThrows(
+            JobException.class, () -> jobsConsumerController.getJob(TestUtil.ORG_ID, jobId));
 
     Assertions.assertEquals(
         "Error while retrieving the job", exception.getMessage(), "Expected Error");
@@ -247,7 +251,8 @@ class JobControllerTest {
     jobFilters.setPageNo(Optional.of(0));
     JobException exception =
         assertThrows(
-            JobException.class, () -> jobsConsumerController.getJobsByFilter(TestUtil.ORG_ID, jobFilters));
+            JobException.class,
+            () -> jobsConsumerController.getJobsByFilter(TestUtil.ORG_ID, jobFilters));
 
     Assertions.assertEquals(
         "PageNo can not be less than one", exception.getMessage(), "Exception message");
@@ -267,7 +272,8 @@ class JobControllerTest {
     JobException exception =
         assertThrows(
             JobException.class,
-            () -> jobsConsumerController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters()));
+            () ->
+                jobsConsumerController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters()));
 
     Assertions.assertEquals(
         "Exception while retrieving the list of jobs", exception.getMessage(), "Exception message");

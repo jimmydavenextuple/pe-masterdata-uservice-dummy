@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
     name = "pe-config-jobs-consumer",
-    url = "${spring.application.dependencies.job.framework:http://pe-config-jobs-consumer:8080/}")
+    url = "${spring.application.dependencies.job.framework:http://pe-config-data-upload:8080/}")
 public interface JobsConsumerClient {
   @PostMapping("/jobs")
   BaseResponse<JobDto> createJob(@Valid @RequestBody JobDto jobDto);
