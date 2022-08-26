@@ -58,7 +58,7 @@ public class TransitService {
             transitBufferCreationRequest.getDestinationGeozone(),
             transitBufferCreationRequest.getCarrierServiceId());
     if (existingTransitEntity.isPresent()) {
-      var transitDays = transitBufferCreationRequest.getTransitDays();
+      var transitDays = existingTransitEntity.get().getTransitDays();
       var bufferDays = transitBufferCreationRequest.getBufferDays();
       if ((transitDays + bufferDays) < 0) {
         Map<String, FieldError> errorMap = new HashMap<>();
@@ -89,7 +89,11 @@ public class TransitService {
       logger.info(
           "Response before updation of transit data :{}",
           INSTANCE.toTransitResponse(existingTransitEntity.get()));
-      INSTANCE.updateTransitEntity(transitBufferCreationRequest, existingTransitEntity.get());
+      existingTransitEntity.get().setBufferDays(bufferDays);
+      existingTransitEntity
+          .get()
+          .setBufferStartDate(transitBufferCreationRequest.getBufferStartDate());
+      existingTransitEntity.get().setBufferEndDate(transitBufferCreationRequest.getBufferEndDate());
       return INSTANCE.toTransitResponse(
           transitDomain.saveTransitEntity(existingTransitEntity.get()));
     }

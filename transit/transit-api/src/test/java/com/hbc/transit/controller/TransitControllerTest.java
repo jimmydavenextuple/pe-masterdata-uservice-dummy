@@ -110,7 +110,6 @@ class TransitControllerTest {
   @Test
   void updateTransitBufferDetailsTest() throws TransitDomainException, CommonServiceException {
     TransitBufferCreationRequest transitBufferCreationRequest = new TransitBufferCreationRequest();
-    transitBufferCreationRequest.setTransitDays(13.5F);
     transitBufferCreationRequest.setBufferDays(3.0);
     when(transitService.updateTransitBufferDetails(any(TransitBufferCreationRequest.class)))
         .thenReturn(testUtil.getTransitResponse2(5.0));

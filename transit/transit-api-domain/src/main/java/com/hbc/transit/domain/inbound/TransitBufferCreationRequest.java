@@ -2,7 +2,6 @@ package com.hbc.transit.domain.inbound;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,9 +26,6 @@ public class TransitBufferCreationRequest implements Serializable {
   @NotBlank(message = "carrierServiceId can't be blank")
   @Length(max = 50)
   private String carrierServiceId;
-
-  @Min(value = 0, message = "transitDays can't be negative")
-  private Float transitDays;
 
   @NotBlank(message = "destinationGeozone can't be blank")
   @Length(max = 50)

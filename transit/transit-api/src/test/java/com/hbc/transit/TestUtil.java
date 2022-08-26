@@ -126,7 +126,7 @@ public class TestUtil {
   }
 
   public TransitBufferCreationRequest getTransitBufferCreationRequest(Double bufferDays) {
-    return TransitBufferCreationRequest.builder().transitDays(13f).bufferDays(bufferDays).build();
+    return TransitBufferCreationRequest.builder().bufferDays(bufferDays).build();
   }
 
   public TransitTimeEntriesDto getTransitTimeEntriesDto(String orgId, String carrierServiceId) {
