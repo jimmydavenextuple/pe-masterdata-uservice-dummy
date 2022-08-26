@@ -68,41 +68,35 @@ class NodeCarrierControllerTest {
   }
 
   @Test
-  @DisplayName(
-      "When node carrier is created/updated successfully with buffer data and response is 200 OK")
-  void createOrUpdateBufferTest()
-      throws NodeCarrierDomainException {
-    when(nodeCarrierService.createOrUpdateBufferData(any()))
-        .thenReturn(testUtil.getNodeCarrierResponse2());
+  @DisplayName("When node carrier is updated successfully with buffer data and response is 200 OK")
+  void createOrUpdateBufferTest() throws NodeCarrierDomainException, CommonServiceException {
+    when(nodeCarrierService.UpdateBufferData(any())).thenReturn(testUtil.getNodeCarrierResponse2());
 
     ResponseEntity<BaseResponse<NodeCarrierResponse>> response =
-        nodeCarrierController.createOrUpdateBuffer(testUtil.getNodeCarrierBufferRequest2());
+        nodeCarrierController.UpdateBuffer(testUtil.getNodeCarrierBufferRequest2());
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     Assertions.assertEquals(
         TestUtil.NODE_ID, Objects.requireNonNull(response.getBody()).getPayload().getNodeId());
     Assertions.assertEquals(
         TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().getOrgId());
-    verify(nodeCarrierService, times(1)).createOrUpdateBufferData(any());
+    verify(nodeCarrierService, times(1)).UpdateBufferData(any());
   }
 
   @Test
-  @DisplayName("When there is somme error in creating or updating buffer data in node carrier")
+  @DisplayName("When there is somme error in updating buffer data in node carrier")
   void createOrUpdateBufferExceptionTest()
-      throws NodeCarrierDomainException {
-    when(nodeCarrierService.createOrUpdateBufferData(any()))
-        .thenThrow(new RuntimeException("Failed to create or update node carrier buffer details"));
+      throws NodeCarrierDomainException, CommonServiceException {
+    when(nodeCarrierService.UpdateBufferData(any()))
+        .thenThrow(new RuntimeException("Failed to update node carrier buffer details"));
 
     Exception ex =
         Assertions.assertThrows(
             Exception.class,
-            () ->
-                nodeCarrierController.createOrUpdateBuffer(
-                    testUtil.getNodeCarrierBufferRequest2()));
+            () -> nodeCarrierController.UpdateBuffer(testUtil.getNodeCarrierBufferRequest2()));
 
-    Assertions.assertEquals(
-        "Failed to create or update node carrier buffer details", ex.getMessage());
-    verify(nodeCarrierService, times(1)).createOrUpdateBufferData(any());
+    Assertions.assertEquals("Failed to update node carrier buffer details", ex.getMessage());
+    verify(nodeCarrierService, times(1)).UpdateBufferData(any());
   }
 
   @Test

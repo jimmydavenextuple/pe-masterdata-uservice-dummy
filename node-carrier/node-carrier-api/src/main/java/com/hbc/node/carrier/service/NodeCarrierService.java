@@ -81,9 +81,8 @@ public class NodeCarrierService {
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
   }
 
-  public NodeCarrierResponse createOrUpdateBufferData(
-      NodeCarrierBufferRequest nodeCarrierBufferRequest)
-      throws NodeCarrierDomainException {
+  public NodeCarrierResponse UpdateBufferData(NodeCarrierBufferRequest nodeCarrierBufferRequest)
+      throws NodeCarrierDomainException, CommonServiceException {
 
     var nodeCarrierEntity = INSTANCE.nodeCarrierBufferRequestToEntity(nodeCarrierBufferRequest);
 
@@ -94,16 +93,21 @@ public class NodeCarrierService {
             "",
             nodeCarrierEntity.getServiceOption());
 
-    if (existingNodeEntity.isPresent()) {
-      INSTANCE.updateNodeCarrierEntityWithBuffer(
-          nodeCarrierBufferRequest, existingNodeEntity.get());
-      return INSTANCE.toNodeCarrierDto(
-          nodeCarrierDomain.saveNodeCarrierEntity(existingNodeEntity.get()));
+    if (!existingNodeEntity.isPresent()) {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          NODE_ID, FieldError.builder().rejectedValue(nodeCarrierEntity.getNodeId()).build());
+      errorMap.put(
+          ORG_ID, FieldError.builder().rejectedValue(nodeCarrierEntity.getOrgId()).build());
+      errorMap.put(
+          SERVICE_OPTION,
+          FieldError.builder().rejectedValue(nodeCarrierEntity.getServiceOption()).build());
+      throw new CommonServiceException(
+          NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
     }
-    nodeCarrierEntity.setProcessingTime(0.0);
-    nodeCarrierEntity.setLastPickupTime("0");
-    nodeCarrierEntity.setCarrierServiceId("");
-    return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
+    INSTANCE.updateNodeCarrierEntityWithBuffer(nodeCarrierBufferRequest, existingNodeEntity.get());
+    return INSTANCE.toNodeCarrierDto(
+        nodeCarrierDomain.saveNodeCarrierEntity(existingNodeEntity.get()));
   }
 
   public void validateLastPickupTime(String lastPickupTime) throws InvalidDataException {

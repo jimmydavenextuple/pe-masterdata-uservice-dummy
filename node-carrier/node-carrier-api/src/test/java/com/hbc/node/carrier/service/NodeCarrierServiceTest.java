@@ -12,7 +12,6 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
-import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
@@ -91,35 +90,16 @@ class NodeCarrierServiceTest {
   }
 
   @Test
-  @DisplayName("When node carrier is created successfully with buffer data")
-  void createOrUpdateNodeCarrierWithBufferDataTest()
+  @DisplayName("When node carrier buffer data is updated successfully")
+  void updateNodeCarrierBufferDataTest()
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
-    NodeCarrierBufferRequest nodeCarrierBufferRequest = testUtil.getNodeCarrierBufferRequest2();
     when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
-        .thenReturn(Optional.empty());
+        .thenReturn(Optional.ofNullable(testUtil.getNodeCarrierEntity()));
     when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
         .thenReturn(testUtil.getNodeCarrierEntity());
 
     NodeCarrierResponse nodeCarrierResponse =
-        nodeCarrierService.createOrUpdateBufferData(nodeCarrierBufferRequest);
-
-    Assertions.assertEquals(
-        testUtil.getNodeCarrierResponse2().getNodeId(), nodeCarrierResponse.getNodeId());
-    verify(nodeCarrierDomain, times(1)).saveNodeCarrierEntity(any());
-  }
-
-  @Test
-  @DisplayName("When node carrier buffer data is updated successfully")
-  void updateNodeCarrierBufferDataTest()
-          throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
-    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
-            .thenReturn(Optional.ofNullable(testUtil.getNodeCarrierEntity()));
-    when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
-            .thenReturn(testUtil.getNodeCarrierEntity());
-
-    NodeCarrierResponse nodeCarrierResponse =
-            nodeCarrierService.createOrUpdateBufferData(
-                    testUtil.getNodeCarrierBufferRequest2());
+        nodeCarrierService.UpdateBufferData(testUtil.getNodeCarrierBufferRequest2());
 
     Assertions.assertEquals(testUtil.getNodeCarrierResponse(), nodeCarrierResponse);
 

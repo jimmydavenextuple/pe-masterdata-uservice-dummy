@@ -52,19 +52,21 @@ public class NodeCarrierController {
     }
   }
 
-  @PostMapping("/buffer")
-  public ResponseEntity<BaseResponse<NodeCarrierResponse>> createOrUpdateBuffer(
+  @PutMapping("/buffer")
+  public ResponseEntity<BaseResponse<NodeCarrierResponse>> UpdateBuffer(
       @Valid @RequestBody NodeCarrierBufferRequest nodeCarrierBufferRequest)
-      throws NodeCarrierDomainException {
+      throws NodeCarrierDomainException, CommonServiceException {
     logger.debug("Processing buffer data creation or updation");
     try {
-      var nodeCarrierResponse =
-          nodeCarrierService.createOrUpdateBufferData(nodeCarrierBufferRequest);
+      var nodeCarrierResponse = nodeCarrierService.UpdateBufferData(nodeCarrierBufferRequest);
       logger.info("Response after creation or updation of buffer data : {}", nodeCarrierResponse);
       return ResponseEntity.ok(
-          BaseResponse.builder().message("Added buffer data").payload(nodeCarrierResponse).build());
+          BaseResponse.builder()
+              .message("Buffer data successfully added.")
+              .payload(nodeCarrierResponse)
+              .build());
     } catch (Exception e) {
-      logger.error("Failed to create or update node carrier buffer details");
+      logger.error("Failed to update node carrier buffer details");
       throw e;
     }
   }
