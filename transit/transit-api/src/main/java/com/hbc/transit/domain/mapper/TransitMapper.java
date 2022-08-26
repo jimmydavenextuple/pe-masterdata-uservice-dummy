@@ -1,6 +1,7 @@
 package com.hbc.transit.domain.mapper;
 
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -21,6 +22,10 @@ public interface TransitMapper {
 
   TransitEntity updateTransitEntity(
       TransitDataUpdationRequest transitDataUpdationRequest,
+      @MappingTarget TransitEntity updatedTransitEntity);
+
+  TransitEntity updateTransitEntity(
+      TransitBufferCreationRequest transitBufferCreationRequest,
       @MappingTarget TransitEntity updatedTransitEntity);
 
   List<TransitResponse> toTransitResponseList(List<TransitEntity> transitEntity);
