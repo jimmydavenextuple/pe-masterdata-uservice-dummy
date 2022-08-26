@@ -1,13 +1,13 @@
 bootJar {
-    enabled = true
-    mainClass.set("com.hbc.csvdownload.CsvUtilityApplication")
+    enabled = false
 }
+
+jar {
+    enabled = true
+}
+
 dependencies {
     implementation(project(":data-upload:csv-utility-common-util"))
     runtimeOnly 'org.postgresql:postgresql'
     implementation(project(":common-util"))
-}
-
-test {
-    useJUnitPlatform()
 }
