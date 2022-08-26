@@ -1,5 +1,6 @@
 package com.hbc.common.configuration.cache.domain;
 
+import com.hbc.core.cache.domain.CacheValue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

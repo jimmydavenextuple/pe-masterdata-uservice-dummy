@@ -129,3 +129,4 @@ include 'common-configuration:common-configuration-near-cache-spring'
 findProject(':common-configuration:common-configuration-near-cache-spring')?.name = 'common-configuration-near-cache-spring'
 
 
+
