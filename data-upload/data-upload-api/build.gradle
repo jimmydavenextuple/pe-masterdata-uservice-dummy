@@ -26,6 +26,8 @@ dependencies {
     implementation(project(":data-upload:jobs-consumer"))
     implementation(project(":data-upload:jobs-dashboard-api"))
     implementation(project(":data-upload:job-framework-common-util"))
+    implementation(project(":data-upload:csv-utility-api"))
+    implementation(project(":data-upload:csv-utility-common-util"))
     implementation "org.springframework.kafka:spring-kafka:2.8.7"
 
 }
