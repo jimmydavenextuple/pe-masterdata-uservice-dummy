@@ -51,8 +51,8 @@ public class RepositoryConfig extends HikariConfig {
 
   @Bean
   public DataSource routingDataSource() {
-    DataSource primaryDataSource = dataSource(false, false);
-    DataSource replicaDataSource = replicaDataSource(true, true);
+    var primaryDataSource = dataSource(false, false);
+    var replicaDataSource = replicaDataSource(true, true);
     if (replicaDataSource == null) {
       replicaDataSource = primaryDataSource;
     }
@@ -60,7 +60,7 @@ public class RepositoryConfig extends HikariConfig {
   }
 
   private DataSource dataSource(boolean readOnly, boolean isAutoCommit) {
-    HikariConfig config = new HikariConfig(primaryProperties());
+    var config = new HikariConfig(primaryProperties());
     config.setJdbcUrl(databaseUrl);
     config.setUsername(username);
     config.setPassword(password);
@@ -73,7 +73,7 @@ public class RepositoryConfig extends HikariConfig {
     if (Boolean.FALSE.equals(replicaReq)) {
       return null;
     }
-    HikariConfig config = new HikariConfig(replicaProperties());
+    var config = new HikariConfig(replicaProperties());
     config.setJdbcUrl(replicaDatabaseUrl);
     config.setUsername(replicaUsername);
     config.setPassword(replicaPassword);
