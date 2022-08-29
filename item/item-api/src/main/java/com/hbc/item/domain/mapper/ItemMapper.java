@@ -7,6 +7,7 @@ import com.hbc.item.domain.inbound.ItemCreationRequest.ItemCreationRequestBuilde
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -24,6 +25,8 @@ public interface ItemMapper {
   ItemEntity toItemEntity(ItemCreationRequest itemCreationRequest);
 
   ItemResponse toItemResponse(ItemEntity itemEntity);
+
+  List<ItemResponse> toItemResponseList(List<ItemEntity> itemEntity);
 
   ItemEntity updateItemEntity(
       ItemUpdationRequest itemUpdationRequest, @MappingTarget ItemEntity existingItemEntity);
