@@ -2,9 +2,7 @@ package com.hbc.transit.domain.inbound;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,33 +14,29 @@ import org.springframework.format.annotation.DateTimeFormat;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TransitDataCreationRequest implements Serializable {
-
-  @NotBlank(message = "orgId can't be blank")
-  @Length(max = 50)
-  private String orgId;
+public class TransitBufferCreationRequest implements Serializable {
 
   @NotBlank(message = "sourceGeozone can't be blank")
   @Length(max = 50)
   private String sourceGeozone;
 
-  @NotBlank(message = "destinationGeozone can't be blank")
+  @NotBlank(message = "orgId can't be blank")
   @Length(max = 50)
-  private String destinationGeozone;
+  private String orgId;
 
   @NotBlank(message = "carrierServiceId can't be blank")
   @Length(max = 50)
   private String carrierServiceId;
 
-  @Min(value = 0, message = "transitDays can't be negative")
-  @NotNull(message = "transitDays can't be null")
-  private Float transitDays;
+  @NotBlank(message = "destinationGeozone can't be blank")
+  @Length(max = 50)
+  private String destinationGeozone;
+
+  private Double bufferDays;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private Date bufferStartDate;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private Date bufferEndDate;
-
-  private Double bufferDays;
 }
