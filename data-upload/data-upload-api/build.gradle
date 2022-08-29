@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":data-upload:jobs-dashboard-api"))
     implementation(project(":data-upload:job-framework-common-util"))
     implementation "org.springframework.kafka:spring-kafka:2.8.7"
+    implementation(project(":common-configuration:common-configuration-api-domain"))
 
 }
 
