@@ -1,6 +1,7 @@
 package com.hbc.node.carrier;
 
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
@@ -31,16 +32,14 @@ public class TestUtil {
         .build();
   }
 
-  public NodeCarrierRequest getNodeCarrierRequest2() {
+  public NodeCarrierBufferRequest getNodeCarrierBufferRequest2() {
     Date bEndDate = new Date();
     bEndDate.setTime(1000);
-    return NodeCarrierRequest.builder()
+    return NodeCarrierBufferRequest.builder()
         .nodeId(NODE_ID)
         .orgId(ORG_ID)
-        .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption(SERVICE_OPTION)
-        .processingTime(2.0)
-        .lastPickupTime("5:00")
+        .bufferHours(3.0)
         .bufferEndDate(bEndDate)
         .build();
   }
@@ -74,6 +73,18 @@ public class TestUtil {
         .build();
   }
 
+  public NodeCarrierResponse getNodeCarrierResponse2() {
+    return NodeCarrierResponse.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .processingTime(2.0)
+        .lastPickupTime("5:00")
+        .bufferHours(3.0)
+        .build();
+  }
+
   public NodeCarrierUpdateRequest getNodeCarrierUpdateRequest() {
     return NodeCarrierUpdateRequest.builder().processingTime(2.0).lastPickupTime("5:00").build();
   }
@@ -81,11 +92,7 @@ public class TestUtil {
   public NodeCarrierUpdateRequest getNodeCarrierUpdateRequest2() {
     Date bEndDate = new Date();
     bEndDate.setTime(1000);
-    return NodeCarrierUpdateRequest.builder()
-        .processingTime(2.0)
-        .lastPickupTime("5:00")
-        .bufferEndDate(bEndDate)
-        .build();
+    return NodeCarrierUpdateRequest.builder().processingTime(2.0).lastPickupTime("5:00").build();
   }
 
   public NodeCarrierEntity getNodeCarrierEntity() {
