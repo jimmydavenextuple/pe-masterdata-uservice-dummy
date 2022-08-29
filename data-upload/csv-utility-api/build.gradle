@@ -1,0 +1,13 @@
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    implementation(project(":data-upload:csv-utility-common-util"))
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation(project(":common-util"))
+}

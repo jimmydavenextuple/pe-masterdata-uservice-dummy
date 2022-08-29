@@ -25,7 +25,11 @@ pagination:
   pageSize: 15
   sortBy: carrierId
   sortOrder: ASC
-
+page-properties:
+  pageNo: 1
+  pageSize: 15
+  sortBy: created_date
+  sortOrder: ASC
 management:
   endpoints:
     web:

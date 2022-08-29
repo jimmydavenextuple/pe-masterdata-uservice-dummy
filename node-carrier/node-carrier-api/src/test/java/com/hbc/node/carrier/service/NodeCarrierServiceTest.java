@@ -1,6 +1,8 @@
 package com.hbc.node.carrier.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -83,6 +85,42 @@ class NodeCarrierServiceTest {
             () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest));
 
     Assertions.assertEquals("Node Carrier already exists for the given details", ex.getMessage());
+    verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(0)).saveNodeCarrierEntity(any());
+  }
+
+  @Test
+  @DisplayName("When node carrier buffer data is updated successfully")
+  void updateNodeCarrierBufferDataTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
+        .thenReturn(Optional.ofNullable(testUtil.getNodeCarrierEntity()));
+    when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
+        .thenReturn(testUtil.getNodeCarrierEntity());
+
+    NodeCarrierResponse nodeCarrierResponse =
+        nodeCarrierService.updateBufferData(testUtil.getNodeCarrierBufferRequest2());
+
+    Assertions.assertEquals(testUtil.getNodeCarrierResponse(), nodeCarrierResponse);
+
+    verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(1)).saveNodeCarrierEntity(any());
+  }
+
+  @Test
+  @DisplayName("When node carrier to be updated is not found")
+  void updateNodeCarrierNotFoundToUpdateBufferDataTest() throws NodeCarrierDomainException {
+    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
+            .thenReturn(Optional.empty());
+
+    Exception ex =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () ->
+                            nodeCarrierService.updateBufferData(
+                                    testUtil.getNodeCarrierBufferRequest2()));
+
+    Assertions.assertEquals("Node Carrier not found for given details", ex.getMessage());
     verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
     verify(nodeCarrierDomain, times(0)).saveNodeCarrierEntity(any());
   }
@@ -271,5 +309,22 @@ class NodeCarrierServiceTest {
             InvalidDataException.class,
             () -> nodeCarrierService.validateLastPickupTime(lastPickUpTime));
     Assertions.assertEquals("LastPickupTime is invalid", ex.getMessage());
+  }
+
+  @Test
+  void getNodeCarrierForNodeIdAndOrgIdTest() throws NodeCarrierDomainException {
+    List<NodeCarrierEntity> nodeCarrierEntityList = testUtil.getNodeCarrierEntityList2();
+    when(nodeCarrierDomain.findNodeCarrierByNodeIdAndOrgId(anyString(), anyString()))
+        .thenReturn(nodeCarrierEntityList);
+
+    List<NodeCarrierResponse> nodeCarrierResponseList =
+        nodeCarrierService.getNodeCarrierForNodeIdAndOrgId(TestUtil.NODE_ID, TestUtil.ORG_ID);
+
+    assertEquals(nodeCarrierEntityList.size(), nodeCarrierResponseList.size());
+    assertEquals(TestUtil.NODE_ID, nodeCarrierResponseList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, nodeCarrierResponseList.get(0).getOrgId());
+    assertEquals("", nodeCarrierResponseList.get(0).getCarrierServiceId());
+
+    verify(nodeCarrierDomain, times(1)).findNodeCarrierByNodeIdAndOrgId(anyString(), anyString());
   }
 }

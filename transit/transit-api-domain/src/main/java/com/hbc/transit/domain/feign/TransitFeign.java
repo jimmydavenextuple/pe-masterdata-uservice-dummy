@@ -57,4 +57,8 @@ public interface TransitFeign {
   @GetMapping("/transit/transit-entries/{orgId}/{carrierServiceId}")
   BaseResponse<TransitTimeEntriesDto> getTransitTimeEntries(
       @PathVariable String orgId, @PathVariable String carrierServiceId);
+
+  @GetMapping("/transit/{orgId}/{destinationGeozone}/")
+  BaseResponse<List<TransitResponse>> getTransitDetailsListForDestinationGeoZone(
+      @PathVariable String orgId, @PathVariable String destinationGeozone);
 }
