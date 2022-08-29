@@ -60,7 +60,7 @@ public class TransitService {
     if (existingTransitEntity.isPresent()) {
       var transitDays = existingTransitEntity.get().getTransitDays();
       var bufferDays = transitBufferCreationRequest.getBufferDays();
-      if ((transitDays + bufferDays) < 0) {
+      if ((transitDays + bufferDays) <= 0) {
         Map<String, FieldError> errorMap = new HashMap<>();
         errorMap.put(
             ORG_ID,
