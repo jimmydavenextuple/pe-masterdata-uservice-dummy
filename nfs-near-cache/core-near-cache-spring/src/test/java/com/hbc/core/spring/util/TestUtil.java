@@ -19,6 +19,7 @@ public class TestUtil {
     cacheMap.put("sourcing_rule", CACHE_PROPERTY_VALUE);
     cacheMap.put("weightage_configuration", CACHE_PROPERTY_VALUE);
     cacheMap.put("transit", CACHE_PROPERTY_VALUE);
+    cacheMap.put("common_configuration", CACHE_PROPERTY_VALUE);
     return cacheMap;
   }
 }

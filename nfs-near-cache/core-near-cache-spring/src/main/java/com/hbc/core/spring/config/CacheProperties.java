@@ -27,6 +27,7 @@ public class CacheProperties {
     defaultMap.put("sourcing_rule", CACHE_PROPERTY_VALUE);
     defaultMap.put("weightage_configuration", CACHE_PROPERTY_VALUE);
     defaultMap.put("transit", CACHE_PROPERTY_VALUE);
+    defaultMap.put("common_configuration", CACHE_PROPERTY_VALUE);
     return defaultMap;
   }
 }

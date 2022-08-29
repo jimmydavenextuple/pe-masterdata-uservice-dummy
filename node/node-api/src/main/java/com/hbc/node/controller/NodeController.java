@@ -154,8 +154,8 @@ public class NodeController {
     pagination.setTotalRecords((int) nodeDtoPage.getTotalElements());
     pagination.setTotalPages(nodeDtoPage.getTotalPages());
     pagination.setCurrentPage(pageParams.getPageNo().orElse(pageProperties.getPageNo()));
-    pagination.setSortOrder(pageParams.getSortOrder().orElse(NODE_DEFAULT_SORT_BY));
-    pagination.setSortBy(pageParams.getSortBy().orElse(DEFAULT_SORT_ORDER));
+    pagination.setSortOrder(pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
+    pagination.setSortBy(pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY));
 
     String nextUri =
         PaginationUtil.buildUriForPagination(

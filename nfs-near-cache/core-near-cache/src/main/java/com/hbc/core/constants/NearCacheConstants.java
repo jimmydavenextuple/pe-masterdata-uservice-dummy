@@ -13,4 +13,5 @@ public class NearCacheConstants {
   public static final String WEIGHTAGE_CONFIGURATION_ENTITY_NAME = "WeightageConfiguration";
   public static final String POSTAL_CODE_ENTITY_NAME = "PostalCode";
   public static final String TRANSIT_ENTITY_NAME = "transit";
+  public static final String COMMON_CONFIG_ENTITY_NAME = "CommonConfiguration";
 }

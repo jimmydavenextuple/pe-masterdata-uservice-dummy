@@ -159,7 +159,7 @@ public class TransitController {
     }
   }
 
-  @GetMapping("transit-entries/{orgId}/{carrierServiceId}")
+  @GetMapping("/transit-entries/{orgId}/{carrierServiceId}")
   public ResponseEntity<BaseResponse<TransitTimeEntriesDto>> getTransitTimeEntries(
       @PathVariable String orgId, @PathVariable String carrierServiceId)
       throws TransitDomainException {
