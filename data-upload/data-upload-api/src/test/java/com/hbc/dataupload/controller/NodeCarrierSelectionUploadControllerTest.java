@@ -26,7 +26,7 @@ import org.mockito.internal.verification.VerificationModeFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class NodeCarrierSelectionUploadControllerTest {
+class NodeCarrierSelectionUploadControllerTest {
 
   @Mock NodeCarrierSelectionUploadService nodeCarrierSelectionUploadService;
 

@@ -38,7 +38,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class NodeCarrierSelectionUploadServiceTest {
+class NodeCarrierSelectionUploadServiceTest {
 
   @InjectMocks NodeCarrierSelectionUploadService nodeCarrierSelectionUploadService;
   @InjectMocks private TestUtil testUtil;

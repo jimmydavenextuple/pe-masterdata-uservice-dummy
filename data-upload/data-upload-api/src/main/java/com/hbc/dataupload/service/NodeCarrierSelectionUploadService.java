@@ -89,7 +89,7 @@ public class NodeCarrierSelectionUploadService {
           String serviceOption = csvRecord.get(SERVICE_OPTION);
           String selectionCriteria = csvRecord.get(SELECTION_CRITERIA);
           String key = serviceOption + ":" + sourceFSA + ":" + destinationFSA;
-          String value = "";
+          var value = "";
 
           switch (selectionCriteria) {
             case "L":
