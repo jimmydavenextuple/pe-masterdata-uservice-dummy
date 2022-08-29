@@ -1,5 +1,6 @@
 package com.hbc.jobs.consumers.common;
 
+import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.domain.entity.JobRecordEntity;
 import com.hbc.jobs.consumers.domain.mapper.JobMapper;
@@ -325,10 +326,20 @@ public class TestUtil {
     nodeCarrierRequest.setNodeId("node-1");
     nodeCarrierRequest.setOrgId(ORG_ID);
     nodeCarrierRequest.setServiceOption("SDND");
-    nodeCarrierRequest.setCarrierServiceId("ALL-SDND");
-    nodeCarrierRequest.setLastPickupTime("0");
+    nodeCarrierRequest.setCarrierServiceId("");
     nodeCarrierRequest.setProcessingTime(30.92);
     return nodeCarrierRequest;
+  }
+
+  public ProcessingLeadTime getProcessingLeadTime(String action) {
+    ProcessingLeadTime processingLeadTime = new ProcessingLeadTime();
+    processingLeadTime.setNodeId("node-1");
+    processingLeadTime.setOrgId(ORG_ID);
+    processingLeadTime.setServiceOption("SDND");
+    processingLeadTime.setCarrierServiceId("");
+    processingLeadTime.setProcessingTime(30.92);
+    processingLeadTime.setActionType(action);
+    return processingLeadTime;
   }
 
   public NodeCarrierResponse getNodeCarrierResponse() {

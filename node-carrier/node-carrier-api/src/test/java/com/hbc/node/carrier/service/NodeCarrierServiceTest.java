@@ -13,6 +13,7 @@ import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import java.util.Collections;
@@ -91,14 +92,12 @@ class NodeCarrierServiceTest {
   @DisplayName("When node carrier to be updated is not found")
   void updateNodeCarrierNotFoundToUpdateBufferDataTest() throws NodeCarrierDomainException {
     when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
-            .thenReturn(Optional.empty());
+        .thenReturn(Optional.empty());
 
     Exception ex =
-            Assertions.assertThrows(
-                    CommonServiceException.class,
-                    () ->
-                            nodeCarrierService.updateBufferData(
-                                    testUtil.getNodeCarrierBufferRequest2()));
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> nodeCarrierService.updateBufferData(testUtil.getNodeCarrierBufferRequest2()));
 
     Assertions.assertEquals("Node Carrier not found for given details", ex.getMessage());
     verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
