@@ -2,6 +2,7 @@ package com.hbc.transit.service;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.postgres.config.ReaderDS;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
@@ -76,7 +77,7 @@ public class TransitService {
     INSTANCE.updateTransitEntity(transitDataUpdationRequest, existingTransitEntity.get());
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(existingTransitEntity.get()));
   }
-
+  @ReaderDS
   public TransitResponse getTransitDetails(
       String orgId,
       String sourceGeozone,
@@ -151,7 +152,7 @@ public class TransitService {
     transitDomain.deleteTransitDetails(transitEntity.get());
     return transitResponse;
   }
-
+  @ReaderDS
   public List<TransitResponse> getListOfTransitDetails(
       String orgId, String destinationGeozone, List<String> sourceGeozones)
       throws TransitDomainException {
@@ -161,7 +162,7 @@ public class TransitService {
 
     return INSTANCE.toTransitResponseList(transitEntities);
   }
-
+  @ReaderDS
   public TransitTimeEntriesDto getTransitTimeEntries(String orgId, String carrierServiceId)
       throws TransitDomainException {
     return TransitTimeEntriesDto.builder()
@@ -170,7 +171,7 @@ public class TransitService {
         .totalRecords(transitDomain.fetchTransitEntitiesCount(orgId, carrierServiceId))
         .build();
   }
-
+  @ReaderDS
   public List<TransitResponse> getListOfTransitDetailsForDestinationGeoZone(
       String orgId, String destinationGeozone)
       throws TransitDomainException, CommonServiceException {
