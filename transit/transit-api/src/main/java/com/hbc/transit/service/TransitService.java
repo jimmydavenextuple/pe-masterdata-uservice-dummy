@@ -77,6 +77,7 @@ public class TransitService {
     INSTANCE.updateTransitEntity(transitDataUpdationRequest, existingTransitEntity.get());
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(existingTransitEntity.get()));
   }
+
   @ReaderDS
   public TransitResponse getTransitDetails(
       String orgId,
@@ -152,6 +153,7 @@ public class TransitService {
     transitDomain.deleteTransitDetails(transitEntity.get());
     return transitResponse;
   }
+
   @ReaderDS
   public List<TransitResponse> getListOfTransitDetails(
       String orgId, String destinationGeozone, List<String> sourceGeozones)
@@ -162,6 +164,7 @@ public class TransitService {
 
     return INSTANCE.toTransitResponseList(transitEntities);
   }
+
   @ReaderDS
   public TransitTimeEntriesDto getTransitTimeEntries(String orgId, String carrierServiceId)
       throws TransitDomainException {
@@ -171,6 +174,7 @@ public class TransitService {
         .totalRecords(transitDomain.fetchTransitEntitiesCount(orgId, carrierServiceId))
         .build();
   }
+
   @ReaderDS
   public List<TransitResponse> getListOfTransitDetailsForDestinationGeoZone(
       String orgId, String destinationGeozone)

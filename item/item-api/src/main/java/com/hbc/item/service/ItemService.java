@@ -9,6 +9,7 @@ import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.mapper.ItemMapper;
 import com.hbc.item.domain.outbound.ItemResponse;
 import com.hbc.item.exception.ItemDomainException;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -17,8 +18,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
-
-import com.hbc.postgres.config.ReaderDS;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -89,6 +88,7 @@ public class ItemService {
     INSTANCE.updateItemEntity(itemUpdationRequest, existingItemEntity.get());
     return INSTANCE.toItemResponse(itemDomain.saveItemEntity(existingItemEntity.get()));
   }
+
   @ReaderDS
   public ItemResponse getItemDetails(String itemId, String orgId, String uom)
       throws ItemDomainException, CommonServiceException {
