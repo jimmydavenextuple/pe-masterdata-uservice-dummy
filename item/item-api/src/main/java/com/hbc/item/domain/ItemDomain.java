@@ -62,7 +62,7 @@ public class ItemDomain {
     try {
       return itemRepository.findByOrgIdAndUomAndItemIdIn(orgId, uom, itemList);
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Unable to find item list");
+      logger.error(String.valueOf(e), "Unable to find item list: {}", itemList);
       throw new ItemBatchingDomainException("Error while finding item list", itemList, orgId, uom);
     }
   }
