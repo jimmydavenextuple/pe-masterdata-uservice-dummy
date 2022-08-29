@@ -19,4 +19,7 @@ public interface NodeCarrierRepository extends JpaRepository<NodeCarrierEntity, 
       nativeQuery = true)
   List<NodeCarrierEntity> findByCarrierServiceIdsWithServiceOption(
       String nodeId, String orgId, String carrierServiceId1, String carrierServiceId2);
+
+  List<NodeCarrierEntity> findByNodeIdAndOrgIdAndCarrierServiceId(
+      String nodeId, String orgId, String carrierServiceId);
 }

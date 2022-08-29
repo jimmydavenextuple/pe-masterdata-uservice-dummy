@@ -2,6 +2,7 @@ package com.hbc.node.domain;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -9,9 +10,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.node.TestUtil;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.exception.NodeDomainException;
 import com.hbc.node.repository.NodeRepository;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +22,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 class NodeDomainTest {
 
@@ -97,5 +105,64 @@ class NodeDomainTest {
             NodeDomainException.class, () -> nodeDomain.deleteNode(testUtil.getNodeEntity()));
     Assertions.assertEquals("Error while deleting node", exception.getMessage());
     verify(nodeRepository, times(1)).delete(any());
+  }
+
+  @Test
+  void getNodeByOrgIdDefaultSortOrderTest() throws NodeDomainException {
+    List<NodeEntity> nodeEntityList = testUtil.getNodeEntityList();
+
+    Pageable pageable = PageRequest.of(1, 1, Sort.by(TestUtil.SORT_BY).ascending());
+    Page<NodeEntity> nodeEntityPage =
+        new PageImpl<>(nodeEntityList, pageable, nodeEntityList.size());
+
+    when(nodeRepository.findNodeByOrgId(anyString(), any(Pageable.class)))
+        .thenReturn(nodeEntityPage);
+
+    Page<NodeDto> response =
+        nodeDomain.getNodeByOrgId(TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "ASC");
+
+    Assertions.assertEquals(nodeEntityList.size(), response.getContent().size());
+    Assertions.assertEquals(2, response.getTotalPages());
+    Assertions.assertEquals(1, response.getPageable().getPageSize());
+    Assertions.assertEquals(2, response.getTotalElements());
+    Assertions.assertEquals("nodeId: ASC", response.getSort().toString());
+
+    verify(nodeRepository, times(1)).findNodeByOrgId(anyString(), any(Pageable.class));
+  }
+
+  @Test
+  void getNodeByOrgIdDESCSortOrderTest() throws NodeDomainException {
+    List<NodeEntity> nodeEntityList = testUtil.getNodeEntityList();
+
+    Pageable pageable = PageRequest.of(1, 1, Sort.by(TestUtil.SORT_BY).descending());
+    Page<NodeEntity> nodeEntityPage =
+        new PageImpl<>(nodeEntityList, pageable, nodeEntityList.size());
+
+    when(nodeRepository.findNodeByOrgId(anyString(), any(Pageable.class)))
+        .thenReturn(nodeEntityPage);
+
+    Page<NodeDto> response =
+        nodeDomain.getNodeByOrgId(TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "desc");
+
+    Assertions.assertEquals(nodeEntityList.size(), response.getContent().size());
+    Assertions.assertEquals(2, response.getTotalPages());
+    Assertions.assertEquals(1, response.getPageable().getPageSize());
+    Assertions.assertEquals(2, response.getTotalElements());
+    Assertions.assertEquals("nodeId: DESC", response.getSort().toString());
+
+    verify(nodeRepository, times(1)).findNodeByOrgId(anyString(), any(Pageable.class));
+  }
+
+  @Test
+  void getNodeByOrgIdTestException() {
+    when(nodeRepository.findNodeByOrgId(anyString(), any(Pageable.class)))
+        .thenThrow(new RuntimeException("Error while fetching node list"));
+
+    Exception exception =
+        assertThrows(
+            NodeDomainException.class,
+            () -> nodeDomain.getNodeByOrgId(TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "ASC"));
+    Assertions.assertEquals("Error while finding node list", exception.getMessage());
+    verify(nodeRepository, times(1)).findNodeByOrgId(anyString(), any(Pageable.class));
   }
 }

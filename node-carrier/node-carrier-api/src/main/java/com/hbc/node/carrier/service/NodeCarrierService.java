@@ -4,6 +4,7 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.mapper.NodeCarrierMapper;
@@ -45,6 +46,35 @@ public class NodeCarrierService {
     validateLastPickupTime(nodeCarrierRequest.getLastPickupTime());
     var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
+  }
+
+  public NodeCarrierResponse updateBufferData(NodeCarrierBufferRequest nodeCarrierBufferRequest)
+      throws NodeCarrierDomainException, CommonServiceException {
+
+    var nodeCarrierEntity = INSTANCE.nodeCarrierBufferRequestToEntity(nodeCarrierBufferRequest);
+
+    Optional<NodeCarrierEntity> existingNodeEntity =
+        nodeCarrierDomain.findNodeCarrierDetails(
+            nodeCarrierEntity.getNodeId(),
+            nodeCarrierEntity.getOrgId(),
+            "",
+            nodeCarrierEntity.getServiceOption());
+
+    if (!existingNodeEntity.isPresent()) {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          NODE_ID, FieldError.builder().rejectedValue(nodeCarrierEntity.getNodeId()).build());
+      errorMap.put(
+          ORG_ID, FieldError.builder().rejectedValue(nodeCarrierEntity.getOrgId()).build());
+      errorMap.put(
+          SERVICE_OPTION,
+          FieldError.builder().rejectedValue(nodeCarrierEntity.getServiceOption()).build());
+      throw new CommonServiceException(
+          NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
+    }
+    INSTANCE.updateNodeCarrierEntityWithBuffer(nodeCarrierBufferRequest, existingNodeEntity.get());
+    return INSTANCE.toNodeCarrierDto(
+        nodeCarrierDomain.saveNodeCarrierEntity(existingNodeEntity.get()));
   }
 
   public void validateLastPickupTime(String lastPickupTime) throws InvalidDataException {
@@ -177,5 +207,13 @@ public class NodeCarrierService {
             nodeCarrierResponseList.add(INSTANCE.toNodeCarrierDto(nodeCarrierEntity)));
 
     return nodeCarrierResponseList;
+  }
+
+  public List<NodeCarrierResponse> getNodeCarrierForNodeIdAndOrgId(String nodeId, String orgId)
+      throws NodeCarrierDomainException {
+    List<NodeCarrierEntity> nodeCarrierEntity =
+        nodeCarrierDomain.findNodeCarrierByNodeIdAndOrgId(nodeId, orgId);
+
+    return INSTANCE.toNodeCarrierResponseList(nodeCarrierEntity);
   }
 }

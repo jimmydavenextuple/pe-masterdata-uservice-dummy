@@ -1,8 +1,11 @@
 package com.hbc.dataupload.controller;
 
-import com.hbc.carrier.domain.pojo.PageParams;
-import com.hbc.carrier.domain.pojo.PageProperties;
+import static com.hbc.common.constants.CommonConstants.CARRIER_DEFAULT_SORT_BY;
+import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+
 import com.hbc.common.base.PagePayload;
+import com.hbc.common.pojo.PageParams;
+import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
@@ -20,7 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class CarrierTransitTimeController {
-
+  private static final String PAGINATION_URL =
+      "/data-upload/ui/carrier-transit-time/orgId/%s?pageNo=%d&pageSize=%d";
   private final PageProperties pageProperties;
 
   private final CarrierTransitTimeService carrierTransitTimeService;
@@ -33,8 +37,8 @@ public class CarrierTransitTimeController {
             orgId,
             pageParams.getPageNo().orElse(pageProperties.getPageNo()),
             pageParams.getPageSize().orElse(pageProperties.getPageSize()),
-            pageParams.getSortBy().orElse(pageProperties.getSortBy()),
-            pageParams.getSortOrder().orElse(pageProperties.getSortOrder()));
+            pageParams.getSortBy().orElse(CARRIER_DEFAULT_SORT_BY),
+            pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
 
     String nextUri =
         PaginationUtil.buildUriForPagination(
@@ -42,7 +46,8 @@ public class CarrierTransitTimeController {
             carrierTransitDto.getPagination().getTotalPages(),
             "next",
             String.format(
-                "/ui/carrier-transit-time/orgId/{orgId}?pageNo=%d&pageSize=%d",
+                PAGINATION_URL,
+                orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
 
@@ -52,7 +57,8 @@ public class CarrierTransitTimeController {
             carrierTransitDto.getPagination().getTotalPages(),
             "previous",
             String.format(
-                "/ui/carrier-transit-time/orgId/{orgId}?pageNo=%d&pageSize=%d",
+                PAGINATION_URL,
+                orgId,
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
 

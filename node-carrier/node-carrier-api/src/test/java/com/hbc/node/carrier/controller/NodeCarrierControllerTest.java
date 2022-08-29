@@ -1,6 +1,7 @@
 package com.hbc.node.carrier.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,6 +65,38 @@ class NodeCarrierControllerTest {
 
     Assertions.assertEquals("Failed to create node carrier details", ex.getMessage());
     verify(nodeCarrierService, times(1)).createNodeCarrier(any());
+  }
+
+  @Test
+  @DisplayName("When node carrier is updated successfully with buffer data and response is 200 OK")
+  void createOrUpdateBufferTest() throws NodeCarrierDomainException, CommonServiceException {
+    when(nodeCarrierService.updateBufferData(any())).thenReturn(testUtil.getNodeCarrierResponse2());
+
+    ResponseEntity<BaseResponse<NodeCarrierResponse>> response =
+        nodeCarrierController.updateBuffer(testUtil.getNodeCarrierBufferRequest2());
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.NODE_ID, Objects.requireNonNull(response.getBody()).getPayload().getNodeId());
+    Assertions.assertEquals(
+        TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().getOrgId());
+    verify(nodeCarrierService, times(1)).updateBufferData(any());
+  }
+
+  @Test
+  @DisplayName("When there is somme error in updating buffer data in node carrier")
+  void createOrUpdateBufferExceptionTest()
+      throws NodeCarrierDomainException, CommonServiceException {
+    when(nodeCarrierService.updateBufferData(any()))
+        .thenThrow(new RuntimeException("Failed to update node carrier buffer details"));
+
+    Exception ex =
+        Assertions.assertThrows(
+            Exception.class,
+            () -> nodeCarrierController.updateBuffer(testUtil.getNodeCarrierBufferRequest2()));
+
+    Assertions.assertEquals("Failed to update node carrier buffer details", ex.getMessage());
+    verify(nodeCarrierService, times(1)).updateBufferData(any());
   }
 
   @Test
@@ -229,5 +262,22 @@ class NodeCarrierControllerTest {
     Assertions.assertEquals("Failed to fetch node carrier details list", ex.getMessage());
     verify(nodeCarrierService, times(1))
         .getNodeCarrierForNodeIdAOrgIdAndServiceOption(any(), any(), any());
+  }
+
+  @Test
+  void getNodeCarrierList() throws NodeCarrierDomainException {
+    when(nodeCarrierService.getNodeCarrierForNodeIdAndOrgId(anyString(), anyString()))
+        .thenReturn(testUtil.getNodeCarrierDtoList2());
+
+    ResponseEntity<BaseResponse<List<NodeCarrierResponse>>> response =
+        nodeCarrierController.getNodeCarrierList(TestUtil.NODE_ID, TestUtil.ORG_ID);
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.NODE_ID,
+        Objects.requireNonNull(response.getBody()).getPayload().get(0).getNodeId());
+    Assertions.assertEquals(
+        TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().get(0).getOrgId());
+    verify(nodeCarrierService, times(1)).getNodeCarrierForNodeIdAndOrgId(anyString(), anyString());
   }
 }
