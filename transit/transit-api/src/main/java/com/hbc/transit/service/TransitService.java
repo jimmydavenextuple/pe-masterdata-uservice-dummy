@@ -96,27 +96,28 @@ public class TransitService {
       existingTransitEntity.get().setBufferEndDate(transitBufferCreationRequest.getBufferEndDate());
       return INSTANCE.toTransitResponse(
           transitDomain.saveTransitEntity(existingTransitEntity.get()));
+    } else {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+              ORG_ID,
+              FieldError.builder().rejectedValue(transitBufferCreationRequest.getOrgId()).build());
+      errorMap.put(
+              SOURCE_GEOZONE,
+              FieldError.builder()
+                      .rejectedValue(transitBufferCreationRequest.getSourceGeozone())
+                      .build());
+      errorMap.put(
+              DESTINATION_GEOZONE,
+              FieldError.builder()
+                      .rejectedValue(transitBufferCreationRequest.getDestinationGeozone())
+                      .build());
+      errorMap.put(
+              CARRIER_SERVICE_ID,
+              FieldError.builder()
+                      .rejectedValue(transitBufferCreationRequest.getCarrierServiceId())
+                      .build());
+      throw new CommonServiceException(TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, null);
     }
-    Map<String, FieldError> errorMap = new HashMap<>();
-    errorMap.put(
-        ORG_ID,
-        FieldError.builder().rejectedValue(transitBufferCreationRequest.getOrgId()).build());
-    errorMap.put(
-        SOURCE_GEOZONE,
-        FieldError.builder()
-            .rejectedValue(transitBufferCreationRequest.getSourceGeozone())
-            .build());
-    errorMap.put(
-        DESTINATION_GEOZONE,
-        FieldError.builder()
-            .rejectedValue(transitBufferCreationRequest.getDestinationGeozone())
-            .build());
-    errorMap.put(
-        CARRIER_SERVICE_ID,
-        FieldError.builder()
-            .rejectedValue(transitBufferCreationRequest.getCarrierServiceId())
-            .build());
-    throw new CommonServiceException(TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, null);
   }
 
   public TransitResponse updateTransitDetails(
