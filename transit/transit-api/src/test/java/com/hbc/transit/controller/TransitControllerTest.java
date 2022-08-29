@@ -279,11 +279,11 @@ class TransitControllerTest {
     when(transitService.getListOfTransitDetailsForDestinationGeoZone(any(), any()))
         .thenReturn(List.of(testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS)));
 
-    List<TransitResponse> responseEntity =
+    BaseResponse<List<TransitResponse>> responseEntity =
         transitController.getTransitDetailsListForDestinationGeoZone(
             TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
 
-    Assertions.assertEquals(1, responseEntity.size());
+    Assertions.assertEquals(1, responseEntity.getPayload().size());
     verify(transitService, times(1)).getListOfTransitDetailsForDestinationGeoZone(any(), any());
   }
 
