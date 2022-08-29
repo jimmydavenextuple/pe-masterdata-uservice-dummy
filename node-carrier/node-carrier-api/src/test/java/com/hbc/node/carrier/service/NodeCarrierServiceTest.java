@@ -57,8 +57,6 @@ class NodeCarrierServiceTest {
   void createNodeCarrierWithValidBufferEndDateTest()
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest3();
-    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
-        .thenReturn(Optional.empty());
     when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
         .thenReturn(testUtil.getNodeCarrierEntity());
 

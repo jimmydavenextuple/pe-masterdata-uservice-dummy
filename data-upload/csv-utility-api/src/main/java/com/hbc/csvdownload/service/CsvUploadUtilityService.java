@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,12 +55,14 @@ public class CsvUploadUtilityService {
     /** CSV data parsed and map to NodeCarrierRequest object */
     CsvToBean<ProcessingLeadTimesRaw> processingLeadTimesRawCsvToBean =
         parseCSVToProcessingLeadTimesRaw(csvFile);
-    /** check if the list that is formed is empty */
-    if (!processingLeadTimesRawCsvToBean.iterator().hasNext()) {
-      throw new CsvFormatValidationFailedException("CSV file can not be empty");
-    }
+
     List<ProcessingLeadTime> nodeCarrierRequestList =
         mapCsvBeanToNodeCarrierRequest(processingLeadTimesRawCsvToBean);
+
+    /** check if the list that is formed is empty */
+    if (CollectionUtils.isEmpty(nodeCarrierRequestList)) {
+      throw new CsvFormatValidationFailedException("CSV file can not be empty");
+    }
 
     /** form job request string */
     String jobRequest;

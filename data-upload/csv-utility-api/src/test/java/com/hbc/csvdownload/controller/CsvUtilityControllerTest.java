@@ -76,7 +76,7 @@ class CsvUtilityControllerTest {
 
     csvUtilityController.downloadCSVTemplate("transitTime", request, response);
     csvUtilityController.downloadCSVTemplate("processingLeadTime", request, response);
-    verify(response, times(2)).getOutputStream();
+    verify(response, times(1)).getOutputStream();
   }
 
   @Test
