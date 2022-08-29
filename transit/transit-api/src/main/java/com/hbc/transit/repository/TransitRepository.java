@@ -1,5 +1,6 @@
 package com.hbc.transit.repository;
 
+import com.hbc.postgres.config.ReaderDS;
 import com.hbc.transit.domain.entity.TransitEntity;
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TransitRepository extends JpaRepository<TransitEntity, String> {
-
+  @ReaderDS
   @Query(
       value =
           "SELECT * FROM transit_data t WHERE t.org_id = ?1 AND t.source_geozone = ?2 AND t.destination_geozone = ?3 AND ( t.carrier_service_id = ?4 OR t.carrier_service_id = ?5 OR t.carrier_service_id = 'ALL')",
@@ -21,9 +22,11 @@ public interface TransitRepository extends JpaRepository<TransitEntity, String> 
       String carrierServiceId1,
       String carrierServiceId2);
 
+  @ReaderDS
   Optional<TransitEntity> findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
       String orgId, String sourceGeozone, String destinationGeozone, String carrierServiceId);
 
+  @ReaderDS
   @Query(
       value =
           "SELECT * FROM transit_data t WHERE t.org_id = ?1 AND t.destination_geozone = ?2  AND t.source_geozone IN ?3 ",
@@ -31,12 +34,14 @@ public interface TransitRepository extends JpaRepository<TransitEntity, String> 
   List<TransitEntity> findByOrgIdAndDestinationGeozoneAndSourceGeoZones(
       String orgId, String destinationGeozone, List<String> sourceGeozones);
 
+  @ReaderDS
   @Query(
       value =
           "SELECT COUNT(*) FROM transit_data t WHERE t.org_id = ?1 AND t.carrier_service_id = ?2",
       nativeQuery = true)
   Integer findTransitCountByOrgIdAndCarrierServiceId(String orgId, String carrierServiceId);
 
+  @ReaderDS
   @Query(
       value = "SELECT * FROM transit_data t WHERE t.org_id = ?1 AND t.destination_geozone = ?2 ",
       nativeQuery = true)
