@@ -2,6 +2,7 @@ package com.hbc.transit;
 
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -45,6 +46,17 @@ public class TestUtil {
         .build();
   }
 
+  public TransitEntity getTransitEntity3(Double bufferDays) {
+    return TransitEntity.builder()
+        .orgId(ORG_ID)
+        .sourceGeozone(SOURCE_GEOZONE)
+        .destinationGeozone(DESTINATION_GEOZONE)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .transitDays(TRANSIT_DAYS)
+        .bufferDays(bufferDays)
+        .build();
+  }
+
   public TransitEntity getTransitEntities(String carrierServiceId) {
     return TransitEntity.builder()
         .orgId(ORG_ID)
@@ -67,6 +79,19 @@ public class TestUtil {
         .bufferDays(3.0)
         .bufferStartDate(bufferStartDate)
         .bufferEndDate(bufferEndDate)
+        .build();
+  }
+
+  public TransitResponse getTransitResponse2(Double bufferDays) {
+    Date bufferStartDate = new Date(1000);
+    Date bufferEndDate = new Date(1000);
+    return TransitResponse.builder()
+        .orgId(ORG_ID)
+        .sourceGeozone(SOURCE_GEOZONE)
+        .destinationGeozone(DESTINATION_GEOZONE)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .transitDays(10f)
+        .bufferDays(bufferDays)
         .build();
   }
 
@@ -97,10 +122,11 @@ public class TestUtil {
   }
 
   public TransitDataUpdationRequest getTransitDataUpdationRequest(Float transitDays) {
-    return TransitDataUpdationRequest.builder()
-        .transitDays(transitDays)
-        .bufferDays(BUFFER_DAYS)
-        .build();
+    return TransitDataUpdationRequest.builder().transitDays(transitDays).build();
+  }
+
+  public TransitBufferCreationRequest getTransitBufferCreationRequest(Double bufferDays) {
+    return TransitBufferCreationRequest.builder().bufferDays(bufferDays).build();
   }
 
   public TransitTimeEntriesDto getTransitTimeEntriesDto(String orgId, String carrierServiceId) {

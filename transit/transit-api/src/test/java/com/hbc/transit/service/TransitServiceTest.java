@@ -10,6 +10,7 @@ import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -54,6 +55,57 @@ class TransitServiceTest {
     Assertions.assertEquals(
         transitDataCreationRequest.getBufferDays(), transitResponse.getBufferDays());
     verify(transitDomain, times(1)).saveTransitEntity(any(TransitEntity.class));
+  }
+
+  @Test
+  void updateTransitBufferDetailsTest() throws TransitDomainException, CommonServiceException {
+    TransitEntity transitEntity = testUtil.getTransitEntity3(TestUtil.BUFFER_DAYS);
+    TransitBufferCreationRequest transitBufferCreationRequest =
+        testUtil.getTransitBufferCreationRequest(5.0);
+    when(transitDomain.findTransitDetails(any(), any(), any(), any()))
+        .thenReturn(Optional.of(transitEntity));
+    when(transitDomain.saveTransitEntity(any())).thenReturn(testUtil.getTransitEntity3(5.0));
+
+    TransitResponse transitResponse =
+        transitService.updateTransitBufferDetails(transitBufferCreationRequest);
+    Assertions.assertEquals(testUtil.getTransitResponse2(5.0), transitResponse);
+
+    verify(transitDomain, times(1)).saveTransitEntity(any(TransitEntity.class));
+    verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
+  }
+
+  @Test
+  void updateTransitBufferDetailsTestException() throws TransitDomainException {
+
+    TransitBufferCreationRequest transitBufferCreationRequest = new TransitBufferCreationRequest();
+    transitBufferCreationRequest.setBufferDays(5.0);
+    when(transitDomain.findTransitDetails(any(), any(), any(), any())).thenReturn(Optional.empty());
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> transitService.updateTransitBufferDetails(transitBufferCreationRequest));
+    Assertions.assertEquals("Transit data not found with given details", exception.getMessage());
+
+    verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
+  }
+
+  @Test
+  void updateTransitBufferDetailsNegativeTransitSumTestException() throws TransitDomainException {
+    TransitEntity transitEntity = testUtil.getTransitEntity3(TestUtil.BUFFER_DAYS);
+    TransitBufferCreationRequest transitBufferCreationRequest =
+        testUtil.getTransitBufferCreationRequest(-15.0);
+    when(transitDomain.findTransitDetails(any(), any(), any(), any()))
+        .thenReturn((Optional.of(transitEntity)));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> transitService.updateTransitBufferDetails(transitBufferCreationRequest));
+    Assertions.assertEquals(
+        "The sum of transit and buffer days is less than 0", exception.getMessage());
+
+    verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
   }
 
   @Test
