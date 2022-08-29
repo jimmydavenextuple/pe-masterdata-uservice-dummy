@@ -6,9 +6,16 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://promise-engine-postgres-stage.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
     username: postgres
-    password: postgres
+    password: bc6624be-d151-4d8a-b315-e7ae8e42a504
+  replica:
+    datasource:
+      platform: postgres
+      url: jdbc:postgresql://promise-engine-postgres-stage.cluster-ro-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
+      username: postgres
+      password: bc6624be-d151-4d8a-b315-e7ae8e42a504
+      required: true
   kafka:
     bootstrap-servers: "localhost:9092"
     consumer-retry-count: 1

@@ -1,0 +1,84 @@
+package com.hbc.postgres.config;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import java.util.Properties;
+import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+@Configuration
+@EnableJpaRepositories(enableDefaultTransactions = false)
+@EnableTransactionManagement
+public class RepositoryConfig extends HikariConfig {
+
+  @Value("${spring.datasource.url}")
+  private String databaseUrl;
+
+  @Value("${spring.datasource.username}")
+  private String username;
+
+  @Value("${spring.datasource.password}")
+  private String password;
+
+  @Value("${spring.replica.datasource.url:null}")
+  private String databaseUrl2;
+
+  @Value("${spring.replica.datasource.required:false}")
+  private Boolean replicaReq;
+
+  @Value("${spring.replica.datasource.username:null}")
+  private String username2;
+
+  @Value("${spring.replica.datasource.password:null}")
+  private String password2;
+
+  @Bean("primaryProperties")
+  @ConfigurationProperties(prefix = "spring.datasource.hikari")
+  public Properties primaryProperties() {
+    return new Properties();
+  }
+
+  @Bean("replicaProperties")
+  @ConfigurationProperties(prefix = "spring.replica.datasource.hikari")
+  public Properties replicaProperties() {
+    return new Properties();
+  }
+
+  @Bean
+  public DataSource routingDataSource() {
+    DataSource primaryDataSource = dataSource(false, false);
+    DataSource replicaDataSource = dataSource2(true, true);
+    if (replicaDataSource == null) {
+      replicaDataSource = primaryDataSource;
+    }
+    return new RoutingDS(primaryDataSource, replicaDataSource);
+  }
+
+  private DataSource dataSource(boolean readOnly, boolean isAutoCommit) {
+    HikariConfig config = new HikariConfig(primaryProperties());
+    config.setJdbcUrl(databaseUrl);
+    config.setUsername(username);
+    config.setPassword(password);
+    config.setReadOnly(readOnly);
+    config.setAutoCommit(isAutoCommit);
+    return new HikariDataSource(config);
+  }
+
+  private DataSource dataSource2(boolean readOnly, boolean isAutoCommit) {
+    if (Boolean.FALSE.equals(replicaReq)) {
+      return null;
+    }
+    HikariConfig config = new HikariConfig(replicaProperties());
+    config.setJdbcUrl(databaseUrl2);
+    config.setUsername(username2);
+    config.setPassword(password2);
+    config.setReadOnly(readOnly);
+    config.setAutoCommit(isAutoCommit);
+    return new HikariDataSource(config);
+  }
+}

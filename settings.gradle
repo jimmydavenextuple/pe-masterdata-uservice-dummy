@@ -123,5 +123,9 @@ include 'common-configuration:common-configuration-api'
 findProject(':common-configuration:common-configuration-api')?.name = 'common-configuration-api'
 include 'common-configuration:common-configuration-api-domain'
 findProject(':common-configuration:common-configuration-api-domain')?.name = 'common-configuration-api-domain'
-
+include 'common'
+include 'common:common-postgres'
+findProject(':common:common-postgres')?.name = 'common-postgres'
+include 'common:common-postgres'
+findProject(':common:common-postgres')?.name = 'common-postgres'
 
