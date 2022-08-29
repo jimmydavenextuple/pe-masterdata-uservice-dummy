@@ -38,11 +38,11 @@ public class TransitDataCreationRequest implements Serializable {
   @NotNull(message = "transitDays can't be null")
   private Float transitDays;
 
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private Date bufferStartDate;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private Date bufferEndDate;
 
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private Double bufferDays;
 }
