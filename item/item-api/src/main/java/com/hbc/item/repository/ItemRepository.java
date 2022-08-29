@@ -11,6 +11,5 @@ public interface ItemRepository extends JpaRepository<ItemEntity, String> {
 
   Optional<ItemEntity> findByItemIdAndOrgIdAndUom(String itemId, String orgId, String uom);
 
-  List<ItemEntity> findByOrgIdAndUomAndItemIdIn(
-      String orgId, String uom, List<String> itemList);
+  List<ItemEntity> findByOrgIdAndUomAndItemIdIn(String orgId, String uom, List<String> itemList);
 }

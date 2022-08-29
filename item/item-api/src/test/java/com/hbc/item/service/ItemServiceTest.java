@@ -11,6 +11,7 @@ import com.hbc.item.domain.ItemDomain;
 import com.hbc.item.domain.entity.ItemEntity;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
+import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
 import java.util.ArrayList;
 import java.util.List;
@@ -153,7 +154,7 @@ class ItemServiceTest {
 
   @Test
   void getItemListByItemIdAndOrgIdAndUomTest()
-      throws ItemDomainException, CommonServiceException {
+      throws CommonServiceException, ItemBatchingDomainException {
     ItemEntity itemEntity = testUtil.getItemEntity();
     List<ItemEntity> itemEntityList = new ArrayList<>();
     itemEntityList.add(itemEntity);
@@ -171,7 +172,7 @@ class ItemServiceTest {
   }
 
   @Test
-  void getItemListByItemIdAndOrgIdAndUomTestException() throws ItemDomainException {
+  void getItemListByItemIdAndOrgIdAndUomTestException() throws ItemBatchingDomainException {
     List<ItemEntity> itemEntityList = new ArrayList<>();
     List<String> itemList = new ArrayList<>();
     itemList.add(TestUtil.ITEM_ID);

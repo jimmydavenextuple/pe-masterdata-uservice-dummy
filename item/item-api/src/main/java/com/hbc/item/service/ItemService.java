@@ -8,6 +8,7 @@ import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.mapper.ItemMapper;
 import com.hbc.item.domain.outbound.ItemResponse;
+import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
 import java.util.HashMap;
 import java.util.List;
@@ -133,7 +134,7 @@ public class ItemService {
   }
 
   public List<ItemResponse> getItemList(List<String> itemList, String orgId, String uom)
-      throws ItemDomainException, CommonServiceException {
+      throws CommonServiceException, ItemBatchingDomainException {
 
     List<ItemEntity> existingItemEntity =
         itemDomain.findItemListByItemIdsAndOrgIdAndUom(itemList, orgId, uom);

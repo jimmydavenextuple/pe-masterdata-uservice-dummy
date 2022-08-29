@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.item.TestUtil;
 import com.hbc.item.domain.entity.ItemEntity;
 import com.hbc.item.domain.entity.ItemPK;
+import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.repository.ItemRepository;
 import java.util.ArrayList;
@@ -119,7 +120,7 @@ class ItemDomainTest {
   }
 
   @Test
-  void getItemListTest() throws ItemDomainException {
+  void getItemListTest() throws ItemBatchingDomainException {
     ItemEntity itemEntity = testUtil.getItemEntity();
     ItemPK id = testUtil.getItemId();
     List<String> itemList = new ArrayList<>();

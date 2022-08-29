@@ -11,6 +11,7 @@ import com.hbc.item.TestUtil;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
+import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.service.ItemService;
 import java.util.ArrayList;
@@ -157,7 +158,7 @@ class ItemControllerTest {
 
   @Test
   void getItemListByItemIdAndOrgIdAndUomTest()
-      throws ItemDomainException, CommonServiceException {
+      throws CommonServiceException, ItemBatchingDomainException {
     ItemResponse itemResponse = testUtil.getItemResponse();
     List<ItemResponse> itemResponseList = new ArrayList<>();
     List<String> itemList = new ArrayList<>();
@@ -175,7 +176,7 @@ class ItemControllerTest {
 
   @Test
   void getItemListByItemIdAndOrgIdAndUomExceptionTest()
-      throws ItemDomainException, CommonServiceException {
+      throws CommonServiceException, ItemBatchingDomainException {
     when(itemService.getItemList(any(), any(), any()))
         .thenThrow(new RuntimeException("Failed to fetch list of item details"));
     List<String> itemList = new ArrayList<>();

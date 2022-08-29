@@ -5,6 +5,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
+import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.service.ItemService;
 import java.util.List;
@@ -118,7 +119,7 @@ public class ItemController {
       @NotBlank @PathVariable String orgId,
       @NotBlank @PathVariable String uom,
       @NotBlank @RequestParam List<String> itemList)
-      throws ItemDomainException, CommonServiceException {
+      throws CommonServiceException, ItemBatchingDomainException {
     logger.debug("Processing get item details");
     try {
 
