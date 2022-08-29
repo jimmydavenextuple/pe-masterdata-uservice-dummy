@@ -9,6 +9,7 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -104,6 +105,40 @@ class TransitControllerTest {
                     TestUtil.SERVICE_OPTION));
     Assertions.assertEquals("Failed to fetch transit details", exception.getMessage());
     verify(transitService, times(1)).getTransitDetails(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void updateTransitBufferDetailsTest() throws TransitDomainException, CommonServiceException {
+    TransitBufferCreationRequest transitBufferCreationRequest = new TransitBufferCreationRequest();
+    transitBufferCreationRequest.setBufferDays(3.0);
+    when(transitService.updateTransitBufferDetails(any(TransitBufferCreationRequest.class)))
+        .thenReturn(testUtil.getTransitResponse2(5.0));
+
+    ResponseEntity<BaseResponse<TransitResponse>> responseEntity =
+        transitController.updateTransitBufferDetails(transitBufferCreationRequest);
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals(
+        testUtil.getTransitResponse2(5.0), responseEntity.getBody().getPayload());
+
+    verify(transitService, times(1)).updateTransitBufferDetails(any());
+  }
+
+  @Test
+  void updateTransitBufferDetailsExceptionTest()
+      throws TransitDomainException, CommonServiceException {
+    TransitBufferCreationRequest transitBufferCreationRequest = new TransitBufferCreationRequest();
+    transitBufferCreationRequest.setBufferDays(3.0);
+    when(transitService.updateTransitBufferDetails(any(TransitBufferCreationRequest.class)))
+        .thenThrow(new RuntimeException("Failed to update transit buffer details"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            Exception.class,
+            () -> transitController.updateTransitBufferDetails(transitBufferCreationRequest));
+    Assertions.assertEquals("Failed to update transit buffer details", exception.getMessage());
+
+    verify(transitService, times(1)).updateTransitBufferDetails(any());
   }
 
   @Test
@@ -244,11 +279,11 @@ class TransitControllerTest {
     when(transitService.getListOfTransitDetailsForDestinationGeoZone(any(), any()))
         .thenReturn(List.of(testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS)));
 
-    List<TransitResponse> responseEntity =
+    BaseResponse<List<TransitResponse>> responseEntity =
         transitController.getTransitDetailsListForDestinationGeoZone(
             TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
 
-    Assertions.assertEquals(1, responseEntity.size());
+    Assertions.assertEquals(1, responseEntity.getPayload().size());
     verify(transitService, times(1)).getListOfTransitDetailsForDestinationGeoZone(any(), any());
   }
 

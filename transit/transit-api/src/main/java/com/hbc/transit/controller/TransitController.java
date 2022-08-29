@@ -3,6 +3,7 @@ package com.hbc.transit.controller;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -49,6 +50,25 @@ public class TransitController {
               .build());
     } catch (Exception e) {
       logger.error("Failed to add transit data");
+      throw e;
+    }
+  }
+
+  @PutMapping("/buffer")
+  public ResponseEntity<BaseResponse<TransitResponse>> updateTransitBufferDetails(
+      @Valid @RequestBody TransitBufferCreationRequest transitBufferCreationRequest)
+      throws TransitDomainException, CommonServiceException {
+    logger.debug("Processing update transit buffer data");
+    try {
+      var transitResponse = transitService.updateTransitBufferDetails(transitBufferCreationRequest);
+      logger.info("Response after updation of transit buffer details :{}", transitResponse);
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Transit details updated successfully")
+              .payload(transitResponse)
+              .build());
+    } catch (Exception e) {
+      logger.error("Failed to update transit buffer details");
       throw e;
     }
   }
@@ -173,12 +193,16 @@ public class TransitController {
   }
 
   @GetMapping("/batch-transit/{orgId}/{destinationGeozone}")
-  public List<TransitResponse> getTransitDetailsListForDestinationGeoZone(
+  public BaseResponse<List<TransitResponse>> getTransitDetailsListForDestinationGeoZone(
       @NotBlank @PathVariable String orgId, @NotBlank @PathVariable String destinationGeozone)
       throws TransitDomainException, CommonServiceException {
     logger.debug("Processing get transit details list");
     try {
-      return transitService.getListOfTransitDetailsForDestinationGeoZone(orgId, destinationGeozone);
+      return BaseResponse.builder()
+          .payload(
+              transitService.getListOfTransitDetailsForDestinationGeoZone(
+                  orgId, destinationGeozone))
+          .build();
     } catch (Exception e) {
       logger.error("Failed to fetch transit details list");
       throw e;

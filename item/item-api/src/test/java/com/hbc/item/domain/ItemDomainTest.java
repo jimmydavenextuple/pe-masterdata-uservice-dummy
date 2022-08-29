@@ -11,8 +11,11 @@ import static org.mockito.Mockito.when;
 import com.hbc.item.TestUtil;
 import com.hbc.item.domain.entity.ItemEntity;
 import com.hbc.item.domain.entity.ItemPK;
+import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.repository.ItemRepository;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -114,5 +117,34 @@ class ItemDomainTest {
             ItemDomainException.class, () -> itemDomain.deleteItem(testUtil.getItemEntity()));
     Assertions.assertEquals("Error while deleting item", exception.getMessage());
     verify(itemRepository, times(1)).delete(any());
+  }
+
+  @Test
+  void getItemListTest() throws ItemBatchingDomainException {
+    ItemEntity itemEntity = testUtil.getItemEntity();
+    ItemPK id = testUtil.getItemId();
+    List<String> itemList = new ArrayList<>();
+    List<ItemEntity> itemEntityList = new ArrayList<>();
+    itemEntityList.add(itemEntity);
+    when(itemRepository.findByOrgIdAndUomAndItemIdIn(any(), any(), any()))
+        .thenReturn(itemEntityList);
+
+    List<ItemEntity> optionalItemEntity =
+        itemDomain.findItemListByItemIdsAndOrgIdAndUom(itemList, TestUtil.ORG_ID, TestUtil.UOM);
+    Assertions.assertEquals(itemEntityList, optionalItemEntity);
+    Assertions.assertEquals(
+        itemEntity.getIsDSVEligible(), optionalItemEntity.get(0).getIsDSVEligible());
+    Assertions.assertEquals(
+        itemEntity.getDepartmentName(), optionalItemEntity.get(0).getDepartmentName());
+    Assertions.assertEquals(
+        itemEntity.getDepartmentNumber(), optionalItemEntity.get(0).getDepartmentNumber());
+    Assertions.assertEquals(itemEntity.getImageUrl(), optionalItemEntity.get(0).getImageUrl());
+    Assertions.assertEquals(
+        itemEntity.getShortDescription(), optionalItemEntity.get(0).getShortDescription());
+
+    verify(itemRepository, times(1)).findByOrgIdAndUomAndItemIdIn(any(), any(), any());
+    Assertions.assertEquals(TestUtil.ITEM_ID, id.getItemId());
+    Assertions.assertEquals(TestUtil.ORG_ID, id.getOrgId());
+    Assertions.assertEquals(TestUtil.UOM, id.getUom());
   }
 }
