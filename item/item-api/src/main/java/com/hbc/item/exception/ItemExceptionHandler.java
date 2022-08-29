@@ -20,4 +20,13 @@ public class ItemExceptionHandler {
                 .message("Internal Server Error")
                 .build());
   }
+
+  @ExceptionHandler(ItemBatchingDomainException.class)
+  public ResponseEntity<ErrorResponse> handleItemBatchingDomainException(Exception e) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0x1771)
+                .message("Internal Server Error")
+                .build());
+  }
 }
