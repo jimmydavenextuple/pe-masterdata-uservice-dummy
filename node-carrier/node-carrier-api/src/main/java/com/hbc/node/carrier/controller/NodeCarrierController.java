@@ -2,6 +2,7 @@ package com.hbc.node.carrier.controller;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
@@ -47,6 +48,25 @@ public class NodeCarrierController {
               .build());
     } catch (Exception e) {
       logger.error("Failed to create node carrier details");
+      throw e;
+    }
+  }
+
+  @PutMapping("/buffer")
+  public ResponseEntity<BaseResponse<NodeCarrierResponse>> updateBuffer(
+      @Valid @RequestBody NodeCarrierBufferRequest nodeCarrierBufferRequest)
+      throws NodeCarrierDomainException, CommonServiceException {
+    logger.debug("Processing buffer data creation or updation");
+    try {
+      var nodeCarrierResponse = nodeCarrierService.updateBufferData(nodeCarrierBufferRequest);
+      logger.info("Response after creation or updation of buffer data : {}", nodeCarrierResponse);
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Buffer data successfully added.")
+              .payload(nodeCarrierResponse)
+              .build());
+    } catch (Exception e) {
+      logger.error("Failed to update node carrier buffer details");
       throw e;
     }
   }

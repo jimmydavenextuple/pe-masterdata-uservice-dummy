@@ -26,16 +26,16 @@ public class RepositoryConfig extends HikariConfig {
   private String password;
 
   @Value("${spring.replica.datasource.url:null}")
-  private String databaseUrl2;
+  private String replicaDatabaseUrl;
 
   @Value("${spring.replica.datasource.required:false}")
   private Boolean replicaReq;
 
   @Value("${spring.replica.datasource.username:null}")
-  private String username2;
+  private String replicaUsername;
 
   @Value("${spring.replica.datasource.password:null}")
-  private String password2;
+  private String replicaPassword;
 
   @Bean("primaryProperties")
   @ConfigurationProperties(prefix = "spring.datasource.hikari")
@@ -52,7 +52,7 @@ public class RepositoryConfig extends HikariConfig {
   @Bean
   public DataSource routingDataSource() {
     DataSource primaryDataSource = dataSource(false, false);
-    DataSource replicaDataSource = dataSource2(true, true);
+    DataSource replicaDataSource = replicaDataSource(true, true);
     if (replicaDataSource == null) {
       replicaDataSource = primaryDataSource;
     }
@@ -69,14 +69,14 @@ public class RepositoryConfig extends HikariConfig {
     return new HikariDataSource(config);
   }
 
-  private DataSource dataSource2(boolean readOnly, boolean isAutoCommit) {
+  private DataSource replicaDataSource(boolean readOnly, boolean isAutoCommit) {
     if (Boolean.FALSE.equals(replicaReq)) {
       return null;
     }
     HikariConfig config = new HikariConfig(replicaProperties());
-    config.setJdbcUrl(databaseUrl2);
-    config.setUsername(username2);
-    config.setPassword(password2);
+    config.setJdbcUrl(replicaDatabaseUrl);
+    config.setUsername(replicaUsername);
+    config.setPassword(replicaPassword);
     config.setReadOnly(readOnly);
     config.setAutoCommit(isAutoCommit);
     return new HikariDataSource(config);
