@@ -14,10 +14,4 @@ public class InvalidActionType extends RuntimeException {
     this.action = action;
     this.rowIndex = rowIndex;
   }
-
-  public InvalidActionType(String message, Throwable cause, String action, int rowIndex) {
-    super(message, cause);
-    this.action = action;
-    this.rowIndex = rowIndex;
-  }
 }
