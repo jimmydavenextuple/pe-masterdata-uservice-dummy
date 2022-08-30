@@ -131,6 +131,13 @@ include 'common-configuration:common-configuration-near-cache'
 findProject(':common-configuration:common-configuration-near-cache')?.name = 'common-configuration-near-cache'
 include 'common-configuration:common-configuration-near-cache-spring'
 findProject(':common-configuration:common-configuration-near-cache-spring')?.name = 'common-configuration-near-cache-spring'
+
+include 'common'
+include 'common:common-postgres'
+findProject(':common:common-postgres')?.name = 'common-postgres'
+include 'common:common-postgres'
+findProject(':common:common-postgres')?.name = 'common-postgres'
+
 include 'transit:transit-near-cache'
 findProject(':transit:transit-near-cache')?.name = 'transit-near-cache'
 include 'transit:transit-near-cache-spring'
