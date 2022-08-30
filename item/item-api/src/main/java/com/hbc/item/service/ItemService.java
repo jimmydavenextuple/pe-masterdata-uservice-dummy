@@ -10,6 +10,7 @@ import com.hbc.item.domain.mapper.ItemMapper;
 import com.hbc.item.domain.outbound.ItemResponse;
 import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +94,7 @@ public class ItemService {
     return INSTANCE.toItemResponse(itemDomain.saveItemEntity(existingItemEntity.get()));
   }
 
+  @ReaderDS
   public ItemResponse getItemDetails(String itemId, String orgId, String uom)
       throws ItemDomainException, CommonServiceException {
 
