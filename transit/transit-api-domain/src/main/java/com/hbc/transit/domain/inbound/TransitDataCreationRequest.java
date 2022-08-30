@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @AllArgsConstructor
@@ -37,8 +38,10 @@ public class TransitDataCreationRequest implements Serializable {
   @NotNull(message = "transitDays can't be null")
   private Float transitDays;
 
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private Date bufferStartDate;
 
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private Date bufferEndDate;
 
   private Double bufferDays;
