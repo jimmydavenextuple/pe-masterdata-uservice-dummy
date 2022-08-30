@@ -18,6 +18,7 @@ spring:
       required: true
       hikari:
         readOnly: true
+        maximumPoolSize: 20
   kafka:
     bootstrap-servers: "temp-5-kafka.integration.awshbc.io:9094"
     consumer-retry-count: 1
