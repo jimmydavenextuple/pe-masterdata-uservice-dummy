@@ -27,6 +27,7 @@ public interface ItemRecordMapper {
     Map<String, Boolean> serviceOptionEligibilityMap = new HashMap<>();
     serviceOptionEligibilityMap.put("sdndEligible", itemRecord.getSdndEligible());
     serviceOptionEligibilityMap.put("expressEligible", itemRecord.getExpressEligible());
+    serviceOptionEligibilityMap.put("nextdayEligible", itemRecord.getNextdayEligible());
     itemCreationRequest.serviceOptionEligibilities(serviceOptionEligibilityMap);
   }
 }

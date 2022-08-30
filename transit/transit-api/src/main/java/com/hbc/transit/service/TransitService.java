@@ -2,8 +2,11 @@ package com.hbc.transit.service;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.postgres.config.ReaderDS;
 import com.hbc.transit.domain.TransitDomain;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.mapper.TransitMapper;
@@ -45,6 +48,79 @@ public class TransitService {
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(transitEntity));
   }
 
+  public TransitResponse updateTransitBufferDetails(
+      TransitBufferCreationRequest transitBufferCreationRequest)
+      throws TransitDomainException, CommonServiceException {
+
+    Optional<TransitEntity> existingTransitEntity =
+        transitDomain.findTransitDetails(
+            transitBufferCreationRequest.getOrgId(),
+            transitBufferCreationRequest.getSourceGeozone(),
+            transitBufferCreationRequest.getDestinationGeozone(),
+            transitBufferCreationRequest.getCarrierServiceId());
+    if (existingTransitEntity.isPresent()) {
+      var transitDays = existingTransitEntity.get().getTransitDays();
+      var bufferDays = transitBufferCreationRequest.getBufferDays();
+      if ((transitDays + bufferDays) <= 0) {
+        Map<String, FieldError> errorMap = new HashMap<>();
+        errorMap.put(
+            ORG_ID,
+            FieldError.builder().rejectedValue(transitBufferCreationRequest.getOrgId()).build());
+        errorMap.put(
+            SOURCE_GEOZONE,
+            FieldError.builder()
+                .rejectedValue(transitBufferCreationRequest.getSourceGeozone())
+                .build());
+        errorMap.put(
+            DESTINATION_GEOZONE,
+            FieldError.builder()
+                .rejectedValue(transitBufferCreationRequest.getDestinationGeozone())
+                .build());
+        errorMap.put(
+            CARRIER_SERVICE_ID,
+            FieldError.builder()
+                .rejectedValue(transitBufferCreationRequest.getCarrierServiceId())
+                .build());
+        throw new CommonServiceException(
+            "The sum of transit and buffer days is less than 0",
+            HttpStatus.BAD_REQUEST,
+            0x1776,
+            errorMap);
+      }
+      logger.info(
+          "Response before updation of transit data :{}",
+          INSTANCE.toTransitResponse(existingTransitEntity.get()));
+      existingTransitEntity.get().setBufferDays(bufferDays);
+      existingTransitEntity
+          .get()
+          .setBufferStartDate(transitBufferCreationRequest.getBufferStartDate());
+      existingTransitEntity.get().setBufferEndDate(transitBufferCreationRequest.getBufferEndDate());
+      return INSTANCE.toTransitResponse(
+          transitDomain.saveTransitEntity(existingTransitEntity.get()));
+    } else {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+              ORG_ID,
+              FieldError.builder().rejectedValue(transitBufferCreationRequest.getOrgId()).build());
+      errorMap.put(
+              SOURCE_GEOZONE,
+              FieldError.builder()
+                      .rejectedValue(transitBufferCreationRequest.getSourceGeozone())
+                      .build());
+      errorMap.put(
+              DESTINATION_GEOZONE,
+              FieldError.builder()
+                      .rejectedValue(transitBufferCreationRequest.getDestinationGeozone())
+                      .build());
+      errorMap.put(
+              CARRIER_SERVICE_ID,
+              FieldError.builder()
+                      .rejectedValue(transitBufferCreationRequest.getCarrierServiceId())
+                      .build());
+      throw new CommonServiceException(TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, null);
+    }
+  }
+
   public TransitResponse updateTransitDetails(
       String orgId,
       String sourceGeozone,
@@ -69,11 +145,14 @@ public class TransitService {
       throw new CommonServiceException(
           TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-
+    logger.info(
+        "Response before updation of transit data :{}",
+        INSTANCE.toTransitResponse(existingTransitEntity.get()));
     INSTANCE.updateTransitEntity(transitDataUpdationRequest, existingTransitEntity.get());
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(existingTransitEntity.get()));
   }
 
+  @ReaderDS
   public TransitResponse getTransitDetails(
       String orgId,
       String sourceGeozone,
@@ -143,9 +222,50 @@ public class TransitService {
       throw new CommonServiceException(
           TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-
+    logger.info("Response before deletion of transit data :{}", transitEntity.get());
     var transitResponse = INSTANCE.toTransitResponse(transitEntity.get());
     transitDomain.deleteTransitDetails(transitEntity.get());
     return transitResponse;
+  }
+
+  @ReaderDS
+  public List<TransitResponse> getListOfTransitDetails(
+      String orgId, String destinationGeozone, List<String> sourceGeozones)
+      throws TransitDomainException {
+
+    List<TransitEntity> transitEntities =
+        transitDomain.fetchTransitList(orgId, destinationGeozone, sourceGeozones);
+
+    return INSTANCE.toTransitResponseList(transitEntities);
+  }
+
+  @ReaderDS
+  public TransitTimeEntriesDto getTransitTimeEntries(String orgId, String carrierServiceId)
+      throws TransitDomainException {
+    return TransitTimeEntriesDto.builder()
+        .orgId(orgId)
+        .carrierServiceId(carrierServiceId)
+        .totalRecords(transitDomain.fetchTransitEntitiesCount(orgId, carrierServiceId))
+        .build();
+  }
+
+  @ReaderDS
+  public List<TransitResponse> getListOfTransitDetailsForDestinationGeoZone(
+      String orgId, String destinationGeozone)
+      throws TransitDomainException, CommonServiceException {
+
+    List<TransitEntity> transitEntities =
+        transitDomain.fetchTransitListForDestinationGeoZone(orgId, destinationGeozone);
+
+    if (transitEntities.isEmpty()) {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(
+          DESTINATION_GEOZONE, FieldError.builder().rejectedValue(destinationGeozone).build());
+      throw new CommonServiceException(
+          TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
+    }
+
+    return INSTANCE.toTransitResponseList(transitEntities);
   }
 }

@@ -2,23 +2,7 @@
 
 echo $ECR_REGISTRY
 export SERVER_CONFIG_FILE="./manifests/config.yml"
-
-if [ -e "./$PROJECT/config.yml" ]; then
-  SERVER_CONFIG_FILE="./$PROJECT/config.yml"
-fi
-
-export REPO=`echo $GITHUB_REPOSITORY | awk -F "/" '{print $2}'`
-export SERVICE_NAME="$REPO-$PROJECT"
-export VERSION=`bash ./gradlew -Pbuild_target=SNAPSHOT -q properties -p $PROJECT | grep version | sed -e "s@version: @@g"`
-export SERVICE_CODE=`echo "$VERSION" | cut -d '-' -f1`
-export NLB_NAME=`echo "$ENVIRONMENT-$PROJECT" | cut -c1-31`
-if [ "${NLB_NAME: -1}" == "-" ]; then
-    NLB_NAME=`echo "$NLB_NAME" | sed 's/.$//'`
-fi
-
-export IMAGE_NAME="$ECR_REGISTRY/$REPO-$PROJECT:$SERVICE_CODE.$COMMIT_HASH"
-
-echo "$IMAGE_NAME"
+export BUILD_TARGET="SNAPSHOT"
 
 aws sts get-caller-identity
 
@@ -31,10 +15,47 @@ elif [ "$ENVIRONMENT" == "stage" ]; then
 elif [ "$ENVIRONMENT" == "perf" ]; then
   export AWS_EKS_NAME="promise-engine-eks-perf"
   export ENV_TAG="stage"
+elif [ "$ENVIRONMENT" == "hotfix" ]; then
+  export AWS_EKS_NAME="dev-eks-cluster"
+  export ENV_TAG="development"
+  export BUILD_TARGET="HOTFIX"
+elif [ "$ENVIRONMENT" == "prod" ]; then
+  export AWS_EKS_NAME="promise-engine-eks-prod"
+  export ENV_TAG="production"
 fi
 
-
 aws eks update-kubeconfig --name $AWS_EKS_NAME --region us-east-1
+
+if [ -e "./$PROJECT/config.yml" ]; then
+  SERVER_CONFIG_FILE="./$PROJECT/config.yml"
+fi
+
+export REPO=`echo $GITHUB_REPOSITORY | awk -F "/" '{print $2}'`
+export SERVICE_NAME="$REPO-$PROJECT"
+
+
+
+if [ -z "$TAG" ]; then
+    export VERSION=`bash ./gradlew -Pbuild_target=$BUILD_TARGET -q properties -p $PROJECT | grep version | sed -e "s@version: @@g"`
+else
+    export VERSION=$(echo $TAG | cut -d "v" -f2)
+    echo "Received version from git tag : ${VERSION}"
+fi
+
+export SERVICE_CODE=`echo "$VERSION" | cut -d '-' -f1`
+export BUILD_IMAGE_NAME=$ECR_REGISTRY/$REPO-$PROJECT:$SERVICE_CODE.$COMMIT_HASH
+export IMAGE_NAME=$ECR_REGISTRY/$REPO-$PROJECT:$VERSION.$ENVIRONMENT
+docker pull $BUILD_IMAGE_NAME
+docker tag $BUILD_IMAGE_NAME $IMAGE_NAME
+docker push $IMAGE_NAME
+
+echo "$IMAGE_NAME"
+
+
+export NLB_NAME=`echo "$ENVIRONMENT-$PROJECT" | cut -c1-31`
+if [ "${NLB_NAME: -1}" == "-" ]; then
+    NLB_NAME=`echo "$NLB_NAME" | sed 's/.$//'`
+fi
 
 
 export COLOR1="blue"
@@ -51,6 +72,7 @@ fi
 echo "Currently running deployment color : $SERVICE_ACTIVE_COLOR"
 
 export HEALTH_CHECK_PATH=`yq -e eval ".server.health-check-endpoint" $SERVER_CONFIG_FILE`
+export NLB_NEEDED=`yq -e eval ".server.environments.$ENVIRONMENT.nlb" $SERVER_CONFIG_FILE`
 export CUSTOM_JAVA_OPTS=`yq -e eval ".server.environments.$ENVIRONMENT.java-opts" $SERVER_CONFIG_FILE`
 export REPLICAS=`yq -e eval ".server.environments.$ENVIRONMENT.replicas" $SERVER_CONFIG_FILE`
 export MIN_MEM_REQUIRED=`yq -e eval ".server.environments.$ENVIRONMENT.resources.min.memory" $SERVER_CONFIG_FILE`
@@ -62,6 +84,12 @@ if [ "$CUSTOM_JAVA_OPTS" = 'null' ]; then
   export REPLACE_JAVA_OPTS_COMMENT_WITH="#JAVA_OPTS"
 else
   export REPLACE_JAVA_OPTS_COMMENT_WITH=""
+fi
+
+if [ "$NLB_NEEDED" = 'null' ]; then
+  export REPLACE_NLB_COMMENT_WITH=""
+else
+  export REPLACE_NLB_COMMENT_WITH="#NLB"
 fi
 
 sed -e "s@<SERVICE_VERSION>@$SERVICE_CODE@g" \
@@ -94,6 +122,7 @@ fi
 sed -e "s@<SERVICE_VERSION>@$SERVICE_CODE@g" \
     -e "s@<SERVICE_NAME>@$SERVICE_NAME@g" \
     -e "s@<ENVIRONMENT>@$ENVIRONMENT@g" \
+    -e "s@#NLB@$REPLACE_NLB_COMMENT_WITH@g" \
     -e "s@<NLB_NAME>@$NLB_NAME@g" \
     -e "s@<ENV_TAG>@$ENV_TAG@g" \
     -e "s@<COLOR>@$SERVICE_PASSIVE_COLOR@g" \

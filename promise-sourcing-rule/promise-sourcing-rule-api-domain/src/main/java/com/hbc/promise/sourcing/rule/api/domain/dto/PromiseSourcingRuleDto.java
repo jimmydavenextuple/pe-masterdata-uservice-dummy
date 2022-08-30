@@ -3,6 +3,7 @@ package com.hbc.promise.sourcing.rule.api.domain.dto;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class PromiseSourcingRuleDto {
   private String orgId;
   private String serviceOption;

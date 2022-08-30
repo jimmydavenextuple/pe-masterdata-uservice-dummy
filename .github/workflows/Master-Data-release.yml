@@ -1,0 +1,98 @@
+name: PROD RELEASE
+
+on:
+  push:
+    tags:
+      - '*RELEASE'
+jobs:
+  Calendar:
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: calendar
+    secrets: inherit
+  Carrier:
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: carrier
+    secrets: inherit
+  Data-Upload:
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: data-upload
+    secrets: inherit
+  Node:
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: node
+    secrets: inherit
+  Node-Carrier:
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: node-carrier
+    secrets: inherit
+  Postal-Code-Timezone:
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: postal-code-timezone
+    secrets: inherit
+  Item:
+    needs:
+      - Calendar
+      - Carrier
+      - Data-Upload
+      - Node
+      - Node-Carrier
+      - Postal-Code-Timezone
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: item
+    secrets: inherit
+  Promise-Sourcing-Rule:
+    needs:
+      - Calendar
+      - Carrier
+      - Data-Upload
+      - Node
+      - Node-Carrier
+      - Postal-Code-Timezone
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: promise-sourcing-rule
+    secrets: inherit
+  Service-Inventory:
+    needs:
+      - Calendar
+      - Carrier
+      - Data-Upload
+      - Node
+      - Node-Carrier
+      - Postal-Code-Timezone
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: service-inventory
+    secrets: inherit
+  Transit:
+    needs:
+      - Calendar
+      - Carrier
+      - Data-Upload
+      - Node
+      - Node-Carrier
+      - Postal-Code-Timezone
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: transit
+    secrets: inherit
+  Weightage-Configuration:
+    needs:
+      - Calendar
+      - Carrier
+      - Data-Upload
+      - Node
+      - Node-Carrier
+      - Postal-Code-Timezone
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: weightage-configuration
+    secrets: inherit
+

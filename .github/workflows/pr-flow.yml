@@ -10,21 +10,41 @@ on:
 jobs:
   PR-CHECK:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      issues: read
+      checks: write
+      pull-requests: write
     steps:
     - uses: actions/checkout@v3
+    - uses: aws-actions/setup-sam@v1
+    - uses: azure/setup-kubectl@v2.0
     - uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: 11
         cache: 'gradle'
+    - uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE }}
+        role-session-name: git-actions-pipeline
+        aws-region: us-east-1
     - name: PR-BUILD
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        BRANCH: ${{ github.base_ref }}
       run: |
-        bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain -p ${{ inputs.module }}
-        bash ./gradlew -Pbuild_target=SNAPSHOT spotlessApply spotbugsMain test jacocoTestReport
-        bash ./gradlew -Pbuild_target=SNAPSHOT dependencyCheckAggregate --info
-        bash ./gradlew -Pbuild_target=SNAPSHOT sonarqube -Dsonar.login=$SONAR_TOKEN -Dsonar.pullrequest.branch=${{ github.head_ref }} -Dsonar.pullrequest.base=development -Dsonar.pullrequest.key=${{ github.event.number }} showSonarQubeLink --info
+        export BUILD_TARGET="SNAPSHOT"
+        if [ $BRANCH == 'hotfix' ]; then
+          export BUILD_TARGET="HOTFIX"
+        fi
+        bash ./gradlew -Pbuild_target=$BUILD_TARGET clean build jacocoTestReport spotlessApply spotbugsMain -p ${{ inputs.module }}
+        bash ./gradlew -Pbuild_target=$BUILD_TARGET spotlessApply spotbugsMain test jacocoTestReport
+        bash ./gradlew -Pbuild_target=$BUILD_TARGET dependencyCheckAggregate --info
+        aws eks update-kubeconfig --name dev-eks-cluster --region us-east-1 && kubectl port-forward pod/sonarqube-89-community-0 9000:9000 &
+        bash ./gradlew -Pbuild_target=$BUILD_TARGET sonarqube -Dsonar.login=$SONAR_TOKEN -Dsonar.pullrequest.branch=${{ github.head_ref }} -Dsonar.pullrequest.base=development -Dsonar.pullrequest.key=${{ github.event.number }} showSonarQubeLink --info
+        fuser -k 9000/tcp
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1
       if: always()

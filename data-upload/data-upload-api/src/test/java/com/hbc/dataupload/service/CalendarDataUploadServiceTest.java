@@ -47,7 +47,7 @@ class CalendarDataUploadServiceTest {
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
     BaseResponse<CalendarResponse> baseResponse = testUtil.getBaseResponseOfCalendar();
-    when(calendarFeign.handleCreateCalendar(any())).thenReturn(baseResponse);
+    when(calendarFeign.createCalendar(any())).thenReturn(baseResponse);
 
     ResponseEntity<BaseResponse<String>> response =
         calendarDataUploadService.uploadCalendarData(absolutePath);
@@ -168,7 +168,7 @@ class CalendarDataUploadServiceTest {
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
     BaseResponse<CalendarResponse> baseResponse = testUtil.getBaseResponseOfCalendar();
-    when(calendarFeign.handleCreateCalendar(any())).thenReturn(baseResponse);
+    when(calendarFeign.createCalendar(any())).thenReturn(baseResponse);
 
     ResponseEntity<BaseResponse<String>> response =
         calendarDataUploadService.uploadCalendarData(absolutePath);

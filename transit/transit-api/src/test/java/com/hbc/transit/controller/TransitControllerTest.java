@@ -8,11 +8,14 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.transit.TestUtil;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.transit.exception.TransitDomainException;
 import com.hbc.transit.service.TransitService;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -105,6 +108,40 @@ class TransitControllerTest {
   }
 
   @Test
+  void updateTransitBufferDetailsTest() throws TransitDomainException, CommonServiceException {
+    TransitBufferCreationRequest transitBufferCreationRequest = new TransitBufferCreationRequest();
+    transitBufferCreationRequest.setBufferDays(3.0);
+    when(transitService.updateTransitBufferDetails(any(TransitBufferCreationRequest.class)))
+        .thenReturn(testUtil.getTransitResponse2(5.0));
+
+    ResponseEntity<BaseResponse<TransitResponse>> responseEntity =
+        transitController.updateTransitBufferDetails(transitBufferCreationRequest);
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals(
+        testUtil.getTransitResponse2(5.0), responseEntity.getBody().getPayload());
+
+    verify(transitService, times(1)).updateTransitBufferDetails(any());
+  }
+
+  @Test
+  void updateTransitBufferDetailsExceptionTest()
+      throws TransitDomainException, CommonServiceException {
+    TransitBufferCreationRequest transitBufferCreationRequest = new TransitBufferCreationRequest();
+    transitBufferCreationRequest.setBufferDays(3.0);
+    when(transitService.updateTransitBufferDetails(any(TransitBufferCreationRequest.class)))
+        .thenThrow(new RuntimeException("Failed to update transit buffer details"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            Exception.class,
+            () -> transitController.updateTransitBufferDetails(transitBufferCreationRequest));
+    Assertions.assertEquals("Failed to update transit buffer details", exception.getMessage());
+
+    verify(transitService, times(1)).updateTransitBufferDetails(any());
+  }
+
+  @Test
   void updateTransitDetailsTest() throws TransitDomainException, CommonServiceException {
     TransitDataUpdationRequest transitDataUpdationRequest = new TransitDataUpdationRequest();
     transitDataUpdationRequest.setTransitDays(13.5F);
@@ -186,5 +223,84 @@ class TransitControllerTest {
     Assertions.assertEquals("Failed to delete transit details", exception.getMessage());
 
     verify(transitService, times(1)).deleteTransitDetails(any(), any(), any(), any());
+  }
+
+  @Test
+  void getTransitDetailsListTest() throws TransitDomainException {
+    when(transitService.getListOfTransitDetails(any(), any(), any()))
+        .thenReturn(List.of(testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS)));
+
+    ResponseEntity<BaseResponse<List<TransitResponse>>> responseEntity =
+        transitController.getTransitDetailsList(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE, List.of(TestUtil.SOURCE_GEOZONE));
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals(
+        testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS),
+        responseEntity.getBody().getPayload().get(0));
+
+    verify(transitService, times(1)).getListOfTransitDetails(any(), any(), any());
+  }
+
+  @Test
+  void getTransitDetailsListTestException() throws TransitDomainException {
+    when(transitService.getListOfTransitDetails(any(), any(), any()))
+        .thenThrow(new RuntimeException("Failed to fetch transit list"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                transitController.getTransitDetailsList(
+                    TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE, List.of(TestUtil.SOURCE_GEOZONE)));
+    Assertions.assertEquals("Failed to fetch transit list", exception.getMessage());
+
+    verify(transitService, times(1)).getListOfTransitDetails(any(), any(), any());
+  }
+
+  @Test
+  void getTransitTimeEntriesTest() throws TransitDomainException {
+    when(transitService.getTransitTimeEntries(any(), any()))
+        .thenReturn(
+            testUtil.getTransitTimeEntriesDto(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+
+    ResponseEntity<BaseResponse<TransitTimeEntriesDto>> response =
+        transitController.getTransitTimeEntries(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(TestUtil.ORG_ID, response.getBody().getPayload().getOrgId());
+
+    verify(transitService, times(1)).getTransitTimeEntries(any(), any());
+  }
+
+  @Test
+  void getTransitDetailsListForDestinationGeoZoneTest()
+      throws TransitDomainException, CommonServiceException {
+    when(transitService.getListOfTransitDetailsForDestinationGeoZone(any(), any()))
+        .thenReturn(List.of(testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS)));
+
+    BaseResponse<List<TransitResponse>> responseEntity =
+        transitController.getTransitDetailsListForDestinationGeoZone(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
+
+    Assertions.assertEquals(1, responseEntity.getPayload().size());
+    verify(transitService, times(1)).getListOfTransitDetailsForDestinationGeoZone(any(), any());
+  }
+
+  @Test
+  void getTransitDetailsListForDestinationGeoZoneTestException()
+      throws TransitDomainException, CommonServiceException {
+    when(transitService.getListOfTransitDetailsForDestinationGeoZone(any(), any()))
+        .thenThrow(new RuntimeException("Failed to fetch transit list"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                transitController.getTransitDetailsListForDestinationGeoZone(
+                    TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE));
+    Assertions.assertEquals("Failed to fetch transit list", exception.getMessage());
+
+    verify(transitService, times(1)).getListOfTransitDetailsForDestinationGeoZone(any(), any());
   }
 }

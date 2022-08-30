@@ -2,6 +2,7 @@ package com.hbc.node.carrier.controller;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
@@ -39,7 +40,7 @@ public class NodeCarrierController {
     logger.debug("Processing node carrier creation request");
     try {
       var nodeCarrierResponse = nodeCarrierService.createNodeCarrier(nodeCarrierRequest);
-
+      logger.info("Response after creation of node-carrier :{}", nodeCarrierResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Node Carrier successfully created")
@@ -47,6 +48,25 @@ public class NodeCarrierController {
               .build());
     } catch (Exception e) {
       logger.error("Failed to create node carrier details");
+      throw e;
+    }
+  }
+
+  @PutMapping("/buffer")
+  public ResponseEntity<BaseResponse<NodeCarrierResponse>> updateBuffer(
+      @Valid @RequestBody NodeCarrierBufferRequest nodeCarrierBufferRequest)
+      throws NodeCarrierDomainException, CommonServiceException {
+    logger.debug("Processing buffer data creation or updation");
+    try {
+      var nodeCarrierResponse = nodeCarrierService.updateBufferData(nodeCarrierBufferRequest);
+      logger.info("Response after creation or updation of buffer data : {}", nodeCarrierResponse);
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Buffer data successfully added.")
+              .payload(nodeCarrierResponse)
+              .build());
+    } catch (Exception e) {
+      logger.error("Failed to update node carrier buffer details");
       throw e;
     }
   }
@@ -88,7 +108,7 @@ public class NodeCarrierController {
       var nodeCarrierResponse =
           nodeCarrierService.updateNodeCarrier(
               nodeId, orgId, carrierServiceId, serviceOption, nodeCarrierUpdateRequest);
-
+      logger.info("Response after updation of node-carrier :{}", nodeCarrierResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Node Carrier updated successfully")
@@ -111,7 +131,7 @@ public class NodeCarrierController {
     try {
       var nodeCarrierResponse =
           nodeCarrierService.deleteNodeCarrier(nodeId, orgId, carrierServiceId, serviceOption);
-
+      logger.info("Response after deletion of node-carrier :{}", nodeCarrierResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Node Carrier deleted successfully")
@@ -144,5 +164,20 @@ public class NodeCarrierController {
       logger.error("Failed to fetch node carrier details list");
       throw e;
     }
+  }
+
+  @GetMapping("/{nodeId}/{orgId}")
+  public ResponseEntity<BaseResponse<List<NodeCarrierResponse>>> getNodeCarrierList(
+      @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId)
+      throws NodeCarrierDomainException {
+    logger.debug("Processing get node carrier for nodeId and orgId");
+    List<NodeCarrierResponse> nodeCarrierResponseList =
+        nodeCarrierService.getNodeCarrierForNodeIdAndOrgId(nodeId, orgId);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier list fetched successfully")
+            .payload(nodeCarrierResponseList)
+            .build());
   }
 }

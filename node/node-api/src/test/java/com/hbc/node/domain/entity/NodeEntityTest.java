@@ -16,17 +16,16 @@ class NodeEntityTest {
     assertNull(nodeEntity.getBopisEligible());
     assertNull(nodeEntity.getCity());
     assertNull(nodeEntity.getCountry());
-    assertNull(nodeEntity.getExpressEligible());
     assertNull(nodeEntity.getIsActive());
     assertNull(nodeEntity.getLatitude());
     assertNull(nodeEntity.getLongitude());
     assertNull(nodeEntity.getOrgId());
     assertNull(nodeEntity.getPostalCode());
     assertNull(nodeEntity.getProvince());
-    assertNull(nodeEntity.getSdndEligible());
     assertNull(nodeEntity.getTimezone());
     assertNull(nodeEntity.getShipToHome());
     assertNull(nodeEntity.getStreet());
+    assertNull(nodeEntity.getServiceOptionEligibilities());
   }
 
   @Test

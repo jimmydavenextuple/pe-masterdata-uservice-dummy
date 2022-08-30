@@ -27,14 +27,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/promiseSourcingRule")
+@RequestMapping("/promise-sourcing-rule")
 @RequiredArgsConstructor
 public class PromiseSourcingRuleController {
 
   private static final Logger logger = LoggerFactory.getLogger(PromiseSourcingRuleController.class);
   private final PromiseSourcingRuleService promiseSourcingRuleService;
 
-  @PostMapping("/fetchRules")
+  @PostMapping("/fetch-rules")
   public ResponseEntity<BaseResponse<FetchPromiseSourcingRuleResponse>> fetchSourcingRule(
       @Valid @RequestBody FetchPromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException {
@@ -57,10 +57,13 @@ public class PromiseSourcingRuleController {
       throws PromiseEngineException {
     logger.debug("Processing create Promise Sourcing Rule request");
     try {
+      var promiseSourcingRuleDto =
+          promiseSourcingRuleService.createPromiseSourcingRule(baseRequest);
+      logger.info("Response after creation of promise sourcing rule :{}", promiseSourcingRuleDto);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Promise Sourcing Rule successfully created!")
-              .payload(promiseSourcingRuleService.createPromiseSourcingRule(baseRequest))
+              .payload(promiseSourcingRuleDto)
               .build());
     } catch (Exception e) {
       logger.error("Failed to process create Promise Sourcing Rule request!");
@@ -137,17 +140,14 @@ public class PromiseSourcingRuleController {
       throws PromiseEngineException {
     logger.debug("Processing update Promise Sourcing Rule request");
     try {
+      var promiseSourcingRuleDto =
+          promiseSourcingRuleService.updatePromiseSourcingRule(
+              orgId, serviceOption, destinationGeoZone, allocationRuleId, priority, baseRequest);
+      logger.info("Response after updation of promise sourcing rule :{}", promiseSourcingRuleDto);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Promise Sourcing Rule successfully updated!")
-              .payload(
-                  promiseSourcingRuleService.updatePromiseSourcingRule(
-                      orgId,
-                      serviceOption,
-                      destinationGeoZone,
-                      allocationRuleId,
-                      priority,
-                      baseRequest))
+              .payload(promiseSourcingRuleDto)
               .build());
     } catch (Exception e) {
       logger.error("Failed to process update Promise Sourcing Rule request!");
@@ -166,12 +166,14 @@ public class PromiseSourcingRuleController {
       throws PromiseEngineException {
     logger.debug("Processing delete Promise Sourcing Rule request by sourcingRuleId");
     try {
+      var promiseSourcingRuleDto =
+          promiseSourcingRuleService.deletePromiseSourcingRule(
+              orgId, serviceOption, destinationGeoZone, allocationRuleId, priority);
+      logger.info("Response after deletion of promise sourcing rule :{}", promiseSourcingRuleDto);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Promise Sourcing Rule successfully deleted!")
-              .payload(
-                  promiseSourcingRuleService.deletePromiseSourcingRule(
-                      orgId, serviceOption, destinationGeoZone, allocationRuleId, priority))
+              .payload(promiseSourcingRuleDto)
               .build());
     } catch (Exception e) {
       logger.error("Failed to process delete Promise Sourcing Rule request!");

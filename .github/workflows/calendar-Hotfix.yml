@@ -1,0 +1,21 @@
+name: CALENDAR HOTFIX
+
+on:
+  push:
+    branches: [ hotfix ]
+    paths:
+      - "calendar/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+jobs:
+
+  Build-Deploy:
+    uses: ./.github/workflows/Build&Deploy_Hotfix.yml
+    with:
+      module: calendar
+    secrets: inherit
+
+
+
+

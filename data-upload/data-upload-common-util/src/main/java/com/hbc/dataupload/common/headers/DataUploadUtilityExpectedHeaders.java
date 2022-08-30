@@ -26,6 +26,7 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.KEY
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LAST_PICKUP_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NEXTDAY_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
@@ -81,7 +82,8 @@ public class DataUploadUtilityExpectedHeaders {
                     BOPIS_ELIGIBLE,
                     EXPRESS_ELIGIBLE,
                     NODE_TYPE,
-                    IS_ACTIVE)),
+                    IS_ACTIVE,
+                    NEXTDAY_ELIGIBLE)),
             Map.entry(
                 "node-carrier",
                 List.of(

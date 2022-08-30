@@ -6,14 +6,17 @@ import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.LAT
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.LONGITUDE;
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.ORG_ID;
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX_2;
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.STATE;
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.TIME_ZONE;
 
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
 import com.hbc.postal.code.timezone.domain.mapper.PostalCodeTimezoneMapper;
+import java.util.List;
 import org.mapstruct.factory.Mappers;
 
 public class TestUtil {
@@ -59,6 +62,13 @@ public class TestUtil {
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .timeZone(TIME_ZONE)
+        .build();
+  }
+
+  public PostalCodePrefixDto getPostalCodePrefixDto() {
+    return PostalCodePrefixDto.builder()
+        .state(STATE)
+        .postalCodePrefix(List.of(POSTAL_CODE_PREFIX, POSTAL_CODE_PREFIX_2))
         .build();
   }
 }

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class NodeCarrierDataUploadController {
   private final NodeCarrierDataUploadService nodeCarrierDataUploadService;
 
-  @PostMapping("/node/carrier")
+  @PostMapping("/node-carrier")
   public ResponseEntity<BaseResponse<String>> uploadNodeCarrierData(
       @NotBlank @RequestParam String fileUri) throws IOException, CommonServiceException {
     log.debug("Processing upload Node Carrier Data request");

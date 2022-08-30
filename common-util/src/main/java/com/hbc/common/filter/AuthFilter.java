@@ -19,12 +19,15 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@Order(Ordered.HIGHEST_PRECEDENCE - 1)
 public class AuthFilter implements Filter {
   private final AuthProperties authProperties;
 
@@ -37,11 +40,12 @@ public class AuthFilter implements Filter {
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
     log.debug("-----Inside auth filter-----");
-    HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+    var httpServletRequest = (HttpServletRequest) request;
     log.debug("Request URL: {}", httpServletRequest.getRequestURL());
 
     if (authProperties.isFilterEnabled()
-        && !httpServletRequest.getRequestURI().startsWith("/actuator")) {
+        && !httpServletRequest.getRequestURI().startsWith("/actuator")
+        && !"options".equalsIgnoreCase(httpServletRequest.getMethod())) {
       try {
 
         // Clean previous context
@@ -65,12 +69,11 @@ public class AuthFilter implements Filter {
         } else {
           throw new AuthFilterException("Verification failed");
         }
-      } catch (AuthFilterException e) {
-        log.error(
-            "Authentication failed for the request: {}", httpServletRequest.getRequestURL(), e);
-        throw e;
       } catch (Exception e) {
-        log.error("Error while getting the response", e);
+        log.error(
+            "Error while getting the response for the url: {}",
+            httpServletRequest.getRequestURL(),
+            e);
         throw e;
       }
     } else {
@@ -83,7 +86,7 @@ public class AuthFilter implements Filter {
       // Claims check
       Map<String, String> claimsMap = authProperties.getClaims();
       for (String claim : claimsMap.keySet()) {
-        String userPassedClaimValue = claims.getBody().get(claim).toString();
+        var userPassedClaimValue = claims.getBody().get(claim).toString();
         log.debug("--------Claim {}: {}------", claim, userPassedClaimValue);
         String actualClaimValue = authProperties.getClaims().get(claim);
         if (!actualClaimValue.equals(userPassedClaimValue)) {
@@ -92,7 +95,7 @@ public class AuthFilter implements Filter {
       }
 
       // Issuer check
-      String issuerString = claims.getBody().getIssuer();
+      var issuerString = claims.getBody().getIssuer();
       log.debug("--------Issuer extracted from claims: {}------", issuerString);
       return authProperties.getIssuer().equals(issuerString);
     } catch (NullPointerException e) {
@@ -102,13 +105,13 @@ public class AuthFilter implements Filter {
 
   private Jwt<? extends Header, Claims> getAllClaimsFromToken(String token) {
     int i = token.lastIndexOf('.');
-    String withoutSignature = token.substring(0, i + 1);
+    var withoutSignature = token.substring(0, i + 1);
     return Jwts.parser().parseClaimsJwt(withoutSignature);
   }
 
   private Optional<String> extractJWTToken(String authorizationHeaderValue) {
     if (!ObjectUtils.isEmpty(authorizationHeaderValue)) {
-      String tokenString = authorizationHeaderValue;
+      var tokenString = authorizationHeaderValue;
       if (authorizationHeaderValue
           .toLowerCase(Locale.ROOT)
           .startsWith("Bearer ".toLowerCase(Locale.ROOT))) {

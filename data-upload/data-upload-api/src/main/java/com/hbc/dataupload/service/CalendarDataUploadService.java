@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +60,7 @@ public class CalendarDataUploadService {
 
   public ResponseEntity<BaseResponse<String>> uploadCalendarData(String fileUri)
       throws CommonServiceException, IOException {
-    Path path = DataUploadUtil.getPath(basePath, fileUri);
+    var path = DataUploadUtil.getPath(basePath, fileUri);
 
     DataUploadUtil.validateFileType(fileUri, CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE);
     DataUploadUtil.validateFileSize(
@@ -74,13 +73,13 @@ public class CalendarDataUploadService {
   }
 
   private Map<String, Boolean> csvReader(Path path) throws IOException, CommonServiceException {
-    boolean isAllFailedForCalendar = true;
-    boolean isAllPassedForCalendar = true;
-    boolean calendarResult = false;
-    ObjectMapper mapper = new ObjectMapper();
+    var isAllFailedForCalendar = true;
+    var isAllPassedForCalendar = true;
+    var calendarResult = false;
+    var mapper = new ObjectMapper();
 
     try (Reader reader = Files.newBufferedReader(path);
-        CSVParser csvParser = DataUploadUtil.getCSVParserWithSetQuoteMode(reader)) {
+        var csvParser = DataUploadUtil.getCSVParserWithSetQuoteMode(reader)) {
       DataUploadUtil.compareHeaders(
           csvParser, "calendar", CALENDAR_DATA_UPLOAD_INVALID_FILE_HEADERS);
 
@@ -92,19 +91,19 @@ public class CalendarDataUploadService {
           String calendarId = csvRecord.get(CALENDAR_ID);
           String orgId = csvRecord.get(ORG_ID);
           String description = csvRecord.get(DESCRIPTION);
-          Boolean isMondayWorking = Boolean.valueOf(csvRecord.get(IS_MONDAY_WORKING));
-          Boolean isTuesdayWorking = Boolean.valueOf(csvRecord.get(IS_TUESDAY_WORKING));
-          Boolean isWednesdayWorking = Boolean.valueOf(csvRecord.get(IS_WEDNESDAY_WORKING));
-          Boolean isThursdayWorking = Boolean.valueOf(csvRecord.get(IS_THURSDAY_WORKING));
-          Boolean isFridayWorking = Boolean.valueOf(csvRecord.get(IS_FRIDAY_WORKING));
-          Boolean isSaturdayWorking = Boolean.valueOf(csvRecord.get(IS_SATURDAY_WORKING));
-          Boolean isSundayWorking = Boolean.valueOf(csvRecord.get(IS_SUNDAY_WORKING));
+          var isMondayWorking = Boolean.valueOf(csvRecord.get(IS_MONDAY_WORKING));
+          var isTuesdayWorking = Boolean.valueOf(csvRecord.get(IS_TUESDAY_WORKING));
+          var isWednesdayWorking = Boolean.valueOf(csvRecord.get(IS_WEDNESDAY_WORKING));
+          var isThursdayWorking = Boolean.valueOf(csvRecord.get(IS_THURSDAY_WORKING));
+          var isFridayWorking = Boolean.valueOf(csvRecord.get(IS_FRIDAY_WORKING));
+          var isSaturdayWorking = Boolean.valueOf(csvRecord.get(IS_SATURDAY_WORKING));
+          var isSundayWorking = Boolean.valueOf(csvRecord.get(IS_SUNDAY_WORKING));
           List<ExceptionDays> exceptionDaysList =
               mapper.readValue(
                   csvRecord.get(EXCEPTION_DAYS), new TypeReference<List<ExceptionDays>>() {});
 
           if (action.equals(CREATE)) {
-            CalendarRequest calendarRequest =
+            var calendarRequest =
                 CalendarRequest.builder()
                     .calendarId(calendarId)
                     .description(description)
@@ -119,7 +118,7 @@ public class CalendarDataUploadService {
                     .exceptionDays(exceptionDaysList)
                     .build();
             BaseResponse<CalendarResponse> baseResponse =
-                calendarFeign.handleCreateCalendar(calendarRequest);
+                calendarFeign.createCalendar(calendarRequest);
             calendarResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else {

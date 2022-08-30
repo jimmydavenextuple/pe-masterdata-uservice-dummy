@@ -5,8 +5,10 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
+import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.service.ItemService;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -56,11 +59,12 @@ public class ItemController {
       throws ItemDomainException, CommonServiceException {
     logger.debug("Processing update item details");
     try {
-
+      var itemResponse = itemService.updateItemDetails(itemId, orgId, uom, itemUpdationRequest);
+      logger.info("Response after updating of item data :{}", itemResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item details updated successfully")
-              .payload(itemService.updateItemDetails(itemId, orgId, uom, itemUpdationRequest))
+              .payload(itemResponse)
               .build());
     } catch (Exception e) {
       logger.error("Failed to update item details");
@@ -96,14 +100,32 @@ public class ItemController {
       throws ItemDomainException, CommonServiceException {
     logger.debug("Processing delete item");
     try {
+      var itemResponse = itemService.deleteItem(itemId, orgId, uom);
+      logger.info("Response after deleting of item data :{}", itemResponse);
 
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item deleted successfully")
-              .payload(itemService.deleteItem(itemId, orgId, uom))
+              .payload(itemResponse)
               .build());
     } catch (Exception e) {
       logger.error("Failed to delete item");
+      throw e;
+    }
+  }
+
+  @GetMapping("/{orgId}/{uom}")
+  public List<ItemResponse> getItemList(
+      @NotBlank @PathVariable String orgId,
+      @NotBlank @PathVariable String uom,
+      @NotBlank @RequestParam List<String> itemList)
+      throws CommonServiceException, ItemBatchingDomainException {
+    logger.debug("Processing get item details");
+    try {
+
+      return itemService.getItemList(itemList, orgId, uom);
+    } catch (Exception e) {
+      logger.error("Failed to fetch list of item details");
       throw e;
     }
   }

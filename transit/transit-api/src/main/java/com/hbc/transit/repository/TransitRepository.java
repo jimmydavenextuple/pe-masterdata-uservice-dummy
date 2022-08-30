@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TransitRepository extends JpaRepository<TransitEntity, String> {
-
   @Query(
       value =
           "SELECT * FROM transit_data t WHERE t.org_id = ?1 AND t.source_geozone = ?2 AND t.destination_geozone = ?3 AND ( t.carrier_service_id = ?4 OR t.carrier_service_id = ?5 OR t.carrier_service_id = 'ALL')",
@@ -23,4 +22,19 @@ public interface TransitRepository extends JpaRepository<TransitEntity, String> 
 
   Optional<TransitEntity> findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
       String orgId, String sourceGeozone, String destinationGeozone, String carrierServiceId);
+
+  @Query(
+      value =
+          "SELECT * FROM transit_data t WHERE t.org_id = ?1 AND t.destination_geozone = ?2  AND t.source_geozone IN ?3 ",
+      nativeQuery = true)
+  List<TransitEntity> findByOrgIdAndDestinationGeozoneAndSourceGeoZones(
+      String orgId, String destinationGeozone, List<String> sourceGeozones);
+
+  @Query(
+      value =
+          "SELECT COUNT(*) FROM transit_data t WHERE t.org_id = ?1 AND t.carrier_service_id = ?2",
+      nativeQuery = true)
+  Integer findTransitCountByOrgIdAndCarrierServiceId(String orgId, String carrierServiceId);
+
+  List<TransitEntity> findByOrgIdAndDestinationGeozone(String orgId, String destinationGeozone);
 }

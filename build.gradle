@@ -47,7 +47,7 @@ bootJar {
 }
 
 group = 'com.hbc'
-version = "1.0.0-${build_target}"
+version = "1.1.0-${build_target}"
 
 subprojects {
     apply from: "$rootProject.projectDir/dependencies.gradle"
@@ -67,7 +67,7 @@ subprojects {
     apply plugin: "org.sonatype.gradle.plugins.scan"
 
     group = 'com.hbc'
-    version = "1.0.0-${build_target}"
+    version = "1.1.0-${build_target}"
 
     sourceCompatibility = "${sourceJdkVersion}"
     targetCompatibility = "${targetJdkVersion}"
@@ -134,6 +134,10 @@ subprojects {
         //Caffeine
         implementation "org.springframework.boot:spring-boot-starter-cache"
         implementation "com.github.ben-manes.caffeine:caffeine"
+
+        //micrometer new relic
+        implementation 'com.newrelic.telemetry:micrometer-registry-new-relic:0.9.0'
+        implementation 'io.micrometer:micrometer-core:1.6.4'
 
     }
 

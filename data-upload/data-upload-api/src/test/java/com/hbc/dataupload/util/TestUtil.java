@@ -6,12 +6,15 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CAR
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESTINATION_GEO_ZONE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXPRESS_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NEXTDAY_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SDND_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_NODES;
@@ -44,16 +47,27 @@ import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.pojo.ExceptionDays;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
+import com.hbc.common.base.PagePayload;
+import com.hbc.common.base.PagePayload.Pagination;
+import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.dataupload.domain.dto.CarrierTransitDto;
+import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
+import com.hbc.dataupload.domain.pojo.CarrierServiceCalendars;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -68,9 +82,13 @@ public class TestUtil {
   public static final String SHIPPING_STAGE = "ALL";
   public static final String EFFECTIVE_DATE = "2022-01-01";
   public static final String DESCRIPTION = "Yearly Calendar";
+  private static final String NODE_ID_2 = "Node_Id_02";
+  private static final String CARRIER_SERVICE_ID_2 = "";
+  private static final String SERVICE_OPTION_2 = "SDND";
   public static String SOURCE_GEOZONE = "SGZ";
   public static String DESTINATION_GEOZONE = "DGZ";
   public static Float TRANSIT_DAYS = Float.valueOf(1);
+  private static final String CARRIER_ID_2 = "Carrier_Id_2";
 
   private NodeCarrierResponse getNodeCarrierResponse() {
     return NodeCarrierResponse.builder()
@@ -113,17 +131,23 @@ public class TestUtil {
         .bopisEligible(true)
         .city(CITY)
         .country(COUNTRY)
-        .expressEligible(false)
         .nodeType(NODE_TYPE)
         .isActive(true)
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .postalCode(POSTAL_CODE)
-        .sdndEligible(false)
+        .serviceOptionEligibilities(getServiceOptionEligibilities())
         .province(PROVINCE)
         .shipToHome(true)
         .timezone(TIME_ZONE)
         .build();
+  }
+
+  public Map<String, Boolean> getServiceOptionEligibilities() {
+    return Map.of(
+        SDND_ELIGIBLE, Boolean.TRUE,
+        EXPRESS_ELIGIBLE, Boolean.TRUE,
+        NEXTDAY_ELIGIBLE, Boolean.TRUE);
   }
 
   public BaseResponse<NodeResponse> getSuccessfulBaseResponseForNode() {
@@ -198,6 +222,17 @@ public class TestUtil {
     return CarrierServiceResponse.builder()
         .orgId(ORG_ID)
         .carrierId(CARRIER_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .carrierName(CARRIER_NAME)
+        .serviceName(SERVICE_NAME)
+        .serviceOptions(SERVICE_OPTIONS)
+        .build();
+  }
+
+  public CarrierServiceResponse getCarrierResponse2() {
+    return CarrierServiceResponse.builder()
+        .orgId(ORG_ID)
+        .carrierId(CARRIER_ID_2)
         .carrierServiceId(CARRIER_SERVICE_ID)
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
@@ -448,5 +483,199 @@ public class TestUtil {
             getTransitResponse(
                 ORG_ID, SOURCE_GEOZONE, DESTINATION_GEOZONE, CARRIER_SERVICE_ID, TRANSIT_DAYS))
         .build();
+  }
+
+  public BaseResponse<PagePayload<NodeDto>> getNodeListPaginationBaseResponse() {
+    return BaseResponse.builder()
+        .message("Carrier Service List fetched successfully")
+        .payload(getNodeListPaginationResponse())
+        .build();
+  }
+
+  private PagePayload<NodeDto> getNodeListPaginationResponse() {
+    PagePayload<NodeDto> pagePayload = new PagePayload<>();
+
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords(2);
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(1);
+    pagination.setSortOrder("ASC");
+    pagination.setSortBy("nodeId");
+    pagination.setPrevious(null);
+    pagination.setNext("/test/{orgId}?pageNo=2,pageSize=1");
+    pagePayload.setPagination(pagination);
+    pagePayload.setData(Arrays.asList(getNodeDto(NODE_ID), getNodeDto(NODE_ID_2)));
+
+    return pagePayload;
+  }
+
+  private NodeDto getNodeDto(String nodeId) {
+    return NodeDto.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .street(STREET)
+        .city(CITY)
+        .nodeType(NODE_TYPE)
+        .province(PROVINCE)
+        .build();
+  }
+
+  public BaseResponse<List<NodeCarrierResponse>> getBaseResponseOfNodeCarrierListResponse() {
+    return BaseResponse.builder()
+        .message("Node Carrier List fetched successfully")
+        .success(true)
+        .payload(
+            Arrays.asList(
+                getNodeCarrierResponse2(CARRIER_SERVICE_ID_2, SERVICE_OPTION),
+                getNodeCarrierResponse2(CARRIER_SERVICE_ID_2, SERVICE_OPTION_2)))
+        .build();
+  }
+
+  private NodeCarrierResponse getNodeCarrierResponse2(
+      String carrierServiceId, String serviceOption) {
+    return NodeCarrierResponse.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(carrierServiceId)
+        .serviceOption(serviceOption)
+        .processingTime(PROCESSING_TIME)
+        .lastPickupTime(LAST_PICK_UP_TIME)
+        .build();
+  }
+
+  public PagePayload<NodeServiceOptionDto> getNodeServiceOptionPagePayload(Integer pageNo) {
+    PagePayload<NodeServiceOptionDto> nodeServiceOptionDtoPagePayload = new PagePayload<>();
+
+    NodeServiceOptionDto nodeServiceOptionDto1 = getNodeServiceOptionDto(NODE_ID);
+    NodeServiceOptionDto nodeServiceOptionDto2 = getNodeServiceOptionDto(NODE_ID_2);
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(4);
+    nodeServiceOptionDtoPagePayload.setPagination(pagination);
+    nodeServiceOptionDtoPagePayload.setData(
+        Arrays.asList(nodeServiceOptionDto1, nodeServiceOptionDto2));
+
+    return nodeServiceOptionDtoPagePayload;
+  }
+
+  private NodeServiceOptionDto getNodeServiceOptionDto(String nodeId) {
+    Map<String, Double> processingTime = new HashMap<>();
+    processingTime.put("SDND", 12.0);
+    processingTime.put("Standard", 4.0);
+
+    return NodeServiceOptionDto.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .serviceOptions(Arrays.asList("SDND", "Standard"))
+        .street(STREET)
+        .nodeType(NODE_TYPE)
+        .processingTime(processingTime)
+        .isActive(true)
+        .build();
+  }
+
+  public PageParams getPageParams(
+      Optional<Integer> pageNo,
+      Optional<Integer> pageSize,
+      Optional<String> sortBy,
+      Optional<String> sortOrder) {
+    PageParams pageParams = new PageParams();
+    pageParams.setPageNo(pageNo);
+    pageParams.setPageSize(pageSize);
+    pageParams.setSortBy(sortBy);
+    pageParams.setSortOrder(sortOrder);
+    return pageParams;
+  }
+
+  public BaseResponse<PagePayload<CarrierServiceResponse>>
+      getCarrierServiceListWithPaginationBaseResponse() {
+    return BaseResponse.builder()
+        .message("Carrier Service List fetched successfully")
+        .payload(getCarrierServiceListWithPaginationResponse())
+        .build();
+  }
+
+  private PagePayload<CarrierServiceResponse> getCarrierServiceListWithPaginationResponse() {
+    PagePayload<CarrierServiceResponse> pagePayload = new PagePayload<>();
+
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords(2);
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(1);
+    pagination.setSortOrder("ASC");
+    pagination.setSortBy("carrierId");
+    pagination.setPrevious(null);
+    pagination.setNext("/test/{orgId}?pageNo=2,pageSize=1");
+    pagePayload.setPagination(pagination);
+    pagePayload.setData(Arrays.asList(getCarrierResponse(), getCarrierResponse2()));
+
+    return pagePayload;
+  }
+
+  public BaseResponse<List<CarrierServiceCalendarResponse>>
+      getCarrierServiceCalendarBaseResponse() {
+    return BaseResponse.builder()
+        .message("Carrier Calendar fetched successfully")
+        .payload(Arrays.asList(getCarrierCalendarResponse()))
+        .build();
+  }
+
+  public BaseResponse<TransitTimeEntriesDto> getTransitTimeEntriesDtoBaseResponse(
+      Integer transitRecords) {
+    return BaseResponse.builder()
+        .message("Transit Entries fetched successfully")
+        .payload(getTransitTimeEntriesDto(transitRecords))
+        .build();
+  }
+
+  private TransitTimeEntriesDto getTransitTimeEntriesDto(Integer transitRecords) {
+    return TransitTimeEntriesDto.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .totalRecords(transitRecords)
+        .build();
+  }
+
+  public PagePayload<CarrierTransitDto> getCarrierTransitPagePayload(Integer pageNo) {
+    PagePayload<CarrierTransitDto> carrierTransitDtoPagePayload = new PagePayload<>();
+
+    CarrierTransitDto carrierTransitDto1 = getCarrierTransitDto(CARRIER_ID);
+    CarrierTransitDto carrierTransitDto2 = getCarrierTransitDto(CARRIER_ID_2);
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(4);
+    carrierTransitDtoPagePayload.setPagination(pagination);
+    carrierTransitDtoPagePayload.setData(Arrays.asList(carrierTransitDto1, carrierTransitDto2));
+
+    return carrierTransitDtoPagePayload;
+  }
+
+  private CarrierTransitDto getCarrierTransitDto(String carrierId) {
+    return CarrierTransitDto.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .carrierId(carrierId)
+        .isCarrierActive(true)
+        .isCalendarAssigned(true)
+        .carrierName(CARRIER_NAME)
+        .serviceName(SERVICE_NAME)
+        .carrierServiceCalendars(
+            Arrays.asList(
+                getCarrierServiceCalendars(CALENDAR_ID, EFFECTIVE_DATE),
+                getCarrierServiceCalendars(CARRIER_ID_2, EFFECTIVE_DATE)))
+        .build();
+  }
+
+  private CarrierServiceCalendars getCarrierServiceCalendars(
+      String calendarId, String effectiveDate) {
+    CarrierServiceCalendars carrierServiceCalendars = new CarrierServiceCalendars();
+    carrierServiceCalendars.setCalendarId(calendarId);
+    carrierServiceCalendars.setEffectiveDate(effectiveDate);
+    return carrierServiceCalendars;
   }
 }

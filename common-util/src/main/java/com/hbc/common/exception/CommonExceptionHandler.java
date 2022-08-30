@@ -1,14 +1,17 @@
 package com.hbc.common.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.hbc.common.context.Logger;
+import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
 import com.hbc.common.response.error.FieldError;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
+import java.util.Map;
 import java.util.regex.Pattern;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,7 +23,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Component
 @ControllerAdvice
 public class CommonExceptionHandler {
-
+  private static final Map<String, String> EMPTY_MAP = Collections.emptyMap();
+  private static Logger slf4jLogger = LoggerFactory.getLogger(CommonExceptionHandler.class);
   private static final Pattern ENUM_MSG =
       Pattern.compile("values accepted for Enum class: \\[[^\\]]*\\]", Pattern.MULTILINE);
   private static final Pattern DATE_MSG =
@@ -41,8 +45,7 @@ public class CommonExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
       MethodArgumentNotValidException e) {
-    ErrorResponse.ErrorResponseBuilder builder =
-        new ErrorResponse.ErrorResponseBuilder(ErrorType.ERROR, 0x000002);
+    var builder = new ErrorResponse.ErrorResponseBuilder(ErrorType.ERROR, 0x000002);
     builder.message(BAD_REQUEST);
     e.getBindingResult()
         .getFieldErrors()
@@ -59,12 +62,13 @@ public class CommonExceptionHandler {
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<ErrorResponse> handleJsonErrors(HttpMessageNotReadableException exception) {
+    slf4jLogger.error(exception, exception.getMessage(), EMPTY_MAP);
     Throwable cause = exception.getCause();
     if (cause instanceof InvalidFormatException) {
       InvalidFormatException invalidFormatCause = (InvalidFormatException) cause;
       String message = invalidFormatCause.getMessage();
       for (Pattern pattern : PATTERNS_TO_MATCH) {
-        Matcher matcher = pattern.matcher(message);
+        var matcher = pattern.matcher(message);
         if (matcher.find()) {
           message = matcher.group(0);
           break;
@@ -91,6 +95,7 @@ public class CommonExceptionHandler {
 
   @ExceptionHandler(CommonServiceException.class)
   public ResponseEntity<ErrorResponse> handleCommonServiceException(CommonServiceException e) {
+    slf4jLogger.error(e, e.getMessage(), EMPTY_MAP);
     return ResponseEntity.status(e.getHttpStatus())
         .body(
             ErrorResponse.builder(ErrorType.ERROR, e.getErrorCode())
@@ -101,6 +106,7 @@ public class CommonExceptionHandler {
 
   @ExceptionHandler(IOException.class)
   public ResponseEntity<ErrorResponse> handleIOException(IOException e) {
+    slf4jLogger.error(e, e.getMessage(), EMPTY_MAP);
     return ResponseEntity.badRequest()
         .body(
             ErrorResponse.builder(ErrorType.ERROR, 0x2772)
@@ -111,10 +117,18 @@ public class CommonExceptionHandler {
 
   @ExceptionHandler(PromiseEngineException.class)
   public ResponseEntity<ErrorResponse> handlePromiseEngineException(PromiseEngineException e) {
+    slf4jLogger.error(e, e.getMessage(), EMPTY_MAP);
     return ResponseEntity.badRequest()
         .body(
             ErrorResponse.builder(ErrorType.ERROR, 0x000001)
                 .message(e.getMessage() + "[" + e.getExceptionCode().getErrorCode() + "]")
                 .build());
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorResponse> handleRuntimeException(Exception e) {
+    slf4jLogger.error(e, e.getMessage(), EMPTY_MAP);
+    return ResponseEntity.internalServerError()
+        .body(ErrorResponse.builder(ErrorType.ERROR, 0x000001).message(e.getMessage()).build());
   }
 }

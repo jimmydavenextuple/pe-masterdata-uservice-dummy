@@ -1,9 +1,5 @@
 package com.hbc.promise.sourcing.rule.service;
 
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.EXPRESS;
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.SDND;
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.STANDARD;
-
 import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
@@ -18,6 +14,7 @@ import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
 import com.hbc.promise.sourcing.rule.domain.mapper.PromiseSourcingRuleMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,6 +29,7 @@ import org.springframework.util.StringUtils;
 @Service
 @RequiredArgsConstructor
 public class PromiseSourcingRuleService {
+
   private static final Logger logger = LoggerFactory.getLogger(PromiseSourcingRuleService.class);
   private static final PromiseSourcingRuleMapper INSTANCE =
       Mappers.getMapper(PromiseSourcingRuleMapper.class);
@@ -80,40 +78,26 @@ public class PromiseSourcingRuleService {
           "Promise Sourcing Rules not found!");
     }
 
-    var fetchPromiseSourcingRuleResponse = new FetchPromiseSourcingRuleResponse();
-    List<ServiceOptionInfo> serviceOptionsForSdnd = new ArrayList<>();
-    List<ServiceOptionInfo> serviceOptionsForStandard = new ArrayList<>();
-    List<ServiceOptionInfo> serviceOptionsForExpress = new ArrayList<>();
+    // group by service options
+    Map<String, List<ServiceOptionInfo>> serviceOptionPromiseRules =
+        promiseSourcingRuleList.stream()
+            .collect(
+                Collectors.groupingBy(
+                    PromiseSourcingRule::getServiceOption,
+                    Collectors.mapping(this::getServiceOptionInfo, Collectors.toList())));
 
-    promiseSourcingRuleList.forEach(
-        promiseSourcingRule -> {
-          var serviceOptionInfo = getServiceOptionInfo(promiseSourcingRule);
-          switch (promiseSourcingRule.getServiceOption()) {
-            case SDND:
-              {
-                serviceOptionsForSdnd.add(serviceOptionInfo);
-                break;
+    // set an empty list for the service options for which promise rule is not found
+    baseRequest
+        .getServiceOptions()
+        .forEach(
+            x -> {
+              if (!serviceOptionPromiseRules.containsKey(x)) {
+                serviceOptionPromiseRules.put(x, new ArrayList<>());
               }
-            case STANDARD:
-              {
-                serviceOptionsForStandard.add(serviceOptionInfo);
-                break;
-              }
-            case EXPRESS:
-              {
-                serviceOptionsForExpress.add(serviceOptionInfo);
-                break;
-              }
-            default:
-              {
-                logger.error("Invalid service option");
-              }
-          }
-        });
-    fetchPromiseSourcingRuleResponse.setSdnd(serviceOptionsForSdnd);
-    fetchPromiseSourcingRuleResponse.setStandard(serviceOptionsForStandard);
-    fetchPromiseSourcingRuleResponse.setExpress(serviceOptionsForExpress);
-    return fetchPromiseSourcingRuleResponse;
+            });
+    return FetchPromiseSourcingRuleResponse.builder()
+        .serviceOptionSourcingRules(serviceOptionPromiseRules)
+        .build();
   }
 
   /**
@@ -282,7 +266,9 @@ public class PromiseSourcingRuleService {
         INSTANCE.convertToPromiseSourcingRuleEntity(
             getPromiseSourcingRule(
                 orgId, serviceOption, destinationGeoZone, allocationRuleId, priority));
-
+    logger.info(
+        "Response before updation of promise sourcing rule :{}",
+        INSTANCE.convertToPromiseSourcingRuleDto(promiseSourcingRuleFromDB));
     INSTANCE.insertValuesFromUpdatePromiseSourcingRuleRequestToEntity(
         baseRequest, promiseSourcingRuleFromDB);
 
@@ -315,6 +301,9 @@ public class PromiseSourcingRuleService {
         INSTANCE.convertToPromiseSourcingRuleEntity(
             getPromiseSourcingRule(
                 orgId, serviceOption, destinationGeoZone, allocationRuleId, priority));
+    logger.info(
+        "Response before deletion of promise sourcing rule :{}",
+        INSTANCE.convertToPromiseSourcingRuleDto(promiseSourcingRuleFromDB));
     return preparePromiseSourcingRuleDto(
         promiseSourcingRuleDomain.deletePromiseSourcingRule(promiseSourcingRuleFromDB));
   }

@@ -1,9 +1,12 @@
 package com.hbc.transit.domain.feign;
 
 import com.hbc.common.response.BaseResponse;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.validation.Valid;
 
 @FeignClient(
     name = "pe-config-transit",
@@ -44,4 +50,22 @@ public interface TransitFeign {
       @PathVariable(name = "sourceGeozone") String sourceGeozone,
       @PathVariable(name = "destinationGeozone") String destinationGeozone,
       @PathVariable(name = "carrierServiceId") String carrierServiceId);
+
+  @GetMapping("/transit/{orgId}/{destinationGeozone}/")
+  BaseResponse<List<TransitResponse>> getTransitDetailsList(
+      @PathVariable String orgId,
+      @PathVariable String destinationGeozone,
+      @RequestParam List<String> sourceGeozones);
+
+  @GetMapping("/transit/transit-entries/{orgId}/{carrierServiceId}")
+  BaseResponse<TransitTimeEntriesDto> getTransitTimeEntries(
+      @PathVariable String orgId, @PathVariable String carrierServiceId);
+
+  @GetMapping("/transit/{orgId}/{destinationGeozone}/")
+  BaseResponse<List<TransitResponse>> getTransitDetailsListForDestinationGeoZone(
+      @PathVariable String orgId, @PathVariable String destinationGeozone);
+
+  @PutMapping("/transit/buffer")
+  BaseResponse<TransitResponse> updateTransitBufferDetails(
+          @Valid @RequestBody TransitBufferCreationRequest transitBufferCreationRequest);
 }

@@ -8,8 +8,11 @@ import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.mapper.ItemMapper;
 import com.hbc.item.domain.outbound.ItemResponse;
+import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -32,6 +35,7 @@ public class ItemService {
 
   private static final Logger logger = LoggerFactory.getLogger(ItemService.class);
   private static final String ITEM_ID = "itemId";
+  private static final String ITEM_LIST = "itemList";
   private static final String ORG_ID = "orgId";
   private static final String UOM = "uom";
 
@@ -41,6 +45,8 @@ public class ItemService {
   public static final ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
   private static final String ITEM_EXCEPTION_MESSAGE = "Item not found with given details";
+
+  private static final String ITEM_LIST_EXCEPTION_MESSAGE = "Items not found with given details";
 
   public ItemResponse createItem(ItemCreationRequest itemCreationRequest)
       throws ItemDomainException {
@@ -81,11 +87,14 @@ public class ItemService {
       throw new CommonServiceException(
           ITEM_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-
+    logger.info(
+        "Response before updating of item data :{}",
+        INSTANCE.toItemResponse(existingItemEntity.get()));
     INSTANCE.updateItemEntity(itemUpdationRequest, existingItemEntity.get());
     return INSTANCE.toItemResponse(itemDomain.saveItemEntity(existingItemEntity.get()));
   }
 
+  @ReaderDS
   public ItemResponse getItemDetails(String itemId, String orgId, String uom)
       throws ItemDomainException, CommonServiceException {
 
@@ -119,9 +128,29 @@ public class ItemService {
       throw new CommonServiceException(
           ITEM_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-
+    logger.info(
+        "Response before deleting of item data :{}", INSTANCE.toItemResponse(itemEntity.get()));
     var itemResponse = INSTANCE.toItemResponse(itemEntity.get());
     itemDomain.deleteItem(itemEntity.get());
     return itemResponse;
+  }
+
+  public List<ItemResponse> getItemList(List<String> itemList, String orgId, String uom)
+      throws CommonServiceException, ItemBatchingDomainException {
+
+    List<ItemEntity> existingItemEntity =
+        itemDomain.findItemListByItemIdsAndOrgIdAndUom(itemList, orgId, uom);
+
+    if (existingItemEntity.isEmpty()) {
+      logger.error(ITEM_EXCEPTION_MESSAGE);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(ITEM_LIST, FieldError.builder().rejectedValue(itemList).build());
+      errorMap.put(UOM, FieldError.builder().rejectedValue(uom).build());
+      throw new CommonServiceException(
+          ITEM_LIST_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1772, errorMap);
+    }
+
+    return INSTANCE.toItemResponseList(existingItemEntity);
   }
 }
