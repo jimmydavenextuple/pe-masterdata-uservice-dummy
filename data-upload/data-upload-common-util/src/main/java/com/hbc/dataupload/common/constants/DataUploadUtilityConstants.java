@@ -60,4 +60,8 @@ public class DataUploadUtilityConstants {
   public static final String EFFECTIVE_DATE = "effectiveDate";
   public static final String SHIPPING_STAGE = "shippingStage";
   public static final String ACTION_INVALID_MESSAGE = "action type invalid";
+  public static final String BUFFER_HOURS = "bufferHours";
+  public static final String BUFFER_START_DATE = "bufferStartDate";
+  public static final String BUFFER_END_DATE = "bufferEndDate";
+  public static final String BUFFER_DAYS = "bufferDays";
 }
