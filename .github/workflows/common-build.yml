@@ -1,0 +1,19 @@
+name: COMMON BUILD
+
+on:
+  push:
+    branches: [ development, hotfix ]
+    paths:
+      - "common/**"
+      - "manifests/**"
+jobs:
+
+  Build-Publish:
+    uses: ./.github/workflows/build.yml
+    with:
+      module: common
+    secrets: inherit
+
+
+
+
