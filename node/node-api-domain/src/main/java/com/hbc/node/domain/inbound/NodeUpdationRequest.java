@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
 @Data
 @AllArgsConstructor
@@ -16,15 +15,12 @@ import org.hibernate.validator.constraints.Length;
 public class NodeUpdationRequest implements Serializable {
 
   @NotBlank(message = "street can't be blank")
-  @Length(max = 50)
   private String street;
 
   @NotBlank(message = "timezone can't be blank")
-  @Length(max = 50)
   private String timezone;
 
   @NotBlank(message = "city can't be blank")
-  @Length(max = 50)
   private String city;
 
   @NotNull(message = "shipToHome can't be null")
@@ -43,26 +39,20 @@ public class NodeUpdationRequest implements Serializable {
   private Boolean isActive;
 
   @NotBlank(message = "nodeType can't be blank")
-  @Length(max = 50)
   private String nodeType;
 
   @NotBlank(message = "province can't be blank")
-  @Length(max = 50)
   private String province;
 
   @NotBlank(message = "country can't be blank")
-  @Length(max = 50)
   private String country;
 
   @NotBlank(message = "postalCode can't be blank")
-  @Length(max = 50)
   private String postalCode;
 
   @NotBlank(message = "latitude can't be blank")
-  @Length(max = 50)
   private String latitude;
 
   @NotBlank(message = "longitude can't be blank")
-  @Length(max = 50)
   private String longitude;
 }
