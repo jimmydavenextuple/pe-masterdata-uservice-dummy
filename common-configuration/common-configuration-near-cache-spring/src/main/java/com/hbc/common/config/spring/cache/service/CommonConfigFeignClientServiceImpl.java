@@ -4,6 +4,7 @@ import com.hbc.common.config.spring.cache.feign.CommonConfigFeignImpl;
 import com.hbc.common.configuration.api.domain.dto.CommonConfigurationDto;
 import com.hbc.common.configuration.cache.domain.CommonConfigCacheKey;
 import com.hbc.common.configuration.cache.domain.CommonConfigCacheValue;
+import com.hbc.common.configuration.cache.domain.CommonConfigDetails;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.core.cache.mapper.GenericMapper;
 import com.hbc.core.spring.service.AbstractGenericFeignClientServiceImpl;
@@ -29,6 +30,8 @@ public class CommonConfigFeignClientServiceImpl
           BaseResponse<CommonConfigurationDto>>
       commonConfigMapper;
 
+  private static final String UNDEFINED = "UNDEFINED";
+
   @Override
   public CommonConfigCacheValue get(CommonConfigCacheKey key) {
     try {
@@ -36,10 +39,14 @@ public class CommonConfigFeignClientServiceImpl
           commonConfigFeign.fetchValue(key.getOrgId(), key.getType(), key.getKey());
 
       if (Objects.isNull(response.getPayload())) {
-        CommonConfigCacheValue commonConfigCacheValue =
-            CommonConfigCacheValue.builder().commonConfigDetails(null).build();
-        commonConfigCacheValue.setDummy(true);
-        return commonConfigCacheValue;
+        CommonConfigDetails commonConfigDetails =
+            CommonConfigDetails.builder()
+                .orgId(UNDEFINED)
+                .type(UNDEFINED)
+                .key(UNDEFINED)
+                .value(UNDEFINED)
+                .build();
+        return CommonConfigCacheValue.builder().commonConfigDetails(commonConfigDetails).build();
       }
       return commonConfigMapper.responseToCacheValue(response);
     } catch (RuntimeException e) {

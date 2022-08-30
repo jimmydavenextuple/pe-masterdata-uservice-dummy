@@ -46,7 +46,7 @@ class CommonConfigFeignClientServiceImplTest {
         .thenReturn(testUtil.getBaseResponseOfCommonConfiguration());
 
     assertEquals(cacheValue, commonConfigFeignClientService.get(cacheKey));
-    assertFalse(commonConfigFeignClientService.get(cacheKey).isDummy());
+    assertFalse(commonConfigFeignClientService.get(cacheKey).isUndefined());
 
     verify(mapper, times(2)).responseToCacheValue(any());
   }
@@ -58,8 +58,19 @@ class CommonConfigFeignClientServiceImplTest {
     response.setPayload(null);
     when(commonConfigFeign.fetchValue(any(), any(), any())).thenReturn(response);
 
-    assertNull(commonConfigFeignClientService.get(cacheKey).getCommonConfigDetails());
-    assertTrue(commonConfigFeignClientService.get(cacheKey).isDummy());
+    assertEquals(
+        TestUtil.UNDEFINED,
+        commonConfigFeignClientService.get(cacheKey).getCommonConfigDetails().getOrgId());
+    assertEquals(
+        TestUtil.UNDEFINED,
+        commonConfigFeignClientService.get(cacheKey).getCommonConfigDetails().getType());
+    assertEquals(
+        TestUtil.UNDEFINED,
+        commonConfigFeignClientService.get(cacheKey).getCommonConfigDetails().getKey());
+    assertEquals(
+        TestUtil.UNDEFINED,
+        commonConfigFeignClientService.get(cacheKey).getCommonConfigDetails().getValue());
+    assertTrue(commonConfigFeignClientService.get(cacheKey).isUndefined());
 
     verify(mapper, times(0)).responseToCacheValue(any());
   }

@@ -11,4 +11,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class PostalCodeTimezoneCacheValue implements CacheValue {
   PostalCodeTimezoneDto postalCodeTimezoneDto;
+
+  @Override
+  public boolean isUndefined() {
+    return false;
+  }
 }

@@ -12,6 +12,8 @@ public class TestUtil {
   public static final String KEY = "DELIVERY_METHOD";
   public static final String VALUE = "SDND";
 
+  public static final String UNDEFINED = "UNDEFINED";
+
   public CommonConfigCacheValue getCommonConfigCacheValue() {
     CommonConfigDetails commonConfigDetails = getCommonConfigDetails();
     return CommonConfigCacheValue.builder().commonConfigDetails(getCommonConfigDetails()).build();
