@@ -1,6 +1,7 @@
 package com.hbc.node.carrier.domain.feign;
 
 import com.hbc.common.response.BaseResponse;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
@@ -49,4 +50,8 @@ public interface NodeCarrierFeign {
   @GetMapping("/node/carrier/{nodeId}/{orgId}")
   BaseResponse<List<NodeCarrierResponse>> getNodeCarrierList(
       @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId);
+
+  @PostMapping("/node/carrier/buffer")
+  BaseResponse<NodeCarrierResponse> updateBuffer(
+          @Valid @RequestBody NodeCarrierBufferRequest nodeCarrierBufferRequest);
 }
