@@ -24,6 +24,7 @@ public class NodeUpdationRequest implements Serializable {
   @NotBlank(message = "timezone can't be blank")
   private String timezone;
 
+  @NotNull(message = "serviceOptionEligibilities can't be null")
   private Map<String, Boolean> serviceOptionEligibilities;
 
   @NotNull(message = "shipToHome can't be null")
