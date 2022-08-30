@@ -193,12 +193,16 @@ public class TransitController {
   }
 
   @GetMapping("/batch-transit/{orgId}/{destinationGeozone}")
-  public List<TransitResponse> getTransitDetailsListForDestinationGeoZone(
+  public BaseResponse<List<TransitResponse>> getTransitDetailsListForDestinationGeoZone(
       @NotBlank @PathVariable String orgId, @NotBlank @PathVariable String destinationGeozone)
       throws TransitDomainException, CommonServiceException {
     logger.debug("Processing get transit details list");
     try {
-      return transitService.getListOfTransitDetailsForDestinationGeoZone(orgId, destinationGeozone);
+      return BaseResponse.builder()
+          .payload(
+              transitService.getListOfTransitDetailsForDestinationGeoZone(
+                  orgId, destinationGeozone))
+          .build();
     } catch (Exception e) {
       logger.error("Failed to fetch transit details list");
       throw e;
