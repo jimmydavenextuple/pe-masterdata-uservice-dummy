@@ -39,7 +39,7 @@ public class CommonConfigFeignClientServiceImpl
           commonConfigFeign.fetchValue(key.getOrgId(), key.getType(), key.getKey());
 
       if (Objects.isNull(response.getPayload())) {
-        CommonConfigDetails commonConfigDetails =
+        var commonConfigDetails =
             CommonConfigDetails.builder()
                 .orgId(UNDEFINED)
                 .type(UNDEFINED)
