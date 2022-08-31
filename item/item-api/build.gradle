@@ -27,6 +27,7 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-joda"
     implementation "org.springframework.kafka:spring-kafka:2.8.7"
     implementation(project(":common-util"))
+    implementation project(":common:common-postgres")
 }
 
 sourceCompatibility = JavaVersion.VERSION_11

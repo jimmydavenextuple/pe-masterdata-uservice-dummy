@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TransitRepository extends JpaRepository<TransitEntity, String> {
-
   @Query(
       value =
           "SELECT * FROM transit_data t WHERE t.org_id = ?1 AND t.source_geozone = ?2 AND t.destination_geozone = ?3 AND ( t.carrier_service_id = ?4 OR t.carrier_service_id = ?5 OR t.carrier_service_id = 'ALL')",
