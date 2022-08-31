@@ -225,7 +225,8 @@ class CsvUploadUtilityServiceTest {
     MultipartFile csvFile = mock(MultipartFile.class);
 
     String csvFileContent =
-        "orgIds,BAY,,,,,,,,,\n"
+        "#CommentedLine1\n"
+            + "orgIds,BAY,,,,,,,,,\n"
             + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
             + "Destination FSA / Source FSA ->,SFSA1,SFSA2\n"
             + "DFSA1,10,9.96\n"
