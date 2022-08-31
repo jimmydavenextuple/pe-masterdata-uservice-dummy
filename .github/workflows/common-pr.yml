@@ -1,0 +1,15 @@
+name: PR-COMMON
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "common/**"
+    branches: [ development, hotfix ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml
+    with:
+      module: common
+    secrets: inherit
