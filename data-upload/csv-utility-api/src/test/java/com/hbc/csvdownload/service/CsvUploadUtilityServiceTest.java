@@ -34,7 +34,6 @@ class CsvUploadUtilityServiceTest {
 
   @Mock private JobsDashboardClient jobsDashboardClient;
 
-  @Mock private JobService jobService;
   @InjectMocks private CsvUploadUtilityService csvUploadUtilityService;
   @InjectMocks private TestUtil testUtil;
 
@@ -193,7 +192,7 @@ class CsvUploadUtilityServiceTest {
   @Test
   void uploadTransitTimesCsv()
       throws IOException, JobServiceException, CsvFormatValidationFailedException,
-          JobUpdationException, CsvException, JsonParsingException {
+          JobUpdationException, CsvException, JsonParsingException, JobSubmissionException {
     MultipartFile csvFile = mock(MultipartFile.class);
 
     String csvFileContent =
@@ -212,17 +211,13 @@ class CsvUploadUtilityServiceTest {
 
     JobDto jobDto = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
 
-    when(jobService.createJob(TestUtil.ORG_ID, 9, JobTypeEnum.UPLOAD_TRANSIT_TIMES))
-        .thenReturn(jobDto);
-
-    when(jobsDashboardClient.processJobJsonOffline(any(), any(), any(), any()))
+    when(jobsDashboardClient.processJobJsonOffline(any(), any(), any()))
         .thenReturn(BaseResponse.builder().payload(jobDto).build());
 
     String res = csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile);
 
     Assertions.assertFalse(ObjectUtils.isEmpty(res));
-    verify(jobsDashboardClient, times(1)).processJobJsonOffline(any(), any(), any(), any());
-    verify(jobService, times(1)).createJob(TestUtil.ORG_ID, 9, JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+    verify(jobsDashboardClient, times(1)).processJobJsonOffline(any(), any(), any());
   }
 
   @Test
@@ -321,21 +316,47 @@ class CsvUploadUtilityServiceTest {
             new ByteArrayInputStream(csvFileContent.getBytes()),
             new ByteArrayInputStream(csvFileContent.getBytes()));
 
-    JobDto jobDto = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
-
-    when(jobService.createJob(TestUtil.ORG_ID, 9, JobTypeEnum.UPLOAD_TRANSIT_TIMES))
-        .thenReturn(jobDto);
-
-    when(jobsDashboardClient.processJobJsonOffline(any(), any(), any(), any()))
+    when(jobsDashboardClient.processJobJsonOffline(any(), any(), any()))
         .thenThrow(new RuntimeException("Error while updating the job"));
 
     Exception exception =
         Assertions.assertThrows(
-            JobUpdationException.class,
+            JobSubmissionException.class,
             () -> csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile));
 
     Assertions.assertNotNull(exception);
-    verify(jobsDashboardClient, times(1)).processJobJsonOffline(any(), any(), any(), any());
-    verify(jobService, times(1)).createJob(TestUtil.ORG_ID, 9, JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+    verify(jobsDashboardClient, times(1)).processJobJsonOffline(any(), any(), any());
+  }
+
+  @Test
+  void uploadTransitTimesCsvFeignException() throws IOException {
+    MultipartFile csvFile = mock(MultipartFile.class);
+
+    String csvFileContent =
+        "orgId,BAY,,,,,,,,,\n"
+            + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+            + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
+            + "DFSA1,10,9.96,9.96\n"
+            + "DFSA2,10,9,9.9\n"
+            + "DFSA3,10,9,9\n";
+
+    when(csvFile.getInputStream())
+        .thenReturn(
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()));
+
+    when(jobsDashboardClient.processJobJsonOffline(any(), anyString(), anyString()))
+        .thenThrow(
+            new FeignException.BadRequest(
+                "Failed to create job",
+                Request.create(HttpMethod.GET, "", new HashMap<>(), null, null, null),
+                "Failed to create job".getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            JobSubmissionException.class,
+            () -> csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile));
+    Assertions.assertNotNull(exception);
   }
 }

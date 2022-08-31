@@ -13,7 +13,6 @@ import com.hbc.csvdownload.util.CsvUtil;
 import com.hbc.csvdownload.util.StringUtil;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
-import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
@@ -34,7 +33,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,7 +43,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class CsvUploadUtilityService {
 
   private final JobsDashboardClient jobsDashboardClient;
-  private final JobService jobService;
 
   public static final ProcessingLeadTimeMapper INSTANCE =
       Mappers.getMapper(ProcessingLeadTimeMapper.class);
@@ -141,7 +138,7 @@ public class CsvUploadUtilityService {
 
   public String uploadTransitTimesCsv(String orgId, MultipartFile csvFile)
       throws IOException, CsvException, CsvFormatValidationFailedException, JsonParsingException,
-          JobServiceException, JobUpdationException {
+          JobServiceException, JobUpdationException, JobSubmissionException {
 
     // validate file type
 
@@ -189,27 +186,19 @@ public class CsvUploadUtilityService {
 
     var jobRequest = StringUtil.createJobRequest(transitDataCreationRequestList, orgId);
 
-    JobDto job =
-        jobService.createJob(
-            orgId, transitDataCreationRequestList.size(), JobTypeEnum.UPLOAD_TRANSIT_TIMES);
-
-    updateJob(orgId, job.getJobId(), jobRequest, JobTypeEnum.UPLOAD_TRANSIT_TIMES);
-
-    return "Job to upload Transit times received successfully";
-  }
-
-  @Async
-  private void updateJob(String orgId, String jobId, String jobRequest, JobTypeEnum jobType)
-      throws JobUpdationException {
-    log.debug("-- Inside update job method --");
+    /** invoke process jobJsonOffline method via jobsDashboardClient */
     try {
-
-      jobsDashboardClient.processJobJsonOffline(orgId, jobType, jobRequest, jobId);
-      log.debug("Job updated successfully");
+      jobsDashboardClient.processJobJsonOffline(
+          JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, orgId, jobRequest);
+      return "Job to bulk upload transit times is submitted successfully";
+    } catch (FeignException e) {
+      log.error("Feign exception while submitting job", e);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
+      throw new JobSubmissionException(errorResponse.getMessage(), e, orgId);
     } catch (Exception e) {
-      log.error("Error while updating the job to upload transit times", e);
-      throw new JobUpdationException(
-          "Error while updating the job to upload transit times", e, orgId, jobId, jobType.name());
+      log.error("Error while submitting bulk upload transit times job to job framework", e);
+      throw new JobSubmissionException(
+          "Error while submitting bulk upload transit times job to job framework", e, orgId);
     }
   }
 
