@@ -1,8 +1,10 @@
 package com.hbc.item.domain;
 
 import com.hbc.item.domain.entity.ItemEntity;
+import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.repository.ItemRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -51,6 +53,17 @@ public class ItemDomain {
           itemEntity.getItemId(),
           itemEntity.getOrgId(),
           itemEntity.getUom());
+    }
+  }
+
+  public List<ItemEntity> findItemListByItemIdsAndOrgIdAndUom(
+      List<String> itemList, String orgId, String uom) throws ItemBatchingDomainException {
+
+    try {
+      return itemRepository.findByOrgIdAndUomAndItemIdIn(orgId, uom, itemList);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to find item list: {}", itemList);
+      throw new ItemBatchingDomainException("Error while finding item list", itemList, orgId, uom);
     }
   }
 }
