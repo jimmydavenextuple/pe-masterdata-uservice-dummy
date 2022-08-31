@@ -61,7 +61,7 @@ public class DataUploadUtilityConstants {
   public static final String EXCEPTION_DAYS = "exceptionDays";
   public static final String EFFECTIVE_DATE = "effectiveDate";
   public static final String SHIPPING_STAGE = "shippingStage";
-  public static final String ACTION_INVALID_MESSAGE = "action type invalid";
+  public static final String ACTION_INVALID_MESSAGE = "Action type invalid";
   public static final String SELECTION_CRITERIA = "selectionCriteria";
 
   public static final String INVALID_SELECTION_CRITERIA = "Invalid selection criteria";

@@ -1,5 +1,7 @@
 package com.hbc.dataupload.service;
 
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.INVALID_SELECTION_CRITERIA;
 import static com.hbc.dataupload.helper.NodeCarrierSelectionUploadConstants.NODE_CARRIER_SELECTION_DATA_UPLOAD_FAILED;
 import static com.hbc.dataupload.helper.NodeCarrierSelectionUploadConstants.NODE_CARRIER_SELECTION_DATA_UPLOAD_FILE_EMPTY_RECORDS;
 import static com.hbc.dataupload.helper.NodeCarrierSelectionUploadConstants.NODE_CARRIER_SELECTION_DATA_UPLOAD_INVALID_FILE_HEADERS;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -114,7 +117,6 @@ class NodeCarrierSelectionUploadServiceTest {
             "nodeCarrierSelectionUpload",
             "nodeCarrierSelection_happyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
-
     ResponseEntity<BaseResponse<String>> response =
         nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -247,15 +249,11 @@ class NodeCarrierSelectionUploadServiceTest {
             "nodeCarrierSelectionUpload",
             "nodeCarrierSelection_invalidAction.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
-
-    BaseResponse<CommonConfigurationDto> baseResponse =
-        testUtil.getSuccessfulBaseResponseForNodeCarrierSelection();
-    when(commonConfigFeign.createCommonConfiguration(any(CreateCommonConfigurationRequest.class)))
-        .thenReturn(baseResponse);
-
-    ResponseEntity<BaseResponse<String>> response =
-        nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath));
+    assertEquals(ACTION_INVALID_MESSAGE, exception.getMessage());
   }
 
   @Test
@@ -269,12 +267,10 @@ class NodeCarrierSelectionUploadServiceTest {
             "nodeCarrierSelectionUpload",
             "nodeCarrierSelection_invalidSelectionCriteria.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
-    BaseResponse<CommonConfigurationDto> baseResponse =
-        testUtil.getSuccessfulBaseResponseForNodeCarrierSelection();
-    when(commonConfigFeign.createCommonConfiguration(any(CreateCommonConfigurationRequest.class)))
-        .thenReturn(baseResponse);
-    ResponseEntity<BaseResponse<String>> response =
-        nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath));
+    assertEquals(INVALID_SELECTION_CRITERIA, exception.getMessage());
   }
 }

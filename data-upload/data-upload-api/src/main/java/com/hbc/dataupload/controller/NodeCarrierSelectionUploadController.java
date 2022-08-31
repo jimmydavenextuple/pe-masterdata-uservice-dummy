@@ -20,15 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class NodeCarrierSelectionUploadController {
   private final NodeCarrierSelectionUploadService nodeCarrierSelectionUploadService;
 
-  @PostMapping("/node-service-selection-upload")
+  @PostMapping("/node-carrier-selection-upload")
   public ResponseEntity<BaseResponse<String>> nodeCarrierSelectionUpload(
       @NotBlank @RequestParam String fileUri) throws IOException, CommonServiceException {
     log.debug("Processing node service selection upload request");
-    try {
-      return nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(fileUri);
-    } catch (Exception e) {
-      log.error(String.valueOf(e), "Failed to process node service selection upload request!");
-      throw e;
-    }
+    return nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(fileUri);
   }
 }

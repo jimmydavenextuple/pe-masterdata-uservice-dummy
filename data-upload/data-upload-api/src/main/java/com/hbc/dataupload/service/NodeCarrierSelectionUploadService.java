@@ -1,7 +1,6 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DELETE_D;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESTINATION_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.INVALID_SELECTION_CRITERIA;
@@ -21,6 +20,7 @@ import com.hbc.common.configuration.api.domain.feign.CommonConfigFeign;
 import com.hbc.common.configuration.api.domain.inbound.CreateCommonConfigurationRequest;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.dataupload.common.constants.NodeCarrierSelectionPriorityEnum;
 import com.hbc.dataupload.common.utils.DataUploadUtil;
 import java.io.IOException;
 import java.io.Reader;
@@ -78,32 +78,35 @@ public class NodeCarrierSelectionUploadService {
           "node-carrier-selection",
           NODE_CARRIER_SELECTION_DATA_UPLOAD_INVALID_FILE_HEADERS);
 
+      DataUploadUtil.validateAction(path);
+
       for (CSVRecord csvRecord : csvParser) {
         long row = csvParser.getCurrentLineNumber();
+
+        // Accessing Values by Column Header Name
+        String action = csvRecord.get(ACTION).toUpperCase();
+        String orgId = csvRecord.get(ORG_ID);
+        String sourceGeozone = csvRecord.get(SOURCE_GEO_ZONE);
+        String destinationGeozone = csvRecord.get(DESTINATION_GEO_ZONE);
+        String serviceOption = csvRecord.get(SERVICE_OPTION);
+        String selectionCriteria = csvRecord.get(SELECTION_CRITERIA);
+        String key = String.format("%s:%s:%s", serviceOption, sourceGeozone, destinationGeozone);
+        var value = "";
+
+        switch (selectionCriteria) {
+          case "L":
+            value = NodeCarrierSelectionPriorityEnum.LATEST.getValue();
+            break;
+          case "E":
+            value = NodeCarrierSelectionPriorityEnum.EARLIEST.getValue();
+            break;
+          default:
+            log.error(INVALID_SELECTION_CRITERIA);
+            throw new CommonServiceException(
+                INVALID_SELECTION_CRITERIA, HttpStatus.BAD_REQUEST, 0x1776, null);
+        }
+
         try {
-          // Accessing Values by Column Header Name
-          String action = csvRecord.get(ACTION);
-          String orgId = csvRecord.get(ORG_ID);
-          String sourceFSA = csvRecord.get(SOURCE_GEO_ZONE);
-          String destinationFSA = csvRecord.get(DESTINATION_GEO_ZONE);
-          String serviceOption = csvRecord.get(SERVICE_OPTION);
-          String selectionCriteria = csvRecord.get(SELECTION_CRITERIA);
-          String key = serviceOption + ":" + sourceFSA + ":" + destinationFSA;
-          var value = "";
-
-          switch (selectionCriteria) {
-            case "L":
-              value = "0";
-              break;
-            case "E":
-              value = "1";
-              break;
-            default:
-              log.error(INVALID_SELECTION_CRITERIA);
-              throw new CommonServiceException(
-                  INVALID_SELECTION_CRITERIA, HttpStatus.BAD_REQUEST, 0x1776, null);
-          }
-
           switch (action) {
             case UPDATE_U:
               {
@@ -127,11 +130,6 @@ public class NodeCarrierSelectionUploadService {
                         orgId, "NODE_CARRIER_SELECTION_PRIORITY", key);
                 nodeCarrierSelectionResult = baseResponse.isSuccess();
                 log.debug(baseResponse.getMessage());
-                break;
-              }
-            default:
-              {
-                log.error(ACTION_INVALID_MESSAGE);
                 break;
               }
           }
