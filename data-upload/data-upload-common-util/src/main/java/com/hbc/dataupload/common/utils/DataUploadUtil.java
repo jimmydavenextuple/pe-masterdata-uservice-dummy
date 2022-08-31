@@ -53,9 +53,9 @@ public class DataUploadUtil {
 
   public static void validateAction(Path path) throws CommonServiceException, IOException {
     var line = "";
-    List actions = new ArrayList();
+    List<String> actions = new ArrayList<String>();
 
-    try (BufferedReader br = Files.newBufferedReader(path)) {
+    try (var br = Files.newBufferedReader(path)) {
       while ((line = br.readLine()) != null) {
         String[] values = line.split(",");
         actions.add(values[5]);

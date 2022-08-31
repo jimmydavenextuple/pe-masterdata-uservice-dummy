@@ -1,6 +1,7 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DELETE_D;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESTINATION_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.INVALID_SELECTION_CRITERIA;
@@ -90,7 +91,7 @@ public class NodeCarrierSelectionUploadService {
         String destinationGeozone = csvRecord.get(DESTINATION_GEO_ZONE);
         String serviceOption = csvRecord.get(SERVICE_OPTION);
         String selectionCriteria = csvRecord.get(SELECTION_CRITERIA);
-        String key = String.format("%s:%s:%s", serviceOption, sourceGeozone, destinationGeozone);
+        var key = String.format("%s:%s:%s", serviceOption, sourceGeozone, destinationGeozone);
         var value = "";
 
         switch (selectionCriteria) {
@@ -132,6 +133,10 @@ public class NodeCarrierSelectionUploadService {
                 log.debug(baseResponse.getMessage());
                 break;
               }
+            default:
+            {
+            log.error(ACTION_INVALID_MESSAGE);
+            }
           }
         } catch (Exception e) {
           if (isAllPassedForNodeCarrierSelection) {
