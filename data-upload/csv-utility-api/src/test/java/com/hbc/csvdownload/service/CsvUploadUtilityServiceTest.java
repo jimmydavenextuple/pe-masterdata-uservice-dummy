@@ -6,9 +6,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
-import com.hbc.csvdownload.exception.JobServiceException;
 import com.hbc.csvdownload.exception.JobSubmissionException;
-import com.hbc.csvdownload.exception.JobUpdationException;
 import com.hbc.csvdownload.exception.JsonParsingException;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
@@ -191,8 +189,8 @@ class CsvUploadUtilityServiceTest {
 
   @Test
   void uploadTransitTimesCsv()
-      throws IOException, JobServiceException, CsvFormatValidationFailedException,
-          JobUpdationException, CsvException, JsonParsingException, JobSubmissionException {
+      throws IOException, CsvFormatValidationFailedException, CsvException, JsonParsingException,
+          JobSubmissionException {
     MultipartFile csvFile = mock(MultipartFile.class);
 
     String csvFileContent =
@@ -300,7 +298,7 @@ class CsvUploadUtilityServiceTest {
   }
 
   @Test
-  void uploadTransitTimesCsvException() throws IOException, JobServiceException {
+  void uploadTransitTimesCsvException() throws IOException {
     MultipartFile csvFile = mock(MultipartFile.class);
 
     String csvFileContent =

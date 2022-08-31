@@ -5,9 +5,7 @@ import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
-import com.hbc.csvdownload.exception.JobServiceException;
 import com.hbc.csvdownload.exception.JobSubmissionException;
-import com.hbc.csvdownload.exception.JobUpdationException;
 import com.hbc.csvdownload.exception.JsonParsingException;
 import com.hbc.csvdownload.service.CsvUploadUtilityService;
 import com.opencsv.exceptions.CsvException;
@@ -36,8 +34,8 @@ public class CsvUploadUtilityController {
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<BaseResponse<String>> uploadTransitTimes(
       @PathVariable String orgId, @RequestBody MultipartFile csvFile)
-      throws CsvException, IOException, CsvFormatValidationFailedException, JobServiceException,
-          JobUpdationException, JsonParsingException, JobSubmissionException {
+      throws CsvException, IOException, CsvFormatValidationFailedException, JsonParsingException,
+          JobSubmissionException {
     logger.debug("-- Inside upload transit times --");
 
     return ResponseEntity.ok(

@@ -18,7 +18,6 @@ public class LogContext {
   public static final String KAFKA_EVENT_DATE = "kafkaEventDate";
   public static final String CORRELATION_ID = "correlationId";
   public static final String HOST_NAME = "host";
-  public static final String USER_NAME = "username";
 
   public static final String APPLICATION_NAME = "applicationName";
   public static final String APPLICATION_VERSION = "applicationVersion";
@@ -90,14 +89,6 @@ public class LogContext {
 
   public LogContext setUsername(String hostName) {
     return put(HOST_NAME, hostName);
-  }
-
-  public String getHostName() {
-    return get(USER_NAME);
-  }
-
-  public LogContext setHostName(String userName) {
-    return put(USER_NAME, userName);
   }
 
   public String getApplicationVersion() {

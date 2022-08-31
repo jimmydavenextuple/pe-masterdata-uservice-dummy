@@ -5,9 +5,7 @@ import static org.mockito.Mockito.*;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
-import com.hbc.csvdownload.exception.JobServiceException;
 import com.hbc.csvdownload.exception.JobSubmissionException;
-import com.hbc.csvdownload.exception.JobUpdationException;
 import com.hbc.csvdownload.exception.JsonParsingException;
 import com.hbc.csvdownload.service.CsvUploadUtilityService;
 import com.opencsv.exceptions.CsvException;
@@ -32,8 +30,8 @@ class CsvUploadUtilityControllerTest {
 
   @Test
   void uploadTransitTimesCSV()
-      throws CsvFormatValidationFailedException, JobServiceException, IOException,
-          JobUpdationException, JobSubmissionException, CsvException, JsonParsingException {
+      throws CsvFormatValidationFailedException, IOException, JobSubmissionException, CsvException,
+          JsonParsingException {
     MultipartFile csvFile = Mockito.mock(MultipartFile.class);
     when(csvUploadUtilityService.uploadTransitTimesCsv(any(), any()))
         .thenReturn("Job to upload Transit times received successfully");

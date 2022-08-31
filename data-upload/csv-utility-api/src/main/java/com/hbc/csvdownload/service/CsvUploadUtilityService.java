@@ -5,9 +5,7 @@ import com.hbc.csvdownload.domain.mapper.ProcessingLeadTimeMapper;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
-import com.hbc.csvdownload.exception.JobServiceException;
 import com.hbc.csvdownload.exception.JobSubmissionException;
-import com.hbc.csvdownload.exception.JobUpdationException;
 import com.hbc.csvdownload.exception.JsonParsingException;
 import com.hbc.csvdownload.util.CsvUtil;
 import com.hbc.csvdownload.util.StringUtil;
@@ -138,7 +136,7 @@ public class CsvUploadUtilityService {
 
   public String uploadTransitTimesCsv(String orgId, MultipartFile csvFile)
       throws IOException, CsvException, CsvFormatValidationFailedException, JsonParsingException,
-          JobServiceException, JobUpdationException, JobSubmissionException {
+          JobSubmissionException {
 
     // validate file type
 
