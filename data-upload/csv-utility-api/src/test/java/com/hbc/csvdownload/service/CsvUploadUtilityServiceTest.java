@@ -174,7 +174,8 @@ class CsvUploadUtilityServiceTest {
   void uploadProcessingLeadTimesCsvInvalidAction() throws IOException {
     MultipartFile csvFile = mock(MultipartFile.class);
     String csvFileContent =
-        "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+        "#CommentedLine1\n"
+            + "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
             + "1554,BAY,SDND,2,N\n"
             + "1560,BAY,SDND,2,U\n"
             + "1101,BAY,SDND,2,U\n"

@@ -3,6 +3,11 @@ package com.hbc.csvdownload.controller;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
+import com.hbc.csvdownload.exception.CsvParsingException;
+import com.hbc.csvdownload.exception.JobSubmissionException;
+import com.hbc.csvdownload.exception.JsonParsingException;
+import com.hbc.csvdownload.service.CsvUploadUtilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 public class CsvUploadUtilityController {
+
+  private final CsvUploadUtilityService csvUploadUtilityService;
 
   private static final Logger logger = LoggerFactory.getLogger(CsvUploadUtilityController.class);
 
@@ -31,14 +38,19 @@ public class CsvUploadUtilityController {
   }
 
   @PostMapping(
-      path = "/org/{orgId}/upload/processing-lead-times",
+      path = "org/{orgId}/upload/processing-lead-times",
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<BaseResponse<String>> uploadLeadProcessingTimeCSV(
-      @PathVariable String orgId, @RequestParam MultipartFile csvFile) {
-    logger.debug("--Inside uploadLeadProcessingTimeCSV API--");
-    // need to add service layer logic
-    var msg = "Job to upload processing lead times submitted successfully";
-    return ResponseEntity.ok().body(BaseResponse.builder().message(msg).build());
+  public ResponseEntity<BaseResponse<String>> uploadProcessingLeadTimes(
+      @PathVariable String orgId, @RequestParam MultipartFile csvFile)
+      throws CsvParsingException, CsvFormatValidationFailedException, JobSubmissionException,
+          JsonParsingException {
+    logger.debug("-- Inside upload processing lead times --");
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Bulk upload of processing lead times uploaded successfully!")
+            .payload(csvUploadUtilityService.uploadProcessingLeadTimesCsv(orgId, csvFile))
+            .build());
   }
 }

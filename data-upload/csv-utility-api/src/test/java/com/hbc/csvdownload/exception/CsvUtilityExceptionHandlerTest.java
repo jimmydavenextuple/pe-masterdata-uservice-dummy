@@ -29,19 +29,32 @@ class CsvUtilityExceptionHandlerTest {
   void handleCsvFormatValidationFailedException() {
     CsvFormatValidationFailedException exception =
         new CsvFormatValidationFailedException("Invalid Csv headers");
+    CsvFormatValidationFailedException exception1 =
+        new CsvFormatValidationFailedException("Invalid Csv headers", null);
+
     ResponseEntity<ErrorResponse> errorResponseResponseEntity =
         csvUtilityExceptionHandler.handleCsvFormatValidationFailedException(exception);
+    ResponseEntity<ErrorResponse> errorResponseResponseEntity1 =
+        csvUtilityExceptionHandler.handleCsvFormatValidationFailedException(exception1);
+
     Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponseResponseEntity.getStatusCode());
     Assertions.assertNotNull(errorResponseResponseEntity.getBody());
+    Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponseResponseEntity1.getStatusCode());
+    Assertions.assertNotNull(errorResponseResponseEntity1.getBody());
   }
 
   @Test
   void handleCsvParsingException() {
     CsvParsingException exception = new CsvParsingException("Invalid csv template");
+    CsvParsingException exception1 = new CsvParsingException("Invalid csv template", null);
     ResponseEntity<ErrorResponse> errorResponseResponseEntity =
         csvUtilityExceptionHandler.handleCsvParsingException(exception);
+    ResponseEntity<ErrorResponse> errorResponseResponseEntity1 =
+        csvUtilityExceptionHandler.handleCsvParsingException(exception1);
     Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponseResponseEntity.getStatusCode());
     Assertions.assertNotNull(errorResponseResponseEntity.getBody());
+    Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponseResponseEntity1.getStatusCode());
+    Assertions.assertNotNull(errorResponseResponseEntity1.getBody());
   }
 
   @Test
@@ -58,10 +71,16 @@ class CsvUtilityExceptionHandlerTest {
   void handleJsonParsingException() {
     JsonParsingException exception =
         new JsonParsingException("Error while parsing to json string", TestUtil.ORG_ID);
+    JsonParsingException exception1 =
+        new JsonParsingException("Error while parsing to json string", null, TestUtil.ORG_ID);
     ResponseEntity<ErrorResponse> errorResponseResponseEntity =
         csvUtilityExceptionHandler.handleJsonParsingException(exception);
+    ResponseEntity<ErrorResponse> errorResponseResponseEntity1 =
+        csvUtilityExceptionHandler.handleJsonParsingException(exception1);
     Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponseResponseEntity.getStatusCode());
     Assertions.assertNotNull(errorResponseResponseEntity.getBody());
+    Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponseResponseEntity1.getStatusCode());
+    Assertions.assertNotNull(errorResponseResponseEntity1.getBody());
   }
 
   @Test
