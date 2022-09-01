@@ -1,5 +1,5 @@
 orgId,sourceGeozone,destinationGeozone,serviceOption,selectionCriteria,action
 BAY,F1A,M1R,SDND,E,u
-BAY,ALL,ALL,STANDARD,L,D
+BAY,ALL,ALL,STANDARD,L,d
 BAY,ALL,ALL,SDND,E,U
 BAY,F2A,F2A,STANDARD,E,D
