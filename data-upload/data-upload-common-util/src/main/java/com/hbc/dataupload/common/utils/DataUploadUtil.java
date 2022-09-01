@@ -9,7 +9,6 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.dataupload.common.headers.DataUploadUtilityExpectedHeaders;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -53,7 +52,7 @@ public class DataUploadUtil {
 
   public static void validateAction(Path path) throws CommonServiceException, IOException {
     var line = "";
-    List<String> actions = new ArrayList<String>();
+    List<String> actions = new ArrayList<>();
 
     try (var br = Files.newBufferedReader(path)) {
       while ((line = br.readLine()) != null) {

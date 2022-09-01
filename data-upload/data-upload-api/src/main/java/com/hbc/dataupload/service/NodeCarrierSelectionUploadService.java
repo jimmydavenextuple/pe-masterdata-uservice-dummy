@@ -1,7 +1,6 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DELETE_D;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESTINATION_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.INVALID_SELECTION_CRITERIA;
@@ -108,35 +107,24 @@ public class NodeCarrierSelectionUploadService {
         }
 
         try {
-          switch (action) {
-            case UPDATE_U:
-              {
-                var createCommonConfigurationRequest =
-                    CreateCommonConfigurationRequest.builder()
-                        .orgId(orgId)
-                        .type("NODE_CARRIER_SELECTION_PRIORITY")
-                        .key(key)
-                        .value(value)
-                        .build();
-                BaseResponse<CommonConfigurationDto> baseResponse =
-                    commonConfigFeign.createCommonConfiguration(createCommonConfigurationRequest);
-                nodeCarrierSelectionResult = baseResponse.isSuccess();
-                log.debug(baseResponse.getMessage());
-                break;
-              }
-            case DELETE_D:
-              {
-                BaseResponse<CommonConfigurationDto> baseResponse =
-                    commonConfigFeign.deleteCommonConfiguration(
-                        orgId, "NODE_CARRIER_SELECTION_PRIORITY", key);
-                nodeCarrierSelectionResult = baseResponse.isSuccess();
-                log.debug(baseResponse.getMessage());
-                break;
-              }
-            default:
-            {
-            log.error(ACTION_INVALID_MESSAGE);
-            }
+          if (action.equalsIgnoreCase(UPDATE_U)) {
+            var createCommonConfigurationRequest =
+                CreateCommonConfigurationRequest.builder()
+                    .orgId(orgId)
+                    .type("NODE_CARRIER_SELECTION_PRIORITY")
+                    .key(key)
+                    .value(value)
+                    .build();
+            BaseResponse<CommonConfigurationDto> baseResponse =
+                commonConfigFeign.createCommonConfiguration(createCommonConfigurationRequest);
+            nodeCarrierSelectionResult = baseResponse.isSuccess();
+            log.debug(baseResponse.getMessage());
+          } else if (action.equalsIgnoreCase(DELETE_D)) {
+            BaseResponse<CommonConfigurationDto> baseResponse =
+                commonConfigFeign.deleteCommonConfiguration(
+                    orgId, "NODE_CARRIER_SELECTION_PRIORITY", key);
+            nodeCarrierSelectionResult = baseResponse.isSuccess();
+            log.debug(baseResponse.getMessage());
           }
         } catch (Exception e) {
           if (isAllPassedForNodeCarrierSelection) {

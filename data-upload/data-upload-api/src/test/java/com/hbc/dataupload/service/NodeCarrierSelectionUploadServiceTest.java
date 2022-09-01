@@ -80,6 +80,31 @@ class NodeCarrierSelectionUploadServiceTest {
   }
 
   @Test
+  void NodeCarrierSelectionDataDeleteSuccessTest() throws CommonServiceException, IOException {
+    Path resourceDirectory =
+        Paths.get(
+            "src",
+            "test",
+            "resources",
+            "nodeCarrierSelectionUpload",
+            "nodeCarrierSelection_DeletehappyPath.csv");
+    String absolutePath = resourceDirectory.toFile().getAbsolutePath();
+
+    BaseResponse<CommonConfigurationDto> baseResponse =
+        testUtil.getSuccessfulBaseResponseForNodeCarrierSelection();
+    when(commonConfigFeign.createCommonConfiguration(any(CreateCommonConfigurationRequest.class)))
+        .thenReturn(baseResponse);
+    when(commonConfigFeign.deleteCommonConfiguration(anyString(), anyString(), anyString()))
+        .thenReturn(baseResponse);
+    ResponseEntity<BaseResponse<String>> response =
+        nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(
+        NODE_CARRIER_SELECTION_DATA_UPLOAD_SUCCESS,
+        Objects.requireNonNull(response.getBody()).getMessage());
+  }
+
+  @Test
   void NodeCarrierSelectionDataPartialSuccessTest() throws CommonServiceException, IOException {
     Path resourceDirectory =
         Paths.get(
