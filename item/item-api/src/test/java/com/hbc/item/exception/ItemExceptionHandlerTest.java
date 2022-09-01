@@ -41,7 +41,7 @@ class ItemExceptionHandlerTest {
   void handleItemBatchingDomainException() {
     ItemBatchingDomainException exception =
         new ItemBatchingDomainException(
-            "Internal Server Error", List.of(TestUtil.ITEM_ID), TestUtil.ORG_ID, TestUtil.UOM);
+            "Internal Server Error", List.of(TestUtil.ITEM_ID), TestUtil.ORG_ID);
 
     ResponseEntity<ErrorResponse> errorResponseResponseEntity =
         itemExceptionHandler.handleOtherException(exception);

@@ -135,18 +135,17 @@ public class ItemService {
     return itemResponse;
   }
 
-  public List<ItemResponse> getItemList(List<String> itemList, String orgId, String uom)
+  public List<ItemResponse> getItemList(List<String> itemList, String orgId)
       throws CommonServiceException, ItemBatchingDomainException {
 
     List<ItemEntity> existingItemEntity =
-        itemDomain.findItemListByItemIdsAndOrgIdAndUom(itemList, orgId, uom);
+        itemDomain.findItemListByItemIdsAndOrgIdAndUom(itemList, orgId);
 
     if (existingItemEntity.isEmpty()) {
       logger.error(ITEM_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(ITEM_LIST, FieldError.builder().rejectedValue(itemList).build());
-      errorMap.put(UOM, FieldError.builder().rejectedValue(uom).build());
       throw new CommonServiceException(
           ITEM_LIST_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1772, errorMap);
     }
