@@ -6,10 +6,14 @@ import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface DataMapper {
 
   NodeCarrierDetails convertToNodeCarrierCacheValue(NodeCarrierResponse nodeCarrierResponse);
+
+  List<NodeCarrierDetails> convertToNodeCarrierCacheValue(List<NodeCarrierResponse> nodeCarrierResponse);
 }
