@@ -38,7 +38,17 @@ class CsvUploadUtilityServiceTest {
       throws IOException, CsvParsingException, CsvFormatValidationFailedException,
           JobSubmissionException, JsonParsingException {
     MultipartFile csvFile = mock(MultipartFile.class);
-    String csvFileContent = TestUtil.processingLeadTimesCsvData;
+    String csvFileContent =
+        "#CommentedLine1\n"
+            + "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+            + "1554,BAY,SDND,2,U\n"
+            + "1560,BAY,SDND,2,U\n"
+            + "1101,BAY,SDND,2,U\n"
+            + "1518,BAY,NEXTDAY,6,D\n"
+            + "1634,BAY,EXPRESS,30.92,U\n"
+            + "1601,BAY,EXPRESS,22.55,U\n"
+            + "1125,BAY,EXPRESS,19.90,D\n"
+            + "1114,BAY,SDND,24.97,U";
     when(csvFile.getInputStream())
         .thenReturn(
             new ByteArrayInputStream(csvFileContent.getBytes()),
