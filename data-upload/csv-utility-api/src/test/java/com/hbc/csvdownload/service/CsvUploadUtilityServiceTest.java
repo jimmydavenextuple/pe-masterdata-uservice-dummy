@@ -40,7 +40,17 @@ class CsvUploadUtilityServiceTest {
       throws IOException, CsvParsingException, CsvFormatValidationFailedException,
           JobSubmissionException, JsonParsingException {
     MultipartFile csvFile = mock(MultipartFile.class);
-    String csvFileContent = TestUtil.leadProcessingTimesCsvData;
+    String csvFileContent =
+        "#CommentedLine1\n"
+            + "nodeId,orgId,serviceOptions,processingTime (in hrs)\n"
+            + "1554,BAY,SDND,2\n"
+            + "1560,BAY,SDND,2\n"
+            + "1101,BAY,SDND,2\n"
+            + "1518,BAY,NEXTDAY,6\n"
+            + "1634,BAY,EXPRESS,30.92\n"
+            + "1601,BAY,EXPRESS,22.55\n"
+            + "1125,BAY,EXPRESS,19.90\n"
+            + "1114,BAY,SDND,24.97";
     when(csvFile.getInputStream())
         .thenReturn(
             new ByteArrayInputStream(csvFileContent.getBytes()),
@@ -223,8 +233,7 @@ class CsvUploadUtilityServiceTest {
     MultipartFile csvFile = mock(MultipartFile.class);
 
     String csvFileContent =
-        "#CommentedLine1\n"
-            + "orgIds,BAY,,,,,,,,,\n"
+        "orgIds,BAY,,,,,,,,,\n"
             + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
             + "Destination FSA / Source FSA ->,SFSA1,SFSA2\n"
             + "DFSA1,10,9.96\n"
