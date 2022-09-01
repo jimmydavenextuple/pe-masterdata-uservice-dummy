@@ -3,6 +3,8 @@ package com.hbc.dataupload.common.headers;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ALLOCATION_RULE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BOPIS_ELIGIBLE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_DAYS;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_HOURS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_NAME;
@@ -12,6 +14,7 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COU
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESCRIPTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESTINATION_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EFFECTIVE_DATE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.END_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXCEPTION_DAYS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXPRESS_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.IS_ACTIVE;
@@ -43,6 +46,7 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHI
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIP_TO_HOME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_NODES;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.START_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.TIMEZONE;
@@ -173,7 +177,21 @@ public class DataUploadUtilityExpectedHeaders {
                     SOURCE_GEO_ZONE,
                     DESTINATION_GEO_ZONE,
                     CARRIER_SERVICE_ID,
-                    TRANSIT_DAYS)));
+                    TRANSIT_DAYS)),
+            Map.entry(
+                "node-service-option-buffer",
+                List.of(ORG_ID, NODE_ID, SERVICE_OPTION, BUFFER_HOURS, START_TIME, END_TIME)),
+            Map.entry(
+                "transit-buffer",
+                List.of(
+                    ORG_ID,
+                    CARRIER_SERVICE_ID,
+                    ACTION,
+                    SOURCE_GEO_ZONE,
+                    DESTINATION_GEO_ZONE,
+                    BUFFER_DAYS,
+                    START_TIME,
+                    END_TIME)));
   }
 
   public static List<String> getCSVExpectedHeaders(String key) {

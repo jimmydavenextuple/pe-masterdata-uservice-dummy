@@ -51,7 +51,7 @@ public interface NodeCarrierFeign {
   BaseResponse<List<NodeCarrierResponse>> getNodeCarrierList(
       @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId);
 
-  @PostMapping("/node/carrier/buffer")
+  @PutMapping("/node/carrier/buffer")
   BaseResponse<NodeCarrierResponse> updateBuffer(
-          @Valid @RequestBody NodeCarrierBufferRequest nodeCarrierBufferRequest);
+      @Valid @RequestBody NodeCarrierBufferRequest nodeCarrierBufferRequest);
 }

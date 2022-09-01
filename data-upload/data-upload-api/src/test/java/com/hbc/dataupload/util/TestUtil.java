@@ -90,6 +90,8 @@ public class TestUtil {
   public static Float TRANSIT_DAYS = Float.valueOf(1);
   private static final String CARRIER_ID_2 = "Carrier_Id_2";
 
+  private static final String BUFFER_START_DATE = "startTime";
+
   private NodeCarrierResponse getNodeCarrierResponse() {
     return NodeCarrierResponse.builder()
         .nodeId(NODE_ID)
@@ -105,6 +107,14 @@ public class TestUtil {
     return BaseResponse.builder()
         .message("Node carrier details fetched successfully")
         .success(true)
+        .payload(getNodeCarrierResponse())
+        .build();
+  }
+
+  public BaseResponse<NodeCarrierResponse> getBaseResponseOfNodeCarrierResponse2() {
+    return BaseResponse.builder()
+        .message("Node carrier details fetched successfully")
+        .success(false)
         .payload(getNodeCarrierResponse())
         .build();
   }
@@ -677,5 +687,23 @@ public class TestUtil {
     carrierServiceCalendars.setCalendarId(calendarId);
     carrierServiceCalendars.setEffectiveDate(effectiveDate);
     return carrierServiceCalendars;
+  }
+
+  public BaseResponse<TransitResponse> getBaseResponseOfTransitResponse() {
+    return BaseResponse.builder()
+        .message("Node carrier details fetched successfully")
+        .success(true)
+        .payload(getTransitResponse())
+        .build();
+  }
+
+  private TransitResponse getTransitResponse() {
+    return TransitResponse.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .sourceGeozone(SOURCE_GEOZONE)
+        .destinationGeozone(DESTINATION_GEOZONE)
+        .bufferDays(0.1)
+        .build();
   }
 }
