@@ -26,7 +26,7 @@ class UploadBufferControllerTest {
   @Mock UploadBufferService uploadBufferService;
 
   @Test
-  public void uploadNodeServiceOptBufferDataSuccessTest()
+   void uploadNodeServiceOptBufferDataSuccessTest()
       throws CommonServiceException, IOException {
     String fileUri = "fileName.csv";
     ResponseEntity<BaseResponse<String>> response =
@@ -44,7 +44,7 @@ class UploadBufferControllerTest {
   }
 
   @Test
-  public void uploadNodeServiceOptBufferDataUploadFailedTest()
+   void uploadNodeServiceOptBufferDataUploadFailedTest()
       throws CommonServiceException, IOException {
     String fileUri = "fileName.csv";
     ResponseEntity<BaseResponse<String>> response =
@@ -61,7 +61,7 @@ class UploadBufferControllerTest {
   }
 
   @Test
-  public void uploadNodeServiceOptBufferDataPartialUploadTest()
+   void uploadNodeServiceOptBufferDataPartialUploadTest()
       throws CommonServiceException, IOException {
     String fileUri = "fileName.csv";
     ResponseEntity<BaseResponse<String>> response =
@@ -81,7 +81,7 @@ class UploadBufferControllerTest {
   }
 
   @Test
-  public void uploadNodeServiceOptBufferDataExceptionTest()
+   void uploadNodeServiceOptBufferDataExceptionTest()
       throws CommonServiceException, IOException {
     String fileUri = "fileName.csv";
     when(uploadBufferService.uploadNodeServiceOptionBufferData(any()))
@@ -97,7 +97,7 @@ class UploadBufferControllerTest {
   }
 
   @Test
-  public void uploadTransitBufferDataSuccessTest() throws CommonServiceException, IOException {
+   void uploadTransitBufferDataSuccessTest() throws CommonServiceException, IOException {
     String fileUri = "fileName.csv";
     ResponseEntity<BaseResponse<String>> response =
         getBaseResponse(HttpStatus.OK, "Transit Buffer Data successfully uploaded!");
@@ -113,7 +113,7 @@ class UploadBufferControllerTest {
   }
 
   @Test
-  public void uploadTransitBufferDataUploadFailedTest() throws CommonServiceException, IOException {
+   void uploadTransitBufferDataUploadFailedTest() throws CommonServiceException, IOException {
     String fileUri = "fileName.csv";
     ResponseEntity<BaseResponse<String>> response =
         getBaseResponse(HttpStatus.BAD_REQUEST, "Transit Buffer Data upload failed!");
@@ -129,7 +129,7 @@ class UploadBufferControllerTest {
   }
 
   @Test
-  public void uploadTransitBufferDataPartialUploadTest()
+   void uploadTransitBufferDataPartialUploadTest()
       throws CommonServiceException, IOException {
     String fileUri = "fileName.csv";
     ResponseEntity<BaseResponse<String>> response =
@@ -149,7 +149,7 @@ class UploadBufferControllerTest {
   }
 
   @Test
-  public void uploadTransitBufferDataExceptionTest() throws CommonServiceException, IOException {
+   void uploadTransitBufferDataExceptionTest() throws CommonServiceException, IOException {
     String fileUri = "fileName.csv";
     when(uploadBufferService.uploadTransitBufferData(any()))
         .thenThrow(new IOException("File not found!"));

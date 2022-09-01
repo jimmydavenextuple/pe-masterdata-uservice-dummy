@@ -253,7 +253,7 @@ public class UploadBufferDataServiceTest {
 
   // transit tests
   @Test
-  public void uploadTransitBufferDataSuccessTest() throws CommonServiceException, IOException {
+   void uploadTransitBufferDataSuccessTest() throws CommonServiceException, IOException {
     Path resourceDir =
         Paths.get("src", "test", "resources", "transitBufferData", "transitBuffer_happyPath.csv");
     String absolutePath = resourceDir.toFile().getAbsolutePath();
@@ -269,7 +269,7 @@ public class UploadBufferDataServiceTest {
   }
 
   @Test
-  public void uploadTransitBufferDataPartialSuccessTest()
+   void uploadTransitBufferDataPartialSuccessTest()
       throws CommonServiceException, IOException {
     Path resourceDir =
         Paths.get("src", "test", "resources", "transitBufferData", "transitBuffer_dateNull.csv");
@@ -284,7 +284,7 @@ public class UploadBufferDataServiceTest {
   }
 
   @Test
-  public void uploadTransitBufferInvalidHeadersExceptionTest() {
+   void uploadTransitBufferInvalidHeadersExceptionTest() {
     Path resourceDirectory =
         Paths.get(
             "src", "test", "resources", "transitBufferData", "transitBuffer_invalidHeaders.csv");
@@ -301,7 +301,7 @@ public class UploadBufferDataServiceTest {
   }
 
   @Test
-  public void uploadTransitBufferInvalidFileTypeExceptionTest() {
+   void uploadTransitBufferInvalidFileTypeExceptionTest() {
     Path resourceDirectory =
         Paths.get(
             "src", "test", "resources", "transitBufferData", "transitBuffer_invalidFileType.html");
@@ -315,7 +315,7 @@ public class UploadBufferDataServiceTest {
   }
 
   @Test
-  public void uploadTransitBufferLargeFileSizeExceptionTest() {
+   void uploadTransitBufferLargeFileSizeExceptionTest() {
     ReflectionTestUtils.setField(uploadBufferService, "maxSizeInKiloBytes", 1);
     Path resourceDirectory =
         Paths.get(
@@ -330,7 +330,7 @@ public class UploadBufferDataServiceTest {
   }
 
   @Test
-  public void uploadTransitBufferLargeRowSizeExceptionTest() {
+   void uploadTransitBufferLargeRowSizeExceptionTest() {
     ReflectionTestUtils.setField(uploadBufferService, "maxRows", 30);
     Path resourceDirectory =
         Paths.get(
@@ -345,7 +345,7 @@ public class UploadBufferDataServiceTest {
   }
 
   @Test
-  public void uploadTransitBufferEmptyRecordsExceptionTest() {
+   void uploadTransitBufferEmptyRecordsExceptionTest() {
     Path resourceDirectory =
         Paths.get(
             "src", "test", "resources", "transitBufferData", "transitBuffer_emptyRecords.csv");
@@ -359,7 +359,7 @@ public class UploadBufferDataServiceTest {
   }
 
   @Test
-  public void uploadTransitBufferFailureTest() throws CommonServiceException, IOException {
+   void uploadTransitBufferFailureTest() throws CommonServiceException, IOException {
     Path resourceDirectory =
         Paths.get("src", "test", "resources", "transitBufferData", "transitBuffer_happyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
@@ -370,7 +370,7 @@ public class UploadBufferDataServiceTest {
   }
 
   @Test
-  public void uploadTransitBufferInvalidActionTest() throws CommonServiceException, IOException {
+   void uploadTransitBufferInvalidActionTest() throws CommonServiceException, IOException {
     Path resourceDirectory =
         Paths.get(
             "src", "test", "resources", "transitBufferData", "transitBuffer_invalidAction.csv");

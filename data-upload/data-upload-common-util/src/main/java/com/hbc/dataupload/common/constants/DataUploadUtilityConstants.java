@@ -10,7 +10,7 @@ public class DataUploadUtilityConstants {
   public static final String DELETE = "DELETE";
   public static final String ACTION = "action";
   public static final String ORG_ID = "orgId";
-  public static final String UPDATE_ = "U";
+  public static final String UPDATE_ACTION = "U";
   public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
   public static final String CARRIER_SERVICE_ID = "carrierServiceId";
   public static final String NODE_ID = "nodeId";
@@ -66,6 +66,4 @@ public class DataUploadUtilityConstants {
   public static final String START_TIME = "startTime";
   public static final String END_TIME = "endTime";
   public static final String BUFFER_DAYS = "bufferDays";
-
-  public static final String SOURCE = "source";
 }

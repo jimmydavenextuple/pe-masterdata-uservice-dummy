@@ -179,7 +179,6 @@ public class UploadBufferService {
           // Accessing Values by Column Header Name
           String orgId = csvRecord.get(ORG_ID);
           String carrierServiceId = csvRecord.get(CARRIER_SERVICE_ID);
-          String action = csvRecord.get(ACTION);
           String sourceGeoZone = csvRecord.get(SOURCE_GEO_ZONE);
           String destinationGeozone = csvRecord.get(DESTINATION_GEO_ZONE);
           Double bufferDays = Double.parseDouble(csvRecord.get(BUFFER_DAYS));

@@ -2,7 +2,7 @@ package com.hbc.dataupload.common.utils;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.FILE_URI;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.UPDATE_;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.UPDATE_ACTION;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
@@ -51,7 +51,7 @@ public class DataUploadUtil {
 
   public static void validateUpdateAction(Path path) throws IOException, CommonServiceException {
     var line = "";
-    List<String> actions = new ArrayList<String>();
+    List<String> actions = new ArrayList<>();
 
     try (var br = Files.newBufferedReader(path)) {
       while ((line = br.readLine()) != null) {
@@ -60,7 +60,7 @@ public class DataUploadUtil {
       }
       actions.remove("action");
       for (Object action : actions) {
-        if (!(action.toString().equalsIgnoreCase(UPDATE_))) {
+        if (!(action.toString().equalsIgnoreCase(UPDATE_ACTION))) {
           throw new CommonServiceException(
               ACTION_INVALID_MESSAGE, HttpStatus.BAD_REQUEST, 0x1777, null);
         }
