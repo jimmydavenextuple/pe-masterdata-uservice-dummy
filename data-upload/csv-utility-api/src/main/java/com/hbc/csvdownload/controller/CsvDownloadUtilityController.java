@@ -1,6 +1,6 @@
 package com.hbc.csvdownload.controller;
 
-import com.hbc.csvdownload.common.util.TemplateTypes;
+import com.hbc.csvdownload.common.pojo.TemplateTypes;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;

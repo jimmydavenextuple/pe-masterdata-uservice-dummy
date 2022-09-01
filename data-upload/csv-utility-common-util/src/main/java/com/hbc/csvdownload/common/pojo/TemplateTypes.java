@@ -1,4 +1,4 @@
-package com.hbc.csvdownload.common.util;
+package com.hbc.csvdownload.common.pojo;
 
 import org.springframework.stereotype.Service;
 
