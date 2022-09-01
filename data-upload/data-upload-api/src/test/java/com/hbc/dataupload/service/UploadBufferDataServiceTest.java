@@ -42,7 +42,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class UploadBufferDataServiceTest {
+ class UploadBufferDataServiceTest {
 
   @InjectMocks UploadBufferService uploadBufferService;
   @InjectMocks private TestUtil testUtil;
