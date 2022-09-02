@@ -39,6 +39,7 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PRI
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROCESSING_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SDND_ELIGIBLE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SELECTION_CRITERIA;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
@@ -192,6 +193,14 @@ public class DataUploadUtilityExpectedHeaders {
                     BUFFER_DAYS,
                     START_TIME,
                     END_TIME)));
+                "node-carrier-selection",
+                List.of(
+                    ORG_ID,
+                    SOURCE_GEO_ZONE,
+                    DESTINATION_GEO_ZONE,
+                    SERVICE_OPTION,
+                    SELECTION_CRITERIA,
+                    ACTION)));
   }
 
   public static List<String> getCSVExpectedHeaders(String key) {
