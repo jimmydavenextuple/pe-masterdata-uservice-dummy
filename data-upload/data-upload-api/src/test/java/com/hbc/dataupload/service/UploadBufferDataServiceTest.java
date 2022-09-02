@@ -42,7 +42,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
- class UploadBufferDataServiceTest {
+class UploadBufferDataServiceTest {
 
   @InjectMocks UploadBufferService uploadBufferService;
   @InjectMocks private TestUtil testUtil;
@@ -253,7 +253,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
   // transit tests
   @Test
-   void uploadTransitBufferDataSuccessTest() throws CommonServiceException, IOException {
+  void uploadTransitBufferDataSuccessTest() throws CommonServiceException, IOException {
     Path resourceDir =
         Paths.get("src", "test", "resources", "transitBufferData", "transitBuffer_happyPath.csv");
     String absolutePath = resourceDir.toFile().getAbsolutePath();
@@ -269,8 +269,7 @@ import org.springframework.test.util.ReflectionTestUtils;
   }
 
   @Test
-   void uploadTransitBufferDataPartialSuccessTest()
-      throws CommonServiceException, IOException {
+  void uploadTransitBufferDataPartialSuccessTest() throws CommonServiceException, IOException {
     Path resourceDir =
         Paths.get("src", "test", "resources", "transitBufferData", "transitBuffer_dateNull.csv");
     String absolutePath = resourceDir.toFile().getAbsolutePath();
@@ -284,7 +283,7 @@ import org.springframework.test.util.ReflectionTestUtils;
   }
 
   @Test
-   void uploadTransitBufferInvalidHeadersExceptionTest() {
+  void uploadTransitBufferInvalidHeadersExceptionTest() {
     Path resourceDirectory =
         Paths.get(
             "src", "test", "resources", "transitBufferData", "transitBuffer_invalidHeaders.csv");
@@ -301,7 +300,7 @@ import org.springframework.test.util.ReflectionTestUtils;
   }
 
   @Test
-   void uploadTransitBufferInvalidFileTypeExceptionTest() {
+  void uploadTransitBufferInvalidFileTypeExceptionTest() {
     Path resourceDirectory =
         Paths.get(
             "src", "test", "resources", "transitBufferData", "transitBuffer_invalidFileType.html");
@@ -315,7 +314,7 @@ import org.springframework.test.util.ReflectionTestUtils;
   }
 
   @Test
-   void uploadTransitBufferLargeFileSizeExceptionTest() {
+  void uploadTransitBufferLargeFileSizeExceptionTest() {
     ReflectionTestUtils.setField(uploadBufferService, "maxSizeInKiloBytes", 1);
     Path resourceDirectory =
         Paths.get(
@@ -330,7 +329,7 @@ import org.springframework.test.util.ReflectionTestUtils;
   }
 
   @Test
-   void uploadTransitBufferLargeRowSizeExceptionTest() {
+  void uploadTransitBufferLargeRowSizeExceptionTest() {
     ReflectionTestUtils.setField(uploadBufferService, "maxRows", 30);
     Path resourceDirectory =
         Paths.get(
@@ -345,7 +344,7 @@ import org.springframework.test.util.ReflectionTestUtils;
   }
 
   @Test
-   void uploadTransitBufferEmptyRecordsExceptionTest() {
+  void uploadTransitBufferEmptyRecordsExceptionTest() {
     Path resourceDirectory =
         Paths.get(
             "src", "test", "resources", "transitBufferData", "transitBuffer_emptyRecords.csv");
@@ -359,7 +358,7 @@ import org.springframework.test.util.ReflectionTestUtils;
   }
 
   @Test
-   void uploadTransitBufferFailureTest() throws CommonServiceException, IOException {
+  void uploadTransitBufferFailureTest() throws CommonServiceException, IOException {
     Path resourceDirectory =
         Paths.get("src", "test", "resources", "transitBufferData", "transitBuffer_happyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
@@ -370,7 +369,7 @@ import org.springframework.test.util.ReflectionTestUtils;
   }
 
   @Test
-   void uploadTransitBufferInvalidActionTest() throws CommonServiceException, IOException {
+  void uploadTransitBufferInvalidActionTest() throws CommonServiceException, IOException {
     Path resourceDirectory =
         Paths.get(
             "src", "test", "resources", "transitBufferData", "transitBuffer_invalidAction.csv");

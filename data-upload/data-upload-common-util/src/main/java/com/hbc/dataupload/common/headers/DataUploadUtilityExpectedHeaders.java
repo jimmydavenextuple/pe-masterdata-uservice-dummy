@@ -192,7 +192,8 @@ public class DataUploadUtilityExpectedHeaders {
                     DESTINATION_GEO_ZONE,
                     BUFFER_DAYS,
                     START_TIME,
-                    END_TIME)));
+                    END_TIME)),
+            Map.entry(
                 "node-carrier-selection",
                 List.of(
                     ORG_ID,

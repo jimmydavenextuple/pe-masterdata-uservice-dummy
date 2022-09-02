@@ -698,7 +698,6 @@ public class TestUtil {
     return carrierServiceCalendars;
   }
 
-
   public BaseResponse<TransitResponse> getBaseResponseOfTransitResponse() {
     return BaseResponse.builder()
         .message("Node carrier details fetched successfully")
@@ -714,6 +713,8 @@ public class TestUtil {
         .sourceGeozone(SOURCE_GEOZONE)
         .destinationGeozone(DESTINATION_GEOZONE)
         .bufferDays(0.1)
+        .build();
+  }
 
   public ResponseEntity<BaseResponse<String>> getNodeCarrierSelectionDataSuccessfulResponse() {
     return ResponseEntity.ok(
