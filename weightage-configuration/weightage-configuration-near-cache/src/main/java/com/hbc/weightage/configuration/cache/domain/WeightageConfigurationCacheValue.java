@@ -11,4 +11,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class WeightageConfigurationCacheValue implements CacheValue {
   private Map<String, Float> weightageConfigurationResponse;
+
+  @Override
+  public boolean isUndefined() {
+    return false;
+  }
 }
