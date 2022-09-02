@@ -49,8 +49,7 @@ class CsvDownloadUtilityServiceTest {
 
   @Test
   void downloadTransitTimesForSourceAndDestinationRegionException()
-      throws PostalCodeTimezoneServiceException, TransitServiceException,
-          CsvDownloadUtilityServiceException {
+      throws PostalCodeTimezoneServiceException, TransitServiceException {
     when(postalCodeTimeZoneService.getFsaList(TestUtil.ORG_ID, TestUtil.DESTINATION_REGION))
         .thenReturn(List.of(TestUtil.DESTINATION_FSA));
 

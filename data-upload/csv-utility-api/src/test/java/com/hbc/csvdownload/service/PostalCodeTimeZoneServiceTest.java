@@ -40,7 +40,7 @@ class PostalCodeTimeZoneServiceTest {
   }
 
   @Test
-  void getFsaListEmptyList() throws PostalCodeTimezoneServiceException {
+  void getFsaListEmptyList() {
     when(postalCodeTimezoneFeign.getPostalCodePrefixForOrgIdAndState(anyString(), anyString()))
         .thenReturn(BaseResponse.builder().payload(Collections.emptyList()).build());
 
@@ -54,7 +54,7 @@ class PostalCodeTimeZoneServiceTest {
   }
 
   @Test
-  void getFsaListNullResponse() throws PostalCodeTimezoneServiceException {
+  void getFsaListNullResponse() {
     when(postalCodeTimezoneFeign.getPostalCodePrefixForOrgIdAndState(anyString(), anyString()))
         .thenReturn(null);
 
@@ -68,7 +68,7 @@ class PostalCodeTimeZoneServiceTest {
   }
 
   @Test
-  void getFsaListFeignException() throws PostalCodeTimezoneServiceException {
+  void getFsaListFeignException() {
     when(postalCodeTimezoneFeign.getPostalCodePrefixForOrgIdAndState(anyString(), anyString()))
         .thenThrow(
             new FeignException.BadRequest(

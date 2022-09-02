@@ -43,7 +43,7 @@ class TransitServiceTest {
   }
 
   @Test
-  void getTransitDetailsEmptyPayload() throws TransitServiceException {
+  void getTransitDetailsEmptyPayload() {
     when(transitFeign.getTransitTimeDetailsForDestinationGeoZonesList(any(), any(), any()))
         .thenReturn(BaseResponse.builder().payload(Collections.emptyList()).build());
 
@@ -61,7 +61,7 @@ class TransitServiceTest {
   }
 
   @Test
-  void getTransitDetailsNullResponse() throws TransitServiceException {
+  void getTransitDetailsNullResponse() {
     when(transitFeign.getTransitTimeDetailsForDestinationGeoZonesList(any(), any(), any()))
         .thenReturn(null);
 
@@ -79,7 +79,7 @@ class TransitServiceTest {
   }
 
   @Test
-  void getTransitDetailsFeignException() throws TransitServiceException {
+  void getTransitDetailsFeignException() {
     when(transitFeign.getTransitTimeDetailsForDestinationGeoZonesList(any(), any(), any()))
         .thenThrow(
             new FeignException.BadRequest(
