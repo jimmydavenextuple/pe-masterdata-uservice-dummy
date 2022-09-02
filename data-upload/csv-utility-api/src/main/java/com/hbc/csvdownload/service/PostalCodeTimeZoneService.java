@@ -3,7 +3,6 @@ package com.hbc.csvdownload.service;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.response.BaseResponse;
-import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
 import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
@@ -36,7 +35,7 @@ public class PostalCodeTimeZoneService {
       }
     } catch (FeignException e) {
       logger.error("Feign exception when fetching list of FSAs");
-      ErrorResponse errorResponse = ExceptionUtils.parseFeignException(e);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
       throw new PostalCodeTimezoneServiceException(errorResponse.getMessage(), orgId, state);
     } catch (Exception e) {
       logger.error("Exception while fetching list of FSAs");

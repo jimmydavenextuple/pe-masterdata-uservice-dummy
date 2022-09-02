@@ -74,7 +74,7 @@ public class CsvDownloadUtilityService {
                   .get(transitResponse.getDestinationGeozone())
                   .put(transitResponse.getSourceGeozone(), transitResponse.getTransitDays()));
 
-      String sourceFsaHeader = String.join(",", filteredSourceFsaSet);
+      var sourceFsaHeader = String.join(",", filteredSourceFsaSet);
       return constructCsvData(orgId, carrierServiceId, transitTimesDataMap, sourceFsaHeader);
     } catch (Exception e) {
       logger.error("Error while forming csv contents string");
@@ -88,7 +88,7 @@ public class CsvDownloadUtilityService {
       String carrierServiceId,
       Map<String, Map<String, Float>> transitTimesDataMap,
       String sourceFsaHeader) {
-    String csvContents =
+    var csvContents =
         String.format(
             "orgId,%s%nCarrier Service:,%s%nDestination FSA / Source FSA ->,%s",
             orgId, carrierServiceId, sourceFsaHeader);

@@ -61,6 +61,24 @@ class TransitServiceTest {
   }
 
   @Test
+  void getTransitDetailsNullResponse() throws TransitServiceException {
+    when(transitFeign.getTransitTimeDetailsForDestinationGeoZonesList(any(), any(), any()))
+        .thenReturn(null);
+
+    Exception exception =
+        Assertions.assertThrows(
+            TransitServiceException.class,
+            () ->
+                transitService.getTransitDetails(
+                    TestUtil.ORG_ID,
+                    TestUtil.CARRIER_SERVICE_ID,
+                    List.of(TestUtil.DESTINATION_FSA)));
+    Assertions.assertNotNull(exception);
+    verify(transitFeign, times(1))
+        .getTransitTimeDetailsForDestinationGeoZonesList(any(), any(), any());
+  }
+
+  @Test
   void getTransitDetailsFeignException() throws TransitServiceException {
     when(transitFeign.getTransitTimeDetailsForDestinationGeoZonesList(any(), any(), any()))
         .thenThrow(

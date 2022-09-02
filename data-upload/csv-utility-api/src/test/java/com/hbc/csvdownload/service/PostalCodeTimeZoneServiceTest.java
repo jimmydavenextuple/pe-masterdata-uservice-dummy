@@ -54,6 +54,20 @@ class PostalCodeTimeZoneServiceTest {
   }
 
   @Test
+  void getFsaListNullResponse() throws PostalCodeTimezoneServiceException {
+    when(postalCodeTimezoneFeign.getPostalCodePrefixForOrgIdAndState(anyString(), anyString()))
+        .thenReturn(null);
+
+    Exception exception =
+        Assertions.assertThrows(
+            PostalCodeTimezoneServiceException.class,
+            () -> postalCodeTimeZoneService.getFsaList(TestUtil.ORG_ID, TestUtil.SOURCE_REGION));
+    Assertions.assertNotNull(exception);
+    verify(postalCodeTimezoneFeign, times(1))
+        .getPostalCodePrefixForOrgIdAndState(anyString(), anyString());
+  }
+
+  @Test
   void getFsaListFeignException() throws PostalCodeTimezoneServiceException {
     when(postalCodeTimezoneFeign.getPostalCodePrefixForOrgIdAndState(anyString(), anyString()))
         .thenThrow(
