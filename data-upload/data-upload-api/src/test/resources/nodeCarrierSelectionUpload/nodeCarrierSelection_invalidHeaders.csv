@@ -1,0 +1,5 @@
+orgId,sourceGeozone,destinationGeozone,serviceOption,selectionCriteria
+BAY,F1A,M1R,SDND,E
+BAY,ALL,ALL,STANDARD,L
+BAY,ALL,ALL,SDND,E
+BAY,F2A,F2A,STANDARD,E
