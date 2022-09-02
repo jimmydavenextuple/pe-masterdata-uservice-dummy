@@ -28,9 +28,9 @@ class CsvUtilityExceptionHandlerTest {
   @Test
   void handleCsvFormatValidationFailedException() {
     CsvFormatValidationFailedException exception =
-        new CsvFormatValidationFailedException("Invalid Csv headers");
-    CsvFormatValidationFailedException exception1 =
         new CsvFormatValidationFailedException("Invalid Csv headers", null);
+    CsvFormatValidationFailedException exception1 =
+        new CsvFormatValidationFailedException("Invalid Csv headers", null, null);
 
     ResponseEntity<ErrorResponse> errorResponseResponseEntity =
         csvUtilityExceptionHandler.handleCsvFormatValidationFailedException(exception);

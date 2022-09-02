@@ -1,6 +1,7 @@
 package com.hbc.csvdownload.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.response.BaseResponse;
@@ -9,6 +10,8 @@ import com.hbc.csvdownload.exception.CsvParsingException;
 import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.csvdownload.exception.JsonParsingException;
 import com.hbc.csvdownload.service.CsvUploadUtilityService;
+import com.opencsv.exceptions.CsvException;
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,10 +31,14 @@ class CsvUploadUtilityControllerTest {
   @InjectMocks private CsvUploadUtilityController csvUploadUtilityController;
 
   @Test
-  void uploadTransitTimesCSV() {
+  void uploadTransitTimesCSV()
+      throws CsvFormatValidationFailedException, IOException, JobSubmissionException, CsvException,
+          JsonParsingException {
     MultipartFile csvFile = Mockito.mock(MultipartFile.class);
+    when(csvUploadUtilityService.uploadTransitTimesCsv(any(), any()))
+        .thenReturn("Job to upload Transit times received successfully");
     ResponseEntity<BaseResponse<String>> res =
-        csvUploadUtilityController.uploadTransitTimesCSV("BAY", csvFile);
+        csvUploadUtilityController.uploadTransitTimes("BAY", csvFile);
     Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
     Assertions.assertNotNull(res);
     Assertions.assertNotNull(res.getBody());
