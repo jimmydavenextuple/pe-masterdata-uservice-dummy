@@ -46,15 +46,41 @@ class CommonConfigFeignClientServiceImplTest {
         .thenReturn(testUtil.getBaseResponseOfCommonConfiguration());
 
     assertEquals(cacheValue, commonConfigFeignClientService.get(cacheKey));
-    verify(mapper, times(1)).responseToCacheValue(any());
+    assertFalse(commonConfigFeignClientService.get(cacheKey).isUndefined());
+
+    verify(mapper, times(2)).responseToCacheValue(any());
+  }
+
+  @Test
+  void getTest2() {
+    CommonConfigCacheKey cacheKey = testUtil.getCommonConfigCacheKey();
+    BaseResponse<CommonConfigurationDto> response = testUtil.getBaseResponseOfCommonConfiguration();
+    response.setPayload(null);
+    when(commonConfigFeign.fetchValue(any(), any(), any())).thenReturn(response);
+
+    assertEquals(
+        TestUtil.UNDEFINED,
+        commonConfigFeignClientService.get(cacheKey).getCommonConfigDetails().getOrgId());
+    assertEquals(
+        TestUtil.UNDEFINED,
+        commonConfigFeignClientService.get(cacheKey).getCommonConfigDetails().getType());
+    assertEquals(
+        TestUtil.UNDEFINED,
+        commonConfigFeignClientService.get(cacheKey).getCommonConfigDetails().getKey());
+    assertEquals(
+        TestUtil.UNDEFINED,
+        commonConfigFeignClientService.get(cacheKey).getCommonConfigDetails().getValue());
+    assertTrue(commonConfigFeignClientService.get(cacheKey).isUndefined());
+
+    verify(mapper, times(0)).responseToCacheValue(any());
   }
 
   @Test
   void getExceptionTest() {
     CommonConfigCacheKey invalidCacheKey = testUtil.getCommonConfigCacheKey();
 
-    when(mapper.responseToCacheValue(any())).thenThrow(new RuntimeException("Error message"));
     assertNull(commonConfigFeignClientService.get(invalidCacheKey));
-    verify(mapper, times(1)).responseToCacheValue(any());
+
+    verify(mapper, times(0)).responseToCacheValue(any());
   }
 }

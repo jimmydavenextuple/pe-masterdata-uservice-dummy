@@ -1,6 +1,7 @@
 package com.hbc.sourcing.rule.spring.cache.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -52,7 +53,8 @@ class SourcingRuleFeignClientServiceImplTest {
     when(mapper.responseToCacheValue(response)).thenReturn(cacheValue);
 
     assertEquals(cacheValue, sourcingRuleFeignClientService.get(cacheKey));
-    verify(mapper, times(1)).responseToCacheValue(any());
+    assertFalse(sourcingRuleFeignClientService.get(cacheKey).isUndefined());
+    verify(mapper, times(2)).responseToCacheValue(any());
   }
 
   @Test

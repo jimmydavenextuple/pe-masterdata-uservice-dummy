@@ -51,7 +51,8 @@ class WeightageConfigurationFeignClientServiceImplTest {
     Mockito.when(mapper.responseToCacheValue(response)).thenReturn(cacheValue);
 
     assertEquals(cacheValue, weightageConfigurationFeignClientService.get(cacheKey));
-    verify(mapper, times(1)).responseToCacheValue(any());
+    assertFalse(weightageConfigurationFeignClientService.get(cacheKey).isUndefined());
+    verify(mapper, times(2)).responseToCacheValue(any());
   }
 
   @Test

@@ -126,8 +126,7 @@ class ItemDomainTest {
     List<String> itemList = new ArrayList<>();
     List<ItemEntity> itemEntityList = new ArrayList<>();
     itemEntityList.add(itemEntity);
-    when(itemRepository.findByOrgIdAndItemIdIn(any(), any()))
-        .thenReturn(itemEntityList);
+    when(itemRepository.findByOrgIdAndItemIdIn(any(), any())).thenReturn(itemEntityList);
 
     List<ItemEntity> optionalItemEntity =
         itemDomain.findItemListByItemIdsAndOrgIdAndUom(itemList, TestUtil.ORG_ID);

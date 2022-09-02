@@ -11,4 +11,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class SourcingRuleCacheValue implements CacheValue {
   FetchPromiseSourcingRuleResponse fetchPromiseSourcingRuleResponse;
+
+  @Override
+  public boolean isUndefined() {
+    return false;
+  }
 }

@@ -13,4 +13,9 @@ import lombok.Data;
 public class NodeCarrierCalendarCacheValue implements CacheValue {
   private static final long serialVersionUID = 2705609994396335116L;
   private List<CalendarDaysStatusInfo> calendarDaysStatusInfo;
+
+  @Override
+  public boolean isUndefined() {
+    return false;
+  }
 }
