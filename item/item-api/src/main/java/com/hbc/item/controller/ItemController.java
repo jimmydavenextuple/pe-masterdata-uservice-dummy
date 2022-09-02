@@ -116,8 +116,7 @@ public class ItemController {
 
   @GetMapping("/{orgId}")
   public List<ItemResponse> getItemList(
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @RequestParam List<String> itemList)
+      @NotBlank @PathVariable String orgId, @NotBlank @RequestParam List<String> itemList)
       throws CommonServiceException, ItemBatchingDomainException {
     logger.debug("Processing get item details");
     try {

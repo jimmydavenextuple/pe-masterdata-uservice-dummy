@@ -7,7 +7,6 @@ import com.hbc.nodecarrier.cache.domain.NodeCarrierCacheValue;
 import com.hbc.nodecarrier.cache.domain.NodeCarrierDetails;
 import com.hbc.nodecarrier.cache.domain.NodeCarrierListCacheKey;
 import com.hbc.nodecarrier.cache.domain.NodeCarrierListCacheValue;
-
 import java.util.List;
 
 public class TestUtil {
@@ -25,7 +24,9 @@ public class TestUtil {
 
   public NodeCarrierListCacheValue getNodeCarrierListCacheValue() {
     NodeCarrierDetails nodeCarrierDetails = getNodeCarrierDetails();
-    return NodeCarrierListCacheValue.builder().nodeCarrierDetailsList(List.of(nodeCarrierDetails)).build();
+    return NodeCarrierListCacheValue.builder()
+        .nodeCarrierDetailsList(List.of(nodeCarrierDetails))
+        .build();
   }
 
   private NodeCarrierDetails getNodeCarrierDetails() {
@@ -59,9 +60,9 @@ public class TestUtil {
 
   public BaseResponse<List<NodeCarrierResponse>> getListOfBaseResponseOfNodeCarrierResponse() {
     return BaseResponse.builder()
-            .message("Node carrier details fetched successfully")
-            .payload(List.of(getNodeCarrierResponse()))
-            .build();
+        .message("Node carrier details fetched successfully")
+        .payload(List.of(getNodeCarrierResponse()))
+        .build();
   }
 
   public NodeCarrierCacheKey getNodeCarrierCacheKey() {
@@ -75,9 +76,9 @@ public class TestUtil {
 
   public NodeCarrierListCacheKey getNodeCarrierListCacheKey() {
     return NodeCarrierListCacheKey.builder()
-            .nodeId(NODE_ID)
-            .orgId(ORG_ID)
-            .serviceOption(SERVICE_OPTION)
-            .build();
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .serviceOption(SERVICE_OPTION)
+        .build();
   }
 }
