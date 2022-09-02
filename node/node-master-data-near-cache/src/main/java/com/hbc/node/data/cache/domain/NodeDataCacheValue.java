@@ -25,4 +25,9 @@ public class NodeDataCacheValue implements CacheValue {
   private Map<String, Boolean> serviceOptionEligibilities;
   private Boolean shipToHome;
   private Boolean bopisEligible;
+
+  @Override
+  public boolean isUndefined() {
+    return false;
+  }
 }

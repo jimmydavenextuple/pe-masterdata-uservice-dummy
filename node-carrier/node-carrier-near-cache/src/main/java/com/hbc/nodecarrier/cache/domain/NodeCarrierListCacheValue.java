@@ -1,6 +1,7 @@
 package com.hbc.nodecarrier.cache.domain;
 
 import com.hbc.core.cache.domain.CacheValue;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,11 +9,9 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class NodeCarrierCacheValue implements CacheValue {
+public class NodeCarrierListCacheValue implements CacheValue {
 
-  private static final long serialVersionUID = 2012829361093199932L;
-
-  private NodeCarrierDetails nodeCarrierDetails;
+  private List<NodeCarrierDetails> nodeCarrierDetailsList;
 
   @Override
   public boolean isUndefined() {

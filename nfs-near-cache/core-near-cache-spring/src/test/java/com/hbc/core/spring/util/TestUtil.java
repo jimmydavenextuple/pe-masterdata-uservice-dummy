@@ -12,6 +12,7 @@ public class TestUtil {
     cacheMap.put("node", CACHE_PROPERTY_VALUE);
     cacheMap.put("carrier", CACHE_PROPERTY_VALUE);
     cacheMap.put("node_carrier", CACHE_PROPERTY_VALUE);
+    cacheMap.put("node_carrier_list", CACHE_PROPERTY_VALUE);
     cacheMap.put("node_calendar", CACHE_PROPERTY_VALUE);
     cacheMap.put("carrier_calendar", CACHE_PROPERTY_VALUE);
     cacheMap.put("node_carrier_calendar", CACHE_PROPERTY_VALUE);

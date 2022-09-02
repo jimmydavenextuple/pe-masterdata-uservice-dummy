@@ -12,4 +12,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class TransitCacheValue implements CacheValue {
   private List<TransitResponse> transitResponseList;
+
+  @Override
+  public boolean isUndefined() {
+    return false;
+  }
 }

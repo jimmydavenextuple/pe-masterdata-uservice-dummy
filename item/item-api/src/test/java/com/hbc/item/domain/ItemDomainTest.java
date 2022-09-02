@@ -126,11 +126,10 @@ class ItemDomainTest {
     List<String> itemList = new ArrayList<>();
     List<ItemEntity> itemEntityList = new ArrayList<>();
     itemEntityList.add(itemEntity);
-    when(itemRepository.findByOrgIdAndUomAndItemIdIn(any(), any(), any()))
-        .thenReturn(itemEntityList);
+    when(itemRepository.findByOrgIdAndItemIdIn(any(), any())).thenReturn(itemEntityList);
 
     List<ItemEntity> optionalItemEntity =
-        itemDomain.findItemListByItemIdsAndOrgIdAndUom(itemList, TestUtil.ORG_ID, TestUtil.UOM);
+        itemDomain.findItemListByItemIdsAndOrgIdAndUom(itemList, TestUtil.ORG_ID);
     Assertions.assertEquals(itemEntityList, optionalItemEntity);
     Assertions.assertEquals(
         itemEntity.getIsDSVEligible(), optionalItemEntity.get(0).getIsDSVEligible());
@@ -142,7 +141,7 @@ class ItemDomainTest {
     Assertions.assertEquals(
         itemEntity.getShortDescription(), optionalItemEntity.get(0).getShortDescription());
 
-    verify(itemRepository, times(1)).findByOrgIdAndUomAndItemIdIn(any(), any(), any());
+    verify(itemRepository, times(1)).findByOrgIdAndItemIdIn(any(), any());
     Assertions.assertEquals(TestUtil.ITEM_ID, id.getItemId());
     Assertions.assertEquals(TestUtil.ORG_ID, id.getOrgId());
     Assertions.assertEquals(TestUtil.UOM, id.getUom());
