@@ -1,7 +1,7 @@
 package com.hbc.csvdownload.domain.mapper;
 
 import com.hbc.csvdownload.common.TestUtil;
-import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,11 +18,11 @@ class ProcessingLeadTimeMapperTest {
   @Test
   void convertToNodeCarrierRequest() {
 
-    NodeCarrierRequest nodeCarrierRequest =
+    ProcessingLeadTime processingLeadTime =
         mapper.convertToNodeCarrierRequest(testUtil.getProcessingLeadTimesRaw());
-    NodeCarrierRequest nullNodeCarrierRequest = mapper.convertToNodeCarrierRequest(null);
-    Assertions.assertNull(nullNodeCarrierRequest);
-    Assertions.assertNotNull(nodeCarrierRequest);
-    Assertions.assertEquals(TestUtil.ORG_ID, nodeCarrierRequest.getOrgId());
+    ProcessingLeadTime nullProcessingLeadTime = mapper.convertToNodeCarrierRequest(null);
+    Assertions.assertNull(nullProcessingLeadTime);
+    Assertions.assertNotNull(processingLeadTime);
+    Assertions.assertEquals(TestUtil.ORG_ID, processingLeadTime.getOrgId());
   }
 }

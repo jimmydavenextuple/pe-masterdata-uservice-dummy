@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
     name = "pe-config-jobs-dashboard",
-    url = "${spring.application.dependencies.job.framework:http://pe-config-data-upload:8080/}")
+    url = "${spring.application.dependencies.data-upload:http://pe-config-data-upload:8080/}")
 public interface JobsDashboardClient {
 
   @GetMapping("/org/{orgId}/jobs/{jobId}")

@@ -3,11 +3,11 @@ package com.hbc.jobs.consumers.service;
 import static org.mockito.Mockito.*;
 
 import com.hbc.common.response.BaseResponse;
+import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
 import com.hbc.jobs.consumers.common.TestUtil;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
-import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
@@ -72,7 +72,7 @@ class NodeCarrierMapperTest {
   void mapTODto() throws NodeCarrierMapperException {
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     Class res = nodeCarrierMapper.mapTODto();
-    Assertions.assertEquals(NodeCarrierRequest.class, res);
+    Assertions.assertEquals(ProcessingLeadTime.class, res);
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
     Exception exception =
         Assertions.assertThrows(
@@ -81,10 +81,22 @@ class NodeCarrierMapperTest {
   }
 
   @Test
-  void callApi() throws NodeCarrierMapperException {
-    Object object = testUtil.getNodeCarrierRequest();
+  void callApiUpdateAction() throws NodeCarrierMapperException {
+    Object object = testUtil.getProcessingLeadTime("U");
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     when(nodeCarrierFeign.createNodeCarrier(any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getNodeCarrierResponse()).build());
+    ResponseEntity<BaseResponse<NodeCarrierResponse>> res =
+        (ResponseEntity<BaseResponse<NodeCarrierResponse>>) nodeCarrierMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
+  }
+
+  @Test
+  void callApiDeleteAction() throws NodeCarrierMapperException {
+    Object object = testUtil.getProcessingLeadTime("D");
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+    when(nodeCarrierFeign.deleteNodeCarrier(any(), any(), any(), any()))
         .thenReturn(BaseResponse.builder().payload(testUtil.getNodeCarrierResponse()).build());
     ResponseEntity<BaseResponse<NodeCarrierResponse>> res =
         (ResponseEntity<BaseResponse<NodeCarrierResponse>>) nodeCarrierMapper.callApi(object, null);

@@ -1,18 +1,20 @@
 package com.hbc.csvdownload.service;
 
 import com.hbc.common.util.JsonUtil;
+import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
 import com.hbc.csvdownload.domain.mapper.ProcessingLeadTimeMapper;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
+import com.hbc.csvdownload.exception.InvalidActionType;
 import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.csvdownload.exception.JsonParsingException;
 import com.hbc.csvdownload.util.CsvUtil;
 import com.hbc.csvdownload.util.StringUtil;
+import com.hbc.dataupload.common.constants.DataUploadUtilityConstants;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
-import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBean;
@@ -33,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -60,8 +63,9 @@ public class CsvUploadUtilityService {
     /** CSV data parsed and map to NodeCarrierRequest object */
     CsvToBean<ProcessingLeadTimesRaw> processingLeadTimesRawCsvToBean =
         parseCSVToProcessingLeadTimesRaw(csvFile);
-    List<NodeCarrierRequest> nodeCarrierRequestList =
-        mapCsvBeanToNodeCarrierRequest(processingLeadTimesRawCsvToBean);
+
+    List<ProcessingLeadTime> nodeCarrierRequestList =
+        mapCsvBeanToProcessingLeadTime(processingLeadTimesRawCsvToBean);
 
     /** check if the list that is formed is empty */
     if (CollectionUtils.isEmpty(nodeCarrierRequestList)) {
@@ -71,7 +75,7 @@ public class CsvUploadUtilityService {
     /** form job request string */
     String jobRequest;
     try {
-      Function<List<NodeCarrierRequest>, String> dataMapper =
+      Function<List<ProcessingLeadTime>, String> dataMapper =
           request -> JsonUtil.convert(nodeCarrierRequestList);
       jobRequest = dataMapper.apply(nodeCarrierRequestList);
     } catch (Exception e) {
@@ -80,29 +84,39 @@ public class CsvUploadUtilityService {
     }
 
     /** invoke process jobJsonOffline method via jobsDashboardClient */
-    try {
-      jobsDashboardClient.processJobJsonOffline(
-          JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, orgId, jobRequest);
-      return "Job to bulk upload processing lead times is submitted successfully";
-    } catch (FeignException e) {
-      log.error("Feign exception while submitting job", e);
-      var errorResponse = ExceptionUtils.parseFeignException(e);
-      throw new JobSubmissionException(errorResponse.getMessage(), e, orgId);
-    } catch (Exception e) {
-      log.error("Error while submitting job to job framework", e);
-      throw new JobSubmissionException("Error while submitting job to job framework", e, orgId);
-    }
+    submitJob(orgId, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, jobRequest);
+
+    return "Job to bulk upload processing lead times is submitted successfully";
   }
 
-  private List<NodeCarrierRequest> mapCsvBeanToNodeCarrierRequest(
+  private List<ProcessingLeadTime> mapCsvBeanToProcessingLeadTime(
       CsvToBean<ProcessingLeadTimesRaw> processingLeadTimesRawCsvToBean) {
+    var rowIndex = new AtomicInteger(0);
     return processingLeadTimesRawCsvToBean.stream()
         .map(
             processingLeadTimesRaw -> {
-              var nodeCarrierRequest = INSTANCE.convertToNodeCarrierRequest(processingLeadTimesRaw);
-              nodeCarrierRequest.setCarrierServiceId("ALL-SDND");
-              nodeCarrierRequest.setLastPickupTime("00:00");
-              return nodeCarrierRequest;
+              if (!ObjectUtils.isEmpty(processingLeadTimesRaw.getActionType())) {
+                if (DataUploadUtilityConstants.UPDATE_U.equalsIgnoreCase(
+                        processingLeadTimesRaw.getActionType())
+                    || DataUploadUtilityConstants.DELETE_D.equalsIgnoreCase(
+                        processingLeadTimesRaw.getActionType())) {
+                  ProcessingLeadTime nodeCarrierRequest =
+                      INSTANCE.convertToNodeCarrierRequest(processingLeadTimesRaw);
+                  nodeCarrierRequest.setCarrierServiceId("");
+                  rowIndex.getAndIncrement();
+                  return nodeCarrierRequest;
+                } else {
+                  log.error("Invalid action type. Valid values U and D");
+                  throw new InvalidActionType(
+                      "Invalid action type. Valid values U and D",
+                      processingLeadTimesRaw.getActionType(),
+                      rowIndex.getAndIncrement());
+                }
+              } else {
+                log.error("Action can not be blank");
+                throw new InvalidActionType(
+                    "Action can not be blank", null, rowIndex.getAndIncrement());
+              }
             })
         .collect(Collectors.toList());
   }
@@ -185,19 +199,8 @@ public class CsvUploadUtilityService {
     var jobRequest = StringUtil.createJobRequest(transitDataCreationRequestList, orgId);
 
     /** invoke process jobJsonOffline method via jobsDashboardClient */
-    try {
-      jobsDashboardClient.processJobJsonOffline(
-          JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, orgId, jobRequest);
-      return "Job to bulk upload transit times is submitted successfully";
-    } catch (FeignException e) {
-      log.error("Feign exception while submitting job", e);
-      var errorResponse = ExceptionUtils.parseFeignException(e);
-      throw new JobSubmissionException(errorResponse.getMessage(), e, orgId);
-    } catch (Exception e) {
-      log.error("Error while submitting bulk upload transit times job to job framework", e);
-      throw new JobSubmissionException(
-          "Error while submitting bulk upload transit times job to job framework", e, orgId);
-    }
+    submitJob(orgId, JobTypeEnum.UPLOAD_TRANSIT_TIMES, jobRequest);
+    return "Job to bulk upload transit times is submitted successfully";
   }
 
   private List<TransitDataCreationRequest> createTransitDataCreationRequestObjects(
@@ -236,6 +239,20 @@ public class CsvUploadUtilityService {
     if (!fsaHeader.equals("Destination FSA / Source FSA ->")) {
       log.error("Invalid header fsaHeader");
       throw new CsvFormatValidationFailedException("Invalid header fsaHeader", fsaHeader);
+    }
+  }
+
+  private void submitJob(String orgId, JobTypeEnum jobType, String jobRequest)
+      throws JobSubmissionException {
+    try {
+      jobsDashboardClient.processJobJsonOffline(jobType, orgId, jobRequest);
+    } catch (FeignException e) {
+      log.error("Feign exception while submitting job", e);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
+      throw new JobSubmissionException(errorResponse.getMessage(), e, orgId);
+    } catch (Exception e) {
+      log.error("Error while submitting job to job framework", e);
+      throw new JobSubmissionException("Error while submitting job to job framework", e, orgId);
     }
   }
 }

@@ -30,7 +30,7 @@ class CsvUtilityExceptionHandlerTest {
     CsvFormatValidationFailedException exception =
         new CsvFormatValidationFailedException("Invalid Csv headers", null);
     CsvFormatValidationFailedException exception1 =
-        new CsvFormatValidationFailedException("Invalid Csv headers", null);
+        new CsvFormatValidationFailedException("Invalid Csv headers", null, null);
 
     ResponseEntity<ErrorResponse> errorResponseResponseEntity =
         csvUtilityExceptionHandler.handleCsvFormatValidationFailedException(exception);
@@ -81,5 +81,14 @@ class CsvUtilityExceptionHandlerTest {
     Assertions.assertNotNull(errorResponseResponseEntity.getBody());
     Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponseResponseEntity1.getStatusCode());
     Assertions.assertNotNull(errorResponseResponseEntity1.getBody());
+  }
+
+  @Test
+  void handleInvalidActionType() {
+    InvalidActionType exception = new InvalidActionType("Invalid action", "invalidAction", 2);
+    ResponseEntity<ErrorResponse> errorResponseResponseEntity =
+        csvUtilityExceptionHandler.handleInvalidActionType(exception);
+    Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponseResponseEntity.getStatusCode());
+    Assertions.assertNotNull(errorResponseResponseEntity.getBody());
   }
 }

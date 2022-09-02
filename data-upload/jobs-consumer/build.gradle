@@ -1,6 +1,5 @@
 bootJar {
     enabled = false
-    mainClass.set("com.hbc.jobs.consumers.JobsConsumersServiceApplication")
 }
 
 jar {
@@ -13,6 +12,7 @@ dependencies {
     implementation "org.springframework.kafka:spring-kafka:2.8.7"
     implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
     implementation(project(":common-util"))
+    implementation(project(":data-upload:csv-utility-common-util"))
     implementation(project(":data-upload:job-framework-common-util"))
     implementation(project(":node-carrier:node-carrier-api-domain"))
     implementation(project(":transit:transit-api-domain"))

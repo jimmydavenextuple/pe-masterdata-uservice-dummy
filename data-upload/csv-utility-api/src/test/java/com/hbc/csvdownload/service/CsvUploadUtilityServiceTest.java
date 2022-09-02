@@ -6,6 +6,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
+import com.hbc.csvdownload.exception.InvalidActionType;
 import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.csvdownload.exception.JsonParsingException;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
@@ -42,15 +43,15 @@ class CsvUploadUtilityServiceTest {
     MultipartFile csvFile = mock(MultipartFile.class);
     String csvFileContent =
         "#CommentedLine1\n"
-            + "nodeId,orgId,serviceOptions,processingTime (in hrs)\n"
-            + "1554,BAY,SDND,2\n"
-            + "1560,BAY,SDND,2\n"
-            + "1101,BAY,SDND,2\n"
-            + "1518,BAY,NEXTDAY,6\n"
-            + "1634,BAY,EXPRESS,30.92\n"
-            + "1601,BAY,EXPRESS,22.55\n"
-            + "1125,BAY,EXPRESS,19.90\n"
-            + "1114,BAY,SDND,24.97";
+            + "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+            + "1554,BAY,SDND,2,U\n"
+            + "1560,BAY,SDND,2,U\n"
+            + "1101,BAY,SDND,2,U\n"
+            + "1518,BAY,NEXTDAY,6,D\n"
+            + "1634,BAY,EXPRESS,30.92,U\n"
+            + "1601,BAY,EXPRESS,22.55,U\n"
+            + "1125,BAY,EXPRESS,19.90,D\n"
+            + "1114,BAY,SDND,24.97,U";
     when(csvFile.getInputStream())
         .thenReturn(
             new ByteArrayInputStream(csvFileContent.getBytes()),
@@ -110,20 +111,40 @@ class CsvUploadUtilityServiceTest {
   }
 
   @Test
+  void uploadProcessingLeadTimesCsvEmptyCsvException()
+      throws IOException, CsvParsingException, CsvFormatValidationFailedException,
+          JobSubmissionException, JsonParsingException {
+    MultipartFile csvFile = mock(MultipartFile.class);
+    String csvFileContent = "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n";
+
+    when(csvFile.getInputStream())
+        .thenReturn(
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CsvFormatValidationFailedException.class,
+            () -> csvUploadUtilityService.uploadProcessingLeadTimesCsv(TestUtil.ORG_ID, csvFile));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
   void uploadProcessingLeadTimesCsvEmptyRowException()
       throws IOException, CsvParsingException, CsvFormatValidationFailedException,
           JobSubmissionException, JsonParsingException {
     MultipartFile csvFile = mock(MultipartFile.class);
     String csvFileContent =
-        "nodeId,orgId,serviceOptions,processingTime (in hrs)\n"
-            + "1554,BAY,SDND,2\n"
-            + "1560,BAY,SDND,2\n"
+        "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+            + "1554,BAY,SDND,2,U\n"
+            + "1560,BAY,SDND,2,U\n"
+            + "1101,BAY,SDND,2,U\n"
+            + "1518,BAY,NEXTDAY,6,D\n"
             + "\n"
-            + "1518,BAY,NEXTDAY,6\n"
-            + "1634,BAY,EXPRESS,30.92\n"
-            + "1601,BAY,EXPRESS,22.55\n"
-            + "1125,BAY,EXPRESS,19.90\n"
-            + "1114,BAY,SDND,24.97";
+            + "1601,BAY,EXPRESS,22.55,U\n"
+            + "1125,BAY,EXPRESS,19.90,D\n"
+            + "1114,BAY,SDND,24.97,U";
 
     when(csvFile.getInputStream())
         .thenReturn(
@@ -136,17 +157,64 @@ class CsvUploadUtilityServiceTest {
   }
 
   @Test
-  void uploadProcessingLeadTimesCsvFeignException() throws IOException {
+  void uploadProcessingLeadTimesCsvNullAction() throws IOException {
     MultipartFile csvFile = mock(MultipartFile.class);
     String csvFileContent =
-        "nodeId,orgId,serviceOptions,processingTime (in hrs)\n"
-            + "1554,BAY,SDND,2\n"
-            + "1560,BAY,SDND,2\n"
-            + "1518,BAY,NEXTDAY,6\n"
-            + "1634,BAY,EXPRESS,30.92\n"
-            + "1601,BAY,EXPRESS,22.55\n"
-            + "1125,BAY,EXPRESS,19.90\n"
-            + "1114,BAY,SDND,24.97";
+        "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+            + "1554,BAY,SDND,2,U\n"
+            + "1560,BAY,SDND,2,U\n"
+            + "1101,BAY,SDND,2,U\n"
+            + "1518,BAY,NEXTDAY,6,D\n"
+            + "1634,BAY,EXPRESS,7,\n"
+            + "1601,BAY,EXPRESS,22.55,U\n"
+            + "1125,BAY,EXPRESS,19.90,D\n"
+            + "1114,BAY,SDND,24.97,U";
+
+    when(csvFile.getInputStream())
+        .thenReturn(
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            InvalidActionType.class,
+            () -> csvUploadUtilityService.uploadProcessingLeadTimesCsv(TestUtil.ORG_ID, csvFile));
+    Assertions.assertFalse(ObjectUtils.isEmpty(exception));
+  }
+
+  @Test
+  void uploadProcessingLeadTimesCsvInvalidAction() throws IOException {
+    MultipartFile csvFile = mock(MultipartFile.class);
+    String csvFileContent =
+        "#CommentedLine1\n"
+            + "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+            + "1554,BAY,SDND,2,N\n"
+            + "1560,BAY,SDND,2,U\n"
+            + "1101,BAY,SDND,2,U\n"
+            + "1518,BAY,NEXTDAY,6,D\n"
+            + "1634,BAY,EXPRESS,7,D\n"
+            + "1601,BAY,EXPRESS,22.55,U\n"
+            + "1125,BAY,EXPRESS,19.90,D\n"
+            + "1114,BAY,SDND,24.97,U";
+
+    when(csvFile.getInputStream())
+        .thenReturn(
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            InvalidActionType.class,
+            () -> csvUploadUtilityService.uploadProcessingLeadTimesCsv(TestUtil.ORG_ID, csvFile));
+    Assertions.assertFalse(ObjectUtils.isEmpty(exception));
+  }
+
+  @Test
+  void uploadProcessingLeadTimesCsvFeignException() throws IOException {
+    MultipartFile csvFile = mock(MultipartFile.class);
+    String csvFileContent = TestUtil.processingLeadTimesCsvData;
 
     when(csvFile.getInputStream())
         .thenReturn(
@@ -171,16 +239,7 @@ class CsvUploadUtilityServiceTest {
   @Test
   void uploadProcessingLeadTimesCsvException() throws IOException {
     MultipartFile csvFile = mock(MultipartFile.class);
-    String csvFileContent =
-        "nodeId,orgId,serviceOptions,processingTime (in hrs)\n"
-            + "1554,BAY,SDND,2\n"
-            + "1560,BAY,SDND,2\n"
-            + "1518,BAY,NEXTDAY,6\n"
-            + "1634,BAY,EXPRESS,30.92\n"
-            + "1601,BAY,EXPRESS,22.55\n"
-            + "1125,BAY,EXPRESS,19.90\n"
-            + "1114,BAY,SDND,24.97";
-
+    String csvFileContent = TestUtil.processingLeadTimesCsvData;
     when(csvFile.getInputStream())
         .thenReturn(
             new ByteArrayInputStream(csvFileContent.getBytes()),

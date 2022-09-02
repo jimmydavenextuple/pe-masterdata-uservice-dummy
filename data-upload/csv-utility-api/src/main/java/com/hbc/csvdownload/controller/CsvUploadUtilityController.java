@@ -24,9 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class CsvUploadUtilityController {
 
-  private static final Logger logger = LoggerFactory.getLogger(CsvUploadUtilityController.class);
-
   private final CsvUploadUtilityService csvUploadUtilityService;
+
+  private static final Logger logger = LoggerFactory.getLogger(CsvUploadUtilityController.class);
 
   @PostMapping(
       path = "/org/{orgId}/upload/transit-times",
@@ -46,7 +46,7 @@ public class CsvUploadUtilityController {
   }
 
   @PostMapping(
-      path = "org/{orgId}/upload/processing-lead-times",
+      path = "/org/{orgId}/upload/processing-lead-times",
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<BaseResponse<String>> uploadProcessingLeadTimes(
