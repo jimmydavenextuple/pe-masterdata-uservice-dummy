@@ -1,0 +1,4 @@
+orgId,carrierServiceId,action,sourceGeozone,destinationGeozone,bufferDays,startTime,endTime
+BAY,ABC,u,B2E,B1P,0.1,2022-08-23T09:38:57Z
+BAY,ABC,U,B1P,B2E,0.2,2022-08-23T09:38:57Z,2022-08-24T00:00:00Z
+BAY,ABC,U,E6A,B2E,0.3,2022-08-23T09:38:57Z,2022-08-24T00:00:00Z

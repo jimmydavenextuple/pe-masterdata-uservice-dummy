@@ -3,6 +3,7 @@ package com.hbc.dataupload.common.utils;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DELETE_D;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.FILE_URI;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.UPDATE_ACTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.UPDATE_U;
 
 import com.hbc.common.exception.CommonServiceException;
@@ -47,6 +48,25 @@ public class DataUploadUtil {
               .errorMessage("CSV File Headers are invalid")
               .build());
       throw new CommonServiceException(errorMessage, HttpStatus.BAD_REQUEST, 0x2777, errorMap);
+    }
+  }
+
+  public static void validateUpdateAction(Path path) throws IOException, CommonServiceException {
+    var line = "";
+    List<String> actions = new ArrayList<>();
+
+    try (var br = Files.newBufferedReader(path)) {
+      while ((line = br.readLine()) != null) {
+        String[] values = line.split(",");
+        actions.add(values[2]);
+      }
+      actions.remove("action");
+      for (Object action : actions) {
+        if (!(action.toString().equalsIgnoreCase(UPDATE_ACTION))) {
+          throw new CommonServiceException(
+              ACTION_INVALID_MESSAGE, HttpStatus.BAD_REQUEST, 0x1777, null);
+        }
+      }
     }
   }
 

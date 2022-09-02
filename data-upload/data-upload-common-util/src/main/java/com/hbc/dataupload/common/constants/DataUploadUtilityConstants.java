@@ -10,6 +10,8 @@ public class DataUploadUtilityConstants {
   public static final String DELETE = "DELETE";
   public static final String ACTION = "action";
   public static final String ORG_ID = "orgId";
+  public static final String UPDATE_ACTION = "U";
+  public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
   public static final String UPDATE_U = "U";
   public static final String DELETE_D = "D";
   public static final String CARRIER_SERVICE_ID = "carrierServiceId";
@@ -61,7 +63,11 @@ public class DataUploadUtilityConstants {
   public static final String EXCEPTION_DAYS = "exceptionDays";
   public static final String EFFECTIVE_DATE = "effectiveDate";
   public static final String SHIPPING_STAGE = "shippingStage";
-  public static final String ACTION_INVALID_MESSAGE = "Action type invalid";
+  public static final String ACTION_INVALID_MESSAGE = "action type invalid";
+  public static final String BUFFER_HOURS = "bufferHours";
+  public static final String START_TIME = "startTime";
+  public static final String END_TIME = "endTime";
+  public static final String BUFFER_DAYS = "bufferDays";
   public static final String SELECTION_CRITERIA = "selectionCriteria";
 
   public static final String INVALID_SELECTION_CRITERIA = "Invalid selection criteria";
