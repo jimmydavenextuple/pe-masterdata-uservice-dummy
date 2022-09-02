@@ -24,6 +24,39 @@ public class CsvUtilityExceptionHandler {
                 .build());
   }
 
+  @ExceptionHandler(CsvFormatValidationFailedException.class)
+  public ResponseEntity<ErrorResponse> handleCsvFormatValidationFailedException(
+      CsvFormatValidationFailedException e) {
+    return ResponseEntity.badRequest()
+        .body(ErrorResponse.builder(ErrorType.ERROR, 0xfffff2).message(e.getMessage()).build());
+  }
+
+  @ExceptionHandler(CsvParsingException.class)
+  public ResponseEntity<ErrorResponse> handleCsvParsingException(CsvParsingException e) {
+    return ResponseEntity.badRequest()
+        .body(ErrorResponse.builder(ErrorType.ERROR, 0xfffff2).message(e.getMessage()).build());
+  }
+
+  @ExceptionHandler(JobSubmissionException.class)
+  public ResponseEntity<ErrorResponse> handleJobSubmissionException(JobSubmissionException e) {
+    return ResponseEntity.badRequest()
+        .body(ErrorResponse.builder(ErrorType.ERROR, 0xfffff3).message(e.getMessage()).build());
+  }
+
+  @ExceptionHandler(JsonParsingException.class)
+  public ResponseEntity<ErrorResponse> handleJsonParsingException(JsonParsingException e) {
+    return ResponseEntity.badRequest()
+        .body(ErrorResponse.builder(ErrorType.ERROR, 0xfffff4).message(e.getMessage()).build());
+  }
+
+  @ExceptionHandler(InvalidActionType.class)
+  public ResponseEntity<ErrorResponse> handleInvalidActionType(InvalidActionType e) {
+    return ResponseEntity.badRequest()
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0xfffff5)
+                .message(e.getMessage())
+                .errorField("rowIndex", FieldError.builder().rejectedValue(e.getRowIndex()).build())
+                .errorField("action", FieldError.builder().rejectedValue(e.getAction()).build())
   @ExceptionHandler(CsvDownloadUtilityServiceException.class)
   public ResponseEntity<ErrorResponse> handleCsvDownloadUtilityServiceException(
       CsvDownloadUtilityServiceException e) {

@@ -121,11 +121,6 @@ include 'data-upload:csv-utility-api'
 findProject(':data-upload:csv-utility-api')?.name = 'csv-utility-api'
 include 'data-upload:csv-utility-common-util'
 findProject(':data-upload:csv-utility-common-util')?.name = 'csv-utility-common-util'
-include 'data-upload:csv-utility-api'
-findProject(':data-upload:csv-utility-api')?.name = 'csv-utility-api'
-include 'data-upload:csv-utility-common-util'
-findProject(':data-upload:csv-utility-common-util')?.name = 'csv-utility-common-util'
-
 
 include 'common-configuration'
 include 'common-configuration:common-configuration-api'
@@ -147,3 +142,4 @@ include 'transit:transit-near-cache'
 findProject(':transit:transit-near-cache')?.name = 'transit-near-cache'
 include 'transit:transit-near-cache-spring'
 findProject(':transit:transit-near-cache-spring')?.name = 'transit-near-cache-spring'
+
