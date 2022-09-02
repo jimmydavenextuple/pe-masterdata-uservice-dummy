@@ -142,3 +142,4 @@ include 'transit:transit-near-cache'
 findProject(':transit:transit-near-cache')?.name = 'transit-near-cache'
 include 'transit:transit-near-cache-spring'
 findProject(':transit:transit-near-cache-spring')?.name = 'transit-near-cache-spring'
+

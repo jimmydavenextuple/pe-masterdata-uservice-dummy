@@ -5,7 +5,6 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
-import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import java.util.Collections;
 import java.util.Date;
 import org.springframework.stereotype.Service;
@@ -18,16 +17,16 @@ public class TestUtil {
   public static final String JOB_ID = "jobId1";
   public static final String SERVICE_OPTION = "serviceOptions";
   public static final Double PROCESSING_TIME = 20.0;
-  public static final String leadProcessingTimesCsvData =
-      "nodeId,orgId,serviceOptions,processingTime (in hrs)\n"
-          + "1554,BAY,SDND,2\n"
-          + "1560,BAY,SDND,2\n"
-          + "1101,BAY,SDND,2\n"
-          + "1518,BAY,NEXTDAY,6\n"
-          + "1634,BAY,EXPRESS,30.92\n"
-          + "1601,BAY,EXPRESS,22.55\n"
-          + "1125,BAY,EXPRESS,19.90\n"
-          + "1114,BAY,SDND,24.97";
+  public static final String processingLeadTimesCsvData =
+      "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+          + "1554,BAY,SDND,2,U\n"
+          + "1560,BAY,SDND,2,U\n"
+          + "1101,BAY,SDND,2,U\n"
+          + "1518,BAY,NEXTDAY,6,D\n"
+          + "1634,BAY,EXPRESS,30.92,U\n"
+          + "1601,BAY,EXPRESS,22.55,U\n"
+          + "1125,BAY,EXPRESS,19.90,D\n"
+          + "1114,BAY,SDND,24.97,U";
 
   public ProcessingLeadTimesRaw getProcessingLeadTimesRaw() {
     ProcessingLeadTimesRaw processingLeadTimesRaw = new ProcessingLeadTimesRaw();
@@ -37,18 +36,6 @@ public class TestUtil {
     processingLeadTimesRaw.setProcessingTime(PROCESSING_TIME);
 
     return processingLeadTimesRaw;
-  }
-
-  public NodeCarrierRequest getNodeCarrierRequest() {
-    NodeCarrierRequest nodeCarrierRequest = new NodeCarrierRequest();
-    nodeCarrierRequest.setOrgId(ORG_ID);
-    nodeCarrierRequest.setCarrierServiceId("ALL_SDND");
-    nodeCarrierRequest.setLastPickupTime("00:00");
-    nodeCarrierRequest.setNodeId(NODE_ID);
-    nodeCarrierRequest.setProcessingTime(PROCESSING_TIME);
-    nodeCarrierRequest.setServiceOption(SERVICE_OPTION);
-
-    return nodeCarrierRequest;
   }
 
   public JobDto createJob(JobTypeEnum jobTypeEnum, int totalRecords) {
