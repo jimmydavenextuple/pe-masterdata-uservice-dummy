@@ -1,6 +1,7 @@
 package com.hbc.core.constants;
 
 public class NearCacheConstants {
+
   private NearCacheConstants() {}
 
   public static final String NODE_ENTITY_NAME = "Node";

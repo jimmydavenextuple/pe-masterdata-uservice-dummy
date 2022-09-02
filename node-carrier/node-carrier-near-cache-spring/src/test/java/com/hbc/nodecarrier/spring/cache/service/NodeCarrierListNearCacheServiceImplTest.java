@@ -1,12 +1,18 @@
 package com.hbc.nodecarrier.spring.cache.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.hbc.core.cache.domain.CacheValue;
 import com.hbc.core.cache.service.GenericFeignCacheService;
 import com.hbc.core.constants.NearCacheConstants;
 import com.hbc.core.registry.NearCacheRegistry;
 import com.hbc.core.spring.service.AbstractGenericFeignClientServiceImpl;
-import com.hbc.nodecarrier.cache.domain.NodeCarrierCacheKey;
-import com.hbc.nodecarrier.cache.domain.NodeCarrierCacheValue;
 import com.hbc.nodecarrier.cache.domain.NodeCarrierListCacheKey;
 import com.hbc.nodecarrier.cache.domain.NodeCarrierListCacheValue;
 import com.hbc.nodecarrier.spring.cache.util.TestUtil;
@@ -16,91 +22,82 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class NodeCarrierListNearCacheServiceImplTest {
 
-    @InjectMocks
-    private NodeCarrierListNearCacheServiceImpl nodeCarrierListNearCacheService;
+  @InjectMocks private NodeCarrierListNearCacheServiceImpl nodeCarrierListNearCacheService;
 
-    @InjectMocks private TestUtil testUtil;
+  @InjectMocks private TestUtil testUtil;
 
-    @Mock
-    private AbstractGenericFeignClientServiceImpl abstractGenericFeignClientService;
+  @Mock private AbstractGenericFeignClientServiceImpl abstractGenericFeignClientService;
 
-    @Mock
-    private GenericFeignCacheService<NodeCarrierListCacheKey, NodeCarrierListCacheValue> feignCacheService;
+  @Mock
+  private GenericFeignCacheService<NodeCarrierListCacheKey, NodeCarrierListCacheValue>
+      feignCacheService;
 
-    @Mock private NearCacheRegistry nearCacheRegistry;
+  @Mock private NearCacheRegistry nearCacheRegistry;
 
-    @Test
-    void getValidTest() {
-        NodeCarrierListCacheKey cacheKey = testUtil.getNodeCarrierListCacheKey();
-        NodeCarrierListCacheValue cacheValue = testUtil.getNodeCarrierListCacheValue();
+  @Test
+  void getValidTest() {
+    NodeCarrierListCacheKey cacheKey = testUtil.getNodeCarrierListCacheKey();
+    NodeCarrierListCacheValue cacheValue = testUtil.getNodeCarrierListCacheValue();
 
-        when(feignCacheService.get(any())).thenReturn(cacheValue);
-        when(abstractGenericFeignClientService.get(any())).thenReturn(cacheValue);
+    when(feignCacheService.get(any())).thenReturn(cacheValue);
+    when(abstractGenericFeignClientService.get(any())).thenReturn(cacheValue);
 
-        // First Invocation
-        CacheValue cacheValue1 = nodeCarrierListNearCacheService.get(cacheKey);
-        assertEquals(cacheValue, cacheValue1);
+    // First Invocation
+    CacheValue cacheValue1 = nodeCarrierListNearCacheService.get(cacheKey);
+    assertEquals(cacheValue, cacheValue1);
 
-        // Second Invocation
-        CacheValue cacheValue2 = abstractGenericFeignClientService.get(cacheKey);
-        assertEquals(cacheValue, cacheValue2);
+    // Second Invocation
+    CacheValue cacheValue2 = abstractGenericFeignClientService.get(cacheKey);
+    assertEquals(cacheValue, cacheValue2);
 
-        // Third Invocation
-        CacheValue cacheValue3 = abstractGenericFeignClientService.get(cacheKey);
-        assertEquals(cacheValue, cacheValue3);
-        verify(feignCacheService, times(1)).get(cacheKey);
-    }
+    // Third Invocation
+    CacheValue cacheValue3 = abstractGenericFeignClientService.get(cacheKey);
+    assertEquals(cacheValue, cacheValue3);
+    verify(feignCacheService, times(1)).get(cacheKey);
+  }
 
-    @Test
-    void getInValidTest() {
-        NodeCarrierListCacheKey cacheKey = testUtil.getNodeCarrierListCacheKey();
+  @Test
+  void getInValidTest() {
+    NodeCarrierListCacheKey cacheKey = testUtil.getNodeCarrierListCacheKey();
 
-        when(feignCacheService.get(any())).thenReturn(null);
-        assertNull(nodeCarrierListNearCacheService.get(cacheKey));
-        verify(feignCacheService, times(1)).get(cacheKey);
-    }
+    when(feignCacheService.get(any())).thenReturn(null);
+    assertNull(nodeCarrierListNearCacheService.get(cacheKey));
+    verify(feignCacheService, times(1)).get(cacheKey);
+  }
 
-    @Test
-    void deleteTest() {
-        NodeCarrierListCacheKey cacheKey = testUtil.getNodeCarrierListCacheKey();
+  @Test
+  void deleteTest() {
+    NodeCarrierListCacheKey cacheKey = testUtil.getNodeCarrierListCacheKey();
 
-        nodeCarrierListNearCacheService.delete(cacheKey);
-        CacheValue cacheValue = nodeCarrierListNearCacheService.get(cacheKey);
-        assertNull(cacheValue);
-    }
+    nodeCarrierListNearCacheService.delete(cacheKey);
+    CacheValue cacheValue = nodeCarrierListNearCacheService.get(cacheKey);
+    assertNull(cacheValue);
+  }
 
-    @Test
-    void deleteAllTest() {
-        NodeCarrierListCacheKey cacheKey = testUtil.getNodeCarrierListCacheKey();
+  @Test
+  void deleteAllTest() {
+    NodeCarrierListCacheKey cacheKey = testUtil.getNodeCarrierListCacheKey();
 
-        nodeCarrierListNearCacheService.deleteAll();
-        CacheValue cacheValue = nodeCarrierListNearCacheService.get(cacheKey);
-        assertNull(cacheValue);
-    }
+    nodeCarrierListNearCacheService.deleteAll();
+    CacheValue cacheValue = nodeCarrierListNearCacheService.get(cacheKey);
+    assertNull(cacheValue);
+  }
 
-    @Test
-    void selfRegister() {
-        doNothing().when(nearCacheRegistry).registerNearCacheEntity(any(), any(), any());
-        nodeCarrierListNearCacheService.selfRegister();
+  @Test
+  void selfRegister() {
+    doNothing().when(nearCacheRegistry).registerNearCacheEntity(any(), any(), any());
+    nodeCarrierListNearCacheService.selfRegister();
 
-        verify(nearCacheRegistry, times(1)).registerNearCacheEntity(any(), any(), any());
-    }
+    verify(nearCacheRegistry, times(1)).registerNearCacheEntity(any(), any(), any());
+  }
 
-    @Test
-    void getEntityName() {
-        assertEquals(
-                NearCacheConstants.NODE_CARRIER_LIST_ENTITY_NAME,
-                nodeCarrierListNearCacheService.getEntityName());
-    }
+  @Test
+  void getEntityName() {
+    assertEquals(
+        NearCacheConstants.NODE_CARRIER_LIST_ENTITY_NAME,
+        nodeCarrierListNearCacheService.getEntityName());
+  }
 }

@@ -100,24 +100,25 @@ public class TransitService {
     } else {
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(
-              ORG_ID,
-              FieldError.builder().rejectedValue(transitBufferCreationRequest.getOrgId()).build());
+          ORG_ID,
+          FieldError.builder().rejectedValue(transitBufferCreationRequest.getOrgId()).build());
       errorMap.put(
-              SOURCE_GEOZONE,
-              FieldError.builder()
-                      .rejectedValue(transitBufferCreationRequest.getSourceGeozone())
-                      .build());
+          SOURCE_GEOZONE,
+          FieldError.builder()
+              .rejectedValue(transitBufferCreationRequest.getSourceGeozone())
+              .build());
       errorMap.put(
-              DESTINATION_GEOZONE,
-              FieldError.builder()
-                      .rejectedValue(transitBufferCreationRequest.getDestinationGeozone())
-                      .build());
+          DESTINATION_GEOZONE,
+          FieldError.builder()
+              .rejectedValue(transitBufferCreationRequest.getDestinationGeozone())
+              .build());
       errorMap.put(
-              CARRIER_SERVICE_ID,
-              FieldError.builder()
-                      .rejectedValue(transitBufferCreationRequest.getCarrierServiceId())
-                      .build());
-      throw new CommonServiceException(TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, null);
+          CARRIER_SERVICE_ID,
+          FieldError.builder()
+              .rejectedValue(transitBufferCreationRequest.getCarrierServiceId())
+              .build());
+      throw new CommonServiceException(
+          TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, null);
     }
   }
 
