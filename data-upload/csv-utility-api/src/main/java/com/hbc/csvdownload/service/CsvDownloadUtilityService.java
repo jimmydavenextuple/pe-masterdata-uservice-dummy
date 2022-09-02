@@ -3,8 +3,6 @@ package com.hbc.csvdownload.service;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
-import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
-import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,19 +26,16 @@ public class CsvDownloadUtilityService {
 
   public String downloadTransitTimesForSourceAndDestinationRegion(
       String orgId, String carrierServiceId, String sourceRegion, String destinationRegion)
-      throws PostalCodeTimezoneServiceException, TransitServiceException,
-          CsvDownloadUtilityServiceException {
+      throws CsvDownloadUtilityServiceException {
     logger.debug("Processing download transit times for source and destination regions");
 
     try {
       List<String> destinationFsaList =
-          postalCodeTimeZoneService.getFsaList(orgId, destinationRegion);
+          postalCodeTimeZoneService.getFSAsByOrgIdAndState(orgId, destinationRegion);
       Set<String> sourceFsaSet =
-          new HashSet<>(postalCodeTimeZoneService.getFsaList(orgId, sourceRegion));
-      List<TransitResponse> destinationFsaTransitResponses =
-          transitService.getTransitDetails(orgId, carrierServiceId, destinationFsaList);
+          new HashSet<>(postalCodeTimeZoneService.getFSAsByOrgIdAndState(orgId, sourceRegion));
       List<TransitResponse> filteredTransitResponseList =
-          destinationFsaTransitResponses.stream()
+          transitService.getTransitDetails(orgId, carrierServiceId, destinationFsaList).stream()
               .filter(transitResponse -> sourceFsaSet.contains(transitResponse.getSourceGeozone()))
               .collect(Collectors.toList());
 
@@ -50,13 +45,13 @@ public class CsvDownloadUtilityService {
             "No transit details available for source and destination FSAs", orgId);
       }
 
-      Set<String> filteredSourceFsaSet =
+      Set<String> filteredSourceFSASet =
           filteredTransitResponseList.stream()
               .map(TransitResponse::getSourceGeozone)
               .collect(Collectors.toSet());
 
       Map<String, Float> sourceAndTransitTimeMap = new TreeMap<>();
-      filteredSourceFsaSet.forEach(fsa -> sourceAndTransitTimeMap.put(fsa, null));
+      filteredSourceFSASet.forEach(fsa -> sourceAndTransitTimeMap.put(fsa, null));
 
       Map<String, Map<String, Float>> transitTimesDataMap = new HashMap<>();
       filteredTransitResponseList.forEach(
@@ -74,7 +69,7 @@ public class CsvDownloadUtilityService {
                   .get(transitResponse.getDestinationGeozone())
                   .put(transitResponse.getSourceGeozone(), transitResponse.getTransitDays()));
 
-      var sourceFsaHeader = String.join(",", filteredSourceFsaSet);
+      var sourceFsaHeader = String.join(",", filteredSourceFSASet);
       return constructCsvData(orgId, carrierServiceId, transitTimesDataMap, sourceFsaHeader);
     } catch (Exception e) {
       logger.error("Error while forming csv contents string");
@@ -94,18 +89,18 @@ public class CsvDownloadUtilityService {
             orgId, carrierServiceId, sourceFsaHeader);
     String rows =
         transitTimesDataMap.keySet().stream()
-            .map(
-                destinationFsa -> {
-                  var sourceFsaAndTransitTimesMap = transitTimesDataMap.get(destinationFsa);
-                  String transitTimes =
-                      sourceFsaAndTransitTimesMap.keySet().stream()
-                          .map(
-                              sourceFsa ->
-                                  String.valueOf(sourceFsaAndTransitTimesMap.get(sourceFsa)))
-                          .collect(Collectors.joining(","));
-                  return String.join(",", destinationFsa, transitTimes);
-                })
+            .map(destinationFsa -> constructCsvRows(transitTimesDataMap, destinationFsa))
             .collect(Collectors.joining("\n"));
     return String.join("\n", csvContents, rows);
+  }
+
+  private static String constructCsvRows(
+      Map<String, Map<String, Float>> transitTimesDataMap, String destinationFsa) {
+    var sourceFsaAndTransitTimesMap = transitTimesDataMap.get(destinationFsa);
+    String transitTimes =
+        sourceFsaAndTransitTimesMap.keySet().stream()
+            .map(sourceFsa -> String.valueOf(sourceFsaAndTransitTimesMap.get(sourceFsa)))
+            .collect(Collectors.joining(","));
+    return String.join(",", destinationFsa, transitTimes);
   }
 }

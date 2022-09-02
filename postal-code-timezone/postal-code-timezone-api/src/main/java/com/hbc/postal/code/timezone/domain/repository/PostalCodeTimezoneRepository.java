@@ -19,9 +19,5 @@ public interface PostalCodeTimezoneRepository
       nativeQuery = true)
   List<PostalCodeTimezoneEntity> findByOrgId(String orgId);
 
-  @Query(
-      value =
-          "SELECT postal_code_prefix FROM postal_code_timezone WHERE org_id = ?1 and state = ?2",
-      nativeQuery = true)
   List<String> findPostalCodePrefixListByOrgIdAndState(String orgId, String state);
 }

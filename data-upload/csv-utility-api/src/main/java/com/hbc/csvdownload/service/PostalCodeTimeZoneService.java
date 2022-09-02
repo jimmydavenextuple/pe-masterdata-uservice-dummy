@@ -20,7 +20,7 @@ public class PostalCodeTimeZoneService {
 
   private final Logger logger = LoggerFactory.getLogger(PostalCodeTimeZoneService.class);
 
-  public List<String> getFsaList(String orgId, String state)
+  public List<String> getFSAsByOrgIdAndState(String orgId, String state)
       throws PostalCodeTimezoneServiceException {
     logger.debug("Processing get FSA list for orgId and state");
     try {

@@ -33,7 +33,7 @@ class PostalCodeTimeZoneServiceTest {
         .thenReturn(BaseResponse.builder().payload(List.of(TestUtil.DESTINATION_FSA)).build());
 
     List<String> fsaList =
-        postalCodeTimeZoneService.getFsaList(TestUtil.ORG_ID, TestUtil.SOURCE_REGION);
+        postalCodeTimeZoneService.getFSAsByOrgIdAndState(TestUtil.ORG_ID, TestUtil.SOURCE_REGION);
     Assertions.assertFalse(CollectionUtils.isEmpty(fsaList));
     verify(postalCodeTimezoneFeign, times(1))
         .getPostalCodePrefixForOrgIdAndState(anyString(), anyString());
@@ -47,7 +47,9 @@ class PostalCodeTimeZoneServiceTest {
     Exception exception =
         Assertions.assertThrows(
             PostalCodeTimezoneServiceException.class,
-            () -> postalCodeTimeZoneService.getFsaList(TestUtil.ORG_ID, TestUtil.SOURCE_REGION));
+            () ->
+                postalCodeTimeZoneService.getFSAsByOrgIdAndState(
+                    TestUtil.ORG_ID, TestUtil.SOURCE_REGION));
     Assertions.assertNotNull(exception);
     verify(postalCodeTimezoneFeign, times(1))
         .getPostalCodePrefixForOrgIdAndState(anyString(), anyString());
@@ -61,7 +63,9 @@ class PostalCodeTimeZoneServiceTest {
     Exception exception =
         Assertions.assertThrows(
             PostalCodeTimezoneServiceException.class,
-            () -> postalCodeTimeZoneService.getFsaList(TestUtil.ORG_ID, TestUtil.SOURCE_REGION));
+            () ->
+                postalCodeTimeZoneService.getFSAsByOrgIdAndState(
+                    TestUtil.ORG_ID, TestUtil.SOURCE_REGION));
     Assertions.assertNotNull(exception);
     verify(postalCodeTimezoneFeign, times(1))
         .getPostalCodePrefixForOrgIdAndState(anyString(), anyString());
@@ -79,7 +83,9 @@ class PostalCodeTimeZoneServiceTest {
     Exception exception =
         Assertions.assertThrows(
             PostalCodeTimezoneServiceException.class,
-            () -> postalCodeTimeZoneService.getFsaList(TestUtil.ORG_ID, TestUtil.SOURCE_REGION));
+            () ->
+                postalCodeTimeZoneService.getFSAsByOrgIdAndState(
+                    TestUtil.ORG_ID, TestUtil.SOURCE_REGION));
     Assertions.assertNotNull(exception);
     verify(postalCodeTimezoneFeign, times(1))
         .getPostalCodePrefixForOrgIdAndState(anyString(), anyString());

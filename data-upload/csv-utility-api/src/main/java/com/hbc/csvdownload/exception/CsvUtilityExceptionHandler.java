@@ -91,4 +91,10 @@ public class CsvUtilityExceptionHandler {
                     FieldError.builder().rejectedValue(e.getCarrierServiceId()).build())
                 .build());
   }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorResponse> handleGenericException(Exception e) {
+    return ResponseEntity.badRequest()
+        .body(ErrorResponse.builder(ErrorType.ERROR, 0xffffff).message(e.getMessage()).build());
+  }
 }

@@ -27,10 +27,11 @@ class CsvDownloadUtilityServiceTest {
   void downloadTransitTimesForSourceAndDestinationRegion()
       throws PostalCodeTimezoneServiceException, TransitServiceException,
           CsvDownloadUtilityServiceException {
-    when(postalCodeTimeZoneService.getFsaList(TestUtil.ORG_ID, TestUtil.DESTINATION_REGION))
+    when(postalCodeTimeZoneService.getFSAsByOrgIdAndState(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_REGION))
         .thenReturn(List.of(TestUtil.DESTINATION_FSA));
 
-    when(postalCodeTimeZoneService.getFsaList(TestUtil.ORG_ID, TestUtil.SOURCE_REGION))
+    when(postalCodeTimeZoneService.getFSAsByOrgIdAndState(TestUtil.ORG_ID, TestUtil.SOURCE_REGION))
         .thenReturn(List.of(TestUtil.SOURCE_FSA));
 
     when(transitService.getTransitDetails(anyString(), anyString(), any()))
@@ -43,17 +44,18 @@ class CsvDownloadUtilityServiceTest {
             TestUtil.SOURCE_REGION,
             TestUtil.DESTINATION_REGION);
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
-    verify(postalCodeTimeZoneService, times(2)).getFsaList(anyString(), anyString());
+    verify(postalCodeTimeZoneService, times(2)).getFSAsByOrgIdAndState(anyString(), anyString());
     verify(transitService, times(1)).getTransitDetails(anyString(), anyString(), any());
   }
 
   @Test
   void downloadTransitTimesForSourceAndDestinationRegionException()
       throws PostalCodeTimezoneServiceException, TransitServiceException {
-    when(postalCodeTimeZoneService.getFsaList(TestUtil.ORG_ID, TestUtil.DESTINATION_REGION))
+    when(postalCodeTimeZoneService.getFSAsByOrgIdAndState(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_REGION))
         .thenReturn(List.of(TestUtil.DESTINATION_FSA));
 
-    when(postalCodeTimeZoneService.getFsaList(TestUtil.ORG_ID, TestUtil.SOURCE_REGION))
+    when(postalCodeTimeZoneService.getFSAsByOrgIdAndState(TestUtil.ORG_ID, TestUtil.SOURCE_REGION))
         .thenReturn(List.of(TestUtil.SOURCE_FSA + "1"));
 
     when(transitService.getTransitDetails(anyString(), anyString(), any()))
@@ -69,7 +71,7 @@ class CsvDownloadUtilityServiceTest {
                     TestUtil.SOURCE_REGION,
                     TestUtil.DESTINATION_REGION));
     Assertions.assertNotNull(exception);
-    verify(postalCodeTimeZoneService, times(2)).getFsaList(anyString(), anyString());
+    verify(postalCodeTimeZoneService, times(2)).getFSAsByOrgIdAndState(anyString(), anyString());
     verify(transitService, times(1)).getTransitDetails(anyString(), anyString(), any());
   }
 }

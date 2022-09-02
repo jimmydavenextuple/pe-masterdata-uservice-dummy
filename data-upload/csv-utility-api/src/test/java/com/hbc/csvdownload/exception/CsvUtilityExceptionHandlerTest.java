@@ -126,4 +126,13 @@ class CsvUtilityExceptionHandlerTest {
     Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponse.getStatusCode());
     Assertions.assertNotNull(errorResponse.getBody());
   }
+
+  @Test
+  void handleGenericException() {
+    Exception exception = new Exception("Error while fetching transit details");
+    ResponseEntity<ErrorResponse> errorResponse =
+        csvUtilityExceptionHandler.handleGenericException(exception);
+    Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponse.getStatusCode());
+    Assertions.assertNotNull(errorResponse.getBody());
+  }
 }
