@@ -56,8 +56,8 @@ public class ItemDomain {
     }
   }
 
-  public List<ItemEntity> findItemListByItemIdsAndOrgIdAndUom(
-      List<String> itemList, String orgId) throws ItemBatchingDomainException {
+  public List<ItemEntity> findItemListByItemIdsAndOrgIdAndUom(List<String> itemList, String orgId)
+      throws ItemBatchingDomainException {
 
     try {
       return itemRepository.findByOrgIdAndItemIdIn(orgId, itemList);

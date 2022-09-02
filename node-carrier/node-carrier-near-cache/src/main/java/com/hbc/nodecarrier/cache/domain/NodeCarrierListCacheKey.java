@@ -10,14 +10,13 @@ import lombok.Data;
 @AllArgsConstructor
 public class NodeCarrierListCacheKey implements CacheKey {
 
-    private String nodeId;
+  private String nodeId;
 
-    private String orgId;
+  private String orgId;
 
-    private String serviceOption;
+  private String serviceOption;
 
-    public NodeCarrierListCacheKey() {
-        //default constructor
-    }
-
+  public NodeCarrierListCacheKey() {
+    // default constructor
+  }
 }

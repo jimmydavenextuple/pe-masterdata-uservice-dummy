@@ -5,5 +5,4 @@ import com.hbc.nodecarrier.cache.domain.NodeCarrierListCacheKey;
 import com.hbc.nodecarrier.cache.domain.NodeCarrierListCacheValue;
 
 public interface NodeCarrierListNearCacheService
-        extends GenericNearCacheService<NodeCarrierListCacheKey, NodeCarrierListCacheValue> {
-}
+    extends GenericNearCacheService<NodeCarrierListCacheKey, NodeCarrierListCacheValue> {}
