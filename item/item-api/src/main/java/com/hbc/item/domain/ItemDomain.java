@@ -57,13 +57,13 @@ public class ItemDomain {
   }
 
   public List<ItemEntity> findItemListByItemIdsAndOrgIdAndUom(
-      List<String> itemList, String orgId, String uom) throws ItemBatchingDomainException {
+      List<String> itemList, String orgId) throws ItemBatchingDomainException {
 
     try {
-      return itemRepository.findByOrgIdAndUomAndItemIdIn(orgId, uom, itemList);
+      return itemRepository.findByOrgIdAndItemIdIn(orgId, itemList);
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to find item list: {}", itemList);
-      throw new ItemBatchingDomainException("Error while finding item list", itemList, orgId, uom);
+      throw new ItemBatchingDomainException("Error while finding item list", itemList, orgId);
     }
   }
 }

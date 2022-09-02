@@ -20,6 +20,7 @@ public class CacheProperties {
     defaultMap.put("node", CACHE_PROPERTY_VALUE);
     defaultMap.put("carrier", CACHE_PROPERTY_VALUE);
     defaultMap.put("node_carrier", CACHE_PROPERTY_VALUE);
+    defaultMap.put("node_carrier_list", CACHE_PROPERTY_VALUE);
     defaultMap.put("node_calendar", CACHE_PROPERTY_VALUE);
     defaultMap.put("carrier_calendar", CACHE_PROPERTY_VALUE);
     defaultMap.put("node_carrier_calendar", CACHE_PROPERTY_VALUE);
