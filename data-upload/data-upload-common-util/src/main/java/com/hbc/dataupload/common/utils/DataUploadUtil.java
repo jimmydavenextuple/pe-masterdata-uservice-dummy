@@ -61,7 +61,7 @@ public class DataUploadUtil {
       }
       actions.remove("action");
       for (Object action : actions) {
-        if (!(action.toString().equalsIgnoreCase(UPDATE_U)
+        if (action == null || !(action.toString().equalsIgnoreCase(UPDATE_U)
             || action.toString().equalsIgnoreCase(DELETE_D))) {
           throw new CommonServiceException(
               ACTION_INVALID_MESSAGE, HttpStatus.BAD_REQUEST, 0x1777, null);
