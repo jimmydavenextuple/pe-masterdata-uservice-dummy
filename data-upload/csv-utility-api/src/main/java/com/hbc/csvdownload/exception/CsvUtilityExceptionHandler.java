@@ -57,6 +57,9 @@ public class CsvUtilityExceptionHandler {
                 .message(e.getMessage())
                 .errorField("rowIndex", FieldError.builder().rejectedValue(e.getRowIndex()).build())
                 .errorField("action", FieldError.builder().rejectedValue(e.getAction()).build())
+                .build());
+  }
+
   @ExceptionHandler(CsvDownloadUtilityServiceException.class)
   public ResponseEntity<ErrorResponse> handleCsvDownloadUtilityServiceException(
       CsvDownloadUtilityServiceException e) {

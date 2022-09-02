@@ -90,16 +90,6 @@ class CsvUtilityExceptionHandlerTest {
         csvUtilityExceptionHandler.handleInvalidActionType(exception);
     Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponseResponseEntity.getStatusCode());
     Assertions.assertNotNull(errorResponseResponseEntity.getBody());
-  @InjectMocks CsvUtilityExceptionHandler csvUtilityExceptionHandler;
-
-  @Test
-  void handleInvalidTemplateTypeException() {
-    InvalidTemplateTypeException invalidTemplateTypeException =
-        new InvalidTemplateTypeException("The template type is invalid", "invalidTemplateType");
-    ResponseEntity<ErrorResponse> errorResponse =
-        csvUtilityExceptionHandler.handleInvalidTemplateTypeException(invalidTemplateTypeException);
-    Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponse.getStatusCode());
-    Assertions.assertNotNull(errorResponse.getBody());
   }
 
   @Test

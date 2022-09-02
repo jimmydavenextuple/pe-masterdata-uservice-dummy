@@ -5,8 +5,8 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
-import java.util.Collections;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import java.util.Collections;
 import java.util.Date;
 import org.springframework.stereotype.Service;
 
