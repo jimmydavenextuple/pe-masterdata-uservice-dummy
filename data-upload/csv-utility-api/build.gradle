@@ -10,4 +10,7 @@ dependencies {
     implementation(project(":data-upload:csv-utility-common-util"))
     runtimeOnly 'org.postgresql:postgresql'
     implementation(project(":common-util"))
+    implementation(project(":postal-code-timezone:postal-code-timezone-api-domain"))
+    implementation(project(":data-upload:job-framework-common-util"))
+    implementation(project(":transit:transit-api-domain"))
 }

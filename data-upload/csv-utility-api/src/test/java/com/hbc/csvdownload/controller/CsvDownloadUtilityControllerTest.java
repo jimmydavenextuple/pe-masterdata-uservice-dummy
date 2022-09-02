@@ -1,12 +1,17 @@
 package com.hbc.csvdownload.controller;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
+import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
+import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.csvdownload.service.CsvDownloadUtilityService;
 import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.ServletOutputStream;
@@ -16,11 +21,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 @ExtendWith(MockitoExtension.class)
 class CsvDownloadUtilityControllerTest {
+
+  @Mock private CsvDownloadUtilityService csvDownloadUtilityService;
 
   @InjectMocks private CsvDownloadUtilityController csvDownloadUtilityController;
 
@@ -44,16 +52,15 @@ class CsvDownloadUtilityControllerTest {
             + "DFSA10,8,8,8,8,8,8.09,8.09,6,7,7";
 
     String leadProcessingTimesTemplate =
-        "nodeId,orgId,serviceOptions,processingTime (in hrs)\n"
-            + "1554,BAY,SDND,2\n"
-            + "1560,BAY,SDND,2\n"
-            + "1101,BAY,SDND,2\n"
-            + "1518,BAY,NEXTDAY,6\n"
-            + "1634,BAY,EXPRESS,30.92\n"
-            + "1601,BAY,EXPRESS,22.55\n"
-            + "1125,BAY,EXPRESS,19.90\n"
-            + "1114,BAY,SDND,24.97";
-
+        "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+            + "1554,BAY,SDND,2,U\n"
+            + "1560,BAY,SDND,2,U\n"
+            + "1101,BAY,SDND,2,U\n"
+            + "1518,BAY,NEXTDAY,6,D\n"
+            + "1634,BAY,EXPRESS,30.92,U\n"
+            + "1601,BAY,EXPRESS,22.55,U\n"
+            + "1125,BAY,EXPRESS,19.90,D\n"
+            + "1114,BAY,SDND,24.97,U";
     doNothing().when(response).setStatus(HttpStatus.OK.value());
     doNothing().when(response).setContentLength(transitTimesTemplate.length());
     doNothing().when(response).setContentLength(leadProcessingTimesTemplate.length());
@@ -100,17 +107,6 @@ class CsvDownloadUtilityControllerTest {
             + "DFSA9,10,9.5,9.5,9.5,9.5,8.09,8.09,7.89,8.09,8.09\n"
             + "DFSA10,8,8,8,8,8,8.09,8.09,6,7,7";
 
-    String leadProcessingTimesTemplate =
-        "nodeId,orgId,serviceOptions,processingTime (in hrs)\n"
-            + "1554,BAY,SDND,2\n"
-            + "1560,BAY,SDND,2\n"
-            + "1101,BAY,SDND,2\n"
-            + "1518,BAY,NEXTDAY,6\n"
-            + "1634,BAY,EXPRESS,30.92\n"
-            + "1601,BAY,EXPRESS,22.55\n"
-            + "1125,BAY,EXPRESS,19.90\n"
-            + "1114,BAY,SDND,24.97";
-
     doNothing().when(response).setStatus(HttpStatus.OK.value());
     doNothing().when(response).setContentLength(transitTimesTemplate.length());
 
@@ -121,32 +117,32 @@ class CsvDownloadUtilityControllerTest {
   }
 
   @Test
-  void downloadTransitTimesDataCSV() throws IOException, InvalidTemplateTypeException {
+  void downloadTransitTimesDataCSV()
+      throws IOException, InvalidTemplateTypeException, TransitServiceException,
+          PostalCodeTimezoneServiceException, CsvDownloadUtilityServiceException {
+
+    String csvContents =
+        "orgId,BAY\n"
+            + "Carrier Service:,ALL-SDND\n"
+            + "Destination FSA / Source FSA ->,A0A,M1R\n"
+            + "K1A,0.5,0.5\n"
+            + "K2A,null,1.0";
+
+    when(csvDownloadUtilityService.downloadTransitTimesForSourceAndDestinationRegion(
+            anyString(), anyString(), anyString(), anyString()))
+        .thenReturn(csvContents);
+
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    String transitTimesTemplate =
-        "orgId,BAY,,,,,,,,,\n"
-            + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
-            + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3,SFSA4,SFSA5,SFSA6,SFSA7,SFSA8,SFSA9,SFSA10\n"
-            + "DFSA1,10,9.96,9.96,9.96,9.96,7,7,8.09,7,7\n"
-            + "DFSA2,10,9,9,9,9,7.81,7.81,7.89,7.89,7.89\n"
-            + "DFSA3,10,9,9,9,9,9.5,9.5,7,7.89,7.89\n"
-            + "DFSA4,10,9.96,9.96,9.96,9.96,8.09,8.09,7.89,8.09,8.09\n"
-            + "DFSA5,10,9.96,9.96,9.96,9.96,7.81,7.81,7.89,7.89,7.89\n"
-            + "DFSA6,10,9.96,9.96,9.96,9.96,7,7,8.09,8.09,8.09\n"
-            + "DFSA7,10,10,10,10,10,7.81,7.81,7.89,7.89,7.89\n"
-            + "DFSA8,10,9.96,9.96,9.96,9.96,7.81,7.81,8.09,6,6\n"
-            + "DFSA9,10,9.5,9.5,9.5,9.5,8.09,8.09,7.89,8.09,8.09\n"
-            + "DFSA10,8,8,8,8,8,8.09,8.09,6,7,7";
 
     doNothing().when(response).setStatus(HttpStatus.OK.value());
-    doNothing().when(response).setContentLength(transitTimesTemplate.length());
+    doNothing().when(response).setContentLength(csvContents.length());
     ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
 
     when(response.getOutputStream()).thenReturn(servletOutputStream);
 
     csvDownloadUtilityController.downloadTransitTimesDataCSV(
-        "BAY", "C-Id", "SR01", "DR01", request, response);
+        "BAY", "ALL-SDND", "ON", "DEL", request, response);
     verify(response, times(1)).getOutputStream();
   }
 

@@ -7,6 +7,7 @@ import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.List;
+import javax.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.validation.Valid;
 
 @FeignClient(
     name = "pe-config-transit",
@@ -67,5 +66,11 @@ public interface TransitFeign {
 
   @PutMapping("/transit/buffer")
   BaseResponse<TransitResponse> updateTransitBufferDetails(
-          @Valid @RequestBody TransitBufferCreationRequest transitBufferCreationRequest);
+      @Valid @RequestBody TransitBufferCreationRequest transitBufferCreationRequest);
+
+  @GetMapping("/transit/transit-entries/{orgId}/{carrierServiceId}/geozones")
+  BaseResponse<List<TransitResponse>> getTransitTimeDetailsForDestinationGeoZonesList(
+      @PathVariable String orgId,
+      @PathVariable String carrierServiceId,
+      @RequestParam List<String> destinationGeozones);
 }
