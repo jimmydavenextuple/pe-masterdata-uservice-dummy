@@ -1,6 +1,7 @@
 package com.hbc.carrier.spring.cache.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -44,7 +45,8 @@ class CarrierFeignClientServiceImplTest {
         .thenReturn(testUtil.getBaseResponseOfCarrierResponse());
 
     assertEquals(cacheValue, carrierFeignClientService.get(cacheKey));
-    verify(mapper, times(1)).responseToCacheValue(any());
+    assertFalse(carrierFeignClientService.get(cacheKey).isUndefined());
+    verify(mapper, times(2)).responseToCacheValue(any());
   }
 
   @Test

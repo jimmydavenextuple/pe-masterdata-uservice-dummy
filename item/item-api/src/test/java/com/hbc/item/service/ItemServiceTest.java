@@ -162,13 +162,11 @@ class ItemServiceTest {
     itemList.add(TestUtil.ITEM_ID);
     List<ItemResponse> itemResponseList = new ArrayList<>();
     itemResponseList.add(testUtil.getItemResponse());
-    when(itemDomain.findItemListByItemIdsAndOrgIdAndUom(any(), any(), any()))
-        .thenReturn(itemEntityList);
+    when(itemDomain.findItemListByItemIdsAndOrgIdAndUom(any(), any())).thenReturn(itemEntityList);
 
-    List<ItemResponse> itemResponse =
-        itemService.getItemList(itemList, TestUtil.ORG_ID, TestUtil.UOM);
+    List<ItemResponse> itemResponse = itemService.getItemList(itemList, TestUtil.ORG_ID);
     Assertions.assertEquals(itemResponseList, itemResponse);
-    verify(itemDomain, times(1)).findItemListByItemIdsAndOrgIdAndUom(any(), any(), any());
+    verify(itemDomain, times(1)).findItemListByItemIdsAndOrgIdAndUom(any(), any());
   }
 
   @Test
@@ -176,15 +174,13 @@ class ItemServiceTest {
     List<ItemEntity> itemEntityList = new ArrayList<>();
     List<String> itemList = new ArrayList<>();
     itemList.add(TestUtil.ITEM_ID);
-    when(itemDomain.findItemListByItemIdsAndOrgIdAndUom(any(), any(), any()))
-        .thenReturn(itemEntityList);
+    when(itemDomain.findItemListByItemIdsAndOrgIdAndUom(any(), any())).thenReturn(itemEntityList);
 
     Exception exception =
         Assertions.assertThrows(
-            CommonServiceException.class,
-            () -> itemService.getItemList(itemList, TestUtil.ORG_ID, TestUtil.UOM));
+            CommonServiceException.class, () -> itemService.getItemList(itemList, TestUtil.ORG_ID));
     Assertions.assertEquals("Items not found with given details", exception.getMessage());
 
-    verify(itemDomain, times(1)).findItemListByItemIdsAndOrgIdAndUom(any(), any(), any());
+    verify(itemDomain, times(1)).findItemListByItemIdsAndOrgIdAndUom(any(), any());
   }
 }

@@ -53,5 +53,5 @@ public interface NodeCarrierFeign {
 
   @PostMapping("/node/carrier/buffer")
   BaseResponse<NodeCarrierResponse> updateBuffer(
-          @Valid @RequestBody NodeCarrierBufferRequest nodeCarrierBufferRequest);
+      @Valid @RequestBody NodeCarrierBufferRequest nodeCarrierBufferRequest);
 }

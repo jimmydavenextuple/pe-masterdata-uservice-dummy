@@ -14,10 +14,9 @@ class ItemBatchingDomainExceptionTest {
     List<String> itemList = new ArrayList<>();
     itemList.add(TestUtil.ITEM_ID);
     ItemBatchingDomainException itemDomainException =
-        new ItemBatchingDomainException("test", itemList, TestUtil.ORG_ID, TestUtil.UOM);
+        new ItemBatchingDomainException("test", itemList, TestUtil.ORG_ID);
     Assertions.assertEquals("test", itemDomainException.getMessage());
     Assertions.assertEquals(TestUtil.ITEM_ID, itemDomainException.getItemList().get(0));
     Assertions.assertEquals(TestUtil.ORG_ID, itemDomainException.getOrgId());
-    Assertions.assertEquals(TestUtil.UOM, itemDomainException.getUom());
   }
 }
