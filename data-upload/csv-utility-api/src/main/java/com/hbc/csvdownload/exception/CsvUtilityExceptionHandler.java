@@ -96,7 +96,7 @@ public class CsvUtilityExceptionHandler {
 
   @ExceptionHandler(FeignException.class)
   public ResponseEntity<ErrorResponse> handleFeignException(FeignException e) {
-    ErrorResponse errorResponse = ExceptionUtils.parseFeignException(e);
+    var errorResponse = ExceptionUtils.parseFeignException(e);
     return ResponseEntity.badRequest()
         .body(
             ErrorResponse.builder(ErrorType.ERROR, 0xffff1)
