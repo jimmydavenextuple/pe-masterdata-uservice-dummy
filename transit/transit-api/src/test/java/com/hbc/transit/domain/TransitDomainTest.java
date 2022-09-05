@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.util.CollectionUtils;
 
 class TransitDomainTest {
 
@@ -237,5 +238,38 @@ class TransitDomainTest {
     Assertions.assertEquals("Error while fetching transit list", exception.getMessage());
 
     verify(transitRepository, times(1)).findByOrgIdAndDestinationGeozone(any(), any());
+  }
+
+  @Test
+  void fetchTransitListForDestinationGeoZones() throws TransitDomainException {
+    when(transitRepository.findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE)))
+        .thenReturn(List.of(testUtil.getTransitEntities(TestUtil.CARRIER_SERVICE_ID)));
+
+    List<TransitEntity> transitEntities =
+        transitDomain.fetchTransitListForDestinationGeoZones(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE));
+    Assertions.assertFalse(CollectionUtils.isEmpty(transitEntities));
+    verify(transitRepository, times(1))
+        .findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(any(), any(), any());
+  }
+
+  @Test
+  void fetchTransitListForDestinationGeoZonesException() throws TransitDomainException {
+    when(transitRepository.findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE)))
+        .thenThrow(new RuntimeException("Error while fetching transit entities"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitDomain.fetchTransitListForDestinationGeoZones(
+                    TestUtil.ORG_ID,
+                    TestUtil.CARRIER_SERVICE_ID,
+                    List.of(TestUtil.DESTINATION_GEOZONE)));
+    Assertions.assertNotNull(exception);
+    verify(transitRepository, times(1))
+        .findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(any(), any(), any());
   }
 }

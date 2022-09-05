@@ -2,6 +2,8 @@ package com.hbc.postal.code.timezone.domain;
 
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.ORG_ID;
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX_2;
+import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.STATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,11 +17,13 @@ import com.hbc.postal.code.timezone.TestUtil;
 import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
 import com.hbc.postal.code.timezone.domain.repository.PostalCodeTimezoneRepository;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.util.CollectionUtils;
 
 class PostalCodeTimezoneDomainTest {
   @InjectMocks private PostalCodeTimezoneDomain postalCodeTimezoneDomain;
@@ -121,5 +125,31 @@ class PostalCodeTimezoneDomainTest {
 
     assertEquals("Postal Code Timezone not found for a given orgId.", ex.getMessage());
     verify(postalCodeTimezoneRepository, times(1)).findByOrgId(anyString());
+  }
+
+  @Test
+  void getPostalCodePrefixForOrgIdAndState() throws PromiseEngineException {
+    when(postalCodeTimezoneRepository.findPostalCodePrefixListByOrgIdAndState(
+            anyString(), anyString()))
+        .thenReturn(List.of(POSTAL_CODE_PREFIX, POSTAL_CODE_PREFIX_2));
+
+    List<String> postalCodePrefixList =
+        postalCodeTimezoneDomain.getPostalCodePrefixForOrgIdAndState(ORG_ID, STATE);
+    Assertions.assertFalse(CollectionUtils.isEmpty(postalCodePrefixList));
+    verify(postalCodeTimezoneRepository, times(1))
+        .findPostalCodePrefixListByOrgIdAndState(anyString(), anyString());
+  }
+
+  @Test
+  void getPostalCodePrefixForOrgIdAndStateException() throws PromiseEngineException {
+    when(postalCodeTimezoneRepository.findPostalCodePrefixListByOrgIdAndState(
+            anyString(), anyString()))
+        .thenThrow(new RuntimeException("Error while fetching postal code prefix list"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            PromiseEngineException.class,
+            () -> postalCodeTimezoneDomain.getPostalCodePrefixForOrgIdAndState(ORG_ID, STATE));
+    Assertions.assertNotNull(exception);
   }
 }

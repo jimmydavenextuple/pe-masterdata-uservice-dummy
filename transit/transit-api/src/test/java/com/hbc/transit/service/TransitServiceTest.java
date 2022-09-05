@@ -24,7 +24,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.util.CollectionUtils;
 
 class TransitServiceTest {
 
@@ -330,5 +332,18 @@ class TransitServiceTest {
                     TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE));
     Assertions.assertEquals("Transit data not found with given details", exception.getMessage());
     verify(transitDomain, times(1)).fetchTransitListForDestinationGeoZone(any(), any());
+  }
+
+  @Test
+  void getTransitDetailsForDestinationGeozones() throws TransitDomainException {
+    when(transitDomain.fetchTransitListForDestinationGeoZones(any(), any(), any()))
+        .thenReturn(List.of(testUtil.getTransitEntities(TestUtil.CARRIER_SERVICE_ID)));
+
+    List<TransitResponse> responses =
+        transitService.getTransitDetailsForDestinationGeozones(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE));
+    Assertions.assertFalse(CollectionUtils.isEmpty(responses));
+    verify(transitDomain, Mockito.times(1))
+        .fetchTransitListForDestinationGeoZones(any(), any(), any());
   }
 }

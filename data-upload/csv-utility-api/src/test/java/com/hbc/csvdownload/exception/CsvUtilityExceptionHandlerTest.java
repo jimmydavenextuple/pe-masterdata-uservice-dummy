@@ -2,6 +2,10 @@ package com.hbc.csvdownload.exception;
 
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.csvdownload.common.TestUtil;
+import feign.FeignException;
+import feign.Request;
+import feign.Request.HttpMethod;
+import java.util.HashMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -90,5 +94,62 @@ class CsvUtilityExceptionHandlerTest {
         csvUtilityExceptionHandler.handleInvalidActionType(exception);
     Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponseResponseEntity.getStatusCode());
     Assertions.assertNotNull(errorResponseResponseEntity.getBody());
+  }
+
+  @Test
+  void handleCsvDownloadUtilityServiceException() {
+    CsvDownloadUtilityServiceException csvDownloadUtilityServiceException =
+        new CsvDownloadUtilityServiceException(
+            "Error while forming csv contents string", TestUtil.ORG_ID);
+    ResponseEntity<ErrorResponse> errorResponse =
+        csvUtilityExceptionHandler.handleCsvDownloadUtilityServiceException(
+            csvDownloadUtilityServiceException);
+    Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponse.getStatusCode());
+    Assertions.assertNotNull(errorResponse.getBody());
+  }
+
+  @Test
+  void handlePostalCodeTimezoneServiceException() {
+    PostalCodeTimezoneServiceException postalCodeTimezoneServiceException =
+        new PostalCodeTimezoneServiceException(
+            "Error while fetching list of FSAs", TestUtil.ORG_ID, TestUtil.SOURCE_REGION);
+    ResponseEntity<ErrorResponse> errorResponse =
+        csvUtilityExceptionHandler.handlePostalCodeTimezoneServiceException(
+            postalCodeTimezoneServiceException);
+    Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponse.getStatusCode());
+    Assertions.assertNotNull(errorResponse.getBody());
+  }
+
+  @Test
+  void handleTransitServiceException() {
+    TransitServiceException transitServiceException =
+        new TransitServiceException(
+            "Error while fetching transit details", TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+    ResponseEntity<ErrorResponse> errorResponse =
+        csvUtilityExceptionHandler.handleTransitServiceException(transitServiceException);
+    Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponse.getStatusCode());
+    Assertions.assertNotNull(errorResponse.getBody());
+  }
+
+  @Test
+  void handleFeignException() {
+    FeignException exception =
+        new FeignException.BadRequest(
+            "Error when fetching fsaList",
+            Request.create(HttpMethod.GET, "", new HashMap<>(), null, null, null),
+            "Error when fetching fsaList".getBytes());
+    ResponseEntity<ErrorResponse> errorResponse =
+        csvUtilityExceptionHandler.handleFeignException(exception);
+    Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponse.getStatusCode());
+    Assertions.assertNotNull(errorResponse.getBody());
+  }
+
+  @Test
+  void handleGenericException() {
+    Exception exception = new Exception("Error while fetching transit details");
+    ResponseEntity<ErrorResponse> errorResponse =
+        csvUtilityExceptionHandler.handleGenericException(exception);
+    Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, errorResponse.getStatusCode());
+    Assertions.assertNotNull(errorResponse.getBody());
   }
 }

@@ -5,6 +5,7 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Collections;
 import java.util.Date;
 import org.springframework.stereotype.Service;
@@ -12,8 +13,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class TestUtil {
 
+  public static final String ORG_ID = "BAY";
+  public static final String CARRIER_SERVICE_ID = "ALL_SDND";
+  public static final String SOURCE_REGION = "ON";
+  public static final String DESTINATION_REGION = "DEL";
+  public static final String SOURCE_FSA = "A0A";
+  public static final String DESTINATION_FSA = "M1R";
   public static final String NODE_ID = "nodeId";
-  public static final String ORG_ID = "orgId";
   public static final String JOB_ID = "jobId1";
   public static final String SERVICE_OPTION = "serviceOptions";
   public static final Double PROCESSING_TIME = 20.0;
@@ -55,5 +61,20 @@ public class TestUtil {
     auditLog.setTimeStamp(new Date());
     job.setAuditLog(Collections.singletonList(auditLog));
     return job;
+  }
+
+  public TransitResponse getTransitResponse(Float transitDays) {
+    Date bufferStartDate = new Date(1000);
+    Date bufferEndDate = new Date(1000);
+    return TransitResponse.builder()
+        .orgId(ORG_ID)
+        .sourceGeozone(SOURCE_FSA)
+        .destinationGeozone(DESTINATION_FSA)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .transitDays(transitDays)
+        .bufferDays(3.0)
+        .bufferStartDate(bufferStartDate)
+        .bufferEndDate(bufferEndDate)
+        .build();
   }
 }
