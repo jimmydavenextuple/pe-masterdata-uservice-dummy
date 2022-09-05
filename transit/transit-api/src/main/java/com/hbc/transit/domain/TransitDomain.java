@@ -130,7 +130,7 @@ public class TransitDomain {
       String orgId, String carrierServiceId, List<String> destinationGeozones)
       throws TransitDomainException {
     try {
-      return transitRepository.findByOrgIdAndDestinationGeozones(
+      return transitRepository.findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
           orgId, carrierServiceId, destinationGeozones);
     } catch (Exception e) {
       logger.error(

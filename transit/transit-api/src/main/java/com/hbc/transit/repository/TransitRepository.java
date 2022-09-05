@@ -38,10 +38,6 @@ public interface TransitRepository extends JpaRepository<TransitEntity, String> 
 
   List<TransitEntity> findByOrgIdAndDestinationGeozone(String orgId, String destinationGeozone);
 
-  @Query(
-      value =
-          "SELECT * FROM transit_data t WHERE t.org_id = ?1 AND t.carrier_service_id = ?2 AND t.destination_geozone IN ?3",
-      nativeQuery = true)
-  List<TransitEntity> findByOrgIdAndDestinationGeozones(
+  List<TransitEntity> findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
       String orgId, String carrierServiceId, List<String> destinationGeozones);
 }

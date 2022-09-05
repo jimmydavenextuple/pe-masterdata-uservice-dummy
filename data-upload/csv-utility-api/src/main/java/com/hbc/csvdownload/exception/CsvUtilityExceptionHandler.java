@@ -3,6 +3,8 @@ package com.hbc.csvdownload.exception;
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.jobs.framework.common.utils.ExceptionUtils;
+import feign.FeignException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -92,9 +94,19 @@ public class CsvUtilityExceptionHandler {
                 .build());
   }
 
+  @ExceptionHandler(FeignException.class)
+  public ResponseEntity<ErrorResponse> handleFeignException(FeignException e) {
+    ErrorResponse errorResponse = ExceptionUtils.parseFeignException(e);
+    return ResponseEntity.badRequest()
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0xffff1)
+                .message(errorResponse.getMessage())
+                .build());
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleGenericException(Exception e) {
-    return ResponseEntity.badRequest()
+    return ResponseEntity.internalServerError()
         .body(ErrorResponse.builder(ErrorType.ERROR, 0xffffff).message(e.getMessage()).build());
   }
 }

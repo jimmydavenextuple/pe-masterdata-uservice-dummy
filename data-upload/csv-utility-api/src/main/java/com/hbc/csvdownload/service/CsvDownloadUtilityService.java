@@ -3,6 +3,8 @@ package com.hbc.csvdownload.service;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
+import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
+import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,56 +28,51 @@ public class CsvDownloadUtilityService {
 
   public String downloadTransitTimesForSourceAndDestinationRegion(
       String orgId, String carrierServiceId, String sourceRegion, String destinationRegion)
-      throws CsvDownloadUtilityServiceException {
+      throws CsvDownloadUtilityServiceException, TransitServiceException,
+          PostalCodeTimezoneServiceException {
     logger.debug("Processing download transit times for source and destination regions");
 
-    try {
-      List<String> destinationFsaList =
-          postalCodeTimeZoneService.getFSAsByOrgIdAndState(orgId, destinationRegion);
-      Set<String> sourceFsaSet =
-          new HashSet<>(postalCodeTimeZoneService.getFSAsByOrgIdAndState(orgId, sourceRegion));
-      List<TransitResponse> filteredTransitResponseList =
-          transitService.getTransitDetails(orgId, carrierServiceId, destinationFsaList).stream()
-              .filter(transitResponse -> sourceFsaSet.contains(transitResponse.getSourceGeozone()))
-              .collect(Collectors.toList());
+    List<String> destinationFsaList =
+        postalCodeTimeZoneService.getFSAsByOrgIdAndState(orgId, destinationRegion);
+    Set<String> sourceFsaSet =
+        new HashSet<>(postalCodeTimeZoneService.getFSAsByOrgIdAndState(orgId, sourceRegion));
+    List<TransitResponse> filteredTransitResponseList =
+        transitService.getTransitDetails(orgId, carrierServiceId, destinationFsaList).stream()
+            .filter(transitResponse -> sourceFsaSet.contains(transitResponse.getSourceGeozone()))
+            .collect(Collectors.toList());
 
-      if (CollectionUtils.isEmpty(filteredTransitResponseList)) {
-        logger.error("No transit details available for source and destination FSAs");
-        throw new CsvDownloadUtilityServiceException(
-            "No transit details available for source and destination FSAs", orgId);
-      }
-
-      Set<String> filteredSourceFSASet =
-          filteredTransitResponseList.stream()
-              .map(TransitResponse::getSourceGeozone)
-              .collect(Collectors.toSet());
-
-      Map<String, Float> sourceAndTransitTimeMap = new TreeMap<>();
-      filteredSourceFSASet.forEach(fsa -> sourceAndTransitTimeMap.put(fsa, null));
-
-      Map<String, Map<String, Float>> transitTimesDataMap = new HashMap<>();
-      filteredTransitResponseList.forEach(
-          transitResponse -> {
-            if (CollectionUtils.isEmpty(
-                transitTimesDataMap.get(transitResponse.getDestinationGeozone()))) {
-              transitTimesDataMap.put(
-                  transitResponse.getDestinationGeozone(), new HashMap<>(sourceAndTransitTimeMap));
-            }
-          });
-
-      filteredTransitResponseList.forEach(
-          transitResponse ->
-              transitTimesDataMap
-                  .get(transitResponse.getDestinationGeozone())
-                  .put(transitResponse.getSourceGeozone(), transitResponse.getTransitDays()));
-
-      var sourceFsaHeader = String.join(",", filteredSourceFSASet);
-      return constructCsvData(orgId, carrierServiceId, transitTimesDataMap, sourceFsaHeader);
-    } catch (Exception e) {
-      logger.error("Error while forming csv contents string");
+    if (CollectionUtils.isEmpty(filteredTransitResponseList)) {
+      logger.error("No transit details available for source and destination FSAs");
       throw new CsvDownloadUtilityServiceException(
-          "Error while forming csv contents string", e, orgId);
+          "No transit details available for source and destination FSAs", orgId);
     }
+
+    Set<String> filteredSourceFSASet =
+        filteredTransitResponseList.stream()
+            .map(TransitResponse::getSourceGeozone)
+            .collect(Collectors.toSet());
+
+    Map<String, Float> sourceAndTransitTimeMap = new TreeMap<>();
+    filteredSourceFSASet.forEach(fsa -> sourceAndTransitTimeMap.put(fsa, null));
+
+    Map<String, Map<String, Float>> transitTimesDataMap = new HashMap<>();
+    filteredTransitResponseList.forEach(
+        transitResponse -> {
+          if (CollectionUtils.isEmpty(
+              transitTimesDataMap.get(transitResponse.getDestinationGeozone()))) {
+            transitTimesDataMap.put(
+                transitResponse.getDestinationGeozone(), new HashMap<>(sourceAndTransitTimeMap));
+          }
+        });
+
+    filteredTransitResponseList.forEach(
+        transitResponse ->
+            transitTimesDataMap
+                .get(transitResponse.getDestinationGeozone())
+                .put(transitResponse.getSourceGeozone(), transitResponse.getTransitDays()));
+
+    var sourceFsaHeader = String.join(",", filteredSourceFSASet);
+    return constructCsvData(orgId, carrierServiceId, transitTimesDataMap, sourceFsaHeader);
   }
 
   private String constructCsvData(

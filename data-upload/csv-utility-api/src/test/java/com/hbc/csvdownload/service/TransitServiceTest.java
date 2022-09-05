@@ -7,11 +7,7 @@ import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.transit.domain.feign.TransitFeign;
 import com.hbc.transit.domain.outbound.TransitResponse;
-import feign.FeignException;
-import feign.Request;
-import feign.Request.HttpMethod;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -64,28 +60,6 @@ class TransitServiceTest {
   void getTransitDetailsNullResponse() {
     when(transitFeign.getTransitTimeDetailsForDestinationGeoZonesList(any(), any(), any()))
         .thenReturn(null);
-
-    Exception exception =
-        Assertions.assertThrows(
-            TransitServiceException.class,
-            () ->
-                transitService.getTransitDetails(
-                    TestUtil.ORG_ID,
-                    TestUtil.CARRIER_SERVICE_ID,
-                    List.of(TestUtil.DESTINATION_FSA)));
-    Assertions.assertNotNull(exception);
-    verify(transitFeign, times(1))
-        .getTransitTimeDetailsForDestinationGeoZonesList(any(), any(), any());
-  }
-
-  @Test
-  void getTransitDetailsFeignException() {
-    when(transitFeign.getTransitTimeDetailsForDestinationGeoZonesList(any(), any(), any()))
-        .thenThrow(
-            new FeignException.BadRequest(
-                "Error when fetching transit details",
-                Request.create(HttpMethod.GET, "", new HashMap<>(), null, null, null),
-                "Error when fetching transit details".getBytes()));
 
     Exception exception =
         Assertions.assertThrows(
