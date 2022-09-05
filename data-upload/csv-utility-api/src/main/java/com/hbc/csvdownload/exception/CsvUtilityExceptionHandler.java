@@ -1,5 +1,7 @@
 package com.hbc.csvdownload.exception;
 
+import com.hbc.common.context.Logger;
+import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
 import com.hbc.common.response.error.FieldError;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Component
 @ControllerAdvice
 public class CsvUtilityExceptionHandler {
+
+  private final Logger logger = LoggerFactory.getLogger(CsvUtilityExceptionHandler.class);
 
   @ExceptionHandler(InvalidTemplateTypeException.class)
   public ResponseEntity<ErrorResponse> handleInvalidTemplateTypeException(
@@ -97,6 +101,7 @@ public class CsvUtilityExceptionHandler {
   @ExceptionHandler(FeignException.class)
   public ResponseEntity<ErrorResponse> handleFeignException(FeignException e) {
     var errorResponse = ExceptionUtils.parseFeignException(e);
+    logger.error("Feign exception. message: {}", errorResponse.getMessage());
     return ResponseEntity.badRequest()
         .body(
             ErrorResponse.builder(ErrorType.ERROR, 0xffff1)
