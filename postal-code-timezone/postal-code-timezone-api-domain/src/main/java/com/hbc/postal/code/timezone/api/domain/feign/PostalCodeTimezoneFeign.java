@@ -4,11 +4,13 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,4 +38,8 @@ public interface PostalCodeTimezoneFeign {
   @DeleteMapping("/postalCodeTimezone")
   BaseResponse<PostalCodeTimezoneDto> deletePostalCodeTimezone(
       @NotBlank @RequestParam String orgId, @NotBlank @RequestParam String postalCodePrefix);
+
+  @GetMapping("/postalCodeTimezone/org/{orgId}")
+  BaseResponse<List<String>> getPostalCodePrefixForOrgIdAndState(
+      @PathVariable String orgId, @RequestParam String state);
 }

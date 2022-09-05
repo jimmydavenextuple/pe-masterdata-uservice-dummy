@@ -269,4 +269,12 @@ public class TransitService {
 
     return INSTANCE.toTransitResponseList(transitEntities);
   }
+
+  public List<TransitResponse> getTransitDetailsForDestinationGeozones(
+      String orgId, String carrierServiceId, List<String> destinationGeozones)
+      throws TransitDomainException {
+    return INSTANCE.toTransitResponseList(
+        transitDomain.fetchTransitListForDestinationGeoZones(
+            orgId, carrierServiceId, destinationGeozones));
+  }
 }
