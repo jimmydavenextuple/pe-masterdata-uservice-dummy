@@ -2,6 +2,7 @@ package com.hbc.csvdownload.service;
 
 import static org.mockito.Mockito.*;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
@@ -18,10 +19,39 @@ import org.springframework.util.ObjectUtils;
 @ExtendWith(MockitoExtension.class)
 class CsvDownloadUtilityServiceTest {
 
+  @Mock private JobDtoService jobDtoService;
+  @Mock private JobRecordsService jobRecordsService;
   @Mock private PostalCodeTimeZoneService postalCodeTimeZoneService;
   @Mock private TransitService transitService;
   @InjectMocks private CsvDownloadUtilityService csvDownloadUtilityService;
   @InjectMocks private TestUtil testUtil;
+
+  @Test
+  void downloadTransitTimeAndProcessingLeadTimeCsvTest() throws CommonServiceException {
+    when(jobDtoService.getJob(testUtil.JOB_ID, testUtil.ORG_ID)).thenReturn(testUtil.getJobDto());
+    when(jobRecordsService.getJobRecords(testUtil.JOB_ID, testUtil.ORG_ID, testUtil.STATUS))
+        .thenReturn(testUtil.getJobRecords());
+
+    String csvContent =
+        csvDownloadUtilityService.downloadTransitTimeAndProcessingLeadTimeCsv(
+            testUtil.JOB_ID, testUtil.ORG_ID, testUtil.STATUS);
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
+
+  @Test
+  void downloadTransitTimeAndProcessingLeadTimeCsvExceptionTest() throws CommonServiceException {
+    when(jobDtoService.getJob(testUtil.JOB_ID, testUtil.ORG_ID)).thenReturn(testUtil.getJobDto2());
+    when(jobRecordsService.getJobRecords(testUtil.JOB_ID, testUtil.ORG_ID, testUtil.STATUS))
+        .thenReturn(testUtil.getJobRecords());
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                csvDownloadUtilityService.downloadTransitTimeAndProcessingLeadTimeCsv(
+                    TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS));
+    Assertions.assertNotNull(exception);
+  }
 
   @Test
   void downloadTransitTimesForSourceAndDestinationRegion()

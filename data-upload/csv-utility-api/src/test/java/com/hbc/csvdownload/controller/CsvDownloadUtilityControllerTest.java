@@ -1,5 +1,6 @@
 package com.hbc.csvdownload.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -7,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
@@ -140,26 +142,25 @@ class CsvDownloadUtilityControllerTest {
   }
 
   @Test
-  void downloadLogsByFilters() throws IOException, InvalidTemplateTypeException {
+  void downloadLogsByFiltersForProcessingLeadTime()
+      throws IOException, InvalidTemplateTypeException, CommonServiceException {
+
+    String ProcessingLeadTimeErrorLogTemplate =
+        "nodeId,orgId,serviceOptions,processingTime (in hrs),errorMessage\n"
+            + "1554,BAY,SDND,2,Invalid nodeId\n"
+            + "1560,BAY,SDND,2,Invalid nodeId\n"
+            + "1101,BAY,SDND,2,Invalid nodeId\n"
+            + "1518,BAY,NEXTDAY,6,Invalid nodeId";
+
+    when(csvDownloadUtilityService.downloadTransitTimeAndProcessingLeadTimeCsv(
+            anyString(), anyString(), any()))
+        .thenReturn(ProcessingLeadTimeErrorLogTemplate);
+
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    String transitTimesTemplate =
-        "orgId,BAY,,,,,,,,,\n"
-            + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
-            + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3,SFSA4,SFSA5,SFSA6,SFSA7,SFSA8,SFSA9,SFSA10\n"
-            + "DFSA1,10,9.96,9.96,9.96,9.96,7,7,8.09,7,7\n"
-            + "DFSA2,10,9,9,9,9,7.81,7.81,7.89,7.89,7.89\n"
-            + "DFSA3,10,9,9,9,9,9.5,9.5,7,7.89,7.89\n"
-            + "DFSA4,10,9.96,9.96,9.96,9.96,8.09,8.09,7.89,8.09,8.09\n"
-            + "DFSA5,10,9.96,9.96,9.96,9.96,7.81,7.81,7.89,7.89,7.89\n"
-            + "DFSA6,10,9.96,9.96,9.96,9.96,7,7,8.09,8.09,8.09\n"
-            + "DFSA7,10,10,10,10,10,7.81,7.81,7.89,7.89,7.89\n"
-            + "DFSA8,10,9.96,9.96,9.96,9.96,7.81,7.81,8.09,6,6\n"
-            + "DFSA9,10,9.5,9.5,9.5,9.5,8.09,8.09,7.89,8.09,8.09\n"
-            + "DFSA10,8,8,8,8,8,8.09,8.09,6,7,7";
 
     doNothing().when(response).setStatus(HttpStatus.OK.value());
-    doNothing().when(response).setContentLength(transitTimesTemplate.length());
+    doNothing().when(response).setContentLength(ProcessingLeadTimeErrorLogTemplate.length());
 
     ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
 

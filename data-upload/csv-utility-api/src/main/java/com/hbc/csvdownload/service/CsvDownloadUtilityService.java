@@ -2,18 +2,27 @@ package com.hbc.csvdownload.service;
 
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import com.newrelic.relocated.Gson;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -25,6 +34,9 @@ public class CsvDownloadUtilityService {
 
   private final PostalCodeTimeZoneService postalCodeTimeZoneService;
   private final TransitService transitService;
+
+  private final JobRecordsService jobRecordsService;
+  private final JobDtoService jobDtoService;
 
   public String downloadTransitTimesForSourceAndDestinationRegion(
       String orgId, String carrierServiceId, String sourceRegion, String destinationRegion)
@@ -99,5 +111,141 @@ public class CsvDownloadUtilityService {
             .map(sourceFsa -> String.valueOf(sourceFsaAndTransitTimesMap.get(sourceFsa)))
             .collect(Collectors.joining(","));
     return String.join(",", destinationFsa, transitTimes);
+  }
+
+  public String downloadTransitTimeAndProcessingLeadTimeCsv(
+      String jobId, String orgId, Optional<String> status) throws CommonServiceException {
+    logger.debug("Processing download transit time and processing lead time");
+    try {
+      JobDto jobDto = jobDtoService.getJob(jobId, orgId);
+      var jobType = jobDto.getJobType();
+      List<RecordStatusDto> recordStatusDtos =
+          jobRecordsService.getJobRecords(jobId, orgId, status);
+
+      if (jobType.equals(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES)) {
+        return DownloadProcessingLeadTimeErrorLogs(recordStatusDtos);
+      } else if (jobType.equals(JobTypeEnum.UPLOAD_TRANSIT_TIMES)) {
+        return downloadTransitTimeErrorLogs(recordStatusDtos);
+      } else {
+        throw new CommonServiceException(
+            "Incorrect jobType specified", HttpStatus.BAD_REQUEST, 0x1772, null);
+      }
+    } catch (Exception e) {
+      throw new CommonServiceException(
+          "Error processing transit time and processing lead time csv",
+          HttpStatus.BAD_REQUEST,
+          0x1772,
+          null);
+    }
+  }
+
+  public String DownloadProcessingLeadTimeErrorLogs(List<RecordStatusDto> recordStatusDtoList) {
+    var header =
+        String.join(",", "nodeId", "orgId", "serviceOption", "processingLeadTime", "errorMessage");
+    String rows =
+        recordStatusDtoList.stream()
+            .map(this::ConstructRowContent)
+            .collect(Collectors.joining("\n"));
+
+    return String.join("\n", header, rows);
+  }
+
+  private String ConstructRowContent(RecordStatusDto recordStatusDto) {
+    Gson gson = new Gson();
+    var requestBody = gson.fromJson(recordStatusDto.getRequestBody(), NodeCarrierRequest.class);
+    return String.join(
+        ",",
+        requestBody.getNodeId(),
+        requestBody.getOrgId(),
+        requestBody.getServiceOption(),
+        requestBody.getProcessingTime().toString(),
+        recordStatusDto.getErrorMessage());
+  }
+
+  public String downloadTransitTimeErrorLogs(List<RecordStatusDto> recordStatusDtoList)
+      throws CommonServiceException {
+    try {
+      var requestBody =
+          recordStatusDtoList.stream()
+              .map(recordStatusDto -> getRequestBody(recordStatusDto))
+              .collect(Collectors.toList());
+
+      List<String> destinationFsaList =
+          requestBody.stream()
+              .map(destinationFsa -> destinationFsa.getDestinationGeozone())
+              .collect(Collectors.toList());
+
+      Set<String> sourceFsaSet =
+          new HashSet<>(
+              requestBody.stream()
+                  .map(sourceFsa -> sourceFsa.getSourceGeozone())
+                  .collect(Collectors.toSet()));
+
+      List<TransitDataCreationRequest> transitDataCreationRequestList =
+          requestBody.stream()
+              .filter(reqBody -> sourceFsaSet.contains(reqBody.getSourceGeozone()))
+              .collect(Collectors.toList());
+
+      Map<String, Float> sourceAndTransitTimeMap = new TreeMap<>();
+
+      sourceFsaSet.forEach(fsa -> sourceAndTransitTimeMap.put(fsa, null));
+
+      Map<String, Map<String, Float>> transitTimeDataMap = new HashMap<>();
+
+      transitDataCreationRequestList.forEach(
+          transitRequest -> {
+            if (CollectionUtils.isEmpty(
+                transitTimeDataMap.get(transitRequest.getDestinationGeozone()))) {
+              transitTimeDataMap.put(
+                  transitRequest.getDestinationGeozone(), new HashMap<>(sourceAndTransitTimeMap));
+            }
+          });
+
+      transitDataCreationRequestList.forEach(
+          transitRequest ->
+              transitTimeDataMap
+                  .get(transitRequest.getDestinationGeozone())
+                  .put(transitRequest.getSourceGeozone(), transitRequest.getTransitDays()));
+
+      var sourceFsaHeader = String.join(",", sourceFsaSet);
+
+      return ConstructCsvData(transitTimeDataMap, sourceFsaHeader, recordStatusDtoList);
+    } catch (Exception e) {
+      logger.error("Error while forming csv contents string");
+      throw new CommonServiceException(
+          "Error while forming csv contents string", HttpStatus.BAD_REQUEST, 0x1771, null);
+    }
+  }
+
+  private String ConstructCsvData(
+      Map<String, Map<String, Float>> transitTimeDataMap,
+      String sourceFsaheader,
+      List<RecordStatusDto> recordStatusDtoList) {
+    var csvContent = String.format("Destination FSA / Source FSA ->,%s", sourceFsaheader);
+
+    String rows =
+        transitTimeDataMap.keySet().stream()
+            .map(
+                destinationFsa ->
+                    ConstructCsvRows(transitTimeDataMap, destinationFsa, recordStatusDtoList))
+            .collect(Collectors.joining("\n"));
+    return String.join("\n", csvContent, rows);
+  }
+
+  private String ConstructCsvRows(
+      Map<String, Map<String, Float>> transitTimeDataMap,
+      String destinationFsa,
+      List<RecordStatusDto> recordStatusDtoList) {
+    String errorMessage =
+        recordStatusDtoList.stream()
+            .map(error -> String.valueOf(error.getErrorMessage()))
+            .collect(Collectors.joining(","));
+
+    return String.join(",", destinationFsa, errorMessage);
+  }
+
+  private TransitDataCreationRequest getRequestBody(RecordStatusDto recordStatusDto) {
+    Gson gson = new Gson();
+    return gson.fromJson(recordStatusDto.getRequestBody(), TransitDataCreationRequest.class);
   }
 }

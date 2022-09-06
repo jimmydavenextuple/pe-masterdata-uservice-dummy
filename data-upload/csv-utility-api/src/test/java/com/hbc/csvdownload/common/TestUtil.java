@@ -5,9 +5,13 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +37,83 @@ public class TestUtil {
           + "1601,BAY,EXPRESS,22.55,U\n"
           + "1125,BAY,EXPRESS,19.90,D\n"
           + "1114,BAY,SDND,24.97,U";
+
+  public static final Optional<String> STATUS = Optional.empty();
+
+  public static final JobTypeEnum jobType = JobTypeEnum.getTypeFromString("any");
+  public static final String requestBodyJson =
+      "{\"nodeId\":\"1554\",\"orgId\":\"BAY\",\"carrierServiceId\":\"ALL-SDND\",\"serviceOption\":\"SDND\",\"processingTime\":2.0,\"lastPickupTime\":\"00:00\"}";
+
+  public JobDto getJobDto() {
+    JobDto jobDto = new JobDto();
+    jobDto.setJobId(JOB_ID);
+    jobDto.setTotalRecords(2);
+    jobDto.setJobType(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+    jobDto.setProcessedRecords(0);
+    jobDto.setRemainingRecords(2);
+    jobDto.setFailureCount(0);
+    jobDto.setSuccessCount(0);
+    jobDto.setStatus(JobStatusEnum.SUBMITTED);
+    jobDto.setOrgId(ORG_ID);
+
+    AuditLog auditLog = new AuditLog();
+    auditLog.setStatus(JobStatusEnum.SUBMITTED);
+    auditLog.setTimeStamp(new Date());
+    jobDto.setAuditLog(Collections.singletonList(auditLog));
+    return jobDto;
+  }
+
+  public JobDto getJobDto2() {
+    JobDto jobDto = new JobDto();
+    jobDto.setJobId(JOB_ID);
+    jobDto.setTotalRecords(2);
+    jobDto.setJobType(jobType);
+    jobDto.setProcessedRecords(0);
+    jobDto.setRemainingRecords(2);
+    jobDto.setFailureCount(0);
+    jobDto.setSuccessCount(0);
+    jobDto.setStatus(JobStatusEnum.SUBMITTED);
+    jobDto.setOrgId(ORG_ID);
+
+    AuditLog auditLog = new AuditLog();
+    auditLog.setStatus(JobStatusEnum.SUBMITTED);
+    auditLog.setTimeStamp(new Date());
+    jobDto.setAuditLog(Collections.singletonList(auditLog));
+    return jobDto;
+  }
+
+  public JobDto getJobDto3() {
+    JobDto jobDto = new JobDto();
+    return jobDto;
+  }
+
+  public List<RecordStatusDto> getJobRecords() {
+    List<RecordStatusDto> recordStatusDtoList = new ArrayList<>();
+    RecordStatusDto recordDto =
+        RecordStatusDto.builder()
+            .jobId(JOB_ID)
+            .jobType(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES)
+            .orgId(ORG_ID)
+            .errorMessage("Invalid nodeId")
+            .requestBody(requestBodyJson)
+            .build();
+
+    recordStatusDtoList.add(recordDto);
+    return recordStatusDtoList;
+  }
+
+  public RecordStatusDto getRecordStatusDto() {
+    RecordStatusDto recordDto =
+        RecordStatusDto.builder()
+            .jobId(JOB_ID)
+            .jobType(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES)
+            .orgId(ORG_ID)
+            .errorMessage("Invalid nodeId")
+            .requestBody(requestBodyJson)
+            .build();
+
+    return recordDto;
+  }
 
   public ProcessingLeadTimesRaw getProcessingLeadTimesRaw() {
     ProcessingLeadTimesRaw processingLeadTimesRaw = new ProcessingLeadTimesRaw();
