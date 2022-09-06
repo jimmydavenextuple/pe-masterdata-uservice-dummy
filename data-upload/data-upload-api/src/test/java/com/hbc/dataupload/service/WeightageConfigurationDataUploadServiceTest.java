@@ -84,6 +84,34 @@ class WeightageConfigurationDataUploadServiceTest {
   }
 
   @Test
+  void uploadWeightageConfigurationDataDeleteSuccessTest()
+      throws CommonServiceException, IOException {
+    Path resourceDirectory =
+        Paths.get(
+            "src",
+            "test",
+            "resources",
+            "weightageConfiguration",
+            "weightageConfiguration_deleteHappyPath.csv");
+    String absolutePath = resourceDirectory.toFile().getAbsolutePath();
+
+    BaseResponse<WeightageConfigurationDto> baseResponse =
+        testUtil.getSuccessfulBaseResponseForWeightageConfiguration();
+    when(weightageConfigurationFeign.createWeightageConfiguration(
+            any(CreateWeightageConfigurationRequest.class)))
+        .thenReturn(baseResponse);
+    when(weightageConfigurationFeign.deleteWeightageConfiguration(
+            anyString(), anyString(), anyString()))
+        .thenReturn(baseResponse);
+    ResponseEntity<BaseResponse<String>> response =
+        weightageConfigurationDataUploadService.uploadWeightageConfigurationData(absolutePath);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(
+        WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_SUCCESS,
+        Objects.requireNonNull(response.getBody()).getMessage());
+  }
+
+  @Test
   void uploadWeightageConfigurationDataPartialSuccessTest()
       throws CommonServiceException, IOException {
     Path resourceDirectory =
