@@ -1,5 +1,6 @@
 orgId,type,key,weightage,action
 org,PRIORITY,P1,1F,u
 org,PRIORITY,P2,2F,U
-org,PRIORITY,P3,3F,D
+org,PRIORITY,P1,1F,D
+org,PRIORITY,P2,2F,d
 org,PRIORITY,P4,4F,U
