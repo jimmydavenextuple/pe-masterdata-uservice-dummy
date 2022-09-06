@@ -11,9 +11,4 @@ public class CsvDownloadUtilityServiceException extends Exception {
     super(message);
     this.orgId = orgId;
   }
-
-  public CsvDownloadUtilityServiceException(String message, Throwable cause, String orgId) {
-    super(message, cause);
-    this.orgId = orgId;
-  }
 }
