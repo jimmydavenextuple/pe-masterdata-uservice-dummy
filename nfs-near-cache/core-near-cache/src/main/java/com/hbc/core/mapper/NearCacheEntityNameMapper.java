@@ -8,6 +8,7 @@ import static com.hbc.core.constants.NearCacheConstants.NODE_CARRIER_LIST_ENTITY
 import static com.hbc.core.constants.NearCacheConstants.NODE_ENTITY_NAME;
 import static com.hbc.core.constants.NearCacheConstants.POSTAL_CODE_ENTITY_NAME;
 import static com.hbc.core.constants.NearCacheConstants.PROMISE_SOURCING_ENTITY_NAME;
+import static com.hbc.core.constants.NearCacheConstants.TRANSIT_ENTITY_NAME;
 import static com.hbc.core.constants.NearCacheConstants.WEIGHTAGE_CONFIGURATION_ENTITY_NAME;
 
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class NearCacheEntityNameMapper {
       registry.put("PromiseSourcingRule", PROMISE_SOURCING_ENTITY_NAME);
       registry.put("WeightageConfiguration", WEIGHTAGE_CONFIGURATION_ENTITY_NAME);
       registry.put("PostalCodeTimezoneEntity", POSTAL_CODE_ENTITY_NAME);
+      registry.put("TransitEntity",TRANSIT_ENTITY_NAME);
     }
     log.debug("Registry value : {}", registry);
     return registry;
