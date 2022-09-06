@@ -34,8 +34,8 @@ public class CsvDownloadUtilityService {
   private final PostalCodeTimeZoneService postalCodeTimeZoneService;
   private final TransitService transitService;
 
-  private final JobRecordsService jobRecordsService;
-  private final JobDtoService jobDtoService;
+  private final JobsDashboardService jobsDashboardService;
+  private final JobsConsumerService jobsConsumerService;
 
   public String downloadTransitTimesForSourceAndDestinationRegion(
       String orgId, String carrierServiceId, String sourceRegion, String destinationRegion)
@@ -116,10 +116,10 @@ public class CsvDownloadUtilityService {
       throws CommonServiceException {
     logger.debug("Processing download transit time and processing lead time");
     try {
-      var jobDto = jobDtoService.getJob(jobId, orgId);
+      var jobDto = jobsConsumerService.getJob(jobId, orgId);
       var jobType = jobDto.getJobType();
       List<RecordStatusDto> recordStatusDtos =
-          jobRecordsService.getJobRecords(jobId, orgId, status);
+          jobsDashboardService.getJobRecords(jobId, orgId, status);
 
       if (jobType.equals(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES)) {
         return downloadProcessingLeadTimeErrorLogs(recordStatusDtos);

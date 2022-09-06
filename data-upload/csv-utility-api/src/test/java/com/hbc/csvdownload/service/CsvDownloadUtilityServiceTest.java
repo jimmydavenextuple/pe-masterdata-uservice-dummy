@@ -23,8 +23,8 @@ import org.springframework.util.ObjectUtils;
 @ExtendWith(MockitoExtension.class)
 class CsvDownloadUtilityServiceTest {
 
-  @Mock private JobDtoService jobDtoService;
-  @Mock private JobRecordsService jobRecordsService;
+  @Mock private JobsConsumerService jobsConsumerService;
+  @Mock private JobsDashboardService jobsDashboardService;
   @Mock private PostalCodeTimeZoneService postalCodeTimeZoneService;
   @Mock private TransitService transitService;
   @InjectMocks private CsvDownloadUtilityService csvDownloadUtilityService;
@@ -32,8 +32,9 @@ class CsvDownloadUtilityServiceTest {
 
   @Test
   void downloadLogsAsCsvForProcessingLeadTimes() throws CommonServiceException {
-    when(jobDtoService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID)).thenReturn(testUtil.getJobDto());
-    when(jobRecordsService.getJobRecords(TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS))
+    when(jobsConsumerService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID))
+        .thenReturn(testUtil.getJobDto());
+    when(jobsDashboardService.getJobRecords(TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS))
         .thenReturn(testUtil.getJobRecordsForProcessingLeadTimes());
 
     String csvContent =
@@ -46,8 +47,8 @@ class CsvDownloadUtilityServiceTest {
   void downloadLogsAsCsvForTransitTime() throws CommonServiceException {
     JobDto jobDto = testUtil.getJobDto();
     jobDto.setJobType(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
-    when(jobDtoService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID)).thenReturn(jobDto);
-    when(jobRecordsService.getJobRecords(anyString(), anyString(), any()))
+    when(jobsConsumerService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID)).thenReturn(jobDto);
+    when(jobsDashboardService.getJobRecords(anyString(), anyString(), any()))
         .thenReturn(testUtil.getJobRecordsForTransitTimes());
 
     String csvContent =
@@ -58,8 +59,9 @@ class CsvDownloadUtilityServiceTest {
 
   @Test
   void downloadTransitTimeAndProcessingLeadTimeCsvExceptionTest() throws CommonServiceException {
-    when(jobDtoService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID)).thenReturn(testUtil.getJobDto2());
-    when(jobRecordsService.getJobRecords(TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS))
+    when(jobsConsumerService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID))
+        .thenReturn(testUtil.getJobDto2());
+    when(jobsDashboardService.getJobRecords(TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS))
         .thenReturn(testUtil.getJobRecordsForProcessingLeadTimes());
 
     Exception exception =

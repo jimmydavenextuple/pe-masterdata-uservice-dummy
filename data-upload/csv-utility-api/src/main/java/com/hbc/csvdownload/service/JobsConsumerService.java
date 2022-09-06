@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class JobDtoService {
+public class JobsConsumerService {
   private final JobsConsumerClient jobsConsumerClient;
-  private final Logger logger = LoggerFactory.getLogger(JobDtoService.class);
+  private final Logger logger = LoggerFactory.getLogger(JobsConsumerService.class);
 
   public JobDto getJob(String jobId, String orgId) throws CommonServiceException {
     logger.debug("Processing job dto for orgId and jobId");

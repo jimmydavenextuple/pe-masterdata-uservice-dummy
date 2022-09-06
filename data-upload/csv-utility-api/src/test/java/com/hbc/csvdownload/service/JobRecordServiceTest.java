@@ -23,7 +23,7 @@ import org.springframework.util.CollectionUtils;
 class JobRecordServiceTest {
   @Mock private JobsDashboardClient jobsDashboardClient;
   @InjectMocks private TestUtil testUtil;
-  @InjectMocks private JobRecordsService jobRecordsService;
+  @InjectMocks private JobsDashboardService jobsDashboardService;
 
   @Test
   void getJobRecordsTest() throws CommonServiceException {
@@ -31,7 +31,7 @@ class JobRecordServiceTest {
         .thenReturn(
             BaseResponse.builder().payload(testUtil.getJobRecordsForProcessingLeadTimes()).build());
     List<RecordStatusDto> recordStatusDtoList =
-        jobRecordsService.getJobRecords(TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS);
+        jobsDashboardService.getJobRecords(TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS);
     Assertions.assertFalse(CollectionUtils.isEmpty(recordStatusDtoList));
   }
 
@@ -43,7 +43,8 @@ class JobRecordServiceTest {
         Assertions.assertThrows(
             CommonServiceException.class,
             () ->
-                jobRecordsService.getJobRecords(TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS));
+                jobsDashboardService.getJobRecords(
+                    TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS));
     Assertions.assertNotNull(exception);
   }
 
@@ -54,7 +55,8 @@ class JobRecordServiceTest {
         Assertions.assertThrows(
             CommonServiceException.class,
             () ->
-                jobRecordsService.getJobRecords(TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS));
+                jobsDashboardService.getJobRecords(
+                    TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS));
     Assertions.assertNotNull(exception);
   }
 }

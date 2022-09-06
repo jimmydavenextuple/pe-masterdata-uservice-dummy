@@ -15,9 +15,9 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 @RequiredArgsConstructor
-public class JobRecordsService {
+public class JobsDashboardService {
   private final JobsDashboardClient jobsDashboardClient;
-  private final Logger logger = LoggerFactory.getLogger(JobRecordsService.class);
+  private final Logger logger = LoggerFactory.getLogger(JobsDashboardService.class);
 
   public List<RecordStatusDto> getJobRecords(String jobId, String orgId, Optional<String> status)
       throws CommonServiceException {
