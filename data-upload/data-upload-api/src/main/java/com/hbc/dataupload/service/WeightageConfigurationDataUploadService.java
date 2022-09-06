@@ -1,7 +1,6 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DELETE_D;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.KEY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.TYPE;
@@ -100,7 +99,7 @@ public class WeightageConfigurationDataUploadService {
                     createWeightageConfigurationRequest);
             weightageResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
-          } else if (action.equalsIgnoreCase(DELETE_D)) {
+          } else {
             BaseResponse<WeightageConfigurationDto> baseResponse =
                 weightageConfigurationFeign.deleteWeightageConfiguration(orgId, type, key);
             weightageResult = baseResponse.isSuccess();

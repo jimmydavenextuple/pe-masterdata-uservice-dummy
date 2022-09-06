@@ -97,9 +97,6 @@ class WeightageConfigurationDataUploadServiceTest {
 
     BaseResponse<WeightageConfigurationDto> baseResponse =
         testUtil.getSuccessfulBaseResponseForWeightageConfiguration();
-    when(weightageConfigurationFeign.createWeightageConfiguration(
-            any(CreateWeightageConfigurationRequest.class)))
-        .thenReturn(baseResponse);
     when(weightageConfigurationFeign.deleteWeightageConfiguration(
             anyString(), anyString(), anyString()))
         .thenReturn(baseResponse);
