@@ -13,11 +13,4 @@ public class PostalCodeTimezoneServiceException extends Exception {
     this.orgId = orgId;
     this.state = state;
   }
-
-  public PostalCodeTimezoneServiceException(
-      String message, Throwable cause, String orgId, String state) {
-    super(message, cause);
-    this.orgId = orgId;
-    this.state = state;
-  }
 }

@@ -30,7 +30,9 @@ public class CommonConfigSpringNearCacheServiceImpl
   @Override
   public void selfRegister() {
     nearCacheRegistry.registerNearCacheEntity(
-        NearCacheConstants.COMMON_CONFIG_ENTITY_NAME, CommonConfigCacheKey.class.getName(), "partial");
+        NearCacheConstants.COMMON_CONFIG_ENTITY_NAME,
+        CommonConfigCacheKey.class.getName(),
+        "partial");
   }
 
   @Override
