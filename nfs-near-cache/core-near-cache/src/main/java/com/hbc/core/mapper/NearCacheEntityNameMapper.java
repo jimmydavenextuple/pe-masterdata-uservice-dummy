@@ -2,6 +2,7 @@ package com.hbc.core.mapper;
 
 import static com.hbc.core.constants.NearCacheConstants.CARRIER_CALENDAR_ENTITY_NAME;
 import static com.hbc.core.constants.NearCacheConstants.CARRIER_ENTITY_NAME;
+import static com.hbc.core.constants.NearCacheConstants.COMMON_CONFIG_ENTITY_NAME;
 import static com.hbc.core.constants.NearCacheConstants.NODE_CALENDAR_ENTITY_NAME;
 import static com.hbc.core.constants.NearCacheConstants.NODE_CARRIER_CALENDAR_ENTITY_NAME;
 import static com.hbc.core.constants.NearCacheConstants.NODE_CARRIER_LIST_ENTITY_NAME;
@@ -33,7 +34,8 @@ public class NearCacheEntityNameMapper {
       registry.put("PromiseSourcingRule", PROMISE_SOURCING_ENTITY_NAME);
       registry.put("WeightageConfiguration", WEIGHTAGE_CONFIGURATION_ENTITY_NAME);
       registry.put("PostalCodeTimezoneEntity", POSTAL_CODE_ENTITY_NAME);
-      registry.put("TransitEntity",TRANSIT_ENTITY_NAME);
+      registry.put("TransitEntity", TRANSIT_ENTITY_NAME);
+      registry.put("CommonConfiguration", COMMON_CONFIG_ENTITY_NAME);
     }
     log.debug("Registry value : {}", registry);
     return registry;
