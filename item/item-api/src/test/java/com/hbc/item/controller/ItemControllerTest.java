@@ -164,28 +164,26 @@ class ItemControllerTest {
     List<String> itemList = new ArrayList<>();
     itemList.add(TestUtil.ITEM_ID);
     itemResponseList.add(itemResponse);
-    when(itemService.getItemList(any(), any(), any())).thenReturn(itemResponseList);
+    when(itemService.getItemList(any(), any())).thenReturn(itemResponseList);
 
-    List<ItemResponse> responseEntity =
-        itemController.getItemList(TestUtil.ORG_ID, TestUtil.UOM, itemList);
+    List<ItemResponse> responseEntity = itemController.getItemList(TestUtil.ORG_ID, itemList);
 
     Assertions.assertEquals(1, responseEntity.size());
 
-    verify(itemService, times(1)).getItemList(any(), any(), any());
+    verify(itemService, times(1)).getItemList(any(), any());
   }
 
   @Test
   void getItemListByItemIdAndOrgIdAndUomExceptionTest()
       throws CommonServiceException, ItemBatchingDomainException {
-    when(itemService.getItemList(any(), any(), any()))
+    when(itemService.getItemList(any(), any()))
         .thenThrow(new RuntimeException("Failed to fetch list of item details"));
     List<String> itemList = new ArrayList<>();
     itemList.add(TestUtil.ITEM_ID);
     Exception exception =
         Assertions.assertThrows(
-            Exception.class,
-            () -> itemController.getItemList(TestUtil.ORG_ID, TestUtil.UOM, itemList));
+            Exception.class, () -> itemController.getItemList(TestUtil.ORG_ID, itemList));
     Assertions.assertEquals("Failed to fetch list of item details", exception.getMessage());
-    verify(itemService, times(1)).getItemList(any(), any(), any());
+    verify(itemService, times(1)).getItemList(any(), any());
   }
 }

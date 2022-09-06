@@ -126,4 +126,15 @@ public class PostalCodeTimezoneController {
             .payload(responseList)
             .build());
   }
+
+  @GetMapping("/org/{orgId}")
+  public ResponseEntity<BaseResponse<List<String>>> getPostalCodePrefixForOrgIdAndState(
+      @PathVariable String orgId, @RequestParam String state) throws PromiseEngineException {
+    logger.debug("Processing get postal code prefix list for orgId and state");
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("")
+            .payload(postalCodeTimezoneService.fetchPostalCodePrefixForOrgIdAndState(orgId, state))
+            .build());
+  }
 }

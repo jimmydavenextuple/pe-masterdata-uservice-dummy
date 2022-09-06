@@ -13,4 +13,9 @@ public class NodeCarrierCacheValue implements CacheValue {
   private static final long serialVersionUID = 2012829361093199932L;
 
   private NodeCarrierDetails nodeCarrierDetails;
+
+  @Override
+  public boolean isUndefined() {
+    return false;
+  }
 }

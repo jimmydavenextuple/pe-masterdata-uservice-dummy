@@ -94,4 +94,21 @@ public class PostalCodeTimezoneDomain {
           "Postal Code Timezone not found for a given orgId.");
     }
   }
+
+  public List<String> getPostalCodePrefixForOrgIdAndState(String orgId, String state)
+      throws PromiseEngineException {
+    try {
+      return postalCodeTimezoneRepository.findPostalCodePrefixListByOrgIdAndState(orgId, state);
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e),
+          "Error while fetching list of postal code prefix for given orgId: {} state: {}",
+          orgId,
+          state);
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Error while fetching list of postal code prefix for given orgId and state");
+    }
+  }
 }

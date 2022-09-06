@@ -143,6 +143,12 @@ public class PostalCodeTimezoneService {
         .collect(Collectors.toList());
   }
 
+  public List<String> fetchPostalCodePrefixForOrgIdAndState(String orgId, String state)
+      throws PromiseEngineException {
+    logger.debug("-- Inside fetch postal_code_prefix for orgId: {} and state: {} --", orgId, state);
+    return postalCodeTimezoneDomain.getPostalCodePrefixForOrgIdAndState(orgId, state);
+  }
+
   private PostalCodePrefixDto postalCodePrefixDto(
       PostalCodeTimezoneEntity postalCodeTimezoneEntity,
       List<PostalCodeTimezoneEntity> list,

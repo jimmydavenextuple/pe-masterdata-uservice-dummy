@@ -1,6 +1,7 @@
 package com.hbc.node.calendar.cache.spring.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -46,7 +47,8 @@ class NodeCalendarFeignClientServiceImplTest {
         .thenReturn(testUtil.getBaseResponseOfListOfCalendarDaysStatusInfo());
 
     assertEquals(cacheValue, nodeCalendarFeignClientService.get(cacheKey));
-    verify(mapper, times(1)).responseToCacheValue(any());
+    assertFalse(nodeCalendarFeignClientService.get(cacheKey).isUndefined());
+    verify(mapper, times(2)).responseToCacheValue(any());
   }
 
   @Test

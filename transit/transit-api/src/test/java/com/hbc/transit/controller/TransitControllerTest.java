@@ -1,6 +1,7 @@
 package com.hbc.transit.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -24,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 
 class TransitControllerTest {
 
@@ -302,5 +304,20 @@ class TransitControllerTest {
     Assertions.assertEquals("Failed to fetch transit list", exception.getMessage());
 
     verify(transitService, times(1)).getListOfTransitDetailsForDestinationGeoZone(any(), any());
+  }
+
+  @Test
+  void getTransitTimeDetailsForDestinationGeoZonesList() throws TransitDomainException {
+    when(transitService.getTransitDetailsForDestinationGeozones(anyString(), anyString(), any()))
+        .thenReturn(List.of(testUtil.getTransitResponse(1.5F)));
+
+    ResponseEntity<BaseResponse<List<TransitResponse>>> responseEntity =
+        transitController.getTransitTimeDetailsForDestinationGeoZonesList(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE));
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertNotNull(responseEntity.getBody());
+    Assertions.assertFalse(CollectionUtils.isEmpty(responseEntity.getBody().getPayload()));
+    verify(transitService, times(1))
+        .getTransitDetailsForDestinationGeozones(anyString(), anyString(), any());
   }
 }

@@ -41,9 +41,7 @@ public interface ItemFeign {
       @PathVariable(name = "orgId") String orgId,
       @PathVariable(name = "uom") String uom);
 
-  @GetMapping("/item/{orgId}/{uom}")
+  @GetMapping("/item/{orgId}")
   List<ItemResponse> getItemList(
-      @PathVariable(name = "orgId") String orgId,
-      @PathVariable(name = "uom") String uom,
-      @RequestParam List<String> itemList);
+      @PathVariable(name = "orgId") String orgId, @RequestParam List<String> itemList);
 }

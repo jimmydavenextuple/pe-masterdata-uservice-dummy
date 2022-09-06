@@ -22,15 +22,15 @@ public class TemplateTypes {
           + "DFSA9,10,9.5,9.5,9.5,9.5,8.09,8.09,7.89,8.09,8.09\n"
           + "DFSA10,8,8,8,8,8,8.09,8.09,6,7,7";
   private static final String PROCESSING_LEAD_TIME =
-      "nodeId,orgId,serviceOptions,processingTime (in hrs)\n"
-          + "1554,BAY,SDND,2\n"
-          + "1560,BAY,SDND,2\n"
-          + "1101,BAY,SDND,2\n"
-          + "1518,BAY,NEXTDAY,6\n"
-          + "1634,BAY,EXPRESS,30.92\n"
-          + "1601,BAY,EXPRESS,22.55\n"
-          + "1125,BAY,EXPRESS,19.90\n"
-          + "1114,BAY,SDND,24.97";
+      "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+          + "1554,BAY,SDND,2,U\n"
+          + "1560,BAY,SDND,2,U\n"
+          + "1101,BAY,SDND,2,U\n"
+          + "1518,BAY,NEXTDAY,6,D\n"
+          + "1634,BAY,EXPRESS,30.92,U\n"
+          + "1601,BAY,EXPRESS,22.55,U\n"
+          + "1125,BAY,EXPRESS,19.90,D\n"
+          + "1114,BAY,SDND,24.97,U";
 
   public static String getTemplateData(String templateType) {
     switch (templateType) {

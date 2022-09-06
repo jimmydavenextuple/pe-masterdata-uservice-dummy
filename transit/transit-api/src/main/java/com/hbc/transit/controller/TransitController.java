@@ -208,4 +208,21 @@ public class TransitController {
       throw e;
     }
   }
+
+  @GetMapping("/transit-entries/{orgId}/{carrierServiceId}/geozones")
+  public ResponseEntity<BaseResponse<List<TransitResponse>>>
+      getTransitTimeDetailsForDestinationGeoZonesList(
+          @PathVariable String orgId,
+          @PathVariable String carrierServiceId,
+          @NotNull @RequestParam List<String> destinationGeozones)
+          throws TransitDomainException {
+    logger.debug("Processing get transit time entries");
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Transit time entries fetched successfully")
+            .payload(
+                transitService.getTransitDetailsForDestinationGeozones(
+                    orgId, carrierServiceId, destinationGeozones))
+            .build());
+  }
 }

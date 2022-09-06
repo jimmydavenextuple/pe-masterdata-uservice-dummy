@@ -1,6 +1,7 @@
 package com.hbc.transit.spring.cache.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -45,7 +46,8 @@ class TransitDataFeignClientServiceImplTest {
         .thenReturn(testUtil.getBaseResponseOfTransit());
 
     assertEquals(cacheValue, transitDataFeignClientServiceImpl.get(cacheKey));
-    verify(mapper, times(1)).responseToCacheValue(any());
+    assertFalse(transitDataFeignClientServiceImpl.get(cacheKey).isUndefined());
+    verify(mapper, times(2)).responseToCacheValue(any());
   }
 
   @Test

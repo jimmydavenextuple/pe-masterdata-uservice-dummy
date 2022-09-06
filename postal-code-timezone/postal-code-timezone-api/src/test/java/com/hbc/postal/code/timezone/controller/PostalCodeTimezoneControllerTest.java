@@ -2,6 +2,8 @@ package com.hbc.postal.code.timezone.controller;
 
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.ORG_ID;
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX_2;
+import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.STATE;
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.STATUS_CODE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,6 +22,7 @@ import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneR
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.service.PostalCodeTimezoneService;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -27,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 
 class PostalCodeTimezoneControllerTest {
 
@@ -193,5 +197,19 @@ class PostalCodeTimezoneControllerTest {
         });
 
     verify(postalCodeTimezoneService, times(1)).fetchPostalCodePrefixList(anyString());
+  }
+
+  @Test
+  void getPostalCodePrefixForOrgIdAndState() throws PromiseEngineException {
+    when(postalCodeTimezoneService.fetchPostalCodePrefixForOrgIdAndState(anyString(), anyString()))
+        .thenReturn(List.of(POSTAL_CODE_PREFIX, POSTAL_CODE_PREFIX_2));
+
+    ResponseEntity<BaseResponse<List<String>>> responseEntity =
+        postalCodeTimezoneController.getPostalCodePrefixForOrgIdAndState(ORG_ID, STATE);
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertNotNull(responseEntity.getBody());
+    Assertions.assertFalse(CollectionUtils.isEmpty(responseEntity.getBody().getPayload()));
+    verify(postalCodeTimezoneService, times(1))
+        .fetchPostalCodePrefixForOrgIdAndState(anyString(), anyString());
   }
 }

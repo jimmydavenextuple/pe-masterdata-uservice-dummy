@@ -12,9 +12,9 @@ configurations {
 
 
 dependencies {
-    implementation(project(":node-carrier:node-carrier-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'
     implementation(project(":common-util"))
+    implementation(project(":node-carrier:node-carrier-api-domain"))
     implementation(project(":nfs-near-cache:core-near-cache-producer"))
 }
 sourceCompatibility = JavaVersion.VERSION_11

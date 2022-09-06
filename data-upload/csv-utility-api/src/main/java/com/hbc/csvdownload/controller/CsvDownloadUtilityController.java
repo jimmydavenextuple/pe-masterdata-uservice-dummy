@@ -1,10 +1,16 @@
 package com.hbc.csvdownload.controller;
 
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
+import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
+import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
+import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.csvdownload.service.CsvDownloadUtilityService;
+import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
@@ -15,7 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class CsvDownloadUtilityController {
+
+  private final CsvDownloadUtilityService csvDownloadUtilityService;
 
   @GetMapping(value = "/{templateType}/download", produces = "text/csv")
   public void downloadCSVTemplate(
@@ -47,10 +56,16 @@ public class CsvDownloadUtilityController {
       @RequestParam String destinationRegion,
       HttpServletRequest request,
       HttpServletResponse response)
-      throws InvalidTemplateTypeException {
+      throws TransitServiceException, PostalCodeTimezoneServiceException, IOException,
+          CsvDownloadUtilityServiceException {
     log.debug("Inside download transit times data as csv");
-    // need to add service layer logic
-    downloadCSVTemplate("transitTime", request, response);
+    String csvContents =
+        csvDownloadUtilityService.downloadTransitTimesForSourceAndDestinationRegion(
+            orgId, carrierServiceId, sourceRegion, destinationRegion);
+    response.setStatus(HttpStatus.OK.value());
+    response.setContentLength(csvContents.length());
+    response.getOutputStream().write(csvContents.getBytes());
+    response.flushBuffer();
   }
 
   @GetMapping(path = "/org/{orgId}/jobs/{jobId}/download")

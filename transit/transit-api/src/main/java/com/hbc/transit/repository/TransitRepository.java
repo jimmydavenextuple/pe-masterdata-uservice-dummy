@@ -37,4 +37,7 @@ public interface TransitRepository extends JpaRepository<TransitEntity, String> 
   Integer findTransitCountByOrgIdAndCarrierServiceId(String orgId, String carrierServiceId);
 
   List<TransitEntity> findByOrgIdAndDestinationGeozone(String orgId, String destinationGeozone);
+
+  List<TransitEntity> findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
+      String orgId, String carrierServiceId, List<String> destinationGeozones);
 }

@@ -24,6 +24,9 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.TIM
 import static com.hbc.dataupload.helper.CarrierDataUploadConstants.CARRIER_DATA_UPLOAD_FAILED;
 import static com.hbc.dataupload.helper.CarrierDataUploadConstants.CARRIER_DATA_UPLOAD_PARTIAL_SUCCESS;
 import static com.hbc.dataupload.helper.CarrierDataUploadConstants.CARRIER_DATA_UPLOAD_SUCCESS;
+import static com.hbc.dataupload.helper.NodeCarrierSelectionUploadConstants.NODE_CARRIER_SELECTION_DATA_UPLOAD_FAILED;
+import static com.hbc.dataupload.helper.NodeCarrierSelectionUploadConstants.NODE_CARRIER_SELECTION_DATA_UPLOAD_PARTIAL_SUCCESS;
+import static com.hbc.dataupload.helper.NodeCarrierSelectionUploadConstants.NODE_CARRIER_SELECTION_DATA_UPLOAD_SUCCESS;
 import static com.hbc.dataupload.helper.NodeDataUploadConstants.NODE_DATA_UPLOAD_FAILED;
 import static com.hbc.dataupload.helper.NodeDataUploadConstants.NODE_DATA_UPLOAD_PARTIAL_SUCCESS;
 import static com.hbc.dataupload.helper.NodeDataUploadConstants.NODE_DATA_UPLOAD_SUCCESS;
@@ -49,6 +52,7 @@ import com.hbc.calendar.domain.pojo.ExceptionDays;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.base.PagePayload.Pagination;
+import com.hbc.common.configuration.api.domain.dto.CommonConfigurationDto;
 import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
@@ -90,6 +94,13 @@ public class TestUtil {
   public static Float TRANSIT_DAYS = Float.valueOf(1);
   private static final String CARRIER_ID_2 = "Carrier_Id_2";
 
+  private static final String BUFFER_START_DATE = "startTime";
+  public static final String KEY = "key";
+
+  public static final String VALUE = "value";
+
+  public static final String TYPE = "type";
+
   private NodeCarrierResponse getNodeCarrierResponse() {
     return NodeCarrierResponse.builder()
         .nodeId(NODE_ID)
@@ -105,6 +116,14 @@ public class TestUtil {
     return BaseResponse.builder()
         .message("Node carrier details fetched successfully")
         .success(true)
+        .payload(getNodeCarrierResponse())
+        .build();
+  }
+
+  public BaseResponse<NodeCarrierResponse> getBaseResponseOfNodeCarrierResponse2() {
+    return BaseResponse.builder()
+        .message("Node carrier details fetched successfully")
+        .success(false)
         .payload(getNodeCarrierResponse())
         .build();
   }
@@ -677,5 +696,62 @@ public class TestUtil {
     carrierServiceCalendars.setCalendarId(calendarId);
     carrierServiceCalendars.setEffectiveDate(effectiveDate);
     return carrierServiceCalendars;
+  }
+
+  public BaseResponse<TransitResponse> getBaseResponseOfTransitResponse() {
+    return BaseResponse.builder()
+        .message("Node carrier details fetched successfully")
+        .success(true)
+        .payload(getTransitResponse())
+        .build();
+  }
+
+  private TransitResponse getTransitResponse() {
+    return TransitResponse.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .sourceGeozone(SOURCE_GEOZONE)
+        .destinationGeozone(DESTINATION_GEOZONE)
+        .bufferDays(0.1)
+        .build();
+  }
+
+  public ResponseEntity<BaseResponse<String>> getNodeCarrierSelectionDataSuccessfulResponse() {
+    return ResponseEntity.ok(
+        BaseResponse.builder().message(NODE_CARRIER_SELECTION_DATA_UPLOAD_SUCCESS).build());
+  }
+
+  public ResponseEntity<BaseResponse<String>> getNodeCarrierSelectionPartiallySuccessfulResponse() {
+    return ResponseEntity.status(HttpStatus.MULTI_STATUS)
+        .body(
+            BaseResponse.builder()
+                .message(NODE_CARRIER_SELECTION_DATA_UPLOAD_PARTIAL_SUCCESS)
+                .build());
+  }
+
+  public ResponseEntity<BaseResponse<String>> getNodeCarrierSelectionFailureResponse() {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(BaseResponse.builder().message(NODE_CARRIER_SELECTION_DATA_UPLOAD_FAILED).build());
+  }
+
+  public BaseResponse<CommonConfigurationDto> getSuccessfulBaseResponseForNodeCarrierSelection() {
+    return BaseResponse.builder()
+        .message("")
+        .success(true)
+        .payload(getCommonConfigurationDto(ORG_ID, TYPE, KEY, VALUE))
+        .build();
+  }
+
+  public CommonConfigurationDto getCommonConfigurationDto(
+      String orgId, String type, String key, String value) {
+    return CommonConfigurationDto.builder().orgId(orgId).type(type).key(key).value(value).build();
+  }
+
+  public BaseResponse<CommonConfigurationDto> getFailedBaseResponseForNodeCarrierSelection() {
+    return BaseResponse.builder()
+        .message("")
+        .success(false)
+        .payload(getCommonConfigurationDto(ORG_ID, TYPE, KEY, VALUE))
+        .build();
   }
 }

@@ -1,5 +1,7 @@
 package com.hbc.jobs.consumers.service;
 
+import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
+import com.hbc.jobs.consumers.domain.mapper.NodeCarrierRequestMapper;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
@@ -9,6 +11,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,10 @@ import org.springframework.stereotype.Service;
 public class NodeCarrierMapper implements FeignClientMapper {
 
   private final NodeCarrierFeign nodeCarrierFeign;
+
+  public static final NodeCarrierRequestMapper INSTANCE =
+      Mappers.getMapper(NodeCarrierRequestMapper.class);
+
   @Setter private JobTypeEnum jobTypeEnum;
 
   @Override
@@ -54,8 +61,7 @@ public class NodeCarrierMapper implements FeignClientMapper {
           break;
       }
     }
-    nodeCarrierRequest.setCarrierServiceId("ALL-SDND");
-    nodeCarrierRequest.setLastPickupTime("0");
+    nodeCarrierRequest.setCarrierServiceId("");
 
     return nodeCarrierRequest;
   }
@@ -69,7 +75,7 @@ public class NodeCarrierMapper implements FeignClientMapper {
   public Class mapTODto() throws NodeCarrierMapperException {
     try {
       if (jobTypeEnum == JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES) {
-        return NodeCarrierRequest.class;
+        return ProcessingLeadTime.class;
       }
       log.error("Unable to map an object!");
       throw new NodeCarrierMapperException(
@@ -85,8 +91,19 @@ public class NodeCarrierMapper implements FeignClientMapper {
   public ResponseEntity<?> callApi(Object request, RecordInputDto inputs)
       throws NodeCarrierMapperException {
     if (jobTypeEnum == JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES) {
-      var nodeCarrierRequest = (NodeCarrierRequest) request;
-      return ResponseEntity.ok(nodeCarrierFeign.createNodeCarrier(nodeCarrierRequest));
+      var processingLeadTime = (ProcessingLeadTime) request;
+      if ("U".equals(processingLeadTime.getActionType())) {
+        return ResponseEntity.ok(
+            nodeCarrierFeign.createNodeCarrier(
+                INSTANCE.convertToNodeCarrierRequest(processingLeadTime)));
+      } else if ("D".equals(processingLeadTime.getActionType())) {
+        return ResponseEntity.ok(
+            nodeCarrierFeign.deleteNodeCarrier(
+                processingLeadTime.getNodeId(),
+                processingLeadTime.getOrgId(),
+                processingLeadTime.getCarrierServiceId(),
+                processingLeadTime.getServiceOption()));
+      }
     }
     log.error("Failed to make a call based on job type");
     throw new NodeCarrierMapperException("Please provide the valid job type", jobTypeEnum);

@@ -13,4 +13,9 @@ public class CarrierCacheValue implements CacheValue {
   private static final long serialVersionUID = -9036961122388888732L;
 
   private CarrierDetails carrierDetails;
+
+  @Override
+  public boolean isUndefined() {
+    return false;
+  }
 }
