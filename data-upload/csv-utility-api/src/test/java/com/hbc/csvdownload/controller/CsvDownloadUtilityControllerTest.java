@@ -113,8 +113,8 @@ class CsvDownloadUtilityControllerTest {
 
   @Test
   void downloadTransitTimesDataCSV()
-      throws IOException, InvalidTemplateTypeException, TransitServiceException,
-          PostalCodeTimezoneServiceException, CsvDownloadUtilityServiceException {
+      throws IOException, TransitServiceException, PostalCodeTimezoneServiceException,
+          CsvDownloadUtilityServiceException {
 
     String csvContents =
         "orgId,BAY\n"
@@ -152,8 +152,7 @@ class CsvDownloadUtilityControllerTest {
             + "1101,BAY,SDND,2,Invalid nodeId\n"
             + "1518,BAY,NEXTDAY,6,Invalid nodeId";
 
-    when(csvDownloadUtilityService.downloadTransitTimeAndProcessingLeadTimeCsv(
-            anyString(), anyString(), any()))
+    when(csvDownloadUtilityService.downloadLogsAsCsv(anyString(), anyString(), any()))
         .thenReturn(ProcessingLeadTimeErrorLogTemplate);
 
     HttpServletRequest request = mock(HttpServletRequest.class);

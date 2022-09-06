@@ -41,8 +41,11 @@ public class TestUtil {
   public static final Optional<String> STATUS = Optional.empty();
 
   public static final JobTypeEnum jobType = JobTypeEnum.getTypeFromString("any");
-  public static final String requestBodyJson =
+  public static final String processingLeadTimesRequestBodyJson =
       "{\"nodeId\":\"1554\",\"orgId\":\"BAY\",\"carrierServiceId\":\"ALL-SDND\",\"serviceOption\":\"SDND\",\"processingTime\":2.0,\"lastPickupTime\":\"00:00\"}";
+
+  public static final String transitTimesRequestBodyJson =
+      "{\"orgId\":\"BAY\",\"sourceGeozone\":\"A0A\",\"destinationGeozone\":\"M1R\",\"carrierServiceId\":\"ALL-SDND\",\"transitDays\":\"1.5\"}";
 
   public JobDto getJobDto() {
     JobDto jobDto = new JobDto();
@@ -82,37 +85,32 @@ public class TestUtil {
     return jobDto;
   }
 
-  public JobDto getJobDto3() {
-    JobDto jobDto = new JobDto();
-    return jobDto;
+  public List<RecordStatusDto> getJobRecordsForProcessingLeadTimes() {
+    RecordStatusDto recordDto =
+        RecordStatusDto.builder()
+            .jobId(JOB_ID)
+            .jobType(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES)
+            .orgId(ORG_ID)
+            .errorMessage("Invalid nodeId")
+            .requestBody(processingLeadTimesRequestBodyJson)
+            .build();
+
+    return List.of(recordDto);
   }
 
-  public List<RecordStatusDto> getJobRecords() {
+  public List<RecordStatusDto> getJobRecordsForTransitTimes() {
     List<RecordStatusDto> recordStatusDtoList = new ArrayList<>();
     RecordStatusDto recordDto =
         RecordStatusDto.builder()
             .jobId(JOB_ID)
-            .jobType(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES)
+            .jobType(JobTypeEnum.UPLOAD_TRANSIT_TIMES)
             .orgId(ORG_ID)
             .errorMessage("Invalid nodeId")
-            .requestBody(requestBodyJson)
+            .requestBody(transitTimesRequestBodyJson)
             .build();
 
     recordStatusDtoList.add(recordDto);
     return recordStatusDtoList;
-  }
-
-  public RecordStatusDto getRecordStatusDto() {
-    RecordStatusDto recordDto =
-        RecordStatusDto.builder()
-            .jobId(JOB_ID)
-            .jobType(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES)
-            .orgId(ORG_ID)
-            .errorMessage("Invalid nodeId")
-            .requestBody(requestBodyJson)
-            .build();
-
-    return recordDto;
   }
 
   public ProcessingLeadTimesRaw getProcessingLeadTimesRaw() {

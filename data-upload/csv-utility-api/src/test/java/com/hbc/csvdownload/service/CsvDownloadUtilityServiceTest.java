@@ -7,7 +7,11 @@ import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
+import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,28 +31,42 @@ class CsvDownloadUtilityServiceTest {
   @InjectMocks private TestUtil testUtil;
 
   @Test
-  void downloadTransitTimeAndProcessingLeadTimeCsvTest() throws CommonServiceException {
-    when(jobDtoService.getJob(testUtil.JOB_ID, testUtil.ORG_ID)).thenReturn(testUtil.getJobDto());
-    when(jobRecordsService.getJobRecords(testUtil.JOB_ID, testUtil.ORG_ID, testUtil.STATUS))
-        .thenReturn(testUtil.getJobRecords());
+  void downloadLogsAsCsvForProcessingLeadTimes() throws CommonServiceException {
+    when(jobDtoService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID)).thenReturn(testUtil.getJobDto());
+    when(jobRecordsService.getJobRecords(TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS))
+        .thenReturn(testUtil.getJobRecordsForProcessingLeadTimes());
 
     String csvContent =
-        csvDownloadUtilityService.downloadTransitTimeAndProcessingLeadTimeCsv(
-            testUtil.JOB_ID, testUtil.ORG_ID, testUtil.STATUS);
+        csvDownloadUtilityService.downloadLogsAsCsv(
+            TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS);
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
+
+  @Test
+  void downloadLogsAsCsvForTransitTime() throws CommonServiceException {
+    JobDto jobDto = testUtil.getJobDto();
+    jobDto.setJobType(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+    when(jobDtoService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID)).thenReturn(jobDto);
+    when(jobRecordsService.getJobRecords(anyString(), anyString(), any()))
+        .thenReturn(testUtil.getJobRecordsForTransitTimes());
+
+    String csvContent =
+        csvDownloadUtilityService.downloadLogsAsCsv(
+            TestUtil.JOB_ID, TestUtil.ORG_ID, Optional.of(ApiStatusEnum.FAILURE.name()));
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
   }
 
   @Test
   void downloadTransitTimeAndProcessingLeadTimeCsvExceptionTest() throws CommonServiceException {
-    when(jobDtoService.getJob(testUtil.JOB_ID, testUtil.ORG_ID)).thenReturn(testUtil.getJobDto2());
-    when(jobRecordsService.getJobRecords(testUtil.JOB_ID, testUtil.ORG_ID, testUtil.STATUS))
-        .thenReturn(testUtil.getJobRecords());
+    when(jobDtoService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID)).thenReturn(testUtil.getJobDto2());
+    when(jobRecordsService.getJobRecords(TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS))
+        .thenReturn(testUtil.getJobRecordsForProcessingLeadTimes());
 
     Exception exception =
         Assertions.assertThrows(
             CommonServiceException.class,
             () ->
-                csvDownloadUtilityService.downloadTransitTimeAndProcessingLeadTimeCsv(
+                csvDownloadUtilityService.downloadLogsAsCsv(
                     TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS));
     Assertions.assertNotNull(exception);
   }

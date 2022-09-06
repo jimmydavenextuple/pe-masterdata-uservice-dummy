@@ -76,10 +76,9 @@ public class CsvDownloadUtilityController {
       @RequestParam(required = false) Optional<String> status,
       HttpServletRequest request,
       HttpServletResponse response)
-      throws InvalidTemplateTypeException, IOException, CommonServiceException {
+      throws IOException, CommonServiceException {
     log.debug("Inside download logs by filters");
-    String csvContent =
-        csvDownloadUtilityService.downloadTransitTimeAndProcessingLeadTimeCsv(jobId, orgId, status);
+    String csvContent = csvDownloadUtilityService.downloadLogsAsCsv(jobId, orgId, status);
     response.setStatus(HttpStatus.OK.value());
     response.setContentLength(csvContent.length());
     response.getOutputStream().write(csvContent.getBytes());
