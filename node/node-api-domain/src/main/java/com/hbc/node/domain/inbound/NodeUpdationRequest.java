@@ -1,9 +1,9 @@
 package com.hbc.node.domain.inbound;
 
 import java.io.Serializable;
+import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
