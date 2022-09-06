@@ -7,7 +7,6 @@ import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
-import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
@@ -117,13 +116,13 @@ public class CsvDownloadUtilityService {
       String jobId, String orgId, Optional<String> status) throws CommonServiceException {
     logger.debug("Processing download transit time and processing lead time");
     try {
-      JobDto jobDto = jobDtoService.getJob(jobId, orgId);
+      var jobDto = jobDtoService.getJob(jobId, orgId);
       var jobType = jobDto.getJobType();
       List<RecordStatusDto> recordStatusDtos =
           jobRecordsService.getJobRecords(jobId, orgId, status);
 
       if (jobType.equals(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES)) {
-        return DownloadProcessingLeadTimeErrorLogs(recordStatusDtos);
+        return downloadProcessingLeadTimeErrorLogs(recordStatusDtos);
       } else if (jobType.equals(JobTypeEnum.UPLOAD_TRANSIT_TIMES)) {
         return downloadTransitTimeErrorLogs(recordStatusDtos);
       } else {
@@ -139,19 +138,19 @@ public class CsvDownloadUtilityService {
     }
   }
 
-  public String DownloadProcessingLeadTimeErrorLogs(List<RecordStatusDto> recordStatusDtoList) {
+  public String downloadProcessingLeadTimeErrorLogs(List<RecordStatusDto> recordStatusDtoList) {
     var header =
         String.join(",", "nodeId", "orgId", "serviceOption", "processingLeadTime", "errorMessage");
     String rows =
         recordStatusDtoList.stream()
-            .map(this::ConstructRowContent)
+            .map(this::constructRowContent)
             .collect(Collectors.joining("\n"));
 
     return String.join("\n", header, rows);
   }
 
-  private String ConstructRowContent(RecordStatusDto recordStatusDto) {
-    Gson gson = new Gson();
+  private String constructRowContent(RecordStatusDto recordStatusDto) {
+    var gson = new Gson();
     var requestBody = gson.fromJson(recordStatusDto.getRequestBody(), NodeCarrierRequest.class);
     return String.join(
         ",",
@@ -167,18 +166,13 @@ public class CsvDownloadUtilityService {
     try {
       var requestBody =
           recordStatusDtoList.stream()
-              .map(recordStatusDto -> getRequestBody(recordStatusDto))
-              .collect(Collectors.toList());
-
-      List<String> destinationFsaList =
-          requestBody.stream()
-              .map(destinationFsa -> destinationFsa.getDestinationGeozone())
+              .map(this::getRequestBody)
               .collect(Collectors.toList());
 
       Set<String> sourceFsaSet =
           new HashSet<>(
               requestBody.stream()
-                  .map(sourceFsa -> sourceFsa.getSourceGeozone())
+                  .map(TransitDataCreationRequest::getSourceGeozone)
                   .collect(Collectors.toSet()));
 
       List<TransitDataCreationRequest> transitDataCreationRequestList =
@@ -209,7 +203,7 @@ public class CsvDownloadUtilityService {
 
       var sourceFsaHeader = String.join(",", sourceFsaSet);
 
-      return ConstructCsvData(transitTimeDataMap, sourceFsaHeader, recordStatusDtoList);
+      return constructCsvDataForTransit(transitTimeDataMap, sourceFsaHeader, recordStatusDtoList);
     } catch (Exception e) {
       logger.error("Error while forming csv contents string");
       throw new CommonServiceException(
@@ -217,7 +211,7 @@ public class CsvDownloadUtilityService {
     }
   }
 
-  private String ConstructCsvData(
+  private String constructCsvDataForTransit(
       Map<String, Map<String, Float>> transitTimeDataMap,
       String sourceFsaheader,
       List<RecordStatusDto> recordStatusDtoList) {
@@ -227,13 +221,12 @@ public class CsvDownloadUtilityService {
         transitTimeDataMap.keySet().stream()
             .map(
                 destinationFsa ->
-                    ConstructCsvRows(transitTimeDataMap, destinationFsa, recordStatusDtoList))
+                    ConstructCsvRowsForTransit(destinationFsa, recordStatusDtoList))
             .collect(Collectors.joining("\n"));
     return String.join("\n", csvContent, rows);
   }
 
-  private String ConstructCsvRows(
-      Map<String, Map<String, Float>> transitTimeDataMap,
+  private String ConstructCsvRowsForTransit(
       String destinationFsa,
       List<RecordStatusDto> recordStatusDtoList) {
     String errorMessage =
@@ -245,7 +238,7 @@ public class CsvDownloadUtilityService {
   }
 
   private TransitDataCreationRequest getRequestBody(RecordStatusDto recordStatusDto) {
-    Gson gson = new Gson();
+    var gson = new Gson();
     return gson.fromJson(recordStatusDto.getRequestBody(), TransitDataCreationRequest.class);
   }
 }

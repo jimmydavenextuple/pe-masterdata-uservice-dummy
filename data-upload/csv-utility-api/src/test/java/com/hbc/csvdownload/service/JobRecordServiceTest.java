@@ -7,8 +7,11 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.TestUtil;
+import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.util.CollectionUtils;
 
 @ExtendWith(MockitoExtension.class)
-public class JobRecordServiceTest {
+ class JobRecordServiceTest {
   @Mock private JobsDashboardClient jobsDashboardClient;
   @InjectMocks private TestUtil testUtil;
   @InjectMocks private JobRecordsService jobRecordsService;
@@ -33,6 +36,18 @@ public class JobRecordServiceTest {
     Assertions.assertFalse(CollectionUtils.isEmpty(recordStatusDtoList));
   }
 
+  @Test
+  void getJobRecordEmptyListTest(){
+      when(jobsDashboardClient.getJobRecords(anyString(),anyString(),any()))
+              .thenReturn(BaseResponse.builder().payload(Collections.emptyList()).build());
+      Exception exception =
+              Assertions.assertThrows(
+                      CommonServiceException.class,
+                      () ->
+                              jobRecordsService.getJobRecords(
+                                      TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS));
+      Assertions.assertNotNull(exception);
+  }
   @Test
   void getJobRecordsNullResponseTest() {
     when(jobsDashboardClient.getJobRecords(anyString(), anyString(), any())).thenReturn(null);

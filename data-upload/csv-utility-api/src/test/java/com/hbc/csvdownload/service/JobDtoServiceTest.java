@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class JobDtoServiceTest {
+ class JobDtoServiceTest {
   @Mock private JobsConsumerClient jobsConsumerClient;
   @InjectMocks private JobDtoService jobDtoService;
   @InjectMocks private TestUtil testUtil;
@@ -28,6 +28,17 @@ public class JobDtoServiceTest {
 
     JobDto jobDto = jobDtoService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID);
     Assertions.assertFalse(jobDto.getJobId().isEmpty());
+  }
+
+  @Test
+  void getJobEmptyTest(){
+      when(jobsConsumerClient.getJob(anyString(), anyString()))
+              .thenReturn(BaseResponse.builder().payload(null).build());
+      Exception exception =
+              Assertions.assertThrows(
+                      CommonServiceException.class,
+                      () -> jobDtoService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID));
+      Assertions.assertNotNull(exception);
   }
 
   @Test
