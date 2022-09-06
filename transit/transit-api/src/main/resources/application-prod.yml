@@ -12,7 +12,7 @@ spring:
   replica:
     datasource:
       platform: postgres
-      url: jdbc:postgresql://promise-engine-postgres-prod.cluster-ro-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/pe?readOnly=true
+      url: jdbc:postgresql://promise-engine-postgres-perf.cluster-ro-co9l0bkmgaei.us-east-1.rds.amazonaws.com,promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe?readOnly=true
       username: \${POSTGRES_USER}
       password: \${POSTGRES_PWD}
       required: true

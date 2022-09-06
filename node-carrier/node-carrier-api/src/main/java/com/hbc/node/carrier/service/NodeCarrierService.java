@@ -11,6 +11,7 @@ import com.hbc.node.carrier.domain.mapper.NodeCarrierMapper;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,6 +85,7 @@ public class NodeCarrierService {
     }
   }
 
+  @ReaderDS
   public NodeCarrierResponse getNodeCarrierDetails(
       String nodeId, String orgId, String carrierServiceId, String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
@@ -183,6 +185,7 @@ public class NodeCarrierService {
     return nodeCarrierResponse;
   }
 
+  @ReaderDS
   public List<NodeCarrierResponse> getNodeCarrierForNodeIdAOrgIdAndServiceOption(
       String nodeId, String orgId, String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
@@ -209,6 +212,7 @@ public class NodeCarrierService {
     return nodeCarrierResponseList;
   }
 
+  @ReaderDS
   public List<NodeCarrierResponse> getNodeCarrierForNodeIdAndOrgId(String nodeId, String orgId)
       throws NodeCarrierDomainException {
     List<NodeCarrierEntity> nodeCarrierEntity =

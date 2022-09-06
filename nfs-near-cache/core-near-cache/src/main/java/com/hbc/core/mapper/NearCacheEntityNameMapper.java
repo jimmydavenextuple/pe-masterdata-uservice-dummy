@@ -33,7 +33,7 @@ public class NearCacheEntityNameMapper {
       registry.put("PromiseSourcingRule", PROMISE_SOURCING_ENTITY_NAME);
       registry.put("WeightageConfiguration", WEIGHTAGE_CONFIGURATION_ENTITY_NAME);
       registry.put("PostalCodeTimezoneEntity", POSTAL_CODE_ENTITY_NAME);
-      registry.put("TransitEntity",TRANSIT_ENTITY_NAME);
+      registry.put("TransitEntity", TRANSIT_ENTITY_NAME);
     }
     log.debug("Registry value : {}", registry);
     return registry;
