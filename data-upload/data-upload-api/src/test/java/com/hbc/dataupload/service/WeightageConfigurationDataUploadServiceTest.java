@@ -1,5 +1,6 @@
 package com.hbc.dataupload.service;
 
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.helper.WeightageConfigurationDataUploadConstants.WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_FAILED;
 import static com.hbc.dataupload.helper.WeightageConfigurationDataUploadConstants.WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_FILE_EMPTY_RECORDS;
 import static com.hbc.dataupload.helper.WeightageConfigurationDataUploadConstants.WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_INVALID_FILE_HEADERS;
@@ -20,7 +21,6 @@ import com.hbc.dataupload.util.TestUtil;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.feign.WeightageConfigurationFeign;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
-import com.hbc.weightage.configuration.api.domain.inbound.UpdateWeightageConfigurationRequest;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,9 +72,6 @@ class WeightageConfigurationDataUploadServiceTest {
     when(weightageConfigurationFeign.createWeightageConfiguration(
             any(CreateWeightageConfigurationRequest.class)))
         .thenReturn(baseResponse);
-    when(weightageConfigurationFeign.updateWeightageConfiguration(
-            anyString(), anyString(), anyString(), any(UpdateWeightageConfigurationRequest.class)))
-        .thenReturn(baseResponse);
     when(weightageConfigurationFeign.deleteWeightageConfiguration(
             anyString(), anyString(), anyString()))
         .thenReturn(baseResponse);
@@ -106,9 +103,6 @@ class WeightageConfigurationDataUploadServiceTest {
     when(weightageConfigurationFeign.createWeightageConfiguration(
             any(CreateWeightageConfigurationRequest.class)))
         .thenReturn(successfulBaseResponse);
-    when(weightageConfigurationFeign.updateWeightageConfiguration(
-            anyString(), anyString(), anyString(), any(UpdateWeightageConfigurationRequest.class)))
-        .thenReturn(failedBaseResponse);
     when(weightageConfigurationFeign.deleteWeightageConfiguration(
             anyString(), anyString(), anyString()))
         .thenReturn(failedBaseResponse);
@@ -280,9 +274,41 @@ class WeightageConfigurationDataUploadServiceTest {
     when(weightageConfigurationFeign.createWeightageConfiguration(
             any(CreateWeightageConfigurationRequest.class)))
         .thenReturn(baseResponse);
+    when(weightageConfigurationFeign.deleteWeightageConfiguration(
+            anyString(), anyString(), anyString()))
+        .thenReturn(baseResponse);
 
-    ResponseEntity<BaseResponse<String>> response =
-        weightageConfigurationDataUploadService.uploadWeightageConfigurationData(absolutePath);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    CommonServiceException exception =
+        assertThrows(
+            CommonServiceException.class,
+            () ->
+                weightageConfigurationDataUploadService.uploadWeightageConfigurationData(
+                    absolutePath));
+
+    assertEquals(ACTION_INVALID_MESSAGE, exception.getMessage());
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+  }
+
+  @Test
+  void uploadWeightageConfigurationDataNullActionExceptionTest()
+      throws CommonServiceException, IOException {
+    Path resourceDirectory =
+        Paths.get(
+            "src",
+            "test",
+            "resources",
+            "weightageConfiguration",
+            "weightageConfiguration_nullAction.csv");
+    String absolutePath = resourceDirectory.toFile().getAbsolutePath();
+
+    CommonServiceException exception =
+        assertThrows(
+            CommonServiceException.class,
+            () ->
+                weightageConfigurationDataUploadService.uploadWeightageConfigurationData(
+                    absolutePath));
+
+    assertEquals(ACTION_INVALID_MESSAGE, exception.getMessage());
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
   }
 }

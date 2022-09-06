@@ -1,5 +1,5 @@
-action,orgId,type,key,weightage
-CREATE,org,PRIORITY,P1,1F
-UPDATE,org,PRIORITY,P2,2F
-DELETE,org,PRIORITY,P3,3F
-CREATE,org,PRIORITY,P4,4F
+orgId,type,key,weightage,action
+org,PRIORITY,P1,1F,u
+org,PRIORITY,P2,2F,U
+org,PRIORITY,P3,3F,D
+org,PRIORITY,P4,4F,U

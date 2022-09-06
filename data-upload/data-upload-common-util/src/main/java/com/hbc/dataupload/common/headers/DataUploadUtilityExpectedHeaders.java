@@ -131,7 +131,7 @@ public class DataUploadUtilityExpectedHeaders {
                     LATITUDE,
                     LONGITUDE,
                     TIMEZONE1)),
-            Map.entry("weightageConfiguration", List.of(ACTION, ORG_ID, TYPE, KEY, WEIGHTAGE)),
+            Map.entry("weightageConfiguration", List.of(ORG_ID, TYPE, KEY, WEIGHTAGE, ACTION)),
             Map.entry(
                 "calendar",
                 List.of(
