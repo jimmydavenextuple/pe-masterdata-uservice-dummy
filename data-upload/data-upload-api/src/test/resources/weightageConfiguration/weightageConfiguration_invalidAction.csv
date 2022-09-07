@@ -1,2 +1,6 @@
-action,orgId,type,key,weightage
-INVALID,org,PRIORITY,P1,1F
+orgId,type,key,weightage,action
+org,PRIORITY,P1,1F,U
+org,PRIORITY,P2,1F,u
+org,PRIORITY,P1,1F,D
+org,PRIORITY,P4,1F,d
+org,PRIORITY,P5,1F,INVALID
