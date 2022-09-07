@@ -220,6 +220,7 @@ public class CsvUploadUtilityService {
               transitDataCreationRequest.setSourceGeozone(sFsa);
               transitDataCreationRequest.setTransitDays(
                   Float.valueOf(row[integer.getAndIncrement()]));
+              transitDataCreationRequest.setBufferDays(0.0);
               return transitDataCreationRequest;
             })
         .collect(Collectors.toList());
