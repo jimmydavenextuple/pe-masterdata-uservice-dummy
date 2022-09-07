@@ -44,6 +44,18 @@ public class TestUtil {
         .build();
   }
 
+  public NodeCarrierBufferRequest getNodeCarrierBufferRequest3() {
+    Date bEndDate = new Date();
+    bEndDate.setTime(1000);
+    return NodeCarrierBufferRequest.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .serviceOption(SERVICE_OPTION)
+        .bufferHours(-3.0)
+        .bufferEndDate(bEndDate)
+        .build();
+  }
+
   public NodeCarrierRequest getNodeCarrierRequest3() {
     Calendar c1 = Calendar.getInstance();
     c1.set(Calendar.MONTH, 11);
@@ -58,6 +70,25 @@ public class TestUtil {
         .serviceOption(SERVICE_OPTION)
         .processingTime(2.0)
         .lastPickupTime("5:00")
+        .bufferEndDate(bEndDate)
+        .build();
+  }
+
+  public NodeCarrierRequest getNodeCarrierRequest4() {
+    Calendar c1 = Calendar.getInstance();
+    c1.set(Calendar.MONTH, 11);
+    c1.set(Calendar.DATE, 05);
+    c1.set(Calendar.YEAR, 2023);
+    Date bEndDate = c1.getTime();
+
+    return NodeCarrierRequest.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .processingTime(2.0)
+        .lastPickupTime("5:00")
+        .bufferHours(-5.0)
         .bufferEndDate(bEndDate)
         .build();
   }
