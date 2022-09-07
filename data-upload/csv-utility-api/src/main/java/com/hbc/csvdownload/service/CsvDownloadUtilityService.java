@@ -254,7 +254,7 @@ public class CsvDownloadUtilityService {
 
   private TransitDataErrorLogsPojo getRequestBody(RecordStatusDto recordStatusDto) {
     var gson = new Gson();
-    TransitDataErrorLogsPojo errorLogsPojo =
+    var errorLogsPojo =
         INSTANCE.convertToTransitDataErrorLogsPojo(
             gson.fromJson(recordStatusDto.getRequestBody(), TransitDataCreationRequest.class));
     errorLogsPojo.setErrorMessage(recordStatusDto.getErrorMessage());
