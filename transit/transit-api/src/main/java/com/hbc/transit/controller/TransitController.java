@@ -38,7 +38,7 @@ public class TransitController {
   @PostMapping
   public ResponseEntity<BaseResponse<TransitResponse>> addTransitData(
       @Valid @RequestBody TransitDataCreationRequest transitDataCreationRequest)
-      throws TransitDomainException {
+      throws TransitDomainException, CommonServiceException {
     logger.debug("Processing transit data creation request");
     try {
       var transitResponse = transitService.addTransitInfo(transitDataCreationRequest);

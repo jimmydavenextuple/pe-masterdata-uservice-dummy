@@ -42,7 +42,7 @@ class TransitServiceTest {
   }
 
   @Test
-  void addTransitDetailsTest() throws TransitDomainException {
+  void addTransitDetailsTest() throws TransitDomainException, CommonServiceException {
     TransitDataCreationRequest transitDataCreationRequest =
         testUtil.getTransitDataCreationRequest(testUtil.TRANSIT_DAYS);
     when(transitDomain.saveTransitEntity(any(TransitEntity.class)))
