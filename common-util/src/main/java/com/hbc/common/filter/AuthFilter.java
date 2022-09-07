@@ -6,6 +6,7 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -84,12 +85,12 @@ public class AuthFilter implements Filter {
   private boolean verifyAllClaimsAndIssuer(Jwt<? extends Header, Claims> claims) {
     try {
       // Claims check
-      Map<String, String> claimsMap = authProperties.getClaims();
+      Map<String, List<String>> claimsMap = authProperties.getClaims();
       for (String claim : claimsMap.keySet()) {
         var userPassedClaimValue = claims.getBody().get(claim).toString();
         log.debug("--------Claim {}: {}------", claim, userPassedClaimValue);
-        String actualClaimValue = authProperties.getClaims().get(claim);
-        if (!actualClaimValue.equals(userPassedClaimValue)) {
+        List<String> actualClaimValue = authProperties.getClaims().get(claim);
+        if (!actualClaimValue.contains(userPassedClaimValue)) {
           return false;
         }
       }
