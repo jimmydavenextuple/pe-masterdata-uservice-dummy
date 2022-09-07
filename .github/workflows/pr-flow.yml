@@ -25,6 +25,26 @@ jobs:
         distribution: 'temurin'
         java-version: 11
         cache: 'gradle'
+    - uses: actions/cache@v3
+      name: cache-cve
+      env:
+        cache-name: cve
+      with:
+        path: ~/.gradle/dependency-check-data/5.0
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+    - uses: actions/cache@v3
+      name: cache-sonar
+      env:
+        cache-name: sonar
+      with:
+        path: ~/.sonar/cache/
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
     - uses: aws-actions/configure-aws-credentials@v1
       with:
         role-to-assume: ${{ secrets.AWS_ROLE }}
