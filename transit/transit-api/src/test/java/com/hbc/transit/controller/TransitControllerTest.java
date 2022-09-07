@@ -40,7 +40,7 @@ class TransitControllerTest {
   }
 
   @Test
-  void createTransitDataTest() throws TransitDomainException {
+  void createTransitDataTest() throws TransitDomainException, CommonServiceException {
     TransitDataCreationRequest transitDataCreationRequest =
         testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS);
     when(transitService.addTransitInfo(any(TransitDataCreationRequest.class)))
@@ -56,7 +56,7 @@ class TransitControllerTest {
   }
 
   @Test
-  void createTransitDataExceptionTest() throws TransitDomainException {
+  void createTransitDataExceptionTest() throws TransitDomainException, CommonServiceException {
     TransitDataCreationRequest transitDataCreationRequest =
         testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS);
     when(transitService.addTransitInfo(any(TransitDataCreationRequest.class)))
