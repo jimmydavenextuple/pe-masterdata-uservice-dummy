@@ -36,7 +36,7 @@ public class NodeCarrierController {
   @PostMapping
   public ResponseEntity<BaseResponse<NodeCarrierResponse>> createNodeCarrier(
       @Valid @RequestBody NodeCarrierRequest nodeCarrierRequest)
-      throws NodeCarrierDomainException, InvalidDataException {
+      throws NodeCarrierDomainException, InvalidDataException, CommonServiceException {
     logger.debug("Processing node carrier creation request");
     try {
       var nodeCarrierResponse = nodeCarrierService.createNodeCarrier(nodeCarrierRequest);
