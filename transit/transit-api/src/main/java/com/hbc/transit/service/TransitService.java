@@ -43,7 +43,7 @@ public class TransitService {
   public TransitResponse addTransitInfo(TransitDataCreationRequest transitDataCreationRequest)
       throws TransitDomainException, CommonServiceException {
 
-    sumOfBufferDaysAndTransitDays(
+    validateTransitDetails(
         transitDataCreationRequest.getTransitDays(),
         transitDataCreationRequest.getBufferDays(),
         transitDataCreationRequest.getOrgId(),
@@ -68,7 +68,7 @@ public class TransitService {
     if (existingTransitEntity.isPresent()) {
       var transitDays = existingTransitEntity.get().getTransitDays();
       var bufferDays = transitBufferCreationRequest.getBufferDays();
-      sumOfBufferDaysAndTransitDays(
+      validateTransitDetails(
           transitDays,
           bufferDays,
           transitBufferCreationRequest.getOrgId(),
@@ -266,7 +266,7 @@ public class TransitService {
             orgId, carrierServiceId, destinationGeozones));
   }
 
-  public void sumOfBufferDaysAndTransitDays(
+  public void validateTransitDetails(
       Float transitDays,
       Double bufferDays,
       String orgId,
