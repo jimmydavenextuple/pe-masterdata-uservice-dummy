@@ -1,13 +1,10 @@
 package com.hbc.dataupload.service;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DELETE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.KEY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.TYPE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.UPDATE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.UPDATE_U;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.WEIGHTAGE;
 import static com.hbc.dataupload.helper.WeightageConfigurationDataUploadConstants.WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_FILE_EMPTY_RECORDS;
 import static com.hbc.dataupload.helper.WeightageConfigurationDataUploadConstants.WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_INVALID_FILE_HEADERS;
@@ -21,7 +18,6 @@ import com.hbc.dataupload.common.utils.DataUploadUtil;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.feign.WeightageConfigurationFeign;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
-import com.hbc.weightage.configuration.api.domain.inbound.UpdateWeightageConfigurationRequest;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -78,6 +74,8 @@ public class WeightageConfigurationDataUploadService {
           "weightageConfiguration",
           WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_INVALID_FILE_HEADERS);
 
+      DataUploadUtil.validateAction(path);
+
       for (CSVRecord csvRecord : csvParser) {
         long row = csvParser.getCurrentLineNumber();
         try {
@@ -88,54 +86,24 @@ public class WeightageConfigurationDataUploadService {
           String key = csvRecord.get(KEY);
           var weightage = Float.valueOf(csvRecord.get(WEIGHTAGE));
 
-          switch (action) {
-            case CREATE:
-              {
-                var createWeightageConfigurationRequest =
-                    CreateWeightageConfigurationRequest.builder()
-                        .orgId(orgId)
-                        .type(type)
-                        .key(key)
-                        .weightage(weightage)
-                        .build();
-                BaseResponse<WeightageConfigurationDto> baseResponse =
-                    weightageConfigurationFeign.createWeightageConfiguration(
-                        createWeightageConfigurationRequest);
-                weightageResult = baseResponse.isSuccess();
-                log.debug(baseResponse.getMessage());
-                break;
-              }
-
-            case UPDATE:
-              {
-                var updateWeightageConfigurationRequest =
-                    UpdateWeightageConfigurationRequest.builder()
-                        .type(type)
-                        .key(key)
-                        .weightage(weightage)
-                        .build();
-                BaseResponse<WeightageConfigurationDto> baseResponse =
-                    weightageConfigurationFeign.updateWeightageConfiguration(
-                        orgId, type, key, updateWeightageConfigurationRequest);
-                weightageResult = baseResponse.isSuccess();
-                log.debug(baseResponse.getMessage());
-                break;
-              }
-
-            case DELETE:
-              {
-                BaseResponse<WeightageConfigurationDto> baseResponse =
-                    weightageConfigurationFeign.deleteWeightageConfiguration(orgId, type, key);
-                weightageResult = baseResponse.isSuccess();
-                log.debug(baseResponse.getMessage());
-                break;
-              }
-
-            default:
-              {
-                log.error(ACTION_INVALID_MESSAGE);
-                break;
-              }
+          if (action.equalsIgnoreCase(UPDATE_U)) {
+            var createWeightageConfigurationRequest =
+                CreateWeightageConfigurationRequest.builder()
+                    .orgId(orgId)
+                    .type(type)
+                    .key(key)
+                    .weightage(weightage)
+                    .build();
+            BaseResponse<WeightageConfigurationDto> baseResponse =
+                weightageConfigurationFeign.createWeightageConfiguration(
+                    createWeightageConfigurationRequest);
+            weightageResult = baseResponse.isSuccess();
+            log.debug(baseResponse.getMessage());
+          } else {
+            BaseResponse<WeightageConfigurationDto> baseResponse =
+                weightageConfigurationFeign.deleteWeightageConfiguration(orgId, type, key);
+            weightageResult = baseResponse.isSuccess();
+            log.debug(baseResponse.getMessage());
           }
         } catch (Exception e) {
           if (isAllPassedForWeightage) {
