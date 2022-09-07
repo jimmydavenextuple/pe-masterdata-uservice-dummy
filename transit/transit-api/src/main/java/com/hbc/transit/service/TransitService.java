@@ -41,8 +41,15 @@ public class TransitService {
       "Transit data not found with given details";
 
   public TransitResponse addTransitInfo(TransitDataCreationRequest transitDataCreationRequest)
-      throws TransitDomainException {
+      throws TransitDomainException, CommonServiceException {
 
+    validateTransitDetails(
+        transitDataCreationRequest.getTransitDays(),
+        transitDataCreationRequest.getBufferDays(),
+        transitDataCreationRequest.getOrgId(),
+        transitDataCreationRequest.getSourceGeozone(),
+        transitDataCreationRequest.getDestinationGeozone(),
+        transitDataCreationRequest.getCarrierServiceId());
     var transitEntity = INSTANCE.toTransitEntity(transitDataCreationRequest);
 
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(transitEntity));
@@ -61,32 +68,13 @@ public class TransitService {
     if (existingTransitEntity.isPresent()) {
       var transitDays = existingTransitEntity.get().getTransitDays();
       var bufferDays = transitBufferCreationRequest.getBufferDays();
-      if ((transitDays + bufferDays) <= 0) {
-        Map<String, FieldError> errorMap = new HashMap<>();
-        errorMap.put(
-            ORG_ID,
-            FieldError.builder().rejectedValue(transitBufferCreationRequest.getOrgId()).build());
-        errorMap.put(
-            SOURCE_GEOZONE,
-            FieldError.builder()
-                .rejectedValue(transitBufferCreationRequest.getSourceGeozone())
-                .build());
-        errorMap.put(
-            DESTINATION_GEOZONE,
-            FieldError.builder()
-                .rejectedValue(transitBufferCreationRequest.getDestinationGeozone())
-                .build());
-        errorMap.put(
-            CARRIER_SERVICE_ID,
-            FieldError.builder()
-                .rejectedValue(transitBufferCreationRequest.getCarrierServiceId())
-                .build());
-        throw new CommonServiceException(
-            "The sum of transit and buffer days is less than 0",
-            HttpStatus.BAD_REQUEST,
-            0x1776,
-            errorMap);
-      }
+      validateTransitDetails(
+          transitDays,
+          bufferDays,
+          transitBufferCreationRequest.getOrgId(),
+          transitBufferCreationRequest.getSourceGeozone(),
+          transitBufferCreationRequest.getDestinationGeozone(),
+          transitBufferCreationRequest.getCarrierServiceId());
       logger.info(
           "Response before updation of transit data :{}",
           INSTANCE.toTransitResponse(existingTransitEntity.get()));
@@ -276,5 +264,29 @@ public class TransitService {
     return INSTANCE.toTransitResponseList(
         transitDomain.fetchTransitListForDestinationGeoZones(
             orgId, carrierServiceId, destinationGeozones));
+  }
+
+  public void validateTransitDetails(
+      Float transitDays,
+      Double bufferDays,
+      String orgId,
+      String sourceGeozone,
+      String destinationGeozone,
+      String carrierServiceId)
+      throws CommonServiceException {
+    if ((transitDays + bufferDays) < 0) {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(SOURCE_GEOZONE, FieldError.builder().rejectedValue(sourceGeozone).build());
+      errorMap.put(
+          DESTINATION_GEOZONE, FieldError.builder().rejectedValue(destinationGeozone).build());
+      errorMap.put(
+          CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
+      throw new CommonServiceException(
+          "The sum of transit and buffer days is less than 0",
+          HttpStatus.BAD_REQUEST,
+          0x1776,
+          errorMap);
+    }
   }
 }
