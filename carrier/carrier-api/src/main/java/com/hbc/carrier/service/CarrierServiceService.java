@@ -12,6 +12,7 @@ import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.carrier.exception.CarrierServiceDomainException;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -51,6 +52,7 @@ public class CarrierServiceService {
         carrierServiceDomain.saveCarrierServiceEntity(carrierServiceEntity));
   }
 
+  @ReaderDS
   public CarrierServiceResponse getCarrierServiceDetails(
       String carrierId, String serviceId, String orgId)
       throws CarrierServiceDomainException, CommonServiceException {
@@ -124,6 +126,7 @@ public class CarrierServiceService {
         carrierServiceDomain.saveCarrierServiceEntity(carrierServiceEntity.get()));
   }
 
+  @ReaderDS
   public Page<CarrierServiceResponse> getCarrierServiceList(
       String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
       throws CarrierServiceDomainException, CommonServiceException {

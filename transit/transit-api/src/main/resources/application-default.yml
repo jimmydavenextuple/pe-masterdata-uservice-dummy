@@ -13,3 +13,7 @@ spring:
 logging:
   level:
     com.hbc: INFO
+
+entity-listener:
+  kafka:
+    enabled: false
