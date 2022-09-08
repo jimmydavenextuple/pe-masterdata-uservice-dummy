@@ -55,3 +55,6 @@ management:
             requests: true
         persistence: true
         cache: true
+entity-listener:
+  kafka:
+    enabled: true

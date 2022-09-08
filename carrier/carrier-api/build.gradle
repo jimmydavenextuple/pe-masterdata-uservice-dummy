@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":carrier:carrier-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'
     implementation(project(":common-util"))
+    implementation project(":common:common-postgres")
     implementation(project(":nfs-near-cache:core-near-cache-producer"))
 }
 
