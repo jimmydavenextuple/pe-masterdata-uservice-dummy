@@ -18,6 +18,7 @@ import com.hbc.pe.masterdata.calendar.exception.CalenderServiceException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateUtil;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -65,12 +66,14 @@ public class CalendarService {
   }
 
   /** Get Calendar details by calendarId and OrgId */
+  @ReaderDS
   public CalendarResponse processGetCalendar(String orgId, String calendarId)
       throws CalendarDomainException, CommonServiceException {
     validateCalendarId(calendarId, orgId);
     return INSTANCE.convertToCalendarResponse(calendarDomain.getCalendar(orgId, calendarId));
   }
 
+  @ReaderDS
   public List<CalendarDaysStatusInfo> processGetUpcomingDaysCalendarStatus(
       String orgId,
       Optional<String> nodeId,
