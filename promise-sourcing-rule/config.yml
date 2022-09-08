@@ -29,16 +29,17 @@ server:
           memory: "512Mi"
           cpu: "256m"
     perf:
-      java-opts: "-Xms2560m -Xmx2560m"
+      java-opts: "-Xms1536m -Xmx1536m"
       replicas: 3
       resources:
         min:
-          memory: "3072Mi"
+          memory: "2048Mi"
           cpu: "1000m"
         max:
-          memory: "3072Mi"
+          memory: "2048Mi"
           cpu: "2000m"
     hotfix:
+      nlb: "no"
       replicas: 1
       resources:
         min:
@@ -48,12 +49,12 @@ server:
           memory: "512Mi"
           cpu: "256m"
     prod:
-      java-opts: "-Xms2560m -Xmx2560m"
+      java-opts: "-Xms1536m -Xmx1536m"
       replicas: 3
       resources:
         min:
-          memory: "3072Mi"
+          memory: "2048Mi"
           cpu: "1000m"
         max:
-          memory: "3072Mi"
+          memory: "2048Mi"
           cpu: "2000m"
