@@ -36,9 +36,21 @@ jobs:
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      - uses: actions/setup-java@v1
+      - uses: actions/setup-java@v3
         with:
+          distribution: 'temurin'
           java-version: 11
+          cache: 'gradle'
+      - uses: actions/cache@v3
+        name: cache-sonar
+        env:
+          cache-name: sonar
+        with:
+          path: ~/.sonar/cache/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
       - name: Build and Analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

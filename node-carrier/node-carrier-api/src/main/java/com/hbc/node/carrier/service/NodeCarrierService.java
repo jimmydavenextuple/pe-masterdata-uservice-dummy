@@ -42,8 +42,8 @@ public class NodeCarrierService {
   public static final NodeCarrierMapper INSTANCE = Mappers.getMapper(NodeCarrierMapper.class);
 
   public NodeCarrierResponse createNodeCarrier(NodeCarrierRequest nodeCarrierRequest)
-      throws NodeCarrierDomainException, InvalidDataException {
-
+          throws NodeCarrierDomainException, InvalidDataException, CommonServiceException {
+    validateBufferHours(nodeCarrierRequest.getBufferHours());
     validateLastPickupTime(nodeCarrierRequest.getLastPickupTime());
     var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
@@ -52,6 +52,7 @@ public class NodeCarrierService {
   public NodeCarrierResponse updateBufferData(NodeCarrierBufferRequest nodeCarrierBufferRequest)
       throws NodeCarrierDomainException, CommonServiceException {
 
+    validateBufferHours(nodeCarrierBufferRequest.getBufferHours());
     var nodeCarrierEntity = INSTANCE.nodeCarrierBufferRequestToEntity(nodeCarrierBufferRequest);
 
     Optional<NodeCarrierEntity> existingNodeEntity =
@@ -219,5 +220,12 @@ public class NodeCarrierService {
         nodeCarrierDomain.findNodeCarrierByNodeIdAndOrgId(nodeId, orgId);
 
     return INSTANCE.toNodeCarrierResponseList(nodeCarrierEntity);
+  }
+
+  public void validateBufferHours(Double bufferHours) throws CommonServiceException {
+    if(bufferHours != null && bufferHours <0){
+      throw new CommonServiceException("bufferHours cannot be negative", HttpStatus.BAD_REQUEST, 0x1775, null);
+    }
+
   }
 }
