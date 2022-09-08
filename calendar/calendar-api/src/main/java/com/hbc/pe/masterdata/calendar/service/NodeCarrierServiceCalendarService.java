@@ -11,6 +11,7 @@ import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,7 @@ public class NodeCarrierServiceCalendarService {
   }
 
   /** Get Node, Carrier&Service Calendar details by orgId, nodeId and carrierServiceId */
+  @ReaderDS
   public List<NodeCarrierServiceCalendarResponse> processGetNodeCarrierServiceCalendar(
       String orgId, String nodeId, String carrierServiceId, Optional<String> serviceOption)
       throws CalendarDomainException {
