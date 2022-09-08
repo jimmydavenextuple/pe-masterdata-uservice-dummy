@@ -12,6 +12,7 @@ import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.CalenderServiceException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +60,7 @@ public class CarrierServiceCalendarService {
   }
 
   /** Get Carrier&Service Calendar details by orgId and carrierServiceId */
+  @ReaderDS
   public List<CarrierServiceCalendarResponse> processGetCarrierServiceCalendar(
       String orgId,
       String carrierServiceId,

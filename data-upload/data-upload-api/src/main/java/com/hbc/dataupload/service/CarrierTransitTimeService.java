@@ -7,6 +7,7 @@ import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.base.PagePayload;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
 import com.hbc.dataupload.domain.mapper.CarrierTransitTimeMapper;
+import com.hbc.postgres.config.ReaderDS;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.feign.TransitFeign;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class CarrierTransitTimeService {
   public static final CarrierTransitTimeMapper INSTANCE =
       Mappers.getMapper(CarrierTransitTimeMapper.class);
 
+  @ReaderDS
   public PagePayload<CarrierTransitDto> getCarrierTransitTimeList(
       String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder) {
     PagePayload<CarrierTransitDto> carrierTransitDtoPagePayload = new PagePayload<>();

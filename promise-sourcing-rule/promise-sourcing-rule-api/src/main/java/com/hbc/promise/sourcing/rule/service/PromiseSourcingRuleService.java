@@ -3,6 +3,7 @@ package com.hbc.promise.sourcing.rule.service;
 import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
+import com.hbc.postgres.config.ReaderDS;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
@@ -179,6 +180,7 @@ public class PromiseSourcingRuleService {
    * @return Fetched Promise Sourcing Rule dto
    * @throws PromiseEngineException
    */
+  @ReaderDS
   public PromiseSourcingRuleDto getPromiseSourcingRule(
       String orgId,
       String serviceOption,
@@ -210,6 +212,7 @@ public class PromiseSourcingRuleService {
    * @return Fetched Promise Sourcing Rules dto
    * @throws PromiseEngineException
    */
+  @ReaderDS
   public List<PromiseSourcingRuleDto> getPromiseSourcingRulesByOrgId(String orgId)
       throws PromiseEngineException {
     logger.debug("-- inside getPromiseSourcingRulesByOrgId service --");
@@ -228,6 +231,7 @@ public class PromiseSourcingRuleService {
    * @return Fetched Promise Sourcing Rules dto
    * @throws PromiseEngineException
    */
+  @ReaderDS
   public List<PromiseSourcingRuleDto> getPromiseSourcingRulesByPriority(int priority)
       throws PromiseEngineException {
     logger.debug("-- inside getPromiseSourcingRulesByPriority service --");
