@@ -2,6 +2,7 @@ package com.hbc.service.inventory.service;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.postgres.config.ReaderDS;
 import com.hbc.service.inventory.domain.ServiceOptionInventoryTypeDomain;
 import com.hbc.service.inventory.domain.entity.ServiceOptionInventoryTypeEntity;
 import com.hbc.service.inventory.domain.inbound.ServiceInventoryRequest;
@@ -44,6 +45,7 @@ public class ServiceOptionInventoryTypeService {
             serviceOptionInventoryTypeEntity));
   }
 
+  @ReaderDS
   public ServiceInventoryDto getServiceOptionInventoryTypeMapping(
       String orgId, String serviceOption)
       throws ServiceInventoryDomainException, CommonServiceException {

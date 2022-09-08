@@ -10,6 +10,7 @@ import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneR
 import com.hbc.postal.code.timezone.domain.PostalCodeTimezoneDomain;
 import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
 import com.hbc.postal.code.timezone.domain.mapper.PostalCodeTimezoneMapper;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -66,6 +67,7 @@ public class PostalCodeTimezoneService {
    * @return Fetched Postal Code Timezone dto
    * @throws PromiseEngineException
    */
+  @ReaderDS
   public PostalCodeTimezoneDto getPostalCodeTimezone(String orgId, String postalCodePrefix)
       throws PromiseEngineException {
     logger.debug("-- inside getPostalCodeTimezone service --");
@@ -132,6 +134,7 @@ public class PostalCodeTimezoneService {
         postalCodeTimezoneDomain.deletePostalCodeTimezone(postalCodeTimezoneEntityFromDB));
   }
 
+  @ReaderDS
   public List<PostalCodePrefixDto> fetchPostalCodePrefixList(String orgId)
       throws PromiseEngineException {
     List<PostalCodeTimezoneEntity> postalCodeTimezoneEntities =
@@ -143,6 +146,7 @@ public class PostalCodeTimezoneService {
         .collect(Collectors.toList());
   }
 
+  @ReaderDS
   public List<String> fetchPostalCodePrefixForOrgIdAndState(String orgId, String state)
       throws PromiseEngineException {
     logger.debug("-- Inside fetch postal_code_prefix for orgId: {} and state: {} --", orgId, state);

@@ -6,6 +6,7 @@ import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.feign.NodeFeign;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ public class NodeServiceOptionService {
   private final NodeFeign nodeFeign;
   private final NodeCarrierFeign nodeCarrierFeign;
 
+  @ReaderDS
   public PagePayload<NodeServiceOptionDto> getNodeServiceOption(
       String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder) {
     PagePayload<NodeServiceOptionDto> nodeServiceOptionDtoPagePayload = new PagePayload<>();

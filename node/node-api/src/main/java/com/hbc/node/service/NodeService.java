@@ -13,6 +13,7 @@ import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.mapper.NodeMapper;
 import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.node.exception.NodeDomainException;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -65,6 +66,7 @@ public class NodeService {
     return INSTANCE.toNodeResponse(nodeDomain.saveNodeEntity(existingNodeEntity.get()));
   }
 
+  @ReaderDS
   public NodeResponse getNodeDetails(String nodeId, String orgId)
       throws NodeDomainException, CommonServiceException {
 
@@ -100,6 +102,7 @@ public class NodeService {
     return nodeResponse;
   }
 
+  @ReaderDS
   public Page<NodeDto> getNodeListByOrgId(
       String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
       throws NodeDomainException, CommonServiceException {

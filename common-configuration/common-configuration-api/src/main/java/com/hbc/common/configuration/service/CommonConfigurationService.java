@@ -8,6 +8,7 @@ import com.hbc.common.configuration.mapper.CommonConfigMapper;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +33,7 @@ public class CommonConfigurationService {
       "Common Configuration not found for given details";
   private final CommonConfigurationDomain configurationDomain;
 
+  @ReaderDS
   public CommonConfigurationDto fetchValue(String orgId, String type, String key)
       throws PromiseEngineException {
 
