@@ -282,6 +282,24 @@ class NodeCarrierSelectionUploadServiceTest {
   }
 
   @Test
+  void NodeCarrierSelectionDataNullActionExceptionTest()
+      throws CommonServiceException, IOException {
+    Path resourceDirectory =
+        Paths.get(
+            "src",
+            "test",
+            "resources",
+            "nodeCarrierSelectionUpload",
+            "nodeCarrierSelection_nullAction.csv");
+    String absolutePath = resourceDirectory.toFile().getAbsolutePath();
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath));
+    assertEquals(ACTION_INVALID_MESSAGE, exception.getMessage());
+  }
+
+  @Test
   void NodeCarrierSelectionInvalidSelectionCriteriaExceptionTest()
       throws CommonServiceException, IOException {
     Path resourceDirectory =

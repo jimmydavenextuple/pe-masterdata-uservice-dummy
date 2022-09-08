@@ -16,4 +16,5 @@ dependencies {
     implementation(project(":common-util"))
     implementation(project(":postal-code-timezone:postal-code-timezone-api-domain"))
     implementation(project(":data-upload:job-framework-common-util"))
+    implementation(project(":node-carrier:node-carrier-api-domain"))
 }

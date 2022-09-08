@@ -13,11 +13,4 @@ public class TransitServiceException extends Exception {
     this.orgId = orgId;
     this.carrierServiceId = carrierServiceId;
   }
-
-  public TransitServiceException(
-      String message, Throwable cause, String orgId, String carrierServiceId) {
-    super(message, cause);
-    this.orgId = orgId;
-    this.carrierServiceId = carrierServiceId;
-  }
 }

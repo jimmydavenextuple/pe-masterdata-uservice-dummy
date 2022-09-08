@@ -77,7 +77,7 @@ public class DataUploadUtil {
     try (var br = Files.newBufferedReader(path)) {
       while ((line = br.readLine()) != null) {
         String[] values = line.split(",");
-        actions.add(values[5]);
+        actions.add(values[values.length - 1]);
       }
       actions.remove("action");
       for (Object action : actions) {

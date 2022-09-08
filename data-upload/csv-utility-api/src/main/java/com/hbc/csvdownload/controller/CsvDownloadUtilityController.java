@@ -1,5 +1,6 @@
 package com.hbc.csvdownload.controller;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
@@ -75,9 +76,12 @@ public class CsvDownloadUtilityController {
       @RequestParam(required = false) Optional<String> status,
       HttpServletRequest request,
       HttpServletResponse response)
-      throws InvalidTemplateTypeException {
+      throws IOException, CommonServiceException {
     log.debug("Inside download logs by filters");
-    // need to add service layer logic
-    downloadCSVTemplate("transitTime", request, response);
+    String csvContent = csvDownloadUtilityService.downloadLogsAsCsv(jobId, orgId, status);
+    response.setStatus(HttpStatus.OK.value());
+    response.setContentLength(csvContent.length());
+    response.getOutputStream().write(csvContent.getBytes());
+    response.flushBuffer();
   }
 }

@@ -12,6 +12,7 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
@@ -69,6 +70,20 @@ class NodeCarrierServiceTest {
   }
 
   @Test
+  @DisplayName("When bufferHours is negative")
+  void createNodeCarrierWithNegativeBufferHoursExceptionTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+    NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest4();
+
+    Exception ex =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest));
+
+    Assertions.assertEquals("bufferHours cannot be negative", ex.getMessage());
+  }
+
+  @Test
   @DisplayName("When node carrier buffer data is updated successfully")
   void updateNodeCarrierBufferDataTest()
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
@@ -84,6 +99,20 @@ class NodeCarrierServiceTest {
 
     verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
     verify(nodeCarrierDomain, times(1)).saveNodeCarrierEntity(any());
+  }
+
+  @Test
+  @DisplayName("When bufferHours is negative while updating buffer details")
+  void updateNodeCarrierWithNegativeBufferHoursExceptionTest()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+    NodeCarrierBufferRequest nodeCarrierBufferRequest = testUtil.getNodeCarrierBufferRequest3();
+
+    Exception ex =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> nodeCarrierService.updateBufferData(nodeCarrierBufferRequest));
+
+    Assertions.assertEquals("bufferHours cannot be negative", ex.getMessage());
   }
 
   @Test

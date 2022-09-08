@@ -1,5 +1,6 @@
 package com.hbc.node.carrier.domain.inbound;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,9 @@ public class NodeCarrierBufferRequest {
 
   private Double bufferHours;
 
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
   private Date bufferStartDate;
 
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
   private Date bufferEndDate;
 }
