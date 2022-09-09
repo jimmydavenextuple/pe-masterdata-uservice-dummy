@@ -180,4 +180,18 @@ public class NodeCarrierController {
             .payload(nodeCarrierResponseList)
             .build());
   }
+
+  @PostMapping("/processing-lead-time")
+  public ResponseEntity<BaseResponse<NodeCarrierResponse>> updateProcessingLeadTime(
+      @Valid @RequestBody NodeCarrierRequest nodeCarrierRequest) throws NodeCarrierDomainException {
+    logger.debug("Processing update processing lead time request");
+
+    var nodeCarrierResponse = nodeCarrierService.updateProcessingLeadTime(nodeCarrierRequest);
+    logger.info("Response after updating processing lead time :{}", nodeCarrierResponse);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Processing lead time updated successfully for a node carrier")
+            .payload(nodeCarrierResponse)
+            .build());
+  }
 }

@@ -84,7 +84,7 @@ class NodeCarrierMapperTest {
   void callApiUpdateAction() throws NodeCarrierMapperException {
     Object object = testUtil.getProcessingLeadTime("U");
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
-    when(nodeCarrierFeign.createNodeCarrier(any()))
+    when(nodeCarrierFeign.updateProcessingLeadTime(any()))
         .thenReturn(BaseResponse.builder().payload(testUtil.getNodeCarrierResponse()).build());
     ResponseEntity<BaseResponse<NodeCarrierResponse>> res =
         (ResponseEntity<BaseResponse<NodeCarrierResponse>>) nodeCarrierMapper.callApi(object, null);
