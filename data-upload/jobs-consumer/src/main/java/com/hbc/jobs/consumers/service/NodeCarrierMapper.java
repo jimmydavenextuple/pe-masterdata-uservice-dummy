@@ -94,7 +94,7 @@ public class NodeCarrierMapper implements FeignClientMapper {
       var processingLeadTime = (ProcessingLeadTime) request;
       if ("U".equals(processingLeadTime.getActionType())) {
         return ResponseEntity.ok(
-            nodeCarrierFeign.createNodeCarrier(
+            nodeCarrierFeign.updateProcessingLeadTime(
                 INSTANCE.convertToNodeCarrierRequest(processingLeadTime)));
       } else if ("D".equals(processingLeadTime.getActionType())) {
         return ResponseEntity.ok(
