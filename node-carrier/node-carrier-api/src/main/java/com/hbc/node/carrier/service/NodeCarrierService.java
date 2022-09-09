@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @RequiredArgsConstructor
 @Service
@@ -44,7 +45,11 @@ public class NodeCarrierService {
   public NodeCarrierResponse createNodeCarrier(NodeCarrierRequest nodeCarrierRequest)
       throws NodeCarrierDomainException, InvalidDataException, CommonServiceException {
     validateBufferHours(nodeCarrierRequest.getBufferHours());
-    validateLastPickupTime(nodeCarrierRequest.getLastPickupTime());
+    if (ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId())) {
+      validateProcessingLeadTime(nodeCarrierRequest.getProcessingTime());
+    } else {
+      validateLastPickupTime(nodeCarrierRequest.getLastPickupTime());
+    }
     var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
   }
@@ -82,7 +87,7 @@ public class NodeCarrierService {
   public void validateLastPickupTime(String lastPickupTime) throws InvalidDataException {
     var regex = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
     if (!lastPickupTime.matches(regex)) {
-      throw new InvalidDataException("LastPickupTime is invalid", lastPickupTime);
+      throw new InvalidDataException("LastPickupTime is invalid", lastPickupTime, null);
     }
   }
 
@@ -233,5 +238,13 @@ public class NodeCarrierService {
       throws NodeCarrierDomainException {
     var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
+  }
+
+  private void validateProcessingLeadTime(Double processingLeadTime) throws InvalidDataException {
+    if (ObjectUtils.isEmpty(processingLeadTime) || processingLeadTime < 0) {
+      logger.error("Processing lead time can not be negative or empty");
+      throw new InvalidDataException(
+          "Processing lead time can not be negative or empty", null, processingLeadTime);
+    }
   }
 }
