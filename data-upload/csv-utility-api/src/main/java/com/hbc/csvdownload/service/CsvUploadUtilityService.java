@@ -175,7 +175,7 @@ public class CsvUploadUtilityService {
 
     // store orgId and carrierServiceId into variables
     String orgIdValue = orgIdRow[1];
-    String carrierServiceIdValue = sFsaListWithHeader[1];
+    String carrierServiceIdValue = carrierServiceIdRow[1];
     int size = csvFileContents.get(0).length;
     List<String> sFsaListWithOutHeader = Arrays.asList(sFsaListWithHeader).subList(1, size);
 

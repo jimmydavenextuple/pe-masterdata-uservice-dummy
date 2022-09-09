@@ -13,10 +13,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -124,7 +127,12 @@ public class CommonExceptionHandler {
                 .message(e.getMessage() + "[" + e.getExceptionCode().getErrorCode() + "]")
                 .build());
   }
-
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(
+          MissingServletRequestParameterException e) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ErrorResponse.builder(ErrorType.ERROR, 0x000004).message(e.getMessage()).build());
+  }
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleRuntimeException(Exception e) {
     slf4jLogger.error(e, e.getMessage(), EMPTY_MAP);

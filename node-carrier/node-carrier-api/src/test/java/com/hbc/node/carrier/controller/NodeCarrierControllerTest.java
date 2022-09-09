@@ -280,4 +280,16 @@ class NodeCarrierControllerTest {
         TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().get(0).getOrgId());
     verify(nodeCarrierService, times(1)).getNodeCarrierForNodeIdAndOrgId(anyString(), anyString());
   }
+
+  @Test
+  void updateProcessingLeadTime() throws NodeCarrierDomainException {
+    when(nodeCarrierService.updateProcessingLeadTime(testUtil.getNodeCarrierRequest()))
+        .thenReturn(testUtil.getNodeCarrierResponse());
+    ResponseEntity<BaseResponse<NodeCarrierResponse>> response =
+        nodeCarrierController.updateProcessingLeadTime(testUtil.getNodeCarrierRequest());
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertNotNull(response.getBody());
+    Assertions.assertNotNull(response.getBody().getPayload());
+    verify(nodeCarrierService, times(1)).updateProcessingLeadTime(any());
+  }
 }
