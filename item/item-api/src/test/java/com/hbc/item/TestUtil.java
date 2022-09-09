@@ -6,8 +6,9 @@ import com.hbc.item.domain.events.ItemMasterEvent;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
+import com.hbc.item.util.ItemUtils;
 import com.hbc.streams.promising.messages.PromisingRecord;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.joda.time.DateTime;
 
@@ -32,9 +33,10 @@ public class TestUtil {
   public static String COST = "cost-1";
 
   public ItemEntity getItemEntity() {
-    Map<String, Boolean> serviceOptionEligibilities = new HashMap<>();
-    serviceOptionEligibilities.put("expressEligible", true);
-    serviceOptionEligibilities.put("sdndEligible", true);
+    Map<String, Boolean> serviceOptionEligibilities =
+        ItemUtils.getServiceOptionEligibitiesMapForTest();
+    Map<String, List<String>> inventoryNodeTypes =
+        ItemUtils.getInventoryNodeTypeMap(serviceOptionEligibilities);
 
     return ItemEntity.builder()
         .itemId(ITEM_ID)
@@ -60,13 +62,13 @@ public class TestUtil {
         .departmentNumber("dNumber")
         .imageUrl("/image")
         .shortDescription("desc")
+        .inventoryNodeTypes(inventoryNodeTypes)
         .build();
   }
 
   public ItemCreationRequest getItemCreationRequest() {
-    Map<String, Boolean> serviceOptionEligibilities = new HashMap<>();
-    serviceOptionEligibilities.put("expressEligible", true);
-    serviceOptionEligibilities.put("sdndEligible", true);
+    Map<String, Boolean> serviceOptionEligibilities =
+        ItemUtils.getServiceOptionEligibitiesMapForTest();
 
     return ItemCreationRequest.builder()
         .itemId(ITEM_ID)
@@ -92,9 +94,10 @@ public class TestUtil {
   }
 
   public ItemResponse getItemResponse() {
-    Map<String, Boolean> serviceOptionEligibilities = new HashMap<>();
-    serviceOptionEligibilities.put("expressEligible", true);
-    serviceOptionEligibilities.put("sdndEligible", true);
+    Map<String, Boolean> serviceOptionEligibilities =
+        ItemUtils.getServiceOptionEligibitiesMapForTest();
+    Map<String, List<String>> inventoryNodeTypes =
+        ItemUtils.getInventoryNodeTypeMap(serviceOptionEligibilities);
 
     return ItemResponse.builder()
         .itemId(ITEM_ID)
@@ -115,6 +118,7 @@ public class TestUtil {
         .height(HEIGHT)
         .weight(WEIGHT)
         .volume(VOLUME)
+        .inventoryNodeTypes(inventoryNodeTypes)
         .build();
   }
 
@@ -228,6 +232,9 @@ public class TestUtil {
     record.setSize("");
     record.setVolumeUom("");
     record.setShortDescription("");
+    record.setSdndEligibleForDC(Boolean.TRUE);
+    record.setNextdayEligible(Boolean.TRUE);
+    record.setNextdayEligibleForDC(Boolean.FALSE);
     return record;
   }
 
