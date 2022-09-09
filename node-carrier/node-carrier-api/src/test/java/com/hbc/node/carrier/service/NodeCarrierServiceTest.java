@@ -333,4 +333,14 @@ class NodeCarrierServiceTest {
 
     verify(nodeCarrierDomain, times(1)).findNodeCarrierByNodeIdAndOrgId(anyString(), anyString());
   }
+
+  @Test
+  void updateProcessingLeadTime() throws NodeCarrierDomainException {
+    when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
+        .thenReturn(testUtil.getNodeCarrierEntity());
+    NodeCarrierResponse nodeCarrierResponse =
+        nodeCarrierService.updateProcessingLeadTime(testUtil.getNodeCarrierRequest());
+    Assertions.assertNotNull(nodeCarrierResponse);
+    verify(nodeCarrierDomain, times(1)).saveNodeCarrierEntity(any());
+  }
 }
