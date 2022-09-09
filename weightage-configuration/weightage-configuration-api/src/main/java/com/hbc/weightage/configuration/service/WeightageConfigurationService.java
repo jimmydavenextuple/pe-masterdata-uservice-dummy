@@ -5,6 +5,7 @@ import static com.hbc.weightage.configuration.utils.WeightageConfigurationConsta
 import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
+import com.hbc.postgres.config.ReaderDS;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
@@ -112,6 +113,7 @@ public class WeightageConfigurationService {
    * @return Fetched Weightage Configuration Dto
    * @throws PromiseEngineException
    */
+  @ReaderDS
   public WeightageConfigurationDto getWeightageConfiguration(String orgId, String type, String key)
       throws PromiseEngineException {
     logger.debug("-- inside getWeightageConfiguration service --");
@@ -135,6 +137,7 @@ public class WeightageConfigurationService {
    * @return Fetched List of Weightage Configuration Dto
    * @throws PromiseEngineException
    */
+  @ReaderDS
   public List<WeightageConfigurationDto> getWeightageConfigurationsByKey(String key)
       throws PromiseEngineException {
     logger.debug("-- inside getWeightageConfigurationByKey service --");

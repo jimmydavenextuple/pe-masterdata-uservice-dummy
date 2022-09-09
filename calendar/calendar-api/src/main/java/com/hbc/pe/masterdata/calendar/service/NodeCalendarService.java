@@ -10,6 +10,7 @@ import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ public class NodeCalendarService {
   }
 
   /** Get Node Calendar details by calendarId and orgId */
+  @ReaderDS
   public List<NodeCalendarResponse> processGetNodeCalendar(String orgId, String nodeId)
       throws CalendarDomainException {
     return INSTANCE.convertToNodeCalendarResponseList(
