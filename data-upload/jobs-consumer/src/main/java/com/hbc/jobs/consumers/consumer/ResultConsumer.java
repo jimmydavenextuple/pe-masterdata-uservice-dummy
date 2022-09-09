@@ -1,5 +1,6 @@
 package com.hbc.jobs.consumers.consumer;
 
+import com.hbc.common.context.CurrentThreadContext;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
@@ -31,6 +32,9 @@ public class ResultConsumer {
     log.debug("Inside receiveResultFromAnotherConsumer service");
 
     try {
+      log.debug("JWT token received in consumer");
+      CurrentThreadContext.getLogContext()
+          .setAuthorizationHeader(headers.getRawHeaders().get("jwtToken").toString());
       jobConsumerService.updateJobStatus(recordStatus);
     } catch (Exception e) {
       log.error("Error while receiving the job from kafka", e);
