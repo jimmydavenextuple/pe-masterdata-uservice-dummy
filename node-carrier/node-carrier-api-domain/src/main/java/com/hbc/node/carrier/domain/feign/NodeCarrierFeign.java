@@ -54,4 +54,8 @@ public interface NodeCarrierFeign {
   @PutMapping("/node/carrier/buffer")
   BaseResponse<NodeCarrierResponse> updateBuffer(
       @Valid @RequestBody NodeCarrierBufferRequest nodeCarrierBufferRequest);
+
+  @PostMapping("/node/carrier/processing-lead-time")
+  BaseResponse<NodeCarrierResponse> updateProcessingLeadTime(
+      @Valid @RequestBody NodeCarrierRequest nodeCarrierRequest);
 }

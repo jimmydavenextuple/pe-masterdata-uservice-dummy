@@ -228,4 +228,10 @@ public class NodeCarrierService {
           "bufferHours cannot be negative", HttpStatus.BAD_REQUEST, 0x1775, null);
     }
   }
+
+  public NodeCarrierResponse updateProcessingLeadTime(NodeCarrierRequest nodeCarrierRequest)
+      throws NodeCarrierDomainException {
+    var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
+    return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
+  }
 }
