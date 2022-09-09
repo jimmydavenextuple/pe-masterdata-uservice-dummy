@@ -3,6 +3,8 @@ package com.hbc.csvdownload.service;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.csvdownload.domain.mapper.TransitDataRequestMapper;
+import com.hbc.csvdownload.domain.pojo.TransitDataErrorLogsPojo;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
@@ -21,9 +23,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +40,9 @@ public class CsvDownloadUtilityService {
 
   private final JobsDashboardService jobsDashboardService;
   private final JobsConsumerService jobsConsumerService;
+
+  private static final TransitDataRequestMapper INSTANCE =
+      Mappers.getMapper(TransitDataRequestMapper.class);
 
   public String downloadTransitTimesForSourceAndDestinationRegion(
       String orgId, String carrierServiceId, String sourceRegion, String destinationRegion)
@@ -118,16 +125,17 @@ public class CsvDownloadUtilityService {
     try {
       var jobDto = jobsConsumerService.getJob(jobId, orgId);
       var jobType = jobDto.getJobType();
+      if (ObjectUtils.isEmpty(JobTypeEnum.valueOf(jobType.name()))) {
+        throw new CommonServiceException(
+            "Incorrect jobType specified", HttpStatus.BAD_REQUEST, 0x1772, null);
+      }
       List<RecordStatusDto> recordStatusDtos =
           jobsDashboardService.getJobRecords(jobId, orgId, status);
 
       if (jobType.equals(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES)) {
         return downloadProcessingLeadTimeErrorLogs(recordStatusDtos);
-      } else if (jobType.equals(JobTypeEnum.UPLOAD_TRANSIT_TIMES)) {
-        return downloadTransitTimeErrorLogs(recordStatusDtos);
       } else {
-        throw new CommonServiceException(
-            "Incorrect jobType specified", HttpStatus.BAD_REQUEST, 0x1772, null);
+        return downloadTransitTimeErrorLogs(recordStatusDtos, orgId);
       }
     } catch (Exception e) {
       throw new CommonServiceException(
@@ -161,46 +169,44 @@ public class CsvDownloadUtilityService {
         recordStatusDto.getErrorMessage());
   }
 
-  private String downloadTransitTimeErrorLogs(List<RecordStatusDto> recordStatusDtoList)
-      throws CommonServiceException {
+  private String downloadTransitTimeErrorLogs(
+      List<RecordStatusDto> recordStatusDtoList, String orgId) throws CommonServiceException {
     try {
-      var requestBody =
+      var transitDataErrorLogsList =
           recordStatusDtoList.stream().map(this::getRequestBody).collect(Collectors.toList());
 
+      String carrierServiceId = transitDataErrorLogsList.get(0).getCarrierServiceId();
+
       Set<String> sourceFsaSet =
-          requestBody.stream()
-              .map(TransitDataCreationRequest::getSourceGeozone)
+          transitDataErrorLogsList.stream()
+              .map(TransitDataErrorLogsPojo::getSourceGeozone)
               .collect(Collectors.toSet());
 
-      List<TransitDataCreationRequest> transitDataCreationRequestList =
-          requestBody.stream()
-              .filter(reqBody -> sourceFsaSet.contains(reqBody.getSourceGeozone()))
-              .collect(Collectors.toList());
-
-      Map<String, Float> sourceAndTransitTimeMap = new TreeMap<>();
+      Map<String, String> sourceAndTransitTimeMap = new TreeMap<>();
 
       sourceFsaSet.forEach(fsa -> sourceAndTransitTimeMap.put(fsa, null));
 
-      Map<String, Map<String, Float>> transitTimeDataMap = new HashMap<>();
+      Map<String, Map<String, String>> transitTimeErrorLogsMap = new HashMap<>();
 
-      transitDataCreationRequestList.forEach(
+      transitDataErrorLogsList.forEach(
           transitRequest -> {
             if (CollectionUtils.isEmpty(
-                transitTimeDataMap.get(transitRequest.getDestinationGeozone()))) {
-              transitTimeDataMap.put(
+                transitTimeErrorLogsMap.get(transitRequest.getDestinationGeozone()))) {
+              transitTimeErrorLogsMap.put(
                   transitRequest.getDestinationGeozone(), new HashMap<>(sourceAndTransitTimeMap));
             }
           });
 
-      transitDataCreationRequestList.forEach(
+      transitDataErrorLogsList.forEach(
           transitRequest ->
-              transitTimeDataMap
+              transitTimeErrorLogsMap
                   .get(transitRequest.getDestinationGeozone())
-                  .put(transitRequest.getSourceGeozone(), transitRequest.getTransitDays()));
+                  .put(transitRequest.getSourceGeozone(), errorMessage(transitRequest)));
 
       var sourceFsaHeader = String.join(",", sourceFsaSet);
 
-      return constructCsvDataForTransit(transitTimeDataMap, sourceFsaHeader, recordStatusDtoList);
+      return constructCsvDataForTransit(
+          orgId, carrierServiceId, transitTimeErrorLogsMap, sourceFsaHeader);
     } catch (Exception e) {
       logger.error("Error while forming csv contents string");
       throw new CommonServiceException(
@@ -208,31 +214,52 @@ public class CsvDownloadUtilityService {
     }
   }
 
+  private String errorMessage(TransitDataErrorLogsPojo transitDataErrorLog) {
+    if (ObjectUtils.isEmpty(transitDataErrorLog.getErrorMessage())) {
+      logger.error("Empty error message received. Defaulting to internal server error message");
+      return "Internal Server Error";
+    } else if (("feign.RetryableException").equals(transitDataErrorLog.getException())) {
+      return String.valueOf(transitDataErrorLog.getTransitDays());
+    } else {
+      return transitDataErrorLog.getErrorMessage();
+    }
+  }
+
   private String constructCsvDataForTransit(
-      Map<String, Map<String, Float>> transitTimeDataMap,
-      String sourceFsaheader,
-      List<RecordStatusDto> recordStatusDtoList) {
-    var csvContent = String.format("Destination FSA / Source FSA ->,%s", sourceFsaheader);
+      String orgId,
+      String carrierServiceId,
+      Map<String, Map<String, String>> transitTimeDataMap,
+      String sourceFsaHeader) {
+    var csvContent =
+        String.format(
+            "orgId,%s%nCarrier Service:,%s%nDestination FSA / Source FSA ->,%s",
+            orgId, carrierServiceId, sourceFsaHeader);
 
     String rows =
         transitTimeDataMap.keySet().stream()
-            .map(destinationFsa -> constructCsvRowsForTransit(destinationFsa, recordStatusDtoList))
+            .map(destinationFsa -> constructCsvRowsForTransit(destinationFsa, transitTimeDataMap))
             .collect(Collectors.joining("\n"));
     return String.join("\n", csvContent, rows);
   }
 
   private String constructCsvRowsForTransit(
-      String destinationFsa, List<RecordStatusDto> recordStatusDtoList) {
-    String errorMessage =
-        recordStatusDtoList.stream()
-            .map(error -> String.valueOf(error.getErrorMessage()))
+      String destinationFsa, Map<String, Map<String, String>> transitTimeDataMap) {
+    Map<String, String> sourceFsaAndMessageMap = transitTimeDataMap.get(destinationFsa);
+    String row =
+        sourceFsaAndMessageMap.keySet().stream()
+            .map(sourceFsa -> String.valueOf(sourceFsaAndMessageMap.get(sourceFsa)))
             .collect(Collectors.joining(","));
 
-    return String.join(",", destinationFsa, errorMessage);
+    return String.join(",", destinationFsa, row);
   }
 
-  private TransitDataCreationRequest getRequestBody(RecordStatusDto recordStatusDto) {
+  private TransitDataErrorLogsPojo getRequestBody(RecordStatusDto recordStatusDto) {
     var gson = new Gson();
-    return gson.fromJson(recordStatusDto.getRequestBody(), TransitDataCreationRequest.class);
+    var errorLogsPojo =
+        INSTANCE.convertToTransitDataErrorLogsPojo(
+            gson.fromJson(recordStatusDto.getRequestBody(), TransitDataCreationRequest.class));
+    errorLogsPojo.setErrorMessage(recordStatusDto.getErrorMessage());
+    errorLogsPojo.setException(recordStatusDto.getException());
+    return errorLogsPojo;
   }
 }

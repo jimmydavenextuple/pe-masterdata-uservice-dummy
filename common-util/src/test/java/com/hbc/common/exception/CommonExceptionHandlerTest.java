@@ -24,6 +24,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 
 class CommonExceptionHandlerTest {
 
@@ -128,6 +129,15 @@ class CommonExceptionHandlerTest {
     ResponseEntity<ErrorResponse> responseEntity = commonExceptionHandler.handleRuntimeException(e);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
+  }
+  @Test
+  void handleMissingServletRequestParameterExceptionTest() {
+    MissingServletRequestParameterException e = new MissingServletRequestParameterException("paramName","string");
+
+    ResponseEntity<ErrorResponse> responseEntity = commonExceptionHandler.handleMissingServletRequestParameterException(e);
+
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
   }
 }
