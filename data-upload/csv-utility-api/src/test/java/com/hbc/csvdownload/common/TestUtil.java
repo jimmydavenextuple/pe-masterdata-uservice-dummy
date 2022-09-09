@@ -6,8 +6,8 @@ import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -98,19 +98,15 @@ public class TestUtil {
     return List.of(recordDto);
   }
 
-  public List<RecordStatusDto> getJobRecordsForTransitTimes() {
-    List<RecordStatusDto> recordStatusDtoList = new ArrayList<>();
-    RecordStatusDto recordDto =
-        RecordStatusDto.builder()
-            .jobId(JOB_ID)
-            .jobType(JobTypeEnum.UPLOAD_TRANSIT_TIMES)
-            .orgId(ORG_ID)
-            .errorMessage("Invalid nodeId")
-            .requestBody(transitTimesRequestBodyJson)
-            .build();
+  public RecordStatusDto getJobRecordsForTransitTimes() {
 
-    recordStatusDtoList.add(recordDto);
-    return recordStatusDtoList;
+    return RecordStatusDto.builder()
+        .jobId(JOB_ID)
+        .jobType(JobTypeEnum.UPLOAD_TRANSIT_TIMES)
+        .orgId(ORG_ID)
+        .errorMessage("Invalid nodeId")
+        .requestBody(transitTimesRequestBodyJson)
+        .build();
   }
 
   public ProcessingLeadTimesRaw getProcessingLeadTimesRaw() {
@@ -155,5 +151,15 @@ public class TestUtil {
         .bufferStartDate(bufferStartDate)
         .bufferEndDate(bufferEndDate)
         .build();
+  }
+
+  public TransitDataCreationRequest getTransitDataCreationRequest() {
+    TransitDataCreationRequest transitDataCreationRequest = new TransitDataCreationRequest();
+    transitDataCreationRequest.setOrgId(ORG_ID);
+    transitDataCreationRequest.setSourceGeozone("SSFA");
+    transitDataCreationRequest.setDestinationGeozone("DSFA");
+    transitDataCreationRequest.setCarrierServiceId("ALL-SDND");
+    transitDataCreationRequest.setTransitDays(2F);
+    return transitDataCreationRequest;
   }
 }

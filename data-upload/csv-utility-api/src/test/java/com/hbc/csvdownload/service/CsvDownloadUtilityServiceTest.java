@@ -10,6 +10,7 @@ import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -49,7 +50,39 @@ class CsvDownloadUtilityServiceTest {
     jobDto.setJobType(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
     when(jobsConsumerService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID)).thenReturn(jobDto);
     when(jobsDashboardService.getJobRecords(anyString(), anyString(), any()))
-        .thenReturn(testUtil.getJobRecordsForTransitTimes());
+        .thenReturn(List.of(testUtil.getJobRecordsForTransitTimes()));
+
+    String csvContent =
+        csvDownloadUtilityService.downloadLogsAsCsv(
+            TestUtil.JOB_ID, TestUtil.ORG_ID, Optional.of(ApiStatusEnum.FAILURE.name()));
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
+
+  @Test
+  void downloadLogsAsCsvForTransitTimeEmptyErrorMessage() throws CommonServiceException {
+    JobDto jobDto = testUtil.getJobDto();
+    RecordStatusDto recordStatusDto = testUtil.getJobRecordsForTransitTimes();
+    recordStatusDto.setErrorMessage("");
+    jobDto.setJobType(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+    when(jobsConsumerService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID)).thenReturn(jobDto);
+    when(jobsDashboardService.getJobRecords(anyString(), anyString(), any()))
+        .thenReturn(List.of(recordStatusDto));
+
+    String csvContent =
+        csvDownloadUtilityService.downloadLogsAsCsv(
+            TestUtil.JOB_ID, TestUtil.ORG_ID, Optional.of(ApiStatusEnum.FAILURE.name()));
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
+
+  @Test
+  void downloadLogsAsCsvForTransitTimeFeignRetryableException() throws CommonServiceException {
+    JobDto jobDto = testUtil.getJobDto();
+    RecordStatusDto recordStatusDto = testUtil.getJobRecordsForTransitTimes();
+    recordStatusDto.setException("feign.RetryableException");
+    jobDto.setJobType(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+    when(jobsConsumerService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID)).thenReturn(jobDto);
+    when(jobsDashboardService.getJobRecords(anyString(), anyString(), any()))
+        .thenReturn(List.of(recordStatusDto));
 
     String csvContent =
         csvDownloadUtilityService.downloadLogsAsCsv(
@@ -61,8 +94,6 @@ class CsvDownloadUtilityServiceTest {
   void downloadTransitTimeAndProcessingLeadTimeCsvExceptionTest() throws CommonServiceException {
     when(jobsConsumerService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID))
         .thenReturn(testUtil.getJobDto2());
-    when(jobsDashboardService.getJobRecords(TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS))
-        .thenReturn(testUtil.getJobRecordsForProcessingLeadTimes());
 
     Exception exception =
         Assertions.assertThrows(

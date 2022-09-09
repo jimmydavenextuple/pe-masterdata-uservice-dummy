@@ -1,5 +1,6 @@
 package com.hbc.jobs.consumers.consumer;
 
+import com.hbc.common.context.CurrentThreadContext;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
@@ -30,6 +31,9 @@ public class TaskConsumer {
     log.info("Inside receiveRecordFromDashboardProducer service");
 
     try {
+      log.debug("JWT token received in consumer");
+      CurrentThreadContext.getLogContext()
+          .setAuthorizationHeader(headers.getRawHeaders().get("jwtToken").toString());
       jobConsumerService.processRecord(recordDto);
       log.info("receiveRecordFromDashboardProducer service ends");
     } catch (Exception e) {

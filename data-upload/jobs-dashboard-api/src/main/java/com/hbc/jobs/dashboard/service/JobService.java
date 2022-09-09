@@ -5,6 +5,7 @@ import static com.hbc.jobs.framework.common.domain.enums.RecordDataTypeEnum.getT
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.constants.CommonConstants;
+import com.hbc.common.context.CurrentThreadContext;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.JsonUtil;
 import com.hbc.jobs.dashboard.exception.JobException;
@@ -205,6 +206,7 @@ public class JobService {
         MessageBuilder.withPayload(recordDto)
             .setHeader(KafkaHeaders.TOPIC, dashboardProducerName)
             .setHeader(CommonConstants.HEADER_USER, job.getUserId())
+            .setHeader("jwtToken", CurrentThreadContext.getLogContext().getAuthorizationHeader())
             .build();
 
     try {
