@@ -274,7 +274,7 @@ public class TransitService {
       String destinationGeozone,
       String carrierServiceId)
       throws CommonServiceException {
-    if ((transitDays + bufferDays) < 0) {
+    if ((transitDays + bufferDays) <= 0) {
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(SOURCE_GEOZONE, FieldError.builder().rejectedValue(sourceGeozone).build());
@@ -283,7 +283,7 @@ public class TransitService {
       errorMap.put(
           CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
       throw new CommonServiceException(
-          "The sum of transit and buffer days is less than 0",
+          "The sum of transit and buffer days is less or equal to 0",
           HttpStatus.BAD_REQUEST,
           0x1776,
           errorMap);
