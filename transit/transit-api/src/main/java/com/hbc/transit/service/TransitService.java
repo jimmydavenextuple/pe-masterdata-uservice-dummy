@@ -274,6 +274,9 @@ public class TransitService {
       String destinationGeozone,
       String carrierServiceId)
       throws CommonServiceException {
+    if (bufferDays == null) {
+      bufferDays = 0.0;
+    }
     if ((transitDays + bufferDays) <= 0) {
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());

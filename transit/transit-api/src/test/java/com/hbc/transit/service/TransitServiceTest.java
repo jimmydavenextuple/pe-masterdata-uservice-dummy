@@ -60,6 +60,23 @@ class TransitServiceTest {
   }
 
   @Test
+  void addTransitDetailsNullBufferDaysTest() throws TransitDomainException, CommonServiceException {
+    TransitDataCreationRequest transitDataCreationRequest =
+        testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS);
+    transitDataCreationRequest.setBufferDays(null);
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    transitEntity.setBufferDays(null);
+    when(transitDomain.saveTransitEntity(any(TransitEntity.class))).thenReturn(transitEntity);
+
+    TransitResponse transitResponse = transitService.addTransitInfo(transitDataCreationRequest);
+    Assertions.assertEquals(
+        testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS).getCarrierServiceId(),
+        transitResponse.getCarrierServiceId());
+    Assertions.assertNull(transitResponse.getBufferDays());
+    verify(transitDomain, times(1)).saveTransitEntity(any(TransitEntity.class));
+  }
+
+  @Test
   void updateTransitBufferDetailsTest() throws TransitDomainException, CommonServiceException {
     TransitEntity transitEntity = testUtil.getTransitEntity3(TestUtil.BUFFER_DAYS);
     TransitBufferCreationRequest transitBufferCreationRequest =
