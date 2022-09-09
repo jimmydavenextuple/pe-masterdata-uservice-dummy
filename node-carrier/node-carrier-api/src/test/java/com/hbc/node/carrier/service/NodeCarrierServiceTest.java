@@ -55,6 +55,47 @@ class NodeCarrierServiceTest {
 
   @Test
   @DisplayName("When node carrier is created successfully")
+  void createNodeCarrierTestNullCarrierServiceId()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+    NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
+    nodeCarrierRequest.setCarrierServiceId(null);
+    NodeCarrierEntity nodeCarrierEntity = testUtil.getNodeCarrierEntity();
+    nodeCarrierEntity.setCarrierServiceId(null);
+    when(nodeCarrierDomain.saveNodeCarrierEntity(any())).thenReturn(nodeCarrierEntity);
+
+    NodeCarrierResponse nodeCarrierResponse =
+        nodeCarrierService.createNodeCarrier(nodeCarrierRequest);
+
+    Assertions.assertNull(nodeCarrierResponse.getCarrierServiceId());
+    verify(nodeCarrierDomain, times(1)).saveNodeCarrierEntity(any());
+  }
+
+  @Test
+  @DisplayName("When processing lead time is invalid")
+  void createNodeCarrierTestInvalidProcessingLeadTime() {
+    NodeCarrierRequest nodeCarrierRequest1 = testUtil.getNodeCarrierRequest();
+    nodeCarrierRequest1.setProcessingTime(-2.0);
+    nodeCarrierRequest1.setCarrierServiceId(null);
+    NodeCarrierRequest nodeCarrierRequest2 = testUtil.getNodeCarrierRequest();
+    nodeCarrierRequest2.setProcessingTime(null);
+    nodeCarrierRequest2.setCarrierServiceId(null);
+
+    Exception exception1 =
+        Assertions.assertThrows(
+            InvalidDataException.class,
+            () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest1));
+
+    Exception exception2 =
+        Assertions.assertThrows(
+            InvalidDataException.class,
+            () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest2));
+
+    Assertions.assertNotNull(exception1);
+    Assertions.assertNotNull(exception2);
+  }
+
+  @Test
+  @DisplayName("When node carrier is created successfully")
   void createNodeCarrierWithValidBufferEndDateTest()
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest3();
@@ -71,8 +112,7 @@ class NodeCarrierServiceTest {
 
   @Test
   @DisplayName("When bufferHours is negative")
-  void createNodeCarrierWithNegativeBufferHoursExceptionTest()
-      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+  void createNodeCarrierWithNegativeBufferHoursExceptionTest() {
     NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest4();
 
     Exception ex =
@@ -85,8 +125,7 @@ class NodeCarrierServiceTest {
 
   @Test
   @DisplayName("When node carrier buffer data is updated successfully")
-  void updateNodeCarrierBufferDataTest()
-      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+  void updateNodeCarrierBufferDataTest() throws NodeCarrierDomainException, CommonServiceException {
     when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
         .thenReturn(Optional.ofNullable(testUtil.getNodeCarrierEntity()));
     when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
@@ -103,8 +142,7 @@ class NodeCarrierServiceTest {
 
   @Test
   @DisplayName("When bufferHours is negative while updating buffer details")
-  void updateNodeCarrierWithNegativeBufferHoursExceptionTest()
-      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+  void updateNodeCarrierWithNegativeBufferHoursExceptionTest() {
     NodeCarrierBufferRequest nodeCarrierBufferRequest = testUtil.getNodeCarrierBufferRequest3();
 
     Exception ex =

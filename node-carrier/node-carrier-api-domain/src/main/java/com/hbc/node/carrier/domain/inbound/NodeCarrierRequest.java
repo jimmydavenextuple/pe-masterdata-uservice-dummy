@@ -3,9 +3,7 @@ package com.hbc.node.carrier.domain.inbound;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.util.Date;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,8 +33,6 @@ public class NodeCarrierRequest implements Serializable {
   @Length(max = 50)
   private String serviceOption;
 
-  @NotNull(message = "processingTime cannot be null")
-  @Min(value = 0, message = "processingTime can't be negative")
   private Double processingTime;
 
   @Length(max = 50)

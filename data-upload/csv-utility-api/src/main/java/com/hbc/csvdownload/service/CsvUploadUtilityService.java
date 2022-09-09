@@ -218,8 +218,9 @@ public class CsvUploadUtilityService {
               transitDataCreationRequest.setCarrierServiceId(carrierServiceIdValue);
               transitDataCreationRequest.setDestinationGeozone(destinationSfa);
               transitDataCreationRequest.setSourceGeozone(sFsa);
+              var transitDaysString = row[integer.getAndIncrement()];
               transitDataCreationRequest.setTransitDays(
-                  Float.valueOf(row[integer.getAndIncrement()]));
+                  ObjectUtils.isEmpty(transitDaysString) ? null : Float.valueOf(transitDaysString));
               return transitDataCreationRequest;
             })
         .collect(Collectors.toList());
