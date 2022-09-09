@@ -125,16 +125,17 @@ public class CsvDownloadUtilityService {
     try {
       var jobDto = jobsConsumerService.getJob(jobId, orgId);
       var jobType = jobDto.getJobType();
+      if (ObjectUtils.isEmpty(JobTypeEnum.valueOf(jobType.name()))) {
+        throw new CommonServiceException(
+            "Incorrect jobType specified", HttpStatus.BAD_REQUEST, 0x1772, null);
+      }
       List<RecordStatusDto> recordStatusDtos =
           jobsDashboardService.getJobRecords(jobId, orgId, status);
 
       if (jobType.equals(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES)) {
         return downloadProcessingLeadTimeErrorLogs(recordStatusDtos);
-      } else if (jobType.equals(JobTypeEnum.UPLOAD_TRANSIT_TIMES)) {
-        return downloadTransitTimeErrorLogs(recordStatusDtos, orgId);
       } else {
-        throw new CommonServiceException(
-            "Incorrect jobType specified", HttpStatus.BAD_REQUEST, 0x1772, null);
+        return downloadTransitTimeErrorLogs(recordStatusDtos, orgId);
       }
     } catch (Exception e) {
       throw new CommonServiceException(

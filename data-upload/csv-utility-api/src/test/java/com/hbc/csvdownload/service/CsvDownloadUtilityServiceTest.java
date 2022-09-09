@@ -94,8 +94,6 @@ class CsvDownloadUtilityServiceTest {
   void downloadTransitTimeAndProcessingLeadTimeCsvExceptionTest() throws CommonServiceException {
     when(jobsConsumerService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID))
         .thenReturn(testUtil.getJobDto2());
-    when(jobsDashboardService.getJobRecords(TestUtil.JOB_ID, TestUtil.ORG_ID, TestUtil.STATUS))
-        .thenReturn(testUtil.getJobRecordsForProcessingLeadTimes());
 
     Exception exception =
         Assertions.assertThrows(
