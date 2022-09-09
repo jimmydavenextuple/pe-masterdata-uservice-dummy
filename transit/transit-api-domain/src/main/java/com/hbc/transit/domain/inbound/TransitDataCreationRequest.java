@@ -1,5 +1,6 @@
 package com.hbc.transit.domain.inbound;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.util.Date;
 import javax.validation.constraints.Min;
@@ -39,9 +40,11 @@ public class TransitDataCreationRequest implements Serializable {
   private Float transitDays;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
   private Date bufferStartDate;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
   private Date bufferEndDate;
 
   private Double bufferDays;
