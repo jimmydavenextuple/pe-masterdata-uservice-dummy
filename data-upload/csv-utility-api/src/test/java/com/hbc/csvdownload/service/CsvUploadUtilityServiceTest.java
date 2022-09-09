@@ -111,9 +111,7 @@ class CsvUploadUtilityServiceTest {
   }
 
   @Test
-  void uploadProcessingLeadTimesCsvEmptyCsvException()
-      throws IOException, CsvParsingException, CsvFormatValidationFailedException,
-          JobSubmissionException, JsonParsingException {
+  void uploadProcessingLeadTimesCsvEmptyCsvException() throws IOException {
     MultipartFile csvFile = mock(MultipartFile.class);
     String csvFileContent = "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n";
 
@@ -269,6 +267,37 @@ class CsvUploadUtilityServiceTest {
             + "DFSA1,10,9.96,9.96\n"
             + "DFSA2,10,9,9.9\n"
             + "DFSA3,10,9,9\n";
+
+    when(csvFile.getInputStream())
+        .thenReturn(
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()));
+
+    JobDto jobDto = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
+
+    when(jobsDashboardClient.processJobJsonOffline(any(), any(), any()))
+        .thenReturn(BaseResponse.builder().payload(jobDto).build());
+
+    String res = csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile);
+
+    Assertions.assertFalse(ObjectUtils.isEmpty(res));
+    verify(jobsDashboardClient, times(1)).processJobJsonOffline(any(), any(), any());
+  }
+
+  @Test
+  void uploadTransitTimesCsvNullTransitTime()
+      throws IOException, CsvFormatValidationFailedException, CsvException, JsonParsingException,
+          JobSubmissionException {
+    MultipartFile csvFile = mock(MultipartFile.class);
+
+    String csvFileContent =
+        "orgId,BAY,,,,,,,,,\n"
+            + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+            + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
+            + "DFSA1,10,9.96,9.96\n"
+            + "DFSA2,10,9,9.9\n"
+            + "DFSA3,10,,9\n";
 
     when(csvFile.getInputStream())
         .thenReturn(
