@@ -105,7 +105,7 @@ class TransitServiceTest {
             CommonServiceException.class,
             () -> transitService.updateTransitBufferDetails(transitBufferCreationRequest));
     Assertions.assertEquals(
-        "The sum of transit and buffer days is less than 0", exception.getMessage());
+        "The sum of transit and buffer days is less or equal to 0", exception.getMessage());
 
     verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
   }
