@@ -6,39 +6,50 @@ import java.util.List;
 import java.util.Map;
 
 public class ItemUtils {
+  public static String SDNDELIGIBLE = "sdndEligible";
+  public static String SDNDELIGIBLEFORDC = "sdndEligibleForDC";
+  public static String NEXTDAYELIGIBLE = "nextDayEligible";
+  public static String NEXTDAYELIGIBLEFORDC = "nextDayEligibleForDC";
+  public static String SDND = "sdnd";
+  public static String NEXTDAY = "nextday";
+  public static String STORE = "Store";
+  public static String FC = "FC";
+  public static String MFC = "MFC";
+  public static String EXPRESSELIGIBLE = "expressEligible";
+
   public static Map<String, List<String>> getInventoryNodeTypeMap(
       Map<String, Boolean> serviceOptionEligibilityMap) {
-    Map<String, List<String>> inventoryNodeTypeMap = new HashMap<String, List<String>>();
-    List<String> sdndEligibleNodeTypeList = new ArrayList<String>();
-    List<String> nextdayEligibleNodeTypeList = new ArrayList<String>();
-    if (serviceOptionEligibilityMap.containsKey("sdndEligible")
-        && serviceOptionEligibilityMap.get("sdndEligible")) {
-      sdndEligibleNodeTypeList.add("Store");
+    Map<String, List<String>> inventoryNodeTypeMap = new HashMap<>();
+    List<String> sdndEligibleNodeTypeList = new ArrayList<>();
+    List<String> nextdayEligibleNodeTypeList = new ArrayList<>();
+    if (serviceOptionEligibilityMap.containsKey(SDNDELIGIBLE)
+        && Boolean.TRUE.equals(serviceOptionEligibilityMap.get(SDNDELIGIBLE))) {
+      sdndEligibleNodeTypeList.add(STORE);
     }
-    if (serviceOptionEligibilityMap.containsKey("sdndEligibleForDC")
-        && serviceOptionEligibilityMap.get("sdndEligibleForDC")) {
-      sdndEligibleNodeTypeList.add("DC");
+    if (serviceOptionEligibilityMap.containsKey(SDNDELIGIBLEFORDC)
+        && Boolean.TRUE.equals(serviceOptionEligibilityMap.get(SDNDELIGIBLEFORDC))) {
+      sdndEligibleNodeTypeList.add(FC);
     }
-    if (serviceOptionEligibilityMap.containsKey("nextDayEligible")
-        && serviceOptionEligibilityMap.get("nextDayEligible")) {
-      nextdayEligibleNodeTypeList.add("Store");
+    if (serviceOptionEligibilityMap.containsKey(NEXTDAYELIGIBLE)
+        && Boolean.TRUE.equals(serviceOptionEligibilityMap.get(NEXTDAYELIGIBLE))) {
+      nextdayEligibleNodeTypeList.add(STORE);
     }
-    if (serviceOptionEligibilityMap.containsKey("nextDayEligibleForDC")
-        && serviceOptionEligibilityMap.get("nextDayEligibleForDC")) {
-      nextdayEligibleNodeTypeList.add("DC");
+    if (serviceOptionEligibilityMap.containsKey(NEXTDAYELIGIBLEFORDC)
+        && Boolean.TRUE.equals(serviceOptionEligibilityMap.get(NEXTDAYELIGIBLEFORDC))) {
+      nextdayEligibleNodeTypeList.add(FC);
     }
-    inventoryNodeTypeMap.put("sdnd", sdndEligibleNodeTypeList);
-    inventoryNodeTypeMap.put("nextday", nextdayEligibleNodeTypeList);
+    inventoryNodeTypeMap.put(SDND, sdndEligibleNodeTypeList);
+    inventoryNodeTypeMap.put(NEXTDAY, nextdayEligibleNodeTypeList);
     return inventoryNodeTypeMap;
   }
 
   public static Map<String, Boolean> getServiceOptionEligibitiesMapForTest() {
     Map<String, Boolean> serviceOptionEligibilities = new HashMap<>();
-    serviceOptionEligibilities.put("expressEligible", true);
-    serviceOptionEligibilities.put("sdndEligible", true);
-    serviceOptionEligibilities.put("sdndEligibleForDC", true);
-    serviceOptionEligibilities.put("nextDayEligible", true);
-    serviceOptionEligibilities.put("nextDayEligibleForDC", false);
+    serviceOptionEligibilities.put(EXPRESSELIGIBLE, true);
+    serviceOptionEligibilities.put(SDNDELIGIBLE, true);
+    serviceOptionEligibilities.put(SDNDELIGIBLEFORDC, true);
+    serviceOptionEligibilities.put(NEXTDAYELIGIBLE, true);
+    serviceOptionEligibilities.put(NEXTDAYELIGIBLEFORDC, false);
     return serviceOptionEligibilities;
   }
 }
