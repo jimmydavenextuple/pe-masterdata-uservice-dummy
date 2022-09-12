@@ -3,6 +3,8 @@ package com.hbc.item.util;
 import java.util.*;
 
 public class ItemUtils {
+  private ItemUtils() {}
+
   private static final String SDND_ELIGIBLE = "sdndEligible";
   private static final String SDND_ELIGIBLE_FOR_DC = "sdndEligibleForDC";
   private static final String NEXT_DAY_ELIGIBLE = "nextDayEligible";
@@ -24,12 +26,14 @@ public class ItemUtils {
     }
     if (Objects.equals(Boolean.TRUE, serviceOptionEligibilityMap.get(SDND_ELIGIBLE_FOR_DC))) {
       sdndEligibleNodeTypeList.add(FC);
+      sdndEligibleNodeTypeList.add(MFC);
     }
     if (Objects.equals(Boolean.TRUE, serviceOptionEligibilityMap.get(NEXT_DAY_ELIGIBLE))) {
       nextdayEligibleNodeTypeList.add(STORE);
     }
     if (Objects.equals(Boolean.TRUE, serviceOptionEligibilityMap.get(NEXT_DAY_ELIGIBLE_FOR_DC))) {
       nextdayEligibleNodeTypeList.add(FC);
+      nextdayEligibleNodeTypeList.add(MFC);
     }
     inventoryNodeTypeMap.put(SDND, sdndEligibleNodeTypeList);
     inventoryNodeTypeMap.put(NEXT_DAY, nextdayEligibleNodeTypeList);
@@ -42,6 +46,16 @@ public class ItemUtils {
     serviceOptionEligibilities.put(SDND_ELIGIBLE, true);
     serviceOptionEligibilities.put(SDND_ELIGIBLE_FOR_DC, true);
     serviceOptionEligibilities.put(NEXT_DAY_ELIGIBLE, true);
+    serviceOptionEligibilities.put(NEXT_DAY_ELIGIBLE_FOR_DC, true);
+    return serviceOptionEligibilities;
+  }
+
+  public static Map<String, Boolean> getServiceOptEligiblityMapForExceptionTest() {
+    Map<String, Boolean> serviceOptionEligibilities = new HashMap<>();
+    serviceOptionEligibilities.put(EXPRESS_ELIGIBLE, false);
+    serviceOptionEligibilities.put(SDND_ELIGIBLE, false);
+    serviceOptionEligibilities.put(SDND_ELIGIBLE_FOR_DC, false);
+    serviceOptionEligibilities.put(NEXT_DAY_ELIGIBLE, false);
     serviceOptionEligibilities.put(NEXT_DAY_ELIGIBLE_FOR_DC, false);
     return serviceOptionEligibilities;
   }

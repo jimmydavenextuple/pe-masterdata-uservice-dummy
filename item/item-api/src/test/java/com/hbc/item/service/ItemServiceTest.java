@@ -13,6 +13,7 @@ import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
 import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
+import com.hbc.item.util.ItemUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,6 +53,10 @@ class ItemServiceTest {
   @Test
   void addItemExceptionTest() throws ItemDomainException {
     ItemEntity itemEntity = testUtil.getItemEntity();
+    itemEntity.setServiceOptionEligibilities(
+        ItemUtils.getServiceOptEligiblityMapForExceptionTest());
+    itemEntity.setInventoryNodeTypes(
+        ItemUtils.getInventoryNodeTypeMap(ItemUtils.getServiceOptEligiblityMapForExceptionTest()));
     ItemCreationRequest itemCreationRequest = testUtil.getItemCreationRequest();
     itemCreationRequest.setUom(null);
     when(itemDomain.saveItemEntity(any(ItemEntity.class))).thenReturn(itemEntity);
