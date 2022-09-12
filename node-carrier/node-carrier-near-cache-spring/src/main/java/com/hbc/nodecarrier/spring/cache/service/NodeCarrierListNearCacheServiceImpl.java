@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -42,6 +43,7 @@ public class NodeCarrierListNearCacheServiceImpl
   }
 
   @Override
+  @Cacheable(cacheManager = "caffeineCacheManager")
   public NodeCarrierListCacheValue get(NodeCarrierListCacheKey key) {
     logger.debug("Inside get NodeCarrierCacheValue");
     return super.get(key);
