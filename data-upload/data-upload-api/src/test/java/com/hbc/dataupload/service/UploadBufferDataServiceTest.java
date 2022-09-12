@@ -1,6 +1,5 @@
 package com.hbc.dataupload.service;
 
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION_INVALID_MESSAGE;
 import static com.hbc.dataupload.helper.UploadBufferDataConstants.NODE_SERVICE_OPTION_BUFFER_DATA_UPLOAD_FAILED;
 import static com.hbc.dataupload.helper.UploadBufferDataConstants.NODE_SERVICE_OPTION_BUFFER_DATA_UPLOAD_FILE_EMPTY_RECORDS;
 import static com.hbc.dataupload.helper.UploadBufferDataConstants.NODE_SERVICE_OPTION_BUFFER_DATA_UPLOAD_INVALID_FILE_HEADERS;
@@ -24,6 +23,7 @@ import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.transit.domain.feign.TransitFeign;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -253,7 +253,8 @@ class UploadBufferDataServiceTest {
 
   // transit tests
   @Test
-  void uploadTransitBufferDataSuccessTest() throws CommonServiceException, IOException {
+  void uploadTransitBufferDataSuccessTest()
+      throws CommonServiceException, IOException, CsvException {
     Path resourceDir =
         Paths.get("src", "test", "resources", "transitBufferData", "transitBuffer_happyPath.csv");
     String absolutePath = resourceDir.toFile().getAbsolutePath();
@@ -269,17 +270,19 @@ class UploadBufferDataServiceTest {
   }
 
   @Test
-  void uploadTransitBufferDataPartialSuccessTest() throws CommonServiceException, IOException {
+  void uploadTransitBufferDataNullEndDate() {
     Path resourceDir =
         Paths.get("src", "test", "resources", "transitBufferData", "transitBuffer_dateNull.csv");
     String absolutePath = resourceDir.toFile().getAbsolutePath();
 
     BaseResponse<TransitResponse> baseResponse = testUtil.getBaseResponseOfTransitResponse();
     when(transitFeign.updateTransitBufferDetails(any())).thenReturn(baseResponse);
-    ResponseEntity<BaseResponse<String>> response =
-        uploadBufferService.uploadTransitBufferData(absolutePath);
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> uploadBufferService.uploadTransitBufferData(absolutePath));
 
-    assertEquals(HttpStatus.MULTI_STATUS, response.getStatusCode());
+    Assertions.assertNotNull(exception);
   }
 
   @Test
@@ -358,7 +361,7 @@ class UploadBufferDataServiceTest {
   }
 
   @Test
-  void uploadTransitBufferFailureTest() throws CommonServiceException, IOException {
+  void uploadTransitBufferFailureTest() throws CommonServiceException, IOException, CsvException {
     Path resourceDirectory =
         Paths.get("src", "test", "resources", "transitBufferData", "transitBuffer_happyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
@@ -366,18 +369,5 @@ class UploadBufferDataServiceTest {
         uploadBufferService.uploadTransitBufferData(absolutePath);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     Assertions.assertEquals("Transit Buffer Data upload failed!", response.getBody().getMessage());
-  }
-
-  @Test
-  void uploadTransitBufferInvalidActionTest() throws CommonServiceException, IOException {
-    Path resourceDirectory =
-        Paths.get(
-            "src", "test", "resources", "transitBufferData", "transitBuffer_invalidAction.csv");
-    String absolutePath = resourceDirectory.toFile().getAbsolutePath();
-    Exception exception =
-        Assertions.assertThrows(
-            CommonServiceException.class,
-            () -> uploadBufferService.uploadTransitBufferData(absolutePath));
-    assertEquals(ACTION_INVALID_MESSAGE, exception.getMessage());
   }
 }
