@@ -131,11 +131,14 @@ class CommonExceptionHandlerTest {
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
   }
+
   @Test
   void handleMissingServletRequestParameterExceptionTest() {
-    MissingServletRequestParameterException e = new MissingServletRequestParameterException("paramName","string");
+    MissingServletRequestParameterException e =
+        new MissingServletRequestParameterException("paramName", "string");
 
-    ResponseEntity<ErrorResponse> responseEntity = commonExceptionHandler.handleMissingServletRequestParameterException(e);
+    ResponseEntity<ErrorResponse> responseEntity =
+        commonExceptionHandler.handleMissingServletRequestParameterException(e);
 
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());

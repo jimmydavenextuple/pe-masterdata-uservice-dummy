@@ -43,7 +43,7 @@ class NodeCarrierExceptionHandlerTest {
   @DisplayName("Test for handling invalid data exception")
   void handleInvalidDataException() {
     InvalidDataException exception =
-        new InvalidDataException("Invalid time format", TestUtil.LAST_PICKUP_TIME);
+        new InvalidDataException("Invalid time format", TestUtil.LAST_PICKUP_TIME, null);
 
     ResponseEntity<ErrorResponse> errorResponseResponseEntity =
         nodeCarrierExceptionHandler.handleInvalidDataException(exception);
