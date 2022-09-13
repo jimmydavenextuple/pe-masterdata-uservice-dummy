@@ -2,6 +2,7 @@ package com.hbc.item.domain.mapper;
 
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemCreationRequest.ItemCreationRequestBuilder;
+import com.hbc.item.util.ItemUtils;
 import com.hbc.streams.promising.messages.PromisingRecord;
 import java.util.*;
 import org.mapstruct.AfterMapping;
@@ -23,22 +24,17 @@ public interface ItemRecordMapper {
   @AfterMapping
   default void afterMappingItemRecord(
       @MappingTarget ItemCreationRequestBuilder itemCreationRequest, PromisingRecord itemRecord) {
-    Map<String, Boolean> serviceOptionEligibilityMap = new HashMap<>();
-    serviceOptionEligibilityMap.put("sdndEligible", itemRecord.getSdndEligible());
-    serviceOptionEligibilityMap.put("expressEligible", itemRecord.getExpressEligible());
-    boolean nextDayEligible =
-        itemRecord.getNextdayEligible() == null ? Boolean.FALSE : itemRecord.getNextdayEligible();
-    boolean sdndEligibleForDC =
-        itemRecord.getSdndEligibleForDC() == null
-            ? Boolean.FALSE
-            : itemRecord.getSdndEligibleForDC();
-    boolean nextDayEligibleForDC =
-        itemRecord.getNextdayEligibleForDC() == null
-            ? Boolean.FALSE
-            : itemRecord.getNextdayEligibleForDC();
-    serviceOptionEligibilityMap.put("nextdayEligible", nextDayEligible);
-    serviceOptionEligibilityMap.put("sdndEligibleForDC", sdndEligibleForDC);
-    serviceOptionEligibilityMap.put("nextdayEligibleForDC", nextDayEligibleForDC);
+    Map<String, Boolean> serviceOptionEligibilityMap =
+        ItemUtils.getServiceOptionEligibilityMap(itemRecord);
     itemCreationRequest.serviceOptionEligibilities(serviceOptionEligibilityMap);
+
+    Map<String, Boolean> itemFlagMapForInvNodeCompute = new HashMap<>();
+    itemFlagMapForInvNodeCompute.put("sdndEligible", itemRecord.getSdndEligible());
+    itemFlagMapForInvNodeCompute.put("sdndEligibleForDC", itemRecord.getSdndEligibleForDC());
+    itemFlagMapForInvNodeCompute.put("nextdayEligible", itemRecord.getNextdayEligible());
+    itemFlagMapForInvNodeCompute.put("nextdayEligibleForDC", itemRecord.getNextdayEligibleForDC());
+    Map<String, List<String>> inventoryNodeTypesMap =
+        ItemUtils.getInventoryNodeTypeMap(itemFlagMapForInvNodeCompute);
+    itemCreationRequest.inventoryNodeTypes(inventoryNodeTypesMap);
   }
 }

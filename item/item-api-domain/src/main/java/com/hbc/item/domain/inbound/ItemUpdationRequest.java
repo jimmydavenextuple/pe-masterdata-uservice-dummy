@@ -1,6 +1,7 @@
 package com.hbc.item.domain.inbound;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -59,4 +60,5 @@ public class ItemUpdationRequest implements Serializable {
   private String departmentNumber;
   private String departmentName;
   private String imageUrl;
+  private Map<String, List<String>> inventoryNodeTypes;
 }
