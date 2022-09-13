@@ -89,4 +89,34 @@ class ItemMasterConsumerTest {
         Exception.class,
         () -> itemMasterConsumer.onItemRecordConsumption(testUtil.getItemRecord(), null));
   }
+
+  @Test
+  void onItemRecordConsumptionTestItemEligibleStore() throws ItemDomainException {
+    when(itemService.createItem(any())).thenReturn(testUtil.getItemResponse());
+    ArgumentCaptor<ItemCreationRequest> captor = ArgumentCaptor.forClass(ItemCreationRequest.class);
+    itemMasterConsumer.onItemRecordConsumption(testUtil.getItemRecordItemEligibleStore(), null);
+
+    verify(itemService, times(1)).createItem(captor.capture());
+    Assertions.assertEquals(TestUtil.ITEM_ID, captor.getValue().getItemId());
+  }
+
+  @Test
+  void onItemRecordConsumptionTestItemEligibleDC() throws ItemDomainException {
+    when(itemService.createItem(any())).thenReturn(testUtil.getItemResponse());
+    ArgumentCaptor<ItemCreationRequest> captor = ArgumentCaptor.forClass(ItemCreationRequest.class);
+    itemMasterConsumer.onItemRecordConsumption(testUtil.getItemRecordItemEligibleDC(), null);
+
+    verify(itemService, times(1)).createItem(captor.capture());
+    Assertions.assertEquals(TestUtil.ITEM_ID, captor.getValue().getItemId());
+  }
+
+  @Test
+  void onItemRecordConsumptionTestItemEligibleNone() throws ItemDomainException {
+    when(itemService.createItem(any())).thenReturn(testUtil.getItemResponse());
+    ArgumentCaptor<ItemCreationRequest> captor = ArgumentCaptor.forClass(ItemCreationRequest.class);
+    itemMasterConsumer.onItemRecordConsumption(testUtil.getItemRecordItemEligibleNone(), null);
+
+    verify(itemService, times(1)).createItem(captor.capture());
+    Assertions.assertEquals(TestUtil.ITEM_ID, captor.getValue().getItemId());
+  }
 }

@@ -15,11 +15,11 @@ import org.apache.avro.specific.SpecificData;
 @org.apache.avro.specific.AvroGenerated
 public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
     implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -5445254456188250260L;
+  private static final long serialVersionUID = 6544548654572521015L;
   public static final org.apache.avro.Schema SCHEMA$ =
       new org.apache.avro.Schema.Parser()
           .parse(
-              "{\"type\":\"record\",\"name\":\"PromisingRecord\",\"namespace\":\"com.hbc.streams.promising.messages\",\"doc\":\"SKU record to be published to Promising Engine destination topic\",\"fields\":[{\"name\":\"itemId\",\"type\":\"string\",\"doc\":\"Sku ID\"},{\"name\":\"itemSource\",\"type\":[\"null\",\"string\"],\"default\":\"BAY\"},{\"name\":\"orgId\",\"type\":\"string\",\"default\":\"BAY\"},{\"name\":\"uom\",\"type\":\"string\",\"default\":\"EACH\"},{\"name\":\"isDSVEligible\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"product\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"color\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"size\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"shipAlone\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"shipEligible\",\"type\":[\"null\",\"boolean\"],\"default\":true},{\"name\":\"parcelShipmentEligible\",\"type\":\"boolean\"},{\"name\":\"bopisEligible\",\"type\":\"boolean\"},{\"name\":\"expressEligible\",\"type\":\"boolean\"},{\"name\":\"sdndEligible\",\"type\":\"boolean\"},{\"name\":\"nextdayEligible\",\"type\":\"boolean\"},{\"name\":\"isWhiteGlove\",\"type\":\"boolean\"},{\"name\":\"height\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"width\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"length\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"volume\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"dimensionUom\",\"type\":[\"null\",\"string\"],\"default\":\"IN\"},{\"name\":\"volumeUom\",\"type\":[\"null\",\"string\"],\"default\":\"CU IN\"},{\"name\":\"weight\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"weightUOM\",\"type\":[\"null\",\"string\"],\"default\":\"LB\"},{\"name\":\"processingTime\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"cost\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"isHazmat\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"shortDescription\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"departmentNumber\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"departmentName\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"imageUrl\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"lastModifiedDate\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}}]}");
+              "{\"type\":\"record\",\"name\":\"PromisingRecord\",\"namespace\":\"com.hbc.streams.promising.messages\",\"doc\":\"SKU record to be published to Promising Engine destination topic\",\"fields\":[{\"name\":\"itemId\",\"type\":\"string\",\"doc\":\"Sku ID\"},{\"name\":\"itemSource\",\"type\":[\"null\",\"string\"],\"default\":\"BAY\"},{\"name\":\"orgId\",\"type\":\"string\",\"default\":\"BAY\"},{\"name\":\"uom\",\"type\":\"string\",\"default\":\"EACH\"},{\"name\":\"isDSVEligible\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"product\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"color\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"size\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"shipAlone\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"shipEligible\",\"type\":\"boolean\"},{\"name\":\"parcelShipmentEligible\",\"type\":\"boolean\"},{\"name\":\"bopisEligible\",\"type\":\"boolean\"},{\"name\":\"expressEligible\",\"type\":\"boolean\"},{\"name\":\"sdndEligible\",\"type\":\"boolean\"},{\"name\":\"isWhiteGlove\",\"type\":\"boolean\"},{\"name\":\"height\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"width\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"length\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"volume\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"dimensionUom\",\"type\":[\"null\",\"string\"],\"default\":\"IN\"},{\"name\":\"volumeUom\",\"type\":[\"null\",\"string\"],\"default\":\"CU IN\"},{\"name\":\"weight\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"weightUOM\",\"type\":[\"null\",\"string\"],\"default\":\"LB\"},{\"name\":\"processingTime\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"cost\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"isHazmat\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"shortDescription\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"departmentNumber\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"departmentName\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"imageUrl\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"lastModifiedDate\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"nextdayEligible\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"sdndEligibleForDC\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"nextdayEligibleForDC\",\"type\":[\"null\",\"boolean\"],\"default\":null}]}");
 
   public static org.apache.avro.Schema getClassSchema() {
     return SCHEMA$;
@@ -69,12 +69,11 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
   @Deprecated public CharSequence color;
   @Deprecated public CharSequence size;
   @Deprecated public Boolean shipAlone;
-  @Deprecated public Boolean shipEligible;
+  @Deprecated public boolean shipEligible;
   @Deprecated public boolean parcelShipmentEligible;
   @Deprecated public boolean bopisEligible;
   @Deprecated public boolean expressEligible;
   @Deprecated public boolean sdndEligible;
-  @Deprecated public boolean nextdayEligible;
   @Deprecated public boolean isWhiteGlove;
   @Deprecated public Double height;
   @Deprecated public Double width;
@@ -92,6 +91,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
   @Deprecated public CharSequence departmentName;
   @Deprecated public CharSequence imageUrl;
   @Deprecated public org.joda.time.DateTime lastModifiedDate;
+  @Deprecated public Boolean nextdayEligible;
+  @Deprecated public Boolean sdndEligibleForDC;
+  @Deprecated public Boolean nextdayEligibleForDC;
 
   /**
    * Default constructor. Note that this does not initialize fields to their default values from the
@@ -116,7 +118,6 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
    * @param bopisEligible The new value for bopisEligible
    * @param expressEligible The new value for expressEligible
    * @param sdndEligible The new value for sdndEligible
-   * @param nextdayEligible The new value for nextdayEligible
    * @param isWhiteGlove The new value for isWhiteGlove
    * @param height The new value for height
    * @param width The new value for width
@@ -134,6 +135,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
    * @param departmentName The new value for departmentName
    * @param imageUrl The new value for imageUrl
    * @param lastModifiedDate The new value for lastModifiedDate
+   * @param nextdayEligible The new value for nextdayEligible
+   * @param sdndEligibleForDC The new value for sdndEligibleForDC
+   * @param nextdayEligibleForDC The new value for nextdayEligibleForDC
    */
   public PromisingRecord(
       CharSequence itemId,
@@ -150,7 +154,6 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
       Boolean bopisEligible,
       Boolean expressEligible,
       Boolean sdndEligible,
-      Boolean nextdayEligible,
       Boolean isWhiteGlove,
       Double height,
       Double width,
@@ -167,7 +170,10 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
       CharSequence departmentNumber,
       CharSequence departmentName,
       CharSequence imageUrl,
-      org.joda.time.DateTime lastModifiedDate) {
+      org.joda.time.DateTime lastModifiedDate,
+      Boolean nextdayEligible,
+      Boolean sdndEligibleForDC,
+      Boolean nextdayEligibleForDC) {
     this.itemId = itemId;
     this.itemSource = itemSource;
     this.orgId = orgId;
@@ -182,7 +188,6 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
     this.bopisEligible = bopisEligible;
     this.expressEligible = expressEligible;
     this.sdndEligible = sdndEligible;
-    this.nextdayEligible = nextdayEligible;
     this.isWhiteGlove = isWhiteGlove;
     this.height = height;
     this.width = width;
@@ -200,6 +205,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
     this.departmentName = departmentName;
     this.imageUrl = imageUrl;
     this.lastModifiedDate = lastModifiedDate;
+    this.nextdayEligible = nextdayEligible;
+    this.sdndEligibleForDC = sdndEligibleForDC;
+    this.nextdayEligibleForDC = nextdayEligibleForDC;
   }
 
   public org.apache.avro.Schema getSchema() {
@@ -237,41 +245,45 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
       case 13:
         return sdndEligible;
       case 14:
-        return nextdayEligible;
-      case 15:
         return isWhiteGlove;
-      case 16:
+      case 15:
         return height;
-      case 17:
+      case 16:
         return width;
-      case 18:
+      case 17:
         return length;
-      case 19:
+      case 18:
         return volume;
-      case 20:
+      case 19:
         return dimensionUom;
-      case 21:
+      case 20:
         return volumeUom;
-      case 22:
+      case 21:
         return weight;
-      case 23:
+      case 22:
         return weightUOM;
-      case 24:
+      case 23:
         return processingTime;
-      case 25:
+      case 24:
         return cost;
-      case 26:
+      case 25:
         return isHazmat;
-      case 27:
+      case 26:
         return shortDescription;
-      case 28:
+      case 27:
         return departmentNumber;
-      case 29:
+      case 28:
         return departmentName;
-      case 30:
+      case 29:
         return imageUrl;
-      case 31:
+      case 30:
         return lastModifiedDate;
+      case 31:
+        return nextdayEligible;
+      case 32:
+        return sdndEligibleForDC;
+      case 33:
+        return nextdayEligibleForDC;
       default:
         throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
@@ -318,8 +330,10 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         null,
         null,
         null,
-        null,
         TIMESTAMP_CONVERSION,
+        null,
+        null,
+        null,
         null
       };
 
@@ -375,58 +389,64 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         sdndEligible = (Boolean) value$;
         break;
       case 14:
-        nextdayEligible = (Boolean) value$;
-        break;
-      case 15:
         isWhiteGlove = (Boolean) value$;
         break;
-      case 16:
+      case 15:
         height = (Double) value$;
         break;
-      case 17:
+      case 16:
         width = (Double) value$;
         break;
-      case 18:
+      case 17:
         length = (Double) value$;
         break;
-      case 19:
+      case 18:
         volume = (Double) value$;
         break;
-      case 20:
+      case 19:
         dimensionUom = (CharSequence) value$;
         break;
-      case 21:
+      case 20:
         volumeUom = (CharSequence) value$;
         break;
-      case 22:
+      case 21:
         weight = (Double) value$;
         break;
-      case 23:
+      case 22:
         weightUOM = (CharSequence) value$;
         break;
-      case 24:
+      case 23:
         processingTime = (Long) value$;
         break;
-      case 25:
+      case 24:
         cost = (CharSequence) value$;
         break;
-      case 26:
+      case 25:
         isHazmat = (Boolean) value$;
         break;
-      case 27:
+      case 26:
         shortDescription = (CharSequence) value$;
         break;
-      case 28:
+      case 27:
         departmentNumber = (CharSequence) value$;
         break;
-      case 29:
+      case 28:
         departmentName = (CharSequence) value$;
         break;
-      case 30:
+      case 29:
         imageUrl = (CharSequence) value$;
         break;
-      case 31:
+      case 30:
         lastModifiedDate = (org.joda.time.DateTime) value$;
+        break;
+      case 31:
+        nextdayEligible = (Boolean) value$;
+        break;
+      case 32:
+        sdndEligibleForDC = (Boolean) value$;
+        break;
+      case 33:
+        nextdayEligibleForDC = (Boolean) value$;
         break;
       default:
         throw new org.apache.avro.AvroRuntimeException("Bad index");
@@ -683,24 +703,6 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
    */
   public void setSdndEligible(Boolean value) {
     this.sdndEligible = value;
-  }
-
-  /**
-   * Gets the value of the 'nextdayEligible' field.
-   *
-   * @return The value of the 'nextdayEligible' field.
-   */
-  public Boolean getNextdayEligible() {
-    return nextdayEligible;
-  }
-
-  /**
-   * Sets the value of the 'nextdayEligible' field.
-   *
-   * @param value the value to set.
-   */
-  public void setNextdayEligible(Boolean value) {
-    this.nextdayEligible = value;
   }
 
   /**
@@ -1010,6 +1012,60 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
   }
 
   /**
+   * Gets the value of the 'nextdayEligible' field.
+   *
+   * @return The value of the 'nextdayEligible' field.
+   */
+  public Boolean getNextdayEligible() {
+    return nextdayEligible;
+  }
+
+  /**
+   * Sets the value of the 'nextdayEligible' field.
+   *
+   * @param value the value to set.
+   */
+  public void setNextdayEligible(Boolean value) {
+    this.nextdayEligible = value;
+  }
+
+  /**
+   * Gets the value of the 'sdndEligibleForDC' field.
+   *
+   * @return The value of the 'sdndEligibleForDC' field.
+   */
+  public Boolean getSdndEligibleForDC() {
+    return sdndEligibleForDC;
+  }
+
+  /**
+   * Sets the value of the 'sdndEligibleForDC' field.
+   *
+   * @param value the value to set.
+   */
+  public void setSdndEligibleForDC(Boolean value) {
+    this.sdndEligibleForDC = value;
+  }
+
+  /**
+   * Gets the value of the 'nextdayEligibleForDC' field.
+   *
+   * @return The value of the 'nextdayEligibleForDC' field.
+   */
+  public Boolean getNextdayEligibleForDC() {
+    return nextdayEligibleForDC;
+  }
+
+  /**
+   * Sets the value of the 'nextdayEligibleForDC' field.
+   *
+   * @param value the value to set.
+   */
+  public void setNextdayEligibleForDC(Boolean value) {
+    this.nextdayEligibleForDC = value;
+  }
+
+  /**
    * Creates a new PromisingRecord RecordBuilder.
    *
    * @return A new PromisingRecord RecordBuilder
@@ -1054,12 +1110,11 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
     private CharSequence color;
     private CharSequence size;
     private Boolean shipAlone;
-    private Boolean shipEligible;
+    private boolean shipEligible;
     private boolean parcelShipmentEligible;
     private boolean bopisEligible;
     private boolean expressEligible;
     private boolean sdndEligible;
-    private boolean nextdayEligible;
     private boolean isWhiteGlove;
     private Double height;
     private Double width;
@@ -1077,6 +1132,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
     private CharSequence departmentName;
     private CharSequence imageUrl;
     private org.joda.time.DateTime lastModifiedDate;
+    private Boolean nextdayEligible;
+    private Boolean sdndEligibleForDC;
+    private Boolean nextdayEligibleForDC;
 
     /** Creates a new Builder */
     private Builder() {
@@ -1147,77 +1205,86 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         this.sdndEligible = data().deepCopy(fields()[13].schema(), other.sdndEligible);
         fieldSetFlags()[13] = true;
       }
-      if (isValidValue(fields()[14], other.nextdayEligible)) {
-        this.nextdayEligible = data().deepCopy(fields()[14].schema(), other.nextdayEligible);
+      if (isValidValue(fields()[14], other.isWhiteGlove)) {
+        this.isWhiteGlove = data().deepCopy(fields()[14].schema(), other.isWhiteGlove);
         fieldSetFlags()[14] = true;
       }
-      if (isValidValue(fields()[15], other.isWhiteGlove)) {
-        this.isWhiteGlove = data().deepCopy(fields()[15].schema(), other.isWhiteGlove);
+      if (isValidValue(fields()[15], other.height)) {
+        this.height = data().deepCopy(fields()[15].schema(), other.height);
         fieldSetFlags()[15] = true;
       }
-      if (isValidValue(fields()[16], other.height)) {
-        this.height = data().deepCopy(fields()[16].schema(), other.height);
+      if (isValidValue(fields()[16], other.width)) {
+        this.width = data().deepCopy(fields()[16].schema(), other.width);
         fieldSetFlags()[16] = true;
       }
-      if (isValidValue(fields()[17], other.width)) {
-        this.width = data().deepCopy(fields()[17].schema(), other.width);
+      if (isValidValue(fields()[17], other.length)) {
+        this.length = data().deepCopy(fields()[17].schema(), other.length);
         fieldSetFlags()[17] = true;
       }
-      if (isValidValue(fields()[18], other.length)) {
-        this.length = data().deepCopy(fields()[18].schema(), other.length);
+      if (isValidValue(fields()[18], other.volume)) {
+        this.volume = data().deepCopy(fields()[18].schema(), other.volume);
         fieldSetFlags()[18] = true;
       }
-      if (isValidValue(fields()[19], other.volume)) {
-        this.volume = data().deepCopy(fields()[19].schema(), other.volume);
+      if (isValidValue(fields()[19], other.dimensionUom)) {
+        this.dimensionUom = data().deepCopy(fields()[19].schema(), other.dimensionUom);
         fieldSetFlags()[19] = true;
       }
-      if (isValidValue(fields()[20], other.dimensionUom)) {
-        this.dimensionUom = data().deepCopy(fields()[20].schema(), other.dimensionUom);
+      if (isValidValue(fields()[20], other.volumeUom)) {
+        this.volumeUom = data().deepCopy(fields()[20].schema(), other.volumeUom);
         fieldSetFlags()[20] = true;
       }
-      if (isValidValue(fields()[21], other.volumeUom)) {
-        this.volumeUom = data().deepCopy(fields()[21].schema(), other.volumeUom);
+      if (isValidValue(fields()[21], other.weight)) {
+        this.weight = data().deepCopy(fields()[21].schema(), other.weight);
         fieldSetFlags()[21] = true;
       }
-      if (isValidValue(fields()[22], other.weight)) {
-        this.weight = data().deepCopy(fields()[22].schema(), other.weight);
+      if (isValidValue(fields()[22], other.weightUOM)) {
+        this.weightUOM = data().deepCopy(fields()[22].schema(), other.weightUOM);
         fieldSetFlags()[22] = true;
       }
-      if (isValidValue(fields()[23], other.weightUOM)) {
-        this.weightUOM = data().deepCopy(fields()[23].schema(), other.weightUOM);
+      if (isValidValue(fields()[23], other.processingTime)) {
+        this.processingTime = data().deepCopy(fields()[23].schema(), other.processingTime);
         fieldSetFlags()[23] = true;
       }
-      if (isValidValue(fields()[24], other.processingTime)) {
-        this.processingTime = data().deepCopy(fields()[24].schema(), other.processingTime);
+      if (isValidValue(fields()[24], other.cost)) {
+        this.cost = data().deepCopy(fields()[24].schema(), other.cost);
         fieldSetFlags()[24] = true;
       }
-      if (isValidValue(fields()[25], other.cost)) {
-        this.cost = data().deepCopy(fields()[25].schema(), other.cost);
+      if (isValidValue(fields()[25], other.isHazmat)) {
+        this.isHazmat = data().deepCopy(fields()[25].schema(), other.isHazmat);
         fieldSetFlags()[25] = true;
       }
-      if (isValidValue(fields()[26], other.isHazmat)) {
-        this.isHazmat = data().deepCopy(fields()[26].schema(), other.isHazmat);
+      if (isValidValue(fields()[26], other.shortDescription)) {
+        this.shortDescription = data().deepCopy(fields()[26].schema(), other.shortDescription);
         fieldSetFlags()[26] = true;
       }
-      if (isValidValue(fields()[27], other.shortDescription)) {
-        this.shortDescription = data().deepCopy(fields()[27].schema(), other.shortDescription);
+      if (isValidValue(fields()[27], other.departmentNumber)) {
+        this.departmentNumber = data().deepCopy(fields()[27].schema(), other.departmentNumber);
         fieldSetFlags()[27] = true;
       }
-      if (isValidValue(fields()[28], other.departmentNumber)) {
-        this.departmentNumber = data().deepCopy(fields()[28].schema(), other.departmentNumber);
+      if (isValidValue(fields()[28], other.departmentName)) {
+        this.departmentName = data().deepCopy(fields()[28].schema(), other.departmentName);
         fieldSetFlags()[28] = true;
       }
-      if (isValidValue(fields()[29], other.departmentName)) {
-        this.departmentName = data().deepCopy(fields()[29].schema(), other.departmentName);
+      if (isValidValue(fields()[29], other.imageUrl)) {
+        this.imageUrl = data().deepCopy(fields()[29].schema(), other.imageUrl);
         fieldSetFlags()[29] = true;
       }
-      if (isValidValue(fields()[30], other.imageUrl)) {
-        this.imageUrl = data().deepCopy(fields()[30].schema(), other.imageUrl);
+      if (isValidValue(fields()[30], other.lastModifiedDate)) {
+        this.lastModifiedDate = data().deepCopy(fields()[30].schema(), other.lastModifiedDate);
         fieldSetFlags()[30] = true;
       }
-      if (isValidValue(fields()[31], other.lastModifiedDate)) {
-        this.lastModifiedDate = data().deepCopy(fields()[31].schema(), other.lastModifiedDate);
+      if (isValidValue(fields()[31], other.nextdayEligible)) {
+        this.nextdayEligible = data().deepCopy(fields()[31].schema(), other.nextdayEligible);
         fieldSetFlags()[31] = true;
+      }
+      if (isValidValue(fields()[32], other.sdndEligibleForDC)) {
+        this.sdndEligibleForDC = data().deepCopy(fields()[32].schema(), other.sdndEligibleForDC);
+        fieldSetFlags()[32] = true;
+      }
+      if (isValidValue(fields()[33], other.nextdayEligibleForDC)) {
+        this.nextdayEligibleForDC =
+            data().deepCopy(fields()[33].schema(), other.nextdayEligibleForDC);
+        fieldSetFlags()[33] = true;
       }
     }
 
@@ -1285,77 +1352,86 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         this.sdndEligible = data().deepCopy(fields()[13].schema(), other.sdndEligible);
         fieldSetFlags()[13] = true;
       }
-      if (isValidValue(fields()[14], other.nextdayEligible)) {
-        this.nextdayEligible = data().deepCopy(fields()[14].schema(), other.nextdayEligible);
+      if (isValidValue(fields()[14], other.isWhiteGlove)) {
+        this.isWhiteGlove = data().deepCopy(fields()[14].schema(), other.isWhiteGlove);
         fieldSetFlags()[14] = true;
       }
-      if (isValidValue(fields()[15], other.isWhiteGlove)) {
-        this.isWhiteGlove = data().deepCopy(fields()[15].schema(), other.isWhiteGlove);
+      if (isValidValue(fields()[15], other.height)) {
+        this.height = data().deepCopy(fields()[15].schema(), other.height);
         fieldSetFlags()[15] = true;
       }
-      if (isValidValue(fields()[16], other.height)) {
-        this.height = data().deepCopy(fields()[16].schema(), other.height);
+      if (isValidValue(fields()[16], other.width)) {
+        this.width = data().deepCopy(fields()[16].schema(), other.width);
         fieldSetFlags()[16] = true;
       }
-      if (isValidValue(fields()[17], other.width)) {
-        this.width = data().deepCopy(fields()[17].schema(), other.width);
+      if (isValidValue(fields()[17], other.length)) {
+        this.length = data().deepCopy(fields()[17].schema(), other.length);
         fieldSetFlags()[17] = true;
       }
-      if (isValidValue(fields()[18], other.length)) {
-        this.length = data().deepCopy(fields()[18].schema(), other.length);
+      if (isValidValue(fields()[18], other.volume)) {
+        this.volume = data().deepCopy(fields()[18].schema(), other.volume);
         fieldSetFlags()[18] = true;
       }
-      if (isValidValue(fields()[19], other.volume)) {
-        this.volume = data().deepCopy(fields()[19].schema(), other.volume);
+      if (isValidValue(fields()[19], other.dimensionUom)) {
+        this.dimensionUom = data().deepCopy(fields()[19].schema(), other.dimensionUom);
         fieldSetFlags()[19] = true;
       }
-      if (isValidValue(fields()[20], other.dimensionUom)) {
-        this.dimensionUom = data().deepCopy(fields()[20].schema(), other.dimensionUom);
+      if (isValidValue(fields()[20], other.volumeUom)) {
+        this.volumeUom = data().deepCopy(fields()[20].schema(), other.volumeUom);
         fieldSetFlags()[20] = true;
       }
-      if (isValidValue(fields()[21], other.volumeUom)) {
-        this.volumeUom = data().deepCopy(fields()[21].schema(), other.volumeUom);
+      if (isValidValue(fields()[21], other.weight)) {
+        this.weight = data().deepCopy(fields()[21].schema(), other.weight);
         fieldSetFlags()[21] = true;
       }
-      if (isValidValue(fields()[22], other.weight)) {
-        this.weight = data().deepCopy(fields()[22].schema(), other.weight);
+      if (isValidValue(fields()[22], other.weightUOM)) {
+        this.weightUOM = data().deepCopy(fields()[22].schema(), other.weightUOM);
         fieldSetFlags()[22] = true;
       }
-      if (isValidValue(fields()[23], other.weightUOM)) {
-        this.weightUOM = data().deepCopy(fields()[23].schema(), other.weightUOM);
+      if (isValidValue(fields()[23], other.processingTime)) {
+        this.processingTime = data().deepCopy(fields()[23].schema(), other.processingTime);
         fieldSetFlags()[23] = true;
       }
-      if (isValidValue(fields()[24], other.processingTime)) {
-        this.processingTime = data().deepCopy(fields()[24].schema(), other.processingTime);
+      if (isValidValue(fields()[24], other.cost)) {
+        this.cost = data().deepCopy(fields()[24].schema(), other.cost);
         fieldSetFlags()[24] = true;
       }
-      if (isValidValue(fields()[25], other.cost)) {
-        this.cost = data().deepCopy(fields()[25].schema(), other.cost);
+      if (isValidValue(fields()[25], other.isHazmat)) {
+        this.isHazmat = data().deepCopy(fields()[25].schema(), other.isHazmat);
         fieldSetFlags()[25] = true;
       }
-      if (isValidValue(fields()[26], other.isHazmat)) {
-        this.isHazmat = data().deepCopy(fields()[26].schema(), other.isHazmat);
+      if (isValidValue(fields()[26], other.shortDescription)) {
+        this.shortDescription = data().deepCopy(fields()[26].schema(), other.shortDescription);
         fieldSetFlags()[26] = true;
       }
-      if (isValidValue(fields()[27], other.shortDescription)) {
-        this.shortDescription = data().deepCopy(fields()[27].schema(), other.shortDescription);
+      if (isValidValue(fields()[27], other.departmentNumber)) {
+        this.departmentNumber = data().deepCopy(fields()[27].schema(), other.departmentNumber);
         fieldSetFlags()[27] = true;
       }
-      if (isValidValue(fields()[28], other.departmentNumber)) {
-        this.departmentNumber = data().deepCopy(fields()[28].schema(), other.departmentNumber);
+      if (isValidValue(fields()[28], other.departmentName)) {
+        this.departmentName = data().deepCopy(fields()[28].schema(), other.departmentName);
         fieldSetFlags()[28] = true;
       }
-      if (isValidValue(fields()[29], other.departmentName)) {
-        this.departmentName = data().deepCopy(fields()[29].schema(), other.departmentName);
+      if (isValidValue(fields()[29], other.imageUrl)) {
+        this.imageUrl = data().deepCopy(fields()[29].schema(), other.imageUrl);
         fieldSetFlags()[29] = true;
       }
-      if (isValidValue(fields()[30], other.imageUrl)) {
-        this.imageUrl = data().deepCopy(fields()[30].schema(), other.imageUrl);
+      if (isValidValue(fields()[30], other.lastModifiedDate)) {
+        this.lastModifiedDate = data().deepCopy(fields()[30].schema(), other.lastModifiedDate);
         fieldSetFlags()[30] = true;
       }
-      if (isValidValue(fields()[31], other.lastModifiedDate)) {
-        this.lastModifiedDate = data().deepCopy(fields()[31].schema(), other.lastModifiedDate);
+      if (isValidValue(fields()[31], other.nextdayEligible)) {
+        this.nextdayEligible = data().deepCopy(fields()[31].schema(), other.nextdayEligible);
         fieldSetFlags()[31] = true;
+      }
+      if (isValidValue(fields()[32], other.sdndEligibleForDC)) {
+        this.sdndEligibleForDC = data().deepCopy(fields()[32].schema(), other.sdndEligibleForDC);
+        fieldSetFlags()[32] = true;
+      }
+      if (isValidValue(fields()[33], other.nextdayEligibleForDC)) {
+        this.nextdayEligibleForDC =
+            data().deepCopy(fields()[33].schema(), other.nextdayEligibleForDC);
+        fieldSetFlags()[33] = true;
       }
     }
 
@@ -1752,7 +1828,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'shipEligible'.
      * @return This builder.
      */
-    public Builder setShipEligible(Boolean value) {
+    public Builder setShipEligible(boolean value) {
       validate(fields()[9], value);
       this.shipEligible = value;
       fieldSetFlags()[9] = true;
@@ -1774,7 +1850,6 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder clearShipEligible() {
-      shipEligible = null;
       fieldSetFlags()[9] = false;
       return this;
     }
@@ -1944,47 +2019,6 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
     }
 
     /**
-     * Gets the value of the 'nextdayEligible' field.
-     *
-     * @return The value.
-     */
-    public Boolean getNextdayEligible() {
-      return nextdayEligible;
-    }
-
-    /**
-     * Sets the value of the 'nextdayEligible' field.
-     *
-     * @param value The value of 'nextdayEligible'.
-     * @return This builder.
-     */
-    public Builder setNextdayEligible(boolean value) {
-      validate(fields()[14], value);
-      this.nextdayEligible = value;
-      fieldSetFlags()[14] = true;
-      return this;
-    }
-
-    /**
-     * Checks whether the 'nextdayEligible' field has been set.
-     *
-     * @return True if the 'nextdayEligible' field has been set, false otherwise.
-     */
-    public boolean hasNextdayEligible() {
-      return fieldSetFlags()[14];
-    }
-
-    /**
-     * Clears the value of the 'nextdayEligible' field.
-     *
-     * @return This builder.
-     */
-    public Builder clearNextdayEligible() {
-      fieldSetFlags()[14] = false;
-      return this;
-    }
-
-    /**
      * Gets the value of the 'isWhiteGlove' field.
      *
      * @return The value.
@@ -2000,9 +2034,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setIsWhiteGlove(boolean value) {
-      validate(fields()[15], value);
+      validate(fields()[14], value);
       this.isWhiteGlove = value;
-      fieldSetFlags()[15] = true;
+      fieldSetFlags()[14] = true;
       return this;
     }
 
@@ -2012,7 +2046,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'isWhiteGlove' field has been set, false otherwise.
      */
     public boolean hasIsWhiteGlove() {
-      return fieldSetFlags()[15];
+      return fieldSetFlags()[14];
     }
 
     /**
@@ -2021,7 +2055,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder clearIsWhiteGlove() {
-      fieldSetFlags()[15] = false;
+      fieldSetFlags()[14] = false;
       return this;
     }
 
@@ -2041,9 +2075,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setHeight(Double value) {
-      validate(fields()[16], value);
+      validate(fields()[15], value);
       this.height = value;
-      fieldSetFlags()[16] = true;
+      fieldSetFlags()[15] = true;
       return this;
     }
 
@@ -2053,7 +2087,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'height' field has been set, false otherwise.
      */
     public boolean hasHeight() {
-      return fieldSetFlags()[16];
+      return fieldSetFlags()[15];
     }
 
     /**
@@ -2063,7 +2097,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearHeight() {
       height = null;
-      fieldSetFlags()[16] = false;
+      fieldSetFlags()[15] = false;
       return this;
     }
 
@@ -2083,9 +2117,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setWidth(Double value) {
-      validate(fields()[17], value);
+      validate(fields()[16], value);
       this.width = value;
-      fieldSetFlags()[17] = true;
+      fieldSetFlags()[16] = true;
       return this;
     }
 
@@ -2095,7 +2129,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'width' field has been set, false otherwise.
      */
     public boolean hasWidth() {
-      return fieldSetFlags()[17];
+      return fieldSetFlags()[16];
     }
 
     /**
@@ -2105,7 +2139,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearWidth() {
       width = null;
-      fieldSetFlags()[17] = false;
+      fieldSetFlags()[16] = false;
       return this;
     }
 
@@ -2125,9 +2159,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setLength(Double value) {
-      validate(fields()[18], value);
+      validate(fields()[17], value);
       this.length = value;
-      fieldSetFlags()[18] = true;
+      fieldSetFlags()[17] = true;
       return this;
     }
 
@@ -2137,7 +2171,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'length' field has been set, false otherwise.
      */
     public boolean hasLength() {
-      return fieldSetFlags()[18];
+      return fieldSetFlags()[17];
     }
 
     /**
@@ -2147,7 +2181,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearLength() {
       length = null;
-      fieldSetFlags()[18] = false;
+      fieldSetFlags()[17] = false;
       return this;
     }
 
@@ -2167,9 +2201,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setVolume(Double value) {
-      validate(fields()[19], value);
+      validate(fields()[18], value);
       this.volume = value;
-      fieldSetFlags()[19] = true;
+      fieldSetFlags()[18] = true;
       return this;
     }
 
@@ -2179,7 +2213,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'volume' field has been set, false otherwise.
      */
     public boolean hasVolume() {
-      return fieldSetFlags()[19];
+      return fieldSetFlags()[18];
     }
 
     /**
@@ -2189,7 +2223,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearVolume() {
       volume = null;
-      fieldSetFlags()[19] = false;
+      fieldSetFlags()[18] = false;
       return this;
     }
 
@@ -2209,9 +2243,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setDimensionUom(CharSequence value) {
-      validate(fields()[20], value);
+      validate(fields()[19], value);
       this.dimensionUom = value;
-      fieldSetFlags()[20] = true;
+      fieldSetFlags()[19] = true;
       return this;
     }
 
@@ -2221,7 +2255,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'dimensionUom' field has been set, false otherwise.
      */
     public boolean hasDimensionUom() {
-      return fieldSetFlags()[20];
+      return fieldSetFlags()[19];
     }
 
     /**
@@ -2231,7 +2265,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearDimensionUom() {
       dimensionUom = null;
-      fieldSetFlags()[20] = false;
+      fieldSetFlags()[19] = false;
       return this;
     }
 
@@ -2251,9 +2285,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setVolumeUom(CharSequence value) {
-      validate(fields()[21], value);
+      validate(fields()[20], value);
       this.volumeUom = value;
-      fieldSetFlags()[21] = true;
+      fieldSetFlags()[20] = true;
       return this;
     }
 
@@ -2263,7 +2297,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'volumeUom' field has been set, false otherwise.
      */
     public boolean hasVolumeUom() {
-      return fieldSetFlags()[21];
+      return fieldSetFlags()[20];
     }
 
     /**
@@ -2273,7 +2307,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearVolumeUom() {
       volumeUom = null;
-      fieldSetFlags()[21] = false;
+      fieldSetFlags()[20] = false;
       return this;
     }
 
@@ -2293,9 +2327,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setWeight(Double value) {
-      validate(fields()[22], value);
+      validate(fields()[21], value);
       this.weight = value;
-      fieldSetFlags()[22] = true;
+      fieldSetFlags()[21] = true;
       return this;
     }
 
@@ -2305,7 +2339,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'weight' field has been set, false otherwise.
      */
     public boolean hasWeight() {
-      return fieldSetFlags()[22];
+      return fieldSetFlags()[21];
     }
 
     /**
@@ -2315,7 +2349,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearWeight() {
       weight = null;
-      fieldSetFlags()[22] = false;
+      fieldSetFlags()[21] = false;
       return this;
     }
 
@@ -2335,9 +2369,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setWeightUOM(CharSequence value) {
-      validate(fields()[23], value);
+      validate(fields()[22], value);
       this.weightUOM = value;
-      fieldSetFlags()[23] = true;
+      fieldSetFlags()[22] = true;
       return this;
     }
 
@@ -2347,7 +2381,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'weightUOM' field has been set, false otherwise.
      */
     public boolean hasWeightUOM() {
-      return fieldSetFlags()[23];
+      return fieldSetFlags()[22];
     }
 
     /**
@@ -2357,7 +2391,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearWeightUOM() {
       weightUOM = null;
-      fieldSetFlags()[23] = false;
+      fieldSetFlags()[22] = false;
       return this;
     }
 
@@ -2377,9 +2411,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setProcessingTime(Long value) {
-      validate(fields()[24], value);
+      validate(fields()[23], value);
       this.processingTime = value;
-      fieldSetFlags()[24] = true;
+      fieldSetFlags()[23] = true;
       return this;
     }
 
@@ -2389,7 +2423,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'processingTime' field has been set, false otherwise.
      */
     public boolean hasProcessingTime() {
-      return fieldSetFlags()[24];
+      return fieldSetFlags()[23];
     }
 
     /**
@@ -2399,7 +2433,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearProcessingTime() {
       processingTime = null;
-      fieldSetFlags()[24] = false;
+      fieldSetFlags()[23] = false;
       return this;
     }
 
@@ -2419,9 +2453,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setCost(CharSequence value) {
-      validate(fields()[25], value);
+      validate(fields()[24], value);
       this.cost = value;
-      fieldSetFlags()[25] = true;
+      fieldSetFlags()[24] = true;
       return this;
     }
 
@@ -2431,7 +2465,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'cost' field has been set, false otherwise.
      */
     public boolean hasCost() {
-      return fieldSetFlags()[25];
+      return fieldSetFlags()[24];
     }
 
     /**
@@ -2441,7 +2475,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearCost() {
       cost = null;
-      fieldSetFlags()[25] = false;
+      fieldSetFlags()[24] = false;
       return this;
     }
 
@@ -2461,9 +2495,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setIsHazmat(Boolean value) {
-      validate(fields()[26], value);
+      validate(fields()[25], value);
       this.isHazmat = value;
-      fieldSetFlags()[26] = true;
+      fieldSetFlags()[25] = true;
       return this;
     }
 
@@ -2473,7 +2507,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'isHazmat' field has been set, false otherwise.
      */
     public boolean hasIsHazmat() {
-      return fieldSetFlags()[26];
+      return fieldSetFlags()[25];
     }
 
     /**
@@ -2483,7 +2517,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearIsHazmat() {
       isHazmat = null;
-      fieldSetFlags()[26] = false;
+      fieldSetFlags()[25] = false;
       return this;
     }
 
@@ -2503,9 +2537,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setShortDescription(CharSequence value) {
-      validate(fields()[27], value);
+      validate(fields()[26], value);
       this.shortDescription = value;
-      fieldSetFlags()[27] = true;
+      fieldSetFlags()[26] = true;
       return this;
     }
 
@@ -2515,7 +2549,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'shortDescription' field has been set, false otherwise.
      */
     public boolean hasShortDescription() {
-      return fieldSetFlags()[27];
+      return fieldSetFlags()[26];
     }
 
     /**
@@ -2525,7 +2559,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearShortDescription() {
       shortDescription = null;
-      fieldSetFlags()[27] = false;
+      fieldSetFlags()[26] = false;
       return this;
     }
 
@@ -2545,9 +2579,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setDepartmentNumber(CharSequence value) {
-      validate(fields()[28], value);
+      validate(fields()[27], value);
       this.departmentNumber = value;
-      fieldSetFlags()[28] = true;
+      fieldSetFlags()[27] = true;
       return this;
     }
 
@@ -2557,7 +2591,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'departmentNumber' field has been set, false otherwise.
      */
     public boolean hasDepartmentNumber() {
-      return fieldSetFlags()[28];
+      return fieldSetFlags()[27];
     }
 
     /**
@@ -2567,7 +2601,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearDepartmentNumber() {
       departmentNumber = null;
-      fieldSetFlags()[28] = false;
+      fieldSetFlags()[27] = false;
       return this;
     }
 
@@ -2587,9 +2621,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setDepartmentName(CharSequence value) {
-      validate(fields()[29], value);
+      validate(fields()[28], value);
       this.departmentName = value;
-      fieldSetFlags()[29] = true;
+      fieldSetFlags()[28] = true;
       return this;
     }
 
@@ -2599,7 +2633,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'departmentName' field has been set, false otherwise.
      */
     public boolean hasDepartmentName() {
-      return fieldSetFlags()[29];
+      return fieldSetFlags()[28];
     }
 
     /**
@@ -2609,7 +2643,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearDepartmentName() {
       departmentName = null;
-      fieldSetFlags()[29] = false;
+      fieldSetFlags()[28] = false;
       return this;
     }
 
@@ -2629,9 +2663,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setImageUrl(CharSequence value) {
-      validate(fields()[30], value);
+      validate(fields()[29], value);
       this.imageUrl = value;
-      fieldSetFlags()[30] = true;
+      fieldSetFlags()[29] = true;
       return this;
     }
 
@@ -2641,7 +2675,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'imageUrl' field has been set, false otherwise.
      */
     public boolean hasImageUrl() {
-      return fieldSetFlags()[30];
+      return fieldSetFlags()[29];
     }
 
     /**
@@ -2651,7 +2685,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      */
     public Builder clearImageUrl() {
       imageUrl = null;
-      fieldSetFlags()[30] = false;
+      fieldSetFlags()[29] = false;
       return this;
     }
 
@@ -2671,9 +2705,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder setLastModifiedDate(org.joda.time.DateTime value) {
-      validate(fields()[31], value);
+      validate(fields()[30], value);
       this.lastModifiedDate = value;
-      fieldSetFlags()[31] = true;
+      fieldSetFlags()[30] = true;
       return this;
     }
 
@@ -2683,7 +2717,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return True if the 'lastModifiedDate' field has been set, false otherwise.
      */
     public boolean hasLastModifiedDate() {
-      return fieldSetFlags()[31];
+      return fieldSetFlags()[30];
     }
 
     /**
@@ -2692,7 +2726,133 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @return This builder.
      */
     public Builder clearLastModifiedDate() {
+      fieldSetFlags()[30] = false;
+      return this;
+    }
+
+    /**
+     * Gets the value of the 'nextdayEligible' field.
+     *
+     * @return The value.
+     */
+    public Boolean getNextdayEligible() {
+      return nextdayEligible;
+    }
+
+    /**
+     * Sets the value of the 'nextdayEligible' field.
+     *
+     * @param value The value of 'nextdayEligible'.
+     * @return This builder.
+     */
+    public Builder setNextdayEligible(Boolean value) {
+      validate(fields()[31], value);
+      this.nextdayEligible = value;
+      fieldSetFlags()[31] = true;
+      return this;
+    }
+
+    /**
+     * Checks whether the 'nextdayEligible' field has been set.
+     *
+     * @return True if the 'nextdayEligible' field has been set, false otherwise.
+     */
+    public boolean hasNextdayEligible() {
+      return fieldSetFlags()[31];
+    }
+
+    /**
+     * Clears the value of the 'nextdayEligible' field.
+     *
+     * @return This builder.
+     */
+    public Builder clearNextdayEligible() {
+      nextdayEligible = null;
       fieldSetFlags()[31] = false;
+      return this;
+    }
+
+    /**
+     * Gets the value of the 'sdndEligibleForDC' field.
+     *
+     * @return The value.
+     */
+    public Boolean getSdndEligibleForDC() {
+      return sdndEligibleForDC;
+    }
+
+    /**
+     * Sets the value of the 'sdndEligibleForDC' field.
+     *
+     * @param value The value of 'sdndEligibleForDC'.
+     * @return This builder.
+     */
+    public Builder setSdndEligibleForDC(Boolean value) {
+      validate(fields()[32], value);
+      this.sdndEligibleForDC = value;
+      fieldSetFlags()[32] = true;
+      return this;
+    }
+
+    /**
+     * Checks whether the 'sdndEligibleForDC' field has been set.
+     *
+     * @return True if the 'sdndEligibleForDC' field has been set, false otherwise.
+     */
+    public boolean hasSdndEligibleForDC() {
+      return fieldSetFlags()[32];
+    }
+
+    /**
+     * Clears the value of the 'sdndEligibleForDC' field.
+     *
+     * @return This builder.
+     */
+    public Builder clearSdndEligibleForDC() {
+      sdndEligibleForDC = null;
+      fieldSetFlags()[32] = false;
+      return this;
+    }
+
+    /**
+     * Gets the value of the 'nextdayEligibleForDC' field.
+     *
+     * @return The value.
+     */
+    public Boolean getNextdayEligibleForDC() {
+      return nextdayEligibleForDC;
+    }
+
+    /**
+     * Sets the value of the 'nextdayEligibleForDC' field.
+     *
+     * @param value The value of 'nextdayEligibleForDC'.
+     * @return This builder.
+     */
+    public Builder setNextdayEligibleForDC(Boolean value) {
+      validate(fields()[33], value);
+      this.nextdayEligibleForDC = value;
+      fieldSetFlags()[33] = true;
+      return this;
+    }
+
+    /**
+     * Checks whether the 'nextdayEligibleForDC' field has been set.
+     *
+     * @return True if the 'nextdayEligibleForDC' field has been set, false otherwise.
+     */
+    public boolean hasNextdayEligibleForDC() {
+      return fieldSetFlags()[33];
+    }
+
+    /**
+     * Clears the value of the 'nextdayEligibleForDC' field.
+     *
+     * @return This builder.
+     */
+    public Builder clearNextdayEligibleForDC() {
+      nextdayEligibleForDC = null;
+      fieldSetFlags()[33] = false;
       return this;
     }
 
@@ -2757,78 +2917,86 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
             fieldSetFlags()[13]
                 ? this.sdndEligible
                 : (Boolean) defaultValue(fields()[13], record.getConversion(13));
-        record.nextdayEligible =
-            fieldSetFlags()[14]
-                ? this.nextdayEligible
-                : (Boolean) defaultValue(fields()[14], record.getConversion(14));
         record.isWhiteGlove =
-            fieldSetFlags()[15]
+            fieldSetFlags()[14]
                 ? this.isWhiteGlove
-                : (Boolean) defaultValue(fields()[15], record.getConversion(15));
+                : (Boolean) defaultValue(fields()[14], record.getConversion(14));
         record.height =
-            fieldSetFlags()[16]
+            fieldSetFlags()[15]
                 ? this.height
-                : (Double) defaultValue(fields()[16], record.getConversion(16));
+                : (Double) defaultValue(fields()[15], record.getConversion(15));
         record.width =
-            fieldSetFlags()[17]
+            fieldSetFlags()[16]
                 ? this.width
-                : (Double) defaultValue(fields()[17], record.getConversion(17));
+                : (Double) defaultValue(fields()[16], record.getConversion(16));
         record.length =
-            fieldSetFlags()[18]
+            fieldSetFlags()[17]
                 ? this.length
-                : (Double) defaultValue(fields()[18], record.getConversion(18));
+                : (Double) defaultValue(fields()[17], record.getConversion(17));
         record.volume =
-            fieldSetFlags()[19]
+            fieldSetFlags()[18]
                 ? this.volume
-                : (Double) defaultValue(fields()[19], record.getConversion(19));
+                : (Double) defaultValue(fields()[18], record.getConversion(18));
         record.dimensionUom =
-            fieldSetFlags()[20]
+            fieldSetFlags()[19]
                 ? this.dimensionUom
-                : (CharSequence) defaultValue(fields()[20], record.getConversion(20));
+                : (CharSequence) defaultValue(fields()[19], record.getConversion(19));
         record.volumeUom =
-            fieldSetFlags()[21]
+            fieldSetFlags()[20]
                 ? this.volumeUom
-                : (CharSequence) defaultValue(fields()[21], record.getConversion(21));
+                : (CharSequence) defaultValue(fields()[20], record.getConversion(20));
         record.weight =
-            fieldSetFlags()[22]
+            fieldSetFlags()[21]
                 ? this.weight
-                : (Double) defaultValue(fields()[22], record.getConversion(22));
+                : (Double) defaultValue(fields()[21], record.getConversion(21));
         record.weightUOM =
-            fieldSetFlags()[23]
+            fieldSetFlags()[22]
                 ? this.weightUOM
-                : (CharSequence) defaultValue(fields()[23], record.getConversion(23));
+                : (CharSequence) defaultValue(fields()[22], record.getConversion(22));
         record.processingTime =
-            fieldSetFlags()[24]
+            fieldSetFlags()[23]
                 ? this.processingTime
-                : (Long) defaultValue(fields()[24], record.getConversion(24));
+                : (Long) defaultValue(fields()[23], record.getConversion(23));
         record.cost =
-            fieldSetFlags()[25]
+            fieldSetFlags()[24]
                 ? this.cost
-                : (CharSequence) defaultValue(fields()[25], record.getConversion(25));
+                : (CharSequence) defaultValue(fields()[24], record.getConversion(24));
         record.isHazmat =
-            fieldSetFlags()[26]
+            fieldSetFlags()[25]
                 ? this.isHazmat
-                : (Boolean) defaultValue(fields()[26], record.getConversion(26));
+                : (Boolean) defaultValue(fields()[25], record.getConversion(25));
         record.shortDescription =
-            fieldSetFlags()[27]
+            fieldSetFlags()[26]
                 ? this.shortDescription
-                : (CharSequence) defaultValue(fields()[27], record.getConversion(27));
+                : (CharSequence) defaultValue(fields()[26], record.getConversion(26));
         record.departmentNumber =
-            fieldSetFlags()[28]
+            fieldSetFlags()[27]
                 ? this.departmentNumber
-                : (CharSequence) defaultValue(fields()[28], record.getConversion(28));
+                : (CharSequence) defaultValue(fields()[27], record.getConversion(27));
         record.departmentName =
-            fieldSetFlags()[29]
+            fieldSetFlags()[28]
                 ? this.departmentName
-                : (CharSequence) defaultValue(fields()[29], record.getConversion(29));
+                : (CharSequence) defaultValue(fields()[28], record.getConversion(28));
         record.imageUrl =
-            fieldSetFlags()[30]
+            fieldSetFlags()[29]
                 ? this.imageUrl
-                : (CharSequence) defaultValue(fields()[30], record.getConversion(30));
+                : (CharSequence) defaultValue(fields()[29], record.getConversion(29));
         record.lastModifiedDate =
-            fieldSetFlags()[31]
+            fieldSetFlags()[30]
                 ? this.lastModifiedDate
-                : (org.joda.time.DateTime) defaultValue(fields()[31], record.getConversion(31));
+                : (org.joda.time.DateTime) defaultValue(fields()[30], record.getConversion(30));
+        record.nextdayEligible =
+            fieldSetFlags()[31]
+                ? this.nextdayEligible
+                : (Boolean) defaultValue(fields()[31], record.getConversion(31));
+        record.sdndEligibleForDC =
+            fieldSetFlags()[32]
+                ? this.sdndEligibleForDC
+                : (Boolean) defaultValue(fields()[32], record.getConversion(32));
+        record.nextdayEligibleForDC =
+            fieldSetFlags()[33]
+                ? this.nextdayEligibleForDC
+                : (Boolean) defaultValue(fields()[33], record.getConversion(33));
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

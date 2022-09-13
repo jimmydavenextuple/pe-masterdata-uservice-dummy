@@ -1,6 +1,7 @@
 package com.hbc.item.domain.outbound;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,4 +40,5 @@ public class ItemResponse implements Serializable {
   private Boolean isHazmat;
   private Long leadTime;
   private Boolean isWhiteGlove;
+  private Map<String, List<String>> inventoryNodeTypes;
 }
