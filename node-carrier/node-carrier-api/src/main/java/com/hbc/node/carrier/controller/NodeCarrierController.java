@@ -4,8 +4,10 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import com.hbc.node.carrier.service.NodeCarrierService;
@@ -192,6 +194,37 @@ public class NodeCarrierController {
         BaseResponse.builder()
             .message("Processing lead time updated successfully for a node carrier")
             .payload(nodeCarrierResponse)
+            .build());
+  }
+
+  @PostMapping("/node-carrier-selection")
+  public ResponseEntity<BaseResponse<NodeCarrierSelectionResponse>> addNodeCarrierSelectionPriority(
+      @Valid @RequestBody NodeCarrierSelectionRequest nodeCarrierSelectionRequest) {
+    var nodeCarrierSelectionPriorityResponse =
+        nodeCarrierService.addNodeCarrierSelectionPriority(nodeCarrierSelectionRequest);
+    logger.info(
+        "Response after addition of node-carrier selection priority :{}",
+        nodeCarrierSelectionPriorityResponse);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier selection priority successfully added")
+            .payload(nodeCarrierSelectionPriorityResponse)
+            .build());
+  }
+
+  @GetMapping("/node-carrier-selection/{orgId}/{serviceOption}/{destinationGeozone}")
+  public ResponseEntity<BaseResponse<List<NodeCarrierSelectionResponse>>>
+      getNodeCarrierSelectionDetails(
+          @NotBlank @PathVariable String orgId,
+          @NotBlank @PathVariable String serviceOption,
+          @NotBlank @PathVariable String destinationGeozone) {
+    var nodeCarrierSelectionList =
+        nodeCarrierService.getNodeCarrierSelectionDetails(orgId, serviceOption, destinationGeozone);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier selection details fetched successfully")
+            .payload(nodeCarrierSelectionList)
             .build());
   }
 }

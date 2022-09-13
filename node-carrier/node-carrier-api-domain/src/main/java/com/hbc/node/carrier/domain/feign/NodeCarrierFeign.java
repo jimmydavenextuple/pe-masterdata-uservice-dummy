@@ -5,6 +5,7 @@ import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -58,4 +59,10 @@ public interface NodeCarrierFeign {
   @PostMapping("/node/carrier/processing-lead-time")
   BaseResponse<NodeCarrierResponse> updateProcessingLeadTime(
       @Valid @RequestBody NodeCarrierRequest nodeCarrierRequest);
+
+  @GetMapping("/node/carrier/node-carrier-selection/{orgId}/{serviceOption}/{destinationGeozone}")
+  BaseResponse<List<NodeCarrierSelectionResponse>> getNodeCarrierSelectionDetails(
+      @NotBlank @PathVariable String orgId,
+      @NotBlank @PathVariable String serviceOption,
+      @NotBlank @PathVariable String destinationGeozone);
 }

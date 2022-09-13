@@ -11,7 +11,7 @@ class InvalidDataExceptionTest {
   @DisplayName("Testing invalid data exception")
   void constructTest() {
     InvalidDataException invalidDataException =
-        new InvalidDataException("Invalid time format", TestUtil.LAST_PICKUP_TIME);
+        new InvalidDataException("Invalid time format", TestUtil.LAST_PICKUP_TIME, null);
 
     Assertions.assertEquals("Invalid time format", invalidDataException.getMessage());
     Assertions.assertEquals(TestUtil.LAST_PICKUP_TIME, invalidDataException.getLastPickupTime());

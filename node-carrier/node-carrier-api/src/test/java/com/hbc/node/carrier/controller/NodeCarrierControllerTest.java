@@ -10,6 +10,7 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import com.hbc.node.carrier.service.NodeCarrierService;
@@ -291,5 +292,77 @@ class NodeCarrierControllerTest {
     Assertions.assertNotNull(response.getBody());
     Assertions.assertNotNull(response.getBody().getPayload());
     verify(nodeCarrierService, times(1)).updateProcessingLeadTime(any());
+  }
+
+  @Test
+  @DisplayName("When node carrier selection is created successfully and response is 200 OK")
+  void createNodeCarrierSelectionTest() {
+    when(nodeCarrierService.addNodeCarrierSelectionPriority(any()))
+        .thenReturn(testUtil.getNodeCarrierSelectionResponse());
+
+    ResponseEntity<BaseResponse<NodeCarrierSelectionResponse>> response =
+        nodeCarrierController.addNodeCarrierSelectionPriority(
+            testUtil.getNodeCarrierSelectionRequest());
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.SERVICE_OPTION,
+        Objects.requireNonNull(response.getBody()).getPayload().getServiceOption());
+    Assertions.assertEquals(
+        TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().getOrgId());
+    verify(nodeCarrierService, times(1)).addNodeCarrierSelectionPriority(any());
+  }
+
+  @Test
+  @DisplayName("When there is somme error in creating node carrier details selection")
+  void saveNodeCarrierSelectionExceptionTest() {
+    when(nodeCarrierService.addNodeCarrierSelectionPriority(any()))
+        .thenThrow(new RuntimeException("Failed to fetch node carrier details list"));
+
+    Exception ex =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                nodeCarrierController.addNodeCarrierSelectionPriority(
+                    testUtil.getNodeCarrierSelectionRequest()));
+
+    Assertions.assertEquals("Failed to fetch node carrier details list", ex.getMessage());
+    verify(nodeCarrierService, times(1)).addNodeCarrierSelectionPriority(any());
+  }
+
+  @Test
+  void getNodeCarrierSelectionList() {
+    when(nodeCarrierService.getNodeCarrierSelectionDetails(anyString(), anyString(), anyString()))
+        .thenReturn(List.of(testUtil.getNodeCarrierSelectionResponse()));
+
+    ResponseEntity<BaseResponse<List<NodeCarrierSelectionResponse>>> response =
+        nodeCarrierController.getNodeCarrierSelectionDetails(
+            TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE, TestUtil.DESTINATION_GEOZONE);
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.SERVICE_OPTION,
+        Objects.requireNonNull(response.getBody()).getPayload().get(0).getServiceOption());
+    Assertions.assertEquals(
+        TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().get(0).getOrgId());
+    verify(nodeCarrierService, times(1))
+        .getNodeCarrierSelectionDetails(anyString(), anyString(), anyString());
+  }
+
+  @Test
+  @DisplayName("When there is somme error in fetching node carrier details selection")
+  void getNodeCarrierSelectionExceptionTest() {
+    when(nodeCarrierService.getNodeCarrierSelectionDetails(any(), any(), any()))
+        .thenThrow(new RuntimeException("Failed to fetch node carrier details list"));
+
+    Exception ex =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                nodeCarrierController.getNodeCarrierSelectionDetails(
+                    TestUtil.ORG_ID, TestUtil.SERVICE_OPTION, TestUtil.DESTINATION_GEOZONE));
+
+    Assertions.assertEquals("Failed to fetch node carrier details list", ex.getMessage());
+    verify(nodeCarrierService, times(1)).getNodeCarrierSelectionDetails(any(), any(), any());
   }
 }
