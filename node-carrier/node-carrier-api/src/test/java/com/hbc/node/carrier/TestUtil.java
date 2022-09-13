@@ -1,10 +1,13 @@
 package com.hbc.node.carrier;
 
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
+import com.hbc.node.carrier.domain.entity.NodeCarrierSelectionEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,6 +21,9 @@ public class TestUtil {
   public static String CARRIER_SERVICE_ID = "carrier-service-id-1";
   public static final String SERVICE_OPTION = "serviceOption-1";
   public static final String SERVICE_OPTION_2 = "serviceOption-2";
+  public static final String SOURCE_GEOZONE = "M1R";
+  public static final String DESTINATION_GEOZONE = "T2P";
+  public static final String PRIORITY = "1";
 
   public static final String LAST_PICKUP_TIME = "5:00";
 
@@ -224,5 +230,35 @@ public class TestUtil {
             .build();
 
     return Arrays.asList(nodeCarrierResponse1, nodeCarrierResponse2);
+  }
+
+  public NodeCarrierSelectionResponse getNodeCarrierSelectionResponse() {
+    return NodeCarrierSelectionResponse.builder()
+        .orgId(ORG_ID)
+        .serviceOption(SERVICE_OPTION)
+        .nodeCarrierSelectionPriority("1")
+        .destinationGeozone(DESTINATION_GEOZONE)
+        .sourceGeozone(SOURCE_GEOZONE)
+        .build();
+  }
+
+  public NodeCarrierSelectionRequest getNodeCarrierSelectionRequest() {
+    return NodeCarrierSelectionRequest.builder()
+        .orgId(ORG_ID)
+        .serviceOption(SERVICE_OPTION)
+        .nodeCarrierSelectionPriority("1")
+        .destinationGeozone(DESTINATION_GEOZONE)
+        .sourceGeozone(SOURCE_GEOZONE)
+        .build();
+  }
+
+  public NodeCarrierSelectionEntity getNodeCarrierSelectionEntity() {
+    NodeCarrierSelectionEntity nodeCarrierEntity = new NodeCarrierSelectionEntity();
+    nodeCarrierEntity.setOrgId(ORG_ID);
+    nodeCarrierEntity.setServiceOption(SERVICE_OPTION);
+    nodeCarrierEntity.setNodeCarrierSelectionPriority(PRIORITY);
+    nodeCarrierEntity.setDestinationGeozone(DESTINATION_GEOZONE);
+    nodeCarrierEntity.setSourceGeozone(SOURCE_GEOZONE);
+    return nodeCarrierEntity;
   }
 }

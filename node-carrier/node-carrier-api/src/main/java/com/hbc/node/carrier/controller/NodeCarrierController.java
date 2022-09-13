@@ -219,10 +219,11 @@ public class NodeCarrierController {
   }
 
   @GetMapping("/selection/priority/{orgId}/{serviceOption}/{destinationGeozone}")
-  public ResponseEntity<BaseResponse<NodeCarrierSelectionResponse>> getNodeCarrierSelectionDetails(
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @PathVariable String serviceOption,
-      @NotBlank @PathVariable String destinationGeozone) {
+  public ResponseEntity<BaseResponse<List<NodeCarrierSelectionResponse>>>
+      getNodeCarrierSelectionDetails(
+          @NotBlank @PathVariable String orgId,
+          @NotBlank @PathVariable String serviceOption,
+          @NotBlank @PathVariable String destinationGeozone) {
     logger.debug("Processing get node carrier selection details");
     try {
       var nodeCarrierSelectionList =

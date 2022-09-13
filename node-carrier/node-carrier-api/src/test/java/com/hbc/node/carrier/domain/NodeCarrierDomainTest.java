@@ -11,8 +11,10 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
+import com.hbc.node.carrier.domain.entity.NodeCarrierSelectionEntity;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import com.hbc.node.carrier.repository.NodeCarrierRepository;
+import com.hbc.node.carrier.repository.NodeCarrierSelectionRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -29,6 +31,8 @@ class NodeCarrierDomainTest {
   @InjectMocks private NodeCarrierDomain nodeCarrierDomain;
 
   @Mock private NodeCarrierRepository nodeCarrierRepository;
+
+  @Mock private NodeCarrierSelectionRepository nodeCarrierSelectionRepository;
 
   @InjectMocks private TestUtil testUtil;
 
@@ -198,5 +202,39 @@ class NodeCarrierDomainTest {
     assertEquals("Error while fetching node carrier list for nodeId and orgId", ex.getMessage());
     verify(nodeCarrierRepository, times(1))
         .findByNodeIdAndOrgIdAndCarrierServiceId(anyString(), anyString(), anyString());
+  }
+
+  @Test
+  @DisplayName("When node carrier is saved successfully")
+  void saveNodeCarrierSelectionEntityTest() throws NodeCarrierDomainException {
+    NodeCarrierSelectionEntity nodeCarrierSelectionEntity =
+        testUtil.getNodeCarrierSelectionEntity();
+    when(nodeCarrierSelectionRepository.save(any())).thenReturn(nodeCarrierSelectionEntity);
+
+    NodeCarrierSelectionEntity nodeCarrierEntity =
+        nodeCarrierDomain.saveNodeCarrierSelectionEntity(testUtil.getNodeCarrierSelectionEntity());
+
+    assertEquals(nodeCarrierEntity, nodeCarrierSelectionEntity);
+    verify(nodeCarrierSelectionRepository, times(1)).save(any());
+  }
+
+  @Test
+  @DisplayName("When there is some error in finding node carrier list")
+  void findNodeCarrierSelectionEntityTest() {
+    when(nodeCarrierSelectionRepository.findByOrgIdAndServiceOptionAndDestinationGeoZone(
+            anyString(), anyString(), anyString()))
+        .thenReturn(List.of(testUtil.getNodeCarrierSelectionEntity()));
+
+    List<NodeCarrierSelectionEntity> responseNodeCarrierList =
+        nodeCarrierDomain.findNodeCarrierByOrgIdAndServiceOptionAndDestinationGeoZone(
+            TestUtil.ORG_ID, TestUtil.SERVICE_OPTION, TestUtil.DESTINATION_GEOZONE);
+
+    assertEquals(TestUtil.SERVICE_OPTION, responseNodeCarrierList.get(0).getServiceOption());
+    assertEquals(TestUtil.ORG_ID, responseNodeCarrierList.get(0).getOrgId());
+    assertEquals(
+        List.of(testUtil.getNodeCarrierSelectionEntity()).size(), responseNodeCarrierList.size());
+
+    verify(nodeCarrierSelectionRepository, times(1))
+        .findByOrgIdAndServiceOptionAndDestinationGeoZone(anyString(), anyString(), anyString());
   }
 }

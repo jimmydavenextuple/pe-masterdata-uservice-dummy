@@ -14,7 +14,9 @@ import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import java.util.Collections;
@@ -380,5 +382,40 @@ class NodeCarrierServiceTest {
         nodeCarrierService.updateProcessingLeadTime(testUtil.getNodeCarrierRequest());
     Assertions.assertNotNull(nodeCarrierResponse);
     verify(nodeCarrierDomain, times(1)).saveNodeCarrierEntity(any());
+  }
+
+  @Test
+  @DisplayName("When node carrier is created successfully")
+  void createNodeCarrierSelectionTest() {
+    NodeCarrierSelectionRequest nodeCarrierSelectionRequest =
+        testUtil.getNodeCarrierSelectionRequest();
+    when(nodeCarrierDomain.saveNodeCarrierSelectionEntity(any()))
+        .thenReturn(testUtil.getNodeCarrierSelectionEntity());
+
+    NodeCarrierSelectionResponse nodeCarrierSelectionResponse =
+        nodeCarrierService.addNodeCarrierSelectionPriority(nodeCarrierSelectionRequest);
+
+    Assertions.assertEquals(
+        nodeCarrierSelectionRequest.getSourceGeozone(),
+        nodeCarrierSelectionResponse.getSourceGeozone());
+    verify(nodeCarrierDomain, times(1)).saveNodeCarrierSelectionEntity(any());
+  }
+
+  @Test
+  void getNodeCarrierSelection() throws NodeCarrierDomainException {
+    when(nodeCarrierDomain.findNodeCarrierByOrgIdAndServiceOptionAndDestinationGeoZone(
+            anyString(), anyString(), anyString()))
+        .thenReturn(List.of(testUtil.getNodeCarrierSelectionEntity()));
+
+    List<NodeCarrierSelectionResponse> nodeCarrierResponseList =
+        nodeCarrierService.getNodeCarrierSelectionDetails(
+            TestUtil.ORG_ID, TestUtil.SERVICE_OPTION, TestUtil.DESTINATION_GEOZONE);
+
+    assertEquals(TestUtil.SERVICE_OPTION, nodeCarrierResponseList.get(0).getServiceOption());
+    assertEquals(TestUtil.ORG_ID, nodeCarrierResponseList.get(0).getOrgId());
+
+    verify(nodeCarrierDomain, times(1))
+        .findNodeCarrierByOrgIdAndServiceOptionAndDestinationGeoZone(
+            anyString(), anyString(), anyString());
   }
 }
