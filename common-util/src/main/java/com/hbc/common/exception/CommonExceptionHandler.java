@@ -78,7 +78,7 @@ public class CommonExceptionHandler {
       }
       return ResponseEntity.badRequest()
           .body(
-              ErrorResponse.builder(ErrorType.ERROR, 0x000003)
+              ErrorResponse.builder(ErrorType.ERROR, 0x000002)
                   .message(BAD_REQUEST)
                   .errorField(
                       invalidFormatCause.getPath().get(0).getFieldName(),
@@ -90,7 +90,7 @@ public class CommonExceptionHandler {
     }
     return ResponseEntity.badRequest()
         .body(
-            ErrorResponse.builder(ErrorType.ERROR, 0x000003)
+            ErrorResponse.builder(ErrorType.ERROR, 0x000002)
                 .message(exception.getMessage())
                 .build());
   }
@@ -122,7 +122,7 @@ public class CommonExceptionHandler {
     slf4jLogger.error(e, e.getMessage(), EMPTY_MAP);
     return ResponseEntity.badRequest()
         .body(
-            ErrorResponse.builder(ErrorType.ERROR, 0x000001)
+            ErrorResponse.builder(ErrorType.ERROR, 0x000002)
                 .message(e.getMessage() + "[" + e.getExceptionCode().getErrorCode() + "]")
                 .build());
   }
@@ -138,6 +138,6 @@ public class CommonExceptionHandler {
   public ResponseEntity<ErrorResponse> handleRuntimeException(Exception e) {
     slf4jLogger.error(e, e.getMessage(), EMPTY_MAP);
     return ResponseEntity.internalServerError()
-        .body(ErrorResponse.builder(ErrorType.ERROR, 0x000001).message(e.getMessage()).build());
+        .body(ErrorResponse.builder(ErrorType.ERROR, 0x000002).message(e.getMessage()).build());
   }
 }
