@@ -27,5 +27,5 @@ public class NodeCarrierSelectionRequest implements Serializable {
   @NotBlank(message = "destinationGeozone can't be blank")
   private String destinationGeozone;
 
-  private String nodeCarrierSelectionPriority;
+  private String priority;
 }

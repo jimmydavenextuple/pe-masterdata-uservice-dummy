@@ -18,5 +18,5 @@ public class NodeCarrierSelectionResponse implements Serializable {
   private String serviceOption;
   private String sourceGeozone;
   private String destinationGeozone;
-  private String nodeCarrierSelectionPriority;
+  private String priority;
 }

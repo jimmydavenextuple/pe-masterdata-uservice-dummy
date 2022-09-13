@@ -23,7 +23,7 @@ public class TestUtil {
   public static final String SERVICE_OPTION_2 = "serviceOption-2";
   public static final String SOURCE_GEOZONE = "M1R";
   public static final String DESTINATION_GEOZONE = "T2P";
-  public static final String PRIORITY = "1";
+  public static final String PRIORITY = "0";
 
   public static final String LAST_PICKUP_TIME = "5:00";
 
@@ -236,7 +236,7 @@ public class TestUtil {
     return NodeCarrierSelectionResponse.builder()
         .orgId(ORG_ID)
         .serviceOption(SERVICE_OPTION)
-        .nodeCarrierSelectionPriority("1")
+        .priority("1")
         .destinationGeozone(DESTINATION_GEOZONE)
         .sourceGeozone(SOURCE_GEOZONE)
         .build();
@@ -246,7 +246,7 @@ public class TestUtil {
     return NodeCarrierSelectionRequest.builder()
         .orgId(ORG_ID)
         .serviceOption(SERVICE_OPTION)
-        .nodeCarrierSelectionPriority("1")
+        .priority("1")
         .destinationGeozone(DESTINATION_GEOZONE)
         .sourceGeozone(SOURCE_GEOZONE)
         .build();
@@ -256,7 +256,7 @@ public class TestUtil {
     NodeCarrierSelectionEntity nodeCarrierEntity = new NodeCarrierSelectionEntity();
     nodeCarrierEntity.setOrgId(ORG_ID);
     nodeCarrierEntity.setServiceOption(SERVICE_OPTION);
-    nodeCarrierEntity.setNodeCarrierSelectionPriority(PRIORITY);
+    nodeCarrierEntity.setPriority(PRIORITY);
     nodeCarrierEntity.setDestinationGeozone(DESTINATION_GEOZONE);
     nodeCarrierEntity.setSourceGeozone(SOURCE_GEOZONE);
     return nodeCarrierEntity;

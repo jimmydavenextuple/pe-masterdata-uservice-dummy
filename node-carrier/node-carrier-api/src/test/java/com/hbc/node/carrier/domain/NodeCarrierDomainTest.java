@@ -222,7 +222,7 @@ class NodeCarrierDomainTest {
   @DisplayName("When there is some error in finding node carrier list")
   void findNodeCarrierSelectionEntityTest() {
     when(nodeCarrierSelectionRepository.findByOrgIdAndServiceOptionAndDestinationGeoZone(
-            anyString(), anyString(), anyString()))
+            anyString(), anyString(), anyString(), anyString()))
         .thenReturn(List.of(testUtil.getNodeCarrierSelectionEntity()));
 
     List<NodeCarrierSelectionEntity> responseNodeCarrierList =
@@ -235,6 +235,7 @@ class NodeCarrierDomainTest {
         List.of(testUtil.getNodeCarrierSelectionEntity()).size(), responseNodeCarrierList.size());
 
     verify(nodeCarrierSelectionRepository, times(1))
-        .findByOrgIdAndServiceOptionAndDestinationGeoZone(anyString(), anyString(), anyString());
+        .findByOrgIdAndServiceOptionAndDestinationGeoZone(
+            anyString(), anyString(), anyString(), anyString());
   }
 }

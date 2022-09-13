@@ -44,7 +44,7 @@ class NodeCarrierEntityTest {
   @Test
   void nodeCarrierSelectionNullDataTest() {
     NodeCarrierSelectionEntity nodeCarrierSelectionEntity = new NodeCarrierSelectionEntity();
-    assertNull(nodeCarrierSelectionEntity.getNodeCarrierSelectionPriority());
+    assertNull(nodeCarrierSelectionEntity.getPriority());
     assertNull(nodeCarrierSelectionEntity.getServiceOption());
     assertNull(nodeCarrierSelectionEntity.getOrgId());
     assertNull(nodeCarrierSelectionEntity.getDestinationGeozone());
@@ -60,7 +60,7 @@ class NodeCarrierEntityTest {
             TestUtil.SOURCE_GEOZONE,
             TestUtil.DESTINATION_GEOZONE,
             TestUtil.PRIORITY);
-    assertNotNull(nodeCarrierSelectionEntity.getNodeCarrierSelectionPriority());
+    assertNotNull(nodeCarrierSelectionEntity.getPriority());
     assertNotNull(nodeCarrierSelectionEntity.getSourceGeozone());
     assertNotNull(nodeCarrierSelectionEntity.getOrgId());
     assertNotNull(nodeCarrierSelectionEntity.getServiceOption());

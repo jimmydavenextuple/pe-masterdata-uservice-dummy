@@ -60,7 +60,7 @@ public interface NodeCarrierFeign {
   BaseResponse<NodeCarrierResponse> updateProcessingLeadTime(
       @Valid @RequestBody NodeCarrierRequest nodeCarrierRequest);
 
-  @GetMapping("/node/carrier/selection/priority/{orgId}/{serviceOption}/{destinationGeozone}")
+  @GetMapping("/node/carrier/node-carrier-selection/{orgId}/{serviceOption}/{destinationGeozone}")
   BaseResponse<List<NodeCarrierSelectionResponse>> getNodeCarrierSelectionDetails(
       @NotBlank @PathVariable String orgId,
       @NotBlank @PathVariable String serviceOption,

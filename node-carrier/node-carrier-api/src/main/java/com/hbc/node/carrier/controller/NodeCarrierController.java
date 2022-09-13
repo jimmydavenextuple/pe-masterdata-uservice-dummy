@@ -197,47 +197,36 @@ public class NodeCarrierController {
             .build());
   }
 
-  @PostMapping("/add/selection/priority")
+  @PostMapping("/node-carrier-selection")
   public ResponseEntity<BaseResponse<NodeCarrierSelectionResponse>> addNodeCarrierSelectionPriority(
       @Valid @RequestBody NodeCarrierSelectionRequest nodeCarrierSelectionRequest) {
     logger.debug("Processing node carrier selection request");
-    try {
-      var nodeCarrierSelectionPriorityResponse =
-          nodeCarrierService.addNodeCarrierSelectionPriority(nodeCarrierSelectionRequest);
-      logger.info(
-          "Response after addition of node-carrier selection priority :{}",
-          nodeCarrierSelectionPriorityResponse);
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Node Carrier selection priority successfully added")
-              .payload(nodeCarrierSelectionPriorityResponse)
-              .build());
-    } catch (Exception e) {
-      logger.error("Failed to addition of node-carrier selection priority details");
-      throw e;
-    }
+    var nodeCarrierSelectionPriorityResponse =
+        nodeCarrierService.addNodeCarrierSelectionPriority(nodeCarrierSelectionRequest);
+    logger.info(
+        "Response after addition of node-carrier selection priority :{}",
+        nodeCarrierSelectionPriorityResponse);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier selection priority successfully added")
+            .payload(nodeCarrierSelectionPriorityResponse)
+            .build());
   }
 
-  @GetMapping("/selection/priority/{orgId}/{serviceOption}/{destinationGeozone}")
+  @GetMapping("/node-carrier-selection/{orgId}/{serviceOption}/{destinationGeozone}")
   public ResponseEntity<BaseResponse<List<NodeCarrierSelectionResponse>>>
       getNodeCarrierSelectionDetails(
           @NotBlank @PathVariable String orgId,
           @NotBlank @PathVariable String serviceOption,
           @NotBlank @PathVariable String destinationGeozone) {
     logger.debug("Processing get node carrier selection details");
-    try {
-      var nodeCarrierSelectionList =
-          nodeCarrierService.getNodeCarrierSelectionDetails(
-              orgId, serviceOption, destinationGeozone);
+    var nodeCarrierSelectionList =
+        nodeCarrierService.getNodeCarrierSelectionDetails(orgId, serviceOption, destinationGeozone);
 
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Node Carrier selection details fetched successfully")
-              .payload(nodeCarrierSelectionList)
-              .build());
-    } catch (Exception e) {
-      logger.error("Failed to get node carrier selection details");
-      throw e;
-    }
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier selection details fetched successfully")
+            .payload(nodeCarrierSelectionList)
+            .build());
   }
 }

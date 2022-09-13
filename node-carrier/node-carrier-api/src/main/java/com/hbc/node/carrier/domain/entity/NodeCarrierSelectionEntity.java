@@ -34,5 +34,5 @@ public class NodeCarrierSelectionEntity {
   @Column(name = "destination_geozone")
   private String destinationGeozone;
 
-  private String nodeCarrierSelectionPriority;
+  private String priority;
 }

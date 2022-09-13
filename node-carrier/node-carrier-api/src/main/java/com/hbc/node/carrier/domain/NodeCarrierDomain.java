@@ -21,6 +21,8 @@ public class NodeCarrierDomain {
 
   private final NodeCarrierSelectionRepository nodeCarrierSelectionRepository;
 
+  private static final String DEFAULT_GEOZONE = "ALL";
+
   public NodeCarrierEntity saveNodeCarrierEntity(NodeCarrierEntity nodeCarrierEntity)
       throws NodeCarrierDomainException {
     try {
@@ -111,6 +113,6 @@ public class NodeCarrierDomain {
           String orgId, String serviceOption, String destinationGeozone) {
 
     return nodeCarrierSelectionRepository.findByOrgIdAndServiceOptionAndDestinationGeoZone(
-        orgId, serviceOption, destinationGeozone);
+        orgId, serviceOption, destinationGeozone, DEFAULT_GEOZONE);
   }
 }
