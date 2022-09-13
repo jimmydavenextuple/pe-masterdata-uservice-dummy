@@ -8,6 +8,7 @@ import static org.mockito.Mockito.*;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.service.UploadBufferService;
+import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -94,7 +95,8 @@ class UploadBufferControllerTest {
   }
 
   @Test
-  void uploadTransitBufferDataSuccessTest() throws CommonServiceException, IOException {
+  void uploadTransitBufferDataSuccessTest()
+      throws CommonServiceException, IOException, CsvException {
     String fileUri = "fileName.csv";
     ResponseEntity<BaseResponse<String>> response =
         getBaseResponse(HttpStatus.OK, "Transit Buffer Data successfully uploaded!");
@@ -110,7 +112,8 @@ class UploadBufferControllerTest {
   }
 
   @Test
-  void uploadTransitBufferDataUploadFailedTest() throws CommonServiceException, IOException {
+  void uploadTransitBufferDataUploadFailedTest()
+      throws CommonServiceException, IOException, CsvException {
     String fileUri = "fileName.csv";
     ResponseEntity<BaseResponse<String>> response =
         getBaseResponse(HttpStatus.BAD_REQUEST, "Transit Buffer Data upload failed!");
@@ -126,7 +129,8 @@ class UploadBufferControllerTest {
   }
 
   @Test
-  void uploadTransitBufferDataPartialUploadTest() throws CommonServiceException, IOException {
+  void uploadTransitBufferDataPartialUploadTest()
+      throws CommonServiceException, IOException, CsvException {
     String fileUri = "fileName.csv";
     ResponseEntity<BaseResponse<String>> response =
         getBaseResponse(
@@ -145,7 +149,8 @@ class UploadBufferControllerTest {
   }
 
   @Test
-  void uploadTransitBufferDataExceptionTest() throws CommonServiceException, IOException {
+  void uploadTransitBufferDataExceptionTest()
+      throws CommonServiceException, IOException, CsvException {
     String fileUri = "fileName.csv";
     when(uploadBufferService.uploadTransitBufferData(any()))
         .thenThrow(new IOException("File not found!"));

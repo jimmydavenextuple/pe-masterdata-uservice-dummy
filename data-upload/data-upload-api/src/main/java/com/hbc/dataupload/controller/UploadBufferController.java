@@ -3,6 +3,7 @@ package com.hbc.dataupload.controller;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.service.UploadBufferService;
+import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,8 @@ public class UploadBufferController {
 
   @PostMapping("/transit-buffer")
   public ResponseEntity<BaseResponse<String>> uploadTransitBufferData(
-      @NotBlank @RequestParam String fileUri) throws IOException, CommonServiceException {
+      @NotBlank @RequestParam String fileUri)
+      throws IOException, CommonServiceException, CsvException {
     log.debug("Processing upload Transit Buffer Data request");
     return uploadBufferService.uploadTransitBufferData(fileUri);
   }

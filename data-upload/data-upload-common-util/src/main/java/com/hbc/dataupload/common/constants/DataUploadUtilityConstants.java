@@ -15,6 +15,8 @@ public class DataUploadUtilityConstants {
   public static final String UPDATE_U = "U";
   public static final String DELETE_D = "D";
   public static final String CARRIER_SERVICE_ID = "carrierServiceId";
+  public static final String CARRIER_SERVICE = "Carrier Service:";
+  public static final String SOURCE_AND_DESTINATION_GEO_ZONE = "Destination FSA / Source FSA ->";
   public static final String NODE_ID = "nodeId";
   public static final String SERVICE_OPTION = "serviceOption";
   public static final String PROCESSING_TIME = "processingTime";

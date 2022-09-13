@@ -3,11 +3,11 @@ package com.hbc.dataupload.common.headers;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ALLOCATION_RULE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BOPIS_ELIGIBLE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_DAYS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_HOURS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_NAME;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
@@ -45,6 +45,7 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SER
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIPPING_STAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIP_TO_HOME;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_AND_DESTINATION_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_NODES;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.START_TIME;
@@ -186,13 +187,10 @@ public class DataUploadUtilityExpectedHeaders {
                 "transit-buffer",
                 List.of(
                     ORG_ID,
-                    CARRIER_SERVICE_ID,
-                    ACTION,
-                    SOURCE_GEO_ZONE,
-                    DESTINATION_GEO_ZONE,
-                    BUFFER_DAYS,
+                    CARRIER_SERVICE,
                     START_TIME,
-                    END_TIME)),
+                    END_TIME,
+                    SOURCE_AND_DESTINATION_GEO_ZONE)),
             Map.entry(
                 "node-carrier-selection",
                 List.of(
