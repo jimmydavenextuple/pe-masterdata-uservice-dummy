@@ -7,14 +7,13 @@ public class ItemUtils {
 
   private static final String SDND_ELIGIBLE = "sdndEligible";
   private static final String SDND_ELIGIBLE_FOR_DC = "sdndEligibleForDC";
-  private static final String NEXT_DAY_ELIGIBLE = "nextDayEligible";
-  private static final String NEXT_DAY_ELIGIBLE_FOR_DC = "nextDayEligibleForDC";
+  private static final String NEXT_DAY_ELIGIBLE = "nextdayEligible";
+  private static final String NEXT_DAY_ELIGIBLE_FOR_DC = "nextdayEligibleForDC";
   private static final String SDND = "sdnd";
   private static final String NEXT_DAY = "nextday";
   private static final String STORE = "Store";
   private static final String FC = "FC";
   private static final String MFC = "MFC";
-  private static final String EXPRESS_ELIGIBLE = "expressEligible";
 
   public static Map<String, List<String>> getInventoryNodeTypeMap(
       Map<String, Boolean> serviceOptionEligibilityMap) {
@@ -38,25 +37,5 @@ public class ItemUtils {
     inventoryNodeTypeMap.put(SDND, sdndEligibleNodeTypeList);
     inventoryNodeTypeMap.put(NEXT_DAY, nextdayEligibleNodeTypeList);
     return inventoryNodeTypeMap;
-  }
-
-  public static Map<String, Boolean> getServiceOptionEligibitiesMapForTest() {
-    Map<String, Boolean> serviceOptionEligibilities = new HashMap<>();
-    serviceOptionEligibilities.put(EXPRESS_ELIGIBLE, true);
-    serviceOptionEligibilities.put(SDND_ELIGIBLE, true);
-    serviceOptionEligibilities.put(SDND_ELIGIBLE_FOR_DC, true);
-    serviceOptionEligibilities.put(NEXT_DAY_ELIGIBLE, true);
-    serviceOptionEligibilities.put(NEXT_DAY_ELIGIBLE_FOR_DC, true);
-    return serviceOptionEligibilities;
-  }
-
-  public static Map<String, Boolean> getServiceOptEligiblityMapForExceptionTest() {
-    Map<String, Boolean> serviceOptionEligibilities = new HashMap<>();
-    serviceOptionEligibilities.put(EXPRESS_ELIGIBLE, false);
-    serviceOptionEligibilities.put(SDND_ELIGIBLE, false);
-    serviceOptionEligibilities.put(SDND_ELIGIBLE_FOR_DC, false);
-    serviceOptionEligibilities.put(NEXT_DAY_ELIGIBLE, false);
-    serviceOptionEligibilities.put(NEXT_DAY_ELIGIBLE_FOR_DC, false);
-    return serviceOptionEligibilities;
   }
 }

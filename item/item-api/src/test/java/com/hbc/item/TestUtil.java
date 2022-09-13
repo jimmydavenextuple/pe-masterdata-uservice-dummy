@@ -8,6 +8,7 @@ import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
 import com.hbc.item.util.ItemUtils;
 import com.hbc.streams.promising.messages.PromisingRecord;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.joda.time.DateTime;
@@ -31,10 +32,15 @@ public class TestUtil {
   public static Double PROCESSING_TIME = 0.0;
   public static Boolean IS_HAZMAT = Boolean.TRUE;
   public static String COST = "cost-1";
+  private static final String SDND_ELIGIBLE = "sdndEligible";
+  private static final String SDND_ELIGIBLE_FOR_DC = "sdndEligibleForDC";
+  private static final String NEXT_DAY_ELIGIBLE = "nextdayEligible";
+  private static final String NEXT_DAY_ELIGIBLE_FOR_DC = "nextdayEligibleForDC";
+  private static final String EXPRESS_ELIGIBLE = "expressEligible";
 
   public ItemEntity getItemEntity() {
     Map<String, Boolean> serviceOptionEligibilities =
-        ItemUtils.getServiceOptionEligibitiesMapForTest();
+        TestUtil.getServiceOptionEligibitiesMapForTest();
     Map<String, List<String>> inventoryNodeTypes =
         ItemUtils.getInventoryNodeTypeMap(serviceOptionEligibilities);
 
@@ -68,7 +74,7 @@ public class TestUtil {
 
   public ItemCreationRequest getItemCreationRequest() {
     Map<String, Boolean> serviceOptionEligibilities =
-        ItemUtils.getServiceOptionEligibitiesMapForTest();
+        TestUtil.getServiceOptionEligibitiesMapForTest();
 
     return ItemCreationRequest.builder()
         .itemId(ITEM_ID)
@@ -95,7 +101,7 @@ public class TestUtil {
 
   public ItemResponse getItemResponse() {
     Map<String, Boolean> serviceOptionEligibilities =
-        ItemUtils.getServiceOptionEligibitiesMapForTest();
+        TestUtil.getServiceOptionEligibitiesMapForTest();
     Map<String, List<String>> inventoryNodeTypes =
         ItemUtils.getInventoryNodeTypeMap(serviceOptionEligibilities);
 
@@ -244,5 +250,25 @@ public class TestUtil {
     id.setOrgId(ORG_ID);
     id.setUom(UOM);
     return id;
+  }
+
+  public static Map<String, Boolean> getServiceOptionEligibitiesMapForTest() {
+    Map<String, Boolean> serviceOptionEligibilities = new HashMap<>();
+    serviceOptionEligibilities.put(EXPRESS_ELIGIBLE, true);
+    serviceOptionEligibilities.put(SDND_ELIGIBLE, true);
+    serviceOptionEligibilities.put(SDND_ELIGIBLE_FOR_DC, true);
+    serviceOptionEligibilities.put(NEXT_DAY_ELIGIBLE, true);
+    serviceOptionEligibilities.put(NEXT_DAY_ELIGIBLE_FOR_DC, true);
+    return serviceOptionEligibilities;
+  }
+
+  public static Map<String, Boolean> getServiceOptEligiblityMapForExceptionTest() {
+    Map<String, Boolean> serviceOptionEligibilities = new HashMap<>();
+    serviceOptionEligibilities.put(EXPRESS_ELIGIBLE, false);
+    serviceOptionEligibilities.put(SDND_ELIGIBLE, false);
+    serviceOptionEligibilities.put(SDND_ELIGIBLE_FOR_DC, false);
+    serviceOptionEligibilities.put(NEXT_DAY_ELIGIBLE, false);
+    serviceOptionEligibilities.put(NEXT_DAY_ELIGIBLE_FOR_DC, false);
+    return serviceOptionEligibilities;
   }
 }

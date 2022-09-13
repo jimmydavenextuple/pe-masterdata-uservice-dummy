@@ -53,10 +53,9 @@ class ItemServiceTest {
   @Test
   void addItemExceptionTest() throws ItemDomainException {
     ItemEntity itemEntity = testUtil.getItemEntity();
-    itemEntity.setServiceOptionEligibilities(
-        ItemUtils.getServiceOptEligiblityMapForExceptionTest());
+    itemEntity.setServiceOptionEligibilities(TestUtil.getServiceOptEligiblityMapForExceptionTest());
     itemEntity.setInventoryNodeTypes(
-        ItemUtils.getInventoryNodeTypeMap(ItemUtils.getServiceOptEligiblityMapForExceptionTest()));
+        ItemUtils.getInventoryNodeTypeMap(TestUtil.getServiceOptEligiblityMapForExceptionTest()));
     ItemCreationRequest itemCreationRequest = testUtil.getItemCreationRequest();
     itemCreationRequest.setUom(null);
     when(itemDomain.saveItemEntity(any(ItemEntity.class))).thenReturn(itemEntity);
