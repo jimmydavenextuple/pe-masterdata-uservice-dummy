@@ -40,4 +40,52 @@ class NodeCarrierEntityTest {
     assertNotNull(nodeCarrierId.getOrgId());
     assertNotNull(nodeCarrierId.getServiceOption());
   }
+
+  @Test
+  void nodeCarrierSelectionNullDataTest() {
+    NodeCarrierSelectionEntity nodeCarrierSelectionEntity = new NodeCarrierSelectionEntity();
+    assertNull(nodeCarrierSelectionEntity.getPriority());
+    assertNull(nodeCarrierSelectionEntity.getServiceOption());
+    assertNull(nodeCarrierSelectionEntity.getOrgId());
+    assertNull(nodeCarrierSelectionEntity.getDestinationGeozone());
+    assertNull(nodeCarrierSelectionEntity.getSourceGeozone());
+  }
+
+  @Test
+  void nodeCarrierSelectionTest() {
+    NodeCarrierSelectionEntity nodeCarrierSelectionEntity =
+        new NodeCarrierSelectionEntity(
+            TestUtil.ORG_ID,
+            TestUtil.SERVICE_OPTION,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE,
+            TestUtil.PRIORITY);
+    assertNotNull(nodeCarrierSelectionEntity.getPriority());
+    assertNotNull(nodeCarrierSelectionEntity.getSourceGeozone());
+    assertNotNull(nodeCarrierSelectionEntity.getOrgId());
+    assertNotNull(nodeCarrierSelectionEntity.getServiceOption());
+  }
+
+  @Test
+  void nodeCarrierSelectionIDNullDataTest() {
+    NodeCarrierSelectionId nodeCarrierSelectionId = new NodeCarrierSelectionId();
+    assertNull(nodeCarrierSelectionId.getServiceOption());
+    assertNull(nodeCarrierSelectionId.getOrgId());
+    assertNull(nodeCarrierSelectionId.getDestinationGeozone());
+    assertNull(nodeCarrierSelectionId.getSourceGeozone());
+  }
+
+  @Test
+  void nodeCarrierSelectionIDTest() {
+    NodeCarrierSelectionId nodeCarrierSelectionId =
+        new NodeCarrierSelectionId(
+            TestUtil.ORG_ID,
+            TestUtil.SERVICE_OPTION,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE);
+    assertNotNull(nodeCarrierSelectionId.getDestinationGeozone());
+    assertNotNull(nodeCarrierSelectionId.getSourceGeozone());
+    assertNotNull(nodeCarrierSelectionId.getOrgId());
+    assertNotNull(nodeCarrierSelectionId.getServiceOption());
+  }
 }

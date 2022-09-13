@@ -1,10 +1,13 @@
 package com.hbc.node.carrier.domain.mapper;
 
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
+import com.hbc.node.carrier.domain.entity.NodeCarrierSelectionEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -33,4 +36,13 @@ public interface NodeCarrierMapper {
 
   List<NodeCarrierResponse> toNodeCarrierResponseList(
       List<NodeCarrierEntity> nodeCarrierEntityList);
+
+  NodeCarrierSelectionEntity nodeCarrierSelectionRequestToEntity(
+      NodeCarrierSelectionRequest nodeCarrierSelectionRequest);
+
+  NodeCarrierSelectionResponse toNodeCarrierSelectionResponse(
+      NodeCarrierSelectionEntity saveNodeCarrierSelectionEntity);
+
+  List<NodeCarrierSelectionResponse> toNodeCarrierSelectionResponseList(
+      List<NodeCarrierSelectionEntity> nodeCarrierByOrgIdAndServiceOptionAndDestinationGeoZone);
 }
