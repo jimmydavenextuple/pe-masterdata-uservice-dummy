@@ -200,7 +200,6 @@ public class NodeCarrierController {
   @PostMapping("/node-carrier-selection")
   public ResponseEntity<BaseResponse<NodeCarrierSelectionResponse>> addNodeCarrierSelectionPriority(
       @Valid @RequestBody NodeCarrierSelectionRequest nodeCarrierSelectionRequest) {
-    logger.debug("Processing node carrier selection request");
     var nodeCarrierSelectionPriorityResponse =
         nodeCarrierService.addNodeCarrierSelectionPriority(nodeCarrierSelectionRequest);
     logger.info(
@@ -219,7 +218,6 @@ public class NodeCarrierController {
           @NotBlank @PathVariable String orgId,
           @NotBlank @PathVariable String serviceOption,
           @NotBlank @PathVariable String destinationGeozone) {
-    logger.debug("Processing get node carrier selection details");
     var nodeCarrierSelectionList =
         nodeCarrierService.getNodeCarrierSelectionDetails(orgId, serviceOption, destinationGeozone);
 
