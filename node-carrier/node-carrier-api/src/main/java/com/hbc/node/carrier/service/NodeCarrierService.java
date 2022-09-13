@@ -6,9 +6,11 @@ import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.mapper.NodeCarrierMapper;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import com.hbc.postgres.config.ReaderDS;
@@ -246,5 +248,22 @@ public class NodeCarrierService {
       throw new InvalidDataException(
           "Processing lead time can not be negative or empty", null, processingLeadTime);
     }
+  }
+
+  public NodeCarrierSelectionResponse addNodeCarrierSelectionPriority(
+      NodeCarrierSelectionRequest nodeCarrierSelectionRequest) {
+
+    var nodeCarrierSelectionEntity =
+        INSTANCE.nodeCarrierSelectionRequestToEntity(nodeCarrierSelectionRequest);
+    return INSTANCE.toNodeCarrierSelectionResponse(
+        nodeCarrierDomain.saveNodeCarrierSelectionEntity(nodeCarrierSelectionEntity));
+  }
+
+  public List<NodeCarrierSelectionResponse> getNodeCarrierSelectionDetails(
+      String orgId, String serviceOption, String destinationGeozone) {
+
+    return INSTANCE.toNodeCarrierSelectionResponseList(
+        nodeCarrierDomain.findNodeCarrierByOrgIdAndServiceOptionAndDestinationGeoZone(
+            orgId, serviceOption, destinationGeozone));
   }
 }

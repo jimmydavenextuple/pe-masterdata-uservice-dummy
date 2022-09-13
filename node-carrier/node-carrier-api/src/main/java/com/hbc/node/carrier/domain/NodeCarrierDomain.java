@@ -1,8 +1,10 @@
 package com.hbc.node.carrier.domain;
 
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
+import com.hbc.node.carrier.domain.entity.NodeCarrierSelectionEntity;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import com.hbc.node.carrier.repository.NodeCarrierRepository;
+import com.hbc.node.carrier.repository.NodeCarrierSelectionRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,8 @@ public class NodeCarrierDomain {
 
   private static final Logger logger = LoggerFactory.getLogger(NodeCarrierDomain.class);
   private final NodeCarrierRepository nodeCarrierRepository;
+
+  private final NodeCarrierSelectionRepository nodeCarrierSelectionRepository;
 
   public NodeCarrierEntity saveNodeCarrierEntity(NodeCarrierEntity nodeCarrierEntity)
       throws NodeCarrierDomainException {
@@ -94,5 +98,19 @@ public class NodeCarrierDomain {
       throw new NodeCarrierDomainException(
           "Error while fetching node carrier list for nodeId and orgId", nodeId, orgId, null, null);
     }
+  }
+
+  public NodeCarrierSelectionEntity saveNodeCarrierSelectionEntity(
+      NodeCarrierSelectionEntity nodeCarrierSelectionEntity) {
+
+    return nodeCarrierSelectionRepository.save(nodeCarrierSelectionEntity);
+  }
+
+  public List<NodeCarrierSelectionEntity>
+      findNodeCarrierByOrgIdAndServiceOptionAndDestinationGeoZone(
+          String orgId, String serviceOption, String destinationGeozone) {
+
+    return nodeCarrierSelectionRepository.findByOrgIdAndServiceOptionAndDestinationGeoZone(
+        orgId, serviceOption, destinationGeozone);
   }
 }
