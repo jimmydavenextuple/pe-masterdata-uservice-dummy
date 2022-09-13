@@ -259,6 +259,7 @@ public class NodeCarrierService {
         nodeCarrierDomain.saveNodeCarrierSelectionEntity(nodeCarrierSelectionEntity));
   }
 
+  @ReaderDS
   public List<NodeCarrierSelectionResponse> getNodeCarrierSelectionDetails(
       String orgId, String serviceOption, String destinationGeozone) {
 
