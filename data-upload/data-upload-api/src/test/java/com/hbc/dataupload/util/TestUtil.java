@@ -59,6 +59,7 @@ import com.hbc.dataupload.domain.dto.CarrierTransitDto;
 import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
 import com.hbc.dataupload.domain.pojo.CarrierServiceCalendars;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
@@ -739,6 +740,20 @@ public class TestUtil {
         .message("")
         .success(true)
         .payload(getCommonConfigurationDto(ORG_ID, TYPE, KEY, VALUE))
+        .build();
+  }
+
+  public BaseResponse<NodeCarrierSelectionResponse> getSuccessfulBaseResponse() {
+    return BaseResponse.builder().success(true).payload(getNodeCarrierSelectionResponse()).build();
+  }
+
+  public NodeCarrierSelectionResponse getNodeCarrierSelectionResponse() {
+    return NodeCarrierSelectionResponse.builder()
+        .orgId(ORG_ID)
+        .serviceOption(SERVICE_OPTION)
+        .priority("1")
+        .destinationGeozone(DESTINATION_GEOZONE)
+        .sourceGeozone(SOURCE_GEOZONE)
         .build();
   }
 

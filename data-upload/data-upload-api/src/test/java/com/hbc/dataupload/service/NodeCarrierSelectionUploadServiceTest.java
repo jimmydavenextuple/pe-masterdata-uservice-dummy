@@ -18,10 +18,11 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.common.configuration.api.domain.dto.CommonConfigurationDto;
 import com.hbc.common.configuration.api.domain.feign.CommonConfigFeign;
-import com.hbc.common.configuration.api.domain.inbound.CreateCommonConfigurationRequest;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.util.TestUtil;
+import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,6 +47,7 @@ class NodeCarrierSelectionUploadServiceTest {
   @InjectMocks NodeCarrierSelectionUploadService nodeCarrierSelectionUploadService;
   @InjectMocks private TestUtil testUtil;
   @Mock private CommonConfigFeign commonConfigFeign;
+  @Mock private NodeCarrierFeign nodeCarrierFeign;
 
   @BeforeEach
   public void setUp() {
@@ -67,8 +69,8 @@ class NodeCarrierSelectionUploadServiceTest {
 
     BaseResponse<CommonConfigurationDto> baseResponse =
         testUtil.getSuccessfulBaseResponseForNodeCarrierSelection();
-    when(commonConfigFeign.createCommonConfiguration(any(CreateCommonConfigurationRequest.class)))
-        .thenReturn(baseResponse);
+    when(nodeCarrierFeign.addNodeCarrierSelectionPriority(any(NodeCarrierSelectionRequest.class)))
+        .thenReturn(testUtil.getSuccessfulBaseResponse());
     when(commonConfigFeign.deleteCommonConfiguration(anyString(), anyString(), anyString()))
         .thenReturn(baseResponse);
     ResponseEntity<BaseResponse<String>> response =
@@ -92,8 +94,8 @@ class NodeCarrierSelectionUploadServiceTest {
 
     BaseResponse<CommonConfigurationDto> baseResponse =
         testUtil.getSuccessfulBaseResponseForNodeCarrierSelection();
-    when(commonConfigFeign.createCommonConfiguration(any(CreateCommonConfigurationRequest.class)))
-        .thenReturn(baseResponse);
+    when(nodeCarrierFeign.addNodeCarrierSelectionPriority(any(NodeCarrierSelectionRequest.class)))
+        .thenReturn(testUtil.getSuccessfulBaseResponse());
     when(commonConfigFeign.deleteCommonConfiguration(anyString(), anyString(), anyString()))
         .thenReturn(baseResponse);
     ResponseEntity<BaseResponse<String>> response =
@@ -120,8 +122,8 @@ class NodeCarrierSelectionUploadServiceTest {
     BaseResponse<CommonConfigurationDto> failedBaseResponse =
         testUtil.getFailedBaseResponseForNodeCarrierSelection();
 
-    when(commonConfigFeign.createCommonConfiguration(any(CreateCommonConfigurationRequest.class)))
-        .thenReturn(successfulBaseResponse);
+    when(nodeCarrierFeign.addNodeCarrierSelectionPriority(any(NodeCarrierSelectionRequest.class)))
+        .thenReturn(testUtil.getSuccessfulBaseResponse());
     when(commonConfigFeign.deleteCommonConfiguration(anyString(), anyString(), anyString()))
         .thenReturn(failedBaseResponse);
     ResponseEntity<BaseResponse<String>> response =

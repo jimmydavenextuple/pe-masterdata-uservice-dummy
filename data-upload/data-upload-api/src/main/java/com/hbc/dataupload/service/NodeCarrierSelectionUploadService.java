@@ -17,11 +17,13 @@ import static com.hbc.dataupload.helper.NodeCarrierSelectionUploadConstants.NODE
 
 import com.hbc.common.configuration.api.domain.dto.CommonConfigurationDto;
 import com.hbc.common.configuration.api.domain.feign.CommonConfigFeign;
-import com.hbc.common.configuration.api.domain.inbound.CreateCommonConfigurationRequest;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.common.constants.NodeCarrierSelectionPriorityEnum;
 import com.hbc.dataupload.common.utils.DataUploadUtil;
+import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -49,6 +51,8 @@ public class NodeCarrierSelectionUploadService {
   private long maxRows;
 
   private final CommonConfigFeign commonConfigFeign;
+
+  private final NodeCarrierFeign nodeCarrierFeign;
 
   public ResponseEntity<BaseResponse<String>> nodeCarrierSelectionUpload(String fileUri)
       throws CommonServiceException, IOException {
@@ -108,15 +112,17 @@ public class NodeCarrierSelectionUploadService {
 
         try {
           if (action.equalsIgnoreCase(UPDATE_U)) {
-            var createCommonConfigurationRequest =
-                CreateCommonConfigurationRequest.builder()
+            var nodeCarrierSelectionRequest =
+                NodeCarrierSelectionRequest.builder()
                     .orgId(orgId)
-                    .type("NODE_CARRIER_SELECTION_PRIORITY")
-                    .key(key)
-                    .value(value)
+                    .sourceGeozone(sourceGeozone)
+                    .destinationGeozone(destinationGeozone)
+                    .serviceOption(serviceOption)
+                    .priority(value)
                     .build();
-            BaseResponse<CommonConfigurationDto> baseResponse =
-                commonConfigFeign.createCommonConfiguration(createCommonConfigurationRequest);
+
+            BaseResponse<NodeCarrierSelectionResponse> baseResponse =
+                nodeCarrierFeign.addNodeCarrierSelectionPriority(nodeCarrierSelectionRequest);
             nodeCarrierSelectionResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else if (action.equalsIgnoreCase(DELETE_D)) {

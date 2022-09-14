@@ -3,6 +3,7 @@ package com.hbc.node.carrier.domain.feign;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
@@ -65,4 +66,8 @@ public interface NodeCarrierFeign {
       @NotBlank @PathVariable String orgId,
       @NotBlank @PathVariable String serviceOption,
       @NotBlank @PathVariable String destinationGeozone);
+
+  @PostMapping("/node/carrier/node-carrier-selection")
+  BaseResponse<NodeCarrierSelectionResponse> addNodeCarrierSelectionPriority(
+      @Valid @RequestBody NodeCarrierSelectionRequest nodeCarrierSelectionRequest);
 }
