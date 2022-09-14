@@ -28,7 +28,7 @@ public class ProcessingLeadTimesRaw {
   private String serviceOption;
 
   @CsvBindByName(column = PROCESSING_TIME)
-  private Double processingTime;
+  private String processingTime;
 
   @CsvBindByName(column = ACTION_TYPE)
   @NotEmpty

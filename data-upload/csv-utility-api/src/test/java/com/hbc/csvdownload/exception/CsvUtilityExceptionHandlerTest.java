@@ -152,4 +152,13 @@ class CsvUtilityExceptionHandlerTest {
     Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, errorResponse.getStatusCode());
     Assertions.assertNotNull(errorResponse.getBody());
   }
+
+  @Test
+  void handleCsvDataValidationException() {
+    CsvDataValidationException exception = new CsvDataValidationException("Invalid csv data");
+    ResponseEntity<ErrorResponse> errorResponseResponse =
+        csvUtilityExceptionHandler.handleCsvDataValidationException(exception);
+    Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponseResponse.getStatusCode());
+    Assertions.assertNotNull(errorResponseResponse.getBody());
+  }
 }

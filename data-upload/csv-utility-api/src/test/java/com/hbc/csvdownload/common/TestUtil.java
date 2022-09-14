@@ -114,7 +114,7 @@ public class TestUtil {
     processingLeadTimesRaw.setNodeId(NODE_ID);
     processingLeadTimesRaw.setOrgId(ORG_ID);
     processingLeadTimesRaw.setServiceOption(SERVICE_OPTION);
-    processingLeadTimesRaw.setProcessingTime(PROCESSING_TIME);
+    processingLeadTimesRaw.setProcessingTime(String.valueOf(PROCESSING_TIME));
 
     return processingLeadTimesRaw;
   }
