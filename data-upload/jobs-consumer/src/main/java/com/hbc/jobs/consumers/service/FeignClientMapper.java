@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Stopwatch;
 import com.hbc.common.context.CurrentThreadContext;
+import com.hbc.common.response.error.FieldError;
 import com.hbc.common.util.JsonUtil;
 import com.hbc.jobs.consumers.exception.FeignClientMapperException;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 public interface FeignClientMapper {
@@ -91,9 +93,22 @@ public interface FeignClientMapper {
       recordStatusDto.setException(e.getClass().getName());
       recordStatusDto.setStatusCode(e.status());
       recordStatusDto.setStatus(FAILURE);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
+      if (errorResponse.getPayload() != null
+          && !CollectionUtils.isEmpty(errorResponse.getPayload().getFields())) {
+        Map<String, FieldError> errorFieldsMap = errorResponse.getPayload().getFields();
+        String errorMessage =
+            errorFieldsMap.keySet().stream()
+                .filter(key -> !ObjectUtils.isEmpty(errorFieldsMap.get(key).getErrorMessage()))
+                .map(key -> errorFieldsMap.get(key).getErrorMessage())
+                .findFirst()
+                .orElse("");
+        recordStatusDto.setErrorMessage(errorMessage);
+      } else {
+        recordStatusDto.setErrorMessage(errorResponse.getMessage());
+      }
       recordStatusDto.setResponseBodyPresent(!ObjectUtils.isEmpty(e.contentUTF8()));
       recordStatusDto.setResponseBody(e.contentUTF8());
-      recordStatusDto.setErrorMessage(ExceptionUtils.parseFeignException(e).getMessage());
     } catch (Exception e) {
       log.error("Error while performing the bulk action", e);
       recordStatusDto.setException(e.getClass().getName());

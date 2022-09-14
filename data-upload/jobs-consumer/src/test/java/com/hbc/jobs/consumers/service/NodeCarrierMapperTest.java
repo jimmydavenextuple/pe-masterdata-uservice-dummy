@@ -84,7 +84,7 @@ class NodeCarrierMapperTest {
   void callApiUpdateAction() throws NodeCarrierMapperException {
     Object object = testUtil.getProcessingLeadTime("U");
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
-    when(nodeCarrierFeign.updateProcessingLeadTime(any()))
+    when(nodeCarrierFeign.createNodeCarrier(any()))
         .thenReturn(BaseResponse.builder().payload(testUtil.getNodeCarrierResponse()).build());
     ResponseEntity<BaseResponse<NodeCarrierResponse>> res =
         (ResponseEntity<BaseResponse<NodeCarrierResponse>>) nodeCarrierMapper.callApi(object, null);
@@ -113,12 +113,4 @@ class NodeCarrierMapperTest {
             NodeCarrierMapperException.class, () -> nodeCarrierMapper.callApi(object, null));
     Assertions.assertNotNull(exception);
   }
-
-  //        when(capacityServiceClient.createOne(any()))
-  //          .thenThrow(
-  //              new FeignException.BadRequest(
-  //                  "testMsg",
-  //                  Request.create(HttpMethod.GET, "", new HashMap<>(), null, null, null),
-  //                  new JSONObject().toString().getBytes(),
-  //                  new HashMap<>()));
 }
