@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -225,6 +226,26 @@ public class NodeCarrierController {
         BaseResponse.builder()
             .message("Node Carrier selection details fetched successfully")
             .payload(nodeCarrierSelectionList)
+            .build());
+  }
+
+  @DeleteMapping("/{nodeId}/{orgId}/{serviceOption}")
+  public ResponseEntity<BaseResponse<NodeCarrierResponse>>
+      deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
+          @NotBlank @PathVariable String nodeId,
+          @NotBlank @PathVariable String orgId,
+          @RequestParam String carrierServiceId,
+          @NotBlank @PathVariable String serviceOption)
+          throws NodeCarrierDomainException, CommonServiceException {
+    logger.debug("Processing delete node carrier");
+
+    var nodeCarrierResponse =
+        nodeCarrierService.deleteNodeCarrier(nodeId, orgId, carrierServiceId, serviceOption);
+    logger.info("Response after deletion of node-carrier :{}", nodeCarrierResponse);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier deleted successfully")
+            .payload(nodeCarrierResponse)
             .build());
   }
 }

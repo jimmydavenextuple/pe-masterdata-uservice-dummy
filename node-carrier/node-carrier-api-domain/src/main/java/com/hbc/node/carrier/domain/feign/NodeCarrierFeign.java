@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
     name = "pe-config-node-carrier",
@@ -70,4 +71,11 @@ public interface NodeCarrierFeign {
   @PostMapping("/node/carrier/node-carrier-selection")
   BaseResponse<NodeCarrierSelectionResponse> addNodeCarrierSelectionPriority(
       @Valid @RequestBody NodeCarrierSelectionRequest nodeCarrierSelectionRequest);
+
+  @DeleteMapping("/node/carrier/{nodeId}/{orgId}/{serviceOption}")
+  BaseResponse<NodeCarrierResponse> deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
+      @NotBlank @PathVariable String nodeId,
+      @NotBlank @PathVariable String orgId,
+      @RequestParam String carrierServiceId,
+      @NotBlank @PathVariable String serviceOption);
 }

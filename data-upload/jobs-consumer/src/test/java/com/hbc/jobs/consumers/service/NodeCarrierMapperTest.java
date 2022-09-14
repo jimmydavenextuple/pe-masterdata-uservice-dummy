@@ -96,7 +96,8 @@ class NodeCarrierMapperTest {
   void callApiDeleteAction() throws NodeCarrierMapperException {
     Object object = testUtil.getProcessingLeadTime("D");
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
-    when(nodeCarrierFeign.deleteNodeCarrier(any(), any(), any(), any()))
+    when(nodeCarrierFeign.deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
+            any(), any(), any(), any()))
         .thenReturn(BaseResponse.builder().payload(testUtil.getNodeCarrierResponse()).build());
     ResponseEntity<BaseResponse<NodeCarrierResponse>> res =
         (ResponseEntity<BaseResponse<NodeCarrierResponse>>) nodeCarrierMapper.callApi(object, null);

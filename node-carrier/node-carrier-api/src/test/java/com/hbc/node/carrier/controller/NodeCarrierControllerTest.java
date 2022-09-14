@@ -365,4 +365,23 @@ class NodeCarrierControllerTest {
     Assertions.assertEquals("Failed to fetch node carrier details list", ex.getMessage());
     verify(nodeCarrierService, times(1)).getNodeCarrierSelectionDetails(any(), any(), any());
   }
+
+  @Test
+  @DisplayName("When node carrier is deleted successfully and response is 200 OK")
+  void deleteNodeCarrierByOrgIdNodeIdAndServiceOption()
+      throws NodeCarrierDomainException, CommonServiceException {
+    when(nodeCarrierService.deleteNodeCarrier(any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeCarrierResponse());
+
+    ResponseEntity<BaseResponse<NodeCarrierResponse>> response =
+        nodeCarrierController.deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
+            TestUtil.NODE_ID, TestUtil.ORG_ID, null, TestUtil.SERVICE_OPTION);
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.NODE_ID, Objects.requireNonNull(response.getBody()).getPayload().getNodeId());
+    Assertions.assertEquals(
+        TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().getOrgId());
+    verify(nodeCarrierService, times(1)).deleteNodeCarrier(any(), any(), any(), any());
+  }
 }

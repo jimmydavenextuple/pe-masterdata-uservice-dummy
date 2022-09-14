@@ -98,7 +98,7 @@ public class NodeCarrierMapper implements FeignClientMapper {
                 INSTANCE.convertToNodeCarrierRequest(processingLeadTime)));
       } else if ("D".equals(processingLeadTime.getActionType())) {
         return ResponseEntity.ok(
-            nodeCarrierFeign.deleteNodeCarrier(
+            nodeCarrierFeign.deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
                 processingLeadTime.getNodeId(),
                 processingLeadTime.getOrgId(),
                 processingLeadTime.getCarrierServiceId(),
