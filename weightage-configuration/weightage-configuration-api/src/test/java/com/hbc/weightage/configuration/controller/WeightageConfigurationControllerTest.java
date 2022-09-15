@@ -19,6 +19,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.weightage.configuration.TestUtil;
+import com.hbc.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
@@ -253,5 +254,19 @@ class WeightageConfigurationControllerTest {
         });
     verify(weightageConfigurationService, times(1))
         .deleteWeightageConfiguration(anyString(), anyString(), anyString());
+  }
+
+  @Test
+  void getWeightageCacheKeysTest() throws PromiseEngineException {
+    List<WeightageCacheKeyDto> weightageCacheKeyDtoList = testUtil.getWeightageCacheKeyDtoList();
+    when(weightageConfigurationService.getAllWeightageCacheKeys(any()))
+        .thenReturn(weightageCacheKeyDtoList);
+
+    ResponseEntity<BaseResponse<List<WeightageCacheKeyDto>>> responseEntity =
+        weightageConfigurationController.getWeightageCacheKeys(2);
+
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), STATUS_CODE);
+    assertEquals(weightageCacheKeyDtoList.size(), responseEntity.getBody().getPayload().size());
+    verify(weightageConfigurationService, times(1)).getAllWeightageCacheKeys(any());
   }
 }

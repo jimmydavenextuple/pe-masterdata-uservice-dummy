@@ -15,6 +15,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.weightage.configuration.TestUtil;
+import com.hbc.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 class WeightageConfigurationServiceTest {
@@ -174,5 +176,19 @@ class WeightageConfigurationServiceTest {
     WeightageConfigurationDto deleted_weightageConfigurationDto =
         weightageConfigurationService.deleteWeightageConfiguration(ORG_ID, TYPE, KEYS.get(0));
     assertEquals(weightageConfiguration.getOrgId(), deleted_weightageConfigurationDto.getOrgId());
+  }
+
+  @Test
+  void getAllWeightageCacheKeysTest() throws PromiseEngineException {
+    List<WeightageConfiguration> weightageConfigurationList =
+        testUtil.getWeightageConfigurationList();
+
+    when(weightageConfigurationDomain.getAllWeightageConfiguration(any()))
+        .thenReturn(weightageConfigurationList);
+
+    List<WeightageCacheKeyDto> response = weightageConfigurationService.getAllWeightageCacheKeys(2);
+    assertEquals(2, response.size());
+    assertEquals(weightageConfigurationList.get(0).getType(), response.get(0).getType());
+    verify(weightageConfigurationDomain, Mockito.times(1)).getAllWeightageConfiguration(any());
   }
 }

@@ -1,5 +1,6 @@
 package com.hbc.carrier;
 
+import com.hbc.carrier.domain.dto.CarrierCacheKeyDto;
 import com.hbc.carrier.domain.entity.CarrierServiceEntity;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
@@ -214,5 +215,23 @@ public class TestUtil {
     pageParams.setSortBy(sortBy);
     pageParams.setSortOrder(sortOrder);
     return pageParams;
+  }
+
+  public List<CarrierCacheKeyDto> getCarrierCacheKeyDtoList() {
+    CarrierCacheKeyDto carrierCacheKeyDto1 =
+        CarrierCacheKeyDto.builder()
+            .orgId(ORG_ID)
+            .carrierId(CARRIER_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .build();
+
+    CarrierCacheKeyDto carrierCacheKeyDto2 =
+        CarrierCacheKeyDto.builder()
+            .orgId(ORG_ID)
+            .carrierId(CARRIER_ID_2)
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .build();
+
+    return List.of(carrierCacheKeyDto1, carrierCacheKeyDto2);
   }
 }

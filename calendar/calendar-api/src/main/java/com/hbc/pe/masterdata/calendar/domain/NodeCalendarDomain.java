@@ -41,4 +41,13 @@ public class NodeCalendarDomain {
           "Unable to fetch node calendar", e, null, orgId, nodeId, null);
     }
   }
+
+  public List<NodeCalendarEntity> getAllNodeCalendar(Integer limit) throws CalendarDomainException {
+    try {
+      return nodeCalendarRepository.findAllNodeCalendarByLimit(limit);
+    } catch (Exception e) {
+      throw new CalendarDomainException(
+          "Unable to fetch all node calendars", e, null, null, null, null);
+    }
+  }
 }

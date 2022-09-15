@@ -238,4 +238,30 @@ class NodeCarrierDomainTest {
         .findByOrgIdAndServiceOptionAndDestinationGeoZone(
             anyString(), anyString(), anyString(), anyString());
   }
+
+  @Test
+  void getAllNodeCarriersTest() throws NodeCarrierDomainException {
+    List<NodeCarrierEntity> nodeCarrierEntities = testUtil.getNodeCarrierEntityList();
+
+    when(nodeCarrierRepository.findAllNodeCarriersByLimit(any())).thenReturn(nodeCarrierEntities);
+
+    List<NodeCarrierEntity> response = nodeCarrierDomain.getAllNodeCarriers(2);
+
+    assertEquals(2, response.size());
+    assertEquals(nodeCarrierEntities.get(0).getNodeId(), response.get(0).getNodeId());
+    verify(nodeCarrierRepository, times(1)).findAllNodeCarriersByLimit(any());
+  }
+
+  @Test
+  void getAllNodeCarriersExceptionTest() {
+    when(nodeCarrierRepository.findAllNodeCarriersByLimit(any()))
+        .thenThrow(new RuntimeException("Error while fetching node carrier list"));
+
+    Exception ex =
+        Assertions.assertThrows(
+            NodeCarrierDomainException.class, () -> nodeCarrierDomain.getAllNodeCarriers(2));
+
+    assertEquals("Error while fetching node carrier list", ex.getMessage());
+    verify(nodeCarrierRepository, times(1)).findAllNodeCarriersByLimit(any());
+  }
 }

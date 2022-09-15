@@ -185,4 +185,32 @@ class CarrierServiceDomainTest {
     verify(carrierServiceRepository, times(1))
         .findCarrierServicesByOrgId(anyString(), any(Pageable.class));
   }
+
+  @Test
+  void getAllCarrierServiceEntitiesTest() throws CarrierServiceDomainException {
+    List<CarrierServiceEntity> carrierServiceEntities = testUtil.getCarrierServiceEntityList();
+
+    when(carrierServiceRepository.findAllCarriersByLimit(any())).thenReturn(carrierServiceEntities);
+
+    List<CarrierServiceEntity> response = carrierServiceDomain.getAllCarrierServiceEntities(2);
+
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(
+        carrierServiceEntities.get(0).getCarrierId(), response.get(0).getCarrierId());
+    verify(carrierServiceRepository, times(1)).findAllCarriersByLimit(any());
+  }
+
+  @Test
+  void getAllCarrierServiceEntitiesExceptionTest() {
+    when(carrierServiceRepository.findAllCarriersByLimit(any()))
+        .thenThrow(new RuntimeException("Error while fetching all carrier services"));
+
+    Exception exception =
+        assertThrows(
+            CarrierServiceDomainException.class,
+            () -> carrierServiceDomain.getAllCarrierServiceEntities(2));
+
+    Assertions.assertEquals("Error while fetching all carrier services", exception.getMessage());
+    verify(carrierServiceRepository, times(1)).findAllCarriersByLimit(any());
+  }
 }

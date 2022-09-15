@@ -8,6 +8,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.node.TestUtil;
 import com.hbc.node.domain.NodeDomain;
+import com.hbc.node.domain.dto.NodeCacheKeyDto;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.inbound.NodeRequest;
@@ -188,5 +189,18 @@ class NodeServiceTest {
     Assertions.assertEquals(
         "Invalid sort order, consider giving either ASC or DESC", exception.getMessage());
     verify(nodeDomain, Mockito.times(0)).getNodeByOrgId(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getAllNodeCacheKeysTest() throws NodeDomainException {
+    List<NodeEntity> nodeEntities = testUtil.getNodeEntityList();
+
+    when(nodeDomain.getAllNodeEntities(any())).thenReturn(nodeEntities);
+
+    List<NodeCacheKeyDto> response = nodeService.getAllNodeCacheKeys(2);
+
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(nodeEntities.get(0).getNodeId(), response.get(0).getNodeId());
+    verify(nodeDomain, times(1)).getAllNodeEntities(any());
   }
 }

@@ -1,6 +1,7 @@
 package com.hbc.node;
 
 import com.hbc.common.pojo.PageParams;
+import com.hbc.node.domain.dto.NodeCacheKeyDto;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.inbound.NodeRequest;
@@ -289,5 +290,15 @@ public class TestUtil {
         "sdndEligible", Boolean.TRUE,
         "expressEligible", Boolean.TRUE,
         "nextdayEligible", Boolean.TRUE);
+  }
+
+  public List<NodeCacheKeyDto> getNodeCacheKeysDtoList() {
+    NodeCacheKeyDto nodeCacheKeyDto1 =
+        NodeCacheKeyDto.builder().nodeId(NODE_ID).orgId(ORG_ID).build();
+
+    NodeCacheKeyDto nodeCacheKeyDto2 =
+        NodeCacheKeyDto.builder().nodeId(NODE_ID_2).orgId(ORG_ID).build();
+
+    return List.of(nodeCacheKeyDto1, nodeCacheKeyDto2);
   }
 }

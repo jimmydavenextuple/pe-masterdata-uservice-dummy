@@ -65,4 +65,14 @@ public class NodeCarrierServiceCalendarDomain {
           carrierServiceId);
     }
   }
+
+  public List<NodeCarrierServiceCalendarEntity> getAllNodeCarrierServiceCalendars(Integer limit)
+      throws CalendarDomainException {
+    try {
+      return nodeCarrierServiceCalendarRepository.findAllNodeCarrierServiceCalendars(limit);
+    } catch (Exception e) {
+      throw new CalendarDomainException(
+          "Unable to fetch all node carrier service calendars", e, null, null, null, null);
+    }
+  }
 }

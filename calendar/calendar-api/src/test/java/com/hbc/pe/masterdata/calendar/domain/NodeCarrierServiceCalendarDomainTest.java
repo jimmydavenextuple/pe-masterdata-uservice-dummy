@@ -146,4 +146,37 @@ class NodeCarrierServiceCalendarDomainTest {
     verify(nodeCarrierServiceCalendarRepository, times(1))
         .findAllNodeCarrierServiceCalendar(any(), any(), any());
   }
+
+  @Test
+  void getAllNodeCarrierServiceCalendarsTest() throws CalendarDomainException {
+    List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntities =
+        testUtil.getNodeCarrierServiceCalendarEntityList();
+
+    when(nodeCarrierServiceCalendarRepository.findAllNodeCarrierServiceCalendars(any()))
+        .thenReturn(nodeCarrierServiceCalendarEntities);
+
+    List<NodeCarrierServiceCalendarEntity> response =
+        nodeCarrierServiceCalendarDomain.getAllNodeCarrierServiceCalendars(2);
+
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(
+        nodeCarrierServiceCalendarEntities.get(0).getCalendarId(), response.get(0).getCalendarId());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .findAllNodeCarrierServiceCalendars(any());
+  }
+
+  @Test
+  void getAllNodeCarrierServiceCalendarsExceptionTest() {
+    when(nodeCarrierServiceCalendarRepository.findAllNodeCarrierServiceCalendars(any()))
+        .thenThrow(new RuntimeException("Unable to fetch all node carrier service calendars"));
+
+    CalendarDomainException ex =
+        Assertions.assertThrows(
+            CalendarDomainException.class,
+            () -> nodeCarrierServiceCalendarDomain.getAllNodeCarrierServiceCalendars(2));
+
+    Assertions.assertEquals("Unable to fetch all node carrier service calendars", ex.getMessage());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .findAllNodeCarrierServiceCalendars(any());
+  }
 }

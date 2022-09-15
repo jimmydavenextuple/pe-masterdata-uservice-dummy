@@ -5,10 +5,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hbc.calendar.domain.dto.NodeCalendarCacheKeyDto;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.NodeCalendarDomain;
+import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
@@ -103,5 +105,18 @@ class NodeCalendarServiceTest {
     Assertions.assertEquals(
         TestUtil.DESCRIPTION, Objects.requireNonNull(resp.get(0).getDescription()));
     verify(nodeCalendarDomain, times(1)).getNodeCalendar(any(), any());
+  }
+
+  @Test
+  void getAllNodeCalendarCacheKeysTest() throws CalendarDomainException {
+    List<NodeCalendarEntity> nodeCalendarEntityList = testUtil.getNodeCalendarEntityList();
+
+    when(nodeCalendarDomain.getAllNodeCalendar(any())).thenReturn(nodeCalendarEntityList);
+
+    List<NodeCalendarCacheKeyDto> response = nodeCalendarService.getAllNodeCalendarCacheKeys(2);
+
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(nodeCalendarEntityList.get(0).getNodeId(), response.get(0).getNodeId());
+    verify(nodeCalendarDomain, times(1)).getAllNodeCalendar(any());
   }
 }

@@ -11,6 +11,7 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.TestUtil;
+import com.hbc.node.domain.dto.NodeCacheKeyDto;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
@@ -238,5 +239,20 @@ class NodeControllerTest {
         "Next Uri should not be null");
 
     verify(nodeService, times(1)).getNodeListByOrgId(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getNodeCacheKeysTest() throws NodeDomainException {
+    List<NodeCacheKeyDto> nodeCacheKeyDtoList = testUtil.getNodeCacheKeysDtoList();
+
+    when(nodeService.getAllNodeCacheKeys(any())).thenReturn(nodeCacheKeyDtoList);
+
+    ResponseEntity<BaseResponse<List<NodeCacheKeyDto>>> response =
+        nodeController.getNodeCacheKeys(2);
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(nodeCacheKeyDtoList, response.getBody().getPayload());
+
+    verify(nodeService, times(1)).getAllNodeCacheKeys(any());
   }
 }

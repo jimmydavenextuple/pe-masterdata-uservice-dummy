@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.hbc.carrier.TestUtil;
+import com.hbc.carrier.domain.dto.CarrierCacheKeyDto;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
@@ -276,5 +277,20 @@ class CarrierServiceControllerTest {
 
     verify(carrierServiceService, times(1))
         .getCarrierServiceList(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getCarrierCacheKeysTest() throws CarrierServiceDomainException {
+    List<CarrierCacheKeyDto> carrierCacheKeyDtoList = testUtil.getCarrierCacheKeyDtoList();
+
+    when(carrierServiceService.getAllCarrierCacheKeys(any())).thenReturn(carrierCacheKeyDtoList);
+
+    ResponseEntity<BaseResponse<List<CarrierCacheKeyDto>>> responseEntity =
+        carrierServiceController.getCarrierCacheKeys(2);
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals(2, responseEntity.getBody().getPayload().size());
+
+    verify(carrierServiceService, times(1)).getAllCarrierCacheKeys(any());
   }
 }
