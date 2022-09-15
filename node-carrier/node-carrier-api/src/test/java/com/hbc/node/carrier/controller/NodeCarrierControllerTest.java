@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.carrier.TestUtil;
+import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
@@ -384,6 +385,23 @@ class NodeCarrierControllerTest {
     Assertions.assertEquals(
         TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().getOrgId());
     verify(nodeCarrierService, times(1)).deleteNodeCarrier(any(), any(), any(), any());
+  }
+
+  @Test
+  void getNodeCarrierListCacheKeysTest() throws NodeCarrierDomainException {
+    List<NodeCarrierListCacheKeyDto> nodeCarrierListCacheKeyDtoList =
+        testUtil.getNodeCarrierListCacheKeyDtoList();
+
+    when(nodeCarrierService.getAllNodeCarrierCacheKeys(any()))
+        .thenReturn(nodeCarrierListCacheKeyDtoList);
+
+    ResponseEntity<BaseResponse<List<NodeCarrierListCacheKeyDto>>> responseEntity =
+        nodeCarrierController.getNodeCarrierListCacheKeys(2);
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals(2, responseEntity.getBody().getPayload().size());
+
+    verify(nodeCarrierService, times(1)).getAllNodeCarrierCacheKeys(any());
   }
 
   @Test

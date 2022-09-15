@@ -8,6 +8,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.hbc.carrier.TestUtil;
 import com.hbc.carrier.domain.CarrierServiceDomain;
+import com.hbc.carrier.domain.dto.CarrierCacheKeyDto;
 import com.hbc.carrier.domain.entity.CarrierServiceEntity;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 
@@ -226,5 +228,20 @@ class CarrierServiceServiceTest {
     assertEquals("Invalid sort order, consider giving either ASC or DESC", exception.getMessage());
     verify(carrierServiceDomain, times(0))
         .findCarrierServiceListByOrgId(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getAllCarrierCacheKeysTest() throws CarrierServiceDomainException {
+    List<CarrierServiceEntity> carrierServiceEntities = testUtil.getCarrierServiceEntityList();
+
+    when(carrierServiceDomain.getAllCarrierServiceEntities(any()))
+        .thenReturn(carrierServiceEntities);
+
+    List<CarrierCacheKeyDto> response = carrierServiceService.getAllCarrierCacheKeys(2);
+
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(
+        carrierServiceEntities.get(0).getCarrierId(), response.get(0).getCarrierId());
+    verify(carrierServiceDomain, Mockito.times(1)).getAllCarrierServiceEntities(any());
   }
 }

@@ -165,4 +165,27 @@ class NodeDomainTest {
     Assertions.assertEquals("Error while finding node list", exception.getMessage());
     verify(nodeRepository, times(1)).findNodeByOrgId(anyString(), any(Pageable.class));
   }
+
+  @Test
+  void getAllNodeEntitiesTest() throws NodeDomainException {
+    List<NodeEntity> nodeEntities = testUtil.getNodeEntityList();
+    when(nodeRepository.findAllNodeEntities(any())).thenReturn(nodeEntities);
+
+    List<NodeEntity> responseList = nodeDomain.getAllNodeEntities(2);
+    Assertions.assertEquals(2, responseList.size());
+    Assertions.assertEquals(nodeEntities.get(0).getNodeId(), responseList.get(0).getNodeId());
+
+    verify(nodeRepository, times(1)).findAllNodeEntities(any());
+  }
+
+  @Test
+  void getAllNodeEntitiesExceptionTest() {
+    when(nodeRepository.findAllNodeEntities(any()))
+        .thenThrow(new RuntimeException("Error while fetching all node records"));
+
+    Exception exception =
+        assertThrows(NodeDomainException.class, () -> nodeDomain.getAllNodeEntities(2));
+    Assertions.assertEquals("Error while fetching all node records", exception.getMessage());
+    verify(nodeRepository, times(1)).findAllNodeEntities(any());
+  }
 }

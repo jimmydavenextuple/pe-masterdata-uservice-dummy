@@ -3,6 +3,7 @@ package com.hbc.carrier.controller;
 import static com.hbc.common.constants.CommonConstants.CARRIER_DEFAULT_SORT_BY;
 import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 
+import com.hbc.carrier.domain.dto.CarrierCacheKeyDto;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
@@ -14,6 +15,7 @@ import com.hbc.common.pojo.PageParams;
 import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -151,6 +154,20 @@ public class CarrierServiceController {
         BaseResponse.builder()
             .message("CarrierService list fetched successfully")
             .payload(pagePayload)
+            .build());
+  }
+
+  @GetMapping("/get-all-cache-keys")
+  public ResponseEntity<BaseResponse<List<CarrierCacheKeyDto>>> getCarrierCacheKeys(
+      @RequestParam Integer limit) throws CarrierServiceDomainException {
+    logger.debug("Processing get Carrier Cache Keys");
+
+    var response = carrierserviceService.getAllCarrierCacheKeys(limit);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Carrier Cache Keys fetched successfully")
+            .payload(response)
             .build());
   }
 

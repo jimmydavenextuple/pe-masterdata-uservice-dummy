@@ -2,6 +2,7 @@ package com.hbc.node.carrier.controller;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionDeleteRequest;
@@ -248,6 +249,20 @@ public class NodeCarrierController {
         BaseResponse.builder()
             .message("Node Carrier deleted successfully")
             .payload(nodeCarrierResponse)
+            .build());
+  }
+
+  @GetMapping("/get-all-cache-keys")
+  public ResponseEntity<BaseResponse<List<NodeCarrierListCacheKeyDto>>> getNodeCarrierListCacheKeys(
+      @RequestParam Integer limit) throws NodeCarrierDomainException {
+    logger.debug("Processing get Node Carrier List Cache Keys");
+
+    var response = nodeCarrierService.getAllNodeCarrierCacheKeys(limit);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier Cache Keys fetched successfully")
+            .payload(response)
             .build());
   }
 

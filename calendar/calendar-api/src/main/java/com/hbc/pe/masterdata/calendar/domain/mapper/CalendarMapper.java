@@ -1,5 +1,8 @@
 package com.hbc.pe.masterdata.calendar.domain.mapper;
 
+import com.hbc.calendar.domain.dto.CarrierCalendarCacheKeyDto;
+import com.hbc.calendar.domain.dto.NodeCalendarCacheKeyDto;
+import com.hbc.calendar.domain.dto.NodeCarrierCalendarCacheKeyDto;
 import com.hbc.calendar.domain.inbound.CalendarRequest;
 import com.hbc.calendar.domain.inbound.CarrierServiceCalendarRequest;
 import com.hbc.calendar.domain.inbound.NodeCalendarRequest;
@@ -48,5 +51,14 @@ public interface CalendarMapper {
       NodeCarrierServiceCalendarEntity nodeCarrierServiceCalendarEntity);
 
   List<NodeCarrierServiceCalendarResponse> convertToNodeCarrierServiceCalendarResponseList(
+      List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntityList);
+
+  List<NodeCalendarCacheKeyDto> convertToNodeCalendarCacheKeyDtoList(
+      List<NodeCalendarEntity> nodeCalendarEntityList);
+
+  List<CarrierCalendarCacheKeyDto> convertToCarrierCalendarCacheKeyDtoList(
+      List<CarrierServiceCalendarEntity> carrierServiceCalendarEntityList);
+
+  List<NodeCarrierCalendarCacheKeyDto> convertToNodeCarrierCalendarCacheKeyDtoList(
       List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntityList);
 }

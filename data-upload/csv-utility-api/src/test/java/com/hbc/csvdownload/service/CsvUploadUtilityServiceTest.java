@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.TestUtil;
+import com.hbc.csvdownload.exception.CsvDataValidationException;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
 import com.hbc.csvdownload.exception.InvalidActionType;
@@ -63,6 +64,33 @@ class CsvUploadUtilityServiceTest {
 
     String res = csvUploadUtilityService.uploadProcessingLeadTimesCsv(TestUtil.ORG_ID, csvFile);
     Assertions.assertFalse(ObjectUtils.isEmpty(res));
+  }
+
+  @Test
+  void uploadProcessingLeadTimesCsvInvalidProcessingLeadTimeException() throws IOException {
+    MultipartFile csvFile = mock(MultipartFile.class);
+    String csvFileContent =
+        "#CommentedLine1\n"
+            + "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+            + "1554,BAY,SDND,invalid,U\n"
+            + "1560,BAY,SDND,2,U\n"
+            + "1101,BAY,SDND,2,U\n"
+            + "1518,BAY,NEXTDAY,6,D\n"
+            + "1634,BAY,EXPRESS,30.92,U\n"
+            + "1601,BAY,EXPRESS,22.55,U\n"
+            + "1125,BAY,EXPRESS,19.90,D\n"
+            + "1114,BAY,SDND,24.97,U";
+    when(csvFile.getInputStream())
+        .thenReturn(
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CsvDataValidationException.class,
+            () -> csvUploadUtilityService.uploadProcessingLeadTimesCsv(TestUtil.ORG_ID, csvFile));
+    Assertions.assertNotNull(exception);
   }
 
   @Test
@@ -286,9 +314,7 @@ class CsvUploadUtilityServiceTest {
   }
 
   @Test
-  void uploadTransitTimesCsvNullTransitTime()
-      throws IOException, CsvFormatValidationFailedException, CsvException, JsonParsingException,
-          JobSubmissionException {
+  void uploadTransitTimesCsvNullTransitTime() throws IOException {
     MultipartFile csvFile = mock(MultipartFile.class);
 
     String csvFileContent =
@@ -305,15 +331,12 @@ class CsvUploadUtilityServiceTest {
             new ByteArrayInputStream(csvFileContent.getBytes()),
             new ByteArrayInputStream(csvFileContent.getBytes()));
 
-    JobDto jobDto = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
+    Exception exception =
+        Assertions.assertThrows(
+            CsvDataValidationException.class,
+            () -> csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile));
 
-    when(jobsDashboardClient.processJobJsonOffline(any(), any(), any()))
-        .thenReturn(BaseResponse.builder().payload(jobDto).build());
-
-    String res = csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile);
-
-    Assertions.assertFalse(ObjectUtils.isEmpty(res));
-    verify(jobsDashboardClient, times(1)).processJobJsonOffline(any(), any(), any());
+    Assertions.assertNotNull(exception);
   }
 
   @Test
@@ -337,6 +360,32 @@ class CsvUploadUtilityServiceTest {
     Exception exception =
         Assertions.assertThrows(
             CsvFormatValidationFailedException.class,
+            () -> csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void uploadTransitTimesCsvInvalidTransitDays() throws IOException {
+    MultipartFile csvFile = mock(MultipartFile.class);
+
+    String csvFileContent =
+        "orgId,BAY,,,,,,,,,\n"
+            + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+            + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
+            + "DFSA1,invalid,9.96,9.96\n"
+            + "DFSA2,10,9,9.9\n"
+            + "DFSA3,10,9,9\n";
+
+    when(csvFile.getInputStream())
+        .thenReturn(
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()),
+            new ByteArrayInputStream(csvFileContent.getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CsvDataValidationException.class,
             () -> csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile));
 
     Assertions.assertNotNull(exception);

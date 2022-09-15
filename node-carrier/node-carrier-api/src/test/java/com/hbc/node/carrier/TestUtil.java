@@ -1,5 +1,6 @@
 package com.hbc.node.carrier;
 
+import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.entity.NodeCarrierSelectionEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
@@ -19,6 +20,7 @@ public class TestUtil {
   public static final String NODE_ID = "node-1";
   public static final String ORG_ID = "org-1";
   private static final String CARRIER_SERVICE_ID_2 = "CarrierServiceId2";
+  private static final String NODE_ID_2 = "node-2";
   public static String CARRIER_SERVICE_ID = "carrier-service-id-1";
   public static final String SERVICE_OPTION = "serviceOption-1";
   public static final String SERVICE_OPTION_2 = "serviceOption-2";
@@ -261,6 +263,24 @@ public class TestUtil {
     nodeCarrierEntity.setDestinationGeozone(DESTINATION_GEOZONE);
     nodeCarrierEntity.setSourceGeozone(SOURCE_GEOZONE);
     return nodeCarrierEntity;
+  }
+
+  public List<NodeCarrierListCacheKeyDto> getNodeCarrierListCacheKeyDtoList() {
+    NodeCarrierListCacheKeyDto nodeCarrierListCacheKeyDto1 =
+        NodeCarrierListCacheKeyDto.builder()
+            .nodeId(NODE_ID)
+            .orgId(ORG_ID)
+            .serviceOption(SERVICE_OPTION)
+            .build();
+
+    NodeCarrierListCacheKeyDto nodeCarrierListCacheKeyDto2 =
+        NodeCarrierListCacheKeyDto.builder()
+            .nodeId(NODE_ID_2)
+            .orgId(ORG_ID)
+            .serviceOption(SERVICE_OPTION)
+            .build();
+
+    return List.of(nodeCarrierListCacheKeyDto1, nodeCarrierListCacheKeyDto2);
   }
 
   public NodeCarrierSelectionDeleteRequest getNodeCarrierSelectionDeleteRequest() {

@@ -29,4 +29,7 @@ public interface NodeCarrierServiceCalendarRepository
       nativeQuery = true)
   List<NodeCarrierServiceCalendarEntity> findNodeCarrierServiceCalendar(
       String orgId, String nodeId, String carrierServiceId, String carrierServiceOption);
+
+  @Query(value = "SELECT * FROM node_carrier_service_calendars LIMIT ?1", nativeQuery = true)
+  List<NodeCarrierServiceCalendarEntity> findAllNodeCarrierServiceCalendars(Integer limit);
 }

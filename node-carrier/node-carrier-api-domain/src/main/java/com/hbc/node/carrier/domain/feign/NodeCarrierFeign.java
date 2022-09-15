@@ -1,6 +1,7 @@
 package com.hbc.node.carrier.domain.feign;
 
 import com.hbc.common.response.BaseResponse;
+import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionDeleteRequest;
@@ -11,6 +12,7 @@ import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,6 +81,10 @@ public interface NodeCarrierFeign {
       @NotBlank @PathVariable String orgId,
       @RequestParam String carrierServiceId,
       @NotBlank @PathVariable String serviceOption);
+
+  @GetMapping("/node/carrier/get-all-cache-keys")
+  BaseResponse<List<NodeCarrierListCacheKeyDto>> getNodeCarrierListCacheKeys(
+      @NotNull @RequestParam Integer limit);
 
   @DeleteMapping("/node/carrier/node-carrier-selection")
   BaseResponse<NodeCarrierSelectionResponse> deleteNodeCarrierSelectionDetails(

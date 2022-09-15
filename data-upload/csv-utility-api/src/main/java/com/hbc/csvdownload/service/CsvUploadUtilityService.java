@@ -4,6 +4,7 @@ import com.hbc.common.util.JsonUtil;
 import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
 import com.hbc.csvdownload.domain.mapper.ProcessingLeadTimeMapper;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
+import com.hbc.csvdownload.exception.CsvDataValidationException;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
 import com.hbc.csvdownload.exception.InvalidActionType;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -49,8 +51,8 @@ public class CsvUploadUtilityService {
       Mappers.getMapper(ProcessingLeadTimeMapper.class);
 
   public String uploadProcessingLeadTimesCsv(String orgId, MultipartFile csvFile)
-      throws CsvParsingException, CsvFormatValidationFailedException, JsonParsingException,
-          JobSubmissionException {
+      throws CsvFormatValidationFailedException, JsonParsingException, JobSubmissionException,
+          CsvParsingException {
     log.debug("-- Inside upload processing lead time csv service --");
 
     String[] expectedHeaders = ProcessingLeadTimesRaw.columnHeadersArray();
@@ -95,6 +97,12 @@ public class CsvUploadUtilityService {
     return processingLeadTimesRawCsvToBean.stream()
         .map(
             processingLeadTimesRaw -> {
+              if (!NumberUtils.isCreatable(processingLeadTimesRaw.getProcessingTime())) {
+                log.error(
+                    "Invalid processing lead time: {}", processingLeadTimesRaw.getProcessingTime());
+                throw new CsvDataValidationException(
+                    "Invalid processing lead time: " + processingLeadTimesRaw.getProcessingTime());
+              }
               if (!ObjectUtils.isEmpty(processingLeadTimesRaw.getActionType())) {
                 if (DataUploadUtilityConstants.UPDATE_U.equalsIgnoreCase(
                         processingLeadTimesRaw.getActionType())
@@ -219,8 +227,12 @@ public class CsvUploadUtilityService {
               transitDataCreationRequest.setDestinationGeozone(destinationSfa);
               transitDataCreationRequest.setSourceGeozone(sFsa);
               var transitDaysString = row[integer.getAndIncrement()];
-              transitDataCreationRequest.setTransitDays(
-                  ObjectUtils.isEmpty(transitDaysString) ? null : Float.valueOf(transitDaysString));
+              if (NumberUtils.isCreatable(transitDaysString)) {
+                transitDataCreationRequest.setTransitDays(Float.valueOf(transitDaysString));
+              } else {
+                log.error("Invalid transit days: {}", transitDaysString);
+                throw new CsvDataValidationException("Invalid transit days: " + transitDaysString);
+              }
               return transitDataCreationRequest;
             })
         .collect(Collectors.toList());

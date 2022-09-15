@@ -109,6 +109,13 @@ public class CsvUtilityExceptionHandler {
                 .build());
   }
 
+  @ExceptionHandler(CsvDataValidationException.class)
+  public ResponseEntity<ErrorResponse> handleCsvDataValidationException(
+      CsvDataValidationException e) {
+    return ResponseEntity.badRequest()
+        .body(ErrorResponse.builder(ErrorType.ERROR, 0xffff2).message(e.getMessage()).build());
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleGenericException(Exception e) {
     return ResponseEntity.internalServerError()

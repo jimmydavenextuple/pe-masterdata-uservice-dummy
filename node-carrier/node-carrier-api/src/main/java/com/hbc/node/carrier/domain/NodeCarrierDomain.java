@@ -117,6 +117,17 @@ public class NodeCarrierDomain {
         orgId, serviceOption, destinationGeozone, DEFAULT_GEOZONE);
   }
 
+  public List<NodeCarrierEntity> getAllNodeCarriers(Integer limit)
+      throws NodeCarrierDomainException {
+    try {
+      return nodeCarrierRepository.findAllNodeCarriersByLimit(limit);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to find all node carriers");
+      throw new NodeCarrierDomainException(
+          "Error while fetching node carrier list", null, null, null, null);
+    }
+  }
+
   public Optional<NodeCarrierSelectionEntity> findNodeCarrierSelectionDetails(
       String orgId, String serviceOption, String sourceGeozone, String destinationGeozone)
       throws NodeCarrierSelectionDomainException {

@@ -7,6 +7,7 @@ import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.mapper.NodeMapper;
 import com.hbc.node.exception.NodeDomainException;
 import com.hbc.node.repository.NodeRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -71,6 +72,15 @@ public class NodeDomain {
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to find node list");
       throw new NodeDomainException("Error while finding node list", null, orgId);
+    }
+  }
+
+  public List<NodeEntity> getAllNodeEntities(Integer limit) throws NodeDomainException {
+    try {
+      return nodeRepository.findAllNodeEntities(limit);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to fetch the node entities");
+      throw new NodeDomainException("Error while fetching all node records", null, null);
     }
   }
 }

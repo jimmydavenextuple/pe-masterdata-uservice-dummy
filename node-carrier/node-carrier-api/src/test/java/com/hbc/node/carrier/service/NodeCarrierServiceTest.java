@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
+import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
@@ -418,6 +419,19 @@ class NodeCarrierServiceTest {
     verify(nodeCarrierDomain, times(1))
         .findNodeCarrierByOrgIdAndServiceOptionAndDestinationGeoZone(
             anyString(), anyString(), anyString());
+  }
+
+  @Test
+  void getAllNodeCarrierCacheKeysTest() throws NodeCarrierDomainException {
+    List<NodeCarrierEntity> nodeCarrierEntities = testUtil.getNodeCarrierEntityList();
+
+    when(nodeCarrierDomain.getAllNodeCarriers(any())).thenReturn(nodeCarrierEntities);
+
+    List<NodeCarrierListCacheKeyDto> response = nodeCarrierService.getAllNodeCarrierCacheKeys(2);
+
+    assertEquals(2, response.size());
+    assertEquals(nodeCarrierEntities.get(0).getNodeId(), response.get(0).getNodeId());
+    verify(nodeCarrierDomain, times(1)).getAllNodeCarriers(any());
   }
 
   @Test

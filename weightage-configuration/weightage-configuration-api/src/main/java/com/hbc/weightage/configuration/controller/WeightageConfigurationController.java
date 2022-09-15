@@ -2,6 +2,7 @@ package com.hbc.weightage.configuration.controller;
 
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
@@ -146,5 +147,19 @@ public class WeightageConfigurationController {
       logger.error("Failed to process delete Weightage Configuration request!");
       throw e;
     }
+  }
+
+  @GetMapping("/get-all-cache-keys")
+  public ResponseEntity<BaseResponse<List<WeightageCacheKeyDto>>> getWeightageCacheKeys(
+      @RequestParam Integer limit) throws PromiseEngineException {
+    logger.debug("Processing get Weightage Cache Keys");
+
+    var response = weightageConfigurationService.getAllWeightageCacheKeys(limit);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Weightage Cache Keys fetched successfully")
+            .payload(response)
+            .build());
   }
 }
