@@ -22,7 +22,7 @@ class MultipleCacheManagerConfigTest {
 
   @Test
   void caffeineCacheManagerTest() {
-    when(cacheProperties.getCacheMap()).thenReturn(testUtil.getCacheMap());
+    when(cacheProperties.getCachemap()).thenReturn(testUtil.getCacheMap());
     CacheManager cacheManager = multipleCacheManagerConfig.caffeineCacheManager();
     assertNotNull(cacheManager);
     verify(cacheProperties, times(0)).setCacheDefaults();
@@ -30,7 +30,7 @@ class MultipleCacheManagerConfigTest {
 
   @Test
   void caffeineCacheManagerDefaultCachePropertiesTest() {
-    when(cacheProperties.getCacheMap()).thenReturn(null);
+    when(cacheProperties.getCachemap()).thenReturn(null);
     when(cacheProperties.setCacheDefaults()).thenReturn(testUtil.getCacheMap());
     CacheManager cacheManager = multipleCacheManagerConfig.caffeineCacheManager();
     assertNotNull(cacheManager);

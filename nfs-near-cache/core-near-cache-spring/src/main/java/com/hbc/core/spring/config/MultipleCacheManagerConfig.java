@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableCaching
-@ConditionalOnProperty(value = "near-cache.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "nearcache.enabled", havingValue = "true")
 @RequiredArgsConstructor
 public class MultipleCacheManagerConfig {
   private final CacheProperties cacheProperties;
@@ -25,10 +25,10 @@ public class MultipleCacheManagerConfig {
   public CacheManager caffeineCacheManager() { // NOSONAR
     List<CaffeineCache> caches = new ArrayList<>();
     Map<String, String> map;
-    if (cacheProperties.getCacheMap() == null) {
+    if (cacheProperties.getCachemap() == null) {
       map = cacheProperties.setCacheDefaults();
     } else {
-      map = cacheProperties.getCacheMap();
+      map = cacheProperties.getCachemap();
     }
     for (Map.Entry<String, String> entry : map.entrySet()) {
       String[] properties = entry.getValue().split(",");

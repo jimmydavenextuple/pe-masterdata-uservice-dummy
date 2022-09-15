@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "near-cache")
+@ConfigurationProperties(prefix = "nearcache")
 public class CacheProperties {
 
   public static final String CACHE_PROPERTY_VALUE = "100,24";
 
-  private Map<String, String> cacheMap;
+  private Map<String, String> cachemap;
 
   public Map<String, String> setCacheDefaults() {
     Map<String, String> defaultMap = new HashMap<>();

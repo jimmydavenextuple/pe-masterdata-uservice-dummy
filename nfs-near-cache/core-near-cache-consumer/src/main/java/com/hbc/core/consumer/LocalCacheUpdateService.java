@@ -49,7 +49,7 @@ public class LocalCacheUpdateService {
           Constructor<?> cons = c.getConstructor();
           var cacheKey = (CacheKey) cons.newInstance();
 
-          String path = "near-cache.entity." + entity + ".attributes";
+          String path = "nearcache.entity." + entity + ".attributes";
           String params = env.getProperty(path);
 
           logger.debug("Params list :{}", params);
