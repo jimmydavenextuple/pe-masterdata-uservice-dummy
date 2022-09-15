@@ -13,6 +13,7 @@ import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.entity.NodeCarrierSelectionEntity;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
+import com.hbc.node.carrier.exception.NodeCarrierSelectionDomainException;
 import com.hbc.node.carrier.repository.NodeCarrierRepository;
 import com.hbc.node.carrier.repository.NodeCarrierSelectionRepository;
 import java.util.List;
@@ -237,5 +238,74 @@ class NodeCarrierDomainTest {
     verify(nodeCarrierSelectionRepository, times(1))
         .findByOrgIdAndServiceOptionAndDestinationGeoZone(
             anyString(), anyString(), anyString(), anyString());
+  }
+
+  @Test
+  void findNodeCarrierSelectionDetailsTest() throws NodeCarrierSelectionDomainException {
+    when(nodeCarrierSelectionRepository
+            .findByOrgIdAndServiceOptionAndSourceGeozoneAndDestinationGeozone(
+                any(), any(), any(), any()))
+        .thenReturn(Optional.of(testUtil.getNodeCarrierSelectionEntity()));
+
+    Optional<NodeCarrierSelectionEntity> response =
+        nodeCarrierDomain.findNodeCarrierSelectionDetails(
+            TestUtil.ORG_ID,
+            TestUtil.SERVICE_OPTION,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE);
+
+    assertEquals(TestUtil.ORG_ID, response.get().getOrgId());
+    assertEquals(TestUtil.SERVICE_OPTION, response.get().getServiceOption());
+    verify(nodeCarrierSelectionRepository, times(1))
+        .findByOrgIdAndServiceOptionAndSourceGeozoneAndDestinationGeozone(
+            any(), any(), any(), any());
+  }
+
+  @Test
+  void findNodeCarrierSelectionDetailsExceptionTest() throws NodeCarrierSelectionDomainException {
+    when(nodeCarrierSelectionRepository
+            .findByOrgIdAndServiceOptionAndSourceGeozoneAndDestinationGeozone(
+                any(), any(), any(), any()))
+        .thenThrow(new RuntimeException("error"));
+
+    Exception ex =
+        Assertions.assertThrows(
+            NodeCarrierSelectionDomainException.class,
+            () ->
+                nodeCarrierDomain.findNodeCarrierSelectionDetails(
+                    TestUtil.ORG_ID,
+                    TestUtil.SERVICE_OPTION,
+                    TestUtil.SOURCE_GEOZONE,
+                    TestUtil.DESTINATION_GEOZONE));
+
+    assertEquals("Error while finding node carrier selection", ex.getMessage());
+    verify(nodeCarrierSelectionRepository, times(1))
+        .findByOrgIdAndServiceOptionAndSourceGeozoneAndDestinationGeozone(
+            any(), any(), any(), any());
+  }
+
+  @Test
+  void deleteNodeCarrierSelectionEntityTest() throws NodeCarrierSelectionDomainException {
+    doNothing().when(nodeCarrierSelectionRepository).delete(any());
+    nodeCarrierDomain.deleteNodeCarrierSelectionEntity(testUtil.getNodeCarrierSelectionEntity());
+
+    verify(nodeCarrierSelectionRepository, times(1)).delete(any());
+  }
+
+  @Test
+  void deleteNodeCarrierSelectionEntityExceptionTest() throws NodeCarrierSelectionDomainException {
+    doThrow(new RuntimeException("error while deleting"))
+        .when(nodeCarrierSelectionRepository)
+        .delete(any());
+
+    Exception ex =
+        Assertions.assertThrows(
+            NodeCarrierSelectionDomainException.class,
+            () ->
+                nodeCarrierDomain.deleteNodeCarrierSelectionEntity(
+                    testUtil.getNodeCarrierSelectionEntity()));
+
+    assertEquals("Error while deleting node carrier selection", ex.getMessage());
+    verify(nodeCarrierSelectionRepository, times(1)).delete(any());
   }
 }

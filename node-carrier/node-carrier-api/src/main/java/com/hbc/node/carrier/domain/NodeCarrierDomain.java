@@ -3,6 +3,7 @@ package com.hbc.node.carrier.domain;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.entity.NodeCarrierSelectionEntity;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
+import com.hbc.node.carrier.exception.NodeCarrierSelectionDomainException;
 import com.hbc.node.carrier.repository.NodeCarrierRepository;
 import com.hbc.node.carrier.repository.NodeCarrierSelectionRepository;
 import java.util.List;
@@ -114,5 +115,39 @@ public class NodeCarrierDomain {
 
     return nodeCarrierSelectionRepository.findByOrgIdAndServiceOptionAndDestinationGeoZone(
         orgId, serviceOption, destinationGeozone, DEFAULT_GEOZONE);
+  }
+
+  public Optional<NodeCarrierSelectionEntity> findNodeCarrierSelectionDetails(
+      String orgId, String serviceOption, String sourceGeozone, String destinationGeozone)
+      throws NodeCarrierSelectionDomainException {
+    try {
+      return nodeCarrierSelectionRepository
+          .findByOrgIdAndServiceOptionAndSourceGeozoneAndDestinationGeozone(
+              orgId, serviceOption, sourceGeozone, destinationGeozone);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to find a node carrier selection details");
+      throw new NodeCarrierSelectionDomainException(
+          "Error while finding node carrier selection",
+          orgId,
+          serviceOption,
+          sourceGeozone,
+          destinationGeozone);
+    }
+  }
+
+  public void deleteNodeCarrierSelectionEntity(
+      NodeCarrierSelectionEntity nodeCarrierSelectionEntity)
+      throws NodeCarrierSelectionDomainException {
+    try {
+      nodeCarrierSelectionRepository.delete(nodeCarrierSelectionEntity);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to delete node carrier selection");
+      throw new NodeCarrierSelectionDomainException(
+          "Error while deleting node carrier selection",
+          nodeCarrierSelectionEntity.getOrgId(),
+          nodeCarrierSelectionEntity.getServiceOption(),
+          nodeCarrierSelectionEntity.getSourceGeozone(),
+          nodeCarrierSelectionEntity.getDestinationGeozone());
+    }
   }
 }

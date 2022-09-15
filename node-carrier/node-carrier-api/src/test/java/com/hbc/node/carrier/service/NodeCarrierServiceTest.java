@@ -19,6 +19,7 @@ import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
+import com.hbc.node.carrier.exception.NodeCarrierSelectionDomainException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -417,5 +418,41 @@ class NodeCarrierServiceTest {
     verify(nodeCarrierDomain, times(1))
         .findNodeCarrierByOrgIdAndServiceOptionAndDestinationGeoZone(
             anyString(), anyString(), anyString());
+  }
+
+  @Test
+  void deleteNodeCarrierSelectionTest()
+      throws NodeCarrierSelectionDomainException, CommonServiceException {
+    when(nodeCarrierDomain.findNodeCarrierSelectionDetails(any(), any(), any(), any()))
+        .thenReturn(Optional.of(testUtil.getNodeCarrierSelectionEntity()));
+    doNothing().when(nodeCarrierDomain).deleteNodeCarrierSelectionEntity(any());
+
+    NodeCarrierSelectionResponse nodeCarrierSelectionResponse =
+        nodeCarrierService.deleteNodeCarrierSelection(
+            testUtil.getNodeCarrierSelectionDeleteRequest());
+
+    Assertions.assertEquals(TestUtil.ORG_ID, nodeCarrierSelectionResponse.getOrgId());
+    Assertions.assertEquals(
+        TestUtil.SERVICE_OPTION, nodeCarrierSelectionResponse.getServiceOption());
+    verify(nodeCarrierDomain, times(1)).findNodeCarrierSelectionDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(1)).deleteNodeCarrierSelectionEntity(any());
+  }
+
+  @Test
+  void deleteNodeCarrierSelectionNotFoundTestException()
+      throws NodeCarrierSelectionDomainException {
+    when(nodeCarrierDomain.findNodeCarrierSelectionDetails(any(), any(), any(), any()))
+        .thenReturn(Optional.empty());
+
+    Exception ex =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                nodeCarrierService.deleteNodeCarrierSelection(
+                    testUtil.getNodeCarrierSelectionDeleteRequest()));
+
+    Assertions.assertEquals("Node Carrier Selection not found for given details", ex.getMessage());
+    verify(nodeCarrierDomain, times(1)).findNodeCarrierSelectionDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(0)).deleteNodeCarrierSelectionEntity(any());
   }
 }

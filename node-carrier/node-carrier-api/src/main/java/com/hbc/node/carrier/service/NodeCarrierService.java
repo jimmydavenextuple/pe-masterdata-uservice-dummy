@@ -4,8 +4,10 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
+import com.hbc.node.carrier.domain.entity.NodeCarrierSelectionEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionDeleteRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.mapper.NodeCarrierMapper;
@@ -13,6 +15,7 @@ import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
+import com.hbc.node.carrier.exception.NodeCarrierSelectionDomainException;
 import com.hbc.postgres.config.ReaderDS;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +40,8 @@ public class NodeCarrierService {
   private static final String NODE_ID = "nodeId";
   private static final String CARRIER_SERVICE_ID = "carrierServiceId";
   private static final String SERVICE_OPTION = "serviceOption";
+  private static final String SOURCE_GEOZONE = "sourceGeozone";
+  private static final String DESTINATION_GEOZONE = "destinationGeozone";
   private static final String NODE_CARRIER_NOT_FOUND_ERROR_MSG =
       "Node Carrier not found for given details";
 
@@ -266,5 +271,48 @@ public class NodeCarrierService {
     return INSTANCE.toNodeCarrierSelectionResponseList(
         nodeCarrierDomain.findNodeCarrierByOrgIdAndServiceOptionAndDestinationGeoZone(
             orgId, serviceOption, destinationGeozone));
+  }
+
+  public NodeCarrierSelectionResponse deleteNodeCarrierSelection(
+      NodeCarrierSelectionDeleteRequest nodeCarrierSelectionDeleteRequest)
+      throws CommonServiceException, NodeCarrierSelectionDomainException {
+    Optional<NodeCarrierSelectionEntity> nodeCarrierSelectionEntity =
+        nodeCarrierDomain.findNodeCarrierSelectionDetails(
+            nodeCarrierSelectionDeleteRequest.getOrgId(),
+            nodeCarrierSelectionDeleteRequest.getServiceOption(),
+            nodeCarrierSelectionDeleteRequest.getSourceGeozone(),
+            nodeCarrierSelectionDeleteRequest.getDestinationGeozone());
+
+    if (!nodeCarrierSelectionEntity.isPresent()) {
+      logger.error("Node Carrier Selection not found for given details");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          ORG_ID,
+          FieldError.builder().rejectedValue(nodeCarrierSelectionDeleteRequest.getOrgId()).build());
+      errorMap.put(
+          SERVICE_OPTION,
+          FieldError.builder()
+              .rejectedValue(nodeCarrierSelectionDeleteRequest.getServiceOption())
+              .build());
+      errorMap.put(
+          SOURCE_GEOZONE,
+          FieldError.builder()
+              .rejectedValue(nodeCarrierSelectionDeleteRequest.getSourceGeozone())
+              .build());
+      errorMap.put(
+          DESTINATION_GEOZONE,
+          FieldError.builder()
+              .rejectedValue(nodeCarrierSelectionDeleteRequest.getSourceGeozone())
+              .build());
+      throw new CommonServiceException(
+          "Node Carrier Selection not found for given details",
+          HttpStatus.NOT_FOUND,
+          0x1773,
+          errorMap);
+    }
+    var nodeCarrierSelectionResponse =
+        INSTANCE.toNodeCarrierSelectionResponse(nodeCarrierSelectionEntity.get());
+    nodeCarrierDomain.deleteNodeCarrierSelectionEntity(nodeCarrierSelectionEntity.get());
+    return nodeCarrierSelectionResponse;
   }
 }

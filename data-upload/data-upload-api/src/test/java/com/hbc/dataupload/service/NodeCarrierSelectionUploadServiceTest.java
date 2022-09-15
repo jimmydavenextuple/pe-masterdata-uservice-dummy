@@ -13,16 +13,16 @@ import static com.hbc.dataupload.helper.NodeCarrierSelectionUploadConstants.NODE
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import com.hbc.common.configuration.api.domain.dto.CommonConfigurationDto;
 import com.hbc.common.configuration.api.domain.feign.CommonConfigFeign;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.util.TestUtil;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionDeleteRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -67,12 +67,11 @@ class NodeCarrierSelectionUploadServiceTest {
             "nodeCarrierSelection_happyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
-    BaseResponse<CommonConfigurationDto> baseResponse =
-        testUtil.getSuccessfulBaseResponseForNodeCarrierSelection();
     when(nodeCarrierFeign.addNodeCarrierSelectionPriority(any(NodeCarrierSelectionRequest.class)))
         .thenReturn(testUtil.getSuccessfulBaseResponse());
-    when(commonConfigFeign.deleteCommonConfiguration(anyString(), anyString(), anyString()))
-        .thenReturn(baseResponse);
+    when(nodeCarrierFeign.deleteNodeCarrierSelectionDetails(
+            any(NodeCarrierSelectionDeleteRequest.class)))
+        .thenReturn(testUtil.getSuccessfulBaseResponse());
     ResponseEntity<BaseResponse<String>> response =
         nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath);
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -92,12 +91,11 @@ class NodeCarrierSelectionUploadServiceTest {
             "nodeCarrierSelection_DeletehappyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
-    BaseResponse<CommonConfigurationDto> baseResponse =
-        testUtil.getSuccessfulBaseResponseForNodeCarrierSelection();
     when(nodeCarrierFeign.addNodeCarrierSelectionPriority(any(NodeCarrierSelectionRequest.class)))
         .thenReturn(testUtil.getSuccessfulBaseResponse());
-    when(commonConfigFeign.deleteCommonConfiguration(anyString(), anyString(), anyString()))
-        .thenReturn(baseResponse);
+    when(nodeCarrierFeign.deleteNodeCarrierSelectionDetails(
+            any(NodeCarrierSelectionDeleteRequest.class)))
+        .thenReturn(testUtil.getSuccessfulBaseResponse());
     ResponseEntity<BaseResponse<String>> response =
         nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath);
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -117,14 +115,13 @@ class NodeCarrierSelectionUploadServiceTest {
             "nodeCarrierSelection_happyPath.csv");
     String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
-    BaseResponse<CommonConfigurationDto> successfulBaseResponse =
-        testUtil.getSuccessfulBaseResponseForNodeCarrierSelection();
-    BaseResponse<CommonConfigurationDto> failedBaseResponse =
+    BaseResponse<NodeCarrierSelectionResponse> failedBaseResponse =
         testUtil.getFailedBaseResponseForNodeCarrierSelection();
 
     when(nodeCarrierFeign.addNodeCarrierSelectionPriority(any(NodeCarrierSelectionRequest.class)))
         .thenReturn(testUtil.getSuccessfulBaseResponse());
-    when(commonConfigFeign.deleteCommonConfiguration(anyString(), anyString(), anyString()))
+    when(nodeCarrierFeign.deleteNodeCarrierSelectionDetails(
+            any(NodeCarrierSelectionDeleteRequest.class)))
         .thenReturn(failedBaseResponse);
     ResponseEntity<BaseResponse<String>> response =
         nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath);

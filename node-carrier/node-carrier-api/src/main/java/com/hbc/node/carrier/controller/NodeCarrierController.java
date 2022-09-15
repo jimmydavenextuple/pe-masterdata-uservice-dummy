@@ -4,12 +4,14 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionDeleteRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
+import com.hbc.node.carrier.exception.NodeCarrierSelectionDomainException;
 import com.hbc.node.carrier.service.NodeCarrierService;
 import java.util.List;
 import javax.validation.Valid;
@@ -246,6 +248,21 @@ public class NodeCarrierController {
         BaseResponse.builder()
             .message("Node Carrier deleted successfully")
             .payload(nodeCarrierResponse)
+            .build());
+  }
+
+  @DeleteMapping("/node-carrier-selection")
+  public ResponseEntity<BaseResponse<NodeCarrierSelectionResponse>>
+      deleteNodeCarrierSelectionDetails(
+          @Valid @RequestBody NodeCarrierSelectionDeleteRequest nodeCarrierSelectionDeleteRequest)
+          throws CommonServiceException, NodeCarrierSelectionDomainException {
+    var nodeCarrierSelectionResponse =
+        nodeCarrierService.deleteNodeCarrierSelection(nodeCarrierSelectionDeleteRequest);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier selection deleted successfully")
+            .payload(nodeCarrierSelectionResponse)
             .build());
   }
 }

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class NodeCarrierExceptionHandler {
 
-  @ExceptionHandler(NodeCarrierDomainException.class)
+  @ExceptionHandler({NodeCarrierDomainException.class, NodeCarrierSelectionDomainException.class})
   public ResponseEntity<ErrorResponse> handleOtherException(Exception e) {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(
