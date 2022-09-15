@@ -1,5 +1,6 @@
 package com.hbc.pe.masterdata.calendar.controller;
 
+import com.hbc.calendar.domain.dto.NodeCarrierCalendarCacheKeyDto;
 import com.hbc.calendar.domain.inbound.NodeCarrierServiceCalendarRequest;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
@@ -71,5 +72,19 @@ public class NodeCarrierServiceCalendarController {
       logger.error("Error in handleGetNodeCarrierServiceCalendar()");
       throw e;
     }
+  }
+
+  @GetMapping("/get-all-cache-keys")
+  public ResponseEntity<BaseResponse<List<NodeCarrierCalendarCacheKeyDto>>>
+      getNodeCarrierCalendarCacheKeys(@RequestParam Integer limit) throws CalendarDomainException {
+    logger.debug("Processing get Node Carrier Calendar Cache Keys");
+
+    var response = nodeCarrierServiceCalendarService.getAllNodeCarrierCalendarCacheKeys(limit);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier Calendar Cache Keys fetched successfully")
+            .payload(response)
+            .build());
   }
 }

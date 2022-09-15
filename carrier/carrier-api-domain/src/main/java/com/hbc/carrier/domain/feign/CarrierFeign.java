@@ -1,12 +1,15 @@
 package com.hbc.carrier.domain.feign;
 
+import com.hbc.carrier.domain.dto.CarrierCacheKeyDto;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,4 +53,7 @@ public interface CarrierFeign {
       @RequestParam(required = false) Integer pageSize,
       @RequestParam(required = false) String sortBy,
       @RequestParam(required = false) String sortOrder);
+
+  @GetMapping("/carrier-service/get-all-cache-keys")
+  BaseResponse<List<CarrierCacheKeyDto>> getCarrierCacheKeys(@NotNull @RequestParam Integer limit);
 }

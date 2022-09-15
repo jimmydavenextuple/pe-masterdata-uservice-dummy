@@ -6,6 +6,7 @@ import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.postgres.config.ReaderDS;
+import com.hbc.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
@@ -193,5 +194,13 @@ public class WeightageConfigurationService {
         INSTANCE.convertToWeightageConfigurationDto(weightageConfigurationFromDB));
     return prepareWeightageConfigurationDto(
         weightageConfigurationDomain.deleteWeightageConfiguration(weightageConfigurationFromDB));
+  }
+
+  public List<WeightageCacheKeyDto> getAllWeightageCacheKeys(Integer limit)
+      throws PromiseEngineException {
+    List<WeightageConfiguration> weightageConfigurationList =
+        weightageConfigurationDomain.getAllWeightageConfiguration(limit);
+
+    return INSTANCE.convertToWeightageCacheKeyDtoList(weightageConfigurationList);
   }
 }

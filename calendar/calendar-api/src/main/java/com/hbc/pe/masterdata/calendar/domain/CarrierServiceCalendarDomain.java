@@ -54,4 +54,14 @@ public class CarrierServiceCalendarDomain {
           "Unable to fetch carrier service calendar", e, null, orgId, null, carrierServiceId);
     }
   }
+
+  public List<CarrierServiceCalendarEntity> getAllCarrierServiceCalendars(Integer limit)
+      throws CalendarDomainException {
+    try {
+      return carrierServiceCalendarRepository.findAllCarrierServiceCalendarsByLimit(limit);
+    } catch (Exception e) {
+      throw new CalendarDomainException(
+          "Unable to fetch all carrier calendars", e, null, null, null, null);
+    }
+  }
 }

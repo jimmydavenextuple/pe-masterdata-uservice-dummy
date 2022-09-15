@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.PromiseEngineException;
@@ -17,6 +19,7 @@ import com.hbc.weightage.configuration.domain.entity.WeightageConfiguration;
 import com.hbc.weightage.configuration.domain.repository.WeightageConfigurationRepository;
 import java.util.Collections;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -175,5 +178,35 @@ class WeightageConfigurationDomainTest {
     WeightageConfiguration received_entity =
         weightageConfigurationDomain.deleteWeightageConfiguration(weightageConfiguration);
     assertEquals(weightageConfiguration, received_entity);
+  }
+
+  @Test
+  void getAllWeightageConfigurationTest() throws PromiseEngineException {
+    List<WeightageConfiguration> weightageConfigurationList =
+        testUtil.getWeightageConfigurationList();
+
+    when(weightageConfigurationRepository.findAllRecords(any()))
+        .thenReturn(weightageConfigurationList);
+
+    List<WeightageConfiguration> response =
+        weightageConfigurationDomain.getAllWeightageConfiguration(2);
+    assertEquals(2, response.size());
+    assertEquals(weightageConfigurationList.get(0).getType(), response.get(0).getType());
+    verify(weightageConfigurationRepository, times(1)).findAllRecords(any());
+  }
+
+  @Test
+  void getAllWeightageConfigurationExceptionTest() {
+    when(weightageConfigurationRepository.findAllRecords(any()))
+        .thenThrow(new RuntimeException("Unable to fetch all Weightage Configuration records"));
+
+    Exception exception =
+        assertThrows(
+            PromiseEngineException.class,
+            () -> weightageConfigurationDomain.getAllWeightageConfiguration(2));
+
+    Assertions.assertEquals(
+        "Unable to fetch all Weightage Configuration records", exception.getMessage());
+    verify(weightageConfigurationRepository, times(1)).findAllRecords(any());
   }
 }

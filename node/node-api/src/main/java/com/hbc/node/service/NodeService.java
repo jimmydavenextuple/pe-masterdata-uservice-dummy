@@ -6,6 +6,7 @@ import static com.hbc.common.constants.CommonConstants.DESC_SORT_ORDER;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.node.domain.NodeDomain;
+import com.hbc.node.domain.dto.NodeCacheKeyDto;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.inbound.NodeRequest;
@@ -15,6 +16,7 @@ import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.node.exception.NodeDomainException;
 import com.hbc.postgres.config.ReaderDS;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -119,5 +121,11 @@ public class NodeService {
           0x1771,
           errorMap);
     }
+  }
+
+  public List<NodeCacheKeyDto> getAllNodeCacheKeys(Integer limit) throws NodeDomainException {
+    var nodeEntities = nodeDomain.getAllNodeEntities(limit);
+
+    return INSTANCE.toNodeCacheKeyResponseList(nodeEntities);
   }
 }

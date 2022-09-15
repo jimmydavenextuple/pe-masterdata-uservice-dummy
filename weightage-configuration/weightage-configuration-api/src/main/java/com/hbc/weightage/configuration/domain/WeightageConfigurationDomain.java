@@ -122,4 +122,16 @@ public class WeightageConfigurationDomain {
           "Unable to delete Weightage Configuration");
     }
   }
+
+  public List<WeightageConfiguration> getAllWeightageConfiguration(Integer limit)
+      throws PromiseEngineException {
+    try {
+      return weightageConfigurationRepository.findAllRecords(limit);
+    } catch (Exception e) {
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Unable to fetch all Weightage Configuration records");
+    }
+  }
 }

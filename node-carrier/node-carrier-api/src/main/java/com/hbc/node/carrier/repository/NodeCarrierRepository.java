@@ -22,4 +22,7 @@ public interface NodeCarrierRepository extends JpaRepository<NodeCarrierEntity, 
 
   List<NodeCarrierEntity> findByNodeIdAndOrgIdAndCarrierServiceId(
       String nodeId, String orgId, String carrierServiceId);
+
+  @Query(value = "SELECT * FROM node_carrier LIMIT ?1", nativeQuery = true)
+  List<NodeCarrierEntity> findAllNodeCarriersByLimit(Integer limit);
 }

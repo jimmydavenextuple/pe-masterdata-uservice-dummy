@@ -3,6 +3,7 @@ package com.hbc.node.carrier.service;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
+import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
@@ -248,6 +249,13 @@ public class NodeCarrierService {
       throw new InvalidDataException(
           "Processing lead time can not be negative or empty", null, processingLeadTime);
     }
+  }
+
+  public List<NodeCarrierListCacheKeyDto> getAllNodeCarrierCacheKeys(Integer limit)
+      throws NodeCarrierDomainException {
+    var nodeCarrierEntities = nodeCarrierDomain.getAllNodeCarriers(limit);
+
+    return INSTANCE.toNodeCarrierListCacheKeyDto(nodeCarrierEntities);
   }
 
   public NodeCarrierSelectionResponse addNodeCarrierSelectionPriority(

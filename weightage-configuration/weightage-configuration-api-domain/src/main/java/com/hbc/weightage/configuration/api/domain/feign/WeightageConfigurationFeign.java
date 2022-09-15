@@ -1,9 +1,11 @@
 package com.hbc.weightage.configuration.api.domain.feign;
 
 import com.hbc.common.response.BaseResponse;
+import com.hbc.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.UpdateWeightageConfigurationRequest;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -42,4 +44,8 @@ public interface WeightageConfigurationFeign {
       @NotBlank @RequestParam String orgId,
       @NotBlank @RequestParam String type,
       @NotBlank @RequestParam String key);
+
+  @GetMapping("/weightage/get-all-cache-keys")
+  BaseResponse<List<WeightageCacheKeyDto>> getWeightageCacheKeys(
+      @NotBlank @RequestParam Integer limit);
 }

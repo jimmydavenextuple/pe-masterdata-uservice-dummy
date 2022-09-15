@@ -5,6 +5,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hbc.calendar.domain.dto.NodeCarrierCalendarCacheKeyDto;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
@@ -108,5 +109,23 @@ class NodeCarrierServiceCalendarControllerTest {
     Assertions.assertEquals("error", ex.getMessage());
     verify(nodeCarrierServiceCalendarService, times(1))
         .processGetNodeCarrierServiceCalendar(any(), any(), any(), any());
+  }
+
+  @Test
+  void getNodeCarrierCalendarCacheKeysTest() throws CalendarDomainException {
+    List<NodeCarrierCalendarCacheKeyDto> nodeCarrierCalendarCacheKeyDtoList =
+        testUtil.getNodeCarrierCalendarCacheKeyDtoList();
+
+    when(nodeCarrierServiceCalendarService.getAllNodeCarrierCalendarCacheKeys(any()))
+        .thenReturn(nodeCarrierCalendarCacheKeyDtoList);
+
+    ResponseEntity<BaseResponse<List<NodeCarrierCalendarCacheKeyDto>>> responseEntity =
+        nodeCarrierServiceCalendarController.getNodeCarrierCalendarCacheKeys(2);
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals(
+        nodeCarrierCalendarCacheKeyDtoList.size(),
+        Objects.requireNonNull(responseEntity.getBody()).getPayload().size());
+    verify(nodeCarrierServiceCalendarService, times(1)).getAllNodeCarrierCalendarCacheKeys(any());
   }
 }

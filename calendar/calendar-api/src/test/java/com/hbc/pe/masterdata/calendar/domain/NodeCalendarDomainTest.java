@@ -92,4 +92,32 @@ class NodeCalendarDomainTest {
     Assertions.assertEquals(TestUtil.NODE_ID, ex.getNodeId());
     verify(nodeCalendarRepository, times(1)).findByOrgIdAndNodeId(any(), any());
   }
+
+  @Test
+  void getAllNodeCalendarTest() throws CalendarDomainException {
+    List<NodeCalendarEntity> nodeCalendarEntityList = testUtil.getNodeCalendarEntityList();
+
+    when(nodeCalendarRepository.findAllNodeCalendarByLimit(any()))
+        .thenReturn(nodeCalendarEntityList);
+
+    List<NodeCalendarEntity> response = nodeCalendarDomain.getAllNodeCalendar(2);
+
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(
+        nodeCalendarEntityList.get(0).getCalendarId(), response.get(0).getCalendarId());
+    verify(nodeCalendarRepository, times(1)).findAllNodeCalendarByLimit(any());
+  }
+
+  @Test
+  void getAllNodeCalendarExceptionTest() {
+    when(nodeCalendarRepository.findAllNodeCalendarByLimit(any()))
+        .thenThrow(new RuntimeException("Unable to fetch all node calendars"));
+
+    CalendarDomainException ex =
+        Assertions.assertThrows(
+            CalendarDomainException.class, () -> nodeCalendarDomain.getAllNodeCalendar(2));
+
+    Assertions.assertEquals("Unable to fetch all node calendars", ex.getMessage());
+    verify(nodeCalendarRepository, times(1)).findAllNodeCalendarByLimit(any());
+  }
 }

@@ -3,6 +3,7 @@ package com.hbc.weightage.configuration.domain.repository;
 import com.hbc.weightage.configuration.domain.entity.WeightageConfiguration;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -14,4 +15,7 @@ public interface WeightageConfigurationRepository
   WeightageConfiguration findByOrgIdAndTypeAndKey(String orgId, String type, String key);
 
   List<WeightageConfiguration> findByKey(String key);
+
+  @Query(value = "SELECT * FROM weightage_configuration LIMIT ?1", nativeQuery = true)
+  List<WeightageConfiguration> findAllRecords(Integer limit);
 }

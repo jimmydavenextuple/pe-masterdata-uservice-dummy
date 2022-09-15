@@ -1,5 +1,6 @@
 package com.hbc.pe.masterdata.calendar.service;
 
+import com.hbc.calendar.domain.dto.NodeCarrierCalendarCacheKeyDto;
 import com.hbc.calendar.domain.inbound.NodeCarrierServiceCalendarRequest;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
@@ -124,5 +125,13 @@ public class NodeCarrierServiceCalendarService {
           0x1771,
           errorMap);
     }
+  }
+
+  public List<NodeCarrierCalendarCacheKeyDto> getAllNodeCarrierCalendarCacheKeys(Integer limit)
+      throws CalendarDomainException {
+    List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntities =
+        nodeCarrierServiceCalendarDomain.getAllNodeCarrierServiceCalendars(limit);
+
+    return INSTANCE.convertToNodeCarrierCalendarCacheKeyDtoList(nodeCarrierServiceCalendarEntities);
   }
 }

@@ -1,5 +1,6 @@
 package com.hbc.node.carrier.domain.mapper;
 
+import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.entity.NodeCarrierSelectionEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
@@ -45,4 +46,7 @@ public interface NodeCarrierMapper {
 
   List<NodeCarrierSelectionResponse> toNodeCarrierSelectionResponseList(
       List<NodeCarrierSelectionEntity> nodeCarrierByOrgIdAndServiceOptionAndDestinationGeoZone);
+
+  List<NodeCarrierListCacheKeyDto> toNodeCarrierListCacheKeyDto(
+      List<NodeCarrierEntity> nodeCarrierEntityList);
 }

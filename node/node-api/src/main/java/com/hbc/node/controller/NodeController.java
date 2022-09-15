@@ -9,12 +9,14 @@ import com.hbc.common.pojo.PageParams;
 import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
+import com.hbc.node.domain.dto.NodeCacheKeyDto;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.node.exception.NodeDomainException;
 import com.hbc.node.service.NodeService;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -144,6 +147,20 @@ public class NodeController {
         BaseResponse.builder()
             .message("Node List fetched successfully")
             .payload(pagePayload)
+            .build());
+  }
+
+  @GetMapping("/get-all-cache-keys")
+  public ResponseEntity<BaseResponse<List<NodeCacheKeyDto>>> getNodeCacheKeys(
+      @RequestParam Integer limit) throws NodeDomainException {
+    logger.debug("Processing get Node Cache Keys");
+
+    var response = nodeService.getAllNodeCacheKeys(limit);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Cache Keys fetched successfully")
+            .payload(response)
             .build());
   }
 

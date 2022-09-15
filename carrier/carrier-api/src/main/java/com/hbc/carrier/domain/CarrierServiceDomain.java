@@ -7,6 +7,7 @@ import com.hbc.carrier.domain.mapper.CarrierServiceMapper;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.carrier.exception.CarrierServiceDomainException;
 import com.hbc.carrier.repository.CarrierServiceRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -82,6 +83,17 @@ public class CarrierServiceDomain {
       logger.error(String.valueOf(e), "Unable to find carrier service list");
       throw new CarrierServiceDomainException(
           "Error while finding carrier service list", null, null, orgId);
+    }
+  }
+
+  public List<CarrierServiceEntity> getAllCarrierServiceEntities(Integer limit)
+      throws CarrierServiceDomainException {
+    try {
+      return carrierServiceRepository.findAllCarriersByLimit(limit);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to fetch the carrier entities");
+      throw new CarrierServiceDomainException(
+          "Error while fetching all carrier services", null, null, null);
     }
   }
 }

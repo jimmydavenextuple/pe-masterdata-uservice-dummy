@@ -4,6 +4,7 @@ import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 import static com.hbc.common.constants.CommonConstants.DESC_SORT_ORDER;
 
 import com.hbc.carrier.domain.CarrierServiceDomain;
+import com.hbc.carrier.domain.dto.CarrierCacheKeyDto;
 import com.hbc.carrier.domain.entity.CarrierServiceEntity;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
@@ -14,6 +15,7 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.postgres.config.ReaderDS;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -144,5 +146,12 @@ public class CarrierServiceService {
           0x1771,
           errorMap);
     }
+  }
+
+  public List<CarrierCacheKeyDto> getAllCarrierCacheKeys(Integer limit)
+      throws CarrierServiceDomainException {
+    var carrierServiceEntities = carrierServiceDomain.getAllCarrierServiceEntities(limit);
+
+    return INSTANCE.toCarrierCacheKeyList(carrierServiceEntities);
   }
 }
