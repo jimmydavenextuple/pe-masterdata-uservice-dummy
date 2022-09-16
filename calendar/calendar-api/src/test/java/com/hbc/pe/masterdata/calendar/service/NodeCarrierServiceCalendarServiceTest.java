@@ -8,6 +8,9 @@ import static org.mockito.Mockito.when;
 import com.hbc.calendar.domain.dto.NodeCarrierCalendarCacheKeyDto;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.node.domain.feign.NodeFeign;
+import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.NodeCarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
@@ -24,18 +27,22 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class NodeCarrierServiceCalendarServiceTest {
 
   @Mock private NodeCarrierServiceCalendarDomain nodeCarrierServiceCalendarDomain;
   @Mock private CalendarDomain calendarDomain;
   @Mock private DateValidation dateValidation;
+  @Mock private NodeFeign nodeFeign;
   @InjectMocks private NodeCarrierServiceCalendarService nodeCarrierServiceCalendarService;
   @InjectMocks private TestUtil testUtil;
 
   @BeforeEach
   public void init() {
+
     MockitoAnnotations.openMocks(this);
+    ReflectionTestUtils.setField(nodeCarrierServiceCalendarService, "nodeFeign", nodeFeign);
   }
 
   @Test
@@ -45,6 +52,7 @@ class NodeCarrierServiceCalendarServiceTest {
         .thenReturn(testUtil.getNodeCarrierServiceCalendarEntity());
     when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getNodeDetails(Boolean.TRUE));
     NodeCarrierServiceCalendarResponse resp =
         nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
             testUtil.getNodeCarrierServiceCalendarRequest());
@@ -58,6 +66,57 @@ class NodeCarrierServiceCalendarServiceTest {
         TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.getEffectiveDate()));
     Assertions.assertEquals(TestUtil.DESCRIPTION, Objects.requireNonNull(resp.getDescription()));
     verify(nodeCarrierServiceCalendarDomain, times(1)).saveNodeCarrierServiceCalendarEntity(any());
+  }
+
+  @Test
+  void processCreateNodeCarrierServiceCalendarInvalidNodeTest() throws CalendarDomainException {
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
+    when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(null);
+    CommonServiceException exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> {
+              nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
+                  testUtil.getNodeCarrierServiceCalendarRequest());
+            });
+    Assertions.assertEquals(0x1772, exception.getErrorCode());
+    verify(nodeCarrierServiceCalendarDomain, times(0)).saveNodeCarrierServiceCalendarEntity(any());
+  }
+
+  @Test
+  void processCreateNodeCarrierServiceCalendarInactiveNodeTest() throws CalendarDomainException {
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
+    when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getNodeDetails(Boolean.FALSE));
+    CommonServiceException exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> {
+              nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
+                  testUtil.getNodeCarrierServiceCalendarRequest());
+            });
+    Assertions.assertEquals(0x1772, exception.getErrorCode());
+    verify(nodeCarrierServiceCalendarDomain, times(0)).saveNodeCarrierServiceCalendarEntity(any());
+  }
+
+  @Test
+  void processCreateNodeCarrierServiceCalendarNodeResponseInvalidTest()
+      throws CalendarDomainException {
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
+    when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
+    BaseResponse<NodeResponse> nodeResponse = testUtil.getNodeDetails(Boolean.TRUE);
+    nodeResponse.setSuccess(false);
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(nodeResponse);
+    CommonServiceException exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> {
+              nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
+                  testUtil.getNodeCarrierServiceCalendarRequest());
+            });
+    Assertions.assertEquals(0x1772, exception.getErrorCode());
+    verify(nodeCarrierServiceCalendarDomain, times(0)).saveNodeCarrierServiceCalendarEntity(any());
   }
 
   @Test

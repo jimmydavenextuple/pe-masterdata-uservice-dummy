@@ -13,6 +13,8 @@ import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.pojo.ExceptionDays;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.pe.masterdata.calendar.domain.entity.CalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
@@ -173,6 +175,13 @@ public class TestUtil {
         .effectiveDate(EFFECTIVE_DATE)
         .nodeId(NODE_ID)
         .build();
+  }
+
+  public BaseResponse<NodeResponse> getNodeDetails(Boolean isActive) {
+    NodeResponse nodeResponse = new NodeResponse();
+    nodeResponse.setNodeId(NODE_ID);
+    nodeResponse.setIsActive(isActive);
+    return BaseResponse.builder().payload(nodeResponse).build();
   }
 
   public List<CalendarDaysStatusInfo> getCalendarDaysStatusInfoList() {
