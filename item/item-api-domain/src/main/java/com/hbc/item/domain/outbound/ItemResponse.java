@@ -25,6 +25,7 @@ public class ItemResponse implements Serializable {
   private Boolean shipEligible;
   private Boolean parcelShipmentEligible;
   private Boolean bopisEligible;
+  private Boolean isDSVEligible;
   private Map<String, Boolean> serviceOptionEligibilities;
   private Boolean shipAlone;
   private Double height;
