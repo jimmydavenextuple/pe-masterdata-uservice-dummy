@@ -8,7 +8,6 @@ import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.entity.NodeCarrierSelectionEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
-import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionDeleteRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.mapper.NodeCarrierMapper;
@@ -282,35 +281,35 @@ public class NodeCarrierService {
   }
 
   public NodeCarrierSelectionResponse deleteNodeCarrierSelection(
-      NodeCarrierSelectionDeleteRequest nodeCarrierSelectionDeleteRequest)
+      NodeCarrierSelectionRequest nodeCarrierSelectionRequest)
       throws CommonServiceException, NodeCarrierSelectionDomainException {
     Optional<NodeCarrierSelectionEntity> nodeCarrierSelectionEntity =
         nodeCarrierDomain.findNodeCarrierSelectionDetails(
-            nodeCarrierSelectionDeleteRequest.getOrgId(),
-            nodeCarrierSelectionDeleteRequest.getServiceOption(),
-            nodeCarrierSelectionDeleteRequest.getSourceGeozone(),
-            nodeCarrierSelectionDeleteRequest.getDestinationGeozone());
+            nodeCarrierSelectionRequest.getOrgId(),
+            nodeCarrierSelectionRequest.getServiceOption(),
+            nodeCarrierSelectionRequest.getSourceGeozone(),
+            nodeCarrierSelectionRequest.getDestinationGeozone());
 
     if (!nodeCarrierSelectionEntity.isPresent()) {
       logger.error("Node Carrier Selection not found for given details");
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(
           ORG_ID,
-          FieldError.builder().rejectedValue(nodeCarrierSelectionDeleteRequest.getOrgId()).build());
+          FieldError.builder().rejectedValue(nodeCarrierSelectionRequest.getOrgId()).build());
       errorMap.put(
           SERVICE_OPTION,
           FieldError.builder()
-              .rejectedValue(nodeCarrierSelectionDeleteRequest.getServiceOption())
+              .rejectedValue(nodeCarrierSelectionRequest.getServiceOption())
               .build());
       errorMap.put(
           SOURCE_GEOZONE,
           FieldError.builder()
-              .rejectedValue(nodeCarrierSelectionDeleteRequest.getSourceGeozone())
+              .rejectedValue(nodeCarrierSelectionRequest.getSourceGeozone())
               .build());
       errorMap.put(
           DESTINATION_GEOZONE,
           FieldError.builder()
-              .rejectedValue(nodeCarrierSelectionDeleteRequest.getDestinationGeozone())
+              .rejectedValue(nodeCarrierSelectionRequest.getDestinationGeozone())
               .build());
       throw new CommonServiceException(
           "Node Carrier Selection not found for given details",

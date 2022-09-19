@@ -441,13 +441,8 @@ class NodeCarrierServiceTest {
         .thenReturn(Optional.of(testUtil.getNodeCarrierSelectionEntity()));
     doNothing().when(nodeCarrierDomain).deleteNodeCarrierSelectionEntity(any());
 
-    NodeCarrierSelectionResponse nodeCarrierSelectionResponse =
-        nodeCarrierService.deleteNodeCarrierSelection(
-            testUtil.getNodeCarrierSelectionDeleteRequest());
+    nodeCarrierService.deleteNodeCarrierSelection(testUtil.getNodeCarrierSelectionRequest());
 
-    Assertions.assertEquals(TestUtil.ORG_ID, nodeCarrierSelectionResponse.getOrgId());
-    Assertions.assertEquals(
-        TestUtil.SERVICE_OPTION, nodeCarrierSelectionResponse.getServiceOption());
     verify(nodeCarrierDomain, times(1)).findNodeCarrierSelectionDetails(any(), any(), any(), any());
     verify(nodeCarrierDomain, times(1)).deleteNodeCarrierSelectionEntity(any());
   }
@@ -463,7 +458,7 @@ class NodeCarrierServiceTest {
             CommonServiceException.class,
             () ->
                 nodeCarrierService.deleteNodeCarrierSelection(
-                    testUtil.getNodeCarrierSelectionDeleteRequest()));
+                    testUtil.getNodeCarrierSelectionRequest()));
 
     Assertions.assertEquals("Node Carrier Selection not found for given details", ex.getMessage());
     verify(nodeCarrierDomain, times(1)).findNodeCarrierSelectionDetails(any(), any(), any(), any());

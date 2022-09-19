@@ -5,7 +5,6 @@ import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
 import com.hbc.node.carrier.domain.entity.NodeCarrierSelectionEntity;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
-import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionDeleteRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
@@ -281,14 +280,5 @@ public class TestUtil {
             .build();
 
     return List.of(nodeCarrierListCacheKeyDto1, nodeCarrierListCacheKeyDto2);
-  }
-
-  public NodeCarrierSelectionDeleteRequest getNodeCarrierSelectionDeleteRequest() {
-    return NodeCarrierSelectionDeleteRequest.builder()
-        .orgId(ORG_ID)
-        .serviceOption(SERVICE_OPTION)
-        .destinationGeozone(DESTINATION_GEOZONE)
-        .sourceGeozone(SOURCE_GEOZONE)
-        .build();
   }
 }

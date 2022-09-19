@@ -4,7 +4,6 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
-import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionDeleteRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
@@ -88,5 +87,5 @@ public interface NodeCarrierFeign {
 
   @DeleteMapping("/node/carrier/node-carrier-selection")
   BaseResponse<NodeCarrierSelectionResponse> deleteNodeCarrierSelectionDetails(
-      @Valid @RequestBody NodeCarrierSelectionDeleteRequest nodeCarrierSelectionDeleteRequest);
+      @Valid @RequestBody NodeCarrierSelectionRequest nodeCarrierSelectionRequest);
 }

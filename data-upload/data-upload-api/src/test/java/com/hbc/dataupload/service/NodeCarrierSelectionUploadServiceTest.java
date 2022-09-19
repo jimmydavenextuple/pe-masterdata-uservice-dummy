@@ -20,7 +20,6 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.util.TestUtil;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
-import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionDeleteRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import java.io.IOException;
@@ -69,8 +68,7 @@ class NodeCarrierSelectionUploadServiceTest {
 
     when(nodeCarrierFeign.addNodeCarrierSelectionPriority(any(NodeCarrierSelectionRequest.class)))
         .thenReturn(testUtil.getSuccessfulBaseResponse());
-    when(nodeCarrierFeign.deleteNodeCarrierSelectionDetails(
-            any(NodeCarrierSelectionDeleteRequest.class)))
+    when(nodeCarrierFeign.deleteNodeCarrierSelectionDetails(any(NodeCarrierSelectionRequest.class)))
         .thenReturn(testUtil.getSuccessfulBaseResponse());
     ResponseEntity<BaseResponse<String>> response =
         nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath);
@@ -93,8 +91,7 @@ class NodeCarrierSelectionUploadServiceTest {
 
     when(nodeCarrierFeign.addNodeCarrierSelectionPriority(any(NodeCarrierSelectionRequest.class)))
         .thenReturn(testUtil.getSuccessfulBaseResponse());
-    when(nodeCarrierFeign.deleteNodeCarrierSelectionDetails(
-            any(NodeCarrierSelectionDeleteRequest.class)))
+    when(nodeCarrierFeign.deleteNodeCarrierSelectionDetails(any(NodeCarrierSelectionRequest.class)))
         .thenReturn(testUtil.getSuccessfulBaseResponse());
     ResponseEntity<BaseResponse<String>> response =
         nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath);
@@ -120,8 +117,7 @@ class NodeCarrierSelectionUploadServiceTest {
 
     when(nodeCarrierFeign.addNodeCarrierSelectionPriority(any(NodeCarrierSelectionRequest.class)))
         .thenReturn(testUtil.getSuccessfulBaseResponse());
-    when(nodeCarrierFeign.deleteNodeCarrierSelectionDetails(
-            any(NodeCarrierSelectionDeleteRequest.class)))
+    when(nodeCarrierFeign.deleteNodeCarrierSelectionDetails(any(NodeCarrierSelectionRequest.class)))
         .thenReturn(failedBaseResponse);
     ResponseEntity<BaseResponse<String>> response =
         nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(absolutePath);

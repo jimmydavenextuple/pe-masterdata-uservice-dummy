@@ -21,7 +21,6 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.common.constants.NodeCarrierSelectionPriorityEnum;
 import com.hbc.dataupload.common.utils.DataUploadUtil;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
-import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionDeleteRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import java.io.IOException;
@@ -125,16 +124,15 @@ public class NodeCarrierSelectionUploadService {
             nodeCarrierSelectionResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else if (action.equalsIgnoreCase(DELETE_D)) {
-            var nodeCarrierSelectionDeleteRequest =
-                NodeCarrierSelectionDeleteRequest.builder()
+            var nodeCarrierSelectionRequest =
+                NodeCarrierSelectionRequest.builder()
                     .orgId(orgId)
                     .serviceOption(serviceOption)
                     .sourceGeozone(sourceGeozone)
                     .destinationGeozone(destinationGeozone)
                     .build();
             BaseResponse<NodeCarrierSelectionResponse> baseResponse =
-                nodeCarrierFeign.deleteNodeCarrierSelectionDetails(
-                    nodeCarrierSelectionDeleteRequest);
+                nodeCarrierFeign.deleteNodeCarrierSelectionDetails(nodeCarrierSelectionRequest);
             nodeCarrierSelectionResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           }

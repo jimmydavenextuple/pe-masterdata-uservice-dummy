@@ -405,7 +405,7 @@ class NodeCarrierControllerTest {
   }
 
   @Test
-  void testGetNodeCarrierListTest()
+  void deleteNodeCarrierListTest()
       throws NodeCarrierSelectionDomainException, CommonServiceException {
     when(nodeCarrierService.deleteNodeCarrierSelection(any()))
         .thenReturn(testUtil.getNodeCarrierSelectionResponse());

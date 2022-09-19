@@ -5,7 +5,6 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierBufferRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
-import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionDeleteRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
@@ -269,10 +268,10 @@ public class NodeCarrierController {
   @DeleteMapping("/node-carrier-selection")
   public ResponseEntity<BaseResponse<NodeCarrierSelectionResponse>>
       deleteNodeCarrierSelectionDetails(
-          @Valid @RequestBody NodeCarrierSelectionDeleteRequest nodeCarrierSelectionDeleteRequest)
+          @Valid @RequestBody NodeCarrierSelectionRequest nodeCarrierSelectionRequest)
           throws CommonServiceException, NodeCarrierSelectionDomainException {
     var nodeCarrierSelectionResponse =
-        nodeCarrierService.deleteNodeCarrierSelection(nodeCarrierSelectionDeleteRequest);
+        nodeCarrierService.deleteNodeCarrierSelection(nodeCarrierSelectionRequest);
 
     return ResponseEntity.ok(
         BaseResponse.builder()
