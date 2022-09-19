@@ -310,7 +310,7 @@ public class NodeCarrierService {
       errorMap.put(
           DESTINATION_GEOZONE,
           FieldError.builder()
-              .rejectedValue(nodeCarrierSelectionDeleteRequest.getSourceGeozone())
+              .rejectedValue(nodeCarrierSelectionDeleteRequest.getDestinationGeozone())
               .build());
       throw new CommonServiceException(
           "Node Carrier Selection not found for given details",
