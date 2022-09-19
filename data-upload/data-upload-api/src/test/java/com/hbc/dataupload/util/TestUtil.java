@@ -52,7 +52,6 @@ import com.hbc.calendar.domain.pojo.ExceptionDays;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.base.PagePayload.Pagination;
-import com.hbc.common.configuration.api.domain.dto.CommonConfigurationDto;
 import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
@@ -735,14 +734,6 @@ public class TestUtil {
         .body(BaseResponse.builder().message(NODE_CARRIER_SELECTION_DATA_UPLOAD_FAILED).build());
   }
 
-  public BaseResponse<CommonConfigurationDto> getSuccessfulBaseResponseForNodeCarrierSelection() {
-    return BaseResponse.builder()
-        .message("")
-        .success(true)
-        .payload(getCommonConfigurationDto(ORG_ID, TYPE, KEY, VALUE))
-        .build();
-  }
-
   public BaseResponse<NodeCarrierSelectionResponse> getSuccessfulBaseResponse() {
     return BaseResponse.builder().success(true).payload(getNodeCarrierSelectionResponse()).build();
   }
@@ -757,16 +748,7 @@ public class TestUtil {
         .build();
   }
 
-  public CommonConfigurationDto getCommonConfigurationDto(
-      String orgId, String type, String key, String value) {
-    return CommonConfigurationDto.builder().orgId(orgId).type(type).key(key).value(value).build();
-  }
-
-  public BaseResponse<CommonConfigurationDto> getFailedBaseResponseForNodeCarrierSelection() {
-    return BaseResponse.builder()
-        .message("")
-        .success(false)
-        .payload(getCommonConfigurationDto(ORG_ID, TYPE, KEY, VALUE))
-        .build();
+  public BaseResponse<NodeCarrierSelectionResponse> getFailedBaseResponseForNodeCarrierSelection() {
+    return BaseResponse.builder().success(false).payload(getNodeCarrierSelectionResponse()).build();
   }
 }

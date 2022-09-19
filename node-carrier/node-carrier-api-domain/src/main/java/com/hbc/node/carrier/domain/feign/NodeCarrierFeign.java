@@ -84,4 +84,8 @@ public interface NodeCarrierFeign {
   @GetMapping("/node/carrier/get-all-cache-keys")
   BaseResponse<List<NodeCarrierListCacheKeyDto>> getNodeCarrierListCacheKeys(
       @NotNull @RequestParam Integer limit);
+
+  @DeleteMapping("/node/carrier/node-carrier-selection")
+  BaseResponse<NodeCarrierSelectionResponse> deleteNodeCarrierSelectionDetails(
+      @Valid @RequestBody NodeCarrierSelectionRequest nodeCarrierSelectionRequest);
 }

@@ -11,6 +11,7 @@ import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
+import com.hbc.node.carrier.exception.NodeCarrierSelectionDomainException;
 import com.hbc.node.carrier.service.NodeCarrierService;
 import java.util.List;
 import javax.validation.Valid;
@@ -261,6 +262,21 @@ public class NodeCarrierController {
         BaseResponse.builder()
             .message("Node Carrier Cache Keys fetched successfully")
             .payload(response)
+            .build());
+  }
+
+  @DeleteMapping("/node-carrier-selection")
+  public ResponseEntity<BaseResponse<NodeCarrierSelectionResponse>>
+      deleteNodeCarrierSelectionDetails(
+          @Valid @RequestBody NodeCarrierSelectionRequest nodeCarrierSelectionRequest)
+          throws CommonServiceException, NodeCarrierSelectionDomainException {
+    var nodeCarrierSelectionResponse =
+        nodeCarrierService.deleteNodeCarrierSelection(nodeCarrierSelectionRequest);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier selection deleted successfully")
+            .payload(nodeCarrierSelectionResponse)
             .build());
   }
 }

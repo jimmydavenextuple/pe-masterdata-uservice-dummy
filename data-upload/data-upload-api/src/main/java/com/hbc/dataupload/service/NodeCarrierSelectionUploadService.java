@@ -15,7 +15,6 @@ import static com.hbc.dataupload.helper.NodeCarrierSelectionUploadConstants.NODE
 import static com.hbc.dataupload.helper.NodeCarrierSelectionUploadConstants.NODE_CARRIER_SELECTION_DATA_UPLOAD_LARGE_FILE_SIZE;
 import static com.hbc.dataupload.helper.NodeCarrierSelectionUploadConstants.NODE_CARRIER_SELECTION_DATA_UPLOAD_LARGE_ROW_SIZE;
 
-import com.hbc.common.configuration.api.domain.dto.CommonConfigurationDto;
 import com.hbc.common.configuration.api.domain.feign.CommonConfigFeign;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
@@ -94,7 +93,6 @@ public class NodeCarrierSelectionUploadService {
         String destinationGeozone = csvRecord.get(DESTINATION_GEO_ZONE);
         String serviceOption = csvRecord.get(SERVICE_OPTION);
         String selectionCriteria = csvRecord.get(SELECTION_CRITERIA);
-        var key = String.format("%s:%s:%s", serviceOption, sourceGeozone, destinationGeozone);
         var value = "";
 
         switch (selectionCriteria) {
@@ -126,9 +124,15 @@ public class NodeCarrierSelectionUploadService {
             nodeCarrierSelectionResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           } else if (action.equalsIgnoreCase(DELETE_D)) {
-            BaseResponse<CommonConfigurationDto> baseResponse =
-                commonConfigFeign.deleteCommonConfiguration(
-                    orgId, "NODE_CARRIER_SELECTION_PRIORITY", key);
+            var nodeCarrierSelectionRequest =
+                NodeCarrierSelectionRequest.builder()
+                    .orgId(orgId)
+                    .serviceOption(serviceOption)
+                    .sourceGeozone(sourceGeozone)
+                    .destinationGeozone(destinationGeozone)
+                    .build();
+            BaseResponse<NodeCarrierSelectionResponse> baseResponse =
+                nodeCarrierFeign.deleteNodeCarrierSelectionDetails(nodeCarrierSelectionRequest);
             nodeCarrierSelectionResult = baseResponse.isSuccess();
             log.debug(baseResponse.getMessage());
           }

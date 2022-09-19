@@ -2,6 +2,7 @@ package com.hbc.node.carrier.repository;
 
 import com.hbc.node.carrier.domain.entity.NodeCarrierSelectionEntity;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,4 +15,8 @@ public interface NodeCarrierSelectionRepository
       nativeQuery = true)
   List<NodeCarrierSelectionEntity> findByOrgIdAndServiceOptionAndDestinationGeoZone(
       String orgId, String serviceOption, String destinationGeozone1, String destinationGeozone2);
+
+  Optional<NodeCarrierSelectionEntity>
+      findByOrgIdAndServiceOptionAndSourceGeozoneAndDestinationGeozone(
+          String orgId, String serviceOption, String sourceGeozone, String destinationGeozone);
 }

@@ -14,6 +14,7 @@ import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
+import com.hbc.node.carrier.exception.NodeCarrierSelectionDomainException;
 import com.hbc.node.carrier.service.NodeCarrierService;
 import java.util.List;
 import java.util.Objects;
@@ -401,5 +402,23 @@ class NodeCarrierControllerTest {
     Assertions.assertEquals(2, responseEntity.getBody().getPayload().size());
 
     verify(nodeCarrierService, times(1)).getAllNodeCarrierCacheKeys(any());
+  }
+
+  @Test
+  void deleteNodeCarrierListTest()
+      throws NodeCarrierSelectionDomainException, CommonServiceException {
+    when(nodeCarrierService.deleteNodeCarrierSelection(any()))
+        .thenReturn(testUtil.getNodeCarrierSelectionResponse());
+
+    ResponseEntity<BaseResponse<NodeCarrierSelectionResponse>> response =
+        nodeCarrierController.deleteNodeCarrierSelectionDetails(any());
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().getOrgId());
+    Assertions.assertEquals(
+        TestUtil.SERVICE_OPTION,
+        Objects.requireNonNull(response.getBody()).getPayload().getServiceOption());
+    verify(nodeCarrierService, times(1)).deleteNodeCarrierSelection(any());
   }
 }
