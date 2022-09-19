@@ -23,6 +23,8 @@ public class TestUtil {
   public static String SIZE = "size-1";
   public static Boolean SHIP_ALONE = Boolean.TRUE;
   public static Boolean SHIP_ELIGIBLE = Boolean.TRUE;
+
+  public static Boolean DSV_ELIGIBLE = Boolean.TRUE;
   public static Boolean PARCEL_SHIPMENT_ELIGIBLE = Boolean.TRUE;
   public static Boolean BOPIS_ELIGIBLE = Boolean.TRUE;
   public static Double HEIGHT = 3.4;
@@ -53,6 +55,7 @@ public class TestUtil {
         .length(LENGTH)
         .shipAlone(SHIP_ALONE)
         .bopisEligible(BOPIS_ELIGIBLE)
+            .isDSVEligible(DSV_ELIGIBLE)
         .serviceOptionEligibilities(serviceOptionEligibilities)
         .isHazmat(IS_HAZMAT)
         .cost(COST)
@@ -121,6 +124,7 @@ public class TestUtil {
         .processingTime(PROCESSING_TIME)
         .product(PRODUCT)
         .shipEligible(SHIP_ELIGIBLE)
+            .isDSVEligible(DSV_ELIGIBLE)
         .height(HEIGHT)
         .weight(WEIGHT)
         .volume(VOLUME)
