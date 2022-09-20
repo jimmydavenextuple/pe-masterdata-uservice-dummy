@@ -314,8 +314,12 @@ class CsvUploadUtilityServiceTest {
   }
 
   @Test
-  void uploadTransitTimesCsvNullTransitTime() throws IOException {
+  void uploadTransitTimesCsvNullTransitTime()
+      throws IOException, CsvFormatValidationFailedException, JobSubmissionException, CsvException,
+          JsonParsingException {
     MultipartFile csvFile = mock(MultipartFile.class);
+
+    JobDto jobDto = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
 
     String csvFileContent =
         "orgId,BAY,,,,,,,,,\n"
@@ -331,12 +335,13 @@ class CsvUploadUtilityServiceTest {
             new ByteArrayInputStream(csvFileContent.getBytes()),
             new ByteArrayInputStream(csvFileContent.getBytes()));
 
-    Exception exception =
-        Assertions.assertThrows(
-            CsvDataValidationException.class,
-            () -> csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile));
+    when(jobsDashboardClient.processJobJsonOffline(any(), any(), any()))
+        .thenReturn(BaseResponse.builder().payload(jobDto).build());
 
-    Assertions.assertNotNull(exception);
+    String res = csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile);
+
+    Assertions.assertFalse(ObjectUtils.isEmpty(res));
+    verify(jobsDashboardClient, times(1)).processJobJsonOffline(any(), any(), any());
   }
 
   @Test

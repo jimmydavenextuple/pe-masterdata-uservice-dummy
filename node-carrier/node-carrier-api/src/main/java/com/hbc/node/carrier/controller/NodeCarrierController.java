@@ -234,10 +234,10 @@ public class NodeCarrierController {
   @DeleteMapping("/{nodeId}/{orgId}/{serviceOption}")
   public ResponseEntity<BaseResponse<NodeCarrierResponse>>
       deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
-          @NotBlank @PathVariable String nodeId,
-          @NotBlank @PathVariable String orgId,
+          @NotBlank(message = "nodeId cannot be empty") @PathVariable String nodeId,
+          @NotBlank(message = "orgId cannot be empty") @PathVariable String orgId,
           @RequestParam String carrierServiceId,
-          @NotBlank @PathVariable String serviceOption)
+          @NotBlank(message = "serviceOption cannot be empty") @PathVariable String serviceOption)
           throws NodeCarrierDomainException, CommonServiceException {
     logger.debug("Processing delete node carrier");
 
