@@ -24,7 +24,9 @@ logging:
 entity-listener:
   kafka:
     enabled: true
-
+promise:
+  service:
+    options: "SDND,STANDARD,EXPRESS,NEXTDAY"
 management:
   endpoints:
     web:
