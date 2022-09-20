@@ -1,19 +1,19 @@
-name: CSV-UTILITY HOTFIX
+name: DATA-UPLOAD HOTFIX
 
 on:
   push:
     branches: [ hotfix ]
     paths:
-      - "csv-utility/**"
+      - "data-upload/**"
       - "deploy-scripts/**"
       - "manifests/**"
       - ".github/**"
+     
 jobs:
-
   Build-Deploy:
     uses: ./.github/workflows/Build&Deploy_Hotfix.yml
     with:
-      module: csv-utility
+      module: data-upload
     secrets: inherit
 
 

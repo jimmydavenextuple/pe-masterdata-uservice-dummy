@@ -1,10 +1,10 @@
-name: CSV-UTILITY BUILD-DEPLOY
+name: DATA-UPLOAD BUILD-DEPLOY
 
 on:
   push:
     branches: [ development ]
     paths:
-      - "csv-utility/**"
+      - "data-upload/**"
       - "deploy-scripts/**"
       - "manifests/**"
       - ".github/**"
@@ -13,7 +13,7 @@ jobs:
   Build-Deploy:
     uses: ./.github/workflows/build&deploy.yml
     with:
-      module: csv-utility
+      module: data-upload
     secrets: inherit
 
 
