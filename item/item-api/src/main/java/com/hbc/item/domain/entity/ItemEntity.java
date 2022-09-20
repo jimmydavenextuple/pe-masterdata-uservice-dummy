@@ -64,7 +64,7 @@ public class ItemEntity extends BaseEntity {
   @Column(name = "parcel_shipment_eligible")
   private Boolean parcelShipmentEligible;
 
-  @Column(name = "bopis_eligilble")
+  @Column(name = "bopis_eligible")
   private Boolean bopisEligible;
 
   @Type(type = "jsonb")
