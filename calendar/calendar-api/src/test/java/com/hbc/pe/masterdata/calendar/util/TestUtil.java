@@ -37,6 +37,7 @@ public class TestUtil {
   public static final String ALL_SHIPPING_STAGE = "ALL";
   public static final String SERVICE_OPTION = "SDND";
   private static final String CARRIER_SERVICE_ID_2 = "Puro-Express";
+  public static final String EFFECTIVE_DATE_2 = "2022-09-09";
 
   public CalendarResponse getCalendarResponse() {
     return CalendarResponse.builder()
@@ -301,5 +302,16 @@ public class TestUtil {
             .build();
 
     return List.of(nodeCarrierCalendarCacheKeyDto1, nodeCarrierCalendarCacheKeyDto2);
+  }
+
+  public CarrierServiceCalendarEntity getCarrierServiceCalendarEntity1() {
+    return CarrierServiceCalendarEntity.builder()
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .description(DESCRIPTION)
+        .effectiveDate(EFFECTIVE_DATE_2)
+        .shippingStage(SHIPPING_STAGE)
+        .build();
   }
 }

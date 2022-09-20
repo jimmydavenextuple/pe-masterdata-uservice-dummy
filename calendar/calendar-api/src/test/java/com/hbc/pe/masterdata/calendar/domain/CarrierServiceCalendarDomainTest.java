@@ -170,4 +170,27 @@ class CarrierServiceCalendarDomainTest {
     Assertions.assertEquals("Unable to fetch all carrier calendars", ex.getMessage());
     verify(carrierServiceCalendarRepository, times(1)).findAllCarrierServiceCalendarsByLimit(any());
   }
+
+  @Test
+  void getCarrierServiceCalendarSortTest() throws CalendarDomainException {
+    when(carrierServiceCalendarRepository.findAllCarrierServiceCalendar(any(), any(), any()))
+        .thenReturn(
+            List.of(
+                testUtil.getCarrierServiceCalendarEntity1(),
+                testUtil.getCarrierServiceCalendarEntity()));
+
+    List<CarrierServiceCalendarEntity> resp =
+        carrierServiceCalendarDomain.getCarrierServiceCalendar(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, TestUtil.ALL_SHIPPING_STAGE);
+
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.get(0).getCalendarId()));
+    Assertions.assertEquals(TestUtil.ORG_ID, Objects.requireNonNull(resp.get(0).getOrgId()));
+    Assertions.assertEquals(
+        TestUtil.EFFECTIVE_DATE_2, Objects.requireNonNull(resp.get(0).getEffectiveDate()));
+    Assertions.assertEquals(
+        TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.get(1).getEffectiveDate()));
+    verify(carrierServiceCalendarRepository, times(1))
+        .findAllCarrierServiceCalendar(any(), any(), any());
+  }
 }
