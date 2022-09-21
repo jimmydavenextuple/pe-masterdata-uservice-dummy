@@ -6,19 +6,19 @@ server:
       resources:
         min:
           memory: "512Mi"
-          cpu: "256m"
+          cpu: "100m"
         max:
           memory: "512Mi"
-          cpu: "256m"
+          cpu: "2000m"
     qa:
       replicas: 1
       resources:
         min:
           memory: "512Mi"
-          cpu: "256m"
+          cpu: "100m"
         max:
           memory: "512Mi"
-          cpu: "256m"
+          cpu: "2000m"
     stage:
       replicas: 3
       resources:
@@ -46,7 +46,7 @@ server:
           cpu: "100m"
         max:
           memory: "512Mi"
-          cpu: "256m"
+          cpu: "2000m"
     prod:
       java-opts: "-Xms768m -Xmx768m"
       replicas: 3
