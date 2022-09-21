@@ -19,6 +19,10 @@ public class TransitDataUpload {
   @Length(max = 50)
   private String orgId;
 
+  @NotBlank(message = "carrierServiceId can't be blank")
+  @Length(max = 50)
+  private String carrierServiceId;
+
   @NotBlank(message = "sourceGeozone can't be blank")
   @Length(max = 50)
   private String sourceGeozone;
@@ -27,13 +31,11 @@ public class TransitDataUpload {
   @Length(max = 50)
   private String destinationGeozone;
 
-  @NotBlank(message = "carrierServiceId can't be blank")
-  @Length(max = 50)
-  private String carrierServiceId;
-
   @Min(value = 0, message = "transitDays can't be negative")
   @NotNull(message = "transitDays can't be null")
   private Float transitDays;
+
+  private String actionType;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -44,6 +46,4 @@ public class TransitDataUpload {
   private Date bufferEndDate;
 
   private Double bufferDays;
-
-  private String actionType;
 }
