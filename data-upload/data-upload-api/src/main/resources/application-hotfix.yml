@@ -48,5 +48,5 @@ jobs-framework:
     group-id: jobs-task-consumer-async-hotfix
 auth-token:
   url: https://promise-engine-dev-pool.auth.us-east-1.amazoncognito.com
-  username: ${COGNITO_CLIENT_ID}
-  password: ${COGNITO_CLIENT_SECRET}
+  username: \${COGNITO_CLIENT_ID}
+  password: \${COGNITO_CLIENT_SECRET}
