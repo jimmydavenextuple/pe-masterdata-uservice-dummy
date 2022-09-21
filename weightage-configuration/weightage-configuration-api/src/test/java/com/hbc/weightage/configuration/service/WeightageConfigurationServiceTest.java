@@ -1,5 +1,6 @@
 package com.hbc.weightage.configuration.service;
 
+import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.KEY;
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.KEYS;
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.ORG_ID;
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.TYPE;
@@ -13,6 +14,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.weightage.configuration.TestUtil;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -80,7 +83,7 @@ class WeightageConfigurationServiceTest {
   }
 
   @Test
-  void createWeightageConfigurationTest() throws PromiseEngineException {
+  void createWeightageConfigurationTest() throws PromiseEngineException, CommonServiceException {
     WeightageConfiguration weightageConfiguration = testUtil.getWeightageConfiguration();
     CreateWeightageConfigurationRequest createWeightageConfigurationRequest =
         testUtil.getCreateWeightageConfigurationRequest();
@@ -190,5 +193,28 @@ class WeightageConfigurationServiceTest {
     assertEquals(2, response.size());
     assertEquals(weightageConfigurationList.get(0).getType(), response.get(0).getType());
     verify(weightageConfigurationDomain, Mockito.times(1)).getAllWeightageConfiguration(any());
+  }
+
+  @Test
+  void createWeightageConfigurationIfAlreadyExistsTest() throws PromiseEngineException {
+    WeightageConfiguration weightageConfiguration = testUtil.getWeightageConfiguration();
+    CreateWeightageConfigurationRequest createWeightageConfigurationRequest =
+        CreateWeightageConfigurationRequest.builder()
+            .orgId(ORG_ID)
+            .type(TYPE)
+            .key(KEY)
+            .weightage(WEIGHTAGE)
+            .build();
+    when(weightageConfigurationDomain.getWeightageConfiguration(any(), any(), any()))
+        .thenReturn(weightageConfiguration);
+
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
+            weightageConfigurationService.createWeightageConfiguration(
+                testUtil.getCreateWeightageConfigurationRequest()));
+
+    verify(weightageConfigurationDomain, times(0))
+        .saveWeightageConfiguration(any(WeightageConfiguration.class));
   }
 }

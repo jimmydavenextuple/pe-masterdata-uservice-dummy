@@ -1,5 +1,6 @@
 package com.hbc.weightage.configuration.controller;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
@@ -46,7 +47,7 @@ public class WeightageConfigurationController {
   @PostMapping("/create")
   public ResponseEntity<BaseResponse<WeightageConfigurationDto>> createWeightageConfiguration(
       @Valid @RequestBody CreateWeightageConfigurationRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("Processing create Weightage Configuration request");
     try {
       var weightageConfigurationDto =
