@@ -1,4 +1,5 @@
 spring:
+  timeRangeInHours: 24
   servlet:
     multipart:
       max-file-size: 2048KB
@@ -63,3 +64,7 @@ management:
             requests: true
         persistence: true
         cache: true
+auth-token:
+  name: amazoncognito-service
+  grant-type: client_credentials
+  scope: sfcc-resources/edd

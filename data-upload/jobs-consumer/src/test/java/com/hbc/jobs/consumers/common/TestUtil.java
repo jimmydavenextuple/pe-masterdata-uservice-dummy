@@ -5,15 +5,13 @@ import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.domain.entity.JobRecordEntity;
 import com.hbc.jobs.consumers.domain.mapper.JobMapper;
 import com.hbc.jobs.consumers.domain.mapper.JobRecordMapper;
+import com.hbc.jobs.consumers.feign.AuthTokenResponse;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
-import com.hbc.jobs.framework.common.domain.enums.RecordDataTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
-import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
-import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
@@ -37,8 +35,24 @@ import org.springframework.stereotype.Service;
 public class TestUtil {
 
   public static final String ORG_ID = "BAY";
-  public static final String JOB_TYPE = JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES.name();
   public static final String JOB_ID = "JobId1";
+
+  public static final String CSV_CONTENTS_PROCESSING_LEAD_TIMES =
+      "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+          + "1554,BAY,SDND,2,U\n"
+          + "1560,BAY,SDND,2,D\n"
+          + "1101,BAY,SDND,2,U";
+
+  public static final String CSV_CONTENTS_TRANSIT_TIMES =
+      "orgId,BAY,,,,,,,,,\n"
+          + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+          + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
+          + "DFSA1,,9.96,9.96\n"
+          + "DFSA2,10,9,9.9\n"
+          + "DFSA3,10,9,9\n";
+
+  public static final String JOB_STRING =
+      "[{\"nodeId\":\"1554\",\"orgId\":\"BAY\",\"serviceOption\":\"SDND\",\"carrierServiceId\":\"\",\"processingTime\":2.0,\"actionType\":\"U\"},{\"nodeId\":\"1560\",\"orgId\":\"BAY\",\"serviceOption\":\"SDND\",\"carrierServiceId\":\"\",\"processingTime\":2.0,\"actionType\":\"D\"},{\"nodeId\":\"1101\",\"orgId\":\"BAY\",\"serviceOption\":\"SDND\",\"carrierServiceId\":\"\",\"processingTime\":2.0,\"actionType\":\"U\"}]";
 
   public static final Optional<String> DEFAULT_SORT_FIELD = Optional.of("created_date");
 
@@ -306,21 +320,6 @@ public class TestUtil {
     return JobMapper.INSTANCE.toJobEntity(createJob(jobTypeEnum, totalRecords));
   }
 
-  public RecordDto createRecordDto(
-      JobDto jobDto,
-      String record,
-      int recordId,
-      RecordDataTypeEnum recordDataTypeEnum,
-      RecordInputDto inputDto) {
-    RecordDto recordDto = new RecordDto();
-    recordDto.setJob(jobDto);
-    recordDto.setInputs(inputDto);
-    recordDto.setRecordData(record);
-    recordDto.setRecordId(recordId);
-    recordDto.setRecordType(recordDataTypeEnum);
-    return recordDto;
-  }
-
   public NodeCarrierRequest getNodeCarrierRequest() {
     NodeCarrierRequest nodeCarrierRequest = new NodeCarrierRequest();
     nodeCarrierRequest.setNodeId("node-1");
@@ -383,5 +382,14 @@ public class TestUtil {
     jobFilters.setPageSize(DEFAULT_PAGE_SIZE);
 
     return jobFilters;
+  }
+
+  public AuthTokenResponse getAuthTokenResponse() {
+    AuthTokenResponse authTokenResponse = new AuthTokenResponse();
+    authTokenResponse.setAccessToken("token");
+    authTokenResponse.setTokenType("tokenType");
+    authTokenResponse.setExpiresIn(20);
+
+    return authTokenResponse;
   }
 }

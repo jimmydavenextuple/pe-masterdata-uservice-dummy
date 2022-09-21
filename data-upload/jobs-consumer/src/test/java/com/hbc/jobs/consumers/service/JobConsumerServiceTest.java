@@ -256,6 +256,17 @@ class JobConsumerServiceTest {
     }
   }
 
+  @Test
+  void saveJob() throws JobDomainException {
+    when(jobDomain.save(any()))
+        .thenReturn(testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
+
+    JobEntity jobEntity =
+        jobConsumerService.saveJob(testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
+    Assertions.assertNotNull(jobEntity);
+    verify(jobDomain, times(1)).save(any());
+  }
+
   @Nested
   class GetJob {
 
@@ -367,6 +378,7 @@ class JobConsumerServiceTest {
     void updateJobSuccess() throws Exception {
       JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
       jobEntity.setJobId(TestUtil.JOB_ID);
+      jobEntity.setStatus(JobStatusEnum.PROCESSED);
       RecordStatusDto recordStatus =
           testUtil.createRecordStatus(
               TestUtil.JOB_ID,

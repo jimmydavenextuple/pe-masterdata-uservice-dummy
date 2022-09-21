@@ -23,4 +23,15 @@ public interface JobRepository extends JpaRepository<JobEntity, String> {
       nativeQuery = true)
   Page<JobEntity> findJobsByJobParam(
       String orgId, String jobType, Date pastDays, Pageable pageableElement);
+
+  @Query(
+      value = "SELECT * FROM JOBS WHERE org_id = ?1 AND status = ?2 FOR UPDATE SKIP LOCKED LIMIT 1",
+      nativeQuery = true)
+  JobEntity getJobStatusByOrgIdAndStatus(String orgId, String status);
+
+  @Query(
+      value =
+          "SELECT * FROM JOBS WHERE processing_started_at <= ?3 AND org_id = ?1 AND status = ?2 FOR UPDATE SKIP LOCKED LIMIT 1",
+      nativeQuery = true)
+  JobEntity fetchJobRecordInTimeRange(String orgId, String status, Date date);
 }

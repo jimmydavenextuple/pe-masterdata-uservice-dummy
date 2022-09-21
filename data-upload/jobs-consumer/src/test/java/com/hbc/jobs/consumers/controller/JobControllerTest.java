@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.consumers.common.TestUtil;
+import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
@@ -139,6 +140,19 @@ class JobControllerTest {
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
 
     verify(jobConsumerService, times(1)).getJob(any(), any());
+  }
+
+  @Test
+  void updateJob() throws JobDomainException {
+    JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
+    when(jobConsumerService.saveJob(any()))
+        .thenReturn(testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
+
+    ResponseEntity<BaseResponse<JobDto>> response = jobsConsumerController.updateJob(job);
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertNotNull(response);
+    Assertions.assertNotNull(response.getBody());
+    Assertions.assertNotNull(response.getBody().getPayload());
   }
 
   @Test
