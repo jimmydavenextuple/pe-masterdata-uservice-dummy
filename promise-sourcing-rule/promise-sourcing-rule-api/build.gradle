@@ -18,6 +18,8 @@ dependencies {
     implementation(project(":nfs-near-cache:core-near-cache-producer"))
     implementation project(":common:common-postgres")
     runtimeOnly 'org.postgresql:postgresql'
+    implementation(project(":node:node-api-domain"))
+    implementation(project(":postal-code-timezone:postal-code-timezone-api-domain"))
 }
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11

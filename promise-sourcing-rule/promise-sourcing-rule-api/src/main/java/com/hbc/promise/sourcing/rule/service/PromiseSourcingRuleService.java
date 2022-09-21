@@ -2,7 +2,14 @@ package com.hbc.promise.sourcing.rule.service;
 
 import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.enums.ExceptionCodeMapping;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.common.response.error.FieldError;
+import com.hbc.node.domain.feign.NodeFeign;
+import com.hbc.node.domain.outbound.NodeResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
 import com.hbc.postgres.config.ReaderDS;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
@@ -14,6 +21,7 @@ import com.hbc.promise.sourcing.rule.domain.PromiseSourcingRuleDomain;
 import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
 import com.hbc.promise.sourcing.rule.domain.mapper.PromiseSourcingRuleMapper;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +31,9 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -32,9 +43,21 @@ import org.springframework.util.StringUtils;
 public class PromiseSourcingRuleService {
 
   private static final Logger logger = LoggerFactory.getLogger(PromiseSourcingRuleService.class);
+
+  private static final String ORG_ID = "orgId";
+  private static final String NODE_ID = "nodeId";
+  private static final String SERVICE_OPTION = "serviceOption";
+  private static final String INVALID_SERVICE_OPTION = "Invalid ServiceOption";
+  private static final String INACTIVE_NODE = "nodeId is not active";
+  private static final String INVALID_DEST_GEOZONE = "DestinationGeoZone is not valid";
   private static final PromiseSourcingRuleMapper INSTANCE =
       Mappers.getMapper(PromiseSourcingRuleMapper.class);
   private final PromiseSourcingRuleDomain promiseSourcingRuleDomain;
+  @Autowired private final PostalCodeTimezoneFeign postalCodeTimezoneFeign;
+  @Autowired private final NodeFeign nodeFeign;
+
+  @Value("#{'${promise.service.options}'.split('\\s*,\\s*')}")
+  public Set<String> serviceOptions;
 
   /**
    * Convert PromiseSourcingRule entity to PromiseSourcingRuleDto with all required processing
@@ -109,7 +132,8 @@ public class PromiseSourcingRuleService {
    * @throws PromiseEngineException
    */
   public PromiseSourcingRuleDto createPromiseSourcingRule(
-      CreatePromiseSourcingRuleRequest baseRequest) throws PromiseEngineException {
+      CreatePromiseSourcingRuleRequest baseRequest)
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside createPromiseSourcingRule service --");
     if (!StringUtils.hasLength(baseRequest.getAllocationRuleId())) {
       baseRequest.setAllocationRuleId("DEFAULT");
@@ -121,6 +145,8 @@ public class PromiseSourcingRuleService {
     String allocationRuleId = baseRequest.getAllocationRuleId();
     Set<String> sourceNodes = baseRequest.getSourceNodes();
 
+    validateNodeIdAndDestinationGeoZoneAndServiceOption(
+        orgId, serviceOption, destinationGeoZone, sourceNodes);
     validateSourcingRules(destinationGeoZone, orgId, serviceOption, allocationRuleId, sourceNodes);
 
     var promiseSourcingRule =
@@ -167,6 +193,31 @@ public class PromiseSourcingRuleService {
     }
   }
 
+  private void validateNodeIdAndDestinationGeoZoneAndServiceOption(
+      String orgId, String serviceOption, String destinationGeoZone, Set<String> sourceNodes)
+      throws CommonServiceException {
+    try {
+      for (String node : sourceNodes) {
+        BaseResponse<NodeResponse> baseResponse = nodeFeign.getNodeDetails(node, orgId);
+        if (Boolean.FALSE.equals(baseResponse.getPayload().getIsActive())) {
+          commonServiceExceptionMethod(INACTIVE_NODE, sourceNodes, orgId, serviceOption, 0x1771);
+        }
+      }
+      BaseResponse<PostalCodeTimezoneDto> postalCodeTimezoneDtoBaseResponse =
+          postalCodeTimezoneFeign.getPostalCodeTimezone(orgId, destinationGeoZone);
+      if (!postalCodeTimezoneDtoBaseResponse.isSuccess()) {
+        commonServiceExceptionMethod(
+            INVALID_DEST_GEOZONE, sourceNodes, orgId, serviceOption, 0x1774);
+      }
+      if (!serviceOptions.contains(serviceOption)) {
+        commonServiceExceptionMethod(
+            INVALID_SERVICE_OPTION, sourceNodes, orgId, serviceOption, 0x1772);
+      }
+    } catch (RuntimeException e) {
+      commonServiceExceptionMethod(
+          "Node not found with given details", sourceNodes, orgId, serviceOption, 0x1775);
+    }
+  }
   /**
    * Get Promise Sourcing Rule
    *
@@ -264,8 +315,11 @@ public class PromiseSourcingRuleService {
       String allocationRuleId,
       int priority,
       UpdatePromiseSourcingRuleRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside updatePromiseSourcingRule service --");
+
+    validateNodeIdAndDestinationGeoZoneAndServiceOption(
+        orgId, serviceOption, destinationGeoZone, baseRequest.getSourceNodes());
     var promiseSourcingRuleFromDB =
         INSTANCE.convertToPromiseSourcingRuleEntity(
             getPromiseSourcingRule(
@@ -310,5 +364,19 @@ public class PromiseSourcingRuleService {
         INSTANCE.convertToPromiseSourcingRuleDto(promiseSourcingRuleFromDB));
     return preparePromiseSourcingRuleDto(
         promiseSourcingRuleDomain.deletePromiseSourcingRule(promiseSourcingRuleFromDB));
+  }
+
+  public void commonServiceExceptionMethod(
+      String errorMessage,
+      Set<String> nodeId,
+      String orgId,
+      String serviceOption,
+      Integer errorCode)
+      throws CommonServiceException {
+    Map<String, FieldError> errorMap = new HashMap<>();
+    errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
+    errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+    errorMap.put(SERVICE_OPTION, FieldError.builder().rejectedValue(serviceOption).build());
+    throw new CommonServiceException(errorMessage, HttpStatus.BAD_REQUEST, errorCode, errorMap);
   }
 }

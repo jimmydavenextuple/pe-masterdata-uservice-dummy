@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -227,14 +228,30 @@ public class CsvUploadUtilityService {
               transitDataCreationRequest.setDestinationGeozone(destinationSfa);
               transitDataCreationRequest.setSourceGeozone(sFsa);
               var transitDaysString = row[integer.getAndIncrement()];
-              if (NumberUtils.isCreatable(transitDaysString)) {
-                transitDataCreationRequest.setTransitDays(Float.valueOf(transitDaysString));
+              if (!ObjectUtils.isEmpty(transitDaysString)
+                  && !NumberUtils.isCreatable(transitDaysString)) {
+                log.error(
+                    "Invalid transit days: {} for destinationFsa: {} and sourceFsa: {}",
+                    transitDaysString,
+                    destinationSfa,
+                    sFsa);
+                throw new CsvDataValidationException(
+                    "Invalid transit days: "
+                        + transitDaysString
+                        + " for destinatonFsa: "
+                        + destinationSfa
+                        + " and sourseFsa: "
+                        + sFsa
+                        + " combination");
               } else {
-                log.error("Invalid transit days: {}", transitDaysString);
-                throw new CsvDataValidationException("Invalid transit days: " + transitDaysString);
+                if (!ObjectUtils.isEmpty(transitDaysString)) {
+                  transitDataCreationRequest.setTransitDays(Float.valueOf(transitDaysString));
+                  return transitDataCreationRequest;
+                }
               }
-              return transitDataCreationRequest;
+              return null;
             })
+        .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
 
