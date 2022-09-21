@@ -1,13 +1,15 @@
 package com.hbc.jobs.consumers.service;
 
+import com.hbc.csvdownload.common.pojo.TransitDataUpload;
+import com.hbc.jobs.consumers.domain.mapper.TransitDataUploadMapper;
 import com.hbc.jobs.consumers.exception.TransitMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.transit.domain.feign.TransitFeign;
-import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import java.util.Map;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class TransitMapper implements FeignClientMapper {
 
+  private static final String DELETE_D = "D";
   private final TransitFeign transitFeign;
 
   public TransitMapper(TransitFeign transitFeign) {
@@ -22,6 +25,9 @@ public class TransitMapper implements FeignClientMapper {
   }
 
   @Setter private JobTypeEnum jobTypeEnum;
+
+  public static final TransitDataUploadMapper INSTANCE =
+      Mappers.getMapper(TransitDataUploadMapper.class);
 
   @Override
   public Object getDTOFromCustomMapper(String stringRecord) {
@@ -37,7 +43,7 @@ public class TransitMapper implements FeignClientMapper {
   public Class mapTODto() throws TransitMapperException {
     try {
       if (jobTypeEnum == JobTypeEnum.UPLOAD_TRANSIT_TIMES) {
-        return TransitDataCreationRequest.class;
+        return TransitDataUpload.class;
       }
       log.error("Unable to map an object!");
       throw new TransitMapperException(
@@ -53,8 +59,18 @@ public class TransitMapper implements FeignClientMapper {
   public ResponseEntity<?> callApi(Object request, RecordInputDto inputs)
       throws TransitMapperException {
     if (jobTypeEnum == JobTypeEnum.UPLOAD_TRANSIT_TIMES) {
-      var transitDataCreationRequest = (TransitDataCreationRequest) request;
-      return ResponseEntity.ok(transitFeign.addTransitData(transitDataCreationRequest));
+      var transitDataUpload = (TransitDataUpload) request;
+      if (DELETE_D.equalsIgnoreCase(transitDataUpload.getActionType())) {
+        return ResponseEntity.ok(
+            transitFeign.deleteTransitDetails(
+                transitDataUpload.getOrgId(),
+                transitDataUpload.getSourceGeozone(),
+                transitDataUpload.getDestinationGeozone(),
+                transitDataUpload.getCarrierServiceId()));
+      } else {
+        return ResponseEntity.ok(
+            transitFeign.addTransitData(INSTANCE.convertToTransitDataRequest(transitDataUpload)));
+      }
     }
     log.error("Failed to make a call based on job type");
     throw new TransitMapperException("Please provide the valid job type", jobTypeEnum);

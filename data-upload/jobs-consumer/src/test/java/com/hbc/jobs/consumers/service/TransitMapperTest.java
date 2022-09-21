@@ -4,11 +4,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.response.BaseResponse;
+import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.jobs.consumers.common.TestUtil;
 import com.hbc.jobs.consumers.exception.TransitMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.transit.domain.feign.TransitFeign;
-import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +44,7 @@ class TransitMapperTest {
   void mapToDto() throws TransitMapperException {
     transitMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
     Class res = transitMapper.mapTODto();
-    Assertions.assertEquals(TransitDataCreationRequest.class, res);
+    Assertions.assertEquals(TransitDataUpload.class, res);
   }
 
   @Test
@@ -57,7 +57,7 @@ class TransitMapperTest {
 
   @Test
   void callApi() throws TransitMapperException {
-    Object object = testUtil.getTransitDataCreationRequest();
+    Object object = testUtil.getTransitDataUpload("");
     transitMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
     when(transitFeign.addTransitData(any()))
         .thenReturn(BaseResponse.builder().payload(testUtil.getTransitResponse()).build());
@@ -68,8 +68,20 @@ class TransitMapperTest {
   }
 
   @Test
+  void callApiDeleteTransitEntryTest() throws TransitMapperException {
+    Object object = testUtil.getTransitDataUpload("D");
+    transitMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+    when(transitFeign.deleteTransitDetails(any(), any(), any(), any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getTransitResponse()).build());
+    ResponseEntity<BaseResponse<TransitResponse>> res =
+        (ResponseEntity<BaseResponse<TransitResponse>>) transitMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
+  }
+
+  @Test
   void callApiException() {
-    Object object = testUtil.getTransitDataCreationRequest();
+    Object object = testUtil.getTransitDataUpload("");
     transitMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     Exception exception =
         Assertions.assertThrows(
