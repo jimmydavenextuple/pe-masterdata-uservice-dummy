@@ -62,8 +62,9 @@ public class WeightageConfigurationService {
    * @throws PromiseEngineException
    */
   public Map<String, Float> fetchWeightage(FetchWeightageRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside fetchWeightage service --");
+    validateKeys(baseRequest.getKeys());
     List<WeightageConfiguration> weightageConfigurationList =
         weightageConfigurationDomain.fetchWeightage(baseRequest);
     if (weightageConfigurationList.isEmpty()) {
@@ -225,5 +226,12 @@ public class WeightageConfigurationService {
         weightageConfigurationDomain.getAllWeightageConfiguration(limit);
 
     return INSTANCE.convertToWeightageCacheKeyDtoList(weightageConfigurationList);
+  }
+
+  public void validateKeys(List<String> keys) throws CommonServiceException {
+    if (keys.stream().anyMatch(String::isBlank)) {
+      throw new CommonServiceException(
+          "Keys cannot contain null or an empty string", HttpStatus.BAD_REQUEST, 0x1771, null);
+    }
   }
 }
