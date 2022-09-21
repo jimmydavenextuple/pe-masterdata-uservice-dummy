@@ -7,7 +7,7 @@ on:
         required: true
         type: string
 jobs:
-  Build:
+  Build-Hotfix2:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -66,6 +66,7 @@ jobs:
   Deploy-To-HOTFIX2:
     runs-on: ubuntu-latest
     environment: hotfix2
+    needs: Build-Hotfix2
     permissions:
       id-token: write
       contents: write
