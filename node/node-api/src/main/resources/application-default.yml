@@ -9,7 +9,13 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
-
+  replica:
+    datasource:
+      required: true
+      platform: postgres
+      url: jdbc:postgresql://localhost:5432/postgres
+      username: postgres
+      password: postgres
 logging:
   level:
     com.hbc: INFO
