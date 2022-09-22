@@ -98,7 +98,6 @@ public class DataUploadUtilityExpectedHeaders {
                     ORG_ID,
                     CARRIER_SERVICE_ID,
                     SERVICE_OPTION,
-                    PROCESSING_TIME,
                     LAST_PICKUP_TIME)),
             Map.entry(
                 "carrier",

@@ -85,7 +85,6 @@ public class NodeCarrierDataUploadService {
           String orgId = csvRecord.get(ORG_ID);
           String carrierServiceId = csvRecord.get(CARRIER_SERVICE_ID);
           String serviceOption = csvRecord.get(SERVICE_OPTION);
-          var processingTime = Double.valueOf(csvRecord.get(PROCESSING_TIME));
           String lastPickupTime = csvRecord.get(LAST_PICKUP_TIME);
 
           switch (action) {
@@ -97,7 +96,6 @@ public class NodeCarrierDataUploadService {
                         .orgId(orgId)
                         .carrierServiceId(carrierServiceId)
                         .serviceOption(serviceOption)
-                        .processingTime(processingTime)
                         .lastPickupTime(lastPickupTime)
                         .build();
                 BaseResponse<NodeCarrierResponse> baseResponse =
@@ -111,7 +109,6 @@ public class NodeCarrierDataUploadService {
               {
                 var nodeCarrierUpdateRequest =
                     NodeCarrierUpdateRequest.builder()
-                        .processingTime(processingTime)
                         .lastPickupTime(lastPickupTime)
                         .build();
                 BaseResponse<NodeCarrierResponse> baseResponse =

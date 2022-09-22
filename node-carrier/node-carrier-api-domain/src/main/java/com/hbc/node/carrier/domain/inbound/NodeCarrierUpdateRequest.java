@@ -18,7 +18,6 @@ public class NodeCarrierUpdateRequest implements Serializable {
 
   private static final long serialVersionUID = 708117169845359905L;
 
-  @NotNull(message = "processingTime cannot be null")
   @Min(value = 0, message = "processingTime can't be negative")
   private Double processingTime;
 
