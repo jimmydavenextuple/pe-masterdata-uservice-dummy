@@ -12,6 +12,7 @@ import com.hbc.transit.service.TransitService;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -209,12 +210,12 @@ public class TransitController {
     }
   }
 
-  @GetMapping("/transit-entries/{orgId}/{carrierServiceId}/geozones")
+  @PostMapping("/transit-entries/{orgId}/{carrierServiceId}/geozones")
   public ResponseEntity<BaseResponse<List<TransitResponse>>>
       getTransitTimeDetailsForDestinationGeoZonesList(
           @PathVariable String orgId,
           @PathVariable String carrierServiceId,
-          @NotNull @RequestParam List<String> destinationGeozones)
+          @NotNull @NotEmpty @RequestBody List<String> destinationGeozones)
           throws TransitDomainException {
     logger.debug("Processing get transit time entries");
     return ResponseEntity.ok(
