@@ -1,6 +1,7 @@
 package com.hbc.node.carrier.service;
 
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
@@ -16,6 +17,8 @@ import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import com.hbc.node.carrier.exception.NodeCarrierSelectionDomainException;
+import com.hbc.node.domain.feign.NodeFeign;
+import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.postgres.config.ReaderDS;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,10 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -46,12 +51,45 @@ public class NodeCarrierService {
       "Node Carrier not found for given details";
 
   private final NodeCarrierDomain nodeCarrierDomain;
+  private final NodeFeign nodeFeign;
+
+  @Value("#{'${promise.service.options}'.split('\\s*,\\s*')}")
+  public Set<String> serviceOptions;
 
   public static final NodeCarrierMapper INSTANCE = Mappers.getMapper(NodeCarrierMapper.class);
 
   public NodeCarrierResponse createNodeCarrier(NodeCarrierRequest nodeCarrierRequest)
       throws NodeCarrierDomainException, InvalidDataException, CommonServiceException {
     validateBufferHours(nodeCarrierRequest.getBufferHours());
+    try {
+      BaseResponse<NodeResponse> baseResponse =
+          nodeFeign.getNodeDetails(nodeCarrierRequest.getNodeId(), nodeCarrierRequest.getOrgId());
+      if (!baseResponse.isSuccess()) {
+        commonServiceExceptionMethod(
+            "Invalid nodeId",
+            nodeCarrierRequest.getNodeId(),
+            nodeCarrierRequest.getOrgId(),
+            nodeCarrierRequest.getCarrierServiceId(),
+            nodeCarrierRequest.getServiceOption());
+      }
+      if (!serviceOptions.contains(nodeCarrierRequest.getServiceOption())) {
+        commonServiceExceptionMethod(
+            "Invalid serviceOption",
+            nodeCarrierRequest.getNodeId(),
+            nodeCarrierRequest.getOrgId(),
+            nodeCarrierRequest.getCarrierServiceId(),
+            nodeCarrierRequest.getServiceOption());
+      }
+    } catch (RuntimeException e) {
+      var errorMessage = "NodeId does not exists";
+      logger.error(errorMessage, e);
+      commonServiceExceptionMethod(
+          errorMessage,
+          nodeCarrierRequest.getNodeId(),
+          nodeCarrierRequest.getOrgId(),
+          nodeCarrierRequest.getCarrierServiceId(),
+          nodeCarrierRequest.getServiceOption());
+    }
     if (ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId())) {
       validateProcessingLeadTime(nodeCarrierRequest.getProcessingTime());
     } else {
@@ -321,5 +359,20 @@ public class NodeCarrierService {
         INSTANCE.toNodeCarrierSelectionResponse(nodeCarrierSelectionEntity.get());
     nodeCarrierDomain.deleteNodeCarrierSelectionEntity(nodeCarrierSelectionEntity.get());
     return nodeCarrierSelectionResponse;
+  }
+
+  public void commonServiceExceptionMethod(
+      String errorMessage,
+      String nodeId,
+      String orgId,
+      String carrierServiceId,
+      String serviceOption)
+      throws CommonServiceException {
+    Map<String, FieldError> errorMap = new HashMap<>();
+    errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
+    errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+    errorMap.put(CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
+    errorMap.put(SERVICE_OPTION, FieldError.builder().rejectedValue(serviceOption).build());
+    throw new CommonServiceException(errorMessage, HttpStatus.BAD_REQUEST, 0x1772, errorMap);
   }
 }

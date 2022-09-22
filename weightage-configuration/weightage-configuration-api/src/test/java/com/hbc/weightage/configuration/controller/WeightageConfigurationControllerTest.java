@@ -16,6 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.weightage.configuration.TestUtil;
@@ -49,7 +50,7 @@ class WeightageConfigurationControllerTest {
   }
 
   @Test
-  void fetchWeightageTest() throws PromiseEngineException {
+  void fetchWeightageTest() throws PromiseEngineException, CommonServiceException {
     FetchWeightageRequest fetchWeightageRequest = testUtil.getFetchWeightageRequest();
     Map<String, Float> fetchWeightageResponse = testUtil.getFetchWeightageResponse();
     when(weightageConfigurationService.fetchWeightage(any(FetchWeightageRequest.class)))
@@ -64,7 +65,7 @@ class WeightageConfigurationControllerTest {
   }
 
   @Test
-  void fetchWeightageNotFoundTest() throws PromiseEngineException {
+  void fetchWeightageNotFoundTest() throws PromiseEngineException, CommonServiceException {
     FetchWeightageRequest fetchWeightageRequest = testUtil.getFetchWeightageRequest();
     when(weightageConfigurationService.fetchWeightage(any(FetchWeightageRequest.class)))
         .thenThrow(PromiseEngineException.class);
@@ -79,7 +80,7 @@ class WeightageConfigurationControllerTest {
   }
 
   @Test
-  void createWeightageConfigurationTest() throws PromiseEngineException {
+  void createWeightageConfigurationTest() throws PromiseEngineException, CommonServiceException {
     CreateWeightageConfigurationRequest createWeightageConfigurationRequest =
         testUtil.getCreateWeightageConfigurationRequest();
     WeightageConfigurationDto weightageConfigurationDto = testUtil.getWeightageConfigurationDto();
@@ -101,7 +102,8 @@ class WeightageConfigurationControllerTest {
   }
 
   @Test
-  void createWeightageConfigurationExceptionTest() throws PromiseEngineException {
+  void createWeightageConfigurationExceptionTest()
+      throws PromiseEngineException, CommonServiceException {
     CreateWeightageConfigurationRequest createWeightageConfigurationRequest =
         testUtil.getCreateWeightageConfigurationRequest();
     when(weightageConfigurationService.createWeightageConfiguration(

@@ -4,7 +4,9 @@ import static com.hbc.weightage.configuration.utils.WeightageConfigurationConsta
 
 import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.enums.ExceptionCodeMapping;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
+import com.hbc.common.response.error.FieldError;
 import com.hbc.postgres.config.ReaderDS;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
@@ -26,6 +28,7 @@ import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,8 +62,9 @@ public class WeightageConfigurationService {
    * @throws PromiseEngineException
    */
   public Map<String, Float> fetchWeightage(FetchWeightageRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside fetchWeightage service --");
+    validateKeys(baseRequest.getKeys());
     List<WeightageConfiguration> weightageConfigurationList =
         weightageConfigurationDomain.fetchWeightage(baseRequest);
     if (weightageConfigurationList.isEmpty()) {
@@ -87,7 +91,8 @@ public class WeightageConfigurationService {
    * @throws PromiseEngineException
    */
   public WeightageConfigurationDto createWeightageConfiguration(
-      CreateWeightageConfigurationRequest baseRequest) throws PromiseEngineException {
+      CreateWeightageConfigurationRequest baseRequest)
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside createWeightageConfiguration service --");
     if (Objects.equals(baseRequest.getType(), AVAILABILITY)
         && !availabilityKeys.contains(baseRequest.getKey())) {
@@ -96,7 +101,11 @@ public class WeightageConfigurationService {
           ExceptionCodeMapping.SERVICE_UNAUTHORIZED_ACTION,
           "Invalid key for AVAILABILITY type");
     }
+    String orgId = baseRequest.getOrgId();
+    String type = baseRequest.getType();
+    String key = baseRequest.getKey();
 
+    validateWeightageConfiguration(orgId, type, key);
     var weightageConfiguration =
         INSTANCE.convertCreateWeightageConfigurationRequestToWeightageConfigurationEntity(
             baseRequest);
@@ -105,6 +114,21 @@ public class WeightageConfigurationService {
         weightageConfigurationDomain.saveWeightageConfiguration(weightageConfiguration));
   }
 
+  private void validateWeightageConfiguration(String orgId, String type, String key)
+      throws PromiseEngineException, CommonServiceException {
+    Optional<WeightageConfiguration> weightageConfiguration =
+        Optional.ofNullable(
+            weightageConfigurationDomain.getWeightageConfiguration(orgId, type, key));
+    if (!weightageConfiguration.isEmpty()) {
+      logger.error("-- Weightage Configuration already exists! --");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put("org-id", FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put("type", FieldError.builder().rejectedValue(type).build());
+      errorMap.put("key", FieldError.builder().rejectedValue(key).build());
+      throw new CommonServiceException(
+          "Weightage Configuration already exists!", HttpStatus.BAD_REQUEST, 0x1771, errorMap);
+    }
+  }
   /**
    * Get Weightage Configuration
    *
@@ -202,5 +226,12 @@ public class WeightageConfigurationService {
         weightageConfigurationDomain.getAllWeightageConfiguration(limit);
 
     return INSTANCE.convertToWeightageCacheKeyDtoList(weightageConfigurationList);
+  }
+
+  public void validateKeys(List<String> keys) throws CommonServiceException {
+    if (keys.stream().anyMatch(String::isBlank)) {
+      throw new CommonServiceException(
+          "Keys cannot contain null or an empty string", HttpStatus.BAD_REQUEST, 0x1771, null);
+    }
   }
 }
