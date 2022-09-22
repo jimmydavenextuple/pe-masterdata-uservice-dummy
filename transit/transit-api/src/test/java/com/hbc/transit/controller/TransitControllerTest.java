@@ -13,6 +13,7 @@ import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
+import com.hbc.transit.domain.inbound.TransitDetailsRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.transit.exception.TransitDomainException;
 import com.hbc.transit.service.TransitService;
@@ -308,12 +309,14 @@ class TransitControllerTest {
 
   @Test
   void getTransitTimeDetailsForDestinationGeoZonesList() throws TransitDomainException {
+    TransitDetailsRequest transitDetailsRequest = new TransitDetailsRequest();
+    transitDetailsRequest.setDestinationGeozones(List.of(TestUtil.DESTINATION_GEOZONE));
     when(transitService.getTransitDetailsForDestinationGeozones(anyString(), anyString(), any()))
         .thenReturn(List.of(testUtil.getTransitResponse(1.5F)));
 
     ResponseEntity<BaseResponse<List<TransitResponse>>> responseEntity =
         transitController.getTransitTimeDetailsForDestinationGeoZonesList(
-            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE));
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, transitDetailsRequest);
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertNotNull(responseEntity.getBody());
     Assertions.assertFalse(CollectionUtils.isEmpty(responseEntity.getBody().getPayload()));
