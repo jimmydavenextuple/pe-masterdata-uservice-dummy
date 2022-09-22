@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -135,6 +136,7 @@ public class PromiseSourcingRuleService {
       CreatePromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside createPromiseSourcingRule service --");
+    validateSourceNode(baseRequest.getSourceNodes());
     if (!StringUtils.hasLength(baseRequest.getAllocationRuleId())) {
       baseRequest.setAllocationRuleId("DEFAULT");
     }
@@ -153,6 +155,16 @@ public class PromiseSourcingRuleService {
         INSTANCE.convertFromCreatePromiseSourcingRuleRequestToEntity(baseRequest);
     return preparePromiseSourcingRuleDto(
         promiseSourcingRuleDomain.savePromiseSourcingRule(promiseSourcingRule));
+  }
+
+  public void validateSourceNode(Set<String> sourceNodes) throws CommonServiceException {
+    if (sourceNodes.stream().anyMatch(String::isBlank)) {
+      throw new CommonServiceException(
+          "sourceNodes cannot contain null or an empty string",
+          HttpStatus.BAD_REQUEST,
+          0x1771,
+          null);
+    }
   }
 
   /**

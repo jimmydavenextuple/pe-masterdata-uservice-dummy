@@ -33,6 +33,7 @@ import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
 import com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
@@ -404,5 +405,17 @@ class PromiseSourcingRuleServiceTest {
         promiseSourcingRuleService.deletePromiseSourcingRule(
             ORG_ID, SERVICE_OPTION, DESTINATION_GEO_ZONE, ALLOCATION_RULE_ID, PRIORITY);
     assertEquals(promiseSourcingRule.getOrgId(), promiseSourcingRuleDto.getOrgId());
+  }
+
+  @Test
+  void validateSourceNodesExceptionTest() throws PromiseEngineException {
+    Set<String> sourceNodes = new HashSet<>();
+    sourceNodes.add("");
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> promiseSourcingRuleService.validateSourceNode(sourceNodes));
+    Assertions.assertEquals(
+        "sourceNodes cannot contain null or an empty string", exception.getMessage());
   }
 }

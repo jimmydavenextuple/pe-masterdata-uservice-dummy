@@ -30,7 +30,8 @@ public class WeightageConfigurationController {
 
   @PostMapping
   public ResponseEntity<BaseResponse<Map<String, Float>>> fetchWeightage(
-      @Valid @RequestBody FetchWeightageRequest baseRequest) throws PromiseEngineException {
+      @Valid @RequestBody FetchWeightageRequest baseRequest)
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("Processing fetch Weightage request");
     try {
       return ResponseEntity.ok(
