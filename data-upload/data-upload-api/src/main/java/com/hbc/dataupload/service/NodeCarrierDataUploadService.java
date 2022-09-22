@@ -8,7 +8,6 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DEL
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LAST_PICKUP_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROCESSING_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.UPDATE;
 import static com.hbc.dataupload.helper.NodeCarrierDataUploadConstants.NODE_CARRIER_DATA_UPLOAD_FILE_EMPTY_RECORDS;
@@ -108,9 +107,7 @@ public class NodeCarrierDataUploadService {
             case UPDATE:
               {
                 var nodeCarrierUpdateRequest =
-                    NodeCarrierUpdateRequest.builder()
-                        .lastPickupTime(lastPickupTime)
-                        .build();
+                    NodeCarrierUpdateRequest.builder().lastPickupTime(lastPickupTime).build();
                 BaseResponse<NodeCarrierResponse> baseResponse =
                     nodeCarrierFeign.updateNodeCarrier(
                         nodeId, orgId, carrierServiceId, serviceOption, nodeCarrierUpdateRequest);

@@ -36,7 +36,6 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PRIORITY;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROCESSING_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SDND_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SELECTION_CRITERIA;
@@ -93,12 +92,7 @@ public class DataUploadUtilityExpectedHeaders {
             Map.entry(
                 "node-carrier",
                 List.of(
-                    ACTION,
-                    NODE_ID,
-                    ORG_ID,
-                    CARRIER_SERVICE_ID,
-                    SERVICE_OPTION,
-                    LAST_PICKUP_TIME)),
+                    ACTION, NODE_ID, ORG_ID, CARRIER_SERVICE_ID, SERVICE_OPTION, LAST_PICKUP_TIME)),
             Map.entry(
                 "carrier",
                 List.of(
