@@ -80,7 +80,6 @@ public class TestUtil {
   public static final String ORG_ID = "Org_Id_01";
   public static final String CARRIER_SERVICE_ID = "Carrier_Service_Id_01";
   public static final String SERVICE_OPTION = "Standard";
-  public static final Double PROCESSING_TIME = 10.0;
   public static final String LAST_PICK_UP_TIME = "5:00 PM";
   public static final String CALENDAR_ID = "Calendar_Id_01";
   public static final String SHIPPING_STAGE = "ALL";
@@ -107,7 +106,6 @@ public class TestUtil {
         .orgId(ORG_ID)
         .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption(SERVICE_OPTION)
-        .processingTime(PROCESSING_TIME)
         .lastPickupTime(LAST_PICK_UP_TIME)
         .build();
   }
@@ -557,7 +555,6 @@ public class TestUtil {
         .orgId(ORG_ID)
         .carrierServiceId(carrierServiceId)
         .serviceOption(serviceOption)
-        .processingTime(PROCESSING_TIME)
         .lastPickupTime(LAST_PICK_UP_TIME)
         .build();
   }
