@@ -88,6 +88,15 @@ class CsvUtilityExceptionHandlerTest {
   }
 
   @Test
+  void handleInvalidActionType() {
+    InvalidActionType exception = new InvalidActionType("Invalid action", "invalidAction", 2);
+    ResponseEntity<ErrorResponse> errorResponseResponseEntity =
+        csvUtilityExceptionHandler.handleInvalidActionType(exception);
+    Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponseResponseEntity.getStatusCode());
+    Assertions.assertNotNull(errorResponseResponseEntity.getBody());
+  }
+
+  @Test
   void handleCsvDownloadUtilityServiceException() {
     CsvDownloadUtilityServiceException csvDownloadUtilityServiceException =
         new CsvDownloadUtilityServiceException(

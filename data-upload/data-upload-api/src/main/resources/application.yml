@@ -1,5 +1,4 @@
 spring:
-  timeRangeInHours: 24
   servlet:
     multipart:
       max-file-size: 2048KB
@@ -68,3 +67,6 @@ auth-token:
   name: amazoncognito-service
   grant-type: client_credentials
   scope: sfcc-resources/edd
+scheduled-processor:
+  timeRangeInHours: 24
+  fixed-rate: 2

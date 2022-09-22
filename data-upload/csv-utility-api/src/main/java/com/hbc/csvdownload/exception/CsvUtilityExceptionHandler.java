@@ -74,6 +74,17 @@ public class CsvUtilityExceptionHandler {
                 .build());
   }
 
+  @ExceptionHandler(InvalidActionType.class)
+  public ResponseEntity<ErrorResponse> handleInvalidActionType(InvalidActionType e) {
+    return ResponseEntity.badRequest()
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0xfffff5)
+                .message(e.getMessage())
+                .errorField("rowIndex", FieldError.builder().rejectedValue(e.getRowIndex()).build())
+                .errorField("action", FieldError.builder().rejectedValue(e.getAction()).build())
+                .build());
+  }
+
   @ExceptionHandler(TransitServiceException.class)
   public ResponseEntity<ErrorResponse> handleTransitServiceException(TransitServiceException e) {
     return ResponseEntity.badRequest()

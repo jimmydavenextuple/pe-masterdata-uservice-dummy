@@ -1,5 +1,7 @@
 package com.hbc.csvdownload.domain.pojo;
 
+import static com.hbc.common.constants.CommonConstants.*;
+
 import com.opencsv.bean.CsvBindByName;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -13,12 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ProcessingLeadTimesRaw {
-
-  public static final String NODE_ID = "nodeId";
-  public static final String ORG_ID = "orgId";
-  public static final String SERVICE_OPTION = "serviceOptions";
-  public static final String PROCESSING_TIME = "processingTime (in hrs)";
-  public static final String ACTION_TYPE = "action";
 
   @CsvBindByName(column = NODE_ID)
   private String nodeId;

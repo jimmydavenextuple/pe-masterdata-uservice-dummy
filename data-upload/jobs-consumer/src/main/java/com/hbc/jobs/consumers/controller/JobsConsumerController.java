@@ -62,7 +62,7 @@ public class JobsConsumerController {
         .body(
             BaseResponse.builder()
                 .payload(pageResp)
-                .message("Retrieval of the job debug();rmation is successful")
+                .message("Retrieval of the job information is successful")
                 .build());
   }
 

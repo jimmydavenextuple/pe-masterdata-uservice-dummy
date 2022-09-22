@@ -1,5 +1,6 @@
 package com.hbc.jobs.consumers.service;
 
+import com.hbc.common.constants.CommonConstants;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
@@ -70,11 +71,11 @@ public class CsvProcessingService {
       var csvRecord = iterator.next();
       var processingLeadTime =
           ProcessingLeadTime.builder()
-              .orgId(csvRecord.get(ProcessingLeadTimesRaw.ORG_ID))
-              .nodeId(csvRecord.get(ProcessingLeadTimesRaw.NODE_ID))
-              .processingTime(Double.valueOf(csvRecord.get(ProcessingLeadTimesRaw.PROCESSING_TIME)))
-              .serviceOption(csvRecord.get(ProcessingLeadTimesRaw.SERVICE_OPTION))
-              .actionType(csvRecord.get(ProcessingLeadTimesRaw.ACTION_TYPE))
+              .orgId(csvRecord.get(CommonConstants.ORG_ID))
+              .nodeId(csvRecord.get(CommonConstants.NODE_ID))
+              .processingTime(Double.valueOf(csvRecord.get(CommonConstants.PROCESSING_TIME)))
+              .serviceOption(csvRecord.get(CommonConstants.SERVICE_OPTION))
+              .actionType(csvRecord.get(CommonConstants.ACTION_TYPE))
               .carrierServiceId("")
               .build();
       processingLeadTimesList.add(processingLeadTime);
