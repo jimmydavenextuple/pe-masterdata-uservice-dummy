@@ -52,7 +52,7 @@ class WeightageConfigurationServiceTest {
   }
 
   @Test
-  void fetchWeightageTest() throws PromiseEngineException {
+  void fetchWeightageTest() throws PromiseEngineException, CommonServiceException {
     List<WeightageConfiguration> weightageConfigurationList =
         Collections.singletonList(testUtil.getWeightageConfiguration());
     FetchWeightageRequest fetchWeightageRequest = testUtil.getFetchWeightageRequest();
@@ -193,6 +193,16 @@ class WeightageConfigurationServiceTest {
     assertEquals(2, response.size());
     assertEquals(weightageConfigurationList.get(0).getType(), response.get(0).getType());
     verify(weightageConfigurationDomain, Mockito.times(1)).getAllWeightageConfiguration(any());
+  }
+
+  @Test
+  void validateKeysExceptionTest() throws CommonServiceException {
+    List<String> keys = new ArrayList<>();
+    keys.add("");
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class, () -> weightageConfigurationService.validateKeys(keys));
+    Assertions.assertEquals("Keys cannot contain null or an empty string", exception.getMessage());
   }
 
   @Test
