@@ -68,9 +68,9 @@ public interface TransitFeign {
   BaseResponse<TransitResponse> updateTransitBufferDetails(
       @Valid @RequestBody TransitBufferCreationRequest transitBufferCreationRequest);
 
-  @GetMapping("/transit/transit-entries/{orgId}/{carrierServiceId}/geozones")
+  @PostMapping("/transit/transit-entries/{orgId}/{carrierServiceId}/geozones")
   BaseResponse<List<TransitResponse>> getTransitTimeDetailsForDestinationGeoZonesList(
       @PathVariable String orgId,
       @PathVariable String carrierServiceId,
-      @RequestParam List<String> destinationGeozones);
+      @RequestBody List<String> destinationGeozones);
 }
