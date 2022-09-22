@@ -5,6 +5,7 @@ import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
+import com.hbc.transit.domain.inbound.TransitDetailsRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.List;
 import javax.validation.Valid;
@@ -72,5 +73,5 @@ public interface TransitFeign {
   BaseResponse<List<TransitResponse>> getTransitTimeDetailsForDestinationGeoZonesList(
       @PathVariable String orgId,
       @PathVariable String carrierServiceId,
-      @RequestBody List<String> destinationGeozones);
+      @RequestBody TransitDetailsRequest transitDetailsRequest);
 }
