@@ -34,7 +34,7 @@ logging:
 dataupload:
   base-path: "/s3-bucket/"
   maxsize-in-kilobytes: 10240
-  max-rows: 1000
+  max-rows: 10000
 jobs-framework:
   kafka-publish:
     topic-name: INTERNAL.HOTFIX.JOBS.TASK
