@@ -6,6 +6,7 @@ import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
+import com.hbc.transit.domain.inbound.TransitDetailsRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.transit.exception.TransitDomainException;
 import com.hbc.transit.service.TransitService;
@@ -209,12 +210,12 @@ public class TransitController {
     }
   }
 
-  @GetMapping("/transit-entries/{orgId}/{carrierServiceId}/geozones")
+  @PostMapping("/transit-entries/{orgId}/{carrierServiceId}/geozones")
   public ResponseEntity<BaseResponse<List<TransitResponse>>>
       getTransitTimeDetailsForDestinationGeoZonesList(
           @PathVariable String orgId,
           @PathVariable String carrierServiceId,
-          @NotNull @RequestParam List<String> destinationGeozones)
+          @RequestBody TransitDetailsRequest transitDetailsRequest)
           throws TransitDomainException {
     logger.debug("Processing get transit time entries");
     return ResponseEntity.ok(
@@ -222,7 +223,7 @@ public class TransitController {
             .message("Transit time entries fetched successfully")
             .payload(
                 transitService.getTransitDetailsForDestinationGeozones(
-                    orgId, carrierServiceId, destinationGeozones))
+                    orgId, carrierServiceId, transitDetailsRequest.getDestinationGeozones()))
             .build());
   }
 }

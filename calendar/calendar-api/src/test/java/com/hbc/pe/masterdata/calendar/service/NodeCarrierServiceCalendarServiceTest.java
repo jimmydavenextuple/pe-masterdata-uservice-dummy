@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.calendar.domain.dto.NodeCarrierCalendarCacheKeyDto;
+import com.hbc.calendar.domain.inbound.NodeCarrierServiceCalendarRequest;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
@@ -14,6 +15,7 @@ import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.NodeCarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
+import com.hbc.pe.masterdata.calendar.domain.repository.NodeCarrierServiceCalendarRepository;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
@@ -23,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -33,6 +36,7 @@ class NodeCarrierServiceCalendarServiceTest {
 
   @Mock private NodeCarrierServiceCalendarDomain nodeCarrierServiceCalendarDomain;
   @Mock private CalendarDomain calendarDomain;
+  @Mock private NodeCarrierServiceCalendarRepository nodeCarrierServiceCalendarRepository;
   @Mock private DateValidation dateValidation;
   @Mock private NodeFeign nodeFeign;
   @InjectMocks private NodeCarrierServiceCalendarService nodeCarrierServiceCalendarService;
@@ -53,6 +57,10 @@ class NodeCarrierServiceCalendarServiceTest {
     when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getNodeDetails(Boolean.TRUE));
+    when(nodeCarrierServiceCalendarRepository
+            .findByCalendarIdAndOrgIdAndNodeIdAndCarrierServiceIdAndEffectiveDate(
+                any(), any(), any(), any(), any()))
+        .thenReturn(Optional.empty());
     NodeCarrierServiceCalendarResponse resp =
         nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
             testUtil.getNodeCarrierServiceCalendarRequest());
@@ -66,6 +74,35 @@ class NodeCarrierServiceCalendarServiceTest {
         TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.getEffectiveDate()));
     Assertions.assertEquals(TestUtil.DESCRIPTION, Objects.requireNonNull(resp.getDescription()));
     verify(nodeCarrierServiceCalendarDomain, times(1)).saveNodeCarrierServiceCalendarEntity(any());
+  }
+
+  @Test
+  @DisplayName("When node carrier service calendar to be created already exists")
+  void createNodeCarrierServiceCalendarTestException()
+      throws CalendarDomainException, CommonServiceException {
+    NodeCarrierServiceCalendarRequest nodeCarrierServiceCalendarRequest =
+        testUtil.getNodeCarrierServiceCalendarRequest();
+    when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getNodeDetails(Boolean.TRUE));
+    when(nodeCarrierServiceCalendarRepository
+            .findByCalendarIdAndOrgIdAndNodeIdAndCarrierServiceIdAndEffectiveDate(
+                any(), any(), any(), any(), any()))
+        .thenReturn(Optional.of(testUtil.getNodeCarrierServiceCalendarEntity()));
+
+    Exception ex =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
+                    nodeCarrierServiceCalendarRequest));
+
+    Assertions.assertEquals(
+        "Node Carrier Service Calendar already exists for the given details", ex.getMessage());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .findByCalendarIdAndOrgIdAndNodeIdAndCarrierServiceIdAndEffectiveDate(
+            any(), any(), any(), any(), any());
+    verify(nodeCarrierServiceCalendarDomain, times(0)).saveNodeCarrierServiceCalendarEntity(any());
   }
 
   @Test
