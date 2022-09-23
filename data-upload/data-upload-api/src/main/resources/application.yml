@@ -63,6 +63,9 @@ management:
             requests: true
         persistence: true
         cache: true
+pe:
+  ui:
+    allowed-origin-url: \${PE_UI_URL}
 auth-token:
   name: amazoncognito-service
   grant-type: client_credentials

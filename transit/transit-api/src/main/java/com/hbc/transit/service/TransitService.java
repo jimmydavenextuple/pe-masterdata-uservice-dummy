@@ -1,7 +1,9 @@
 package com.hbc.transit.service;
 
+import com.hbc.carrier.domain.feign.CarrierFeign;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.common.util.DateValidationUtil;
 import com.hbc.postgres.config.ReaderDS;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
@@ -15,8 +17,10 @@ import com.hbc.transit.exception.TransitDomainException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class TransitService {
 
   private static final Logger logger = LoggerFactory.getLogger(TransitService.class);
@@ -35,10 +40,17 @@ public class TransitService {
 
   private final TransitDomain transitDomain;
 
+  private final CarrierFeign carrierFeign;
+
   public static final TransitMapper INSTANCE = Mappers.getMapper(TransitMapper.class);
 
   private static final String TRANSIT_EXCEPTION_MESSAGE =
       "Transit data not found with given details";
+
+  private static final String INVALID_TRANSIT_DATA_EXCEPTION_MESSAGE =
+      "Transit data cannot be created with given carrierServiceId and orgId";
+
+  private final DateValidationUtil dateValidationUtil;
 
   public TransitResponse addTransitInfo(TransitDataCreationRequest transitDataCreationRequest)
       throws TransitDomainException, CommonServiceException {
@@ -50,15 +62,48 @@ public class TransitService {
         transitDataCreationRequest.getSourceGeozone(),
         transitDataCreationRequest.getDestinationGeozone(),
         transitDataCreationRequest.getCarrierServiceId());
+    if (Boolean.FALSE.equals(validateCarrierDetails(transitDataCreationRequest))) {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          ORG_ID,
+          FieldError.builder().rejectedValue(transitDataCreationRequest.getOrgId()).build());
+      errorMap.put(
+          CARRIER_SERVICE_ID,
+          FieldError.builder()
+              .rejectedValue(transitDataCreationRequest.getCarrierServiceId())
+              .build());
+      throw new CommonServiceException(
+          INVALID_TRANSIT_DATA_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST, 0x1771, errorMap);
+    }
     var transitEntity = INSTANCE.toTransitEntity(transitDataCreationRequest);
 
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(transitEntity));
   }
 
+  private Boolean validateCarrierDetails(TransitDataCreationRequest transitDataCreationRequest) {
+    try {
+      var carrierServiceResponse =
+          carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(
+              transitDataCreationRequest.getCarrierServiceId(),
+              transitDataCreationRequest.getOrgId());
+      if (Objects.nonNull(carrierServiceResponse)) {
+        var payload = carrierServiceResponse.getPayload();
+        if (Objects.nonNull(payload) && Boolean.FALSE.equals(payload.isEmpty())) {
+            return true;
+        }
+      }
+      return false;
+    } catch (Exception e) {
+       logger.error("Error while fetching carrier details for orgId:{} , carrierServiceId:{}",transitDataCreationRequest.getOrgId(),transitDataCreationRequest.getCarrierServiceId());
+       return false;
+    }
+  }
   public TransitResponse updateTransitBufferDetails(
       TransitBufferCreationRequest transitBufferCreationRequest)
       throws TransitDomainException, CommonServiceException {
-
+    dateValidationUtil.validateBufferStartAndEndDate(
+        transitBufferCreationRequest.getBufferStartDate(),
+        transitBufferCreationRequest.getBufferEndDate());
     Optional<TransitEntity> existingTransitEntity =
         transitDomain.findTransitDetails(
             transitBufferCreationRequest.getOrgId(),
