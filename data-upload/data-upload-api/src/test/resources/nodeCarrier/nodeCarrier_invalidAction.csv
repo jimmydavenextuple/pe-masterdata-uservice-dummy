@@ -1,2 +1,2 @@
-action,nodeId,orgId,carrierServiceId,serviceOption,processingTime,lastPickupTime
-NEW,1,BAY,ALL-EXPRESS,EXPRESS,34.23,20:00
+action,nodeId,orgId,carrierServiceId,serviceOption,lastPickupTime
+NEW,1,BAY,ALL-EXPRESS,EXPRESS,20:00
