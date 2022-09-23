@@ -2,6 +2,7 @@ package com.hbc.csvdownload.service;
 
 import com.hbc.common.util.JsonUtil;
 import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
+import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.csvdownload.domain.mapper.ProcessingLeadTimeMapper;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.CsvDataValidationException;
@@ -16,7 +17,6 @@ import com.hbc.dataupload.common.constants.DataUploadUtilityConstants;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
-import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -50,6 +50,8 @@ public class CsvUploadUtilityService {
 
   public static final ProcessingLeadTimeMapper INSTANCE =
       Mappers.getMapper(ProcessingLeadTimeMapper.class);
+
+  public static final String DELETE_D = "D";
 
   public String uploadProcessingLeadTimesCsv(String orgId, MultipartFile csvFile)
       throws CsvFormatValidationFailedException, JsonParsingException, JobSubmissionException,
@@ -188,14 +190,14 @@ public class CsvUploadUtilityService {
     int size = csvFileContents.get(0).length;
     List<String> sFsaListWithOutHeader = Arrays.asList(sFsaListWithHeader).subList(1, size);
 
-    List<TransitDataCreationRequest> transitDataCreationRequestList = new ArrayList<>();
+    List<TransitDataUpload> transitDataUploadList = new ArrayList<>();
     csvFileContents.stream()
         .filter(row -> row.length != 0)
         .forEach(
             row -> {
               var integer = new AtomicInteger(0);
               String destinationSfa = row[integer.getAndIncrement()];
-              transitDataCreationRequestList.addAll(
+              transitDataUploadList.addAll(
                   createTransitDataCreationRequestObjects(
                       orgIdValue,
                       sFsaListWithOutHeader,
@@ -205,14 +207,14 @@ public class CsvUploadUtilityService {
                       integer));
             });
 
-    var jobRequest = StringUtil.createJobRequest(transitDataCreationRequestList, orgId);
+    var jobRequest = StringUtil.createJobRequest(transitDataUploadList, orgId);
 
     /** invoke process jobJsonOffline method via jobsDashboardClient */
     submitJob(orgId, JobTypeEnum.UPLOAD_TRANSIT_TIMES, jobRequest);
     return "Job to bulk upload transit times is submitted successfully";
   }
 
-  private List<TransitDataCreationRequest> createTransitDataCreationRequestObjects(
+  private List<TransitDataUpload> createTransitDataCreationRequestObjects(
       String orgId,
       List<String> sFsaList,
       String carrierServiceIdValue,
@@ -222,14 +224,15 @@ public class CsvUploadUtilityService {
     return sFsaList.stream()
         .map(
             sFsa -> {
-              var transitDataCreationRequest = new TransitDataCreationRequest();
-              transitDataCreationRequest.setOrgId(orgId);
-              transitDataCreationRequest.setCarrierServiceId(carrierServiceIdValue);
-              transitDataCreationRequest.setDestinationGeozone(destinationSfa);
-              transitDataCreationRequest.setSourceGeozone(sFsa);
+              var transitDataUpload = new TransitDataUpload();
+              transitDataUpload.setOrgId(orgId);
+              transitDataUpload.setCarrierServiceId(carrierServiceIdValue);
+              transitDataUpload.setDestinationGeozone(destinationSfa);
+              transitDataUpload.setSourceGeozone(sFsa);
               var transitDaysString = row[integer.getAndIncrement()];
               if (!ObjectUtils.isEmpty(transitDaysString)
-                  && !NumberUtils.isCreatable(transitDaysString)) {
+                  && !NumberUtils.isCreatable(transitDaysString)
+                  && !DELETE_D.equalsIgnoreCase(transitDaysString)) {
                 log.error(
                     "Invalid transit days: {} for destinationFsa: {} and sourceFsa: {}",
                     transitDaysString,
@@ -244,9 +247,13 @@ public class CsvUploadUtilityService {
                         + sFsa
                         + " combination");
               } else {
-                if (!ObjectUtils.isEmpty(transitDaysString)) {
-                  transitDataCreationRequest.setTransitDays(Float.valueOf(transitDaysString));
-                  return transitDataCreationRequest;
+                if (DELETE_D.equalsIgnoreCase(transitDaysString)) {
+                  transitDataUpload.setActionType(transitDaysString);
+                  return transitDataUpload;
+                } else if (!ObjectUtils.isEmpty(transitDaysString)) {
+                  transitDataUpload.setActionType(transitDaysString);
+                  transitDataUpload.setTransitDays(Float.valueOf(transitDaysString));
+                  return transitDataUpload;
                 }
               }
               return null;
