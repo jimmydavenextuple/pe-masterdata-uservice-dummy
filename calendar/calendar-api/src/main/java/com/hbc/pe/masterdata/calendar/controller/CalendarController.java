@@ -31,7 +31,7 @@ public class CalendarController {
   @PostMapping
   public ResponseEntity<BaseResponse<CalendarResponse>> handleCreateCalendar(
       @Valid @RequestBody CalendarRequest calendarRequest)
-      throws CalendarDomainException, DateException {
+      throws CalendarDomainException, DateException, CommonServiceException {
     logger.debug("Inside handleCreateCalendar() for calendarRequest: {}", calendarRequest);
     try {
       var calendarResponse = calendarService.processCreateCalendar(calendarRequest);
