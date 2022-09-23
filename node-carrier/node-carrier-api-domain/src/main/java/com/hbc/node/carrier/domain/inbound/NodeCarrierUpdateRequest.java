@@ -3,7 +3,6 @@ package com.hbc.node.carrier.domain.inbound;
 import java.io.Serializable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +17,6 @@ public class NodeCarrierUpdateRequest implements Serializable {
 
   private static final long serialVersionUID = 708117169845359905L;
 
-  @NotNull(message = "processingTime cannot be null")
   @Min(value = 0, message = "processingTime can't be negative")
   private Double processingTime;
 
