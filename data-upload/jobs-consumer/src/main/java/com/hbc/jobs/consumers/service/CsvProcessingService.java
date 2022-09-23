@@ -3,13 +3,12 @@ package com.hbc.jobs.consumers.service;
 import com.hbc.common.constants.CommonConstants;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
-import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
+import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.csvdownload.domain.mapper.ProcessingLeadTimeMapper;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.JsonParsingException;
 import com.hbc.jobs.consumers.util.StringUtil;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
-import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import java.io.BufferedReader;
@@ -64,25 +63,25 @@ public class CsvProcessingService {
     Iterable<CSVRecord> csvRecords = csvParser.getRecords();
     Iterator<CSVRecord> iterator = csvRecords.iterator();
     iterator.next();
-    List<ProcessingLeadTime> processingLeadTimesList = new ArrayList<>();
+    List<ProcessingLeadTimesRaw> processingLeadTimesRawList = new ArrayList<>();
 
     /** CSV data parsed and map to NodeCarrierRequest object */
     while (iterator.hasNext()) {
       var csvRecord = iterator.next();
       var processingLeadTime =
-          ProcessingLeadTime.builder()
+          ProcessingLeadTimesRaw.builder()
               .orgId(csvRecord.get(CommonConstants.ORG_ID))
               .nodeId(csvRecord.get(CommonConstants.NODE_ID))
-              .processingTime(Double.valueOf(csvRecord.get(CommonConstants.PROCESSING_TIME)))
+              .processingTime(csvRecord.get(CommonConstants.PROCESSING_TIME))
               .serviceOption(csvRecord.get(CommonConstants.SERVICE_OPTION))
               .actionType(csvRecord.get(CommonConstants.ACTION_TYPE))
               .carrierServiceId("")
               .build();
-      processingLeadTimesList.add(processingLeadTime);
+      processingLeadTimesRawList.add(processingLeadTime);
     }
 
     /** form job request string */
-    return StringUtil.createJobRequest(processingLeadTimesList, orgId);
+    return StringUtil.createJobRequest(processingLeadTimesRawList, orgId);
   }
 
   private String createUploadTransitTimesJobRequest(InputStream inputStream, String orgId)
@@ -108,14 +107,14 @@ public class CsvProcessingService {
     int size = csvFileContents.get(0).length;
     List<String> sFsaListWithOutHeader = Arrays.asList(sFsaListWithHeader).subList(1, size);
 
-    List<TransitDataCreationRequest> transitDataCreationRequestList = new ArrayList<>();
+    List<TransitDataUpload> transitDataUploadList = new ArrayList<>();
     csvFileContents.stream()
         .filter(row -> row.length != 0)
         .forEach(
             row -> {
               var integer = new AtomicInteger(0);
               String destinationSfa = row[integer.getAndIncrement()];
-              transitDataCreationRequestList.addAll(
+              transitDataUploadList.addAll(
                   createTransitDataCreationRequestObjects(
                       orgIdValue,
                       sFsaListWithOutHeader,
@@ -125,10 +124,10 @@ public class CsvProcessingService {
                       integer));
             });
 
-    return StringUtil.createJobRequest(transitDataCreationRequestList, orgId);
+    return StringUtil.createJobRequest(transitDataUploadList, orgId);
   }
 
-  private List<TransitDataCreationRequest> createTransitDataCreationRequestObjects(
+  private List<TransitDataUpload> createTransitDataCreationRequestObjects(
       String orgId,
       List<String> sFsaList,
       String carrierServiceIdValue,
@@ -138,17 +137,16 @@ public class CsvProcessingService {
     return sFsaList.stream()
         .map(
             sFsa -> {
-              var transitDataCreationRequest = new TransitDataCreationRequest();
-              transitDataCreationRequest.setOrgId(orgId);
-              transitDataCreationRequest.setCarrierServiceId(carrierServiceIdValue);
-              transitDataCreationRequest.setDestinationGeozone(destinationSfa);
-              transitDataCreationRequest.setSourceGeozone(sFsa);
+              var transitDataUpload = new TransitDataUpload();
+              transitDataUpload.setOrgId(orgId);
+              transitDataUpload.setCarrierServiceId(carrierServiceIdValue);
+              transitDataUpload.setDestinationGeozone(destinationSfa);
+              transitDataUpload.setSourceGeozone(sFsa);
               var transitDaysString = row[integer.getAndIncrement()];
               if (!ObjectUtils.isEmpty(transitDaysString)) {
-                transitDataCreationRequest.setTransitDays(Float.valueOf(transitDaysString));
-                return transitDataCreationRequest;
+                transitDataUpload.setTransitDays(transitDaysString);
+                return transitDataUpload;
               }
-              logger.debug("Empty/null transit days passed hence ignoring the record");
               return null;
             })
         .filter(Objects::nonNull)

@@ -54,6 +54,9 @@ public class ScheduledProcessor {
   @Scheduled(fixedRateString = "${scheduled-processor.fixed-rate:2}", timeUnit = TimeUnit.MINUTES)
   @Transactional
   public void processJobOffline() throws JobDomainException {
+    String authToken = getAuthToken();
+    CurrentThreadContext.getLogContext().setAuthorizationHeader(authToken);
+
     var jobDto = getJobInSubmittedState();
     if (Objects.isNull(jobDto)) {
       jobDto = getJobInProcessedStateForADay(JobStatusEnum.PROCESSED.name(), timeRangeInHours);
@@ -68,8 +71,6 @@ public class ScheduledProcessor {
     var jobTypeEnum = jobDto.getJobType();
 
     try {
-      String authToken = getAuthToken();
-      CurrentThreadContext.getLogContext().setAuthorizationHeader(authToken);
       logger.debug("Processing of the csv data started");
       String jobRequest =
           csvProcessingService.processInputCsvFile(inputStream, jobTypeEnum, jobDto.getOrgId());

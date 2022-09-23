@@ -1,5 +1,6 @@
 package com.hbc.common.constants;
 
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +23,12 @@ public class CommonConstants {
   public static final String PROCESSING_TIME = "processingTime (in hrs)";
 
   public static final String ACTION_TYPE = "action";
+
+  public static final String DELETE_D = "D";
+
+  public static final String UPDATE_U = "U";
+
+  public static final Set<String> actionTypes = Set.of(DELETE_D, UPDATE_U);
 
   public static final String HEADER_USER = "X-User";
   public static final String AUTHORIZATION_HEADER = "Authorization";

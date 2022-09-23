@@ -33,6 +33,8 @@ public class ProcessingLeadTimesRaw {
   @NotBlank(message = "action can not be empty")
   private String actionType;
 
+  private String carrierServiceId = "";
+
   public static String[] columnHeadersArray() {
     return new String[] {NODE_ID, ORG_ID, SERVICE_OPTION, PROCESSING_TIME, ACTION_TYPE};
   }

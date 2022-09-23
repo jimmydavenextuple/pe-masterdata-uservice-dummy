@@ -108,6 +108,7 @@ class ScheduledProcessorTest {
   void processJobOfflineNoJobAvailableForProcessing() throws JobDomainException {
     ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);
 
+    when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
     when(jobDomain.updateJobStatusByOrgIdAndStatus(
             TestUtil.ORG_ID, JobStatusEnum.SUBMITTED, JobStatusEnum.PROCESSING))
         .thenReturn(null);

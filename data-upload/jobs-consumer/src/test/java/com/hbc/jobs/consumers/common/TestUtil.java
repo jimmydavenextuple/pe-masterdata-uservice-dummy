@@ -1,7 +1,7 @@
 package com.hbc.jobs.consumers.common;
 
-import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
 import com.hbc.csvdownload.common.pojo.TransitDataUpload;
+import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.domain.entity.JobRecordEntity;
 import com.hbc.jobs.consumers.domain.mapper.JobMapper;
@@ -48,7 +48,7 @@ public class TestUtil {
           + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
           + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
           + "DFSA1,,9.96,9.96\n"
-          + "DFSA2,10,9,9.9\n"
+          + "DFSA2,D,9,9.9\n"
           + "DFSA3,10,9,9\n";
 
   public static final String JOB_STRING =
@@ -330,13 +330,13 @@ public class TestUtil {
     return nodeCarrierRequest;
   }
 
-  public ProcessingLeadTime getProcessingLeadTime(String action) {
-    ProcessingLeadTime processingLeadTime = new ProcessingLeadTime();
+  public ProcessingLeadTimesRaw getProcessingLeadTime(String action) {
+    ProcessingLeadTimesRaw processingLeadTime = new ProcessingLeadTimesRaw();
     processingLeadTime.setNodeId("node-1");
     processingLeadTime.setOrgId(ORG_ID);
     processingLeadTime.setServiceOption("SDND");
     processingLeadTime.setCarrierServiceId("");
-    processingLeadTime.setProcessingTime(30.92);
+    processingLeadTime.setProcessingTime("30.92");
     processingLeadTime.setActionType(action);
     return processingLeadTime;
   }
@@ -352,14 +352,13 @@ public class TestUtil {
     return nodeCarrierResponse;
   }
 
-  public TransitDataUpload getTransitDataUpload(String action) {
+  public TransitDataUpload getTransitDataUpload() {
     TransitDataUpload transitDataUpload = new TransitDataUpload();
     transitDataUpload.setOrgId(ORG_ID);
     transitDataUpload.setSourceGeozone("SSFA");
     transitDataUpload.setDestinationGeozone("DSFA");
     transitDataUpload.setCarrierServiceId("ALL-SDND");
-    transitDataUpload.setTransitDays(2F);
-    transitDataUpload.setActionType(action);
+    transitDataUpload.setTransitDays("2F");
     return transitDataUpload;
   }
 

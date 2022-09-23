@@ -3,8 +3,10 @@ package com.hbc.jobs.consumers.service;
 import static org.mockito.Mockito.*;
 
 import com.hbc.common.response.BaseResponse;
-import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
+import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
+import com.hbc.csvdownload.exception.CsvDataValidationException;
 import com.hbc.jobs.consumers.common.TestUtil;
+import com.hbc.jobs.consumers.exception.InvalidActionTypeException;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
@@ -72,7 +74,7 @@ class NodeCarrierMapperTest {
   void mapTODto() throws NodeCarrierMapperException {
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     Class res = nodeCarrierMapper.mapTODto();
-    Assertions.assertEquals(ProcessingLeadTime.class, res);
+    Assertions.assertEquals(ProcessingLeadTimesRaw.class, res);
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
     Exception exception =
         Assertions.assertThrows(
@@ -81,7 +83,7 @@ class NodeCarrierMapperTest {
   }
 
   @Test
-  void callApiUpdateAction() throws NodeCarrierMapperException {
+  void callApiUpdateAction() throws NodeCarrierMapperException, InvalidActionTypeException {
     Object object = testUtil.getProcessingLeadTime("U");
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     when(nodeCarrierFeign.createNodeCarrier(any()))
@@ -93,7 +95,7 @@ class NodeCarrierMapperTest {
   }
 
   @Test
-  void callApiDeleteAction() throws NodeCarrierMapperException {
+  void callApiDeleteAction() throws NodeCarrierMapperException, InvalidActionTypeException {
     Object object = testUtil.getProcessingLeadTime("D");
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     when(nodeCarrierFeign.deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
@@ -112,6 +114,29 @@ class NodeCarrierMapperTest {
     Exception exception =
         Assertions.assertThrows(
             NodeCarrierMapperException.class, () -> nodeCarrierMapper.callApi(object, null));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void callApiInvalidAction() throws NodeCarrierMapperException, InvalidActionTypeException {
+    Object object = testUtil.getProcessingLeadTime("A");
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+    Exception exception =
+        Assertions.assertThrows(
+            InvalidActionTypeException.class, () -> nodeCarrierMapper.callApi(object, null));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void callApiInvalidProcessingEadTime()
+      throws NodeCarrierMapperException, InvalidActionTypeException {
+    ProcessingLeadTimesRaw processingLeadTimesRaw = testUtil.getProcessingLeadTime("U");
+    processingLeadTimesRaw.setProcessingTime("invalid");
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+    Exception exception =
+        Assertions.assertThrows(
+            CsvDataValidationException.class,
+            () -> nodeCarrierMapper.callApi(processingLeadTimesRaw, null));
     Assertions.assertNotNull(exception);
   }
 }
