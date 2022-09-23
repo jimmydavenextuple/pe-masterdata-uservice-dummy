@@ -2,6 +2,7 @@ package com.hbc.csvdownload.service;
 
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
+import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.csvdownload.domain.mapper.ProcessingLeadTimeMapper;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.CsvDataValidationException;
@@ -43,6 +44,8 @@ public class CsvUploadUtilityService {
 
   public static final ProcessingLeadTimeMapper INSTANCE =
       Mappers.getMapper(ProcessingLeadTimeMapper.class);
+
+  public static final String DELETE_D = "D";
 
   public String uploadProcessingLeadTimesCsv(String orgId, MultipartFile csvFile)
       throws CsvFormatValidationFailedException, JobSubmissionException, CsvParsingException {

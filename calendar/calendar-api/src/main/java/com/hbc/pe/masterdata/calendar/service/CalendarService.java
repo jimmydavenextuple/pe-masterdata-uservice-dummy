@@ -13,6 +13,7 @@ import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
+import com.hbc.pe.masterdata.calendar.domain.repository.CalendarRepository;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.CalenderServiceException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
@@ -38,6 +39,7 @@ public class CalendarService {
   private static final Logger logger = LoggerFactory.getLogger(CalendarService.class);
   private static final CalendarMapper INSTANCE = Mappers.getMapper(CalendarMapper.class);
   private final CalendarDomain calendarDomain;
+  private final CalendarRepository calendarRepository;
   private final NodeCalendarDomain nodeCalendarDomain;
   private final CarrierServiceCalendarService carrierServiceCalendarService;
   private final DateValidation dateValidation;
@@ -54,13 +56,31 @@ public class CalendarService {
 
   /** Creates a new Calendar */
   public CalendarResponse processCreateCalendar(CalendarRequest calendarRequest)
-      throws CalendarDomainException, DateException {
+      throws CalendarDomainException, DateException, CommonServiceException {
     if (Objects.nonNull(calendarRequest.getExceptionDays())
         && !dateValidation.validateExceptionDays(calendarRequest.getExceptionDays())) {
       throw new DateException(
           "Date is invalid / missing", calendarRequest.getCalendarId(), calendarRequest.getOrgId());
     }
     var calendarEntity = INSTANCE.convertToCalendarEntity(calendarRequest);
+    Optional<CalendarEntity> existingCalendarEntity =
+        calendarRepository.findCalendarDetailsByCalendarIdAndOrgId(
+            calendarRequest.getCalendarId(), calendarRequest.getOrgId());
+    if (existingCalendarEntity.isPresent()) {
+      logger.error(
+          "Calendar already exists for calendarId:{} , orgId:{}",
+          calendarEntity.getCalendarId(),
+          calendarEntity.getOrgId());
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          CALENDAR_ID, FieldError.builder().rejectedValue(calendarEntity.getCalendarId()).build());
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(calendarEntity.getOrgId()).build());
+      throw new CommonServiceException(
+          "Calendar already exists for the given details",
+          HttpStatus.BAD_REQUEST,
+          0x1772,
+          errorMap);
+    }
     var savedCalendarEntity = calendarDomain.saveCalendarEntity(calendarEntity);
     return INSTANCE.convertToCalendarResponse(savedCalendarEntity);
   }
