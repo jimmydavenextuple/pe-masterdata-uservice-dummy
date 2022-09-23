@@ -1,11 +1,13 @@
 package com.hbc.transit.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.util.DateValidationUtil;
 import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
@@ -35,6 +37,8 @@ class TransitServiceTest {
   @InjectMocks private TestUtil testUtil;
 
   @Mock private TransitDomain transitDomain;
+
+  @Mock private DateValidationUtil dateValidationUtil;
 
   @BeforeEach
   void setUp() {
@@ -81,6 +85,7 @@ class TransitServiceTest {
     TransitEntity transitEntity = testUtil.getTransitEntity3(TestUtil.BUFFER_DAYS);
     TransitBufferCreationRequest transitBufferCreationRequest =
         testUtil.getTransitBufferCreationRequest(5.0);
+    doNothing().when(dateValidationUtil).validateBufferStartAndEndDate(any(), any());
     when(transitDomain.findTransitDetails(any(), any(), any(), any()))
         .thenReturn(Optional.of(transitEntity));
     when(transitDomain.saveTransitEntity(any())).thenReturn(testUtil.getTransitEntity3(5.0));
@@ -94,10 +99,12 @@ class TransitServiceTest {
   }
 
   @Test
-  void updateTransitBufferDetailsTestException() throws TransitDomainException {
+  void updateTransitBufferDetailsTestException()
+      throws TransitDomainException, CommonServiceException {
 
     TransitBufferCreationRequest transitBufferCreationRequest = new TransitBufferCreationRequest();
     transitBufferCreationRequest.setBufferDays(5.0);
+    doNothing().when(dateValidationUtil).validateBufferStartAndEndDate(any(), any());
     when(transitDomain.findTransitDetails(any(), any(), any(), any())).thenReturn(Optional.empty());
 
     Exception exception =
@@ -110,10 +117,12 @@ class TransitServiceTest {
   }
 
   @Test
-  void updateTransitBufferDetailsNegativeTransitSumTestException() throws TransitDomainException {
+  void updateTransitBufferDetailsNegativeTransitSumTestException()
+      throws TransitDomainException, CommonServiceException {
     TransitEntity transitEntity = testUtil.getTransitEntity3(TestUtil.BUFFER_DAYS);
     TransitBufferCreationRequest transitBufferCreationRequest =
         testUtil.getTransitBufferCreationRequest(-15.0);
+    doNothing().when(dateValidationUtil).validateBufferStartAndEndDate(any(), any());
     when(transitDomain.findTransitDetails(any(), any(), any(), any()))
         .thenReturn((Optional.of(transitEntity)));
 

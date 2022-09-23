@@ -2,6 +2,7 @@ package com.hbc.transit.service;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.common.util.DateValidationUtil;
 import com.hbc.postgres.config.ReaderDS;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
@@ -40,6 +41,8 @@ public class TransitService {
   private static final String TRANSIT_EXCEPTION_MESSAGE =
       "Transit data not found with given details";
 
+  private final DateValidationUtil dateValidationUtil;
+
   public TransitResponse addTransitInfo(TransitDataCreationRequest transitDataCreationRequest)
       throws TransitDomainException, CommonServiceException {
 
@@ -58,7 +61,9 @@ public class TransitService {
   public TransitResponse updateTransitBufferDetails(
       TransitBufferCreationRequest transitBufferCreationRequest)
       throws TransitDomainException, CommonServiceException {
-
+    dateValidationUtil.validateBufferStartAndEndDate(
+        transitBufferCreationRequest.getBufferStartDate(),
+        transitBufferCreationRequest.getBufferEndDate());
     Optional<TransitEntity> existingTransitEntity =
         transitDomain.findTransitDetails(
             transitBufferCreationRequest.getOrgId(),
