@@ -1,6 +1,7 @@
 package com.hbc.jobs.consumers.common;
 
 import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
+import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.domain.entity.JobRecordEntity;
 import com.hbc.jobs.consumers.domain.mapper.JobMapper;
@@ -17,7 +18,6 @@ import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
-import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Arrays;
 import java.util.Collections;
@@ -353,14 +353,15 @@ public class TestUtil {
     return nodeCarrierResponse;
   }
 
-  public TransitDataCreationRequest getTransitDataCreationRequest() {
-    TransitDataCreationRequest transitDataCreationRequest = new TransitDataCreationRequest();
-    transitDataCreationRequest.setOrgId(ORG_ID);
-    transitDataCreationRequest.setSourceGeozone("SSFA");
-    transitDataCreationRequest.setDestinationGeozone("DSFA");
-    transitDataCreationRequest.setCarrierServiceId("ALL-SDND");
-    transitDataCreationRequest.setTransitDays(2F);
-    return transitDataCreationRequest;
+  public TransitDataUpload getTransitDataUpload(String action) {
+    TransitDataUpload transitDataUpload = new TransitDataUpload();
+    transitDataUpload.setOrgId(ORG_ID);
+    transitDataUpload.setSourceGeozone("SSFA");
+    transitDataUpload.setDestinationGeozone("DSFA");
+    transitDataUpload.setCarrierServiceId("ALL-SDND");
+    transitDataUpload.setTransitDays(2F);
+    transitDataUpload.setActionType(action);
+    return transitDataUpload;
   }
 
   public TransitResponse getTransitResponse() {
