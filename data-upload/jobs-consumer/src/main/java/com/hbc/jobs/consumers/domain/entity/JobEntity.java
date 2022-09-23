@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,7 @@ import org.hibernate.annotations.TypeDef;
 @AllArgsConstructor
 @Builder
 @DynamicInsert
-@Table(name = "jobs")
+@Table(name = "jobs", indexes = @Index(name = "job_id", columnList = "job_id"))
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class JobEntity extends BaseEntity {
 
