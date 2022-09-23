@@ -5,6 +5,7 @@ import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.transit.domain.feign.TransitFeign;
+import com.hbc.transit.domain.inbound.TransitDetailsRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +24,11 @@ public class TransitService {
       String orgId, String carrierServiceId, List<String> destinationGeoZones)
       throws TransitServiceException {
     logger.debug("Processing get FSA list for orgId and city");
+    var transitDetailsRequest = new TransitDetailsRequest();
+    transitDetailsRequest.setDestinationGeozones(destinationGeoZones);
     BaseResponse<List<TransitResponse>> response =
         transitFeign.getTransitTimeDetailsForDestinationGeoZonesList(
-            orgId, carrierServiceId, destinationGeoZones);
+            orgId, carrierServiceId, transitDetailsRequest);
     if (response != null && !CollectionUtils.isEmpty(response.getPayload())) {
       return response.getPayload();
     } else {

@@ -38,7 +38,8 @@ class CalendarControllerTest {
   }
 
   @Test
-  void handleCreateCalendarTest() throws CalendarDomainException, DateException {
+  void handleCreateCalendarTest()
+      throws CalendarDomainException, DateException, CommonServiceException {
     when(calendarService.processCreateCalendar(any())).thenReturn(testUtil.getCalendarResponse());
 
     ResponseEntity<BaseResponse<CalendarResponse>> resp =
@@ -51,7 +52,8 @@ class CalendarControllerTest {
   }
 
   @Test
-  void handleCreateCalendarExceptionTest() throws CalendarDomainException, DateException {
+  void handleCreateCalendarExceptionTest()
+      throws CalendarDomainException, DateException, CommonServiceException {
 
     when(calendarService.processCreateCalendar(any())).thenThrow(new NullPointerException("error"));
 

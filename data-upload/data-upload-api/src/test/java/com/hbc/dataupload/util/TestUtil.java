@@ -107,7 +107,6 @@ public class TestUtil {
         .orgId(ORG_ID)
         .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption(SERVICE_OPTION)
-        .processingTime(PROCESSING_TIME)
         .lastPickupTime(LAST_PICK_UP_TIME)
         .build();
   }

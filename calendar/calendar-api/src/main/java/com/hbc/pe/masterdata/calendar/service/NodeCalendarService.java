@@ -7,7 +7,9 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.NodeCalendarDomain;
+import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
+import com.hbc.pe.masterdata.calendar.domain.repository.NodeCalendarRepository;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
@@ -15,6 +17,7 @@ import com.hbc.postgres.config.ReaderDS;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -29,10 +32,13 @@ public class NodeCalendarService {
   private static final CalendarMapper INSTANCE = Mappers.getMapper(CalendarMapper.class);
   private static final Logger logger = LoggerFactory.getLogger(NodeCalendarService.class);
   private final NodeCalendarDomain nodeCalendarDomain;
+  private final NodeCalendarRepository nodeCalendarRepository;
   private final DateValidation dateValidation;
   private final CalendarDomain calendarDomain;
   private static final String ORG_ID = "orgId";
   private static final String CALENDAR_ID = "calendarId";
+  private static final String NODE_ID = "nodeId";
+  private static final String EFFECTIVE_DATE = "effectiveDate";
 
   /** Creates a new Node Calendar */
   public NodeCalendarResponse processCreateNodeCalendar(NodeCalendarRequest nodeCalendarRequest)
@@ -43,6 +49,36 @@ public class NodeCalendarService {
     }
     validateCalendarId(nodeCalendarRequest.getCalendarId(), nodeCalendarRequest.getOrgId());
     var nodeCalendarEntity = INSTANCE.convertToNodeCalendarEntity(nodeCalendarRequest);
+    Optional<NodeCalendarEntity> existingNodeCalendarEntity =
+        nodeCalendarRepository.findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(
+            nodeCalendarRequest.getCalendarId(),
+            nodeCalendarRequest.getNodeId(),
+            nodeCalendarRequest.getOrgId(),
+            nodeCalendarRequest.getEffectiveDate());
+    if (existingNodeCalendarEntity.isPresent()) {
+      logger.error(
+          "Node Calendar already exists for calendarId:{} , nodeId:{} , orgId:{}, effectiveDate:{}",
+          nodeCalendarEntity.getCalendarId(),
+          nodeCalendarEntity.getNodeId(),
+          nodeCalendarEntity.getOrgId(),
+          nodeCalendarEntity.getEffectiveDate());
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          CALENDAR_ID,
+          FieldError.builder().rejectedValue(nodeCalendarEntity.getCalendarId()).build());
+      errorMap.put(
+          NODE_ID, FieldError.builder().rejectedValue(nodeCalendarEntity.getNodeId()).build());
+      errorMap.put(
+          ORG_ID, FieldError.builder().rejectedValue(nodeCalendarEntity.getOrgId()).build());
+      errorMap.put(
+          EFFECTIVE_DATE,
+          FieldError.builder().rejectedValue(nodeCalendarEntity.getEffectiveDate()).build());
+      throw new CommonServiceException(
+          "Node Calendar already exists for the given details",
+          HttpStatus.BAD_REQUEST,
+          0x1772,
+          errorMap);
+    }
     var savedNodeCalendarEntity = nodeCalendarDomain.saveNodeCalendarEntity(nodeCalendarEntity);
     return INSTANCE.convertToNodeCalendarResponse(savedNodeCalendarEntity);
   }

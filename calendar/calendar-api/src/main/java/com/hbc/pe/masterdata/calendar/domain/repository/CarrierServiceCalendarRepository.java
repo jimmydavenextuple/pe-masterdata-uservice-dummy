@@ -2,6 +2,7 @@ package com.hbc.pe.masterdata.calendar.domain.repository;
 
 import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -29,6 +30,14 @@ public interface CarrierServiceCalendarRepository
       nativeQuery = true)
   List<CarrierServiceCalendarEntity> findCarrierServiceCalendar(
       String orgId, String carrierServiceId, String carrierServiceOption, String shippingStage);
+
+  Optional<CarrierServiceCalendarEntity>
+      findByCalendarIdAndOrgIdAndCarrierServiceIdAndShippingStageAndEffectiveDate(
+          String calendarId,
+          String orgId,
+          String carrierServiceId,
+          String shippingStage,
+          String effectiveDate);
 
   @Query(value = "SELECT * FROM carrier_service_calendars LIMIT ?1", nativeQuery = true)
   List<CarrierServiceCalendarEntity> findAllCarrierServiceCalendarsByLimit(Integer limit);
