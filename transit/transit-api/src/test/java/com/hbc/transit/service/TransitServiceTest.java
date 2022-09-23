@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.carrier.domain.feign.CarrierFeign;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.util.DateValidationUtil;
 import com.hbc.transit.TestUtil;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import feign.FeignException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +43,8 @@ class TransitServiceTest {
 
   @Mock private DateValidationUtil dateValidationUtil;
 
+  @Mock private CarrierFeign carrierFeign;
+
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
@@ -51,7 +56,7 @@ class TransitServiceTest {
         testUtil.getTransitDataCreationRequest(testUtil.TRANSIT_DAYS);
     when(transitDomain.saveTransitEntity(any(TransitEntity.class)))
         .thenReturn(testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS));
-
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(),any())).thenReturn(testUtil.getCarrierServiceUpdateResponse());
     TransitResponse transitResponse =
         transitService.addTransitInfo(
             testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS));
@@ -64,6 +69,22 @@ class TransitServiceTest {
   }
 
   @Test
+  void addTransitDetailsTestException() {
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(),any())).thenReturn(null);
+    Assertions.assertThrows(CommonServiceException.class, () ->
+            transitService.addTransitInfo(
+                    testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS)));
+  }
+
+  @Test
+  void addTransitDetailsTestException2() {
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(),any())).thenThrow(FeignException.class);
+    Assertions.assertThrows(CommonServiceException.class, () ->
+            transitService.addTransitInfo(
+                    testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS)));
+  }
+
+  @Test
   void addTransitDetailsNullBufferDaysTest() throws TransitDomainException, CommonServiceException {
     TransitDataCreationRequest transitDataCreationRequest =
         testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS);
@@ -71,7 +92,7 @@ class TransitServiceTest {
     TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
     transitEntity.setBufferDays(null);
     when(transitDomain.saveTransitEntity(any(TransitEntity.class))).thenReturn(transitEntity);
-
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(),any())).thenReturn(testUtil.getCarrierServiceUpdateResponse());
     TransitResponse transitResponse = transitService.addTransitInfo(transitDataCreationRequest);
     Assertions.assertEquals(
         testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS).getCarrierServiceId(),

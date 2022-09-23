@@ -14,6 +14,9 @@ public interface CarrierServiceRepository extends JpaRepository<CarrierServiceEn
   Optional<CarrierServiceEntity> findCarrierServiceByCarrierIdAndCarrierServiceIdAndOrgId(
       String carrierId, String carrierServiceId, String orgId);
 
+  Optional<List<CarrierServiceEntity>> findCarrierServiceByCarrierServiceIdAndOrgId(
+      String carrierServiceId, String orgId);
+
   Page<CarrierServiceEntity> findCarrierServicesByOrgId(String orgId, Pageable pageable);
 
   @Query(value = "SELECT * FROM carrier_service LIMIT ?1", nativeQuery = true)

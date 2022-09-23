@@ -86,6 +86,18 @@ public class CarrierServiceDomain {
     }
   }
 
+  public Optional<List<CarrierServiceEntity>> findCarrierServiceByServiceIdAndOrgId(
+      String serviceId, String orgId) throws CarrierServiceDomainException {
+    try {
+      return carrierServiceRepository.findCarrierServiceByCarrierServiceIdAndOrgId(
+          serviceId, orgId);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to find carrier service");
+      throw new CarrierServiceDomainException(
+          "Error while finding carrier service","", serviceId, orgId);
+    }
+  }
+
   public List<CarrierServiceEntity> getAllCarrierServiceEntities(Integer limit)
       throws CarrierServiceDomainException {
     try {
