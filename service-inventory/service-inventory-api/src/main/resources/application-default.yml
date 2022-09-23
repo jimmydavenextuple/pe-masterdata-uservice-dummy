@@ -9,6 +9,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
+pe:
+  ui:
+    allowed-origin-url: "*"
 
 logging:
   level:
