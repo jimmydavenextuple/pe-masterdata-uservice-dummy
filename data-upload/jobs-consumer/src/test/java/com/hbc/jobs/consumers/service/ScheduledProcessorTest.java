@@ -59,7 +59,7 @@ class ScheduledProcessorTest {
     String csvContents = TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES;
     jobEntity.setFile(csvContents.getBytes());
     jobDto.setFile(csvContents.getBytes());
-    when(jobDomain.updateJobStatusByOrgIdAndStatus(any(), any(), any())).thenReturn(jobEntity);
+    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any())).thenReturn(jobEntity);
     when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
     when(csvProcessingService.processInputCsvFile(any(), any(), any()))
         .thenReturn(TestUtil.JOB_STRING);
@@ -87,7 +87,7 @@ class ScheduledProcessorTest {
     jobDto.setStatus(JobStatusEnum.PROCESSED);
     jobDto.setFile(csvContents.getBytes());
 
-    when(jobDomain.updateJobStatusByOrgIdAndStatus(
+    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
             TestUtil.ORG_ID, JobStatusEnum.SUBMITTED, JobStatusEnum.PROCESSING))
         .thenReturn(null);
     when(jobDomain.fetchJobRecordInTimeRange(any(), any(), any())).thenReturn(jobEntity);
@@ -97,7 +97,7 @@ class ScheduledProcessorTest {
     when(jobsDashboardClient.processJobJsonOffline(any(), any(), any(), any()))
         .thenReturn(BaseResponse.builder().payload(jobDto).build());
     jobEntity.setStatus(JobStatusEnum.PROCESSED);
-    when(jobDomain.updateJobStatusByOrgIdAndStatus(
+    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
             TestUtil.ORG_ID, JobStatusEnum.PROCESSING, JobStatusEnum.PROCESSED))
         .thenReturn(jobEntity);
 
@@ -109,7 +109,7 @@ class ScheduledProcessorTest {
     ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);
 
     when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
-    when(jobDomain.updateJobStatusByOrgIdAndStatus(
+    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
             TestUtil.ORG_ID, JobStatusEnum.SUBMITTED, JobStatusEnum.PROCESSING))
         .thenReturn(null);
     when(jobDomain.fetchJobRecordInTimeRange(any(), any(), any())).thenReturn(null);
@@ -140,7 +140,7 @@ class ScheduledProcessorTest {
             Request.create(HttpMethod.PUT, "", new HashMap<>(), null, null, null),
             "Feign exception while processing the job".getBytes());
 
-    when(jobDomain.updateJobStatusByOrgIdAndStatus(any(), any(), any())).thenReturn(jobEntity);
+    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any())).thenReturn(jobEntity);
     when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
     when(csvProcessingService.processInputCsvFile(any(), any(), any()))
         .thenReturn(TestUtil.JOB_STRING);
@@ -171,7 +171,7 @@ class ScheduledProcessorTest {
     jobDto.setStatus(JobStatusEnum.PROCESSED);
     jobDto.setFile(csvContents.getBytes());
 
-    when(jobDomain.updateJobStatusByOrgIdAndStatus(any(), any(), any())).thenReturn(jobEntity);
+    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any())).thenReturn(jobEntity);
     when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
     when(csvProcessingService.processInputCsvFile(any(), any(), any()))
         .thenThrow(new RuntimeException("Error while forming job string"));

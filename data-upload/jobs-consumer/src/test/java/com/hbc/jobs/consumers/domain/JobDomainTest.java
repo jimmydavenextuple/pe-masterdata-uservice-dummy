@@ -150,7 +150,7 @@ class JobDomainTest {
     when(jobRepository.save(any())).thenReturn(jobEntity);
 
     JobEntity jobEntity1 =
-        jobDomain.updateJobStatusByOrgIdAndStatus(
+        jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
             TestUtil.ORG_ID, JobStatusEnum.SUBMITTED, JobStatusEnum.PROCESSING);
 
     Assertions.assertNotNull(jobEntity1);
@@ -165,7 +165,7 @@ class JobDomainTest {
     when(jobRepository.getJobStatusByOrgIdAndStatus(any(), any())).thenReturn(null);
 
     JobEntity jobEntity2 =
-        jobDomain.updateJobStatusByOrgIdAndStatus(
+        jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
             TestUtil.ORG_ID, JobStatusEnum.SUBMITTED, JobStatusEnum.PROCESSING);
 
     Assertions.assertNull(jobEntity2);
@@ -186,7 +186,7 @@ class JobDomainTest {
         Assertions.assertThrows(
             JobDomainException.class,
             () ->
-                jobDomain.updateJobStatusByOrgIdAndStatus(
+                jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
                     TestUtil.ORG_ID, JobStatusEnum.SUBMITTED, JobStatusEnum.PROCESSING));
 
     Assertions.assertNotNull(exception);

@@ -72,4 +72,5 @@ auth-token:
   scope: sfcc-resources/edd
 scheduled-processor:
   timeRangeInHours: 24
-  fixed-rate: 2
+  fixed-rate:
+    minutes: 2
