@@ -97,7 +97,7 @@ public class JobDomain {
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public JobEntity updateJobStatusByOrgIdAndStatus(
+  public JobEntity getAndUpdateJobStatusByOrgIdAndStatus(
       String orgId, JobStatusEnum oldStatus, JobStatusEnum newStatus) throws JobDomainException {
     try {
       var jobEntity = jobRepository.getJobStatusByOrgIdAndStatus(orgId, oldStatus.name());

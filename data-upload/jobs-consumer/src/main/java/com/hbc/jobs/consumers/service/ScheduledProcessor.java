@@ -51,7 +51,7 @@ public class ScheduledProcessor {
   private static final JobMapper INSTANCE = Mappers.getMapper(JobMapper.class);
   private static final String ORG_ID = "BAY";
 
-  @Scheduled(fixedRateString = "${scheduled-processor.fixed-rate:2}", timeUnit = TimeUnit.MINUTES)
+  @Scheduled(fixedRateString = "${scheduled-processor.fixed-rate.minutes:2}", timeUnit = TimeUnit.MINUTES)
   @Transactional
   public void processJobOffline() throws JobDomainException {
     String authToken = getAuthToken();
@@ -77,7 +77,7 @@ public class ScheduledProcessor {
       logger.debug("Processing of the csv data completed");
       jobDto =
           INSTANCE.toJob(
-              jobDomain.updateJobStatusByOrgIdAndStatus(
+              jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
                   ORG_ID, JobStatusEnum.PROCESSING, JobStatusEnum.PROCESSED));
       jobsDashboardClient.processJobJsonOffline(
           ORG_ID, jobDto.getJobType(), jobRequest, jobDto.getJobId());
@@ -98,7 +98,7 @@ public class ScheduledProcessor {
   private JobDto getJobInSubmittedState() throws JobDomainException {
     logger.debug("Fetching job in SUBMITTED status");
     return INSTANCE.toJob(
-        jobDomain.updateJobStatusByOrgIdAndStatus(
+        jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
             ORG_ID, JobStatusEnum.SUBMITTED, JobStatusEnum.PROCESSING));
   }
 

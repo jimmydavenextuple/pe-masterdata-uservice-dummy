@@ -1,0 +1,17 @@
+name: DATA-UPLOAD RELEASE
+
+on:
+  push:
+    tags:
+      - '*RELEASE'
+     
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: data-upload
+    secrets: inherit
+
+
+
+

@@ -1,0 +1,17 @@
+name: PROMISE-SOURCING-RULE RELEASE
+
+on:
+  push:
+    tags:
+      - '*RELEASE'
+jobs:
+
+  Build-Deploy:
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: promise-sourcing-rule
+    secrets: inherit
+
+
+
+
