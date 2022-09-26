@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +34,10 @@ public interface JobsDashboardClient {
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestBody String request);
 
-  @PutMapping("/org/{orgId}/jobs/{jobId}")
+  @PutMapping(
+      value = "/org/{orgId}/jobs/{jobId}",
+      produces = MediaType.APPLICATION_JSON_VALUE,
+      consumes = MediaType.APPLICATION_JSON_VALUE)
   BaseResponse<JobDto> processJobJsonOffline(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotNull @Valid @RequestParam("jobType") JobTypeEnum jobType,
@@ -55,4 +59,11 @@ public interface JobsDashboardClient {
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotEmpty @NotNull @PathVariable("jobId") String jobId,
       @RequestParam(name = "status", required = false) String status);
+
+  @PostMapping("/org/{orgId}/jobs")
+  BaseResponse<JobDto> processJobOffline(
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
+      @RequestParam("jobType") @NotNull @Valid JobTypeEnum jobType,
+      @RequestBody byte[] csvFile,
+      @RequestParam("fileName") String fileName);
 }

@@ -2,6 +2,7 @@ package com.hbc.csvdownload.util;
 
 import com.hbc.csvdownload.exception.CsvParsingException;
 import com.opencsv.CSVReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.function.Predicate;
@@ -33,14 +34,14 @@ public class CsvUtil {
    * A method to find the number of comment lines exists in CSV file before the actual CSV content
    * starts (i.e. before any header or actual row).
    *
-   * @param csvFile Actual CSV File reference
+   * @param inputStream Byte array input stream of the csv file
    * @param commentLineFilter A predicate which determines the commented line
    * @return an integer indicating number of commented lines
    */
   public static int getCommentedLinesCount(
-      MultipartFile csvFile, Predicate<String[]> commentLineFilter) throws CsvParsingException {
+      InputStream inputStream, Predicate<String[]> commentLineFilter) throws CsvParsingException {
     var countedCommentedLines = 0;
-    try (var csvReader = new CSVReader(new InputStreamReader(csvFile.getInputStream()))) {
+    try (var csvReader = new CSVReader(new InputStreamReader(inputStream))) {
       boolean foundCommentedLine;
       String[] csvLine;
       do {

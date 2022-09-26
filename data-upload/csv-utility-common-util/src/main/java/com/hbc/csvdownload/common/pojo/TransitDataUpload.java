@@ -1,6 +1,5 @@
 package com.hbc.csvdownload.common.pojo;
 
-import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +7,15 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransitDataUpload extends TransitDataCreationRequest {
-  private String actionType;
+public class TransitDataUpload {
+
+  private String orgId;
+
+  private String sourceGeozone;
+
+  private String destinationGeozone;
+
+  private String carrierServiceId;
+
+  private String transitDays;
 }

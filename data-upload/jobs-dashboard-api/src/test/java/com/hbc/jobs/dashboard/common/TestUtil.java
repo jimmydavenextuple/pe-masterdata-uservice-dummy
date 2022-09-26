@@ -32,7 +32,13 @@ public class TestUtil {
   public static final JobTypeEnum JOB_TYPE_UPLOAD_TRANSIT_TIMES = JobTypeEnum.UPLOAD_TRANSIT_TIMES;
   public static final String JOB_ID = "JobId1";
 
-  public static final String JOB_TYPE = JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES.name();
+  public static final String fileName = "Bulk Data Upload.csv";
+
+  public static final String CSV_CONTENTS_PROCESSING_LEAD_TIMES =
+      "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+          + "1554,BAY,SDND,2,U\n"
+          + "1560,BAY,SDND,2,D\n"
+          + "1101,BAY,SDND,2,U";
 
   public static final Optional<String> DEFAULT_SORT_FIELD = Optional.of("created_date");
 
@@ -118,108 +124,6 @@ public class TestUtil {
               }
             });
     return recordStatusDtos;
-  }
-
-  public PagePayload<RecordStatusDto> createPageRecordStatusDto(
-      List<RecordStatusDto> recordStatusDtoList, int totalPage, int totalElements, int pageNo) {
-    PagePayload<RecordStatusDto> pagePayload = new PagePayload<>();
-    Page<RecordStatusDto> pageResp =
-        createPageRecordStatusDto(totalPage, recordStatusDtoList, totalElements);
-    PagePayload.Pagination pagination = new PagePayload.Pagination();
-    pagination.setTotalRecords((int) pageResp.getTotalElements());
-    pagination.setTotalPages(pageResp.getTotalPages());
-    pagination.setCurrentPage(pageNo);
-    pagePayload.setData(pageResp.getContent());
-    pagePayload.setPagination(pagination);
-    return pagePayload;
-  }
-
-  public Page<RecordStatusDto> createPageRecordStatusDto(
-      int totalPage, List<RecordStatusDto> recordStatusDtoList, int totalElements) {
-    Page<RecordStatusDto> pageResponse =
-        new Page() {
-          @Override
-          public int getTotalPages() {
-            return totalPage;
-          }
-
-          @Override
-          public long getTotalElements() {
-            return totalElements;
-          }
-
-          @Override
-          public Page map(Function converter) {
-            return null;
-          }
-
-          @Override
-          public int getNumber() {
-            return 0;
-          }
-
-          @Override
-          public int getSize() {
-            return 0;
-          }
-
-          @Override
-          public int getNumberOfElements() {
-            return 0;
-          }
-
-          @Override
-          public List getContent() {
-            return recordStatusDtoList;
-          }
-
-          @Override
-          public boolean hasContent() {
-            return false;
-          }
-
-          @Override
-          public Sort getSort() {
-            return null;
-          }
-
-          @Override
-          public boolean isFirst() {
-            return false;
-          }
-
-          @Override
-          public boolean isLast() {
-            return false;
-          }
-
-          @Override
-          public boolean hasNext() {
-            return false;
-          }
-
-          @Override
-          public boolean hasPrevious() {
-            return false;
-          }
-
-          @Override
-          public Pageable nextPageable() {
-            return null;
-          }
-
-          @Override
-          public Pageable previousPageable() {
-            return null;
-          }
-
-          @Override
-          public Iterator iterator() {
-            return null;
-          }
-        };
-
-    return pageResponse;
   }
 
   public PagePayload<JobDto> createPagePayloadJobDto(

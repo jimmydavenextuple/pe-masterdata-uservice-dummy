@@ -1,4 +1,4 @@
-package com.hbc.csvdownload.util;
+package com.hbc.jobs.consumers.util;
 
 import com.hbc.common.util.JsonUtil;
 import com.hbc.csvdownload.exception.JsonParsingException;

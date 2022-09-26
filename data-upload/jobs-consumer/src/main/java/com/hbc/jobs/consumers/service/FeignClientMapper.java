@@ -10,6 +10,7 @@ import com.hbc.common.context.CurrentThreadContext;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.common.util.JsonUtil;
 import com.hbc.jobs.consumers.exception.FeignClientMapperException;
+import com.hbc.jobs.consumers.exception.InvalidActionTypeException;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.consumers.exception.TransitMapperException;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
@@ -112,6 +113,7 @@ public interface FeignClientMapper {
     } catch (Exception e) {
       log.error("Error while performing the bulk action", e);
       recordStatusDto.setException(e.getClass().getName());
+      recordStatusDto.setErrorMessage(e.getMessage());
       recordStatusDto.setStatusCode(
           HttpStatus.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.name()).value());
       recordStatusDto.setStatus(FAILURE);
@@ -173,5 +175,5 @@ public interface FeignClientMapper {
   Class mapTODto() throws TransitMapperException, NodeCarrierMapperException; // NOSONAR
 
   ResponseEntity<?> callApi(Object dtoFromJson, RecordInputDto inputs) // NOSONAR
-      throws TransitMapperException, NodeCarrierMapperException;
+      throws TransitMapperException, NodeCarrierMapperException, InvalidActionTypeException;
 }
