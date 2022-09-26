@@ -11,34 +11,36 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hbc.jobs.consumers.common.TestUtil;
 import com.hbc.jobs.consumers.exception.JobException;
+import com.hbc.jobs.consumers.feign.AuthTokenAPI;
 import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
-import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.kafka.support.converter.KafkaMessageHeaders;
 
 @ExtendWith(MockitoExtension.class)
 class TaskConsumerTest {
 
   @Mock private JobConsumerService jobConsumerService;
 
-  @Mock private KafkaMessageHeaders headers;
+  @Mock private AuthTokenAPI authTokenAPI;
 
   @InjectMocks private TaskConsumer taskConsumer;
+
+  @InjectMocks private TestUtil testUtil;
 
   @Test
   void receiveRecordFromDashboardProducer() throws JobException {
     doNothing().when(jobConsumerService).processRecord(any());
-    when(headers.getRawHeaders()).thenReturn(Map.of("jwtToken", "token"));
+    when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
 
-    assertDoesNotThrow(() -> taskConsumer.receiveRecordFromDashboardProducer(null, headers));
+    assertDoesNotThrow(() -> taskConsumer.receiveRecordFromDashboardProducer(null, null));
     verify(jobConsumerService, times(1)).processRecord(any());
   }
 
@@ -47,12 +49,12 @@ class TaskConsumerTest {
     RecordDto record = mock(RecordDto.class);
 
     when(record.getJob()).thenReturn(mock(JobDto.class));
-    when(headers.getRawHeaders()).thenReturn(Map.of("jwtToken", "token"));
+    when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
     doThrow(RuntimeException.class).when(jobConsumerService).processRecord(any());
     JobException e =
         assertThrows(
             JobException.class,
-            () -> taskConsumer.receiveRecordFromDashboardProducer(record, headers));
+            () -> taskConsumer.receiveRecordFromDashboardProducer(record, null));
     Assertions.assertEquals(
         "Exception while receiving the job record from the kafka producer", e.getMessage());
     assertNull(e.getJobId());

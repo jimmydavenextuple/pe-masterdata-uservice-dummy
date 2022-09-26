@@ -60,3 +60,7 @@ jobs-framework:
   record-consumer:
     topic-name: INTERNAL.PERF.JOBS.TASK
     group-id: jobs-task-consumer-async-perf
+auth-token:
+  url: https://promise-engine-perf-pool.auth.us-east-1.amazoncognito.com
+  username: \${COGNITO_CLIENT_ID}
+  password: \${COGNITO_CLIENT_SECRET}

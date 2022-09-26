@@ -236,7 +236,7 @@ public class NodeCarrierController {
       deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
           @NotBlank(message = "nodeId cannot be empty") @PathVariable String nodeId,
           @NotBlank(message = "orgId cannot be empty") @PathVariable String orgId,
-          @RequestParam String carrierServiceId,
+          @RequestParam(required = false) String carrierServiceId,
           @NotBlank(message = "serviceOption cannot be empty") @PathVariable String serviceOption)
           throws NodeCarrierDomainException, CommonServiceException {
     logger.debug("Processing delete node carrier");

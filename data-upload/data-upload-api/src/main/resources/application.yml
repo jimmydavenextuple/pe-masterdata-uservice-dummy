@@ -66,3 +66,11 @@ management:
 pe:
   ui:
     allowed-origin-url: \${PE_UI_URL}
+auth-token:
+  name: amazoncognito-service
+  grant-type: client_credentials
+  scope: sfcc-resources/edd
+scheduled-processor:
+  timeRangeInHours: 24
+  fixed-rate:
+    minutes: 2

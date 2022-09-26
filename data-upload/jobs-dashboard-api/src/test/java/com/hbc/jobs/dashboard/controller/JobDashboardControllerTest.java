@@ -29,12 +29,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.multipart.MultipartFile;
 
 class JobDashboardControllerTest {
 
@@ -54,22 +53,30 @@ class JobDashboardControllerTest {
 
   @Test
   void processJobOffline() throws JobException {
-    MultipartFile csvFile = Mockito.mock(MultipartFile.class);
+    String csvContents = TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES;
+    ByteArrayResource byteArrayResource = new ByteArrayResource(csvContents.getBytes());
 
     when(jobService.processJobOffline(
-            csvFile, TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES))
+            byteArrayResource,
+            TestUtil.ORG_ID,
+            TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES,
+            TestUtil.fileName))
         .thenReturn(new JobDto());
     ResponseEntity<BaseResponse<JobDto>> responseEntity =
         jobDashboardController.processJobOffline(
-            TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, csvFile);
+            TestUtil.ORG_ID,
+            TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES,
+            byteArrayResource,
+            TestUtil.fileName);
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Status code");
   }
 
   @Test
   void processJobOfflineException() throws JobException {
-    MultipartFile csvFile = Mockito.mock(MultipartFile.class);
+    String csvContents = TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES;
+    ByteArrayResource byteArrayResource = new ByteArrayResource(csvContents.getBytes());
 
-    when(jobService.processJobOffline(any(), any(), any()))
+    when(jobService.processJobOffline(any(), any(), any(), any()))
         .thenThrow(
             new JobException(
                 "Error while processing csv/json file",
@@ -81,7 +88,10 @@ class JobDashboardControllerTest {
             JobException.class,
             () ->
                 jobDashboardController.processJobOffline(
-                    TestUtil.JOB_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, csvFile));
+                    TestUtil.JOB_ID,
+                    TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES,
+                    byteArrayResource,
+                    TestUtil.fileName));
 
     Assertions.assertEquals(
         "Error while processing csv/json file", exception.getMessage(), "Exception Message");
@@ -328,7 +338,6 @@ class JobDashboardControllerTest {
     ResponseEntity<BaseResponse<List<RecordStatusDto>>> response =
         jobDashboardController.getJobRecordsByFilter(
             TestUtil.ORG_ID, TestUtil.JOB_ID, Optional.of("SUCCESS"));
-    List<RecordStatusDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     verify(jobService, times(1)).getJobResults(any(), any(), any());
 

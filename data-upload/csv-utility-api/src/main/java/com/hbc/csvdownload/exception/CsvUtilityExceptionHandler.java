@@ -55,17 +55,6 @@ public class CsvUtilityExceptionHandler {
         .body(ErrorResponse.builder(ErrorType.ERROR, 0xfffff4).message(e.getMessage()).build());
   }
 
-  @ExceptionHandler(InvalidActionType.class)
-  public ResponseEntity<ErrorResponse> handleInvalidActionType(InvalidActionType e) {
-    return ResponseEntity.badRequest()
-        .body(
-            ErrorResponse.builder(ErrorType.ERROR, 0xfffff5)
-                .message(e.getMessage())
-                .errorField("rowIndex", FieldError.builder().rejectedValue(e.getRowIndex()).build())
-                .errorField("action", FieldError.builder().rejectedValue(e.getAction()).build())
-                .build());
-  }
-
   @ExceptionHandler(CsvDownloadUtilityServiceException.class)
   public ResponseEntity<ErrorResponse> handleCsvDownloadUtilityServiceException(
       CsvDownloadUtilityServiceException e) {
@@ -82,6 +71,17 @@ public class CsvUtilityExceptionHandler {
                 .message(e.getMessage())
                 .errorField("orgId", FieldError.builder().rejectedValue(e.getOrgId()).build())
                 .errorField("state", FieldError.builder().rejectedValue(e.getState()).build())
+                .build());
+  }
+
+  @ExceptionHandler(InvalidActionType.class)
+  public ResponseEntity<ErrorResponse> handleInvalidActionType(InvalidActionType e) {
+    return ResponseEntity.badRequest()
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0xfffff5)
+                .message(e.getMessage())
+                .errorField("rowIndex", FieldError.builder().rejectedValue(e.getRowIndex()).build())
+                .errorField("action", FieldError.builder().rejectedValue(e.getAction()).build())
                 .build());
   }
 
