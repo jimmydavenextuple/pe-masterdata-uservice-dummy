@@ -184,6 +184,7 @@ public class DataUploadUtilityExpectedHeaders {
                     START_TIME,
                     END_TIME,
                     SOURCE_AND_DESTINATION_GEO_ZONE)),
+            Map.entry("delete-transit-buffer", List.of(ORG_ID, CARRIER_SERVICE_ID, ACTION)),
             Map.entry(
                 "node-carrier-selection",
                 List.of(

@@ -3,6 +3,7 @@ package com.hbc.transit.controller;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
@@ -224,6 +225,20 @@ public class TransitController {
             .payload(
                 transitService.getTransitDetailsForDestinationGeozones(
                     orgId, carrierServiceId, transitDetailsRequest.getDestinationGeozones()))
+            .build());
+  }
+
+  @GetMapping
+  public ResponseEntity<BaseResponse<DistinctGeozonesResponse>>
+      getDistinctSourceAndDestinationGeozones(
+          @RequestParam String orgId, @RequestParam String carrierServiceId)
+          throws TransitDomainException {
+    logger.debug("Processing get distinct source and destination lists");
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Distinct source and destination lists fetched successfully")
+            .payload(
+                transitService.getDistinctSourceAndDestinationGeoZones(orgId, carrierServiceId))
             .build());
   }
 }

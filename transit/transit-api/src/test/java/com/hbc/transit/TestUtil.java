@@ -4,6 +4,7 @@ import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
@@ -157,5 +158,12 @@ public class TestUtil {
                 .serviceOptions(SERVICE_OPTIONS)
                 .build());
     return BaseResponse.builder().payload(carrierResponse).build();
+  }
+
+  public DistinctGeozonesResponse geozonesResponse() {
+    DistinctGeozonesResponse geozonesResponse = new DistinctGeozonesResponse();
+    geozonesResponse.setSourceGeozones(List.of(SOURCE_GEOZONE));
+    geozonesResponse.setDestinationGeozones(List.of(DESTINATION_GEOZONE));
+    return geozonesResponse;
   }
 }

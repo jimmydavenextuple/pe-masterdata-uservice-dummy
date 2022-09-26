@@ -8,6 +8,7 @@ import com.hbc.postgres.config.ReaderDS;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
@@ -89,15 +90,19 @@ public class TransitService {
       if (Objects.nonNull(carrierServiceResponse)) {
         var payload = carrierServiceResponse.getPayload();
         if (Objects.nonNull(payload) && Boolean.FALSE.equals(payload.isEmpty())) {
-            return true;
+          return true;
         }
       }
       return false;
     } catch (Exception e) {
-       logger.error("Error while fetching carrier details for orgId:{} , carrierServiceId:{}",transitDataCreationRequest.getOrgId(),transitDataCreationRequest.getCarrierServiceId());
-       return false;
+      logger.error(
+          "Error while fetching carrier details for orgId:{} , carrierServiceId:{}",
+          transitDataCreationRequest.getOrgId(),
+          transitDataCreationRequest.getCarrierServiceId());
+      return false;
     }
   }
+
   public TransitResponse updateTransitBufferDetails(
       TransitBufferCreationRequest transitBufferCreationRequest)
       throws TransitDomainException, CommonServiceException {
@@ -336,5 +341,18 @@ public class TransitService {
           0x1776,
           errorMap);
     }
+  }
+
+  public DistinctGeozonesResponse getDistinctSourceAndDestinationGeoZones(
+      String orgId, String carrierServiceId) throws TransitDomainException {
+    List<String> sourceGeoZones =
+        transitDomain.fetchDistinctSourceGeoZones(orgId, carrierServiceId);
+    List<String> destinationGeoZones =
+        transitDomain.fetchDistinctDestinationGeoZones(orgId, carrierServiceId);
+    var response = new DistinctGeozonesResponse();
+    response.setSourceGeozones(sourceGeoZones);
+    response.setDestinationGeozones(destinationGeoZones);
+
+    return response;
   }
 }
