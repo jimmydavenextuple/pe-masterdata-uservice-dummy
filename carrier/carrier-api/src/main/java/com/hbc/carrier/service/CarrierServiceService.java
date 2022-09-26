@@ -148,6 +148,24 @@ public class CarrierServiceService {
     }
   }
 
+  @ReaderDS
+  public List<CarrierServiceResponse> getCarrierServiceDetailsByCarrierIdAndOrgId(
+      String serviceId, String orgId) throws CarrierServiceDomainException, CommonServiceException {
+
+    Optional<List<CarrierServiceEntity>> carrierServiceEntity =
+        carrierServiceDomain.findCarrierServiceByServiceIdAndOrgId(serviceId, orgId);
+
+    if (carrierServiceEntity.isEmpty()) {
+      logger.error(CARRIER_SERVICE_EXCEPTION_MESSAGE);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(SERVICE_ID, FieldError.builder().rejectedValue(serviceId).build());
+      throw new CommonServiceException(
+          CARRIER_SERVICE_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
+    }
+    return INSTANCE.toCarrierServiceResponseList(carrierServiceEntity.get());
+  }
+
   public List<CarrierCacheKeyDto> getAllCarrierCacheKeys(Integer limit)
       throws CarrierServiceDomainException {
     var carrierServiceEntities = carrierServiceDomain.getAllCarrierServiceEntities(limit);
