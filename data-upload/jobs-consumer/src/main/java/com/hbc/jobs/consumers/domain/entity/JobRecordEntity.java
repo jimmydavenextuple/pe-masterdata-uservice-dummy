@@ -31,7 +31,7 @@ import org.springframework.data.annotation.Version;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "job_records", indexes = @Index(name = "jobId", columnList = "job_id"))
+@Table(name = "job_records", indexes = @Index(name = "jobId_key", columnList = "job_id"))
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class JobRecordEntity extends BaseEntity {
   // Common fields
