@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
     name = "pe-config-transit",
-    url = "${spring.application.dependencies.transit:http://localhost:8083/}")
+    url = "${spring.application.dependencies.transit:http://pe-config-transit:8080/}")
 public interface TransitFeign {
 
   @PostMapping("/transit")
