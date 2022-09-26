@@ -27,7 +27,7 @@ import org.hibernate.annotations.TypeDef;
 @AllArgsConstructor
 @Builder
 @DynamicInsert
-@Table(name = "jobs", indexes = @Index(name = "job_id", columnList = "job_id"))
+@Table(name = "jobs", indexes = @Index(name = "status", columnList = "status"))
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class JobEntity extends BaseEntity {
 
