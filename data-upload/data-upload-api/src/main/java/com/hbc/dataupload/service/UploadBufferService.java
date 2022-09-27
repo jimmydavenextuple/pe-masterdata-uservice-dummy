@@ -429,11 +429,7 @@ public class UploadBufferService {
       throws IOException, CsvException, CommonServiceException, CsvFormatValidationFailedException,
           JobSubmissionException {
 
-    var reader = new BufferedReader(new FileReader(path.toFile()));
-    List<String[]> csvFileContents;
-    try (var csvReader = new CSVReader(reader)) {
-      csvFileContents = csvReader.readAll();
-    }
+    List<String[]> csvFileContents = readCsvContents(path);
 
     String[] orgIdRow = csvFileContents.remove(0);
     String[] carrierServiceIdRow = csvFileContents.remove(0);
@@ -499,14 +495,13 @@ public class UploadBufferService {
       csvWriter.writeNext(distinctDestinationGeozones.toArray(new String[0]));
 
       destinationFsaAndActionList.forEach(csvWriter::writeNext);
-      csvWriter.flush();
     }
 
     submitJob(
         orgIdValue,
         JobTypeEnum.DELETE_TRANSIT_BUFFER,
-        FileUtils.readFileToByteArray(path.toFile()),
-        path.getFileName().toString());
+        FileUtils.readFileToByteArray(tempFile.toFile()),
+        tempFile.getFileName().toString());
 
     return "Delete transit buffer job submitted to job framework successfully";
   }
@@ -523,5 +518,15 @@ public class UploadBufferService {
       log.error("Error while submitting job to job framework", e);
       throw new JobSubmissionException("Error while submitting job to job framework", e, orgId);
     }
+  }
+
+  private static List<String[]> readCsvContents(Path path)
+      throws IOException, CsvException {
+    var reader = new BufferedReader(new FileReader(path.toFile()));
+    List<String[]> csvFileContents;
+    try (var csvReader = new CSVReader(reader)) {
+      csvFileContents = csvReader.readAll();
+    }
+    return csvFileContents;
   }
 }
