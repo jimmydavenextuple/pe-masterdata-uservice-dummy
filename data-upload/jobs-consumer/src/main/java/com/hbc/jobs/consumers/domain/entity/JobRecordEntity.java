@@ -11,6 +11,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,7 @@ import org.springframework.data.annotation.Version;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "job_records")
+@Table(name = "job_records", indexes = @Index(name = "jobId_key", columnList = "job_id"))
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class JobRecordEntity extends BaseEntity {
   // Common fields

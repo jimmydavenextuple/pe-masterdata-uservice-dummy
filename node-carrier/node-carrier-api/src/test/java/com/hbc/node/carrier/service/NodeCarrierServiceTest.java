@@ -151,7 +151,7 @@ class NodeCarrierServiceTest {
         Assertions.assertThrows(
             CommonServiceException.class,
             () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest1));
-    Assertions.assertEquals("NodeId does not exists", exception.getMessage());
+    Assertions.assertEquals("NodeId and OrgId combination does not exists", exception.getMessage());
   }
 
   @Test

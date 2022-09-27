@@ -246,35 +246,33 @@ class CarrierServiceServiceTest {
   }
 
   @Test
-  void getCarrierServiceDetailsByServiceIdAndOrgIdTest() throws CarrierServiceDomainException, CommonServiceException {
+  void getCarrierServiceDetailsByServiceIdAndOrgIdTest()
+      throws CarrierServiceDomainException, CommonServiceException {
     CarrierServiceEntity carrierServiceEntity = testUtil.getCarrierServiceEntity();
-    when(carrierServiceDomain.findCarrierServiceByServiceIdAndOrgId(
-            any(), any()))
-            .thenReturn(Optional.of(List.of(carrierServiceEntity)));
+    when(carrierServiceDomain.findCarrierServiceByServiceIdAndOrgId(any(), any()))
+        .thenReturn(Optional.of(List.of(carrierServiceEntity)));
 
     List<CarrierServiceResponse> CarrierServiceResponse =
-            carrierServiceService.getCarrierServiceDetailsByCarrierIdAndOrgId(
-                    TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
+        carrierServiceService.getCarrierServiceDetailsByCarrierIdAndOrgId(
+            TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
     assertEquals(List.of(testUtil.getCarrierServiceUpdateResponse()), CarrierServiceResponse);
-    verify(carrierServiceDomain, times(1))
-            .findCarrierServiceByServiceIdAndOrgId(any(), any());
+    verify(carrierServiceDomain, times(1)).findCarrierServiceByServiceIdAndOrgId(any(), any());
   }
 
   @Test
-  void getCarrierServiceDetailsByServiceIdAndOrgIdTestException() throws CarrierServiceDomainException {
-    when(carrierServiceDomain.findCarrierServiceByServiceIdAndOrgId(
-            any(), any()))
-            .thenReturn(Optional.empty());
+  void getCarrierServiceDetailsByServiceIdAndOrgIdTestException()
+      throws CarrierServiceDomainException {
+    when(carrierServiceDomain.findCarrierServiceByServiceIdAndOrgId(any(), any()))
+        .thenReturn(Optional.empty());
 
     Exception exception =
-            Assertions.assertThrows(
-                    CommonServiceException.class,
-                    () ->
-                            carrierServiceService.getCarrierServiceDetailsByCarrierIdAndOrgId(
-                                    TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                carrierServiceService.getCarrierServiceDetailsByCarrierIdAndOrgId(
+                    TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
     assertEquals("Carrier service not found with given details", exception.getMessage());
 
-    verify(carrierServiceDomain, times(1))
-            .findCarrierServiceByServiceIdAndOrgId(any(), any());
+    verify(carrierServiceDomain, times(1)).findCarrierServiceByServiceIdAndOrgId(any(), any());
   }
 }
