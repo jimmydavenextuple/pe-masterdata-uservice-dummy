@@ -226,7 +226,7 @@ public class NodeCarrierServiceCalendarService {
       throws CommonServiceException {
     BaseResponse<List<CarrierServiceResponse>> response =
         carrierFeign.getCarrierServiceListByOrgId(orgId);
-    boolean isValidId = false;
+    var isValidId = false;
     for (CarrierServiceResponse carrierServiceResponse : response.getPayload()) {
       if (carrierServiceResponse.getCarrierServiceId().equals(carrierServiceId)) {
         isValidId = true;
