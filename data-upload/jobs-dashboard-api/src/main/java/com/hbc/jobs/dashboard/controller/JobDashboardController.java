@@ -1,7 +1,7 @@
 package com.hbc.jobs.dashboard.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
@@ -19,6 +19,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
@@ -43,15 +43,16 @@ public class JobDashboardController {
   @PostMapping(
       path = "/org/{orgId}/jobs",
       produces = APPLICATION_JSON_VALUE,
-      consumes = {MULTIPART_FORM_DATA_VALUE})
+      consumes = APPLICATION_OCTET_STREAM_VALUE)
   public ResponseEntity<BaseResponse<JobDto>> processJobOffline(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestParam @NotNull @Valid JobTypeEnum jobType,
-      @RequestParam("file") MultipartFile csvFile)
+      @RequestBody ByteArrayResource csvFile,
+      @RequestParam("fileName") @NotNull @Valid String fileName)
       throws JobException {
     log.debug("Processing offline job request");
 
-    var jobDto = jobService.processJobOffline(csvFile, orgId, jobType);
+    var jobDto = jobService.processJobOffline(csvFile, orgId, jobType, fileName);
 
     log.debug("Processing offline job request ends");
 

@@ -1,6 +1,5 @@
 package com.hbc.jobs.consumers.service;
 
-import com.hbc.common.context.CurrentThreadContext;
 import com.hbc.jobs.consumers.exception.JobDashboardException;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +28,6 @@ public class JobDashboardService {
           .send(
               MessageBuilder.withPayload(recordStatus)
                   .setHeader(KafkaHeaders.TOPIC, resultPublishTopicName)
-                  .setHeader(
-                      "jwtToken", CurrentThreadContext.getLogContext().getAuthorizationHeader())
                   .setHeader(KafkaHeaders.MESSAGE_KEY, recordStatus.getJobId())
                   .build())
           .addCallback(

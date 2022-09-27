@@ -1,0 +1,17 @@
+name: WEIGHTAGE-CONFIGURATION RELEASE
+
+on:
+  push:
+    tags:
+      - '*RELEASE'
+jobs:
+
+  Build-Deploy:
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: weightage-configuration
+    secrets: inherit
+
+
+
+

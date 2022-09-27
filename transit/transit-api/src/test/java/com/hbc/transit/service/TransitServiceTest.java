@@ -1,5 +1,6 @@
 package com.hbc.transit.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
@@ -8,6 +9,9 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.hbc.carrier.domain.feign.CarrierFeign;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
 import com.hbc.common.util.DateValidationUtil;
 import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.TransitDomain;
@@ -18,12 +22,11 @@ import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.transit.exception.TransitDomainException;
+import feign.FeignException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import feign.FeignException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,6 +48,8 @@ class TransitServiceTest {
 
   @Mock private CarrierFeign carrierFeign;
 
+  @Mock private PostalCodeTimezoneFeign postalCodeTimezoneFeign;
+
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
@@ -54,9 +59,12 @@ class TransitServiceTest {
   void addTransitDetailsTest() throws TransitDomainException, CommonServiceException {
     TransitDataCreationRequest transitDataCreationRequest =
         testUtil.getTransitDataCreationRequest(testUtil.TRANSIT_DAYS);
+    when(postalCodeTimezoneFeign.getPostalCodeTimezone(any(), any()))
+        .thenReturn(testUtil.getBaseResponseOfPostalCodeTimezoneDto());
     when(transitDomain.saveTransitEntity(any(TransitEntity.class)))
         .thenReturn(testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS));
-    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(),any())).thenReturn(testUtil.getCarrierServiceUpdateResponse());
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
     TransitResponse transitResponse =
         transitService.addTransitInfo(
             testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS));
@@ -70,29 +78,55 @@ class TransitServiceTest {
 
   @Test
   void addTransitDetailsTestException() {
-    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(),any())).thenReturn(null);
-    Assertions.assertThrows(CommonServiceException.class, () ->
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(null);
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
             transitService.addTransitInfo(
-                    testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS)));
+                testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS)));
   }
 
   @Test
   void addTransitDetailsTestException2() {
-    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(),any())).thenThrow(FeignException.class);
-    Assertions.assertThrows(CommonServiceException.class, () ->
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenThrow(FeignException.class);
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
             transitService.addTransitInfo(
+                testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS)));
+  }
+  @Test
+  void addTransitDetailsForInvalidGeoZoneTest2() throws TransitDomainException {
+    BaseResponse<PostalCodeTimezoneDto> response = new BaseResponse<>();
+    response.setPayload(null);
+    response.setSuccess(true);
+    when(postalCodeTimezoneFeign.getPostalCodeTimezone(any(), any())).thenReturn(response);
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+            .thenReturn(testUtil.getCarrierServiceUpdateResponse());
+    Exception ex =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                transitService.addTransitInfo(
                     testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS)));
+    assertEquals("geoZone is not valid", ex.getMessage());
+    verify(transitDomain, times(0)).saveTransitEntity(any(TransitEntity.class));
   }
 
   @Test
   void addTransitDetailsNullBufferDaysTest() throws TransitDomainException, CommonServiceException {
     TransitDataCreationRequest transitDataCreationRequest =
         testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS);
+    when(postalCodeTimezoneFeign.getPostalCodeTimezone(any(), any()))
+        .thenReturn(testUtil.getBaseResponseOfPostalCodeTimezoneDto());
     transitDataCreationRequest.setBufferDays(null);
     TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
     transitEntity.setBufferDays(null);
     when(transitDomain.saveTransitEntity(any(TransitEntity.class))).thenReturn(transitEntity);
-    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(),any())).thenReturn(testUtil.getCarrierServiceUpdateResponse());
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
     TransitResponse transitResponse = transitService.addTransitInfo(transitDataCreationRequest);
     Assertions.assertEquals(
         testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS).getCarrierServiceId(),

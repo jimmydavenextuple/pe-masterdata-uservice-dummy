@@ -39,12 +39,11 @@ server:
           memory: "2048Mi"
           cpu: "2000m"
     hotfix:
-      nlb: "no"
       replicas: 1
       resources:
         min:
           memory: "512Mi"
-          cpu: "256m"
+          cpu: "100m"
         max:
           memory: "512Mi"
           cpu: "256m"

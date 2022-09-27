@@ -1,11 +1,8 @@
 package com.hbc.jobs.dashboard.service;
 
-import static com.hbc.jobs.framework.common.domain.enums.RecordDataTypeEnum.getTypeFromString;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.constants.CommonConstants;
-import com.hbc.common.context.CurrentThreadContext;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.JsonUtil;
 import com.hbc.jobs.dashboard.exception.JobException;
@@ -20,12 +17,7 @@ import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputWrapper;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReaderBuilder;
 import feign.FeignException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -36,13 +28,13 @@ import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -60,112 +52,26 @@ public class JobService {
    * @param inputFile
    * @param orgId
    * @param jobType
+   * @param fileName
    * @return
    * @throws JobException
    */
-  public JobDto processJobOffline(MultipartFile inputFile, String orgId, JobTypeEnum jobType)
+  public JobDto processJobOffline(
+      ByteArrayResource inputFile, String orgId, JobTypeEnum jobType, String fileName)
       throws JobException {
     log.debug("Inside processJobOffline service");
 
     try {
-      RecordDataTypeEnum fileType = getFileType(inputFile);
-      final List<String> recordsFromFile = getRecordsFromFile(inputFile);
-      JobDto job = constructJob(recordsFromFile.size(), orgId, jobType);
+      JobDto job = constructJob(0, orgId, jobType, inputFile, fileName);
       BaseResponse<JobDto> baseResponse = jobsConsumerClient.createJob(job);
-      JobDto jobResponse = baseResponse.getPayload();
-      IntStream.range(0, recordsFromFile.size())
-          .forEach(
-              recordNumber ->
-                  publishToKafka(
-                      recordNumber, recordsFromFile.get(recordNumber), jobResponse, fileType));
-      return job;
+      return baseResponse.getPayload();
     } catch (FeignException e) {
-      log.error("Error while processing csv/json file", e);
+      log.error("Error while creating job", e);
       var errorResponse = ExceptionUtils.parseFeignException(e);
       throw new JobException(errorResponse.getMessage(), e, null, jobType);
     } catch (Exception e) {
-      log.error("Unable to process csv/json file", e);
-      throw new JobException("Error while processing csv/json file", e, null, jobType);
-    }
-  }
-
-  /**
-   * Construct the list of records from the csv/json file
-   *
-   * @param inputFile
-   * @return
-   * @throws JobException
-   */
-  private List<String> getRecordsFromFile(MultipartFile inputFile) throws JobException {
-    RecordDataTypeEnum fileExtension = getFileType(inputFile);
-    List<String> records;
-    if (fileExtension == RecordDataTypeEnum.JSON) {
-      records = parseJSON(inputFile);
-    } else {
-      records = parseCSV(inputFile);
-    }
-    return records;
-  }
-
-  /**
-   * @param inputFile
-   * @return
-   */
-  private RecordDataTypeEnum getFileType(MultipartFile inputFile) {
-    String originalFilename = inputFile.getOriginalFilename();
-    if (!ObjectUtils.isEmpty(originalFilename)) {
-      String[] fileName = originalFilename.split("\\.");
-      String extension = fileName[fileName.length - 1].toLowerCase();
-      return getTypeFromString(extension.toLowerCase());
-    } else {
-      return null;
-    }
-  }
-
-  /**
-   * @param inputFile
-   * @return
-   * @throws JobException
-   */
-  private List<String> parseCSV(MultipartFile inputFile) throws JobException {
-    try {
-      Reader reader = new InputStreamReader(inputFile.getInputStream());
-
-      CSVParser parser =
-          new CSVParserBuilder().withSeparator(',').withIgnoreQuotations(false).build();
-
-      var csvReader = new CSVReaderBuilder(reader).withSkipLines(0).withCSVParser(parser).build();
-
-      List<String[]> rows = csvReader.readAll();
-      final String header = Arrays.stream(rows.get(0)).collect(Collectors.joining(","));
-      final var MARKER = "\n";
-
-      return rows.stream()
-          .skip(1)
-          .filter(
-              row -> {
-                String line = Arrays.stream(row).collect(Collectors.joining(""));
-                return !line.trim().isEmpty();
-              })
-          .map(row -> header + MARKER + Arrays.stream(row).collect(Collectors.joining(",")))
-          .collect(Collectors.toList());
-    } catch (Exception e) {
-      log.error("Unable to parse the csv file", e);
-      throw new JobException("Error while parsing csv file", e, null, null);
-    }
-  }
-
-  /**
-   * @param inputFile
-   * @return
-   * @throws JobException
-   */
-  private List<String> parseJSON(MultipartFile inputFile) throws JobException {
-    try {
-      return parseJSON(new String(inputFile.getBytes()));
-    } catch (Exception e) {
-      log.error("Unable to parse the json file", e);
-      throw new JobException("Error while parsing json file", e, null, null);
+      log.error("Error while process job offline", e);
+      throw new JobException("Error while process job offline", e, null, jobType);
     }
   }
 
@@ -206,7 +112,6 @@ public class JobService {
         MessageBuilder.withPayload(recordDto)
             .setHeader(KafkaHeaders.TOPIC, dashboardProducerName)
             .setHeader(CommonConstants.HEADER_USER, job.getUserId())
-            .setHeader("jwtToken", CurrentThreadContext.getLogContext().getAuthorizationHeader())
             .build();
 
     try {
@@ -237,19 +142,32 @@ public class JobService {
     return inputs;
   }
 
+  private JobDto constructJob(int totalRecords, String orgId, JobTypeEnum jobTypeEnum) {
+    return constructJob(
+        totalRecords, orgId, jobTypeEnum, new ByteArrayResource("".getBytes()), null);
+  }
+
   /**
    * @param totalRecords
    * @param orgId
-   * @param jobTypeEnum consumers.
+   * @param jobTypeEnum
+   * @param inputFile
+   * @param fileName
    * @return
    */
-  private JobDto constructJob(int totalRecords, String orgId, JobTypeEnum jobTypeEnum) {
+  private JobDto constructJob(
+      int totalRecords,
+      String orgId,
+      JobTypeEnum jobTypeEnum,
+      ByteArrayResource inputFile,
+      String fileName) {
     var job = new JobDto();
     job.setJobId(UUID.randomUUID().toString());
 
     job.setTotalRecords(totalRecords);
     job.setJobType(jobTypeEnum);
-
+    job.setFileName(fileName);
+    job.setFile(inputFile.getByteArray());
     job.setProcessedRecords(0);
     job.setRemainingRecords(totalRecords - job.getProcessedRecords());
     job.setFailureCount(0);
@@ -267,6 +185,7 @@ public class JobService {
   /**
    * Retrieve the job
    *
+   * @param orgId
    * @param jobId
    * @return
    * @throws JobException
@@ -288,8 +207,11 @@ public class JobService {
   }
 
   /**
+   * @param orgId
    * @param jobType
    * @param days
+   * @param sortField
+   * @param sortOrder
    * @param pageNo
    * @param pageSize
    * @return
@@ -332,6 +254,7 @@ public class JobService {
    * @param request
    * @param orgId
    * @param jobType
+   * @param jobId
    * @return
    * @throws JobException
    */
@@ -342,9 +265,12 @@ public class JobService {
 
     try {
       List<String> jsonList = parseJSON(request);
-      JobDto jobResponse = null;
+      JobDto jobResponse;
       if (jobId.isPresent() && !ObjectUtils.isEmpty(jobId.orElse(null))) {
         jobResponse = jobsConsumerClient.getJob(orgId, jobId.get()).getPayload();
+        jobResponse.setTotalRecords(jsonList.size());
+        jobResponse.setRemainingRecords(jsonList.size());
+        jobResponse = jobsConsumerClient.updateJob(jobResponse).getPayload();
       } else {
         JobDto job = constructJob(jsonList.size(), orgId, jobType);
         BaseResponse<JobDto> baseResponse = jobsConsumerClient.createJob(job);
@@ -369,6 +295,13 @@ public class JobService {
     }
   }
 
+  /**
+   * @param orgId
+   * @param jobId
+   * @param status
+   * @return
+   * @throws JobException
+   */
   public List<RecordStatusDto> getJobResults(String orgId, String jobId, Optional<String> status)
       throws JobException {
     log.debug("--Inside getJobResults()--");

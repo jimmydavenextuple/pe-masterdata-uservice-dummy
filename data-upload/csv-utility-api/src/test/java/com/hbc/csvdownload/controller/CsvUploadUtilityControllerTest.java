@@ -1,14 +1,12 @@
 package com.hbc.csvdownload.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
 import com.hbc.csvdownload.exception.JobSubmissionException;
-import com.hbc.csvdownload.exception.JsonParsingException;
 import com.hbc.csvdownload.service.CsvUploadUtilityService;
 import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
@@ -32,8 +30,7 @@ class CsvUploadUtilityControllerTest {
 
   @Test
   void uploadTransitTimesCSV()
-      throws CsvFormatValidationFailedException, IOException, JobSubmissionException, CsvException,
-          JsonParsingException {
+      throws CsvFormatValidationFailedException, IOException, JobSubmissionException, CsvException {
     MultipartFile csvFile = Mockito.mock(MultipartFile.class);
     when(csvUploadUtilityService.uploadTransitTimesCsv(any(), any()))
         .thenReturn("Job to upload Transit times received successfully");
@@ -48,7 +45,7 @@ class CsvUploadUtilityControllerTest {
   @Test
   void uploadLeadProcessingTimeCSV()
       throws CsvParsingException, CsvFormatValidationFailedException, JobSubmissionException,
-          JsonParsingException {
+          IOException, CsvException {
     MultipartFile csvFile = Mockito.mock(MultipartFile.class);
     when(csvUploadUtilityService.uploadProcessingLeadTimesCsv(any(), any()))
         .thenReturn("Job to bulk upload processing lead times is submitted successfully");
