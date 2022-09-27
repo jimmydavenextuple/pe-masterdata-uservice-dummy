@@ -135,7 +135,7 @@ public class CsvDownloadUtilityService {
       if (jobType.equals(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES)) {
         return downloadProcessingLeadTimeErrorLogs(recordStatusDtos);
       } else {
-        return downloadTransitTimeErrorLogs(recordStatusDtos, orgId);
+        return downloadTransitTimeErrorLogs(recordStatusDtos);
       }
     } catch (Exception e) {
       throw new CommonServiceException(
@@ -169,12 +169,13 @@ public class CsvDownloadUtilityService {
         recordStatusDto.getErrorMessage());
   }
 
-  private String downloadTransitTimeErrorLogs(
-      List<RecordStatusDto> recordStatusDtoList, String orgId) throws CommonServiceException {
+  private String downloadTransitTimeErrorLogs(List<RecordStatusDto> recordStatusDtoList)
+      throws CommonServiceException {
     try {
       var transitDataErrorLogsList =
           recordStatusDtoList.stream().map(this::getRequestBody).collect(Collectors.toList());
 
+      String orgId = transitDataErrorLogsList.get(0).getOrgId();
       String carrierServiceId = transitDataErrorLogsList.get(0).getCarrierServiceId();
 
       Set<String> sourceFsaSet =

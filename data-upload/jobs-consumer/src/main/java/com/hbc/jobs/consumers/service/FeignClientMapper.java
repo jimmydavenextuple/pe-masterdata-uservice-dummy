@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Stopwatch;
 import com.hbc.common.context.CurrentThreadContext;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.common.util.JsonUtil;
 import com.hbc.jobs.consumers.exception.FeignClientMapperException;
@@ -42,6 +43,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 public interface FeignClientMapper {
 
@@ -104,6 +106,9 @@ public interface FeignClientMapper {
                 .map(key -> errorFieldsMap.get(key).getErrorMessage())
                 .findFirst()
                 .orElse("");
+        if (!StringUtils.hasLength(errorMessage)) {
+          errorMessage = errorResponse.getMessage();
+        }
         recordStatusDto.setErrorMessage(errorMessage);
       } else {
         recordStatusDto.setErrorMessage(errorResponse.getMessage());
@@ -175,5 +180,5 @@ public interface FeignClientMapper {
   Class mapTODto() throws TransitMapperException, NodeCarrierMapperException; // NOSONAR
 
   ResponseEntity<?> callApi(Object dtoFromJson, RecordInputDto inputs) // NOSONAR
-      throws TransitMapperException, NodeCarrierMapperException, InvalidActionTypeException;
+          throws TransitMapperException, NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException;
 }
