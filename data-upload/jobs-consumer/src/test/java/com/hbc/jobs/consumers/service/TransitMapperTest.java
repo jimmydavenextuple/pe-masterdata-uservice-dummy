@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.pojo.TransitDataUpload;
+import com.hbc.csvdownload.exception.CsvDataValidationException;
 import com.hbc.jobs.consumers.common.TestUtil;
 import com.hbc.jobs.consumers.exception.TransitMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
@@ -57,7 +58,7 @@ class TransitMapperTest {
 
   @Test
   void callApi() throws TransitMapperException {
-    Object object = testUtil.getTransitDataUpload("");
+    Object object = testUtil.getTransitDataUpload();
     transitMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
     when(transitFeign.addTransitData(any()))
         .thenReturn(BaseResponse.builder().payload(testUtil.getTransitResponse()).build());
@@ -69,23 +70,39 @@ class TransitMapperTest {
 
   @Test
   void callApiDeleteTransitEntryTest() throws TransitMapperException {
-    Object object = testUtil.getTransitDataUpload("D");
+    TransitDataUpload transitDataUpload = testUtil.getTransitDataUpload();
+    transitDataUpload.setTransitDays("D");
     transitMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
     when(transitFeign.deleteTransitDetails(any(), any(), any(), any()))
         .thenReturn(BaseResponse.builder().payload(testUtil.getTransitResponse()).build());
     ResponseEntity<BaseResponse<TransitResponse>> res =
-        (ResponseEntity<BaseResponse<TransitResponse>>) transitMapper.callApi(object, null);
+        (ResponseEntity<BaseResponse<TransitResponse>>)
+            transitMapper.callApi(transitDataUpload, null);
     Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
     Assertions.assertNotNull(res.getBody());
   }
 
   @Test
+  void callApiInvalidTransitEntryTest() {
+    var transitDataUpload = testUtil.getTransitDataUpload();
+    transitDataUpload.setTransitDays("invalid");
+    transitMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+    Exception exception =
+        Assertions.assertThrows(
+            CsvDataValidationException.class, () -> transitMapper.callApi(transitDataUpload, null));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
   void callApiException() {
-    Object object = testUtil.getTransitDataUpload("");
+    TransitDataUpload transitDataUpload = testUtil.getTransitDataUpload();
+    transitDataUpload.setTransitDays("");
+
     transitMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     Exception exception =
         Assertions.assertThrows(
-            TransitMapperException.class, () -> transitMapper.callApi(object, null));
+            TransitMapperException.class, () -> transitMapper.callApi(transitDataUpload, null));
     Assertions.assertNotNull(exception);
   }
 }

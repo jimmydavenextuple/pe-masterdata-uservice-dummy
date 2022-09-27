@@ -4,6 +4,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.consumers.util.UriBuilder;
@@ -25,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -75,7 +77,7 @@ public class JobsConsumerController {
       consumes = APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<JobDto>> createJob(@Valid @RequestBody JobDto jobDto)
       throws JobException {
-    log.info("-- Inside createJob controller --");
+    log.debug("-- Inside createJob controller --");
 
     JobDto job = jobConsumerService.createJob(jobDto);
     return ResponseEntity.ok(
@@ -93,14 +95,31 @@ public class JobsConsumerController {
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotEmpty @NotNull @PathVariable String jobId)
       throws JobException {
-    log.info("-- Inside getJob controller --");
+    log.debug("-- Inside getJob controller --");
 
     JobDto job = jobConsumerService.getJob(jobId, orgId);
 
-    log.info("Job successfully retrieved : {}", jobId);
+    log.debug("Job successfully retrieved : {}", jobId);
 
     return ResponseEntity.ok(
         BaseResponse.builder().message("Retrieval of the job is successful").payload(job).build());
+  }
+
+  /**
+   * @param jobDto
+   * @return
+   * @throws JobDomainException
+   */
+  @PutMapping(path = "/jobs/update")
+  public ResponseEntity<BaseResponse<JobDto>> updateJob(@Valid @RequestBody JobDto jobDto)
+      throws JobDomainException {
+    log.debug("-- Inside update job controller --");
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Retrieval of the job is successful")
+            .payload(jobConsumerService.saveJob(jobDto))
+            .build());
   }
 
   /**

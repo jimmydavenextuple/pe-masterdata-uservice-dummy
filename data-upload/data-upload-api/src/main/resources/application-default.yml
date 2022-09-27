@@ -43,3 +43,10 @@ dataupload:
   base-path: "/s3-bucket/"
   maxsize-in-kilobytes: 10240
   max-rows: 1000
+pe:
+  ui:
+    allowed-origin-url: "*"
+auth-token:
+  url: https://promise-engine-dev-pool.auth.us-east-1.amazoncognito.com
+  username: user
+  password: password

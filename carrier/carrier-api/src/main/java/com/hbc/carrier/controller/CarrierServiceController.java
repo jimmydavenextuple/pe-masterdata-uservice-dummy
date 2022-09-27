@@ -157,6 +157,29 @@ public class CarrierServiceController {
             .build());
   }
 
+  @GetMapping("/{carrierServiceId}/{orgId}")
+  public ResponseEntity<BaseResponse<List<CarrierServiceResponse>>>
+      getCarrierServiceDetailsByCarrierServiceIdAndOrgId(
+          @NotBlank @PathVariable String carrierServiceId, @NotBlank @PathVariable String orgId)
+          throws CarrierServiceDomainException, CommonServiceException {
+    logger.debug("Processing get CarrierService details");
+    try {
+
+      var carrierServiceResponse =
+          carrierserviceService.getCarrierServiceDetailsByCarrierIdAndOrgId(
+              carrierServiceId, orgId);
+
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("CarrierService details fetched successfully")
+              .payload(carrierServiceResponse)
+              .build());
+    } catch (Exception e) {
+      logger.error("Failed to fetch CarrierService details");
+      throw e;
+    }
+  }
+
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<CarrierCacheKeyDto>>> getCarrierCacheKeys(
       @RequestParam Integer limit) throws CarrierServiceDomainException {

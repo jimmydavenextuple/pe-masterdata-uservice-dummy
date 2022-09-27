@@ -3,6 +3,7 @@ package com.hbc.node.carrier.service;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.common.util.DateValidationUtil;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
@@ -53,6 +54,8 @@ public class NodeCarrierService {
   private final NodeCarrierDomain nodeCarrierDomain;
   private final NodeFeign nodeFeign;
 
+  private final DateValidationUtil dateValidationUtil;
+
   @Value("#{'${promise.service.options}'.split('\\s*,\\s*')}")
   public Set<String> serviceOptions;
 
@@ -101,7 +104,8 @@ public class NodeCarrierService {
 
   public NodeCarrierResponse updateBufferData(NodeCarrierBufferRequest nodeCarrierBufferRequest)
       throws NodeCarrierDomainException, CommonServiceException {
-
+    dateValidationUtil.validateBufferStartAndEndDate(
+        nodeCarrierBufferRequest.getBufferStartDate(), nodeCarrierBufferRequest.getBufferEndDate());
     validateBufferHours(nodeCarrierBufferRequest.getBufferHours());
     var nodeCarrierEntity = INSTANCE.nodeCarrierBufferRequestToEntity(nodeCarrierBufferRequest);
 

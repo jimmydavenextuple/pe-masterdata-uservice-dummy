@@ -8,6 +8,7 @@ import com.hbc.jobs.consumers.domain.mapper.JobMapper;
 import com.hbc.jobs.consumers.domain.mapper.JobRecordMapper;
 import com.hbc.jobs.consumers.exception.DuplicateJobException;
 import com.hbc.jobs.consumers.exception.InvalidJobTypeException;
+import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.exception.JobIdNotFoundException;
 import com.hbc.jobs.framework.common.aop.DBTransaction;
@@ -47,12 +48,12 @@ public class JobConsumerService {
    * @throws JobException
    */
   public void processRecord(RecordDto recordDto) throws JobException {
-    log.info("Inside processRecord service");
+    log.debug("Inside processRecord service");
 
     try {
       RecordStatusDto recordStatus = getRecordStatus(recordDto);
       publishRecordStatusToKafka(recordStatus);
-      log.info("Inside processRecord service ends");
+      log.debug("Inside processRecord service ends");
     } catch (Exception e) {
       log.error("Error while processing the job record.", e);
       throw new JobException(
@@ -65,7 +66,7 @@ public class JobConsumerService {
    * @throws JobException
    */
   private void publishRecordStatusToKafka(RecordStatusDto recordStatus) throws JobException {
-    log.info("Inside publishRecordStatusToKafka service");
+    log.debug("Inside publishRecordStatusToKafka service");
 
     try {
       jobDashboardService.publishJobRecord(recordStatus);
@@ -83,7 +84,7 @@ public class JobConsumerService {
    */
   public RecordStatusDto getRecordStatus(RecordDto recordDto)
       throws JobException, InvalidJobTypeException {
-    log.info("Inside getRecordStatus service");
+    log.debug("Inside getRecordStatus service");
 
     try {
       var feignClientMapper = feignClientMapperFactory.getMapper(recordDto.getJob().getJobType());
@@ -105,7 +106,7 @@ public class JobConsumerService {
    */
   @DBTransaction
   public void updateJobStatus(RecordStatusDto recordStatusDto) throws JobException {
-    log.info("Inside updateJobStatus service");
+    log.debug("Inside updateJobStatus service");
 
     try {
       jobRecordDomain.create(JobRecordMapper.INSTANCE.toJobRecordEntity(recordStatusDto));
@@ -155,7 +156,7 @@ public class JobConsumerService {
    * @return
    */
   private JobEntity processJobStatus(JobEntity jobEntity, RecordStatusDto recordStatusDto) {
-    log.info("Inside processJobStatus service");
+    log.debug("Inside processJobStatus service");
 
     if (recordStatusDto.getStatus().equals(ApiStatusEnum.FAILURE)) {
       jobEntity.setFailureCount(jobEntity.getFailureCount() + 1);
@@ -174,7 +175,7 @@ public class JobConsumerService {
       jobEntity.setStatus(JobStatusEnum.COMPLETED);
       auditLog.setTimeStamp(new Date());
       oldAuditLog.add(auditLog);
-    } else if (jobEntity.getStatus().equals(JobStatusEnum.SUBMITTED)) {
+    } else if (jobEntity.getStatus().equals(JobStatusEnum.PROCESSED)) {
       var auditLog = new AuditLog();
       auditLog.setStatus(JobStatusEnum.RUNNING);
       jobEntity.setStatus(JobStatusEnum.RUNNING);
@@ -209,7 +210,7 @@ public class JobConsumerService {
    * @throws JobException
    */
   public JobDto createJob(JobDto jobDto) throws JobException {
-    log.info("--Inside createJob service--");
+    log.debug("--Inside createJob service--");
 
     try {
       var existingJobEntity =
@@ -221,13 +222,17 @@ public class JobConsumerService {
             "Job already exists for the same jobId", existingJobEntity.getJobId());
       }
 
-      var jobEntity = jobDomain.save(JobMapper.INSTANCE.toJobEntity(jobDto));
-      log.info("--Inside createJob service ends--");
+      var jobEntity = saveJob(jobDto);
+      log.debug("--Inside createJob service ends--");
       return JobMapper.INSTANCE.toJob(jobEntity);
     } catch (Exception e) {
       log.error("Error while creating a job", e);
       throw new JobException("Exception while creating the job ", e, jobDto.getJobId(), null);
     }
+  }
+
+  public JobEntity saveJob(JobDto jobDto) throws JobDomainException {
+    return jobDomain.save(JobMapper.INSTANCE.toJobEntity(jobDto));
   }
 
   /**
@@ -237,7 +242,7 @@ public class JobConsumerService {
    * @throws JobException
    */
   public JobDto getJob(String jobId, String orgId) throws JobException {
-    log.info("-- Inside getJob service --");
+    log.debug("-- Inside getJob service --");
 
     try {
       var jobEntity = jobDomain.findJobByJobIdAndOrgId(jobId, orgId);

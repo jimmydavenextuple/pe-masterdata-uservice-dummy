@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.util.DateValidationUtil;
 import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
@@ -43,6 +44,8 @@ class NodeCarrierServiceTest {
   @Mock NodeCarrierDomain nodeCarrierDomain;
 
   @InjectMocks TestUtil testUtil;
+
+  @Mock DateValidationUtil dateValidationUtil;
 
   @Test
   @DisplayName("When node carrier is created successfully")
@@ -180,6 +183,7 @@ class NodeCarrierServiceTest {
   @Test
   @DisplayName("When node carrier buffer data is updated successfully")
   void updateNodeCarrierBufferDataTest() throws NodeCarrierDomainException, CommonServiceException {
+    doNothing().when(dateValidationUtil).validateBufferStartAndEndDate(any(), any());
     when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
         .thenReturn(Optional.ofNullable(testUtil.getNodeCarrierEntity()));
     when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
@@ -196,8 +200,10 @@ class NodeCarrierServiceTest {
 
   @Test
   @DisplayName("When bufferHours is negative while updating buffer details")
-  void updateNodeCarrierWithNegativeBufferHoursExceptionTest() {
+  void updateNodeCarrierWithNegativeBufferHoursExceptionTest() throws CommonServiceException {
     NodeCarrierBufferRequest nodeCarrierBufferRequest = testUtil.getNodeCarrierBufferRequest3();
+
+    doNothing().when(dateValidationUtil).validateBufferStartAndEndDate(any(), any());
 
     Exception ex =
         Assertions.assertThrows(
@@ -209,7 +215,9 @@ class NodeCarrierServiceTest {
 
   @Test
   @DisplayName("When node carrier to be updated is not found")
-  void updateNodeCarrierNotFoundToUpdateBufferDataTest() throws NodeCarrierDomainException {
+  void updateNodeCarrierNotFoundToUpdateBufferDataTest()
+      throws NodeCarrierDomainException, CommonServiceException {
+    doNothing().when(dateValidationUtil).validateBufferStartAndEndDate(any(), any());
     when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
         .thenReturn(Optional.empty());
 

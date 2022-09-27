@@ -1,0 +1,16 @@
+name: POSTAL-CODE-TIMEZONE RELEASE
+
+on:
+  push:
+    tags:
+      - '*RELEASE'
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: postal-code-timezone
+    secrets: inherit
+
+
+
+
