@@ -103,6 +103,8 @@ class TransitServiceTest {
     response.setPayload(null);
     response.setSuccess(true);
     when(postalCodeTimezoneFeign.getPostalCodeTimezone(any(), any())).thenReturn(response);
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+            .thenReturn(testUtil.getCarrierServiceUpdateResponse());
     Exception ex =
         Assertions.assertThrows(
             CommonServiceException.class,
