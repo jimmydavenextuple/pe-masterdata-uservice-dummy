@@ -16,7 +16,7 @@ public interface NodeCarrierServiceCalendarRepository
           "SELECT * FROM node_carrier_service_calendars "
               + "where org_id = ?1 "
               + "AND node_id = ?2 "
-              + "AND (carrier_service_id = ?3 OR carrier_service_id = 'ALL' )",
+              + "AND (carrier_service_id = ?3 OR carrier_service_id = 'ALL' ) ORDER BY effective_date DESC, created_date DESC",
       nativeQuery = true)
   List<NodeCarrierServiceCalendarEntity> findAllNodeCarrierServiceCalendar(
       String orgId, String nodeId, String carrierServiceId);
@@ -26,7 +26,7 @@ public interface NodeCarrierServiceCalendarRepository
           "SELECT * FROM node_carrier_service_calendars "
               + "where org_id = ?1 "
               + "AND node_id = ?2 "
-              + "AND (carrier_service_id = ?3 OR carrier_service_id = ?4 OR carrier_service_id = 'ALL' )",
+              + "AND (carrier_service_id = ?3 OR carrier_service_id = ?4 OR carrier_service_id = 'ALL' ) ORDER BY effective_date DESC, created_date DESC",
       nativeQuery = true)
   List<NodeCarrierServiceCalendarEntity> findNodeCarrierServiceCalendar(
       String orgId, String nodeId, String carrierServiceId, String carrierServiceOption);
