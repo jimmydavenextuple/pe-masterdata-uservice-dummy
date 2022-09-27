@@ -1,5 +1,6 @@
 package com.hbc.node.carrier.service;
 
+import com.hbc.carrier.domain.feign.CarrierFeign;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.FieldError;
@@ -56,6 +57,11 @@ public class NodeCarrierService {
 
   private final DateValidationUtil dateValidationUtil;
 
+  private final CarrierFeign carrierFeign;
+
+  private static final String INVALID_DATA_EXCEPTION_MESSAGE =
+      "Node carrier data cannot be created with given carrierServiceId and orgId";
+
   @Value("#{'${promise.service.options}'.split('\\s*,\\s*')}")
   public Set<String> serviceOptions;
 
@@ -70,6 +76,17 @@ public class NodeCarrierService {
       if (!baseResponse.isSuccess()) {
         commonServiceExceptionMethod(
             "Invalid nodeId",
+            nodeCarrierRequest.getNodeId(),
+            nodeCarrierRequest.getOrgId(),
+            nodeCarrierRequest.getCarrierServiceId(),
+            nodeCarrierRequest.getServiceOption());
+      }
+
+      if (Boolean.FALSE.equals(
+          validateCarrierDetails(
+              nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
+        commonServiceExceptionMethod(
+            INVALID_DATA_EXCEPTION_MESSAGE,
             nodeCarrierRequest.getNodeId(),
             nodeCarrierRequest.getOrgId(),
             nodeCarrierRequest.getCarrierServiceId(),
@@ -100,6 +117,26 @@ public class NodeCarrierService {
     }
     var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
+  }
+
+  private Boolean validateCarrierDetails(String orgId, String carrierServiceId) {
+    try {
+      var carrierServiceResponse =
+          carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(carrierServiceId, orgId);
+      if (Objects.nonNull(carrierServiceResponse)) {
+        var payload = carrierServiceResponse.getPayload();
+        if (Objects.nonNull(payload) && Boolean.FALSE.equals(payload.isEmpty())) {
+          return true;
+        }
+      }
+      return false;
+    } catch (Exception e) {
+      logger.error(
+          "Error while fetching carrier details for orgId:{} , carrierServiceId:{}",
+          orgId,
+          carrierServiceId);
+      return false;
+    }
   }
 
   public NodeCarrierResponse updateBufferData(NodeCarrierBufferRequest nodeCarrierBufferRequest)
