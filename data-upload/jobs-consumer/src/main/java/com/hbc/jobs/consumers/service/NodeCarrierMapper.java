@@ -3,6 +3,8 @@ package com.hbc.jobs.consumers.service;
 import com.hbc.common.constants.CommonConstants;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
+import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.error.FieldError;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.CsvDataValidationException;
 import com.hbc.jobs.consumers.domain.mapper.NodeCarrierRequestMapper;
@@ -12,15 +14,19 @@ import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.mapstruct.factory.Mappers;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -28,7 +34,10 @@ import org.springframework.stereotype.Service;
 public class NodeCarrierMapper implements FeignClientMapper {
 
   private final Logger logger = LoggerFactory.getLogger(NodeCarrierMapper.class);
-
+  private static final String ORG_ID = "orgId";
+  private static final String NODE_ID = "nodeId";
+  private static final String CARRIER_SERVICE_ID = "carrierServiceId";
+  private static final String SERVICE_OPTION = "serviceOption";
   private final NodeCarrierFeign nodeCarrierFeign;
 
   public static final NodeCarrierRequestMapper INSTANCE =
@@ -98,7 +107,7 @@ public class NodeCarrierMapper implements FeignClientMapper {
 
   @Override
   public ResponseEntity<?> callApi(Object request, RecordInputDto inputs)
-      throws NodeCarrierMapperException, InvalidActionTypeException {
+          throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
     if (jobTypeEnum == JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES) {
       var processingLeadTimesRaw = (ProcessingLeadTimesRaw) request;
 
@@ -111,16 +120,40 @@ public class NodeCarrierMapper implements FeignClientMapper {
                 INSTANCE.convertToNodeCarrierRequest(processingLeadTimesRaw)));
       } else if (CommonConstants.DELETE_D.equalsIgnoreCase(
           processingLeadTimesRaw.getActionType())) {
+        var nodeId = processingLeadTimesRaw.getNodeId();
+        var orgId = processingLeadTimesRaw.getOrgId();
+        var carrierServiceId = processingLeadTimesRaw.getCarrierServiceId();
+        var serviceOption = processingLeadTimesRaw.getServiceOption();
+
+        if (StringUtils.isEmpty(nodeId)) {
+          throwCommonServiceException("NodeId can't be empty", NODE_ID,nodeId);
+        }
+        if (StringUtils.isEmpty(orgId)) {
+          throwCommonServiceException("OrgId can't be empty", ORG_ID, orgId);
+        }
+        if (StringUtils.isEmpty(serviceOption)) {
+          throwCommonServiceException("ServiceOption can't be empty", SERVICE_OPTION,serviceOption);
+        }
+
         return ResponseEntity.ok(
-            nodeCarrierFeign.deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
-                processingLeadTimesRaw.getNodeId(),
-                processingLeadTimesRaw.getOrgId(),
-                processingLeadTimesRaw.getCarrierServiceId(),
-                processingLeadTimesRaw.getServiceOption()));
+
+        nodeCarrierFeign.deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
+                nodeId,orgId,carrierServiceId,serviceOption));
       }
+
     }
     logger.error("Failed to make a call based on job type");
     throw new NodeCarrierMapperException("Please provide the valid job type", jobTypeEnum);
+  }
+  public void throwCommonServiceException(
+          String errorMessage,
+          String field,
+          String fieldValue
+  )
+          throws CommonServiceException {
+    Map<String, FieldError> errorMap = new HashMap<>();
+    errorMap.put(field, FieldError.builder().rejectedValue(fieldValue).build());
+    throw new CommonServiceException(errorMessage, HttpStatus.BAD_REQUEST, 0x1772, errorMap);
   }
 
   private void validateProcessingLeadTimeAndActionType(
