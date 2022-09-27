@@ -42,6 +42,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 public interface FeignClientMapper {
 
@@ -104,6 +105,9 @@ public interface FeignClientMapper {
                 .map(key -> errorFieldsMap.get(key).getErrorMessage())
                 .findFirst()
                 .orElse("");
+        if (!StringUtils.hasLength(errorMessage)) {
+          errorMessage = errorResponse.getMessage();
+        }
         recordStatusDto.setErrorMessage(errorMessage);
       } else {
         recordStatusDto.setErrorMessage(errorResponse.getMessage());

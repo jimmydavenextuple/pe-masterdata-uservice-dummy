@@ -89,15 +89,19 @@ public class TransitService {
       if (Objects.nonNull(carrierServiceResponse)) {
         var payload = carrierServiceResponse.getPayload();
         if (Objects.nonNull(payload) && Boolean.FALSE.equals(payload.isEmpty())) {
-            return true;
+          return true;
         }
       }
       return false;
     } catch (Exception e) {
-       logger.error("Error while fetching carrier details for orgId:{} , carrierServiceId:{}",transitDataCreationRequest.getOrgId(),transitDataCreationRequest.getCarrierServiceId());
-       return false;
+      logger.error(
+          "Error while fetching carrier details for orgId:{} , carrierServiceId:{}",
+          transitDataCreationRequest.getOrgId(),
+          transitDataCreationRequest.getCarrierServiceId());
+      return false;
     }
   }
+
   public TransitResponse updateTransitBufferDetails(
       TransitBufferCreationRequest transitBufferCreationRequest)
       throws TransitDomainException, CommonServiceException {

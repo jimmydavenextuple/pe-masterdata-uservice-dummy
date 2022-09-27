@@ -84,7 +84,7 @@ public class NodeCarrierService {
             nodeCarrierRequest.getServiceOption());
       }
     } catch (RuntimeException e) {
-      var errorMessage = "NodeId does not exists";
+      var errorMessage = "NodeId and OrgId combination does not exists";
       logger.error(errorMessage, e);
       commonServiceExceptionMethod(
           errorMessage,
