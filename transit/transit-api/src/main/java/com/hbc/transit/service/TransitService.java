@@ -62,10 +62,6 @@ public class TransitService {
 
   public TransitResponse addTransitInfo(TransitDataCreationRequest transitDataCreationRequest)
       throws TransitDomainException, CommonServiceException {
-    validateSourceAndDestinationGeozone(
-        transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getSourceGeozone());
-    validateSourceAndDestinationGeozone(
-        transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getDestinationGeozone());
     validateTransitDetails(
         transitDataCreationRequest.getTransitDays(),
         transitDataCreationRequest.getBufferDays(),
@@ -86,6 +82,11 @@ public class TransitService {
       throw new CommonServiceException(
           INVALID_TRANSIT_DATA_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST, 0x1771, errorMap);
     }
+
+    validateSourceAndDestinationGeozone(
+            transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getSourceGeozone());
+    validateSourceAndDestinationGeozone(
+            transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getDestinationGeozone());
     var transitEntity = INSTANCE.toTransitEntity(transitDataCreationRequest);
 
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(transitEntity));
