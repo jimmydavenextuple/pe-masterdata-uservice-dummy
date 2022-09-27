@@ -2,6 +2,8 @@ package com.hbc.transit;
 
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
 import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
@@ -158,6 +160,17 @@ public class TestUtil {
                 .serviceOptions(SERVICE_OPTIONS)
                 .build());
     return BaseResponse.builder().payload(carrierResponse).build();
+  }
+
+  public BaseResponse<PostalCodeTimezoneDto> getBaseResponseOfPostalCodeTimezoneDto() {
+    BaseResponse<PostalCodeTimezoneDto> response = new BaseResponse<>();
+    response.setPayload(getPostalCodeTimezoneDto());
+    response.setSuccess(true);
+    return response;
+  }
+
+  public PostalCodeTimezoneDto getPostalCodeTimezoneDto() {
+    return PostalCodeTimezoneDto.builder().orgId(ORG_ID).postalCodePrefix(SOURCE_GEOZONE).build();
   }
 
   public DistinctGeozonesResponse geozonesResponse() {

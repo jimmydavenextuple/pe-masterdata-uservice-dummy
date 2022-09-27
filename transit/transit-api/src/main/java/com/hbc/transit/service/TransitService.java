@@ -2,7 +2,10 @@ package com.hbc.transit.service;
 
 import com.hbc.carrier.domain.feign.CarrierFeign;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
 import com.hbc.common.util.DateValidationUtil;
 import com.hbc.postgres.config.ReaderDS;
 import com.hbc.transit.domain.TransitDomain;
@@ -25,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -53,9 +57,16 @@ public class TransitService {
 
   private final DateValidationUtil dateValidationUtil;
 
+  private static final String INVALID_GEOZONE = "geoZone is not valid";
+
+  @Autowired private final PostalCodeTimezoneFeign postalCodeTimezoneFeign;
+
   public TransitResponse addTransitInfo(TransitDataCreationRequest transitDataCreationRequest)
       throws TransitDomainException, CommonServiceException {
-
+    validateSourceAndDestinationGeozone(
+        transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getSourceGeozone());
+    validateSourceAndDestinationGeozone(
+        transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getDestinationGeozone());
     validateTransitDetails(
         transitDataCreationRequest.getTransitDays(),
         transitDataCreationRequest.getBufferDays(),
@@ -79,6 +90,32 @@ public class TransitService {
     var transitEntity = INSTANCE.toTransitEntity(transitDataCreationRequest);
 
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(transitEntity));
+  }
+
+  private void validateSourceAndDestinationGeozone(String orgId, String geozone)
+      throws CommonServiceException {
+    try {
+      BaseResponse<PostalCodeTimezoneDto> postalCodeTimezoneDtoBaseResponse =
+          postalCodeTimezoneFeign.getPostalCodeTimezone(orgId, geozone);
+      if (Objects.isNull(postalCodeTimezoneDtoBaseResponse.getPayload())) {
+
+        commonServiceException(INVALID_GEOZONE, orgId, geozone);
+      }
+    } catch (Exception e) {
+      logger.error(
+          "Error while fetching postal code timezone details for orgId:{} , geoZone:{}",
+          orgId,
+          geozone);
+      commonServiceException(INVALID_GEOZONE, orgId, geozone);
+    }
+  }
+
+  public void commonServiceException(String errorMessage, String orgId, String geoZone)
+      throws CommonServiceException {
+    Map<String, FieldError> errorMap = new HashMap<>();
+    errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+    errorMap.put("geoZone", FieldError.builder().rejectedValue(geoZone).build());
+    throw new CommonServiceException(errorMessage, HttpStatus.BAD_REQUEST, 0x1771, errorMap);
   }
 
   private Boolean validateCarrierDetails(TransitDataCreationRequest transitDataCreationRequest) {
