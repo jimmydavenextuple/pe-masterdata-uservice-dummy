@@ -89,15 +89,19 @@ public class TransitService {
       if (Objects.nonNull(carrierServiceResponse)) {
         var payload = carrierServiceResponse.getPayload();
         if (Objects.nonNull(payload) && Boolean.FALSE.equals(payload.isEmpty())) {
-            return true;
+          return true;
         }
       }
       return false;
     } catch (Exception e) {
-       logger.error("Error while fetching carrier details for orgId:{} , carrierServiceId:{}",transitDataCreationRequest.getOrgId(),transitDataCreationRequest.getCarrierServiceId());
-       return false;
+      logger.error(
+          "Error while fetching carrier details for orgId:{} , carrierServiceId:{}",
+          transitDataCreationRequest.getOrgId(),
+          transitDataCreationRequest.getCarrierServiceId());
+      return false;
     }
   }
+
   public TransitResponse updateTransitBufferDetails(
       TransitBufferCreationRequest transitBufferCreationRequest)
       throws TransitDomainException, CommonServiceException {
@@ -105,11 +109,11 @@ public class TransitService {
         transitBufferCreationRequest.getBufferStartDate(),
         transitBufferCreationRequest.getBufferEndDate());
     Optional<TransitEntity> existingTransitEntity =
-        transitDomain.findTransitDetails(
+        getTransitEntity(
             transitBufferCreationRequest.getOrgId(),
+            transitBufferCreationRequest.getCarrierServiceId(),
             transitBufferCreationRequest.getSourceGeozone(),
-            transitBufferCreationRequest.getDestinationGeozone(),
-            transitBufferCreationRequest.getCarrierServiceId());
+            transitBufferCreationRequest.getDestinationGeozone());
     if (existingTransitEntity.isPresent()) {
       var transitDays = existingTransitEntity.get().getTransitDays();
       var bufferDays = transitBufferCreationRequest.getBufferDays();
@@ -164,8 +168,7 @@ public class TransitService {
       throws TransitDomainException, CommonServiceException {
 
     Optional<TransitEntity> existingTransitEntity =
-        transitDomain.findTransitDetails(
-            orgId, sourceGeozone, destinationGeozone, carrierServiceId);
+        getTransitEntity(orgId, carrierServiceId, sourceGeozone, destinationGeozone);
 
     if (existingTransitEntity.isEmpty()) {
       logger.error(TRANSIT_EXCEPTION_MESSAGE);
@@ -241,8 +244,7 @@ public class TransitService {
       String orgId, String sourceGeozone, String destinationGeozone, String carrierServiceId)
       throws TransitDomainException, CommonServiceException {
     Optional<TransitEntity> transitEntity =
-        transitDomain.findTransitDetails(
-            orgId, sourceGeozone, destinationGeozone, carrierServiceId);
+        getTransitEntity(orgId, carrierServiceId, sourceGeozone, destinationGeozone);
 
     if (transitEntity.isEmpty()) {
       logger.error(TRANSIT_EXCEPTION_MESSAGE);
@@ -336,5 +338,30 @@ public class TransitService {
           0x1776,
           errorMap);
     }
+  }
+
+  public TransitResponse deleteTransitBufferDays(
+      String orgId, String carrierServiceId, String sourceGeozone, String destinationGeozone)
+      throws TransitDomainException {
+    Optional<TransitEntity> transitEntity =
+        getTransitEntity(orgId, carrierServiceId, sourceGeozone, destinationGeozone);
+    if (transitEntity.isPresent()) {
+      var tempEntity = transitEntity.get();
+
+      if ((tempEntity.getTransitDays() != null && tempEntity.getTransitDays() > 0)) {
+        tempEntity.setTransitDays(0F);
+        tempEntity = transitDomain.saveTransitEntity(tempEntity);
+      }
+
+      return INSTANCE.toTransitResponse(tempEntity);
+    }
+    return null;
+  }
+
+  private Optional<TransitEntity> getTransitEntity(
+      String orgId, String carrierServiceId, String sourceGeozone, String destinationGeozone)
+      throws TransitDomainException {
+    return transitDomain.findTransitDetails(
+        orgId, sourceGeozone, destinationGeozone, carrierServiceId);
   }
 }

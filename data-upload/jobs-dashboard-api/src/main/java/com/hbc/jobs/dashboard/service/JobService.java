@@ -268,8 +268,8 @@ public class JobService {
       JobDto jobResponse;
       if (jobId.isPresent() && !ObjectUtils.isEmpty(jobId.orElse(null))) {
         jobResponse = jobsConsumerClient.getJob(orgId, jobId.get()).getPayload();
-        jobResponse.setTotalRecords(jsonList.size());
-        jobResponse.setRemainingRecords(jsonList.size());
+        jobResponse.setTotalRecords(jobResponse.getTotalRecords() + jsonList.size());
+        jobResponse.setRemainingRecords(jobResponse.getRemainingRecords() + jsonList.size());
         jobResponse = jobsConsumerClient.updateJob(jobResponse).getPayload();
       } else {
         JobDto job = constructJob(jsonList.size(), orgId, jobType);
