@@ -94,7 +94,7 @@ public class CarrierServiceDomain {
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to find carrier service");
       throw new CarrierServiceDomainException(
-          "Error while finding carrier service","", serviceId, orgId);
+          "Error while finding carrier service", "", serviceId, orgId);
     }
   }
 
