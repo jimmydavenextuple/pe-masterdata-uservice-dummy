@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 import com.hbc.calendar.domain.dto.NodeCarrierCalendarCacheKeyDto;
 import com.hbc.calendar.domain.inbound.NodeCarrierServiceCalendarRequest;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
+import com.hbc.carrier.domain.feign.CarrierFeign;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.domain.feign.NodeFeign;
@@ -39,6 +41,7 @@ class NodeCarrierServiceCalendarServiceTest {
   @Mock private NodeCarrierServiceCalendarRepository nodeCarrierServiceCalendarRepository;
   @Mock private DateValidation dateValidation;
   @Mock private NodeFeign nodeFeign;
+  @Mock private CarrierFeign carrierFeign;
   @InjectMocks private NodeCarrierServiceCalendarService nodeCarrierServiceCalendarService;
   @InjectMocks private TestUtil testUtil;
 
@@ -47,6 +50,7 @@ class NodeCarrierServiceCalendarServiceTest {
 
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(nodeCarrierServiceCalendarService, "nodeFeign", nodeFeign);
+    ReflectionTestUtils.setField(nodeCarrierServiceCalendarService, "carrierFeign", carrierFeign);
   }
 
   @Test
@@ -57,6 +61,7 @@ class NodeCarrierServiceCalendarServiceTest {
     when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getNodeDetails(Boolean.TRUE));
+    when(carrierFeign.getCarrierServiceListByOrgId(any())).thenReturn(testUtil.getCarrierServiceResponse());
     when(nodeCarrierServiceCalendarRepository
             .findByCalendarIdAndOrgIdAndNodeIdAndCarrierServiceIdAndEffectiveDate(
                 any(), any(), any(), any(), any()))
@@ -85,6 +90,7 @@ class NodeCarrierServiceCalendarServiceTest {
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
     when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getNodeDetails(Boolean.TRUE));
+    when(carrierFeign.getCarrierServiceListByOrgId(any())).thenReturn(testUtil.getCarrierServiceResponse());
     when(nodeCarrierServiceCalendarRepository
             .findByCalendarIdAndOrgIdAndNodeIdAndCarrierServiceIdAndEffectiveDate(
                 any(), any(), any(), any(), any()))
@@ -153,6 +159,25 @@ class NodeCarrierServiceCalendarServiceTest {
                   testUtil.getNodeCarrierServiceCalendarRequest());
             });
     Assertions.assertEquals(0x1772, exception.getErrorCode());
+    verify(nodeCarrierServiceCalendarDomain, times(0)).saveNodeCarrierServiceCalendarEntity(any());
+  }
+
+  @Test
+  void processCreateNodeCarrierServiceCalendarInvalidCarrierServiceIdTest() throws CalendarDomainException {
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
+    when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getNodeDetails(Boolean.TRUE));
+    BaseResponse<List<CarrierServiceResponse>> response = testUtil.getCarrierServiceResponse();
+    response.getPayload().get(0).setCarrierServiceId("INVALID");
+    when(carrierFeign.getCarrierServiceListByOrgId(any())).thenReturn(response);
+    CommonServiceException exception =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () -> {
+                      nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
+                              testUtil.getNodeCarrierServiceCalendarRequest());
+                    });
+    Assertions.assertEquals(0x1773, exception.getErrorCode());
     verify(nodeCarrierServiceCalendarDomain, times(0)).saveNodeCarrierServiceCalendarEntity(any());
   }
 

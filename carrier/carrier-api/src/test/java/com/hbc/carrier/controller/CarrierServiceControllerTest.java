@@ -325,4 +325,15 @@ class CarrierServiceControllerTest {
     Assertions.assertEquals("Unable to fetch carrier service details", exception.getMessage());
     verify(carrierServiceService, times(1)).getCarrierServiceDetailsByCarrierIdAndOrgId(any(), any());
   }
+
+  @Test
+  void getCarrierServiceListByOrgIdTest() throws CarrierServiceDomainException {
+    when(carrierServiceService.getCarrierServiceListByOrgId(TestUtil.ORG_ID))
+            .thenReturn(List.of(testUtil.getCarrierServiceResponse()));
+    ResponseEntity<BaseResponse<List<CarrierServiceResponse>>> response =
+            carrierServiceController.getCarrierServiceListByOrgId(TestUtil.ORG_ID);
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(testUtil.getCarrierServiceResponse(), response.getBody().getPayload().get(0));
+    verify(carrierServiceService, times(1)).getCarrierServiceListByOrgId(anyString());
+  }
 }

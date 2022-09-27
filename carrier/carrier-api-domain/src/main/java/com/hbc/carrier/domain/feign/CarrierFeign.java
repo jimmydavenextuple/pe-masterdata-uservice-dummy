@@ -61,4 +61,7 @@ public interface CarrierFeign {
 
   @GetMapping("/carrier-service/get-all-cache-keys")
   BaseResponse<List<CarrierCacheKeyDto>> getCarrierCacheKeys(@NotNull @RequestParam Integer limit);
+
+  @GetMapping("/carrier-service/orgId/{orgId}")
+  BaseResponse<List<CarrierServiceResponse>> getCarrierServiceListByOrgId(@PathVariable String orgId);
 }

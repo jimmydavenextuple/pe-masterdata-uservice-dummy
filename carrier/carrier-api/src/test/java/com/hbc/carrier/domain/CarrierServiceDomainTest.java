@@ -247,4 +247,25 @@ class CarrierServiceDomainTest {
             .findCarrierServiceByCarrierServiceIdAndOrgId(any(), any());
   }
 
+  @Test
+  void findCarrierServiceListByOrgIdWithoutPagination() throws CarrierServiceDomainException {
+    List<CarrierServiceEntity> carrierServiceEntities = testUtil.getCarrierServiceEntityList();
+    when(carrierServiceRepository.findCarrierServicesByOrgId(any()))
+            .thenReturn(carrierServiceEntities);
+    List<CarrierServiceResponse> responses =
+            carrierServiceDomain.findCarrierServiceListByOrgIdWithoutPagination(TestUtil.ORG_ID);
+    Assertions.assertEquals(carrierServiceEntities.size(), responses.size());
+
+    verify(carrierServiceRepository, times(1)).findCarrierServicesByOrgId(any());
+  }
+
+  @Test
+  void findCarrierServiceListByOrgIdWithoutPaginationExceptionTest() throws CarrierServiceDomainException {
+    when(carrierServiceRepository.findCarrierServicesByOrgId(any()))
+            .thenThrow(new RuntimeException());
+    CarrierServiceDomainException e = assertThrows(CarrierServiceDomainException.class,
+            () -> { carrierServiceDomain.findCarrierServiceListByOrgIdWithoutPagination(TestUtil.ORG_ID);});
+    Assertions.assertEquals(TestUtil.ORG_ID, e.getOrgId());
+    verify(carrierServiceRepository, times(1)).findCarrierServicesByOrgId(any());
+  }
 }

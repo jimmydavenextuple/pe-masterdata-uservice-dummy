@@ -13,6 +13,7 @@ import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.pojo.ExceptionDays;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.pe.masterdata.calendar.domain.entity.CalendarEntity;
@@ -313,5 +314,12 @@ public class TestUtil {
         .effectiveDate(EFFECTIVE_DATE_2)
         .shippingStage(SHIPPING_STAGE)
         .build();
+  }
+
+  public BaseResponse<List<CarrierServiceResponse>> getCarrierServiceResponse(){
+    CarrierServiceResponse response = new CarrierServiceResponse();
+    response.setOrgId(ORG_ID);
+    response.setCarrierServiceId(CARRIER_SERVICE_ID);
+    return BaseResponse.builder().payload(List.of(response)).build();
   }
 }
