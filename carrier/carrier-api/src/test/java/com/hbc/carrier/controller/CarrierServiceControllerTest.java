@@ -295,45 +295,49 @@ class CarrierServiceControllerTest {
   }
 
   @Test
-  void getCarrierServiceDetailsByCarrierServiceIdAndOrgIdTest() throws CarrierServiceDomainException, CommonServiceException {
+  void getCarrierServiceDetailsByCarrierServiceIdAndOrgIdTest()
+      throws CarrierServiceDomainException, CommonServiceException {
     CarrierServiceResponse CarrierServiceResponse = testUtil.getCarrierServiceResponse();
     when(carrierServiceService.getCarrierServiceDetailsByCarrierIdAndOrgId(any(), any()))
-            .thenReturn(List.of(CarrierServiceResponse));
+        .thenReturn(List.of(CarrierServiceResponse));
 
     ResponseEntity<BaseResponse<List<CarrierServiceResponse>>> responseEntity =
-            carrierServiceController.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(
-                    TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
+        carrierServiceController.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(
+            TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
 
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertEquals(List.of(CarrierServiceResponse), responseEntity.getBody().getPayload());
 
-    verify(carrierServiceService, times(1)).getCarrierServiceDetailsByCarrierIdAndOrgId(any(), any());
+    verify(carrierServiceService, times(1))
+        .getCarrierServiceDetailsByCarrierIdAndOrgId(any(), any());
   }
 
   @Test
   void getCarrierServiceDetailsByCarrierServiceIdAndOrgIdExceptionTest()
-          throws CarrierServiceDomainException, CommonServiceException {
+      throws CarrierServiceDomainException, CommonServiceException {
     when(carrierServiceService.getCarrierServiceDetailsByCarrierIdAndOrgId(any(), any()))
-            .thenThrow(new RuntimeException("Unable to fetch carrier service details"));
+        .thenThrow(new RuntimeException("Unable to fetch carrier service details"));
 
     Exception exception =
-            Assertions.assertThrows(
-                    Exception.class,
-                    () ->
-                            carrierServiceController.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(
-                                    TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                carrierServiceController.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(
+                    TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
     Assertions.assertEquals("Unable to fetch carrier service details", exception.getMessage());
-    verify(carrierServiceService, times(1)).getCarrierServiceDetailsByCarrierIdAndOrgId(any(), any());
+    verify(carrierServiceService, times(1))
+        .getCarrierServiceDetailsByCarrierIdAndOrgId(any(), any());
   }
 
   @Test
   void getCarrierServiceListByOrgIdTest() throws CarrierServiceDomainException {
     when(carrierServiceService.getCarrierServiceListByOrgId(TestUtil.ORG_ID))
-            .thenReturn(List.of(testUtil.getCarrierServiceResponse()));
+        .thenReturn(List.of(testUtil.getCarrierServiceResponse()));
     ResponseEntity<BaseResponse<List<CarrierServiceResponse>>> response =
-            carrierServiceController.getCarrierServiceListByOrgId(TestUtil.ORG_ID);
+        carrierServiceController.getCarrierServiceListByOrgId(TestUtil.ORG_ID);
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-    Assertions.assertEquals(testUtil.getCarrierServiceResponse(), response.getBody().getPayload().get(0));
+    Assertions.assertEquals(
+        testUtil.getCarrierServiceResponse(), response.getBody().getPayload().get(0));
     verify(carrierServiceService, times(1)).getCarrierServiceListByOrgId(anyString());
   }
 }

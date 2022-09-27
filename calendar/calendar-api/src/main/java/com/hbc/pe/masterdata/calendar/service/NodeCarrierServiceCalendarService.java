@@ -74,8 +74,8 @@ public class NodeCarrierServiceCalendarService {
         nodeCarrierServiceCalendarRequest.getNodeId(),
         nodeCarrierServiceCalendarRequest.getOrgId());
     validateCarrierServiceId(
-            nodeCarrierServiceCalendarRequest.getOrgId(),
-            nodeCarrierServiceCalendarRequest.getCarrierServiceId());
+        nodeCarrierServiceCalendarRequest.getOrgId(),
+        nodeCarrierServiceCalendarRequest.getCarrierServiceId());
     var nodeCarrierServiceCalendarEntity =
         INSTANCE.convertToNodeCarrierServiceCalendarEntity(nodeCarrierServiceCalendarRequest);
     Optional<NodeCarrierServiceCalendarEntity> existingNodeCarrierServiceCalendarEntity =
@@ -222,24 +222,27 @@ public class NodeCarrierServiceCalendarService {
     return INSTANCE.convertToNodeCarrierCalendarCacheKeyDtoList(nodeCarrierServiceCalendarEntities);
   }
 
-  public void validateCarrierServiceId(String orgId, String carrierServiceId) throws CommonServiceException {
-    BaseResponse<List<CarrierServiceResponse>> response = carrierFeign.getCarrierServiceListByOrgId(orgId);
+  public void validateCarrierServiceId(String orgId, String carrierServiceId)
+      throws CommonServiceException {
+    BaseResponse<List<CarrierServiceResponse>> response =
+        carrierFeign.getCarrierServiceListByOrgId(orgId);
     boolean isValidId = false;
-    for(CarrierServiceResponse carrierServiceResponse: response.getPayload()){
-      if(carrierServiceResponse.getCarrierServiceId().equals(carrierServiceId)){
+    for (CarrierServiceResponse carrierServiceResponse : response.getPayload()) {
+      if (carrierServiceResponse.getCarrierServiceId().equals(carrierServiceId)) {
         isValidId = true;
         break;
       }
     }
-    if(!isValidId){
+    if (!isValidId) {
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
-      errorMap.put(CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
+      errorMap.put(
+          CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
       throw new CommonServiceException(
-              "Cannot create a node carrier service calendar as carrier service id is invalid",
-              HttpStatus.BAD_REQUEST,
-              0x1773,
-              errorMap);
+          "Cannot create a node carrier service calendar as carrier service id is invalid",
+          HttpStatus.BAD_REQUEST,
+          0x1773,
+          errorMap);
     }
   }
 }

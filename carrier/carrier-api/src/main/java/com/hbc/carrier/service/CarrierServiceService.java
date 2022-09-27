@@ -148,8 +148,9 @@ public class CarrierServiceService {
     }
   }
 
-  public List<CarrierServiceResponse> getCarrierServiceListByOrgId(String orgId) throws CarrierServiceDomainException {
-      return carrierServiceDomain.findCarrierServiceListByOrgIdWithoutPagination(orgId);
+  public List<CarrierServiceResponse> getCarrierServiceListByOrgId(String orgId)
+      throws CarrierServiceDomainException {
+    return carrierServiceDomain.findCarrierServiceListByOrgIdWithoutPagination(orgId);
   }
 
   @ReaderDS

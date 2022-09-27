@@ -35,8 +35,7 @@ public interface CarrierFeign {
 
   @GetMapping("/carrier-service/{carrierServiceId}/{orgId}")
   BaseResponse<List<CarrierServiceResponse>> getCarrierServiceDetailsByCarrierServiceIdAndOrgId(
-          @NotBlank @PathVariable String carrierServiceId,
-          @NotBlank @PathVariable String orgId);
+      @NotBlank @PathVariable String carrierServiceId, @NotBlank @PathVariable String orgId);
 
   @PutMapping("/carrier-service/{carrierId}/{carrierServiceId}/{orgId}")
   BaseResponse<CarrierServiceResponse> updateCarrierServiceDetails(
@@ -63,5 +62,6 @@ public interface CarrierFeign {
   BaseResponse<List<CarrierCacheKeyDto>> getCarrierCacheKeys(@NotNull @RequestParam Integer limit);
 
   @GetMapping("/carrier-service/orgId/{orgId}")
-  BaseResponse<List<CarrierServiceResponse>> getCarrierServiceListByOrgId(@PathVariable String orgId);
+  BaseResponse<List<CarrierServiceResponse>> getCarrierServiceListByOrgId(
+      @PathVariable String orgId);
 }

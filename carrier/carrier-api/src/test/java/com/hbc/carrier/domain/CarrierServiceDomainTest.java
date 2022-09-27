@@ -215,56 +215,60 @@ class CarrierServiceDomainTest {
   }
 
   @Test
-  void getCarrierServiceDetailsByCarrierServiceIdAndOrgIdTest() throws CarrierServiceDomainException {
+  void getCarrierServiceDetailsByCarrierServiceIdAndOrgIdTest()
+      throws CarrierServiceDomainException {
     CarrierServiceEntity carrierServiceEntity = testUtil.getCarrierServiceEntity();
-    when(carrierServiceRepository.findCarrierServiceByCarrierServiceIdAndOrgId(
-            any(), any()))
-            .thenReturn(Optional.of(List.of(carrierServiceEntity)));
+    when(carrierServiceRepository.findCarrierServiceByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(Optional.of(List.of(carrierServiceEntity)));
 
     Optional<List<CarrierServiceEntity>> carrierServiceEntity1 =
-            carrierServiceDomain.findCarrierServiceByServiceIdAndOrgId(
-                    TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
+        carrierServiceDomain.findCarrierServiceByServiceIdAndOrgId(
+            TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
     Assertions.assertEquals(List.of(carrierServiceEntity), carrierServiceEntity1.get());
 
     verify(carrierServiceRepository, times(1))
-            .findCarrierServiceByCarrierServiceIdAndOrgId(any(), any());
+        .findCarrierServiceByCarrierServiceIdAndOrgId(any(), any());
   }
 
   @Test
   void getCarrierServiceDetailsByCarrierServiceIdAndOrgIdTestException() {
-    when(carrierServiceRepository.findCarrierServiceByCarrierServiceIdAndOrgId(
-            any(), any()))
-            .thenThrow(new RuntimeException("Error while fetching details"));
+    when(carrierServiceRepository.findCarrierServiceByCarrierServiceIdAndOrgId(any(), any()))
+        .thenThrow(new RuntimeException("Error while fetching details"));
 
     Exception exception =
-            assertThrows(
-                    CarrierServiceDomainException.class,
-                    () ->
-                            carrierServiceDomain.findCarrierServiceByServiceIdAndOrgId(
-                                    TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
+        assertThrows(
+            CarrierServiceDomainException.class,
+            () ->
+                carrierServiceDomain.findCarrierServiceByServiceIdAndOrgId(
+                    TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
     Assertions.assertEquals("Error while finding carrier service", exception.getMessage());
     verify(carrierServiceRepository, times(1))
-            .findCarrierServiceByCarrierServiceIdAndOrgId(any(), any());
+        .findCarrierServiceByCarrierServiceIdAndOrgId(any(), any());
   }
 
   @Test
   void findCarrierServiceListByOrgIdWithoutPagination() throws CarrierServiceDomainException {
     List<CarrierServiceEntity> carrierServiceEntities = testUtil.getCarrierServiceEntityList();
     when(carrierServiceRepository.findCarrierServicesByOrgId(any()))
-            .thenReturn(carrierServiceEntities);
+        .thenReturn(carrierServiceEntities);
     List<CarrierServiceResponse> responses =
-            carrierServiceDomain.findCarrierServiceListByOrgIdWithoutPagination(TestUtil.ORG_ID);
+        carrierServiceDomain.findCarrierServiceListByOrgIdWithoutPagination(TestUtil.ORG_ID);
     Assertions.assertEquals(carrierServiceEntities.size(), responses.size());
 
     verify(carrierServiceRepository, times(1)).findCarrierServicesByOrgId(any());
   }
 
   @Test
-  void findCarrierServiceListByOrgIdWithoutPaginationExceptionTest() throws CarrierServiceDomainException {
+  void findCarrierServiceListByOrgIdWithoutPaginationExceptionTest()
+      throws CarrierServiceDomainException {
     when(carrierServiceRepository.findCarrierServicesByOrgId(any()))
-            .thenThrow(new RuntimeException());
-    CarrierServiceDomainException e = assertThrows(CarrierServiceDomainException.class,
-            () -> { carrierServiceDomain.findCarrierServiceListByOrgIdWithoutPagination(TestUtil.ORG_ID);});
+        .thenThrow(new RuntimeException());
+    CarrierServiceDomainException e =
+        assertThrows(
+            CarrierServiceDomainException.class,
+            () -> {
+              carrierServiceDomain.findCarrierServiceListByOrgIdWithoutPagination(TestUtil.ORG_ID);
+            });
     Assertions.assertEquals(TestUtil.ORG_ID, e.getOrgId());
     verify(carrierServiceRepository, times(1)).findCarrierServicesByOrgId(any());
   }

@@ -87,13 +87,15 @@ public class CarrierServiceDomain {
   }
 
   public List<CarrierServiceResponse> findCarrierServiceListByOrgIdWithoutPagination(String orgId)
-          throws CarrierServiceDomainException {
-    try{
-      List<CarrierServiceEntity> responses = carrierServiceRepository.findCarrierServicesByOrgId(orgId);
+      throws CarrierServiceDomainException {
+    try {
+      List<CarrierServiceEntity> responses =
+          carrierServiceRepository.findCarrierServicesByOrgId(orgId);
       return INSTANCE.toCarrierServiceResponseList(responses);
-    }catch (Exception e){
+    } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to find carrier service list");
-      throw new CarrierServiceDomainException("Error while finding carrier service list", null, null, orgId);
+      throw new CarrierServiceDomainException(
+          "Error while finding carrier service list", null, null, orgId);
     }
   }
 
@@ -105,7 +107,7 @@ public class CarrierServiceDomain {
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to find carrier service");
       throw new CarrierServiceDomainException(
-          "Error while finding carrier service","", serviceId, orgId);
+          "Error while finding carrier service", "", serviceId, orgId);
     }
   }
 

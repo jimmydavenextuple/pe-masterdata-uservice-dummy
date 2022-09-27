@@ -316,7 +316,7 @@ public class TestUtil {
         .build();
   }
 
-  public BaseResponse<List<CarrierServiceResponse>> getCarrierServiceResponse(){
+  public BaseResponse<List<CarrierServiceResponse>> getCarrierServiceResponse() {
     CarrierServiceResponse response = new CarrierServiceResponse();
     response.setOrgId(ORG_ID);
     response.setCarrierServiceId(CARRIER_SERVICE_ID);

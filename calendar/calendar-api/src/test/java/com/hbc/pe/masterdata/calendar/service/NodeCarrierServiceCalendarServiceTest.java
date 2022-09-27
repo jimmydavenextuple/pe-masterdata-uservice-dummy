@@ -61,7 +61,8 @@ class NodeCarrierServiceCalendarServiceTest {
     when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getNodeDetails(Boolean.TRUE));
-    when(carrierFeign.getCarrierServiceListByOrgId(any())).thenReturn(testUtil.getCarrierServiceResponse());
+    when(carrierFeign.getCarrierServiceListByOrgId(any()))
+        .thenReturn(testUtil.getCarrierServiceResponse());
     when(nodeCarrierServiceCalendarRepository
             .findByCalendarIdAndOrgIdAndNodeIdAndCarrierServiceIdAndEffectiveDate(
                 any(), any(), any(), any(), any()))
@@ -90,7 +91,8 @@ class NodeCarrierServiceCalendarServiceTest {
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
     when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getNodeDetails(Boolean.TRUE));
-    when(carrierFeign.getCarrierServiceListByOrgId(any())).thenReturn(testUtil.getCarrierServiceResponse());
+    when(carrierFeign.getCarrierServiceListByOrgId(any()))
+        .thenReturn(testUtil.getCarrierServiceResponse());
     when(nodeCarrierServiceCalendarRepository
             .findByCalendarIdAndOrgIdAndNodeIdAndCarrierServiceIdAndEffectiveDate(
                 any(), any(), any(), any(), any()))
@@ -163,7 +165,8 @@ class NodeCarrierServiceCalendarServiceTest {
   }
 
   @Test
-  void processCreateNodeCarrierServiceCalendarInvalidCarrierServiceIdTest() throws CalendarDomainException {
+  void processCreateNodeCarrierServiceCalendarInvalidCarrierServiceIdTest()
+      throws CalendarDomainException {
     when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getNodeDetails(Boolean.TRUE));
@@ -171,12 +174,12 @@ class NodeCarrierServiceCalendarServiceTest {
     response.getPayload().get(0).setCarrierServiceId("INVALID");
     when(carrierFeign.getCarrierServiceListByOrgId(any())).thenReturn(response);
     CommonServiceException exception =
-            Assertions.assertThrows(
-                    CommonServiceException.class,
-                    () -> {
-                      nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
-                              testUtil.getNodeCarrierServiceCalendarRequest());
-                    });
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> {
+              nodeCarrierServiceCalendarService.processCreateNodeCarrierServiceCalendarResponse(
+                  testUtil.getNodeCarrierServiceCalendarRequest());
+            });
     Assertions.assertEquals(0x1773, exception.getErrorCode());
     verify(nodeCarrierServiceCalendarDomain, times(0)).saveNodeCarrierServiceCalendarEntity(any());
   }
