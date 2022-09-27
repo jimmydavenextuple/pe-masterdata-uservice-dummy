@@ -9,7 +9,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.carrier.domain.feign.CarrierFeign;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.DateValidationUtil;
 import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
@@ -95,7 +97,7 @@ class NodeCarrierServiceTest {
 
   @Test
   @DisplayName("When carrierServiceId passed is not valid")
-  void createNodeCarrierTestWithInvalidCarrierServiceId()
+  void createNodeCarrierTestWithInvalidCarrierServiceId_Test1()
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
     ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
@@ -115,6 +117,54 @@ class NodeCarrierServiceTest {
     Assertions.assertEquals(
         "Node carrier data cannot be created with given carrierServiceId and orgId",
         exception.getMessage());
+  }
+
+  @Test
+  void createNodeCarrierTestWithInvalidCarrierServiceId_Test2()
+  {
+    Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
+    ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
+    NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+    BaseResponse<List<CarrierServiceResponse>> carrierServiceList = testUtil.getCarrierServiceUpdateResponse();
+    carrierServiceList.setPayload(null);
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+            .thenReturn(carrierServiceList);
+    nodeCarrierRequest.setCarrierServiceId(null);
+    NodeCarrierEntity nodeCarrierEntity = testUtil.getNodeCarrierEntity();
+    nodeCarrierEntity.setCarrierServiceId(null);
+
+    Exception exception =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest));
+    Assertions.assertEquals(
+            "Node carrier data cannot be created with given carrierServiceId and orgId",
+            exception.getMessage());
+  }
+
+  @Test
+  void createNodeCarrierTestWithInvalidCarrierServiceId_Test3() {
+    Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
+    ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
+    NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+    BaseResponse<List<CarrierServiceResponse>> carrierServiceList = testUtil.getCarrierServiceUpdateResponse();
+    List<CarrierServiceResponse> emptyList = Collections.<CarrierServiceResponse>emptyList();
+    carrierServiceList.setPayload(emptyList);
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+            .thenReturn(carrierServiceList);
+    nodeCarrierRequest.setCarrierServiceId(null);
+    NodeCarrierEntity nodeCarrierEntity = testUtil.getNodeCarrierEntity();
+    nodeCarrierEntity.setCarrierServiceId(null);
+
+    Exception exception =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest));
+    Assertions.assertEquals(
+            "Node carrier data cannot be created with given carrierServiceId and orgId",
+            exception.getMessage());
   }
 
   @Test
