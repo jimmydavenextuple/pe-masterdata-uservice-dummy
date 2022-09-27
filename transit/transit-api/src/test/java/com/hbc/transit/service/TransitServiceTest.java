@@ -427,7 +427,7 @@ class TransitServiceTest {
   }
 
   @Test
-  void deleteTransitBufferDays() throws TransitDomainException, CommonServiceException {
+  void deleteTransitBufferDays() throws TransitDomainException {
     TransitEntity transitEntity = testUtil.getTransitEntity(5F);
     transitEntity.setBufferDays(1D);
     when(transitDomain.findTransitDetails(any(), any(), any(), any()))
@@ -448,9 +448,28 @@ class TransitServiceTest {
   }
 
   @Test
-  void deleteTransitBufferDaysNullTransiitBufferDays() throws TransitDomainException, CommonServiceException {
+  void deleteTransitBufferDaysZeroTransitBufferDays() throws TransitDomainException {
     TransitEntity transitEntity = testUtil.getTransitEntity(5F);
-    transitEntity.setBufferDays(null);
+    transitEntity.setBufferDays(0D);
+    when(transitDomain.findTransitDetails(any(), any(), any(), any()))
+        .thenReturn(Optional.of(transitEntity));
+
+    when(transitDomain.saveTransitEntity(any())).thenReturn(transitEntity);
+
+    TransitResponse response =
+        transitService.deleteTransitBufferDays(
+            TestUtil.ORG_ID,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE);
+
+    Assertions.assertNotNull(response);
+    Assertions.assertEquals(0,response.getBufferDays());
+  }
+
+  @Test
+  void deleteTransitBufferDaysNullTransitBufferDays() throws TransitDomainException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(5F);
     when(transitDomain.findTransitDetails(any(), any(), any(), any()))
         .thenReturn(Optional.of(transitEntity));
 
@@ -469,7 +488,7 @@ class TransitServiceTest {
 
   @Test
   void deleteTransitBufferDaysTransitDetailsNotFound()
-      throws TransitDomainException, CommonServiceException {
+      throws TransitDomainException {
     when(transitDomain.findTransitDetails(any(), any(), any(), any())).thenReturn(Optional.empty());
 
     TransitResponse response =
