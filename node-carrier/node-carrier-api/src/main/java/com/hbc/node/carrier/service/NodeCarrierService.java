@@ -59,7 +59,7 @@ public class NodeCarrierService {
 
   private final CarrierFeign carrierFeign;
 
-  private static final String INVALID_DATA_EXCEPTION_MESSAGE =
+  private static final String INVALID_CARRIER_DATA_EXCEPTION_MESSAGE =
       "Node carrier data cannot be created with given carrierServiceId and orgId";
 
   @Value("#{'${promise.service.options}'.split('\\s*,\\s*')}")
@@ -86,7 +86,7 @@ public class NodeCarrierService {
           validateCarrierDetails(
               nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
         commonServiceExceptionMethod(
-            INVALID_DATA_EXCEPTION_MESSAGE,
+            INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
             nodeCarrierRequest.getNodeId(),
             nodeCarrierRequest.getOrgId(),
             nodeCarrierRequest.getCarrierServiceId(),
