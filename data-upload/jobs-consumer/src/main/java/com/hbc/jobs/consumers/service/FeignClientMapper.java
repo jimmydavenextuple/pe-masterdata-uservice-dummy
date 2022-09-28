@@ -180,5 +180,6 @@ public interface FeignClientMapper {
   Class mapTODto() throws TransitMapperException, NodeCarrierMapperException; // NOSONAR
 
   ResponseEntity<?> callApi(Object dtoFromJson, RecordInputDto inputs) // NOSONAR
-          throws TransitMapperException, NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException;
+      throws TransitMapperException, NodeCarrierMapperException, InvalidActionTypeException,
+          CommonServiceException;
 }

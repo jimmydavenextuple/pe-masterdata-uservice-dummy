@@ -433,10 +433,13 @@ class TransitServiceTest {
   void deleteTransitBufferDays() throws TransitDomainException {
     TransitEntity transitEntity = testUtil.getTransitEntity(5F);
     transitEntity.setBufferDays(1D);
-    when(transitDomain.findTransitDetails(any(), any(), any(), any()))
+    when(transitDomain.findTransitDetails(
+            TestUtil.ORG_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE,
+            TestUtil.CARRIER_SERVICE_ID))
         .thenReturn(Optional.of(transitEntity));
 
-    transitEntity.setBufferDays(0D);
     when(transitDomain.saveTransitEntity(any())).thenReturn(transitEntity);
 
     TransitResponse response =

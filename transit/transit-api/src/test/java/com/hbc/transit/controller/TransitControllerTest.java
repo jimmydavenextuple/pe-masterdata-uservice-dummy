@@ -332,7 +332,7 @@ class TransitControllerTest {
         .thenReturn(transitResponse);
 
     ResponseEntity<BaseResponse<TransitResponse>> responseEntity =
-        transitController.deleteBufferDays(
+        transitController.updateTransitBufferDays(
             TestUtil.ORG_ID,
             TestUtil.CARRIER_SERVICE_ID,
             TestUtil.SOURCE_GEOZONE,

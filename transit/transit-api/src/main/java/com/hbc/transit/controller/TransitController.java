@@ -227,8 +227,8 @@ public class TransitController {
             .build());
   }
 
-  @DeleteMapping("/{orgId}/{carrierServiceId}/buffer-days")
-  public ResponseEntity<BaseResponse<TransitResponse>> deleteBufferDays(
+  @PutMapping("/{orgId}/{carrierServiceId}/buffer-days")
+  public ResponseEntity<BaseResponse<TransitResponse>> updateTransitBufferDays(
       @PathVariable String orgId,
       @PathVariable String carrierServiceId,
       @NotBlank(message = "sourceGeoZone can't be blank") @RequestParam String sourceGeoZone,
