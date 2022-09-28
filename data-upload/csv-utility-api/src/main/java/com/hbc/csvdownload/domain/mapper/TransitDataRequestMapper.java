@@ -1,7 +1,7 @@
 package com.hbc.csvdownload.domain.mapper;
 
+import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.TransitDataErrorLogsPojo;
-import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -12,5 +12,5 @@ import org.mapstruct.ReportingPolicy;
 public interface TransitDataRequestMapper {
 
   TransitDataErrorLogsPojo convertToTransitDataErrorLogsPojo(
-      TransitDataCreationRequest transitDataCreationRequest);
+      DownloadErrorTransitData downloadErrorTransitData);
 }
