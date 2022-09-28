@@ -57,7 +57,7 @@ public class JobConsumerService {
     } catch (Exception e) {
       log.error("Error while processing the job record.", e);
       throw new JobException(
-          "Exception while processing the job record", e, recordDto.getJob().getJobId(), null);
+          "Exception while processing the job record", e, recordDto.getJobId(), null);
     }
   }
 
@@ -87,16 +87,16 @@ public class JobConsumerService {
     log.debug("Inside getRecordStatus service");
 
     try {
-      var feignClientMapper = feignClientMapperFactory.getMapper(recordDto.getJob().getJobType());
+      var feignClientMapper = feignClientMapperFactory.getMapper(recordDto.getJobType());
       if (Objects.isNull(feignClientMapper)) {
         throw new InvalidJobTypeException(
-            "Job type is not correct", recordDto.getJob().getJobType().toString());
+            "Job type is not correct", recordDto.getJobType().toString());
       }
       return feignClientMapper.getResponseFromAPI(recordDto);
     } catch (Exception e) {
       log.error("Error while retrieving the job record", e);
       throw new JobException(
-          "Exception while retrieving the job record", e, recordDto.getJob().getJobId(), null);
+          "Exception while retrieving the job record", e, recordDto.getJobId(), null);
     }
   }
 

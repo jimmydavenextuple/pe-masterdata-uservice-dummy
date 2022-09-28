@@ -4,9 +4,9 @@ import com.hbc.carrier.domain.feign.CarrierFeign;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.common.util.DateValidationUtil;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
-import com.hbc.common.util.DateValidationUtil;
 import com.hbc.postgres.config.ReaderDS;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
@@ -84,9 +84,9 @@ public class TransitService {
     }
 
     validateSourceAndDestinationGeozone(
-            transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getSourceGeozone());
+        transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getSourceGeozone());
     validateSourceAndDestinationGeozone(
-            transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getDestinationGeozone());
+        transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getDestinationGeozone());
     var transitEntity = INSTANCE.toTransitEntity(transitDataCreationRequest);
 
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(transitEntity));

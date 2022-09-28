@@ -105,7 +105,10 @@ public class JobService {
     recordDto.setRecordId(recordId);
     recordDto.setRecordData(data);
     recordDto.setInputs(parseRecordInputs(data, job.getTotalRecords()));
-    recordDto.setJob(job);
+    recordDto.setOrgId(job.getOrgId());
+    recordDto.setJobId(job.getJobId());
+    recordDto.setJobType(job.getJobType());
+    recordDto.setTotalRecords(job.getTotalRecords());
     recordDto.setRecordType(fileType);
     Message<RecordDto> message;
     message =

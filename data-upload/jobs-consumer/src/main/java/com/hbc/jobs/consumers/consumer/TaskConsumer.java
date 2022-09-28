@@ -54,7 +54,7 @@ public class TaskConsumer {
       throw new JobException(
           "Exception while receiving the job record from the kafka producer",
           e,
-          recordDto.getJob().getJobId(),
+          recordDto.getJobId(),
           null);
     }
   }

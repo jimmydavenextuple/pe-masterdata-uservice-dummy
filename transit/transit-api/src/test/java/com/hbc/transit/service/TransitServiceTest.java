@@ -10,9 +10,9 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.hbc.carrier.domain.feign.CarrierFeign;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.common.util.DateValidationUtil;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
-import com.hbc.common.util.DateValidationUtil;
 import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
@@ -97,6 +97,7 @@ class TransitServiceTest {
             transitService.addTransitInfo(
                 testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS)));
   }
+
   @Test
   void addTransitDetailsForInvalidGeoZoneTest2() throws TransitDomainException {
     BaseResponse<PostalCodeTimezoneDto> response = new BaseResponse<>();
@@ -104,7 +105,7 @@ class TransitServiceTest {
     response.setSuccess(true);
     when(postalCodeTimezoneFeign.getPostalCodeTimezone(any(), any())).thenReturn(response);
     when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
-            .thenReturn(testUtil.getCarrierServiceUpdateResponse());
+        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
     Exception ex =
         Assertions.assertThrows(
             CommonServiceException.class,
@@ -466,12 +467,13 @@ class TransitServiceTest {
             TestUtil.DESTINATION_GEOZONE);
 
     Assertions.assertNotNull(response);
-    Assertions.assertEquals(0,response.getBufferDays());
+    Assertions.assertEquals(0, response.getBufferDays());
   }
 
   @Test
   void deleteTransitBufferDaysNullTransitBufferDays() throws TransitDomainException {
     TransitEntity transitEntity = testUtil.getTransitEntity(5F);
+    transitEntity.setBufferDays(null);
     when(transitDomain.findTransitDetails(any(), any(), any(), any()))
         .thenReturn(Optional.of(transitEntity));
 
@@ -489,8 +491,7 @@ class TransitServiceTest {
   }
 
   @Test
-  void deleteTransitBufferDaysTransitDetailsNotFound()
-      throws TransitDomainException {
+  void deleteTransitBufferDaysTransitDetailsNotFound() throws TransitDomainException {
     when(transitDomain.findTransitDetails(any(), any(), any(), any())).thenReturn(Optional.empty());
 
     TransitResponse response =

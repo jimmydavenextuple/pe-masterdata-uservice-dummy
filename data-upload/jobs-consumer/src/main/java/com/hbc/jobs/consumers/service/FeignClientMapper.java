@@ -72,11 +72,11 @@ public interface FeignClientMapper {
     recordStatusDto.setCorrelationId(CurrentThreadContext.getLogContext().getCorrelationId());
     recordStatusDto.setServiceCorrelationId(
         CurrentThreadContext.getLogContext().getServiceCorrelationId());
-    recordStatusDto.setJobId(recordDto.getJob().getJobId());
-    recordStatusDto.setOrgId(recordDto.getJob().getOrgId());
+    recordStatusDto.setJobId(recordDto.getJobId());
+    recordStatusDto.setOrgId(recordDto.getOrgId());
     recordStatusDto.setRecordNo(recordDto.getRecordId());
-    recordStatusDto.setJobType(recordDto.getJob().getJobType());
-    recordStatusDto.setTotalRecordsInJob(recordDto.getJob().getTotalRecords());
+    recordStatusDto.setJobType(recordDto.getJobType());
+    recordStatusDto.setTotalRecordsInJob(recordDto.getTotalRecords());
     Stopwatch stopwatch = null;
     Object dtoFromRecord = null;
     stopwatch = Stopwatch.createStarted();
