@@ -8,7 +8,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hbc.carrier.domain.feign.CarrierFeign;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.DateValidationUtil;
 import com.hbc.node.carrier.TestUtil;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
@@ -23,10 +26,7 @@ import com.hbc.node.carrier.exception.InvalidDataException;
 import com.hbc.node.carrier.exception.NodeCarrierDomainException;
 import com.hbc.node.carrier.exception.NodeCarrierSelectionDomainException;
 import com.hbc.node.domain.feign.NodeFeign;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import com.hbc.node.domain.outbound.NodeResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +35,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class NodeCarrierServiceTest {
@@ -47,6 +57,8 @@ class NodeCarrierServiceTest {
 
   @Mock DateValidationUtil dateValidationUtil;
 
+  @Mock CarrierFeign carrierFeign;
+
   @Test
   @DisplayName("When node carrier is created successfully")
   void createNodeCarrierTest()
@@ -55,6 +67,8 @@ class NodeCarrierServiceTest {
     ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
     NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
     when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
         .thenReturn(testUtil.getNodeCarrierEntity());
 
@@ -74,6 +88,8 @@ class NodeCarrierServiceTest {
     ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
     NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
     nodeCarrierRequest.setCarrierServiceId(null);
     NodeCarrierEntity nodeCarrierEntity = testUtil.getNodeCarrierEntity();
     nodeCarrierEntity.setCarrierServiceId(null);
@@ -87,10 +103,84 @@ class NodeCarrierServiceTest {
   }
 
   @Test
+  @DisplayName("When carrierServiceId passed is not valid")
+  void createNodeCarrierTestWithInvalidCarrierServiceId_Test1()
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+    Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
+    ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
+    NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(null);
+    nodeCarrierRequest.setCarrierServiceId(null);
+    NodeCarrierEntity nodeCarrierEntity = testUtil.getNodeCarrierEntity();
+    nodeCarrierEntity.setCarrierServiceId(null);
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest));
+    Assertions.assertEquals(
+        "Node carrier data cannot be created with given carrierServiceId and orgId",
+        exception.getMessage());
+  }
+
+  @Test
+  void createNodeCarrierTestWithInvalidCarrierServiceId_Test2()
+  {
+    Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
+    ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
+    NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+    BaseResponse<List<CarrierServiceResponse>> carrierServiceList = testUtil.getCarrierServiceUpdateResponse();
+    carrierServiceList.setPayload(null);
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+            .thenReturn(carrierServiceList);
+    nodeCarrierRequest.setCarrierServiceId(null);
+    NodeCarrierEntity nodeCarrierEntity = testUtil.getNodeCarrierEntity();
+    nodeCarrierEntity.setCarrierServiceId(null);
+
+    Exception exception =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest));
+    Assertions.assertEquals(
+            "Node carrier data cannot be created with given carrierServiceId and orgId",
+            exception.getMessage());
+  }
+
+  @Test
+  void createNodeCarrierTestWithInvalidCarrierServiceId_Test3() {
+    Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
+    ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
+    NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+    BaseResponse<List<CarrierServiceResponse>> carrierServiceList = testUtil.getCarrierServiceUpdateResponse();
+    List<CarrierServiceResponse> emptyList = Collections.<CarrierServiceResponse>emptyList();
+    carrierServiceList.setPayload(emptyList);
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+            .thenReturn(carrierServiceList);
+    nodeCarrierRequest.setCarrierServiceId(null);
+    NodeCarrierEntity nodeCarrierEntity = testUtil.getNodeCarrierEntity();
+    nodeCarrierEntity.setCarrierServiceId(null);
+
+    Exception exception =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest));
+    Assertions.assertEquals(
+            "Node carrier data cannot be created with given carrierServiceId and orgId",
+            exception.getMessage());
+  }
+
+  @Test
   void createNodeCarrierServiceOptionExceptionTest() {
     Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
     ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
     NodeCarrierRequest nodeCarrierRequest1 = testUtil.getNodeCarrierRequest5();
 
     Exception exception =
@@ -127,6 +217,8 @@ class NodeCarrierServiceTest {
     Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
     ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
     NodeCarrierRequest nodeCarrierRequest1 = testUtil.getNodeCarrierRequest();
     nodeCarrierRequest1.setProcessingTime(-2.0);
     nodeCarrierRequest1.setCarrierServiceId(null);
@@ -156,6 +248,8 @@ class NodeCarrierServiceTest {
     ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
     NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest3();
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
     when(nodeCarrierDomain.saveNodeCarrierEntity(any()))
         .thenReturn(testUtil.getNodeCarrierEntity());
 
@@ -251,7 +345,7 @@ class NodeCarrierServiceTest {
   @Test
   @DisplayName("When node carrier to be fetched is not found")
   void getNodeCarrierDetailsNotFoundTest() throws NodeCarrierDomainException {
-    List<NodeCarrierEntity> nodeCarrierEntityList = Collections.<NodeCarrierEntity>emptyList();
+    List<NodeCarrierEntity> nodeCarrierEntityList = Collections.emptyList();
     when(nodeCarrierDomain.filterAndGetNodeCarrierDetails(any(), any(), any(), any()))
         .thenReturn(nodeCarrierEntityList);
 
@@ -333,16 +427,17 @@ class NodeCarrierServiceTest {
   @Test
   @DisplayName("When node carrier is deleted successfully")
   void deleteNodeCarrierTest() throws NodeCarrierDomainException, CommonServiceException {
+    Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
+    ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+
     when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
         .thenReturn(Optional.ofNullable(testUtil.getNodeCarrierEntity()));
     doNothing().when(nodeCarrierDomain).deleteNodeCarrierEntity(any());
 
     NodeCarrierResponse nodeCarrierResponse =
         nodeCarrierService.deleteNodeCarrier(
-            TestUtil.NODE_ID,
-            TestUtil.ORG_ID,
-            TestUtil.CARRIER_SERVICE_ID,
-            TestUtil.SERVICE_OPTION);
+            TestUtil.NODE_ID, TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, "EXPRESS");
 
     Assertions.assertEquals(testUtil.getNodeCarrierResponse(), nodeCarrierResponse);
     verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
@@ -350,23 +445,20 @@ class NodeCarrierServiceTest {
   }
 
   @Test
-  @DisplayName("When node carrier to be deleted is not found")
-  void deleteNodeCarrierNotFoundTestException() throws NodeCarrierDomainException {
-    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
-        .thenReturn(Optional.empty());
+  @DisplayName("No Node Details found")
+  void deleteNodeCarrierTestException() throws NodeCarrierDomainException {
+    BaseResponse<NodeResponse> baseResponse = testUtil.getBaseResponseOfNode();
+    baseResponse.setSuccess(false);
 
-    Exception ex =
-        Assertions.assertThrows(
-            CommonServiceException.class,
-            () ->
-                nodeCarrierService.deleteNodeCarrier(
-                    TestUtil.NODE_ID,
-                    TestUtil.ORG_ID,
-                    TestUtil.CARRIER_SERVICE_ID,
-                    TestUtil.SERVICE_OPTION));
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(baseResponse);
 
-    Assertions.assertEquals("Node Carrier not found for given details", ex.getMessage());
-    verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
+            nodeCarrierService.deleteNodeCarrier(
+                TestUtil.NODE_ID, TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, "EXPRESS"));
+
+    verify(nodeCarrierDomain, times(0)).findNodeCarrierDetails(any(), any(), any(), any());
     verify(nodeCarrierDomain, times(0)).deleteNodeCarrierEntity(any());
   }
 
@@ -391,7 +483,7 @@ class NodeCarrierServiceTest {
   @DisplayName("When node carrier list to be fetched is not found")
   void getNodeCarrierForNodeIdAOrgIdAndServiceOptionNotFoundTest()
       throws NodeCarrierDomainException {
-    List<NodeCarrierEntity> entityList = Collections.<NodeCarrierEntity>emptyList();
+    List<NodeCarrierEntity> entityList = Collections.emptyList();
     when(nodeCarrierDomain.findNodeCarrierByNodeIdAOrgIdAndServiceOption(any(), any(), any()))
         .thenReturn(entityList);
 
@@ -521,5 +613,79 @@ class NodeCarrierServiceTest {
     Assertions.assertEquals("Node Carrier Selection not found for given details", ex.getMessage());
     verify(nodeCarrierDomain, times(1)).findNodeCarrierSelectionDetails(any(), any(), any(), any());
     verify(nodeCarrierDomain, times(0)).deleteNodeCarrierSelectionEntity(any());
+  }
+  @Test
+  @DisplayName("Wrong Service Option")
+  void deleteNodeCarrierTestException2() throws NodeCarrierDomainException {
+    Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
+    ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+
+    Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                    nodeCarrierService.deleteNodeCarrier(
+                            TestUtil.NODE_ID,
+                            TestUtil.ORG_ID,
+                            TestUtil.CARRIER_SERVICE_ID,
+                            TestUtil.SERVICE_OPTION));
+
+    verify(nodeCarrierDomain, times(0)).findNodeCarrierDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(0)).deleteNodeCarrierEntity(any());
+  }
+
+  @Test
+  @DisplayName("Wrong OrgId Option")
+  void deleteNodeCarrierTestException3() throws NodeCarrierDomainException {
+    Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
+    ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+
+    Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                    nodeCarrierService.deleteNodeCarrier(
+                            TestUtil.NODE_ID, "", TestUtil.CARRIER_SERVICE_ID, "EXPRESS"));
+
+    verify(nodeCarrierDomain, times(0)).findNodeCarrierDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(0)).deleteNodeCarrierEntity(any());
+  }
+  @Test
+  @DisplayName("When node carrier to be deleted is not found")
+  void deleteNodeCarrierNotFoundTestException() throws NodeCarrierDomainException {
+    Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
+    ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
+
+    when(nodeCarrierDomain.findNodeCarrierDetails(any(), any(), any(), any()))
+            .thenReturn(Optional.empty());
+
+    Exception ex =
+            Assertions.assertThrows(
+                    CommonServiceException.class,
+                    () ->
+                            nodeCarrierService.deleteNodeCarrier(
+                                    TestUtil.NODE_ID, TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, "SDND"));
+
+    Assertions.assertEquals("Node Carrier not found for given details", ex.getMessage());
+    verify(nodeCarrierDomain, times(1)).findNodeCarrierDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(0)).deleteNodeCarrierEntity(any());
+  }
+  @Test
+  @DisplayName("No Node Details found")
+  void deleteNodeCarrierTestException4() throws NodeCarrierDomainException {
+    BaseResponse<NodeResponse> baseResponse = testUtil.getBaseResponseOfNode();
+    baseResponse.setPayload(null);
+
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(baseResponse);
+
+    Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                    nodeCarrierService.deleteNodeCarrier(
+                            TestUtil.NODE_ID, TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, "EXPRESS"));
+
+    verify(nodeCarrierDomain, times(0)).findNodeCarrierDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(0)).deleteNodeCarrierEntity(any());
   }
 }

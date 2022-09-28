@@ -63,10 +63,10 @@ public class NodeCarrierMapper implements FeignClientMapper {
     int bound = header.length;
     for (var i = 0; i < bound; i++) {
       switch (header[i]) {
-        case "nodeId":
+        case NODE_ID:
           nodeCarrierRequest.setNodeId(data[i]);
           break;
-        case "orgId":
+        case ORG_ID:
           nodeCarrierRequest.setOrgId(data[i]);
           break;
         case "serviceOptions":
