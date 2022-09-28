@@ -22,6 +22,13 @@ import com.hbc.node.carrier.exception.NodeCarrierSelectionDomainException;
 import com.hbc.node.domain.feign.NodeFeign;
 import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.postgres.config.ReaderDS;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -31,19 +38,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
 @RequiredArgsConstructor
 @Service
 public class NodeCarrierService {
 
-  public static final NodeCarrierMapper INSTANCE = Mappers.getMapper(NodeCarrierMapper.class);
   private static final Logger logger = LoggerFactory.getLogger(NodeCarrierService.class);
   private static final String ORG_ID = "orgId";
   private static final String NODE_ID = "nodeId";
@@ -53,8 +51,10 @@ public class NodeCarrierService {
   private static final String DESTINATION_GEOZONE = "destinationGeozone";
   private static final String NODE_CARRIER_NOT_FOUND_ERROR_MSG =
       "Node Carrier not found for given details";
+
   private final NodeCarrierDomain nodeCarrierDomain;
   private final NodeFeign nodeFeign;
+
   private final DateValidationUtil dateValidationUtil;
 
   private final CarrierFeign carrierFeign;
@@ -64,6 +64,8 @@ public class NodeCarrierService {
 
   @Value("#{'${promise.service.options}'.split('\\s*,\\s*')}")
   public Set<String> serviceOptions;
+
+  public static final NodeCarrierMapper INSTANCE = Mappers.getMapper(NodeCarrierMapper.class);
 
   public NodeCarrierResponse createNodeCarrier(NodeCarrierRequest nodeCarrierRequest)
       throws NodeCarrierDomainException, InvalidDataException, CommonServiceException {
@@ -79,16 +81,15 @@ public class NodeCarrierService {
             nodeCarrierRequest.getCarrierServiceId(),
             nodeCarrierRequest.getServiceOption());
       }
-
-      if (Boolean.FALSE.equals(
-          validateCarrierDetails(
-              nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
-        commonServiceExceptionMethod(
-            INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
-            nodeCarrierRequest.getNodeId(),
-            nodeCarrierRequest.getOrgId(),
-            nodeCarrierRequest.getCarrierServiceId(),
-            nodeCarrierRequest.getServiceOption());
+        if (!ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId()) && Boolean.FALSE.equals(
+                validateCarrierDetails(
+                        nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
+          commonServiceExceptionMethod(
+                  INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
+                  nodeCarrierRequest.getNodeId(),
+                  nodeCarrierRequest.getOrgId(),
+                  nodeCarrierRequest.getCarrierServiceId(),
+                  nodeCarrierRequest.getServiceOption());
       }
       if (!serviceOptions.contains(nodeCarrierRequest.getServiceOption())) {
         commonServiceExceptionMethod(
@@ -257,11 +258,11 @@ public class NodeCarrierService {
     BaseResponse<NodeResponse> baseResponse = nodeFeign.getNodeDetails(nodeId, orgId);
     if (!baseResponse.isSuccess() || Objects.isNull(baseResponse.getPayload())) {
       commonServiceExceptionMethod(
-          "Invalid nodeId", nodeId, orgId, carrierServiceId, serviceOption);
+              "Invalid nodeId", nodeId, orgId, carrierServiceId, serviceOption);
     }
     if (!serviceOptions.contains(serviceOption)) {
       commonServiceExceptionMethod(
-          "Invalid serviceOption", nodeId, orgId, carrierServiceId, serviceOption);
+              "Invalid serviceOption", nodeId, orgId, carrierServiceId, serviceOption);
     }
     if (!orgId.equals(baseResponse.getPayload().getOrgId())) {
       commonServiceExceptionMethod("Invalid orgId", nodeId, orgId, carrierServiceId, serviceOption);

@@ -88,8 +88,6 @@ class NodeCarrierServiceTest {
     ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
     NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
-    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
-        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
     nodeCarrierRequest.setCarrierServiceId(null);
     NodeCarrierEntity nodeCarrierEntity = testUtil.getNodeCarrierEntity();
     nodeCarrierEntity.setCarrierServiceId(null);
@@ -113,9 +111,6 @@ class NodeCarrierServiceTest {
 
     when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
         .thenReturn(null);
-    nodeCarrierRequest.setCarrierServiceId(null);
-    NodeCarrierEntity nodeCarrierEntity = testUtil.getNodeCarrierEntity();
-    nodeCarrierEntity.setCarrierServiceId(null);
 
     Exception exception =
         Assertions.assertThrows(
@@ -137,9 +132,6 @@ class NodeCarrierServiceTest {
     carrierServiceList.setPayload(null);
     when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
             .thenReturn(carrierServiceList);
-    nodeCarrierRequest.setCarrierServiceId(null);
-    NodeCarrierEntity nodeCarrierEntity = testUtil.getNodeCarrierEntity();
-    nodeCarrierEntity.setCarrierServiceId(null);
 
     Exception exception =
             Assertions.assertThrows(
@@ -161,9 +153,6 @@ class NodeCarrierServiceTest {
     carrierServiceList.setPayload(emptyList);
     when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
             .thenReturn(carrierServiceList);
-    nodeCarrierRequest.setCarrierServiceId(null);
-    NodeCarrierEntity nodeCarrierEntity = testUtil.getNodeCarrierEntity();
-    nodeCarrierEntity.setCarrierServiceId(null);
 
     Exception exception =
             Assertions.assertThrows(
@@ -217,8 +206,6 @@ class NodeCarrierServiceTest {
     Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
     ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
     when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode());
-    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
-        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
     NodeCarrierRequest nodeCarrierRequest1 = testUtil.getNodeCarrierRequest();
     nodeCarrierRequest1.setProcessingTime(-2.0);
     nodeCarrierRequest1.setCarrierServiceId(null);
