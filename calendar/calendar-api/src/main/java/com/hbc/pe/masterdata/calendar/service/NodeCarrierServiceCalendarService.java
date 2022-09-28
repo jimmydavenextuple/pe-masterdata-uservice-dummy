@@ -92,7 +92,6 @@ public class NodeCarrierServiceCalendarService {
           0x1773,
           errorMap);
     }
-    ;
     var nodeCarrierServiceCalendarEntity =
         INSTANCE.convertToNodeCarrierServiceCalendarEntity(nodeCarrierServiceCalendarRequest);
     Optional<NodeCarrierServiceCalendarEntity> existingNodeCarrierServiceCalendarEntity =
