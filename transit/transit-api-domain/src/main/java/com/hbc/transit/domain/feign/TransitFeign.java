@@ -75,8 +75,8 @@ public interface TransitFeign {
       @PathVariable String carrierServiceId,
       @RequestBody TransitDetailsRequest transitDetailsRequest);
 
-  @DeleteMapping("/transit/{orgId}/{carrierServiceId}/buffer-days")
-  BaseResponse<TransitResponse> deleteBufferDays(
+  @PutMapping("/transit/{orgId}/{carrierServiceId}/buffer-days")
+  BaseResponse<TransitResponse> updateTransitBufferDays(
       @PathVariable String orgId,
       @PathVariable String carrierServiceId,
       @RequestParam String sourceGeoZone,

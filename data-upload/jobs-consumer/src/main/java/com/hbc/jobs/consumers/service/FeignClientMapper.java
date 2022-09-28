@@ -67,7 +67,7 @@ public interface FeignClientMapper {
   }
 
   default RecordStatusDto getResponseFromAPI(RecordDto recordDto) {
-    log.info("Inside getResponseFromAPI service");
+    log.debug("Inside getResponseFromAPI service");
 
     var recordStatusDto = new RecordStatusDto();
     recordStatusDto.setCorrelationId(CurrentThreadContext.getLogContext().getCorrelationId());
@@ -127,7 +127,7 @@ public interface FeignClientMapper {
     }
     recordStatusDto.setRequestBody(JsonUtil.convert(dtoFromRecord));
     recordStatusDto.setResponseTime(stopwatch.elapsed(TimeUnit.MILLISECONDS));
-    log.info("getResponseFromAPI method ends");
+    log.debug("getResponseFromAPI method ends");
     return recordStatusDto;
   }
 

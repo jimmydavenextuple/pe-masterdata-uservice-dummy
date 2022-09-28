@@ -443,7 +443,7 @@ class TransitServiceTest {
     when(transitDomain.saveTransitEntity(any())).thenReturn(transitEntity);
 
     TransitResponse response =
-        transitService.deleteTransitBufferDays(
+        transitService.updateTransitBufferDays(
             TestUtil.ORG_ID,
             TestUtil.CARRIER_SERVICE_ID,
             TestUtil.SOURCE_GEOZONE,
@@ -463,7 +463,7 @@ class TransitServiceTest {
     when(transitDomain.saveTransitEntity(any())).thenReturn(transitEntity);
 
     TransitResponse response =
-        transitService.deleteTransitBufferDays(
+        transitService.updateTransitBufferDays(
             TestUtil.ORG_ID,
             TestUtil.CARRIER_SERVICE_ID,
             TestUtil.SOURCE_GEOZONE,
@@ -483,7 +483,7 @@ class TransitServiceTest {
     when(transitDomain.saveTransitEntity(any())).thenReturn(transitEntity);
 
     TransitResponse response =
-        transitService.deleteTransitBufferDays(
+        transitService.updateTransitBufferDays(
             TestUtil.ORG_ID,
             TestUtil.CARRIER_SERVICE_ID,
             TestUtil.SOURCE_GEOZONE,
@@ -498,7 +498,7 @@ class TransitServiceTest {
     when(transitDomain.findTransitDetails(any(), any(), any(), any())).thenReturn(Optional.empty());
 
     TransitResponse response =
-        transitService.deleteTransitBufferDays(
+        transitService.updateTransitBufferDays(
             TestUtil.ORG_ID,
             TestUtil.CARRIER_SERVICE_ID,
             TestUtil.SOURCE_GEOZONE,

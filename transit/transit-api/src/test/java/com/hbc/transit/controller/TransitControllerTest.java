@@ -328,7 +328,7 @@ class TransitControllerTest {
   void deleteBufferDays() throws TransitDomainException, CommonServiceException {
     TransitResponse transitResponse = testUtil.getTransitResponse(5F);
     transitResponse.setBufferDays(0D);
-    when(transitService.deleteTransitBufferDays(any(), any(), any(), any()))
+    when(transitService.updateTransitBufferDays(any(), any(), any(), any()))
         .thenReturn(transitResponse);
 
     ResponseEntity<BaseResponse<TransitResponse>> responseEntity =
@@ -341,6 +341,6 @@ class TransitControllerTest {
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertNotNull(responseEntity.getBody());
     Assertions.assertNotNull(responseEntity.getBody().getPayload());
-    verify(transitService, times(1)).deleteTransitBufferDays(any(), any(), any(), any());
+    verify(transitService, times(1)).updateTransitBufferDays(any(), any(), any(), any());
   }
 }

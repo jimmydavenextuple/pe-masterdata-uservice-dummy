@@ -79,7 +79,7 @@ class TransitMapperTest {
   void callApiForDeleteTransitBuffer() throws TransitMapperException {
     Object object = testUtil.getTransitDataUpload();
     transitMapper.setJobTypeEnum(JobTypeEnum.DELETE_TRANSIT_BUFFER);
-    when(transitFeign.deleteBufferDays(any(), any(), any(), any()))
+    when(transitFeign.updateTransitBufferDays(any(), any(), any(), any()))
         .thenReturn(BaseResponse.builder().payload(testUtil.getTransitResponse()).build());
     ResponseEntity<BaseResponse<TransitResponse>> res =
         (ResponseEntity<BaseResponse<TransitResponse>>) transitMapper.callApi(object, null);

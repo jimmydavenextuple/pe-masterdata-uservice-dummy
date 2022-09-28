@@ -241,7 +241,7 @@ public class TransitController {
             BaseResponse.builder()
                 .message("Transit buffer days removed successfully")
                 .payload(
-                    transitService.deleteTransitBufferDays(
+                    transitService.updateTransitBufferDays(
                         orgId, carrierServiceId, sourceGeoZone, destinationGeoZone))
                 .build());
   }

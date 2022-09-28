@@ -378,7 +378,7 @@ public class TransitService {
     }
   }
 
-  public TransitResponse deleteTransitBufferDays(
+  public TransitResponse updateTransitBufferDays(
       String orgId, String carrierServiceId, String sourceGeozone, String destinationGeozone)
       throws TransitDomainException {
     Optional<TransitEntity> transitEntity =

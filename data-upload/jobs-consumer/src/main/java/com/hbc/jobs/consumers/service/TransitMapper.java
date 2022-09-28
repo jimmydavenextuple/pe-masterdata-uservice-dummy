@@ -84,7 +84,7 @@ public class TransitMapper implements FeignClientMapper {
     } else if (jobTypeEnum == JobTypeEnum.DELETE_TRANSIT_BUFFER) {
       var transitDataUpload = (TransitDataUpload) request;
       return ResponseEntity.ok(
-          transitFeign.deleteBufferDays(
+          transitFeign.updateTransitBufferDays(
               transitDataUpload.getOrgId(),
               transitDataUpload.getCarrierServiceId(),
               transitDataUpload.getSourceGeozone(),
