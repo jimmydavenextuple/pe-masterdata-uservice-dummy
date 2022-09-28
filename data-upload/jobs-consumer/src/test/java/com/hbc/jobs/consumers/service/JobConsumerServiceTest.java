@@ -74,7 +74,6 @@ class JobConsumerServiceTest {
       FeignClientMapper feignClientMapper = mock(FeignClientMapper.class);
       RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
 
-      when(record.getJob()).thenReturn(mock(JobDto.class));
       when(feignClientMapper.getResponseFromAPI(any())).thenReturn(recordStatusDto);
       when(feignClientMapperFactory.getMapper(any())).thenReturn(feignClientMapper);
       doNothing().when(jobDashboardService).publishJobRecord(any());
@@ -90,7 +89,6 @@ class JobConsumerServiceTest {
       FeignClientMapper feignClientMapper = mock(FeignClientMapper.class);
       RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
 
-      when(record.getJob()).thenReturn(mock(JobDto.class));
       when(feignClientMapper.getResponseFromAPI(any())).thenReturn(recordStatusDto);
       when(feignClientMapperFactory.getMapper(any())).thenReturn(feignClientMapper);
       doThrow(RuntimeException.class).when(jobDashboardService).publishJobRecord(any());
@@ -108,7 +106,11 @@ class JobConsumerServiceTest {
   @Test
   void getRecordStatus() throws JobException {
     RecordDto record = new RecordDto();
-    record.setJob(testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2));
+    record.setJobId(TestUtil.JOB_ID);
+    record.setTotalRecords(2);
+    record.setJobType(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+    record.setOrgId(TestUtil.ORG_ID);
+
     when(feignClientMapperFactory.getMapper(any())).thenReturn(nodeCarrierMapper);
     when(nodeCarrierMapper.getResponseFromAPI(any()))
         .thenReturn(
@@ -130,7 +132,10 @@ class JobConsumerServiceTest {
   @Test
   void getRecordStatusInvalidJobType() {
     RecordDto record = new RecordDto();
-    record.setJob(testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2));
+    record.setJobId(TestUtil.JOB_ID);
+    record.setTotalRecords(2);
+    record.setJobType(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+    record.setOrgId(TestUtil.ORG_ID);
     when(feignClientMapperFactory.getMapper(any())).thenReturn(null);
 
     Exception exception =

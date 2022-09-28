@@ -41,4 +41,16 @@ class CsvProcessingServiceTest {
 
     Assertions.assertFalse(ObjectUtils.isEmpty(jobString));
   }
+
+  @Test
+  void processInputDeleteTransitBufferCsvFile()
+      throws IOException, JsonParsingException, CsvException {
+    String csvContents = TestUtil.CSV_CONTENTS_TRANSIT_TIMES;
+    InputStream inputStream = new ByteArrayInputStream(csvContents.getBytes());
+    String jobString =
+        csvProcessingService.processInputCsvFile(
+            inputStream, JobTypeEnum.DELETE_TRANSIT_BUFFER, TestUtil.ORG_ID);
+
+    Assertions.assertFalse(ObjectUtils.isEmpty(jobString));
+  }
 }

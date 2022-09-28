@@ -105,7 +105,10 @@ public class JobService {
     recordDto.setRecordId(recordId);
     recordDto.setRecordData(data);
     recordDto.setInputs(parseRecordInputs(data, job.getTotalRecords()));
-    recordDto.setJob(job);
+    recordDto.setOrgId(job.getOrgId());
+    recordDto.setJobId(job.getJobId());
+    recordDto.setJobType(job.getJobType());
+    recordDto.setTotalRecords(job.getTotalRecords());
     recordDto.setRecordType(fileType);
     Message<RecordDto> message;
     message =
@@ -268,8 +271,8 @@ public class JobService {
       JobDto jobResponse;
       if (jobId.isPresent() && !ObjectUtils.isEmpty(jobId.orElse(null))) {
         jobResponse = jobsConsumerClient.getJob(orgId, jobId.get()).getPayload();
-        jobResponse.setTotalRecords(jsonList.size());
-        jobResponse.setRemainingRecords(jsonList.size());
+        jobResponse.setTotalRecords(jobResponse.getTotalRecords() + jsonList.size());
+        jobResponse.setRemainingRecords(jobResponse.getRemainingRecords() + jsonList.size());
         jobResponse = jobsConsumerClient.updateJob(jobResponse).getPayload();
       } else {
         JobDto job = constructJob(jsonList.size(), orgId, jobType);

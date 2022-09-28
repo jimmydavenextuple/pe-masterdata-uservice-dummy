@@ -1,5 +1,8 @@
 package com.hbc.jobs.consumers.service;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
+
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
@@ -10,6 +13,7 @@ import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,11 +23,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-
-import java.util.Map;
-
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class NodeCarrierMapperTest {
@@ -86,7 +85,8 @@ class NodeCarrierMapperTest {
   }
 
   @Test
-  void callApiUpdateAction() throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
+  void callApiUpdateAction()
+      throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
     Object object = testUtil.getProcessingLeadTime("U");
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     when(nodeCarrierFeign.createNodeCarrier(any()))
@@ -98,7 +98,8 @@ class NodeCarrierMapperTest {
   }
 
   @Test
-  void callApiDeleteAction() throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
+  void callApiDeleteAction()
+      throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
     Object object = testUtil.getProcessingLeadTime("D");
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     when(nodeCarrierFeign.deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
@@ -131,8 +132,7 @@ class NodeCarrierMapperTest {
   }
 
   @Test
-  void callApiInvalidProcessingEadTime()
-      {
+  void callApiInvalidProcessingEadTime() {
     ProcessingLeadTimesRaw processingLeadTimesRaw = testUtil.getProcessingLeadTime("U");
     processingLeadTimesRaw.setProcessingTime("invalid");
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
@@ -142,6 +142,7 @@ class NodeCarrierMapperTest {
             () -> nodeCarrierMapper.callApi(processingLeadTimesRaw, null));
     Assertions.assertNotNull(exception);
   }
+
   @Test
   void callApiDeleteActionException1() {
     ProcessingLeadTimesRaw object = testUtil.getProcessingLeadTime("D");
@@ -150,7 +151,7 @@ class NodeCarrierMapperTest {
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
 
     Assertions.assertThrows(
-            CommonServiceException.class, () -> nodeCarrierMapper.callApi(object, null));
+        CommonServiceException.class, () -> nodeCarrierMapper.callApi(object, null));
   }
 
   @Test
@@ -161,7 +162,7 @@ class NodeCarrierMapperTest {
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
 
     Assertions.assertThrows(
-            CommonServiceException.class, () -> nodeCarrierMapper.callApi(object, null));
+        CommonServiceException.class, () -> nodeCarrierMapper.callApi(object, null));
   }
 
   @Test
@@ -172,6 +173,6 @@ class NodeCarrierMapperTest {
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
 
     Assertions.assertThrows(
-            CommonServiceException.class, () -> nodeCarrierMapper.callApi(object, null));
+        CommonServiceException.class, () -> nodeCarrierMapper.callApi(object, null));
   }
 }
