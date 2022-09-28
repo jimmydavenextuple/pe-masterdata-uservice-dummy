@@ -113,6 +113,16 @@ public class TestUtil {
         .build();
   }
 
+  public NodeCalendarEntity getNodeCalendarEntity1() {
+    return NodeCalendarEntity.builder()
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .nodeId(NODE_ID)
+        .description(DESCRIPTION)
+        .effectiveDate(EFFECTIVE_DATE_2)
+        .build();
+  }
+
   public CarrierServiceCalendarResponse getCarrierServiceCalendarResponse() {
     return CarrierServiceCalendarResponse.builder()
         .calendarId(CALENDAR_ID)
@@ -313,6 +323,17 @@ public class TestUtil {
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE_2)
         .shippingStage(SHIPPING_STAGE)
+        .build();
+  }
+
+  public NodeCarrierServiceCalendarEntity getNodeCarrierServiceCalendarEntity1() {
+    return NodeCarrierServiceCalendarEntity.builder()
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .description(DESCRIPTION)
+        .effectiveDate(EFFECTIVE_DATE_2)
+        .nodeId(NODE_ID)
         .build();
   }
 
