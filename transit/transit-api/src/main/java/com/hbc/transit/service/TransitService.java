@@ -4,9 +4,9 @@ import com.hbc.carrier.domain.feign.CarrierFeign;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.common.util.DateValidationUtil;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
-import com.hbc.common.util.DateValidationUtil;
 import com.hbc.postgres.config.ReaderDS;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
@@ -85,9 +85,9 @@ public class TransitService {
     }
 
     validateSourceAndDestinationGeozone(
-            transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getSourceGeozone());
+        transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getSourceGeozone());
     validateSourceAndDestinationGeozone(
-            transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getDestinationGeozone());
+        transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getDestinationGeozone());
     var transitEntity = INSTANCE.toTransitEntity(transitDataCreationRequest);
 
     return INSTANCE.toTransitResponse(transitDomain.saveTransitEntity(transitEntity));
@@ -148,11 +148,11 @@ public class TransitService {
         transitBufferCreationRequest.getBufferStartDate(),
         transitBufferCreationRequest.getBufferEndDate());
     Optional<TransitEntity> existingTransitEntity =
-        transitDomain.findTransitDetails(
+        getTransitEntity(
             transitBufferCreationRequest.getOrgId(),
+            transitBufferCreationRequest.getCarrierServiceId(),
             transitBufferCreationRequest.getSourceGeozone(),
-            transitBufferCreationRequest.getDestinationGeozone(),
-            transitBufferCreationRequest.getCarrierServiceId());
+            transitBufferCreationRequest.getDestinationGeozone());
     if (existingTransitEntity.isPresent()) {
       var transitDays = existingTransitEntity.get().getTransitDays();
       var bufferDays = transitBufferCreationRequest.getBufferDays();
@@ -207,8 +207,7 @@ public class TransitService {
       throws TransitDomainException, CommonServiceException {
 
     Optional<TransitEntity> existingTransitEntity =
-        transitDomain.findTransitDetails(
-            orgId, sourceGeozone, destinationGeozone, carrierServiceId);
+        getTransitEntity(orgId, carrierServiceId, sourceGeozone, destinationGeozone);
 
     if (existingTransitEntity.isEmpty()) {
       logger.error(TRANSIT_EXCEPTION_MESSAGE);
@@ -284,8 +283,7 @@ public class TransitService {
       String orgId, String sourceGeozone, String destinationGeozone, String carrierServiceId)
       throws TransitDomainException, CommonServiceException {
     Optional<TransitEntity> transitEntity =
-        transitDomain.findTransitDetails(
-            orgId, sourceGeozone, destinationGeozone, carrierServiceId);
+        getTransitEntity(orgId, carrierServiceId, sourceGeozone, destinationGeozone);
 
     if (transitEntity.isEmpty()) {
       logger.error(TRANSIT_EXCEPTION_MESSAGE);
@@ -392,5 +390,30 @@ public class TransitService {
     response.setDestinationGeozones(destinationGeoZones);
 
     return response;
+  }
+
+  public TransitResponse updateTransitBufferDays(
+      String orgId, String carrierServiceId, String sourceGeozone, String destinationGeozone)
+      throws TransitDomainException {
+    Optional<TransitEntity> transitEntity =
+        getTransitEntity(orgId, carrierServiceId, sourceGeozone, destinationGeozone);
+    if (transitEntity.isPresent()) {
+      var tempEntity = transitEntity.get();
+
+      if ((tempEntity.getBufferDays() != null && tempEntity.getBufferDays() > 0)) {
+        tempEntity.setBufferDays(0D);
+        tempEntity = transitDomain.saveTransitEntity(tempEntity);
+      }
+
+      return INSTANCE.toTransitResponse(tempEntity);
+    }
+    return null;
+  }
+
+  private Optional<TransitEntity> getTransitEntity(
+      String orgId, String carrierServiceId, String sourceGeozone, String destinationGeozone)
+      throws TransitDomainException {
+    return transitDomain.findTransitDetails(
+        orgId, sourceGeozone, destinationGeozone, carrierServiceId);
   }
 }

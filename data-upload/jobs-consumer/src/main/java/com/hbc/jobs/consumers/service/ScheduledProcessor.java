@@ -51,7 +51,9 @@ public class ScheduledProcessor {
   private static final JobMapper INSTANCE = Mappers.getMapper(JobMapper.class);
   private static final String ORG_ID = "BAY";
 
-  @Scheduled(fixedRateString = "${scheduled-processor.fixed-rate.minutes:2}", timeUnit = TimeUnit.MINUTES)
+  @Scheduled(
+      fixedRateString = "${scheduled-processor.fixed-rate.minutes:2}",
+      timeUnit = TimeUnit.MINUTES)
   @Transactional
   public void processJobOffline() throws JobDomainException {
     String authToken = getAuthToken();

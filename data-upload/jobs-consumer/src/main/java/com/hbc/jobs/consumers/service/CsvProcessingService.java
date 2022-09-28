@@ -48,6 +48,9 @@ public class CsvProcessingService {
     } else if (jobType == JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES) {
       logger.debug("Processing processing lead times upload data");
       return createUploadProcessingLeadTimesJobRequest(inputStream, orgId);
+    } else if (jobType == JobTypeEnum.DELETE_TRANSIT_BUFFER) {
+      logger.debug("Processing delete transit buffer upload data");
+      return createUploadTransitTimesJobRequest(inputStream, orgId);
     }
     return null;
   }
@@ -92,17 +95,15 @@ public class CsvProcessingService {
     List<String[]> csvFileContents = csvReader.readAll();
     csvReader.close();
 
-    // Extract orgId header and value
+    // Extract orgId value
     String[] orgIdRow = csvFileContents.remove(0);
     String orgIdValue = orgIdRow[1];
-    // Extract carrierServiceId header and value
+    // Extract carrierServiceId  value
     String[] carrierServiceIdRow = csvFileContents.remove(0);
     String carrierServiceIdValue = carrierServiceIdRow[1];
 
     // Extract destination/sourceFsa header and sourceFsa values
     String[] sFsaListWithHeader = csvFileContents.remove(0);
-
-    // store orgId and carrierServiceId into variables
 
     int size = csvFileContents.get(0).length;
     List<String> sFsaListWithOutHeader = Arrays.asList(sFsaListWithHeader).subList(1, size);

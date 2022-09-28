@@ -228,6 +228,25 @@ public class TransitController {
             .build());
   }
 
+  @PutMapping("/{orgId}/{carrierServiceId}/buffer-days")
+  public ResponseEntity<BaseResponse<TransitResponse>> updateTransitBufferDays(
+      @PathVariable String orgId,
+      @PathVariable String carrierServiceId,
+      @NotBlank(message = "sourceGeoZone can't be blank") @RequestParam String sourceGeoZone,
+      @NotBlank(message = "destinationGeoZone can't be blank") @RequestParam
+          String destinationGeoZone)
+      throws TransitDomainException {
+    logger.debug("Processing delete transit buffer days");
+    return ResponseEntity.ok()
+        .body(
+            BaseResponse.builder()
+                .message("Transit buffer days removed successfully")
+                .payload(
+                    transitService.updateTransitBufferDays(
+                        orgId, carrierServiceId, sourceGeoZone, destinationGeoZone))
+                .build());
+  }
+
   @GetMapping
   public ResponseEntity<BaseResponse<DistinctGeozonesResponse>>
       getDistinctSourceAndDestinationGeozones(

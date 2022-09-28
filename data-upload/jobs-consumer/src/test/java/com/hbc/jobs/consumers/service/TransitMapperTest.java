@@ -42,8 +42,15 @@ class TransitMapperTest {
   }
 
   @Test
-  void mapToDto() throws TransitMapperException {
+  void mapToDtoForUploadTransitTimes() throws TransitMapperException {
     transitMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+    Class res = transitMapper.mapTODto();
+    Assertions.assertEquals(TransitDataUpload.class, res);
+  }
+
+  @Test
+  void mapToDtoForDeleteTransitBuffer() throws TransitMapperException {
+    transitMapper.setJobTypeEnum(JobTypeEnum.DELETE_TRANSIT_BUFFER);
     Class res = transitMapper.mapTODto();
     Assertions.assertEquals(TransitDataUpload.class, res);
   }
@@ -61,6 +68,18 @@ class TransitMapperTest {
     Object object = testUtil.getTransitDataUpload();
     transitMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
     when(transitFeign.addTransitData(any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getTransitResponse()).build());
+    ResponseEntity<BaseResponse<TransitResponse>> res =
+        (ResponseEntity<BaseResponse<TransitResponse>>) transitMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
+  }
+
+  @Test
+  void callApiForDeleteTransitBuffer() throws TransitMapperException {
+    Object object = testUtil.getTransitDataUpload();
+    transitMapper.setJobTypeEnum(JobTypeEnum.DELETE_TRANSIT_BUFFER);
+    when(transitFeign.updateTransitBufferDays(any(), any(), any(), any()))
         .thenReturn(BaseResponse.builder().payload(testUtil.getTransitResponse()).build());
     ResponseEntity<BaseResponse<TransitResponse>> res =
         (ResponseEntity<BaseResponse<TransitResponse>>) transitMapper.callApi(object, null);

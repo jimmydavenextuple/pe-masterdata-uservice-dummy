@@ -49,7 +49,8 @@ public class TransitMapper implements FeignClientMapper {
   @Override
   public Class mapTODto() throws TransitMapperException {
     try {
-      if (jobTypeEnum == JobTypeEnum.UPLOAD_TRANSIT_TIMES) {
+      if (jobTypeEnum == JobTypeEnum.UPLOAD_TRANSIT_TIMES
+          || jobTypeEnum == JobTypeEnum.DELETE_TRANSIT_BUFFER) {
         return TransitDataUpload.class;
       }
       logger.error("Unable to map an object!");
@@ -80,6 +81,14 @@ public class TransitMapper implements FeignClientMapper {
         return ResponseEntity.ok(
             transitFeign.addTransitData(INSTANCE.convertToTransitDataRequest(transitDataUpload)));
       }
+    } else if (jobTypeEnum == JobTypeEnum.DELETE_TRANSIT_BUFFER) {
+      var transitDataUpload = (TransitDataUpload) request;
+      return ResponseEntity.ok(
+          transitFeign.updateTransitBufferDays(
+              transitDataUpload.getOrgId(),
+              transitDataUpload.getCarrierServiceId(),
+              transitDataUpload.getSourceGeozone(),
+              transitDataUpload.getDestinationGeozone()));
     }
     logger.error("Failed to make a call based on job type");
     throw new TransitMapperException("Please provide the valid job type", jobTypeEnum);
