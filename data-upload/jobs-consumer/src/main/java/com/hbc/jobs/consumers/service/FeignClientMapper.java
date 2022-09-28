@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Stopwatch;
 import com.hbc.common.context.CurrentThreadContext;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.common.util.JsonUtil;
 import com.hbc.jobs.consumers.exception.FeignClientMapperException;
@@ -179,5 +180,5 @@ public interface FeignClientMapper {
   Class mapTODto() throws TransitMapperException, NodeCarrierMapperException; // NOSONAR
 
   ResponseEntity<?> callApi(Object dtoFromJson, RecordInputDto inputs) // NOSONAR
-      throws TransitMapperException, NodeCarrierMapperException, InvalidActionTypeException;
+          throws TransitMapperException, NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException;
 }

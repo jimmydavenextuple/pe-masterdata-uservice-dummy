@@ -1,5 +1,6 @@
 package com.hbc.node.carrier;
 
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
@@ -41,6 +42,10 @@ public class TestUtil {
   public static String NODE_TYPE = "MFC";
   public static Boolean IS_ACTIVE = Boolean.TRUE;
   public static final String LAST_PICKUP_TIME = "5:00";
+  public static final String CARRIER_NAME = "carrier-name-1";
+  public static final String SERVICE_NAME = "service-name-1";
+  public static final String SERVICE_OPTIONS = "service-options-1";
+  public static final String CARRIER_ID = "carrier-1";
 
   public NodeCarrierRequest getNodeCarrierRequest() {
     return NodeCarrierRequest.builder()
@@ -339,5 +344,19 @@ public class TestUtil {
             .build();
 
     return List.of(nodeCarrierListCacheKeyDto1, nodeCarrierListCacheKeyDto2);
+  }
+
+  public BaseResponse<List<CarrierServiceResponse>> getCarrierServiceUpdateResponse() {
+    var carrierResponse =
+        List.of(
+            CarrierServiceResponse.builder()
+                .orgId(ORG_ID)
+                .carrierId(CARRIER_ID)
+                .carrierServiceId(CARRIER_SERVICE_ID)
+                .carrierName(CARRIER_NAME)
+                .serviceName(SERVICE_NAME)
+                .serviceOptions(SERVICE_OPTIONS)
+                .build());
+    return BaseResponse.builder().payload(carrierResponse).build();
   }
 }

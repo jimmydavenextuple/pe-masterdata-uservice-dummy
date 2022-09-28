@@ -62,7 +62,7 @@ class NodeCalendarDomainTest {
   @Test
   void getNodeCalendarTest() throws CalendarDomainException {
     when(nodeCalendarRepository.findByOrgIdAndNodeId(any(), any()))
-        .thenReturn(List.of(testUtil.getNodeCalendarEntity()));
+        .thenReturn(List.of(testUtil.getNodeCalendarEntity1(), testUtil.getNodeCalendarEntity()));
 
     List<NodeCalendarEntity> resp =
         nodeCalendarDomain.getNodeCalendar(TestUtil.ORG_ID, TestUtil.NODE_ID);
@@ -74,7 +74,9 @@ class NodeCalendarDomainTest {
         TestUtil.DESCRIPTION, Objects.requireNonNull(resp.get(0).getDescription()));
     Assertions.assertEquals(TestUtil.NODE_ID, Objects.requireNonNull(resp.get(0).getNodeId()));
     Assertions.assertEquals(
-        TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.get(0).getEffectiveDate()));
+        TestUtil.EFFECTIVE_DATE_2, Objects.requireNonNull(resp.get(0).getEffectiveDate()));
+    Assertions.assertEquals(
+        TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.get(1).getEffectiveDate()));
     verify(nodeCalendarRepository, times(1)).findByOrgIdAndNodeId(any(), any());
   }
 
