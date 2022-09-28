@@ -69,7 +69,10 @@ class NodeCarrierServiceCalendarDomainTest {
   void getNodeCarrierServiceCalendarWithServiceOptionTest() throws CalendarDomainException {
     when(nodeCarrierServiceCalendarRepository.findNodeCarrierServiceCalendar(
             any(), any(), any(), any()))
-        .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarEntity()));
+        .thenReturn(
+            List.of(
+                testUtil.getNodeCarrierServiceCalendarEntity1(),
+                testUtil.getNodeCarrierServiceCalendarEntity()));
 
     List<NodeCarrierServiceCalendarEntity> resp =
         nodeCarrierServiceCalendarDomain.getNodeCarrierServiceCalendar(
@@ -82,6 +85,10 @@ class NodeCarrierServiceCalendarDomainTest {
         TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.get(0).getCalendarId()));
     Assertions.assertEquals(TestUtil.ORG_ID, Objects.requireNonNull(resp.get(0).getOrgId()));
     Assertions.assertEquals(TestUtil.NODE_ID, Objects.requireNonNull(resp.get(0).getNodeId()));
+    Assertions.assertEquals(
+        TestUtil.EFFECTIVE_DATE_2, Objects.requireNonNull(resp.get(0).getEffectiveDate()));
+    Assertions.assertEquals(
+        TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.get(1).getEffectiveDate()));
     verify(nodeCarrierServiceCalendarRepository, times(1))
         .findNodeCarrierServiceCalendar(any(), any(), any(), any());
   }
@@ -113,7 +120,10 @@ class NodeCarrierServiceCalendarDomainTest {
   void getNodeCarrierServiceCalendarTest() throws CalendarDomainException {
     when(nodeCarrierServiceCalendarRepository.findAllNodeCarrierServiceCalendar(
             any(), any(), any()))
-        .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarEntity()));
+        .thenReturn(
+            List.of(
+                testUtil.getNodeCarrierServiceCalendarEntity1(),
+                testUtil.getNodeCarrierServiceCalendarEntity()));
 
     List<NodeCarrierServiceCalendarEntity> resp =
         nodeCarrierServiceCalendarDomain.getNodeCarrierServiceCalendar(
@@ -123,6 +133,10 @@ class NodeCarrierServiceCalendarDomainTest {
         TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.get(0).getCalendarId()));
     Assertions.assertEquals(TestUtil.ORG_ID, Objects.requireNonNull(resp.get(0).getOrgId()));
     Assertions.assertEquals(TestUtil.NODE_ID, Objects.requireNonNull(resp.get(0).getNodeId()));
+    Assertions.assertEquals(
+        TestUtil.EFFECTIVE_DATE_2, Objects.requireNonNull(resp.get(0).getEffectiveDate()));
+    Assertions.assertEquals(
+        TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.get(1).getEffectiveDate()));
     verify(nodeCarrierServiceCalendarRepository, times(1))
         .findAllNodeCarrierServiceCalendar(any(), any(), any());
   }
