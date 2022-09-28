@@ -492,7 +492,7 @@ public class UploadBufferService {
       csvWriter.writeNext(new String[] {orgIdHeader, orgIdValue});
       csvWriter.writeNext(new String[] {carrierServiceIdHeader, carrierServiceIdValue});
       distinctSourceGeozones.add(0, SOURCE_AND_DESTINATION_GEO_ZONE);
-      csvWriter.writeNext(distinctDestinationGeozones.toArray(new String[0]));
+      csvWriter.writeNext(distinctSourceGeozones.toArray(new String[0]));
 
       destinationFsaAndActionList.forEach(csvWriter::writeNext);
     }
