@@ -467,8 +467,7 @@ class UploadBufferDataServiceTest {
   }
 
   @Test
-  void deleteTransitBufferFeignException()
-      throws CommonServiceException {
+  void deleteTransitBufferFeignException() throws CommonServiceException {
     Path resourceDirectory =
         Paths.get(
             "src", "test", "resources", "transitBufferData", "deleteTransitBuffer_happyPath.csv");
@@ -494,8 +493,7 @@ class UploadBufferDataServiceTest {
   }
 
   @Test
-  void deleteTransitBufferException()
-      throws CommonServiceException {
+  void deleteTransitBufferException() throws CommonServiceException {
     Path resourceDirectory =
         Paths.get(
             "src", "test", "resources", "transitBufferData", "deleteTransitBuffer_happyPath.csv");

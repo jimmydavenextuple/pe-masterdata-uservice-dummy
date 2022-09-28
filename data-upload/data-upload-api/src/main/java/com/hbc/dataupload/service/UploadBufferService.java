@@ -520,8 +520,7 @@ public class UploadBufferService {
     }
   }
 
-  private static List<String[]> readCsvContents(Path path)
-      throws IOException, CsvException {
+  private static List<String[]> readCsvContents(Path path) throws IOException, CsvException {
     var reader = new BufferedReader(new FileReader(path.toFile()));
     List<String[]> csvFileContents;
     try (var csvReader = new CSVReader(reader)) {
