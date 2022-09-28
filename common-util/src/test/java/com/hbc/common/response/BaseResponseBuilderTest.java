@@ -56,7 +56,7 @@ class BaseResponseBuilderTest {
     Date timestamp = new Date();
     baseResponseBuilder.timestamp(timestamp);
     BaseResponse baseResponse = baseResponseBuilder.build();
-    assertEquals(timestamp, baseResponse.getTimestamp(), "Timestamp");
+    assertEquals(timestamp.getTime(), baseResponse.getTimestamp(), "Timestamp");
   }
 
   @DisplayName("Should return the message that has been previously set")
