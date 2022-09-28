@@ -1,0 +1,17 @@
+name: ITEM RELEASE
+
+on:
+  push:
+    tags:
+      - '*RELEASE'
+     
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/release-flow.yml
+    with:
+      module: item
+    secrets: inherit
+
+
+
+

@@ -3,13 +3,20 @@ package com.hbc.postal.code.timezone.service;
 import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.domain.PostalCodeTimezoneDomain;
 import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
 import com.hbc.postal.code.timezone.domain.mapper.PostalCodeTimezoneMapper;
+import com.hbc.postgres.config.ReaderDS;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -60,6 +67,7 @@ public class PostalCodeTimezoneService {
    * @return Fetched Postal Code Timezone dto
    * @throws PromiseEngineException
    */
+  @ReaderDS
   public PostalCodeTimezoneDto getPostalCodeTimezone(String orgId, String postalCodePrefix)
       throws PromiseEngineException {
     logger.debug("-- inside getPostalCodeTimezone service --");
@@ -124,5 +132,39 @@ public class PostalCodeTimezoneService {
         INSTANCE.convertToPostalCodeTimezoneDto(postalCodeTimezoneEntityFromDB));
     return preparePostalCodeTimezoneDto(
         postalCodeTimezoneDomain.deletePostalCodeTimezone(postalCodeTimezoneEntityFromDB));
+  }
+
+  @ReaderDS
+  public List<PostalCodePrefixDto> fetchPostalCodePrefixList(String orgId)
+      throws PromiseEngineException {
+    List<PostalCodeTimezoneEntity> postalCodeTimezoneEntities =
+        postalCodeTimezoneDomain.getPostalCodeTimezoneForOrgId(orgId);
+    Set<String> visitedStates = new HashSet<>();
+    return postalCodeTimezoneEntities.stream()
+        .filter(pte -> !visitedStates.contains(pte.getState()))
+        .map(pte -> this.postalCodePrefixDto(pte, postalCodeTimezoneEntities, visitedStates))
+        .collect(Collectors.toList());
+  }
+
+  @ReaderDS
+  public List<String> fetchPostalCodePrefixForOrgIdAndState(String orgId, String state)
+      throws PromiseEngineException {
+    logger.debug("-- Inside fetch postal_code_prefix for orgId: {} and state: {} --", orgId, state);
+    return postalCodeTimezoneDomain.getPostalCodePrefixForOrgIdAndState(orgId, state);
+  }
+
+  private PostalCodePrefixDto postalCodePrefixDto(
+      PostalCodeTimezoneEntity postalCodeTimezoneEntity,
+      List<PostalCodeTimezoneEntity> list,
+      Set<String> visitedStates) {
+    var postalCodePrefixDto = new PostalCodePrefixDto();
+    List<String> postalCodePrefixList = new ArrayList<>();
+    list.stream()
+        .filter(pte -> pte.getState().equals(postalCodeTimezoneEntity.getState()))
+        .forEach(pte -> postalCodePrefixList.add(pte.getPostalCodePrefix()));
+    postalCodePrefixDto.setState(postalCodeTimezoneEntity.getState());
+    postalCodePrefixDto.setPostalCodePrefix(postalCodePrefixList);
+    visitedStates.add(postalCodeTimezoneEntity.getState());
+    return postalCodePrefixDto;
   }
 }

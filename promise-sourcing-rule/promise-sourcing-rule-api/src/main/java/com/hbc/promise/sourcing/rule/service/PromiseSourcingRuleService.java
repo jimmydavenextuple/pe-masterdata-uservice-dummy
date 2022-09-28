@@ -1,12 +1,16 @@
 package com.hbc.promise.sourcing.rule.service;
 
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.EXPRESS;
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.SDND;
-import static com.hbc.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.STANDARD;
-
 import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.enums.ExceptionCodeMapping;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.common.response.error.FieldError;
+import com.hbc.node.domain.feign.NodeFeign;
+import com.hbc.node.domain.outbound.NodeResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
+import com.hbc.postgres.config.ReaderDS;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
 import com.hbc.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
@@ -17,7 +21,9 @@ import com.hbc.promise.sourcing.rule.domain.PromiseSourcingRuleDomain;
 import com.hbc.promise.sourcing.rule.domain.entity.PromiseSourcingRule;
 import com.hbc.promise.sourcing.rule.domain.mapper.PromiseSourcingRuleMapper;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,6 +31,9 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -32,10 +41,23 @@ import org.springframework.util.StringUtils;
 @Service
 @RequiredArgsConstructor
 public class PromiseSourcingRuleService {
+
   private static final Logger logger = LoggerFactory.getLogger(PromiseSourcingRuleService.class);
+
+  private static final String ORG_ID = "orgId";
+  private static final String NODE_ID = "nodeId";
+  private static final String SERVICE_OPTION = "serviceOption";
+  private static final String INVALID_SERVICE_OPTION = "Invalid ServiceOption";
+  private static final String INACTIVE_NODE = "nodeId is not active";
+  private static final String INVALID_DEST_GEOZONE = "DestinationGeoZone is not valid";
   private static final PromiseSourcingRuleMapper INSTANCE =
       Mappers.getMapper(PromiseSourcingRuleMapper.class);
   private final PromiseSourcingRuleDomain promiseSourcingRuleDomain;
+  @Autowired private final PostalCodeTimezoneFeign postalCodeTimezoneFeign;
+  @Autowired private final NodeFeign nodeFeign;
+
+  @Value("#{'${promise.service.options}'.split('\\s*,\\s*')}")
+  public Set<String> serviceOptions;
 
   /**
    * Convert PromiseSourcingRule entity to PromiseSourcingRuleDto with all required processing
@@ -80,40 +102,26 @@ public class PromiseSourcingRuleService {
           "Promise Sourcing Rules not found!");
     }
 
-    var fetchPromiseSourcingRuleResponse = new FetchPromiseSourcingRuleResponse();
-    List<ServiceOptionInfo> serviceOptionsForSdnd = new ArrayList<>();
-    List<ServiceOptionInfo> serviceOptionsForStandard = new ArrayList<>();
-    List<ServiceOptionInfo> serviceOptionsForExpress = new ArrayList<>();
+    // group by service options
+    Map<String, List<ServiceOptionInfo>> serviceOptionPromiseRules =
+        promiseSourcingRuleList.stream()
+            .collect(
+                Collectors.groupingBy(
+                    PromiseSourcingRule::getServiceOption,
+                    Collectors.mapping(this::getServiceOptionInfo, Collectors.toList())));
 
-    promiseSourcingRuleList.forEach(
-        promiseSourcingRule -> {
-          var serviceOptionInfo = getServiceOptionInfo(promiseSourcingRule);
-          switch (promiseSourcingRule.getServiceOption()) {
-            case SDND:
-              {
-                serviceOptionsForSdnd.add(serviceOptionInfo);
-                break;
+    // set an empty list for the service options for which promise rule is not found
+    baseRequest
+        .getServiceOptions()
+        .forEach(
+            x -> {
+              if (!serviceOptionPromiseRules.containsKey(x)) {
+                serviceOptionPromiseRules.put(x, new ArrayList<>());
               }
-            case STANDARD:
-              {
-                serviceOptionsForStandard.add(serviceOptionInfo);
-                break;
-              }
-            case EXPRESS:
-              {
-                serviceOptionsForExpress.add(serviceOptionInfo);
-                break;
-              }
-            default:
-              {
-                logger.error("Invalid service option");
-              }
-          }
-        });
-    fetchPromiseSourcingRuleResponse.setSdnd(serviceOptionsForSdnd);
-    fetchPromiseSourcingRuleResponse.setStandard(serviceOptionsForStandard);
-    fetchPromiseSourcingRuleResponse.setExpress(serviceOptionsForExpress);
-    return fetchPromiseSourcingRuleResponse;
+            });
+    return FetchPromiseSourcingRuleResponse.builder()
+        .serviceOptionSourcingRules(serviceOptionPromiseRules)
+        .build();
   }
 
   /**
@@ -124,8 +132,10 @@ public class PromiseSourcingRuleService {
    * @throws PromiseEngineException
    */
   public PromiseSourcingRuleDto createPromiseSourcingRule(
-      CreatePromiseSourcingRuleRequest baseRequest) throws PromiseEngineException {
+      CreatePromiseSourcingRuleRequest baseRequest)
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside createPromiseSourcingRule service --");
+    validateSourceNode(baseRequest.getSourceNodes());
     if (!StringUtils.hasLength(baseRequest.getAllocationRuleId())) {
       baseRequest.setAllocationRuleId("DEFAULT");
     }
@@ -136,12 +146,24 @@ public class PromiseSourcingRuleService {
     String allocationRuleId = baseRequest.getAllocationRuleId();
     Set<String> sourceNodes = baseRequest.getSourceNodes();
 
+    validateNodeIdAndDestinationGeoZoneAndServiceOption(
+        orgId, serviceOption, destinationGeoZone, sourceNodes);
     validateSourcingRules(destinationGeoZone, orgId, serviceOption, allocationRuleId, sourceNodes);
 
     var promiseSourcingRule =
         INSTANCE.convertFromCreatePromiseSourcingRuleRequestToEntity(baseRequest);
     return preparePromiseSourcingRuleDto(
         promiseSourcingRuleDomain.savePromiseSourcingRule(promiseSourcingRule));
+  }
+
+  public void validateSourceNode(Set<String> sourceNodes) throws CommonServiceException {
+    if (sourceNodes.stream().anyMatch(String::isBlank)) {
+      throw new CommonServiceException(
+          "sourceNodes cannot contain null or an empty string",
+          HttpStatus.BAD_REQUEST,
+          0x1771,
+          null);
+    }
   }
 
   /**
@@ -182,6 +204,31 @@ public class PromiseSourcingRuleService {
     }
   }
 
+  private void validateNodeIdAndDestinationGeoZoneAndServiceOption(
+      String orgId, String serviceOption, String destinationGeoZone, Set<String> sourceNodes)
+      throws CommonServiceException {
+    try {
+      for (String node : sourceNodes) {
+        BaseResponse<NodeResponse> baseResponse = nodeFeign.getNodeDetails(node, orgId);
+        if (Boolean.FALSE.equals(baseResponse.getPayload().getIsActive())) {
+          commonServiceExceptionMethod(INACTIVE_NODE, sourceNodes, orgId, serviceOption, 0x1771);
+        }
+      }
+      BaseResponse<PostalCodeTimezoneDto> postalCodeTimezoneDtoBaseResponse =
+          postalCodeTimezoneFeign.getPostalCodeTimezone(orgId, destinationGeoZone);
+      if (!postalCodeTimezoneDtoBaseResponse.isSuccess()) {
+        commonServiceExceptionMethod(
+            INVALID_DEST_GEOZONE, sourceNodes, orgId, serviceOption, 0x1774);
+      }
+      if (!serviceOptions.contains(serviceOption)) {
+        commonServiceExceptionMethod(
+            INVALID_SERVICE_OPTION, sourceNodes, orgId, serviceOption, 0x1772);
+      }
+    } catch (RuntimeException e) {
+      commonServiceExceptionMethod(
+          "Node not found with given details", sourceNodes, orgId, serviceOption, 0x1775);
+    }
+  }
   /**
    * Get Promise Sourcing Rule
    *
@@ -195,6 +242,7 @@ public class PromiseSourcingRuleService {
    * @return Fetched Promise Sourcing Rule dto
    * @throws PromiseEngineException
    */
+  @ReaderDS
   public PromiseSourcingRuleDto getPromiseSourcingRule(
       String orgId,
       String serviceOption,
@@ -226,6 +274,7 @@ public class PromiseSourcingRuleService {
    * @return Fetched Promise Sourcing Rules dto
    * @throws PromiseEngineException
    */
+  @ReaderDS
   public List<PromiseSourcingRuleDto> getPromiseSourcingRulesByOrgId(String orgId)
       throws PromiseEngineException {
     logger.debug("-- inside getPromiseSourcingRulesByOrgId service --");
@@ -244,6 +293,7 @@ public class PromiseSourcingRuleService {
    * @return Fetched Promise Sourcing Rules dto
    * @throws PromiseEngineException
    */
+  @ReaderDS
   public List<PromiseSourcingRuleDto> getPromiseSourcingRulesByPriority(int priority)
       throws PromiseEngineException {
     logger.debug("-- inside getPromiseSourcingRulesByPriority service --");
@@ -276,8 +326,11 @@ public class PromiseSourcingRuleService {
       String allocationRuleId,
       int priority,
       UpdatePromiseSourcingRuleRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside updatePromiseSourcingRule service --");
+
+    validateNodeIdAndDestinationGeoZoneAndServiceOption(
+        orgId, serviceOption, destinationGeoZone, baseRequest.getSourceNodes());
     var promiseSourcingRuleFromDB =
         INSTANCE.convertToPromiseSourcingRuleEntity(
             getPromiseSourcingRule(
@@ -322,5 +375,19 @@ public class PromiseSourcingRuleService {
         INSTANCE.convertToPromiseSourcingRuleDto(promiseSourcingRuleFromDB));
     return preparePromiseSourcingRuleDto(
         promiseSourcingRuleDomain.deletePromiseSourcingRule(promiseSourcingRuleFromDB));
+  }
+
+  public void commonServiceExceptionMethod(
+      String errorMessage,
+      Set<String> nodeId,
+      String orgId,
+      String serviceOption,
+      Integer errorCode)
+      throws CommonServiceException {
+    Map<String, FieldError> errorMap = new HashMap<>();
+    errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
+    errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+    errorMap.put(SERVICE_OPTION, FieldError.builder().rejectedValue(serviceOption).build());
+    throw new CommonServiceException(errorMessage, HttpStatus.BAD_REQUEST, errorCode, errorMap);
   }
 }

@@ -1,6 +1,7 @@
 package com.hbc.item.domain.inbound;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -89,4 +90,6 @@ public class ItemCreationRequest implements Serializable {
   private String imageUrl;
 
   private DateTime lastModifiedDate;
+
+  private Map<String, List<String>> inventoryNodeTypes;
 }

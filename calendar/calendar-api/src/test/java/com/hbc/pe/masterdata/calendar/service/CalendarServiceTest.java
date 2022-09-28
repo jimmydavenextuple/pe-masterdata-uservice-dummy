@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
+import com.hbc.calendar.domain.inbound.CalendarRequest;
 import com.hbc.calendar.domain.outbound.CalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
@@ -14,6 +15,7 @@ import com.hbc.pe.masterdata.calendar.domain.entity.CalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
+import com.hbc.pe.masterdata.calendar.domain.repository.CalendarRepository;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.CalenderServiceException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
@@ -27,6 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,6 +40,7 @@ class CalendarServiceTest {
 
   @Mock private CalendarDomain calendarDomain;
   @Mock private NodeCalendarDomain nodeCalendarDomain;
+  @Mock private CalendarRepository calendarRepository;
   @Mock private CarrierServiceCalendarService carrierServiceCalendarService;
   @Mock private NodeCarrierServiceCalendarService nodeCarrierServiceCalendarService;
   @Mock private DateValidation dateValidation;
@@ -50,9 +54,12 @@ class CalendarServiceTest {
   }
 
   @Test
-  void processCreateCalendarTest() throws CalendarDomainException, DateException {
+  void processCreateCalendarTest()
+      throws CalendarDomainException, DateException, CommonServiceException {
     when(calendarDomain.saveCalendarEntity(any())).thenReturn(testUtil.getCalendarEntity());
     when(dateValidation.validateExceptionDays(any())).thenReturn(Boolean.TRUE);
+    when(calendarRepository.findCalendarDetailsByCalendarIdAndOrgId(any(), any()))
+        .thenReturn(Optional.empty());
     CalendarResponse resp = calendarService.processCreateCalendar(testUtil.getCalendarRequest());
 
     Assertions.assertEquals(TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.getCalendarId()));
@@ -71,6 +78,24 @@ class CalendarServiceTest {
             DateException.class,
             () -> calendarService.processCreateCalendar(testUtil.getCalendarRequest()));
     Assertions.assertEquals("Date is invalid / missing", exception.getMessage());
+  }
+
+  @Test
+  @DisplayName("When calendar to be created already exists")
+  void createCalendarTestException() throws CalendarDomainException {
+    CalendarRequest calendarRequest = testUtil.getCalendarRequest();
+    when(dateValidation.validateExceptionDays(any())).thenReturn(Boolean.TRUE);
+    when(calendarRepository.findCalendarDetailsByCalendarIdAndOrgId(any(), any()))
+        .thenReturn(Optional.of(testUtil.getCalendarEntity()));
+
+    Exception ex =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> calendarService.processCreateCalendar(calendarRequest));
+
+    Assertions.assertEquals("Calendar already exists for the given details", ex.getMessage());
+    verify(calendarRepository, times(1)).findCalendarDetailsByCalendarIdAndOrgId(any(), any());
+    verify(calendarDomain, times(0)).saveCalendarEntity(any());
   }
 
   @Test

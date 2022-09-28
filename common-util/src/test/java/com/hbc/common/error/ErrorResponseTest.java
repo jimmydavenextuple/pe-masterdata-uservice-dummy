@@ -63,7 +63,7 @@ class ErrorResponseTest {
 
     assertEquals(errorType, actual.getPayload().getType(), "Error type");
     assertEquals(code, actual.getPayload().getCode(), "Code");
-    assertEquals(timestamp, actual.getTimestamp(), "Timestamp");
+    assertEquals(timestamp.getTime(), actual.getTimestamp(), "Timestamp");
     assertEquals(message, actual.getMessage(), "Message");
   }
 
@@ -119,7 +119,7 @@ class ErrorResponseTest {
 
     assertEquals(errorType, actual.getPayload().getType(), "Error Type");
     assertEquals(code, actual.getPayload().getCode(), "Code");
-    assertEquals(timestamp, actual.getTimestamp(), "Timestamp");
+    assertEquals(timestamp.getTime(), actual.getTimestamp(), "Timestamp");
   }
 
   @DisplayName("Test the ErrorResponseBuilder message method")

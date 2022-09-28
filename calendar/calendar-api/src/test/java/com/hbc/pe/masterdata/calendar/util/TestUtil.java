@@ -1,6 +1,9 @@
 package com.hbc.pe.masterdata.calendar.util;
 
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
+import com.hbc.calendar.domain.dto.CarrierCalendarCacheKeyDto;
+import com.hbc.calendar.domain.dto.NodeCalendarCacheKeyDto;
+import com.hbc.calendar.domain.dto.NodeCarrierCalendarCacheKeyDto;
 import com.hbc.calendar.domain.inbound.CalendarRequest;
 import com.hbc.calendar.domain.inbound.CarrierServiceCalendarRequest;
 import com.hbc.calendar.domain.inbound.NodeCalendarRequest;
@@ -10,6 +13,8 @@ import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.pojo.ExceptionDays;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.pe.masterdata.calendar.domain.entity.CalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
@@ -20,6 +25,7 @@ import java.util.List;
 public class TestUtil {
 
   public static final String CALENDAR_ID = "C001";
+  public static final String CALENDAR_ID_2 = "C002";
   public static final String ORG_ID = "Bay";
   public static final String NODE_ID = "N001";
   public static final String DESCRIPTION = "Yearly";
@@ -30,6 +36,8 @@ public class TestUtil {
   public static final String SHIPPING_STAGE = "PICKUP";
   public static final String ALL_SHIPPING_STAGE = "ALL";
   public static final String SERVICE_OPTION = "SDND";
+  private static final String CARRIER_SERVICE_ID_2 = "Puro-Express";
+  public static final String EFFECTIVE_DATE_2 = "2022-09-09";
 
   public CalendarResponse getCalendarResponse() {
     return CalendarResponse.builder()
@@ -104,6 +112,16 @@ public class TestUtil {
         .build();
   }
 
+  public NodeCalendarEntity getNodeCalendarEntity1() {
+    return NodeCalendarEntity.builder()
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .nodeId(NODE_ID)
+        .description(DESCRIPTION)
+        .effectiveDate(EFFECTIVE_DATE_2)
+        .build();
+  }
+
   public CarrierServiceCalendarResponse getCarrierServiceCalendarResponse() {
     return CarrierServiceCalendarResponse.builder()
         .calendarId(CALENDAR_ID)
@@ -170,8 +188,151 @@ public class TestUtil {
         .build();
   }
 
+  public BaseResponse<NodeResponse> getNodeDetails(Boolean isActive) {
+    NodeResponse nodeResponse = new NodeResponse();
+    nodeResponse.setNodeId(NODE_ID);
+    nodeResponse.setIsActive(isActive);
+    return BaseResponse.builder().payload(nodeResponse).build();
+  }
+
   public List<CalendarDaysStatusInfo> getCalendarDaysStatusInfoList() {
     return Collections.singletonList(
         CalendarDaysStatusInfo.builder().date("2022-01-01").isActive(true).build());
+  }
+
+  public List<CarrierServiceCalendarEntity> getCarrierServiceCalendarEntityList() {
+    CarrierServiceCalendarEntity carrierServiceCalendarEntity1 =
+        CarrierServiceCalendarEntity.builder()
+            .calendarId(CALENDAR_ID)
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .description(DESCRIPTION)
+            .effectiveDate(EFFECTIVE_DATE)
+            .shippingStage(SHIPPING_STAGE)
+            .build();
+
+    CarrierServiceCalendarEntity carrierServiceCalendarEntity2 =
+        CarrierServiceCalendarEntity.builder()
+            .calendarId(CALENDAR_ID_2)
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .description(DESCRIPTION)
+            .effectiveDate(EFFECTIVE_DATE)
+            .shippingStage(SHIPPING_STAGE)
+            .build();
+
+    return List.of(carrierServiceCalendarEntity1, carrierServiceCalendarEntity2);
+  }
+
+  public List<NodeCalendarEntity> getNodeCalendarEntityList() {
+    NodeCalendarEntity nodeCalendarEntity1 =
+        NodeCalendarEntity.builder()
+            .calendarId(CALENDAR_ID)
+            .orgId(ORG_ID)
+            .nodeId(NODE_ID)
+            .description(DESCRIPTION)
+            .effectiveDate(EFFECTIVE_DATE)
+            .build();
+
+    NodeCalendarEntity nodeCalendarEntity2 =
+        NodeCalendarEntity.builder()
+            .calendarId(CALENDAR_ID_2)
+            .orgId(ORG_ID)
+            .nodeId(NODE_ID)
+            .description(DESCRIPTION)
+            .effectiveDate(EFFECTIVE_DATE)
+            .build();
+
+    return List.of(nodeCalendarEntity1, nodeCalendarEntity2);
+  }
+
+  public List<NodeCarrierServiceCalendarEntity> getNodeCarrierServiceCalendarEntityList() {
+    NodeCarrierServiceCalendarEntity nodeCarrierServiceCalendarEntity1 =
+        NodeCarrierServiceCalendarEntity.builder()
+            .calendarId(CALENDAR_ID)
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .description(DESCRIPTION)
+            .effectiveDate(EFFECTIVE_DATE)
+            .nodeId(NODE_ID)
+            .build();
+
+    NodeCarrierServiceCalendarEntity nodeCarrierServiceCalendarEntity2 =
+        NodeCarrierServiceCalendarEntity.builder()
+            .calendarId(CALENDAR_ID_2)
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .description(DESCRIPTION)
+            .effectiveDate(EFFECTIVE_DATE)
+            .nodeId(NODE_ID)
+            .build();
+
+    return List.of(nodeCarrierServiceCalendarEntity1, nodeCarrierServiceCalendarEntity2);
+  }
+
+  public List<CarrierCalendarCacheKeyDto> getCarrierCalendarCacheKeyDtoList() {
+    CarrierCalendarCacheKeyDto carrierCalendarCacheKeyDto1 =
+        CarrierCalendarCacheKeyDto.builder()
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .build();
+
+    CarrierCalendarCacheKeyDto carrierCalendarCacheKeyDto2 =
+        CarrierCalendarCacheKeyDto.builder()
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID_2)
+            .build();
+
+    return List.of(carrierCalendarCacheKeyDto1, carrierCalendarCacheKeyDto2);
+  }
+
+  public List<NodeCalendarCacheKeyDto> getNodeCalendarCacheKeyDtoList() {
+    NodeCalendarCacheKeyDto nodeCalendarCacheKeyDto1 =
+        NodeCalendarCacheKeyDto.builder().nodeId(NODE_ID).orgId(ORG_ID).build();
+
+    NodeCalendarCacheKeyDto nodeCalendarCacheKeyDto2 =
+        NodeCalendarCacheKeyDto.builder().nodeId(NODE_ID).orgId(ORG_ID).build();
+
+    return List.of(nodeCalendarCacheKeyDto1, nodeCalendarCacheKeyDto2);
+  }
+
+  public List<NodeCarrierCalendarCacheKeyDto> getNodeCarrierCalendarCacheKeyDtoList() {
+    NodeCarrierCalendarCacheKeyDto nodeCarrierCalendarCacheKeyDto1 =
+        NodeCarrierCalendarCacheKeyDto.builder()
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .nodeId(NODE_ID)
+            .orgId(ORG_ID)
+            .build();
+
+    NodeCarrierCalendarCacheKeyDto nodeCarrierCalendarCacheKeyDto2 =
+        NodeCarrierCalendarCacheKeyDto.builder()
+            .carrierServiceId(CARRIER_SERVICE_ID_2)
+            .nodeId(NODE_ID)
+            .orgId(ORG_ID)
+            .build();
+
+    return List.of(nodeCarrierCalendarCacheKeyDto1, nodeCarrierCalendarCacheKeyDto2);
+  }
+
+  public CarrierServiceCalendarEntity getCarrierServiceCalendarEntity1() {
+    return CarrierServiceCalendarEntity.builder()
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .description(DESCRIPTION)
+        .effectiveDate(EFFECTIVE_DATE_2)
+        .shippingStage(SHIPPING_STAGE)
+        .build();
+  }
+
+  public NodeCarrierServiceCalendarEntity getNodeCarrierServiceCalendarEntity1() {
+    return NodeCarrierServiceCalendarEntity.builder()
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .description(DESCRIPTION)
+        .effectiveDate(EFFECTIVE_DATE_2)
+        .nodeId(NODE_ID)
+        .build();
   }
 }

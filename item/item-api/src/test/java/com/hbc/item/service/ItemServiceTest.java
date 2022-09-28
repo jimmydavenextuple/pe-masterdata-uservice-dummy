@@ -11,7 +11,11 @@ import com.hbc.item.domain.ItemDomain;
 import com.hbc.item.domain.entity.ItemEntity;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
+import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
+import com.hbc.item.util.ItemUtils;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
@@ -49,6 +53,9 @@ class ItemServiceTest {
   @Test
   void addItemExceptionTest() throws ItemDomainException {
     ItemEntity itemEntity = testUtil.getItemEntity();
+    itemEntity.setServiceOptionEligibilities(TestUtil.getServiceOptEligiblityMapForExceptionTest());
+    itemEntity.setInventoryNodeTypes(
+        ItemUtils.getInventoryNodeTypeMap(TestUtil.getServiceOptEligiblityMapForExceptionTest()));
     ItemCreationRequest itemCreationRequest = testUtil.getItemCreationRequest();
     itemCreationRequest.setUom(null);
     when(itemDomain.saveItemEntity(any(ItemEntity.class))).thenReturn(itemEntity);
@@ -147,5 +154,37 @@ class ItemServiceTest {
     Assertions.assertEquals("Item not found with given details", exception.getMessage());
 
     verify(itemDomain, times(1)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
+  }
+
+  @Test
+  void getItemListByItemIdAndOrgIdAndUomTest()
+      throws CommonServiceException, ItemBatchingDomainException {
+    ItemEntity itemEntity = testUtil.getItemEntity();
+    List<ItemEntity> itemEntityList = new ArrayList<>();
+    itemEntityList.add(itemEntity);
+    List<String> itemList = new ArrayList<>();
+    itemList.add(TestUtil.ITEM_ID);
+    List<ItemResponse> itemResponseList = new ArrayList<>();
+    itemResponseList.add(testUtil.getItemResponse());
+    when(itemDomain.findItemListByItemIdsAndOrgIdAndUom(any(), any())).thenReturn(itemEntityList);
+
+    List<ItemResponse> itemResponse = itemService.getItemList(itemList, TestUtil.ORG_ID);
+    Assertions.assertEquals(itemResponseList, itemResponse);
+    verify(itemDomain, times(1)).findItemListByItemIdsAndOrgIdAndUom(any(), any());
+  }
+
+  @Test
+  void getItemListByItemIdAndOrgIdAndUomTestException() throws ItemBatchingDomainException {
+    List<ItemEntity> itemEntityList = new ArrayList<>();
+    List<String> itemList = new ArrayList<>();
+    itemList.add(TestUtil.ITEM_ID);
+    when(itemDomain.findItemListByItemIdsAndOrgIdAndUom(any(), any())).thenReturn(itemEntityList);
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class, () -> itemService.getItemList(itemList, TestUtil.ORG_ID));
+    Assertions.assertEquals("Items not found with given details", exception.getMessage());
+
+    verify(itemDomain, times(1)).findItemListByItemIdsAndOrgIdAndUom(any(), any());
   }
 }

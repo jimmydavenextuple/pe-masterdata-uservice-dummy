@@ -55,3 +55,9 @@ management:
             requests: true
         persistence: true
         cache: true
+entity-listener:
+  kafka:
+    enabled: true
+pe:
+  ui:
+    allowed-origin-url: \${PE_UI_URL}

@@ -9,6 +9,16 @@ spring:
     url: jdbc:postgresql://promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
+  replica:
+    datasource:
+      platform: postgres
+      url: jdbc:postgresql://promise-engine-postgres-perf.cluster-ro-co9l0bkmgaei.us-east-1.rds.amazonaws.com,promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe?readOnly=true
+      username: \${POSTGRES_USER}
+      password: \${POSTGRES_PWD}
+      required: true
+      hikari:
+        readOnly: true
+        maximumPoolSize: 20
   kafka:
     bootstrap-servers: "temp-5-kafka.integration.awshbc.io:9094"
     consumer-retry-count: 1

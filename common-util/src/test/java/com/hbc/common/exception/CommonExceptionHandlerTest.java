@@ -2,25 +2,20 @@ package com.hbc.common.exception;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.hbc.common.context.CurrentThreadContext;
-import com.hbc.common.context.LogContext;
+import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.response.error.ErrorType;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
@@ -29,6 +24,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 
 class CommonExceptionHandlerTest {
 
@@ -40,7 +36,7 @@ class CommonExceptionHandlerTest {
     ReflectionTestUtils.setField(
         commonExceptionHandler,
         "slf4jLogger",
-        org.slf4j.LoggerFactory.getLogger(CommonExceptionHandler.class));
+        LoggerFactory.getLogger(CommonExceptionHandler.class));
   }
 
   @Test
@@ -137,15 +133,14 @@ class CommonExceptionHandlerTest {
   }
 
   @Test
-  void logErrorTest() {
-    Map<String, String> metaData = new HashMap<>();
-    metaData.put("key1", "value1");
-    LogContext mockLogCtx = mock(LogContext.class);
+  void handleMissingServletRequestParameterExceptionTest() {
+    MissingServletRequestParameterException e =
+        new MissingServletRequestParameterException("paramName", "string");
 
-    try (MockedStatic mocked = mockStatic(CurrentThreadContext.class)) {
-      mocked.when(CurrentThreadContext::getLogContext).thenReturn(mockLogCtx);
-      commonExceptionHandler.logError(null, "error occurrred", metaData, "Params");
-      mocked.verify(CurrentThreadContext::getLogContext);
-    }
+    ResponseEntity<ErrorResponse> responseEntity =
+        commonExceptionHandler.handleMissingServletRequestParameterException(e);
+
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
   }
 }

@@ -2,6 +2,8 @@ package com.hbc.postal.code.timezone.service;
 
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.ORG_ID;
 import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX_2;
+import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.STATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -12,16 +14,20 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.postal.code.timezone.TestUtil;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.domain.PostalCodeTimezoneDomain;
 import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.util.CollectionUtils;
 
 class PostalCodeTimezoneServiceTest {
   @Mock private PostalCodeTimezoneDomain postalCodeTimezoneDomain;
@@ -107,5 +113,32 @@ class PostalCodeTimezoneServiceTest {
     PostalCodeTimezoneDto deleted_postalCodeTimezoneDto =
         postalCodeTimezoneService.deletePostalCodeTimezone(ORG_ID, POSTAL_CODE_PREFIX);
     assertEquals(postalCodeTimezoneEntity.getOrgId(), deleted_postalCodeTimezoneDto.getOrgId());
+  }
+
+  @Test
+  void fetchPostalCodePrefixListTest() throws PromiseEngineException {
+    PostalCodeTimezoneEntity postalCodeTimezoneEntity = testUtil.getPostalCodeTimezoneEntity();
+
+    when(postalCodeTimezoneDomain.getPostalCodeTimezoneForOrgId(anyString()))
+        .thenReturn(List.of(postalCodeTimezoneEntity));
+
+    List<PostalCodePrefixDto> postalCodePrefixDtoList =
+        postalCodeTimezoneService.fetchPostalCodePrefixList(ORG_ID);
+
+    assertEquals(1, postalCodePrefixDtoList.size());
+    assertEquals(postalCodeTimezoneEntity.getState(), postalCodePrefixDtoList.get(0).getState());
+    verify(postalCodeTimezoneDomain, times(1)).getPostalCodeTimezoneForOrgId(anyString());
+  }
+
+  @Test
+  void fetchPostalCodePrefixForOrgIdAndState() throws PromiseEngineException {
+    when(postalCodeTimezoneDomain.getPostalCodePrefixForOrgIdAndState(anyString(), anyString()))
+        .thenReturn(List.of(POSTAL_CODE_PREFIX, POSTAL_CODE_PREFIX_2));
+
+    List<String> postalCodeTimeZonePrefixList =
+        postalCodeTimezoneService.fetchPostalCodePrefixForOrgIdAndState(ORG_ID, STATE);
+    Assertions.assertFalse(CollectionUtils.isEmpty(postalCodeTimeZonePrefixList));
+    verify(postalCodeTimezoneDomain, times(1))
+        .getPostalCodePrefixForOrgIdAndState(anyString(), anyString());
   }
 }

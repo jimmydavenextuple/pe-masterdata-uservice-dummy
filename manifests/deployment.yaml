@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: <SERVICE_NAME>-<COLOR>
-  namespace: <ENVIRONMENT>
+  namespace: <NAMESPACE>
 spec:
   selector:
     matchLabels:
@@ -68,8 +68,8 @@ spec:
             failureThreshold: 60
             periodSeconds: 10
           env:
-            - name: CLUSTER_REGION
-              value: "<CLUSTER_REGION>"
+            - name: CLUSTER_NAME
+              value: "<CLUSTER_NAME>"
             - name: SPRING_PROFILES_ACTIVE
               value: "<ENVIRONMENT>"
             - name: SERVICE_NAME

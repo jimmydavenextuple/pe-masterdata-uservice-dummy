@@ -9,7 +9,7 @@ on:
 jobs:
   Deploy-To-Prod:
     runs-on: ubuntu-latest
-    environment: prod
+    environment: prod2
     permissions:
       id-token: write
       contents: write
@@ -36,6 +36,6 @@ jobs:
           ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
           NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
           COMMIT_HASH: ${{ github.sha }}
-          ENVIRONMENT: "prod"
+          ENVIRONMENT: "prod2"
           PROJECT: ${{ inputs.module }}
           TAG: ${{github.ref_name}}

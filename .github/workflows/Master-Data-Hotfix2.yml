@@ -1,0 +1,99 @@
+name: HOTFIX2 DEPLOY
+
+on:
+  push:
+    branches: [ test-hotfix2 ]
+    tags:
+      - '*SNAPSHOT'
+jobs:
+  Item:
+    uses: ./.github/workflows/hotfix2-flow.yml
+    with:
+      module: item
+    secrets: inherit
+  Transit:
+    uses: ./.github/workflows/hotfix2-flow.yml
+    with:
+      module: transit
+    secrets: inherit
+  Data-Upload:
+    uses: ./.github/workflows/hotfix2-flow.yml
+    with:
+      module: data-upload
+    secrets: inherit
+  Node-Carrier:
+    uses: ./.github/workflows/hotfix2-flow.yml
+    with:
+      module: node-carrier
+    secrets: inherit
+  Node:
+    needs:
+      - Item
+      - Transit
+      - Data-Upload
+      - Node-Carrier
+    uses: ./.github/workflows/hotfix2-flow.yml
+    with:
+      module: node
+    secrets: inherit
+  Postal-Code-Timezone:
+    needs:
+      - Item
+      - Transit
+      - Data-Upload
+      - Node-Carrier
+    uses: ./.github/workflows/hotfix2-flow.yml
+    with:
+      module: postal-code-timezone
+    secrets: inherit
+  Calendar:
+    needs:
+      - Item
+      - Transit
+      - Data-Upload
+      - Node-Carrier
+    uses: ./.github/workflows/hotfix2-flow.yml
+    with:
+      module: calendar
+    secrets: inherit
+  Promise-Sourcing-Rule:
+    needs:
+      - Item
+      - Transit
+      - Data-Upload
+      - Node-Carrier
+    uses: ./.github/workflows/hotfix2-flow.yml
+    with:
+      module: promise-sourcing-rule
+    secrets: inherit
+  Service-Inventory:
+    needs:
+      - Item
+      - Transit
+      - Data-Upload
+      - Node-Carrier
+    uses: ./.github/workflows/hotfix2-flow.yml
+    with:
+      module: service-inventory
+    secrets: inherit
+  Carrier:
+    needs:
+      - Item
+      - Transit
+      - Data-Upload
+      - Node-Carrier
+    uses: ./.github/workflows/hotfix2-flow.yml
+    with:
+      module: carrier
+    secrets: inherit
+  Weightage-Configuration:
+    needs:
+      - Item
+      - Transit
+      - Data-Upload
+      - Node-Carrier
+    uses: ./.github/workflows/hotfix2-flow.yml
+    with:
+      module: weightage-configuration
+    secrets: inherit
+

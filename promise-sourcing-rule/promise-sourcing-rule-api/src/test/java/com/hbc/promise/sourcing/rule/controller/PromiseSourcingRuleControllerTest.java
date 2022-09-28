@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.promise.sourcing.rule.TestUtil;
@@ -76,7 +77,7 @@ class PromiseSourcingRuleControllerTest {
   }
 
   @Test
-  void createPromiseSourcingRuleTest() throws PromiseEngineException {
+  void createPromiseSourcingRuleTest() throws PromiseEngineException, CommonServiceException {
     CreatePromiseSourcingRuleRequest createPromiseSourcingRuleRequest =
         testUtil.getPromiseSourcingRuleCreationRequest();
     PromiseSourcingRuleDto promiseSourcingRuleDto = testUtil.getPromiseSourcingRuleDto();
@@ -98,7 +99,8 @@ class PromiseSourcingRuleControllerTest {
   }
 
   @Test
-  void createPromiseSourcingRuleExceptionTest() throws PromiseEngineException {
+  void createPromiseSourcingRuleExceptionTest()
+      throws PromiseEngineException, CommonServiceException {
     CreatePromiseSourcingRuleRequest createPromiseSourcingRuleRequest =
         testUtil.getPromiseSourcingRuleCreationRequest();
     when(promiseSourcingRuleService.createPromiseSourcingRule(
@@ -204,7 +206,7 @@ class PromiseSourcingRuleControllerTest {
   }
 
   @Test
-  void updatePromiseSourcingRuleTest() throws PromiseEngineException {
+  void updatePromiseSourcingRuleTest() throws PromiseEngineException, CommonServiceException {
     PromiseSourcingRuleDto dto = testUtil.getPromiseSourcingRuleDto();
     UpdatePromiseSourcingRuleRequest baseRequest = testUtil.getUpdatePromiseSourcingRuleRequest();
     when(promiseSourcingRuleService.updatePromiseSourcingRule(
@@ -239,7 +241,8 @@ class PromiseSourcingRuleControllerTest {
   }
 
   @Test
-  void updatePromiseSourcingRuleExceptionTest() throws PromiseEngineException {
+  void updatePromiseSourcingRuleExceptionTest()
+      throws PromiseEngineException, CommonServiceException {
     UpdatePromiseSourcingRuleRequest baseRequest = testUtil.getUpdatePromiseSourcingRuleRequest();
     when(promiseSourcingRuleService.updatePromiseSourcingRule(
             anyString(),

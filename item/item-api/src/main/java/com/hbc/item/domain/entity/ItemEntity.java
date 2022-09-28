@@ -2,6 +2,7 @@ package com.hbc.item.domain.entity;
 
 import com.hbc.common.base.BaseEntity;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import java.util.List;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -63,7 +64,7 @@ public class ItemEntity extends BaseEntity {
   @Column(name = "parcel_shipment_eligible")
   private Boolean parcelShipmentEligible;
 
-  @Column(name = "bopis_eligilble")
+  @Column(name = "bopis_eligible")
   private Boolean bopisEligible;
 
   @Type(type = "jsonb")
@@ -123,4 +124,8 @@ public class ItemEntity extends BaseEntity {
 
   @Column(name = "image_url")
   private String imageUrl;
+
+  @Type(type = "jsonb")
+  @Column(columnDefinition = "jsonb", name = "inventory_node_types")
+  private Map<String, List<String>> inventoryNodeTypes;
 }

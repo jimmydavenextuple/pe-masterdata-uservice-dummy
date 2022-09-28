@@ -3,15 +3,18 @@ package com.hbc.dataupload.common.headers;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ALLOCATION_RULE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BOPIS_ELIGIBLE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_HOURS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_NAME;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESCRIPTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESTINATION_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EFFECTIVE_DATE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.END_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXCEPTION_DAYS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXPRESS_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.IS_ACTIVE;
@@ -26,22 +29,25 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.KEY
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LAST_PICKUP_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NEXTDAY_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PRIORITY;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROCESSING_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SDND_ELIGIBLE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SELECTION_CRITERIA;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIPPING_STAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIP_TO_HOME;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_AND_DESTINATION_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_NODES;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.START_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.TIMEZONE;
@@ -81,17 +87,12 @@ public class DataUploadUtilityExpectedHeaders {
                     BOPIS_ELIGIBLE,
                     EXPRESS_ELIGIBLE,
                     NODE_TYPE,
-                    IS_ACTIVE)),
+                    IS_ACTIVE,
+                    NEXTDAY_ELIGIBLE)),
             Map.entry(
                 "node-carrier",
                 List.of(
-                    ACTION,
-                    NODE_ID,
-                    ORG_ID,
-                    CARRIER_SERVICE_ID,
-                    SERVICE_OPTION,
-                    PROCESSING_TIME,
-                    LAST_PICKUP_TIME)),
+                    ACTION, NODE_ID, ORG_ID, CARRIER_SERVICE_ID, SERVICE_OPTION, LAST_PICKUP_TIME)),
             Map.entry(
                 "carrier",
                 List.of(
@@ -124,7 +125,7 @@ public class DataUploadUtilityExpectedHeaders {
                     LATITUDE,
                     LONGITUDE,
                     TIMEZONE1)),
-            Map.entry("weightageConfiguration", List.of(ACTION, ORG_ID, TYPE, KEY, WEIGHTAGE)),
+            Map.entry("weightageConfiguration", List.of(ORG_ID, TYPE, KEY, WEIGHTAGE, ACTION)),
             Map.entry(
                 "calendar",
                 List.of(
@@ -171,7 +172,27 @@ public class DataUploadUtilityExpectedHeaders {
                     SOURCE_GEO_ZONE,
                     DESTINATION_GEO_ZONE,
                     CARRIER_SERVICE_ID,
-                    TRANSIT_DAYS)));
+                    TRANSIT_DAYS)),
+            Map.entry(
+                "node-service-option-buffer",
+                List.of(ORG_ID, NODE_ID, SERVICE_OPTION, BUFFER_HOURS, START_TIME, END_TIME)),
+            Map.entry(
+                "transit-buffer",
+                List.of(
+                    ORG_ID,
+                    CARRIER_SERVICE,
+                    START_TIME,
+                    END_TIME,
+                    SOURCE_AND_DESTINATION_GEO_ZONE)),
+            Map.entry(
+                "node-carrier-selection",
+                List.of(
+                    ORG_ID,
+                    SOURCE_GEO_ZONE,
+                    DESTINATION_GEO_ZONE,
+                    SERVICE_OPTION,
+                    SELECTION_CRITERIA,
+                    ACTION)));
   }
 
   public static List<String> getCSVExpectedHeaders(String key) {

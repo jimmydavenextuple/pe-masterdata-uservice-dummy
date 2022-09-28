@@ -24,6 +24,9 @@ logging:
 entity-listener:
   kafka:
     enabled: true
+pagination:
+  pageNo: 1
+  pageSize: 15
 
 management:
   endpoints:
@@ -54,3 +57,6 @@ management:
             requests: true
         persistence: true
         cache: true
+pe:
+  ui:
+    allowed-origin-url: \${PE_UI_URL}

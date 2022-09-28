@@ -8,7 +8,7 @@ public class BaseResponseBuilder {
 
   public BaseResponseBuilder() {
     this.baseResponse = new BaseResponse(); // NOSONAR
-    this.baseResponse.setTimestamp(new Date());
+    this.baseResponse.setTimestamp(new Date().getTime());
     this.baseResponse.setSuccess(true);
     this.baseResponse.setRequestId(CurrentThreadContext.getLogContext().getCorrelationId());
   }
@@ -24,7 +24,7 @@ public class BaseResponseBuilder {
   }
 
   public BaseResponseBuilder timestamp(Date timestamp) {
-    this.baseResponse.setTimestamp(timestamp);
+    this.baseResponse.setTimestamp(timestamp.getTime());
     return this;
   }
 

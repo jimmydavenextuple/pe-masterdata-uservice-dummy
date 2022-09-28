@@ -11,6 +11,7 @@ configurations {
 }
 
 dependencies {
+    implementation 'com.opencsv:opencsv:5.6'
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly 'org.apache.commons:commons-csv'
     implementation(project(":data-upload:data-upload-common-util"))
@@ -23,6 +24,16 @@ dependencies {
     implementation(project(":weightage-configuration:weightage-configuration-api-domain"))
     implementation(project(":calendar:calendar-api-domain"))
     implementation(project(":common-util"))
+    implementation project(":common:common-postgres")
+    implementation(project(":data-upload:jobs-consumer"))
+    implementation(project(":data-upload:jobs-dashboard-api"))
+    implementation(project(":data-upload:job-framework-common-util"))
+    implementation(project(":data-upload:csv-utility-api"))
+    implementation(project(":data-upload:csv-utility-common-util"))
+    implementation "org.springframework.kafka:spring-kafka:2.8.7"
+    implementation(project(":common-configuration:common-configuration-api-domain"))
+    implementation(project(":data-upload:csv-utility-api"))
+    implementation(project(":data-upload:csv-utility-common-util"))
 }
 
 test {

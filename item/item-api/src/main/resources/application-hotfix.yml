@@ -6,7 +6,7 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://dev-db.co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe_hotfix
+    url: jdbc:postgresql://dev-db.co9l0bkmgaei.us-east-1.rds.amazonaws.com/peconfig
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
   kafka:
@@ -20,7 +20,7 @@ spring:
       topics:
         item_master:
           name: items.promise.bay.hotfix.v1
-          group-id: item-master-hotfix
+          group-id: item-master-hotfix-release2
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.hbc.item.consumer.serializer.ItemSerializer

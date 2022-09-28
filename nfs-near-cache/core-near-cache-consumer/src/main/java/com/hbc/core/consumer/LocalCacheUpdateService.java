@@ -5,7 +5,6 @@ import com.hbc.core.cache.service.GenericNearCacheService;
 import com.hbc.core.event.LocalCacheUpdateEvent;
 import com.hbc.core.registry.NearCacheRegistry;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,9 +47,9 @@ public class LocalCacheUpdateService {
         } else {
           Class<?> c = Class.forName(className);
           Constructor<?> cons = c.getConstructor();
-          CacheKey cacheKey = (CacheKey) cons.newInstance();
+          var cacheKey = (CacheKey) cons.newInstance();
 
-          String path = "near-cache.entity." + entity + ".attributes";
+          String path = "nearcache.entity." + entity + ".attributes";
           String params = env.getProperty(path);
 
           logger.debug("Params list :{}", params);
@@ -60,7 +59,7 @@ public class LocalCacheUpdateService {
             paramsList = Arrays.asList(params.split("\\s*,\\s*")); // NOSONAR
           }
           for (String param : paramsList) {
-            Field field = c.getDeclaredField(param);
+            var field = c.getDeclaredField(param);
             field.setAccessible(true); // NOSONAR
             field.set(cacheKey, message.get(param)); // NOSONAR
           }

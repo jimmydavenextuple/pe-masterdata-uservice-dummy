@@ -1,10 +1,14 @@
 package com.hbc.transit.domain.feign;
 
 import com.hbc.common.response.BaseResponse;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
+import com.hbc.transit.domain.inbound.TransitDetailsRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.List;
+import javax.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,4 +56,22 @@ public interface TransitFeign {
       @PathVariable String orgId,
       @PathVariable String destinationGeozone,
       @RequestParam List<String> sourceGeozones);
+
+  @GetMapping("/transit/transit-entries/{orgId}/{carrierServiceId}")
+  BaseResponse<TransitTimeEntriesDto> getTransitTimeEntries(
+      @PathVariable String orgId, @PathVariable String carrierServiceId);
+
+  @GetMapping("/transit/{orgId}/{destinationGeozone}/")
+  BaseResponse<List<TransitResponse>> getTransitDetailsListForDestinationGeoZone(
+      @PathVariable String orgId, @PathVariable String destinationGeozone);
+
+  @PutMapping("/transit/buffer")
+  BaseResponse<TransitResponse> updateTransitBufferDetails(
+      @Valid @RequestBody TransitBufferCreationRequest transitBufferCreationRequest);
+
+  @PostMapping("/transit/transit-entries/{orgId}/{carrierServiceId}/geozones")
+  BaseResponse<List<TransitResponse>> getTransitTimeDetailsForDestinationGeoZonesList(
+      @PathVariable String orgId,
+      @PathVariable String carrierServiceId,
+      @RequestBody TransitDetailsRequest transitDetailsRequest);
 }

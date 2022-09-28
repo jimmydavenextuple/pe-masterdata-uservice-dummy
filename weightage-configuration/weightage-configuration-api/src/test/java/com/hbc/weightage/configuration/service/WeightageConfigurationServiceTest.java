@@ -1,5 +1,6 @@
 package com.hbc.weightage.configuration.service;
 
+import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.KEY;
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.KEYS;
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.ORG_ID;
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.TYPE;
@@ -13,8 +14,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.weightage.configuration.TestUtil;
+import com.hbc.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
@@ -26,11 +29,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 class WeightageConfigurationServiceTest {
@@ -47,7 +52,7 @@ class WeightageConfigurationServiceTest {
   }
 
   @Test
-  void fetchWeightageTest() throws PromiseEngineException {
+  void fetchWeightageTest() throws PromiseEngineException, CommonServiceException {
     List<WeightageConfiguration> weightageConfigurationList =
         Collections.singletonList(testUtil.getWeightageConfiguration());
     FetchWeightageRequest fetchWeightageRequest = testUtil.getFetchWeightageRequest();
@@ -78,7 +83,7 @@ class WeightageConfigurationServiceTest {
   }
 
   @Test
-  void createWeightageConfigurationTest() throws PromiseEngineException {
+  void createWeightageConfigurationTest() throws PromiseEngineException, CommonServiceException {
     WeightageConfiguration weightageConfiguration = testUtil.getWeightageConfiguration();
     CreateWeightageConfigurationRequest createWeightageConfigurationRequest =
         testUtil.getCreateWeightageConfigurationRequest();
@@ -174,5 +179,52 @@ class WeightageConfigurationServiceTest {
     WeightageConfigurationDto deleted_weightageConfigurationDto =
         weightageConfigurationService.deleteWeightageConfiguration(ORG_ID, TYPE, KEYS.get(0));
     assertEquals(weightageConfiguration.getOrgId(), deleted_weightageConfigurationDto.getOrgId());
+  }
+
+  @Test
+  void getAllWeightageCacheKeysTest() throws PromiseEngineException {
+    List<WeightageConfiguration> weightageConfigurationList =
+        testUtil.getWeightageConfigurationList();
+
+    when(weightageConfigurationDomain.getAllWeightageConfiguration(any()))
+        .thenReturn(weightageConfigurationList);
+
+    List<WeightageCacheKeyDto> response = weightageConfigurationService.getAllWeightageCacheKeys(2);
+    assertEquals(2, response.size());
+    assertEquals(weightageConfigurationList.get(0).getType(), response.get(0).getType());
+    verify(weightageConfigurationDomain, Mockito.times(1)).getAllWeightageConfiguration(any());
+  }
+
+  @Test
+  void validateKeysExceptionTest() throws CommonServiceException {
+    List<String> keys = new ArrayList<>();
+    keys.add("");
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class, () -> weightageConfigurationService.validateKeys(keys));
+    Assertions.assertEquals("Keys cannot contain null or an empty string", exception.getMessage());
+  }
+
+  @Test
+  void createWeightageConfigurationIfAlreadyExistsTest() throws PromiseEngineException {
+    WeightageConfiguration weightageConfiguration = testUtil.getWeightageConfiguration();
+    CreateWeightageConfigurationRequest createWeightageConfigurationRequest =
+        CreateWeightageConfigurationRequest.builder()
+            .orgId(ORG_ID)
+            .type(TYPE)
+            .key(KEY)
+            .weightage(WEIGHTAGE)
+            .build();
+    when(weightageConfigurationDomain.getWeightageConfiguration(any(), any(), any()))
+        .thenReturn(weightageConfiguration);
+
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
+            weightageConfigurationService.createWeightageConfiguration(
+                testUtil.getCreateWeightageConfigurationRequest()));
+
+    verify(weightageConfigurationDomain, times(0))
+        .saveWeightageConfiguration(any(WeightageConfiguration.class));
   }
 }

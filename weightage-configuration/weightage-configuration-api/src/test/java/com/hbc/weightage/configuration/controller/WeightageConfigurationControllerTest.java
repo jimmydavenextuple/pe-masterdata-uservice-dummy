@@ -16,9 +16,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.weightage.configuration.TestUtil;
+import com.hbc.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
@@ -48,7 +50,7 @@ class WeightageConfigurationControllerTest {
   }
 
   @Test
-  void fetchWeightageTest() throws PromiseEngineException {
+  void fetchWeightageTest() throws PromiseEngineException, CommonServiceException {
     FetchWeightageRequest fetchWeightageRequest = testUtil.getFetchWeightageRequest();
     Map<String, Float> fetchWeightageResponse = testUtil.getFetchWeightageResponse();
     when(weightageConfigurationService.fetchWeightage(any(FetchWeightageRequest.class)))
@@ -63,7 +65,7 @@ class WeightageConfigurationControllerTest {
   }
 
   @Test
-  void fetchWeightageNotFoundTest() throws PromiseEngineException {
+  void fetchWeightageNotFoundTest() throws PromiseEngineException, CommonServiceException {
     FetchWeightageRequest fetchWeightageRequest = testUtil.getFetchWeightageRequest();
     when(weightageConfigurationService.fetchWeightage(any(FetchWeightageRequest.class)))
         .thenThrow(PromiseEngineException.class);
@@ -78,7 +80,7 @@ class WeightageConfigurationControllerTest {
   }
 
   @Test
-  void createWeightageConfigurationTest() throws PromiseEngineException {
+  void createWeightageConfigurationTest() throws PromiseEngineException, CommonServiceException {
     CreateWeightageConfigurationRequest createWeightageConfigurationRequest =
         testUtil.getCreateWeightageConfigurationRequest();
     WeightageConfigurationDto weightageConfigurationDto = testUtil.getWeightageConfigurationDto();
@@ -100,7 +102,8 @@ class WeightageConfigurationControllerTest {
   }
 
   @Test
-  void createWeightageConfigurationExceptionTest() throws PromiseEngineException {
+  void createWeightageConfigurationExceptionTest()
+      throws PromiseEngineException, CommonServiceException {
     CreateWeightageConfigurationRequest createWeightageConfigurationRequest =
         testUtil.getCreateWeightageConfigurationRequest();
     when(weightageConfigurationService.createWeightageConfiguration(
@@ -253,5 +256,19 @@ class WeightageConfigurationControllerTest {
         });
     verify(weightageConfigurationService, times(1))
         .deleteWeightageConfiguration(anyString(), anyString(), anyString());
+  }
+
+  @Test
+  void getWeightageCacheKeysTest() throws PromiseEngineException {
+    List<WeightageCacheKeyDto> weightageCacheKeyDtoList = testUtil.getWeightageCacheKeyDtoList();
+    when(weightageConfigurationService.getAllWeightageCacheKeys(any()))
+        .thenReturn(weightageCacheKeyDtoList);
+
+    ResponseEntity<BaseResponse<List<WeightageCacheKeyDto>>> responseEntity =
+        weightageConfigurationController.getWeightageCacheKeys(2);
+
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), STATUS_CODE);
+    assertEquals(weightageCacheKeyDtoList.size(), responseEntity.getBody().getPayload().size());
+    verify(weightageConfigurationService, times(1)).getAllWeightageCacheKeys(any());
   }
 }

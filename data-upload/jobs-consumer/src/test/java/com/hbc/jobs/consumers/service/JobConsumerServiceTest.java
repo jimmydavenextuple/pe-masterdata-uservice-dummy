@@ -1,0 +1,562 @@
+package com.hbc.jobs.consumers.service;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.hbc.jobs.consumers.common.TestUtil;
+import com.hbc.jobs.consumers.domain.JobDomain;
+import com.hbc.jobs.consumers.domain.JobRecordDomain;
+import com.hbc.jobs.consumers.domain.entity.JobEntity;
+import com.hbc.jobs.consumers.domain.entity.JobRecordEntity;
+import com.hbc.jobs.consumers.domain.mapper.JobMapper;
+import com.hbc.jobs.consumers.exception.JobDashboardException;
+import com.hbc.jobs.consumers.exception.JobDomainException;
+import com.hbc.jobs.consumers.exception.JobException;
+import com.hbc.jobs.consumers.exception.JobRecordDomainException;
+import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
+import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
+import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
+import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
+import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.CollectionUtils;
+
+class JobConsumerServiceTest {
+
+  @InjectMocks private JobConsumerService jobConsumerService;
+
+  @InjectMocks private TestUtil testUtil;
+
+  @Mock private FeignClientMapperFactory feignClientMapperFactory;
+
+  @Mock private NodeCarrierMapper nodeCarrierMapper;
+  @Mock private JobRecordDomain jobRecordDomain;
+
+  @Mock private JobDomain jobDomain;
+
+  @Mock private JobDashboardService jobDashboardService;
+
+  @BeforeEach
+  public void init() {
+    MockitoAnnotations.openMocks(this);
+    MockMvcBuilders.standaloneSetup(jobConsumerService).build();
+  }
+
+  @Nested
+  class ProcessRecord {
+
+    @Test
+    void processRecord() throws JobDashboardException {
+      RecordDto record = mock(RecordDto.class);
+      FeignClientMapper feignClientMapper = mock(FeignClientMapper.class);
+      RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
+
+      when(record.getJob()).thenReturn(mock(JobDto.class));
+      when(feignClientMapper.getResponseFromAPI(any())).thenReturn(recordStatusDto);
+      when(feignClientMapperFactory.getMapper(any())).thenReturn(feignClientMapper);
+      doNothing().when(jobDashboardService).publishJobRecord(any());
+
+      Assertions.assertDoesNotThrow(() -> jobConsumerService.processRecord(record));
+      verify(jobDashboardService, times(1)).publishJobRecord(any());
+      verify(feignClientMapperFactory, times(1)).getMapper(any());
+    }
+
+    @Test
+    void processRecordError() throws JobDashboardException {
+      RecordDto record = mock(RecordDto.class);
+      FeignClientMapper feignClientMapper = mock(FeignClientMapper.class);
+      RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
+
+      when(record.getJob()).thenReturn(mock(JobDto.class));
+      when(feignClientMapper.getResponseFromAPI(any())).thenReturn(recordStatusDto);
+      when(feignClientMapperFactory.getMapper(any())).thenReturn(feignClientMapper);
+      doThrow(RuntimeException.class).when(jobDashboardService).publishJobRecord(any());
+
+      JobException e =
+          Assertions.assertThrows(
+              JobException.class, () -> jobConsumerService.processRecord(record));
+      Assertions.assertEquals("Exception while processing the job record", e.getMessage());
+      Assertions.assertNull(e.getJobId());
+      verify(jobDashboardService, times(1)).publishJobRecord(any());
+      verify(feignClientMapperFactory, times(1)).getMapper(any());
+    }
+  }
+
+  @Test
+  void getRecordStatus() throws JobException {
+    RecordDto record = new RecordDto();
+    record.setJob(testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2));
+    when(feignClientMapperFactory.getMapper(any())).thenReturn(nodeCarrierMapper);
+    when(nodeCarrierMapper.getResponseFromAPI(any()))
+        .thenReturn(
+            testUtil.createRecordStatus(
+                TestUtil.JOB_ID,
+                TestUtil.ORG_ID,
+                ApiStatusEnum.SUCCESS,
+                HttpStatus.OK,
+                "",
+                JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+                2));
+
+    jobConsumerService.processRecord(record);
+
+    verify(feignClientMapperFactory, times(1)).getMapper(any());
+    verify(nodeCarrierMapper, times(1)).getResponseFromAPI(any());
+  }
+
+  @Test
+  void getRecordStatusInvalidJobType() {
+    RecordDto record = new RecordDto();
+    record.setJob(testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2));
+    when(feignClientMapperFactory.getMapper(any())).thenReturn(null);
+
+    Exception exception =
+        Assertions.assertThrows(JobException.class, () -> jobConsumerService.processRecord(record));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Nested
+  class UpdateJobStatus {
+
+    @Test
+    void updateJobStatus() throws JobRecordDomainException, JobException {
+      JobConsumerService jobConsumerService =
+          spy(
+              new JobConsumerService(
+                  feignClientMapperFactory, jobRecordDomain, jobDomain, jobDashboardService));
+
+      doNothing().when(jobConsumerService).updateJob(any(), anyInt());
+      JobRecordEntity jobRecordEntity = mock(JobRecordEntity.class);
+      RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
+
+      when(jobRecordDomain.create(any())).thenReturn(jobRecordEntity);
+
+      Assertions.assertDoesNotThrow(() -> jobConsumerService.updateJobStatus(recordStatusDto));
+      verify(jobRecordDomain, times(1)).create(any());
+    }
+
+    @Test
+    void updateJobStatusError() throws JobRecordDomainException {
+      RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
+
+      when(jobRecordDomain.create(any())).thenThrow(RuntimeException.class);
+
+      JobException e =
+          Assertions.assertThrows(
+              JobException.class, () -> jobConsumerService.updateJobStatus(recordStatusDto));
+      Assertions.assertEquals("Exception while persisting the job record", e.getMessage());
+      Assertions.assertNull(e.getJobId());
+      verify(jobRecordDomain, times(1)).create(any());
+    }
+  }
+
+  @Nested
+  class GetJobResults {
+
+    @Test
+    void getJobResultsSuccess() throws JobException {
+
+      String jobId = "JobId1";
+      Optional<String> status = Optional.of(ApiStatusEnum.valueOf("SUCCESS").toString());
+
+      List<RecordStatusDto> recordStatusDtoList =
+          testUtil.createRecordStatusDtoList(TestUtil.ORG_ID);
+      when(jobRecordDomain.findConsumerJobsByJobParam(TestUtil.ORG_ID, jobId, status))
+          .thenReturn(recordStatusDtoList);
+      List<RecordStatusDto> pageResponse =
+          jobConsumerService.getJobResults(TestUtil.ORG_ID, jobId, status);
+
+      Assertions.assertFalse(CollectionUtils.isEmpty(pageResponse));
+      verify(jobRecordDomain, times(1)).findConsumerJobsByJobParam(any(), any(), any());
+    }
+
+    @Test
+    void getJobResultsRuntimeException() {
+      Optional<String> status = Optional.of(ApiStatusEnum.valueOf("SUCCESS").toString());
+      when(jobRecordDomain.findConsumerJobsByJobParam(any(), any(), any()))
+          .thenThrow(new RuntimeException());
+
+      JobException exception =
+          Assertions.assertThrows(
+              JobException.class,
+              () -> jobConsumerService.getJobResults(TestUtil.ORG_ID, "JobId1", status));
+
+      Assertions.assertEquals(
+          "Exception while retrieving the job records", exception.getMessage(), "Expected Error");
+
+      Assertions.assertEquals("JobId1", exception.getJobId(), "Expected jobId");
+    }
+  }
+
+  @Nested
+  class CreateJob {
+
+    @Test
+    void createJobSuccess() throws JobDomainException, JobException {
+      JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      when(jobDomain.findJobByJobIdAndOrgId(job.getJobId(), TestUtil.ORG_ID)).thenReturn(null);
+
+      when(jobDomain.save(any())).thenReturn(jobEntity);
+
+      JobDto job1 = jobConsumerService.createJob(job);
+
+      Assertions.assertEquals(jobEntity.getJobId(), job1.getJobId(), "JobId");
+    }
+
+    @Test
+    void createJobExists() throws JobDomainException {
+      JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      when(jobDomain.findJobByJobIdAndOrgId(job.getJobId(), TestUtil.ORG_ID)).thenReturn(jobEntity);
+
+      JobException exception =
+          Assertions.assertThrows(JobException.class, () -> jobConsumerService.createJob(job));
+
+      Assertions.assertEquals(
+          "Exception while creating the job ", exception.getMessage(), "Expected Error");
+    }
+
+    @Test
+    void createJobException() throws JobDomainException {
+      JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      when(jobDomain.findJobByJobIdAndOrgId(any(), any())).thenThrow(new RuntimeException());
+
+      JobException exception =
+          Assertions.assertThrows(JobException.class, () -> jobConsumerService.createJob(job));
+
+      Assertions.assertEquals(
+          "Exception while creating the job ", exception.getMessage(), "Expected Error");
+
+      Assertions.assertEquals(job.getJobId(), exception.getJobId(), "Expected JobId");
+    }
+  }
+
+  @Test
+  void saveJob() throws JobDomainException {
+    when(jobDomain.save(any()))
+        .thenReturn(testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
+
+    JobEntity jobEntity =
+        jobConsumerService.saveJob(testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
+    Assertions.assertNotNull(jobEntity);
+    verify(jobDomain, times(1)).save(any());
+  }
+
+  @Nested
+  class GetJob {
+
+    @Test
+    void getJobSuccess() throws JobDomainException, JobException {
+      JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      JobEntity jobEntity = JobMapper.INSTANCE.toJobEntity(job);
+      when(jobDomain.findJobByJobIdAndOrgId(job.getJobId(), TestUtil.ORG_ID)).thenReturn(jobEntity);
+
+      JobDto job1 = jobConsumerService.getJob(job.getJobId(), TestUtil.ORG_ID);
+
+      Assertions.assertEquals(job.getJobId(), job1.getJobId(), "JobId");
+    }
+
+    @Test
+    void getJobNotFound() throws JobDomainException {
+      JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      when(jobDomain.findJobByJobIdAndOrgId(job.getJobId(), TestUtil.ORG_ID)).thenReturn(null);
+
+      JobException exception =
+          Assertions.assertThrows(
+              JobException.class, () -> jobConsumerService.getJob(job.getJobId(), TestUtil.ORG_ID));
+
+      Assertions.assertEquals(
+          "Exception while retrieving the job by jobId",
+          exception.getMessage(),
+          "Exception message");
+
+      Assertions.assertEquals(job.getJobId(), exception.getJobId(), "Job Id");
+    }
+
+    @Test
+    void getJobException() throws JobDomainException {
+      JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      when(jobDomain.findJobByJobIdAndOrgId(any(), any())).thenThrow(new RuntimeException());
+
+      JobException exception =
+          Assertions.assertThrows(
+              JobException.class, () -> jobConsumerService.getJob(job.getJobId(), TestUtil.ORG_ID));
+
+      Assertions.assertEquals(
+          "Exception while retrieving the job by jobId",
+          exception.getMessage(),
+          "Exception message");
+
+      Assertions.assertEquals(job.getJobId(), exception.getJobId(), "Exception message");
+    }
+  }
+
+  @Nested
+  class GetJobs {
+
+    @Test
+    void getJobsSuccess() throws JobException {
+
+      int pageNo = 1;
+      int pageSize = 2;
+
+      List<JobDto> jobDtoList = testUtil.createJobDtoList();
+      Page<JobDto> page = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
+      when(jobDomain.findJobsByJobParam(any(), any(), any(), any(), any(), anyInt(), anyInt()))
+          .thenReturn(page);
+
+      Page<JobDto> pageResponse =
+          jobConsumerService.getJobs(
+              TestUtil.ORG_ID,
+              Optional.empty(),
+              Optional.of(2),
+              TestUtil.DEFAULT_SORT_FIELD.orElse(""),
+              TestUtil.DEFAULT_SORT_ORDER.orElse(""),
+              pageNo,
+              pageSize);
+
+      Assertions.assertEquals(2, pageResponse.getTotalPages(), "Pagination Total pages");
+      Assertions.assertEquals(jobDtoList, pageResponse.getContent(), "Paginated Jobs ");
+      verify(jobDomain, times(1))
+          .findJobsByJobParam(any(), any(), any(), any(), any(), anyInt(), anyInt());
+    }
+
+    @Test
+    void getJobsRuntimeException() {
+      when(jobDomain.findJobsByJobParam(any(), any(), any(), any(), any(), anyInt(), anyInt()))
+          .thenThrow(new RuntimeException());
+
+      JobException exception =
+          Assertions.assertThrows(
+              JobException.class,
+              () ->
+                  jobConsumerService.getJobs(
+                      TestUtil.ORG_ID,
+                      Optional.empty(),
+                      Optional.of(2),
+                      TestUtil.DEFAULT_SORT_FIELD.orElse(""),
+                      TestUtil.DEFAULT_SORT_ORDER.orElse(""),
+                      2,
+                      5));
+
+      Assertions.assertEquals(
+          "Exception while retrieving the list of jobs", exception.getMessage(), "Expected Error");
+
+      Assertions.assertEquals(2, exception.getPageNo().intValue(), "Expected pageNo");
+    }
+  }
+
+  @Nested
+  class UpdateJob {
+
+    @Test
+    void updateJobSuccess() throws Exception {
+      JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      jobEntity.setJobId(TestUtil.JOB_ID);
+      jobEntity.setStatus(JobStatusEnum.PROCESSED);
+      RecordStatusDto recordStatus =
+          testUtil.createRecordStatus(
+              TestUtil.JOB_ID,
+              TestUtil.ORG_ID,
+              ApiStatusEnum.SUCCESS,
+              HttpStatus.OK,
+              null,
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+              2);
+      when(jobDomain.save(any())).thenReturn(jobEntity);
+      when(jobDomain.findJobByJobIdAndOrgId(any(), any())).thenReturn(jobEntity);
+      jobConsumerService.updateJob(recordStatus, jobEntity.getTotalRecords());
+
+      AuditLog auditLog = new AuditLog();
+      auditLog.setStatus(JobStatusEnum.RUNNING);
+      jobEntity.setStatus(JobStatusEnum.RUNNING);
+
+      JobEntity updatedJobEntity =
+          testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      updatedJobEntity.setJobId(TestUtil.JOB_ID);
+      updatedJobEntity.setSuccessCount(1);
+      updatedJobEntity.setProcessedRecords(1);
+      updatedJobEntity.setStatus(JobStatusEnum.RUNNING);
+      List<AuditLog> oldAuditLog = new ArrayList<>(Arrays.asList(jobEntity.getAuditLog()));
+      oldAuditLog.add(auditLog);
+      updatedJobEntity.setAuditLog(oldAuditLog.toArray(new AuditLog[0]));
+
+      when(jobDomain.save(any(JobEntity.class)))
+          .thenAnswer(
+              je -> {
+                JobEntity actualJobEntity = je.getArgument(0);
+                Assertions.assertEquals(
+                    updatedJobEntity.getJobId(), actualJobEntity.getJobId(), "Job Id");
+                Assertions.assertEquals(
+                    updatedJobEntity.getSuccessCount(),
+                    actualJobEntity.getSuccessCount(),
+                    "Success count");
+                Assertions.assertEquals(
+                    updatedJobEntity.getProcessedRecords(),
+                    actualJobEntity.getProcessedRecords(),
+                    "Total processed records");
+                Assertions.assertEquals(
+                    updatedJobEntity.getStatus(), actualJobEntity.getStatus(), "Status");
+                Assertions.assertEquals(
+                    updatedJobEntity.getAuditLog().length,
+                    actualJobEntity.getAuditLog().length,
+                    "Audit log length");
+                return actualJobEntity;
+              });
+      verify(jobDomain, times(1)).save(any());
+    }
+
+    @Test
+    void updateJobRecordStatusFailure() throws JobDomainException {
+      RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
+      int retryCount = 5;
+      JobEntity jobEntity = mock(JobEntity.class);
+
+      when(recordStatusDto.getStatus()).thenReturn(ApiStatusEnum.FAILURE);
+      when(jobEntity.getFailureCount()).thenReturn(2);
+      when(jobEntity.getProcessedRecords()).thenReturn(3);
+      when(jobEntity.getTotalRecords()).thenReturn(3);
+      when(jobDomain.findJobByJobIdAndOrgId(any(), any())).thenReturn(jobEntity);
+      when(jobDomain.save(any())).thenReturn(jobEntity);
+      when(jobDomain.save(any())).thenReturn(null);
+
+      Assertions.assertThrows(
+          JobException.class, () -> jobConsumerService.updateJob(recordStatusDto, retryCount));
+    }
+
+    @Test
+    void updateJobValidateAuditLogs() throws Exception {
+      JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      jobEntity.setJobId(TestUtil.JOB_ID);
+      jobEntity.setStatus(JobStatusEnum.RUNNING);
+      RecordStatusDto recordStatus =
+          testUtil.createRecordStatus(
+              TestUtil.JOB_ID,
+              TestUtil.ORG_ID,
+              ApiStatusEnum.SUCCESS,
+              HttpStatus.OK,
+              null,
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+              2);
+      when(jobDomain.save(any())).thenReturn(jobEntity);
+      when(jobDomain.findJobByJobIdAndOrgId(any(), any())).thenReturn(jobEntity);
+      jobConsumerService.updateJob(recordStatus, jobEntity.getTotalRecords());
+
+      jobEntity.setStatus(JobStatusEnum.RUNNING);
+
+      JobEntity updatedJobEntity =
+          testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      updatedJobEntity.setJobId(TestUtil.JOB_ID);
+      updatedJobEntity.setSuccessCount(1);
+      updatedJobEntity.setProcessedRecords(1);
+      updatedJobEntity.setStatus(JobStatusEnum.RUNNING);
+
+      when(jobDomain.save(any(JobEntity.class)))
+          .thenAnswer(
+              je -> {
+                JobEntity actualJobEntity = je.getArgument(0);
+                Assertions.assertEquals(
+                    updatedJobEntity.getJobId(), actualJobEntity.getJobId(), "Job Id");
+                Assertions.assertEquals(
+                    updatedJobEntity.getSuccessCount(),
+                    actualJobEntity.getSuccessCount(),
+                    "Success count");
+                Assertions.assertEquals(
+                    updatedJobEntity.getProcessedRecords(),
+                    actualJobEntity.getProcessedRecords(),
+                    "Total processed records");
+                Assertions.assertEquals(
+                    updatedJobEntity.getStatus(), actualJobEntity.getStatus(), "Status");
+                Assertions.assertEquals(
+                    updatedJobEntity.getAuditLog().length,
+                    actualJobEntity.getAuditLog().length,
+                    "Audit log length");
+                return actualJobEntity;
+              });
+      verify(jobDomain, times(1)).save(any());
+    }
+
+    @Test
+    void updateJobDocumentVersionError() throws JobDomainException {
+      JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      jobEntity.setJobId(TestUtil.JOB_ID);
+      RecordStatusDto recordStatus =
+          testUtil.createRecordStatus(
+              TestUtil.JOB_ID,
+              TestUtil.ORG_ID,
+              ApiStatusEnum.SUCCESS,
+              HttpStatus.OK,
+              null,
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+              2);
+
+      Exception r =
+          new OptimisticLockingFailureException(
+              "org.springframework.dao.OptimisticLockingFailureException: Cannot save \" +\n"
+                  + "                \"entity %s with version 1 to collection JOB. Has it been modified meanwhile?");
+
+      when(jobDomain.findJobByJobIdAndOrgId(jobEntity.getJobId(), jobEntity.getOrgId()))
+          .thenReturn(jobEntity);
+
+      when(jobDomain.save(any()))
+          .thenThrow(new OptimisticLockingFailureException("Document version " + "different", r));
+
+      JobException exception =
+          Assertions.assertThrows(
+              JobException.class,
+              () -> jobConsumerService.updateJob(recordStatus, jobEntity.getTotalRecords()));
+
+      Assertions.assertEquals(
+          "Attempt to update job with wrong version", exception.getMessage(), "Expected Error");
+    }
+
+    @Test
+    void updateJobException() throws JobDomainException {
+      JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      jobEntity.setJobId(TestUtil.JOB_ID);
+      RecordStatusDto recordStatus =
+          testUtil.createRecordStatus(
+              TestUtil.JOB_ID,
+              TestUtil.ORG_ID,
+              ApiStatusEnum.SUCCESS,
+              HttpStatus.OK,
+              null,
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+              2);
+      when(jobDomain.save(any())).thenThrow(new RuntimeException());
+
+      JobException exception =
+          Assertions.assertThrows(
+              JobException.class,
+              () -> jobConsumerService.updateJob(recordStatus, jobEntity.getTotalRecords()));
+
+      Assertions.assertEquals(
+          "Exception while updating job entity", exception.getMessage(), "Expected Error");
+    }
+  }
+}

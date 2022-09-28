@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.util.CollectionUtils;
 
 class TransitDomainTest {
 
@@ -180,5 +181,95 @@ class TransitDomainTest {
 
     verify(transitRepository, times(1))
         .findByOrgIdAndDestinationGeozoneAndSourceGeoZones(any(), any(), any());
+  }
+
+  @Test
+  void fetchTransitEntitiesCountTest() throws TransitDomainException {
+    when(transitRepository.findTransitCountByOrgIdAndCarrierServiceId(any(), any())).thenReturn(2);
+
+    Integer transitEntitiesCount =
+        transitDomain.fetchTransitEntitiesCount(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertEquals(2, transitEntitiesCount);
+    verify(transitRepository, times(1)).findTransitCountByOrgIdAndCarrierServiceId(any(), any());
+  }
+
+  @Test
+  void fetchTransitEntitiesCountTestException() throws TransitDomainException {
+    when(transitRepository.findTransitCountByOrgIdAndCarrierServiceId(any(), any()))
+        .thenThrow(new RuntimeException("Error while fetching transit entities count"));
+
+    Exception exception =
+        assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitDomain.fetchTransitEntitiesCount(
+                    TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+
+    Assertions.assertEquals("Error while fetching transit entities count", exception.getMessage());
+    verify(transitRepository, times(1)).findTransitCountByOrgIdAndCarrierServiceId(any(), any());
+  }
+
+  @Test
+  void getListOfTransitDetailsForDestinationGeoZoneTest() throws TransitDomainException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    when(transitRepository.findByOrgIdAndDestinationGeozone(any(), any()))
+        .thenReturn(List.of(transitEntity));
+
+    List<TransitEntity> transitEntityList =
+        transitDomain.fetchTransitListForDestinationGeoZone(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
+    Assertions.assertEquals(transitEntity, transitEntityList.get(0));
+
+    verify(transitRepository, times(1)).findByOrgIdAndDestinationGeozone(any(), any());
+  }
+
+  @Test
+  void getListOfTransitDetailsForDestinationGeoZoneTestException() {
+    when(transitRepository.findByOrgIdAndDestinationGeozone(any(), any()))
+        .thenThrow(new RuntimeException("Error while fetching transit list"));
+
+    Exception exception =
+        assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitDomain.fetchTransitListForDestinationGeoZone(
+                    TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE));
+    Assertions.assertEquals("Error while fetching transit list", exception.getMessage());
+
+    verify(transitRepository, times(1)).findByOrgIdAndDestinationGeozone(any(), any());
+  }
+
+  @Test
+  void fetchTransitListForDestinationGeoZones() throws TransitDomainException {
+    when(transitRepository.findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE)))
+        .thenReturn(List.of(testUtil.getTransitEntities(TestUtil.CARRIER_SERVICE_ID)));
+
+    List<TransitEntity> transitEntities =
+        transitDomain.fetchTransitListForDestinationGeoZones(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE));
+    Assertions.assertFalse(CollectionUtils.isEmpty(transitEntities));
+    verify(transitRepository, times(1))
+        .findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(any(), any(), any());
+  }
+
+  @Test
+  void fetchTransitListForDestinationGeoZonesException() throws TransitDomainException {
+    when(transitRepository.findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE)))
+        .thenThrow(new RuntimeException("Error while fetching transit entities"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitDomain.fetchTransitListForDestinationGeoZones(
+                    TestUtil.ORG_ID,
+                    TestUtil.CARRIER_SERVICE_ID,
+                    List.of(TestUtil.DESTINATION_GEOZONE)));
+    Assertions.assertNotNull(exception);
+    verify(transitRepository, times(1))
+        .findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(any(), any(), any());
   }
 }

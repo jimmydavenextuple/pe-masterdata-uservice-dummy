@@ -2,8 +2,11 @@ package com.hbc.transit.controller;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
+import com.hbc.transit.domain.inbound.TransitDetailsRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.transit.exception.TransitDomainException;
 import com.hbc.transit.service.TransitService;
@@ -36,7 +39,7 @@ public class TransitController {
   @PostMapping
   public ResponseEntity<BaseResponse<TransitResponse>> addTransitData(
       @Valid @RequestBody TransitDataCreationRequest transitDataCreationRequest)
-      throws TransitDomainException {
+      throws TransitDomainException, CommonServiceException {
     logger.debug("Processing transit data creation request");
     try {
       var transitResponse = transitService.addTransitInfo(transitDataCreationRequest);
@@ -48,6 +51,25 @@ public class TransitController {
               .build());
     } catch (Exception e) {
       logger.error("Failed to add transit data");
+      throw e;
+    }
+  }
+
+  @PutMapping("/buffer")
+  public ResponseEntity<BaseResponse<TransitResponse>> updateTransitBufferDetails(
+      @Valid @RequestBody TransitBufferCreationRequest transitBufferCreationRequest)
+      throws TransitDomainException, CommonServiceException {
+    logger.debug("Processing update transit buffer data");
+    try {
+      var transitResponse = transitService.updateTransitBufferDetails(transitBufferCreationRequest);
+      logger.info("Response after updation of transit buffer details :{}", transitResponse);
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Transit details updated successfully")
+              .payload(transitResponse)
+              .build());
+    } catch (Exception e) {
+      logger.error("Failed to update transit buffer details");
       throw e;
     }
   }
@@ -156,5 +178,52 @@ public class TransitController {
       logger.error("Failed to fetch transit details list");
       throw e;
     }
+  }
+
+  @GetMapping("/transit-entries/{orgId}/{carrierServiceId}")
+  public ResponseEntity<BaseResponse<TransitTimeEntriesDto>> getTransitTimeEntries(
+      @PathVariable String orgId, @PathVariable String carrierServiceId)
+      throws TransitDomainException {
+    logger.debug("Processing get transit time entries");
+    var transitTimeEntriesDto = transitService.getTransitTimeEntries(orgId, carrierServiceId);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Transit time entries fetched successfully")
+            .payload(transitTimeEntriesDto)
+            .build());
+  }
+
+  @GetMapping("/batch-transit/{orgId}/{destinationGeozone}")
+  public BaseResponse<List<TransitResponse>> getTransitDetailsListForDestinationGeoZone(
+      @NotBlank @PathVariable String orgId, @NotBlank @PathVariable String destinationGeozone)
+      throws TransitDomainException, CommonServiceException {
+    logger.debug("Processing get transit details list");
+    try {
+      return BaseResponse.builder()
+          .payload(
+              transitService.getListOfTransitDetailsForDestinationGeoZone(
+                  orgId, destinationGeozone))
+          .build();
+    } catch (Exception e) {
+      logger.error("Failed to fetch transit details list");
+      throw e;
+    }
+  }
+
+  @PostMapping("/transit-entries/{orgId}/{carrierServiceId}/geozones")
+  public ResponseEntity<BaseResponse<List<TransitResponse>>>
+      getTransitTimeDetailsForDestinationGeoZonesList(
+          @PathVariable String orgId,
+          @PathVariable String carrierServiceId,
+          @RequestBody TransitDetailsRequest transitDetailsRequest)
+          throws TransitDomainException {
+    logger.debug("Processing get transit time entries");
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Transit time entries fetched successfully")
+            .payload(
+                transitService.getTransitDetailsForDestinationGeozones(
+                    orgId, carrierServiceId, transitDetailsRequest.getDestinationGeozones()))
+            .build());
   }
 }

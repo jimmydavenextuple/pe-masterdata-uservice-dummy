@@ -1,7 +1,9 @@
 package com.hbc.weightage.configuration.controller;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
@@ -28,7 +30,8 @@ public class WeightageConfigurationController {
 
   @PostMapping
   public ResponseEntity<BaseResponse<Map<String, Float>>> fetchWeightage(
-      @Valid @RequestBody FetchWeightageRequest baseRequest) throws PromiseEngineException {
+      @Valid @RequestBody FetchWeightageRequest baseRequest)
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("Processing fetch Weightage request");
     try {
       return ResponseEntity.ok(
@@ -45,7 +48,7 @@ public class WeightageConfigurationController {
   @PostMapping("/create")
   public ResponseEntity<BaseResponse<WeightageConfigurationDto>> createWeightageConfiguration(
       @Valid @RequestBody CreateWeightageConfigurationRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("Processing create Weightage Configuration request");
     try {
       var weightageConfigurationDto =
@@ -146,5 +149,19 @@ public class WeightageConfigurationController {
       logger.error("Failed to process delete Weightage Configuration request!");
       throw e;
     }
+  }
+
+  @GetMapping("/get-all-cache-keys")
+  public ResponseEntity<BaseResponse<List<WeightageCacheKeyDto>>> getWeightageCacheKeys(
+      @RequestParam Integer limit) throws PromiseEngineException {
+    logger.debug("Processing get Weightage Cache Keys");
+
+    var response = weightageConfigurationService.getAllWeightageCacheKeys(limit);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Weightage Cache Keys fetched successfully")
+            .payload(response)
+            .build());
   }
 }

@@ -290,7 +290,7 @@ public class DateUtil {
    * @return
    */
   public static Date getDateNow() {
-    Calendar time = Calendar.getInstance();
+    var time = Calendar.getInstance();
     time.add(Calendar.MILLISECOND, -time.getTimeZone().getOffset(time.getTimeInMillis()));
     return time.getTime();
   }
@@ -302,7 +302,7 @@ public class DateUtil {
    * @return
    */
   public static Date addMinutesToCurrentDate(int toAddMinutes) {
-    DateTime dt = new DateTime();
+    var dt = new DateTime();
     DateTime added = dt.plusMinutes(toAddMinutes);
 
     return added.toDate();
@@ -315,7 +315,7 @@ public class DateUtil {
    * @return
    */
   public static Date addHoursToCurrentDate(int toAddHours) {
-    DateTime dt = new DateTime();
+    var dt = new DateTime();
     DateTime added = dt.plusHours(toAddHours);
 
     return added.toDate();
@@ -328,7 +328,7 @@ public class DateUtil {
    * @return
    */
   public static Date addDaysToCurrentDate(int toAddDays) {
-    DateTime dt = new DateTime();
+    var dt = new DateTime();
     DateTime added = dt.plusDays(toAddDays);
 
     return added.toDate();
@@ -344,7 +344,7 @@ public class DateUtil {
     if (Objects.isNull(toAddMinutes)) {
       return dt;
     }
-    DateTime jodaTime = new DateTime(dt);
+    var jodaTime = new DateTime(dt);
     DateTime added = jodaTime.plusMinutes(toAddMinutes);
 
     return added.toDate();
@@ -357,7 +357,7 @@ public class DateUtil {
    * @return
    */
   public static Date addHoursToDate(Date dt, int toAddHours) {
-    DateTime jodaTime = new DateTime(dt);
+    var jodaTime = new DateTime(dt);
     DateTime added = jodaTime.plusHours(toAddHours);
 
     return added.toDate();
@@ -370,7 +370,7 @@ public class DateUtil {
    * @return
    */
   public static Date addDaysToDate(Date dt, int toAddDays) {
-    DateTime jodaTime = new DateTime(dt);
+    var jodaTime = new DateTime(dt);
     DateTime added = jodaTime.plusDays(toAddDays);
 
     return added.toDate();
@@ -417,7 +417,7 @@ public class DateUtil {
    * @return
    */
   public static Date convertDateToTimeZone(Date date, String timeZone) {
-    SimpleDateFormat sdf = new SimpleDateFormat(LONG_DATE_FORMAT);
+    var sdf = new SimpleDateFormat(LONG_DATE_FORMAT);
     sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
     return getDateByFormat(sdf.format(date), SHORT_DATE_FORMAT);
   }
@@ -430,8 +430,8 @@ public class DateUtil {
    * @return
    */
   public static Date convertDateAndTimeToTimeZone(Date date, String timeZone) {
-    DateTime dt = new DateTime(date);
-    DateTimeZone dtZone = DateTimeZone.forID(timeZone);
+    var dt = new DateTime(date);
+    var dtZone = DateTimeZone.forID(timeZone);
     DateTime dtus = dt.withZone(dtZone);
     return dtus.toLocalDateTime().toDate();
   }
@@ -449,7 +449,7 @@ public class DateUtil {
    */
   public static Date getUTCTimeInDate(
       int year, int month, int day, int hours, int minutes, String timeZone) {
-    DateTime dt = new DateTime(year, month, day, hours, minutes, DateTimeZone.forID(timeZone));
+    var dt = new DateTime(year, month, day, hours, minutes, DateTimeZone.forID(timeZone));
     return dt.toDate();
   }
 
@@ -465,10 +465,10 @@ public class DateUtil {
   }
 
   public static Date convertZoneDateTime(String date, String time, String zone) {
-    java.time.LocalDate localDate = java.time.LocalDate.parse(date);
-    java.time.LocalTime localTime = java.time.LocalTime.parse(time);
-    ZoneId timeZone = ZoneId.of(zone);
-    ZonedDateTime zonedDateTime = ZonedDateTime.of(localDate, localTime, timeZone);
+    var localDate = java.time.LocalDate.parse(date);
+    var localTime = java.time.LocalTime.parse(time);
+    var timeZone = ZoneId.of(zone);
+    var zonedDateTime = ZonedDateTime.of(localDate, localTime, timeZone);
     return Date.from(java.time.Instant.from(zonedDateTime));
   }
 
@@ -487,7 +487,7 @@ public class DateUtil {
    * @return
    */
   public static String convertDateShortForm(Date dt1) {
-    String val = "";
+    var val = "";
     if (dt1 != null) {
       DateFormat df = new SimpleDateFormat(SHORT_DATE_FORMAT);
       val = df.format(dt1);
@@ -502,7 +502,7 @@ public class DateUtil {
    * @return
    */
   public static String convertDateLongForm(Date dt1) {
-    String val = "";
+    var val = "";
     if (dt1 != null) {
       DateFormat df = new SimpleDateFormat(LONG_DATE_FORMAT);
       val = df.format(dt1);
@@ -517,7 +517,7 @@ public class DateUtil {
    * @return
    */
   public static String convertDateLongFormUTC(Date dt1) {
-    String val = "";
+    var val = "";
     if (dt1 != null) {
       DateFormat df = new SimpleDateFormat(LONG_DATE_FORMAT_UTC);
       df.setTimeZone(TimeZone.getTimeZone(UTC_FORMAT));
@@ -562,7 +562,7 @@ public class DateUtil {
    */
   public static String getUTCTimeInString(
       int year, int month, int day, int hours, int minutes, String timeZone) {
-    DateTime dt = new DateTime(year, month, day, hours, minutes, DateTimeZone.forID(timeZone));
+    var dt = new DateTime(year, month, day, hours, minutes, DateTimeZone.forID(timeZone));
     DateFormat dateFormat = new SimpleDateFormat(LONG_DATE_FORMAT);
     dateFormat.setTimeZone(TimeZone.getTimeZone(UTC_FORMAT));
     return dateFormat.format(dt.toDate());
@@ -575,7 +575,7 @@ public class DateUtil {
    * @return
    */
   public static String getUTCTimeInString(long time) {
-    DateTime dt = new DateTime(time);
+    var dt = new DateTime(time);
     DateFormat dateFormat = new SimpleDateFormat(LONG_DATE_FORMAT);
     dateFormat.setTimeZone(TimeZone.getTimeZone(UTC_FORMAT));
     return dateFormat.format(dt.toDate());
@@ -594,7 +594,7 @@ public class DateUtil {
    */
   public static String getLocalTimeFormatWithOffset(
       int year, int month, int day, int hours, int minutes, String timeZone) {
-    DateTime dt = new DateTime(year, month, day, hours, minutes, DateTimeZone.forID(timeZone));
+    var dt = new DateTime(year, month, day, hours, minutes, DateTimeZone.forID(timeZone));
     DateFormat dateFormat = new SimpleDateFormat(LONG_DATE_FORMAT);
     dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
     return dateFormat.format(dt.toDate());
@@ -607,7 +607,7 @@ public class DateUtil {
    * @return
    */
   public static Date minusHoursFromCurrentDate(int minusHours) {
-    DateTime dt = new DateTime();
+    var dt = new DateTime();
     DateTime added = dt.minusHours(minusHours);
 
     return added.toDate();
@@ -621,8 +621,8 @@ public class DateUtil {
    * @return
    */
   public static LocalDateTime convertDateAndTime(String date, String time) {
-    LocalDate datePart = LocalDate.parse(date);
-    LocalTime timePart = LocalTime.parse(time);
+    var datePart = LocalDate.parse(date);
+    var timePart = LocalTime.parse(time);
 
     return new LocalDateTime(
         datePart.getYear(),
@@ -679,8 +679,8 @@ public class DateUtil {
    * @return time to live in milliseconds
    */
   public static long getTTLFromNowInMilliSec(String date, int daysToLive) {
-    Date ttlDate = DateUtil.addDaysToDate(DateUtil.getDate(date), daysToLive);
-    Date currentDate = DateUtil.getCurrentDate();
+    var ttlDate = DateUtil.addDaysToDate(DateUtil.getDate(date), daysToLive);
+    var currentDate = DateUtil.getCurrentDate();
     long ttl = ttlDate.getTime() - currentDate.getTime();
     if (ttl < 0) return 0;
     return ttl;
@@ -694,7 +694,7 @@ public class DateUtil {
    * @return
    */
   public static String getDecimalByPattern(String pattern, int decimal) {
-    DecimalFormat formatter = new DecimalFormat(pattern);
+    var formatter = new DecimalFormat(pattern);
 
     return formatter.format(decimal);
   }

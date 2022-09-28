@@ -10,7 +10,13 @@ public class DataUploadUtilityConstants {
   public static final String DELETE = "DELETE";
   public static final String ACTION = "action";
   public static final String ORG_ID = "orgId";
+  public static final String UPDATE_ACTION = "U";
+  public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+  public static final String UPDATE_U = "U";
+  public static final String DELETE_D = "D";
   public static final String CARRIER_SERVICE_ID = "carrierServiceId";
+  public static final String CARRIER_SERVICE = "Carrier Service:";
+  public static final String SOURCE_AND_DESTINATION_GEO_ZONE = "Destination FSA / Source FSA ->";
   public static final String NODE_ID = "nodeId";
   public static final String SERVICE_OPTION = "serviceOption";
   public static final String PROCESSING_TIME = "processingTime";
@@ -30,6 +36,7 @@ public class DataUploadUtilityConstants {
   public static final String SHIP_TO_HOME = "shipToHome";
   public static final String SDND_ELIGIBLE = "sdndEligible";
   public static final String BOPIS_ELIGIBLE = "bopisEligible";
+  public static final String NEXTDAY_ELIGIBLE = "nextdayEligible";
   public static final String EXPRESS_ELIGIBLE = "expressEligible";
   public static final String NODE_TYPE = "nodeType";
   public static final String IS_ACTIVE = "isActive";
@@ -59,4 +66,11 @@ public class DataUploadUtilityConstants {
   public static final String EFFECTIVE_DATE = "effectiveDate";
   public static final String SHIPPING_STAGE = "shippingStage";
   public static final String ACTION_INVALID_MESSAGE = "action type invalid";
+  public static final String BUFFER_HOURS = "bufferHours";
+  public static final String START_TIME = "startTime";
+  public static final String END_TIME = "endTime";
+  public static final String BUFFER_DAYS = "bufferDays";
+  public static final String SELECTION_CRITERIA = "selectionCriteria";
+
+  public static final String INVALID_SELECTION_CRITERIA = "Invalid selection criteria";
 }

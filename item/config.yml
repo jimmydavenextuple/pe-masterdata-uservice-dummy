@@ -6,19 +6,19 @@ server:
       resources:
         min:
           memory: "512Mi"
-          cpu: "256m"
+          cpu: "100m"
         max:
           memory: "512Mi"
-          cpu: "256m"
+          cpu: "2000m"
     qa:
       replicas: 1
       resources:
         min:
           memory: "512Mi"
-          cpu: "256m"
+          cpu: "100m"
         max:
           memory: "512Mi"
-          cpu: "256m"
+          cpu: "2000m"
     stage:
       replicas: 3
       resources:
@@ -37,16 +37,16 @@ server:
           cpu: "1000m"
         max:
           memory: "2048Mi"
-          cpu: "1000m"
+          cpu: "2000m"
     hotfix:
       replicas: 1
       resources:
         min:
           memory: "512Mi"
-          cpu: "256m"
+          cpu: "100m"
         max:
           memory: "512Mi"
-          cpu: "256m"
+          cpu: "2000m"
     prod:
       java-opts: "-Xms1536m -Xmx1536m"
       replicas: 3
@@ -56,4 +56,4 @@ server:
           cpu: "1000m"
         max:
           memory: "2048Mi"
-          cpu: "1000m"
+          cpu: "2000m"

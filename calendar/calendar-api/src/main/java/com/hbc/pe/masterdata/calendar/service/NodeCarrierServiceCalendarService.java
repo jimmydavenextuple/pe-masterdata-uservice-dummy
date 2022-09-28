@@ -1,26 +1,34 @@
 package com.hbc.pe.masterdata.calendar.service;
 
+import com.hbc.calendar.domain.dto.NodeCarrierCalendarCacheKeyDto;
 import com.hbc.calendar.domain.inbound.NodeCarrierServiceCalendarRequest;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.node.domain.feign.NodeFeign;
+import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.NodeCarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
+import com.hbc.pe.masterdata.calendar.domain.repository.NodeCarrierServiceCalendarRepository;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -35,9 +43,15 @@ public class NodeCarrierServiceCalendarService {
   private static final CalendarMapper INSTANCE = Mappers.getMapper(CalendarMapper.class);
   private final NodeCarrierServiceCalendarDomain nodeCarrierServiceCalendarDomain;
   private final CalendarDomain calendarDomain;
+  private final NodeCarrierServiceCalendarRepository nodeCarrierServiceCalendarRepository;
   private final DateValidation dateValidation;
   private static final String ORG_ID = "orgId";
   private static final String CALENDAR_ID = "calendarId";
+  private static final String NODE_ID = "nodeId";
+  private static final String CARRIER_SERVICE_ID = "carrierServiceId";
+  private static final String EFFECTIVE_DATE = "effectiveDate";
+
+  @Autowired NodeFeign nodeFeign;
 
   /** Creates a new Node Carrier Service Calendar */
   public NodeCarrierServiceCalendarResponse processCreateNodeCarrierServiceCalendarResponse(
@@ -52,8 +66,54 @@ public class NodeCarrierServiceCalendarService {
     validateCalendarId(
         nodeCarrierServiceCalendarRequest.getCalendarId(),
         nodeCarrierServiceCalendarRequest.getOrgId());
+
+    validateNodeId(
+        nodeCarrierServiceCalendarRequest.getNodeId(),
+        nodeCarrierServiceCalendarRequest.getOrgId());
     var nodeCarrierServiceCalendarEntity =
         INSTANCE.convertToNodeCarrierServiceCalendarEntity(nodeCarrierServiceCalendarRequest);
+    Optional<NodeCarrierServiceCalendarEntity> existingNodeCarrierServiceCalendarEntity =
+        nodeCarrierServiceCalendarRepository
+            .findByCalendarIdAndOrgIdAndNodeIdAndCarrierServiceIdAndEffectiveDate(
+                nodeCarrierServiceCalendarRequest.getCalendarId(),
+                nodeCarrierServiceCalendarRequest.getOrgId(),
+                nodeCarrierServiceCalendarRequest.getNodeId(),
+                nodeCarrierServiceCalendarRequest.getCarrierServiceId(),
+                nodeCarrierServiceCalendarRequest.getEffectiveDate());
+    if (existingNodeCarrierServiceCalendarEntity.isPresent()) {
+      logger.error(
+          "Node Carrier Service Calendar already exists for calendarId:{}, orgId:{}, nodeId:{}, carrierServiceId:{}, effectiveDate:{}",
+          nodeCarrierServiceCalendarEntity.getCalendarId(),
+          nodeCarrierServiceCalendarEntity.getOrgId(),
+          nodeCarrierServiceCalendarEntity.getNodeId(),
+          nodeCarrierServiceCalendarEntity.getCarrierServiceId(),
+          nodeCarrierServiceCalendarEntity.getEffectiveDate());
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          CALENDAR_ID,
+          FieldError.builder()
+              .rejectedValue(nodeCarrierServiceCalendarEntity.getCalendarId())
+              .build());
+      errorMap.put(
+          ORG_ID,
+          FieldError.builder().rejectedValue(nodeCarrierServiceCalendarEntity.getOrgId()).build());
+      errorMap.put(
+          NODE_ID,
+          FieldError.builder().rejectedValue(nodeCarrierServiceCalendarEntity.getNodeId()).build());
+      errorMap.put(
+          CARRIER_SERVICE_ID,
+          FieldError.builder().rejectedValue(nodeCarrierServiceCalendarEntity.getNodeId()).build());
+      errorMap.put(
+          EFFECTIVE_DATE,
+          FieldError.builder()
+              .rejectedValue(nodeCarrierServiceCalendarEntity.getEffectiveDate())
+              .build());
+      throw new CommonServiceException(
+          "Node Carrier Service Calendar already exists for the given details",
+          HttpStatus.BAD_REQUEST,
+          0x1772,
+          errorMap);
+    }
     var savedNodeCarrierServiceCalendarEntity =
         nodeCarrierServiceCalendarDomain.saveNodeCarrierServiceCalendarEntity(
             nodeCarrierServiceCalendarEntity);
@@ -62,6 +122,7 @@ public class NodeCarrierServiceCalendarService {
   }
 
   /** Get Node, Carrier&Service Calendar details by orgId, nodeId and carrierServiceId */
+  @ReaderDS
   public List<NodeCarrierServiceCalendarResponse> processGetNodeCarrierServiceCalendar(
       String orgId, String nodeId, String carrierServiceId, Optional<String> serviceOption)
       throws CalendarDomainException {
@@ -122,5 +183,36 @@ public class NodeCarrierServiceCalendarService {
           0x1771,
           errorMap);
     }
+  }
+
+  public void validateNodeId(String nodeId, String orgId) throws CommonServiceException {
+    try {
+      BaseResponse<NodeResponse> nodeResponse = nodeFeign.getNodeDetails(nodeId, orgId);
+
+      if (!nodeResponse.isSuccess()
+          || Objects.isNull(nodeResponse.getPayload())
+          || Boolean.FALSE.equals(nodeResponse.getPayload().getIsActive())) {
+        throw new CommonServiceException("", HttpStatus.BAD_REQUEST, 0x1772, new HashMap<>());
+      }
+    } catch (Exception e) {
+      logger.error(
+          "Cannot create a node carrier service calendar as Node id is invalid or node is inactive");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
+      throw new CommonServiceException(
+          "Cannot create a node carrier service calendar as Node id is invalid or node is inactive",
+          HttpStatus.BAD_REQUEST,
+          0x1772,
+          errorMap);
+    }
+  }
+
+  public List<NodeCarrierCalendarCacheKeyDto> getAllNodeCarrierCalendarCacheKeys(Integer limit)
+      throws CalendarDomainException {
+    List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntities =
+        nodeCarrierServiceCalendarDomain.getAllNodeCarrierServiceCalendars(limit);
+
+    return INSTANCE.convertToNodeCarrierCalendarCacheKeyDtoList(nodeCarrierServiceCalendarEntities);
   }
 }

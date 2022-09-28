@@ -5,18 +5,24 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hbc.calendar.domain.dto.NodeCalendarCacheKeyDto;
+import com.hbc.calendar.domain.inbound.NodeCalendarRequest;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.NodeCalendarDomain;
+import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
+import com.hbc.pe.masterdata.calendar.domain.repository.NodeCalendarRepository;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.util.DateValidation;
 import com.hbc.pe.masterdata.calendar.util.TestUtil;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,6 +32,7 @@ class NodeCalendarServiceTest {
 
   @Mock private NodeCalendarDomain nodeCalendarDomain;
   @Mock private CalendarDomain calendarDomain;
+  @Mock private NodeCalendarRepository nodeCalendarRepository;
   @Mock private DateValidation dateValidation;
   @InjectMocks private NodeCalendarService nodeCalendarService;
   @InjectMocks private TestUtil testUtil;
@@ -42,6 +49,9 @@ class NodeCalendarServiceTest {
         .thenReturn(testUtil.getNodeCalendarEntity());
     when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
     when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
+    when(nodeCalendarRepository.findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(
+            any(), any(), any(), any()))
+        .thenReturn(Optional.empty());
     NodeCalendarResponse resp =
         nodeCalendarService.processCreateNodeCalendar(testUtil.getNodeCalendarRequest());
 
@@ -52,6 +62,27 @@ class NodeCalendarServiceTest {
         TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.getEffectiveDate()));
     Assertions.assertEquals(TestUtil.DESCRIPTION, Objects.requireNonNull(resp.getDescription()));
     verify(nodeCalendarDomain, times(1)).saveNodeCalendarEntity(any());
+  }
+
+  @Test
+  @DisplayName("When node calendar to be created already exists")
+  void createNodeCalendarTestException() throws CalendarDomainException, CommonServiceException {
+    NodeCalendarRequest nodeCalendarRequest = testUtil.getNodeCalendarRequest();
+    when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
+    when(nodeCalendarRepository.findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(
+            any(), any(), any(), any()))
+        .thenReturn(Optional.of(testUtil.getNodeCalendarEntity()));
+
+    Exception ex =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> nodeCalendarService.processCreateNodeCalendar(nodeCalendarRequest));
+
+    Assertions.assertEquals("Node Calendar already exists for the given details", ex.getMessage());
+    verify(nodeCalendarRepository, times(1))
+        .findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(any(), any(), any(), any());
+    verify(nodeCalendarDomain, times(0)).saveNodeCalendarEntity(any());
   }
 
   @Test
@@ -103,5 +134,18 @@ class NodeCalendarServiceTest {
     Assertions.assertEquals(
         TestUtil.DESCRIPTION, Objects.requireNonNull(resp.get(0).getDescription()));
     verify(nodeCalendarDomain, times(1)).getNodeCalendar(any(), any());
+  }
+
+  @Test
+  void getAllNodeCalendarCacheKeysTest() throws CalendarDomainException {
+    List<NodeCalendarEntity> nodeCalendarEntityList = testUtil.getNodeCalendarEntityList();
+
+    when(nodeCalendarDomain.getAllNodeCalendar(any())).thenReturn(nodeCalendarEntityList);
+
+    List<NodeCalendarCacheKeyDto> response = nodeCalendarService.getAllNodeCalendarCacheKeys(2);
+
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(nodeCalendarEntityList.get(0).getNodeId(), response.get(0).getNodeId());
+    verify(nodeCalendarDomain, times(1)).getAllNodeCalendar(any());
   }
 }

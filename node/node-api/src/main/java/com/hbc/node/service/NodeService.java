@@ -1,21 +1,29 @@
 package com.hbc.node.service;
 
+import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+import static com.hbc.common.constants.CommonConstants.DESC_SORT_ORDER;
+
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.node.domain.NodeDomain;
+import com.hbc.node.domain.dto.NodeCacheKeyDto;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.mapper.NodeMapper;
 import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.node.exception.NodeDomainException;
+import com.hbc.postgres.config.ReaderDS;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +34,7 @@ public class NodeService {
   private static final Logger logger = LoggerFactory.getLogger(NodeService.class);
   private static final String ORG_ID = "orgId";
   private static final String NODE_ID = "nodeId";
+  private static final String SORT_ORDER = "sortOrder";
 
   private final NodeDomain nodeDomain;
 
@@ -59,6 +68,7 @@ public class NodeService {
     return INSTANCE.toNodeResponse(nodeDomain.saveNodeEntity(existingNodeEntity.get()));
   }
 
+  @ReaderDS
   public NodeResponse getNodeDetails(String nodeId, String orgId)
       throws NodeDomainException, CommonServiceException {
 
@@ -92,5 +102,30 @@ public class NodeService {
     var nodeResponse = INSTANCE.toNodeResponse(nodeEntity.get());
     nodeDomain.deleteNode(nodeEntity.get());
     return nodeResponse;
+  }
+
+  @ReaderDS
+  public Page<NodeDto> getNodeListByOrgId(
+      String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
+      throws NodeDomainException, CommonServiceException {
+    if (sortOrder.equalsIgnoreCase(DEFAULT_SORT_ORDER)
+        || sortOrder.equalsIgnoreCase(DESC_SORT_ORDER)) {
+      return nodeDomain.getNodeByOrgId(orgId, pageNo, pageSize, sortBy, sortOrder);
+    } else {
+      logger.error("Invalid sort order");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(SORT_ORDER, FieldError.builder().rejectedValue(sortOrder).build());
+      throw new CommonServiceException(
+          "Invalid sort order, consider giving either ASC or DESC",
+          HttpStatus.BAD_REQUEST,
+          0x1771,
+          errorMap);
+    }
+  }
+
+  public List<NodeCacheKeyDto> getAllNodeCacheKeys(Integer limit) throws NodeDomainException {
+    var nodeEntities = nodeDomain.getAllNodeEntities(limit);
+
+    return INSTANCE.toNodeCacheKeyResponseList(nodeEntities);
   }
 }

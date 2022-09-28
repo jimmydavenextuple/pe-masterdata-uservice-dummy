@@ -11,8 +11,11 @@ import com.hbc.item.TestUtil;
 import com.hbc.item.domain.inbound.ItemCreationRequest;
 import com.hbc.item.domain.inbound.ItemUpdationRequest;
 import com.hbc.item.domain.outbound.ItemResponse;
+import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.service.ItemService;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -151,5 +154,36 @@ class ItemControllerTest {
     Assertions.assertEquals("Error while deleting item", exception.getMessage());
 
     verify(itemService, times(1)).deleteItem(any(), any(), any());
+  }
+
+  @Test
+  void getItemListByItemIdAndOrgIdAndUomTest()
+      throws CommonServiceException, ItemBatchingDomainException {
+    ItemResponse itemResponse = testUtil.getItemResponse();
+    List<ItemResponse> itemResponseList = new ArrayList<>();
+    List<String> itemList = new ArrayList<>();
+    itemList.add(TestUtil.ITEM_ID);
+    itemResponseList.add(itemResponse);
+    when(itemService.getItemList(any(), any())).thenReturn(itemResponseList);
+
+    List<ItemResponse> responseEntity = itemController.getItemList(TestUtil.ORG_ID, itemList);
+
+    Assertions.assertEquals(1, responseEntity.size());
+
+    verify(itemService, times(1)).getItemList(any(), any());
+  }
+
+  @Test
+  void getItemListByItemIdAndOrgIdAndUomExceptionTest()
+      throws CommonServiceException, ItemBatchingDomainException {
+    when(itemService.getItemList(any(), any()))
+        .thenThrow(new RuntimeException("Failed to fetch list of item details"));
+    List<String> itemList = new ArrayList<>();
+    itemList.add(TestUtil.ITEM_ID);
+    Exception exception =
+        Assertions.assertThrows(
+            Exception.class, () -> itemController.getItemList(TestUtil.ORG_ID, itemList));
+    Assertions.assertEquals("Failed to fetch list of item details", exception.getMessage());
+    verify(itemService, times(1)).getItemList(any(), any());
   }
 }

@@ -31,6 +31,7 @@ class CurrentThreadContextTest {
     assertNull(actual.getResponseCode(), "Response Code");
     assertNull(actual.getServiceCorrelationId(), "Service Correlation Id");
     assertNull(actual.getTraceId(), "Trace Id");
+    assertNull(actual.getUsername(), "host");
   }
 
   @DisplayName("Should set all the parameters based on function methods")

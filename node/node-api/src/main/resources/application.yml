@@ -53,3 +53,12 @@ management:
             requests: true
         persistence: true
         cache: true
+pe:
+  ui:
+    allowed-origin-url: \${PE_UI_URL}
+
+pagination:
+  pageNo: 1
+  pageSize: 15
+  sortBy: nodeId
+  sortOrder: ASC

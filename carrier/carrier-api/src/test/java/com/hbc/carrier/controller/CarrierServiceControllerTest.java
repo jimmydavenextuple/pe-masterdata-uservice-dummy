@@ -7,22 +7,29 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.hbc.carrier.TestUtil;
+import com.hbc.carrier.domain.dto.CarrierCacheKeyDto;
 import com.hbc.carrier.domain.inbound.CarrierServiceRequest;
 import com.hbc.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.carrier.exception.CarrierServiceDomainException;
 import com.hbc.carrier.service.CarrierServiceService;
+import com.hbc.common.base.PagePayload;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+@ExtendWith(MockitoExtension.class)
 class CarrierServiceControllerTest {
   @InjectMocks private CarrierServiceController carrierServiceController;
 
@@ -30,10 +37,7 @@ class CarrierServiceControllerTest {
 
   @Mock private CarrierServiceService carrierServiceService;
 
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
-  }
+  @Mock private PageProperties pageProperties;
 
   @Test
   void createCarrierServiceTest() throws CarrierServiceDomainException {
@@ -176,5 +180,152 @@ class CarrierServiceControllerTest {
     Assertions.assertEquals("Error while deleting carrier service", exception.getMessage());
 
     verify(carrierServiceService, times(1)).deleteCarrierService(any(), any(), any());
+  }
+
+  @Test
+  void getCarrierServiceListWithPaginationSuccessTest()
+      throws CarrierServiceDomainException, CommonServiceException {
+    List<CarrierServiceResponse> carrierServiceResponseList =
+        testUtil.getCarrierServiceResponseList();
+
+    when(carrierServiceService.getCarrierServiceList(any(), any(), any(), any(), any()))
+        .thenReturn(
+            testUtil.createPageCarrierServiceResponse(
+                2, carrierServiceResponseList, carrierServiceResponseList.size()));
+
+    ResponseEntity<BaseResponse<PagePayload<CarrierServiceResponse>>> response =
+        carrierServiceController.getCarrierServiceListWithPagination(
+            TestUtil.ORG_ID,
+            testUtil.getPageParams(
+                Optional.of(2),
+                Optional.of(1),
+                Optional.of(TestUtil.SORT_BY),
+                Optional.of(TestUtil.SORT_ORDER_DESC)));
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
+    Assertions.assertEquals(
+        2,
+        (int) response.getBody().getPayload().getPagination().getTotalPages(),
+        "Pagination Total pages");
+    Assertions.assertEquals(
+        carrierServiceResponseList.size(),
+        (int) response.getBody().getPayload().getPagination().getTotalRecords(),
+        "Total Elements");
+    Assertions.assertEquals(
+        2,
+        (int) response.getBody().getPayload().getPagination().getCurrentPage(),
+        "Current page number");
+    Assertions.assertEquals(
+        carrierServiceResponseList.size(),
+        response.getBody().getPayload().getData().size(),
+        "Paginated data");
+    Assertions.assertEquals(
+        "", response.getBody().getPayload().getPagination().getNext(), "Next Uri should be empty");
+    Assertions.assertEquals(
+        Boolean.TRUE,
+        Objects.nonNull(response.getBody().getPayload().getPagination().getPrevious()),
+        "Previous Uri should not be null");
+
+    verify(carrierServiceService, times(1))
+        .getCarrierServiceList(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getCarrierServiceListWithPaginationSuccessDefaultTest()
+      throws CarrierServiceDomainException, CommonServiceException {
+    List<CarrierServiceResponse> carrierServiceResponseList =
+        testUtil.getCarrierServiceResponseList();
+
+    when(pageProperties.getPageNo()).thenReturn(1);
+    when(pageProperties.getPageSize()).thenReturn(15);
+    when(carrierServiceService.getCarrierServiceList(any(), any(), any(), any(), any()))
+        .thenReturn(
+            testUtil.createPageCarrierServiceResponse(
+                2, carrierServiceResponseList, carrierServiceResponseList.size()));
+
+    ResponseEntity<BaseResponse<PagePayload<CarrierServiceResponse>>> response =
+        carrierServiceController.getCarrierServiceListWithPagination(
+            TestUtil.ORG_ID,
+            testUtil.getPageParams(
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()));
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
+    Assertions.assertEquals(
+        2,
+        (int) response.getBody().getPayload().getPagination().getTotalPages(),
+        "Pagination Total pages");
+    Assertions.assertEquals(
+        carrierServiceResponseList.size(),
+        (int) response.getBody().getPayload().getPagination().getTotalRecords(),
+        "Total Elements");
+    Assertions.assertEquals(
+        1,
+        (int) response.getBody().getPayload().getPagination().getCurrentPage(),
+        "Current page number");
+    Assertions.assertEquals(
+        carrierServiceResponseList.size(),
+        response.getBody().getPayload().getData().size(),
+        "Paginated data");
+    Assertions.assertEquals(
+        "",
+        response.getBody().getPayload().getPagination().getPrevious(),
+        "Previous Uri should be empty");
+    Assertions.assertEquals(
+        Boolean.TRUE,
+        Objects.nonNull(response.getBody().getPayload().getPagination().getNext()),
+        "Next Uri should not be null");
+
+    verify(carrierServiceService, times(1))
+        .getCarrierServiceList(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getCarrierCacheKeysTest() throws CarrierServiceDomainException {
+    List<CarrierCacheKeyDto> carrierCacheKeyDtoList = testUtil.getCarrierCacheKeyDtoList();
+
+    when(carrierServiceService.getAllCarrierCacheKeys(any())).thenReturn(carrierCacheKeyDtoList);
+
+    ResponseEntity<BaseResponse<List<CarrierCacheKeyDto>>> responseEntity =
+        carrierServiceController.getCarrierCacheKeys(2);
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals(2, responseEntity.getBody().getPayload().size());
+
+    verify(carrierServiceService, times(1)).getAllCarrierCacheKeys(any());
+  }
+
+  @Test
+  void getCarrierServiceDetailsByCarrierServiceIdAndOrgIdTest()
+      throws CarrierServiceDomainException, CommonServiceException {
+    CarrierServiceResponse CarrierServiceResponse = testUtil.getCarrierServiceResponse();
+    when(carrierServiceService.getCarrierServiceDetailsByCarrierIdAndOrgId(any(), any()))
+        .thenReturn(List.of(CarrierServiceResponse));
+
+    ResponseEntity<BaseResponse<List<CarrierServiceResponse>>> responseEntity =
+        carrierServiceController.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(
+            TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID);
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals(List.of(CarrierServiceResponse), responseEntity.getBody().getPayload());
+
+    verify(carrierServiceService, times(1))
+        .getCarrierServiceDetailsByCarrierIdAndOrgId(any(), any());
+  }
+
+  @Test
+  void getCarrierServiceDetailsByCarrierServiceIdAndOrgIdExceptionTest()
+      throws CarrierServiceDomainException, CommonServiceException {
+    when(carrierServiceService.getCarrierServiceDetailsByCarrierIdAndOrgId(any(), any()))
+        .thenThrow(new RuntimeException("Unable to fetch carrier service details"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                carrierServiceController.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(
+                    TestUtil.CARRIER_SERVICE_ID, TestUtil.ORG_ID));
+    Assertions.assertEquals("Unable to fetch carrier service details", exception.getMessage());
+    verify(carrierServiceService, times(1))
+        .getCarrierServiceDetailsByCarrierIdAndOrgId(any(), any());
   }
 }

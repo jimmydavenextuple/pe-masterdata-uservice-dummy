@@ -1,5 +1,6 @@
 package com.hbc.promise.sourcing.rule.controller;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
@@ -27,14 +28,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/promiseSourcingRule")
+@RequestMapping("/promise-sourcing-rule")
 @RequiredArgsConstructor
 public class PromiseSourcingRuleController {
 
   private static final Logger logger = LoggerFactory.getLogger(PromiseSourcingRuleController.class);
   private final PromiseSourcingRuleService promiseSourcingRuleService;
 
-  @PostMapping("/fetchRules")
+  @PostMapping("/fetch-rules")
   public ResponseEntity<BaseResponse<FetchPromiseSourcingRuleResponse>> fetchSourcingRule(
       @Valid @RequestBody FetchPromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException {
@@ -54,7 +55,7 @@ public class PromiseSourcingRuleController {
   @PostMapping
   public ResponseEntity<BaseResponse<PromiseSourcingRuleDto>> createPromiseSourcingRule(
       @Valid @RequestBody CreatePromiseSourcingRuleRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("Processing create Promise Sourcing Rule request");
     try {
       var promiseSourcingRuleDto =
@@ -137,7 +138,7 @@ public class PromiseSourcingRuleController {
       @NotBlank @RequestParam String allocationRuleId,
       @NotBlank @RequestParam int priority,
       @Valid @RequestBody UpdatePromiseSourcingRuleRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("Processing update Promise Sourcing Rule request");
     try {
       var promiseSourcingRuleDto =

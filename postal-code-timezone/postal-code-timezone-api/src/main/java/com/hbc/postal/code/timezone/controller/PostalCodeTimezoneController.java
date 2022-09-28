@@ -2,10 +2,12 @@ package com.hbc.postal.code.timezone.controller;
 
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.service.PostalCodeTimezoneService;
+import java.util.List;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -107,5 +110,31 @@ public class PostalCodeTimezoneController {
       logger.error("Failed to process delete Postal Code Timezone request!");
       throw e;
     }
+  }
+
+  @GetMapping("/ui/state-postal-code-prefix/orgId/{orgId}")
+  public ResponseEntity<BaseResponse<List<PostalCodePrefixDto>>> getPostalCodePrefixList(
+      @PathVariable String orgId) throws PromiseEngineException {
+    logger.debug("Processing get state and postal code prefixes list");
+
+    List<PostalCodePrefixDto> responseList =
+        postalCodeTimezoneService.fetchPostalCodePrefixList(orgId);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("State and Postal Code Prefix list fetched successfully")
+            .payload(responseList)
+            .build());
+  }
+
+  @GetMapping("/org/{orgId}")
+  public ResponseEntity<BaseResponse<List<String>>> getPostalCodePrefixForOrgIdAndState(
+      @PathVariable String orgId, @RequestParam String state) throws PromiseEngineException {
+    logger.debug("Processing get postal code prefix list for orgId and state");
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("")
+            .payload(postalCodeTimezoneService.fetchPostalCodePrefixForOrgIdAndState(orgId, state))
+            .build());
   }
 }

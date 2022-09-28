@@ -14,6 +14,11 @@ dependencies {
     implementation(project(":transit:transit-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'
     implementation(project(":common-util"))
+    implementation project(":common:common-postgres")
+    implementation(project(":nfs-near-cache:core-near-cache-producer"))
+    implementation(project(":carrier:carrier-api"))
+    implementation(project(":carrier:carrier-api-domain"))
+    implementation(project(":postal-code-timezone:postal-code-timezone-api-domain"))
 }
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11

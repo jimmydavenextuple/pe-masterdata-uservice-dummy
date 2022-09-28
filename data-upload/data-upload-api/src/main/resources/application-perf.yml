@@ -9,6 +9,33 @@ spring:
     url: jdbc:postgresql://promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
+  replica:
+    datasource:
+      platform: postgres
+      url: jdbc:postgresql://promise-engine-postgres-perf.cluster-ro-co9l0bkmgaei.us-east-1.rds.amazonaws.com,promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe?readOnly=true
+      username: \${POSTGRES_USER}
+      password: \${POSTGRES_PWD}
+      required: true
+      hikari:
+        readOnly: true
+  kafka:
+    bootstrap-servers: "b-1.promiseenginekafkaper.wyucgs.c23.kafka.us-east-1.amazonaws.com:9096,b-3.promiseenginekafkaper.wyucgs.c23.kafka.us-east-1.amazonaws.com:9096,b-2.promiseenginekafkaper.wyucgs.c23.kafka.us-east-1.amazonaws.com:9096"
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: SCRAM-SHA-512
+      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"\${KAFKA_USER}\" password=\"\${KAFKA_PWD}\";"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.trusted.packages: "*"
+        acks: 1
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
 
 logging:
   level:
@@ -21,3 +48,19 @@ dataupload:
   base-path: "/s3-bucket/"
   maxsize-in-kilobytes: 10240
   max-rows: 10000
+
+jobs-framework:
+  kafka-publish:
+    topic-name: INTERNAL.PERF.JOBS.TASK
+  result-publish:
+    topic-name: INTERNAL.PERF.JOBS.RESULT
+  result-consumer:
+    topic-name: INTERNAL.PERF.JOBS.RESULT
+    group-id: jobs-result-consumer-async-perf
+  record-consumer:
+    topic-name: INTERNAL.PERF.JOBS.TASK
+    group-id: jobs-task-consumer-async-perf
+auth-token:
+  url: https://promise-engine-perf-pool.auth.us-east-1.amazoncognito.com
+  username: \${COGNITO_CLIENT_ID}
+  password: \${COGNITO_CLIENT_SECRET}

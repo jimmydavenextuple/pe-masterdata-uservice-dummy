@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 2048KB
+      max-request-size: 3072KB
   config:
     import: optional:aws-secretsmanager:/secret/\${SPRING_PROFILES_ACTIVE}
   application:
@@ -20,7 +24,16 @@ logging:
     org.springframework: WARN
     root: WARN
     com.hbc: INFO
-
+pagination:
+  pageNo: 1
+  pageSize: 15
+  sortBy: carrierId
+  sortOrder: ASC
+page-properties:
+  pageNo: 1
+  pageSize: 15
+  sortBy: created_date
+  sortOrder: ASC
 management:
   endpoints:
     web:
@@ -50,3 +63,14 @@ management:
             requests: true
         persistence: true
         cache: true
+pe:
+  ui:
+    allowed-origin-url: \${PE_UI_URL}
+auth-token:
+  name: amazoncognito-service
+  grant-type: client_credentials
+  scope: sfcc-resources/edd
+scheduled-processor:
+  timeRangeInHours: 24
+  fixed-rate:
+    minutes: 2

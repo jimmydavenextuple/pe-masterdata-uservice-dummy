@@ -99,4 +99,46 @@ public class TransitDomain {
           "Error while fetching transit list", orgId, null, destinationGeozone, null);
     }
   }
+
+  public Integer fetchTransitEntitiesCount(String orgId, String carrierServiceId)
+      throws TransitDomainException {
+    try {
+      return transitRepository.findTransitCountByOrgIdAndCarrierServiceId(orgId, carrierServiceId);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to fetch transit entities count");
+      throw new TransitDomainException(
+          "Error while fetching transit entities count", orgId, null, null, carrierServiceId);
+    }
+  }
+
+  public List<TransitEntity> fetchTransitListForDestinationGeoZone(
+      String orgId, String destinationGeozone) throws TransitDomainException {
+    try {
+      return transitRepository.findByOrgIdAndDestinationGeozone(orgId, destinationGeozone);
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e),
+          "Unable to fetch transit list for orgId: {} and destination geozone: {}",
+          orgId,
+          destinationGeozone);
+      throw new TransitDomainException(
+          "Error while fetching transit list", orgId, null, destinationGeozone, null);
+    }
+  }
+
+  public List<TransitEntity> fetchTransitListForDestinationGeoZones(
+      String orgId, String carrierServiceId, List<String> destinationGeozones)
+      throws TransitDomainException {
+    try {
+      return transitRepository.findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
+          orgId, carrierServiceId, destinationGeozones);
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e),
+          "Unable to fetch transit list for orgId: {} and destination geozones",
+          orgId);
+      throw new TransitDomainException(
+          "Error while fetching transit entity list", orgId, null, null, carrierServiceId);
+    }
+  }
 }

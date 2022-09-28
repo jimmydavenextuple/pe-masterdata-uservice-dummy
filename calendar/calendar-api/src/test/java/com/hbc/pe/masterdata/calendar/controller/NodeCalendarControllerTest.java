@@ -5,6 +5,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hbc.calendar.domain.dto.NodeCalendarCacheKeyDto;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
@@ -93,5 +94,23 @@ class NodeCalendarControllerTest {
 
     Assertions.assertEquals("error", ex.getMessage());
     verify(nodeCalendarService, times(1)).processGetNodeCalendar(any(), any());
+  }
+
+  @Test
+  void getNodeCalendarCacheKeysTest() throws CalendarDomainException {
+    List<NodeCalendarCacheKeyDto> nodeCalendarCacheKeyDtoList =
+        testUtil.getNodeCalendarCacheKeyDtoList();
+
+    when(nodeCalendarService.getAllNodeCalendarCacheKeys(any()))
+        .thenReturn(nodeCalendarCacheKeyDtoList);
+
+    ResponseEntity<BaseResponse<List<NodeCalendarCacheKeyDto>>> responseEntity =
+        nodeCalendarController.getNodeCalendarCacheKeys(2);
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals(
+        nodeCalendarCacheKeyDtoList.size(),
+        Objects.requireNonNull(responseEntity.getBody()).getPayload().size());
+    verify(nodeCalendarService, times(1)).getAllNodeCalendarCacheKeys(any());
   }
 }

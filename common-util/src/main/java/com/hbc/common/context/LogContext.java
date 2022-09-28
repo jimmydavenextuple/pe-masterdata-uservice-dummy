@@ -18,6 +18,7 @@ public class LogContext {
   public static final String KAFKA_EVENT_DATE = "kafkaEventDate";
   public static final String CORRELATION_ID = "correlationId";
   public static final String HOST_NAME = "host";
+
   public static final String APPLICATION_NAME = "applicationName";
   public static final String APPLICATION_VERSION = "applicationVersion";
   public static final String REQUEST_HEADERS = "requestHeader_";
@@ -82,11 +83,11 @@ public class LogContext {
     return put(APPLICATION_NAME, applicationName);
   }
 
-  public String getHostName() {
+  public String getUsername() {
     return get(HOST_NAME);
   }
 
-  public LogContext setHostName(String hostName) {
+  public LogContext setUsername(String hostName) {
     return put(HOST_NAME, hostName);
   }
 
@@ -155,7 +156,7 @@ public class LogContext {
   }
 
   public Long getKafkaEventDate() {
-    String epochTimeInString = get(KAFKA_EVENT_DATE);
+    var epochTimeInString = get(KAFKA_EVENT_DATE);
     if (!ObjectUtils.isEmpty(epochTimeInString)) {
       return Long.parseLong(epochTimeInString);
     }
@@ -195,7 +196,7 @@ public class LogContext {
     }
 
     try {
-      Date parsedDate = DateUtil.getDateAndTime(date);
+      var parsedDate = DateUtil.getDateAndTime(date);
       if (parsedDate != null) {
         return put(KAFKA_EVENT_DATE, parsedDate.getTime() + "");
       }
@@ -204,7 +205,7 @@ public class LogContext {
     }
 
     try {
-      Date parsedDate = DateUtil.getDateUTC(date);
+      var parsedDate = DateUtil.getDateUTC(date);
       if (parsedDate != null) {
         return put(KAFKA_EVENT_DATE, parsedDate.getTime() + "");
       }

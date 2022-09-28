@@ -1,10 +1,13 @@
 package com.hbc.weightage.configuration;
 
+import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.AVAILABILITY;
+import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.KEY;
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.KEYS;
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.ORG_ID;
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.TYPE;
 import static com.hbc.weightage.configuration.utils.WeightageConfigurationConstants.WEIGHTAGE;
 
+import com.hbc.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.hbc.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
 import com.hbc.weightage.configuration.api.domain.inbound.FetchWeightageRequest;
@@ -12,6 +15,7 @@ import com.hbc.weightage.configuration.api.domain.inbound.UpdateWeightageConfigu
 import com.hbc.weightage.configuration.domain.entity.WeightageConfiguration;
 import com.hbc.weightage.configuration.domain.mapper.WeightageConfigurationMapper;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.mapstruct.factory.Mappers;
 
@@ -57,5 +61,31 @@ public class TestUtil {
         .key(KEYS.get(0))
         .type(TYPE)
         .build();
+  }
+
+  public List<WeightageConfiguration> getWeightageConfigurationList() {
+    WeightageConfiguration weightageConfiguration1 = new WeightageConfiguration();
+    weightageConfiguration1.setOrgId(ORG_ID);
+    weightageConfiguration1.setKey(KEYS.get(0));
+    weightageConfiguration1.setType(TYPE);
+    weightageConfiguration1.setWeightage(WEIGHTAGE);
+
+    WeightageConfiguration weightageConfiguration2 = new WeightageConfiguration();
+    weightageConfiguration2.setOrgId(ORG_ID);
+    weightageConfiguration2.setKey(KEYS.get(0));
+    weightageConfiguration2.setType(AVAILABILITY);
+    weightageConfiguration2.setWeightage(WEIGHTAGE);
+
+    return List.of(weightageConfiguration1, weightageConfiguration2);
+  }
+
+  public List<WeightageCacheKeyDto> getWeightageCacheKeyDtoList() {
+    WeightageCacheKeyDto weightageCacheKeyDto1 =
+        WeightageCacheKeyDto.builder().key(KEY).orgId(ORG_ID).type(TYPE).build();
+
+    WeightageCacheKeyDto weightageCacheKeyDto2 =
+        WeightageCacheKeyDto.builder().key(KEY).orgId(ORG_ID).type(AVAILABILITY).build();
+
+    return List.of(weightageCacheKeyDto1, weightageCacheKeyDto2);
   }
 }

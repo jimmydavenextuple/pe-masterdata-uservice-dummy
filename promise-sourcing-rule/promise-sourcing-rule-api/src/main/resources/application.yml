@@ -24,7 +24,9 @@ logging:
 entity-listener:
   kafka:
     enabled: true
-
+promise:
+  service:
+    options: "SDND,STANDARD,EXPRESS,NEXTDAY"
 management:
   endpoints:
     web:
@@ -54,3 +56,6 @@ management:
             requests: true
         persistence: true
         cache: true
+pe:
+  ui:
+    allowed-origin-url: \${PE_UI_URL}

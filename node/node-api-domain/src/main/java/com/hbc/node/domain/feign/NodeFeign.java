@@ -1,11 +1,16 @@
 package com.hbc.node.domain.feign;
 
+import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.node.domain.dto.NodeCacheKeyDto;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.outbound.NodeResponse;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
     name = "pe-config-node",
@@ -35,4 +41,15 @@ public interface NodeFeign {
   @DeleteMapping("/node/{nodeId}/{orgId}")
   BaseResponse<NodeResponse> deleteNode(
       @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId);
+
+  @GetMapping("/node/{orgId}")
+  BaseResponse<PagePayload<NodeDto>> getNodeList(
+      @NotBlank @PathVariable String orgId,
+      @RequestParam(required = false) Integer pageNo,
+      @RequestParam(required = false) Integer pageSize,
+      @RequestParam(required = false) String sortBy,
+      @RequestParam(required = false) String sortOrder);
+
+  @GetMapping("/node/get-all-cache-keys")
+  BaseResponse<List<NodeCacheKeyDto>> getNodeCacheKeys(@NotNull @RequestParam Integer limit);
 }

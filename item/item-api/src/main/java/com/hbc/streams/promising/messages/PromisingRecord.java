@@ -15,11 +15,11 @@ import org.apache.avro.specific.SpecificData;
 @org.apache.avro.specific.AvroGenerated
 public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
     implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 2960260856982257050L;
+  private static final long serialVersionUID = 6544548654572521015L;
   public static final org.apache.avro.Schema SCHEMA$ =
       new org.apache.avro.Schema.Parser()
           .parse(
-              "{\"type\":\"record\",\"name\":\"PromisingRecord\",\"namespace\":\"com.hbc.streams.promising.messages\",\"doc\":\"SKU record to be published to Promising Engine destination topic\",\"fields\":[{\"name\":\"itemId\",\"type\":\"string\",\"doc\":\"Sku ID\"},{\"name\":\"itemSource\",\"type\":[\"null\",\"string\"],\"default\":\"BAY\"},{\"name\":\"orgId\",\"type\":\"string\",\"default\":\"BAY\"},{\"name\":\"uom\",\"type\":\"string\",\"default\":\"EACH\"},{\"name\":\"isDSVEligible\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"product\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"color\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"size\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"shipAlone\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"shipEligible\",\"type\":\"boolean\"},{\"name\":\"parcelShipmentEligible\",\"type\":\"boolean\"},{\"name\":\"bopisEligible\",\"type\":\"boolean\"},{\"name\":\"expressEligible\",\"type\":\"boolean\"},{\"name\":\"sdndEligible\",\"type\":\"boolean\"},{\"name\":\"isWhiteGlove\",\"type\":\"boolean\"},{\"name\":\"height\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"width\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"length\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"volume\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"dimensionUom\",\"type\":[\"null\",\"string\"],\"default\":\"IN\"},{\"name\":\"volumeUom\",\"type\":[\"null\",\"string\"],\"default\":\"CU IN\"},{\"name\":\"weight\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"weightUOM\",\"type\":[\"null\",\"string\"],\"default\":\"LB\"},{\"name\":\"processingTime\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"cost\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"isHazmat\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"shortDescription\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"departmentNumber\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"departmentName\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"imageUrl\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"lastModifiedDate\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}}]}");
+              "{\"type\":\"record\",\"name\":\"PromisingRecord\",\"namespace\":\"com.hbc.streams.promising.messages\",\"doc\":\"SKU record to be published to Promising Engine destination topic\",\"fields\":[{\"name\":\"itemId\",\"type\":\"string\",\"doc\":\"Sku ID\"},{\"name\":\"itemSource\",\"type\":[\"null\",\"string\"],\"default\":\"BAY\"},{\"name\":\"orgId\",\"type\":\"string\",\"default\":\"BAY\"},{\"name\":\"uom\",\"type\":\"string\",\"default\":\"EACH\"},{\"name\":\"isDSVEligible\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"product\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"color\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"size\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"shipAlone\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"shipEligible\",\"type\":\"boolean\"},{\"name\":\"parcelShipmentEligible\",\"type\":\"boolean\"},{\"name\":\"bopisEligible\",\"type\":\"boolean\"},{\"name\":\"expressEligible\",\"type\":\"boolean\"},{\"name\":\"sdndEligible\",\"type\":\"boolean\"},{\"name\":\"isWhiteGlove\",\"type\":\"boolean\"},{\"name\":\"height\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"width\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"length\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"volume\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"dimensionUom\",\"type\":[\"null\",\"string\"],\"default\":\"IN\"},{\"name\":\"volumeUom\",\"type\":[\"null\",\"string\"],\"default\":\"CU IN\"},{\"name\":\"weight\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"weightUOM\",\"type\":[\"null\",\"string\"],\"default\":\"LB\"},{\"name\":\"processingTime\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"cost\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"isHazmat\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"shortDescription\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"departmentNumber\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"departmentName\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"imageUrl\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"lastModifiedDate\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"nextdayEligible\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"sdndEligibleForDC\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"nextdayEligibleForDC\",\"type\":[\"null\",\"boolean\"],\"default\":null}]}");
 
   public static org.apache.avro.Schema getClassSchema() {
     return SCHEMA$;
@@ -91,6 +91,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
   @Deprecated public CharSequence departmentName;
   @Deprecated public CharSequence imageUrl;
   @Deprecated public org.joda.time.DateTime lastModifiedDate;
+  @Deprecated public Boolean nextdayEligible;
+  @Deprecated public Boolean sdndEligibleForDC;
+  @Deprecated public Boolean nextdayEligibleForDC;
 
   /**
    * Default constructor. Note that this does not initialize fields to their default values from the
@@ -132,6 +135,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
    * @param departmentName The new value for departmentName
    * @param imageUrl The new value for imageUrl
    * @param lastModifiedDate The new value for lastModifiedDate
+   * @param nextdayEligible The new value for nextdayEligible
+   * @param sdndEligibleForDC The new value for sdndEligibleForDC
+   * @param nextdayEligibleForDC The new value for nextdayEligibleForDC
    */
   public PromisingRecord(
       CharSequence itemId,
@@ -164,7 +170,10 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
       CharSequence departmentNumber,
       CharSequence departmentName,
       CharSequence imageUrl,
-      org.joda.time.DateTime lastModifiedDate) {
+      org.joda.time.DateTime lastModifiedDate,
+      Boolean nextdayEligible,
+      Boolean sdndEligibleForDC,
+      Boolean nextdayEligibleForDC) {
     this.itemId = itemId;
     this.itemSource = itemSource;
     this.orgId = orgId;
@@ -196,6 +205,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
     this.departmentName = departmentName;
     this.imageUrl = imageUrl;
     this.lastModifiedDate = lastModifiedDate;
+    this.nextdayEligible = nextdayEligible;
+    this.sdndEligibleForDC = sdndEligibleForDC;
+    this.nextdayEligibleForDC = nextdayEligibleForDC;
   }
 
   public org.apache.avro.Schema getSchema() {
@@ -266,6 +278,12 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         return imageUrl;
       case 30:
         return lastModifiedDate;
+      case 31:
+        return nextdayEligible;
+      case 32:
+        return sdndEligibleForDC;
+      case 33:
+        return nextdayEligibleForDC;
       default:
         throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
@@ -313,6 +331,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         null,
         null,
         TIMESTAMP_CONVERSION,
+        null,
+        null,
+        null,
         null
       };
 
@@ -417,6 +438,15 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         break;
       case 30:
         lastModifiedDate = (org.joda.time.DateTime) value$;
+        break;
+      case 31:
+        nextdayEligible = (Boolean) value$;
+        break;
+      case 32:
+        sdndEligibleForDC = (Boolean) value$;
+        break;
+      case 33:
+        nextdayEligibleForDC = (Boolean) value$;
         break;
       default:
         throw new org.apache.avro.AvroRuntimeException("Bad index");
@@ -982,12 +1012,66 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
   }
 
   /**
+   * Gets the value of the 'nextdayEligible' field.
+   *
+   * @return The value of the 'nextdayEligible' field.
+   */
+  public Boolean getNextdayEligible() {
+    return nextdayEligible;
+  }
+
+  /**
+   * Sets the value of the 'nextdayEligible' field.
+   *
+   * @param value the value to set.
+   */
+  public void setNextdayEligible(Boolean value) {
+    this.nextdayEligible = value;
+  }
+
+  /**
+   * Gets the value of the 'sdndEligibleForDC' field.
+   *
+   * @return The value of the 'sdndEligibleForDC' field.
+   */
+  public Boolean getSdndEligibleForDC() {
+    return sdndEligibleForDC;
+  }
+
+  /**
+   * Sets the value of the 'sdndEligibleForDC' field.
+   *
+   * @param value the value to set.
+   */
+  public void setSdndEligibleForDC(Boolean value) {
+    this.sdndEligibleForDC = value;
+  }
+
+  /**
+   * Gets the value of the 'nextdayEligibleForDC' field.
+   *
+   * @return The value of the 'nextdayEligibleForDC' field.
+   */
+  public Boolean getNextdayEligibleForDC() {
+    return nextdayEligibleForDC;
+  }
+
+  /**
+   * Sets the value of the 'nextdayEligibleForDC' field.
+   *
+   * @param value the value to set.
+   */
+  public void setNextdayEligibleForDC(Boolean value) {
+    this.nextdayEligibleForDC = value;
+  }
+
+  /**
    * Creates a new PromisingRecord RecordBuilder.
    *
    * @return A new PromisingRecord RecordBuilder
    */
-  public static com.hbc.streams.promising.messages.PromisingRecord.Builder newBuilder() {
-    return new com.hbc.streams.promising.messages.PromisingRecord.Builder();
+  public static Builder newBuilder() {
+    return new Builder();
   }
 
   /**
@@ -996,9 +1080,8 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
    * @param other The existing builder to copy.
    * @return A new PromisingRecord RecordBuilder
    */
-  public static com.hbc.streams.promising.messages.PromisingRecord.Builder newBuilder(
-      com.hbc.streams.promising.messages.PromisingRecord.Builder other) {
-    return new com.hbc.streams.promising.messages.PromisingRecord.Builder(other);
+  public static Builder newBuilder(Builder other) {
+    return new Builder(other);
   }
 
   /**
@@ -1007,9 +1090,8 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
    * @param other The existing instance to copy.
    * @return A new PromisingRecord RecordBuilder
    */
-  public static com.hbc.streams.promising.messages.PromisingRecord.Builder newBuilder(
-      com.hbc.streams.promising.messages.PromisingRecord other) {
-    return new com.hbc.streams.promising.messages.PromisingRecord.Builder(other);
+  public static Builder newBuilder(PromisingRecord other) {
+    return new Builder(other);
   }
 
   /** RecordBuilder for PromisingRecord instances. */
@@ -1050,6 +1132,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
     private CharSequence departmentName;
     private CharSequence imageUrl;
     private org.joda.time.DateTime lastModifiedDate;
+    private Boolean nextdayEligible;
+    private Boolean sdndEligibleForDC;
+    private Boolean nextdayEligibleForDC;
 
     /** Creates a new Builder */
     private Builder() {
@@ -1061,7 +1146,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @param other The existing Builder to copy.
      */
-    private Builder(com.hbc.streams.promising.messages.PromisingRecord.Builder other) {
+    private Builder(Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.itemId)) {
         this.itemId = data().deepCopy(fields()[0].schema(), other.itemId);
@@ -1188,6 +1273,19 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         this.lastModifiedDate = data().deepCopy(fields()[30].schema(), other.lastModifiedDate);
         fieldSetFlags()[30] = true;
       }
+      if (isValidValue(fields()[31], other.nextdayEligible)) {
+        this.nextdayEligible = data().deepCopy(fields()[31].schema(), other.nextdayEligible);
+        fieldSetFlags()[31] = true;
+      }
+      if (isValidValue(fields()[32], other.sdndEligibleForDC)) {
+        this.sdndEligibleForDC = data().deepCopy(fields()[32].schema(), other.sdndEligibleForDC);
+        fieldSetFlags()[32] = true;
+      }
+      if (isValidValue(fields()[33], other.nextdayEligibleForDC)) {
+        this.nextdayEligibleForDC =
+            data().deepCopy(fields()[33].schema(), other.nextdayEligibleForDC);
+        fieldSetFlags()[33] = true;
+      }
     }
 
     /**
@@ -1195,7 +1293,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @param other The existing instance to copy.
      */
-    private Builder(com.hbc.streams.promising.messages.PromisingRecord other) {
+    private Builder(PromisingRecord other) {
       super(SCHEMA$);
       if (isValidValue(fields()[0], other.itemId)) {
         this.itemId = data().deepCopy(fields()[0].schema(), other.itemId);
@@ -1322,6 +1420,19 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         this.lastModifiedDate = data().deepCopy(fields()[30].schema(), other.lastModifiedDate);
         fieldSetFlags()[30] = true;
       }
+      if (isValidValue(fields()[31], other.nextdayEligible)) {
+        this.nextdayEligible = data().deepCopy(fields()[31].schema(), other.nextdayEligible);
+        fieldSetFlags()[31] = true;
+      }
+      if (isValidValue(fields()[32], other.sdndEligibleForDC)) {
+        this.sdndEligibleForDC = data().deepCopy(fields()[32].schema(), other.sdndEligibleForDC);
+        fieldSetFlags()[32] = true;
+      }
+      if (isValidValue(fields()[33], other.nextdayEligibleForDC)) {
+        this.nextdayEligibleForDC =
+            data().deepCopy(fields()[33].schema(), other.nextdayEligibleForDC);
+        fieldSetFlags()[33] = true;
+      }
     }
 
     /**
@@ -1339,8 +1450,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'itemId'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setItemId(
-        CharSequence value) {
+    public Builder setItemId(CharSequence value) {
       validate(fields()[0], value);
       this.itemId = value;
       fieldSetFlags()[0] = true;
@@ -1361,7 +1471,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearItemId() {
+    public Builder clearItemId() {
       itemId = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -1382,8 +1492,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'itemSource'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setItemSource(
-        CharSequence value) {
+    public Builder setItemSource(CharSequence value) {
       validate(fields()[1], value);
       this.itemSource = value;
       fieldSetFlags()[1] = true;
@@ -1404,7 +1513,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearItemSource() {
+    public Builder clearItemSource() {
       itemSource = null;
       fieldSetFlags()[1] = false;
       return this;
@@ -1425,7 +1534,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'orgId'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setOrgId(CharSequence value) {
+    public Builder setOrgId(CharSequence value) {
       validate(fields()[2], value);
       this.orgId = value;
       fieldSetFlags()[2] = true;
@@ -1446,7 +1555,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearOrgId() {
+    public Builder clearOrgId() {
       orgId = null;
       fieldSetFlags()[2] = false;
       return this;
@@ -1467,7 +1576,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'uom'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setUom(CharSequence value) {
+    public Builder setUom(CharSequence value) {
       validate(fields()[3], value);
       this.uom = value;
       fieldSetFlags()[3] = true;
@@ -1488,7 +1597,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearUom() {
+    public Builder clearUom() {
       uom = null;
       fieldSetFlags()[3] = false;
       return this;
@@ -1509,8 +1618,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'isDSVEligible'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setIsDSVEligible(
-        Boolean value) {
+    public Builder setIsDSVEligible(Boolean value) {
       validate(fields()[4], value);
       this.isDSVEligible = value;
       fieldSetFlags()[4] = true;
@@ -1531,7 +1639,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearIsDSVEligible() {
+    public Builder clearIsDSVEligible() {
       isDSVEligible = null;
       fieldSetFlags()[4] = false;
       return this;
@@ -1552,8 +1660,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'product'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setProduct(
-        CharSequence value) {
+    public Builder setProduct(CharSequence value) {
       validate(fields()[5], value);
       this.product = value;
       fieldSetFlags()[5] = true;
@@ -1574,7 +1681,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearProduct() {
+    public Builder clearProduct() {
       product = null;
       fieldSetFlags()[5] = false;
       return this;
@@ -1595,7 +1702,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'color'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setColor(CharSequence value) {
+    public Builder setColor(CharSequence value) {
       validate(fields()[6], value);
       this.color = value;
       fieldSetFlags()[6] = true;
@@ -1616,7 +1723,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearColor() {
+    public Builder clearColor() {
       color = null;
       fieldSetFlags()[6] = false;
       return this;
@@ -1637,7 +1744,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'size'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setSize(CharSequence value) {
+    public Builder setSize(CharSequence value) {
       validate(fields()[7], value);
       this.size = value;
       fieldSetFlags()[7] = true;
@@ -1658,7 +1765,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearSize() {
+    public Builder clearSize() {
       size = null;
       fieldSetFlags()[7] = false;
       return this;
@@ -1679,7 +1786,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'shipAlone'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setShipAlone(Boolean value) {
+    public Builder setShipAlone(Boolean value) {
       validate(fields()[8], value);
       this.shipAlone = value;
       fieldSetFlags()[8] = true;
@@ -1700,7 +1807,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearShipAlone() {
+    public Builder clearShipAlone() {
       shipAlone = null;
       fieldSetFlags()[8] = false;
       return this;
@@ -1721,8 +1828,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'shipEligible'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setShipEligible(
-        boolean value) {
+    public Builder setShipEligible(boolean value) {
       validate(fields()[9], value);
       this.shipEligible = value;
       fieldSetFlags()[9] = true;
@@ -1743,7 +1849,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearShipEligible() {
+    public Builder clearShipEligible() {
       fieldSetFlags()[9] = false;
       return this;
     }
@@ -1763,8 +1869,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'parcelShipmentEligible'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setParcelShipmentEligible(
-        boolean value) {
+    public Builder setParcelShipmentEligible(boolean value) {
       validate(fields()[10], value);
       this.parcelShipmentEligible = value;
       fieldSetFlags()[10] = true;
@@ -1785,8 +1890,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder
-        clearParcelShipmentEligible() {
+    public Builder clearParcelShipmentEligible() {
       fieldSetFlags()[10] = false;
       return this;
     }
@@ -1806,8 +1910,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'bopisEligible'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setBopisEligible(
-        boolean value) {
+    public Builder setBopisEligible(boolean value) {
       validate(fields()[11], value);
       this.bopisEligible = value;
       fieldSetFlags()[11] = true;
@@ -1828,7 +1931,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearBopisEligible() {
+    public Builder clearBopisEligible() {
       fieldSetFlags()[11] = false;
       return this;
     }
@@ -1848,8 +1951,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'expressEligible'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setExpressEligible(
-        boolean value) {
+    public Builder setExpressEligible(boolean value) {
       validate(fields()[12], value);
       this.expressEligible = value;
       fieldSetFlags()[12] = true;
@@ -1870,7 +1972,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearExpressEligible() {
+    public Builder clearExpressEligible() {
       fieldSetFlags()[12] = false;
       return this;
     }
@@ -1890,8 +1992,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'sdndEligible'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setSdndEligible(
-        boolean value) {
+    public Builder setSdndEligible(boolean value) {
       validate(fields()[13], value);
       this.sdndEligible = value;
       fieldSetFlags()[13] = true;
@@ -1912,7 +2013,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearSdndEligible() {
+    public Builder clearSdndEligible() {
       fieldSetFlags()[13] = false;
       return this;
     }
@@ -1932,8 +2033,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'isWhiteGlove'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setIsWhiteGlove(
-        boolean value) {
+    public Builder setIsWhiteGlove(boolean value) {
       validate(fields()[14], value);
       this.isWhiteGlove = value;
       fieldSetFlags()[14] = true;
@@ -1954,7 +2054,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearIsWhiteGlove() {
+    public Builder clearIsWhiteGlove() {
       fieldSetFlags()[14] = false;
       return this;
     }
@@ -1974,7 +2074,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'height'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setHeight(Double value) {
+    public Builder setHeight(Double value) {
       validate(fields()[15], value);
       this.height = value;
       fieldSetFlags()[15] = true;
@@ -1995,7 +2095,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearHeight() {
+    public Builder clearHeight() {
       height = null;
       fieldSetFlags()[15] = false;
       return this;
@@ -2016,7 +2116,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'width'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setWidth(Double value) {
+    public Builder setWidth(Double value) {
       validate(fields()[16], value);
       this.width = value;
       fieldSetFlags()[16] = true;
@@ -2037,7 +2137,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearWidth() {
+    public Builder clearWidth() {
       width = null;
       fieldSetFlags()[16] = false;
       return this;
@@ -2058,7 +2158,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'length'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setLength(Double value) {
+    public Builder setLength(Double value) {
       validate(fields()[17], value);
       this.length = value;
       fieldSetFlags()[17] = true;
@@ -2079,7 +2179,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearLength() {
+    public Builder clearLength() {
       length = null;
       fieldSetFlags()[17] = false;
       return this;
@@ -2100,7 +2200,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'volume'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setVolume(Double value) {
+    public Builder setVolume(Double value) {
       validate(fields()[18], value);
       this.volume = value;
       fieldSetFlags()[18] = true;
@@ -2121,7 +2221,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearVolume() {
+    public Builder clearVolume() {
       volume = null;
       fieldSetFlags()[18] = false;
       return this;
@@ -2142,8 +2242,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'dimensionUom'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setDimensionUom(
-        CharSequence value) {
+    public Builder setDimensionUom(CharSequence value) {
       validate(fields()[19], value);
       this.dimensionUom = value;
       fieldSetFlags()[19] = true;
@@ -2164,7 +2263,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearDimensionUom() {
+    public Builder clearDimensionUom() {
       dimensionUom = null;
       fieldSetFlags()[19] = false;
       return this;
@@ -2185,8 +2284,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'volumeUom'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setVolumeUom(
-        CharSequence value) {
+    public Builder setVolumeUom(CharSequence value) {
       validate(fields()[20], value);
       this.volumeUom = value;
       fieldSetFlags()[20] = true;
@@ -2207,7 +2305,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearVolumeUom() {
+    public Builder clearVolumeUom() {
       volumeUom = null;
       fieldSetFlags()[20] = false;
       return this;
@@ -2228,7 +2326,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'weight'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setWeight(Double value) {
+    public Builder setWeight(Double value) {
       validate(fields()[21], value);
       this.weight = value;
       fieldSetFlags()[21] = true;
@@ -2249,7 +2347,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearWeight() {
+    public Builder clearWeight() {
       weight = null;
       fieldSetFlags()[21] = false;
       return this;
@@ -2270,8 +2368,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'weightUOM'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setWeightUOM(
-        CharSequence value) {
+    public Builder setWeightUOM(CharSequence value) {
       validate(fields()[22], value);
       this.weightUOM = value;
       fieldSetFlags()[22] = true;
@@ -2292,7 +2389,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearWeightUOM() {
+    public Builder clearWeightUOM() {
       weightUOM = null;
       fieldSetFlags()[22] = false;
       return this;
@@ -2313,8 +2410,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'processingTime'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setProcessingTime(
-        Long value) {
+    public Builder setProcessingTime(Long value) {
       validate(fields()[23], value);
       this.processingTime = value;
       fieldSetFlags()[23] = true;
@@ -2335,7 +2431,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearProcessingTime() {
+    public Builder clearProcessingTime() {
       processingTime = null;
       fieldSetFlags()[23] = false;
       return this;
@@ -2356,7 +2452,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'cost'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setCost(CharSequence value) {
+    public Builder setCost(CharSequence value) {
       validate(fields()[24], value);
       this.cost = value;
       fieldSetFlags()[24] = true;
@@ -2377,7 +2473,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearCost() {
+    public Builder clearCost() {
       cost = null;
       fieldSetFlags()[24] = false;
       return this;
@@ -2398,7 +2494,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'isHazmat'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setIsHazmat(Boolean value) {
+    public Builder setIsHazmat(Boolean value) {
       validate(fields()[25], value);
       this.isHazmat = value;
       fieldSetFlags()[25] = true;
@@ -2419,7 +2515,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearIsHazmat() {
+    public Builder clearIsHazmat() {
       isHazmat = null;
       fieldSetFlags()[25] = false;
       return this;
@@ -2440,8 +2536,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'shortDescription'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setShortDescription(
-        CharSequence value) {
+    public Builder setShortDescription(CharSequence value) {
       validate(fields()[26], value);
       this.shortDescription = value;
       fieldSetFlags()[26] = true;
@@ -2462,7 +2557,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearShortDescription() {
+    public Builder clearShortDescription() {
       shortDescription = null;
       fieldSetFlags()[26] = false;
       return this;
@@ -2483,8 +2578,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'departmentNumber'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setDepartmentNumber(
-        CharSequence value) {
+    public Builder setDepartmentNumber(CharSequence value) {
       validate(fields()[27], value);
       this.departmentNumber = value;
       fieldSetFlags()[27] = true;
@@ -2505,7 +2599,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearDepartmentNumber() {
+    public Builder clearDepartmentNumber() {
       departmentNumber = null;
       fieldSetFlags()[27] = false;
       return this;
@@ -2526,8 +2620,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'departmentName'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setDepartmentName(
-        CharSequence value) {
+    public Builder setDepartmentName(CharSequence value) {
       validate(fields()[28], value);
       this.departmentName = value;
       fieldSetFlags()[28] = true;
@@ -2548,7 +2641,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearDepartmentName() {
+    public Builder clearDepartmentName() {
       departmentName = null;
       fieldSetFlags()[28] = false;
       return this;
@@ -2569,8 +2662,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'imageUrl'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setImageUrl(
-        CharSequence value) {
+    public Builder setImageUrl(CharSequence value) {
       validate(fields()[29], value);
       this.imageUrl = value;
       fieldSetFlags()[29] = true;
@@ -2591,7 +2683,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearImageUrl() {
+    public Builder clearImageUrl() {
       imageUrl = null;
       fieldSetFlags()[29] = false;
       return this;
@@ -2612,8 +2704,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      * @param value The value of 'lastModifiedDate'.
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder setLastModifiedDate(
-        org.joda.time.DateTime value) {
+    public Builder setLastModifiedDate(org.joda.time.DateTime value) {
       validate(fields()[30], value);
       this.lastModifiedDate = value;
       fieldSetFlags()[30] = true;
@@ -2634,8 +2725,134 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
      *
      * @return This builder.
      */
-    public com.hbc.streams.promising.messages.PromisingRecord.Builder clearLastModifiedDate() {
+    public Builder clearLastModifiedDate() {
       fieldSetFlags()[30] = false;
+      return this;
+    }
+
+    /**
+     * Gets the value of the 'nextdayEligible' field.
+     *
+     * @return The value.
+     */
+    public Boolean getNextdayEligible() {
+      return nextdayEligible;
+    }
+
+    /**
+     * Sets the value of the 'nextdayEligible' field.
+     *
+     * @param value The value of 'nextdayEligible'.
+     * @return This builder.
+     */
+    public Builder setNextdayEligible(Boolean value) {
+      validate(fields()[31], value);
+      this.nextdayEligible = value;
+      fieldSetFlags()[31] = true;
+      return this;
+    }
+
+    /**
+     * Checks whether the 'nextdayEligible' field has been set.
+     *
+     * @return True if the 'nextdayEligible' field has been set, false otherwise.
+     */
+    public boolean hasNextdayEligible() {
+      return fieldSetFlags()[31];
+    }
+
+    /**
+     * Clears the value of the 'nextdayEligible' field.
+     *
+     * @return This builder.
+     */
+    public Builder clearNextdayEligible() {
+      nextdayEligible = null;
+      fieldSetFlags()[31] = false;
+      return this;
+    }
+
+    /**
+     * Gets the value of the 'sdndEligibleForDC' field.
+     *
+     * @return The value.
+     */
+    public Boolean getSdndEligibleForDC() {
+      return sdndEligibleForDC;
+    }
+
+    /**
+     * Sets the value of the 'sdndEligibleForDC' field.
+     *
+     * @param value The value of 'sdndEligibleForDC'.
+     * @return This builder.
+     */
+    public Builder setSdndEligibleForDC(Boolean value) {
+      validate(fields()[32], value);
+      this.sdndEligibleForDC = value;
+      fieldSetFlags()[32] = true;
+      return this;
+    }
+
+    /**
+     * Checks whether the 'sdndEligibleForDC' field has been set.
+     *
+     * @return True if the 'sdndEligibleForDC' field has been set, false otherwise.
+     */
+    public boolean hasSdndEligibleForDC() {
+      return fieldSetFlags()[32];
+    }
+
+    /**
+     * Clears the value of the 'sdndEligibleForDC' field.
+     *
+     * @return This builder.
+     */
+    public Builder clearSdndEligibleForDC() {
+      sdndEligibleForDC = null;
+      fieldSetFlags()[32] = false;
+      return this;
+    }
+
+    /**
+     * Gets the value of the 'nextdayEligibleForDC' field.
+     *
+     * @return The value.
+     */
+    public Boolean getNextdayEligibleForDC() {
+      return nextdayEligibleForDC;
+    }
+
+    /**
+     * Sets the value of the 'nextdayEligibleForDC' field.
+     *
+     * @param value The value of 'nextdayEligibleForDC'.
+     * @return This builder.
+     */
+    public Builder setNextdayEligibleForDC(Boolean value) {
+      validate(fields()[33], value);
+      this.nextdayEligibleForDC = value;
+      fieldSetFlags()[33] = true;
+      return this;
+    }
+
+    /**
+     * Checks whether the 'nextdayEligibleForDC' field has been set.
+     *
+     * @return True if the 'nextdayEligibleForDC' field has been set, false otherwise.
+     */
+    public boolean hasNextdayEligibleForDC() {
+      return fieldSetFlags()[33];
+    }
+
+    /**
+     * Clears the value of the 'nextdayEligibleForDC' field.
+     *
+     * @return This builder.
+     */
+    public Builder clearNextdayEligibleForDC() {
+      nextdayEligibleForDC = null;
+      fieldSetFlags()[33] = false;
       return this;
     }
 
@@ -2768,6 +2985,18 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
             fieldSetFlags()[30]
                 ? this.lastModifiedDate
                 : (org.joda.time.DateTime) defaultValue(fields()[30], record.getConversion(30));
+        record.nextdayEligible =
+            fieldSetFlags()[31]
+                ? this.nextdayEligible
+                : (Boolean) defaultValue(fields()[31], record.getConversion(31));
+        record.sdndEligibleForDC =
+            fieldSetFlags()[32]
+                ? this.sdndEligibleForDC
+                : (Boolean) defaultValue(fields()[32], record.getConversion(32));
+        record.nextdayEligibleForDC =
+            fieldSetFlags()[33]
+                ? this.nextdayEligibleForDC
+                : (Boolean) defaultValue(fields()[33], record.getConversion(33));
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
