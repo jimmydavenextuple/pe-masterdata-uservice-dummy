@@ -15,7 +15,7 @@ public class ErrorResponse extends BaseResponse<ErrorPayload> {
   public ErrorResponse() {
     this.setSuccess(false);
     this.setRequestId(CurrentThreadContext.getLogContext().getCorrelationId());
-    this.setTimestamp(new Date());
+    this.setTimestamp(new Date().getTime());
   }
 
   public static ErrorResponseBuilder builder(ErrorType type, Integer code) {
@@ -34,7 +34,7 @@ public class ErrorResponse extends BaseResponse<ErrorPayload> {
       this.errorResponse = new ErrorResponse();
       this.errorResponse.setPayload(new ErrorPayload(type, code));
       this.errorResponse.setMessage(message);
-      this.errorResponse.setTimestamp(timestamp);
+      this.errorResponse.setTimestamp(timestamp.getTime());
     }
 
     public ErrorResponseBuilder exception(Exception exception) {
@@ -49,7 +49,7 @@ public class ErrorResponse extends BaseResponse<ErrorPayload> {
     }
 
     public ErrorResponseBuilder timestamp(Date timestamp) {
-      errorResponse.setTimestamp(timestamp);
+      errorResponse.setTimestamp(timestamp.getTime());
       return this;
     }
 
