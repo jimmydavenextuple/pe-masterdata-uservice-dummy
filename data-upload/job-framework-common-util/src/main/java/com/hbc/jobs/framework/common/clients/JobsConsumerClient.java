@@ -2,6 +2,7 @@ package com.hbc.jobs.framework.common.clients;
 
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.List;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
     url = "${spring.application.dependencies.data-upload:http://pe-config-data-upload:8080/}")
 public interface JobsConsumerClient {
   @PostMapping("/jobs")
-  BaseResponse<JobDto> createJob(@Valid @RequestBody JobDto jobDto);
+  BaseResponse<JobResponse> createJob(@Valid @RequestBody JobDto jobDto);
 
   @GetMapping("/org/{orgId}/jobs/{jobId}")
   BaseResponse<JobDto> getJob(
@@ -29,7 +30,7 @@ public interface JobsConsumerClient {
       @NotEmpty @NotNull @PathVariable("jobId") String jobId);
 
   @GetMapping("/org/{orgId}/jobs")
-  BaseResponse<PagePayload<JobDto>> getJobsByFilter(
+  BaseResponse<PagePayload<JobResponse>> getJobsByFilter(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestParam(name = "jobType", required = false) String jobType,
       @RequestParam(name = "days", required = false) Integer days,
@@ -45,5 +46,5 @@ public interface JobsConsumerClient {
       @RequestParam(name = "status", required = false) String status);
 
   @PutMapping("/jobs/update")
-  BaseResponse<JobDto> updateJob(@Valid @RequestBody JobDto jobDto);
+  BaseResponse<JobResponse> updateJob(@Valid @RequestBody JobDto jobDto);
 }

@@ -4,6 +4,7 @@ import com.hbc.common.base.PagePayload;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
@@ -55,6 +56,27 @@ public class TestUtil {
       List<AuditLog> auditLogs,
       JobTypeEnum jobTypeEnum) {
     JobDto job = new JobDto();
+    job.setOrgId(orgId);
+    job.setStatus(status);
+    job.setTotalRecords(10);
+    job.setProcessedRecords(5);
+    job.setSuccessCount(5);
+    job.setFailureCount(0);
+    job.setJobType(jobTypeEnum);
+    job.setMetadata(new Metadata());
+    job.setUserId("User1");
+    job.setAuditLog(auditLogs);
+    job.setJobId(jobId);
+    return job;
+  }
+
+  public JobResponse createJobResponse(
+      String jobId,
+      String orgId,
+      JobStatusEnum status,
+      List<AuditLog> auditLogs,
+      JobTypeEnum jobTypeEnum) {
+    JobResponse job = new JobResponse();
     job.setOrgId(orgId);
     job.setStatus(status);
     job.setTotalRecords(10);
@@ -126,10 +148,10 @@ public class TestUtil {
     return recordStatusDtos;
   }
 
-  public PagePayload<JobDto> createPagePayloadJobDto(
+  public PagePayload<JobResponse> createPagePayloadJobDto(
       List<JobDto> jobDtoList, int totalPage, int totalElements, int pageNo) {
-    PagePayload<JobDto> pagePayload = new PagePayload<>();
-    Page<JobDto> pageResp = createPageJobDtos(totalPage, jobDtoList, totalElements);
+    PagePayload<JobResponse> pagePayload = new PagePayload<>();
+    Page<JobResponse> pageResp = createPageJobDtos(totalPage, jobDtoList, totalElements);
     PagePayload.Pagination pagination = new PagePayload.Pagination();
     pagination.setTotalRecords((int) pageResp.getTotalElements());
     pagination.setTotalPages(pageResp.getTotalPages());
@@ -139,8 +161,9 @@ public class TestUtil {
     return pagePayload;
   }
 
-  public Page<JobDto> createPageJobDtos(int totalPage, List<JobDto> jobList, int totalElements) {
-    Page<JobDto> pageResponse =
+  public Page<JobResponse> createPageJobDtos(
+      int totalPage, List<JobDto> jobList, int totalElements) {
+    Page<JobResponse> pageResponse =
         new Page() {
           @Override
           public int getTotalPages() {
