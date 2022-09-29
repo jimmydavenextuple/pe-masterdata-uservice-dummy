@@ -40,7 +40,7 @@ public class UploadBufferController {
     return uploadBufferService.uploadTransitBufferData(fileUri);
   }
 
-  @DeleteMapping("transit-buffer-delete")
+  @DeleteMapping("/transit-buffer-delete")
   public ResponseEntity<BaseResponse<String>> uploadDeleteTransitBufferData(
       @NotBlank @RequestParam String fileUri)
       throws IOException, CommonServiceException, CsvException, CsvFormatValidationFailedException,
