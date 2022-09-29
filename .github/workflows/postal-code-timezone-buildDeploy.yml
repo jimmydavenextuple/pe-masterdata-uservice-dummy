@@ -2,7 +2,7 @@ name: POSTAL-CODE-TIMEZONE BUILD-DEPLOY
 
 on:
   push:
-    branches: [ development ]
+    branches: [ devr3 ]
     paths:
       - "postal-code-timezone/**"
       - "deploy-scripts/**"
@@ -10,6 +10,7 @@ on:
       - ".github/**"
 jobs:
   Build-Deploy:
+    name: R3
     uses: ./.github/workflows/build&deploy.yml
     with:
       module: postal-code-timezone
