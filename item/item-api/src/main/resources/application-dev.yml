@@ -10,7 +10,7 @@ spring:
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
   kafka:
-    bootstrap-servers: "b-3.promisemksdevelopment.kmb9h1.c25.kafka.us-east-1.amazonaws.com:9096,b-2.promisemksdevelopment.kmb9h1.c25.kafka.us-east-1.amazonaws.com:9096,b-1.promisemksdevelopment.kmb9h1.c25.kafka.us-east-1.amazonaws.com:9096"
+    bootstrap-servers: "temp-5-kafka.integration.awshbc.io:9094"
     consumer-retry-count: 1
     consumer:
       enable-auto-commit: true
