@@ -7,7 +7,7 @@ import com.hbc.jobs.consumers.domain.mapper.JobMapper;
 import com.hbc.jobs.consumers.domain.repository.JobRepository;
 import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
-import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
@@ -74,7 +74,7 @@ public class JobDomain {
    * @return
    */
   @SuppressWarnings("squid:S107")
-  public Page<JobDto> findJobsByJobParam(
+  public Page<JobResponse> findJobsByJobParam(
       String orgId,
       Optional<String> jobType,
       Optional<Date> pastDays,
@@ -91,7 +91,7 @@ public class JobDomain {
         jobRepository.findJobsByJobParam(
             orgId, jobType.orElse(null), pastDays.orElse(null), element);
     return new PageImpl<>(
-        JobMapper.INSTANCE.toJobList(entityPage.getContent()),
+        JobMapper.INSTANCE.toJobResponseList(entityPage.getContent()),
         entityPage.getPageable(),
         entityPage.getTotalElements());
   }

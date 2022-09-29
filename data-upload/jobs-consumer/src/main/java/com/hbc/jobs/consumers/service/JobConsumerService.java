@@ -14,6 +14,7 @@ import com.hbc.jobs.consumers.exception.JobIdNotFoundException;
 import com.hbc.jobs.framework.common.aop.DBTransaction;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
@@ -82,8 +83,7 @@ public class JobConsumerService {
    * @return
    * @throws JobException
    */
-  public RecordStatusDto getRecordStatus(RecordDto recordDto)
-      throws JobException, InvalidJobTypeException {
+  public RecordStatusDto getRecordStatus(RecordDto recordDto) throws JobException {
     log.debug("Inside getRecordStatus service");
 
     try {
@@ -126,8 +126,7 @@ public class JobConsumerService {
    */
   public void updateJob(RecordStatusDto recordStatusDto, int retryCount) throws JobException {
     try {
-      var jobEntity =
-          jobDomain.findJobByJobIdAndOrgId(recordStatusDto.getJobId(), recordStatusDto.getOrgId());
+      var jobEntity = getJobEntity(recordStatusDto.getJobId(), recordStatusDto.getOrgId());
       var updateJobEntity = processJobStatus(jobEntity, recordStatusDto);
       jobDomain.save(updateJobEntity);
     } catch (Exception e) {
@@ -209,12 +208,11 @@ public class JobConsumerService {
    * @return
    * @throws JobException
    */
-  public JobDto createJob(JobDto jobDto) throws JobException {
+  public JobResponse createJob(JobDto jobDto) throws JobException {
     log.debug("--Inside createJob service--");
 
     try {
-      var existingJobEntity =
-          jobDomain.findJobByJobIdAndOrgId(jobDto.getJobId(), jobDto.getOrgId());
+      var existingJobEntity = getJobEntity(jobDto.getJobId(), jobDto.getOrgId());
 
       if (Objects.nonNull(existingJobEntity)) {
         log.error("Job already exists for job id {}", existingJobEntity.getJobId());
@@ -222,17 +220,22 @@ public class JobConsumerService {
             "Job already exists for the same jobId", existingJobEntity.getJobId());
       }
 
-      var jobEntity = saveJob(jobDto);
+      var jobEntity = jobDomain.save(JobMapper.INSTANCE.toJobEntity(jobDto));
       log.debug("--Inside createJob service ends--");
-      return JobMapper.INSTANCE.toJob(jobEntity);
+      return JobMapper.INSTANCE.toJobResponse(jobEntity);
     } catch (Exception e) {
       log.error("Error while creating a job", e);
       throw new JobException("Exception while creating the job ", e, jobDto.getJobId(), null);
     }
   }
 
-  public JobEntity saveJob(JobDto jobDto) throws JobDomainException {
-    return jobDomain.save(JobMapper.INSTANCE.toJobEntity(jobDto));
+  private JobEntity getJobEntity(String jobId, String orgId) throws JobDomainException {
+    return jobDomain.findJobByJobIdAndOrgId(jobId,orgId);
+  }
+
+  public JobEntity saveJob(JobResponse jobResponse) throws JobDomainException {
+    var jobEntity = getJobEntity(jobResponse.getJobId(), jobResponse.getOrgId());
+    return jobDomain.save(JobMapper.INSTANCE.updateJobEntity(jobResponse, jobEntity));
   }
 
   /**
@@ -245,7 +248,7 @@ public class JobConsumerService {
     log.debug("-- Inside getJob service --");
 
     try {
-      var jobEntity = jobDomain.findJobByJobIdAndOrgId(jobId, orgId);
+      var jobEntity = getJobEntity(jobId, orgId);
       if (Objects.isNull(jobEntity)) {
         throw new JobIdNotFoundException("Job is not found!", jobId);
       }
@@ -268,7 +271,7 @@ public class JobConsumerService {
    * @throws JobException
    */
   @SuppressWarnings("squid:S107")
-  public Page<JobDto> getJobs(
+  public Page<JobResponse> getJobs(
       String orgId,
       Optional<String> jobType,
       Optional<Integer> days,
@@ -278,7 +281,7 @@ public class JobConsumerService {
       int pageSize)
       throws JobException {
     log.debug("-- Inside getJobs service --");
-    Page<JobDto> page;
+    Page<JobResponse> page;
     Optional<Date> pastDays = Optional.empty();
 
     if (days.isPresent()) {

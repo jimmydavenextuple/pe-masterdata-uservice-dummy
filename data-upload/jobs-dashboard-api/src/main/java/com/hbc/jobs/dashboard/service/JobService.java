@@ -10,6 +10,7 @@ import com.hbc.jobs.framework.common.clients.JobsConsumerClient;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.enums.RecordDataTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
@@ -56,14 +57,14 @@ public class JobService {
    * @return
    * @throws JobException
    */
-  public JobDto processJobOffline(
+  public JobResponse processJobOffline(
       ByteArrayResource inputFile, String orgId, JobTypeEnum jobType, String fileName)
       throws JobException {
     log.debug("Inside processJobOffline service");
 
     try {
       JobDto job = constructJob(0, orgId, jobType, inputFile, fileName);
-      BaseResponse<JobDto> baseResponse = jobsConsumerClient.createJob(job);
+      BaseResponse<JobResponse> baseResponse = jobsConsumerClient.createJob(job);
       return baseResponse.getPayload();
     } catch (FeignException e) {
       log.error("Error while creating job", e);
@@ -96,25 +97,26 @@ public class JobService {
   /**
    * @param recordId
    * @param data
-   * @param job
+   * @param jobResponse
    * @param fileType
    */
-  private void publishToKafka(int recordId, String data, JobDto job, RecordDataTypeEnum fileType) {
+  private void publishToKafka(
+      int recordId, String data, JobResponse jobResponse, RecordDataTypeEnum fileType) {
     log.debug("Inside publish to kafka method");
     var recordDto = new RecordDto();
     recordDto.setRecordId(recordId);
     recordDto.setRecordData(data);
-    recordDto.setInputs(parseRecordInputs(data, job.getTotalRecords()));
-    recordDto.setOrgId(job.getOrgId());
-    recordDto.setJobId(job.getJobId());
-    recordDto.setJobType(job.getJobType());
-    recordDto.setTotalRecords(job.getTotalRecords());
+    recordDto.setInputs(parseRecordInputs(data, jobResponse.getTotalRecords()));
+    recordDto.setOrgId(jobResponse.getOrgId());
+    recordDto.setJobId(jobResponse.getJobId());
+    recordDto.setJobType(jobResponse.getJobType());
+    recordDto.setTotalRecords(jobResponse.getTotalRecords());
     recordDto.setRecordType(fileType);
     Message<RecordDto> message;
     message =
         MessageBuilder.withPayload(recordDto)
             .setHeader(KafkaHeaders.TOPIC, dashboardProducerName)
-            .setHeader(CommonConstants.HEADER_USER, job.getUserId())
+            .setHeader(CommonConstants.HEADER_USER, jobResponse.getUserId())
             .build();
 
     try {
@@ -221,7 +223,7 @@ public class JobService {
    * @throws JobException
    */
   @SuppressWarnings("squid:S107")
-  public PagePayload<JobDto> getJobsByJobInfo(
+  public PagePayload<JobResponse> getJobsByJobInfo(
       String orgId,
       Optional<String> jobType,
       Optional<Integer> days,
@@ -261,25 +263,25 @@ public class JobService {
    * @return
    * @throws JobException
    */
-  public JobDto processJobJsonOffline(
+  public JobResponse processJobJsonOffline(
       String request, String orgId, JobTypeEnum jobType, Optional<String> jobId)
       throws JobException {
     log.debug("Inside processJobOffline service");
 
     try {
       List<String> jsonList = parseJSON(request);
-      JobDto jobResponse;
+      JobResponse jobResponse;
       if (jobId.isPresent() && !ObjectUtils.isEmpty(jobId.orElse(null))) {
-        jobResponse = jobsConsumerClient.getJob(orgId, jobId.get()).getPayload();
-        jobResponse.setTotalRecords(jobResponse.getTotalRecords() + jsonList.size());
-        jobResponse.setRemainingRecords(jobResponse.getRemainingRecords() + jsonList.size());
-        jobResponse = jobsConsumerClient.updateJob(jobResponse).getPayload();
+        var jobDto = jobsConsumerClient.getJob(orgId, jobId.get()).getPayload();
+        jobDto.setTotalRecords(jobDto.getTotalRecords() + jsonList.size());
+        jobDto.setRemainingRecords(jobDto.getRemainingRecords() + jsonList.size());
+        jobResponse = jobsConsumerClient.updateJob(jobDto).getPayload();
       } else {
         JobDto job = constructJob(jsonList.size(), orgId, jobType);
-        BaseResponse<JobDto> baseResponse = jobsConsumerClient.createJob(job);
+        BaseResponse<JobResponse> baseResponse = jobsConsumerClient.createJob(job);
         jobResponse = baseResponse.getPayload();
       }
-      JobDto finalJobResponse = jobResponse;
+      var finalJobResponse = jobResponse;
       IntStream.range(0, jsonList.size())
           .forEach(
               recordNumber ->
