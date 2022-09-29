@@ -15,6 +15,7 @@ import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.dashboard.service.JobService;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
@@ -61,8 +62,8 @@ class JobDashboardControllerTest {
             TestUtil.ORG_ID,
             TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES,
             TestUtil.fileName))
-        .thenReturn(new JobDto());
-    ResponseEntity<BaseResponse<JobDto>> responseEntity =
+        .thenReturn(new JobResponse());
+    ResponseEntity<BaseResponse<JobResponse>> responseEntity =
         jobDashboardController.processJobOffline(
             TestUtil.ORG_ID,
             TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES,
@@ -107,14 +108,14 @@ class JobDashboardControllerTest {
     when(jobService.processJobJsonOffline(
             anyString(), anyString(), any(JobTypeEnum.class), any(Optional.class)))
         .thenReturn(
-            testUtil.createJob(
+            testUtil.createJobResponse(
                 TestUtil.JOB_ID,
                 TestUtil.ORG_ID,
                 JobStatusEnum.SUBMITTED,
                 Collections.singletonList(new AuditLog()),
                 TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES));
 
-    ResponseEntity<BaseResponse<JobDto>> responseEntity =
+    ResponseEntity<BaseResponse<JobResponse>> responseEntity =
         jobDashboardController.processJobJsonOffline(
             JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, TestUtil.ORG_ID, request);
 
@@ -150,8 +151,9 @@ class JobDashboardControllerTest {
   @Test
   void processJobJsonOfflineUpdateExistingJob() throws JobException {
 
-    when(jobService.processJobJsonOffline(any(), any(), any(), any())).thenReturn(new JobDto());
-    ResponseEntity<BaseResponse<JobDto>> responseEntity =
+    when(jobService.processJobJsonOffline(any(), any(), any(), any()))
+        .thenReturn(new JobResponse());
+    ResponseEntity<BaseResponse<JobResponse>> responseEntity =
         jobDashboardController.processJobJsonOffline(
             TestUtil.ORG_ID,
             TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES,
@@ -165,8 +167,9 @@ class JobDashboardControllerTest {
   @Test
   void processJobJsonOffline2() throws JobException {
 
-    when(jobService.processJobJsonOffline(any(), any(), any(), any())).thenReturn(new JobDto());
-    ResponseEntity<BaseResponse<JobDto>> responseEntity =
+    when(jobService.processJobJsonOffline(any(), any(), any(), any()))
+        .thenReturn(new JobResponse());
+    ResponseEntity<BaseResponse<JobResponse>> responseEntity =
         jobDashboardController.processJobJsonOffline(
             TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, "", "");
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Status code");
@@ -263,16 +266,16 @@ class JobDashboardControllerTest {
   void getJobsByFilterSuccess() throws JobException {
     List<JobDto> jobList =
         testUtil.createJobList(TestUtil.JOB_TYPE_UPLOAD_TRANSIT_TIMES.name(), TestUtil.ORG_ID);
-    PagePayload<JobDto> pagePayloadJobDto =
+    PagePayload<JobResponse> pagePayloadJobDto =
         testUtil.createPagePayloadJobDto(jobList, jobList.size(), jobList.size(), 1);
     when(defaultPageProperties.getPageNo()).thenReturn(1);
     when(defaultPageProperties.getPageSize()).thenReturn(15);
     when(jobService.getJobsByJobInfo(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenReturn(pagePayloadJobDto);
 
-    ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
+    ResponseEntity<BaseResponse<PagePayload<JobResponse>>> response =
         jobDashboardController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters());
-    PagePayload<JobDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
+    PagePayload<JobResponse> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     verify(jobService, times(1))
         .getJobsByJobInfo(any(), any(), any(), any(), any(), anyInt(), anyInt());
