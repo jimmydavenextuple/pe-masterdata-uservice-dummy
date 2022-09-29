@@ -2,13 +2,14 @@ name: NFS-COMMON BUILD
 
 on:
   push:
-    branches: [ development ]
+    branches: [ devr3 ]
     paths:
       - "nfs-common/**"
       - ".github/workflows/nfs-common-build.yml"
 jobs:
 
   Build-Publish:
+    name: R3
     uses: ./.github/workflows/build.yml
     with:
       module: nfs-common

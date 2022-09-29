@@ -10,20 +10,20 @@ ENVIRONMENT=`echo $ENVIRONMENT | sed 's/[0-9]\+$//'`
 aws sts get-caller-identity
 
 if [ "$ENVIRONMENT" == "dev" -o "$ENVIRONMENT" == "qa" ]; then
-  export AWS_EKS_NAME="dev-eks-cluster"
+  export AWS_EKS_NAME="eks-cluster-promise-development"
   export ENV_TAG="development"
 elif [ "$ENVIRONMENT" == "stage" ]; then
-  export AWS_EKS_NAME="stage-eks-cluster"
+  export AWS_EKS_NAME="stage-eks-cluster-new"
   export ENV_TAG="stage"
 elif [ "$ENVIRONMENT" == "perf" ]; then
-  export AWS_EKS_NAME="promise-engine-eks-perf"
+  export AWS_EKS_NAME="promise-engine-eks-perf-new"
   export ENV_TAG="stage"
 elif [ "$ENVIRONMENT" == "hotfix" ]; then
-  export AWS_EKS_NAME="dev-eks-cluster"
+  export AWS_EKS_NAME="eks-cluster-promise-development"
   export ENV_TAG="development"
   export BUILD_TARGET="SNAPSHOT"
 elif [ "$ENVIRONMENT" == "prod" ]; then
-  export AWS_EKS_NAME="promise-engine-eks-prod"
+  export AWS_EKS_NAME="promise-engine-eks-prod-new"
   export ENV_TAG="production"
 fi
 

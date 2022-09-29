@@ -5,10 +5,11 @@ on:
   pull_request:
     paths:
       - "data-upload/**"
-    branches: [ development, hotfix ]
+    branches: [ devr3, hotfix ]
 
 jobs:
   PR-Analysis:
+    name: R3
     uses: ./.github/workflows/pr-flow.yml
     with:
       module: data-upload
