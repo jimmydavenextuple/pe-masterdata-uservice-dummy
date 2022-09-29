@@ -230,7 +230,7 @@ public class JobConsumerService {
   }
 
   private JobEntity getJobEntity(String jobId, String orgId) throws JobDomainException {
-    return jobDomain.findJobByJobIdAndOrgId(jobId,orgId);
+    return jobDomain.findJobByJobIdAndOrgId(jobId, orgId);
   }
 
   public JobEntity saveJob(JobResponse jobResponse) throws JobDomainException {

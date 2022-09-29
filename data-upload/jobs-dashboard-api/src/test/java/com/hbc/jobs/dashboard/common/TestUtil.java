@@ -1,6 +1,8 @@
 package com.hbc.jobs.dashboard.common;
 
 import com.hbc.common.base.PagePayload;
+import com.hbc.jobs.consumers.domain.entity.JobEntity;
+import com.hbc.jobs.consumers.domain.mapper.JobMapper;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
@@ -41,6 +43,22 @@ public class TestUtil {
           + "1560,BAY,SDND,2,D\n"
           + "1101,BAY,SDND,2,U";
 
+  public static final String CSV_CONTENTS_TRANSIT_TIMES =
+      "orgId,BAY,,,,,,,,,\n"
+          + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+          + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
+          + "DFSA1,,9.96,9.96\n"
+          + "DFSA2,D,9,9.9\n"
+          + "DFSA3,10,9,9\n";
+
+  public static final String CSV_CONTENTS_DELETE_TRANSIT_BUFFER =
+      "orgId,BAY,,,,,,,,,\n"
+          + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+          + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
+          + "DFSA1,D,D.D,D\n"
+          + "DFSA2,D,D,D\n"
+          + "DFSA3,D,D,D\n";
+
   public static final Optional<String> DEFAULT_SORT_FIELD = Optional.of("created_date");
 
   public static final Optional<String> DEFAULT_SORT_ORDER = Optional.of("ASC");
@@ -68,6 +86,15 @@ public class TestUtil {
     job.setAuditLog(auditLogs);
     job.setJobId(jobId);
     return job;
+  }
+
+  public JobEntity createJobEntity(
+      String jobId,
+      String orgId,
+      JobStatusEnum jobStatus,
+      List<AuditLog> auditLog,
+      JobTypeEnum jobType) {
+    return JobMapper.INSTANCE.toJobEntity(createJob(jobId, orgId, jobStatus, auditLog, jobType));
   }
 
   public JobResponse createJobResponse(
