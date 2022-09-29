@@ -17,16 +17,16 @@ public class JobResponse {
 
   private String jobId;
   private String fileName;
-  private Integer totalRecords;
   private JobTypeEnum jobType;
+  private JobStatusEnum status;
+  private Date processingStartedAt;
   private Integer processedRecords;
   private Integer remainingRecords;
   private Integer failureCount;
   private Integer successCount;
-  private JobStatusEnum status;
+  private Integer totalRecords;
   private String userId;
   private String orgId;
-  private Date processingStartedAt;
   private Metadata metadata;
   private List<AuditLog> auditLog;
   private String errorMessage;
