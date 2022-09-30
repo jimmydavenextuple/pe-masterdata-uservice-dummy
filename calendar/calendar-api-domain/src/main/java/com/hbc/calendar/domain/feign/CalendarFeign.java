@@ -57,4 +57,8 @@ public interface CalendarFeign {
   @GetMapping("/node-carrier-service-calendar/get-all-cache-keys")
   BaseResponse<List<NodeCarrierCalendarCacheKeyDto>> getNodeCarrierCalendarCacheKeys(
       @NotNull @RequestParam Integer limit);
+
+  @GetMapping("/node-calendar/{orgId}/{nodeId}")
+  BaseResponse<List<NodeCalendarResponse>> handleGetNodeCalendar(
+          @PathVariable String orgId, @PathVariable String nodeId);
 }
