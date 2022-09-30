@@ -52,7 +52,7 @@ public class RepositoryConfig extends HikariConfig {
     return new Properties();
   }
 
-  @Bean(name = "routingDS")
+  @Bean(name = ConfigConstants.ROUTING_DS)
   @Primary
   public DataSource routingDataSource() {
     var primaryDataSource = dataSource(false, false);
@@ -63,7 +63,7 @@ public class RepositoryConfig extends HikariConfig {
     return new RoutingDS(primaryDataSource, replicaDataSource);
   }
 
-  @Bean(name = "primaryDS")
+  @Bean(name = ConfigConstants.PRIMARY_DS)
   protected DataSource dataSource(boolean readOnly, boolean isAutoCommit) {
     var config = new HikariConfig(primaryProperties());
     config.setJdbcUrl(databaseUrl);
@@ -74,7 +74,7 @@ public class RepositoryConfig extends HikariConfig {
     return new HikariDataSource(config);
   }
 
-  @Bean(name = "readerAndPrimaryDS")
+  @Bean(name = ConfigConstants.READER_OR_PRIMARY_DS)
   protected DataSource replicaDataSource(boolean readOnly, boolean isAutoCommit) {
     if (Boolean.FALSE.equals(replicaReq)) {
       return null;

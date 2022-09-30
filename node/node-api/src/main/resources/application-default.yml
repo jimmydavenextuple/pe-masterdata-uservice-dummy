@@ -6,16 +6,18 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
     username: postgres
-    password: postgres
+    password: a0756aa8-6370-4ada-99e2-a742ba5dc34b
   replica:
-    datasource:
-      required: true
-      platform: postgres
-      url: jdbc:postgresql://localhost:5432/postgres
-      username: postgres
-      password: postgres
+      datasource:
+        platform: postgres
+        url: jdbc:postgresql://promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com,promise-engine-postgres-perf.cluster-ro-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe?readOnly=true
+        username: postgres
+        password: a0756aa8-6370-4ada-99e2-a742ba5dc34b
+        required: true
+        hikari:
+          readOnly: true
 logging:
   level:
     com.hbc: INFO
