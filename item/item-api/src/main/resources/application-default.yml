@@ -28,3 +28,6 @@ spring:
 logging:
   level:
     com.hbc: INFO
+pe:
+  ui:
+    allowed-origin-url: "*"

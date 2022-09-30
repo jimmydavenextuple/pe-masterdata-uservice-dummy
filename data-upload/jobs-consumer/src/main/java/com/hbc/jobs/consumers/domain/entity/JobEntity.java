@@ -5,11 +5,14 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +27,7 @@ import org.hibernate.annotations.TypeDef;
 @AllArgsConstructor
 @Builder
 @DynamicInsert
-@Table(name = "jobs")
+@Table(name = "jobs", indexes = @Index(name = "status_key", columnList = "status"))
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class JobEntity extends BaseEntity {
 
@@ -34,6 +37,16 @@ public class JobEntity extends BaseEntity {
 
   @Column(name = "org_id")
   private String orgId;
+
+  @Column(name = "processing_started_at")
+  private Date processingStartedAt;
+
+  @Column(name = "file_name")
+  private String fileName;
+
+  @Column(name = "file")
+  @Lob
+  private byte[] file;
 
   @Column(name = "status")
   @Enumerated(EnumType.STRING)
@@ -63,4 +76,7 @@ public class JobEntity extends BaseEntity {
 
   @Column(name = "audit_log")
   private AuditLog[] auditLog;
+
+  @Column(name = "error_message")
+  private String errorMessage;
 }

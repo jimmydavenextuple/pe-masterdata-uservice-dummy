@@ -10,10 +10,12 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.consumers.common.TestUtil;
+import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
@@ -87,9 +89,10 @@ class JobControllerTest {
   void createJobSuccess() throws JobException {
 
     JobDto job = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
-    when(jobConsumerService.createJob(any())).thenReturn(job);
+    when(jobConsumerService.createJob(any()))
+        .thenReturn(testUtil.createJobResponse(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
 
-    ResponseEntity<BaseResponse<JobDto>> response = jobsConsumerController.createJob(job);
+    ResponseEntity<BaseResponse<JobResponse>> response = jobsConsumerController.createJob(job);
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
 
@@ -142,6 +145,19 @@ class JobControllerTest {
   }
 
   @Test
+  void updateJob() throws JobDomainException {
+    JobResponse job = testUtil.createJobResponse(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
+    when(jobConsumerService.saveJob(any()))
+        .thenReturn(testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
+
+    ResponseEntity<BaseResponse<JobResponse>> response = jobsConsumerController.updateJob(job);
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertNotNull(response);
+    Assertions.assertNotNull(response.getBody());
+    Assertions.assertNotNull(response.getBody().getPayload());
+  }
+
+  @Test
   void getJobNotFoundException() throws JobException {
 
     String jobId = "job123";
@@ -175,8 +191,8 @@ class JobControllerTest {
   @Test
   void getJobsByFilterSuccess() throws JobException {
 
-    List<JobDto> jobDtoList = testUtil.createJobDtoList();
-    Page<JobDto> pageResp = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
+    List<JobResponse> jobDtoList = testUtil.createJobResponseList();
+    Page<JobResponse> pageResp = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
 
     when(defaultPageProperties.getPageNo()).thenReturn(1);
     when(defaultPageProperties.getPageSize()).thenReturn(15);
@@ -186,9 +202,9 @@ class JobControllerTest {
     when(jobConsumerService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenReturn(pageResp);
 
-    ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
+    ResponseEntity<BaseResponse<PagePayload<JobResponse>>> response =
         jobsConsumerController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters());
-    PagePayload<JobDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
+    PagePayload<JobResponse> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
     Assertions.assertEquals(
@@ -211,8 +227,8 @@ class JobControllerTest {
 
     JobFilters jobFilters = testUtil.getJobFilters();
     jobFilters.setPageNo(Optional.of(2));
-    List<JobDto> jobDtoList = testUtil.createJobDtoList();
-    Page<JobDto> pageResp = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
+    List<JobResponse> jobDtoList = testUtil.createJobResponseList();
+    Page<JobResponse> pageResp = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
 
     when(defaultPageProperties.getPageNo()).thenReturn(1);
     when(defaultPageProperties.getPageSize()).thenReturn(15);
@@ -221,9 +237,9 @@ class JobControllerTest {
     when(jobConsumerService.getJobs(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenReturn(pageResp);
 
-    ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
+    ResponseEntity<BaseResponse<PagePayload<JobResponse>>> response =
         jobsConsumerController.getJobsByFilter(TestUtil.ORG_ID, jobFilters);
-    PagePayload<JobDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
+    PagePayload<JobResponse> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
     Assertions.assertEquals(

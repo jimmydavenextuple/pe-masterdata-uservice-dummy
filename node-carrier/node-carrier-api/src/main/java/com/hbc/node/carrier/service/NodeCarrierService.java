@@ -1,8 +1,10 @@
 package com.hbc.node.carrier.service;
 
+import com.hbc.carrier.domain.feign.CarrierFeign;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.common.util.DateValidationUtil;
 import com.hbc.node.carrier.domain.NodeCarrierDomain;
 import com.hbc.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
 import com.hbc.node.carrier.domain.entity.NodeCarrierEntity;
@@ -53,6 +55,13 @@ public class NodeCarrierService {
   private final NodeCarrierDomain nodeCarrierDomain;
   private final NodeFeign nodeFeign;
 
+  private final DateValidationUtil dateValidationUtil;
+
+  private final CarrierFeign carrierFeign;
+
+  private static final String INVALID_CARRIER_DATA_EXCEPTION_MESSAGE =
+      "Node carrier data cannot be created with given carrierServiceId and orgId";
+
   @Value("#{'${promise.service.options}'.split('\\s*,\\s*')}")
   public Set<String> serviceOptions;
 
@@ -72,6 +81,16 @@ public class NodeCarrierService {
             nodeCarrierRequest.getCarrierServiceId(),
             nodeCarrierRequest.getServiceOption());
       }
+        if (!ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId()) && Boolean.FALSE.equals(
+                validateCarrierDetails(
+                        nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
+          commonServiceExceptionMethod(
+                  INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
+                  nodeCarrierRequest.getNodeId(),
+                  nodeCarrierRequest.getOrgId(),
+                  nodeCarrierRequest.getCarrierServiceId(),
+                  nodeCarrierRequest.getServiceOption());
+      }
       if (!serviceOptions.contains(nodeCarrierRequest.getServiceOption())) {
         commonServiceExceptionMethod(
             "Invalid serviceOption",
@@ -81,7 +100,7 @@ public class NodeCarrierService {
             nodeCarrierRequest.getServiceOption());
       }
     } catch (RuntimeException e) {
-      var errorMessage = "NodeId does not exists";
+      var errorMessage = "NodeId and OrgId combination does not exists";
       logger.error(errorMessage, e);
       commonServiceExceptionMethod(
           errorMessage,
@@ -99,9 +118,30 @@ public class NodeCarrierService {
     return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
   }
 
+  private Boolean validateCarrierDetails(String orgId, String carrierServiceId) {
+    try {
+      var carrierServiceResponse =
+          carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(carrierServiceId, orgId);
+      if (Objects.nonNull(carrierServiceResponse)) {
+        var payload = carrierServiceResponse.getPayload();
+        if (Objects.nonNull(payload) && Boolean.FALSE.equals(payload.isEmpty())) {
+          return true;
+        }
+      }
+      return false;
+    } catch (Exception e) {
+      logger.error(
+          "Error while fetching carrier details for orgId:{} , carrierServiceId:{}",
+          orgId,
+          carrierServiceId);
+      return false;
+    }
+  }
+
   public NodeCarrierResponse updateBufferData(NodeCarrierBufferRequest nodeCarrierBufferRequest)
       throws NodeCarrierDomainException, CommonServiceException {
-
+    dateValidationUtil.validateBufferStartAndEndDate(
+        nodeCarrierBufferRequest.getBufferStartDate(), nodeCarrierBufferRequest.getBufferEndDate());
     validateBufferHours(nodeCarrierBufferRequest.getBufferHours());
     var nodeCarrierEntity = INSTANCE.nodeCarrierBufferRequestToEntity(nodeCarrierBufferRequest);
 
@@ -214,6 +254,20 @@ public class NodeCarrierService {
   public NodeCarrierResponse deleteNodeCarrier(
       String nodeId, String orgId, String carrierServiceId, String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
+
+    BaseResponse<NodeResponse> baseResponse = nodeFeign.getNodeDetails(nodeId, orgId);
+    if (!baseResponse.isSuccess() || Objects.isNull(baseResponse.getPayload())) {
+      commonServiceExceptionMethod(
+              "Invalid nodeId", nodeId, orgId, carrierServiceId, serviceOption);
+    }
+    if (!serviceOptions.contains(serviceOption)) {
+      commonServiceExceptionMethod(
+              "Invalid serviceOption", nodeId, orgId, carrierServiceId, serviceOption);
+    }
+    if (!orgId.equals(baseResponse.getPayload().getOrgId())) {
+      commonServiceExceptionMethod("Invalid orgId", nodeId, orgId, carrierServiceId, serviceOption);
+    }
+
     Optional<NodeCarrierEntity> nodeCarrierEntity =
         nodeCarrierDomain.findNodeCarrierDetails(nodeId, orgId, carrierServiceId, serviceOption);
 

@@ -9,6 +9,7 @@ import com.hbc.pe.masterdata.calendar.domain.CalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.CarrierServiceCalendarDomain;
 import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.mapper.CalendarMapper;
+import com.hbc.pe.masterdata.calendar.domain.repository.CarrierServiceCalendarRepository;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.CalenderServiceException;
 import com.hbc.pe.masterdata.calendar.exception.DateException;
@@ -37,9 +38,13 @@ public class CarrierServiceCalendarService {
   private static final CalendarMapper INSTANCE = Mappers.getMapper(CalendarMapper.class);
   private final CarrierServiceCalendarDomain carrierServiceCalendarDomain;
   private final CalendarDomain calendarDomain;
+  private final CarrierServiceCalendarRepository carrierServiceCalendarRepository;
   private final DateValidation dateValidation;
   private static final String ORG_ID = "orgId";
   private static final String CALENDAR_ID = "calendarId";
+  private static final String CARRIER_SERVICE_ID = "carrierServiceId";
+  private static final String SHIPPING_STAGE = "shippingStage";
+  private static final String EFFECTIVE_DATE = "effectiveDate";
 
   /** Creates a new Carrier Service Calendar */
   public CarrierServiceCalendarResponse processCreateCarrierServiceCalendar(
@@ -55,6 +60,50 @@ public class CarrierServiceCalendarService {
         carrierServiceCalendarRequest.getCalendarId(), carrierServiceCalendarRequest.getOrgId());
     var carrierServiceCalendarEntity =
         INSTANCE.convertToCarrierServiceCalendarEntity(carrierServiceCalendarRequest);
+    Optional<CarrierServiceCalendarEntity> existingCarrierServiceCalendarEntity =
+        carrierServiceCalendarRepository
+            .findByCalendarIdAndOrgIdAndCarrierServiceIdAndShippingStageAndEffectiveDate(
+                carrierServiceCalendarRequest.getCalendarId(),
+                carrierServiceCalendarRequest.getOrgId(),
+                carrierServiceCalendarRequest.getCarrierServiceId(),
+                carrierServiceCalendarRequest.getShippingStage(),
+                carrierServiceCalendarRequest.getEffectiveDate());
+    if (existingCarrierServiceCalendarEntity.isPresent()) {
+      logger.error(
+          "Node Calendar already exists for calendarId:{} ,orgId:{}, nodeId:{} ,shippingStage:{} , effectiveDate:{}",
+          carrierServiceCalendarRequest.getCalendarId(),
+          carrierServiceCalendarRequest.getOrgId(),
+          carrierServiceCalendarRequest.getCarrierServiceId(),
+          carrierServiceCalendarRequest.getShippingStage(),
+          carrierServiceCalendarRequest.getEffectiveDate());
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          CALENDAR_ID,
+          FieldError.builder().rejectedValue(carrierServiceCalendarEntity.getCalendarId()).build());
+      errorMap.put(
+          ORG_ID,
+          FieldError.builder().rejectedValue(carrierServiceCalendarEntity.getOrgId()).build());
+      errorMap.put(
+          CARRIER_SERVICE_ID,
+          FieldError.builder()
+              .rejectedValue(carrierServiceCalendarEntity.getCarrierServiceId())
+              .build());
+      errorMap.put(
+          SHIPPING_STAGE,
+          FieldError.builder()
+              .rejectedValue(carrierServiceCalendarEntity.getShippingStage())
+              .build());
+      errorMap.put(
+          EFFECTIVE_DATE,
+          FieldError.builder()
+              .rejectedValue(carrierServiceCalendarEntity.getEffectiveDate())
+              .build());
+      throw new CommonServiceException(
+          "Carrier Service Calendar already exists for the given details",
+          HttpStatus.BAD_REQUEST,
+          0x1772,
+          errorMap);
+    }
     var savedCarrierServiceCalendarEntity =
         carrierServiceCalendarDomain.saveCarrierServiceCalendarEntity(carrierServiceCalendarEntity);
     return INSTANCE.convertToCarrierServiceCalendarResponse(savedCarrierServiceCalendarEntity);

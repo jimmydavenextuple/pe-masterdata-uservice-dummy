@@ -1,6 +1,7 @@
 package com.hbc.transit.domain.inbound;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import java.io.Serializable;
 import java.util.Date;
 import javax.validation.constraints.NotBlank;
@@ -36,10 +37,10 @@ public class TransitBufferCreationRequest implements Serializable {
   private Double bufferDays;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", lenient = OptBoolean.FALSE)
   private Date bufferStartDate;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", lenient = OptBoolean.FALSE)
   private Date bufferEndDate;
 }

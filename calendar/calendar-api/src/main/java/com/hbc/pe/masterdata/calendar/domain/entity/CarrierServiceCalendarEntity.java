@@ -1,5 +1,6 @@
 package com.hbc.pe.masterdata.calendar.domain.entity;
 
+import com.hbc.common.base.BaseEntity;
 import com.hbc.core.event.listeners.CommonEntityListener;
 import com.hbc.pe.masterdata.calendar.domain.entity.primarykey.CarrierServiceCalendarPK;
 import javax.persistence.*;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "carrier_service_calendars")
 @IdClass(CarrierServiceCalendarPK.class)
 @EntityListeners(CommonEntityListener.class)
-public class CarrierServiceCalendarEntity {
+public class CarrierServiceCalendarEntity extends BaseEntity {
 
   @Id
   @Column(name = "calendar_id")

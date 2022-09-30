@@ -23,6 +23,7 @@ import com.hbc.jobs.consumers.exception.JobRecordDomainException;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
@@ -74,7 +75,6 @@ class JobConsumerServiceTest {
       FeignClientMapper feignClientMapper = mock(FeignClientMapper.class);
       RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
 
-      when(record.getJob()).thenReturn(mock(JobDto.class));
       when(feignClientMapper.getResponseFromAPI(any())).thenReturn(recordStatusDto);
       when(feignClientMapperFactory.getMapper(any())).thenReturn(feignClientMapper);
       doNothing().when(jobDashboardService).publishJobRecord(any());
@@ -90,7 +90,6 @@ class JobConsumerServiceTest {
       FeignClientMapper feignClientMapper = mock(FeignClientMapper.class);
       RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
 
-      when(record.getJob()).thenReturn(mock(JobDto.class));
       when(feignClientMapper.getResponseFromAPI(any())).thenReturn(recordStatusDto);
       when(feignClientMapperFactory.getMapper(any())).thenReturn(feignClientMapper);
       doThrow(RuntimeException.class).when(jobDashboardService).publishJobRecord(any());
@@ -108,7 +107,11 @@ class JobConsumerServiceTest {
   @Test
   void getRecordStatus() throws JobException {
     RecordDto record = new RecordDto();
-    record.setJob(testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2));
+    record.setJobId(TestUtil.JOB_ID);
+    record.setTotalRecords(2);
+    record.setJobType(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+    record.setOrgId(TestUtil.ORG_ID);
+
     when(feignClientMapperFactory.getMapper(any())).thenReturn(nodeCarrierMapper);
     when(nodeCarrierMapper.getResponseFromAPI(any()))
         .thenReturn(
@@ -130,7 +133,10 @@ class JobConsumerServiceTest {
   @Test
   void getRecordStatusInvalidJobType() {
     RecordDto record = new RecordDto();
-    record.setJob(testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2));
+    record.setJobId(TestUtil.JOB_ID);
+    record.setTotalRecords(2);
+    record.setJobType(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+    record.setOrgId(TestUtil.ORG_ID);
     when(feignClientMapperFactory.getMapper(any())).thenReturn(null);
 
     Exception exception =
@@ -223,7 +229,7 @@ class JobConsumerServiceTest {
 
       when(jobDomain.save(any())).thenReturn(jobEntity);
 
-      JobDto job1 = jobConsumerService.createJob(job);
+      JobResponse job1 = jobConsumerService.createJob(job);
 
       Assertions.assertEquals(jobEntity.getJobId(), job1.getJobId(), "JobId");
     }
@@ -254,6 +260,21 @@ class JobConsumerServiceTest {
 
       Assertions.assertEquals(job.getJobId(), exception.getJobId(), "Expected JobId");
     }
+  }
+
+  @Test
+  void saveJob() throws JobDomainException {
+    when(jobDomain.findJobByJobIdAndOrgId(any(), any()))
+        .thenReturn(testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
+    when(jobDomain.save(any()))
+        .thenReturn(testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
+
+    JobEntity jobEntity =
+        jobConsumerService.saveJob(
+            testUtil.createJobResponse(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
+    Assertions.assertNotNull(jobEntity);
+    Assertions.assertNotNull(jobEntity.getFile());
+    verify(jobDomain, times(1)).save(any());
   }
 
   @Nested
@@ -314,12 +335,12 @@ class JobConsumerServiceTest {
       int pageNo = 1;
       int pageSize = 2;
 
-      List<JobDto> jobDtoList = testUtil.createJobDtoList();
-      Page<JobDto> page = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
+      List<JobResponse> jobDtoList = testUtil.createJobResponseList();
+      Page<JobResponse> page = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
       when(jobDomain.findJobsByJobParam(any(), any(), any(), any(), any(), anyInt(), anyInt()))
           .thenReturn(page);
 
-      Page<JobDto> pageResponse =
+      Page<JobResponse> pageResponse =
           jobConsumerService.getJobs(
               TestUtil.ORG_ID,
               Optional.empty(),
@@ -367,6 +388,7 @@ class JobConsumerServiceTest {
     void updateJobSuccess() throws Exception {
       JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
       jobEntity.setJobId(TestUtil.JOB_ID);
+      jobEntity.setStatus(JobStatusEnum.PROCESSED);
       RecordStatusDto recordStatus =
           testUtil.createRecordStatus(
               TestUtil.JOB_ID,

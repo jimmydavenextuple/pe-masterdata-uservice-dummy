@@ -1,23 +1,22 @@
 package com.hbc.jobs.consumers.common;
 
-import com.hbc.csvdownload.common.pojo.ProcessingLeadTime;
+import com.hbc.csvdownload.common.pojo.TransitDataUpload;
+import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.domain.entity.JobRecordEntity;
 import com.hbc.jobs.consumers.domain.mapper.JobMapper;
 import com.hbc.jobs.consumers.domain.mapper.JobRecordMapper;
+import com.hbc.jobs.consumers.feign.AuthTokenResponse;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
-import com.hbc.jobs.framework.common.domain.enums.RecordDataTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
-import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
-import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
-import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,8 +36,24 @@ import org.springframework.stereotype.Service;
 public class TestUtil {
 
   public static final String ORG_ID = "BAY";
-  public static final String JOB_TYPE = JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES.name();
   public static final String JOB_ID = "JobId1";
+
+  public static final String CSV_CONTENTS_PROCESSING_LEAD_TIMES =
+      "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+          + "1554,BAY,SDND,2,U\n"
+          + "1560,BAY,SDND,2,D\n"
+          + "1101,BAY,SDND,2,U";
+
+  public static final String CSV_CONTENTS_TRANSIT_TIMES =
+      "orgId,BAY,,,,,,,,,\n"
+          + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+          + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
+          + "DFSA1,,9.96,9.96\n"
+          + "DFSA2,D,9,9.9\n"
+          + "DFSA3,10,9,9\n";
+
+  public static final String JOB_STRING =
+      "[{\"nodeId\":\"1554\",\"orgId\":\"BAY\",\"serviceOption\":\"SDND\",\"carrierServiceId\":\"\",\"processingTime\":2.0,\"actionType\":\"U\"},{\"nodeId\":\"1560\",\"orgId\":\"BAY\",\"serviceOption\":\"SDND\",\"carrierServiceId\":\"\",\"processingTime\":2.0,\"actionType\":\"D\"},{\"nodeId\":\"1101\",\"orgId\":\"BAY\",\"serviceOption\":\"SDND\",\"carrierServiceId\":\"\",\"processingTime\":2.0,\"actionType\":\"U\"}]";
 
   public static final Optional<String> DEFAULT_SORT_FIELD = Optional.of("created_date");
 
@@ -104,15 +119,22 @@ public class TestUtil {
     return Arrays.asList(record1, record2);
   }
 
+  public List<JobResponse> createJobResponseList() {
+    JobResponse job1 = createJobResponse(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+    JobResponse job2 = createJobResponse(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 5);
+    return Arrays.asList(job1, job2);
+  }
+
   public List<JobDto> createJobDtoList() {
     JobDto job1 = createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
     JobDto job2 = createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 5);
     return Arrays.asList(job1, job2);
   }
 
-  public Page<JobDto> createPageJobDto(int totalPage, List<JobDto> jobDtos, int totalElements) {
+  public Page<JobResponse> createPageJobDto(
+      int totalPage, List<JobResponse> jobDtos, int totalElements) {
 
-    return (Page<JobDto>)
+    return (Page<JobResponse>)
         new Page() {
           @Override
           public int getTotalPages() {
@@ -294,6 +316,24 @@ public class TestUtil {
     job.setSuccessCount(0);
     job.setStatus(JobStatusEnum.SUBMITTED);
     job.setOrgId(ORG_ID);
+    job.setFile(new byte[] {1, 2, 3});
+    AuditLog auditLog = new AuditLog();
+    auditLog.setStatus(JobStatusEnum.SUBMITTED);
+    auditLog.setTimeStamp(new Date());
+    job.setAuditLog(Collections.singletonList(auditLog));
+    return job;
+  }
+
+  public JobResponse createJobResponse(JobTypeEnum jobTypeEnum, int totalRecords) {
+    JobResponse job = new JobResponse();
+    job.setJobId(UUID.randomUUID().toString());
+    job.setTotalRecords(totalRecords);
+    job.setJobType(jobTypeEnum);
+    job.setProcessedRecords(0);
+    job.setFailureCount(0);
+    job.setSuccessCount(0);
+    job.setStatus(JobStatusEnum.SUBMITTED);
+    job.setOrgId(ORG_ID);
 
     AuditLog auditLog = new AuditLog();
     auditLog.setStatus(JobStatusEnum.SUBMITTED);
@@ -306,21 +346,6 @@ public class TestUtil {
     return JobMapper.INSTANCE.toJobEntity(createJob(jobTypeEnum, totalRecords));
   }
 
-  public RecordDto createRecordDto(
-      JobDto jobDto,
-      String record,
-      int recordId,
-      RecordDataTypeEnum recordDataTypeEnum,
-      RecordInputDto inputDto) {
-    RecordDto recordDto = new RecordDto();
-    recordDto.setJob(jobDto);
-    recordDto.setInputs(inputDto);
-    recordDto.setRecordData(record);
-    recordDto.setRecordId(recordId);
-    recordDto.setRecordType(recordDataTypeEnum);
-    return recordDto;
-  }
-
   public NodeCarrierRequest getNodeCarrierRequest() {
     NodeCarrierRequest nodeCarrierRequest = new NodeCarrierRequest();
     nodeCarrierRequest.setNodeId("node-1");
@@ -331,13 +356,13 @@ public class TestUtil {
     return nodeCarrierRequest;
   }
 
-  public ProcessingLeadTime getProcessingLeadTime(String action) {
-    ProcessingLeadTime processingLeadTime = new ProcessingLeadTime();
+  public ProcessingLeadTimesRaw getProcessingLeadTime(String action) {
+    ProcessingLeadTimesRaw processingLeadTime = new ProcessingLeadTimesRaw();
     processingLeadTime.setNodeId("node-1");
     processingLeadTime.setOrgId(ORG_ID);
     processingLeadTime.setServiceOption("SDND");
     processingLeadTime.setCarrierServiceId("");
-    processingLeadTime.setProcessingTime(30.92);
+    processingLeadTime.setProcessingTime("30.92");
     processingLeadTime.setActionType(action);
     return processingLeadTime;
   }
@@ -353,14 +378,14 @@ public class TestUtil {
     return nodeCarrierResponse;
   }
 
-  public TransitDataCreationRequest getTransitDataCreationRequest() {
-    TransitDataCreationRequest transitDataCreationRequest = new TransitDataCreationRequest();
-    transitDataCreationRequest.setOrgId(ORG_ID);
-    transitDataCreationRequest.setSourceGeozone("SSFA");
-    transitDataCreationRequest.setDestinationGeozone("DSFA");
-    transitDataCreationRequest.setCarrierServiceId("ALL-SDND");
-    transitDataCreationRequest.setTransitDays(2F);
-    return transitDataCreationRequest;
+  public TransitDataUpload getTransitDataUpload() {
+    TransitDataUpload transitDataUpload = new TransitDataUpload();
+    transitDataUpload.setOrgId(ORG_ID);
+    transitDataUpload.setSourceGeozone("SSFA");
+    transitDataUpload.setDestinationGeozone("DSFA");
+    transitDataUpload.setCarrierServiceId("ALL-SDND");
+    transitDataUpload.setTransitDays("2F");
+    return transitDataUpload;
   }
 
   public TransitResponse getTransitResponse() {
@@ -383,5 +408,14 @@ public class TestUtil {
     jobFilters.setPageSize(DEFAULT_PAGE_SIZE);
 
     return jobFilters;
+  }
+
+  public AuthTokenResponse getAuthTokenResponse() {
+    AuthTokenResponse authTokenResponse = new AuthTokenResponse();
+    authTokenResponse.setAccessToken("token");
+    authTokenResponse.setTokenType("tokenType");
+    authTokenResponse.setExpiresIn(20);
+
+    return authTokenResponse;
   }
 }

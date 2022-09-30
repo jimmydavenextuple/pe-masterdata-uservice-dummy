@@ -20,6 +20,9 @@ public interface CarrierServiceMapper {
 
   CarrierServiceResponse toCarrierServiceResponse(CarrierServiceEntity carrierServiceEntity);
 
+  List<CarrierServiceResponse> toCarrierServiceResponseList(
+      List<CarrierServiceEntity> carrierServiceEntity);
+
   CarrierServiceEntity updateCarrierServiceEntity(
       CarrierServiceUpdateRequest carrierServiceUpdateRequest,
       @MappingTarget CarrierServiceEntity carrierServiceEntity);

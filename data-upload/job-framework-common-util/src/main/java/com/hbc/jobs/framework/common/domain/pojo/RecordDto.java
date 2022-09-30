@@ -1,6 +1,7 @@
 package com.hbc.jobs.framework.common.domain.pojo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.enums.RecordDataTypeEnum;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,9 @@ public class RecordDto implements Serializable {
   private Integer recordId;
   private String recordData;
   private RecordInputDto inputs;
-  private JobDto job;
+  private String jobId;
+  private String orgId;
+  private JobTypeEnum jobType;
+  private Integer totalRecords;
   private RecordDataTypeEnum recordType;
 }

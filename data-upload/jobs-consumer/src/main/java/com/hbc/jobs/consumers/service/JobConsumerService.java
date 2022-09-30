@@ -8,11 +8,13 @@ import com.hbc.jobs.consumers.domain.mapper.JobMapper;
 import com.hbc.jobs.consumers.domain.mapper.JobRecordMapper;
 import com.hbc.jobs.consumers.exception.DuplicateJobException;
 import com.hbc.jobs.consumers.exception.InvalidJobTypeException;
+import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.exception.JobIdNotFoundException;
 import com.hbc.jobs.framework.common.aop.DBTransaction;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
@@ -47,16 +49,16 @@ public class JobConsumerService {
    * @throws JobException
    */
   public void processRecord(RecordDto recordDto) throws JobException {
-    log.info("Inside processRecord service");
+    log.debug("Inside processRecord service");
 
     try {
       RecordStatusDto recordStatus = getRecordStatus(recordDto);
       publishRecordStatusToKafka(recordStatus);
-      log.info("Inside processRecord service ends");
+      log.debug("Inside processRecord service ends");
     } catch (Exception e) {
       log.error("Error while processing the job record.", e);
       throw new JobException(
-          "Exception while processing the job record", e, recordDto.getJob().getJobId(), null);
+          "Exception while processing the job record", e, recordDto.getJobId(), null);
     }
   }
 
@@ -65,7 +67,7 @@ public class JobConsumerService {
    * @throws JobException
    */
   private void publishRecordStatusToKafka(RecordStatusDto recordStatus) throws JobException {
-    log.info("Inside publishRecordStatusToKafka service");
+    log.debug("Inside publishRecordStatusToKafka service");
 
     try {
       jobDashboardService.publishJobRecord(recordStatus);
@@ -81,21 +83,20 @@ public class JobConsumerService {
    * @return
    * @throws JobException
    */
-  public RecordStatusDto getRecordStatus(RecordDto recordDto)
-      throws JobException, InvalidJobTypeException {
-    log.info("Inside getRecordStatus service");
+  public RecordStatusDto getRecordStatus(RecordDto recordDto) throws JobException {
+    log.debug("Inside getRecordStatus service");
 
     try {
-      var feignClientMapper = feignClientMapperFactory.getMapper(recordDto.getJob().getJobType());
+      var feignClientMapper = feignClientMapperFactory.getMapper(recordDto.getJobType());
       if (Objects.isNull(feignClientMapper)) {
         throw new InvalidJobTypeException(
-            "Job type is not correct", recordDto.getJob().getJobType().toString());
+            "Job type is not correct", recordDto.getJobType().toString());
       }
       return feignClientMapper.getResponseFromAPI(recordDto);
     } catch (Exception e) {
       log.error("Error while retrieving the job record", e);
       throw new JobException(
-          "Exception while retrieving the job record", e, recordDto.getJob().getJobId(), null);
+          "Exception while retrieving the job record", e, recordDto.getJobId(), null);
     }
   }
 
@@ -105,7 +106,7 @@ public class JobConsumerService {
    */
   @DBTransaction
   public void updateJobStatus(RecordStatusDto recordStatusDto) throws JobException {
-    log.info("Inside updateJobStatus service");
+    log.debug("Inside updateJobStatus service");
 
     try {
       jobRecordDomain.create(JobRecordMapper.INSTANCE.toJobRecordEntity(recordStatusDto));
@@ -125,8 +126,7 @@ public class JobConsumerService {
    */
   public void updateJob(RecordStatusDto recordStatusDto, int retryCount) throws JobException {
     try {
-      var jobEntity =
-          jobDomain.findJobByJobIdAndOrgId(recordStatusDto.getJobId(), recordStatusDto.getOrgId());
+      var jobEntity = getJobEntity(recordStatusDto.getJobId(), recordStatusDto.getOrgId());
       var updateJobEntity = processJobStatus(jobEntity, recordStatusDto);
       jobDomain.save(updateJobEntity);
     } catch (Exception e) {
@@ -155,7 +155,7 @@ public class JobConsumerService {
    * @return
    */
   private JobEntity processJobStatus(JobEntity jobEntity, RecordStatusDto recordStatusDto) {
-    log.info("Inside processJobStatus service");
+    log.debug("Inside processJobStatus service");
 
     if (recordStatusDto.getStatus().equals(ApiStatusEnum.FAILURE)) {
       jobEntity.setFailureCount(jobEntity.getFailureCount() + 1);
@@ -174,7 +174,7 @@ public class JobConsumerService {
       jobEntity.setStatus(JobStatusEnum.COMPLETED);
       auditLog.setTimeStamp(new Date());
       oldAuditLog.add(auditLog);
-    } else if (jobEntity.getStatus().equals(JobStatusEnum.SUBMITTED)) {
+    } else if (jobEntity.getStatus().equals(JobStatusEnum.PROCESSED)) {
       var auditLog = new AuditLog();
       auditLog.setStatus(JobStatusEnum.RUNNING);
       jobEntity.setStatus(JobStatusEnum.RUNNING);
@@ -208,12 +208,11 @@ public class JobConsumerService {
    * @return
    * @throws JobException
    */
-  public JobDto createJob(JobDto jobDto) throws JobException {
-    log.info("--Inside createJob service--");
+  public JobResponse createJob(JobDto jobDto) throws JobException {
+    log.debug("--Inside createJob service--");
 
     try {
-      var existingJobEntity =
-          jobDomain.findJobByJobIdAndOrgId(jobDto.getJobId(), jobDto.getOrgId());
+      var existingJobEntity = getJobEntity(jobDto.getJobId(), jobDto.getOrgId());
 
       if (Objects.nonNull(existingJobEntity)) {
         log.error("Job already exists for job id {}", existingJobEntity.getJobId());
@@ -222,12 +221,21 @@ public class JobConsumerService {
       }
 
       var jobEntity = jobDomain.save(JobMapper.INSTANCE.toJobEntity(jobDto));
-      log.info("--Inside createJob service ends--");
-      return JobMapper.INSTANCE.toJob(jobEntity);
+      log.debug("--Inside createJob service ends--");
+      return JobMapper.INSTANCE.toJobResponse(jobEntity);
     } catch (Exception e) {
       log.error("Error while creating a job", e);
       throw new JobException("Exception while creating the job ", e, jobDto.getJobId(), null);
     }
+  }
+
+  private JobEntity getJobEntity(String jobId, String orgId) throws JobDomainException {
+    return jobDomain.findJobByJobIdAndOrgId(jobId, orgId);
+  }
+
+  public JobEntity saveJob(JobResponse jobResponse) throws JobDomainException {
+    var jobEntity = getJobEntity(jobResponse.getJobId(), jobResponse.getOrgId());
+    return jobDomain.save(JobMapper.INSTANCE.updateJobEntity(jobResponse, jobEntity));
   }
 
   /**
@@ -237,10 +245,10 @@ public class JobConsumerService {
    * @throws JobException
    */
   public JobDto getJob(String jobId, String orgId) throws JobException {
-    log.info("-- Inside getJob service --");
+    log.debug("-- Inside getJob service --");
 
     try {
-      var jobEntity = jobDomain.findJobByJobIdAndOrgId(jobId, orgId);
+      var jobEntity = getJobEntity(jobId, orgId);
       if (Objects.isNull(jobEntity)) {
         throw new JobIdNotFoundException("Job is not found!", jobId);
       }
@@ -263,7 +271,7 @@ public class JobConsumerService {
    * @throws JobException
    */
   @SuppressWarnings("squid:S107")
-  public Page<JobDto> getJobs(
+  public Page<JobResponse> getJobs(
       String orgId,
       Optional<String> jobType,
       Optional<Integer> days,
@@ -273,7 +281,7 @@ public class JobConsumerService {
       int pageSize)
       throws JobException {
     log.debug("-- Inside getJobs service --");
-    Page<JobDto> page;
+    Page<JobResponse> page;
     Optional<Date> pastDays = Optional.empty();
 
     if (days.isPresent()) {

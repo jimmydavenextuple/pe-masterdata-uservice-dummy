@@ -4,9 +4,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.consumers.util.UriBuilder;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
@@ -25,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,11 +76,11 @@ public class JobsConsumerController {
       value = "/jobs",
       produces = APPLICATION_JSON_VALUE,
       consumes = APPLICATION_JSON_VALUE)
-  public ResponseEntity<BaseResponse<JobDto>> createJob(@Valid @RequestBody JobDto jobDto)
+  public ResponseEntity<BaseResponse<JobResponse>> createJob(@Valid @RequestBody JobDto jobDto)
       throws JobException {
-    log.info("-- Inside createJob controller --");
+    log.debug("-- Inside createJob controller --");
 
-    JobDto job = jobConsumerService.createJob(jobDto);
+    JobResponse job = jobConsumerService.createJob(jobDto);
     return ResponseEntity.ok(
         BaseResponse.builder().message("Job successfully created").payload(job).build());
   }
@@ -93,14 +96,31 @@ public class JobsConsumerController {
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotEmpty @NotNull @PathVariable String jobId)
       throws JobException {
-    log.info("-- Inside getJob controller --");
+    log.debug("-- Inside getJob controller --");
 
     JobDto job = jobConsumerService.getJob(jobId, orgId);
 
-    log.info("Job successfully retrieved : {}", jobId);
+    log.debug("Job successfully retrieved : {}", jobId);
 
     return ResponseEntity.ok(
         BaseResponse.builder().message("Retrieval of the job is successful").payload(job).build());
+  }
+
+  /**
+   * @param jobResponse
+   * @return
+   * @throws JobDomainException
+   */
+  @PutMapping(path = "/jobs/update")
+  public ResponseEntity<BaseResponse<JobResponse>> updateJob(
+      @Valid @RequestBody JobResponse jobResponse) throws JobDomainException {
+    log.debug("-- Inside update job controller --");
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Retrieval of the job is successful")
+            .payload(jobConsumerService.saveJob(jobResponse))
+            .build());
   }
 
   /**
@@ -110,7 +130,7 @@ public class JobsConsumerController {
    * @throws JobException
    */
   @GetMapping(value = "/org/{orgId}/jobs", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<BaseResponse<PagePayload<JobDto>>> getJobsByFilter(
+  public ResponseEntity<BaseResponse<PagePayload<JobResponse>>> getJobsByFilter(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId, JobFilters jobFilters)
       throws JobException {
     log.debug("--Inside getJobsByFilter()--");
@@ -125,7 +145,7 @@ public class JobsConsumerController {
       throw new JobException("PageNo can not be less than one", null, requiredPageNo);
     }
 
-    Page<JobDto> pageResp =
+    Page<JobResponse> pageResp =
         jobConsumerService.getJobs(
             orgId,
             jobFilters.getJobType(),
@@ -142,7 +162,7 @@ public class JobsConsumerController {
     pagination.setSortBy(requiredSortByField);
     pagination.setSortOrder(requiredSortOrder);
 
-    PagePayload<JobDto> pagePayload = new PagePayload<>();
+    PagePayload<JobResponse> pagePayload = new PagePayload<>();
     pagePayload.setData(pageResp.getContent());
     pagePayload.setPagination(pagination);
     pagePayload.setAggregation(Collections.emptyList());

@@ -18,7 +18,7 @@ class TransitDataRequestMapperTest {
   void convertToTransitDataErrorLogsPojo() {
 
     TransitDataErrorLogsPojo transitDataErrorLogsPojo =
-        mapper.convertToTransitDataErrorLogsPojo(testUtil.getTransitDataCreationRequest());
+        mapper.convertToTransitDataErrorLogsPojo(testUtil.getAddTransitDataRequest());
     TransitDataErrorLogsPojo nullTransitDataErrorLogsPojo =
         mapper.convertToTransitDataErrorLogsPojo(null);
     Assertions.assertNull(nullTransitDataErrorLogsPojo);

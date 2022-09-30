@@ -3,6 +3,7 @@ package com.hbc.jobs.framework.common.clients;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,20 +30,22 @@ public interface JobsDashboardClient {
       @NotEmpty @NotNull @PathVariable("jobId") String jobId);
 
   @PostMapping("/org/{orgId}/jobs")
-  BaseResponse<JobDto> processJobJsonOffline(
+  BaseResponse<JobResponse> processJobJsonOffline(
       @NotNull @Valid @RequestParam("jobType") JobTypeEnum jobType,
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestBody String request);
 
-  @PutMapping("/org/{orgId}/jobs/{jobId}")
-  BaseResponse<JobDto> processJobJsonOffline(
+  @PutMapping(
+      value = "/org/{orgId}/jobs/{jobId}",
+      produces = MediaType.APPLICATION_JSON_VALUE,
+      consumes = MediaType.APPLICATION_JSON_VALUE)
+  BaseResponse<JobResponse> processJobsJsonOffline(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotNull @Valid @RequestParam("jobType") JobTypeEnum jobType,
-      @RequestBody String request,
       @PathVariable("jobId") String jobId);
 
   @GetMapping("/org/{orgId}/jobs/filters")
-  BaseResponse<PagePayload<JobDto>> getJobsByFilter(
+  BaseResponse<PagePayload<JobResponse>> getJobsByFilter(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestParam(name = "jobType", required = false) String jobType,
       @RequestParam(name = "days", required = false) Integer days,
@@ -55,4 +59,11 @@ public interface JobsDashboardClient {
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotEmpty @NotNull @PathVariable("jobId") String jobId,
       @RequestParam(name = "status", required = false) String status);
+
+  @PostMapping("/org/{orgId}/jobs")
+  BaseResponse<JobResponse> processJobOffline(
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
+      @RequestParam("jobType") @NotNull @Valid JobTypeEnum jobType,
+      @RequestBody byte[] csvFile,
+      @RequestParam("fileName") String fileName);
 }

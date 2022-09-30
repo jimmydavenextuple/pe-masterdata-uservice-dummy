@@ -33,6 +33,10 @@ public interface CarrierFeign {
       @NotBlank @PathVariable String carrierServiceId,
       @NotBlank @PathVariable String orgId);
 
+  @GetMapping("/carrier-service/{carrierServiceId}/{orgId}")
+  BaseResponse<List<CarrierServiceResponse>> getCarrierServiceDetailsByCarrierServiceIdAndOrgId(
+      @NotBlank @PathVariable String carrierServiceId, @NotBlank @PathVariable String orgId);
+
   @PutMapping("/carrier-service/{carrierId}/{carrierServiceId}/{orgId}")
   BaseResponse<CarrierServiceResponse> updateCarrierServiceDetails(
       @NotBlank @PathVariable String carrierId,

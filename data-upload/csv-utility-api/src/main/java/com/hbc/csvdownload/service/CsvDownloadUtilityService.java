@@ -4,14 +4,14 @@ import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.domain.mapper.TransitDataRequestMapper;
+import com.hbc.csvdownload.domain.pojo.DownloadErrorNodeCarrier;
+import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.TransitDataErrorLogsPojo;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
-import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
-import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
 import java.util.HashMap;
@@ -135,14 +135,11 @@ public class CsvDownloadUtilityService {
       if (jobType.equals(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES)) {
         return downloadProcessingLeadTimeErrorLogs(recordStatusDtos);
       } else {
-        return downloadTransitTimeErrorLogs(recordStatusDtos, orgId);
+        return downloadTransitTimeErrorLogs(recordStatusDtos);
       }
     } catch (Exception e) {
       throw new CommonServiceException(
-          "Error processing transit time and processing lead time csv",
-          HttpStatus.BAD_REQUEST,
-          0x1772,
-          null);
+          "Error while downloading error logs as csv", HttpStatus.BAD_REQUEST, 0x1772, null);
     }
   }
 
@@ -159,22 +156,24 @@ public class CsvDownloadUtilityService {
 
   private String constructRowContent(RecordStatusDto recordStatusDto) {
     var gson = new Gson();
-    var requestBody = gson.fromJson(recordStatusDto.getRequestBody(), NodeCarrierRequest.class);
+    var requestBody =
+        gson.fromJson(recordStatusDto.getRequestBody(), DownloadErrorNodeCarrier.class);
     return String.join(
         ",",
         requestBody.getNodeId(),
         requestBody.getOrgId(),
         requestBody.getServiceOption(),
-        requestBody.getProcessingTime().toString(),
+        requestBody.getProcessingTime(),
         recordStatusDto.getErrorMessage());
   }
 
-  private String downloadTransitTimeErrorLogs(
-      List<RecordStatusDto> recordStatusDtoList, String orgId) throws CommonServiceException {
+  private String downloadTransitTimeErrorLogs(List<RecordStatusDto> recordStatusDtoList)
+      throws CommonServiceException {
     try {
       var transitDataErrorLogsList =
           recordStatusDtoList.stream().map(this::getRequestBody).collect(Collectors.toList());
 
+      String orgId = transitDataErrorLogsList.get(0).getOrgId();
       String carrierServiceId = transitDataErrorLogsList.get(0).getCarrierServiceId();
 
       Set<String> sourceFsaSet =
@@ -257,7 +256,7 @@ public class CsvDownloadUtilityService {
     var gson = new Gson();
     var errorLogsPojo =
         INSTANCE.convertToTransitDataErrorLogsPojo(
-            gson.fromJson(recordStatusDto.getRequestBody(), TransitDataCreationRequest.class));
+            gson.fromJson(recordStatusDto.getRequestBody(), DownloadErrorTransitData.class));
     errorLogsPojo.setErrorMessage(recordStatusDto.getErrorMessage());
     errorLogsPojo.setException(recordStatusDto.getException());
     return errorLogsPojo;

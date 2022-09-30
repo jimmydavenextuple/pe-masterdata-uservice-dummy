@@ -15,6 +15,7 @@ import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.dashboard.service.JobService;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
@@ -29,12 +30,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.multipart.MultipartFile;
 
 class JobDashboardControllerTest {
 
@@ -54,22 +54,30 @@ class JobDashboardControllerTest {
 
   @Test
   void processJobOffline() throws JobException {
-    MultipartFile csvFile = Mockito.mock(MultipartFile.class);
+    String csvContents = TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES;
+    ByteArrayResource byteArrayResource = new ByteArrayResource(csvContents.getBytes());
 
     when(jobService.processJobOffline(
-            csvFile, TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES))
-        .thenReturn(new JobDto());
-    ResponseEntity<BaseResponse<JobDto>> responseEntity =
+            byteArrayResource,
+            TestUtil.ORG_ID,
+            TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES,
+            TestUtil.fileName))
+        .thenReturn(new JobResponse());
+    ResponseEntity<BaseResponse<JobResponse>> responseEntity =
         jobDashboardController.processJobOffline(
-            TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, csvFile);
+            TestUtil.ORG_ID,
+            TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES,
+            byteArrayResource,
+            TestUtil.fileName);
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Status code");
   }
 
   @Test
   void processJobOfflineException() throws JobException {
-    MultipartFile csvFile = Mockito.mock(MultipartFile.class);
+    String csvContents = TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES;
+    ByteArrayResource byteArrayResource = new ByteArrayResource(csvContents.getBytes());
 
-    when(jobService.processJobOffline(any(), any(), any()))
+    when(jobService.processJobOffline(any(), any(), any(), any()))
         .thenThrow(
             new JobException(
                 "Error while processing csv/json file",
@@ -81,7 +89,10 @@ class JobDashboardControllerTest {
             JobException.class,
             () ->
                 jobDashboardController.processJobOffline(
-                    TestUtil.JOB_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, csvFile));
+                    TestUtil.JOB_ID,
+                    TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES,
+                    byteArrayResource,
+                    TestUtil.fileName));
 
     Assertions.assertEquals(
         "Error while processing csv/json file", exception.getMessage(), "Exception Message");
@@ -97,14 +108,14 @@ class JobDashboardControllerTest {
     when(jobService.processJobJsonOffline(
             anyString(), anyString(), any(JobTypeEnum.class), any(Optional.class)))
         .thenReturn(
-            testUtil.createJob(
+            testUtil.createJobResponse(
                 TestUtil.JOB_ID,
                 TestUtil.ORG_ID,
                 JobStatusEnum.SUBMITTED,
                 Collections.singletonList(new AuditLog()),
                 TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES));
 
-    ResponseEntity<BaseResponse<JobDto>> responseEntity =
+    ResponseEntity<BaseResponse<JobResponse>> responseEntity =
         jobDashboardController.processJobJsonOffline(
             JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, TestUtil.ORG_ID, request);
 
@@ -140,34 +151,31 @@ class JobDashboardControllerTest {
   @Test
   void processJobJsonOfflineUpdateExistingJob() throws JobException {
 
-    when(jobService.processJobJsonOffline(any(), any(), any(), any())).thenReturn(new JobDto());
-    ResponseEntity<BaseResponse<JobDto>> responseEntity =
+    when(jobService.processJobJsonOffline(any(), any(), any())).thenReturn(new JobResponse());
+    ResponseEntity<BaseResponse<JobResponse>> responseEntity =
         jobDashboardController.processJobJsonOffline(
-            TestUtil.ORG_ID,
-            TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES,
-            TestUtil.ORG_ID,
-            "req");
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, TestUtil.JOB_ID);
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Status code");
 
-    verify(jobService, times(1)).processJobJsonOffline(any(), any(), any(), any());
+    verify(jobService, times(1)).processJobJsonOffline(any(), any(), any());
   }
 
   @Test
   void processJobJsonOffline2() throws JobException {
 
-    when(jobService.processJobJsonOffline(any(), any(), any(), any())).thenReturn(new JobDto());
-    ResponseEntity<BaseResponse<JobDto>> responseEntity =
+    when(jobService.processJobJsonOffline(any(), any(), any())).thenReturn(new JobResponse());
+    ResponseEntity<BaseResponse<JobResponse>> responseEntity =
         jobDashboardController.processJobJsonOffline(
-            TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, "", "");
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, "");
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Status code");
 
-    verify(jobService, times(1)).processJobJsonOffline(any(), any(), any(), any());
+    verify(jobService, times(1)).processJobJsonOffline(any(), any(), any());
   }
 
   @Test
   void processJobJsonOffline2Exception() throws JobException {
 
-    when(jobService.processJobJsonOffline(any(), any(), any(), any()))
+    when(jobService.processJobJsonOffline(any(), any(), any()))
         .thenThrow(
             new JobException(
                 "Error while processing json request", "jobId1", JobTypeEnum.UPLOAD_TRANSIT_TIMES));
@@ -177,20 +185,20 @@ class JobDashboardControllerTest {
             JobException.class,
             () ->
                 jobDashboardController.processJobJsonOffline(
-                    TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, "", ""));
+                    TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, ""));
 
     Assertions.assertEquals(
         "Error while processing json request", exception.getMessage(), "Exception Message");
 
     Assertions.assertEquals(
         JobTypeEnum.UPLOAD_TRANSIT_TIMES, exception.getJobType(), "Exception Job type");
-    verify(jobService, times(1)).processJobJsonOffline(any(), any(), any(), any());
+    verify(jobService, times(1)).processJobJsonOffline(any(), any(), any());
   }
 
   @Test
   void processJobJsonOfflineException() throws JobException {
 
-    when(jobService.processJobJsonOffline(any(), any(), any(), any()))
+    when(jobService.processJobJsonOffline(any(), any(), any()))
         .thenThrow(
             new JobException(
                 "Error while processing json request",
@@ -202,7 +210,7 @@ class JobDashboardControllerTest {
             JobException.class,
             () ->
                 jobDashboardController.processJobJsonOffline(
-                    TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, "", ""));
+                    TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, ""));
 
     Assertions.assertEquals(
         "Error while processing json request", exception.getMessage(), "Exception Message");
@@ -253,16 +261,16 @@ class JobDashboardControllerTest {
   void getJobsByFilterSuccess() throws JobException {
     List<JobDto> jobList =
         testUtil.createJobList(TestUtil.JOB_TYPE_UPLOAD_TRANSIT_TIMES.name(), TestUtil.ORG_ID);
-    PagePayload<JobDto> pagePayloadJobDto =
+    PagePayload<JobResponse> pagePayloadJobDto =
         testUtil.createPagePayloadJobDto(jobList, jobList.size(), jobList.size(), 1);
     when(defaultPageProperties.getPageNo()).thenReturn(1);
     when(defaultPageProperties.getPageSize()).thenReturn(15);
     when(jobService.getJobsByJobInfo(any(), any(), any(), any(), any(), anyInt(), anyInt()))
         .thenReturn(pagePayloadJobDto);
 
-    ResponseEntity<BaseResponse<PagePayload<JobDto>>> response =
+    ResponseEntity<BaseResponse<PagePayload<JobResponse>>> response =
         jobDashboardController.getJobsByFilter(TestUtil.ORG_ID, testUtil.getJobFilters());
-    PagePayload<JobDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
+    PagePayload<JobResponse> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     verify(jobService, times(1))
         .getJobsByJobInfo(any(), any(), any(), any(), any(), anyInt(), anyInt());
@@ -328,7 +336,6 @@ class JobDashboardControllerTest {
     ResponseEntity<BaseResponse<List<RecordStatusDto>>> response =
         jobDashboardController.getJobRecordsByFilter(
             TestUtil.ORG_ID, TestUtil.JOB_ID, Optional.of("SUCCESS"));
-    List<RecordStatusDto> responsePage = Objects.requireNonNull(response.getBody()).getPayload();
 
     verify(jobService, times(1)).getJobResults(any(), any(), any());
 

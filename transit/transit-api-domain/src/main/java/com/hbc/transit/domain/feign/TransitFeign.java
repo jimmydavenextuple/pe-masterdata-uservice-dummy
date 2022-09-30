@@ -5,6 +5,7 @@ import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
+import com.hbc.transit.domain.inbound.TransitDetailsRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.List;
 import javax.validation.Valid;
@@ -68,9 +69,16 @@ public interface TransitFeign {
   BaseResponse<TransitResponse> updateTransitBufferDetails(
       @Valid @RequestBody TransitBufferCreationRequest transitBufferCreationRequest);
 
-  @GetMapping("/transit/transit-entries/{orgId}/{carrierServiceId}/geozones")
+  @PostMapping("/transit/transit-entries/{orgId}/{carrierServiceId}/geozones")
   BaseResponse<List<TransitResponse>> getTransitTimeDetailsForDestinationGeoZonesList(
       @PathVariable String orgId,
       @PathVariable String carrierServiceId,
-      @RequestParam List<String> destinationGeozones);
+      @RequestBody TransitDetailsRequest transitDetailsRequest);
+
+  @PutMapping("/transit/{orgId}/{carrierServiceId}/buffer-days")
+  BaseResponse<TransitResponse> updateTransitBufferDays(
+      @PathVariable String orgId,
+      @PathVariable String carrierServiceId,
+      @RequestParam String sourceGeoZone,
+      @RequestParam String destinationGeoZone);
 }

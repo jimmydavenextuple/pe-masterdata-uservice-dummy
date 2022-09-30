@@ -13,7 +13,7 @@ public class TransitDataErrorLogsPojo {
   private String sourceGeozone;
   private String destinationGeozone;
   private String carrierServiceId;
-  private Float transitDays;
+  private String transitDays;
   private String errorMessage;
   private String exception;
 }

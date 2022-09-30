@@ -1,9 +1,12 @@
 package com.hbc.jobs.dashboard.common;
 
 import com.hbc.common.base.PagePayload;
+import com.hbc.jobs.consumers.domain.entity.JobEntity;
+import com.hbc.jobs.consumers.domain.mapper.JobMapper;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
@@ -32,7 +35,29 @@ public class TestUtil {
   public static final JobTypeEnum JOB_TYPE_UPLOAD_TRANSIT_TIMES = JobTypeEnum.UPLOAD_TRANSIT_TIMES;
   public static final String JOB_ID = "JobId1";
 
-  public static final String JOB_TYPE = JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES.name();
+  public static final String fileName = "Bulk Data Upload.csv";
+
+  public static final String CSV_CONTENTS_PROCESSING_LEAD_TIMES =
+      "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
+          + "1554,BAY,SDND,2,U\n"
+          + "1560,BAY,SDND,2,D\n"
+          + "1101,BAY,SDND,2,U";
+
+  public static final String CSV_CONTENTS_TRANSIT_TIMES =
+      "orgId,BAY,,,,,,,,,\n"
+          + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+          + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
+          + "DFSA1,,9.96,9.96\n"
+          + "DFSA2,D,9,9.9\n"
+          + "DFSA3,10,9,9\n";
+
+  public static final String CSV_CONTENTS_DELETE_TRANSIT_BUFFER =
+      "orgId,BAY,,,,,,,,,\n"
+          + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+          + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
+          + "DFSA1,D,D.D,D\n"
+          + "DFSA2,D,D,D\n"
+          + "DFSA3,D,D,D\n";
 
   public static final Optional<String> DEFAULT_SORT_FIELD = Optional.of("created_date");
 
@@ -49,6 +74,36 @@ public class TestUtil {
       List<AuditLog> auditLogs,
       JobTypeEnum jobTypeEnum) {
     JobDto job = new JobDto();
+    job.setOrgId(orgId);
+    job.setStatus(status);
+    job.setTotalRecords(10);
+    job.setProcessedRecords(5);
+    job.setSuccessCount(5);
+    job.setFailureCount(0);
+    job.setJobType(jobTypeEnum);
+    job.setMetadata(new Metadata());
+    job.setUserId("User1");
+    job.setAuditLog(auditLogs);
+    job.setJobId(jobId);
+    return job;
+  }
+
+  public JobEntity createJobEntity(
+      String jobId,
+      String orgId,
+      JobStatusEnum jobStatus,
+      List<AuditLog> auditLog,
+      JobTypeEnum jobType) {
+    return JobMapper.INSTANCE.toJobEntity(createJob(jobId, orgId, jobStatus, auditLog, jobType));
+  }
+
+  public JobResponse createJobResponse(
+      String jobId,
+      String orgId,
+      JobStatusEnum status,
+      List<AuditLog> auditLogs,
+      JobTypeEnum jobTypeEnum) {
+    JobResponse job = new JobResponse();
     job.setOrgId(orgId);
     job.setStatus(status);
     job.setTotalRecords(10);
@@ -120,112 +175,10 @@ public class TestUtil {
     return recordStatusDtos;
   }
 
-  public PagePayload<RecordStatusDto> createPageRecordStatusDto(
-      List<RecordStatusDto> recordStatusDtoList, int totalPage, int totalElements, int pageNo) {
-    PagePayload<RecordStatusDto> pagePayload = new PagePayload<>();
-    Page<RecordStatusDto> pageResp =
-        createPageRecordStatusDto(totalPage, recordStatusDtoList, totalElements);
-    PagePayload.Pagination pagination = new PagePayload.Pagination();
-    pagination.setTotalRecords((int) pageResp.getTotalElements());
-    pagination.setTotalPages(pageResp.getTotalPages());
-    pagination.setCurrentPage(pageNo);
-    pagePayload.setData(pageResp.getContent());
-    pagePayload.setPagination(pagination);
-    return pagePayload;
-  }
-
-  public Page<RecordStatusDto> createPageRecordStatusDto(
-      int totalPage, List<RecordStatusDto> recordStatusDtoList, int totalElements) {
-    Page<RecordStatusDto> pageResponse =
-        new Page() {
-          @Override
-          public int getTotalPages() {
-            return totalPage;
-          }
-
-          @Override
-          public long getTotalElements() {
-            return totalElements;
-          }
-
-          @Override
-          public Page map(Function converter) {
-            return null;
-          }
-
-          @Override
-          public int getNumber() {
-            return 0;
-          }
-
-          @Override
-          public int getSize() {
-            return 0;
-          }
-
-          @Override
-          public int getNumberOfElements() {
-            return 0;
-          }
-
-          @Override
-          public List getContent() {
-            return recordStatusDtoList;
-          }
-
-          @Override
-          public boolean hasContent() {
-            return false;
-          }
-
-          @Override
-          public Sort getSort() {
-            return null;
-          }
-
-          @Override
-          public boolean isFirst() {
-            return false;
-          }
-
-          @Override
-          public boolean isLast() {
-            return false;
-          }
-
-          @Override
-          public boolean hasNext() {
-            return false;
-          }
-
-          @Override
-          public boolean hasPrevious() {
-            return false;
-          }
-
-          @Override
-          public Pageable nextPageable() {
-            return null;
-          }
-
-          @Override
-          public Pageable previousPageable() {
-            return null;
-          }
-
-          @Override
-          public Iterator iterator() {
-            return null;
-          }
-        };
-
-    return pageResponse;
-  }
-
-  public PagePayload<JobDto> createPagePayloadJobDto(
+  public PagePayload<JobResponse> createPagePayloadJobDto(
       List<JobDto> jobDtoList, int totalPage, int totalElements, int pageNo) {
-    PagePayload<JobDto> pagePayload = new PagePayload<>();
-    Page<JobDto> pageResp = createPageJobDtos(totalPage, jobDtoList, totalElements);
+    PagePayload<JobResponse> pagePayload = new PagePayload<>();
+    Page<JobResponse> pageResp = createPageJobDtos(totalPage, jobDtoList, totalElements);
     PagePayload.Pagination pagination = new PagePayload.Pagination();
     pagination.setTotalRecords((int) pageResp.getTotalElements());
     pagination.setTotalPages(pageResp.getTotalPages());
@@ -235,8 +188,9 @@ public class TestUtil {
     return pagePayload;
   }
 
-  public Page<JobDto> createPageJobDtos(int totalPage, List<JobDto> jobList, int totalElements) {
-    Page<JobDto> pageResponse =
+  public Page<JobResponse> createPageJobDtos(
+      int totalPage, List<JobDto> jobList, int totalElements) {
+    Page<JobResponse> pageResponse =
         new Page() {
           @Override
           public int getTotalPages() {

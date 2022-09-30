@@ -50,7 +50,7 @@ class WeightageConfigurationControllerTest {
   }
 
   @Test
-  void fetchWeightageTest() throws PromiseEngineException {
+  void fetchWeightageTest() throws PromiseEngineException, CommonServiceException {
     FetchWeightageRequest fetchWeightageRequest = testUtil.getFetchWeightageRequest();
     Map<String, Float> fetchWeightageResponse = testUtil.getFetchWeightageResponse();
     when(weightageConfigurationService.fetchWeightage(any(FetchWeightageRequest.class)))
@@ -65,7 +65,7 @@ class WeightageConfigurationControllerTest {
   }
 
   @Test
-  void fetchWeightageNotFoundTest() throws PromiseEngineException {
+  void fetchWeightageNotFoundTest() throws PromiseEngineException, CommonServiceException {
     FetchWeightageRequest fetchWeightageRequest = testUtil.getFetchWeightageRequest();
     when(weightageConfigurationService.fetchWeightage(any(FetchWeightageRequest.class)))
         .thenThrow(PromiseEngineException.class);

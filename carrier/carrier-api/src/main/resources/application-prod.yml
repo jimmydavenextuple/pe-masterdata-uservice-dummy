@@ -6,13 +6,13 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://promise-engine-postgres-prod.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/pe
+    url: jdbc:postgresql://promise-engine-postgres-prod.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/peconfig
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
   replica:
     datasource:
       platform: postgres
-      url: jdbc:postgresql://promise-engine-postgres-prod.cluster-ro-cboxgnkbeo0q.us-east-1.rds.amazonaws.com,promise-engine-postgres-prod.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/pe?readOnly=true
+      url: jdbc:postgresql://promise-engine-postgres-prod.cluster-ro-cboxgnkbeo0q.us-east-1.rds.amazonaws.com,promise-engine-postgres-prod.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/peconfig?readOnly=true
       username: \${POSTGRES_USER}
       password: \${POSTGRES_PWD}
       required: true

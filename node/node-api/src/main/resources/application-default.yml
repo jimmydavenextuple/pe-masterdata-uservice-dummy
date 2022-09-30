@@ -22,3 +22,6 @@ logging:
 entity-listener:
   kafka:
     enabled: false
+pe:
+  ui:
+    allowed-origin-url: "*"

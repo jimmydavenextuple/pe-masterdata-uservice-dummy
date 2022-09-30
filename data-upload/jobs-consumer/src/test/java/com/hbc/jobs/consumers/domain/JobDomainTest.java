@@ -10,8 +10,9 @@ import com.hbc.jobs.consumers.common.TestUtil;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.domain.repository.JobRepository;
 import com.hbc.jobs.consumers.exception.JobDomainException;
+import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
-import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
@@ -125,7 +126,7 @@ class JobDomainTest {
                 pageable,
                 10));
 
-    Page<JobDto> jobDtos =
+    Page<JobResponse> jobDtos =
         jobDomain.findJobsByJobParam(
             TestUtil.ORG_ID,
             Optional.of("testType"),
@@ -137,5 +138,82 @@ class JobDomainTest {
 
     Assertions.assertEquals(1, jobDtos.getContent().size());
     verify(jobRepository, times(1)).findJobsByJobParam(any(), any(), any(), any());
+  }
+
+  @Test
+  void updateJobStatusByOrgIdAndStatus() throws JobDomainException {
+    JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
+    jobEntity.setStatus(JobStatusEnum.SUBMITTED);
+    when(jobRepository.getJobStatusByOrgIdAndStatus(any(), any())).thenReturn(jobEntity);
+    jobEntity.setStatus(JobStatusEnum.PROCESSING);
+
+    when(jobRepository.save(any())).thenReturn(jobEntity);
+
+    JobEntity jobEntity1 =
+        jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
+            TestUtil.ORG_ID, JobStatusEnum.SUBMITTED, JobStatusEnum.PROCESSING);
+
+    Assertions.assertNotNull(jobEntity1);
+
+    verify(jobRepository, times(1)).getJobStatusByOrgIdAndStatus(any(), any());
+    verify(jobRepository, times(1)).save(any());
+  }
+
+  @Test
+  void updateJobStatusByOrgIdAndStatusNullJobDto() throws JobDomainException {
+
+    when(jobRepository.getJobStatusByOrgIdAndStatus(any(), any())).thenReturn(null);
+
+    JobEntity jobEntity2 =
+        jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
+            TestUtil.ORG_ID, JobStatusEnum.SUBMITTED, JobStatusEnum.PROCESSING);
+
+    Assertions.assertNull(jobEntity2);
+
+    verify(jobRepository, times(1)).getJobStatusByOrgIdAndStatus(any(), any());
+  }
+
+  @Test
+  void updateJobStatusByOrgIdAndStatusException() {
+    JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
+    jobEntity.setStatus(JobStatusEnum.SUBMITTED);
+    when(jobRepository.getJobStatusByOrgIdAndStatus(any(), any())).thenReturn(jobEntity);
+    jobEntity.setStatus(JobStatusEnum.PROCESSING);
+    when(jobRepository.save(jobEntity))
+        .thenThrow(new RuntimeException("Exception while retrieving the job"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            JobDomainException.class,
+            () ->
+                jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
+                    TestUtil.ORG_ID, JobStatusEnum.SUBMITTED, JobStatusEnum.PROCESSING));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void fetchJobRecordInTimeRange() throws JobDomainException {
+    when(jobRepository.fetchJobRecordInTimeRange(any(), any(), any()))
+        .thenReturn(testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
+
+    JobEntity jobEntity =
+        jobDomain.fetchJobRecordInTimeRange(
+            TestUtil.ORG_ID, JobStatusEnum.PROCESSING.name(), new Date());
+    Assertions.assertNotNull(jobEntity);
+    verify(jobRepository, times(1)).fetchJobRecordInTimeRange(any(), any(), any());
+  }
+
+  @Test
+  void fetchJobRecordInTimeRangeException() {
+    when(jobRepository.fetchJobRecordInTimeRange(any(), any(), any()))
+        .thenThrow(new RuntimeException(""));
+    Exception exception =
+        Assertions.assertThrows(
+            JobDomainException.class,
+            () ->
+                jobDomain.fetchJobRecordInTimeRange(
+                    TestUtil.ORG_ID, JobStatusEnum.PROCESSING.name(), new Date()));
+    Assertions.assertNotNull(exception);
   }
 }
