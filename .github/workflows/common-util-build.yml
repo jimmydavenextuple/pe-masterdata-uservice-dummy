@@ -5,6 +5,7 @@ on:
     branches: [ devr3, hotfix ]
     paths:
       - "common-util/**"
+      - ".github/workflows/common-util-build.yml"
 jobs:
 
   Build-Publish:

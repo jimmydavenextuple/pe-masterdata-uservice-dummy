@@ -5,6 +5,7 @@ on:
     branches: [ devr3, hotfix ]
     paths:
       - "nfs-near-cache/**"
+      - ".github/workflows/nfs-near-cache-build.yml"
 jobs:
 
   Build-Publish:
