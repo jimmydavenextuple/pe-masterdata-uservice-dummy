@@ -39,10 +39,9 @@ public interface JobsDashboardClient {
       value = "/org/{orgId}/jobs/{jobId}",
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE)
-  BaseResponse<JobResponse> processJobJsonOffline(
+  BaseResponse<JobResponse> processJobsJsonOffline(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotNull @Valid @RequestParam("jobType") JobTypeEnum jobType,
-      @RequestBody String request,
       @PathVariable("jobId") String jobId);
 
   @GetMapping("/org/{orgId}/jobs/filters")

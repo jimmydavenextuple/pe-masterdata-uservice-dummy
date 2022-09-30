@@ -151,36 +151,31 @@ class JobDashboardControllerTest {
   @Test
   void processJobJsonOfflineUpdateExistingJob() throws JobException {
 
-    when(jobService.processJobJsonOffline(any(), any(), any(), any()))
-        .thenReturn(new JobResponse());
+    when(jobService.processJobJsonOffline(any(), any(), any())).thenReturn(new JobResponse());
     ResponseEntity<BaseResponse<JobResponse>> responseEntity =
         jobDashboardController.processJobJsonOffline(
-            TestUtil.ORG_ID,
-            TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES,
-            TestUtil.ORG_ID,
-            "req");
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, TestUtil.JOB_ID);
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Status code");
 
-    verify(jobService, times(1)).processJobJsonOffline(any(), any(), any(), any());
+    verify(jobService, times(1)).processJobJsonOffline(any(), any(), any());
   }
 
   @Test
   void processJobJsonOffline2() throws JobException {
 
-    when(jobService.processJobJsonOffline(any(), any(), any(), any()))
-        .thenReturn(new JobResponse());
+    when(jobService.processJobJsonOffline(any(), any(), any())).thenReturn(new JobResponse());
     ResponseEntity<BaseResponse<JobResponse>> responseEntity =
         jobDashboardController.processJobJsonOffline(
-            TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, "", "");
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, "");
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Status code");
 
-    verify(jobService, times(1)).processJobJsonOffline(any(), any(), any(), any());
+    verify(jobService, times(1)).processJobJsonOffline(any(), any(), any());
   }
 
   @Test
   void processJobJsonOffline2Exception() throws JobException {
 
-    when(jobService.processJobJsonOffline(any(), any(), any(), any()))
+    when(jobService.processJobJsonOffline(any(), any(), any()))
         .thenThrow(
             new JobException(
                 "Error while processing json request", "jobId1", JobTypeEnum.UPLOAD_TRANSIT_TIMES));
@@ -190,20 +185,20 @@ class JobDashboardControllerTest {
             JobException.class,
             () ->
                 jobDashboardController.processJobJsonOffline(
-                    TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, "", ""));
+                    TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, ""));
 
     Assertions.assertEquals(
         "Error while processing json request", exception.getMessage(), "Exception Message");
 
     Assertions.assertEquals(
         JobTypeEnum.UPLOAD_TRANSIT_TIMES, exception.getJobType(), "Exception Job type");
-    verify(jobService, times(1)).processJobJsonOffline(any(), any(), any(), any());
+    verify(jobService, times(1)).processJobJsonOffline(any(), any(), any());
   }
 
   @Test
   void processJobJsonOfflineException() throws JobException {
 
-    when(jobService.processJobJsonOffline(any(), any(), any(), any()))
+    when(jobService.processJobJsonOffline(any(), any(), any()))
         .thenThrow(
             new JobException(
                 "Error while processing json request",
@@ -215,7 +210,7 @@ class JobDashboardControllerTest {
             JobException.class,
             () ->
                 jobDashboardController.processJobJsonOffline(
-                    TestUtil.ORG_ID, TestUtil.JOB_TYPE_UPLOAD_PROCESSING_LEAD_TIMES, "", ""));
+                    TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, ""));
 
     Assertions.assertEquals(
         "Error while processing json request", exception.getMessage(), "Exception Message");

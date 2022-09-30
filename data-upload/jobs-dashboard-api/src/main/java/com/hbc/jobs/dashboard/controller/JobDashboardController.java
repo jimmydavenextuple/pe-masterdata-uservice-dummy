@@ -85,13 +85,11 @@ public class JobDashboardController {
   public ResponseEntity<BaseResponse<JobResponse>> processJobJsonOffline(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestParam @NotNull @Valid JobTypeEnum jobType,
-      @RequestBody String request,
       @PathVariable String jobId)
       throws JobException {
     log.debug("Processing offline job json request");
 
-    var jobDto =
-        jobService.processJobJsonOffline(request, orgId, jobType, Optional.ofNullable(jobId));
+    var jobDto = jobService.processJobJsonOffline(orgId, jobType, Optional.ofNullable(jobId));
 
     log.debug("Processing offline job json request ends");
 
