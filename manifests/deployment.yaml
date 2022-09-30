@@ -60,7 +60,7 @@ spec:
             initialDelaySeconds: 200
             failureThreshold: 3
             timeoutSeconds: 10
-            periodSeconds: 10
+            periodSeconds: 30
           startupProbe:
             httpGet:
               path: "<HEALTH_CHECK_PATH>"
