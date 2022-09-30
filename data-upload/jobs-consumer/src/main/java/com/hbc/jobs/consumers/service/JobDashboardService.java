@@ -28,7 +28,7 @@ public class JobDashboardService {
           .send(
               MessageBuilder.withPayload(recordStatus)
                   .setHeader(KafkaHeaders.TOPIC, resultPublishTopicName)
-                  .setHeader(KafkaHeaders.MESSAGE_KEY, String.valueOf(recordStatus.getRecordNo()))
+                  .setHeader(KafkaHeaders.MESSAGE_KEY, recordStatus.getJobId())
                   .build())
           .addCallback(
               e -> log.debug("Record to Consumer topic successfully sent"),
