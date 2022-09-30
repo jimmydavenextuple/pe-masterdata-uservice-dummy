@@ -14,4 +14,4 @@ logging:
   level:
     com.hbc: DEBUG
 auth:
-  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_SRg9eldJN/us-east-1_FAqWuc7OP
+  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_FAqWuc7OP
