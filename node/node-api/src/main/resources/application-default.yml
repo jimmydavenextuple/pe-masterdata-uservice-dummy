@@ -9,17 +9,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
-    hikari:
-      connectionTimeout: 5000
-  replica:
-      datasource:
-        required: true
-        platform: postgres
-        url: jdbc:postgresql://localhost:5432/postgres
-        username: postgres
-        password: postgres
-        hikari:
-          connectionTimeout: 5000
 logging:
   level:
     com.hbc: INFO
