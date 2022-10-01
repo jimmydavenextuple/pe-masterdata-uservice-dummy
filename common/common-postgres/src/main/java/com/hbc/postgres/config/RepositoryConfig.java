@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -51,7 +52,8 @@ public class RepositoryConfig extends HikariConfig {
     return new Properties();
   }
 
-  @Bean
+  @Bean(name = ConfigConstants.ROUTING_DS)
+  @Primary
   public DataSource routingDataSource() {
     var primaryDataSource = dataSource(false, false);
     var replicaDataSource = replicaDataSource(true, true);
@@ -61,7 +63,8 @@ public class RepositoryConfig extends HikariConfig {
     return new RoutingDS(primaryDataSource, replicaDataSource);
   }
 
-  private DataSource dataSource(boolean readOnly, boolean isAutoCommit) {
+  @Bean(name = ConfigConstants.PRIMARY_DS)
+  protected DataSource dataSource(boolean readOnly, boolean isAutoCommit) {
     var config = new HikariConfig(primaryProperties());
     config.setJdbcUrl(databaseUrl);
     config.setUsername(username);
@@ -70,8 +73,8 @@ public class RepositoryConfig extends HikariConfig {
     config.setAutoCommit(isAutoCommit);
     return new HikariDataSource(config);
   }
-
-  private DataSource replicaDataSource(boolean readOnly, boolean isAutoCommit) {
+  @Bean(name = ConfigConstants.READER_OR_PRIMARY_DS)
+  protected DataSource replicaDataSource(boolean readOnly, boolean isAutoCommit) {
     if (Boolean.FALSE.equals(replicaReq)) {
       return null;
     }
