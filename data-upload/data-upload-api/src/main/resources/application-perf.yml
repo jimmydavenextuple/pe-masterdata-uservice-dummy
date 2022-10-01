@@ -9,6 +9,8 @@ spring:
     url: jdbc:postgresql://promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
+    hikari:
+      connectionTimeout: 5000
   replica:
     datasource:
       platform: postgres
@@ -18,6 +20,7 @@ spring:
       required: true
       hikari:
         readOnly: true
+        connectionTimeout: 5000
   kafka:
     bootstrap-servers: "b-1.promiseenginekafkaper.wyucgs.c23.kafka.us-east-1.amazonaws.com:9096,b-3.promiseenginekafkaper.wyucgs.c23.kafka.us-east-1.amazonaws.com:9096,b-2.promiseenginekafkaper.wyucgs.c23.kafka.us-east-1.amazonaws.com:9096"
     properties:
