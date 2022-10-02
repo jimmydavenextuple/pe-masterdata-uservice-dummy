@@ -5,11 +5,16 @@ import com.hbc.common.base.PagePayload;
 import com.hbc.common.constants.CommonConstants;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.JsonUtil;
+import com.hbc.csvdownload.common.pojo.TransitDataUpload;
+import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
+import com.hbc.jobs.consumers.domain.JobDomain;
+import com.hbc.jobs.consumers.domain.mapper.JobMapper;
 import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.framework.common.clients.JobsConsumerClient;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.enums.RecordDataTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
@@ -17,16 +22,32 @@ import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputWrapper;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -42,6 +63,8 @@ import org.springframework.util.ObjectUtils;
 public class JobService {
   private final KafkaTemplate<String, RecordDto> kafkaTemplate;
   private final JobsConsumerClient jobsConsumerClient;
+  private final JobDomain jobDomain;
+  private static final JobMapper INSTANCE = Mappers.getMapper(JobMapper.class);
 
   @Value("${jobs-framework.kafka-publish.topic-name}")
   String dashboardProducerName;
@@ -56,14 +79,14 @@ public class JobService {
    * @return
    * @throws JobException
    */
-  public JobDto processJobOffline(
+  public JobResponse processJobOffline(
       ByteArrayResource inputFile, String orgId, JobTypeEnum jobType, String fileName)
       throws JobException {
     log.debug("Inside processJobOffline service");
 
     try {
       JobDto job = constructJob(0, orgId, jobType, inputFile, fileName);
-      BaseResponse<JobDto> baseResponse = jobsConsumerClient.createJob(job);
+      BaseResponse<JobResponse> baseResponse = jobsConsumerClient.createJob(job);
       return baseResponse.getPayload();
     } catch (FeignException e) {
       log.error("Error while creating job", e);
@@ -96,22 +119,26 @@ public class JobService {
   /**
    * @param recordId
    * @param data
-   * @param job
+   * @param jobResponse
    * @param fileType
    */
-  private void publishToKafka(int recordId, String data, JobDto job, RecordDataTypeEnum fileType) {
+  private void publishToKafka(
+      int recordId, String data, JobResponse jobResponse, RecordDataTypeEnum fileType) {
     log.debug("Inside publish to kafka method");
     var recordDto = new RecordDto();
     recordDto.setRecordId(recordId);
     recordDto.setRecordData(data);
-    recordDto.setInputs(parseRecordInputs(data, job.getTotalRecords()));
-    recordDto.setJob(job);
+    recordDto.setInputs(parseRecordInputs(data, jobResponse.getTotalRecords()));
+    recordDto.setOrgId(jobResponse.getOrgId());
+    recordDto.setJobId(jobResponse.getJobId());
+    recordDto.setJobType(jobResponse.getJobType());
+    recordDto.setTotalRecords(jobResponse.getTotalRecords());
     recordDto.setRecordType(fileType);
     Message<RecordDto> message;
     message =
         MessageBuilder.withPayload(recordDto)
             .setHeader(KafkaHeaders.TOPIC, dashboardProducerName)
-            .setHeader(CommonConstants.HEADER_USER, job.getUserId())
+            .setHeader(CommonConstants.HEADER_USER, jobResponse.getUserId())
             .build();
 
     try {
@@ -140,11 +167,6 @@ public class JobService {
     }
 
     return inputs;
-  }
-
-  private JobDto constructJob(int totalRecords, String orgId, JobTypeEnum jobTypeEnum) {
-    return constructJob(
-        totalRecords, orgId, jobTypeEnum, new ByteArrayResource("".getBytes()), null);
   }
 
   /**
@@ -218,7 +240,7 @@ public class JobService {
    * @throws JobException
    */
   @SuppressWarnings("squid:S107")
-  public PagePayload<JobDto> getJobsByJobInfo(
+  public PagePayload<JobResponse> getJobsByJobInfo(
       String orgId,
       Optional<String> jobType,
       Optional<Integer> days,
@@ -250,6 +272,11 @@ public class JobService {
     }
   }
 
+  public JobResponse processJobJsonOffline(
+      String orgId, JobTypeEnum jobType, Optional<String> jobId) throws JobException {
+    return processJobJsonOffline(null, orgId, jobType, jobId);
+  }
+
   /**
    * @param request
    * @param orgId
@@ -258,31 +285,36 @@ public class JobService {
    * @return
    * @throws JobException
    */
-  public JobDto processJobJsonOffline(
-      String request, String orgId, JobTypeEnum jobType, Optional<String> jobId)
+  public JobResponse processJobJsonOffline(
+      String request, String orgId, JobTypeEnum jobType, Optional<String> jobId) // NOSONAR
       throws JobException {
     log.debug("Inside processJobOffline service");
 
     try {
-      List<String> jsonList = parseJSON(request);
-      JobDto jobResponse;
+      var jobResponse = new JobResponse();
+      var uploadRequestList = new ArrayList<>();
       if (jobId.isPresent() && !ObjectUtils.isEmpty(jobId.orElse(null))) {
-        jobResponse = jobsConsumerClient.getJob(orgId, jobId.get()).getPayload();
-        jobResponse.setTotalRecords(jsonList.size());
-        jobResponse.setRemainingRecords(jsonList.size());
-        jobResponse = jobsConsumerClient.updateJob(jobResponse).getPayload();
-      } else {
-        JobDto job = constructJob(jsonList.size(), orgId, jobType);
-        BaseResponse<JobDto> baseResponse = jobsConsumerClient.createJob(job);
-        jobResponse = baseResponse.getPayload();
+        var jobDto = jobsConsumerClient.getJob(orgId, jobId.get()).getPayload();
+        InputStream inputStream = new ByteArrayInputStream(jobDto.getFile());
+
+        updateRequestObjectsList(jobType, uploadRequestList, inputStream);
+
+        jobDto =
+            INSTANCE.toJob(
+                jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
+                    jobDto.getOrgId(), JobStatusEnum.PROCESSING, JobStatusEnum.PROCESSED));
+
+        jobDto.setTotalRecords(jobDto.getTotalRecords() + uploadRequestList.size());
+        jobDto.setRemainingRecords(jobDto.getRemainingRecords() + uploadRequestList.size());
+        jobResponse = jobsConsumerClient.updateJob(jobDto).getPayload();
       }
-      JobDto finalJobResponse = jobResponse;
-      IntStream.range(0, jsonList.size())
+      var finalJobResponse = jobResponse;
+      IntStream.range(0, uploadRequestList.size())
           .forEach(
               recordNumber ->
                   publishToKafka(
                       recordNumber,
-                      jsonList.get(recordNumber),
+                      JsonUtil.convert(uploadRequestList.get(recordNumber)),
                       finalJobResponse,
                       RecordDataTypeEnum.JSON));
       return jobResponse;
@@ -293,6 +325,122 @@ public class JobService {
       log.error("Unable to process json request", e);
       throw new JobException("Exception while processing job json request", e, null, jobType);
     }
+  }
+
+  private void updateRequestObjectsList(
+      JobTypeEnum jobType,
+      ArrayList<Object> uploadRequestList,
+      InputStream inputStream)
+      throws IOException, CsvException {
+    if (jobType == JobTypeEnum.UPLOAD_TRANSIT_TIMES) {
+      log.debug("Processing transit times upload data");
+      uploadRequestList.addAll(createUploadTransitTimesJobRequest(inputStream));
+    } else if (jobType == JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES) {
+      log.debug("Processing processing lead times upload data");
+      uploadRequestList.addAll(createUploadProcessingLeadTimesJobRequest(inputStream));
+    } else if (jobType == JobTypeEnum.DELETE_TRANSIT_BUFFER) {
+      log.debug("Processing delete transit buffer upload data");
+      uploadRequestList.addAll(createUploadTransitTimesJobRequest(inputStream));
+    }
+  }
+
+  private List<ProcessingLeadTimesRaw> createUploadProcessingLeadTimesJobRequest(
+      InputStream inputStream) throws IOException {
+
+    var bufferedReader =
+        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    var csvFormat = CSVFormat.DEFAULT.withHeader(ProcessingLeadTimesRaw.columnHeadersArray());
+    var csvParser = new CSVParser(bufferedReader, csvFormat);
+
+    Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+    Iterator<CSVRecord> iterator = csvRecords.iterator();
+    iterator.next();
+    List<ProcessingLeadTimesRaw> processingLeadTimesRawList = new ArrayList<>();
+
+    /** CSV data parsed and map to NodeCarrierRequest object */
+    while (iterator.hasNext()) {
+      var csvRecord = iterator.next();
+      var processingLeadTime =
+          ProcessingLeadTimesRaw.builder()
+              .orgId(csvRecord.get(CommonConstants.ORG_ID))
+              .nodeId(csvRecord.get(CommonConstants.NODE_ID))
+              .processingTime(csvRecord.get(CommonConstants.PROCESSING_TIME))
+              .serviceOption(csvRecord.get(CommonConstants.SERVICE_OPTION))
+              .actionType(csvRecord.get(CommonConstants.ACTION_TYPE))
+              .carrierServiceId("")
+              .build();
+      processingLeadTimesRawList.add(processingLeadTime);
+    }
+
+    /** form job request string */
+    return processingLeadTimesRawList;
+  }
+
+  private List<TransitDataUpload> createUploadTransitTimesJobRequest(
+      InputStream inputStream) throws IOException, CsvException {
+
+    var inputStreamReader = new InputStreamReader(inputStream);
+    var csvReader = new CSVReader(inputStreamReader);
+    List<String[]> csvFileContents = csvReader.readAll();
+    csvReader.close();
+
+    // Extract orgId value
+    String[] orgIdRow = csvFileContents.remove(0);
+    String orgIdValue = orgIdRow[1];
+    // Extract carrierServiceId  value
+    String[] carrierServiceIdRow = csvFileContents.remove(0);
+    String carrierServiceIdValue = carrierServiceIdRow[1];
+
+    // Extract destination/sourceFsa header and sourceFsa values
+    String[] sFsaListWithHeader = csvFileContents.remove(0);
+
+    int size = csvFileContents.get(0).length;
+    List<String> sFsaListWithOutHeader = Arrays.asList(sFsaListWithHeader).subList(1, size);
+
+    List<TransitDataUpload> transitDataUploadList = new ArrayList<>();
+    csvFileContents.stream()
+        .filter(row -> row.length != 0)
+        .forEach(
+            row -> {
+              var integer = new AtomicInteger(0);
+              String destinationSfa = row[integer.getAndIncrement()];
+              transitDataUploadList.addAll(
+                  createTransitDataCreationRequestObjects(
+                      orgIdValue,
+                      sFsaListWithOutHeader,
+                      carrierServiceIdValue,
+                      row,
+                      destinationSfa,
+                      integer));
+            });
+
+    return transitDataUploadList;
+  }
+
+  private List<TransitDataUpload> createTransitDataCreationRequestObjects(
+      String orgId,
+      List<String> sFsaList,
+      String carrierServiceIdValue,
+      String[] row,
+      String destinationSfa,
+      AtomicInteger integer) {
+    return sFsaList.stream()
+        .map(
+            sFsa -> {
+              var transitDataUpload = new TransitDataUpload();
+              transitDataUpload.setOrgId(orgId);
+              transitDataUpload.setCarrierServiceId(carrierServiceIdValue);
+              transitDataUpload.setDestinationGeozone(destinationSfa);
+              transitDataUpload.setSourceGeozone(sFsa);
+              var transitDaysString = row[integer.getAndIncrement()];
+              if (!ObjectUtils.isEmpty(transitDaysString)) {
+                transitDataUpload.setTransitDays(transitDaysString);
+                return transitDataUpload;
+              }
+              return null;
+            })
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
   }
 
   /**

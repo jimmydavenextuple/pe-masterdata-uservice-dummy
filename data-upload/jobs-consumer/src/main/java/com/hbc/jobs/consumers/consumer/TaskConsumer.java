@@ -41,20 +41,20 @@ public class TaskConsumer {
   @KafkaHandler(isDefault = true)
   public void receiveRecordFromDashboardProducer(
       @Payload RecordDto recordDto, @Headers KafkaMessageHeaders headers) throws JobException {
-    log.info("Inside receiveRecordFromDashboardProducer service");
+    log.debug("Inside receiveRecordFromDashboardProducer service");
 
     try {
       log.debug("Auth token received in consumer");
       String authToken = getAuthToken();
       CurrentThreadContext.getLogContext().setAuthorizationHeader(authToken);
       jobConsumerService.processRecord(recordDto);
-      log.info("receiveRecordFromDashboardProducer service ends");
+      log.debug("receiveRecordFromDashboardProducer service ends");
     } catch (Exception e) {
       log.error("Error while receiving the job record from the kafka producer", e);
       throw new JobException(
           "Exception while receiving the job record from the kafka producer",
           e,
-          recordDto.getJob().getJobId(),
+          recordDto.getJobId(),
           null);
     }
   }

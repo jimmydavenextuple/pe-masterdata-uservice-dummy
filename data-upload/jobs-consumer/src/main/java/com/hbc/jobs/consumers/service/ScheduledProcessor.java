@@ -15,8 +15,6 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
 import feign.FeignException;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +31,6 @@ public class ScheduledProcessor {
   private final Logger logger = LoggerFactory.getLogger(ScheduledProcessor.class);
 
   private final JobDomain jobDomain;
-  private final CsvProcessingService csvProcessingService;
 
   private final JobsDashboardClient jobsDashboardClient;
 
@@ -51,7 +48,9 @@ public class ScheduledProcessor {
   private static final JobMapper INSTANCE = Mappers.getMapper(JobMapper.class);
   private static final String ORG_ID = "BAY";
 
-  @Scheduled(fixedRateString = "${scheduled-processor.fixed-rate.minutes:2}", timeUnit = TimeUnit.MINUTES)
+  @Scheduled(
+      fixedRateString = "${scheduled-processor.fixed-rate.minutes:2}",
+      timeUnit = TimeUnit.MINUTES)
   @Transactional
   public void processJobOffline() throws JobDomainException {
     String authToken = getAuthToken();
@@ -66,21 +65,8 @@ public class ScheduledProcessor {
       return;
     }
 
-    InputStream inputStream = new ByteArrayInputStream(jobDto.getFile());
-
-    var jobTypeEnum = jobDto.getJobType();
-
     try {
-      logger.debug("Processing of the csv data started");
-      String jobRequest =
-          csvProcessingService.processInputCsvFile(inputStream, jobTypeEnum, jobDto.getOrgId());
-      logger.debug("Processing of the csv data completed");
-      jobDto =
-          INSTANCE.toJob(
-              jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
-                  ORG_ID, JobStatusEnum.PROCESSING, JobStatusEnum.PROCESSED));
-      jobsDashboardClient.processJobJsonOffline(
-          ORG_ID, jobDto.getJobType(), jobRequest, jobDto.getJobId());
+      jobsDashboardClient.processJobsJsonOffline(ORG_ID, jobDto.getJobType(), jobDto.getJobId());
     } catch (FeignException e) {
       logger.error("Feign exception while processing the job", e);
       var errorResponse = ExceptionUtils.parseFeignException(e);

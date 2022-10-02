@@ -67,17 +67,17 @@ public interface FeignClientMapper {
   }
 
   default RecordStatusDto getResponseFromAPI(RecordDto recordDto) {
-    log.info("Inside getResponseFromAPI service");
+    log.debug("Inside getResponseFromAPI service");
 
     var recordStatusDto = new RecordStatusDto();
     recordStatusDto.setCorrelationId(CurrentThreadContext.getLogContext().getCorrelationId());
     recordStatusDto.setServiceCorrelationId(
         CurrentThreadContext.getLogContext().getServiceCorrelationId());
-    recordStatusDto.setJobId(recordDto.getJob().getJobId());
-    recordStatusDto.setOrgId(recordDto.getJob().getOrgId());
+    recordStatusDto.setJobId(recordDto.getJobId());
+    recordStatusDto.setOrgId(recordDto.getOrgId());
     recordStatusDto.setRecordNo(recordDto.getRecordId());
-    recordStatusDto.setJobType(recordDto.getJob().getJobType());
-    recordStatusDto.setTotalRecordsInJob(recordDto.getJob().getTotalRecords());
+    recordStatusDto.setJobType(recordDto.getJobType());
+    recordStatusDto.setTotalRecordsInJob(recordDto.getTotalRecords());
     Stopwatch stopwatch = null;
     Object dtoFromRecord = null;
     stopwatch = Stopwatch.createStarted();
@@ -127,7 +127,7 @@ public interface FeignClientMapper {
     }
     recordStatusDto.setRequestBody(JsonUtil.convert(dtoFromRecord));
     recordStatusDto.setResponseTime(stopwatch.elapsed(TimeUnit.MILLISECONDS));
-    log.info("getResponseFromAPI method ends");
+    log.debug("getResponseFromAPI method ends");
     return recordStatusDto;
   }
 
@@ -180,5 +180,6 @@ public interface FeignClientMapper {
   Class mapTODto() throws TransitMapperException, NodeCarrierMapperException; // NOSONAR
 
   ResponseEntity<?> callApi(Object dtoFromJson, RecordInputDto inputs) // NOSONAR
-          throws TransitMapperException, NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException;
+      throws TransitMapperException, NodeCarrierMapperException, InvalidActionTypeException,
+          CommonServiceException;
 }

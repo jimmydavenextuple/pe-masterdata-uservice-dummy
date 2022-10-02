@@ -31,7 +31,7 @@ public class JobDashboardService {
                   .setHeader(KafkaHeaders.MESSAGE_KEY, recordStatus.getJobId())
                   .build())
           .addCallback(
-              e -> log.info("Record to Consumer topic successfully sent"),
+              e -> log.debug("Record to Consumer topic successfully sent"),
               e -> log.error("Sending record to Consumer topic failed", e));
     } catch (Exception e) {
       log.error("Error while publishing record from consumer to consumer", e);
