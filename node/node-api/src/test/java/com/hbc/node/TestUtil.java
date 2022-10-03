@@ -1,8 +1,12 @@
 package com.hbc.node;
 
+import com.hbc.common.base.PagePayload;
+import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.common.pojo.PageParams;
 import com.hbc.node.domain.dto.NodeCacheKeyDto;
 import com.hbc.node.domain.dto.NodeDto;
+import com.hbc.node.domain.dto.NodeListDto;
+import com.hbc.node.domain.dto.PickupTimeDto;
 import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
@@ -39,6 +43,10 @@ public class TestUtil {
   public static Boolean EXPRESS_ELIGIBLE = Boolean.TRUE;
   public static String NODE_TYPE = "MFC";
   public static Boolean IS_ACTIVE = Boolean.TRUE;
+
+  public static final String CARRIER_SERVICE_ID = "Carrier_Service_Id_01";
+  public static final String SERVICE_OPTION = "Standard";
+  public static final String LAST_PICK_UP_TIME = "5:00 PM";
 
   public NodeEntity getNodeEntity() {
     return NodeEntity.builder()
@@ -301,4 +309,38 @@ public class TestUtil {
 
     return List.of(nodeCacheKeyDto1, nodeCacheKeyDto2);
   }
+
+  public PagePayload<NodeListDto> getNodeListPagePayload(Integer pageNo) {
+    PagePayload<NodeListDto> nodeListDtoPagePayload = new PagePayload<>();
+
+    NodeListDto nodeListDto = getNodeListDto(NODE_ID);
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(4);
+    nodeListDtoPagePayload.setPagination(pagination);
+    nodeListDtoPagePayload.setData(
+            Arrays.asList(nodeListDto));
+
+    return nodeListDtoPagePayload;
+  }
+
+  private NodeListDto getNodeListDto(String nodeId) {
+    NodeListDto nodeListDto = new NodeListDto();
+    nodeListDto.setNodeId(nodeId);
+    nodeListDto.setOrgId(ORG_ID);
+    nodeListDto.setIsActive(Boolean.TRUE);
+    nodeListDto.setCarrierServices(List.of(CARRIER_SERVICE_ID));
+    nodeListDto.setServiceOptions(List.of(SERVICE_OPTION));
+    PickupTimeDto pickupTimeDto = new PickupTimeDto();
+    pickupTimeDto.setNodeId(nodeId);
+    pickupTimeDto.setCarrierServiceId(CARRIER_SERVICE_ID);
+    pickupTimeDto.setPickupTime(LAST_PICK_UP_TIME);
+    nodeListDto.setPickupTime(List.of(pickupTimeDto));
+    return nodeListDto;
+
+  }
+
 }

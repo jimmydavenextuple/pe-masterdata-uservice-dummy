@@ -1,29 +1,21 @@
 package com.hbc.dataupload.service;
 
 import com.hbc.calendar.domain.feign.CalendarFeign;
-import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
-import com.hbc.carrier.domain.feign.CarrierFeign;
-import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.base.PagePayload;
-import com.hbc.dataupload.domain.dto.CarrierTransitDto;
 import com.hbc.dataupload.domain.dto.NodeListDto;
 import com.hbc.dataupload.domain.dto.NodeWorkingCalendarDto;
 import com.hbc.dataupload.domain.dto.PickupTimeDto;
-import com.hbc.dataupload.domain.mapper.CarrierTransitTimeMapper;
 import com.hbc.dataupload.domain.mapper.NodeMapper;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.feign.NodeFeign;
 import com.hbc.postgres.config.ReaderDS;
-import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
-import com.hbc.transit.domain.feign.TransitFeign;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class RegionalNodesDataUploadService {
+public class RegionalNodesDetailsService {
 
   private final CalendarFeign calendarFeign;
   private final NodeFeign nodeFeign;

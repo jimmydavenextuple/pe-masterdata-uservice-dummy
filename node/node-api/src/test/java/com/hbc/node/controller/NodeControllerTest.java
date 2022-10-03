@@ -1,5 +1,7 @@
 package com.hbc.node.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -13,6 +15,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.node.TestUtil;
 import com.hbc.node.domain.dto.NodeCacheKeyDto;
 import com.hbc.node.domain.dto.NodeDto;
+import com.hbc.node.domain.dto.NodeListDto;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.outbound.NodeResponse;
@@ -26,6 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -254,5 +258,53 @@ class NodeControllerTest {
     Assertions.assertEquals(nodeCacheKeyDtoList, response.getBody().getPayload());
 
     verify(nodeService, times(1)).getAllNodeCacheKeys(any());
+  }
+
+  @Test
+  void getRegionalNodesListTest() throws NodeDomainException, CommonServiceException {
+    when(nodeService.getNodesList(any(), any(), any(), any(), any()))
+            .thenReturn(testUtil.getNodeListPagePayload(2));
+
+    ResponseEntity<BaseResponse<PagePayload<NodeListDto>>> response =
+    nodeController.getRegionalNodesList(
+                    TestUtil.ORG_ID,
+                    testUtil.getPageParams(
+                            Optional.of(2), Optional.of(1), Optional.of("nodeId"), Optional.of("DESC")));
+
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(1, response.getBody().getPayload().getData().size());
+    assertEquals(4, response.getBody().getPayload().getPagination().getTotalRecords());
+    assertEquals(2, response.getBody().getPayload().getPagination().getCurrentPage());
+    assertEquals(2, response.getBody().getPayload().getPagination().getTotalPages());
+    assertNotNull(response.getBody().getPayload().getPagination().getPrevious());
+    assertEquals("", response.getBody().getPayload().getPagination().getNext());
+
+    verify(nodeService, Mockito.times(1))
+            .getNodesList(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getRegionalNodesListDefaultsTest() throws NodeDomainException, CommonServiceException {
+    when(pageProperties.getPageNo()).thenReturn(1);
+    when(pageProperties.getPageSize()).thenReturn(15);
+    when(nodeService.getNodesList(any(), any(), any(), any(), any()))
+            .thenReturn(testUtil.getNodeListPagePayload(1));
+
+    ResponseEntity<BaseResponse<PagePayload<NodeListDto>>> response =
+            nodeController.getRegionalNodesList(
+                    TestUtil.ORG_ID,
+                    testUtil.getPageParams(
+                            Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()));
+
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(1, response.getBody().getPayload().getData().size());
+    assertEquals(4, response.getBody().getPayload().getPagination().getTotalRecords());
+    assertEquals(1, response.getBody().getPayload().getPagination().getCurrentPage());
+    assertEquals(2, response.getBody().getPayload().getPagination().getTotalPages());
+    assertNotNull(response.getBody().getPayload().getPagination().getNext());
+    assertEquals("", response.getBody().getPayload().getPagination().getPrevious());
+
+    verify(nodeService, Mockito.times(1))
+            .getNodesList(any(), any(), any(), any(), any());
   }
 }

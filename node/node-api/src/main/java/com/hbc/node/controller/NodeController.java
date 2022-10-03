@@ -11,6 +11,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
 import com.hbc.node.domain.dto.NodeCacheKeyDto;
 import com.hbc.node.domain.dto.NodeDto;
+import com.hbc.node.domain.dto.NodeListDto;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
 import com.hbc.node.domain.outbound.NodeResponse;
@@ -200,5 +201,48 @@ public class NodeController {
     pagePayload.setData(nodeDtoPage.getContent());
 
     return pagePayload;
+  }
+
+  @GetMapping("/v1/nodes/orgId/{orgId}")
+  public ResponseEntity<BaseResponse<PagePayload<NodeListDto>>> getRegionalNodesList(
+          @PathVariable String orgId, PageParams pageParams) throws NodeDomainException,CommonServiceException{
+    PagePayload<NodeListDto> nodeListDto =
+            nodeService.getNodesList(
+                    orgId,
+                    pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+                    pageParams.getPageSize().orElse(pageProperties.getPageSize()),
+                    pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY),
+                    pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
+
+    String nextUri =
+            PaginationUtil.buildUriForPagination(
+                    pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+                    nodeListDto.getPagination().getTotalPages(),
+                    "next",
+                    String.format(
+                            PAGINATION_URL,
+                            orgId,
+                            (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
+                            pageParams.getPageSize().orElse(pageProperties.getPageSize())));
+
+    String previousUri =
+            PaginationUtil.buildUriForPagination(
+                    pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+                    nodeListDto.getPagination().getTotalPages(),
+                    "previous",
+                    String.format(
+                            PAGINATION_URL,
+                            orgId,
+                            (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
+                            pageParams.getPageSize().orElse(pageProperties.getPageSize())));
+
+    nodeListDto.getPagination().setNext(nextUri);
+    nodeListDto.getPagination().setPrevious(previousUri);
+
+    return ResponseEntity.ok(
+            BaseResponse.builder()
+                    .message("Node list fetched successfully")
+                    .payload(nodeListDto)
+                    .build());
   }
 }

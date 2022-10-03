@@ -290,7 +290,7 @@ public class NodeCarrierController {
 
     return ResponseEntity.ok(
             BaseResponse.builder()
-                    .message("Node Carrier list fetched successfully")
+                    .message("Node Carrier list with last pickup time details fetched successfully")
                     .payload(nodeCarrierResponseList)
                     .build());
   }

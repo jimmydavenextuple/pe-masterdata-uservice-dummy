@@ -5,10 +5,8 @@ import com.hbc.common.pojo.PageParams;
 import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
-import com.hbc.dataupload.domain.dto.CarrierTransitDto;
 import com.hbc.dataupload.domain.dto.NodeListDto;
-import com.hbc.dataupload.service.CarrierTransitTimeService;
-import com.hbc.dataupload.service.RegionalNodesDataUploadService;
+import com.hbc.dataupload.service.RegionalNodesDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,26 +15,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.hbc.common.constants.CommonConstants.CARRIER_DEFAULT_SORT_BY;
 import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 import static com.hbc.common.constants.CommonConstants.NODE_DEFAULT_SORT_BY;
 
 @RestController
-@RequestMapping("/data-upload/ui/regions-nodes/nodes")
+@RequestMapping("/data-upload/ui")
 @RequiredArgsConstructor
 @Slf4j
-public class RegionalNodesDataUploadController {
+public class RegionalNodesDetailsController {
   private static final String PAGINATION_URL =
       "/data-upload/ui/regions-nodes/nodes/orgId/%s?pageNo=%d&pageSize=%d";
   private final PageProperties pageProperties;
 
-  private final RegionalNodesDataUploadService regionalNodesDataUploadService;
+  private final RegionalNodesDetailsService regionalNodesDetailsService;
 
-  @GetMapping("/orgId/{orgId}")
+  @GetMapping("/regions-nodes/nodes/orgId/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<NodeListDto>>> getNodesList(
       @PathVariable String orgId, PageParams pageParams) {
     PagePayload<NodeListDto> nodeListDto =
-        regionalNodesDataUploadService.getNodesList(
+        regionalNodesDetailsService.getNodesList(
             orgId,
             pageParams.getPageNo().orElse(pageProperties.getPageNo()),
             pageParams.getPageSize().orElse(pageProperties.getPageSize()),

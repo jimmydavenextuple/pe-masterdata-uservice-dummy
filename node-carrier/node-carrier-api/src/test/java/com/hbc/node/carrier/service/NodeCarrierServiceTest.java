@@ -675,4 +675,20 @@ class NodeCarrierServiceTest {
     verify(nodeCarrierDomain, times(0)).findNodeCarrierDetails(any(), any(), any(), any());
     verify(nodeCarrierDomain, times(0)).deleteNodeCarrierEntity(any());
   }
+
+  @Test
+  void getNodeCarrierListForNodeIdAndOrgIdTest() throws NodeCarrierDomainException {
+    when(nodeCarrierDomain.findNodeCarrierDetailsByNodeIdAndOrgId(anyString(), anyString()))
+            .thenReturn(testUtil.getNodeCarrierEntityListWithPickupDetails());
+
+    List<NodeCarrierResponse> nodeCarrierResponseList =
+            nodeCarrierService.getNodeCarrierListForNodeIdAndOrgId(TestUtil.NODE_ID, TestUtil.ORG_ID);
+
+    assertEquals(testUtil.getNodeCarrierEntityListWithPickupDetails().size(), nodeCarrierResponseList.size());
+    assertEquals(TestUtil.NODE_ID, nodeCarrierResponseList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, nodeCarrierResponseList.get(0).getOrgId());
+    assertEquals(TestUtil.CARRIER_SERVICE_ID, nodeCarrierResponseList.get(0).getCarrierServiceId());
+
+    verify(nodeCarrierDomain, times(1)).findNodeCarrierDetailsByNodeIdAndOrgId(anyString(), anyString());
+  }
 }

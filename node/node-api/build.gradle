@@ -16,6 +16,8 @@ dependencies {
     implementation(project(":common-util"))
     implementation(project(":nfs-near-cache:core-near-cache-producer"))
     implementation project(":common:common-postgres")
+    implementation(project(":calendar:calendar-api-domain"))
+    implementation(project(":node-carrier:node-carrier-api-domain"))
     implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
 }
 sourceCompatibility = JavaVersion.VERSION_11

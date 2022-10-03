@@ -2,6 +2,7 @@ package com.hbc.node.domain.mapper;
 
 import com.hbc.node.domain.dto.NodeCacheKeyDto;
 import com.hbc.node.domain.dto.NodeDto;
+import com.hbc.node.domain.dto.NodeListDto;
 import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.inbound.NodeRequest;
 import com.hbc.node.domain.inbound.NodeUpdationRequest;
@@ -27,4 +28,6 @@ public interface NodeMapper {
   NodeDto toNodeDto(NodeEntity nodeEntity);
 
   List<NodeCacheKeyDto> toNodeCacheKeyResponseList(List<NodeEntity> nodeEntities);
+
+    NodeListDto toNodeListDto(NodeDto nodeResponse);
 }

@@ -55,7 +55,9 @@ import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
+import com.hbc.dataupload.domain.dto.NodeListDto;
 import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
+import com.hbc.dataupload.domain.dto.PickupTimeDto;
 import com.hbc.dataupload.domain.pojo.CarrierServiceCalendars;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
@@ -749,5 +751,46 @@ public class TestUtil {
 
   public BaseResponse<NodeCarrierSelectionResponse> getFailedBaseResponseForNodeCarrierSelection() {
     return BaseResponse.builder().success(false).payload(getNodeCarrierSelectionResponse()).build();
+  }
+
+  public PagePayload<NodeListDto> getNodeListPagePayload(Integer pageNo) {
+    PagePayload<NodeListDto> nodeListDtoPagePayload = new PagePayload<>();
+
+    NodeListDto nodeListDto = getNodeListDto(NODE_ID);
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(4);
+    nodeListDtoPagePayload.setPagination(pagination);
+    nodeListDtoPagePayload.setData(
+            Arrays.asList(nodeListDto));
+
+    return nodeListDtoPagePayload;
+  }
+
+  private NodeListDto getNodeListDto(String nodeId) {
+    NodeListDto nodeListDto = new NodeListDto();
+    nodeListDto.setNodeId(nodeId);
+    nodeListDto.setOrgId(ORG_ID);
+    nodeListDto.setIsActive(Boolean.TRUE);
+    nodeListDto.setCarrierServices(List.of(CARRIER_SERVICE_ID));
+    nodeListDto.setServiceOptions(List.of(SERVICE_OPTION));
+    PickupTimeDto pickupTimeDto = new PickupTimeDto();
+    pickupTimeDto.setNodeId(nodeId);
+    pickupTimeDto.setCarrierServiceId(CARRIER_SERVICE_ID);
+    pickupTimeDto.setPickupTime(LAST_PICK_UP_TIME);
+    nodeListDto.setPickupTime(List.of(pickupTimeDto));
+    return nodeListDto;
+
+  }
+
+  public BaseResponse<List<NodeCalendarResponse>> getBaseResponseOfNodeCalendarList() {
+    return BaseResponse.builder()
+            .message("Node Calendar details added successfully")
+            .success(true)
+            .payload(List.of(getNodeCalendarResponse()))
+            .build();
   }
 }
