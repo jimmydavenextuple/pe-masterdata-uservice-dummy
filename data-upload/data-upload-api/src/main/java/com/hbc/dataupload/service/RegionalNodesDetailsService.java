@@ -87,7 +87,7 @@ public class RegionalNodesDetailsService {
       pickupTimeDto.setPickupTime(nodeCarrierResponse.getLastPickupTime());
       pickupTimeDtoList.add(pickupTimeDto);
     }
-    return pickupTimeDtoList.stream().distinct().collect(Collectors.toList());
+    return pickupTimeDtoList;
   }
 
   private List<String> getCarrierServiceIds(List<NodeCarrierResponse> nodeCarrierResponse) {
@@ -107,7 +107,7 @@ public class RegionalNodesDetailsService {
       nodeWorkingCalendarDto.setEffectiveDate(nodeCalendarResponse.getEffectiveDate());
       nodeWorkingCalendarDtoList.add(nodeWorkingCalendarDto);
     }
-    return nodeWorkingCalendarDtoList.stream().distinct().collect(Collectors.toList());
+    return nodeWorkingCalendarDtoList;
   }
 
   private List<String> getServiceOptions(List<NodeCarrierResponse> nodeCarrierResponse) {
