@@ -425,17 +425,19 @@ class NodeCarrierControllerTest {
   @Test
   void getNodeCarrierListWithLastPickUpTimeDetails() throws NodeCarrierDomainException {
     when(nodeCarrierService.getNodeCarrierListForNodeIdAndOrgId(anyString(), anyString()))
-            .thenReturn(testUtil.getNodeCarrierList());
+        .thenReturn(testUtil.getNodeCarrierList());
 
     ResponseEntity<BaseResponse<List<NodeCarrierResponse>>> response =
-            nodeCarrierController.getNodeCarrierListWithLastPickUpTimeDetails(TestUtil.NODE_ID, TestUtil.ORG_ID);
+        nodeCarrierController.getNodeCarrierListWithLastPickUpTimeDetails(
+            TestUtil.NODE_ID, TestUtil.ORG_ID);
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     Assertions.assertEquals(
-            TestUtil.NODE_ID,
-            Objects.requireNonNull(response.getBody()).getPayload().get(0).getNodeId());
+        TestUtil.NODE_ID,
+        Objects.requireNonNull(response.getBody()).getPayload().get(0).getNodeId());
     Assertions.assertEquals(
-            TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().get(0).getOrgId());
-    verify(nodeCarrierService, times(1)).getNodeCarrierListForNodeIdAndOrgId(anyString(), anyString());
+        TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().get(0).getOrgId());
+    verify(nodeCarrierService, times(1))
+        .getNodeCarrierListForNodeIdAndOrgId(anyString(), anyString());
   }
 }

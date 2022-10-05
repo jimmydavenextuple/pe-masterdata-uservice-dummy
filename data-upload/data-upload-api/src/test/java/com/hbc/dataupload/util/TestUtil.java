@@ -764,8 +764,7 @@ public class TestUtil {
     pagination.setSortBy("DESC");
     pagination.setTotalRecords(4);
     nodeListDtoPagePayload.setPagination(pagination);
-    nodeListDtoPagePayload.setData(
-            Arrays.asList(nodeListDto));
+    nodeListDtoPagePayload.setData(Arrays.asList(nodeListDto));
 
     return nodeListDtoPagePayload;
   }
@@ -783,14 +782,13 @@ public class TestUtil {
     pickupTimeDto.setPickupTime(LAST_PICK_UP_TIME);
     nodeListDto.setPickupTime(List.of(pickupTimeDto));
     return nodeListDto;
-
   }
 
   public BaseResponse<List<NodeCalendarResponse>> getBaseResponseOfNodeCalendarList() {
     return BaseResponse.builder()
-            .message("Node Calendar details added successfully")
-            .success(true)
-            .payload(List.of(getNodeCalendarResponse()))
-            .build();
+        .message("Node Calendar details added successfully")
+        .success(true)
+        .payload(List.of(getNodeCalendarResponse()))
+        .build();
   }
 }

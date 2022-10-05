@@ -1,8 +1,4 @@
 spring:
-  application:
-    dependencies:
-      calendar: "http://localhost:8080/"
-      node-carrier: "http://localhost:8084/"
   jpa:
     database: POSTGRESQL
     show-sql: true

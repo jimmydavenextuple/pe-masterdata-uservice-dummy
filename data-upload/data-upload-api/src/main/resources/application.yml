@@ -13,7 +13,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
 server:
-  port: 18000
+  port: 8080
   tomcat:
     max-connections: 500
     threads:

@@ -1,12 +1,11 @@
 package com.hbc.dataupload.domain.dto;
 
+import java.io.Serializable;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -31,5 +30,4 @@ public class NodeListDto implements Serializable {
   private List<String> carrierServices;
   private List<String> serviceOptions;
   private List<PickupTimeDto> pickupTime;
-
 }

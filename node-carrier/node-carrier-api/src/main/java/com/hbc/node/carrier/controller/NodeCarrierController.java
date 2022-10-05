@@ -281,17 +281,18 @@ public class NodeCarrierController {
   }
 
   @GetMapping("/v1/{nodeId}/{orgId}")
-  public ResponseEntity<BaseResponse<List<NodeCarrierResponse>>> getNodeCarrierListWithLastPickUpTimeDetails(
+  public ResponseEntity<BaseResponse<List<NodeCarrierResponse>>>
+      getNodeCarrierListWithLastPickUpTimeDetails(
           @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId)
           throws NodeCarrierDomainException {
     logger.debug("Processing get node carrier for nodeId and orgId");
     List<NodeCarrierResponse> nodeCarrierResponseList =
-            nodeCarrierService.getNodeCarrierListForNodeIdAndOrgId(nodeId, orgId);
+        nodeCarrierService.getNodeCarrierListForNodeIdAndOrgId(nodeId, orgId);
 
     return ResponseEntity.ok(
-            BaseResponse.builder()
-                    .message("Node Carrier list with last pickup time details fetched successfully")
-                    .payload(nodeCarrierResponseList)
-                    .build());
+        BaseResponse.builder()
+            .message("Node Carrier list with last pickup time details fetched successfully")
+            .payload(nodeCarrierResponseList)
+            .build());
   }
 }

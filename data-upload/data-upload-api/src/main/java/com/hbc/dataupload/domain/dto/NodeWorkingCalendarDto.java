@@ -1,11 +1,10 @@
 package com.hbc.dataupload.domain.dto;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
@@ -13,8 +12,8 @@ import java.io.Serializable;
 @Builder
 public class NodeWorkingCalendarDto implements Serializable {
 
-    private static final long serialVersionUID = 5055863613059504920L;
+  private static final long serialVersionUID = 5055863613059504920L;
 
-    private String effectiveDate;
-    private String calendarId;
+  private String effectiveDate;
+  private String calendarId;
 }

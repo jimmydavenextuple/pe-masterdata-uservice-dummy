@@ -362,24 +362,24 @@ public class TestUtil {
 
   public List<NodeCarrierResponse> getNodeCarrierList() {
     NodeCarrierResponse nodeCarrierResponse1 =
-            NodeCarrierResponse.builder()
-                    .nodeId(NODE_ID)
-                    .orgId(ORG_ID)
-                    .carrierServiceId(CARRIER_SERVICE_ID)
-                    .serviceOption(SERVICE_OPTION)
-                    .processingTime(2.0)
-                    .lastPickupTime("5:00")
-                    .build();
+        NodeCarrierResponse.builder()
+            .nodeId(NODE_ID)
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .serviceOption(SERVICE_OPTION)
+            .processingTime(2.0)
+            .lastPickupTime("5:00")
+            .build();
 
     NodeCarrierResponse nodeCarrierResponse2 =
-            NodeCarrierResponse.builder()
-                    .nodeId(NODE_ID)
-                    .orgId(ORG_ID)
-                    .carrierServiceId(CARRIER_SERVICE_ID_2)
-                    .serviceOption(SERVICE_OPTION_2)
-                    .processingTime(10.0)
-                    .lastPickupTime("11:00")
-                    .build();
+        NodeCarrierResponse.builder()
+            .nodeId(NODE_ID)
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID_2)
+            .serviceOption(SERVICE_OPTION_2)
+            .processingTime(10.0)
+            .lastPickupTime("11:00")
+            .build();
 
     return Arrays.asList(nodeCarrierResponse1, nodeCarrierResponse2);
   }

@@ -162,14 +162,15 @@ public class NodeCarrierDomain {
     }
   }
 
-  public List<NodeCarrierEntity> findNodeCarrierDetailsByNodeIdAndOrgId(String nodeId, String orgId) throws NodeCarrierDomainException{
+  public List<NodeCarrierEntity> findNodeCarrierDetailsByNodeIdAndOrgId(String nodeId, String orgId)
+      throws NodeCarrierDomainException {
 
     try {
       return nodeCarrierRepository.findByNodeIdAndOrgId(nodeId, orgId);
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to find node carrier list");
       throw new NodeCarrierDomainException(
-              "Error while fetching node carrier list for nodeId and orgId", nodeId, orgId, null, null);
+          "Error while fetching node carrier list for nodeId and orgId", nodeId, orgId, null, null);
     }
   }
 }

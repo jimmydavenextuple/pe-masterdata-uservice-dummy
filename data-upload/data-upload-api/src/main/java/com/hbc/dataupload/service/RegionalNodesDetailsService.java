@@ -12,14 +12,13 @@ import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.feign.NodeFeign;
 import com.hbc.postgres.config.ReaderDS;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +29,8 @@ public class RegionalNodesDetailsService {
   private final NodeFeign nodeFeign;
   private final NodeCarrierFeign nodeCarrierFeign;
 
-  public static final NodeMapper INSTANCE =
-          Mappers.getMapper(NodeMapper.class);
+  public static final NodeMapper INSTANCE = Mappers.getMapper(NodeMapper.class);
+
   @ReaderDS
   public PagePayload<NodeListDto> getNodesList(
       String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder) {
@@ -39,7 +38,7 @@ public class RegionalNodesDetailsService {
     List<NodeListDto> responseList = new ArrayList<>();
 
     PagePayload<NodeDto> nodeResponse =
-            nodeFeign.getNodeList(orgId, pageNo, pageSize, sortBy, sortOrder).getPayload();
+        nodeFeign.getNodeList(orgId, pageNo, pageSize, sortBy, sortOrder).getPayload();
 
     List<NodeDto> nodeResponseList = nodeResponse.getData();
     for (NodeDto nodeServiceResponse : nodeResponseList) {
@@ -55,18 +54,23 @@ public class RegionalNodesDetailsService {
       }
 
       List<NodeCarrierResponse> nodeCarrierResponse =
-              nodeCarrierFeign.getNodeCarrierListWithLastPickUpTimeDetails(nodeServiceResponse.getNodeId(), nodeServiceResponse.getOrgId()).getPayload();
+          nodeCarrierFeign
+              .getNodeCarrierListWithLastPickUpTimeDetails(
+                  nodeServiceResponse.getNodeId(), nodeServiceResponse.getOrgId())
+              .getPayload();
 
       responseList.add(
-          setNodeListDto(
-              nodeServiceResponse, nodeCalendarResponseList, nodeCarrierResponse));
+          setNodeListDto(nodeServiceResponse, nodeCalendarResponseList, nodeCarrierResponse));
     }
     nodeListDtoPagePayload.setPagination(nodeResponse.getPagination());
     nodeListDtoPagePayload.setData(responseList);
     return nodeListDtoPagePayload;
   }
 
-  private NodeListDto setNodeListDto(NodeDto nodeResponse, List<NodeCalendarResponse> nodeCalendarResponseList, List<NodeCarrierResponse> nodeCarrierResponse) {
+  private NodeListDto setNodeListDto(
+      NodeDto nodeResponse,
+      List<NodeCalendarResponse> nodeCalendarResponseList,
+      List<NodeCarrierResponse> nodeCarrierResponse) {
     NodeListDto nodeListDto;
     nodeListDto = INSTANCE.toNodeListDto(nodeResponse);
     nodeListDto.setNodeWorkingCalendar(setNodeCalendar(nodeCalendarResponseList));
@@ -76,11 +80,11 @@ public class RegionalNodesDetailsService {
     return nodeListDto;
   }
 
-  private List<PickupTimeDto> getPickupTimeDetails(List<NodeCarrierResponse> nodeCarrierResponseList) {
+  private List<PickupTimeDto> getPickupTimeDetails(
+      List<NodeCarrierResponse> nodeCarrierResponseList) {
 
     List<PickupTimeDto> pickupTimeDtoList = new ArrayList<>();
-    for (NodeCarrierResponse nodeCarrierResponse : nodeCarrierResponseList)
-    {
+    for (NodeCarrierResponse nodeCarrierResponse : nodeCarrierResponseList) {
       PickupTimeDto pickupTimeDto = new PickupTimeDto();
       pickupTimeDto.setNodeId(nodeCarrierResponse.getNodeId());
       pickupTimeDto.setCarrierServiceId(nodeCarrierResponse.getCarrierServiceId());
@@ -93,15 +97,16 @@ public class RegionalNodesDetailsService {
   private List<String> getCarrierServiceIds(List<NodeCarrierResponse> nodeCarrierResponse) {
 
     List<String> carrierServiceIds = new ArrayList<>();
-    nodeCarrierResponse.forEach(nodeCarrier -> carrierServiceIds.add(nodeCarrier.getCarrierServiceId()));
+    nodeCarrierResponse.forEach(
+        nodeCarrier -> carrierServiceIds.add(nodeCarrier.getCarrierServiceId()));
     return carrierServiceIds.stream().distinct().collect(Collectors.toList());
   }
 
-  private List<NodeWorkingCalendarDto> setNodeCalendar(List<NodeCalendarResponse> nodeCalendarResponseList) {
+  private List<NodeWorkingCalendarDto> setNodeCalendar(
+      List<NodeCalendarResponse> nodeCalendarResponseList) {
 
     List<NodeWorkingCalendarDto> nodeWorkingCalendarDtoList = new ArrayList<>();
-    for (NodeCalendarResponse nodeCalendarResponse : nodeCalendarResponseList)
-    {
+    for (NodeCalendarResponse nodeCalendarResponse : nodeCalendarResponseList) {
       NodeWorkingCalendarDto nodeWorkingCalendarDto = new NodeWorkingCalendarDto();
       nodeWorkingCalendarDto.setCalendarId(nodeCalendarResponse.getCalendarId());
       nodeWorkingCalendarDto.setEffectiveDate(nodeCalendarResponse.getEffectiveDate());
