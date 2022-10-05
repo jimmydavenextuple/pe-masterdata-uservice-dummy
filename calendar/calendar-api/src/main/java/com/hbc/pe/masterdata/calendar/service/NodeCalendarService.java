@@ -47,7 +47,7 @@ public class NodeCalendarService {
       throw new DateException(
           "Invalid Date", nodeCalendarRequest.getCalendarId(), nodeCalendarRequest.getOrgId());
     }
-    //    validateCalendarId(nodeCalendarRequest.getCalendarId(), nodeCalendarRequest.getOrgId());
+    validateCalendarId(nodeCalendarRequest.getCalendarId(), nodeCalendarRequest.getOrgId());
     var nodeCalendarEntity = INSTANCE.convertToNodeCalendarEntity(nodeCalendarRequest);
     Optional<NodeCalendarEntity> existingNodeCalendarEntity =
         nodeCalendarRepository.findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(

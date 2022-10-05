@@ -72,29 +72,27 @@ public class NodeCarrierService {
       throws NodeCarrierDomainException, InvalidDataException, CommonServiceException {
     validateBufferHours(nodeCarrierRequest.getBufferHours());
     try {
-      //      BaseResponse<NodeResponse> baseResponse =
-      //          nodeFeign.getNodeDetails(nodeCarrierRequest.getNodeId(),
-      // nodeCarrierRequest.getOrgId());
-      //      if (!baseResponse.isSuccess()) {
-      //        commonServiceExceptionMethod(
-      //            "Invalid nodeId",
-      //            nodeCarrierRequest.getNodeId(),
-      //            nodeCarrierRequest.getOrgId(),
-      //            nodeCarrierRequest.getCarrierServiceId(),
-      //            nodeCarrierRequest.getServiceOption());
-      //      }
-      //        if (!ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId()) &&
-      // Boolean.FALSE.equals(
-      //                validateCarrierDetails(
-      //                        nodeCarrierRequest.getOrgId(),
-      // nodeCarrierRequest.getCarrierServiceId()))) {
-      //          commonServiceExceptionMethod(
-      //                  INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
-      //                  nodeCarrierRequest.getNodeId(),
-      //                  nodeCarrierRequest.getOrgId(),
-      //                  nodeCarrierRequest.getCarrierServiceId(),
-      //                  nodeCarrierRequest.getServiceOption());
-      //      }
+      BaseResponse<NodeResponse> baseResponse =
+          nodeFeign.getNodeDetails(nodeCarrierRequest.getNodeId(), nodeCarrierRequest.getOrgId());
+      if (!baseResponse.isSuccess()) {
+        commonServiceExceptionMethod(
+            "Invalid nodeId",
+            nodeCarrierRequest.getNodeId(),
+            nodeCarrierRequest.getOrgId(),
+            nodeCarrierRequest.getCarrierServiceId(),
+            nodeCarrierRequest.getServiceOption());
+      }
+      if (!ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId())
+          && Boolean.FALSE.equals(
+              validateCarrierDetails(
+                  nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
+        commonServiceExceptionMethod(
+            INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
+            nodeCarrierRequest.getNodeId(),
+            nodeCarrierRequest.getOrgId(),
+            nodeCarrierRequest.getCarrierServiceId(),
+            nodeCarrierRequest.getServiceOption());
+      }
       if (!serviceOptions.contains(nodeCarrierRequest.getServiceOption())) {
         commonServiceExceptionMethod(
             "Invalid serviceOption",
