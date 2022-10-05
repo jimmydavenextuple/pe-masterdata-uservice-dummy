@@ -3,10 +3,8 @@ package com.hbc.node.service;
 import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 import static com.hbc.common.constants.CommonConstants.DESC_SORT_ORDER;
 
-import com.hbc.calendar.domain.feign.CalendarFeign;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
-import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.domain.NodeDomain;
 import com.hbc.node.domain.dto.NodeCacheKeyDto;
 import com.hbc.node.domain.dto.NodeDto;
@@ -39,9 +37,6 @@ public class NodeService {
   private static final String SORT_ORDER = "sortOrder";
 
   private final NodeDomain nodeDomain;
-
-  private final CalendarFeign calendarFeign;
-  private final NodeCarrierFeign nodeCarrierFeign;
 
   public static final NodeMapper INSTANCE = Mappers.getMapper(NodeMapper.class);
 
