@@ -356,7 +356,7 @@ class NodeCarrierDomainTest {
 
     Exception ex =
         Assertions.assertThrows(
-            NodeCarrierSelectionDomainException.class,
+            NodeCarrierDomainException.class,
             () ->
                 nodeCarrierDomain.fetchCarrierServiceIdsByOrgIdAndNodeId(
                     TestUtil.ORG_ID, TestUtil.NODE_ID));
