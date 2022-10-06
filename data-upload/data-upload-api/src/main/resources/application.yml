@@ -4,7 +4,7 @@ spring:
       max-file-size: 2048KB
       max-request-size: 3072KB
   config:
-    import: optional:aws-secretsmanager:/secret/\${SPRING_PROFILES_ACTIVE}
+    import: optional:aws-secretsmanager:/secret/promise-\${SPRING_PROFILES_ACTIVE}
   application:
     name: "data-upload-service"
     version: 1.0
