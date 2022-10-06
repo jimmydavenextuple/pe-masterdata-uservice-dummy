@@ -85,7 +85,7 @@ public class RegionalNodesDetailsService {
 
     List<PickupTimeDto> pickupTimeDtoList = new ArrayList<>();
     for (NodeCarrierResponse nodeCarrierResponse : nodeCarrierResponseList) {
-      PickupTimeDto pickupTimeDto = new PickupTimeDto();
+      var pickupTimeDto = new PickupTimeDto();
       pickupTimeDto.setNodeId(nodeCarrierResponse.getNodeId());
       pickupTimeDto.setCarrierServiceId(nodeCarrierResponse.getCarrierServiceId());
       pickupTimeDto.setPickupTime(nodeCarrierResponse.getLastPickupTime());
@@ -102,17 +102,14 @@ public class RegionalNodesDetailsService {
     return carrierServiceIds.stream().distinct().collect(Collectors.toList());
   }
 
-  private List<NodeWorkingCalendarDto> setNodeCalendar(
+  private NodeWorkingCalendarDto setNodeCalendar(
       List<NodeCalendarResponse> nodeCalendarResponseList) {
-
-    List<NodeWorkingCalendarDto> nodeWorkingCalendarDtoList = new ArrayList<>();
-    for (NodeCalendarResponse nodeCalendarResponse : nodeCalendarResponseList) {
-      NodeWorkingCalendarDto nodeWorkingCalendarDto = new NodeWorkingCalendarDto();
-      nodeWorkingCalendarDto.setCalendarId(nodeCalendarResponse.getCalendarId());
-      nodeWorkingCalendarDto.setEffectiveDate(nodeCalendarResponse.getEffectiveDate());
-      nodeWorkingCalendarDtoList.add(nodeWorkingCalendarDto);
+    var nodeWorkingCalendarDto = new NodeWorkingCalendarDto();
+    if (!nodeCalendarResponseList.isEmpty()) {
+      nodeWorkingCalendarDto.setCalendarId(nodeCalendarResponseList.get(0).getCalendarId());
+      nodeWorkingCalendarDto.setEffectiveDate(nodeCalendarResponseList.get(0).getEffectiveDate());
     }
-    return nodeWorkingCalendarDtoList;
+    return nodeWorkingCalendarDto;
   }
 
   private List<String> getServiceOptions(List<NodeCarrierResponse> nodeCarrierResponse) {

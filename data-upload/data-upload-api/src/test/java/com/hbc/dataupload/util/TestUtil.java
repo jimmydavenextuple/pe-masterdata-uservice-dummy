@@ -57,6 +57,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
 import com.hbc.dataupload.domain.dto.NodeListDto;
 import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
+import com.hbc.dataupload.domain.dto.NodeWorkingCalendarDto;
 import com.hbc.dataupload.domain.dto.PickupTimeDto;
 import com.hbc.dataupload.domain.pojo.CarrierServiceCalendars;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
@@ -781,6 +782,10 @@ public class TestUtil {
     pickupTimeDto.setCarrierServiceId(CARRIER_SERVICE_ID);
     pickupTimeDto.setPickupTime(LAST_PICK_UP_TIME);
     nodeListDto.setPickupTime(List.of(pickupTimeDto));
+    NodeWorkingCalendarDto nodeWorkingCalendarDto = new NodeWorkingCalendarDto();
+    nodeWorkingCalendarDto.setCalendarId(CALENDAR_ID);
+    nodeWorkingCalendarDto.setEffectiveDate(EFFECTIVE_DATE);
+    nodeListDto.setNodeWorkingCalendar(nodeWorkingCalendarDto);
     return nodeListDto;
   }
 

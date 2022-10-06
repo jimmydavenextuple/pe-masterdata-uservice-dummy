@@ -26,7 +26,7 @@ public class NodeListDto implements Serializable {
   private String longitude;
   private String timezone;
   private Boolean isActive;
-  private List<NodeWorkingCalendarDto> nodeWorkingCalendar;
+  private NodeWorkingCalendarDto nodeWorkingCalendar;
   private List<String> carrierServices;
   private List<String> serviceOptions;
   private List<PickupTimeDto> pickupTime;

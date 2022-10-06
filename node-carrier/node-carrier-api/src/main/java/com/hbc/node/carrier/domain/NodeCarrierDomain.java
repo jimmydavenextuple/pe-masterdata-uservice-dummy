@@ -168,7 +168,7 @@ public class NodeCarrierDomain {
     try {
       return nodeCarrierRepository.findByNodeIdAndOrgId(nodeId, orgId);
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Unable to find node carrier list");
+      logger.error(String.valueOf(e), "Unable to find node carrier details list");
       throw new NodeCarrierDomainException(
           "Error while fetching node carrier list for nodeId and orgId", nodeId, orgId, null, null);
     }
