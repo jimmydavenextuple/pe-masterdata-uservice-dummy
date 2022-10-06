@@ -323,4 +323,24 @@ class TransitControllerTest {
     verify(transitService, times(1))
         .getTransitDetailsForDestinationGeozones(anyString(), anyString(), any());
   }
+
+  @Test
+  void deleteBufferDays() throws TransitDomainException, CommonServiceException {
+    TransitResponse transitResponse = testUtil.getTransitResponse(5F);
+    transitResponse.setBufferDays(0D);
+    when(transitService.updateTransitBufferDays(any(), any(), any(), any()))
+        .thenReturn(transitResponse);
+
+    ResponseEntity<BaseResponse<TransitResponse>> responseEntity =
+        transitController.updateTransitBufferDays(
+            TestUtil.ORG_ID,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE);
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertNotNull(responseEntity.getBody());
+    Assertions.assertNotNull(responseEntity.getBody().getPayload());
+    verify(transitService, times(1)).updateTransitBufferDays(any(), any(), any(), any());
+  }
 }

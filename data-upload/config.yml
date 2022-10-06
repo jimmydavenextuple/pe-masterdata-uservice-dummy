@@ -11,13 +11,14 @@ server:
           memory: "512Mi"
           cpu: "2000m"
     qa:
+      java-opts: "-Xms1536m -Xmx1536m"
       replicas: 1
       resources:
         min:
-          memory: "512Mi"
+          memory: "2048Mi"
           cpu: "100m"
         max:
-          memory: "512Mi"
+          memory: "2048Mi"
           cpu: "2000m"
     stage:
       replicas: 3

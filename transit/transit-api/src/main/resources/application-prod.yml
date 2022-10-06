@@ -6,19 +6,22 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://promise-engine-postgres-prod.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/pe
+    url: jdbc:postgresql://promise-engine-postgres-prod.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/peconfig
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
+    hikari:
+      connectionTimeout: 5000
   replica:
     datasource:
       platform: postgres
-      url: jdbc:postgresql://promise-engine-postgres-prod.cluster-ro-cboxgnkbeo0q.us-east-1.rds.amazonaws.com,promise-engine-postgres-prod.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/pe?readOnly=true
+      url: jdbc:postgresql://promise-engine-postgres-prod.cluster-ro-cboxgnkbeo0q.us-east-1.rds.amazonaws.com,promise-engine-postgres-prod.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/peconfig?readOnly=true
       username: \${POSTGRES_USER}
       password: \${POSTGRES_PWD}
       required: true
       hikari:
         readOnly: true
         maximumPoolSize: 20
+        connectionTimeout: 5000
   kafka:
     bootstrap-servers: "b-1.promiseenginekafkapro.o79lf2.c23.kafka.us-east-1.amazonaws.com:9096,b-2.promiseenginekafkapro.o79lf2.c23.kafka.us-east-1.amazonaws.com:9096,b-3.promiseenginekafkapro.o79lf2.c23.kafka.us-east-1.amazonaws.com:9096"
     properties:

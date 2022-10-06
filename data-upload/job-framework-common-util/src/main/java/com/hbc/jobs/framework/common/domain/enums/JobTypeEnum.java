@@ -10,7 +10,8 @@ import lombok.Getter;
 @Getter
 public enum JobTypeEnum {
   UPLOAD_TRANSIT_TIMES(MasterDataModule.TRANSIT),
-  UPLOAD_PROCESSING_LEAD_TIMES(MasterDataModule.NODE_CARRIER);
+  UPLOAD_PROCESSING_LEAD_TIMES(MasterDataModule.NODE_CARRIER),
+  DELETE_TRANSIT_BUFFER(MasterDataModule.TRANSIT);
 
   private static final Map<String, JobTypeEnum> jobTypeMap =
       Collections.unmodifiableMap(initialize());

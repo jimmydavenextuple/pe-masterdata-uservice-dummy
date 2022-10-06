@@ -1,12 +1,13 @@
 package com.hbc.csvdownload.common;
 
+import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
-import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Collections;
 import java.util.Date;
@@ -119,8 +120,8 @@ public class TestUtil {
     return processingLeadTimesRaw;
   }
 
-  public JobDto createJob(JobTypeEnum jobTypeEnum, int totalRecords) {
-    JobDto job = new JobDto();
+  public JobResponse createJobResponse(JobTypeEnum jobTypeEnum, int totalRecords) {
+    JobResponse job = new JobResponse();
     job.setJobId(JOB_ID);
     job.setTotalRecords(totalRecords);
     job.setJobType(jobTypeEnum);
@@ -153,13 +154,13 @@ public class TestUtil {
         .build();
   }
 
-  public TransitDataCreationRequest getTransitDataCreationRequest() {
-    TransitDataCreationRequest transitDataCreationRequest = new TransitDataCreationRequest();
-    transitDataCreationRequest.setOrgId(ORG_ID);
-    transitDataCreationRequest.setSourceGeozone("SSFA");
-    transitDataCreationRequest.setDestinationGeozone("DSFA");
-    transitDataCreationRequest.setCarrierServiceId("ALL-SDND");
-    transitDataCreationRequest.setTransitDays(2F);
-    return transitDataCreationRequest;
+  public DownloadErrorTransitData getAddTransitDataRequest() {
+    DownloadErrorTransitData downloadErrorTransitData = new DownloadErrorTransitData();
+    downloadErrorTransitData.setOrgId(ORG_ID);
+    downloadErrorTransitData.setSourceGeozone("SSFA");
+    downloadErrorTransitData.setDestinationGeozone("DSFA");
+    downloadErrorTransitData.setCarrierServiceId("ALL-SDND");
+    downloadErrorTransitData.setTransitDays("2");
+    return downloadErrorTransitData;
   }
 }

@@ -35,8 +35,6 @@ class ScheduledProcessorTest {
 
   @Mock private JobDomain jobDomain;
 
-  @Mock private CsvProcessingService csvProcessingService;
-
   @Mock private JobsDashboardClient jobsDashboardClient;
 
   @Mock private AuthTokenAPI authTokenAPI;
@@ -47,7 +45,7 @@ class ScheduledProcessorTest {
 
   @Test
   void processJobOffline()
-      throws JobDomainException, IOException, JsonParsingException, CsvException {
+      throws JobDomainException {
     ReflectionTestUtils.setField(scheduledProcessor, "grantType", "grant");
     ReflectionTestUtils.setField(scheduledProcessor, "scope", "scope");
     ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);
@@ -59,11 +57,10 @@ class ScheduledProcessorTest {
     String csvContents = TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES;
     jobEntity.setFile(csvContents.getBytes());
     jobDto.setFile(csvContents.getBytes());
-    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any())).thenReturn(jobEntity);
+    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any()))
+        .thenReturn(jobEntity);
     when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
-    when(csvProcessingService.processInputCsvFile(any(), any(), any()))
-        .thenReturn(TestUtil.JOB_STRING);
-    when(jobsDashboardClient.processJobJsonOffline(any(), any(), any(), any()))
+    when(jobsDashboardClient.processJobsJsonOffline(any(), any(), any()))
         .thenReturn(BaseResponse.builder().payload(jobDto).build());
 
     Assertions.assertDoesNotThrow(() -> scheduledProcessor.processJobOffline());
@@ -71,7 +68,7 @@ class ScheduledProcessorTest {
 
   @Test
   void processJobOfflineQueuedJob()
-      throws JobDomainException, IOException, JsonParsingException, CsvException {
+      throws JobDomainException {
     ReflectionTestUtils.setField(scheduledProcessor, "grantType", "grant");
     ReflectionTestUtils.setField(scheduledProcessor, "scope", "scope");
     ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);
@@ -92,14 +89,12 @@ class ScheduledProcessorTest {
         .thenReturn(null);
     when(jobDomain.fetchJobRecordInTimeRange(any(), any(), any())).thenReturn(jobEntity);
     when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
-    when(csvProcessingService.processInputCsvFile(any(), any(), any()))
-        .thenReturn(TestUtil.JOB_STRING);
-    when(jobsDashboardClient.processJobJsonOffline(any(), any(), any(), any()))
-        .thenReturn(BaseResponse.builder().payload(jobDto).build());
+    when(jobsDashboardClient.processJobsJsonOffline(any(), any(), any()))
+        .thenReturn(
+            BaseResponse.builder()
+                .payload(testUtil.createJobResponse(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2))
+                .build());
     jobEntity.setStatus(JobStatusEnum.PROCESSED);
-    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
-            TestUtil.ORG_ID, JobStatusEnum.PROCESSING, JobStatusEnum.PROCESSED))
-        .thenReturn(jobEntity);
 
     Assertions.assertDoesNotThrow(() -> scheduledProcessor.processJobOffline());
   }
@@ -119,7 +114,7 @@ class ScheduledProcessorTest {
 
   @Test
   void processJobOfflineFeignException()
-      throws JobDomainException, IOException, JsonParsingException, CsvException {
+      throws JobDomainException {
     ReflectionTestUtils.setField(scheduledProcessor, "grantType", "grant");
     ReflectionTestUtils.setField(scheduledProcessor, "scope", "scope");
     ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);
@@ -140,43 +135,13 @@ class ScheduledProcessorTest {
             Request.create(HttpMethod.PUT, "", new HashMap<>(), null, null, null),
             "Feign exception while processing the job".getBytes());
 
-    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any())).thenReturn(jobEntity);
+    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any()))
+        .thenReturn(jobEntity);
     when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
-    when(csvProcessingService.processInputCsvFile(any(), any(), any()))
-        .thenReturn(TestUtil.JOB_STRING);
-    when(jobsDashboardClient.processJobJsonOffline(any(), any(), any(), any()))
-        .thenThrow(exception);
+    when(jobsDashboardClient.processJobsJsonOffline(any(), any(), any())).thenThrow(exception);
     jobEntity.setStatus(JobStatusEnum.FAILED);
     ErrorResponse errorResponse = ExceptionUtils.parseFeignException(exception);
     jobEntity.setErrorMessage(errorResponse.getMessage());
-    when(jobDomain.save(jobEntity)).thenReturn(jobEntity);
-
-    Assertions.assertDoesNotThrow(() -> scheduledProcessor.processJobOffline());
-  }
-
-  @Test
-  void processJobOfflineException()
-      throws JobDomainException, IOException, JsonParsingException, CsvException {
-    ReflectionTestUtils.setField(scheduledProcessor, "grantType", "grant");
-    ReflectionTestUtils.setField(scheduledProcessor, "scope", "scope");
-    ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);
-
-    String csvContents = TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES;
-
-    JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
-    jobEntity.setStatus(JobStatusEnum.PROCESSING);
-    jobEntity.setFile(csvContents.getBytes());
-
-    JobDto jobDto = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
-    jobDto.setStatus(JobStatusEnum.PROCESSED);
-    jobDto.setFile(csvContents.getBytes());
-
-    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any())).thenReturn(jobEntity);
-    when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
-    when(csvProcessingService.processInputCsvFile(any(), any(), any()))
-        .thenThrow(new RuntimeException("Error while forming job string"));
-    jobEntity.setStatus(JobStatusEnum.FAILED);
-    jobEntity.setErrorMessage("Error while forming job string");
     when(jobDomain.save(jobEntity)).thenReturn(jobEntity);
 
     Assertions.assertDoesNotThrow(() -> scheduledProcessor.processJobOffline());

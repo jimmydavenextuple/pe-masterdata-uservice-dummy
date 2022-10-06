@@ -9,7 +9,7 @@ import com.hbc.csvdownload.exception.CsvParsingException;
 import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
-import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
 import feign.Request;
@@ -57,7 +57,7 @@ class CsvUploadUtilityServiceTest {
             new ByteArrayInputStream(csvFileContent.getBytes()));
 
     when(jobsDashboardClient.processJobOffline(any(), any(), any(), any()))
-        .thenReturn(BaseResponse.builder().payload(new JobDto()).build());
+        .thenReturn(BaseResponse.builder().payload(new JobResponse()).build());
 
     String res = csvUploadUtilityService.uploadProcessingLeadTimesCsv(TestUtil.ORG_ID, csvFile);
     Assertions.assertFalse(ObjectUtils.isEmpty(res));
@@ -198,10 +198,10 @@ class CsvUploadUtilityServiceTest {
             new ByteArrayInputStream(csvFileContent.getBytes()),
             new ByteArrayInputStream(csvFileContent.getBytes()));
 
-    JobDto jobDto = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
+    JobResponse jobResponse = testUtil.createJobResponse(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
 
     when(jobsDashboardClient.processJobOffline(any(), any(), any(), any()))
-        .thenReturn(BaseResponse.builder().payload(jobDto).build());
+        .thenReturn(BaseResponse.builder().payload(jobResponse).build());
 
     String res = csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile);
 
@@ -234,7 +234,7 @@ class CsvUploadUtilityServiceTest {
       throws IOException, CsvFormatValidationFailedException, JobSubmissionException, CsvException {
     MultipartFile csvFile = mock(MultipartFile.class);
 
-    JobDto jobDto = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
+    JobResponse jobResponse = testUtil.createJobResponse(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
 
     String csvFileContent =
         "orgId,BAY,,,,,,,,,\n"
@@ -251,7 +251,7 @@ class CsvUploadUtilityServiceTest {
             new ByteArrayInputStream(csvFileContent.getBytes()));
 
     when(jobsDashboardClient.processJobOffline(any(), any(), any(), any()))
-        .thenReturn(BaseResponse.builder().payload(jobDto).build());
+        .thenReturn(BaseResponse.builder().payload(jobResponse).build());
 
     String res = csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile);
 
@@ -421,10 +421,10 @@ class CsvUploadUtilityServiceTest {
     when(csvFile.getBytes()).thenReturn(csvFileContent.getBytes());
     when(csvFile.getOriginalFilename()).thenReturn("file_name.csv");
 
-    JobDto jobDto = testUtil.createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
+    JobResponse jobResponse = testUtil.createJobResponse(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 9);
 
     when(jobsDashboardClient.processJobOffline(any(), any(), any(), any()))
-        .thenReturn(BaseResponse.builder().payload(jobDto).build());
+        .thenReturn(BaseResponse.builder().payload(jobResponse).build());
 
     String res = csvUploadUtilityService.uploadTransitTimesCsv(TestUtil.ORG_ID, csvFile);
 

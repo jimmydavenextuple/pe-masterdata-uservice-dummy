@@ -15,7 +15,6 @@ import com.hbc.jobs.consumers.common.TestUtil;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.feign.AuthTokenAPI;
 import com.hbc.jobs.consumers.service.JobConsumerService;
-import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -48,7 +47,6 @@ class TaskConsumerTest {
   void receiveRecordFromDashboardProducerError() throws JobException {
     RecordDto record = mock(RecordDto.class);
 
-    when(record.getJob()).thenReturn(mock(JobDto.class));
     when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
     doThrow(RuntimeException.class).when(jobConsumerService).processRecord(any());
     JobException e =

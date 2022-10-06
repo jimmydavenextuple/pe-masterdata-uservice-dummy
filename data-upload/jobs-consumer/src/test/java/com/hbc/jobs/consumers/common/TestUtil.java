@@ -10,6 +10,7 @@ import com.hbc.jobs.consumers.feign.AuthTokenResponse;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
@@ -118,15 +119,22 @@ public class TestUtil {
     return Arrays.asList(record1, record2);
   }
 
+  public List<JobResponse> createJobResponseList() {
+    JobResponse job1 = createJobResponse(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+    JobResponse job2 = createJobResponse(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 5);
+    return Arrays.asList(job1, job2);
+  }
+
   public List<JobDto> createJobDtoList() {
     JobDto job1 = createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
     JobDto job2 = createJob(JobTypeEnum.UPLOAD_TRANSIT_TIMES, 5);
     return Arrays.asList(job1, job2);
   }
 
-  public Page<JobDto> createPageJobDto(int totalPage, List<JobDto> jobDtos, int totalElements) {
+  public Page<JobResponse> createPageJobDto(
+      int totalPage, List<JobResponse> jobDtos, int totalElements) {
 
-    return (Page<JobDto>)
+    return (Page<JobResponse>)
         new Page() {
           @Override
           public int getTotalPages() {
@@ -300,6 +308,24 @@ public class TestUtil {
 
   public JobDto createJob(JobTypeEnum jobTypeEnum, int totalRecords) {
     JobDto job = new JobDto();
+    job.setJobId(UUID.randomUUID().toString());
+    job.setTotalRecords(totalRecords);
+    job.setJobType(jobTypeEnum);
+    job.setProcessedRecords(0);
+    job.setFailureCount(0);
+    job.setSuccessCount(0);
+    job.setStatus(JobStatusEnum.SUBMITTED);
+    job.setOrgId(ORG_ID);
+    job.setFile(new byte[] {1, 2, 3});
+    AuditLog auditLog = new AuditLog();
+    auditLog.setStatus(JobStatusEnum.SUBMITTED);
+    auditLog.setTimeStamp(new Date());
+    job.setAuditLog(Collections.singletonList(auditLog));
+    return job;
+  }
+
+  public JobResponse createJobResponse(JobTypeEnum jobTypeEnum, int totalRecords) {
+    JobResponse job = new JobResponse();
     job.setJobId(UUID.randomUUID().toString());
     job.setTotalRecords(totalRecords);
     job.setJobType(jobTypeEnum);

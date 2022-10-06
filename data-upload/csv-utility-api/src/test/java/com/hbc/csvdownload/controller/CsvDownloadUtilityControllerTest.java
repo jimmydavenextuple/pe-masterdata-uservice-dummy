@@ -142,8 +142,7 @@ class CsvDownloadUtilityControllerTest {
   }
 
   @Test
-  void downloadLogsByFiltersForProcessingLeadTime()
-      throws IOException, InvalidTemplateTypeException, CommonServiceException {
+  void downloadLogsByFiltersForProcessingLeadTime() throws IOException, CommonServiceException {
 
     String ProcessingLeadTimeErrorLogTemplate =
         "nodeId,orgId,serviceOptions,processingTime (in hrs),errorMessage\n"
