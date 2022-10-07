@@ -3,6 +3,8 @@ package com.hbc.pe.masterdata.calendar.service;
 import com.hbc.calendar.domain.dto.NodeCarrierCalendarCacheKeyDto;
 import com.hbc.calendar.domain.inbound.NodeCarrierServiceCalendarRequest;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
+import com.hbc.carrier.domain.feign.CarrierFeign;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.FieldError;
@@ -52,6 +54,7 @@ public class NodeCarrierServiceCalendarService {
   private static final String EFFECTIVE_DATE = "effectiveDate";
 
   @Autowired NodeFeign nodeFeign;
+  @Autowired CarrierFeign carrierFeign;
 
   /** Creates a new Node Carrier Service Calendar */
   public NodeCarrierServiceCalendarResponse processCreateNodeCarrierServiceCalendarResponse(
@@ -70,6 +73,25 @@ public class NodeCarrierServiceCalendarService {
     validateNodeId(
         nodeCarrierServiceCalendarRequest.getNodeId(),
         nodeCarrierServiceCalendarRequest.getOrgId());
+    if (Boolean.FALSE.equals(
+        validateCarrierServiceId(
+            nodeCarrierServiceCalendarRequest.getOrgId(),
+            nodeCarrierServiceCalendarRequest.getCarrierServiceId()))) {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          ORG_ID,
+          FieldError.builder().rejectedValue(nodeCarrierServiceCalendarRequest.getOrgId()).build());
+      errorMap.put(
+          CARRIER_SERVICE_ID,
+          FieldError.builder()
+              .rejectedValue(nodeCarrierServiceCalendarRequest.getCarrierServiceId())
+              .build());
+      throw new CommonServiceException(
+          "Cannot create a node carrier service calendar as carrier service id is invalid",
+          HttpStatus.BAD_REQUEST,
+          0x1773,
+          errorMap);
+    }
     var nodeCarrierServiceCalendarEntity =
         INSTANCE.convertToNodeCarrierServiceCalendarEntity(nodeCarrierServiceCalendarRequest);
     Optional<NodeCarrierServiceCalendarEntity> existingNodeCarrierServiceCalendarEntity =
@@ -214,5 +236,18 @@ public class NodeCarrierServiceCalendarService {
         nodeCarrierServiceCalendarDomain.getAllNodeCarrierServiceCalendars(limit);
 
     return INSTANCE.convertToNodeCarrierCalendarCacheKeyDtoList(nodeCarrierServiceCalendarEntities);
+  }
+
+  public boolean validateCarrierServiceId(String orgId, String carrierServiceId) {
+    BaseResponse<List<CarrierServiceResponse>> response =
+        carrierFeign.getCarrierServiceListByOrgId(orgId);
+    var isValidId = false;
+    for (CarrierServiceResponse carrierServiceResponse : response.getPayload()) {
+      if (carrierServiceResponse.getCarrierServiceId().equals(carrierServiceId)) {
+        isValidId = true;
+        break;
+      }
+    }
+    return isValidId;
   }
 }

@@ -1,6 +1,6 @@
 spring:
   config:
-    import: optional:aws-secretsmanager:/secret/\${SPRING_PROFILES_ACTIVE}
+    import: optional:aws-secretsmanager:/secret/promise-\${SPRING_PROFILES_ACTIVE}
   application:
     name: "master-data-calendar-uservice"
     version: 1.0

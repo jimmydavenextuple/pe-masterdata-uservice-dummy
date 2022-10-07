@@ -14,7 +14,7 @@ dependencies {
     implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
     implementation(project(":nfs-near-cache:core-near-cache-producer"))
     implementation project(":common:common-postgres")
-
+    implementation(project(":carrier:carrier-api-domain"))
     implementation(project(":node:node-api-domain"))
 
     runtimeOnly 'org.postgresql:postgresql'

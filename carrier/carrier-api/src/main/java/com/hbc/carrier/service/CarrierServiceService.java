@@ -148,6 +148,11 @@ public class CarrierServiceService {
     }
   }
 
+  public List<CarrierServiceResponse> getCarrierServiceListByOrgId(String orgId)
+      throws CarrierServiceDomainException {
+    return carrierServiceDomain.findCarrierServiceListByOrgIdWithoutPagination(orgId);
+  }
+
   @ReaderDS
   public List<CarrierServiceResponse> getCarrierServiceDetailsByCarrierIdAndOrgId(
       String serviceId, String orgId) throws CarrierServiceDomainException, CommonServiceException {

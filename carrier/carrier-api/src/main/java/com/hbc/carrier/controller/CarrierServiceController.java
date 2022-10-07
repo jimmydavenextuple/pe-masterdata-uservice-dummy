@@ -138,7 +138,7 @@ public class CarrierServiceController {
   public ResponseEntity<BaseResponse<PagePayload<CarrierServiceResponse>>>
       getCarrierServiceListWithPagination(@PathVariable String orgId, PageParams pageParams)
           throws CarrierServiceDomainException, CommonServiceException {
-    logger.debug("Processing get carrier service list by orgId");
+    logger.debug("Processing get carrier service list by orgId with pagination");
     Page<CarrierServiceResponse> carrierServiceResponses =
         carrierserviceService.getCarrierServiceList(
             orgId,
@@ -230,5 +230,18 @@ public class CarrierServiceController {
     pagePayload.setData(carrierServiceResponses.getContent());
 
     return pagePayload;
+  }
+
+  @GetMapping("/orgId/{orgId}")
+  public ResponseEntity<BaseResponse<List<CarrierServiceResponse>>> getCarrierServiceListByOrgId(
+      @PathVariable String orgId) throws CarrierServiceDomainException {
+    logger.debug("Processing get carrier service list by orgId");
+    List<CarrierServiceResponse> carrierServiceResponses =
+        carrierserviceService.getCarrierServiceListByOrgId(orgId);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("CarrierService list fetched successfully")
+            .payload(carrierServiceResponses)
+            .build());
   }
 }
