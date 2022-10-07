@@ -6,7 +6,7 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://promise-engine-postgres-performance.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.co/pe
+    url: jdbc:postgresql://promise-engine-postgres-performance.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
     hikari:
@@ -14,7 +14,7 @@ spring:
   replica:
     datasource:
       platform: postgres
-      url: jdbc:postgresql://promise-engine-postgres-performance.cluster-ro-co9l0bkmgaei.us-east-1.rds.amazonaws.com,promise-engine-postgres-performance.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.co/pe?readOnly=true
+      url: jdbc:postgresql://promise-engine-postgres-performance.cluster-ro-co9l0bkmgaei.us-east-1.rds.amazonaws.com,promise-engine-postgres-performance.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe?readOnly=true
       username: \${POSTGRES_USER}
       password: \${POSTGRES_PWD}
       required: true
