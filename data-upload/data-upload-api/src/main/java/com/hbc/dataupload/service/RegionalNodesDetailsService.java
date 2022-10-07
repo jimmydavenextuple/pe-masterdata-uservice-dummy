@@ -73,7 +73,9 @@ public class RegionalNodesDetailsService {
       List<NodeCarrierResponse> nodeCarrierResponse) {
     NodeListDto nodeListDto;
     nodeListDto = INSTANCE.toNodeListDto(nodeResponse);
-    nodeListDto.setNodeWorkingCalendar(setNodeCalendar(nodeCalendarResponseList));
+    if (!nodeCalendarResponseList.isEmpty()) {
+      nodeListDto.setNodeWorkingCalendar(setNodeCalendar(nodeCalendarResponseList));
+    }
     nodeListDto.setServiceOptions(getServiceOptions(nodeCarrierResponse));
     nodeListDto.setCarrierServices(getCarrierServiceIds(nodeCarrierResponse));
     nodeListDto.setPickupTime(getPickupTimeDetails(nodeCarrierResponse));
@@ -105,10 +107,9 @@ public class RegionalNodesDetailsService {
   private NodeWorkingCalendarDto setNodeCalendar(
       List<NodeCalendarResponse> nodeCalendarResponseList) {
     var nodeWorkingCalendarDto = new NodeWorkingCalendarDto();
-    if (!nodeCalendarResponseList.isEmpty()) {
-      nodeWorkingCalendarDto.setCalendarId(nodeCalendarResponseList.get(0).getCalendarId());
-      nodeWorkingCalendarDto.setEffectiveDate(nodeCalendarResponseList.get(0).getEffectiveDate());
-    }
+
+    nodeWorkingCalendarDto.setCalendarId(nodeCalendarResponseList.get(0).getCalendarId());
+    nodeWorkingCalendarDto.setEffectiveDate(nodeCalendarResponseList.get(0).getEffectiveDate());
     return nodeWorkingCalendarDto;
   }
 
