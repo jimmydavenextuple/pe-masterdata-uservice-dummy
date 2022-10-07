@@ -2,7 +2,7 @@ name: CARRIER BUILD-DEPLOY
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ development ]
     paths:
       - "carrier/**"
       - "deploy-scripts/**"

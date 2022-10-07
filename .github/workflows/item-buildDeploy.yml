@@ -12,7 +12,6 @@ on:
      
 jobs:
   Build-Deploy:
-    
     uses: ./.github/workflows/build&deploy.yml
     with:
       module: item
