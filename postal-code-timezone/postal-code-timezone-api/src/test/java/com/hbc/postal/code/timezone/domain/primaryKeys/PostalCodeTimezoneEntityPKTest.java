@@ -1,9 +1,10 @@
 package com.hbc.postal.code.timezone.domain.primaryKeys;
 
+import static com.hbc.postal.code.timezone.TestUtil.ORG_ID;
+import static com.hbc.postal.code.timezone.TestUtil.POSTAL_CODE_PREFIX;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.hbc.postal.code.timezone.domain.primarykeys.PostalCodeTimezoneEntityPK;
-import com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants;
 import org.junit.jupiter.api.Test;
 
 class PostalCodeTimezoneEntityPKTest {
@@ -18,8 +19,7 @@ class PostalCodeTimezoneEntityPKTest {
   @Test
   void postalCodeTimezoneEntityPKTest() {
     PostalCodeTimezoneEntityPK postalCodeTimezoneEntityPK =
-        new PostalCodeTimezoneEntityPK(
-            PostalCodeTimezoneConstants.ORG_ID, PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX);
+        new PostalCodeTimezoneEntityPK(ORG_ID, POSTAL_CODE_PREFIX);
     assertNotNull(postalCodeTimezoneEntityPK.getOrgId());
     assertNotNull(postalCodeTimezoneEntityPK.getPostalCodePrefix());
   }

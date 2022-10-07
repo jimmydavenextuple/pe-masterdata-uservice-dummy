@@ -190,4 +190,13 @@ public class CarrierServiceCalendarService {
 
     return INSTANCE.convertToCarrierCalendarCacheKeyDtoList(carrierServiceCalendarEntities);
   }
+
+  public List<CarrierServiceCalendarResponse> getCarrierServiceAssociationWithCalendar(
+      String calendarId, String orgId) throws CalendarDomainException {
+    var carrierServiceCalendarEntities =
+        carrierServiceCalendarDomain.getCarrierServiceCalendarByOrgIdAndCalendarId(
+            calendarId, orgId);
+
+    return INSTANCE.convertToCarrierServiceCalendarResponseList(carrierServiceCalendarEntities);
+  }
 }

@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
@@ -142,8 +143,7 @@ class CsvDownloadUtilityControllerTest {
   }
 
   @Test
-  void downloadLogsByFiltersForProcessingLeadTime()
-      throws IOException, InvalidTemplateTypeException, CommonServiceException {
+  void downloadLogsByFiltersForProcessingLeadTime() throws IOException, CommonServiceException {
 
     String ProcessingLeadTimeErrorLogTemplate =
         "nodeId,orgId,serviceOptions,processingTime (in hrs),errorMessage\n"
@@ -167,6 +167,26 @@ class CsvDownloadUtilityControllerTest {
 
     csvDownloadUtilityController.downloadLogsByFilters(
         "BAY", "C-Id", Optional.empty(), request, response);
+    verify(response, times(1)).getOutputStream();
+  }
+
+  @Test
+  void downloadMarketRegionDataCSVTest()
+      throws IOException, PostalCodeTimezoneServiceException, CsvDownloadUtilityServiceException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    String marketRegionTemplate = TemplateTypes.getTemplateData("marketRegion");
+    when(csvDownloadUtilityService.downloadMarketRegionForOrgIdAndCountry(anyString(), anyString()))
+        .thenReturn(marketRegionTemplate);
+
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    doNothing().when(response).setContentLength(marketRegionTemplate.length());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    csvDownloadUtilityController.downloadMarketRegionDataCSV(
+        TestUtil.ORG_ID, TestUtil.COUNTRY, request, response);
     verify(response, times(1)).getOutputStream();
   }
 }

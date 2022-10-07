@@ -55,9 +55,10 @@ docker push $IMAGE_NAME
 echo "$IMAGE_NAME"
 
 
-export NLB_NAME=`echo "$NAMESPACE-$PROJECT" | cut -c1-31`
+export NLB_NAME=`echo "tf-$NAMESPACE-$PROJECT" | cut -c1-31`
 if [ "${NLB_NAME: -1}" == "-" ]; then
     NLB_NAME=`echo "$NLB_NAME" | sed 's/.$//'`
+    NLB_NAME="tf-$NLB_NAME"
 fi
 
 

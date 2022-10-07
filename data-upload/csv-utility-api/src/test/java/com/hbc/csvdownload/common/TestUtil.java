@@ -1,12 +1,22 @@
 package com.hbc.csvdownload.common;
 
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
+import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
+
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Collections;
 import java.util.Date;
@@ -26,6 +36,7 @@ public class TestUtil {
   public static final String NODE_ID = "nodeId";
   public static final String JOB_ID = "jobId1";
   public static final String SERVICE_OPTION = "serviceOptions";
+  public static final String COUNTRY = "CA";
   public static final Double PROCESSING_TIME = 20.0;
   public static final String processingLeadTimesCsvData =
       "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
@@ -119,8 +130,8 @@ public class TestUtil {
     return processingLeadTimesRaw;
   }
 
-  public JobDto createJob(JobTypeEnum jobTypeEnum, int totalRecords) {
-    JobDto job = new JobDto();
+  public JobResponse createJobResponse(JobTypeEnum jobTypeEnum, int totalRecords) {
+    JobResponse job = new JobResponse();
     job.setJobId(JOB_ID);
     job.setTotalRecords(totalRecords);
     job.setJobType(jobTypeEnum);
@@ -161,5 +172,18 @@ public class TestUtil {
     downloadErrorTransitData.setCarrierServiceId("ALL-SDND");
     downloadErrorTransitData.setTransitDays("2");
     return downloadErrorTransitData;
+  }
+
+  public PostalCodeTimezoneDto getPostalCodeTimezoneDto() {
+    return PostalCodeTimezoneDto.builder()
+        .orgId(ORG_ID)
+        .postalCodePrefix(POSTAL_CODE_PREFIX)
+        .country(COUNTRY)
+        .state(STATE)
+        .city(CITY)
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .timeZone(TIME_ZONE)
+        .build();
   }
 }

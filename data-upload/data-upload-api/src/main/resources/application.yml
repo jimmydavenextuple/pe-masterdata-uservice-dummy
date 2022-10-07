@@ -27,8 +27,6 @@ logging:
 pagination:
   pageNo: 1
   pageSize: 15
-  sortBy: carrierId
-  sortOrder: ASC
 page-properties:
   pageNo: 1
   pageSize: 15
@@ -73,4 +71,4 @@ auth-token:
 scheduled-processor:
   timeRangeInHours: 24
   fixed-rate:
-    minutes: 2
+    minutes: 1

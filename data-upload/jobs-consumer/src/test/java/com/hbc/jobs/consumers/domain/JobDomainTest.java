@@ -12,7 +12,7 @@ import com.hbc.jobs.consumers.domain.repository.JobRepository;
 import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
-import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
@@ -126,7 +126,7 @@ class JobDomainTest {
                 pageable,
                 10));
 
-    Page<JobDto> jobDtos =
+    Page<JobResponse> jobDtos =
         jobDomain.findJobsByJobParam(
             TestUtil.ORG_ID,
             Optional.of("testType"),

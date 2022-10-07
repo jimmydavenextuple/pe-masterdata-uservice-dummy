@@ -8,6 +8,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.dashboard.service.JobService;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -44,7 +47,7 @@ public class JobDashboardController {
       path = "/org/{orgId}/jobs",
       produces = APPLICATION_JSON_VALUE,
       consumes = APPLICATION_OCTET_STREAM_VALUE)
-  public ResponseEntity<BaseResponse<JobDto>> processJobOffline(
+  public ResponseEntity<BaseResponse<JobResponse>> processJobOffline(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestParam @NotNull @Valid JobTypeEnum jobType,
       @RequestBody ByteArrayResource csvFile,
@@ -63,7 +66,7 @@ public class JobDashboardController {
       path = "/org/{orgId}/jobs",
       produces = APPLICATION_JSON_VALUE,
       consumes = "text/plain;charset=UTF-8")
-  public ResponseEntity<BaseResponse<JobDto>> processJobJsonOffline(
+  public ResponseEntity<BaseResponse<JobResponse>> processJobJsonOffline(
       @RequestParam @NotNull @Valid JobTypeEnum jobType,
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestBody String request)
@@ -81,16 +84,14 @@ public class JobDashboardController {
       path = "/org/{orgId}/jobs/{jobId}",
       produces = APPLICATION_JSON_VALUE,
       consumes = APPLICATION_JSON_VALUE)
-  public ResponseEntity<BaseResponse<JobDto>> processJobJsonOffline(
+  public ResponseEntity<BaseResponse<JobResponse>> processJobJsonOffline(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestParam @NotNull @Valid JobTypeEnum jobType,
-      @RequestBody String request,
       @PathVariable String jobId)
       throws JobException {
     log.debug("Processing offline job json request");
 
-    var jobDto =
-        jobService.processJobJsonOffline(request, orgId, jobType, Optional.ofNullable(jobId));
+    var jobDto = jobService.processJobJsonOffline(orgId, jobType, Optional.ofNullable(jobId));
 
     log.debug("Processing offline job json request ends");
 
@@ -119,7 +120,7 @@ public class JobDashboardController {
    * @throws JobException
    */
   @GetMapping(path = "/org/{orgId}/jobs/filters", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<BaseResponse<PagePayload<JobDto>>> getJobsByFilter(
+  public ResponseEntity<BaseResponse<PagePayload<JobResponse>>> getJobsByFilter(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId, JobFilters jobFilters)
       throws JobException {
     log.debug("--Inside getJobsByFilter()--");
@@ -131,7 +132,7 @@ public class JobDashboardController {
       throw new JobException("PageNo can not be less than one", null, jobTypeEnum);
     }
 
-    PagePayload<JobDto> pageResp =
+    PagePayload<JobResponse> pageResp =
         jobService.getJobsByJobInfo(
             orgId,
             jobFilters.getJobType(),

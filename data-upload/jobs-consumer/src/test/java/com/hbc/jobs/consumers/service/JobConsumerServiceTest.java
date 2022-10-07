@@ -23,6 +23,7 @@ import com.hbc.jobs.consumers.exception.JobRecordDomainException;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
@@ -228,7 +229,7 @@ class JobConsumerServiceTest {
 
       when(jobDomain.save(any())).thenReturn(jobEntity);
 
-      JobDto job1 = jobConsumerService.createJob(job);
+      JobResponse job1 = jobConsumerService.createJob(job);
 
       Assertions.assertEquals(jobEntity.getJobId(), job1.getJobId(), "JobId");
     }
@@ -263,12 +264,16 @@ class JobConsumerServiceTest {
 
   @Test
   void saveJob() throws JobDomainException {
+    when(jobDomain.findJobByJobIdAndOrgId(any(), any()))
+        .thenReturn(testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
     when(jobDomain.save(any()))
         .thenReturn(testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
 
     JobEntity jobEntity =
-        jobConsumerService.saveJob(testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
+        jobConsumerService.saveJob(
+            testUtil.createJobResponse(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
     Assertions.assertNotNull(jobEntity);
+    Assertions.assertNotNull(jobEntity.getFile());
     verify(jobDomain, times(1)).save(any());
   }
 
@@ -330,12 +335,12 @@ class JobConsumerServiceTest {
       int pageNo = 1;
       int pageSize = 2;
 
-      List<JobDto> jobDtoList = testUtil.createJobDtoList();
-      Page<JobDto> page = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
+      List<JobResponse> jobDtoList = testUtil.createJobResponseList();
+      Page<JobResponse> page = testUtil.createPageJobDto(2, jobDtoList, jobDtoList.size());
       when(jobDomain.findJobsByJobParam(any(), any(), any(), any(), any(), anyInt(), anyInt()))
           .thenReturn(page);
 
-      Page<JobDto> pageResponse =
+      Page<JobResponse> pageResponse =
           jobConsumerService.getJobs(
               TestUtil.ORG_ID,
               Optional.empty(),

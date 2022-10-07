@@ -1,8 +1,12 @@
 package com.hbc.postal.code.timezone.service;
 
+import com.amazonaws.util.CollectionUtils;
 import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.enums.ExceptionCodeMapping;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
+import com.hbc.common.response.error.FieldError;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
@@ -12,15 +16,20 @@ import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
 import com.hbc.postal.code.timezone.domain.mapper.PostalCodeTimezoneMapper;
 import com.hbc.postgres.config.ReaderDS;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.joda.time.DateTimeZone;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,6 +39,8 @@ public class PostalCodeTimezoneService {
   private static final PostalCodeTimezoneMapper INSTANCE =
       Mappers.getMapper(PostalCodeTimezoneMapper.class);
   private final PostalCodeTimezoneDomain postalCodeTimezoneDomain;
+  private static final String TIMEZONE_EXCEPTION_MESSAGE = "Invalid Timezone Found";
+  private static final String COUNTRY_EXCEPTION_MESSAGE = "Invalid Country Found";
 
   /**
    * Convert PostalCodeTimezone Entity to PostalCodeTimezone Dto with all required processing
@@ -50,8 +61,9 @@ public class PostalCodeTimezoneService {
    * @throws PromiseEngineException
    */
   public PostalCodeTimezoneDto createPostalCodeTimezone(CreatePostalCodeTimezoneRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside createPostalCodeTimezone service --");
+    validateTimezoneAndCountry(baseRequest.getTimeZone(), baseRequest.getCountry());
     var postalCodeTimezoneEntity =
         INSTANCE.convertFromCreatePostalCodeTimezoneRequestToEntity(baseRequest);
     return preparePostalCodeTimezoneDto(
@@ -98,8 +110,9 @@ public class PostalCodeTimezoneService {
    */
   public PostalCodeTimezoneDto updatePostalCodeTimezone(
       String orgId, String postalCodePrefix, UpdatePostalCodeTimezoneRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside updatePostalCodeTimezone service --");
+    validateTimezoneAndCountry(baseRequest.getTimeZone(), baseRequest.getCountry());
     var postalCodeTimezoneEntityFromDB =
         INSTANCE.convertToPostalCodeTimezoneEntity(getPostalCodeTimezone(orgId, postalCodePrefix));
 
@@ -153,6 +166,18 @@ public class PostalCodeTimezoneService {
     return postalCodeTimezoneDomain.getPostalCodePrefixForOrgIdAndState(orgId, state);
   }
 
+  @ReaderDS
+  public List<PostalCodeTimezoneDto> fetchPostalCodeTimezoneByOrgIdAndCountry(
+      String orgId, String country) throws PromiseEngineException {
+    logger.debug("-- inside getPostalCodeTimezone service --");
+    List<PostalCodeTimezoneEntity> postalCodeTimezoneEntities =
+        postalCodeTimezoneDomain.getPostCodeTimeZoneByOrgIdAndCountry(orgId, country);
+
+    return postalCodeTimezoneEntities.stream()
+        .map(this::preparePostalCodeTimezoneDto)
+        .collect(Collectors.toList());
+  }
+
   private PostalCodePrefixDto postalCodePrefixDto(
       PostalCodeTimezoneEntity postalCodeTimezoneEntity,
       List<PostalCodeTimezoneEntity> list,
@@ -166,5 +191,36 @@ public class PostalCodeTimezoneService {
     postalCodePrefixDto.setPostalCodePrefix(postalCodePrefixList);
     visitedStates.add(postalCodeTimezoneEntity.getState());
     return postalCodePrefixDto;
+  }
+
+  private void validateTimezoneAndCountry(String timezone, String country)
+      throws CommonServiceException {
+    if (!DateTimeZone.getAvailableIDs().contains(timezone))
+      throwCommonServiceException("timezone", timezone, TIMEZONE_EXCEPTION_MESSAGE);
+    if (!Set.of(Locale.getISOCountries()).contains(country))
+      throwCommonServiceException("country", country, COUNTRY_EXCEPTION_MESSAGE);
+  }
+
+  private void throwCommonServiceException(String field, String fieldValue, String errorMessage)
+      throws CommonServiceException {
+    logger.error(errorMessage);
+    Map<String, FieldError> errorMap = new HashMap<>();
+    errorMap.put(field, FieldError.builder().rejectedValue(fieldValue).build());
+    throw new CommonServiceException(errorMessage, HttpStatus.NOT_FOUND, 0x1771, errorMap);
+  }
+
+  @ReaderDS
+  public List<MarketRegionDto> getMarketRegionForOrgId(String orgId) throws PromiseEngineException {
+    logger.debug("-- Inside get market region for orgId : {}", orgId);
+
+    List<MarketRegionDto> records = postalCodeTimezoneDomain.getRecordsForOrgId(orgId);
+
+    if (CollectionUtils.isNullOrEmpty(records)) {
+      throw new PromiseEngineException(
+          ApplicationLayer.SERVICE_LAYER,
+          ExceptionCodeMapping.SERVICE_FIND_FAILED,
+          "No Market Regions Found");
+    }
+    return records;
   }
 }

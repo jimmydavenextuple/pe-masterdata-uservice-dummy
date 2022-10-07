@@ -22,7 +22,7 @@ class DTOTests {
         .with(new GetterTester())
         .with(new SetterTester())
         .build()
-        .validate(pojoClassList.stream()
-            .filter(x -> !x.getName().startsWith("com.hbc.postgres.config")).collect(Collectors.toList()));
+            .validate(pojoClassList.stream()
+                    .filter(x -> !x.getName().startsWith("com.hbc.postgres.config")).collect(Collectors.toList()));
   }
 }

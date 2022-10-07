@@ -73,6 +73,7 @@ public class RepositoryConfig extends HikariConfig {
     config.setAutoCommit(isAutoCommit);
     return new HikariDataSource(config);
   }
+
   @Bean(name = ConfigConstants.READER_OR_PRIMARY_DS)
   protected DataSource replicaDataSource(boolean readOnly, boolean isAutoCommit) {
     if (Boolean.FALSE.equals(replicaReq)) {
