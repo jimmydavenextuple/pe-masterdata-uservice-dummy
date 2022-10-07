@@ -1,15 +1,5 @@
 package com.hbc.postal.code.timezone;
 
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.CITY;
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.COUNTRY;
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.LATITUDE;
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.LONGITUDE;
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.ORG_ID;
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX;
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX_2;
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.STATE;
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.TIME_ZONE;
-
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
@@ -20,7 +10,16 @@ import java.util.List;
 import org.mapstruct.factory.Mappers;
 
 public class TestUtil {
-
+  public static final String ORG_ID = "ABC";
+  public static final String POSTAL_CODE_PREFIX = "XYZ";
+  public static final String POSTAL_CODE_PREFIX_2 = "ABC";
+  public static final String COUNTRY = "CANADA";
+  public static final String STATE = "ONTARIO";
+  public static final String CITY = "TORONTO";
+  public static final String LATITUDE = "LATITUDE";
+  public static final String LONGITUDE = "LONGITUDE";
+  public static final String TIME_ZONE = "TIMEZONE";
+  public static final String STATUS_CODE = "Status code";
   private static final PostalCodeTimezoneMapper INSTANCE =
       Mappers.getMapper(PostalCodeTimezoneMapper.class);
 
