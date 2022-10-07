@@ -12,6 +12,7 @@ import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
 import java.util.HashMap;
@@ -52,6 +53,7 @@ public class CsvDownloadUtilityService {
 
     List<String> destinationFsaList =
         postalCodeTimeZoneService.getFSAsByOrgIdAndState(orgId, destinationRegion);
+
     Set<String> sourceFsaSet =
         new HashSet<>(postalCodeTimeZoneService.getFSAsByOrgIdAndState(orgId, sourceRegion));
     List<TransitResponse> filteredTransitResponseList =
@@ -260,5 +262,45 @@ public class CsvDownloadUtilityService {
     errorLogsPojo.setErrorMessage(recordStatusDto.getErrorMessage());
     errorLogsPojo.setException(recordStatusDto.getException());
     return errorLogsPojo;
+  }
+
+  public String downloadMarketRegionForOrgIdAndCountry(String orgId, String country)
+      throws PostalCodeTimezoneServiceException {
+    logger.debug("Processing download market regions for orgId and country");
+    List<PostalCodeTimezoneDto> postalCodeTimezoneDtoList =
+        postalCodeTimeZoneService.getPostalCodeTimeZoneByOrgIdAndCountry(orgId, country);
+    var header =
+        String.join(
+            ",",
+            "orgId",
+            "postalCodePrefix",
+            "country",
+            "state",
+            "city",
+            "latitude",
+            "longitude",
+            "timeZone");
+    var rows =
+        postalCodeTimezoneDtoList.stream().map(this::createRow).collect(Collectors.joining("\n"));
+
+    return String.join("\n", header, rows);
+  }
+
+  private String createRow(PostalCodeTimezoneDto dto) {
+    return dto.getOrgId()
+        + ","
+        + dto.getPostalCodePrefix()
+        + ","
+        + dto.getCountry()
+        + ","
+        + dto.getState()
+        + ","
+        + dto.getCity()
+        + ","
+        + dto.getLatitude()
+        + ","
+        + dto.getLongitude()
+        + ","
+        + dto.getTimeZone();
   }
 }

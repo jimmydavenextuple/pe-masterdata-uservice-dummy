@@ -124,6 +124,7 @@ class CsvDownloadUtilityServiceTest {
             TestUtil.CARRIER_SERVICE_ID,
             TestUtil.SOURCE_REGION,
             TestUtil.DESTINATION_REGION);
+
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
     verify(postalCodeTimeZoneService, times(2)).getFSAsByOrgIdAndState(anyString(), anyString());
     verify(transitService, times(1)).getTransitDetails(anyString(), anyString(), any());
@@ -154,5 +155,20 @@ class CsvDownloadUtilityServiceTest {
     Assertions.assertNotNull(exception);
     verify(postalCodeTimeZoneService, times(2)).getFSAsByOrgIdAndState(anyString(), anyString());
     verify(transitService, times(1)).getTransitDetails(anyString(), anyString(), any());
+  }
+
+  @Test
+  void downloadMarketRegionForOrgIdAndCountry_Test()
+      throws PostalCodeTimezoneServiceException, CsvDownloadUtilityServiceException {
+    when(postalCodeTimeZoneService.getPostalCodeTimeZoneByOrgIdAndCountry(anyString(), anyString()))
+        .thenReturn(List.of(testUtil.getPostalCodeTimezoneDto()));
+
+    String csvContents =
+        csvDownloadUtilityService.downloadMarketRegionForOrgIdAndCountry(
+            TestUtil.ORG_ID, TestUtil.COUNTRY);
+
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
+    verify(postalCodeTimeZoneService, times(1))
+        .getPostalCodeTimeZoneByOrgIdAndCountry(anyString(), anyString());
   }
 }

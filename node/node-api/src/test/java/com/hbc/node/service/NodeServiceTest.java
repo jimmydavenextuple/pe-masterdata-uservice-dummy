@@ -17,6 +17,8 @@ import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.node.exception.NodeDomainException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class NodeServiceTest {
 
@@ -41,10 +44,12 @@ class NodeServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
+    Set<String> nodeTypes = Set.of("STORE", "FC", "MFC","DROPSHIP VENDOR");
+    ReflectionTestUtils.setField(nodeService, "nodeTypes", nodeTypes);
   }
 
   @Test
-  void createNodeTest() throws NodeDomainException {
+  void createNodeTest() throws NodeDomainException, CommonServiceException {
     NodeEntity nodeEntity = testUtil.getNodeEntity();
     NodeRequest nodeRequest = testUtil.getNodeRequest();
     when(nodeDomain.saveNodeEntity(any(NodeEntity.class))).thenReturn(nodeEntity);
@@ -202,5 +207,22 @@ class NodeServiceTest {
     Assertions.assertEquals(2, response.size());
     Assertions.assertEquals(nodeEntities.get(0).getNodeId(), response.get(0).getNodeId());
     verify(nodeDomain, times(1)).getAllNodeEntities(any());
+  }
+
+  @Test
+  void createNodeTest_validateFields() throws NodeDomainException {
+    NodeRequest nodeRequest1 = testUtil.getNodeRequest();
+    nodeRequest1.setCountry("IND");
+    NodeRequest nodeRequest2 = testUtil.getNodeRequest();
+    nodeRequest2.setTimezone("IST");
+    NodeRequest nodeRequest3 = testUtil.getNodeRequest();
+    nodeRequest3.setNodeType(" ");
+    Assertions.assertThrows(
+        CommonServiceException.class, () -> nodeService.createNode(nodeRequest1));
+    Assertions.assertThrows(
+        CommonServiceException.class, () -> nodeService.createNode(nodeRequest2));
+    Assertions.assertThrows(
+        CommonServiceException.class, () -> nodeService.createNode(nodeRequest3));
+    verify(nodeDomain, times(0)).saveNodeEntity(any(NodeEntity.class));
   }
 }
