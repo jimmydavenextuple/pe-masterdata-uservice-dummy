@@ -2,14 +2,13 @@ name: NFS-NEAR-CACHE BUILD
 
 on:
   push:
-    branches: [ devr3, hotfix ]
+    branches: [ development, hotfix ]
     paths:
       - "nfs-near-cache/**"
       - ".github/workflows/nfs-near-cache-build.yml"
 jobs:
 
   Build-Publish:
-    name: R3
     uses: ./.github/workflows/build.yml
     with:
       module: nfs-near-cache

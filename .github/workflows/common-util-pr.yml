@@ -6,11 +6,10 @@ on:
     paths:
       - "common-util/**"
       -  ".github/workflows/common-util-pr.yml"
-    branches: [ devr3, hotfix ]
+    branches: [ development, hotfix ]
 
 jobs:
   PR-Analysis:
-    name: R3
     uses: ./.github/workflows/pr-flow.yml
     with:
       module: common-util

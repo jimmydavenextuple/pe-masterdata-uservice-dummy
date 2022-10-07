@@ -2,7 +2,7 @@ name: COMMON BUILD
 
 on:
   push:
-    branches: [ devr3, hotfix ]
+    branches: [ development, hotfix ]
     paths:
       - "common/**"
       - "manifests/**"
@@ -10,7 +10,6 @@ on:
 jobs:
 
   Build-Publish:
-    name: R3
     uses: ./.github/workflows/build.yml
     with:
       module: common

@@ -2,7 +2,7 @@ name: ITEM BUILD-DEPLOY
 
 on:
   push:
-    branches: [ devr3 ]
+    branches: [ development ]
     paths:
       - "item/**"
       - "node/**"
@@ -12,7 +12,7 @@ on:
      
 jobs:
   Build-Deploy:
-    name: R3
+    
     uses: ./.github/workflows/build&deploy.yml
     with:
       module: item

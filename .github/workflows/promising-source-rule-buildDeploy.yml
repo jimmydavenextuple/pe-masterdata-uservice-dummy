@@ -2,7 +2,7 @@ name: PROMISE-SOURCING-RULE BUILD-DEPLOY
 
 on:
   push:
-    branches: [ devr3 ]
+    branches: [ development ]
     paths:
       - "promise-sourcing-rule/**"
       - "deploy-scripts/**"
@@ -11,7 +11,6 @@ on:
 jobs:
 
   Build-Deploy:
-    name: R3
     uses: ./.github/workflows/build&deploy.yml
     with:
       module: promise-sourcing-rule

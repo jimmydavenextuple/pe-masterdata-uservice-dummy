@@ -5,11 +5,10 @@ on:
   pull_request:
     paths:
       - "carrier/**"
-    branches: [ devr3, hotfix ]
+    branches: [ development, hotfix ]
 
 jobs:
   PR-Analysis:
-    name: R3
     uses: ./.github/workflows/pr-flow.yml
     with:
       module: carrier
