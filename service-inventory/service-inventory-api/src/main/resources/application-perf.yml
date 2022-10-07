@@ -6,13 +6,13 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
+    url: jdbc:postgresql://promise-engine-postgres-performance.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.co/pe
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
   replica:
     datasource:
       platform: postgres
-      url: jdbc:postgresql://promise-engine-postgres-perf.cluster-ro-co9l0bkmgaei.us-east-1.rds.amazonaws.com,promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe?readOnly=true
+      url: jdbc:postgresql://promise-engine-postgres-performance.cluster-ro-co9l0bkmgaei.us-east-1.rds.amazonaws.com,promise-engine-postgres-performance.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.co/pe?readOnly=true
       username: \${POSTGRES_USER}
       password: \${POSTGRES_PWD}
       required: true
@@ -24,4 +24,4 @@ logging:
     root: WARN
     com.hbc: INFO
 auth:
-  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Pk3rFdZm1
+  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_SJ1yMwanC
