@@ -1,9 +1,6 @@
 package com.hbc.postal.code.timezone.domain;
 
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.ORG_ID;
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX;
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.POSTAL_CODE_PREFIX_2;
-import static com.hbc.postal.code.timezone.utils.PostalCodeTimezoneConstants.STATE;
+import static com.hbc.postal.code.timezone.TestUtil.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
