@@ -16,7 +16,7 @@ elif [ "$ENVIRONMENT" == "stage" ]; then
   export AWS_EKS_NAME="stage-eks-cluster"
   export ENV_TAG="stage"
 elif [ "$ENVIRONMENT" == "perf" ]; then
-  export AWS_EKS_NAME="promise-engine-eks-perf"
+  export AWS_EKS_NAME="eks-cluster-promise-performance"
   export ENV_TAG="stage"
 elif [ "$ENVIRONMENT" == "hotfix" ]; then
   export AWS_EKS_NAME="eks-cluster-promise-development"
