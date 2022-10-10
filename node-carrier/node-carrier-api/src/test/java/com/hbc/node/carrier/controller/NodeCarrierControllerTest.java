@@ -426,16 +426,16 @@ class NodeCarrierControllerTest {
   @Test
   void getUniqueCarrierServiceIdList() throws NodeCarrierDomainException {
 
-    when(nodeCarrierService.getUniqueCarrierServiceIdList(anyString(), anyString()))
+    when(nodeCarrierService.getUniqueNodeCarrierServiceList(anyString(), anyString()))
         .thenReturn(List.of(TestUtil.CARRIER_SERVICE_ID));
 
     ResponseEntity<BaseResponse<List<String>>> response =
-        nodeCarrierController.getUniqueCarrierServiceIdList(TestUtil.NODE_ID, TestUtil.ORG_ID);
+        nodeCarrierController.getUniqueNodeCarrierServiceList(TestUtil.NODE_ID, TestUtil.ORG_ID);
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     Assertions.assertNotNull(response);
     Assertions.assertNotNull(response.getBody());
     Assertions.assertNotNull(response.getBody().getPayload());
     Assertions.assertFalse(CollectionUtils.isEmpty(response.getBody().getPayload()));
-    verify(nodeCarrierService, times(1)).getUniqueCarrierServiceIdList(anyString(), anyString());
+    verify(nodeCarrierService, times(1)).getUniqueNodeCarrierServiceList(anyString(), anyString());
   }
 }

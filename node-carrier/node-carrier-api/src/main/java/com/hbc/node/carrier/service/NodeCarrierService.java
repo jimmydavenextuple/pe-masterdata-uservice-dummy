@@ -416,9 +416,9 @@ public class NodeCarrierService {
     return nodeCarrierSelectionResponse;
   }
 
-  public List<String> getUniqueCarrierServiceIdList(String nodeId, String orgId)
+  public List<String> getUniqueNodeCarrierServiceList(String nodeId, String orgId)
       throws NodeCarrierDomainException {
-    return nodeCarrierDomain.fetchCarrierServiceIdsByOrgIdAndNodeId(orgId, nodeId);
+    return nodeCarrierDomain.fetchNodeCarrierServiceListByOrgIdAndNodeId(orgId, nodeId);
   }
 
   public void commonServiceExceptionMethod(

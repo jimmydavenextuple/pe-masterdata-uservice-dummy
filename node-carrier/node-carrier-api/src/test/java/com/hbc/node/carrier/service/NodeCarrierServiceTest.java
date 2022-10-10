@@ -3,7 +3,6 @@ package com.hbc.node.carrier.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -677,13 +676,13 @@ class NodeCarrierServiceTest {
 
   @Test
   void getUniqueCarrierServiceIdList() throws NodeCarrierDomainException {
-    when(nodeCarrierDomain.fetchCarrierServiceIdsByOrgIdAndNodeId(anyString(), anyString()))
+    when(nodeCarrierDomain.fetchNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString()))
         .thenReturn(List.of(TestUtil.CARRIER_SERVICE_ID));
 
     List<String> uniqueCarrierServiceIdList =
-        nodeCarrierService.getUniqueCarrierServiceIdList(TestUtil.NODE_ID, TestUtil.ORG_ID);
+        nodeCarrierService.getUniqueNodeCarrierServiceList(TestUtil.NODE_ID, TestUtil.ORG_ID);
     Assertions.assertFalse(CollectionUtils.isEmpty(uniqueCarrierServiceIdList));
     verify(nodeCarrierDomain, times(1))
-        .fetchCarrierServiceIdsByOrgIdAndNodeId(anyString(), anyString());
+        .fetchNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString());
   }
 }
