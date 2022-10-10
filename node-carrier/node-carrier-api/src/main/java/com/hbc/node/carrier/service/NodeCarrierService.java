@@ -418,7 +418,7 @@ public class NodeCarrierService {
 
   public List<String> getUniqueNodeCarrierServiceList(String nodeId, String orgId)
       throws NodeCarrierDomainException {
-    return nodeCarrierDomain.fetchNodeCarrierServiceListByOrgIdAndNodeId(orgId, nodeId);
+    return nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(orgId, nodeId);
   }
 
   public void commonServiceExceptionMethod(

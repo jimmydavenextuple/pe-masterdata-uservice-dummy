@@ -342,7 +342,7 @@ class NodeCarrierDomainTest {
         .thenReturn(List.of(TestUtil.CARRIER_SERVICE_ID));
 
     List<String> uniqueCarrierServiceIdList =
-        nodeCarrierDomain.fetchNodeCarrierServiceListByOrgIdAndNodeId(TestUtil.ORG_ID, TestUtil.NODE_ID);
+        nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(TestUtil.ORG_ID, TestUtil.NODE_ID);
 
     Assertions.assertFalse(CollectionUtils.isEmpty(uniqueCarrierServiceIdList));
     verify(nodeCarrierRepository, times(1))
@@ -358,7 +358,7 @@ class NodeCarrierDomainTest {
         Assertions.assertThrows(
             NodeCarrierDomainException.class,
             () ->
-                nodeCarrierDomain.fetchNodeCarrierServiceListByOrgIdAndNodeId(
+                nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(
                     TestUtil.ORG_ID, TestUtil.NODE_ID));
 
     Assertions.assertNotNull(ex);

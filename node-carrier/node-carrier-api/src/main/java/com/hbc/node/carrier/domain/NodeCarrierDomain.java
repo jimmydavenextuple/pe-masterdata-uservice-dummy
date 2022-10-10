@@ -162,7 +162,7 @@ public class NodeCarrierDomain {
     }
   }
 
-  public List<String> fetchNodeCarrierServiceListByOrgIdAndNodeId(String orgId, String nodeId)
+  public List<String> fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(String orgId, String nodeId)
       throws NodeCarrierDomainException {
 
     try {

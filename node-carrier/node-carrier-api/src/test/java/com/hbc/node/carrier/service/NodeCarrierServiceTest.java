@@ -676,13 +676,13 @@ class NodeCarrierServiceTest {
 
   @Test
   void getUniqueCarrierServiceIdList() throws NodeCarrierDomainException {
-    when(nodeCarrierDomain.fetchNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString()))
+    when(nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString()))
         .thenReturn(List.of(TestUtil.CARRIER_SERVICE_ID));
 
     List<String> uniqueCarrierServiceIdList =
         nodeCarrierService.getUniqueNodeCarrierServiceList(TestUtil.NODE_ID, TestUtil.ORG_ID);
     Assertions.assertFalse(CollectionUtils.isEmpty(uniqueCarrierServiceIdList));
     verify(nodeCarrierDomain, times(1))
-        .fetchNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString());
+        .fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString());
   }
 }
