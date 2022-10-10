@@ -417,6 +417,11 @@ public class NodeCarrierService {
     return nodeCarrierSelectionResponse;
   }
 
+  public List<String> getUniqueNodeCarrierServiceList(String nodeId, String orgId)
+      throws NodeCarrierDomainException {
+    return nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(orgId, nodeId);
+  }
+
   public void commonServiceExceptionMethod(
       String errorMessage,
       String nodeId,

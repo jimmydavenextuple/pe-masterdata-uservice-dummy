@@ -284,6 +284,16 @@ public class NodeCarrierController {
             .build());
   }
 
+  @GetMapping("/{orgId}/{nodeId}/carrier-service")
+  public ResponseEntity<BaseResponse<List<String>>> getUniqueNodeCarrierServiceList(
+      @PathVariable String orgId, @PathVariable String nodeId) throws NodeCarrierDomainException {
+    logger.debug("Processing get list of unique node-carrier-service");
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .payload(nodeCarrierService.getUniqueNodeCarrierServiceList(nodeId, orgId))
+            .build());
+  }
+
   @GetMapping("/v1/{nodeId}/{orgId}")
   public ResponseEntity<BaseResponse<List<NodeCarrierResponse>>>
       getNodeCarrierListWithLastPickUpTimeDetails(
