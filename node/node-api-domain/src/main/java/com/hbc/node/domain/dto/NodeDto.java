@@ -19,4 +19,9 @@ public class NodeDto implements Serializable {
   private String street;
   private String city;
   private String province;
+  private String postalCode;
+  private String latitude;
+  private String longitude;
+  private String timezone;
+  private Boolean isActive;
 }
