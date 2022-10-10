@@ -48,7 +48,7 @@ public class NodeCarrierServiceDetailsService {
   private NodeCarrierServiceResponse createNodeCarrierServiceResponse(NodeDto nodeDto) {
     List<String> distinctCarrierServiceIds =
         nodeCarrierFeign
-            .getUniqueNodeCarrierServiceList(nodeDto.getNodeId(), nodeDto.getOrgId())
+            .getUniqueNodeCarrierServiceList(nodeDto.getOrgId(), nodeDto.getNodeId())
             .getPayload();
 
     List<PickUpCalendar> pickUpCalendarList = new ArrayList<>();
