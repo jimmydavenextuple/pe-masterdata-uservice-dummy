@@ -1,6 +1,7 @@
 package com.hbc.postal.code.timezone.api.domain.feign;
 
 import com.hbc.common.response.BaseResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
@@ -18,8 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
     name = "pe-config-postal-code-timezone",
-    url =
-        "${spring.application.dependencies.postal-code-timezone:http://pe-config-postal-code-timezone:8080/}")
+    url = "${spring.application.dependencies.postal-code-timezone:http://pe-config-postal-code-timezone:8080/}")
 public interface PostalCodeTimezoneFeign {
   @PostMapping("/postalCodeTimezone")
   BaseResponse<PostalCodeTimezoneDto> createPostalCodeTimezone(
@@ -42,4 +42,11 @@ public interface PostalCodeTimezoneFeign {
   @GetMapping("/postalCodeTimezone/org/{orgId}")
   BaseResponse<List<String>> getPostalCodePrefixForOrgIdAndState(
       @PathVariable String orgId, @RequestParam String state);
+
+  @GetMapping("/postalCodeTimezone/market-regions/org/{orgId}")
+  BaseResponse<List<MarketRegionDto>> getMarketRegionsForOrgId(@PathVariable String orgId);
+
+  @GetMapping("/postalCodeTimezone/market-region/org/{orgId}")
+  BaseResponse<List<PostalCodeTimezoneDto>> getPostalCodeTimeZoneForOrgIdAndCountry(
+      @NotBlank @RequestParam String orgId, @NotBlank @RequestParam String country);
 }

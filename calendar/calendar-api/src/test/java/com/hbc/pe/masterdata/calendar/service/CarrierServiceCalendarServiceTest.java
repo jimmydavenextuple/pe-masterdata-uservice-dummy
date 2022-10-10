@@ -235,4 +235,24 @@ class CarrierServiceCalendarServiceTest {
         response.get(0).getCarrierServiceId());
     verify(carrierServiceCalendarDomain, times(1)).getAllCarrierServiceCalendars(any());
   }
+
+  @Test
+  void getCarrierServiceAssociationWithCalendarTest() throws CalendarDomainException {
+    when(carrierServiceCalendarDomain.getCarrierServiceCalendarByOrgIdAndCalendarId(any(), any()))
+        .thenReturn(
+            List.of(
+                testUtil.getCarrierServiceCalendarEntity(),
+                testUtil.getCarrierServiceCalendarEntity1()));
+
+    List<CarrierServiceCalendarResponse> response =
+        carrierServiceCalendarService.getCarrierServiceAssociationWithCalendar(
+            TestUtil.CALENDAR_ID, TestUtil.ORG_ID);
+
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID, Objects.requireNonNull(response.get(0).getCalendarId()));
+    Assertions.assertEquals(TestUtil.ORG_ID, Objects.requireNonNull(response.get(0).getOrgId()));
+    verify(carrierServiceCalendarDomain, times(1))
+        .getCarrierServiceCalendarByOrgIdAndCalendarId(any(), any());
+  }
 }

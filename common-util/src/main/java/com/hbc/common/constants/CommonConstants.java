@@ -26,5 +26,6 @@ public class CommonConstants {
   public static final String DEFAULT_SORT_ORDER = "ASC";
   public static final String DESC_SORT_ORDER = "DESC";
   public static final String CARRIER_DEFAULT_SORT_BY = "carrierId";
+  public static final String CALENDAR_DEFAULT_SORT_BY = "calendarId";
   public static final String NODE_DEFAULT_SORT_BY = "nodeId";
 }

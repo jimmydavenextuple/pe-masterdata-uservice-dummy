@@ -11,15 +11,18 @@ import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -29,7 +32,9 @@ public class CsvDownloadUtilityController {
 
   @GetMapping(value = "/{templateType}/download", produces = "text/csv")
   public void downloadCSVTemplate(
-      @PathVariable String templateType, HttpServletRequest request, HttpServletResponse response)
+      @NotBlank(message = "templateType can't be empty") @PathVariable String templateType,
+      HttpServletRequest request,
+      HttpServletResponse response)
       throws InvalidTemplateTypeException {
     log.debug("Inside downloadCSVTemplate for type: {}", templateType);
 
@@ -51,10 +56,11 @@ public class CsvDownloadUtilityController {
 
   @GetMapping(value = "/org/{orgId}/download/carrier-services/{carrierServiceId}/transit-time")
   public void downloadTransitTimesDataCSV(
-      @PathVariable String orgId,
-      @PathVariable String carrierServiceId,
-      @RequestParam String sourceRegion,
-      @RequestParam String destinationRegion,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId,
+      @NotBlank(message = "sourceRegion can't be empty") @RequestParam String sourceRegion,
+      @NotBlank(message = "destinationRegion can't be empty") @RequestParam
+          String destinationRegion,
       HttpServletRequest request,
       HttpServletResponse response)
       throws TransitServiceException, PostalCodeTimezoneServiceException, IOException,
@@ -69,10 +75,26 @@ public class CsvDownloadUtilityController {
     response.flushBuffer();
   }
 
+  @GetMapping(value = "/org/{orgId}/download/market-regions")
+  public void downloadMarketRegionDataCSV(
+      @PathVariable String orgId,
+      @RequestParam String country,
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws PostalCodeTimezoneServiceException, IOException, CsvDownloadUtilityServiceException {
+    log.debug("Inside download transit times data as csv");
+    String csvContents =
+        csvDownloadUtilityService.downloadMarketRegionForOrgIdAndCountry(orgId, country);
+    response.setStatus(HttpStatus.OK.value());
+    response.setContentLength(csvContents.length());
+    response.getOutputStream().write(csvContents.getBytes());
+    response.flushBuffer();
+  }
+
   @GetMapping(path = "/org/{orgId}/jobs/{jobId}/download")
   public void downloadLogsByFilters(
-      @PathVariable String orgId,
-      @PathVariable String jobId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "jobId can't be empty") @PathVariable String jobId,
       @RequestParam(required = false) Optional<String> status,
       HttpServletRequest request,
       HttpServletResponse response)

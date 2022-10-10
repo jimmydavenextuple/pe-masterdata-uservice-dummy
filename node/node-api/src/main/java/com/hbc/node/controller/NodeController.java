@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/node")
 @RequiredArgsConstructor
@@ -46,7 +48,8 @@ public class NodeController {
 
   @PostMapping
   public ResponseEntity<BaseResponse<NodeResponse>> createNode(
-      @Valid @RequestBody NodeRequest nodeRequest) throws NodeDomainException {
+      @Valid @RequestBody NodeRequest nodeRequest)
+      throws NodeDomainException, CommonServiceException {
     logger.debug("Processing node creation request");
     try {
       var nodeResponse = nodeService.createNode(nodeRequest);
@@ -65,8 +68,8 @@ public class NodeController {
 
   @PutMapping("/{nodeId}/{orgId}")
   public ResponseEntity<BaseResponse<NodeResponse>> updateNodeDetails(
-      @NotBlank @PathVariable String nodeId,
-      @NotBlank @PathVariable String orgId,
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
       @Valid @RequestBody NodeUpdationRequest nodeUpdationRequest)
       throws NodeDomainException, CommonServiceException {
     logger.debug("Processing update node details");
@@ -88,7 +91,8 @@ public class NodeController {
 
   @GetMapping("/{nodeId}/{orgId}")
   public ResponseEntity<BaseResponse<NodeResponse>> getNodeDetails(
-      @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId)
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
       throws NodeDomainException, CommonServiceException {
     logger.debug("Processing get node details");
     try {
@@ -108,7 +112,8 @@ public class NodeController {
 
   @DeleteMapping("/{nodeId}/{orgId}")
   public ResponseEntity<BaseResponse<NodeResponse>> deleteNode(
-      @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId)
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
       throws NodeDomainException, CommonServiceException {
     logger.debug("Processing delete node");
     try {
@@ -129,7 +134,7 @@ public class NodeController {
 
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<NodeDto>>> getNodeList(
-      @NotBlank @PathVariable String orgId, PageParams pageParams)
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId, PageParams pageParams)
       throws NodeDomainException, CommonServiceException {
     logger.debug("Processing get node list for an orgId");
 

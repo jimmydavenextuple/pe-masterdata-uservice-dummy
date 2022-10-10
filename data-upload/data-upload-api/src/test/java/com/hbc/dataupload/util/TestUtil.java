@@ -54,6 +54,7 @@ import com.hbc.common.base.PagePayload;
 import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.dataupload.domain.dto.CalendarDto;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
 import com.hbc.dataupload.domain.dto.NodeCarrierServiceResponse;
 import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
@@ -63,13 +64,16 @@ import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.outbound.NodeResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +106,7 @@ public class TestUtil {
   public static final String VALUE = "value";
 
   public static final String TYPE = "type";
+  public static final String CALENDAR_ID_2 = "Calendar_Id_02";
 
   private NodeCarrierResponse getNodeCarrierResponse() {
     return NodeCarrierResponse.builder()
@@ -751,6 +756,155 @@ public class TestUtil {
 
   public BaseResponse<NodeCarrierSelectionResponse> getFailedBaseResponseForNodeCarrierSelection() {
     return BaseResponse.builder().success(false).payload(getNodeCarrierSelectionResponse()).build();
+  }
+
+  private CalendarResponse getCalendarResponse2() {
+    ExceptionDays exceptionDays1 = new ExceptionDays();
+    exceptionDays1.setDate("2022-01-01");
+    exceptionDays1.setReason("New Year's Day");
+
+    List<ExceptionDays> exceptionDaysList = List.of(exceptionDays1);
+
+    return CalendarResponse.builder()
+        .calendarId(CALENDAR_ID_2)
+        .orgId(ORG_ID)
+        .description(DESCRIPTION)
+        .isMondayWorking(true)
+        .isTuesdayWorking(true)
+        .isWednesdayWorking(true)
+        .isThursdayWorking(true)
+        .isFridayWorking(true)
+        .isSaturdayWorking(false)
+        .isSundayWorking(false)
+        .exceptionDays(exceptionDaysList)
+        .build();
+  }
+
+  public BaseResponse<PagePayload<CalendarResponse>> getCalendarWithPaginationBaseResponse() {
+    return BaseResponse.builder()
+        .message("Carrier Service Calendars fetched successfully")
+        .payload(getCarrierServiceCalendarWithPaginationResponse())
+        .build();
+  }
+
+  private PagePayload<CalendarResponse> getCarrierServiceCalendarWithPaginationResponse() {
+    PagePayload<CalendarResponse> payload = new PagePayload<>();
+
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords(2);
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(1);
+    pagination.setSortOrder("ASC");
+    pagination.setSortBy("carrierId");
+    pagination.setPrevious(null);
+    pagination.setNext("/test/{orgId}?pageNo=2,pageSize=1");
+    payload.setPagination(pagination);
+    payload.setData(List.of(getCalendarResponse(), getCalendarResponse2()));
+
+    return payload;
+  }
+
+  public BaseResponse<List<NodeCalendarResponse>> getNodeCalendarBaseResponse() {
+    return BaseResponse.builder()
+        .message("Node Service Calendars fetched successfully")
+        .payload(List.of(getNodeCalendarResponse()))
+        .build();
+  }
+
+  public BaseResponse<List<CarrierServiceCalendarResponse>> getCarrierCalendarBaseResponse() {
+    return BaseResponse.builder()
+        .message("Carrier Service Calendars fetched successfully")
+        .payload(List.of(getCarrierResponse()))
+        .build();
+  }
+
+  public BaseResponse<List<NodeCalendarResponse>> getEmptyNodeCalendarBaseResponse() {
+    return BaseResponse.builder()
+        .message("Node Service Calendars fetched successfully")
+        .payload(new ArrayList<>())
+        .build();
+  }
+
+  public BaseResponse<List<CarrierServiceCalendarResponse>> getEmptyCarrierCalendarBaseResponse() {
+    return BaseResponse.builder()
+        .message("Carrier Service Calendars fetched successfully")
+        .payload(new ArrayList<>())
+        .build();
+  }
+
+  public PagePayload<CalendarDto> getCalendarPagePayload(int pageNo) {
+    PagePayload<CalendarDto> calendarDtoPagePayload = new PagePayload<>();
+
+    CalendarDto calendarDto1 = getCalendarDto(CALENDAR_ID);
+    CalendarDto calendarDto2 = getCalendarDto(CALENDAR_ID_2);
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(2);
+    calendarDtoPagePayload.setPagination(pagination);
+    calendarDtoPagePayload.setData(Arrays.asList(calendarDto1, calendarDto2));
+
+    return calendarDtoPagePayload;
+  }
+
+  private CalendarDto getCalendarDto(String calendarId) {
+    ExceptionDays exceptionDays1 = new ExceptionDays();
+    exceptionDays1.setDate("2022-01-01");
+    exceptionDays1.setReason("New Year's Day");
+
+    List<ExceptionDays> exceptionDaysList = List.of(exceptionDays1);
+    CalendarDto calendarDto = new CalendarDto();
+
+    calendarDto.setCalendarId(calendarId);
+    calendarDto.setOrgId(ORG_ID);
+    calendarDto.setDescription(DESCRIPTION);
+    calendarDto.setExceptionDays(exceptionDaysList);
+    calendarDto.setIsActive(true);
+    calendarDto.setIsMondayWorking(true);
+    calendarDto.setIsSundayWorking(false);
+    calendarDto.setIsFridayWorking(true);
+
+    return calendarDto;
+  }
+
+  public BaseResponse<List<MarketRegionDto>> getMarketRegionDto() {
+    MarketRegionDto marketRegionDto = new MarketRegionDto() {
+      @Override
+      public String getCountry() {
+        return COUNTRY;
+      }
+
+      @Override
+      public long getNoOfStates() {
+        return 0;
+      }
+
+      @Override
+      public long getNoOfCities() {
+        return 0;
+      }
+
+      @Override
+      public long getNoOfPostalCodePrefixes() {
+        return 0;
+      }
+
+      @Override
+      public Date getUploadDate() {
+        return null;
+      }
+
+      @Override
+      public void setUploadDate(String v) {
+
+      }
+    };
+    return BaseResponse.builder()
+        .message("Market Region fetched successfully")
+        .payload(List.of(marketRegionDto))
+        .build();
   }
 
   public PickUpCalendar getPickUpCalendar() {

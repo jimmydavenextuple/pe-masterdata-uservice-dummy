@@ -162,11 +162,11 @@ public class NodeCarrierDomain {
     }
   }
 
-  public List<String> fetchCarrierServiceIdsByOrgIdAndNodeId(String orgId, String nodeId)
+  public List<String> fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(String orgId, String nodeId)
       throws NodeCarrierDomainException {
 
     try {
-      return nodeCarrierRepository.findCarrierServiceIdsByOrgIdAndNodeId(orgId, nodeId);
+      return nodeCarrierRepository.findUniqueNodeCarrierServiceListByOrgIdAndNodeId(orgId, nodeId);
     } catch (Exception e) {
       logger.error(
           String.valueOf(e),

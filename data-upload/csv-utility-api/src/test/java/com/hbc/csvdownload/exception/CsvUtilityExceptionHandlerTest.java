@@ -112,7 +112,7 @@ class CsvUtilityExceptionHandlerTest {
   void handlePostalCodeTimezoneServiceException() {
     PostalCodeTimezoneServiceException postalCodeTimezoneServiceException =
         new PostalCodeTimezoneServiceException(
-            "Error while fetching list of FSAs", TestUtil.ORG_ID, TestUtil.SOURCE_REGION);
+            "Error while fetching list of FSAs", TestUtil.ORG_ID, TestUtil.SOURCE_REGION, null);
     ResponseEntity<ErrorResponse> errorResponse =
         csvUtilityExceptionHandler.handlePostalCodeTimezoneServiceException(
             postalCodeTimezoneServiceException);

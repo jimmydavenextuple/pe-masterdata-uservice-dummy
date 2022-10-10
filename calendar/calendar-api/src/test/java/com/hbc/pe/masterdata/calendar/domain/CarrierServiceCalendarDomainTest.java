@@ -184,4 +184,45 @@ class CarrierServiceCalendarDomainTest {
     Assertions.assertEquals("Unable to fetch all carrier calendars", ex.getMessage());
     verify(carrierServiceCalendarRepository, times(1)).findAllCarrierServiceCalendarsByLimit(any());
   }
+
+  @Test
+  void getCarrierServiceCalendarByOrgIdAndCalendarIdTest() throws CalendarDomainException {
+    when(carrierServiceCalendarRepository.findCarrierServiceCalendarByCalendarIdAndOrgId(
+            any(), any()))
+        .thenReturn(
+            List.of(
+                testUtil.getCarrierServiceCalendarEntity(),
+                testUtil.getCarrierServiceCalendarEntity1()));
+
+    List<CarrierServiceCalendarEntity> response =
+        carrierServiceCalendarDomain.getCarrierServiceCalendarByOrgIdAndCalendarId(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID, Objects.requireNonNull(response.get(0).getCalendarId()));
+    Assertions.assertEquals(TestUtil.ORG_ID, Objects.requireNonNull(response.get(0).getOrgId()));
+    Assertions.assertEquals(
+        TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(response.get(0).getEffectiveDate()));
+    verify(carrierServiceCalendarRepository, times(1))
+        .findCarrierServiceCalendarByCalendarIdAndOrgId(any(), any());
+  }
+
+  @Test
+  void getCarrierServiceCalendarByOrgIdAndCalendarIdExceptionTest() {
+    when(carrierServiceCalendarRepository.findCarrierServiceCalendarByCalendarIdAndOrgId(
+            any(), any()))
+        .thenThrow(new RuntimeException("Unable to fetch carrier service calendar list"));
+
+    CalendarDomainException ex =
+        Assertions.assertThrows(
+            CalendarDomainException.class,
+            () ->
+                carrierServiceCalendarDomain.getCarrierServiceCalendarByOrgIdAndCalendarId(
+                    TestUtil.CALENDAR_ID, TestUtil.ORG_ID));
+
+    Assertions.assertEquals("Unable to fetch carrier service calendar list", ex.getMessage());
+    verify(carrierServiceCalendarRepository, times(1))
+        .findCarrierServiceCalendarByCalendarIdAndOrgId(any(), any());
+  }
 }

@@ -12,12 +12,15 @@ import com.hbc.pe.masterdata.calendar.service.CarrierServiceCalendarService;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
 @RequestMapping("/carrier-service-calendar")
 @RequiredArgsConstructor
@@ -55,8 +58,9 @@ public class CarrierServiceCalendarController {
   @GetMapping("/{orgId}/{carrierServiceId}")
   public ResponseEntity<BaseResponse<List<CarrierServiceCalendarResponse>>>
       handleGetCarrierServiceCalendar(
-          @PathVariable String orgId,
-          @PathVariable String carrierServiceId,
+          @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+          @NotBlank(message = "carrierServiceId can't be empty") @PathVariable
+              String carrierServiceId,
           @RequestParam Optional<String> serviceOption,
           @RequestParam Optional<String> shippingStage)
           throws CalendarDomainException, CalenderServiceException {
@@ -84,6 +88,21 @@ public class CarrierServiceCalendarController {
     return ResponseEntity.ok(
         BaseResponse.builder()
             .message("Carrier Calendar Cache Keys fetched successfully")
+            .payload(response)
+            .build());
+  }
+
+  @GetMapping("/get-calendar-association/{calendarId}/{orgId}")
+  public ResponseEntity<BaseResponse<List<CarrierServiceCalendarResponse>>> getCarrierCalendars(
+      @PathVariable String calendarId, @PathVariable String orgId) throws CalendarDomainException {
+    logger.debug("Processing get Carrier Calendars by orgId and calendarId");
+
+    var response =
+        carrierServiceCalendarService.getCarrierServiceAssociationWithCalendar(calendarId, orgId);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Carrier Calendar List fetched successfully")
             .payload(response)
             .build());
   }

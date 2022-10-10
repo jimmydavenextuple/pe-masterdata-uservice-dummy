@@ -3,6 +3,7 @@ package com.hbc.postal.code.timezone.domain;
 import com.hbc.common.enums.ApplicationLayer;
 import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.PromiseEngineException;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
 import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
 import com.hbc.postal.code.timezone.domain.repository.PostalCodeTimezoneRepository;
 import java.util.List;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PostalCodeTimezoneDomain {
   private static final Logger logger = LoggerFactory.getLogger(PostalCodeTimezoneDomain.class);
+  public static final String POSTAL_CODE_TIMEZONE_NOT_FOUND =
+      "Postal Code Timezone not found for a given orgId.";
   private final PostalCodeTimezoneRepository postalCodeTimezoneRepository;
   /**
    * Save Postal Code Timezone
@@ -87,11 +90,24 @@ public class PostalCodeTimezoneDomain {
     try {
       return postalCodeTimezoneRepository.findByOrgId(orgId);
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Postal Code Timezone not found for a given orgId.");
+      logger.error(String.valueOf(e), POSTAL_CODE_TIMEZONE_NOT_FOUND);
+      logger.error(String.valueOf(e), POSTAL_CODE_TIMEZONE_NOT_FOUND);
       throw new PromiseEngineException(
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Postal Code Timezone not found for a given orgId.");
+          POSTAL_CODE_TIMEZONE_NOT_FOUND);
+    }
+  }
+
+  public List<MarketRegionDto> getRecordsForOrgId(String orgId) throws PromiseEngineException {
+    try {
+      return postalCodeTimezoneRepository.findRecordsByOrgId(orgId);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), POSTAL_CODE_TIMEZONE_NOT_FOUND);
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          POSTAL_CODE_TIMEZONE_NOT_FOUND);
     }
   }
 
@@ -109,6 +125,19 @@ public class PostalCodeTimezoneDomain {
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.DAO_FIND_FAILED,
           "Error while fetching list of postal code prefix for given orgId and state");
+    }
+  }
+
+  public List<PostalCodeTimezoneEntity> getPostCodeTimeZoneByOrgIdAndCountry(
+      String orgId, String country) throws PromiseEngineException {
+    try {
+      return postalCodeTimezoneRepository.findByOrgIdAndCountry(orgId, country);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), POSTAL_CODE_TIMEZONE_NOT_FOUND);
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          POSTAL_CODE_TIMEZONE_NOT_FOUND);
     }
   }
 }

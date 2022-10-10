@@ -9,10 +9,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@Validated
 @Controller
 @RequestMapping("/upload")
 @Slf4j
@@ -22,7 +24,8 @@ public class NodeCarrierSelectionUploadController {
 
   @PostMapping("/node-carrier-selection-upload")
   public ResponseEntity<BaseResponse<String>> nodeCarrierSelectionUpload(
-      @NotBlank @RequestParam String fileUri) throws IOException, CommonServiceException {
+      @NotBlank(message = "fileUri can't be empty") @RequestParam String fileUri)
+      throws IOException, CommonServiceException {
     log.debug("Processing node service selection upload request");
     return nodeCarrierSelectionUploadService.nodeCarrierSelectionUpload(fileUri);
   }

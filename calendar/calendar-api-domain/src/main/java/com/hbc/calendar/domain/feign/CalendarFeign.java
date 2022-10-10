@@ -11,6 +11,7 @@ import com.hbc.calendar.domain.outbound.CalendarResponse;
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
+import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import java.util.List;
 import javax.validation.Valid;
@@ -57,6 +58,22 @@ public interface CalendarFeign {
   @GetMapping("/node-carrier-service-calendar/get-all-cache-keys")
   BaseResponse<List<NodeCarrierCalendarCacheKeyDto>> getNodeCarrierCalendarCacheKeys(
       @NotNull @RequestParam Integer limit);
+
+  @GetMapping("/node-calendar/get-calendar-association/{calendarId}/{orgId}")
+  BaseResponse<List<NodeCalendarResponse>> getNodeCalendars(
+      @PathVariable String calendarId, @PathVariable String orgId);
+
+  @GetMapping("/carrier-service-calendar/get-calendar-association/{calendarId}/{orgId}")
+  BaseResponse<List<CarrierServiceCalendarResponse>> getCarrierCalendars(
+      @PathVariable String calendarId, @PathVariable String orgId);
+
+  @GetMapping("/calendar/{orgId}")
+  BaseResponse<PagePayload<CalendarResponse>> getCalendarListWithPagination(
+      @PathVariable String orgId,
+      @RequestParam(required = false) Integer pageNo,
+      @RequestParam(required = false) Integer pageSize,
+      @RequestParam(required = false) String sortBy,
+      @RequestParam(required = false) String sortOrder);
 
   @GetMapping("/node-carrier-service-calendar/{orgId}/{nodeId}/{carrierServiceId}")
   BaseResponse<List<NodeCarrierServiceCalendarResponse>> getNodeCarrierServiceCalendar(
