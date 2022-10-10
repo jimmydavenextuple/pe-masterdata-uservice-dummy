@@ -676,19 +676,38 @@ class NodeCarrierServiceTest {
   }
 
   @Test
-  void getNodeCarrierListForNodeIdAndOrgIdTest() throws NodeCarrierDomainException {
+  void getNodeCarrierListForNodeIdAndOrgIdTest1() throws NodeCarrierDomainException {
     when(nodeCarrierDomain.findNodeCarrierDetailsByNodeIdAndOrgId(anyString(), anyString()))
-        .thenReturn(testUtil.getNodeCarrierEntityListWithPickupDetails());
+        .thenReturn(
+            testUtil.getNodeCarrierEntityListWithPickupDetails(TestUtil.CARRIER_SERVICE_ID));
 
     List<NodeCarrierResponse> nodeCarrierResponseList =
         nodeCarrierService.getNodeCarrierListForNodeIdAndOrgId(TestUtil.NODE_ID, TestUtil.ORG_ID);
 
     assertEquals(
-        testUtil.getNodeCarrierEntityListWithPickupDetails().size(),
+        testUtil.getNodeCarrierEntityListWithPickupDetails(TestUtil.CARRIER_SERVICE_ID).size(),
         nodeCarrierResponseList.size());
     assertEquals(TestUtil.NODE_ID, nodeCarrierResponseList.get(0).getNodeId());
     assertEquals(TestUtil.ORG_ID, nodeCarrierResponseList.get(0).getOrgId());
     assertEquals(TestUtil.CARRIER_SERVICE_ID, nodeCarrierResponseList.get(0).getCarrierServiceId());
+
+    verify(nodeCarrierDomain, times(1))
+        .findNodeCarrierDetailsByNodeIdAndOrgId(anyString(), anyString());
+  }
+
+  @Test
+  void getNodeCarrierListForNodeIdAndOrgIdTest2() throws NodeCarrierDomainException {
+    when(nodeCarrierDomain.findNodeCarrierDetailsByNodeIdAndOrgId(anyString(), anyString()))
+        .thenReturn(testUtil.getNodeCarrierEntityListWithPickupDetails(""));
+
+    List<NodeCarrierResponse> nodeCarrierResponseList =
+        nodeCarrierService.getNodeCarrierListForNodeIdAndOrgId(TestUtil.NODE_ID, TestUtil.ORG_ID);
+
+    assertEquals(1, nodeCarrierResponseList.size());
+    assertEquals(TestUtil.NODE_ID, nodeCarrierResponseList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, nodeCarrierResponseList.get(0).getOrgId());
+    assertEquals(
+        TestUtil.CARRIER_SERVICE_ID_2, nodeCarrierResponseList.get(0).getCarrierServiceId());
 
     verify(nodeCarrierDomain, times(1))
         .findNodeCarrierDetailsByNodeIdAndOrgId(anyString(), anyString());

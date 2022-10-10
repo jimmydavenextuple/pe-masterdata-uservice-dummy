@@ -21,7 +21,7 @@ public class TestUtil {
 
   public static final String NODE_ID = "node-1";
   public static final String ORG_ID = "org-1";
-  private static final String CARRIER_SERVICE_ID_2 = "CarrierServiceId2";
+  public static final String CARRIER_SERVICE_ID_2 = "CarrierServiceId2";
   private static final String NODE_ID_2 = "node-2";
   public static String CARRIER_SERVICE_ID = "carrier-service-id-1";
   public static final String SERVICE_OPTION = "serviceOption-1";
@@ -384,11 +384,12 @@ public class TestUtil {
     return Arrays.asList(nodeCarrierResponse1, nodeCarrierResponse2);
   }
 
-  public List<NodeCarrierEntity> getNodeCarrierEntityListWithPickupDetails() {
+  public List<NodeCarrierEntity> getNodeCarrierEntityListWithPickupDetails(
+      String carrierServiceId) {
     NodeCarrierEntity nodeCarrierEntity1 = new NodeCarrierEntity();
     nodeCarrierEntity1.setNodeId(NODE_ID);
     nodeCarrierEntity1.setOrgId(ORG_ID);
-    nodeCarrierEntity1.setCarrierServiceId(CARRIER_SERVICE_ID);
+    nodeCarrierEntity1.setCarrierServiceId(carrierServiceId);
     nodeCarrierEntity1.setServiceOption(SERVICE_OPTION);
     nodeCarrierEntity1.setLastPickupTime("5:00");
 
