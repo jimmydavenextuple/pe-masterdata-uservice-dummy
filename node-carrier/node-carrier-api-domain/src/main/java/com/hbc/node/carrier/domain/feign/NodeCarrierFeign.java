@@ -88,4 +88,8 @@ public interface NodeCarrierFeign {
   @DeleteMapping("/node/carrier/node-carrier-selection")
   BaseResponse<NodeCarrierSelectionResponse> deleteNodeCarrierSelectionDetails(
       @Valid @RequestBody NodeCarrierSelectionRequest nodeCarrierSelectionRequest);
+
+  @GetMapping("/node/carrier/{orgId}/{nodeId}/carrier-service")
+  BaseResponse<List<String>> getUniqueNodeCarrierServiceList(
+      @NotBlank @PathVariable String orgId, @NotBlank @PathVariable String nodeId);
 }

@@ -25,6 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.util.CollectionUtils;
 
 @ExtendWith(MockitoExtension.class)
 class NodeCarrierDomainTest {
@@ -207,7 +208,7 @@ class NodeCarrierDomainTest {
 
   @Test
   @DisplayName("When node carrier is saved successfully")
-  void saveNodeCarrierSelectionEntityTest() throws NodeCarrierDomainException {
+  void saveNodeCarrierSelectionEntityTest() {
     NodeCarrierSelectionEntity nodeCarrierSelectionEntity =
         testUtil.getNodeCarrierSelectionEntity();
     when(nodeCarrierSelectionRepository.save(any())).thenReturn(nodeCarrierSelectionEntity);
@@ -288,7 +289,7 @@ class NodeCarrierDomainTest {
   }
 
   @Test
-  void findNodeCarrierSelectionDetailsExceptionTest() throws NodeCarrierSelectionDomainException {
+  void findNodeCarrierSelectionDetailsExceptionTest() {
     when(nodeCarrierSelectionRepository
             .findByOrgIdAndServiceOptionAndSourceGeozoneAndDestinationGeozone(
                 any(), any(), any(), any()))
@@ -319,7 +320,7 @@ class NodeCarrierDomainTest {
   }
 
   @Test
-  void deleteNodeCarrierSelectionEntityExceptionTest() throws NodeCarrierSelectionDomainException {
+  void deleteNodeCarrierSelectionEntityExceptionTest() {
     doThrow(new RuntimeException("error while deleting"))
         .when(nodeCarrierSelectionRepository)
         .delete(any());
@@ -333,5 +334,35 @@ class NodeCarrierDomainTest {
 
     assertEquals("Error while deleting node carrier selection", ex.getMessage());
     verify(nodeCarrierSelectionRepository, times(1)).delete(any());
+  }
+
+  @Test
+  void fetchCarrierServiceIdsByOrgIdAndNodeId() throws NodeCarrierDomainException {
+    when(nodeCarrierRepository.findUniqueNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString()))
+        .thenReturn(List.of(TestUtil.CARRIER_SERVICE_ID));
+
+    List<String> uniqueCarrierServiceIdList =
+        nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(TestUtil.ORG_ID, TestUtil.NODE_ID);
+
+    Assertions.assertFalse(CollectionUtils.isEmpty(uniqueCarrierServiceIdList));
+    verify(nodeCarrierRepository, times(1))
+        .findUniqueNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString());
+  }
+
+  @Test
+  void fetchCarrierServiceIdsByOrgIdAndNodeIdException() {
+    when(nodeCarrierRepository.findUniqueNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString()))
+        .thenThrow(new RuntimeException("Error while fetching list of unique carrier service ids"));
+
+    Exception ex =
+        Assertions.assertThrows(
+            NodeCarrierDomainException.class,
+            () ->
+                nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(
+                    TestUtil.ORG_ID, TestUtil.NODE_ID));
+
+    Assertions.assertNotNull(ex);
+    verify(nodeCarrierRepository, times(1))
+        .findUniqueNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString());
   }
 }
