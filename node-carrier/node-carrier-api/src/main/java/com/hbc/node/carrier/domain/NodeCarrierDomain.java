@@ -166,7 +166,7 @@ public class NodeCarrierDomain {
       throws NodeCarrierDomainException {
 
     try {
-      return nodeCarrierRepository.findNodeCarrierServiceListByOrgIdAndNodeId(orgId, nodeId);
+      return nodeCarrierRepository.findUniqueNodeCarrierServiceListByOrgIdAndNodeId(orgId, nodeId);
     } catch (Exception e) {
       logger.error(
           String.valueOf(e),
