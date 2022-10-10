@@ -90,6 +90,6 @@ public interface NodeCarrierFeign {
       @Valid @RequestBody NodeCarrierSelectionRequest nodeCarrierSelectionRequest);
 
   @GetMapping("/node/carrier/carrier-service-id/{nodeId}/{orgId}")
-  BaseResponse<List<String>> getUniqueCarrierServiceIdList(
+  BaseResponse<List<String>> getUniqueNodeCarrierServiceList(
       @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId);
 }
