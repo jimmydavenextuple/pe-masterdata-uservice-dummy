@@ -1,7 +1,9 @@
 package com.hbc.postal.code.timezone.controller;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/postalCodeTimezone")
 @RequiredArgsConstructor
@@ -36,7 +40,7 @@ public class PostalCodeTimezoneController {
   @PostMapping
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> createPostalCodeTimezone(
       @Valid @RequestBody CreatePostalCodeTimezoneRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("Processing create Postal Code Timezone request");
     try {
       var postalCodeTimezoneDto = postalCodeTimezoneService.createPostalCodeTimezone(baseRequest);
@@ -54,7 +58,8 @@ public class PostalCodeTimezoneController {
 
   @GetMapping
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> getPostalCodeTimezone(
-      @NotBlank @RequestParam String orgId, @NotBlank @RequestParam String postalCodePrefix)
+      @NotBlank(message = "orgId can't be empty") @RequestParam String orgId,
+      @NotBlank(message = "postalCodePrefix can't be empty") @RequestParam String postalCodePrefix)
       throws PromiseEngineException {
     logger.debug("Processing get Postal Code Timezone request");
     try {
@@ -71,10 +76,10 @@ public class PostalCodeTimezoneController {
 
   @PutMapping
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> updatePostalCodeTimezone(
-      @NotBlank @RequestParam String orgId,
-      @NotBlank @RequestParam String postalCodePrefix,
+      @NotBlank(message = "orgId can't be empty") @RequestParam String orgId,
+      @NotBlank(message = "postalCodePrefix can't be empty") @RequestParam String postalCodePrefix,
       @Valid @RequestBody UpdatePostalCodeTimezoneRequest baseRequest)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     logger.debug("Processing update Postal Code Timezone request");
     try {
       var postalCodeTimezoneDto =
@@ -94,7 +99,8 @@ public class PostalCodeTimezoneController {
   @Transactional
   @DeleteMapping
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> deletePostalCodeTimezone(
-      @NotBlank @RequestParam String orgId, @NotBlank @RequestParam String postalCodePrefix)
+      @NotBlank(message = "orgId can't be empty") @RequestParam String orgId,
+      @NotBlank(message = "postalCodePrefix can't be empty") @RequestParam String postalCodePrefix)
       throws PromiseEngineException {
     logger.debug("Processing delete Postal Code Timezone request");
     try {
@@ -114,7 +120,8 @@ public class PostalCodeTimezoneController {
 
   @GetMapping("/ui/state-postal-code-prefix/orgId/{orgId}")
   public ResponseEntity<BaseResponse<List<PostalCodePrefixDto>>> getPostalCodePrefixList(
-      @PathVariable String orgId) throws PromiseEngineException {
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
+      throws PromiseEngineException {
     logger.debug("Processing get state and postal code prefixes list");
 
     List<PostalCodePrefixDto> responseList =
@@ -129,12 +136,38 @@ public class PostalCodeTimezoneController {
 
   @GetMapping("/org/{orgId}")
   public ResponseEntity<BaseResponse<List<String>>> getPostalCodePrefixForOrgIdAndState(
-      @PathVariable String orgId, @RequestParam String state) throws PromiseEngineException {
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @RequestParam String state)
+      throws PromiseEngineException {
     logger.debug("Processing get postal code prefix list for orgId and state");
     return ResponseEntity.ok(
         BaseResponse.builder()
             .message("")
             .payload(postalCodeTimezoneService.fetchPostalCodePrefixForOrgIdAndState(orgId, state))
+            .build());
+  }
+
+  @GetMapping("/market-region/org/{orgId}")
+  public ResponseEntity<BaseResponse<List<PostalCodeTimezoneDto>>>
+      getPostalCodeTimeZoneForOrgIdAndCountry(
+          @PathVariable String orgId, @RequestParam String country) throws PromiseEngineException {
+    logger.debug("Processing get postal code prefix list for orgId and state");
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Postal Code Timezone successfully fetched!")
+            .payload(
+                postalCodeTimezoneService.fetchPostalCodeTimezoneByOrgIdAndCountry(orgId, country))
+            .build());
+  }
+
+  @GetMapping("/market-regions/org/{orgId}")
+  public ResponseEntity<BaseResponse<List<MarketRegionDto>>> getMarketRegionsForOrgId(
+      @PathVariable String orgId) throws PromiseEngineException {
+    logger.debug("Processing get market regions for orgId");
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Market Regions are fetched successfully")
+            .payload(postalCodeTimezoneService.getMarketRegionForOrgId(orgId))
             .build());
   }
 }

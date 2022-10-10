@@ -45,7 +45,7 @@ class NodeControllerTest {
   }
 
   @Test
-  void createNodeTest() throws NodeDomainException {
+  void createNodeTest() throws NodeDomainException, CommonServiceException {
     NodeRequest nodeRequest = testUtil.getNodeRequest();
     when(nodeService.createNode(any(NodeRequest.class))).thenReturn(testUtil.getNodeResponse());
 
@@ -59,7 +59,7 @@ class NodeControllerTest {
   }
 
   @Test
-  void createNodeExceptionTest() throws NodeDomainException {
+  void createNodeExceptionTest() throws NodeDomainException, CommonServiceException {
     NodeRequest nodeRequest = testUtil.getNodeRequest();
     when(nodeService.createNode(any(NodeRequest.class)))
         .thenThrow(new RuntimeException("Failed to create node"));

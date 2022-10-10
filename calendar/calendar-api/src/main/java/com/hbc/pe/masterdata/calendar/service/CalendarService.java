@@ -1,5 +1,8 @@
 package com.hbc.pe.masterdata.calendar.service;
 
+import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+import static com.hbc.common.constants.CommonConstants.DESC_SORT_ORDER;
+
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
 import com.hbc.calendar.domain.inbound.CalendarRequest;
 import com.hbc.calendar.domain.outbound.CalendarResponse;
@@ -27,6 +30,7 @@ import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -50,6 +54,7 @@ public class CalendarService {
   private static final String NODE_ID = "nodeId";
   private static final String CARRIER_SERVICE_ID = "carrierServiceId";
   private static final String CALENDAR_ID = "calendarId";
+  private static final String SORT_ORDER = "sortOrder";
 
   @Value("${constants.default-number-of-days-in-future}")
   private Integer defaultNumberOfDaysInFuture;
@@ -349,5 +354,23 @@ public class CalendarService {
     if (x == 6) return calendarEntity.getIsSaturdayWorking();
     if (x == 7) return calendarEntity.getIsSundayWorking();
     return false;
+  }
+
+  public Page<CalendarResponse> getCalendarList(
+      String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
+      throws CommonServiceException, CalendarDomainException {
+    if (sortOrder.equalsIgnoreCase(DEFAULT_SORT_ORDER)
+        || sortOrder.equalsIgnoreCase(DESC_SORT_ORDER)) {
+      return calendarDomain.findCalendarListByOrgId(orgId, pageNo, pageSize, sortBy, sortOrder);
+    } else {
+      logger.error("Invalid sort order");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(SORT_ORDER, FieldError.builder().rejectedValue(sortOrder).build());
+      throw new CommonServiceException(
+          "Invalid sort order, consider giving either ASC or DESC",
+          HttpStatus.BAD_REQUEST,
+          0x1771,
+          errorMap);
+    }
   }
 }

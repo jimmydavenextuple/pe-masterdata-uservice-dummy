@@ -22,7 +22,8 @@ public class NodeCalendarDataUploadController {
 
   @PostMapping("/node-calendar")
   public ResponseEntity<BaseResponse<String>> uploadNodeCalendarData(
-      @NotBlank @RequestParam String fileUri) throws IOException, CommonServiceException {
+      @NotBlank(message = "fileUri can't be empty") @RequestParam String fileUri)
+      throws IOException, CommonServiceException {
     log.debug("Processing upload Node Calendar Data request");
     try {
       return nodeCalendarDataUploadService.uploadNodeCalendarData(fileUri);

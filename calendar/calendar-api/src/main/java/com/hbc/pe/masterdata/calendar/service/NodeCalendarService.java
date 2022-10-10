@@ -114,4 +114,12 @@ public class NodeCalendarService {
 
     return INSTANCE.convertToNodeCalendarCacheKeyDtoList(nodeCalendarEntityList);
   }
+
+  public List<NodeCalendarResponse> getNodeAssociationWithCalendar(String calendarId, String orgId)
+      throws CalendarDomainException {
+    var nodeCalendarEntityList =
+        nodeCalendarDomain.getNodeServiceCalendarByOrgIdAndCalendarId(calendarId, orgId);
+
+    return INSTANCE.convertToNodeCalendarResponseList(nodeCalendarEntityList);
+  }
 }

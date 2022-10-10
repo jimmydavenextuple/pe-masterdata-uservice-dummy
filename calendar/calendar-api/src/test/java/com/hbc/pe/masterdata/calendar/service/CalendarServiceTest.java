@@ -1,5 +1,6 @@
 package com.hbc.pe.masterdata.calendar.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -34,6 +35,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.util.ReflectionTestUtils;
 
 class CalendarServiceTest {
@@ -324,5 +328,61 @@ class CalendarServiceTest {
     verify(nodeCarrierServiceCalendarService, times(1))
         .getAndFilterNodeCarrierServiceCalendar(any(), any(), any(), any());
     verify(calendarDomain, times(0)).getCalendar(any(), any());
+  }
+
+  @Test
+  void getCalendarListTest() throws CalendarDomainException, CommonServiceException {
+    List<CalendarResponse> calendarResponses =
+        List.of(testUtil.getCalendarResponse(), testUtil.getCalendarResponse1());
+
+    when(calendarDomain.findCalendarListByOrgId(any(), any(), any(), any(), any()))
+        .thenReturn(
+            testUtil.getCalendarPageResponses(
+                2, calendarResponses, calendarResponses.size(), TestUtil.SORT_ORDER_DESC));
+
+    Page<CalendarResponse> calendarResponsePage =
+        calendarService.getCalendarList(
+            TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, TestUtil.SORT_ORDER_DESC);
+
+    assertEquals(2, (int) calendarResponsePage.getTotalElements());
+    assertEquals(2, calendarResponsePage.getTotalPages());
+    assertEquals(calendarResponses.size(), calendarResponsePage.getContent().size());
+    assertEquals(Sort.by(Direction.DESC, TestUtil.SORT_BY), calendarResponsePage.getSort());
+    verify(calendarDomain, times(1)).findCalendarListByOrgId(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getCalendarListDefaultSortOrderTest()
+      throws CalendarDomainException, CommonServiceException {
+    List<CalendarResponse> calendarResponses =
+        List.of(testUtil.getCalendarResponse(), testUtil.getCalendarResponse1());
+
+    when(calendarDomain.findCalendarListByOrgId(any(), any(), any(), any(), any()))
+        .thenReturn(
+            testUtil.getCalendarPageResponses(
+                2, calendarResponses, calendarResponses.size(), TestUtil.SORT_ORDER_ASC));
+
+    Page<CalendarResponse> calendarResponsePage =
+        calendarService.getCalendarList(
+            TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, TestUtil.SORT_ORDER_ASC);
+
+    assertEquals(2, (int) calendarResponsePage.getTotalElements());
+    assertEquals(2, calendarResponsePage.getTotalPages());
+    assertEquals(calendarResponses.size(), calendarResponsePage.getContent().size());
+    assertEquals(Sort.by(Direction.ASC, TestUtil.SORT_BY), calendarResponsePage.getSort());
+    verify(calendarDomain, times(1)).findCalendarListByOrgId(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getCalendarListExceptionTest() throws CalendarDomainException, CommonServiceException {
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                calendarService.getCalendarList(
+                    TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "invalid sort order"));
+
+    assertEquals("Invalid sort order, consider giving either ASC or DESC", exception.getMessage());
+    verify(calendarDomain, times(0)).findCalendarListByOrgId(any(), any(), any(), any(), any());
   }
 }

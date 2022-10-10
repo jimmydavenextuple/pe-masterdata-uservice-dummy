@@ -23,7 +23,8 @@ public class CarrierCalendarDataUploadController {
 
   @PostMapping("/carrier-service-calendar")
   public ResponseEntity<BaseResponse<String>> uploadCarrierCalendarData(
-      @NotBlank @RequestParam String fileUri) throws IOException, CommonServiceException {
+      @NotBlank(message = "fileUri can't be empty") @RequestParam String fileUri)
+      throws IOException, CommonServiceException {
     log.debug("Processing upload Carrier Calendar Data request");
     try {
       return calendarDataUploadService.uploadCarrierCalendarData(fileUri);
