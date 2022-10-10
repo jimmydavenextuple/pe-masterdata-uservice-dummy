@@ -59,18 +59,6 @@ jobs:
     with:
       module: promise-sourcing-rule
     secrets: inherit
-  Service-Inventory:
-    needs:
-      - Calendar
-      - Carrier
-      - Data-Upload
-      - Node
-      - Node-Carrier
-      - Postal-Code-Timezone
-    uses: ./.github/workflows/release-flow.yml
-    with:
-      module: service-inventory
-    secrets: inherit
   Transit:
     needs:
       - Calendar
