@@ -32,7 +32,7 @@ public class NodeCarrierServiceController {
 
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<NodeCarrierServiceResponse>>>
-      getNodeServiceOptionDetails(@PathVariable @NotBlank String orgId, PageParams pageParams) {
+  getNodeCarrierServiceDetails(@PathVariable @NotBlank String orgId, PageParams pageParams) {
     logger.debug("Processing get list of nodes and carrier service details");
 
     PagePayload<NodeCarrierServiceResponse> nodeCarrierServiceResponse =
@@ -43,6 +43,16 @@ public class NodeCarrierServiceController {
             pageParams.getSortBy().orElse(pageProperties.getSortBy()),
             pageParams.getSortOrder().orElse(pageProperties.getSortOrder()));
 
+    updatePaginationDetails(nodeCarrierServiceResponse, orgId, pageParams);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node and Carrier Service List fetched successfully")
+            .payload(nodeCarrierServiceResponse)
+            .build());
+  }
+
+  private void updatePaginationDetails(PagePayload<NodeCarrierServiceResponse> nodeCarrierServiceResponse, String orgId, PageParams pageParams){
     int currentPage = nodeCarrierServiceResponse.getPagination().getCurrentPage();
     String nextUri =
         PaginationUtil.buildUriForPagination(
@@ -72,11 +82,5 @@ public class NodeCarrierServiceController {
 
     nodeCarrierServiceResponse.getPagination().setNext(nextUri);
     nodeCarrierServiceResponse.getPagination().setPrevious(previousUri);
-
-    return ResponseEntity.ok(
-        BaseResponse.builder()
-            .message("Node and Carrier Service List fetched successfully")
-            .payload(nodeCarrierServiceResponse)
-            .build());
   }
 }

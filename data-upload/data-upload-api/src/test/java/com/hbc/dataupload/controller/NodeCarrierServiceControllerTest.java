@@ -40,7 +40,7 @@ class NodeCarrierServiceControllerTest {
         .thenReturn(testUtil.getNodeCarrierServicePagePayload(1));
 
     ResponseEntity<BaseResponse<PagePayload<NodeCarrierServiceResponse>>> response =
-        nodeCarrierServiceController.getNodeServiceOptionDetails(
+        nodeCarrierServiceController.getNodeCarrierServiceDetails(
             TestUtil.ORG_ID,
             testUtil.getPageParams(
                 Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()));
