@@ -2,7 +2,7 @@ package com.hbc.dataupload.controller;
 
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.service.MarketRegionService;
-import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class MarketRegionController {
   private final MarketRegionService marketRegionService;
 
   @GetMapping("/market-regions/orgId/{orgId}")
-  public ResponseEntity<BaseResponse<List<MarketRegionDto>>> getMarketRegions(
+  public ResponseEntity<BaseResponse<List<MarketRegionInfo>>> getMarketRegions(
       @NotBlank(message = "OrgId can't be empty") @PathVariable String orgId) {
     return ResponseEntity.ok(
         BaseResponse.builder()

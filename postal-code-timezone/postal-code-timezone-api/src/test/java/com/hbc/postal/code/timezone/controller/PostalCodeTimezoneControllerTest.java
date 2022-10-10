@@ -1,11 +1,11 @@
 package com.hbc.postal.code.timezone.controller;
 
+import static com.hbc.postal.code.timezone.TestUtil.COUNTRY;
 import static com.hbc.postal.code.timezone.TestUtil.ORG_ID;
 import static com.hbc.postal.code.timezone.TestUtil.POSTAL_CODE_PREFIX;
 import static com.hbc.postal.code.timezone.TestUtil.POSTAL_CODE_PREFIX_2;
 import static com.hbc.postal.code.timezone.TestUtil.STATE;
 import static com.hbc.postal.code.timezone.TestUtil.STATUS_CODE;
-import static com.hbc.postal.code.timezone.TestUtil.COUNTRY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,16 +18,18 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.postal.code.timezone.TestUtil;
-import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
+import com.hbc.postal.code.timezone.domain.mapper.PostalCodeTimezoneMapper;
 import com.hbc.postal.code.timezone.service.PostalCodeTimezoneService;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -40,6 +42,9 @@ class PostalCodeTimezoneControllerTest {
   @Mock private PostalCodeTimezoneService postalCodeTimezoneService;
   @InjectMocks private PostalCodeTimezoneController postalCodeTimezoneController;
   @InjectMocks private TestUtil testUtil;
+
+  private static final PostalCodeTimezoneMapper INSTANCE =
+      Mappers.getMapper(PostalCodeTimezoneMapper.class);
 
   @BeforeEach
   void setUp() {
@@ -236,9 +241,9 @@ class PostalCodeTimezoneControllerTest {
   @Test
   void getMarketRegionsForOrgId() throws PromiseEngineException {
     when(postalCodeTimezoneService.getMarketRegionForOrgId(anyString()))
-        .thenReturn(testUtil.getMarketRegion());
+        .thenReturn(INSTANCE.convertToMarketRegionInfo(testUtil.getMarketRegion()));
 
-    ResponseEntity<BaseResponse<List<MarketRegionDto>>> responseEntity =
+    ResponseEntity<BaseResponse<List<MarketRegionInfo>>> responseEntity =
         postalCodeTimezoneController.getMarketRegionsForOrgId(ORG_ID);
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertNotNull(responseEntity.getBody());

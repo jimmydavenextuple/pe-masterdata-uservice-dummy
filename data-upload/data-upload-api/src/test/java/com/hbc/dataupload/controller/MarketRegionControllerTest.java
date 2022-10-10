@@ -1,6 +1,5 @@
 package com.hbc.dataupload.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -24,7 +23,7 @@ class MarketRegionControllerTest {
   @Test
   void getMarketRegions_Test() {
     when(marketRegionService.getMarketRegions(anyString()))
-        .thenReturn(testUtil.getMarketRegionDto().getPayload());
+        .thenReturn(testUtil.getMarketRegionInfo().getPayload());
 
     Assertions.assertDoesNotThrow(() -> marketRegionController.getMarketRegions(TestUtil.ORG_ID));
   }
