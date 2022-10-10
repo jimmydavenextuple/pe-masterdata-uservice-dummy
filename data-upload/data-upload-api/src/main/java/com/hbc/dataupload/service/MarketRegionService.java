@@ -1,6 +1,7 @@
 package com.hbc.dataupload.service;
 
-import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
 import com.hbc.postgres.config.ReaderDS;
 import java.util.List;
@@ -16,7 +17,9 @@ public class MarketRegionService {
   private final PostalCodeTimezoneFeign postalCodeTimezoneFeign;
 
   @ReaderDS
-  public List<MarketRegionDto> getMarketRegions(String orgId) {
-    return postalCodeTimezoneFeign.getMarketRegionsForOrgId(orgId).getPayload();
+  public List<MarketRegionInfo> getMarketRegions(String orgId) {
+    BaseResponse<List<MarketRegionInfo>> result =
+        postalCodeTimezoneFeign.getMarketRegionsForOrgId(orgId);
+    return result.getPayload();
   }
 }

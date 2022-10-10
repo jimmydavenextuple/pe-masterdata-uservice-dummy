@@ -62,7 +62,7 @@ import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.outbound.NodeResponse;
-import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
@@ -867,41 +867,13 @@ public class TestUtil {
     return calendarDto;
   }
 
-  public BaseResponse<List<MarketRegionDto>> getMarketRegionDto() {
-    MarketRegionDto marketRegionDto = new MarketRegionDto() {
-      @Override
-      public String getCountry() {
-        return COUNTRY;
-      }
-
-      @Override
-      public long getNoOfStates() {
-        return 0;
-      }
-
-      @Override
-      public long getNoOfCities() {
-        return 0;
-      }
-
-      @Override
-      public long getNoOfPostalCodePrefixes() {
-        return 0;
-      }
-
-      @Override
-      public Date getUploadDate() {
-        return null;
-      }
-
-      @Override
-      public void setUploadDate(String v) {
-
-      }
-    };
+  public BaseResponse<List<MarketRegionInfo>> getMarketRegionInfo() {
+    MarketRegionInfo marketRegionInfo = new MarketRegionInfo();
+    marketRegionInfo.setCountry("CA");
+    marketRegionInfo.setUploadDate(new Date().toString());
     return BaseResponse.builder()
         .message("Market Region fetched successfully")
-        .payload(List.of(marketRegionDto))
+        .payload(List.of(marketRegionInfo))
         .build();
   }
 }
