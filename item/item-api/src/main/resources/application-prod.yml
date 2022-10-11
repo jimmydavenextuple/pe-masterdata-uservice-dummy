@@ -33,7 +33,7 @@ spring:
       topics:
         item_master:
           name: items.promise.bay.v1
-          group-id: pe-item-master-prod
+          group-id: pe-item-master-prod-v1
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.hbc.item.consumer.serializer.ItemSerializer

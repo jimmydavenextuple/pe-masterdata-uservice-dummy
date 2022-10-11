@@ -1,4 +1,4 @@
-name: reusable-workflow
+name: RELEASE FLOW
 
 on:
   workflow_call:
