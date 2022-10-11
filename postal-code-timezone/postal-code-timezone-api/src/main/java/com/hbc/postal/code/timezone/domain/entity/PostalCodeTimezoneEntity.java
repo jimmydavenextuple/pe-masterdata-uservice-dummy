@@ -8,7 +8,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
-
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

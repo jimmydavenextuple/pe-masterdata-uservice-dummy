@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
     name = "pe-config-postal-code-timezone",
-    url = "${spring.application.dependencies.postal-code-timezone:http://pe-config-postal-code-timezone:8080/}")
+    url =
+        "${spring.application.dependencies.postal-code-timezone:http://pe-config-postal-code-timezone:8080/}")
 public interface PostalCodeTimezoneFeign {
   @PostMapping("/postalCodeTimezone")
   BaseResponse<PostalCodeTimezoneDto> createPostalCodeTimezone(

@@ -1,11 +1,11 @@
 package com.hbc.postal.code.timezone.controller;
 
+import static com.hbc.postal.code.timezone.TestUtil.COUNTRY;
 import static com.hbc.postal.code.timezone.TestUtil.ORG_ID;
 import static com.hbc.postal.code.timezone.TestUtil.POSTAL_CODE_PREFIX;
 import static com.hbc.postal.code.timezone.TestUtil.POSTAL_CODE_PREFIX_2;
 import static com.hbc.postal.code.timezone.TestUtil.STATE;
 import static com.hbc.postal.code.timezone.TestUtil.STATUS_CODE;
-import static com.hbc.postal.code.timezone.TestUtil.COUNTRY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

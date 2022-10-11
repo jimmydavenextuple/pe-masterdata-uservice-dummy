@@ -81,15 +81,16 @@ public class NodeCarrierService {
             nodeCarrierRequest.getCarrierServiceId(),
             nodeCarrierRequest.getServiceOption());
       }
-        if (!ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId()) && Boolean.FALSE.equals(
-                validateCarrierDetails(
-                        nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
-          commonServiceExceptionMethod(
-                  INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
-                  nodeCarrierRequest.getNodeId(),
-                  nodeCarrierRequest.getOrgId(),
-                  nodeCarrierRequest.getCarrierServiceId(),
-                  nodeCarrierRequest.getServiceOption());
+      if (!ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId())
+          && Boolean.FALSE.equals(
+              validateCarrierDetails(
+                  nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
+        commonServiceExceptionMethod(
+            INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
+            nodeCarrierRequest.getNodeId(),
+            nodeCarrierRequest.getOrgId(),
+            nodeCarrierRequest.getCarrierServiceId(),
+            nodeCarrierRequest.getServiceOption());
       }
       if (!serviceOptions.contains(nodeCarrierRequest.getServiceOption())) {
         commonServiceExceptionMethod(
@@ -258,11 +259,11 @@ public class NodeCarrierService {
     BaseResponse<NodeResponse> baseResponse = nodeFeign.getNodeDetails(nodeId, orgId);
     if (!baseResponse.isSuccess() || Objects.isNull(baseResponse.getPayload())) {
       commonServiceExceptionMethod(
-              "Invalid nodeId", nodeId, orgId, carrierServiceId, serviceOption);
+          "Invalid nodeId", nodeId, orgId, carrierServiceId, serviceOption);
     }
     if (!serviceOptions.contains(serviceOption)) {
       commonServiceExceptionMethod(
-              "Invalid serviceOption", nodeId, orgId, carrierServiceId, serviceOption);
+          "Invalid serviceOption", nodeId, orgId, carrierServiceId, serviceOption);
     }
     if (!orgId.equals(baseResponse.getPayload().getOrgId())) {
       commonServiceExceptionMethod("Invalid orgId", nodeId, orgId, carrierServiceId, serviceOption);
