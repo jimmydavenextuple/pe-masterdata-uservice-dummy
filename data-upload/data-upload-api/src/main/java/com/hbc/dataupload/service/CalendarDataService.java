@@ -64,7 +64,10 @@ public class CalendarDataService {
     calendarDto.setIsFridayWorking(calendarResponse.getIsFridayWorking());
     calendarDto.setIsSaturdayWorking(calendarResponse.getIsSaturdayWorking());
     calendarDto.setIsSundayWorking(calendarResponse.getIsSundayWorking());
-    calendarDto.setExceptionDays(calendarResponse.getExceptionDays());
+    calendarDto.setExceptionDays(
+        calendarResponse.getExceptionDays() == null
+            ? new ArrayList<>()
+            : calendarResponse.getExceptionDays());
     calendarDto.setIsActive(
         !nodeCalendarResponseList.isEmpty() || !carrierCalendarResponseList.isEmpty());
 
