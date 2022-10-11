@@ -10,6 +10,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
 import com.hbc.dataupload.domain.dto.ProcessingTimeBufferDto;
 import com.hbc.dataupload.service.ProcessingTimeBufferService;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,9 @@ public class ProcessingTimeBufferController {
 
   @GetMapping("/orgId/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<ProcessingTimeBufferDto>>>
-      getProcessingTimeBufferDetails(@PathVariable String orgId, PageParams pageParams) {
+      getProcessingTimeBufferDetails(
+          @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+          PageParams pageParams) {
     PagePayload<ProcessingTimeBufferDto> processingTimeBufferDtoPagePayload =
         processingTimeBufferService.getProcessingTimeBuffers(
             orgId,

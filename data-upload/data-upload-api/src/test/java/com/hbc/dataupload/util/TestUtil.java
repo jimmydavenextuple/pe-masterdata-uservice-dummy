@@ -1043,11 +1043,14 @@ public class TestUtil {
     return processingTimeBuffer;
   }
 
-  public BaseResponse<List<NodeCarrierResponse>> getBaseResponseOfNodeCarrierListResponseWithPartialNullValues() {
+  public BaseResponse<List<NodeCarrierResponse>>
+      getBaseResponseOfNodeCarrierListResponseWithPartialNullValues() {
     return BaseResponse.builder()
         .message("Node Carrier List fetched successfully")
         .success(true)
-        .payload(Arrays.asList(getNodeCarrierResponse2(SERVICE_OPTION, 5.5, null, getBufferDate(2023, 11, 20))))
+        .payload(
+            Arrays.asList(
+                getNodeCarrierResponse2(SERVICE_OPTION, 5.5, null, getBufferDate(2023, 11, 20))))
         .build();
   }
 }
