@@ -99,4 +99,26 @@ class ProcessingTimeBufferServiceTest {
     verify(nodeFeign, times(1)).getNodeList(any(), any(), any(), any(), any());
     verify(nodeCarrierFeign, times(2)).getNodeCarrierList(any(), any());
   }
+
+  @Test
+  void getProcessingTimeBuffersPartialNullValuesTest() {
+    when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeListPaginationBaseResponse());
+    when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
+        .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponseWithPartialNullValues());
+
+    PagePayload<ProcessingTimeBufferDto> response =
+        processingTimeBufferService.getProcessingTimeBuffers(
+            TestUtil.ORG_ID, 1, 1, "nodeId", "ASC");
+
+    assertEquals(1, response.getData().get((0)).getServiceOptions().size());
+    assertEquals(1, response.getData().get((0)).getProcessingTimeBuffers().size());
+    assertNotNull(response.getData().get((0)).getProcessingTimeBuffers().get(0).getBufferHours());
+    assertNull(response.getData().get((0)).getProcessingTimeBuffers().get(0).getBufferStartDate());
+    assertNotNull(response.getData().get((0)).getProcessingTimeBuffers().get(0).getBufferEndDate());
+    assertNull(response.getData().get((0)).getProcessingTimeBuffers().get(0).getStatus());
+
+    verify(nodeFeign, times(1)).getNodeList(any(), any(), any(), any(), any());
+    verify(nodeCarrierFeign, times(2)).getNodeCarrierList(any(), any());
+  }
 }

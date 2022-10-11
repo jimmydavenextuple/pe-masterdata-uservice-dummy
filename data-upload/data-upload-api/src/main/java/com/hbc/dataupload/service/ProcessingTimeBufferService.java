@@ -71,7 +71,7 @@ public class ProcessingTimeBufferService {
 
     nodeCarrierResponses.forEach(
         nodeCarrierResponse -> {
-          ProcessingTimeBuffer processingTimeBuffer = new ProcessingTimeBuffer();
+          var processingTimeBuffer = new ProcessingTimeBuffer();
           processingTimeBuffer.setServiceOption(nodeCarrierResponse.getServiceOption());
           processingTimeBuffer.setBufferHours(nodeCarrierResponse.getBufferHours());
           processingTimeBuffer.setBufferStartDate(nodeCarrierResponse.getBufferStartDate());
