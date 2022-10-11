@@ -1,6 +1,7 @@
-package com.hbc.node.domain.dto;
+package com.hbc.dataupload.domain.dto;
 
 import java.io.Serializable;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NodeDto implements Serializable {
-  private static final long serialVersionUID = 1240891589171888066L;
+public class NodeListDto implements Serializable {
+
+  private static final long serialVersionUID = -9030089295880579769L;
 
   private String nodeId;
   private String orgId;
@@ -24,4 +26,8 @@ public class NodeDto implements Serializable {
   private String longitude;
   private String timezone;
   private Boolean isActive;
+  private NodeWorkingCalendarDto nodeWorkingCalendar;
+  private List<String> carrierServices;
+  private List<String> serviceOptions;
+  private List<PickupTimeDto> pickupTime;
 }

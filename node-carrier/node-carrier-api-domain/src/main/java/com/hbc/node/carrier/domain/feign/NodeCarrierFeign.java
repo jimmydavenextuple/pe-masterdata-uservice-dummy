@@ -92,4 +92,8 @@ public interface NodeCarrierFeign {
   @GetMapping("/node/carrier/{orgId}/{nodeId}/carrier-service")
   BaseResponse<List<String>> getUniqueNodeCarrierServiceList(
       @NotBlank @PathVariable String orgId, @NotBlank @PathVariable String nodeId);
+
+  @GetMapping("/node/carrier/v1/{nodeId}/{orgId}")
+  BaseResponse<List<NodeCarrierResponse>> getNodeCarrierListWithLastPickUpTimeDetails(
+      @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId);
 }

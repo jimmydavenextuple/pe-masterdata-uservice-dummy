@@ -31,4 +31,6 @@ public interface NodeCarrierRepository extends JpaRepository<NodeCarrierEntity, 
           "SELECT DISTINCT carrier_service_id FROM node_carrier WHERE org_id = ?1 AND node_id = ?2",
       nativeQuery = true)
   List<String> findUniqueNodeCarrierServiceListByOrgIdAndNodeId(String orgId, String nodeId);
+
+  List<NodeCarrierEntity> findByNodeIdAndOrgId(String nodeId, String orgId);
 }

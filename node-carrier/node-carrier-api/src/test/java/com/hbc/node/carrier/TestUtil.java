@@ -21,7 +21,7 @@ public class TestUtil {
 
   public static final String NODE_ID = "node-1";
   public static final String ORG_ID = "org-1";
-  private static final String CARRIER_SERVICE_ID_2 = "CarrierServiceId2";
+  public static final String CARRIER_SERVICE_ID_2 = "CarrierServiceId2";
   private static final String NODE_ID_2 = "node-2";
   public static String CARRIER_SERVICE_ID = "carrier-service-id-1";
   public static final String SERVICE_OPTION = "serviceOption-1";
@@ -358,5 +358,48 @@ public class TestUtil {
                 .serviceOptions(SERVICE_OPTIONS)
                 .build());
     return BaseResponse.builder().payload(carrierResponse).build();
+  }
+
+  public List<NodeCarrierResponse> getNodeCarrierList() {
+    NodeCarrierResponse nodeCarrierResponse1 =
+        NodeCarrierResponse.builder()
+            .nodeId(NODE_ID)
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .serviceOption(SERVICE_OPTION)
+            .processingTime(2.0)
+            .lastPickupTime("5:00")
+            .build();
+
+    NodeCarrierResponse nodeCarrierResponse2 =
+        NodeCarrierResponse.builder()
+            .nodeId(NODE_ID)
+            .orgId(ORG_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID_2)
+            .serviceOption(SERVICE_OPTION_2)
+            .processingTime(10.0)
+            .lastPickupTime("11:00")
+            .build();
+
+    return Arrays.asList(nodeCarrierResponse1, nodeCarrierResponse2);
+  }
+
+  public List<NodeCarrierEntity> getNodeCarrierEntityListWithPickupDetails(
+      String carrierServiceId) {
+    NodeCarrierEntity nodeCarrierEntity1 = new NodeCarrierEntity();
+    nodeCarrierEntity1.setNodeId(NODE_ID);
+    nodeCarrierEntity1.setOrgId(ORG_ID);
+    nodeCarrierEntity1.setCarrierServiceId(carrierServiceId);
+    nodeCarrierEntity1.setServiceOption(SERVICE_OPTION);
+    nodeCarrierEntity1.setLastPickupTime("5:00");
+
+    NodeCarrierEntity nodeCarrierEntity2 = new NodeCarrierEntity();
+    nodeCarrierEntity2.setNodeId(NODE_ID);
+    nodeCarrierEntity2.setOrgId(ORG_ID);
+    nodeCarrierEntity2.setCarrierServiceId(CARRIER_SERVICE_ID_2);
+    nodeCarrierEntity2.setServiceOption(SERVICE_OPTION_2);
+    nodeCarrierEntity2.setLastPickupTime("11:00");
+
+    return Arrays.asList(nodeCarrierEntity1, nodeCarrierEntity2);
   }
 }
