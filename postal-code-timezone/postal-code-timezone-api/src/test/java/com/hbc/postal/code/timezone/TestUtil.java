@@ -1,6 +1,6 @@
 package com.hbc.postal.code.timezone;
 
-import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
+import com.hbc.postal.code.timezone.api.domain.projection.MarketRegionProjection;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
@@ -73,9 +73,9 @@ public class TestUtil {
         .build();
   }
 
-  public List<MarketRegionDto> getMarketRegion() {
+  public List<MarketRegionProjection> getMarketRegion() {
     return List.of(
-        new MarketRegionDto() {
+        new MarketRegionProjection() {
           @Override
           public String getCountry() {
 
@@ -98,8 +98,8 @@ public class TestUtil {
           }
 
           @Override
-          public Date getUploadDate() {
-            return new Date();
+          public String getUploadDate() {
+            return new Date().toString();
           }
 
           @Override

@@ -1,6 +1,6 @@
 package com.hbc.postal.code.timezone.domain.repository;
 
-import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
+import com.hbc.postal.code.timezone.api.domain.projection.MarketRegionProjection;
 import com.hbc.postal.code.timezone.domain.entity.PostalCodeTimezoneEntity;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,7 +30,7 @@ public interface PostalCodeTimezoneRepository
               + " CAST( MAX( v.last_modified_date ) AS Date ) AS uploadDate FROM postal_code_timezone v WHERE v.org_id = ?1 "
               + "GROUP BY v.country ",
       nativeQuery = true)
-  List<MarketRegionDto> findRecordsByOrgId(String orgId);
+  List<MarketRegionProjection> findRecordsByOrgId(String orgId);
 
   @Query(
       value =

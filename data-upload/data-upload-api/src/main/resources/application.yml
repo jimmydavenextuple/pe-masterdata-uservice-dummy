@@ -32,6 +32,9 @@ page-properties:
   pageSize: 15
   sortBy: created_date
   sortOrder: ASC
+node-carrier-service-page-properties:
+  sortBy: nodeId
+  sortOrder: ASC
 management:
   endpoints:
     web:
