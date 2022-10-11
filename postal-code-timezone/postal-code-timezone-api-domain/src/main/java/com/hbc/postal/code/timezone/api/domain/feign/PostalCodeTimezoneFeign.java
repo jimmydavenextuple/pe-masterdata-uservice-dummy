@@ -1,7 +1,7 @@
 package com.hbc.postal.code.timezone.api.domain.feign;
 
 import com.hbc.common.response.BaseResponse;
-import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
@@ -45,7 +45,7 @@ public interface PostalCodeTimezoneFeign {
       @PathVariable String orgId, @RequestParam String state);
 
   @GetMapping("/postalCodeTimezone/market-regions/org/{orgId}")
-  BaseResponse<List<MarketRegionDto>> getMarketRegionsForOrgId(@PathVariable String orgId);
+  BaseResponse<List<MarketRegionInfo>> getMarketRegionsForOrgId(@PathVariable String orgId);
 
   @GetMapping("/postalCodeTimezone/market-region/org/{orgId}")
   BaseResponse<List<PostalCodeTimezoneDto>> getPostalCodeTimeZoneForOrgIdAndCountry(

@@ -56,15 +56,20 @@ import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.domain.dto.CalendarDto;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
+import com.hbc.dataupload.domain.dto.NodeCarrierServiceResponse;
+import com.hbc.dataupload.domain.dto.NodeListDto;
 import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
+import com.hbc.dataupload.domain.dto.NodeWorkingCalendarDto;
+import com.hbc.dataupload.domain.dto.PickupTimeDto;
 import com.hbc.dataupload.domain.dto.ProcessingTimeBufferDto;
 import com.hbc.dataupload.domain.pojo.CarrierServiceCalendars;
+import com.hbc.dataupload.domain.pojo.PickUpCalendar;
 import com.hbc.dataupload.domain.pojo.ProcessingTimeBuffer;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.outbound.NodeResponse;
-import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
@@ -884,40 +889,108 @@ public class TestUtil {
     return calendarDto;
   }
 
-  public BaseResponse<List<MarketRegionDto>> getMarketRegionDto() {
-    MarketRegionDto marketRegionDto =
-        new MarketRegionDto() {
-          @Override
-          public String getCountry() {
-            return COUNTRY;
-          }
-
-          @Override
-          public long getNoOfStates() {
-            return 0;
-          }
-
-          @Override
-          public long getNoOfCities() {
-            return 0;
-          }
-
-          @Override
-          public long getNoOfPostalCodePrefixes() {
-            return 0;
-          }
-
-          @Override
-          public Date getUploadDate() {
-            return null;
-          }
-
-          @Override
-          public void setUploadDate(String v) {}
-        };
+  public BaseResponse<List<MarketRegionInfo>> getMarketRegionInfo() {
+    MarketRegionInfo marketRegionInfo = new MarketRegionInfo();
+    marketRegionInfo.setCountry("CA");
+    marketRegionInfo.setUploadDate(new Date().toString());
     return BaseResponse.builder()
         .message("Market Region fetched successfully")
-        .payload(List.of(marketRegionDto))
+        .payload(List.of(marketRegionInfo))
+        .build();
+  }
+
+  public PickUpCalendar getPickUpCalendar() {
+    PickUpCalendar pickUpCalendar = new PickUpCalendar();
+    pickUpCalendar.setCalendarId(CALENDAR_ID);
+    pickUpCalendar.setCarrierServiceId(CARRIER_SERVICE_ID);
+    pickUpCalendar.setNodeId(NODE_ID);
+
+    return pickUpCalendar;
+  }
+
+  public NodeCarrierServiceResponse getNodeCarrierServiceResponse() {
+    NodeCarrierServiceResponse nodeCarrierServiceResponse = new NodeCarrierServiceResponse();
+    nodeCarrierServiceResponse.setNodeId(NODE_ID);
+    nodeCarrierServiceResponse.setOrgId(ORG_ID);
+    nodeCarrierServiceResponse.setStreet(STREET);
+    nodeCarrierServiceResponse.setCity(CITY);
+    nodeCarrierServiceResponse.setProvince(PROVINCE);
+    nodeCarrierServiceResponse.setPostalCode(POSTAL_CODE);
+    nodeCarrierServiceResponse.setCarrierServices(List.of(CARRIER_SERVICE_ID));
+    nodeCarrierServiceResponse.setPickupCalendar(List.of(getPickUpCalendar()));
+
+    return nodeCarrierServiceResponse;
+  }
+
+  public PagePayload<NodeCarrierServiceResponse> getNodeCarrierServicePagePayload(Integer pageNo) {
+    PagePayload<NodeCarrierServiceResponse> nodeCarrierServicePagePayload = new PagePayload<>();
+
+    NodeCarrierServiceResponse nodeCarrierServiceResponse = getNodeCarrierServiceResponse();
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(4);
+    nodeCarrierServicePagePayload.setPagination(pagination);
+    nodeCarrierServicePagePayload.setData(List.of(nodeCarrierServiceResponse));
+
+    return nodeCarrierServicePagePayload;
+  }
+
+  public NodeCarrierServiceCalendarResponse getNodeCarrierServiceCalendarResponse() {
+    NodeCarrierServiceCalendarResponse nodeCarrierServiceCalendarResponse =
+        new NodeCarrierServiceCalendarResponse();
+    nodeCarrierServiceCalendarResponse.setNodeId(NODE_ID);
+    nodeCarrierServiceCalendarResponse.setCarrierServiceId(CARRIER_SERVICE_ID);
+    nodeCarrierServiceCalendarResponse.setCalendarId(CALENDAR_ID);
+    nodeCarrierServiceCalendarResponse.setOrgId(ORG_ID);
+    nodeCarrierServiceCalendarResponse.setEffectiveDate(EFFECTIVE_DATE);
+    nodeCarrierServiceCalendarResponse.setDescription(DESCRIPTION);
+
+    return nodeCarrierServiceCalendarResponse;
+  }
+
+  public PagePayload<NodeListDto> getNodeListPagePayload(Integer pageNo) {
+    PagePayload<NodeListDto> nodeListDtoPagePayload = new PagePayload<>();
+
+    NodeListDto nodeListDto = getNodeListDto(NODE_ID);
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(4);
+    nodeListDtoPagePayload.setPagination(pagination);
+    nodeListDtoPagePayload.setData(Arrays.asList(nodeListDto));
+
+    return nodeListDtoPagePayload;
+  }
+
+  private NodeListDto getNodeListDto(String nodeId) {
+    NodeListDto nodeListDto = new NodeListDto();
+    nodeListDto.setNodeId(nodeId);
+    nodeListDto.setOrgId(ORG_ID);
+    nodeListDto.setIsActive(Boolean.TRUE);
+    nodeListDto.setCarrierServices(List.of(CARRIER_SERVICE_ID));
+    nodeListDto.setServiceOptions(List.of(SERVICE_OPTION));
+    PickupTimeDto pickupTimeDto = new PickupTimeDto();
+    pickupTimeDto.setNodeId(nodeId);
+    pickupTimeDto.setCarrierServiceId(CARRIER_SERVICE_ID);
+    pickupTimeDto.setPickupTime(LAST_PICK_UP_TIME);
+    nodeListDto.setPickupTime(List.of(pickupTimeDto));
+    NodeWorkingCalendarDto nodeWorkingCalendarDto = new NodeWorkingCalendarDto();
+    nodeWorkingCalendarDto.setCalendarId(CALENDAR_ID);
+    nodeWorkingCalendarDto.setEffectiveDate(EFFECTIVE_DATE);
+    nodeListDto.setNodeWorkingCalendar(nodeWorkingCalendarDto);
+    return nodeListDto;
+  }
+
+  public BaseResponse<List<NodeCalendarResponse>> getBaseResponseOfNodeCalendarList() {
+    return BaseResponse.builder()
+        .message("Node Calendar details added successfully")
+        .success(true)
+        .payload(List.of(getNodeCalendarResponse()))
         .build();
   }
 

@@ -1,6 +1,5 @@
 package com.hbc.dataupload.service;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -24,7 +23,7 @@ class MarketRegionServiceTest {
   @Test
   void getMarketRegions_Test() {
     when(postalCodeTimezoneFeign.getMarketRegionsForOrgId(anyString()))
-        .thenReturn(testUtil.getMarketRegionDto());
+        .thenReturn(testUtil.getMarketRegionInfo());
 
     Assertions.assertDoesNotThrow(() -> marketRegionService.getMarketRegions(TestUtil.ORG_ID));
   }

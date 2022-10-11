@@ -1,8 +1,6 @@
-package com.hbc.postal.code.timezone.api.domain.dto;
+package com.hbc.postal.code.timezone.api.domain.projection;
 
-import java.util.Date;
-
-public interface MarketRegionDto {
+public interface MarketRegionProjection {
 
   String getCountry();
 
@@ -12,7 +10,7 @@ public interface MarketRegionDto {
 
   long getNoOfPostalCodePrefixes();
 
-  Date getUploadDate();
+  String getUploadDate();
 
   void setUploadDate(String v);
 }

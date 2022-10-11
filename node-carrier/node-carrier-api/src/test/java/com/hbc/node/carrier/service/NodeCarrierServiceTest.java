@@ -3,7 +3,6 @@ package com.hbc.node.carrier.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -40,6 +39,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.CollectionUtils;
 
 @ExtendWith(MockitoExtension.class)
 class NodeCarrierServiceTest {
@@ -97,8 +97,7 @@ class NodeCarrierServiceTest {
 
   @Test
   @DisplayName("When carrierServiceId passed is not valid")
-  void createNodeCarrierTestWithInvalidCarrierServiceId_Test1()
-      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+  void createNodeCarrierTestWithInvalidCarrierServiceId_Test1() {
     Set<String> serviceOptions = Set.of("SDND", "EXPRESS", "STANDARD");
     ReflectionTestUtils.setField(nodeCarrierService, "serviceOptions", serviceOptions);
     NodeCarrierRequest nodeCarrierRequest = testUtil.getNodeCarrierRequest();
@@ -537,7 +536,7 @@ class NodeCarrierServiceTest {
   }
 
   @Test
-  void getNodeCarrierSelection() throws NodeCarrierDomainException {
+  void getNodeCarrierSelection() {
     when(nodeCarrierDomain.findNodeCarrierByOrgIdAndServiceOptionAndDestinationGeoZone(
             anyString(), anyString(), anyString()))
         .thenReturn(List.of(testUtil.getNodeCarrierSelectionEntity()));
@@ -673,5 +672,56 @@ class NodeCarrierServiceTest {
 
     verify(nodeCarrierDomain, times(0)).findNodeCarrierDetails(any(), any(), any(), any());
     verify(nodeCarrierDomain, times(0)).deleteNodeCarrierEntity(any());
+  }
+
+  @Test
+  void getUniqueCarrierServiceIdList() throws NodeCarrierDomainException {
+    when(nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(
+            anyString(), anyString()))
+        .thenReturn(List.of(TestUtil.CARRIER_SERVICE_ID));
+
+    List<String> uniqueCarrierServiceIdList =
+        nodeCarrierService.getUniqueNodeCarrierServiceList(TestUtil.NODE_ID, TestUtil.ORG_ID);
+    Assertions.assertFalse(CollectionUtils.isEmpty(uniqueCarrierServiceIdList));
+    verify(nodeCarrierDomain, times(1))
+        .fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString());
+  }
+
+  @Test
+  void getNodeCarrierListForNodeIdAndOrgIdTest1() throws NodeCarrierDomainException {
+    when(nodeCarrierDomain.findNodeCarrierDetailsByNodeIdAndOrgId(anyString(), anyString()))
+        .thenReturn(
+            testUtil.getNodeCarrierEntityListWithPickupDetails(TestUtil.CARRIER_SERVICE_ID));
+
+    List<NodeCarrierResponse> nodeCarrierResponseList =
+        nodeCarrierService.getNodeCarrierListForNodeIdAndOrgId(TestUtil.NODE_ID, TestUtil.ORG_ID);
+
+    assertEquals(
+        testUtil.getNodeCarrierEntityListWithPickupDetails(TestUtil.CARRIER_SERVICE_ID).size(),
+        nodeCarrierResponseList.size());
+    assertEquals(TestUtil.NODE_ID, nodeCarrierResponseList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, nodeCarrierResponseList.get(0).getOrgId());
+    assertEquals(TestUtil.CARRIER_SERVICE_ID, nodeCarrierResponseList.get(0).getCarrierServiceId());
+
+    verify(nodeCarrierDomain, times(1))
+        .findNodeCarrierDetailsByNodeIdAndOrgId(anyString(), anyString());
+  }
+
+  @Test
+  void getNodeCarrierListForNodeIdAndOrgIdTest2() throws NodeCarrierDomainException {
+    when(nodeCarrierDomain.findNodeCarrierDetailsByNodeIdAndOrgId(anyString(), anyString()))
+        .thenReturn(testUtil.getNodeCarrierEntityListWithPickupDetails(""));
+
+    List<NodeCarrierResponse> nodeCarrierResponseList =
+        nodeCarrierService.getNodeCarrierListForNodeIdAndOrgId(TestUtil.NODE_ID, TestUtil.ORG_ID);
+
+    assertEquals(1, nodeCarrierResponseList.size());
+    assertEquals(TestUtil.NODE_ID, nodeCarrierResponseList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, nodeCarrierResponseList.get(0).getOrgId());
+    assertEquals(
+        TestUtil.CARRIER_SERVICE_ID_2, nodeCarrierResponseList.get(0).getCarrierServiceId());
+
+    verify(nodeCarrierDomain, times(1))
+        .findNodeCarrierDetailsByNodeIdAndOrgId(anyString(), anyString());
   }
 }
