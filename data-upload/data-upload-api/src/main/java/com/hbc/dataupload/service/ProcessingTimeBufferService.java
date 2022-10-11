@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ProcessingTimeBufferService {
 
+  private static final String ACTIVE = "Active";
+  private static final String INACTIVE = "Inactive";
   private final NodeFeign nodeFeign;
   private final NodeCarrierFeign nodeCarrierFeign;
 
@@ -83,9 +85,11 @@ public class ProcessingTimeBufferService {
 
   private String computeStatus(NodeCarrierResponse nodeCarrierResponse) {
     var currentDate = new Date();
-    if (nodeCarrierResponse.getBufferHours() != null) {
-      if (currentDate.compareTo(nodeCarrierResponse.getBufferEndDate()) <= 0) return "Active";
-      else return "InActive";
+    if (nodeCarrierResponse.getBufferHours() != null
+        && nodeCarrierResponse.getBufferStartDate() != null
+        && nodeCarrierResponse.getBufferEndDate() != null) {
+      if (currentDate.compareTo(nodeCarrierResponse.getBufferEndDate()) <= 0) return ACTIVE;
+      else return INACTIVE;
     }
     return null;
   }

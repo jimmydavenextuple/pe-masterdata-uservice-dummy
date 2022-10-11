@@ -57,7 +57,9 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.domain.dto.CalendarDto;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
 import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
+import com.hbc.dataupload.domain.dto.ProcessingTimeBufferDto;
 import com.hbc.dataupload.domain.pojo.CarrierServiceCalendars;
+import com.hbc.dataupload.domain.pojo.ProcessingTimeBuffer;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.domain.dto.NodeDto;
@@ -70,6 +72,7 @@ import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -510,7 +513,7 @@ public class TestUtil {
 
   public BaseResponse<PagePayload<NodeDto>> getNodeListPaginationBaseResponse() {
     return BaseResponse.builder()
-        .message("Carrier Service List fetched successfully")
+        .message("Node Service List fetched successfully")
         .payload(getNodeListPaginationResponse())
         .build();
   }
@@ -549,20 +552,34 @@ public class TestUtil {
         .success(true)
         .payload(
             Arrays.asList(
-                getNodeCarrierResponse2(CARRIER_SERVICE_ID_2, SERVICE_OPTION),
-                getNodeCarrierResponse2(CARRIER_SERVICE_ID_2, SERVICE_OPTION_2)))
+                getNodeCarrierResponse2(
+                    SERVICE_OPTION, 2.5, getBufferDate(2022, 10, 23), getBufferDate(2023, 11, 20)),
+                getNodeCarrierResponse2(
+                    SERVICE_OPTION_2,
+                    4.5,
+                    getBufferDate(2021, 10, 23),
+                    getBufferDate(2021, 11, 20))))
         .build();
   }
 
+  public Date getBufferDate(int year, int month, int date) {
+    Calendar bufferDate = Calendar.getInstance();
+    bufferDate.set(year, month, date);
+    return bufferDate.getTime();
+  }
+
   private NodeCarrierResponse getNodeCarrierResponse2(
-      String carrierServiceId, String serviceOption) {
+      String serviceOption, Double bufferHours, Date bufferStartDate, Date bufferEndDate) {
     return NodeCarrierResponse.builder()
         .nodeId(NODE_ID)
         .orgId(ORG_ID)
-        .carrierServiceId(carrierServiceId)
+        .carrierServiceId("")
         .serviceOption(serviceOption)
         .processingTime(PROCESSING_TIME)
         .lastPickupTime(LAST_PICK_UP_TIME)
+        .bufferHours(bufferHours)
+        .bufferStartDate(bufferStartDate)
+        .bufferEndDate(bufferEndDate)
         .build();
   }
 
@@ -868,40 +885,88 @@ public class TestUtil {
   }
 
   public BaseResponse<List<MarketRegionDto>> getMarketRegionDto() {
-    MarketRegionDto marketRegionDto = new MarketRegionDto() {
-      @Override
-      public String getCountry() {
-        return COUNTRY;
-      }
+    MarketRegionDto marketRegionDto =
+        new MarketRegionDto() {
+          @Override
+          public String getCountry() {
+            return COUNTRY;
+          }
 
-      @Override
-      public long getNoOfStates() {
-        return 0;
-      }
+          @Override
+          public long getNoOfStates() {
+            return 0;
+          }
 
-      @Override
-      public long getNoOfCities() {
-        return 0;
-      }
+          @Override
+          public long getNoOfCities() {
+            return 0;
+          }
 
-      @Override
-      public long getNoOfPostalCodePrefixes() {
-        return 0;
-      }
+          @Override
+          public long getNoOfPostalCodePrefixes() {
+            return 0;
+          }
 
-      @Override
-      public Date getUploadDate() {
-        return null;
-      }
+          @Override
+          public Date getUploadDate() {
+            return null;
+          }
 
-      @Override
-      public void setUploadDate(String v) {
-
-      }
-    };
+          @Override
+          public void setUploadDate(String v) {}
+        };
     return BaseResponse.builder()
         .message("Market Region fetched successfully")
         .payload(List.of(marketRegionDto))
         .build();
+  }
+
+  public BaseResponse<List<NodeCarrierResponse>>
+      getBaseResponseOfNodeCarrierListResponseWithNullValues() {
+    return BaseResponse.builder()
+        .message("Node Carrier List fetched successfully")
+        .success(true)
+        .payload(Arrays.asList(getNodeCarrierResponse2(SERVICE_OPTION, null, null, null)))
+        .build();
+  }
+
+  public PagePayload<ProcessingTimeBufferDto> getProcessingTimeBufferPagePayload(int pageNo) {
+    PagePayload<ProcessingTimeBufferDto> processingTimeBufferDtoPagePayload = new PagePayload<>();
+
+    ProcessingTimeBufferDto processingTimeBufferDto1 = getProcessingTimeBufferDto(NODE_ID);
+    ProcessingTimeBufferDto processingTimeBufferDto2 = getProcessingTimeBufferDto(NODE_ID_2);
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(2);
+    processingTimeBufferDtoPagePayload.setPagination(pagination);
+    processingTimeBufferDtoPagePayload.setData(
+        Arrays.asList(processingTimeBufferDto1, processingTimeBufferDto2));
+
+    return processingTimeBufferDtoPagePayload;
+  }
+
+  private ProcessingTimeBufferDto getProcessingTimeBufferDto(String nodeId) {
+    return ProcessingTimeBufferDto.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .nodeType(NODE_TYPE)
+        .serviceOptions(List.of(SERVICE_OPTION, SERVICE_OPTION_2))
+        .processingTimeBuffers(
+            List.of(
+                getProcessingTimeBuffer(SERVICE_OPTION), getProcessingTimeBuffer(SERVICE_OPTION_2)))
+        .build();
+  }
+
+  private ProcessingTimeBuffer getProcessingTimeBuffer(String serviceOption) {
+    ProcessingTimeBuffer processingTimeBuffer = new ProcessingTimeBuffer();
+    processingTimeBuffer.setServiceOption(serviceOption);
+    processingTimeBuffer.setBufferHours(2.5);
+    processingTimeBuffer.setBufferStartDate(getBufferDate(2022, 10, 10));
+    processingTimeBuffer.setBufferEndDate(getBufferDate(2022, 11, 10));
+    processingTimeBuffer.setStatus("Active");
+    return processingTimeBuffer;
   }
 }
