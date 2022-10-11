@@ -56,8 +56,10 @@ import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.domain.dto.CalendarDto;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
+import com.hbc.dataupload.domain.dto.NodeCarrierServiceResponse;
 import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
 import com.hbc.dataupload.domain.pojo.CarrierServiceCalendars;
+import com.hbc.dataupload.domain.pojo.PickUpCalendar;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.domain.dto.NodeDto;
@@ -875,5 +877,57 @@ public class TestUtil {
         .message("Market Region fetched successfully")
         .payload(List.of(marketRegionInfo))
         .build();
+  }
+
+  public PickUpCalendar getPickUpCalendar() {
+    PickUpCalendar pickUpCalendar = new PickUpCalendar();
+    pickUpCalendar.setCalendarId(CALENDAR_ID);
+    pickUpCalendar.setCarrierServiceId(CARRIER_SERVICE_ID);
+    pickUpCalendar.setNodeId(NODE_ID);
+
+    return pickUpCalendar;
+  }
+
+  public NodeCarrierServiceResponse getNodeCarrierServiceResponse() {
+    NodeCarrierServiceResponse nodeCarrierServiceResponse = new NodeCarrierServiceResponse();
+    nodeCarrierServiceResponse.setNodeId(NODE_ID);
+    nodeCarrierServiceResponse.setOrgId(ORG_ID);
+    nodeCarrierServiceResponse.setStreet(STREET);
+    nodeCarrierServiceResponse.setCity(CITY);
+    nodeCarrierServiceResponse.setProvince(PROVINCE);
+    nodeCarrierServiceResponse.setPostalCode(POSTAL_CODE);
+    nodeCarrierServiceResponse.setCarrierServices(List.of(CARRIER_SERVICE_ID));
+    nodeCarrierServiceResponse.setPickupCalendar(List.of(getPickUpCalendar()));
+
+    return nodeCarrierServiceResponse;
+  }
+
+  public PagePayload<NodeCarrierServiceResponse> getNodeCarrierServicePagePayload(Integer pageNo) {
+    PagePayload<NodeCarrierServiceResponse> nodeCarrierServicePagePayload = new PagePayload<>();
+
+    NodeCarrierServiceResponse nodeCarrierServiceResponse = getNodeCarrierServiceResponse();
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(4);
+    nodeCarrierServicePagePayload.setPagination(pagination);
+    nodeCarrierServicePagePayload.setData(List.of(nodeCarrierServiceResponse));
+
+    return nodeCarrierServicePagePayload;
+  }
+
+  public NodeCarrierServiceCalendarResponse getNodeCarrierServiceCalendarResponse() {
+    NodeCarrierServiceCalendarResponse nodeCarrierServiceCalendarResponse =
+        new NodeCarrierServiceCalendarResponse();
+    nodeCarrierServiceCalendarResponse.setNodeId(NODE_ID);
+    nodeCarrierServiceCalendarResponse.setCarrierServiceId(CARRIER_SERVICE_ID);
+    nodeCarrierServiceCalendarResponse.setCalendarId(CALENDAR_ID);
+    nodeCarrierServiceCalendarResponse.setOrgId(ORG_ID);
+    nodeCarrierServiceCalendarResponse.setEffectiveDate(EFFECTIVE_DATE);
+    nodeCarrierServiceCalendarResponse.setDescription(DESCRIPTION);
+
+    return nodeCarrierServiceCalendarResponse;
   }
 }
