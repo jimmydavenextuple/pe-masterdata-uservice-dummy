@@ -6,7 +6,8 @@ import com.hbc.common.enums.ExceptionCodeMapping;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.error.FieldError;
-import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
+import com.hbc.postal.code.timezone.api.domain.projection.MarketRegionProjection;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
@@ -210,10 +211,11 @@ public class PostalCodeTimezoneService {
   }
 
   @ReaderDS
-  public List<MarketRegionDto> getMarketRegionForOrgId(String orgId) throws PromiseEngineException {
+  public List<MarketRegionInfo> getMarketRegionForOrgId(String orgId)
+      throws PromiseEngineException {
     logger.debug("-- Inside get market region for orgId : {}", orgId);
 
-    List<MarketRegionDto> records = postalCodeTimezoneDomain.getRecordsForOrgId(orgId);
+    List<MarketRegionProjection> records = postalCodeTimezoneDomain.getRecordsForOrgId(orgId);
 
     if (CollectionUtils.isNullOrEmpty(records)) {
       throw new PromiseEngineException(
@@ -221,6 +223,6 @@ public class PostalCodeTimezoneService {
           ExceptionCodeMapping.SERVICE_FIND_FAILED,
           "No Market Regions Found");
     }
-    return records;
+    return INSTANCE.convertToMarketRegionInfo(records);
   }
 }

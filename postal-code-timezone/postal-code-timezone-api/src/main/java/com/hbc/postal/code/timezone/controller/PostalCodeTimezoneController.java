@@ -3,7 +3,7 @@ package com.hbc.postal.code.timezone.controller;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
-import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
@@ -161,7 +161,7 @@ public class PostalCodeTimezoneController {
   }
 
   @GetMapping("/market-regions/org/{orgId}")
-  public ResponseEntity<BaseResponse<List<MarketRegionDto>>> getMarketRegionsForOrgId(
+  public ResponseEntity<BaseResponse<List<MarketRegionInfo>>> getMarketRegionsForOrgId(
       @PathVariable String orgId) throws PromiseEngineException {
     logger.debug("Processing get market regions for orgId");
     return ResponseEntity.ok(

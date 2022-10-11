@@ -11,6 +11,7 @@ import com.hbc.item.service.ItemService;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,7 +120,7 @@ public class ItemController {
   @GetMapping("/{orgId}")
   public List<ItemResponse> getItemList(
       @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
-      @NotBlank @RequestParam List<String> itemList)
+      @NotEmpty @RequestParam List<String> itemList)
       throws CommonServiceException, ItemBatchingDomainException {
     logger.debug("Processing get item details");
     try {

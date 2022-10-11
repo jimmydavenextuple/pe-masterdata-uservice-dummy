@@ -1,10 +1,10 @@
 package com.hbc.postal.code.timezone.service;
 
+import static com.hbc.postal.code.timezone.TestUtil.COUNTRY;
 import static com.hbc.postal.code.timezone.TestUtil.ORG_ID;
 import static com.hbc.postal.code.timezone.TestUtil.POSTAL_CODE_PREFIX;
 import static com.hbc.postal.code.timezone.TestUtil.POSTAL_CODE_PREFIX_2;
 import static com.hbc.postal.code.timezone.TestUtil.STATE;
-import static com.hbc.postal.code.timezone.TestUtil.COUNTRY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -16,7 +16,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.postal.code.timezone.TestUtil;
-import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionDto;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
@@ -184,7 +184,7 @@ class PostalCodeTimezoneServiceTest {
     when(postalCodeTimezoneDomain.getRecordsForOrgId(anyString()))
         .thenReturn(testUtil.getMarketRegion());
 
-    List<MarketRegionDto> marketRegionDtos =
+    List<MarketRegionInfo> marketRegionDtos =
         postalCodeTimezoneService.getMarketRegionForOrgId(ORG_ID);
 
     assertEquals(1, marketRegionDtos.size());
