@@ -161,4 +161,20 @@ public class NodeCarrierDomain {
           nodeCarrierSelectionEntity.getDestinationGeozone());
     }
   }
+
+  public List<String> fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(String orgId, String nodeId)
+      throws NodeCarrierDomainException {
+
+    try {
+      return nodeCarrierRepository.findUniqueNodeCarrierServiceListByOrgIdAndNodeId(orgId, nodeId);
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e),
+          "Unable to fetch list of unique carrier service ids for given orgId: {} and nodeId: {}",
+          orgId,
+          nodeId);
+      throw new NodeCarrierDomainException(
+          "Error while fetching list of unique carrier service ids", nodeId, orgId, null, null);
+    }
+  }
 }

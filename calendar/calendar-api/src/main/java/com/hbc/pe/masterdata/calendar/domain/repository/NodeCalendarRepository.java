@@ -21,4 +21,6 @@ public interface NodeCalendarRepository extends JpaRepository<NodeCalendarEntity
 
   @Query(value = "SELECT * FROM node_calendars LIMIT ?1", nativeQuery = true)
   List<NodeCalendarEntity> findAllNodeCalendarByLimit(Integer limit);
+
+  List<NodeCalendarEntity> findNodeCalendarByCalendarIdAndOrgId(String calendarId, String orgId);
 }

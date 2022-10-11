@@ -122,4 +122,38 @@ class NodeCalendarDomainTest {
     Assertions.assertEquals("Unable to fetch all node calendars", ex.getMessage());
     verify(nodeCalendarRepository, times(1)).findAllNodeCalendarByLimit(any());
   }
+
+  @Test
+  void getNodeServiceCalendarByOrgIdAndCalendarIdTest() throws CalendarDomainException {
+    when(nodeCalendarRepository.findNodeCalendarByCalendarIdAndOrgId(any(), any()))
+        .thenReturn(List.of(testUtil.getNodeCalendarEntity(), testUtil.getNodeCalendarEntity1()));
+
+    List<NodeCalendarEntity> response =
+        nodeCalendarDomain.getNodeServiceCalendarByOrgIdAndCalendarId(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID, Objects.requireNonNull(response.get(0).getCalendarId()));
+    Assertions.assertEquals(TestUtil.ORG_ID, Objects.requireNonNull(response.get(0).getOrgId()));
+    Assertions.assertEquals(
+        TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(response.get(0).getEffectiveDate()));
+    verify(nodeCalendarRepository, times(1)).findNodeCalendarByCalendarIdAndOrgId(any(), any());
+  }
+
+  @Test
+  void getNodeServiceCalendarByOrgIdAndCalendarIdExceptionTest() {
+    when(nodeCalendarRepository.findNodeCalendarByCalendarIdAndOrgId(any(), any()))
+        .thenThrow(new RuntimeException("Unable to fetch node calendar list"));
+
+    CalendarDomainException ex =
+        Assertions.assertThrows(
+            CalendarDomainException.class,
+            () ->
+                nodeCalendarDomain.getNodeServiceCalendarByOrgIdAndCalendarId(
+                    TestUtil.CALENDAR_ID, TestUtil.ORG_ID));
+
+    Assertions.assertEquals("Unable to fetch node calendar list", ex.getMessage());
+    verify(nodeCalendarRepository, times(1)).findNodeCalendarByCalendarIdAndOrgId(any(), any());
+  }
 }

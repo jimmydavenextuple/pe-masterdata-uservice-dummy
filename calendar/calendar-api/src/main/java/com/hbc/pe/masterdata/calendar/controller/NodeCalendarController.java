@@ -10,12 +10,15 @@ import com.hbc.pe.masterdata.calendar.exception.DateException;
 import com.hbc.pe.masterdata.calendar.service.NodeCalendarService;
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
 @RequestMapping("/node-calendar")
 @RequiredArgsConstructor
@@ -46,7 +49,9 @@ public class NodeCalendarController {
 
   @GetMapping("/{orgId}/{nodeId}")
   public ResponseEntity<BaseResponse<List<NodeCalendarResponse>>> handleGetNodeCalendar(
-      @PathVariable String orgId, @PathVariable String nodeId) throws CalendarDomainException {
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId)
+      throws CalendarDomainException {
     try {
       return ResponseEntity.ok(
           BaseResponse.builder()
@@ -69,6 +74,20 @@ public class NodeCalendarController {
     return ResponseEntity.ok(
         BaseResponse.builder()
             .message("Node Calendar Cache Keys fetched successfully")
+            .payload(response)
+            .build());
+  }
+
+  @GetMapping("/get-calendar-association/{calendarId}/{orgId}")
+  public ResponseEntity<BaseResponse<List<NodeCalendarResponse>>> getNodeCalendars(
+      @PathVariable String calendarId, @PathVariable String orgId) throws CalendarDomainException {
+    logger.debug("Processing get Node Calendars by orgId and calendarId");
+
+    var response = nodeCalendarService.getNodeAssociationWithCalendar(calendarId, orgId);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Calendar List fetched successfully")
             .payload(response)
             .build());
   }

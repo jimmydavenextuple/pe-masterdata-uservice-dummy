@@ -62,3 +62,6 @@ pagination:
   pageSize: 15
   sortBy: nodeId
   sortOrder: ASC
+
+node:
+  type: "STORE,FC,MFC,DROPSHIP VENDOR"

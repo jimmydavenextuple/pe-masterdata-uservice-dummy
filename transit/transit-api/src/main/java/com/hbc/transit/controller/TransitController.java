@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/transit")
 @RequiredArgsConstructor
@@ -77,10 +79,11 @@ public class TransitController {
 
   @PutMapping("/{orgId}/{sourceGeozone}/{destinationGeozone}/{carrierServiceId}")
   public ResponseEntity<BaseResponse<TransitResponse>> updateTransitData(
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @PathVariable String sourceGeozone,
-      @NotBlank @PathVariable String destinationGeozone,
-      @NotBlank @PathVariable String carrierServiceId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "sourceGeozone can't be empty") @PathVariable String sourceGeozone,
+      @NotBlank(message = "destinationGeozone can't be empty") @PathVariable
+          String destinationGeozone,
+      @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId,
       @Valid @RequestBody TransitDataUpdationRequest transitDataUpdationRequest)
       throws TransitDomainException, CommonServiceException {
     logger.debug("Processing update transit data");
@@ -108,10 +111,11 @@ public class TransitController {
 
   @GetMapping("/{orgId}/{sourceGeozone}/{destinationGeozone}/{carrierServiceId}/{serviceOption}")
   public ResponseEntity<BaseResponse<TransitResponse>> getTransitDetails(
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @PathVariable String sourceGeozone,
-      @NotBlank @PathVariable String destinationGeozone,
-      @NotBlank @PathVariable String carrierServiceId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "sourceGeozone can't be empty") @PathVariable String sourceGeozone,
+      @NotBlank(message = "destinationGeozone can't be empty") @PathVariable
+          String destinationGeozone,
+      @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId,
       @NotBlank @PathVariable String serviceOption)
       throws TransitDomainException, CommonServiceException {
     logger.debug("Processing get transit details");
@@ -134,10 +138,11 @@ public class TransitController {
 
   @DeleteMapping("/{orgId}/{sourceGeozone}/{destinationGeozone}/{carrierServiceId}")
   public ResponseEntity<BaseResponse<TransitResponse>> deleteTransitDetails(
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @PathVariable String sourceGeozone,
-      @NotBlank @PathVariable String destinationGeozone,
-      @NotBlank @PathVariable String carrierServiceId)
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "sourceGeozone can't be empty") @PathVariable String sourceGeozone,
+      @NotBlank(message = "destinationGeozone can't be empty") @PathVariable
+          String destinationGeozone,
+      @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId)
       throws TransitDomainException, CommonServiceException {
     logger.debug("Processing delete transit details");
     try {
@@ -160,8 +165,9 @@ public class TransitController {
 
   @GetMapping("/{orgId}/{destinationGeozone}")
   public ResponseEntity<BaseResponse<List<TransitResponse>>> getTransitDetailsList(
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @PathVariable String destinationGeozone,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "destinationGeozone can't be empty") @PathVariable
+          String destinationGeozone,
       @NotNull @RequestParam List<String> sourceGeozones)
       throws TransitDomainException {
     logger.debug("Processing get transit details list");
@@ -183,7 +189,8 @@ public class TransitController {
 
   @GetMapping("/transit-entries/{orgId}/{carrierServiceId}")
   public ResponseEntity<BaseResponse<TransitTimeEntriesDto>> getTransitTimeEntries(
-      @PathVariable String orgId, @PathVariable String carrierServiceId)
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId)
       throws TransitDomainException {
     logger.debug("Processing get transit time entries");
     var transitTimeEntriesDto = transitService.getTransitTimeEntries(orgId, carrierServiceId);
@@ -196,7 +203,9 @@ public class TransitController {
 
   @GetMapping("/batch-transit/{orgId}/{destinationGeozone}")
   public BaseResponse<List<TransitResponse>> getTransitDetailsListForDestinationGeoZone(
-      @NotBlank @PathVariable String orgId, @NotBlank @PathVariable String destinationGeozone)
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "destinationGeozone can't be empty") @PathVariable
+          String destinationGeozone)
       throws TransitDomainException, CommonServiceException {
     logger.debug("Processing get transit details list");
     try {
@@ -214,8 +223,9 @@ public class TransitController {
   @PostMapping("/transit-entries/{orgId}/{carrierServiceId}/geozones")
   public ResponseEntity<BaseResponse<List<TransitResponse>>>
       getTransitTimeDetailsForDestinationGeoZonesList(
-          @PathVariable String orgId,
-          @PathVariable String carrierServiceId,
+          @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+          @NotBlank(message = "carrierServiceId can't be empty") @PathVariable
+              String carrierServiceId,
           @RequestBody TransitDetailsRequest transitDetailsRequest)
           throws TransitDomainException {
     logger.debug("Processing get transit time entries");

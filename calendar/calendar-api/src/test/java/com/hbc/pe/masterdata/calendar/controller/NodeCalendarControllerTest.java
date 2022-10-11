@@ -113,4 +113,21 @@ class NodeCalendarControllerTest {
         Objects.requireNonNull(responseEntity.getBody()).getPayload().size());
     verify(nodeCalendarService, times(1)).getAllNodeCalendarCacheKeys(any());
   }
+
+  @Test
+  void getNodeCalendarsTest() throws CalendarDomainException {
+    when(nodeCalendarService.getNodeAssociationWithCalendar(any(), any()))
+        .thenReturn(List.of(testUtil.getNodeCalendarResponse()));
+
+    ResponseEntity<BaseResponse<List<NodeCalendarResponse>>> response =
+        nodeCalendarController.getNodeCalendars(TestUtil.CALENDAR_ID, TestUtil.ORG_ID);
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID,
+        Objects.requireNonNull(response.getBody()).getPayload().get(0).getCalendarId());
+    Assertions.assertEquals(
+        TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().get(0).getOrgId());
+    verify(nodeCalendarService, times(1)).getNodeAssociationWithCalendar(any(), any());
+  }
 }
