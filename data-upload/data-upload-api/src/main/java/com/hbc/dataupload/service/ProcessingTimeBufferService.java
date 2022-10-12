@@ -66,37 +66,37 @@ public class ProcessingTimeBufferService {
   }
 
   private List<ProcessingTimeBuffer> getProcessingTimeBufferList(
-      List<NodeCarrierResponse> nodeCarrierResponses) {
+      List<NodeCarrierResponse> nodeServiceResponses) {
     List<ProcessingTimeBuffer> processingTimeBufferList = new ArrayList<>();
 
-    nodeCarrierResponses.forEach(
-        nodeCarrierResponse -> {
+    nodeServiceResponses.forEach(
+        nodeServiceResponse -> {
           var processingTimeBuffer = new ProcessingTimeBuffer();
-          processingTimeBuffer.setServiceOption(nodeCarrierResponse.getServiceOption());
-          processingTimeBuffer.setBufferHours(nodeCarrierResponse.getBufferHours());
-          processingTimeBuffer.setBufferStartDate(nodeCarrierResponse.getBufferStartDate());
-          processingTimeBuffer.setBufferEndDate(nodeCarrierResponse.getBufferEndDate());
-          processingTimeBuffer.setStatus(computeStatus(nodeCarrierResponse));
+          processingTimeBuffer.setServiceOption(nodeServiceResponse.getServiceOption());
+          processingTimeBuffer.setBufferHours(nodeServiceResponse.getBufferHours());
+          processingTimeBuffer.setBufferStartDate(nodeServiceResponse.getBufferStartDate());
+          processingTimeBuffer.setBufferEndDate(nodeServiceResponse.getBufferEndDate());
+          processingTimeBuffer.setStatus(computeStatus(nodeServiceResponse));
           processingTimeBufferList.add(processingTimeBuffer);
         });
 
     return processingTimeBufferList;
   }
 
-  private String computeStatus(NodeCarrierResponse nodeCarrierResponse) {
+  private String computeStatus(NodeCarrierResponse nodeServiceResponse) {
     var currentDate = new Date();
-    if (nodeCarrierResponse.getBufferHours() != null
-        && nodeCarrierResponse.getBufferStartDate() != null
-        && nodeCarrierResponse.getBufferEndDate() != null) {
-      if (currentDate.compareTo(nodeCarrierResponse.getBufferEndDate()) <= 0) return ACTIVE;
+    if (nodeServiceResponse.getBufferHours() != null
+        && nodeServiceResponse.getBufferStartDate() != null
+        && nodeServiceResponse.getBufferEndDate() != null) {
+      if (currentDate.compareTo(nodeServiceResponse.getBufferEndDate()) <= 0) return ACTIVE;
       else return INACTIVE;
     }
     return null;
   }
 
-  private List<String> getServiceOptions(List<NodeCarrierResponse> nodeCarrierResponse) {
+  private List<String> getServiceOptions(List<NodeCarrierResponse> nodeServiceResponse) {
     List<String> serviceOptions = new ArrayList<>();
-    nodeCarrierResponse.forEach(nodeCarrier -> serviceOptions.add(nodeCarrier.getServiceOption()));
+    nodeServiceResponse.forEach(nodeCarrier -> serviceOptions.add(nodeCarrier.getServiceOption()));
     return serviceOptions;
   }
 }
