@@ -32,7 +32,7 @@ public class NodeCarrierServiceController {
 
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<NodeCarrierServiceResponse>>>
-  getNodeCarrierServiceDetails(@PathVariable @NotBlank String orgId, PageParams pageParams) {
+      getNodeCarrierServiceDetails(@PathVariable @NotBlank String orgId, PageParams pageParams) {
     logger.debug("Processing get list of nodes and carrier service details");
 
     PagePayload<NodeCarrierServiceResponse> nodeCarrierServiceResponse =
@@ -52,7 +52,10 @@ public class NodeCarrierServiceController {
             .build());
   }
 
-  private void updatePaginationDetails(PagePayload<NodeCarrierServiceResponse> nodeCarrierServiceResponse, String orgId, PageParams pageParams){
+  private void updatePaginationDetails(
+      PagePayload<NodeCarrierServiceResponse> nodeCarrierServiceResponse,
+      String orgId,
+      PageParams pageParams) {
     int currentPage = nodeCarrierServiceResponse.getPagination().getCurrentPage();
     String nextUri =
         PaginationUtil.buildUriForPagination(

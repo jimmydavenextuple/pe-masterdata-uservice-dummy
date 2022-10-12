@@ -32,7 +32,8 @@ class NodeCarrierServiceDetailsServiceTest {
     when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getNodeListPaginationBaseResponse());
     when(nodeCarrierFeign.getUniqueNodeCarrierServiceList(any(), any()))
-        .thenReturn(BaseResponse.builder().payload(List.of(TestUtil.CARRIER_SERVICE_ID, "")).build());
+        .thenReturn(
+            BaseResponse.builder().payload(List.of(TestUtil.CARRIER_SERVICE_ID, "")).build());
     when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
         .thenReturn(
             BaseResponse.builder()
