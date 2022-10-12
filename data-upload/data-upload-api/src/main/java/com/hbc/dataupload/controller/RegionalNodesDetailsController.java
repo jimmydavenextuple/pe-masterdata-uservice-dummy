@@ -10,16 +10,19 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
 import com.hbc.dataupload.domain.dto.NodeListDto;
 import com.hbc.dataupload.service.RegionalNodesDetailsService;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
-@RequestMapping("/data-upload/ui")
+@RequestMapping("/ui/regions-nodes")
 @RequiredArgsConstructor
 @Slf4j
 public class RegionalNodesDetailsController {
@@ -29,9 +32,10 @@ public class RegionalNodesDetailsController {
 
   private final RegionalNodesDetailsService regionalNodesDetailsService;
 
-  @GetMapping("/regions-nodes/nodes/orgId/{orgId}")
+  @GetMapping("/nodes/orgId/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<NodeListDto>>> getNodesList(
-      @PathVariable String orgId, PageParams pageParams) {
+      @NotBlank(message = "OrgId can't be empty") @PathVariable String orgId,
+      PageParams pageParams) {
     PagePayload<NodeListDto> nodeListDto =
         regionalNodesDetailsService.getNodesList(
             orgId,
