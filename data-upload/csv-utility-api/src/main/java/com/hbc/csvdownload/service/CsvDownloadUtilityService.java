@@ -84,9 +84,9 @@ public class CsvDownloadUtilityService {
         .forEach(
             carrierServiceResponse -> {
               String carrierServiceId = carrierServiceResponse.getCarrierServiceId();
-              List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses=new ArrayList<>();
+              List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses;
               List<String> calenderIds = new ArrayList<>();
-              getCalenderIds(orgId, carrierServiceId, calenderIds,carrierServiceCalendarResponses);
+              getCalenderIds(orgId, carrierServiceId, calenderIds);
               List<TransitResponse> transitResponses = new ArrayList<>();
               try {
                 transitResponses =
@@ -135,8 +135,8 @@ public class CsvDownloadUtilityService {
     return String.join("\n", header, rows[0]);
   }
 
-  private void getCalenderIds(String orgId, String carrierServiceId, List<String> calenderIds,List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses) {
-
+  private void getCalenderIds(String orgId, String carrierServiceId, List<String> calenderIds) {
+    List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses;
     try {
 
       carrierServiceCalendarResponses =
