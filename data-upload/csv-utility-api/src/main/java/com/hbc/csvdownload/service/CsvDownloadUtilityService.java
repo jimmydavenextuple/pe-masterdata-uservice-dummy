@@ -77,30 +77,16 @@ public class CsvDownloadUtilityService {
             SOURCE_GEOZONE,
             DESTINATION_GEOZONE,
             TRANSIT_DAYS);
-    String[] rows = new String[1];
+    var rows = new String[1];
     rows[0] = "";
 
     carrierServiceResponses.parallelStream()
         .forEach(
             carrierServiceResponse -> {
               String carrierServiceId = carrierServiceResponse.getCarrierServiceId();
-              List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses;
+              List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses=new ArrayList<>();
               List<String> calenderIds = new ArrayList<>();
-              try {
-
-                carrierServiceCalendarResponses =
-                    calenderService.getCarrierServiceCalender(orgId, carrierServiceId);
-
-                calenderIds.addAll(
-                    carrierServiceCalendarResponses.stream()
-                        .map(CarrierServiceCalendarResponse::getCalendarId)
-                        .distinct()
-                        .collect(Collectors.toList()));
-              } catch (Exception e) {
-                calenderIds.add("NA");
-
-                logger.error("Empty Carrier Service Calendar Response List");
-              }
+              getCalenderIds(orgId, carrierServiceId, calenderIds,carrierServiceCalendarResponses);
               List<TransitResponse> transitResponses = new ArrayList<>();
               try {
                 transitResponses =
@@ -113,16 +99,16 @@ public class CsvDownloadUtilityService {
                   .forEach(
                       calenderId -> {
                         String row;
-
+                        String status=(!carrierServiceResponses.isEmpty()
+                                && !CollectionUtils.isEmpty(finalTransitResponses))
+                                      ? "ACTIVE"
+                                      : "INACTIVE";
                         if (CollectionUtils.isEmpty(finalTransitResponses)) {
                           row =
                               (constructRow(
                                   orgId,
                                   carrierServiceResponse,
-                                  (!carrierServiceResponses.isEmpty()
-                                          && finalTransitResponses.size() > 0)
-                                      ? "ACTIVE"
-                                      : "INACTIVE",
+                                  status,
                                   calenderId,
                                   "NA",
                                   "NA",
@@ -136,10 +122,7 @@ public class CsvDownloadUtilityService {
                                           constructRow(
                                               orgId,
                                               carrierServiceResponse,
-                                              (!carrierServiceResponses.isEmpty()
-                                                      && finalTransitResponses.size() > 0)
-                                                  ? "ACTIVE"
-                                                  : "INACTIVE",
+                                              status,
                                               calenderId,
                                               transitResponse.getSourceGeozone(),
                                               transitResponse.getDestinationGeozone(),
@@ -150,6 +133,25 @@ public class CsvDownloadUtilityService {
                       });
             });
     return String.join("\n", header, rows[0]);
+  }
+
+  private void getCalenderIds(String orgId, String carrierServiceId, List<String> calenderIds,List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses) {
+
+    try {
+
+      carrierServiceCalendarResponses =
+          calenderService.getCarrierServiceCalender(orgId, carrierServiceId);
+
+      calenderIds.addAll(
+          carrierServiceCalendarResponses.stream()
+              .map(CarrierServiceCalendarResponse::getCalendarId)
+              .distinct()
+              .collect(Collectors.toList()));
+    } catch (Exception e) {
+      calenderIds.add("NA");
+
+      logger.error("Empty Carrier Service Calendar Response List");
+    }
   }
 
   public String constructRow(

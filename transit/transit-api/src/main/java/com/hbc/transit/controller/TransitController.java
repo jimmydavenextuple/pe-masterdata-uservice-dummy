@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TransitController {
 
   private static final Logger logger = LoggerFactory.getLogger(TransitController.class);
+  public static final String FETCH_TRANSIT_DETAILS_LIST_ERROR_MESSAGE = "Failed to fetch transit details list";
   private final TransitService transitService;
 
   @PostMapping
@@ -181,7 +182,7 @@ public class TransitController {
               .payload(transitResponse)
               .build());
     } catch (Exception e) {
-      logger.error("Failed to fetch transit details list");
+      logger.error(FETCH_TRANSIT_DETAILS_LIST_ERROR_MESSAGE);
       throw e;
     }
   }
@@ -205,13 +206,13 @@ public class TransitController {
       @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
       @NotBlank(message = "carrierServiceId can't be empty") @RequestParam String carrierServiceId)
       throws TransitDomainException, CommonServiceException {
-    logger.debug("Processing get transit time entries");
+    logger.debug("Processing get transit time entries for carrier service id and orgId");
     var transitTimeEntriesDto =
         transitService.getListOfTransitDetailsForCarrierServiceId(orgId, carrierServiceId);
     try {
       return BaseResponse.builder().payload(transitTimeEntriesDto).build();
     } catch (Exception e) {
-      logger.error("Failed to fetch transit details list");
+      logger.error(FETCH_TRANSIT_DETAILS_LIST_ERROR_MESSAGE);
       throw e;
     }
   }
@@ -230,7 +231,7 @@ public class TransitController {
                   orgId, destinationGeozone))
           .build();
     } catch (Exception e) {
-      logger.error("Failed to fetch transit details list");
+      logger.error(FETCH_TRANSIT_DETAILS_LIST_ERROR_MESSAGE);
       throw e;
     }
   }
@@ -243,7 +244,7 @@ public class TransitController {
               String carrierServiceId,
           @RequestBody TransitDetailsRequest transitDetailsRequest)
           throws TransitDomainException {
-    logger.debug("Processing get transit time entries");
+    logger.debug("Processing get transit time entries for geoZones");
     return ResponseEntity.ok(
         BaseResponse.builder()
             .message("Transit time entries fetched successfully")

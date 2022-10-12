@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class TransitDomain {
 
   private static final Logger logger = LoggerFactory.getLogger(TransitDomain.class);
+  public static final String FETCH_TRANSIT_LIST_ERROR_MESSAGE = "Error while fetching transit list";
 
   private final TransitRepository transitRepository;
 
@@ -96,7 +97,7 @@ public class TransitDomain {
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to fetch transit list");
       throw new TransitDomainException(
-          "Error while fetching transit list", orgId, null, destinationGeozone, null);
+              FETCH_TRANSIT_LIST_ERROR_MESSAGE, orgId, null, destinationGeozone, null);
     }
   }
 
@@ -122,7 +123,7 @@ public class TransitDomain {
           orgId,
           destinationGeozone);
       throw new TransitDomainException(
-          "Error while fetching transit list", orgId, null, destinationGeozone, null);
+              FETCH_TRANSIT_LIST_ERROR_MESSAGE, orgId, null, destinationGeozone, null);
     }
   }
 
@@ -137,7 +138,7 @@ public class TransitDomain {
           orgId,
           carrierServiceId);
       throw new TransitDomainException(
-          "Error while fetching transit list", orgId, null, null, carrierServiceId);
+              FETCH_TRANSIT_LIST_ERROR_MESSAGE, orgId, null, null, carrierServiceId);
     }
   }
 

@@ -83,7 +83,7 @@ public class CsvDownloadUtilityController {
       HttpServletRequest request,
       HttpServletResponse response)
       throws PostalCodeTimezoneServiceException, IOException {
-    log.debug("Inside download transit times data as csv");
+    log.debug("Inside download market region data as csv");
     String csvContents =
         csvDownloadUtilityService.downloadMarketRegionForOrgIdAndCountry(orgId, country);
     response.setStatus(HttpStatus.OK.value());
@@ -96,7 +96,7 @@ public class CsvDownloadUtilityController {
   public void downloadCarrierServiceCSV(
       @PathVariable String orgId, HttpServletRequest request, HttpServletResponse response)
       throws IOException, TransitServiceException, CarrierServiceException {
-    log.debug("Inside download transit times data as csv");
+    log.debug("Inside download carrier service data as csv");
     String csvContents = csvDownloadUtilityService.downloadCarrierServiceData(orgId);
     response.setStatus(HttpStatus.OK.value());
     response.setContentLength(csvContents.length());
