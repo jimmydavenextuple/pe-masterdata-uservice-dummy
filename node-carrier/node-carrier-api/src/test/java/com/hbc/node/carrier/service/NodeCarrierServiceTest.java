@@ -42,7 +42,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.CollectionUtils;
 
-
 @ExtendWith(MockitoExtension.class)
 class NodeCarrierServiceTest {
 
@@ -678,7 +677,8 @@ class NodeCarrierServiceTest {
 
   @Test
   void getUniqueCarrierServiceIdList() throws NodeCarrierDomainException {
-    when(nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString()))
+    when(nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(
+            anyString(), anyString()))
         .thenReturn(List.of(TestUtil.CARRIER_SERVICE_ID));
 
     List<String> uniqueCarrierServiceIdList =

@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.util.DateUtil;
-import com.hbc.csvdownload.exception.JsonParsingException;
 import com.hbc.jobs.consumers.common.TestUtil;
 import com.hbc.jobs.consumers.domain.JobDomain;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
@@ -16,11 +15,9 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
-import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
 import feign.Request;
 import feign.Request.HttpMethod;
-import java.io.IOException;
 import java.util.HashMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,8 +41,7 @@ class ScheduledProcessorTest {
   @InjectMocks private TestUtil testUtil;
 
   @Test
-  void processJobOffline()
-      throws JobDomainException {
+  void processJobOffline() throws JobDomainException {
     ReflectionTestUtils.setField(scheduledProcessor, "grantType", "grant");
     ReflectionTestUtils.setField(scheduledProcessor, "scope", "scope");
     ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);
@@ -67,8 +63,7 @@ class ScheduledProcessorTest {
   }
 
   @Test
-  void processJobOfflineQueuedJob()
-      throws JobDomainException {
+  void processJobOfflineQueuedJob() throws JobDomainException {
     ReflectionTestUtils.setField(scheduledProcessor, "grantType", "grant");
     ReflectionTestUtils.setField(scheduledProcessor, "scope", "scope");
     ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);
@@ -113,8 +108,7 @@ class ScheduledProcessorTest {
   }
 
   @Test
-  void processJobOfflineFeignException()
-      throws JobDomainException {
+  void processJobOfflineFeignException() throws JobDomainException {
     ReflectionTestUtils.setField(scheduledProcessor, "grantType", "grant");
     ReflectionTestUtils.setField(scheduledProcessor, "scope", "scope");
     ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);

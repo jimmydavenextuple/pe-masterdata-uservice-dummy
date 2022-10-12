@@ -328,9 +328,7 @@ public class JobService {
   }
 
   private void updateRequestObjectsList(
-      JobTypeEnum jobType,
-      ArrayList<Object> uploadRequestList,
-      InputStream inputStream)
+      JobTypeEnum jobType, ArrayList<Object> uploadRequestList, InputStream inputStream)
       throws IOException, CsvException {
     if (jobType == JobTypeEnum.UPLOAD_TRANSIT_TIMES) {
       log.debug("Processing transit times upload data");
@@ -376,8 +374,8 @@ public class JobService {
     return processingLeadTimesRawList;
   }
 
-  private List<TransitDataUpload> createUploadTransitTimesJobRequest(
-      InputStream inputStream) throws IOException, CsvException {
+  private List<TransitDataUpload> createUploadTransitTimesJobRequest(InputStream inputStream)
+      throws IOException, CsvException {
 
     var inputStreamReader = new InputStreamReader(inputStream);
     var csvReader = new CSVReader(inputStreamReader);

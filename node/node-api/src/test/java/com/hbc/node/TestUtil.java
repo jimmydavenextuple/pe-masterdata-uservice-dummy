@@ -67,7 +67,7 @@ public class TestUtil {
         .street(STREET)
         .bopisEligible(BOPIS_ELIGIBLE)
         .city(CITY)
-            .nodeType("Store")
+        .nodeType("Store")
         .country(COUNTRY)
         .nodeType(NODE_TYPE)
         .isActive(IS_ACTIVE)

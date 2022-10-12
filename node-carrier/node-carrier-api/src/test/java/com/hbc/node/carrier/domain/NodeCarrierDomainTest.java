@@ -338,11 +338,13 @@ class NodeCarrierDomainTest {
 
   @Test
   void fetchCarrierServiceIdsByOrgIdAndNodeId() throws NodeCarrierDomainException {
-    when(nodeCarrierRepository.findUniqueNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString()))
+    when(nodeCarrierRepository.findUniqueNodeCarrierServiceListByOrgIdAndNodeId(
+            anyString(), anyString()))
         .thenReturn(List.of(TestUtil.CARRIER_SERVICE_ID));
 
     List<String> uniqueCarrierServiceIdList =
-        nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(TestUtil.ORG_ID, TestUtil.NODE_ID);
+        nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID);
 
     Assertions.assertFalse(CollectionUtils.isEmpty(uniqueCarrierServiceIdList));
     verify(nodeCarrierRepository, times(1))
@@ -351,7 +353,8 @@ class NodeCarrierDomainTest {
 
   @Test
   void fetchCarrierServiceIdsByOrgIdAndNodeIdException() {
-    when(nodeCarrierRepository.findUniqueNodeCarrierServiceListByOrgIdAndNodeId(anyString(), anyString()))
+    when(nodeCarrierRepository.findUniqueNodeCarrierServiceListByOrgIdAndNodeId(
+            anyString(), anyString()))
         .thenThrow(new RuntimeException("Error while fetching list of unique carrier service ids"));
 
     Exception ex =

@@ -8,36 +8,36 @@ import com.hbc.common.pojo.PageParams;
 import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
-import com.hbc.dataupload.domain.dto.NodeListDto;
-import com.hbc.dataupload.service.RegionalNodesDetailsService;
+import com.hbc.dataupload.domain.dto.ProcessingTimeBufferDto;
+import com.hbc.dataupload.service.ProcessingTimeBufferService;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Validated
 @RestController
-@RequestMapping("/ui/regions-nodes")
+@RequestMapping("/ui/processing-time-buffer")
 @RequiredArgsConstructor
 @Slf4j
-public class RegionalNodesDetailsController {
+public class ProcessingTimeBufferController {
+
   private static final String PAGINATION_URL =
-      "/data-upload/ui/regions-nodes/nodes/orgId/%s?pageNo=%d&pageSize=%d";
+      "/data-upload/ui/processing-time-buffer/orgId/%s?pageNo=%d&pageSize=%d";
   private final PageProperties pageProperties;
 
-  private final RegionalNodesDetailsService regionalNodesDetailsService;
+  private final ProcessingTimeBufferService processingTimeBufferService;
 
-  @GetMapping("/nodes/orgId/{orgId}")
-  public ResponseEntity<BaseResponse<PagePayload<NodeListDto>>> getNodesList(
-      @NotBlank(message = "OrgId can't be empty") @PathVariable String orgId,
-      PageParams pageParams) {
-    PagePayload<NodeListDto> nodeListDto =
-        regionalNodesDetailsService.getNodesList(
+  @GetMapping("/orgId/{orgId}")
+  public ResponseEntity<BaseResponse<PagePayload<ProcessingTimeBufferDto>>>
+      getProcessingTimeBufferDetails(
+          @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+          PageParams pageParams) {
+    PagePayload<ProcessingTimeBufferDto> processingTimeBufferDtoPagePayload =
+        processingTimeBufferService.getProcessingTimeBuffers(
             orgId,
             pageParams.getPageNo().orElse(pageProperties.getPageNo()),
             pageParams.getPageSize().orElse(pageProperties.getPageSize()),
@@ -47,7 +47,7 @@ public class RegionalNodesDetailsController {
     String nextUri =
         PaginationUtil.buildUriForPagination(
             pageParams.getPageNo().orElse(pageProperties.getPageNo()),
-            nodeListDto.getPagination().getTotalPages(),
+            processingTimeBufferDtoPagePayload.getPagination().getTotalPages(),
             "next",
             String.format(
                 PAGINATION_URL,
@@ -58,7 +58,7 @@ public class RegionalNodesDetailsController {
     String previousUri =
         PaginationUtil.buildUriForPagination(
             pageParams.getPageNo().orElse(pageProperties.getPageNo()),
-            nodeListDto.getPagination().getTotalPages(),
+            processingTimeBufferDtoPagePayload.getPagination().getTotalPages(),
             "previous",
             String.format(
                 PAGINATION_URL,
@@ -66,13 +66,13 @@ public class RegionalNodesDetailsController {
                 (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
                 pageParams.getPageSize().orElse(pageProperties.getPageSize())));
 
-    nodeListDto.getPagination().setNext(nextUri);
-    nodeListDto.getPagination().setPrevious(previousUri);
+    processingTimeBufferDtoPagePayload.getPagination().setNext(nextUri);
+    processingTimeBufferDtoPagePayload.getPagination().setPrevious(previousUri);
 
     return ResponseEntity.ok(
         BaseResponse.builder()
-            .message("Node list fetched successfully")
-            .payload(nodeListDto)
+            .message("Processing Time Buffer list fetched successfully")
+            .payload(processingTimeBufferDtoPagePayload)
             .build());
   }
 }
