@@ -89,7 +89,7 @@ class TransitServiceTest {
   @Test
   void getTransitDetailsForCarrierServiceIdTestNullResponse() {
     when(transitFeign.getTransitDetailsForCarrierServiceId(anyString(), anyString()))
-        .thenReturn(BaseResponse.builder().payload(null).build());
+        .thenReturn(null);
     Assertions.assertThrows(
         TransitServiceException.class,
         () ->

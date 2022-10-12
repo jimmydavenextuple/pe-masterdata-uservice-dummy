@@ -41,7 +41,7 @@ class CarrierServiceTest {
   }
 
   @Test
-  void getCarrierServiceTestNullResponse() {
+  void getCarrierServiceTestEmptyResponse() {
     when(carrierFeign.getCarrierServiceListByOrgId(anyString()))
         .thenReturn(BaseResponse.builder().payload(new ArrayList<>()).build());
 
@@ -52,9 +52,9 @@ class CarrierServiceTest {
   }
 
   @Test
-  void getCarrierServiceTestEmptyResponse() {
+  void getCarrierServiceTestNullResponse() {
     when(carrierFeign.getCarrierServiceListByOrgId(anyString()))
-        .thenReturn(BaseResponse.builder().payload(null).build());
+        .thenReturn(null);
 
     Assertions.assertThrows(
         CarrierServiceException.class, () -> carrierService.getCarrierService(TestUtil.ORG_ID));
