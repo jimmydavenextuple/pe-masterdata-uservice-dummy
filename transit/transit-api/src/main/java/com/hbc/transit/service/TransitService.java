@@ -343,6 +343,25 @@ public class TransitService {
     return INSTANCE.toTransitResponseList(transitEntities);
   }
 
+  @ReaderDS
+  public List<TransitResponse> getListOfTransitDetailsForCarrierServiceId(
+      String orgId, String carrierServiceId) throws TransitDomainException, CommonServiceException {
+
+    List<TransitEntity> transitEntities =
+        transitDomain.fetchTransitListForCarrierServiceID(orgId, carrierServiceId);
+
+    if (transitEntities.isEmpty()) {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(
+          CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
+      throw new CommonServiceException(
+          TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
+    }
+
+    return INSTANCE.toTransitResponseList(transitEntities);
+  }
+
   public List<TransitResponse> getTransitDetailsForDestinationGeozones(
       String orgId, String carrierServiceId, List<String> destinationGeozones)
       throws TransitDomainException {

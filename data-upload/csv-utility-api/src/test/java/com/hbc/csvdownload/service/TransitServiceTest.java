@@ -73,4 +73,40 @@ class TransitServiceTest {
     verify(transitFeign, times(1))
         .getTransitTimeDetailsForDestinationGeoZonesList(any(), any(), any());
   }
+
+  @Test
+  void getTransitDetailsForCarrierServiceIdTest() throws TransitServiceException {
+    when(transitFeign.getTransitDetailsForCarrierServiceId(anyString(), anyString()))
+        .thenReturn(
+            BaseResponse.builder().payload(List.of(testUtil.getTransitResponse(1.5F))).build());
+    List<TransitResponse> transitResponses =
+        transitService.getTransitDetailsForCarrierServiceId(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+    Assertions.assertFalse(CollectionUtils.isEmpty(transitResponses));
+    verify(transitFeign, times(1)).getTransitDetailsForCarrierServiceId(any(), any());
+  }
+
+  @Test
+  void getTransitDetailsForCarrierServiceIdTestNullResponse() {
+    when(transitFeign.getTransitDetailsForCarrierServiceId(anyString(), anyString()))
+        .thenReturn(BaseResponse.builder().payload(null).build());
+    Assertions.assertThrows(
+        TransitServiceException.class,
+        () ->
+            transitService.getTransitDetailsForCarrierServiceId(
+                TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+    verify(transitFeign, times(1)).getTransitDetailsForCarrierServiceId(any(), any());
+  }
+
+  @Test
+  void getTransitDetailsForCarrierServiceIdTestEmptyResponse() {
+    when(transitFeign.getTransitDetailsForCarrierServiceId(anyString(), anyString()))
+        .thenReturn(BaseResponse.builder().payload(Collections.emptyList()).build());
+    Assertions.assertThrows(
+        TransitServiceException.class,
+        () ->
+            transitService.getTransitDetailsForCarrierServiceId(
+                TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+    verify(transitFeign, times(1)).getTransitDetailsForCarrierServiceId(any(), any());
+  }
 }

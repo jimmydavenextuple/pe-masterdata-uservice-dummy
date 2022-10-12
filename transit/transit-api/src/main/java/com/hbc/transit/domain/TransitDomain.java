@@ -126,6 +126,21 @@ public class TransitDomain {
     }
   }
 
+  public List<TransitEntity> fetchTransitListForCarrierServiceID(
+      String orgId, String carrierServiceId) throws TransitDomainException {
+    try {
+      return transitRepository.findByOrgIdAndCarrierServiceId(orgId, carrierServiceId);
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e),
+          "Unable to fetch transit list for orgId: {} and carrierServiceId: {}",
+          orgId,
+          carrierServiceId);
+      throw new TransitDomainException(
+          "Error while fetching transit list", orgId, null, null, carrierServiceId);
+    }
+  }
+
   public List<TransitEntity> fetchTransitListForDestinationGeoZones(
       String orgId, String carrierServiceId, List<String> destinationGeozones)
       throws TransitDomainException {

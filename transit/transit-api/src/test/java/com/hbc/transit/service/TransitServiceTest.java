@@ -2,6 +2,7 @@ package com.hbc.transit.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -505,5 +506,26 @@ class TransitServiceTest {
             TestUtil.DESTINATION_GEOZONE);
 
     Assertions.assertNull(response);
+  }
+
+  @Test
+  void getListOfTransitDetailsForCarrierServiceId() throws TransitDomainException {
+    when(transitDomain.fetchTransitListForCarrierServiceID(anyString(), anyString()))
+        .thenReturn(List.of(testUtil.getTransitEntities(TestUtil.CARRIER_SERVICE_ID)));
+    Assertions.assertDoesNotThrow(
+        () ->
+            transitService.getListOfTransitDetailsForCarrierServiceId(
+                TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+  }
+
+  @Test
+  void getListOfTransitDetailsForCarrierServiceIdEmptyResponse() throws TransitDomainException {
+    when(transitDomain.fetchTransitListForCarrierServiceID(anyString(), anyString()))
+        .thenReturn(new ArrayList<>());
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
+            transitService.getListOfTransitDetailsForCarrierServiceId(
+                TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
   }
 }

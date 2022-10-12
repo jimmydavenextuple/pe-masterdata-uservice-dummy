@@ -200,6 +200,22 @@ public class TransitController {
             .build());
   }
 
+  @GetMapping("/{orgId}")
+  public BaseResponse<List<TransitResponse>> getTransitDetailsForCarrierServiceId(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "carrierServiceId can't be empty") @RequestParam String carrierServiceId)
+      throws TransitDomainException, CommonServiceException {
+    logger.debug("Processing get transit time entries");
+    var transitTimeEntriesDto =
+        transitService.getListOfTransitDetailsForCarrierServiceId(orgId, carrierServiceId);
+    try {
+      return BaseResponse.builder().payload(transitTimeEntriesDto).build();
+    } catch (Exception e) {
+      logger.error("Failed to fetch transit details list");
+      throw e;
+    }
+  }
+
   @GetMapping("/batch-transit/{orgId}/{destinationGeozone}")
   public BaseResponse<List<TransitResponse>> getTransitDetailsListForDestinationGeoZone(
       @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,

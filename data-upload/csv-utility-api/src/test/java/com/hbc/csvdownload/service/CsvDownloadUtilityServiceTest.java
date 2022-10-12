@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.TestUtil;
+import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
@@ -28,6 +29,9 @@ class CsvDownloadUtilityServiceTest {
   @Mock private JobsDashboardService jobsDashboardService;
   @Mock private PostalCodeTimeZoneService postalCodeTimeZoneService;
   @Mock private TransitService transitService;
+
+  @Mock private CarrierService carrierService;
+  @Mock private CalenderService calenderService;
   @InjectMocks private CsvDownloadUtilityService csvDownloadUtilityService;
   @InjectMocks private TestUtil testUtil;
 
@@ -158,8 +162,7 @@ class CsvDownloadUtilityServiceTest {
   }
 
   @Test
-  void downloadMarketRegionForOrgIdAndCountry_Test()
-      throws PostalCodeTimezoneServiceException, CsvDownloadUtilityServiceException {
+  void downloadMarketRegionForOrgIdAndCountry_Test() throws PostalCodeTimezoneServiceException {
     when(postalCodeTimeZoneService.getPostalCodeTimeZoneByOrgIdAndCountry(anyString(), anyString()))
         .thenReturn(List.of(testUtil.getPostalCodeTimezoneDto()));
 
@@ -170,5 +173,22 @@ class CsvDownloadUtilityServiceTest {
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
     verify(postalCodeTimeZoneService, times(1))
         .getPostalCodeTimeZoneByOrgIdAndCountry(anyString(), anyString());
+  }
+
+  @Test
+  void downloadCarrierServiceData_Test() throws CarrierServiceException, TransitServiceException {
+    when(carrierService.getCarrierService(anyString()))
+        .thenReturn(List.of(testUtil.getCarrierServiceResponse()));
+    when(calenderService.getCarrierServiceCalender(anyString(), anyString()))
+        .thenReturn(List.of(testUtil.getCarrierServiceCalendarResponse()));
+
+    when(transitService.getTransitDetailsForCarrierServiceId(anyString(), anyString()))
+        .thenReturn(List.of(testUtil.getTransitResponse(0.5f)));
+    String csvContents = csvDownloadUtilityService.downloadCarrierServiceData(TestUtil.ORG_ID);
+
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
+    verify(calenderService, times(1)).getCarrierServiceCalender(anyString(), anyString());
+    verify(transitService, times(1)).getTransitDetailsForCarrierServiceId(anyString(), anyString());
+    verify(carrierService, times(1)).getCarrierService(anyString());
   }
 }

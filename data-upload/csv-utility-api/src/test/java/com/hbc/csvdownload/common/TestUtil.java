@@ -1,13 +1,17 @@
 package com.hbc.csvdownload.common;
 
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
 import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
+import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
@@ -29,6 +33,8 @@ public class TestUtil {
 
   public static final String ORG_ID = "BAY";
   public static final String CARRIER_SERVICE_ID = "ALL_SDND";
+  public static final String CARRIER_ID = "01";
+
   public static final String SOURCE_REGION = "ON";
   public static final String DESTINATION_REGION = "DEL";
   public static final String SOURCE_FSA = "A0A";
@@ -184,6 +190,23 @@ public class TestUtil {
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .timeZone(TIME_ZONE)
+        .build();
+  }
+
+  public CarrierServiceCalendarResponse getCarrierServiceCalendarResponse() {
+    return CarrierServiceCalendarResponse.builder()
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .build();
+  }
+
+  public CarrierServiceResponse getCarrierServiceResponse() {
+    return CarrierServiceResponse.builder()
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .carrierId(CARRIER_ID)
+        .serviceName(SERVICE_NAME)
+        .serviceOptions(SERVICE_OPTION)
         .build();
   }
 }

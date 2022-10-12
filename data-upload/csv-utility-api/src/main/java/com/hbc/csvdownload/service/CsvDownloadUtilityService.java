@@ -1,5 +1,18 @@
 package com.hbc.csvdownload.service;
 
+import static com.hbc.common.constants.CommonConstants.CARRIER_ID;
+import static com.hbc.common.constants.CommonConstants.CARRIER_NAME;
+import static com.hbc.common.constants.CommonConstants.CARRIER_SERVICE_ID;
+import static com.hbc.common.constants.CommonConstants.DESTINATION_GEOZONE;
+import static com.hbc.common.constants.CommonConstants.ORG_ID;
+import static com.hbc.common.constants.CommonConstants.SERVICE_NAME;
+import static com.hbc.common.constants.CommonConstants.SOURCE_GEOZONE;
+import static com.hbc.common.constants.CommonConstants.STATUS;
+import static com.hbc.common.constants.CommonConstants.TRANSIT_DAYS;
+import static com.hbc.common.constants.CommonConstants.WORKING_CALENDER;
+
+import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
@@ -7,6 +20,7 @@ import com.hbc.csvdownload.domain.mapper.TransitDataRequestMapper;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorNodeCarrier;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.TransitDataErrorLogsPojo;
+import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
@@ -15,6 +29,7 @@ import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,12 +53,126 @@ public class CsvDownloadUtilityService {
 
   private final PostalCodeTimeZoneService postalCodeTimeZoneService;
   private final TransitService transitService;
-
+  private final CarrierService carrierService;
+  private final CalenderService calenderService;
   private final JobsDashboardService jobsDashboardService;
   private final JobsConsumerService jobsConsumerService;
 
   private static final TransitDataRequestMapper INSTANCE =
       Mappers.getMapper(TransitDataRequestMapper.class);
+
+  public String downloadCarrierServiceData(String orgId) throws CarrierServiceException {
+    logger.debug("Processing download carrier service for orgId");
+    List<CarrierServiceResponse> carrierServiceResponses = carrierService.getCarrierService(orgId);
+    var header =
+        String.join(
+            ",",
+            CARRIER_SERVICE_ID,
+            ORG_ID,
+            CARRIER_NAME,
+            CARRIER_ID,
+            SERVICE_NAME,
+            STATUS,
+            WORKING_CALENDER,
+            SOURCE_GEOZONE,
+            DESTINATION_GEOZONE,
+            TRANSIT_DAYS);
+    String[] rows = new String[1];
+    rows[0] = "";
+
+    carrierServiceResponses.parallelStream()
+        .forEach(
+            carrierServiceResponse -> {
+              String carrierServiceId = carrierServiceResponse.getCarrierServiceId();
+              List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses;
+              List<String> calenderIds = new ArrayList<>();
+              try {
+
+                carrierServiceCalendarResponses =
+                    calenderService.getCarrierServiceCalender(orgId, carrierServiceId);
+
+                calenderIds.addAll(
+                    carrierServiceCalendarResponses.stream()
+                        .map(CarrierServiceCalendarResponse::getCalendarId)
+                        .distinct()
+                        .collect(Collectors.toList()));
+              } catch (Exception e) {
+                calenderIds.add("NA");
+
+                logger.error("Empty Carrier Service Calendar Response List");
+              }
+              List<TransitResponse> transitResponses = new ArrayList<>();
+              try {
+                transitResponses =
+                    transitService.getTransitDetailsForCarrierServiceId(orgId, carrierServiceId);
+              } catch (Exception e) {
+                logger.error("Empty Transit Response List");
+              }
+              List<TransitResponse> finalTransitResponses = transitResponses;
+              calenderIds.parallelStream()
+                  .forEach(
+                      calenderId -> {
+                        String row;
+
+                        if (CollectionUtils.isEmpty(finalTransitResponses)) {
+                          row =
+                              (constructRow(
+                                  orgId,
+                                  carrierServiceResponse,
+                                  (!carrierServiceResponses.isEmpty()
+                                          && finalTransitResponses.size() > 0)
+                                      ? "ACTIVE"
+                                      : "INACTIVE",
+                                  calenderId,
+                                  "NA",
+                                  "NA",
+                                  "NA"));
+
+                        } else {
+                          row =
+                              (finalTransitResponses.stream()
+                                  .map(
+                                      transitResponse ->
+                                          constructRow(
+                                              orgId,
+                                              carrierServiceResponse,
+                                              (!carrierServiceResponses.isEmpty()
+                                                      && finalTransitResponses.size() > 0)
+                                                  ? "ACTIVE"
+                                                  : "INACTIVE",
+                                              calenderId,
+                                              transitResponse.getSourceGeozone(),
+                                              transitResponse.getDestinationGeozone(),
+                                              transitResponse.getTransitDays().toString()))
+                                  .collect(Collectors.joining("\n")));
+                        }
+                        rows[0] = String.join("\n", row, rows[0]);
+                      });
+            });
+    return String.join("\n", header, rows[0]);
+  }
+
+  public String constructRow(
+      String orgId,
+      CarrierServiceResponse carrierServiceResponse,
+      String status,
+      String calenderId,
+      String sourceGeoZone,
+      String destinationGeoZone,
+      String transitDays) {
+    return String.join(
+        ",",
+        carrierServiceResponse.getCarrierServiceId(),
+        orgId,
+        carrierServiceResponse.getCarrierName(),
+        carrierServiceResponse.getCarrierId(),
+        carrierServiceResponse.getServiceName(),
+        status,
+        calenderId,
+        sourceGeoZone,
+        destinationGeoZone,
+        transitDays);
+  }
 
   public String downloadTransitTimesForSourceAndDestinationRegion(
       String orgId, String carrierServiceId, String sourceRegion, String destinationRegion)

@@ -325,7 +325,7 @@ class TransitControllerTest {
   }
 
   @Test
-  void deleteBufferDays() throws TransitDomainException, CommonServiceException {
+  void deleteBufferDays() throws TransitDomainException {
     TransitResponse transitResponse = testUtil.getTransitResponse(5F);
     transitResponse.setBufferDays(0D);
     when(transitService.updateTransitBufferDays(any(), any(), any(), any()))
@@ -342,5 +342,35 @@ class TransitControllerTest {
     Assertions.assertNotNull(responseEntity.getBody());
     Assertions.assertNotNull(responseEntity.getBody().getPayload());
     verify(transitService, times(1)).updateTransitBufferDays(any(), any(), any(), any());
+  }
+
+  @Test
+  void getTransitDetailsForCarrierServiceIdTest()
+      throws TransitDomainException, CommonServiceException {
+    when(transitService.getListOfTransitDetailsForCarrierServiceId(anyString(), anyString()))
+        .thenReturn(List.of(testUtil.getTransitResponse(5F)));
+
+    BaseResponse<List<TransitResponse>> response =
+        transitController.getTransitDetailsForCarrierServiceId(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+    Assertions.assertNotNull(response.getPayload());
+    Assertions.assertEquals(TestUtil.ORG_ID, response.getPayload().get(0).getOrgId());
+
+    verify(transitService, times(1)).getListOfTransitDetailsForCarrierServiceId(any(), any());
+  }
+
+  @Test
+  void getTransitDetailsForCarrierServiceIdTestException()
+      throws TransitDomainException, CommonServiceException {
+    when(transitService.getListOfTransitDetailsForCarrierServiceId(anyString(), anyString()))
+        .thenThrow(CommonServiceException.class);
+
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
+            transitController.getTransitDetailsForCarrierServiceId(
+                TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+
+    verify(transitService, times(1)).getListOfTransitDetailsForCarrierServiceId(any(), any());
   }
 }

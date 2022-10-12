@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
+import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
@@ -171,8 +172,7 @@ class CsvDownloadUtilityControllerTest {
   }
 
   @Test
-  void downloadMarketRegionDataCSVTest()
-      throws IOException, PostalCodeTimezoneServiceException, CsvDownloadUtilityServiceException {
+  void downloadMarketRegionDataCSVTest() throws IOException, PostalCodeTimezoneServiceException {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     String marketRegionTemplate = TemplateTypes.getTemplateData("marketRegion");
@@ -187,6 +187,25 @@ class CsvDownloadUtilityControllerTest {
 
     csvDownloadUtilityController.downloadMarketRegionDataCSV(
         TestUtil.ORG_ID, TestUtil.COUNTRY, request, response);
+    verify(response, times(1)).getOutputStream();
+  }
+
+  @Test
+  void downloadCarrierServiceCSVTest()
+      throws IOException, CarrierServiceException, TransitServiceException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    String carrierService = TemplateTypes.getTemplateData("carrierService");
+    when(csvDownloadUtilityService.downloadCarrierServiceData(anyString()))
+        .thenReturn(carrierService);
+
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    doNothing().when(response).setContentLength(carrierService.length());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    csvDownloadUtilityController.downloadCarrierServiceCSV(TestUtil.ORG_ID, request, response);
     verify(response, times(1)).getOutputStream();
   }
 }

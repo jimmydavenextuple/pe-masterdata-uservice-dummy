@@ -75,6 +75,10 @@ public interface TransitFeign {
       @PathVariable String carrierServiceId,
       @RequestBody TransitDetailsRequest transitDetailsRequest);
 
+  @GetMapping("/transit/{orgId}")
+  BaseResponse<List<TransitResponse>> getTransitDetailsForCarrierServiceId(
+      @PathVariable String orgId, @RequestParam String carrierServiceId);
+
   @PutMapping("/transit/{orgId}/{carrierServiceId}/buffer-days")
   BaseResponse<TransitResponse> updateTransitBufferDays(
       @PathVariable String orgId,

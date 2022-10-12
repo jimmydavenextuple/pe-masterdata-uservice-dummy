@@ -2,6 +2,7 @@ package com.hbc.csvdownload.controller;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
+import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
@@ -81,10 +82,22 @@ public class CsvDownloadUtilityController {
       @RequestParam String country,
       HttpServletRequest request,
       HttpServletResponse response)
-      throws PostalCodeTimezoneServiceException, IOException, CsvDownloadUtilityServiceException {
+      throws PostalCodeTimezoneServiceException, IOException {
     log.debug("Inside download transit times data as csv");
     String csvContents =
         csvDownloadUtilityService.downloadMarketRegionForOrgIdAndCountry(orgId, country);
+    response.setStatus(HttpStatus.OK.value());
+    response.setContentLength(csvContents.length());
+    response.getOutputStream().write(csvContents.getBytes());
+    response.flushBuffer();
+  }
+
+  @GetMapping(value = "/org/{orgId}/download/carrier-services")
+  public void downloadCarrierServiceCSV(
+      @PathVariable String orgId, HttpServletRequest request, HttpServletResponse response)
+      throws IOException, TransitServiceException, CarrierServiceException {
+    log.debug("Inside download transit times data as csv");
+    String csvContents = csvDownloadUtilityService.downloadCarrierServiceData(orgId);
     response.setStatus(HttpStatus.OK.value());
     response.setContentLength(csvContents.length());
     response.getOutputStream().write(csvContents.getBytes());

@@ -40,4 +40,20 @@ public class TransitService {
           carrierServiceId);
     }
   }
+
+  public List<TransitResponse> getTransitDetailsForCarrierServiceId(
+      String orgId, String carrierServiceId) throws TransitServiceException {
+
+    BaseResponse<List<TransitResponse>> response =
+        transitFeign.getTransitDetailsForCarrierServiceId(orgId, carrierServiceId);
+    if (response != null && !CollectionUtils.isEmpty(response.getPayload())) {
+      return response.getPayload();
+    } else {
+      logger.error("Transit details does not exist for given orgId and carrierServiceId ");
+      throw new TransitServiceException(
+          "Transit details does not exist for given orgId and carrierServiceId  ",
+          orgId,
+          carrierServiceId);
+    }
+  }
 }
