@@ -15,13 +15,13 @@ public class NodeDto implements Serializable {
 
   private String nodeId;
   private String orgId;
-  private String nodeType;
-  private String street;
-  private String city;
   private String province;
   private String postalCode;
+  private String nodeType;
+  private String street;
   private String latitude;
   private String longitude;
   private String timezone;
+  private String city;
   private Boolean isActive;
 }
