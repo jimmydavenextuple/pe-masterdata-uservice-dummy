@@ -56,11 +56,13 @@ import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.domain.dto.CalendarDto;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
+import com.hbc.dataupload.domain.dto.NodeCarrierServiceAndServiceOptionResponse;
 import com.hbc.dataupload.domain.dto.NodeCarrierServiceResponse;
 import com.hbc.dataupload.domain.dto.NodeListDto;
 import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
 import com.hbc.dataupload.domain.dto.NodeWorkingCalendarDto;
 import com.hbc.dataupload.domain.dto.PickupTimeDto;
+import com.hbc.dataupload.domain.pojo.ActiveCombination;
 import com.hbc.dataupload.domain.pojo.CarrierServiceCalendars;
 import com.hbc.dataupload.domain.pojo.PickUpCalendar;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
@@ -917,6 +919,51 @@ public class TestUtil {
     pagination.setTotalRecords(4);
     nodeCarrierServicePagePayload.setPagination(pagination);
     nodeCarrierServicePagePayload.setData(List.of(nodeCarrierServiceResponse));
+
+    return nodeCarrierServicePagePayload;
+  }
+
+  public ActiveCombination getActiveCombination() {
+    return ActiveCombination.builder()
+        .nodeId(NODE_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .isActive(true)
+        .build();
+  }
+
+  public NodeCarrierServiceAndServiceOptionResponse
+      getNodeCarrierServiceAndServiceOptionResponse() {
+    NodeCarrierServiceAndServiceOptionResponse response =
+        new NodeCarrierServiceAndServiceOptionResponse();
+    response.setNodeId(NODE_ID);
+    response.setOrgId(ORG_ID);
+    response.setStreet(STREET);
+    response.setCity(CITY);
+    response.setProvince(PROVINCE);
+    response.setPostalCode(POSTAL_CODE);
+    response.setCarrierServices(List.of(CARRIER_SERVICE_ID));
+    response.setServiceOptions(List.of(SERVICE_OPTION));
+    response.setActiveCombination(List.of(getActiveCombination()));
+
+    return response;
+  }
+
+  public PagePayload<NodeCarrierServiceAndServiceOptionResponse>
+      getNodeCarrierServiceAndServiceOptionResponse(Integer pageNo) {
+    PagePayload<NodeCarrierServiceAndServiceOptionResponse> nodeCarrierServicePagePayload =
+        new PagePayload<>();
+
+    NodeCarrierServiceAndServiceOptionResponse response =
+        getNodeCarrierServiceAndServiceOptionResponse();
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(4);
+    nodeCarrierServicePagePayload.setPagination(pagination);
+    nodeCarrierServicePagePayload.setData(List.of(response));
 
     return nodeCarrierServicePagePayload;
   }
