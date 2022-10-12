@@ -18,7 +18,6 @@ import com.hbc.node.exception.NodeDomainException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,7 @@ class NodeServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    Set<String> nodeTypes = Set.of("STORE", "FC", "MFC","DROPSHIP VENDOR");
+    Set<String> nodeTypes = Set.of("STORE", "FC", "MFC", "DROPSHIP VENDOR");
     ReflectionTestUtils.setField(nodeService, "nodeTypes", nodeTypes);
   }
 

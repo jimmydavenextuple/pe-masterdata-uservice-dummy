@@ -99,7 +99,8 @@ public class PostalCodeTimezoneDomain {
     }
   }
 
-  public List<MarketRegionProjection> getRecordsForOrgId(String orgId) throws PromiseEngineException {
+  public List<MarketRegionProjection> getRecordsForOrgId(String orgId)
+      throws PromiseEngineException {
     try {
       return postalCodeTimezoneRepository.findRecordsByOrgId(orgId);
     } catch (Exception e) {

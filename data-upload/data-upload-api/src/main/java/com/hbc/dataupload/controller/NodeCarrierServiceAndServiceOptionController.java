@@ -6,9 +6,9 @@ import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
-import com.hbc.dataupload.domain.dto.NodeCarrierServiceResponse;
+import com.hbc.dataupload.domain.dto.NodeCarrierServiceAndServiceOptionResponse;
 import com.hbc.dataupload.domain.pojo.NodeCarrierServicePageProperties;
-import com.hbc.dataupload.service.NodeCarrierServiceDetailsService;
+import com.hbc.dataupload.service.NodeCarrierServiceAndServiceOptionService;
 import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -19,41 +19,45 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/ui/node-carrier-service-option")
 @RequiredArgsConstructor
-@RequestMapping("/ui/node-carrier-service")
-public class NodeCarrierServiceController {
+public class NodeCarrierServiceAndServiceOptionController {
 
-  private final Logger logger = LoggerFactory.getLogger(NodeCarrierServiceController.class);
-  private final NodeCarrierServiceDetailsService nodeCarrierServiceDetailsService;
   private final NodeCarrierServicePageProperties pageProperties;
   private final DefaultPageProperties defaultPageProperties;
+  private final NodeCarrierServiceAndServiceOptionService nodeCarrierServiceAndServiceOptionService;
+  private final Logger logger =
+      LoggerFactory.getLogger(NodeCarrierServiceAndServiceOptionController.class);
   private static final String PAGINATION_URL =
-      "/data-upload/ui/node-carrier-service/%s?pageNo=%d&pageSize=%d&sortBy=%s&sortOrder=%s";
+      "/data-upload/ui/node-carrier-service-option/%s?pageNo=%d&pageSize=%d&sortBy=%s&sortOrder=%s";
 
   @GetMapping("/{orgId}")
-  public ResponseEntity<BaseResponse<PagePayload<NodeCarrierServiceResponse>>>
-      getNodeCarrierServiceDetails(@PathVariable @NotBlank String orgId, PageParams pageParams) {
-    logger.debug("Processing get list of nodes and carrier service details");
+  public ResponseEntity<BaseResponse<PagePayload<NodeCarrierServiceAndServiceOptionResponse>>>
+      getListOfNodeCarrierServiceAndServiceOptionDetails(
+          @NotBlank @PathVariable String orgId, PageParams pageParams) {
 
-    PagePayload<NodeCarrierServiceResponse> nodeCarrierServiceResponse =
-        nodeCarrierServiceDetailsService.getNodeCarrierServiceDetails(
-            orgId,
-            pageParams.getPageNo().orElse(defaultPageProperties.getPageNo()),
-            pageParams.getPageSize().orElse(defaultPageProperties.getPageSize()),
-            pageParams.getSortBy().orElse(pageProperties.getSortBy()),
-            pageParams.getSortOrder().orElse(pageProperties.getSortOrder()));
+    logger.debug("Processing get Node + Carrier Service + Service Option details");
+
+    PagePayload<NodeCarrierServiceAndServiceOptionResponse> nodeCarrierServiceResponse =
+        nodeCarrierServiceAndServiceOptionService
+            .getListOfNodeCarrierServiceAndServiceOptionDetails(
+                orgId,
+                pageParams.getPageNo().orElse(defaultPageProperties.getPageNo()),
+                pageParams.getPageSize().orElse(defaultPageProperties.getPageSize()),
+                pageParams.getSortBy().orElse(pageProperties.getSortBy()),
+                pageParams.getSortOrder().orElse(pageProperties.getSortOrder()));
 
     updatePaginationDetails(nodeCarrierServiceResponse, orgId, pageParams);
 
     return ResponseEntity.ok(
         BaseResponse.builder()
-            .message("Node and Carrier Service List fetched successfully")
+            .message("List of node + carrier service + service option details fetched successfully")
             .payload(nodeCarrierServiceResponse)
             .build());
   }
 
   private void updatePaginationDetails(
-      PagePayload<NodeCarrierServiceResponse> nodeCarrierServiceResponse,
+      PagePayload<NodeCarrierServiceAndServiceOptionResponse> nodeCarrierServiceResponse,
       String orgId,
       PageParams pageParams) {
     int currentPage = nodeCarrierServiceResponse.getPagination().getCurrentPage();
