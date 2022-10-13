@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@ConditionalOnProperty(value = "storage.provider", havingValue = "aws")
+@ConditionalOnProperty(value = "storage.type", havingValue = "S3")
 @Profile("default")
 public class AWSConfigDefault {
 

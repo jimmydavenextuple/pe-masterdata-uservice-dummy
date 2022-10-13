@@ -5,10 +5,11 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
-import com.hbc.common.util.DateUtil;
 import com.hbc.jobs.dashboard.enums.ModuleEnum;
 import com.hbc.jobs.dashboard.service.PreSignedUrlInterface;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +20,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class S3SignedUrlServiceImpl implements PreSignedUrlInterface {
 
-  @Value("${s3.signed-url-expiry-minutes}")
+  @Value("${aws.s3.signed-url-expiry-minutes}")
   private Integer signedUrlExpiryMinutes;
 
   @Value("${dataupload.bucket-name}")
   private String bucketName;
 
+  @Value("${storage.type}")
+  private String storageType;
+
   @Autowired private AmazonS3 amazonS3;
 
   @Override
-  public String getPreSignedURL(String fileName, String moduleName) throws CommonServiceException {
+  public PreSignedUrlResponse getPreSignedURL(String fileName, String moduleName)
+      throws CommonServiceException {
     if (!validateModuleName(moduleName)) {
       throw new CommonServiceException(
           "module name is not valid",
@@ -36,9 +41,19 @@ public class S3SignedUrlServiceImpl implements PreSignedUrlInterface {
           0x1778,
           Map.of("moduleName", FieldError.builder().rejectedValue(moduleName).build()));
     }
-    return generatePreSignedUrl(
-        String.format("%s/%s/%s", bucketName, moduleName, DateTime.now().toString("yyyy-MM-dd")),
-        String.format("%s-%s", DateUtil.getCurrentUTCTimeStampInString(), fileName));
+    var bucketPath =
+        String.format(
+            "%s/%s/%s/%s",
+            bucketName,
+            ModuleEnum.UI.getModuleValue(),
+            moduleName,
+            DateTime.now().toString("yyyy-MM-dd"));
+    var file = String.format("%s-%s", new Date().getTime(), fileName);
+    return PreSignedUrlResponse.builder()
+        .signedURL(generatePreSignedUrl(bucketPath, file))
+        .filePath(String.format("%s/%s", bucketPath, file))
+        .storageType(storageType)
+        .build();
   }
 
   /*
