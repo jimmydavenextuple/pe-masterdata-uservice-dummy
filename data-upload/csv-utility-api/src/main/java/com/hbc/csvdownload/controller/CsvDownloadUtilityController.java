@@ -98,7 +98,7 @@ public class CsvDownloadUtilityController {
       HttpServletResponse response)
       throws IOException {
     log.debug("Inside download processing time buffers data as csv");
-    String csvData = csvDownloadUtilityService.downloadProcessingTimeBuffersForOrgId(orgId);
+    String csvData = csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(orgId);
     response.setStatus(HttpStatus.OK.value());
     response.setContentLength(csvData.length());
     response.getOutputStream().write(csvData.getBytes());

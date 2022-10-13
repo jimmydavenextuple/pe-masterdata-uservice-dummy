@@ -7,10 +7,8 @@ import com.hbc.node.domain.outbound.NodeResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +16,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class NodeProcessingTimeBufferService {
 
+  private static final String ACTIVE = "Active";
+  private static final String INACTIVE = "Inactive";
   private final NodeCarrierFeign nodeCarrierFeign;
   private final NodeFeign nodeFeign;
 
-  public String getProcessingTimeBuffersForOgId(String orgId) {
+  public String getProcessingTimeBuffersByOgId(String orgId) {
     List<NodeResponse> nodeResponseList = nodeFeign.getAllNodesByOrgId(orgId).getPayload();
     List<NodeCarrierResponse> nodeCarrierResponseList =
         nodeCarrierFeign.getAllNodeCarriersByOrgId(orgId).getPayload();
@@ -47,20 +47,15 @@ public class NodeProcessingTimeBufferService {
   private Map<String, List<NodeCarrierResponse>> constructMap(
       List<NodeCarrierResponse> nodeCarrierResponseList) {
     Map<String, List<NodeCarrierResponse>> nodeCarrierResponseMap = new HashMap<>();
-    Set<String> visitedNodes = new HashSet<>();
 
     nodeCarrierResponseList.forEach(
-        nodeCarrierResponse -> {
-          if (!visitedNodes.contains(nodeCarrierResponse.getNodeId())) {
+        nodeCarrier -> {
+          if (nodeCarrierResponseMap.containsKey(nodeCarrier.getNodeId())) {
+            nodeCarrierResponseMap.get(nodeCarrier.getNodeId()).add(nodeCarrier);
+          } else {
             List<NodeCarrierResponse> nodeCarrierResponseList1 = new ArrayList<>();
-            nodeCarrierResponseList.forEach(
-                nodeCarrierResponse1 -> {
-                  if (nodeCarrierResponse1.getNodeId().equals(nodeCarrierResponse.getNodeId())) {
-                    nodeCarrierResponseList1.add(nodeCarrierResponse1);
-                  }
-                });
-            nodeCarrierResponseMap.put(nodeCarrierResponse.getNodeId(), nodeCarrierResponseList1);
-            visitedNodes.add(nodeCarrierResponse.getNodeId());
+            nodeCarrierResponseList1.add(nodeCarrier);
+            nodeCarrierResponseMap.put(nodeCarrier.getNodeId(), nodeCarrierResponseList1);
           }
         });
 
@@ -70,8 +65,10 @@ public class NodeProcessingTimeBufferService {
   private String constructCSVContents(NodeResponse node, NodeCarrierResponse nodeCarrierResponse) {
     String serviceOption = checkForNullValues(nodeCarrierResponse.getServiceOption());
     String bufferHours = checkForNullValues(nodeCarrierResponse.getBufferHours());
-    String bufferStartDate = checkForNullValues(nodeCarrierResponse.getBufferStartDate());
-    String bufferEndDate = checkForNullValues(nodeCarrierResponse.getBufferEndDate());
+    String bufferStartDate =
+        checkForNullValues(convertToStringUTC(nodeCarrierResponse.getBufferStartDate()));
+    String bufferEndDate =
+        checkForNullValues(convertToStringUTC(nodeCarrierResponse.getBufferEndDate()));
     String status =
         checkForNullValues(
             computeStatus(
@@ -105,18 +102,20 @@ public class NodeProcessingTimeBufferService {
   }
 
   private String checkForNullValues(Object value) {
-    if (value instanceof Date) {
-      // Convert Date to String UTC format
-      return ((Date) value).toInstant().toString();
-    }
     return (value == null) ? "NA" : value.toString();
   }
 
+  private String convertToStringUTC(Date value) {
+    if (value != null) {
+      return value.toInstant().toString();
+    }
+    return null;
+  }
+
   private String computeStatus(Double bufferHours, Date bufferStartDate, Date bufferEndDate) {
-    var currentDate = new Date();
     if (bufferHours != null && bufferStartDate != null && bufferEndDate != null) {
-      if (currentDate.compareTo(bufferEndDate) <= 0) return "Active";
-      else return "Inactive";
+      var currentDate = new Date();
+      return currentDate.compareTo(bufferEndDate) <= 0 ? ACTIVE : INACTIVE;
     }
     return null;
   }

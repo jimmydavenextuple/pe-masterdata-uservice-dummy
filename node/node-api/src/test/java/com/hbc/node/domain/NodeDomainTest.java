@@ -192,25 +192,25 @@ class NodeDomainTest {
   @Test
   void getAllNodesByOrgIdTest() throws NodeDomainException {
     List<NodeEntity> nodeEntities = testUtil.getNodeEntityList();
-    when(nodeRepository.findAllNodesByOrgId(any())).thenReturn(nodeEntities);
+    when(nodeRepository.findByOrgIdOrderByNodeIdAsc(any())).thenReturn(nodeEntities);
 
     List<NodeEntity> responseList = nodeDomain.getAllNodesByOrgId(TestUtil.ORG_ID);
     Assertions.assertEquals(2, responseList.size());
     Assertions.assertEquals(nodeEntities.get(0).getNodeId(), responseList.get(0).getNodeId());
     Assertions.assertEquals(nodeEntities.get(0).getOrgId(), responseList.get(0).getOrgId());
 
-    verify(nodeRepository, times(1)).findAllNodesByOrgId(any());
+    verify(nodeRepository, times(1)).findByOrgIdOrderByNodeIdAsc(any());
   }
 
   @Test
   void getAllNodesByOrgIdExceptionTest() {
-    when(nodeRepository.findAllNodesByOrgId(any()))
+    when(nodeRepository.findByOrgIdOrderByNodeIdAsc(any()))
         .thenThrow(new RuntimeException("Error while fetching all node records"));
 
     Exception exception =
         assertThrows(
             NodeDomainException.class, () -> nodeDomain.getAllNodesByOrgId(TestUtil.ORG_ID));
     Assertions.assertEquals("Error while fetching all node records", exception.getMessage());
-    verify(nodeRepository, times(1)).findAllNodesByOrgId(any());
+    verify(nodeRepository, times(1)).findByOrgIdOrderByNodeIdAsc(any());
   }
 }

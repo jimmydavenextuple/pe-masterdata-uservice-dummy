@@ -169,7 +169,7 @@ public class NodeController {
             .build());
   }
 
-  @GetMapping("/get-all-nodes/{orgId}")
+  @GetMapping("/{orgId}/nodes")
   public ResponseEntity<BaseResponse<List<NodeResponse>>> getAllNodesByOrgId(
       @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
       throws NodeDomainException {

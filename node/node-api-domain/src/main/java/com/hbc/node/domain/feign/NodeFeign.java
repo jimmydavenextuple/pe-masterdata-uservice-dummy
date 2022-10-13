@@ -53,6 +53,6 @@ public interface NodeFeign {
   @GetMapping("/node/get-all-cache-keys")
   BaseResponse<List<NodeCacheKeyDto>> getNodeCacheKeys(@NotNull @RequestParam Integer limit);
 
-  @GetMapping("/node/get-all-nodes/{orgId}")
+  @GetMapping("/node/{orgId}/nodes")
   BaseResponse<List<NodeResponse>> getAllNodesByOrgId(@NotBlank @PathVariable String orgId);
 }

@@ -306,7 +306,7 @@ public class CsvDownloadUtilityService {
         + dto.getTimeZone();
   }
 
-  public String downloadProcessingTimeBuffersForOrgId(String orgId) {
+  public String downloadProcessingTimeBuffersByOrgId(String orgId) {
     logger.debug("Processing download processing time buffers for orgId");
 
     var header =
@@ -325,7 +325,7 @@ public class CsvDownloadUtilityService {
             "bufferEndDate",
             "status");
 
-    var rows = nodeProcessingTimeBufferService.getProcessingTimeBuffersForOgId(orgId);
+    var rows = nodeProcessingTimeBufferService.getProcessingTimeBuffersByOgId(orgId);
 
     return String.join("\n", header, rows);
   }

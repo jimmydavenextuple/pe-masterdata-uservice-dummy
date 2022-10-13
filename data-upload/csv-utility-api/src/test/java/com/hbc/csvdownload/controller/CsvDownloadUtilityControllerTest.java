@@ -199,7 +199,7 @@ class CsvDownloadUtilityControllerTest {
             + "1101,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,EXPRESS,2.4,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,Inactive\n"
             + "1101,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,SDND,4.0,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,Active\n"
             + "1105,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,NA,NA,NA,NA,NA";
-    when(csvDownloadUtilityService.downloadProcessingTimeBuffersForOrgId(any()))
+    when(csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(any()))
         .thenReturn(csvContents);
 
     doNothing().when(response).setStatus(HttpStatus.OK.value());

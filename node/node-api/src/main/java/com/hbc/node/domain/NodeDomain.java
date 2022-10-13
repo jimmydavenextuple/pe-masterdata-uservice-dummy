@@ -86,7 +86,7 @@ public class NodeDomain {
 
   public List<NodeEntity> getAllNodesByOrgId(String orgId) throws NodeDomainException {
     try {
-      return nodeRepository.findAllNodesByOrgId(orgId);
+      return nodeRepository.findByOrgIdOrderByNodeIdAsc(orgId);
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to fetch the node details");
       throw new NodeDomainException("Error while fetching all node records", null, orgId);

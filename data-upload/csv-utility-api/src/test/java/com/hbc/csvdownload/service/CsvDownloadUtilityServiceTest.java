@@ -179,13 +179,12 @@ class CsvDownloadUtilityServiceTest {
         "1101,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,EXPRESS,2.4,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,Inactive\n"
             + "1101,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,SDND,4.0,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,Active\n"
             + "1105,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,NA,NA,NA,NA,NA";
-    when(nodeProcessingTimeBufferService.getProcessingTimeBuffersForOgId(any()))
-        .thenReturn(csvRows);
+    when(nodeProcessingTimeBufferService.getProcessingTimeBuffersByOgId(any())).thenReturn(csvRows);
 
     String csvContents =
-        csvDownloadUtilityService.downloadProcessingTimeBuffersForOrgId(TestUtil.ORG_ID);
+        csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(TestUtil.ORG_ID);
 
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
-    verify(nodeProcessingTimeBufferService, times(1)).getProcessingTimeBuffersForOgId(any());
+    verify(nodeProcessingTimeBufferService, times(1)).getProcessingTimeBuffersByOgId(any());
   }
 }

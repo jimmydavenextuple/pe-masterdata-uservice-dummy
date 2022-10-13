@@ -310,7 +310,7 @@ public class NodeCarrierController {
             .build());
   }
 
-  @GetMapping("/get-all-node-carriers/{orgId}")
+  @GetMapping("/{orgId}/node-carriers")
   public ResponseEntity<BaseResponse<List<NodeCarrierResponse>>> getAllNodeCarriersByOrgId(
       @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
       throws NodeCarrierDomainException {

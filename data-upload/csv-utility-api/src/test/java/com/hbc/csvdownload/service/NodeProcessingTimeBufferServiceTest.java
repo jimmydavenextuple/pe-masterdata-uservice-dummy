@@ -38,7 +38,7 @@ class NodeProcessingTimeBufferServiceTest {
         .thenReturn(BaseResponse.builder().payload(nodeCarrierResponseList).build());
 
     String csvRows =
-        nodeProcessingTimeBufferService.getProcessingTimeBuffersForOgId(TestUtil.ORG_ID);
+        nodeProcessingTimeBufferService.getProcessingTimeBuffersByOgId(TestUtil.ORG_ID);
 
     Assertions.assertFalse(ObjectUtils.isEmpty(csvRows));
     Assertions.assertEquals(TestUtil.processingTimeBufferCsvRowData, csvRows);
@@ -58,7 +58,7 @@ class NodeProcessingTimeBufferServiceTest {
         .thenReturn(BaseResponse.builder().payload(nodeCarrierResponseList).build());
 
     String csvRows =
-        nodeProcessingTimeBufferService.getProcessingTimeBuffersForOgId(TestUtil.ORG_ID);
+        nodeProcessingTimeBufferService.getProcessingTimeBuffersByOgId(TestUtil.ORG_ID);
 
     Assertions.assertFalse(ObjectUtils.isEmpty(csvRows));
     Assertions.assertEquals(TestUtil.processingTimeBufferCsvRowDataForNullValues, csvRows);
@@ -78,7 +78,7 @@ class NodeProcessingTimeBufferServiceTest {
         .thenReturn(BaseResponse.builder().payload(nodeCarrierResponseList).build());
 
     String csvRows =
-        nodeProcessingTimeBufferService.getProcessingTimeBuffersForOgId(TestUtil.ORG_ID);
+        nodeProcessingTimeBufferService.getProcessingTimeBuffersByOgId(TestUtil.ORG_ID);
 
     Assertions.assertFalse(ObjectUtils.isEmpty(csvRows));
     Assertions.assertEquals(TestUtil.processingTimeBufferCsvRowDataForPartialNullValues, csvRows);
