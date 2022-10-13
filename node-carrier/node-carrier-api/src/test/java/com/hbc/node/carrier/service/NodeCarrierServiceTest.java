@@ -724,4 +724,20 @@ class NodeCarrierServiceTest {
     verify(nodeCarrierDomain, times(1))
         .findNodeCarrierDetailsByNodeIdAndOrgId(anyString(), anyString());
   }
+
+  @Test
+  void getAllNodeCarrierByOrgIdTest() throws NodeCarrierDomainException {
+    List<NodeCarrierEntity> nodeCarrierEntities = testUtil.getNodeCarrierEntityList2();
+    when(nodeCarrierDomain.getAllNodeCarriersByOrgId(any())).thenReturn(nodeCarrierEntities);
+
+    List<NodeCarrierResponse> nodeCarrierResponseList =
+        nodeCarrierService.getAllNodeCarrierByOrgId(TestUtil.ORG_ID);
+
+    assertEquals(2, nodeCarrierResponseList.size());
+    assertEquals(TestUtil.NODE_ID, nodeCarrierResponseList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, nodeCarrierResponseList.get(0).getOrgId());
+    assertEquals("", nodeCarrierResponseList.get(0).getCarrierServiceId());
+
+    verify(nodeCarrierDomain, times(1)).getAllNodeCarriersByOrgId(any());
+  }
 }

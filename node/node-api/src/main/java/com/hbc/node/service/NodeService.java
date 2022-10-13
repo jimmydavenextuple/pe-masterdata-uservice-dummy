@@ -162,4 +162,10 @@ public class NodeService {
     errorMap.put(field, FieldError.builder().rejectedValue(fieldValue).build());
     throw new CommonServiceException(errorMessage, HttpStatus.NOT_FOUND, 0x1771, errorMap);
   }
+
+  public List<NodeResponse> getAllNodesByOrgId(String orgId) throws NodeDomainException {
+    List<NodeEntity> nodeEntityList = nodeDomain.getAllNodesByOrgId(orgId);
+
+    return INSTANCE.toNodeResponseList(nodeEntityList);
+  }
 }

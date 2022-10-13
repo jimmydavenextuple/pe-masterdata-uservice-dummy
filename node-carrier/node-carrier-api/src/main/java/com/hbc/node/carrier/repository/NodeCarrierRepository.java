@@ -33,4 +33,6 @@ public interface NodeCarrierRepository extends JpaRepository<NodeCarrierEntity, 
   List<String> findUniqueNodeCarrierServiceListByOrgIdAndNodeId(String orgId, String nodeId);
 
   List<NodeCarrierEntity> findByNodeIdAndOrgId(String nodeId, String orgId);
+
+  List<NodeCarrierEntity> findByOrgIdAndCarrierServiceId(String orgId, String carrierServiceId);
 }

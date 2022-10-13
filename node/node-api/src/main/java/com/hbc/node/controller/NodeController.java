@@ -169,6 +169,17 @@ public class NodeController {
             .build());
   }
 
+  @GetMapping("/get-all-nodes/{orgId}")
+  public ResponseEntity<BaseResponse<List<NodeResponse>>> getAllNodesByOrgId(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
+      throws NodeDomainException {
+    logger.debug("Processing get all nodes by orgId");
+    var nodeResponse = nodeService.getAllNodesByOrgId(orgId);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder().message("Nodes fetched successfully").payload(nodeResponse).build());
+  }
+
   private PagePayload<NodeDto> setNodePagePayload(
       Page<NodeDto> nodeDtoPage, PageParams pageParams, @NotBlank String orgId) {
     PagePayload<NodeDto> pagePayload = new PagePayload<>();

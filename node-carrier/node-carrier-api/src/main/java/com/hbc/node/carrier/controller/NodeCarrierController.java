@@ -309,4 +309,18 @@ public class NodeCarrierController {
             .payload(nodeCarrierResponseList)
             .build());
   }
+
+  @GetMapping("/get-all-node-carriers/{orgId}")
+  public ResponseEntity<BaseResponse<List<NodeCarrierResponse>>> getAllNodeCarriersByOrgId(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
+      throws NodeCarrierDomainException {
+    logger.debug("Processing get all node carriers for a given orgId");
+    var nodeCarrierResponseList = nodeCarrierService.getAllNodeCarrierByOrgId(orgId);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier list fetched successfully")
+            .payload(nodeCarrierResponseList)
+            .build());
+  }
 }
