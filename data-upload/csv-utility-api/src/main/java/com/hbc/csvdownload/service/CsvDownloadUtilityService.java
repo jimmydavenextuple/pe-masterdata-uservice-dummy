@@ -41,6 +41,8 @@ public class CsvDownloadUtilityService {
 
   private final JobsDashboardService jobsDashboardService;
   private final JobsConsumerService jobsConsumerService;
+  private final NodeProcessingTimeBufferService nodeProcessingTimeBufferService;
+  private static final String ORG_ID = "orgId";
 
   private static final TransitDataRequestMapper INSTANCE =
       Mappers.getMapper(TransitDataRequestMapper.class);
@@ -147,7 +149,7 @@ public class CsvDownloadUtilityService {
 
   private String downloadProcessingLeadTimeErrorLogs(List<RecordStatusDto> recordStatusDtoList) {
     var header =
-        String.join(",", "nodeId", "orgId", "serviceOption", "processingLeadTime", "errorMessage");
+        String.join(",", "nodeId", ORG_ID, "serviceOption", "processingLeadTime", "errorMessage");
     String rows =
         recordStatusDtoList.stream()
             .map(this::constructRowContent)
@@ -272,7 +274,7 @@ public class CsvDownloadUtilityService {
     var header =
         String.join(
             ",",
-            "orgId",
+            ORG_ID,
             "postalCodePrefix",
             "country",
             "state",
@@ -302,5 +304,29 @@ public class CsvDownloadUtilityService {
         + dto.getLongitude()
         + ","
         + dto.getTimeZone();
+  }
+
+  public String downloadProcessingTimeBuffersForOrgId(String orgId) {
+    logger.debug("Processing download processing time buffers for orgId");
+
+    var header =
+        String.join(
+            ",",
+            "nodeId",
+            ORG_ID,
+            "nodeType",
+            "street",
+            "city",
+            "province",
+            "postalCode",
+            "serviceOption",
+            "bufferHours",
+            "bufferStartDate",
+            "bufferEndDate",
+            "status");
+
+    var rows = nodeProcessingTimeBufferService.getProcessingTimeBuffersForOgId(orgId);
+
+    return String.join("\n", header, rows);
   }
 }

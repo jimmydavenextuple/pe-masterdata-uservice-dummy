@@ -91,6 +91,20 @@ public class CsvDownloadUtilityController {
     response.flushBuffer();
   }
 
+  @GetMapping(value = "/org/{orgId}/download/processing-time-buffers")
+  public void downloadProcessingTimeBufferDataCSV(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws IOException {
+    log.debug("Inside download processing time buffers data as csv");
+    String csvData = csvDownloadUtilityService.downloadProcessingTimeBuffersForOrgId(orgId);
+    response.setStatus(HttpStatus.OK.value());
+    response.setContentLength(csvData.length());
+    response.getOutputStream().write(csvData.getBytes());
+    response.flushBuffer();
+  }
+
   @GetMapping(path = "/org/{orgId}/jobs/{jobId}/download")
   public void downloadLogsByFilters(
       @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,

@@ -4,8 +4,12 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CIT
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
 import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
@@ -16,6 +20,8 @@ import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Collections;
@@ -38,6 +44,8 @@ public class TestUtil {
   public static final String SERVICE_OPTION = "serviceOptions";
   public static final String COUNTRY = "CA";
   public static final Double PROCESSING_TIME = 20.0;
+  private static final String NODE_ID_2 = "nodeId2";
+  private static final String SERVICE_OPTION_2 = "EXPRESS";
   public static final String processingLeadTimesCsvData =
       "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
           + "1554,BAY,SDND,2,U\n"
@@ -57,6 +65,15 @@ public class TestUtil {
 
   public static final String transitTimesRequestBodyJson =
       "{\"orgId\":\"BAY\",\"sourceGeozone\":\"A0A\",\"destinationGeozone\":\"M1R\",\"carrierServiceId\":\"ALL-SDND\",\"transitDays\":\"1.5\"}";
+
+  public static final String processingTimeBufferCsvRowData =
+      "nodeId,BAY,nodeType,street,city,province,postalCode,serviceOptions,2.5,1970-01-01T00:00:01Z,1970-01-01T00:00:01Z,Inactive\n"
+          + "nodeId,BAY,nodeType,street,city,province,postalCode,EXPRESS,2.5,1970-01-01T00:00:01Z,1970-01-01T00:00:01Z,Inactive\n"
+          + "nodeId2,BAY,nodeType,street,city,province,postalCode,NA,NA,NA,NA,NA";
+
+  public static final String processingTimeBufferCsvRowDataForNullValues =
+      "nodeId,BAY,nodeType,street,city,province,postalCode,NA,NA,NA,NA,NA\n"
+          + "nodeId2,BAY,nodeType,street,city,province,postalCode,NA,NA,NA,NA,NA";
 
   public JobDto getJobDto() {
     JobDto jobDto = new JobDto();
@@ -185,5 +202,50 @@ public class TestUtil {
         .longitude(LONGITUDE)
         .timeZone(TIME_ZONE)
         .build();
+  }
+
+  public NodeResponse getNodeResponse(String nodeId) {
+    return NodeResponse.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .street(STREET)
+        .city(CITY)
+        .country(COUNTRY)
+        .nodeType(NODE_TYPE)
+        .isActive(true)
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .postalCode(POSTAL_CODE)
+        .province(PROVINCE)
+        .timezone(TIME_ZONE)
+        .build();
+  }
+
+  public List<NodeResponse> getNodeResponseList() {
+    return List.of(getNodeResponse(NODE_ID), getNodeResponse(NODE_ID_2));
+  }
+
+  public List<NodeCarrierResponse> getNodeCarrierResponseList() {
+    return List.of(
+        getNodeCarrierResponse(SERVICE_OPTION, 2.5, new Date(1000), new Date(1000)),
+        getNodeCarrierResponse(SERVICE_OPTION_2, 2.5, new Date(1000), new Date(1000)));
+  }
+
+  private NodeCarrierResponse getNodeCarrierResponse(
+      String serviceOption, Double bufferHours, Date bufferStartDate, Date bufferEndDate) {
+    return NodeCarrierResponse.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId("")
+        .serviceOption(serviceOption)
+        .processingTime(PROCESSING_TIME)
+        .bufferHours(bufferHours)
+        .bufferStartDate(bufferStartDate)
+        .bufferEndDate(bufferEndDate)
+        .build();
+  }
+
+  public List<NodeCarrierResponse> getNodeCarrierResponseListWithNullValues() {
+    return List.of(getNodeCarrierResponse(null, null, null, null));
   }
 }
