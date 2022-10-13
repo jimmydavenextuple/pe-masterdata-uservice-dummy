@@ -75,6 +75,10 @@ public class TestUtil {
       "nodeId,BAY,nodeType,street,city,province,postalCode,NA,NA,NA,NA,NA\n"
           + "nodeId2,BAY,nodeType,street,city,province,postalCode,NA,NA,NA,NA,NA";
 
+  public static String processingTimeBufferCsvRowDataForPartialNullValues =
+      "nodeId,BAY,nodeType,street,city,province,postalCode,serviceOptions,2.4,NA,NA,NA\n"
+          + "nodeId2,BAY,nodeType,street,city,province,postalCode,NA,NA,NA,NA,NA";
+
   public JobDto getJobDto() {
     JobDto jobDto = new JobDto();
     jobDto.setJobId(JOB_ID);
@@ -247,5 +251,9 @@ public class TestUtil {
 
   public List<NodeCarrierResponse> getNodeCarrierResponseListWithNullValues() {
     return List.of(getNodeCarrierResponse(null, null, null, null));
+  }
+
+  public List<NodeCarrierResponse> getNodeCarrierResponseListWithPartialNullValues() {
+    return List.of(getNodeCarrierResponse(SERVICE_OPTION, 2.4, null, null));
   }
 }

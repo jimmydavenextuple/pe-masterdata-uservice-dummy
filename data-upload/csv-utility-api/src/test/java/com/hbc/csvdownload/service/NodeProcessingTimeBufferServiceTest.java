@@ -65,4 +65,24 @@ class NodeProcessingTimeBufferServiceTest {
     verify(nodeFeign, times(1)).getAllNodesByOrgId(any());
     verify(nodeCarrierFeign, times(1)).getAllNodeCarriersByOrgId(any());
   }
+
+  @Test
+  void getProcessingTimeBuffersForOgIdPartialNullValuesTest() {
+    List<NodeResponse> nodeResponseList = testUtil.getNodeResponseList();
+    List<NodeCarrierResponse> nodeCarrierResponseList =
+        testUtil.getNodeCarrierResponseListWithPartialNullValues();
+
+    when(nodeFeign.getAllNodesByOrgId(any()))
+        .thenReturn(BaseResponse.builder().payload(nodeResponseList).build());
+    when(nodeCarrierFeign.getAllNodeCarriersByOrgId(any()))
+        .thenReturn(BaseResponse.builder().payload(nodeCarrierResponseList).build());
+
+    String csvRows =
+        nodeProcessingTimeBufferService.getProcessingTimeBuffersForOgId(TestUtil.ORG_ID);
+
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvRows));
+    Assertions.assertEquals(TestUtil.processingTimeBufferCsvRowDataForPartialNullValues, csvRows);
+    verify(nodeFeign, times(1)).getAllNodesByOrgId(any());
+    verify(nodeCarrierFeign, times(1)).getAllNodeCarriersByOrgId(any());
+  }
 }
