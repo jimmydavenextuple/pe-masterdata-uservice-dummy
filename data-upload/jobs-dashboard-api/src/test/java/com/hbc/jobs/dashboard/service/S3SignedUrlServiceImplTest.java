@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.amazonaws.services.s3.AmazonS3;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.jobs.dashboard.service.impl.aws.S3SignedUrlServiceImpl;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.jupiter.api.Assertions;
@@ -34,8 +35,8 @@ class S3SignedUrlServiceImplTest {
   void getPreSignedUrlTest() throws MalformedURLException, CommonServiceException {
     when(amazonS3.generatePresignedUrl(any()))
         .thenReturn(new URL("https", "s3.amazonaws.com", 8080, "/test.csv"));
-    String response = s3SignedUrlServiceImpl.getPreSignedURL("test.csv", "transit");
-    Assertions.assertEquals("https://s3.amazonaws.com:8080/test.csv", response);
+    PreSignedUrlResponse response = s3SignedUrlServiceImpl.getPreSignedURL("test.csv", "transit");
+    Assertions.assertEquals("https://s3.amazonaws.com:8080/test.csv", response.getSignedURL());
     verify(amazonS3, times(1)).generatePresignedUrl(any());
   }
 

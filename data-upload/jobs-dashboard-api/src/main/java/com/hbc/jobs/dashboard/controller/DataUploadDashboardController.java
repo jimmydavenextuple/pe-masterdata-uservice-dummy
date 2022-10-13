@@ -29,11 +29,11 @@ public class DataUploadDashboardController {
 
       return ResponseEntity.ok(
           BaseResponse.builder()
-              .message("Pre Signed S3 Url generated successfully!")
+              .message("Pre Signed Url generated successfully!")
               .payload(s3SignedUrlInterface.getPreSignedURL(fileName, moduleName))
               .build());
     } catch (Exception e) {
-      logger.error("Error in generating pre signed s3 url");
+      logger.error("Error in generating pre signed url");
       throw e;
     }
   }

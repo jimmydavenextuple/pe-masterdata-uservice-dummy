@@ -18,7 +18,8 @@ public enum ModuleEnum {
   NODE_CARRIER_SELECTION("node-carrier-selection-upload"),
   NODE_SERVICE_OPTION_BUFFER("node-service-option-buffer"),
   TRANSIT_BUFFER("transit-buffer"),
-  EDD_COMPUTATION("edd-computation");
+  EDD_COMPUTATION("edd-computation"),
+  UI("ui");
 
   private final String moduleValue;
 
