@@ -10,14 +10,15 @@ import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.domain.feign.NodeFeign;
-import com.hbc.node.domain.outbound.NodeResponse;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.ObjectUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,13 +28,17 @@ class NodeProcessingTimeBufferServiceTest {
   @Mock private NodeFeign nodeFeign;
   @Mock private NodeCarrierFeign nodeCarrierFeign;
 
+  @BeforeEach
+  public void init() {
+    ReflectionTestUtils.setField(nodeProcessingTimeBufferService, "pageSize", 2);
+  }
+
   @Test
   void getProcessingTimeBuffersForOgIdTest() {
-    List<NodeResponse> nodeResponseList = testUtil.getNodeResponseList();
     List<NodeCarrierResponse> nodeCarrierResponseList = testUtil.getNodeCarrierResponseList();
 
-    when(nodeFeign.getAllNodesByOrgId(any()))
-        .thenReturn(BaseResponse.builder().payload(nodeResponseList).build());
+    when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeListPaginationBaseResponse(1));
     when(nodeCarrierFeign.getAllNodeCarriersByOrgId(any()))
         .thenReturn(BaseResponse.builder().payload(nodeCarrierResponseList).build());
 
@@ -42,18 +47,17 @@ class NodeProcessingTimeBufferServiceTest {
 
     Assertions.assertFalse(ObjectUtils.isEmpty(csvRows));
     Assertions.assertEquals(TestUtil.processingTimeBufferCsvRowData, csvRows);
-    verify(nodeFeign, times(1)).getAllNodesByOrgId(any());
+    verify(nodeFeign, times(1)).getNodeList(any(), any(), any(), any(), any());
     verify(nodeCarrierFeign, times(1)).getAllNodeCarriersByOrgId(any());
   }
 
   @Test
   void getProcessingTimeBuffersForOgIdNullValuesTest() {
-    List<NodeResponse> nodeResponseList = testUtil.getNodeResponseList();
     List<NodeCarrierResponse> nodeCarrierResponseList =
         testUtil.getNodeCarrierResponseListWithNullValues();
 
-    when(nodeFeign.getAllNodesByOrgId(any()))
-        .thenReturn(BaseResponse.builder().payload(nodeResponseList).build());
+    when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeListPaginationBaseResponse(1));
     when(nodeCarrierFeign.getAllNodeCarriersByOrgId(any()))
         .thenReturn(BaseResponse.builder().payload(nodeCarrierResponseList).build());
 
@@ -62,18 +66,17 @@ class NodeProcessingTimeBufferServiceTest {
 
     Assertions.assertFalse(ObjectUtils.isEmpty(csvRows));
     Assertions.assertEquals(TestUtil.processingTimeBufferCsvRowDataForNullValues, csvRows);
-    verify(nodeFeign, times(1)).getAllNodesByOrgId(any());
+    verify(nodeFeign, times(1)).getNodeList(any(), any(), any(), any(), any());
     verify(nodeCarrierFeign, times(1)).getAllNodeCarriersByOrgId(any());
   }
 
   @Test
   void getProcessingTimeBuffersForOgIdPartialNullValuesTest() {
-    List<NodeResponse> nodeResponseList = testUtil.getNodeResponseList();
     List<NodeCarrierResponse> nodeCarrierResponseList =
         testUtil.getNodeCarrierResponseListWithPartialNullValues();
 
-    when(nodeFeign.getAllNodesByOrgId(any()))
-        .thenReturn(BaseResponse.builder().payload(nodeResponseList).build());
+    when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeListPaginationBaseResponse(1));
     when(nodeCarrierFeign.getAllNodeCarriersByOrgId(any()))
         .thenReturn(BaseResponse.builder().payload(nodeCarrierResponseList).build());
 
@@ -82,7 +85,7 @@ class NodeProcessingTimeBufferServiceTest {
 
     Assertions.assertFalse(ObjectUtils.isEmpty(csvRows));
     Assertions.assertEquals(TestUtil.processingTimeBufferCsvRowDataForPartialNullValues, csvRows);
-    verify(nodeFeign, times(1)).getAllNodesByOrgId(any());
+    verify(nodeFeign, times(1)).getNodeList(any(), any(), any(), any(), any());
     verify(nodeCarrierFeign, times(1)).getAllNodeCarriersByOrgId(any());
   }
 }

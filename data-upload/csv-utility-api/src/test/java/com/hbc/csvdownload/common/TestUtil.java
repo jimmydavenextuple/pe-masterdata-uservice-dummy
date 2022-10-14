@@ -12,6 +12,8 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STA
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
 import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
+import com.hbc.common.base.PagePayload;
+import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
@@ -21,9 +23,10 @@ import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
-import com.hbc.node.domain.outbound.NodeResponse;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -208,27 +211,6 @@ public class TestUtil {
         .build();
   }
 
-  public NodeResponse getNodeResponse(String nodeId) {
-    return NodeResponse.builder()
-        .nodeId(nodeId)
-        .orgId(ORG_ID)
-        .street(STREET)
-        .city(CITY)
-        .country(COUNTRY)
-        .nodeType(NODE_TYPE)
-        .isActive(true)
-        .latitude(LATITUDE)
-        .longitude(LONGITUDE)
-        .postalCode(POSTAL_CODE)
-        .province(PROVINCE)
-        .timezone(TIME_ZONE)
-        .build();
-  }
-
-  public List<NodeResponse> getNodeResponseList() {
-    return List.of(getNodeResponse(NODE_ID), getNodeResponse(NODE_ID_2));
-  }
-
   public List<NodeCarrierResponse> getNodeCarrierResponseList() {
     return List.of(
         getNodeCarrierResponse(SERVICE_OPTION, 2.5, new Date(1000), new Date(1000)),
@@ -255,5 +237,45 @@ public class TestUtil {
 
   public List<NodeCarrierResponse> getNodeCarrierResponseListWithPartialNullValues() {
     return List.of(getNodeCarrierResponse(SERVICE_OPTION, 2.4, null, null));
+  }
+
+  private NodeDto getNodeDto(String nodeId) {
+    return NodeDto.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .street(STREET)
+        .city(CITY)
+        .nodeType(NODE_TYPE)
+        .isActive(true)
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .postalCode(POSTAL_CODE)
+        .province(PROVINCE)
+        .timezone(TIME_ZONE)
+        .build();
+  }
+
+  private PagePayload<NodeDto> getNodeListPaginationResponse(Integer totalPages) {
+    PagePayload<NodeDto> pagePayload = new PagePayload<>();
+
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords(2);
+    pagination.setTotalPages(totalPages);
+    pagination.setCurrentPage(1);
+    pagination.setSortOrder("ASC");
+    pagination.setSortBy("nodeId");
+    pagination.setPrevious(null);
+    pagination.setNext("/test/{orgId}?pageNo=1,pageSize=2");
+    pagePayload.setPagination(pagination);
+    pagePayload.setData(Arrays.asList(getNodeDto(NODE_ID), getNodeDto(NODE_ID_2)));
+
+    return pagePayload;
+  }
+
+  public BaseResponse<PagePayload<NodeDto>> getNodeListPaginationBaseResponse(Integer totalPages) {
+    return BaseResponse.builder()
+        .message("Node Service List fetched successfully")
+        .payload(getNodeListPaginationResponse(totalPages))
+        .build();
   }
 }
