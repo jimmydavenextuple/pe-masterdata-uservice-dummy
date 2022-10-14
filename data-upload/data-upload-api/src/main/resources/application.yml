@@ -32,6 +32,11 @@ page-properties:
   pageSize: 15
   sortBy: created_date
   sortOrder: ASC
+aws:
+  s3:
+    signed-url-expiry-minutes: 30
+storage:
+  type: S3
 node-carrier-service-page-properties:
   sortBy: nodeId
   sortOrder: ASC
