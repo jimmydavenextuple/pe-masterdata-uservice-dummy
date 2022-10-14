@@ -11,18 +11,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@ConditionalOnProperty(value = "storage.provider", havingValue = "aws")
+@ConditionalOnProperty(value = "storage.type", havingValue = "S3")
 @Profile("!default")
 public class AWSConfig {
 
   @Bean
-  public AmazonS3 s3(
-      EnvironmentVariableCredentialsProvider environmentVariableCredentialsProvider) {
+  public AmazonS3 s3(DefaultAWSCredentialsProviderChain defaultAWSCredentialsProviderChain) {
     return AmazonS3ClientBuilder.standard()
         .withRegion(String.valueOf(Region.getRegion(Regions.US_EAST_1)))
         .withCredentials(
-            new AWSStaticCredentialsProvider(
-                environmentVariableCredentialsProvider.getCredentials()))
+            new AWSStaticCredentialsProvider(defaultAWSCredentialsProviderChain.getCredentials()))
         .build();
   }
 }

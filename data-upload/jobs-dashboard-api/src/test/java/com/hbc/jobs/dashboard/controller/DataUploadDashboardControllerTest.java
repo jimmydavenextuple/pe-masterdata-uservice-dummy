@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.dashboard.service.PreSignedUrlInterface;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ class DataUploadDashboardControllerTest {
   @Test
   void getPreSignedUrlTest() throws CommonServiceException {
     when(preSignedUrlInterface.getPreSignedURL(any(), any()))
-        .thenReturn("https://s3.amazonaws.com/test");
+        .thenReturn(PreSignedUrlResponse.builder().build());
     ResponseEntity<BaseResponse<String>> response =
         dataUploadDashboardController.getPreSignedUrl("test.csv", "transit");
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Status code");
