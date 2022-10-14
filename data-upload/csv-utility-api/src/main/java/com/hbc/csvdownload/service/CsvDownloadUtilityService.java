@@ -94,7 +94,7 @@ public class CsvDownloadUtilityService {
               WORKING_CALENDER);
       writer.append(header);
       writer.append("\n");
-      carrierServiceResponses.parallelStream()
+      carrierServiceResponses
           .forEach(
               carrierServiceResponse -> {
                 String carrierServiceId = carrierServiceResponse.getCarrierServiceId();
@@ -119,7 +119,7 @@ public class CsvDownloadUtilityService {
                         ? "ACTIVE"
                         : "INACTIVE";
                 String row =
-                    calenderIds.parallelStream()
+                    calenderIds.stream()
                         .map(
                             calenderId ->
                                 constructRow(orgId, carrierServiceResponse, status, calenderId))
