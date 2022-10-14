@@ -16,7 +16,7 @@ public class TransitDomain {
 
   private static final Logger logger = LoggerFactory.getLogger(TransitDomain.class);
 
-  private String ERROR_MESSAGE = "Error while fetching transit list";
+  private static final String ERROR_MESSAGE = "Error while fetching transit list";
 
   private final TransitRepository transitRepository;
 
