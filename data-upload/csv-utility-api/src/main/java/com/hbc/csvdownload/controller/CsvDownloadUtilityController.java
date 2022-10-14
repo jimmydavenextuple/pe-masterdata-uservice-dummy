@@ -10,7 +10,7 @@ import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +18,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
@@ -100,13 +101,15 @@ public class CsvDownloadUtilityController {
       throws IOException, CarrierServiceException {
     log.debug("Inside download carrier service data as csv");
     final var file = csvDownloadUtilityService.downloadCarrierServiceData(orgId);
-    InputStream inputStream = new FileInputStream(file);
-    response.setStatus(HttpStatus.OK.value());
-    response.setHeader("Content-Disposition", "attachment; filename=" + file.getName() );
-    IOUtils.copy(inputStream, response.getOutputStream());
-    response.flushBuffer();
-    inputStream.close();
-    file.delete();
+    try (var inputStream = new FileInputStream(file)) {
+      response.setStatus(HttpStatus.OK.value());
+      response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+      response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+      IOUtils.copy(inputStream, response.getOutputStream());
+      response.flushBuffer();
+      inputStream.close();
+      Files.delete(file.toPath());
+    }
   }
 
   @GetMapping(path = "/org/{orgId}/jobs/{jobId}/download")
