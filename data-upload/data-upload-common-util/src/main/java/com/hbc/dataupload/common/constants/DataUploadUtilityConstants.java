@@ -76,4 +76,6 @@ public class DataUploadUtilityConstants {
   public static final String BUFFER_START_DATE = "bufferStartDate";
   public static final String BUFFER_END_DATE = "bufferEndDate";
   public static final String STATUS = "status";
+  public static final String ACTIVE = "Active";
+  public static final String INACTIVE = "Inactive";
 }

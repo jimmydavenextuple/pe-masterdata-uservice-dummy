@@ -278,4 +278,8 @@ public class TestUtil {
         .payload(getNodeListPaginationResponse(totalPages))
         .build();
   }
+
+  public List<NodeDto> getNodeDtoList() {
+    return Arrays.asList(getNodeDto(NODE_ID), getNodeDto(NODE_ID_2));
+  }
 }

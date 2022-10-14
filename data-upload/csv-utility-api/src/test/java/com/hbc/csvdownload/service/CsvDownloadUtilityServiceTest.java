@@ -30,7 +30,8 @@ class CsvDownloadUtilityServiceTest {
   @Mock private JobsDashboardService jobsDashboardService;
   @Mock private PostalCodeTimeZoneService postalCodeTimeZoneService;
   @Mock private TransitService transitService;
-  @Mock private NodeProcessingTimeBufferService nodeProcessingTimeBufferService;
+  @Mock private NodeService nodeService;
+  @Mock private NodeCarrierService nodeCarrierService;
   @InjectMocks private CsvDownloadUtilityService csvDownloadUtilityService;
   @InjectMocks private TestUtil testUtil;
 
@@ -176,17 +177,44 @@ class CsvDownloadUtilityServiceTest {
   }
 
   @Test
-  void downloadProcessingTimeBuffersForOrgIdTest() throws IOException {
-    String csvRows =
-        "1101,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,EXPRESS,2.4,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,Inactive\n"
-            + "1101,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,SDND,4.0,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,Active\n"
-            + "1105,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,NA,NA,NA,NA,NA";
-    when(nodeProcessingTimeBufferService.getProcessingTimeBuffersByOgId(any())).thenReturn(csvRows);
+  void downloadProcessingTimeBuffersByOrgIdTest() throws IOException {
+    when(nodeService.getNodeList(any())).thenReturn(testUtil.getNodeDtoList());
+    when(nodeCarrierService.getNodeCarrierList(any()))
+        .thenReturn(testUtil.getNodeCarrierResponseList());
 
     File processingTimeBuffersFile =
         csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(TestUtil.ORG_ID);
 
     Assertions.assertNotNull(processingTimeBuffersFile);
-    verify(nodeProcessingTimeBufferService, times(1)).getProcessingTimeBuffersByOgId(any());
+    verify(nodeService, times(1)).getNodeList(any());
+    verify(nodeCarrierService, times(1)).getNodeCarrierList(any());
+  }
+
+  @Test
+  void downloadProcessingTimeBuffersByOrgIdNullValuesTest() throws IOException {
+    when(nodeService.getNodeList(any())).thenReturn(testUtil.getNodeDtoList());
+    when(nodeCarrierService.getNodeCarrierList(any()))
+        .thenReturn(testUtil.getNodeCarrierResponseListWithNullValues());
+
+    File processingTimeBuffersFile =
+        csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(TestUtil.ORG_ID);
+
+    Assertions.assertNotNull(processingTimeBuffersFile);
+    verify(nodeService, times(1)).getNodeList(any());
+    verify(nodeCarrierService, times(1)).getNodeCarrierList(any());
+  }
+
+  @Test
+  void downloadProcessingTimeBuffersByOrgIdPartialNullValuesTest() throws IOException {
+    when(nodeService.getNodeList(any())).thenReturn(testUtil.getNodeDtoList());
+    when(nodeCarrierService.getNodeCarrierList(any()))
+        .thenReturn(testUtil.getNodeCarrierResponseListWithPartialNullValues());
+
+    File processingTimeBuffersFile =
+        csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(TestUtil.ORG_ID);
+
+    Assertions.assertNotNull(processingTimeBuffersFile);
+    verify(nodeService, times(1)).getNodeList(any());
+    verify(nodeCarrierService, times(1)).getNodeCarrierList(any());
   }
 }

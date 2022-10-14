@@ -1,9 +1,11 @@
 package com.hbc.csvdownload.service;
 
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTIVE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_END_DATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_HOURS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_START_DATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.INACTIVE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
@@ -25,6 +27,8 @@ import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
@@ -32,6 +36,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,7 +64,8 @@ public class CsvDownloadUtilityService {
 
   private final JobsDashboardService jobsDashboardService;
   private final JobsConsumerService jobsConsumerService;
-  private final NodeProcessingTimeBufferService nodeProcessingTimeBufferService;
+  private final NodeService nodeService;
+  private final NodeCarrierService nodeCarrierService;
 
   private static final TransitDataRequestMapper INSTANCE =
       Mappers.getMapper(TransitDataRequestMapper.class);
@@ -331,6 +337,9 @@ public class CsvDownloadUtilityService {
     var processingTimeBufferFile = new File(pathName);
     var fileWriter = new FileWriter(processingTimeBufferFile);
     try (var writer = new BufferedWriter(fileWriter)) {
+      List<NodeDto> nodeDtoList = nodeService.getNodeList(orgId);
+      List<NodeCarrierResponse> nodeCarrierResponseList =
+          nodeCarrierService.getNodeCarrierList(orgId);
       var header =
           String.join(
               ",",
@@ -349,10 +358,106 @@ public class CsvDownloadUtilityService {
       writer.append(header);
       writer.append("\n");
 
-      var rows = nodeProcessingTimeBufferService.getProcessingTimeBuffersByOgId(orgId);
-      writer.append(rows);
+      Map<String, List<NodeCarrierResponse>> nodeCarrierResponseMap =
+          constructMap(nodeCarrierResponseList);
+
+      nodeDtoList.forEach(
+          node -> {
+            List<NodeCarrierResponse> nodeCarrierResponses =
+                nodeCarrierResponseMap.get(node.getNodeId());
+            if (nodeCarrierResponses != null) {
+              nodeCarrierResponses.forEach(
+                  nodeCarrierResponse ->
+                      appendRowToFile(constructCSVContents(node, nodeCarrierResponse), writer));
+            } else appendRowToFile(constructCSVContents(node, new NodeCarrierResponse()), writer);
+          });
     }
 
     return processingTimeBufferFile;
+  }
+
+  private void appendRowToFile(String row, BufferedWriter writer) {
+    try {
+      writer.append(row);
+      writer.append("\n");
+    } catch (IOException e) {
+      logger.error("Error while writing processing time buffers records");
+    }
+  }
+
+  private Map<String, List<NodeCarrierResponse>> constructMap(
+      List<NodeCarrierResponse> nodeCarrierResponseList) {
+    Map<String, List<NodeCarrierResponse>> nodeCarrierResponseMap = new HashMap<>();
+
+    nodeCarrierResponseList.forEach(
+        nodeCarrier -> {
+          if (nodeCarrierResponseMap.containsKey(nodeCarrier.getNodeId())) {
+            nodeCarrierResponseMap.get(nodeCarrier.getNodeId()).add(nodeCarrier);
+          } else {
+            List<NodeCarrierResponse> nodeCarrierResponseList1 = new ArrayList<>();
+            nodeCarrierResponseList1.add(nodeCarrier);
+            nodeCarrierResponseMap.put(nodeCarrier.getNodeId(), nodeCarrierResponseList1);
+          }
+        });
+
+    return nodeCarrierResponseMap;
+  }
+
+  private String constructCSVContents(NodeDto node, NodeCarrierResponse nodeCarrierResponse) {
+    String serviceOption = checkForNullValues(nodeCarrierResponse.getServiceOption());
+    String bufferHours = checkForNullValues(nodeCarrierResponse.getBufferHours());
+    String bufferStartDate =
+        checkForNullValues(convertToStringUTC(nodeCarrierResponse.getBufferStartDate()));
+    String bufferEndDate =
+        checkForNullValues(convertToStringUTC(nodeCarrierResponse.getBufferEndDate()));
+    String status =
+        checkForNullValues(
+            computeStatus(
+                nodeCarrierResponse.getBufferHours(),
+                nodeCarrierResponse.getBufferStartDate(),
+                nodeCarrierResponse.getBufferEndDate()));
+
+    return node.getNodeId()
+        + ","
+        + node.getOrgId()
+        + ","
+        + node.getNodeType()
+        + ","
+        + node.getStreet()
+        + ","
+        + node.getCity()
+        + ","
+        + node.getProvince()
+        + ","
+        + node.getPostalCode()
+        + ","
+        + serviceOption
+        + ","
+        + bufferHours
+        + ","
+        + bufferStartDate
+        + ","
+        + bufferEndDate
+        + ","
+        + status;
+  }
+
+  private String checkForNullValues(Object value) {
+    return (value == null) ? "NA" : value.toString();
+  }
+
+  private String convertToStringUTC(Date value) {
+    if (value != null) {
+      return value.toInstant().toString();
+    }
+    return null;
+  }
+
+  private String computeStatus(Double bufferHours, Date bufferStartDate, Date bufferEndDate) {
+    if (bufferHours != null && bufferStartDate != null && bufferEndDate != null) {
+      var currentDate = new Date();
+      return currentDate.compareTo(bufferEndDate) <= 0 ? ACTIVE : INACTIVE;
+    }
+    return null;
   }
 }
