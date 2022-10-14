@@ -2,6 +2,7 @@ package com.hbc.transit.domain.feign;
 
 import com.hbc.common.response.BaseResponse;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
@@ -82,4 +83,9 @@ public interface TransitFeign {
       @PathVariable String carrierServiceId,
       @RequestParam String sourceGeoZone,
       @RequestParam String destinationGeoZone);
+
+  @GetMapping("/transit")
+  BaseResponse<DistinctGeozonesResponse> getDistinctSourceAndDestinationGeozones(
+      @RequestParam(name = "orgId") String orgId,
+      @RequestParam(name = "carrierServiceId") String carrierServiceId);
 }

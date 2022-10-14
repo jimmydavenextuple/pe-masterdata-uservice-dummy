@@ -142,4 +142,42 @@ public class TransitDomain {
           "Error while fetching transit entity list", orgId, null, null, carrierServiceId);
     }
   }
+
+  public List<String> fetchDistinctSourceGeoZones(String orgId, String carrierServiceId)
+      throws TransitDomainException {
+    try {
+      return transitRepository.findDistinctSourceGeoZones(orgId, carrierServiceId);
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e),
+          "Unable to fetch distinct source geozones list for orgId: {} and carrierServiceId: {}",
+          orgId,
+          carrierServiceId);
+      throw new TransitDomainException(
+          "Unable to fetch distinct source geozones list for orgId and carrierServiceId",
+          orgId,
+          null,
+          null,
+          carrierServiceId);
+    }
+  }
+
+  public List<String> fetchDistinctDestinationGeoZones(String orgId, String carrierServiceId)
+      throws TransitDomainException {
+    try {
+      return transitRepository.findDistinctDestinationGeoZones(orgId, carrierServiceId);
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e),
+          "Unable to fetch distinct destination geozones list for orgId: {} and carrierServiceId: {}",
+          orgId,
+          carrierServiceId);
+      throw new TransitDomainException(
+          "Unable to fetch distinct destination geozones list for given orgId and carrierServiceId",
+          orgId,
+          null,
+          null,
+          carrierServiceId);
+    }
+  }
 }

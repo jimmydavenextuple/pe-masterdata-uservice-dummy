@@ -6,7 +6,7 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
+    url: jdbc:postgresql://promise-engine-postgres-performance.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
     hikari:
@@ -14,7 +14,7 @@ spring:
   replica:
     datasource:
       platform: postgres
-      url: jdbc:postgresql://promise-engine-postgres-perf.cluster-ro-co9l0bkmgaei.us-east-1.rds.amazonaws.com,promise-engine-postgres-perf.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe?readOnly=true
+      url: jdbc:postgresql://promise-engine-postgres-performance.cluster-ro-co9l0bkmgaei.us-east-1.rds.amazonaws.com,promise-engine-postgres-performance.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe?readOnly=true
       username: \${POSTGRES_USER}
       password: \${POSTGRES_PWD}
       required: true
@@ -22,7 +22,7 @@ spring:
         readOnly: true
         connectionTimeout: 5000
   kafka:
-    bootstrap-servers: "b-1.promiseenginekafkaper.wyucgs.c23.kafka.us-east-1.amazonaws.com:9096,b-3.promiseenginekafkaper.wyucgs.c23.kafka.us-east-1.amazonaws.com:9096,b-2.promiseenginekafkaper.wyucgs.c23.kafka.us-east-1.amazonaws.com:9096"
+    bootstrap-servers: "b-3.promisemksperformance.o5d7t4.c25.kafka.us-east-1.amazonaws.com:9096,b-1.promisemksperformance.o5d7t4.c25.kafka.us-east-1.amazonaws.com:9096,b-2.promisemksperformance.o5d7t4.c25.kafka.us-east-1.amazonaws.com:9096"
     properties:
       security.protocol: SASL_SSL
       sasl.mechanism: SCRAM-SHA-512
@@ -45,7 +45,7 @@ logging:
     root: WARN
     com.hbc: INFO
 auth:
-  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Pk3rFdZm1
+  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_SJ1yMwanC
 
 dataupload:
   base-path: "/s3-bucket/"
@@ -65,6 +65,6 @@ jobs-framework:
     topic-name: INTERNAL.PERF.JOBS.TASK
     group-id: jobs-task-consumer-async-perf
 auth-token:
-  url: https://promise-engine-perf-pool.auth.us-east-1.amazoncognito.com
+  url: https://promise-engine-domain-performance.auth.us-east-1.amazoncognito.com
   username: \${COGNITO_CLIENT_ID}
   password: \${COGNITO_CLIENT_SECRET}
