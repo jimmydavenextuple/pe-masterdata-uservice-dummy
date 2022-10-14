@@ -4,6 +4,7 @@ import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.feign.TransitFeign;
 import com.hbc.transit.domain.inbound.TransitDetailsRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -41,15 +42,13 @@ public class TransitService {
     }
   }
 
-  public List<TransitResponse> getTransitDetailsForCarrierServiceId(
-      String orgId, String carrierServiceId) throws TransitServiceException {
-
-    BaseResponse<List<TransitResponse>> response =
-        transitFeign.getTransitDetailsForCarrierServiceId(orgId, carrierServiceId);
-    if (response != null && !CollectionUtils.isEmpty(response.getPayload())) {
+  public TransitTimeEntriesDto getTransitTimeEntries(String orgId, String carrierServiceId)
+      throws TransitServiceException {
+    try {
+      BaseResponse<TransitTimeEntriesDto> response =
+          transitFeign.getTransitTimeEntries(orgId, carrierServiceId);
       return response.getPayload();
-    } else {
-      logger.error("Transit details does not exist for given orgId and carrierServiceId ");
+    } catch (Exception e) {
       throw new TransitServiceException(
           "Transit details does not exist for given orgId and carrierServiceId  ",
           orgId,

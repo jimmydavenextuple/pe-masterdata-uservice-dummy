@@ -12,6 +12,8 @@ import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -176,19 +178,20 @@ class CsvDownloadUtilityServiceTest {
   }
 
   @Test
-  void downloadCarrierServiceData_Test() throws CarrierServiceException, TransitServiceException {
+  void downloadCarrierServiceData_Test()
+      throws CarrierServiceException, TransitServiceException, IOException {
     when(carrierService.getCarrierService(anyString()))
         .thenReturn(List.of(testUtil.getCarrierServiceResponse()));
     when(calenderService.getCarrierServiceCalender(anyString(), anyString()))
         .thenReturn(List.of(testUtil.getCarrierServiceCalendarResponse()));
 
-    when(transitService.getTransitDetailsForCarrierServiceId(anyString(), anyString()))
-        .thenReturn(List.of(testUtil.getTransitResponse(0.5f)));
-    String csvContents = csvDownloadUtilityService.downloadCarrierServiceData(TestUtil.ORG_ID);
+    when(transitService.getTransitTimeEntries(anyString(), anyString()))
+        .thenReturn(testUtil.getTransitTimeEntriesDto());
+    File csvContents = csvDownloadUtilityService.downloadCarrierServiceData(TestUtil.ORG_ID);
 
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
     verify(calenderService, times(1)).getCarrierServiceCalender(anyString(), anyString());
-    verify(transitService, times(1)).getTransitDetailsForCarrierServiceId(anyString(), anyString());
+    verify(transitService, times(1)).getTransitTimeEntries(anyString(), anyString());
     verify(carrierService, times(1)).getCarrierService(anyString());
   }
 }

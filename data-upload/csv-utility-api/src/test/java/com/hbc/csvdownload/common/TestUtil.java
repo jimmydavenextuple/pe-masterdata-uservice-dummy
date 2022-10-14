@@ -21,6 +21,7 @@ import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Collections;
 import java.util.Date;
@@ -167,6 +168,14 @@ public class TestUtil {
         .bufferDays(3.0)
         .bufferStartDate(bufferStartDate)
         .bufferEndDate(bufferEndDate)
+        .build();
+  }
+
+  public TransitTimeEntriesDto getTransitTimeEntriesDto() {
+    return TransitTimeEntriesDto.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .totalRecords(2)
         .build();
   }
 

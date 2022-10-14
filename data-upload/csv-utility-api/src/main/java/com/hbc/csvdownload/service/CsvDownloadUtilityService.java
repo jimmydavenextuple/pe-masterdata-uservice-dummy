@@ -3,12 +3,9 @@ package com.hbc.csvdownload.service;
 import static com.hbc.common.constants.CommonConstants.CARRIER_ID;
 import static com.hbc.common.constants.CommonConstants.CARRIER_NAME;
 import static com.hbc.common.constants.CommonConstants.CARRIER_SERVICE_ID;
-import static com.hbc.common.constants.CommonConstants.DESTINATION_GEOZONE;
 import static com.hbc.common.constants.CommonConstants.ORG_ID;
 import static com.hbc.common.constants.CommonConstants.SERVICE_NAME;
-import static com.hbc.common.constants.CommonConstants.SOURCE_GEOZONE;
 import static com.hbc.common.constants.CommonConstants.STATUS;
-import static com.hbc.common.constants.CommonConstants.TRANSIT_DAYS;
 import static com.hbc.common.constants.CommonConstants.WORKING_CALENDER;
 
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
@@ -27,9 +24,15 @@ import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -61,9 +64,16 @@ public class CsvDownloadUtilityService {
   private static final TransitDataRequestMapper INSTANCE =
       Mappers.getMapper(TransitDataRequestMapper.class);
 
-  public String downloadCarrierServiceData(String orgId) throws CarrierServiceException {
+  public File downloadCarrierServiceData(String orgId) throws CarrierServiceException, IOException {
     logger.debug("Processing download carrier service for orgId");
+    String tmpdir = System.getProperty("java.io.tmpdir");
+    String separator = System.getProperty("file.separator");
+    String pathName = tmpdir + separator + new Date().getTime() + ".csv";
+    File carrierServiceFile = new File(pathName);
+    FileWriter fileWriter = new FileWriter(carrierServiceFile);
+    BufferedWriter writer = new BufferedWriter(fileWriter);
     List<CarrierServiceResponse> carrierServiceResponses = carrierService.getCarrierService(orgId);
+
     var header =
         String.join(
             ",",
@@ -73,65 +83,49 @@ public class CsvDownloadUtilityService {
             CARRIER_ID,
             SERVICE_NAME,
             STATUS,
-            WORKING_CALENDER,
-            SOURCE_GEOZONE,
-            DESTINATION_GEOZONE,
-            TRANSIT_DAYS);
-    var rows = new String[1];
-    rows[0] = "";
-
+            WORKING_CALENDER);
+    writer.append(header);
+    writer.append("\n");
     carrierServiceResponses.parallelStream()
         .forEach(
             carrierServiceResponse -> {
               String carrierServiceId = carrierServiceResponse.getCarrierServiceId();
               List<String> calenderIds = new ArrayList<>();
               getCalenderIds(orgId, carrierServiceId, calenderIds);
-              List<TransitResponse> transitResponses = new ArrayList<>();
+              TransitTimeEntriesDto transitTimeEntriesDto = new TransitTimeEntriesDto();
               try {
-                transitResponses =
-                    transitService.getTransitDetailsForCarrierServiceId(orgId, carrierServiceId);
+                transitTimeEntriesDto =
+                    transitService.getTransitTimeEntries(orgId, carrierServiceId);
               } catch (Exception e) {
                 logger.error("Empty Transit Response List");
+                transitTimeEntriesDto.setTotalRecords(0);
               }
-              List<TransitResponse> finalTransitResponses = transitResponses;
-              calenderIds.parallelStream()
-                  .forEach(
-                      calenderId -> {
-                        String row;
-                        String status=(!carrierServiceResponses.isEmpty()
-                                && !CollectionUtils.isEmpty(finalTransitResponses))
-                                      ? "ACTIVE"
-                                      : "INACTIVE";
-                        if (CollectionUtils.isEmpty(finalTransitResponses)) {
-                          row =
-                              (constructRow(
-                                  orgId,
-                                  carrierServiceResponse,
-                                  status,
-                                  calenderId,
-                                  "NA",
-                                  "NA",
-                                  "NA"));
+              String status =
+                  (!carrierServiceResponses.isEmpty()
+                          && transitTimeEntriesDto.getTotalRecords() > 0)
+                      ? "ACTIVE"
+                      : "INACTIVE";
 
-                        } else {
-                          row =
-                              (finalTransitResponses.stream()
-                                  .map(
-                                      transitResponse ->
-                                          constructRow(
-                                              orgId,
-                                              carrierServiceResponse,
-                                              status,
-                                              calenderId,
-                                              transitResponse.getSourceGeozone(),
-                                              transitResponse.getDestinationGeozone(),
-                                              transitResponse.getTransitDays().toString()))
-                                  .collect(Collectors.joining("\n")));
-                        }
-                        rows[0] = String.join("\n", row, rows[0]);
-                      });
+              if (!CollectionUtils.isEmpty(calenderIds)) {
+                String row =
+                    calenderIds.parallelStream()
+                        .map(
+                            calenderId -> {
+                              return constructRow(
+                                  orgId, carrierServiceResponse, status, calenderId);
+                            })
+                        .collect(Collectors.joining("\n"));
+                try {
+
+                  writer.append(row);
+                  writer.append("\n");
+                } catch (IOException e) {
+                  throw new RuntimeException(e);
+                }
+              }
             });
-    return String.join("\n", header, rows[0]);
+    writer.close();
+    return carrierServiceFile;
   }
 
   private void getCalenderIds(String orgId, String carrierServiceId, List<String> calenderIds) {
@@ -144,11 +138,8 @@ public class CsvDownloadUtilityService {
       calenderIds.addAll(
           carrierServiceCalendarResponses.stream()
               .map(CarrierServiceCalendarResponse::getCalendarId)
-              .distinct()
-              .collect(Collectors.toList()));
+              .collect(Collectors.toSet()));
     } catch (Exception e) {
-      calenderIds.add("NA");
-
       logger.error("Empty Carrier Service Calendar Response List");
     }
   }
@@ -157,10 +148,7 @@ public class CsvDownloadUtilityService {
       String orgId,
       CarrierServiceResponse carrierServiceResponse,
       String status,
-      String calenderId,
-      String sourceGeoZone,
-      String destinationGeoZone,
-      String transitDays) {
+      String calenderId) {
     return String.join(
         ",",
         carrierServiceResponse.getCarrierServiceId(),
@@ -169,10 +157,7 @@ public class CsvDownloadUtilityService {
         carrierServiceResponse.getCarrierId(),
         carrierServiceResponse.getServiceName(),
         status,
-        calenderId,
-        sourceGeoZone,
-        destinationGeoZone,
-        transitDays);
+        calenderId);
   }
 
   public String downloadTransitTimesForSourceAndDestinationRegion(

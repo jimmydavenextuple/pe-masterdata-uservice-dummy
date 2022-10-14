@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.feign.TransitFeign;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Collections;
@@ -75,38 +76,22 @@ class TransitServiceTest {
   }
 
   @Test
-  void getTransitDetailsForCarrierServiceIdTest() throws TransitServiceException {
-    when(transitFeign.getTransitDetailsForCarrierServiceId(anyString(), anyString()))
-        .thenReturn(
-            BaseResponse.builder().payload(List.of(testUtil.getTransitResponse(1.5F))).build());
-    List<TransitResponse> transitResponses =
-        transitService.getTransitDetailsForCarrierServiceId(
-            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
-    Assertions.assertFalse(CollectionUtils.isEmpty(transitResponses));
-    verify(transitFeign, times(1)).getTransitDetailsForCarrierServiceId(any(), any());
+  void gTransitTimeEntriesDto() throws TransitServiceException {
+    when(transitFeign.getTransitTimeEntries(anyString(), anyString()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getTransitTimeEntriesDto()).build());
+    TransitTimeEntriesDto transitResponses =
+        transitService.getTransitTimeEntries(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+    Assertions.assertNotNull(transitResponses);
+    verify(transitFeign, times(1)).getTransitTimeEntries(any(), any());
   }
 
   @Test
-  void getTransitDetailsForCarrierServiceIdTestNullResponse() {
-    when(transitFeign.getTransitDetailsForCarrierServiceId(anyString(), anyString()))
-        .thenReturn(null);
+  void getTransitDetailsForCarrierServiceIdTestException() {
+    when(transitFeign.getTransitTimeEntries(anyString(), anyString()))
+        .thenThrow(new RuntimeException());
     Assertions.assertThrows(
         TransitServiceException.class,
-        () ->
-            transitService.getTransitDetailsForCarrierServiceId(
-                TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
-    verify(transitFeign, times(1)).getTransitDetailsForCarrierServiceId(any(), any());
-  }
-
-  @Test
-  void getTransitDetailsForCarrierServiceIdTestEmptyResponse() {
-    when(transitFeign.getTransitDetailsForCarrierServiceId(anyString(), anyString()))
-        .thenReturn(BaseResponse.builder().payload(Collections.emptyList()).build());
-    Assertions.assertThrows(
-        TransitServiceException.class,
-        () ->
-            transitService.getTransitDetailsForCarrierServiceId(
-                TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
-    verify(transitFeign, times(1)).getTransitDetailsForCarrierServiceId(any(), any());
+        () -> transitService.getTransitTimeEntries(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+    verify(transitFeign, times(1)).getTransitTimeEntries(any(), any());
   }
 }

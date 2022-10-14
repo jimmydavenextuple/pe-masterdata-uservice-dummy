@@ -17,6 +17,7 @@ import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.ServletOutputStream;
@@ -28,7 +29,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class CsvDownloadUtilityControllerTest {
@@ -191,21 +194,12 @@ class CsvDownloadUtilityControllerTest {
   }
 
   @Test
-  void downloadCarrierServiceCSVTest()
-      throws IOException, CarrierServiceException, TransitServiceException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-    String carrierService = TemplateTypes.getTemplateData("carrierService");
-    when(csvDownloadUtilityService.downloadCarrierServiceData(anyString()))
-        .thenReturn(carrierService);
+  void downloadCarrierServiceCSVTest() throws IOException, CarrierServiceException {
+    File file = mock(File.class);
+    when(csvDownloadUtilityService.downloadCarrierServiceData(anyString())).thenReturn(file);
 
-    doNothing().when(response).setStatus(HttpStatus.OK.value());
-    doNothing().when(response).setContentLength(carrierService.length());
-    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
-
-    when(response.getOutputStream()).thenReturn(servletOutputStream);
-
-    csvDownloadUtilityController.downloadCarrierServiceCSV(TestUtil.ORG_ID, request, response);
-    verify(response, times(1)).getOutputStream();
+    ResponseEntity<Resource> response =
+        csvDownloadUtilityController.downloadCarrierServiceCSV(TestUtil.ORG_ID);
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
   }
 }

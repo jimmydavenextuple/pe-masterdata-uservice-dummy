@@ -8,6 +8,7 @@ import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +16,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -93,15 +99,22 @@ public class CsvDownloadUtilityController {
   }
 
   @GetMapping(value = "/org/{orgId}/download/carrier-services")
-  public void downloadCarrierServiceCSV(
-      @PathVariable String orgId, HttpServletRequest request, HttpServletResponse response)
-      throws IOException, TransitServiceException, CarrierServiceException {
+  public ResponseEntity<Resource> downloadCarrierServiceCSV(@PathVariable String orgId)
+      throws IOException, CarrierServiceException {
     log.debug("Inside download carrier service data as csv");
-    String csvContents = csvDownloadUtilityService.downloadCarrierServiceData(orgId);
-    response.setStatus(HttpStatus.OK.value());
-    response.setContentLength(csvContents.length());
-    response.getOutputStream().write(csvContents.getBytes());
-    response.flushBuffer();
+    csvDownloadUtilityService.downloadCarrierServiceData(orgId);
+    final HttpHeaders httpHeaders = new HttpHeaders();
+    final File file = csvDownloadUtilityService.downloadCarrierServiceData(orgId);
+    final FileSystemResource resource = new FileSystemResource(file);
+    httpHeaders.set(HttpHeaders.LAST_MODIFIED, String.valueOf(file.lastModified()));
+    httpHeaders.set(
+        HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"");
+    httpHeaders.set(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+    return ResponseEntity.ok()
+        .headers(httpHeaders)
+        .contentLength(file.length())
+        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+        .body(resource);
   }
 
   @GetMapping(path = "/org/{orgId}/jobs/{jobId}/download")
