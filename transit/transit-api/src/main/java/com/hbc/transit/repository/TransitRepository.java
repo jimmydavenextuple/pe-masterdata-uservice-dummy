@@ -47,4 +47,16 @@ public interface TransitRepository extends JpaRepository<TransitEntity, String> 
 
   List<TransitEntity> findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
       String orgId, String carrierServiceId, List<String> destinationGeozones);
+
+  @Query(
+      value =
+          "SELECT DISTINCT source_geozone FROM transit_data t WHERE t.org_id = ?1 AND t.carrier_service_id = ?2",
+      nativeQuery = true)
+  List<String> findDistinctSourceGeoZones(String orgId, String carrierServiceId);
+
+  @Query(
+      value =
+          "SELECT DISTINCT destination_geozone FROM transit_data t WHERE t.org_id = ?1 AND t.carrier_service_id = ?2",
+      nativeQuery = true)
+  List<String> findDistinctDestinationGeoZones(String orgId, String carrierServiceId);
 }

@@ -302,4 +302,53 @@ class TransitDomainTest {
     verify(transitRepository, times(1))
         .findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(any(), any(), any());
   }
+
+  @Test
+  void fetchDistinctSourceGeoZones() throws TransitDomainException {
+    when(transitRepository.findDistinctSourceGeoZones(any(), any()))
+        .thenReturn(List.of(TestUtil.SOURCE_GEOZONE));
+
+    List<String> sourceGeozones =
+        transitDomain.fetchDistinctSourceGeoZones(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+    Assertions.assertFalse(CollectionUtils.isEmpty(sourceGeozones));
+  }
+
+  @Test
+  void fetchDistinctSourceGeoZonesException() throws TransitDomainException {
+    when(transitRepository.findDistinctSourceGeoZones(any(), any()))
+        .thenThrow(new RuntimeException("Error"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitDomain.fetchDistinctSourceGeoZones(
+                    TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void fetchDistinctDestinationGeoZones() throws TransitDomainException {
+    when(transitRepository.findDistinctDestinationGeoZones(any(), any()))
+        .thenReturn(List.of(TestUtil.DESTINATION_GEOZONE));
+
+    List<String> sourceGeozones =
+        transitDomain.fetchDistinctDestinationGeoZones(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+    Assertions.assertFalse(CollectionUtils.isEmpty(sourceGeozones));
+  }
+
+  @Test
+  void fetchDistinctDestinationGeoZonesException() throws TransitDomainException {
+    when(transitRepository.findDistinctDestinationGeoZones(any(), any()))
+        .thenThrow(new RuntimeException("Error"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitDomain.fetchDistinctDestinationGeoZones(
+                    TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+    Assertions.assertNotNull(exception);
+  }
 }

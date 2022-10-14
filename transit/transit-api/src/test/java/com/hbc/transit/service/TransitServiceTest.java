@@ -18,6 +18,7 @@ import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
@@ -541,5 +542,25 @@ class TransitServiceTest {
             TestUtil.DESTINATION_GEOZONE);
 
     Assertions.assertNull(response);
+  }
+
+  @Test
+  void getDistinctSourceAndDestinationGeoZones() throws TransitDomainException {
+    when(transitDomain.fetchDistinctSourceGeoZones(any(), any()))
+        .thenReturn(List.of(TestUtil.SOURCE_GEOZONE));
+
+    when(transitDomain.fetchDistinctDestinationGeoZones(any(), any()))
+        .thenReturn(List.of(TestUtil.DESTINATION_GEOZONE));
+
+    DistinctGeozonesResponse response =
+        transitService.getDistinctSourceAndDestinationGeoZones(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertNotNull(response);
+    Assertions.assertFalse(CollectionUtils.isEmpty(response.getDestinationGeozones()));
+    Assertions.assertFalse(CollectionUtils.isEmpty(response.getSourceGeozones()));
+
+    verify(transitDomain, times(1)).fetchDistinctSourceGeoZones(any(), any());
+    verify(transitDomain, times(1)).fetchDistinctDestinationGeoZones(any(), any());
   }
 }
