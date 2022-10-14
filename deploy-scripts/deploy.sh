@@ -13,17 +13,17 @@ if [ "$ENVIRONMENT" == "dev" -o "$ENVIRONMENT" == "qa" ]; then
   export AWS_EKS_NAME="eks-cluster-promise-development"
   export ENV_TAG="development"
 elif [ "$ENVIRONMENT" == "stage" ]; then
-  export AWS_EKS_NAME="stage-eks-cluster-new"
+  export AWS_EKS_NAME="eks-cluster-promise-stage"
   export ENV_TAG="stage"
 elif [ "$ENVIRONMENT" == "perf" ]; then
-  export AWS_EKS_NAME="promise-engine-eks-perf-new"
+  export AWS_EKS_NAME="eks-cluster-promise-performance"
   export ENV_TAG="stage"
 elif [ "$ENVIRONMENT" == "hotfix" ]; then
   export AWS_EKS_NAME="eks-cluster-promise-development"
   export ENV_TAG="development"
   export BUILD_TARGET="SNAPSHOT"
 elif [ "$ENVIRONMENT" == "prod" ]; then
-  export AWS_EKS_NAME="promise-engine-eks-prod-new"
+  export AWS_EKS_NAME="eks-cluster-promise-production"
   export ENV_TAG="production"
 fi
 

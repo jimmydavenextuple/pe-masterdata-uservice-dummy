@@ -20,7 +20,7 @@ server:
           memory: "512Mi"
           cpu: "2000m"
     stage:
-      replicas: 3
+      replicas: 1
       resources:
         min:
           memory: "512Mi"
