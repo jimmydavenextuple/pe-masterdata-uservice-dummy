@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,8 @@ class PostalCodeTimeZoneServiceTest {
   @Mock private PostalCodeTimezoneFeign postalCodeTimezoneFeign;
 
   @InjectMocks private PostalCodeTimeZoneService postalCodeTimeZoneService;
+
+  @InjectMocks TestUtil testUtil;
 
   @Test
   void getFsaList() throws PostalCodeTimezoneServiceException {
@@ -65,5 +68,50 @@ class PostalCodeTimeZoneServiceTest {
     Assertions.assertNotNull(exception);
     verify(postalCodeTimezoneFeign, times(1))
         .getPostalCodePrefixForOrgIdAndState(anyString(), anyString());
+  }
+
+  @Test
+  void getPostalCodeTimeZoneByOrgIdAndCountry() throws PostalCodeTimezoneServiceException {
+    when(postalCodeTimezoneFeign.getPostalCodeTimeZoneForOrgIdAndCountry(anyString(), anyString()))
+        .thenReturn(
+            BaseResponse.builder().payload(List.of(testUtil.getPostalCodeTimezoneDto())).build());
+
+    List<PostalCodeTimezoneDto> postalCodeTimezoneDtoList =
+        postalCodeTimeZoneService.getPostalCodeTimeZoneByOrgIdAndCountry(TestUtil.ORG_ID, "CANADA");
+    Assertions.assertFalse(CollectionUtils.isEmpty(postalCodeTimezoneDtoList));
+    verify(postalCodeTimezoneFeign, times(1))
+        .getPostalCodeTimeZoneForOrgIdAndCountry(anyString(), anyString());
+  }
+
+  @Test
+  void getPostalCodeTimeZoneByOrgIdAndCountryEmptyList() {
+    when(postalCodeTimezoneFeign.getPostalCodeTimeZoneForOrgIdAndCountry(anyString(), anyString()))
+        .thenReturn(BaseResponse.builder().payload(Collections.emptyList()).build());
+
+    Exception exception =
+        Assertions.assertThrows(
+            PostalCodeTimezoneServiceException.class,
+            () ->
+                postalCodeTimeZoneService.getPostalCodeTimeZoneByOrgIdAndCountry(
+                    TestUtil.ORG_ID, "CANADA"));
+    Assertions.assertNotNull(exception);
+    verify(postalCodeTimezoneFeign, times(1))
+        .getPostalCodeTimeZoneForOrgIdAndCountry(anyString(), anyString());
+  }
+
+  @Test
+  void getPostalCodeTimeZoneByOrgIdAndCountryNullResponse() {
+    when(postalCodeTimezoneFeign.getPostalCodeTimeZoneForOrgIdAndCountry(anyString(), anyString()))
+        .thenReturn(null);
+
+    Exception exception =
+        Assertions.assertThrows(
+            PostalCodeTimezoneServiceException.class,
+            () ->
+                postalCodeTimeZoneService.getPostalCodeTimeZoneByOrgIdAndCountry(
+                    TestUtil.ORG_ID, "CANADA"));
+    Assertions.assertNotNull(exception);
+    verify(postalCodeTimezoneFeign, times(1))
+        .getPostalCodeTimeZoneForOrgIdAndCountry(anyString(), anyString());
   }
 }

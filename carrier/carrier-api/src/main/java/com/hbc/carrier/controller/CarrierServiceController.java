@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/carrier-service")
 @RequiredArgsConstructor
@@ -65,9 +67,9 @@ public class CarrierServiceController {
 
   @GetMapping("/{carrierId}/{carrierServiceId}/{orgId}")
   public ResponseEntity<BaseResponse<CarrierServiceResponse>> getCarrierServiceDetails(
-      @NotBlank @PathVariable String carrierId,
-      @NotBlank @PathVariable String carrierServiceId,
-      @NotBlank @PathVariable String orgId)
+      @NotBlank(message = "carrierId can't be empty") @PathVariable String carrierId,
+      @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
       throws CarrierServiceDomainException, CommonServiceException {
     logger.debug("Processing get CarrierService details");
     try {
@@ -88,9 +90,9 @@ public class CarrierServiceController {
 
   @PutMapping("/{carrierId}/{carrierServiceId}/{orgId}")
   public ResponseEntity<BaseResponse<CarrierServiceResponse>> updateCarrierServiceDetails(
-      @NotBlank @PathVariable String carrierId,
-      @NotBlank @PathVariable String carrierServiceId,
-      @NotBlank @PathVariable String orgId,
+      @NotBlank(message = "carrierId can't be empty") @PathVariable String carrierId,
+      @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
       @Valid @RequestBody CarrierServiceUpdateRequest carrierServiceUpdateRequest)
       throws CarrierServiceDomainException, CommonServiceException {
     logger.debug("Processing update CarrierService details");
@@ -114,9 +116,9 @@ public class CarrierServiceController {
 
   @DeleteMapping("/{carrierId}/{carrierServiceId}/{orgId}")
   public ResponseEntity<BaseResponse<CarrierServiceResponse>> deleteCarrierService(
-      @NotBlank @PathVariable String carrierId,
-      @NotBlank @PathVariable String carrierServiceId,
-      @NotBlank @PathVariable String orgId)
+      @NotBlank(message = "carrierId can't be empty") @PathVariable String carrierId,
+      @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
       throws CarrierServiceDomainException, CommonServiceException {
     logger.debug("Processing delete CarrierService");
     try {
@@ -136,9 +138,11 @@ public class CarrierServiceController {
 
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<CarrierServiceResponse>>>
-      getCarrierServiceListWithPagination(@PathVariable String orgId, PageParams pageParams)
+      getCarrierServiceListWithPagination(
+          @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+          PageParams pageParams)
           throws CarrierServiceDomainException, CommonServiceException {
-    logger.debug("Processing get carrier service list by orgId");
+    logger.debug("Processing get carrier service list by orgId with pagination");
     Page<CarrierServiceResponse> carrierServiceResponses =
         carrierserviceService.getCarrierServiceList(
             orgId,
@@ -160,7 +164,9 @@ public class CarrierServiceController {
   @GetMapping("/{carrierServiceId}/{orgId}")
   public ResponseEntity<BaseResponse<List<CarrierServiceResponse>>>
       getCarrierServiceDetailsByCarrierServiceIdAndOrgId(
-          @NotBlank @PathVariable String carrierServiceId, @NotBlank @PathVariable String orgId)
+          @NotBlank(message = "carrierServiceId can't be empty") @PathVariable
+              String carrierServiceId,
+          @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
           throws CarrierServiceDomainException, CommonServiceException {
     logger.debug("Processing get CarrierService details");
     try {
@@ -230,5 +236,18 @@ public class CarrierServiceController {
     pagePayload.setData(carrierServiceResponses.getContent());
 
     return pagePayload;
+  }
+
+  @GetMapping("/orgId/{orgId}")
+  public ResponseEntity<BaseResponse<List<CarrierServiceResponse>>> getCarrierServiceListByOrgId(
+      @PathVariable String orgId) throws CarrierServiceDomainException {
+    logger.debug("Processing get carrier service list by orgId");
+    List<CarrierServiceResponse> carrierServiceResponses =
+        carrierserviceService.getCarrierServiceListByOrgId(orgId);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("CarrierService list fetched successfully")
+            .payload(carrierServiceResponses)
+            .build());
   }
 }

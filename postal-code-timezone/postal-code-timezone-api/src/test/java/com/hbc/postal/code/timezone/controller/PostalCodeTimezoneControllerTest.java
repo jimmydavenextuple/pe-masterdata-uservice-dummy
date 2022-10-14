@@ -9,18 +9,22 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.exception.PromiseEngineException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.postal.code.timezone.TestUtil;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodePrefixDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.inbound.CreatePostalCodeTimezoneRequest;
 import com.hbc.postal.code.timezone.api.domain.inbound.UpdatePostalCodeTimezoneRequest;
+import com.hbc.postal.code.timezone.domain.mapper.PostalCodeTimezoneMapper;
 import com.hbc.postal.code.timezone.service.PostalCodeTimezoneService;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -34,13 +38,16 @@ class PostalCodeTimezoneControllerTest {
   @InjectMocks private PostalCodeTimezoneController postalCodeTimezoneController;
   @InjectMocks private TestUtil testUtil;
 
+  private static final PostalCodeTimezoneMapper INSTANCE =
+      Mappers.getMapper(PostalCodeTimezoneMapper.class);
+
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
   }
 
   @Test
-  void createPostalCodeTimezoneTest() throws PromiseEngineException {
+  void createPostalCodeTimezoneTest() throws PromiseEngineException, CommonServiceException {
     CreatePostalCodeTimezoneRequest createPostalCodeTimezoneRequest =
         testUtil.getCreatePostalCodeTimezoneRequest();
     PostalCodeTimezoneDto postalCodeTimezoneDto = testUtil.getPostalCodeTimezoneDto();
@@ -59,7 +66,8 @@ class PostalCodeTimezoneControllerTest {
   }
 
   @Test
-  void createPostalCodeTimezoneExceptionTest() throws PromiseEngineException {
+  void createPostalCodeTimezoneExceptionTest()
+      throws PromiseEngineException, CommonServiceException {
     CreatePostalCodeTimezoneRequest createPostalCodeTimezoneRequest =
         testUtil.getCreatePostalCodeTimezoneRequest();
     when(postalCodeTimezoneService.createPostalCodeTimezone(
@@ -104,7 +112,7 @@ class PostalCodeTimezoneControllerTest {
   }
 
   @Test
-  void updatePostalCodeTimezoneTest() throws PromiseEngineException {
+  void updatePostalCodeTimezoneTest() throws PromiseEngineException, CommonServiceException {
     PostalCodeTimezoneDto postalCodeTimezoneDto = testUtil.getPostalCodeTimezoneDto();
     UpdatePostalCodeTimezoneRequest baseRequest = testUtil.getUpdatePostalCodeTimezoneRequest();
     when(postalCodeTimezoneService.updatePostalCodeTimezone(
@@ -123,7 +131,8 @@ class PostalCodeTimezoneControllerTest {
   }
 
   @Test
-  void updatePostalCodeTimezoneExceptionTest() throws PromiseEngineException {
+  void updatePostalCodeTimezoneExceptionTest()
+      throws PromiseEngineException, CommonServiceException {
     UpdatePostalCodeTimezoneRequest baseRequest = testUtil.getUpdatePostalCodeTimezoneRequest();
     when(postalCodeTimezoneService.updatePostalCodeTimezone(
             anyString(), anyString(), any(UpdatePostalCodeTimezoneRequest.class)))
@@ -207,5 +216,32 @@ class PostalCodeTimezoneControllerTest {
     Assertions.assertFalse(CollectionUtils.isEmpty(responseEntity.getBody().getPayload()));
     verify(postalCodeTimezoneService, times(1))
         .fetchPostalCodePrefixForOrgIdAndState(anyString(), anyString());
+  }
+
+  @Test
+  void getPostalCodeTimeZoneForOrgIdAndCountry() throws PromiseEngineException {
+    when(postalCodeTimezoneService.fetchPostalCodeTimezoneByOrgIdAndCountry(
+            anyString(), anyString()))
+        .thenReturn(List.of(testUtil.getPostalCodeTimezoneDto()));
+
+    ResponseEntity<BaseResponse<List<PostalCodeTimezoneDto>>> responseEntity =
+        postalCodeTimezoneController.getPostalCodeTimeZoneForOrgIdAndCountry(ORG_ID, COUNTRY);
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertNotNull(responseEntity.getBody());
+    Assertions.assertFalse(CollectionUtils.isEmpty(responseEntity.getBody().getPayload()));
+    verify(postalCodeTimezoneService, times(1))
+        .fetchPostalCodeTimezoneByOrgIdAndCountry(anyString(), anyString());
+  }
+
+  @Test
+  void getMarketRegionsForOrgId() throws PromiseEngineException {
+    when(postalCodeTimezoneService.getMarketRegionForOrgId(anyString()))
+        .thenReturn(INSTANCE.convertToMarketRegionInfo(testUtil.getMarketRegion()));
+
+    ResponseEntity<BaseResponse<List<MarketRegionInfo>>> responseEntity =
+        postalCodeTimezoneController.getMarketRegionsForOrgId(ORG_ID);
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertNotNull(responseEntity.getBody());
+    verify(postalCodeTimezoneService, times(1)).getMarketRegionForOrgId(anyString());
   }
 }

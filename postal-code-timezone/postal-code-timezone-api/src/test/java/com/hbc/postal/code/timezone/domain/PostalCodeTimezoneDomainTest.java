@@ -149,4 +149,44 @@ class PostalCodeTimezoneDomainTest {
             () -> postalCodeTimezoneDomain.getPostalCodePrefixForOrgIdAndState(ORG_ID, STATE));
     Assertions.assertNotNull(exception);
   }
+
+  @Test
+  void getPostCodeTimeZoneByOrgIdAndCountry() throws PromiseEngineException {
+    when(postalCodeTimezoneRepository.findByOrgIdAndCountry(anyString(), anyString()))
+        .thenReturn(List.of(testUtil.getPostalCodeTimezoneEntity()));
+
+    List<PostalCodeTimezoneEntity> postalCodePrefixList =
+        postalCodeTimezoneDomain.getPostCodeTimeZoneByOrgIdAndCountry(ORG_ID, COUNTRY);
+    Assertions.assertFalse(CollectionUtils.isEmpty(postalCodePrefixList));
+    verify(postalCodeTimezoneRepository, times(1)).findByOrgIdAndCountry(anyString(), anyString());
+  }
+
+  @Test
+  void getPostCodeTimeZoneByOrgIdAndCountryException() {
+    when(postalCodeTimezoneRepository.findByOrgIdAndCountry(anyString(), anyString()))
+        .thenThrow(new RuntimeException("Error while fetching postal code prefix list"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            PromiseEngineException.class,
+            () -> postalCodeTimezoneDomain.getPostCodeTimeZoneByOrgIdAndCountry(ORG_ID, COUNTRY));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void getRecordsForOrgId() {
+    when(postalCodeTimezoneRepository.findRecordsByOrgId(anyString()))
+        .thenReturn(testUtil.getMarketRegion());
+
+    Assertions.assertDoesNotThrow(() -> postalCodeTimezoneRepository.findRecordsByOrgId(ORG_ID));
+  }
+
+  @Test
+  void getRecordsForOrgIdException() {
+    when(postalCodeTimezoneRepository.findRecordsByOrgId(anyString()))
+        .thenThrow(new RuntimeException());
+
+    Assertions.assertThrows(
+        RuntimeException.class, () -> postalCodeTimezoneRepository.findRecordsByOrgId(ORG_ID));
+  }
 }

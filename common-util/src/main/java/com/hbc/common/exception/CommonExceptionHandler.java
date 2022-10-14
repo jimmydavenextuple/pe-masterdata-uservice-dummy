@@ -13,6 +13,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.StreamSupport;
+import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -58,6 +60,26 @@ public class CommonExceptionHandler {
                     FieldError.builder()
                         .errorMessage(x.getDefaultMessage())
                         .rejectedValue(x.getRejectedValue() + "")
+                        .build()));
+    return ResponseEntity.badRequest().body(builder.build());
+  }
+
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<ErrorResponse> handleConstraintViolationException(
+      ConstraintViolationException e) {
+    var builder = new ErrorResponse.ErrorResponseBuilder(ErrorType.ERROR, 0x000002);
+    builder.message(BAD_REQUEST);
+    e.getConstraintViolations().stream()
+        .forEach(
+            violation ->
+                builder.errorField(
+                    StreamSupport.stream(violation.getPropertyPath().spliterator(), false)
+                        .reduce((first, second) -> second)
+                        .orElse(null)
+                        .toString(),
+                    FieldError.builder()
+                        .errorMessage(violation.getMessage())
+                        .rejectedValue(violation.getInvalidValue().toString())
                         .build()));
     return ResponseEntity.badRequest().body(builder.build());
   }

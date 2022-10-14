@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -81,15 +82,16 @@ public class NodeCarrierService {
             nodeCarrierRequest.getCarrierServiceId(),
             nodeCarrierRequest.getServiceOption());
       }
-        if (!ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId()) && Boolean.FALSE.equals(
-                validateCarrierDetails(
-                        nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
-          commonServiceExceptionMethod(
-                  INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
-                  nodeCarrierRequest.getNodeId(),
-                  nodeCarrierRequest.getOrgId(),
-                  nodeCarrierRequest.getCarrierServiceId(),
-                  nodeCarrierRequest.getServiceOption());
+      if (!ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId())
+          && Boolean.FALSE.equals(
+              validateCarrierDetails(
+                  nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
+        commonServiceExceptionMethod(
+            INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
+            nodeCarrierRequest.getNodeId(),
+            nodeCarrierRequest.getOrgId(),
+            nodeCarrierRequest.getCarrierServiceId(),
+            nodeCarrierRequest.getServiceOption());
       }
       if (!serviceOptions.contains(nodeCarrierRequest.getServiceOption())) {
         commonServiceExceptionMethod(
@@ -258,11 +260,11 @@ public class NodeCarrierService {
     BaseResponse<NodeResponse> baseResponse = nodeFeign.getNodeDetails(nodeId, orgId);
     if (!baseResponse.isSuccess() || Objects.isNull(baseResponse.getPayload())) {
       commonServiceExceptionMethod(
-              "Invalid nodeId", nodeId, orgId, carrierServiceId, serviceOption);
+          "Invalid nodeId", nodeId, orgId, carrierServiceId, serviceOption);
     }
     if (!serviceOptions.contains(serviceOption)) {
       commonServiceExceptionMethod(
-              "Invalid serviceOption", nodeId, orgId, carrierServiceId, serviceOption);
+          "Invalid serviceOption", nodeId, orgId, carrierServiceId, serviceOption);
     }
     if (!orgId.equals(baseResponse.getPayload().getOrgId())) {
       commonServiceExceptionMethod("Invalid orgId", nodeId, orgId, carrierServiceId, serviceOption);
@@ -415,6 +417,11 @@ public class NodeCarrierService {
     return nodeCarrierSelectionResponse;
   }
 
+  public List<String> getUniqueNodeCarrierServiceList(String nodeId, String orgId)
+      throws NodeCarrierDomainException {
+    return nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(orgId, nodeId);
+  }
+
   public void commonServiceExceptionMethod(
       String errorMessage,
       String nodeId,
@@ -428,5 +435,17 @@ public class NodeCarrierService {
     errorMap.put(CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
     errorMap.put(SERVICE_OPTION, FieldError.builder().rejectedValue(serviceOption).build());
     throw new CommonServiceException(errorMessage, HttpStatus.BAD_REQUEST, 0x1772, errorMap);
+  }
+
+  public List<NodeCarrierResponse> getNodeCarrierListForNodeIdAndOrgId(String nodeId, String orgId)
+      throws NodeCarrierDomainException {
+
+    List<NodeCarrierEntity> nodeCarrierEntity =
+        nodeCarrierDomain.findNodeCarrierDetailsByNodeIdAndOrgId(nodeId, orgId);
+
+    return INSTANCE.toNodeCarrierResponseList(
+        nodeCarrierEntity.stream()
+            .filter(x -> !ObjectUtils.isEmpty(x.getCarrierServiceId()))
+            .collect(Collectors.toList()));
   }
 }

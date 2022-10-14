@@ -13,6 +13,13 @@ import com.hbc.common.response.error.ErrorType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotBlank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -29,6 +36,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 class CommonExceptionHandlerTest {
 
   @InjectMocks private CommonExceptionHandler commonExceptionHandler;
+  private Validator validator;
 
   @BeforeEach
   void init() {
@@ -37,6 +45,8 @@ class CommonExceptionHandlerTest {
         commonExceptionHandler,
         "slf4jLogger",
         LoggerFactory.getLogger(CommonExceptionHandler.class));
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    validator = factory.getValidator();
   }
 
   @Test
@@ -142,5 +152,30 @@ class CommonExceptionHandlerTest {
 
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
+  }
+
+  @Test
+  void handleConstraintViolationExceptionTest() {
+
+    TestPojo testPojo = new TestPojo(" ");
+    Set<ConstraintViolation<TestPojo>> violations = validator.validate(testPojo);
+    org.junit.jupiter.api.Assertions.assertFalse(violations.isEmpty());
+
+    ConstraintViolationException exception =
+        new ConstraintViolationException("Field found empty", violations);
+
+    ResponseEntity<ErrorResponse> responseEntity =
+        commonExceptionHandler.handleConstraintViolationException(exception);
+
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
+  }
+
+  static class TestPojo {
+    @NotBlank String testField;
+
+    TestPojo(String testField) {
+      this.testField = testField;
+    }
   }
 }

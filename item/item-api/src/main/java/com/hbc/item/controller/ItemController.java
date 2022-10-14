@@ -8,10 +8,18 @@ import com.hbc.item.domain.outbound.ItemResponse;
 import com.hbc.item.exception.ItemBatchingDomainException;
 import com.hbc.item.exception.ItemDomainException;
 import com.hbc.item.service.ItemService;
+import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,10 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import java.util.List;
-
+@Validated
 @RestController
 @RequestMapping("/item")
 @RequiredArgsConstructor
@@ -53,9 +58,9 @@ public class ItemController {
 
   @PutMapping("/{itemId}/{orgId}/{uom}")
   public ResponseEntity<BaseResponse<ItemResponse>> updateItemDetails(
-      @NotBlank @PathVariable String itemId,
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @PathVariable String uom,
+      @NotBlank(message = "itemId can't be empty") @PathVariable String itemId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "uom can't be empty") @PathVariable String uom,
       @Valid @RequestBody ItemUpdationRequest itemUpdationRequest)
       throws ItemDomainException, CommonServiceException {
     logger.debug("Processing update item details");
@@ -75,9 +80,9 @@ public class ItemController {
 
   @GetMapping("/{itemId}/{orgId}/{uom}")
   public ResponseEntity<BaseResponse<ItemResponse>> getItemDetails(
-      @NotBlank @PathVariable String itemId,
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @PathVariable String uom)
+      @NotBlank(message = "itemId can't be empty") @PathVariable String itemId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "uom can't be empty") @PathVariable String uom)
       throws ItemDomainException, CommonServiceException {
     logger.debug("Processing get item details");
     try {
@@ -95,9 +100,9 @@ public class ItemController {
 
   @DeleteMapping("/{itemId}/{orgId}/{uom}")
   public ResponseEntity<BaseResponse<ItemResponse>> deleteItem(
-      @NotBlank @PathVariable String itemId,
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @PathVariable String uom)
+      @NotBlank(message = "itemId can't be empty") @PathVariable String itemId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "uom can't be empty") @PathVariable String uom)
       throws ItemDomainException, CommonServiceException {
     logger.debug("Processing delete item");
     try {
@@ -117,7 +122,8 @@ public class ItemController {
 
   @GetMapping("/{orgId}")
   public List<ItemResponse> getItemList(
-      @NotBlank @PathVariable String orgId, @NotBlank @RequestParam List<String> itemList)
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotEmpty @RequestParam List<String> itemList)
       throws CommonServiceException, ItemBatchingDomainException {
     logger.debug("Processing get item details");
     try {

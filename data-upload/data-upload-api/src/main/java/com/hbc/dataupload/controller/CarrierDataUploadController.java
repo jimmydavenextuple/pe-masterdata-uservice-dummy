@@ -22,7 +22,8 @@ public class CarrierDataUploadController {
 
   @PostMapping("/carrier")
   public ResponseEntity<BaseResponse<String>> uploadCarrierData(
-      @NotBlank @RequestParam String fileUri) throws IOException, CommonServiceException {
+      @NotBlank(message = "fileUri can't be empty") @RequestParam String fileUri)
+      throws IOException, CommonServiceException {
     log.debug("Processing upload Carrier Data request");
     try {
       return carrierDataUploadService.uploadCarrierData(fileUri);

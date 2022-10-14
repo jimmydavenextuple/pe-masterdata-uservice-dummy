@@ -1,0 +1,52 @@
+package com.hbc.jobs.dashboard.controller;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.jobs.dashboard.service.PreSignedUrlInterface;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+class DataUploadDashboardControllerTest {
+
+  @InjectMocks private DataUploadDashboardController dataUploadDashboardController;
+  @Mock private PreSignedUrlInterface preSignedUrlInterface;
+
+  @BeforeEach
+  public void init() {
+    MockitoAnnotations.initMocks(this);
+  }
+
+  @Test
+  void getPreSignedUrlTest() throws CommonServiceException {
+    when(preSignedUrlInterface.getPreSignedURL(any(), any()))
+        .thenReturn(PreSignedUrlResponse.builder().build());
+    ResponseEntity<BaseResponse<String>> response =
+        dataUploadDashboardController.getPreSignedUrl("test.csv", "transit");
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Status code");
+    verify(preSignedUrlInterface, times(1)).getPreSignedURL(any(), any());
+  }
+
+  @Test
+  void getPreSignedUrlExceptionTest() throws CommonServiceException {
+    when(preSignedUrlInterface.getPreSignedURL(any(), any()))
+        .thenThrow(new RuntimeException("error"));
+    Exception ex =
+        Assertions.assertThrows(
+            Exception.class,
+            () -> dataUploadDashboardController.getPreSignedUrl("test.csv", "transit"));
+    Assertions.assertEquals("error", ex.getMessage());
+    verify(preSignedUrlInterface, times(1)).getPreSignedURL(any(), any());
+  }
+}

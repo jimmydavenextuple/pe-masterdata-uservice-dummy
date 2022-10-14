@@ -7,6 +7,8 @@ import static org.mockito.Mockito.*;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
+import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.dataupload.service.UploadBufferService;
 import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
@@ -161,6 +163,20 @@ class UploadBufferControllerTest {
 
     assertEquals("File not found!", exception.getMessage());
     verify(uploadBufferService, times(1)).uploadTransitBufferData(any());
+  }
+
+  @Test
+  void uploadDeleteTransitBufferData()
+      throws CsvFormatValidationFailedException, CommonServiceException, IOException,
+          JobSubmissionException, CsvException {
+    String fileUri = "fileName.csv";
+    when(uploadBufferService.deleteTransitBuffer(fileUri))
+        .thenReturn("Delete transit buffer job submitted to job framework successfully");
+
+    ResponseEntity<BaseResponse<String>> response =
+        uploadBufferController.uploadDeleteTransitBufferData(fileUri);
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    verify(uploadBufferService, times(1)).deleteTransitBuffer(fileUri);
   }
 
   private ResponseEntity<BaseResponse<String>> getBaseResponse(

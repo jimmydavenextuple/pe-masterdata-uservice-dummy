@@ -26,7 +26,7 @@ public class TestUtil {
   public static final String CITY = "city-1";
   public static final String PROVINCE = "province-1";
   public static final String POSTAL_CODE = "33666";
-  public static final String COUNTRY = "country-1";
+  public static final String COUNTRY = "IN";
   public static final String LATITUDE = "43.769912";
   public static final String LONGITUDE = "-79.296678";
   public static final String TIME_ZONE = "America/Toronto";
@@ -67,6 +67,7 @@ public class TestUtil {
         .street(STREET)
         .bopisEligible(BOPIS_ELIGIBLE)
         .city(CITY)
+        .nodeType("Store")
         .country(COUNTRY)
         .nodeType(NODE_TYPE)
         .isActive(IS_ACTIVE)
@@ -104,6 +105,9 @@ public class TestUtil {
     return NodeUpdationRequest.builder()
         .isActive(Boolean.FALSE)
         .city("city-2")
+        .country(COUNTRY)
+        .nodeType("Store")
+        .timezone(TIME_ZONE)
         .latitude("3526.5262")
         .build();
   }

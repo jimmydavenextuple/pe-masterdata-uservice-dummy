@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/promise-sourcing-rule")
 @RequiredArgsConstructor
@@ -74,11 +76,12 @@ public class PromiseSourcingRuleController {
 
   @GetMapping
   public ResponseEntity<BaseResponse<PromiseSourcingRuleDto>> getPromiseSourcingRule(
-      @NotBlank @RequestParam String orgId,
-      @NotBlank @RequestParam String serviceOption,
-      @NotBlank @RequestParam String destinationGeoZone,
-      @NotBlank @RequestParam String allocationRuleId,
-      @NotBlank @RequestParam int priority)
+      @NotBlank(message = "orgId can't be empty") @RequestParam String orgId,
+      @NotBlank(message = "serviceOption can't be empty") @RequestParam String serviceOption,
+      @NotBlank(message = "destinationGeoZone can't be empty") @RequestParam
+          String destinationGeoZone,
+      @NotBlank(message = "allocationRuleId can't be empty") @RequestParam String allocationRuleId,
+      @NotBlank(message = "priority can't be empty") @RequestParam int priority)
       throws PromiseEngineException {
     logger.debug("Processing get Promise Sourcing Rule request");
     try {
@@ -97,7 +100,8 @@ public class PromiseSourcingRuleController {
 
   @GetMapping("/{orgId}@oid")
   public ResponseEntity<BaseResponse<List<PromiseSourcingRuleDto>>> getPromiseSourcingRulesByOrgId(
-      @NotBlank @PathVariable String orgId) throws PromiseEngineException {
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
+      throws PromiseEngineException {
     logger.debug("Processing get Promise Sourcing Rules by orgId request");
     try {
       List<PromiseSourcingRuleDto> promiseSourcingRuleDtoList =
@@ -115,7 +119,8 @@ public class PromiseSourcingRuleController {
 
   @GetMapping("/{priority}@pty")
   public ResponseEntity<BaseResponse<List<PromiseSourcingRuleDto>>>
-      getPromiseSourcingRulesByPriority(@NotBlank @PathVariable int priority)
+      getPromiseSourcingRulesByPriority(
+          @NotBlank(message = "priority can't be empty") @PathVariable int priority)
           throws PromiseEngineException {
     logger.debug("Processing get Promise Sourcing Rules by priority request");
     try {
@@ -132,11 +137,12 @@ public class PromiseSourcingRuleController {
 
   @PutMapping
   public ResponseEntity<BaseResponse<PromiseSourcingRuleDto>> updatePromiseSourcingRule(
-      @NotBlank @RequestParam String orgId,
-      @NotBlank @RequestParam String serviceOption,
-      @NotBlank @RequestParam String destinationGeoZone,
-      @NotBlank @RequestParam String allocationRuleId,
-      @NotBlank @RequestParam int priority,
+      @NotBlank(message = "orgId can't be empty") @RequestParam String orgId,
+      @NotBlank(message = "serviceOption can't be empty") @RequestParam String serviceOption,
+      @NotBlank(message = "destinationGeoZone can't be empty") @RequestParam
+          String destinationGeoZone,
+      @NotBlank(message = "allocationRuleId can't be empty") @RequestParam String allocationRuleId,
+      @NotBlank(message = "priority can't be empty") @RequestParam int priority,
       @Valid @RequestBody UpdatePromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("Processing update Promise Sourcing Rule request");
@@ -159,11 +165,12 @@ public class PromiseSourcingRuleController {
   @Transactional
   @DeleteMapping
   public ResponseEntity<BaseResponse<PromiseSourcingRuleDto>> deletePromiseSourcingRule(
-      @NotBlank @RequestParam String orgId,
-      @NotBlank @RequestParam String serviceOption,
-      @NotBlank @RequestParam String destinationGeoZone,
-      @NotBlank @RequestParam String allocationRuleId,
-      @NotBlank @RequestParam int priority)
+      @NotBlank(message = "orgId can't be empty") @RequestParam String orgId,
+      @NotBlank(message = "serviceOption can't be empty") @RequestParam String serviceOption,
+      @NotBlank(message = "destinationGeoZone can't be empty") @RequestParam
+          String destinationGeoZone,
+      @NotBlank(message = "allocationRuleId can't be empty") @RequestParam String allocationRuleId,
+      @NotBlank(message = "priority can't be empty") @RequestParam int priority)
       throws PromiseEngineException {
     logger.debug("Processing delete Promise Sourcing Rule request by sourcingRuleId");
     try {

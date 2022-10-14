@@ -1,6 +1,7 @@
 package com.hbc.carrier.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -274,5 +275,30 @@ class CarrierServiceServiceTest {
     assertEquals("Carrier service not found with given details", exception.getMessage());
 
     verify(carrierServiceDomain, times(1)).findCarrierServiceByServiceIdAndOrgId(any(), any());
+  }
+
+  @Test
+  void getCarrierServiceListByOrgIdTest() throws CarrierServiceDomainException {
+    when(carrierServiceDomain.findCarrierServiceListByOrgIdWithoutPagination(TestUtil.ORG_ID))
+        .thenReturn(testUtil.getCarrierServiceResponseList());
+    List<CarrierServiceResponse> responseList =
+        carrierServiceService.getCarrierServiceListByOrgId(TestUtil.ORG_ID);
+    Assertions.assertEquals(testUtil.getCarrierServiceResponseList(), responseList);
+    verify(carrierServiceDomain, times(1)).findCarrierServiceListByOrgIdWithoutPagination(any());
+  }
+
+  @Test
+  void getCarrierServiceListByOrgIdExceptionTest() throws CarrierServiceDomainException {
+    when(carrierServiceDomain.findCarrierServiceListByOrgIdWithoutPagination(TestUtil.ORG_ID))
+        .thenThrow(new RuntimeException("Error occurred"));
+    Exception e =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              carrierServiceService.getCarrierServiceListByOrgId(TestUtil.ORG_ID);
+            });
+
+    Assertions.assertEquals("Error occurred", e.getMessage());
+    verify(carrierServiceDomain, times(1)).findCarrierServiceListByOrgIdWithoutPagination(any());
   }
 }

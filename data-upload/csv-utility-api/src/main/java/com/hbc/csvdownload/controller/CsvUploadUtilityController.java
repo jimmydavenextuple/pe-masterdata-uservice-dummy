@@ -9,9 +9,11 @@ import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.csvdownload.service.CsvUploadUtilityService;
 import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 public class CsvUploadUtilityController {
@@ -32,7 +35,8 @@ public class CsvUploadUtilityController {
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<BaseResponse<String>> uploadTransitTimes(
-      @PathVariable String orgId, @RequestBody MultipartFile csvFile)
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @RequestBody MultipartFile csvFile)
       throws CsvException, IOException, CsvFormatValidationFailedException, JobSubmissionException {
     logger.debug("-- Inside upload transit times --");
 
@@ -48,7 +52,8 @@ public class CsvUploadUtilityController {
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<BaseResponse<String>> uploadProcessingLeadTimes(
-      @PathVariable String orgId, @RequestParam MultipartFile csvFile)
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @RequestParam MultipartFile csvFile)
       throws CsvParsingException, CsvFormatValidationFailedException, JobSubmissionException,
           IOException, CsvException {
     logger.debug("-- Inside upload processing lead times --");
