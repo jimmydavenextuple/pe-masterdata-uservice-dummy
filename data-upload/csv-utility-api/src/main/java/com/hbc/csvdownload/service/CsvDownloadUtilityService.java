@@ -100,14 +100,16 @@ public class CsvDownloadUtilityService {
                 String carrierServiceId = carrierServiceResponse.getCarrierServiceId();
                 List<String> calenderIds = new ArrayList<>();
                 getCalenderIds(orgId, carrierServiceId, calenderIds);
-                var transitTimeEntriesDto = new TransitTimeEntriesDto();
+                TransitTimeEntriesDto transitTimeEntriesDto = new TransitTimeEntriesDto();
+
                 try {
                   transitTimeEntriesDto =
                       transitService.getTransitTimeEntries(orgId, carrierServiceId);
-                } catch (Exception e) {
-                  logger.error("Empty Transit Response List");
+                } catch (TransitServiceException e) {
                   transitTimeEntriesDto.setTotalRecords(0);
+                  logger.info("No transit entries found");
                 }
+
                 String status =
                     (!carrierServiceResponses.isEmpty()
                             && transitTimeEntriesDto.getTotalRecords() > 0)
@@ -132,7 +134,6 @@ public class CsvDownloadUtilityService {
                 }
               });
     }
-
     return carrierServiceFile;
   }
 
@@ -147,6 +148,7 @@ public class CsvDownloadUtilityService {
           carrierServiceCalendarResponses.stream()
               .map(CarrierServiceCalendarResponse::getCalendarId)
               .collect(Collectors.toSet()));
+
     } catch (Exception e) {
       logger.error("Empty Carrier Service Calendar Response List");
     }

@@ -29,9 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class CsvDownloadUtilityControllerTest {
@@ -195,11 +193,15 @@ class CsvDownloadUtilityControllerTest {
 
   @Test
   void downloadCarrierServiceCSVTest() throws IOException, CarrierServiceException {
-    File file = mock(File.class);
+    File file = File.createTempFile("some-prefix", "some-ext");
+    file.deleteOnExit();
     when(csvDownloadUtilityService.downloadCarrierServiceData(anyString())).thenReturn(file);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
 
-    ResponseEntity<Resource> response =
-        csvDownloadUtilityController.downloadCarrierServiceCSV(TestUtil.ORG_ID);
-    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+    Assertions.assertDoesNotThrow(
+        () -> csvDownloadUtilityController.downloadCarrierServiceCSV(TestUtil.ORG_ID, response));
   }
 }
