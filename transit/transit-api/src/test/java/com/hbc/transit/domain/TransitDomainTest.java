@@ -2,7 +2,6 @@ package com.hbc.transit.domain;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -272,26 +271,5 @@ class TransitDomainTest {
     Assertions.assertNotNull(exception);
     verify(transitRepository, times(1))
         .findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(any(), any(), any());
-  }
-
-  @Test
-  void fetchTransitListForCarrierServiceID() {
-    when(transitRepository.findByOrgIdAndCarrierServiceId(anyString(), anyString()))
-        .thenReturn(List.of(testUtil.getTransitEntities(TestUtil.CARRIER_SERVICE_ID)));
-    Assertions.assertDoesNotThrow(
-        () ->
-            transitDomain.fetchTransitListForCarrierServiceID(
-                TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
-  }
-
-  @Test
-  void fetchTransitListForCarrierServiceIDException() {
-    when(transitRepository.findByOrgIdAndCarrierServiceId(anyString(), anyString()))
-        .thenThrow(new RuntimeException());
-    Assertions.assertThrows(
-        TransitDomainException.class,
-        () ->
-            transitDomain.fetchTransitListForCarrierServiceID(
-                TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
   }
 }

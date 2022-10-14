@@ -36,7 +36,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class TransitController {
 
   private static final Logger logger = LoggerFactory.getLogger(TransitController.class);
-  public static final String FETCH_TRANSIT_DETAILS_LIST_ERROR_MESSAGE = "Failed to fetch transit details list";
+  public static final String FETCH_TRANSIT_DETAILS_LIST_ERROR_MESSAGE =
+      "Failed to fetch transit details list";
   private final TransitService transitService;
 
   @PostMapping
@@ -199,22 +200,6 @@ public class TransitController {
             .message("Transit time entries fetched successfully")
             .payload(transitTimeEntriesDto)
             .build());
-  }
-
-  @GetMapping("/{orgId}")
-  public BaseResponse<List<TransitResponse>> getTransitDetailsForCarrierServiceId(
-      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
-      @NotBlank(message = "carrierServiceId can't be empty") @RequestParam String carrierServiceId)
-      throws TransitDomainException, CommonServiceException {
-    logger.debug("Processing get transit time entries for carrier service id and orgId");
-    var transitTimeEntriesDto =
-        transitService.getListOfTransitDetailsForCarrierServiceId(orgId, carrierServiceId);
-    try {
-      return BaseResponse.builder().payload(transitTimeEntriesDto).build();
-    } catch (Exception e) {
-      logger.error(FETCH_TRANSIT_DETAILS_LIST_ERROR_MESSAGE);
-      throw e;
-    }
   }
 
   @GetMapping("/batch-transit/{orgId}/{destinationGeozone}")

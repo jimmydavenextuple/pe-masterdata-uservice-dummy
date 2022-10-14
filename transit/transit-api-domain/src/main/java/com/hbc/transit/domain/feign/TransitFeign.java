@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
     name = "pe-config-transit",
-    url = "${spring.application.dependencies.transit:http://localhost:8080/}")
+    url = "${spring.application.dependencies.transit:http://pe-config-transit:8080/}")
 public interface TransitFeign {
 
   @PostMapping("/transit")
@@ -75,9 +75,6 @@ public interface TransitFeign {
       @PathVariable String carrierServiceId,
       @RequestBody TransitDetailsRequest transitDetailsRequest);
 
-  @GetMapping("/transit/{orgId}")
-  BaseResponse<List<TransitResponse>> getTransitDetailsForCarrierServiceId(
-      @PathVariable String orgId, @RequestParam String carrierServiceId);
 
   @PutMapping("/transit/{orgId}/{carrierServiceId}/buffer-days")
   BaseResponse<TransitResponse> updateTransitBufferDays(

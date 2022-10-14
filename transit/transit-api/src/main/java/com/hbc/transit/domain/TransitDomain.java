@@ -97,7 +97,7 @@ public class TransitDomain {
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to fetch transit list");
       throw new TransitDomainException(
-              FETCH_TRANSIT_LIST_ERROR_MESSAGE, orgId, null, destinationGeozone, null);
+          FETCH_TRANSIT_LIST_ERROR_MESSAGE, orgId, null, destinationGeozone, null);
     }
   }
 
@@ -123,22 +123,7 @@ public class TransitDomain {
           orgId,
           destinationGeozone);
       throw new TransitDomainException(
-              FETCH_TRANSIT_LIST_ERROR_MESSAGE, orgId, null, destinationGeozone, null);
-    }
-  }
-
-  public List<TransitEntity> fetchTransitListForCarrierServiceID(
-      String orgId, String carrierServiceId) throws TransitDomainException {
-    try {
-      return transitRepository.findByOrgIdAndCarrierServiceId(orgId, carrierServiceId);
-    } catch (Exception e) {
-      logger.error(
-          String.valueOf(e),
-          "Unable to fetch transit list for orgId: {} and carrierServiceId: {}",
-          orgId,
-          carrierServiceId);
-      throw new TransitDomainException(
-              FETCH_TRANSIT_LIST_ERROR_MESSAGE, orgId, null, null, carrierServiceId);
+          FETCH_TRANSIT_LIST_ERROR_MESSAGE, orgId, null, destinationGeozone, null);
     }
   }
 
