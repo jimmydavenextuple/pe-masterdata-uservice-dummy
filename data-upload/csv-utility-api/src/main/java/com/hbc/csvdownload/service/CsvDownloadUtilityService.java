@@ -74,9 +74,9 @@ public class CsvDownloadUtilityService {
         String tmpdir = System.getProperty("java.io.tmpdir");
         String separator = System.getProperty("file.separator");
         String pathName = tmpdir + separator + new Date().getTime() + ".csv";
-        File carrierServiceFile = new File(pathName);
-        FileWriter fileWriter = new FileWriter(carrierServiceFile);
-        try (BufferedWriter writer = new BufferedWriter(fileWriter)) {
+        var carrierServiceFile = new File(pathName);
+        var fileWriter = new FileWriter(carrierServiceFile);
+        try (var writer = new BufferedWriter(fileWriter)) {
             List<CarrierServiceResponse> carrierServiceResponses = carrierService.getCarrierService(orgId);
             var header = String.join(",", CARRIER_SERVICE_ID, ORG_ID, CARRIER_NAME, CARRIER_ID, SERVICE_NAME, STATUS, WORKING_CALENDER);
             writer.append(header);
@@ -85,7 +85,7 @@ public class CsvDownloadUtilityService {
                 String carrierServiceId = carrierServiceResponse.getCarrierServiceId();
                 List<String> calenderIds = new ArrayList<>();
                 getCalenderIds(orgId, carrierServiceId, calenderIds);
-                TransitTimeEntriesDto transitTimeEntriesDto = new TransitTimeEntriesDto();
+                var transitTimeEntriesDto = new TransitTimeEntriesDto();
                 try {
                     transitTimeEntriesDto = transitService.getTransitTimeEntries(orgId, carrierServiceId);
                 } catch (Exception e) {
@@ -96,13 +96,16 @@ public class CsvDownloadUtilityService {
 
                 if (!CollectionUtils.isEmpty(calenderIds)) {
                     String row = calenderIds.parallelStream().map(calenderId -> constructRow(orgId, carrierServiceResponse, status, calenderId)).collect(Collectors.joining("\n"));
-                    try {
 
+
+                    try {
                         writer.append(row);
                         writer.append("\n");
+
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        logger.error("Error while writing carrier service records");
                     }
+
                 }
             });
         }

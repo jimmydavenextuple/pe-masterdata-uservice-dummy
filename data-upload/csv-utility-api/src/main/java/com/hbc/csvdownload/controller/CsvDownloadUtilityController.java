@@ -102,9 +102,9 @@ public class CsvDownloadUtilityController {
   public ResponseEntity<Resource> downloadCarrierServiceCSV(@PathVariable String orgId)
       throws IOException, CarrierServiceException {
     log.debug("Inside download carrier service data as csv");
-    final HttpHeaders httpHeaders = new HttpHeaders();
-    final File file = csvDownloadUtilityService.downloadCarrierServiceData(orgId);
-    final FileSystemResource resource = new FileSystemResource(file);
+    final var httpHeaders = new HttpHeaders();
+    final var file = csvDownloadUtilityService.downloadCarrierServiceData(orgId);
+    final var resource = new FileSystemResource(file);
     httpHeaders.set(HttpHeaders.LAST_MODIFIED, String.valueOf(file.lastModified()));
     httpHeaders.set(
         HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"");
