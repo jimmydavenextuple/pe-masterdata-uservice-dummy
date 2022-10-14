@@ -13,6 +13,7 @@ import com.hbc.transit.service.TransitService;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -182,6 +183,25 @@ public class TransitController {
               .build());
     } catch (Exception e) {
       logger.error("Failed to fetch transit details list");
+      throw e;
+    }
+  }
+
+  @GetMapping("distinct/dFSA/{orgId}/{sourceGeozone}")
+  public ResponseEntity<BaseResponse<List<String>>> getDistinctDestinationFSAList(
+          @NotBlank(message="orgId can't be blank") @PathVariable String orgId,
+          @NotBlank(message = "sourceGeozone can't be empty") @PathVariable String sourceGeozone,
+          @NotEmpty(message = "carrier service id list can't be empty") @RequestBody List<String> carrierServiceIds) throws TransitDomainException {
+    logger.debug("Processing distinct destination geozone request");
+    try{
+      var transitResponse = transitService.getDistinctDFSA(orgId, sourceGeozone, carrierServiceIds);
+      return ResponseEntity.ok(
+              BaseResponse.builder()
+                      .message("Fetched distinct list of destination geozones")
+                      .payload(transitResponse)
+                      .build());
+    } catch (Exception e){
+      logger.error("Failed to fetch distinct destination geozones");
       throw e;
     }
   }

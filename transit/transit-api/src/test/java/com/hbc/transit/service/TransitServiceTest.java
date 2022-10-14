@@ -2,6 +2,7 @@ package com.hbc.transit.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -311,6 +312,33 @@ class TransitServiceTest {
                     TestUtil.SERVICE_OPTION));
     Assertions.assertEquals("Transit data not found with given details", exception.getMessage());
     verify(transitDomain, times(1)).filterAndGetTransitDetails(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getDistinctDFSATest() throws TransitDomainException {
+    when(transitDomain.fetchDestinationGeozones(any(), any(), any()))
+            .thenReturn(List.of("B1P", "M1R", "A1F"));
+    List<String> dFSAs = transitService.getDistinctDFSA(
+            TestUtil.ORG_ID,
+            TestUtil.SOURCE_GEOZONE,
+            List.of(TestUtil.CARRIER_SERVICE_ID));
+    Assertions.assertEquals(3, dFSAs.size());
+    verify(transitDomain, times(1)).fetchDestinationGeozones(any(), any(), anyList());
+  }
+
+  @Test
+  void getDistinctDFSAExceptionTest() throws TransitDomainException {
+    when(transitDomain.fetchDestinationGeozones(any(), any(), any()))
+            .thenThrow(new RuntimeException("Failure while fetching DFSAs"));
+    TransitDomainException e = Assertions.assertThrows(TransitDomainException.class,
+            () -> transitService.getDistinctDFSA(
+                    TestUtil.ORG_ID,
+                    TestUtil.SOURCE_GEOZONE,
+                    List.of(TestUtil.CARRIER_SERVICE_ID)));
+
+    Assertions.assertEquals(TestUtil.ORG_ID, e.getOrgId());
+    Assertions.assertEquals(TestUtil.SOURCE_GEOZONE, e.getSourceGeozone());
+    verify(transitDomain, times(1)).fetchDestinationGeozones(any(), any(), anyList());
   }
 
   @Test

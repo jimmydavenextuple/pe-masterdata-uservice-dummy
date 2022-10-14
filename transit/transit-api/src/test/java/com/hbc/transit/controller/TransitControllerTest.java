@@ -1,7 +1,6 @@
 package com.hbc.transit.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -108,6 +107,41 @@ class TransitControllerTest {
                     TestUtil.SERVICE_OPTION));
     Assertions.assertEquals("Failed to fetch transit details", exception.getMessage());
     verify(transitService, times(1)).getTransitDetails(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getDistinctDestinationFSAListTest() throws TransitDomainException {
+    List<String> dFSAResponse = List.of("A1P", "B1P", "M1R");
+    when(transitService.getDistinctDFSA(any(), any(), anyList()))
+            .thenReturn(dFSAResponse);
+
+    ResponseEntity<BaseResponse<List<String>>> responseEntity =
+            transitController.getDistinctDestinationFSAList(
+                    TestUtil.ORG_ID,
+                    TestUtil.SOURCE_GEOZONE,
+                    List.of(TestUtil.CARRIER_SERVICE_ID));
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals(dFSAResponse, responseEntity.getBody().getPayload());
+
+    verify(transitService, times(1)).getDistinctDFSA(any(), any(), anyList());
+  }
+
+  @Test
+  void getDistinctDestinationFSAListExceptionTest() throws TransitDomainException{
+    when(transitService.getDistinctDFSA(any(), any(), anyList()))
+            .thenThrow(new RuntimeException("Failed to fetch DFSAs"));
+
+    Exception exception =
+            Assertions.assertThrows(
+                    Exception.class,
+                    () ->
+                            transitController.getDistinctDestinationFSAList(
+                                    TestUtil.ORG_ID,
+                                    TestUtil.SOURCE_GEOZONE,
+                                    List.of(TestUtil.CARRIER_SERVICE_ID)));
+    Assertions.assertEquals("Failed to fetch DFSAs", exception.getMessage());
+    verify(transitService, times(1)).getDistinctDFSA(any(), any(), anyList());
   }
 
   @Test

@@ -2,6 +2,7 @@ package com.hbc.transit.domain;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -77,6 +78,36 @@ class TransitDomainTest {
     verify(transitRepository, times(1))
         .findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
             any(), any(), any(), any());
+  }
+
+  @Test
+  void fetchDestinationGeozonesTest() throws TransitDomainException {
+    when(transitRepository.findByOrgIdAndSourceGeozoneAndCarrierServiceIds(any(), any(), anyList()))
+            .thenReturn(List.of("B1P", "M1R", "A1F"));
+    List<String> response = transitDomain.fetchDestinationGeozones(
+            TestUtil.ORG_ID,
+            TestUtil.SOURCE_GEOZONE,
+            List.of(TestUtil.CARRIER_SERVICE_ID));
+    Assertions.assertEquals(3, response.size());
+    verify(transitRepository, times(1))
+            .findByOrgIdAndSourceGeozoneAndCarrierServiceIds(any(), any(), anyList());
+  }
+
+  @Test
+  void fetchDestinationGeozonesExceptionTest(){
+    when(transitRepository.findByOrgIdAndSourceGeozoneAndCarrierServiceIds(any(), any(), anyList()))
+            .thenThrow(new RuntimeException("Eror while fetching DFSAs"));
+    TransitDomainException e = Assertions.assertThrows(TransitDomainException.class,
+            ()-> {
+              transitDomain.fetchDestinationGeozones(
+                      TestUtil.ORG_ID,
+                      TestUtil.SOURCE_GEOZONE,
+                      List.of(TestUtil.CARRIER_SERVICE_ID));
+            });
+    Assertions.assertEquals(TestUtil.ORG_ID, e.getOrgId());
+    Assertions.assertEquals(TestUtil.SOURCE_GEOZONE, e.getSourceGeozone());
+    verify(transitRepository, times(1))
+            .findByOrgIdAndSourceGeozoneAndCarrierServiceIds(any(), any(), anyList());
   }
 
   @Test

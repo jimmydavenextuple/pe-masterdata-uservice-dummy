@@ -9,6 +9,8 @@ import com.hbc.transit.domain.inbound.TransitDetailsRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,6 +58,12 @@ public interface TransitFeign {
       @PathVariable String orgId,
       @PathVariable String destinationGeozone,
       @RequestParam List<String> sourceGeozones);
+
+  @GetMapping("/transit/distinct/dFSA/{orgId}/{sourceGeozone}/{carrierServiceId}")
+  BaseResponse<List<String>> getDistinctDestinationFSAList(
+      @PathVariable(name = "orgId") String orgId,
+      @PathVariable(name = "sourceGeozone") String sourceGeozone,
+      @PathVariable(name = "carrierServiceId") String carrierServiceId);
 
   @GetMapping("/transit/transit-entries/{orgId}/{carrierServiceId}")
   BaseResponse<TransitTimeEntriesDto> getTransitTimeEntries(
