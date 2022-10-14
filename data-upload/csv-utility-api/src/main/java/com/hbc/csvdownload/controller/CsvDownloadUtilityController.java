@@ -102,7 +102,7 @@ public class CsvDownloadUtilityController {
     final var file = csvDownloadUtilityService.downloadCarrierServiceData(orgId);
     InputStream inputStream = new FileInputStream(file);
     response.setStatus(HttpStatus.OK.value());
-    response.setHeader("Content-Disposition", "attachment; filename=" + file.getName() + ".txt");
+    response.setHeader("Content-Disposition", "attachment; filename=" + file.getName() );
     IOUtils.copy(inputStream, response.getOutputStream());
     response.flushBuffer();
     inputStream.close();
