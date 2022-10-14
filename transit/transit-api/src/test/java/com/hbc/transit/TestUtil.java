@@ -5,6 +5,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
@@ -169,5 +170,12 @@ public class TestUtil {
 
   public PostalCodeTimezoneDto getPostalCodeTimezoneDto() {
     return PostalCodeTimezoneDto.builder().orgId(ORG_ID).postalCodePrefix(SOURCE_GEOZONE).build();
+  }
+
+  public DistinctGeozonesResponse geozonesResponse() {
+    DistinctGeozonesResponse geozonesResponse = new DistinctGeozonesResponse();
+    geozonesResponse.setSourceGeozones(List.of(SOURCE_GEOZONE));
+    geozonesResponse.setDestinationGeozones(List.of(DESTINATION_GEOZONE));
+    return geozonesResponse;
   }
 }

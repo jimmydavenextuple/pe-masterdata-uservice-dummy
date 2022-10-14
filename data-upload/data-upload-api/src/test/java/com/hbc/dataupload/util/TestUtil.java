@@ -75,6 +75,7 @@ import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import java.util.ArrayList;
@@ -778,6 +779,14 @@ public class TestUtil {
 
   public BaseResponse<NodeCarrierSelectionResponse> getFailedBaseResponseForNodeCarrierSelection() {
     return BaseResponse.builder().success(false).payload(getNodeCarrierSelectionResponse()).build();
+  }
+
+  public DistinctGeozonesResponse geozonesResponse() {
+    DistinctGeozonesResponse response = new DistinctGeozonesResponse();
+    response.setDestinationGeozones(Arrays.asList(DESTINATION_GEOZONE, DESTINATION_GEOZONE + "1"));
+    response.setSourceGeozones(Arrays.asList(SOURCE_GEOZONE, SOURCE_GEOZONE + "1"));
+
+    return response;
   }
 
   private CalendarResponse getCalendarResponse2() {
