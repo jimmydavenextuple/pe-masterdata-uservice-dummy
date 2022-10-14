@@ -16,6 +16,7 @@ import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.ServletOutputStream;
@@ -192,23 +193,17 @@ class CsvDownloadUtilityControllerTest {
 
   @Test
   void downloadProcessingTimeBufferDataCSVTest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
+    File file = File.createTempFile("some-prefix", "some-ext");
+    file.deleteOnExit();
+    when(csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(any())).thenReturn(file);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    String csvContents =
-        "nodeId,orgId,nodeType,street,city,province,postalCode,serviceOption,bufferHours,bufferStartDate,bufferEndDate,status\n"
-            + "1101,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,EXPRESS,2.4,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,Inactive\n"
-            + "1101,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,SDND,4.0,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,Active\n"
-            + "1105,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,NA,NA,NA,NA,NA";
-    when(csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(any()))
-        .thenReturn(csvContents);
-
     doNothing().when(response).setStatus(HttpStatus.OK.value());
-    doNothing().when(response).setContentLength(csvContents.length());
     ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
 
     when(response.getOutputStream()).thenReturn(servletOutputStream);
-
-    csvDownloadUtilityController.downloadProcessingTimeBufferDataCSV("BAY", request, response);
-    verify(response, times(1)).getOutputStream();
+    Assertions.assertDoesNotThrow(
+        () ->
+            csvDownloadUtilityController.downloadProcessingTimeBufferDataCSV(
+                TestUtil.ORG_ID, response));
   }
 }

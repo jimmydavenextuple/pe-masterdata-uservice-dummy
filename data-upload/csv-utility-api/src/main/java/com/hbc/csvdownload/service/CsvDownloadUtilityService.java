@@ -1,5 +1,18 @@
 package com.hbc.csvdownload.service;
 
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_END_DATE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_HOURS;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_START_DATE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATUS;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
+
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
@@ -15,6 +28,11 @@ import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +60,6 @@ public class CsvDownloadUtilityService {
   private final JobsDashboardService jobsDashboardService;
   private final JobsConsumerService jobsConsumerService;
   private final NodeProcessingTimeBufferService nodeProcessingTimeBufferService;
-  private static final String ORG_ID = "orgId";
 
   private static final TransitDataRequestMapper INSTANCE =
       Mappers.getMapper(TransitDataRequestMapper.class);
@@ -149,7 +166,7 @@ public class CsvDownloadUtilityService {
 
   private String downloadProcessingLeadTimeErrorLogs(List<RecordStatusDto> recordStatusDtoList) {
     var header =
-        String.join(",", "nodeId", ORG_ID, "serviceOption", "processingLeadTime", "errorMessage");
+        String.join(",", "nodeId", "orgId", "serviceOption", "processingLeadTime", "errorMessage");
     String rows =
         recordStatusDtoList.stream()
             .map(this::constructRowContent)
@@ -274,7 +291,7 @@ public class CsvDownloadUtilityService {
     var header =
         String.join(
             ",",
-            ORG_ID,
+            "orgId",
             "postalCodePrefix",
             "country",
             "state",
@@ -306,27 +323,36 @@ public class CsvDownloadUtilityService {
         + dto.getTimeZone();
   }
 
-  public String downloadProcessingTimeBuffersByOrgId(String orgId) {
+  public File downloadProcessingTimeBuffersByOrgId(String orgId) throws IOException {
     logger.debug("Processing download processing time buffers for orgId");
+    String tmpdir = System.getProperty("java.io.tmpdir");
+    String separator = System.getProperty("file.separator");
+    String pathName = tmpdir + separator + new Date().getTime() + ".csv";
+    var processingTimeBufferFile = new File(pathName);
+    var fileWriter = new FileWriter(processingTimeBufferFile);
+    try (var writer = new BufferedWriter(fileWriter)) {
+      var header =
+          String.join(
+              ",",
+              NODE_ID,
+              ORG_ID,
+              NODE_TYPE,
+              STREET,
+              CITY,
+              PROVINCE,
+              POSTAL_CODE,
+              SERVICE_OPTION,
+              BUFFER_HOURS,
+              BUFFER_START_DATE,
+              BUFFER_END_DATE,
+              STATUS);
+      writer.append(header);
+      writer.append("\n");
 
-    var header =
-        String.join(
-            ",",
-            "nodeId",
-            ORG_ID,
-            "nodeType",
-            "street",
-            "city",
-            "province",
-            "postalCode",
-            "serviceOption",
-            "bufferHours",
-            "bufferStartDate",
-            "bufferEndDate",
-            "status");
+      var rows = nodeProcessingTimeBufferService.getProcessingTimeBuffersByOgId(orgId);
+      writer.append(rows);
+    }
 
-    var rows = nodeProcessingTimeBufferService.getProcessingTimeBuffersByOgId(orgId);
-
-    return String.join("\n", header, rows);
+    return processingTimeBufferFile;
   }
 }

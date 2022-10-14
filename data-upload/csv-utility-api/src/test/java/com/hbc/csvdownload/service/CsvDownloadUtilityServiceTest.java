@@ -11,6 +11,8 @@ import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -174,17 +176,17 @@ class CsvDownloadUtilityServiceTest {
   }
 
   @Test
-  void downloadProcessingTimeBuffersForOrgIdTest() {
+  void downloadProcessingTimeBuffersForOrgIdTest() throws IOException {
     String csvRows =
         "1101,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,EXPRESS,2.4,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,Inactive\n"
             + "1101,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,SDND,4.0,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,Active\n"
             + "1105,BAY,MFC,100 Metropolitan Rd.,Scarborough,ON,M1R 5A2,NA,NA,NA,NA,NA";
     when(nodeProcessingTimeBufferService.getProcessingTimeBuffersByOgId(any())).thenReturn(csvRows);
 
-    String csvContents =
+    File processingTimeBuffersFile =
         csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(TestUtil.ORG_ID);
 
-    Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
+    Assertions.assertNotNull(processingTimeBuffersFile);
     verify(nodeProcessingTimeBufferService, times(1)).getProcessingTimeBuffersByOgId(any());
   }
 }
