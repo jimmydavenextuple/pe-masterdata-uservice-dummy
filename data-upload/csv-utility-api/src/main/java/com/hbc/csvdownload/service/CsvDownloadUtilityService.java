@@ -103,7 +103,7 @@ public class CsvDownloadUtilityService {
                     new ArrayList<>();
                 getCalenderIds(
                     orgId, carrierServiceId, calenderIds, carrierServiceCalendarResponses);
-                TransitTimeEntriesDto transitTimeEntriesDto = new TransitTimeEntriesDto();
+                var transitTimeEntriesDto = new TransitTimeEntriesDto();
 
                 try {
                   transitTimeEntriesDto =

@@ -107,7 +107,6 @@ public class CsvDownloadUtilityController {
       response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
       IOUtils.copy(inputStream, response.getOutputStream());
       response.flushBuffer();
-      inputStream.close();
       Files.delete(file.toPath());
     }
   }
