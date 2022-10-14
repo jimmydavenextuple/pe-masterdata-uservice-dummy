@@ -112,14 +112,11 @@ class TransitControllerTest {
   @Test
   void getDistinctDestinationFSAListTest() throws TransitDomainException {
     List<String> dFSAResponse = List.of("A1P", "B1P", "M1R");
-    when(transitService.getDistinctDFSA(any(), any(), anyList()))
-            .thenReturn(dFSAResponse);
+    when(transitService.getDistinctDFSA(any(), any(), anyList())).thenReturn(dFSAResponse);
 
     ResponseEntity<BaseResponse<List<String>>> responseEntity =
-            transitController.getDistinctDestinationFSAList(
-                    TestUtil.ORG_ID,
-                    TestUtil.SOURCE_GEOZONE,
-                    List.of(TestUtil.CARRIER_SERVICE_ID));
+        transitController.getDistinctDestinationFSAList(
+            TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE, List.of(TestUtil.CARRIER_SERVICE_ID));
 
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertEquals(dFSAResponse, responseEntity.getBody().getPayload());
@@ -128,18 +125,18 @@ class TransitControllerTest {
   }
 
   @Test
-  void getDistinctDestinationFSAListExceptionTest() throws TransitDomainException{
+  void getDistinctDestinationFSAListExceptionTest() throws TransitDomainException {
     when(transitService.getDistinctDFSA(any(), any(), anyList()))
-            .thenThrow(new RuntimeException("Failed to fetch DFSAs"));
+        .thenThrow(new RuntimeException("Failed to fetch DFSAs"));
 
     Exception exception =
-            Assertions.assertThrows(
-                    Exception.class,
-                    () ->
-                            transitController.getDistinctDestinationFSAList(
-                                    TestUtil.ORG_ID,
-                                    TestUtil.SOURCE_GEOZONE,
-                                    List.of(TestUtil.CARRIER_SERVICE_ID)));
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                transitController.getDistinctDestinationFSAList(
+                    TestUtil.ORG_ID,
+                    TestUtil.SOURCE_GEOZONE,
+                    List.of(TestUtil.CARRIER_SERVICE_ID)));
     Assertions.assertEquals("Failed to fetch DFSAs", exception.getMessage());
     verify(transitService, times(1)).getDistinctDFSA(any(), any(), anyList());
   }

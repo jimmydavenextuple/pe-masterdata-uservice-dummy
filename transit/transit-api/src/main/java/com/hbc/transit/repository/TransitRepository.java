@@ -31,10 +31,11 @@ public interface TransitRepository extends JpaRepository<TransitEntity, String> 
       String orgId, String destinationGeozone, List<String> sourceGeozones);
 
   @Query(
-          value =
-                  "SELECT DISTINCT destination_geozone FROM transit_data t WHERE t.org_id = ?1 AND t.source_geozone = ?2 AND t.carrier_service_id in ?3",
-          nativeQuery = true)
-  List<String> findByOrgIdAndSourceGeozoneAndCarrierServiceIds(String orgId, String sourceGeozone, List<String> carrierServiceId);
+      value =
+          "SELECT DISTINCT destination_geozone FROM transit_data t WHERE t.org_id = ?1 AND t.source_geozone = ?2 AND t.carrier_service_id in ?3",
+      nativeQuery = true)
+  List<String> findByOrgIdAndSourceGeozoneAndCarrierServiceIds(
+      String orgId, String sourceGeozone, List<String> carrierServiceId);
 
   @Query(
       value =

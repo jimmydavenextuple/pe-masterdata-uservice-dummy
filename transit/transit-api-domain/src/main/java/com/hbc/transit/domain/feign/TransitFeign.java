@@ -9,8 +9,6 @@ import com.hbc.transit.domain.inbound.TransitDetailsRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.List;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -317,11 +317,10 @@ class TransitServiceTest {
   @Test
   void getDistinctDFSATest() throws TransitDomainException {
     when(transitDomain.fetchDestinationGeozones(any(), any(), any()))
-            .thenReturn(List.of("B1P", "M1R", "A1F"));
-    List<String> dFSAs = transitService.getDistinctDFSA(
-            TestUtil.ORG_ID,
-            TestUtil.SOURCE_GEOZONE,
-            List.of(TestUtil.CARRIER_SERVICE_ID));
+        .thenReturn(List.of("B1P", "M1R", "A1F"));
+    List<String> dFSAs =
+        transitService.getDistinctDFSA(
+            TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE, List.of(TestUtil.CARRIER_SERVICE_ID));
     Assertions.assertEquals(3, dFSAs.size());
     verify(transitDomain, times(1)).fetchDestinationGeozones(any(), any(), anyList());
   }
@@ -329,9 +328,12 @@ class TransitServiceTest {
   @Test
   void getDistinctDFSAExceptionTest() throws TransitDomainException {
     when(transitDomain.fetchDestinationGeozones(any(), any(), any()))
-            .thenThrow(new RuntimeException("Failure while fetching DFSAs"));
-    TransitDomainException e = Assertions.assertThrows(TransitDomainException.class,
-            () -> transitService.getDistinctDFSA(
+        .thenThrow(new RuntimeException("Failure while fetching DFSAs"));
+    TransitDomainException e =
+        Assertions.assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitService.getDistinctDFSA(
                     TestUtil.ORG_ID,
                     TestUtil.SOURCE_GEOZONE,
                     List.of(TestUtil.CARRIER_SERVICE_ID)));

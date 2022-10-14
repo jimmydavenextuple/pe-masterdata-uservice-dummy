@@ -101,15 +101,15 @@ public class TransitDomain {
   }
 
   public List<String> fetchDestinationGeozones(
-          String orgId, String sourceGeozone, List<String> carrierServiceIds)
-          throws TransitDomainException {
+      String orgId, String sourceGeozone, List<String> carrierServiceIds)
+      throws TransitDomainException {
     try {
       return transitRepository.findByOrgIdAndSourceGeozoneAndCarrierServiceIds(
-              orgId, sourceGeozone, carrierServiceIds);
+          orgId, sourceGeozone, carrierServiceIds);
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to fetch transit list");
       throw new TransitDomainException(
-              "Error while fetching transit list", orgId, sourceGeozone, null, null);
+          "Error while fetching transit list", orgId, sourceGeozone, null, null);
     }
   }
 
