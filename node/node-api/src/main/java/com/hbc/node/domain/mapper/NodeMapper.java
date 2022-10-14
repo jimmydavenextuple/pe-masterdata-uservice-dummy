@@ -27,6 +27,4 @@ public interface NodeMapper {
   NodeDto toNodeDto(NodeEntity nodeEntity);
 
   List<NodeCacheKeyDto> toNodeCacheKeyResponseList(List<NodeEntity> nodeEntities);
-
-  List<NodeResponse> toNodeResponseList(List<NodeEntity> nodeEntities);
 }

@@ -255,19 +255,4 @@ class NodeControllerTest {
 
     verify(nodeService, times(1)).getAllNodeCacheKeys(any());
   }
-
-  @Test
-  void getAllNodesByOrgIdTest() throws NodeDomainException {
-    List<NodeResponse> nodeResponseList = List.of(testUtil.getNodeResponse());
-
-    when(nodeService.getAllNodesByOrgId(any())).thenReturn(nodeResponseList);
-
-    ResponseEntity<BaseResponse<List<NodeResponse>>> response =
-        nodeController.getAllNodesByOrgId(TestUtil.ORG_ID);
-
-    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-    Assertions.assertEquals(nodeResponseList, response.getBody().getPayload());
-
-    verify(nodeService, times(1)).getAllNodesByOrgId(any());
-  }
 }

@@ -18,6 +18,4 @@ public interface NodeRepository extends JpaRepository<NodeEntity, String> {
 
   @Query(value = "SELECT * FROM node LIMIT ?1", nativeQuery = true)
   List<NodeEntity> findAllNodeEntities(Integer limit);
-
-  List<NodeEntity> findByOrgIdOrderByNodeIdAsc(String orgId);
 }

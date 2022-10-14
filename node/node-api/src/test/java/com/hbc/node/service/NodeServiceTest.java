@@ -224,18 +224,4 @@ class NodeServiceTest {
         CommonServiceException.class, () -> nodeService.createNode(nodeRequest3));
     verify(nodeDomain, times(0)).saveNodeEntity(any(NodeEntity.class));
   }
-
-  @Test
-  void getAllNodesByOrgIdTest() throws NodeDomainException {
-    List<NodeEntity> nodeEntities = testUtil.getNodeEntityList();
-    when(nodeDomain.getAllNodesByOrgId(any())).thenReturn(nodeEntities);
-
-    List<NodeResponse> nodeResponseList = nodeService.getAllNodesByOrgId(TestUtil.ORG_ID);
-
-    Assertions.assertEquals(2, nodeResponseList.size());
-    Assertions.assertEquals(nodeEntities.get(0).getNodeId(), nodeResponseList.get(0).getNodeId());
-    Assertions.assertEquals(nodeEntities.get(0).getOrgId(), nodeResponseList.get(0).getOrgId());
-
-    verify(nodeDomain, times(1)).getAllNodesByOrgId(any());
-  }
 }
