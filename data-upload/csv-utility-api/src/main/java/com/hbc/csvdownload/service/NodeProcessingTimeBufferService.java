@@ -1,15 +1,17 @@
 package com.hbc.csvdownload.service;
 
+import com.hbc.common.base.PagePayload;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.feign.NodeFeign;
-import com.hbc.node.domain.outbound.NodeResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,8 +23,25 @@ public class NodeProcessingTimeBufferService {
   private final NodeCarrierFeign nodeCarrierFeign;
   private final NodeFeign nodeFeign;
 
+  @Value("${download-page-size.node}")
+  private int pageSize;
+
   public String getProcessingTimeBuffersByOgId(String orgId) {
-    List<NodeResponse> nodeResponseList = nodeFeign.getAllNodesByOrgId(orgId).getPayload();
+    PagePayload<NodeDto> nodeDtoPagePayload =
+        nodeFeign.getNodeList(orgId, null, pageSize, null, null).getPayload();
+    int totalPages = nodeDtoPagePayload.getPagination().getTotalPages();
+    int currentPageNo = nodeDtoPagePayload.getPagination().getCurrentPage();
+    List<NodeDto> nodeDtoList = nodeDtoPagePayload.getData();
+
+    if (totalPages > 0) {
+      while (totalPages != currentPageNo) {
+        currentPageNo += 1;
+        PagePayload<NodeDto> nodeDtoPagePayload1 =
+            nodeFeign.getNodeList(orgId, currentPageNo, pageSize, null, null).getPayload();
+        nodeDtoList.addAll(nodeDtoPagePayload1.getData());
+      }
+    }
+
     List<NodeCarrierResponse> nodeCarrierResponseList =
         nodeCarrierFeign.getAllNodeCarriersByOrgId(orgId).getPayload();
 
@@ -30,7 +49,7 @@ public class NodeProcessingTimeBufferService {
         constructMap(nodeCarrierResponseList);
     List<String> csvContents = new ArrayList<>();
 
-    nodeResponseList.forEach(
+    nodeDtoList.forEach(
         node -> {
           List<NodeCarrierResponse> nodeCarrierResponses =
               nodeCarrierResponseMap.get(node.getNodeId());
@@ -62,7 +81,7 @@ public class NodeProcessingTimeBufferService {
     return nodeCarrierResponseMap;
   }
 
-  private String constructCSVContents(NodeResponse node, NodeCarrierResponse nodeCarrierResponse) {
+  private String constructCSVContents(NodeDto node, NodeCarrierResponse nodeCarrierResponse) {
     String serviceOption = checkForNullValues(nodeCarrierResponse.getServiceOption());
     String bufferHours = checkForNullValues(nodeCarrierResponse.getBufferHours());
     String bufferStartDate =
