@@ -328,7 +328,13 @@ class TransitServiceTest {
   @Test
   void getDistinctDFSAExceptionTest() throws TransitDomainException {
     when(transitDomain.fetchDestinationGeozones(any(), any(), any()))
-        .thenThrow(new RuntimeException("Failure while fetching DFSAs"));
+        .thenThrow(
+            new TransitDomainException(
+                "Failure while fetching DFSAs",
+                TestUtil.ORG_ID,
+                TestUtil.SOURCE_GEOZONE,
+                null,
+                null));
     TransitDomainException e =
         Assertions.assertThrows(
             TransitDomainException.class,
