@@ -194,4 +194,22 @@ class CsvDownloadUtilityServiceTest {
     verify(transitService, times(1)).getTransitTimeEntries(anyString(), anyString());
     verify(carrierService, times(1)).getCarrierService(anyString());
   }
+
+  @Test
+  void downloadCarrierServiceData_TestErrorTransitEntries()
+      throws CarrierServiceException, TransitServiceException, IOException {
+    when(carrierService.getCarrierService(anyString()))
+        .thenReturn(List.of(testUtil.getCarrierServiceResponse()));
+    when(calenderService.getCarrierServiceCalender(anyString(), anyString()))
+        .thenReturn(List.of(testUtil.getCarrierServiceCalendarResponse()));
+
+    when(transitService.getTransitTimeEntries(anyString(), anyString()))
+        .thenThrow(TransitServiceException.class);
+    File csvContents = csvDownloadUtilityService.downloadCarrierServiceData(TestUtil.ORG_ID);
+
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
+    verify(calenderService, times(1)).getCarrierServiceCalender(anyString(), anyString());
+    verify(transitService, times(1)).getTransitTimeEntries(anyString(), anyString());
+    verify(carrierService, times(1)).getCarrierService(anyString());
+  }
 }

@@ -99,7 +99,10 @@ public class CsvDownloadUtilityService {
               carrierServiceResponse -> {
                 String carrierServiceId = carrierServiceResponse.getCarrierServiceId();
                 List<String> calenderIds = new ArrayList<>();
-                getCalenderIds(orgId, carrierServiceId, calenderIds);
+                List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses =
+                    new ArrayList<>();
+                getCalenderIds(
+                    orgId, carrierServiceId, calenderIds, carrierServiceCalendarResponses);
                 TransitTimeEntriesDto transitTimeEntriesDto = new TransitTimeEntriesDto();
 
                 try {
@@ -111,41 +114,41 @@ public class CsvDownloadUtilityService {
                 }
 
                 String status =
-                    (!carrierServiceResponses.isEmpty()
+                    (!carrierServiceCalendarResponses.isEmpty()
                             && transitTimeEntriesDto.getTotalRecords() > 0)
                         ? "ACTIVE"
                         : "INACTIVE";
+                String row =
+                    calenderIds.parallelStream()
+                        .map(
+                            calenderId ->
+                                constructRow(orgId, carrierServiceResponse, status, calenderId))
+                        .collect(Collectors.joining("\n"));
 
-                if (!CollectionUtils.isEmpty(calenderIds)) {
-                  String row =
-                      calenderIds.parallelStream()
-                          .map(
-                              calenderId ->
-                                  constructRow(orgId, carrierServiceResponse, status, calenderId))
-                          .collect(Collectors.joining("\n"));
+                try {
+                  writer.append(row);
+                  writer.append("\n");
 
-                  try {
-                    writer.append(row);
-                    writer.append("\n");
-
-                  } catch (IOException e) {
-                    logger.error("Error while writing carrier service records");
-                  }
+                } catch (IOException e) {
+                  logger.error("Error while writing carrier service records");
                 }
               });
     }
     return carrierServiceFile;
   }
 
-  private void getCalenderIds(String orgId, String carrierServiceId, List<String> calenderIds) {
-    List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses;
+  private void getCalenderIds(
+      String orgId,
+      String carrierServiceId,
+      List<String> calenderIds,
+      List<CarrierServiceCalendarResponse> serviceCalendarResponses) {
     try {
 
-      carrierServiceCalendarResponses =
-          calenderService.getCarrierServiceCalender(orgId, carrierServiceId);
+      serviceCalendarResponses.addAll(
+          calenderService.getCarrierServiceCalender(orgId, carrierServiceId));
 
       calenderIds.addAll(
-          carrierServiceCalendarResponses.stream()
+          serviceCalendarResponses.stream()
               .map(CarrierServiceCalendarResponse::getCalendarId)
               .collect(Collectors.toSet()));
 
