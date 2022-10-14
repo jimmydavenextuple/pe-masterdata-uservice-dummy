@@ -76,9 +76,8 @@ public class CsvDownloadUtilityService {
         String pathName = tmpdir + separator + new Date().getTime() + ".csv";
         File carrierServiceFile = new File(pathName);
         FileWriter fileWriter = new FileWriter(carrierServiceFile);
-        BufferedWriter writer = new BufferedWriter(fileWriter);
-        List<CarrierServiceResponse> carrierServiceResponses = carrierService.getCarrierService(orgId);
-        try {
+        try (BufferedWriter writer = new BufferedWriter(fileWriter)) {
+            List<CarrierServiceResponse> carrierServiceResponses = carrierService.getCarrierService(orgId);
             var header = String.join(",", CARRIER_SERVICE_ID, ORG_ID, CARRIER_NAME, CARRIER_ID, SERVICE_NAME, STATUS, WORKING_CALENDER);
             writer.append(header);
             writer.append("\n");
@@ -106,9 +105,6 @@ public class CsvDownloadUtilityService {
                     }
                 }
             });
-        } finally {
-            fileWriter.close();
-            writer.close();
         }
 
         return carrierServiceFile;
