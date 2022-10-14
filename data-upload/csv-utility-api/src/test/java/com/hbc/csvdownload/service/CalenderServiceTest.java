@@ -43,8 +43,7 @@ class CalenderServiceTest {
 
   @Test
   void getCarrierServiceCalenderTestNullResponse() {
-    when(calendarFeign.getCarrierServiceCalendar(anyString(), anyString()))
-        .thenReturn(null);
+    when(calendarFeign.getCarrierServiceCalendar(anyString(), anyString())).thenReturn(null);
     Assertions.assertThrows(
         CarrierServiceException.class,
         () ->

@@ -53,8 +53,7 @@ class CarrierServiceTest {
 
   @Test
   void getCarrierServiceTestNullResponse() {
-    when(carrierFeign.getCarrierServiceListByOrgId(anyString()))
-        .thenReturn(null);
+    when(carrierFeign.getCarrierServiceListByOrgId(anyString())).thenReturn(null);
 
     Assertions.assertThrows(
         CarrierServiceException.class, () -> carrierService.getCarrierService(TestUtil.ORG_ID));
