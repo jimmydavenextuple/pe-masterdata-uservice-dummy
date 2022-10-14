@@ -6,11 +6,11 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://promise-engine-postgres-stage.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
+    url: jdbc:postgresql://promise-engine-postgres-cluster-stage.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
   kafka:
-    bootstrap-servers: "b-2.promiseenginekafkasta.vs4wfd.c23.kafka.us-east-1.amazonaws.com:9096, b-1.promiseenginekafkasta.vs4wfd.c23.kafka.us-east-1.amazonaws.com:9096, b-3.promiseenginekafkasta.vs4wfd.c23.kafka.us-east-1.amazonaws.com:9096"
+    bootstrap-servers: "b-2.promisemksstage.hwe2x6.c18.kafka.us-east-1.amazonaws.com:9096,b-1.promisemksstage.hwe2x6.c18.kafka.us-east-1.amazonaws.com:9096,b-3.promisemksstage.hwe2x6.c18.kafka.us-east-1.amazonaws.com:9096"
     properties:
       security.protocol: SASL_SSL
       sasl.mechanism: SCRAM-SHA-512
@@ -31,7 +31,7 @@ logging:
   level:
     com.hbc: DEBUG
 auth:
-  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_HExeMsLrg
+  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_5uCQJb6Il
 
 dataupload:
   base-path: "/s3-bucket/"
@@ -51,6 +51,6 @@ jobs-framework:
     topic-name: INTERNAL.STAGE.JOBS.TASK
     group-id: jobs-task-consumer-async-stage
 auth-token:
-  url: https://promise-engine-stage-pool.auth.us-east-1.amazoncognito.com
+  url: https://promise-engine-domain-stage.auth.us-east-1.amazoncognito.com
   username: \${COGNITO_CLIENT_ID}
   password: \${COGNITO_CLIENT_SECRET}

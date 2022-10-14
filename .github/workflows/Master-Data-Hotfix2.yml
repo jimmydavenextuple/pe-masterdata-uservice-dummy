@@ -3,8 +3,7 @@ name: HOTFIX2 DEPLOY
 on:
   push:
     branches: [ test-hotfix2 ]
-    tags:
-      - '*SNAPSHOT'
+
 jobs:
   Item:
     uses: ./.github/workflows/hotfix2-flow.yml

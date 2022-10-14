@@ -6,20 +6,20 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://promise-engine-postgres-prod.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/pe
+    url: jdbc:postgresql://promise-engine-postgres-production.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/pe
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
   replica:
     datasource:
       platform: postgres
-      url: jdbc:postgresql://promise-engine-postgres-prod.cluster-ro-cboxgnkbeo0q.us-east-1.rds.amazonaws.com,promise-engine-postgres-prod.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/pe?readOnly=true
+      url: jdbc:postgresql://promise-engine-postgres-production.cluster-ro-cboxgnkbeo0q.us-east-1.rds.amazonaws.com,promise-engine-postgres-production.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/pe?readOnly=true
       username: \${POSTGRES_USER}
       password: \${POSTGRES_PWD}
       required: true
       hikari:
         readOnly: true
   kafka:
-    bootstrap-servers: "b-1.promiseenginekafkapro.o79lf2.c23.kafka.us-east-1.amazonaws.com:9096,b-2.promiseenginekafkapro.o79lf2.c23.kafka.us-east-1.amazonaws.com:9096,b-3.promiseenginekafkapro.o79lf2.c23.kafka.us-east-1.amazonaws.com:9096"
+    bootstrap-servers: "b-3.promisemksproduction.wo9ili.c19.kafka.us-east-1.amazonaws.com:9096,b-1.promisemksproduction.wo9ili.c19.kafka.us-east-1.amazonaws.com:9096,b-2.promisemksproduction.wo9ili.c19.kafka.us-east-1.amazonaws.com:9096"
     properties:
       security.protocol: SASL_SSL
       sasl.mechanism: SCRAM-SHA-512
@@ -39,4 +39,4 @@ logging:
     root: WARN
     com.hbc: INFO
 auth:
-  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_phMvZ9Tci
+  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_MW21O5cnf

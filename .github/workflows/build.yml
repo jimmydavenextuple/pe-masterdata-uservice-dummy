@@ -40,7 +40,7 @@ jobs:
         run: |
           export BUILD_TARGET="SNAPSHOT"
           if [ $BRANCH == 'hotfix' ]; then
-            export BUILD_TARGET="HOTFIX"
+            export BUILD_TARGET="SNAPSHOT"
           fi
           
           export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain hbc --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
