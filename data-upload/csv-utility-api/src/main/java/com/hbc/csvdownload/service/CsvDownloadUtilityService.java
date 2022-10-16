@@ -333,7 +333,7 @@ public class CsvDownloadUtilityService {
     logger.debug("Processing download processing time buffers for orgId");
     String tmpdir = System.getProperty("java.io.tmpdir");
     String separator = System.getProperty("file.separator");
-    String pathName = tmpdir + separator + new Date().getTime() + ".csv";
+    String pathName = String.format("%s%s%s.csv", tmpdir, separator, new Date().getTime());
     var processingTimeBufferFile = new File(pathName);
     var fileWriter = new FileWriter(processingTimeBufferFile);
     try (var writer = new BufferedWriter(fileWriter)) {
