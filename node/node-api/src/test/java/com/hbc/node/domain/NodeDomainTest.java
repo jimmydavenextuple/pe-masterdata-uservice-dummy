@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.node.TestUtil;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.entity.NodeEntity;
+import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.node.exception.NodeDomainException;
 import com.hbc.node.repository.NodeRepository;
 import java.util.List;
@@ -164,6 +165,40 @@ class NodeDomainTest {
             () -> nodeDomain.getNodeByOrgId(TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "ASC"));
     Assertions.assertEquals("Error while finding node list", exception.getMessage());
     verify(nodeRepository, times(1)).findNodeByOrgId(anyString(), any(Pageable.class));
+  }
+
+  @Test
+  void getAllNodesPaginatedTest() throws NodeDomainException {
+    List<NodeEntity> nodeEntityList = testUtil.getNodeEntityList();
+
+    Pageable pageable = PageRequest.of(1, 1, Sort.by(TestUtil.SORT_BY).ascending());
+    Page<NodeEntity> nodeEntityPage =
+            new PageImpl<>(nodeEntityList, pageable, nodeEntityList.size());
+
+    when(nodeRepository.findAll(any(Pageable.class))).thenReturn(nodeEntityPage);
+
+    Page<NodeResponse> response =
+            nodeDomain.getAllNodesPaginated(1, 1, TestUtil.SORT_BY, "ASC");
+
+    Assertions.assertEquals(nodeEntityList.size(), response.getContent().size());
+    Assertions.assertEquals(2, response.getTotalPages());
+    Assertions.assertEquals(1, response.getPageable().getPageSize());
+    Assertions.assertEquals(2, response.getTotalElements());
+    Assertions.assertEquals("nodeId: ASC", response.getSort().toString());
+
+    verify(nodeRepository, times(1)).findAll(any(Pageable.class));
+  }
+  @Test
+  void getAllNodesPaginatedTestException() {
+    when(nodeRepository.findAll(any(Pageable.class)))
+            .thenThrow(new RuntimeException("Error while fetching node list"));
+
+    Exception exception =
+            assertThrows(
+                    NodeDomainException.class,
+                    () -> nodeDomain.getAllNodesPaginated(1, 1, TestUtil.SORT_BY, "ASC"));
+    Assertions.assertEquals("Error while finding node list", exception.getMessage());
+    verify(nodeRepository, times(1)).findAll(any(Pageable.class));
   }
 
   @Test

@@ -196,6 +196,44 @@ class NodeServiceTest {
   }
 
   @Test
+  void getAllNodesTest() throws NodeDomainException {
+    List<NodeResponse> nodeResponses = List.of(testUtil.getNodeResponse());
+
+    Pageable pageable = PageRequest.of(1, 1, Sort.by(TestUtil.SORT_BY).ascending());
+    Page<NodeResponse> nodeResponsePage = new PageImpl<>(nodeResponses, pageable, nodeResponses.size());
+
+    when(nodeDomain.getAllNodesPaginated(any(), any(), any(), any())).thenReturn(nodeResponsePage);
+
+    Page<NodeResponse> response =
+            nodeService.getAllNodes(
+                    1, 1, TestUtil.SORT_BY, TestUtil.SORT_ORDER_DESC);
+
+    Assertions.assertEquals(nodeResponses.size(), response.getContent().size());
+    Assertions.assertEquals(2, response.getTotalPages());
+    Assertions.assertEquals(1, response.getPageable().getPageSize());
+    Assertions.assertEquals(2, response.getTotalElements());
+    Assertions.assertEquals("nodeId: ASC", response.getSort().toString());
+
+    verify(nodeDomain, Mockito.times(1)).getAllNodesPaginated(any(), any(), any(), any());
+  }
+
+  @Test
+  void getAllNodesExceptionTest() throws NodeDomainException {
+    when(nodeDomain.getAllNodesPaginated(any(), any(), any(), any()))
+            .thenThrow(new NodeDomainException("Failed to fetch nodes", null, null));
+    Exception exception =
+            Assertions.assertThrows(
+                    NodeDomainException.class,
+                    () ->
+                            nodeService.getAllNodes(
+                                    1, 1, TestUtil.SORT_BY, "DESC"));
+
+    Assertions.assertEquals(
+            "Failed to fetch nodes", exception.getMessage());
+    verify(nodeDomain, Mockito.times(1)).getAllNodesPaginated(any(), any(), any(), any());
+  }
+
+  @Test
   void getAllNodeCacheKeysTest() throws NodeDomainException {
     List<NodeEntity> nodeEntities = testUtil.getNodeEntityList();
 
