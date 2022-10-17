@@ -326,4 +326,16 @@ class CsvDownloadUtilityServiceTest {
     Assertions.assertNotNull(file);
     verify(processingTimeBuffersService, times(1)).getProcessingTimeBuffers(any());
   }
+
+  @Test
+  void downloadProcessingTimeBuffersByOrgIdWithPartialEmptyValuesTest() throws IOException {
+    List<ProcessingTimeBufferResponse> responseList =
+        List.of(testUtil.getProcessingTimeBufferResponsePartialEmptyValues(TestUtil.NODE_ID));
+    when(processingTimeBuffersService.getProcessingTimeBuffers(any())).thenReturn(responseList);
+
+    File file = csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(TestUtil.ORG_ID);
+
+    Assertions.assertNotNull(file);
+    verify(processingTimeBuffersService, times(1)).getProcessingTimeBuffers(any());
+  }
 }

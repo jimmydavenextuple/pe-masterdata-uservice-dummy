@@ -307,4 +307,15 @@ public class TestUtil {
         .processingTimeBuffers(new ArrayList<>())
         .build();
   }
+
+  public ProcessingTimeBufferResponse getProcessingTimeBufferResponsePartialEmptyValues(
+      String nodeId) {
+    return ProcessingTimeBufferResponse.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .nodeType(NODE_TYPE)
+        .serviceOptions(List.of(SERVICE_OPTION, SERVICE_OPTION_2))
+        .processingTimeBuffers(new ArrayList<>())
+        .build();
+  }
 }

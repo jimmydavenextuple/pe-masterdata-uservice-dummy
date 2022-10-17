@@ -452,7 +452,7 @@ public class CsvDownloadUtilityService {
             BUFFER_END_DATE,
             STATUS
           };
-      writer.writeNext(header);
+      writeToCSV(header, writer);
 
       writerProcessingTimeBufferDataToFile(writer, responses);
       writer.flush();
@@ -463,40 +463,40 @@ public class CsvDownloadUtilityService {
 
   private void writerProcessingTimeBufferDataToFile(
       CSVWriter writer, List<ProcessingTimeBufferResponse> responseList) {
-    String[] csvData = new String[12];
+    List<String> csvData = new ArrayList<>();
     responseList.forEach(
         response -> {
-          csvData[0] = response.getNodeId();
-          csvData[1] = response.getNodeType();
-          csvData[2] = response.getStreet();
-          csvData[3] = response.getCity();
-          csvData[4] = response.getOrgId();
-          csvData[5] = response.getProvince();
-          csvData[6] = response.getPostalCode();
+          csvData.add(response.getNodeId());
+          csvData.add(response.getNodeType());
+          csvData.add(response.getStreet());
+          csvData.add(response.getCity());
+          csvData.add(response.getOrgId());
+          csvData.add(response.getProvince());
+          csvData.add(response.getPostalCode());
           if (response.getServiceOptions().isEmpty()
               && response.getProcessingTimeBuffers().isEmpty()) {
-            csvData[7] = NA;
-            csvData[8] = NA;
-            csvData[9] = NA;
-            csvData[10] = NA;
-            csvData[11] = NA;
-            writeToCSV(csvData, writer);
+            csvData.add(NA);
+            csvData.add(NA);
+            csvData.add(NA);
+            csvData.add(NA);
+            csvData.add(NA);
+            writeToCSV(csvData.toArray(new String[0]), writer);
           } else {
             response
                 .getProcessingTimeBuffers()
                 .forEach(
                     processingTimeBuffer -> {
-                      csvData[7] = processingTimeBuffer.getServiceOption();
-                      csvData[8] =
-                          checkForNullValues(processingTimeBuffer.getBufferHours().toString());
-                      csvData[9] =
+                      csvData.add(processingTimeBuffer.getServiceOption());
+                      csvData.add(
+                          checkForNullValues(processingTimeBuffer.getBufferHours().toString()));
+                      csvData.add(
                           checkForNullValues(
-                              convertToStringUTC(processingTimeBuffer.getBufferStartDate()));
-                      csvData[10] =
+                              convertToStringUTC(processingTimeBuffer.getBufferStartDate())));
+                      csvData.add(
                           checkForNullValues(
-                              convertToStringUTC(processingTimeBuffer.getBufferEndDate()));
-                      csvData[11] = checkForNullValues(processingTimeBuffer.getStatus());
-                      writeToCSV(csvData, writer);
+                              convertToStringUTC(processingTimeBuffer.getBufferEndDate())));
+                      csvData.add(checkForNullValues(processingTimeBuffer.getStatus()));
+                      writeToCSV(csvData.toArray(new String[0]), writer);
                     });
           }
         });
