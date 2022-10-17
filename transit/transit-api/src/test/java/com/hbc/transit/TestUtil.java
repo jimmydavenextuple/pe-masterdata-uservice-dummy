@@ -5,14 +5,18 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitBufferReqJobRefEntity;
+import com.hbc.transit.domain.entity.TransitBufferConfigRequestEntity;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
 import com.hbc.transit.domain.enums.TransitBufferReqJobRefEnum;
-import com.hbc.transit.domain.inbound.*;
-import com.hbc.transit.domain.outbound.TransitBufferReqJobRefResponse;
 import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
+import com.hbc.transit.domain.inbound.TransitBufferConfigRequest;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
+import com.hbc.transit.domain.inbound.TransitBufferReqJobRefRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
+import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
+import com.hbc.transit.domain.outbound.TransitBufferReqJobRefResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +48,7 @@ public class TestUtil {
   public static Double BUFFER_DAYS = 3.0;
 
   public static final String SERVICE_OPTION = "serviceOption-1";
+  public static final Long ID = 1L;
 
   public TransitEntity getTransitEntity(Float transitDays) {
     Date bufferStartDate = new Date(1000);
@@ -224,11 +229,53 @@ public class TestUtil {
             .action(TransitBufferReqJobRefEnum.COMPLETED)
             .build();
   }
-   
+
   public DistinctGeozonesResponse geozonesResponse() {
     DistinctGeozonesResponse geozonesResponse = new DistinctGeozonesResponse();
     geozonesResponse.setSourceGeozones(List.of(SOURCE_GEOZONE));
     geozonesResponse.setDestinationGeozones(List.of(DESTINATION_GEOZONE));
     return geozonesResponse;
+  }
+
+  public TransitBufferConfigRequest getTransitBufferConfigRequest() {
+    Date bufferStartDate = new Date(1000);
+    Date bufferEndDate = new Date(1000);
+    return TransitBufferConfigRequest.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .bufferDays(BUFFER_DAYS)
+        .startDate(bufferStartDate)
+        .endDate(bufferEndDate)
+        .build();
+  }
+
+  public TransitBufferConfigResponse getTransitBufferConfigResponse(
+      TransitBufferConfigRequestStatusEnum status) {
+    Date bufferStartDate = new Date(1000);
+    Date bufferEndDate = new Date(1000);
+    return TransitBufferConfigResponse.builder()
+        .id(ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .bufferDays(BUFFER_DAYS)
+        .startDate(bufferStartDate)
+        .endDate(bufferEndDate)
+        .status(status)
+        .build();
+  }
+
+  public TransitBufferConfigRequestEntity getTransitBufferConfigRequestEntity(
+      TransitBufferConfigRequestStatusEnum status) {
+    Date bufferStartDate = new Date(1000);
+    Date bufferEndDate = new Date(1000);
+    return TransitBufferConfigRequestEntity.builder()
+        .id(ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .bufferDays(BUFFER_DAYS)
+        .startDate(bufferStartDate)
+        .endDate(bufferEndDate)
+        .status(status)
+        .build();
   }
 }
