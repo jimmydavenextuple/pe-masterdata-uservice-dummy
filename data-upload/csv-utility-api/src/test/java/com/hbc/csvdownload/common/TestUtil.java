@@ -1,7 +1,5 @@
 package com.hbc.csvdownload.common;
 
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
@@ -14,7 +12,9 @@ import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
+import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
 import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
+import com.hbc.dataupload.common.pojo.ActiveCombination;
 import com.hbc.dataupload.common.pojo.ProcessingTimeBuffer;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
@@ -45,6 +45,10 @@ public class TestUtil {
   public static final String JOB_ID = "jobId1";
   public static final String SERVICE_OPTION = "serviceOptions";
   public static final String COUNTRY = "CA";
+  public static final String STREET = "1963 Boul. Lionel-Bertrand";
+  public static final String CITY = "Boisbriand";
+  public static final String PROVINCE = "QC";
+  public static final String POSTAL_CODE = "J7H 1N8";
   public static final Double PROCESSING_TIME = 20.0;
   private static final String NODE_ID_2 = "nodeId2";
   private static final String SERVICE_OPTION_2 = "EXPRESS";
@@ -67,19 +71,6 @@ public class TestUtil {
 
   public static final String transitTimesRequestBodyJson =
       "{\"orgId\":\"BAY\",\"sourceGeozone\":\"A0A\",\"destinationGeozone\":\"M1R\",\"carrierServiceId\":\"ALL-SDND\",\"transitDays\":\"1.5\"}";
-
-  public static final String processingTimeBufferCsvRowData =
-      "nodeId,BAY,nodeType,street,city,province,postalCode,serviceOptions,2.5,1970-01-01T00:00:01Z,1970-01-01T00:00:01Z,Inactive\n"
-          + "nodeId,BAY,nodeType,street,city,province,postalCode,EXPRESS,2.5,1970-01-01T00:00:01Z,1970-01-01T00:00:01Z,Inactive\n"
-          + "nodeId2,BAY,nodeType,street,city,province,postalCode,NA,NA,NA,NA,NA";
-
-  public static final String processingTimeBufferCsvRowDataForNullValues =
-      "nodeId,BAY,nodeType,street,city,province,postalCode,NA,NA,NA,NA,NA\n"
-          + "nodeId2,BAY,nodeType,street,city,province,postalCode,NA,NA,NA,NA,NA";
-
-  public static String processingTimeBufferCsvRowDataForPartialNullValues =
-      "nodeId,BAY,nodeType,street,city,province,postalCode,serviceOptions,2.4,NA,NA,NA\n"
-          + "nodeId2,BAY,nodeType,street,city,province,postalCode,NA,NA,NA,NA,NA";
 
   public JobDto getJobDto() {
     JobDto jobDto = new JobDto();
@@ -208,6 +199,52 @@ public class TestUtil {
         .longitude(LONGITUDE)
         .timeZone(TIME_ZONE)
         .build();
+  }
+
+  public ActiveCombination getActiveCombination() {
+    return ActiveCombination.builder()
+        .nodeId(NODE_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .isActive(true)
+        .build();
+  }
+
+  public NodeCarrierServiceAndServiceOptionResponse
+      getNodeCarrierServiceAndServiceOptionResponse() {
+    NodeCarrierServiceAndServiceOptionResponse response =
+        new NodeCarrierServiceAndServiceOptionResponse();
+    response.setNodeId(NODE_ID);
+    response.setOrgId(ORG_ID);
+    response.setStreet(STREET);
+    response.setCity(CITY);
+    response.setProvince(PROVINCE);
+    response.setPostalCode(POSTAL_CODE);
+    response.setCarrierServices(List.of(CARRIER_SERVICE_ID));
+    response.setServiceOptions(List.of(SERVICE_OPTION));
+    response.setActiveCombination(List.of(getActiveCombination()));
+
+    return response;
+  }
+
+  public PagePayload<NodeCarrierServiceAndServiceOptionResponse>
+      getNodeCarrierServiceAndServiceOptionResponse(Integer pageNo) {
+    PagePayload<NodeCarrierServiceAndServiceOptionResponse> nodeCarrierServicePagePayload =
+        new PagePayload<>();
+
+    NodeCarrierServiceAndServiceOptionResponse response =
+        getNodeCarrierServiceAndServiceOptionResponse();
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(1);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("nodeId");
+    pagination.setSortOrder("ASC");
+    pagination.setTotalRecords(1);
+    nodeCarrierServicePagePayload.setPagination(pagination);
+    nodeCarrierServicePagePayload.setData(List.of(response));
+
+    return nodeCarrierServicePagePayload;
   }
 
   public BaseResponse<PagePayload<ProcessingTimeBufferResponse>>

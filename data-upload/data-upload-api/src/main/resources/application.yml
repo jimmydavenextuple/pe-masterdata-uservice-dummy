@@ -81,4 +81,5 @@ scheduled-processor:
   fixed-rate:
     minutes: 1
 download-page-size:
+  node-carrier-service-options: 200
   node: 200

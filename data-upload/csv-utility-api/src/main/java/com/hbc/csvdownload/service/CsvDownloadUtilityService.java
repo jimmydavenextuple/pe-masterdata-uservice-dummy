@@ -3,6 +3,7 @@ package com.hbc.csvdownload.service;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_END_DATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_HOURS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_START_DATE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICES;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
@@ -10,12 +11,16 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATUS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
 
+import com.hbc.common.base.PagePayload;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
 import com.hbc.csvdownload.domain.mapper.TransitDataRequestMapper;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorNodeCarrier;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
@@ -23,6 +28,8 @@ import com.hbc.csvdownload.domain.pojo.TransitDataErrorLogsPojo;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.dataupload.common.feign.DataUploadFeign;
+import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
 import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
@@ -35,6 +42,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +54,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -59,11 +68,14 @@ public class CsvDownloadUtilityService {
 
   private final PostalCodeTimeZoneService postalCodeTimeZoneService;
   private final TransitService transitService;
-
+  private final DataUploadFeign dataUploadFeign;
   private final JobsDashboardService jobsDashboardService;
   private final JobsConsumerService jobsConsumerService;
   private final ProcessingTimeBuffersService processingTimeBuffersService;
   private static final String NA = "NA";
+
+  @Value("${download-page-size.node-carrier-service-options}")
+  private Integer noOfRecordsPerPage;
 
   private static final TransitDataRequestMapper INSTANCE =
       Mappers.getMapper(TransitDataRequestMapper.class);
@@ -325,6 +337,97 @@ public class CsvDownloadUtilityService {
         + dto.getLongitude()
         + ","
         + dto.getTimeZone();
+  }
+
+  public DownloadNodeCarrierServiceAndServiceOptionPojo
+      downloadNodeCarrierServiceAndServiceOptionsDataCSV(String orgId) throws IOException {
+
+    /** feign client call to get data */
+    BaseResponse<PagePayload<NodeCarrierServiceAndServiceOptionResponse>> response =
+        dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
+            orgId, null, noOfRecordsPerPage, null, null);
+    /** Create a temporary file to write the data */
+    Path tempFile = Files.createTempFile("download-node-carrierService-serviceOption", ".csv");
+    try (var csvWriter = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+      var headers =
+          new String[] {
+            NODE_ID,
+            ORG_ID,
+            STREET,
+            CITY,
+            PROVINCE,
+            POSTAL_CODE,
+            CARRIER_SERVICES,
+            SERVICE_OPTIONS,
+            STATUS
+          };
+      Integer currentPageNo = 1;
+      Integer totalPages = 0;
+      List<NodeCarrierServiceAndServiceOptionResponse> responses = new ArrayList<>();
+      if (response != null && response.getPayload() != null) {
+        csvWriter.writeNext(headers);
+        responses = response.getPayload().getData();
+        totalPages = response.getPayload().getPagination().getTotalPages();
+        currentPageNo = response.getPayload().getPagination().getCurrentPage();
+      }
+
+      writeDataOntoFile(csvWriter, responses);
+      csvWriter.flush();
+
+      if (totalPages > 0) {
+        while (currentPageNo < totalPages) {
+          BaseResponse<PagePayload<NodeCarrierServiceAndServiceOptionResponse>> response2 =
+              dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
+                  orgId, currentPageNo + 1, noOfRecordsPerPage, null, null);
+          if (response2 != null && response2.getPayload() != null) {
+            responses = response2.getPayload().getData();
+            totalPages = response2.getPayload().getPagination().getTotalPages();
+            currentPageNo = response2.getPayload().getPagination().getCurrentPage();
+            writeDataOntoFile(csvWriter, responses);
+            csvWriter.flush();
+          }
+        }
+      }
+
+      return DownloadNodeCarrierServiceAndServiceOptionPojo.builder()
+          .contentsLength(tempFile.toFile().length())
+          .fileContents(Files.readAllBytes(tempFile))
+          .build();
+    } finally {
+      tempFile.toFile().delete(); // NOSONAR
+    }
+  }
+
+  private void writeDataOntoFile(
+      CSVWriter csvWriter, List<NodeCarrierServiceAndServiceOptionResponse> responses) {
+
+    if (!CollectionUtils.isEmpty(responses)) {
+      responses.forEach(
+          response -> {
+            var nodeId = response.getNodeId();
+            var orgId = response.getOrgId();
+            var street = response.getStreet();
+            var city = response.getCity();
+            var province = response.getProvince();
+            var postalCode = response.getPostalCode();
+            response
+                .getActiveCombination()
+                .forEach(
+                    activeCombination ->
+                        csvWriter.writeNext(
+                            new String[] {
+                              nodeId,
+                              orgId,
+                              street,
+                              city,
+                              province,
+                              postalCode,
+                              activeCombination.getCarrierServiceId(),
+                              activeCombination.getServiceOption(),
+                              String.valueOf(activeCombination.isActive())
+                            }));
+          });
+    }
   }
 
   public File downloadProcessingTimeBuffersByOrgId(String orgId) throws IOException {

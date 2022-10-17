@@ -1,12 +1,22 @@
 package com.hbc.csvdownload.service;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import com.hbc.common.base.PagePayload;
+import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.TestUtil;
+import com.hbc.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.dataupload.common.feign.DataUploadFeign;
+import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
 import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
@@ -22,6 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.ObjectUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +42,7 @@ class CsvDownloadUtilityServiceTest {
   @Mock private JobsDashboardService jobsDashboardService;
   @Mock private PostalCodeTimeZoneService postalCodeTimeZoneService;
   @Mock private TransitService transitService;
+  @Mock private DataUploadFeign dataUploadFeign;
   @Mock private ProcessingTimeBuffersService processingTimeBuffersService;
   @InjectMocks private CsvDownloadUtilityService csvDownloadUtilityService;
   @InjectMocks private TestUtil testUtil;
@@ -162,8 +174,7 @@ class CsvDownloadUtilityServiceTest {
   }
 
   @Test
-  void downloadMarketRegionForOrgIdAndCountry_Test()
-      throws PostalCodeTimezoneServiceException, CsvDownloadUtilityServiceException {
+  void downloadMarketRegionForOrgIdAndCountry_Test() throws PostalCodeTimezoneServiceException {
     when(postalCodeTimeZoneService.getPostalCodeTimeZoneByOrgIdAndCountry(anyString(), anyString()))
         .thenReturn(List.of(testUtil.getPostalCodeTimezoneDto()));
 
@@ -174,6 +185,122 @@ class CsvDownloadUtilityServiceTest {
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
     verify(postalCodeTimeZoneService, times(1))
         .getPostalCodeTimeZoneByOrgIdAndCountry(anyString(), anyString());
+  }
+
+  @Test
+  void downloadNodeCarrierServiceAndServiceOptionsDataCSV() throws IOException {
+    ReflectionTestUtils.setField(csvDownloadUtilityService, "noOfRecordsPerPage", 200);
+    when(dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
+            any(), any(), any(), any(), any()))
+        .thenReturn(
+            BaseResponse.builder()
+                .payload(testUtil.getNodeCarrierServiceAndServiceOptionResponse(1))
+                .build());
+
+    DownloadNodeCarrierServiceAndServiceOptionPojo pojo =
+        csvDownloadUtilityService.downloadNodeCarrierServiceAndServiceOptionsDataCSV(
+            TestUtil.ORG_ID);
+
+    verify(dataUploadFeign, times(1))
+        .getListOfNodeCarrierServiceAndServiceOptionDetails(any(), any(), any(), any(), any());
+
+    Assertions.assertNotNull(pojo);
+    Assertions.assertNotNull(pojo.getFileContents());
+    Assertions.assertTrue(pojo.getContentsLength() > 0);
+  }
+
+  @Test
+  void downloadNodeCarrierServiceAndServiceOptionsDataCSVEmptyPagePayloadData() throws IOException {
+    ReflectionTestUtils.setField(csvDownloadUtilityService, "noOfRecordsPerPage", 200);
+    when(dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
+            any(), any(), any(), any(), any()))
+        .thenReturn(BaseResponse.builder().payload(null).build());
+
+    DownloadNodeCarrierServiceAndServiceOptionPojo pojo =
+        csvDownloadUtilityService.downloadNodeCarrierServiceAndServiceOptionsDataCSV(
+            TestUtil.ORG_ID);
+
+    verify(dataUploadFeign, times(1))
+        .getListOfNodeCarrierServiceAndServiceOptionDetails(any(), any(), any(), any(), any());
+
+    Assertions.assertNotNull(pojo);
+    Assertions.assertNotNull(pojo.getFileContents());
+    Assertions.assertEquals(0, pojo.getContentsLength());
+  }
+
+  @Test
+  void downloadNodeCarrierServiceAndServiceOptionsDataCSVNullResponse() throws IOException {
+    ReflectionTestUtils.setField(csvDownloadUtilityService, "noOfRecordsPerPage", 200);
+    when(dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
+            any(), any(), any(), any(), any()))
+        .thenReturn(null);
+
+    DownloadNodeCarrierServiceAndServiceOptionPojo pojo =
+        csvDownloadUtilityService.downloadNodeCarrierServiceAndServiceOptionsDataCSV(
+            TestUtil.ORG_ID);
+
+    verify(dataUploadFeign, times(1))
+        .getListOfNodeCarrierServiceAndServiceOptionDetails(any(), any(), any(), any(), any());
+
+    Assertions.assertNotNull(pojo);
+    Assertions.assertNotNull(pojo.getFileContents());
+    Assertions.assertEquals(0, pojo.getContentsLength());
+  }
+
+  @Test
+  void downloadNodeCarrierServiceAndServiceOptionsDataCSVMultiplePages() throws IOException {
+    ReflectionTestUtils.setField(csvDownloadUtilityService, "noOfRecordsPerPage", 200);
+    NodeCarrierServiceAndServiceOptionResponse response1 =
+        testUtil.getNodeCarrierServiceAndServiceOptionResponse();
+
+    when(dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
+            TestUtil.ORG_ID, null, 200, null, null))
+        .thenReturn(BaseResponse.builder().payload(responsePagePayload(response1, 1)).build());
+
+    when(dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
+            TestUtil.ORG_ID, 2, 200, null, null))
+        .thenReturn(BaseResponse.builder().payload(responsePagePayload(response1, 2)).build());
+
+    DownloadNodeCarrierServiceAndServiceOptionPojo pojo =
+        csvDownloadUtilityService.downloadNodeCarrierServiceAndServiceOptionsDataCSV(
+            TestUtil.ORG_ID);
+
+    verify(dataUploadFeign, times(1))
+        .getListOfNodeCarrierServiceAndServiceOptionDetails(TestUtil.ORG_ID, null, 200, null, null);
+
+    verify(dataUploadFeign, times(1))
+        .getListOfNodeCarrierServiceAndServiceOptionDetails(TestUtil.ORG_ID, 2, 200, null, null);
+
+    Assertions.assertNotNull(pojo);
+    Assertions.assertNotNull(pojo.getFileContents());
+    Assertions.assertTrue(pojo.getContentsLength() > 0);
+  }
+
+  private PagePayload<NodeCarrierServiceAndServiceOptionResponse> responsePagePayload(
+      NodeCarrierServiceAndServiceOptionResponse response, int pageNo) {
+    PagePayload<NodeCarrierServiceAndServiceOptionResponse> nodeCarrierServicePagePayload =
+        new PagePayload<>();
+
+    response.setNodeId(TestUtil.NODE_ID + 1);
+    response.setOrgId(TestUtil.ORG_ID);
+    response.setStreet(TestUtil.STREET);
+    response.setCity(TestUtil.CITY);
+    response.setProvince(TestUtil.PROVINCE);
+    response.setPostalCode(TestUtil.POSTAL_CODE);
+    response.setCarrierServices(List.of(TestUtil.CARRIER_SERVICE_ID));
+    response.setServiceOptions(List.of(TestUtil.SERVICE_OPTION));
+    response.setActiveCombination(List.of(testUtil.getActiveCombination()));
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("nodeId");
+    pagination.setSortOrder("ASC");
+    pagination.setTotalRecords(2);
+    nodeCarrierServicePagePayload.setPagination(pagination);
+    nodeCarrierServicePagePayload.setData(List.of(response));
+
+    return nodeCarrierServicePagePayload;
   }
 
   @Test

@@ -1,6 +1,6 @@
-package com.hbc.dataupload.domain.dto;
+package com.hbc.dataupload.common.outbound;
 
-import com.hbc.dataupload.domain.pojo.ActiveCombination;
+import com.hbc.dataupload.common.pojo.ActiveCombination;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
