@@ -328,7 +328,8 @@ class CsvDownloadUtilityServiceTest {
   }
 
   @Test
-  void downloadProcessingTimeBuffersByOrgIdWithPartialEmptyValuesTest() throws IOException {
+  void downloadProcessingTimeBuffersByOrgIdWithPartialEmptyValuesAndNullValuesTest()
+      throws IOException {
     List<ProcessingTimeBufferResponse> responseList =
         List.of(testUtil.getProcessingTimeBufferResponsePartialEmptyValues(TestUtil.NODE_ID));
     when(processingTimeBuffersService.getProcessingTimeBuffers(any())).thenReturn(responseList);

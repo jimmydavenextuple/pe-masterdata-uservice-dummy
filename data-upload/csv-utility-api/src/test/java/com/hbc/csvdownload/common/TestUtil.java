@@ -314,8 +314,18 @@ public class TestUtil {
         .nodeId(nodeId)
         .orgId(ORG_ID)
         .nodeType(NODE_TYPE)
-        .serviceOptions(List.of(SERVICE_OPTION, SERVICE_OPTION_2))
-        .processingTimeBuffers(new ArrayList<>())
+        .serviceOptions(new ArrayList<>())
+        .processingTimeBuffers(List.of(getProcessingTimeBufferWithNullValues(SERVICE_OPTION)))
         .build();
+  }
+
+  private ProcessingTimeBuffer getProcessingTimeBufferWithNullValues(String serviceOption) {
+    ProcessingTimeBuffer processingTimeBuffer = new ProcessingTimeBuffer();
+    processingTimeBuffer.setServiceOption(serviceOption);
+    processingTimeBuffer.setBufferHours(2.5);
+    processingTimeBuffer.setBufferStartDate(null);
+    processingTimeBuffer.setBufferEndDate(null);
+    processingTimeBuffer.setStatus(null);
+    return processingTimeBuffer;
   }
 }
