@@ -13,7 +13,6 @@ import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
-import com.hbc.csvdownload.common.pojo.DownloadCarrierServicePojo;
 import com.hbc.csvdownload.domain.mapper.TransitDataRequestMapper;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorNodeCarrier;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
@@ -29,11 +28,13 @@ import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
 import com.opencsv.CSVWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -63,13 +64,20 @@ public class CsvDownloadUtilityService {
   private final JobsDashboardService jobsDashboardService;
   private final JobsConsumerService jobsConsumerService;
 
-  public DownloadCarrierServicePojo downloadCarrierServiceDataCSV(String orgId)
+  public File downloadCarrierServiceDataCSV(String orgId)
       throws IOException, CarrierServiceException {
 
     List<CarrierServiceResponse> carrierServiceResponses = carrierService.getCarrierService(orgId);
 
-    Path tempFile = Files.createTempFile("download-carrierService", ".csv");
-    try (var csvWriter = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+    Path tempFile = Files.createTempFile("download-carrierService" + new Date().getTime(), ".csv");
+
+    try (var csvWriter =
+        new CSVWriter(
+            new FileWriter(tempFile.toFile()),
+            CSVWriter.DEFAULT_SEPARATOR,
+            CSVWriter.NO_QUOTE_CHARACTER,
+            CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+            CSVWriter.DEFAULT_LINE_END)) {
       var headers =
           new String[] {
             CARRIER_SERVICE_ID,
@@ -103,14 +111,8 @@ public class CsvDownloadUtilityService {
         writeDataOntoFile(csvWriter, orgId, carrierServiceResponse, status, calenderIds);
         csvWriter.flush();
       }
-
-      return DownloadCarrierServicePojo.builder()
-          .contentsLength(tempFile.toFile().length())
-          .fileContents(Files.readAllBytes(tempFile))
-          .build();
-    } finally {
-      tempFile.toFile().delete(); // NOSONAR
     }
+    return tempFile.toFile();
   }
 
   private void getCalenderIds(
@@ -127,7 +129,9 @@ public class CsvDownloadUtilityService {
           serviceCalendarResponses.stream()
               .map(CarrierServiceCalendarResponse::getCalendarId)
               .collect(Collectors.toSet()));
-
+      for (int i = 1; i < 200; i++) {
+        calenderIds.add(String.valueOf(i));
+      }
     } catch (Exception e) {
       logger.error("Empty Carrier Service Calendar Response List");
     }

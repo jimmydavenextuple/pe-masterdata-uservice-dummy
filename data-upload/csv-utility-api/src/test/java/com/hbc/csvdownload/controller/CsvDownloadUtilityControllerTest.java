@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.TestUtil;
-import com.hbc.csvdownload.common.pojo.DownloadCarrierServicePojo;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
 import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
@@ -18,6 +17,7 @@ import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.ServletOutputStream;
@@ -196,14 +196,13 @@ class CsvDownloadUtilityControllerTest {
 
     HttpServletRequest request = mock(HttpServletRequest.class);
 
-    DownloadCarrierServicePojo pojo = mock(DownloadCarrierServicePojo.class);
-    when(csvDownloadUtilityService.downloadCarrierServiceDataCSV(anyString())).thenReturn(pojo);
+    File file = File.createTempFile("some-prefix", "some-ext");
+    file.deleteOnExit();
+    when(csvDownloadUtilityService.downloadCarrierServiceDataCSV(anyString())).thenReturn(file);
     HttpServletResponse response = mock(HttpServletResponse.class);
     ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
     when(response.getOutputStream()).thenReturn(servletOutputStream);
     doNothing().when(response).setStatus(HttpStatus.OK.value());
-
-    doNothing().when(servletOutputStream).write(any());
     when(response.getOutputStream()).thenReturn(servletOutputStream);
     Assertions.assertDoesNotThrow(
         () ->

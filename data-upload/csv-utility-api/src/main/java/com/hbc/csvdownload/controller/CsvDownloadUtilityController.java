@@ -1,7 +1,6 @@
 package com.hbc.csvdownload.controller;
 
 import com.hbc.common.exception.CommonServiceException;
-import com.hbc.csvdownload.common.pojo.DownloadCarrierServicePojo;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
 import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
@@ -9,6 +8,7 @@ import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
@@ -99,12 +101,15 @@ public class CsvDownloadUtilityController {
       throws IOException, CarrierServiceException {
     log.debug("Inside download carrier service data as csv");
 
-    DownloadCarrierServicePojo pojo =
-        csvDownloadUtilityService.downloadCarrierServiceDataCSV(orgId);
-    response.setStatus(HttpStatus.OK.value());
-    response.setContentLength(Math.toIntExact(pojo.getContentsLength()));
-    response.getOutputStream().write(pojo.getFileContents());
-    response.flushBuffer();
+    var file = csvDownloadUtilityService.downloadCarrierServiceDataCSV(orgId);
+    try (var inputStream = new FileInputStream(file)) {
+      response.setStatus(HttpStatus.OK.value());
+      response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+      response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+      IOUtils.copy(inputStream, response.getOutputStream());
+      response.flushBuffer();
+      file.delete(); // NOSONAR
+    }
   }
 
   @GetMapping(path = "/org/{orgId}/jobs/{jobId}/download")

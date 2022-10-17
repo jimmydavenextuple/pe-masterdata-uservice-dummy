@@ -4,7 +4,6 @@ import static org.mockito.Mockito.*;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.TestUtil;
-import com.hbc.csvdownload.common.pojo.DownloadCarrierServicePojo;
 import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
@@ -13,6 +12,7 @@ import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -187,8 +187,7 @@ class CsvDownloadUtilityServiceTest {
 
     when(transitService.getTransitTimeEntries(anyString(), anyString()))
         .thenReturn(testUtil.getTransitTimeEntriesDto());
-    DownloadCarrierServicePojo csvContents =
-        csvDownloadUtilityService.downloadCarrierServiceDataCSV(TestUtil.ORG_ID);
+    File csvContents = csvDownloadUtilityService.downloadCarrierServiceDataCSV(TestUtil.ORG_ID);
 
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
     verify(calenderService, times(1)).getCarrierServiceCalender(anyString(), anyString());
@@ -206,8 +205,7 @@ class CsvDownloadUtilityServiceTest {
 
     when(transitService.getTransitTimeEntries(anyString(), anyString()))
         .thenThrow(TransitServiceException.class);
-    DownloadCarrierServicePojo csvContents =
-        csvDownloadUtilityService.downloadCarrierServiceDataCSV(TestUtil.ORG_ID);
+    File csvContents = csvDownloadUtilityService.downloadCarrierServiceDataCSV(TestUtil.ORG_ID);
 
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
     verify(calenderService, times(1)).getCarrierServiceCalender(anyString(), anyString());
