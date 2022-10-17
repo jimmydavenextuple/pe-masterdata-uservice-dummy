@@ -347,7 +347,9 @@ public class CsvDownloadUtilityService {
         dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
             orgId, null, noOfRecordsPerPage, null, null);
     /** Create a temporary file to write the data */
-    Path tempFile = Files.createTempFile("download-node-carrierService-serviceOption", ".csv");
+    Path tempFile =
+        Files.createTempFile(
+            "download-node-carrierService-serviceOption" + new Date().getTime(), ".csv");
     try (var csvWriter = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
       var headers =
           new String[] {
@@ -435,7 +437,8 @@ public class CsvDownloadUtilityService {
     List<ProcessingTimeBufferResponse> responses =
         processingTimeBuffersService.getProcessingTimeBuffers(orgId);
 
-    Path tempFile = Files.createTempFile("download-processing-time-buffers", ".csv");
+    Path tempFile =
+        Files.createTempFile("download-processing-time-buffers" + new Date().getTime(), ".csv");
     try (var writer = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
       var header =
           new String[] {
