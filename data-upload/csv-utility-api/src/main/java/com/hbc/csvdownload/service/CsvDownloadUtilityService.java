@@ -1,5 +1,10 @@
 package com.hbc.csvdownload.service;
 
+import static com.hbc.common.constants.CommonConstants.CARRIER_ID;
+import static com.hbc.common.constants.CommonConstants.CARRIER_NAME;
+import static com.hbc.common.constants.CommonConstants.CARRIER_SERVICE_ID;
+import static com.hbc.common.constants.CommonConstants.SERVICE_NAME;
+import static com.hbc.common.constants.CommonConstants.WORKING_CALENDER;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICES;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
@@ -10,17 +15,9 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SER
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATUS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
 
-import com.hbc.common.base.PagePayload;
-import static com.hbc.common.constants.CommonConstants.CARRIER_ID;
-import static com.hbc.common.constants.CommonConstants.CARRIER_NAME;
-import static com.hbc.common.constants.CommonConstants.CARRIER_SERVICE_ID;
-import static com.hbc.common.constants.CommonConstants.ORG_ID;
-import static com.hbc.common.constants.CommonConstants.SERVICE_NAME;
-import static com.hbc.common.constants.CommonConstants.STATUS;
-import static com.hbc.common.constants.CommonConstants.WORKING_CALENDER;
-
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
+import com.hbc.common.base.PagePayload;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
@@ -42,12 +39,6 @@ import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
-import com.opencsv.CSVWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -90,8 +81,6 @@ public class CsvDownloadUtilityService {
   @Value("${download-page-size.node-carrier-service-options}")
   private Integer noOfRecordsPerPage;
 
-  private static final TransitDataRequestMapper INSTANCE =
-      Mappers.getMapper(TransitDataRequestMapper.class);
   public File downloadCarrierServiceDataCSV(String orgId)
       throws IOException, CarrierServiceException {
 
