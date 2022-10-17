@@ -14,6 +14,10 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PRO
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATUS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
+import static com.opencsv.ICSVWriter.DEFAULT_ESCAPE_CHARACTER;
+import static com.opencsv.ICSVWriter.DEFAULT_LINE_END;
+import static com.opencsv.ICSVWriter.DEFAULT_SEPARATOR;
+import static com.opencsv.ICSVWriter.NO_QUOTE_CHARACTER;
 
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
@@ -91,10 +95,10 @@ public class CsvDownloadUtilityService {
     try (var csvWriter =
         new CSVWriter(
             new FileWriter(tempFile.toFile()),
-            CSVWriter.DEFAULT_SEPARATOR,
-            CSVWriter.NO_QUOTE_CHARACTER,
-            CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-            CSVWriter.DEFAULT_LINE_END)) {
+            DEFAULT_SEPARATOR,
+            NO_QUOTE_CHARACTER,
+            DEFAULT_ESCAPE_CHARACTER,
+            DEFAULT_LINE_END)) {
       var headers =
           new String[] {
             CARRIER_SERVICE_ID,
@@ -146,9 +150,7 @@ public class CsvDownloadUtilityService {
           serviceCalendarResponses.stream()
               .map(CarrierServiceCalendarResponse::getCalendarId)
               .collect(Collectors.toSet()));
-      for (int i = 1; i < 200; i++) {
-        calenderIds.add(String.valueOf(i));
-      }
+
     } catch (Exception e) {
       logger.error("Empty Carrier Service Calendar Response List");
     }
