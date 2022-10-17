@@ -12,8 +12,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @ComponentScan("com.hbc")
 @EnableFeignClients(basePackages = {"com.hbc"})
-@EnableJpaRepositories("com.hbc.jobs.consumers.domain.repository")
-@EntityScan("com.hbc.jobs.consumers.domain.entity")
+@EnableJpaRepositories(basePackages = {"com.hbc.jobs.consumers.domain.repository", "com.hbc.jobs.dashboard.repository"})
+@EntityScan(basePackages = {"com.hbc.jobs.consumers.domain.entity", "com.hbc.jobs.dashboard.domain.entity"})
 @EnableScheduling
 @Slf4j
 public class DataUploadApplication {
@@ -25,3 +25,4 @@ public class DataUploadApplication {
     log.debug("Service started successfully!");
   }
 }
+
