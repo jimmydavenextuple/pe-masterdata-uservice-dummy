@@ -8,7 +8,7 @@ import com.hbc.common.pojo.PageParams;
 import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
-import com.hbc.dataupload.domain.dto.ProcessingTimeBufferDto;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.dataupload.service.ProcessingTimeBufferService;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -32,11 +32,11 @@ public class ProcessingTimeBufferController {
   private final ProcessingTimeBufferService processingTimeBufferService;
 
   @GetMapping("/orgId/{orgId}")
-  public ResponseEntity<BaseResponse<PagePayload<ProcessingTimeBufferDto>>>
+  public ResponseEntity<BaseResponse<PagePayload<ProcessingTimeBufferResponse>>>
       getProcessingTimeBufferDetails(
           @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
           PageParams pageParams) {
-    PagePayload<ProcessingTimeBufferDto> processingTimeBufferDtoPagePayload =
+    PagePayload<ProcessingTimeBufferResponse> processingTimeBufferDtoPagePayload =
         processingTimeBufferService.getProcessingTimeBuffers(
             orgId,
             pageParams.getPageNo().orElse(pageProperties.getPageNo()),

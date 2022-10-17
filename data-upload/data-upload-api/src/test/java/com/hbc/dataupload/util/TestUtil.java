@@ -54,6 +54,8 @@ import com.hbc.common.base.PagePayload;
 import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
+import com.hbc.dataupload.common.pojo.ProcessingTimeBuffer;
 import com.hbc.dataupload.domain.dto.CalendarDto;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
 import com.hbc.dataupload.domain.dto.NodeCarrierServiceAndServiceOptionResponse;
@@ -62,11 +64,9 @@ import com.hbc.dataupload.domain.dto.NodeListDto;
 import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
 import com.hbc.dataupload.domain.dto.NodeWorkingCalendarDto;
 import com.hbc.dataupload.domain.dto.PickupTimeDto;
-import com.hbc.dataupload.domain.dto.ProcessingTimeBufferDto;
 import com.hbc.dataupload.domain.pojo.ActiveCombination;
 import com.hbc.dataupload.domain.pojo.CarrierServiceCalendars;
 import com.hbc.dataupload.domain.pojo.PickUpCalendar;
-import com.hbc.dataupload.domain.pojo.ProcessingTimeBuffer;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.domain.dto.NodeDto;
@@ -1059,11 +1059,14 @@ public class TestUtil {
         .build();
   }
 
-  public PagePayload<ProcessingTimeBufferDto> getProcessingTimeBufferPagePayload(int pageNo) {
-    PagePayload<ProcessingTimeBufferDto> processingTimeBufferDtoPagePayload = new PagePayload<>();
+  public PagePayload<ProcessingTimeBufferResponse> getProcessingTimeBufferPagePayload(int pageNo) {
+    PagePayload<ProcessingTimeBufferResponse> processingTimeBufferDtoPagePayload =
+        new PagePayload<>();
 
-    ProcessingTimeBufferDto processingTimeBufferDto1 = getProcessingTimeBufferDto(NODE_ID);
-    ProcessingTimeBufferDto processingTimeBufferDto2 = getProcessingTimeBufferDto(NODE_ID_2);
+    ProcessingTimeBufferResponse processingTimeBufferResponse1 =
+        getProcessingTimeBufferDto(NODE_ID);
+    ProcessingTimeBufferResponse processingTimeBufferResponse2 =
+        getProcessingTimeBufferDto(NODE_ID_2);
 
     Pagination pagination = new Pagination();
     pagination.setTotalPages(2);
@@ -1072,13 +1075,13 @@ public class TestUtil {
     pagination.setTotalRecords(2);
     processingTimeBufferDtoPagePayload.setPagination(pagination);
     processingTimeBufferDtoPagePayload.setData(
-        Arrays.asList(processingTimeBufferDto1, processingTimeBufferDto2));
+        Arrays.asList(processingTimeBufferResponse1, processingTimeBufferResponse2));
 
     return processingTimeBufferDtoPagePayload;
   }
 
-  private ProcessingTimeBufferDto getProcessingTimeBufferDto(String nodeId) {
-    return ProcessingTimeBufferDto.builder()
+  private ProcessingTimeBufferResponse getProcessingTimeBufferDto(String nodeId) {
+    return ProcessingTimeBufferResponse.builder()
         .nodeId(nodeId)
         .orgId(ORG_ID)
         .nodeType(NODE_TYPE)

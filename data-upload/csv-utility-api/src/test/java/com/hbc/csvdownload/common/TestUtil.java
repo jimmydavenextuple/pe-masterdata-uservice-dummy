@@ -5,27 +5,26 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COU
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
 import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
 import com.hbc.common.base.PagePayload;
+import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
+import com.hbc.dataupload.common.pojo.ProcessingTimeBuffer;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
-import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
-import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -211,75 +210,64 @@ public class TestUtil {
         .build();
   }
 
-  public List<NodeCarrierResponse> getNodeCarrierResponseList() {
-    return List.of(
-        getNodeCarrierResponse(SERVICE_OPTION, 2.5, new Date(1000), new Date(1000)),
-        getNodeCarrierResponse(SERVICE_OPTION_2, 2.5, new Date(1000), new Date(1000)));
-  }
-
-  private NodeCarrierResponse getNodeCarrierResponse(
-      String serviceOption, Double bufferHours, Date bufferStartDate, Date bufferEndDate) {
-    return NodeCarrierResponse.builder()
-        .nodeId(NODE_ID)
-        .orgId(ORG_ID)
-        .carrierServiceId("")
-        .serviceOption(serviceOption)
-        .processingTime(PROCESSING_TIME)
-        .bufferHours(bufferHours)
-        .bufferStartDate(bufferStartDate)
-        .bufferEndDate(bufferEndDate)
+  public BaseResponse<PagePayload<ProcessingTimeBufferResponse>>
+      getBaseResponseOfProcessingTimeBuffers() {
+    return BaseResponse.builder()
+        .message("Processing time buffers fetched successfully")
+        .payload(getProcessingTimeBufferPagePayload(1))
         .build();
   }
 
-  public List<NodeCarrierResponse> getNodeCarrierResponseListWithNullValues() {
-    return List.of(getNodeCarrierResponse(null, null, null, null));
+  public PagePayload<ProcessingTimeBufferResponse> getProcessingTimeBufferPagePayload(int pageNo) {
+    PagePayload<ProcessingTimeBufferResponse> processingTimeBufferDtoPagePayload =
+        new PagePayload<>();
+
+    ProcessingTimeBufferResponse processingTimeBufferResponse1 =
+        getProcessingTimeBufferResponse(NODE_ID);
+    ProcessingTimeBufferResponse processingTimeBufferResponse2 =
+        getProcessingTimeBufferResponse(NODE_ID_2);
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(2);
+    processingTimeBufferDtoPagePayload.setPagination(pagination);
+    processingTimeBufferDtoPagePayload.setData(
+        Arrays.asList(processingTimeBufferResponse1, processingTimeBufferResponse2));
+
+    return processingTimeBufferDtoPagePayload;
   }
 
-  public List<NodeCarrierResponse> getNodeCarrierResponseListWithPartialNullValues() {
-    return List.of(getNodeCarrierResponse(SERVICE_OPTION, 2.4, null, null));
-  }
-
-  private NodeDto getNodeDto(String nodeId) {
-    return NodeDto.builder()
+  public ProcessingTimeBufferResponse getProcessingTimeBufferResponse(String nodeId) {
+    return ProcessingTimeBufferResponse.builder()
         .nodeId(nodeId)
         .orgId(ORG_ID)
-        .street(STREET)
-        .city(CITY)
         .nodeType(NODE_TYPE)
-        .isActive(true)
-        .latitude(LATITUDE)
-        .longitude(LONGITUDE)
-        .postalCode(POSTAL_CODE)
-        .province(PROVINCE)
-        .timezone(TIME_ZONE)
+        .serviceOptions(List.of(SERVICE_OPTION, SERVICE_OPTION_2))
+        .processingTimeBuffers(
+            List.of(
+                getProcessingTimeBuffer(SERVICE_OPTION), getProcessingTimeBuffer(SERVICE_OPTION_2)))
         .build();
   }
 
-  private PagePayload<NodeDto> getNodeListPaginationResponse(Integer totalPages) {
-    PagePayload<NodeDto> pagePayload = new PagePayload<>();
-
-    PagePayload.Pagination pagination = new PagePayload.Pagination();
-    pagination.setTotalRecords(2);
-    pagination.setTotalPages(totalPages);
-    pagination.setCurrentPage(1);
-    pagination.setSortOrder("ASC");
-    pagination.setSortBy("nodeId");
-    pagination.setPrevious(null);
-    pagination.setNext("/test/{orgId}?pageNo=1,pageSize=2");
-    pagePayload.setPagination(pagination);
-    pagePayload.setData(Arrays.asList(getNodeDto(NODE_ID), getNodeDto(NODE_ID_2)));
-
-    return pagePayload;
+  private ProcessingTimeBuffer getProcessingTimeBuffer(String serviceOption) {
+    ProcessingTimeBuffer processingTimeBuffer = new ProcessingTimeBuffer();
+    processingTimeBuffer.setServiceOption(serviceOption);
+    processingTimeBuffer.setBufferHours(2.5);
+    processingTimeBuffer.setBufferStartDate(new Date(1000));
+    processingTimeBuffer.setBufferEndDate(new Date(1000));
+    processingTimeBuffer.setStatus("Inactive");
+    return processingTimeBuffer;
   }
 
-  public BaseResponse<PagePayload<NodeDto>> getNodeListPaginationBaseResponse(Integer totalPages) {
-    return BaseResponse.builder()
-        .message("Node Service List fetched successfully")
-        .payload(getNodeListPaginationResponse(totalPages))
+  public ProcessingTimeBufferResponse getProcessingTimeBufferResponseEmptyValues(String nodeId) {
+    return ProcessingTimeBufferResponse.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .nodeType(NODE_TYPE)
+        .serviceOptions(new ArrayList<>())
+        .processingTimeBuffers(new ArrayList<>())
         .build();
-  }
-
-  public List<NodeDto> getNodeDtoList() {
-    return Arrays.asList(getNodeDto(NODE_ID), getNodeDto(NODE_ID_2));
   }
 }

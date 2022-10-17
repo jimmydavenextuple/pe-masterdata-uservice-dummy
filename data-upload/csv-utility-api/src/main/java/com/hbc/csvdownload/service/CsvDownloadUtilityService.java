@@ -1,11 +1,9 @@
 package com.hbc.csvdownload.service;
 
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTIVE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_END_DATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_HOURS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_START_DATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.INACTIVE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
@@ -25,18 +23,18 @@ import com.hbc.csvdownload.domain.pojo.TransitDataErrorLogsPojo;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
-import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
-import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
-import java.io.BufferedWriter;
+import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,8 +62,8 @@ public class CsvDownloadUtilityService {
 
   private final JobsDashboardService jobsDashboardService;
   private final JobsConsumerService jobsConsumerService;
-  private final NodeService nodeService;
-  private final NodeCarrierService nodeCarrierService;
+  private final ProcessingTimeBuffersService processingTimeBuffersService;
+  private static final String NA = "NA";
 
   private static final TransitDataRequestMapper INSTANCE =
       Mappers.getMapper(TransitDataRequestMapper.class);
@@ -331,131 +329,87 @@ public class CsvDownloadUtilityService {
 
   public File downloadProcessingTimeBuffersByOrgId(String orgId) throws IOException {
     logger.debug("Processing download processing time buffers for orgId");
-    String tmpdir = System.getProperty("java.io.tmpdir");
-    String separator = System.getProperty("file.separator");
-    var pathName = String.format("%s%s%s.csv", tmpdir, separator, new Date().getTime());
-    var processingTimeBufferFile = new File(pathName);
-    var fileWriter = new FileWriter(processingTimeBufferFile);
-    try (var writer = new BufferedWriter(fileWriter)) {
-      List<NodeDto> nodeDtoList = nodeService.getNodeList(orgId);
-      List<NodeCarrierResponse> nodeCarrierResponseList =
-          nodeCarrierService.getNodeCarrierList(orgId);
+    List<ProcessingTimeBufferResponse> responses =
+        processingTimeBuffersService.getProcessingTimeBuffers(orgId);
+
+    Path tempFile = Files.createTempFile("download-processing-time-buffers", ".csv");
+    try (var writer = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
       var header =
-          String.join(
-              ",",
-              NODE_ID,
-              ORG_ID,
-              NODE_TYPE,
-              STREET,
-              CITY,
-              PROVINCE,
-              POSTAL_CODE,
-              SERVICE_OPTION,
-              BUFFER_HOURS,
-              BUFFER_START_DATE,
-              BUFFER_END_DATE,
-              STATUS);
-      appendRowToFile(header, writer);
+          new String[] {
+            NODE_ID,
+            ORG_ID,
+            NODE_TYPE,
+            STREET,
+            CITY,
+            PROVINCE,
+            POSTAL_CODE,
+            SERVICE_OPTION,
+            BUFFER_HOURS,
+            BUFFER_START_DATE,
+            BUFFER_END_DATE,
+            STATUS
+          };
+      writer.writeNext(header);
 
-      Map<String, List<NodeCarrierResponse>> nodeCarrierResponseMap =
-          constructMap(nodeCarrierResponseList);
-
-      nodeDtoList.forEach(
-          node -> {
-            List<NodeCarrierResponse> nodeCarrierResponses =
-                nodeCarrierResponseMap.get(node.getNodeId());
-            if (nodeCarrierResponses != null) {
-              nodeCarrierResponses.forEach(
-                  nodeCarrierResponse ->
-                      appendRowToFile(constructCSVContents(node, nodeCarrierResponse), writer));
-            } else appendRowToFile(constructCSVContents(node, new NodeCarrierResponse()), writer);
-          });
+      writerProcessingTimeBufferDataToFile(writer, responses);
+      writer.flush();
     }
 
-    return processingTimeBufferFile;
+    return tempFile.toFile();
   }
 
-  private void appendRowToFile(String row, BufferedWriter writer) {
-    try {
-      writer.append(row);
-      writer.append("\n");
-    } catch (IOException e) {
-      logger.error("Error while writing processing time buffers records");
-    }
-  }
-
-  private Map<String, List<NodeCarrierResponse>> constructMap(
-      List<NodeCarrierResponse> nodeCarrierResponseList) {
-    Map<String, List<NodeCarrierResponse>> nodeCarrierResponseMap = new HashMap<>();
-
-    nodeCarrierResponseList.forEach(
-        nodeCarrier -> {
-          if (nodeCarrierResponseMap.containsKey(nodeCarrier.getNodeId())) {
-            nodeCarrierResponseMap.get(nodeCarrier.getNodeId()).add(nodeCarrier);
+  private void writerProcessingTimeBufferDataToFile(
+      CSVWriter writer, List<ProcessingTimeBufferResponse> responseList) {
+    String[] csvData = new String[12];
+    responseList.forEach(
+        response -> {
+          csvData[0] = response.getNodeId();
+          csvData[1] = response.getNodeType();
+          csvData[2] = response.getStreet();
+          csvData[3] = response.getCity();
+          csvData[4] = response.getOrgId();
+          csvData[5] = response.getProvince();
+          csvData[6] = response.getPostalCode();
+          if (response.getServiceOptions().isEmpty()
+              && response.getProcessingTimeBuffers().isEmpty()) {
+            csvData[7] = NA;
+            csvData[8] = NA;
+            csvData[9] = NA;
+            csvData[10] = NA;
+            csvData[11] = NA;
+            writeToCSV(csvData, writer);
           } else {
-            List<NodeCarrierResponse> nodeCarrierResponseList1 = new ArrayList<>();
-            nodeCarrierResponseList1.add(nodeCarrier);
-            nodeCarrierResponseMap.put(nodeCarrier.getNodeId(), nodeCarrierResponseList1);
+            response
+                .getProcessingTimeBuffers()
+                .forEach(
+                    processingTimeBuffer -> {
+                      csvData[7] = processingTimeBuffer.getServiceOption();
+                      csvData[8] =
+                          checkForNullValues(processingTimeBuffer.getBufferHours().toString());
+                      csvData[9] =
+                          checkForNullValues(
+                              convertToStringUTC(processingTimeBuffer.getBufferStartDate()));
+                      csvData[10] =
+                          checkForNullValues(
+                              convertToStringUTC(processingTimeBuffer.getBufferEndDate()));
+                      csvData[11] = checkForNullValues(processingTimeBuffer.getStatus());
+                      writeToCSV(csvData, writer);
+                    });
           }
         });
-
-    return nodeCarrierResponseMap;
   }
 
-  private String constructCSVContents(NodeDto node, NodeCarrierResponse nodeCarrierResponse) {
-    String serviceOption = checkForNullValues(nodeCarrierResponse.getServiceOption());
-    String bufferHours = checkForNullValues(nodeCarrierResponse.getBufferHours());
-    String bufferStartDate =
-        checkForNullValues(convertToStringUTC(nodeCarrierResponse.getBufferStartDate()));
-    String bufferEndDate =
-        checkForNullValues(convertToStringUTC(nodeCarrierResponse.getBufferEndDate()));
-    String status =
-        checkForNullValues(
-            computeStatus(
-                nodeCarrierResponse.getBufferHours(),
-                nodeCarrierResponse.getBufferStartDate(),
-                nodeCarrierResponse.getBufferEndDate()));
-
-    return node.getNodeId()
-        + ","
-        + node.getOrgId()
-        + ","
-        + node.getNodeType()
-        + ","
-        + node.getStreet()
-        + ","
-        + node.getCity()
-        + ","
-        + node.getProvince()
-        + ","
-        + node.getPostalCode()
-        + ","
-        + serviceOption
-        + ","
-        + bufferHours
-        + ","
-        + bufferStartDate
-        + ","
-        + bufferEndDate
-        + ","
-        + status;
+  private void writeToCSV(String[] data, CSVWriter writer) {
+    writer.writeNext(data);
   }
 
   private String checkForNullValues(Object value) {
-    return (value == null) ? "NA" : value.toString();
+    return (value == null) ? NA : value.toString();
   }
 
   private String convertToStringUTC(Date value) {
     if (value != null) {
       return value.toInstant().toString();
-    }
-    return null;
-  }
-
-  private String computeStatus(Double bufferHours, Date bufferStartDate, Date bufferEndDate) {
-    if (bufferHours != null && bufferStartDate != null && bufferEndDate != null) {
-      var currentDate = new Date();
-      return currentDate.compareTo(bufferEndDate) <= 0 ? ACTIVE : INACTIVE;
     }
     return null;
   }
