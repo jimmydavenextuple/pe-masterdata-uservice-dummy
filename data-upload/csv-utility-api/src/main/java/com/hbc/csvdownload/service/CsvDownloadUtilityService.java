@@ -128,10 +128,6 @@ public class CsvDownloadUtilityService {
               .map(CarrierServiceCalendarResponse::getCalendarId)
               .collect(Collectors.toSet()));
 
-      for (int i = 0; i < 2000; i++) {
-        calenderIds.add(String.valueOf(i));
-      }
-
     } catch (Exception e) {
       logger.error("Empty Carrier Service Calendar Response List");
     }
