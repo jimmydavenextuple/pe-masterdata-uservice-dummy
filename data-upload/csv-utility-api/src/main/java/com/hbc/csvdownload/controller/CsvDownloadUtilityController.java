@@ -103,14 +103,13 @@ public class CsvDownloadUtilityController {
     log.debug("Inside download carrier service data as csv");
 
     var file = csvDownloadUtilityService.downloadCarrierServiceDataCSV(orgId);
-    try {
-      var inputStream = new FileInputStream(file);
+    try (var inputStream = new FileInputStream(file)) {
+
       response.setStatus(HttpStatus.OK.value());
       response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
       response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
       IOUtils.copy(inputStream, response.getOutputStream());
       response.flushBuffer();
-
     } finally {
       file.delete(); // NOSONAR
     }
