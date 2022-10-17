@@ -13,6 +13,7 @@ import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.csvdownload.common.pojo.DownloadCarrierServicePojo;
 import com.hbc.csvdownload.domain.mapper.TransitDataRequestMapper;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorNodeCarrier;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
@@ -27,12 +28,12 @@ import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
-import java.io.BufferedWriter;
-import java.io.File;
+import com.opencsv.CSVWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -62,79 +63,54 @@ public class CsvDownloadUtilityService {
   private final JobsDashboardService jobsDashboardService;
   private final JobsConsumerService jobsConsumerService;
 
-  private static String constructCsvRows(
-      Map<String, Map<String, Float>> transitTimesDataMap, String destinationFsa) {
-    var sourceFsaAndTransitTimesMap = transitTimesDataMap.get(destinationFsa);
-    String transitTimes =
-        sourceFsaAndTransitTimesMap.keySet().stream()
-            .map(sourceFsa -> String.valueOf(sourceFsaAndTransitTimesMap.get(sourceFsa)))
-            .collect(Collectors.joining(","));
-    return String.join(",", destinationFsa, transitTimes);
-  }
+  public DownloadCarrierServicePojo downloadCarrierServiceDataCSV(String orgId)
+      throws IOException, CarrierServiceException {
 
-  public File downloadCarrierServiceData(String orgId) throws CarrierServiceException, IOException {
-    logger.debug("Processing download carrier service for orgId");
-    String tmpdir = System.getProperty("java.io.tmpdir");
-    String separator = System.getProperty("file.separator");
-    String pathName = tmpdir + separator + new Date().getTime() + ".csv";
-    var carrierServiceFile = new File(pathName);
-    var fileWriter = new FileWriter(carrierServiceFile);
-    try (var writer = new BufferedWriter(fileWriter)) {
-      List<CarrierServiceResponse> carrierServiceResponses =
-          carrierService.getCarrierService(orgId);
-      var header =
-          String.join(
-              ",",
-              CARRIER_SERVICE_ID,
-              ORG_ID,
-              CARRIER_NAME,
-              CARRIER_ID,
-              SERVICE_NAME,
-              STATUS,
-              WORKING_CALENDER);
-      writer.append(header);
-      writer.append("\n");
-      carrierServiceResponses
-          .forEach(
-              carrierServiceResponse -> {
-                String carrierServiceId = carrierServiceResponse.getCarrierServiceId();
-                List<String> calenderIds = new ArrayList<>();
-                List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses =
-                    new ArrayList<>();
-                getCalenderIds(
-                    orgId, carrierServiceId, calenderIds, carrierServiceCalendarResponses);
-                var transitTimeEntriesDto = new TransitTimeEntriesDto();
+    List<CarrierServiceResponse> carrierServiceResponses = carrierService.getCarrierService(orgId);
 
-                try {
-                  transitTimeEntriesDto =
-                      transitService.getTransitTimeEntries(orgId, carrierServiceId);
-                } catch (TransitServiceException e) {
-                  transitTimeEntriesDto.setTotalRecords(0);
-                  logger.info("No transit entries found");
-                }
+    Path tempFile = Files.createTempFile("download-carrierService", ".csv");
+    try (var csvWriter = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+      var headers =
+          new String[] {
+            CARRIER_SERVICE_ID,
+            ORG_ID,
+            CARRIER_NAME,
+            CARRIER_ID,
+            SERVICE_NAME,
+            STATUS,
+            WORKING_CALENDER
+          };
+      csvWriter.writeNext(headers);
+      for (CarrierServiceResponse carrierServiceResponse : carrierServiceResponses) {
+        String carrierServiceId = carrierServiceResponse.getCarrierServiceId();
+        List<String> calenderIds = new ArrayList<>();
+        List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses = new ArrayList<>();
+        getCalenderIds(orgId, carrierServiceId, calenderIds, carrierServiceCalendarResponses);
+        var transitTimeEntriesDto = new TransitTimeEntriesDto();
 
-                String status =
-                    (!carrierServiceCalendarResponses.isEmpty()
-                            && transitTimeEntriesDto.getTotalRecords() > 0)
-                        ? "ACTIVE"
-                        : "INACTIVE";
-                String row =
-                    calenderIds.stream()
-                        .map(
-                            calenderId ->
-                                constructRow(orgId, carrierServiceResponse, status, calenderId))
-                        .collect(Collectors.joining("\n"));
+        try {
+          transitTimeEntriesDto = transitService.getTransitTimeEntries(orgId, carrierServiceId);
+        } catch (TransitServiceException e) {
+          transitTimeEntriesDto.setTotalRecords(0);
+          logger.debug("No transit entries found");
+        }
 
-                try {
-                  writer.append(row);
-                  writer.append("\n");
+        String status =
+            (!carrierServiceCalendarResponses.isEmpty()
+                    && transitTimeEntriesDto.getTotalRecords() > 0)
+                ? "ACTIVE"
+                : "INACTIVE";
+        writeDataOntoFile(csvWriter, orgId, carrierServiceResponse, status, calenderIds);
+        csvWriter.flush();
+      }
 
-                } catch (IOException e) {
-                  logger.error("Error while writing carrier service records");
-                }
-              });
+      return DownloadCarrierServicePojo.builder()
+          .contentsLength(tempFile.toFile().length())
+          .fileContents(Files.readAllBytes(tempFile))
+          .build();
+    } finally {
+      tempFile.toFile().delete(); // NOSONAR
     }
-    return carrierServiceFile;
   }
 
   private void getCalenderIds(
@@ -152,25 +128,13 @@ public class CsvDownloadUtilityService {
               .map(CarrierServiceCalendarResponse::getCalendarId)
               .collect(Collectors.toSet()));
 
+      for (int i = 0; i < 2000; i++) {
+        calenderIds.add(String.valueOf(i));
+      }
+
     } catch (Exception e) {
       logger.error("Empty Carrier Service Calendar Response List");
     }
-  }
-
-  public String constructRow(
-      String orgId,
-      CarrierServiceResponse carrierServiceResponse,
-      String status,
-      String calenderId) {
-    return String.join(
-        ",",
-        carrierServiceResponse.getCarrierServiceId(),
-        orgId,
-        carrierServiceResponse.getCarrierName(),
-        carrierServiceResponse.getCarrierId(),
-        carrierServiceResponse.getServiceName(),
-        status,
-        calenderId);
   }
 
   public String downloadTransitTimesForSourceAndDestinationRegion(
@@ -420,5 +384,36 @@ public class CsvDownloadUtilityService {
         + dto.getLongitude()
         + ","
         + dto.getTimeZone();
+  }
+
+  private static String constructCsvRows(
+      Map<String, Map<String, Float>> transitTimesDataMap, String destinationFsa) {
+    var sourceFsaAndTransitTimesMap = transitTimesDataMap.get(destinationFsa);
+    String transitTimes =
+        sourceFsaAndTransitTimesMap.keySet().stream()
+            .map(sourceFsa -> String.valueOf(sourceFsaAndTransitTimesMap.get(sourceFsa)))
+            .collect(Collectors.joining(","));
+    return String.join(",", destinationFsa, transitTimes);
+  }
+
+  private void writeDataOntoFile(
+      CSVWriter csvWriter,
+      String orgId,
+      CarrierServiceResponse carrierServiceResponse,
+      String status,
+      List<String> calenderIds) {
+
+    calenderIds.forEach(
+        calenderId ->
+            csvWriter.writeNext(
+                new String[] {
+                  carrierServiceResponse.getCarrierServiceId(),
+                  orgId,
+                  carrierServiceResponse.getCarrierName(),
+                  carrierServiceResponse.getCarrierId(),
+                  carrierServiceResponse.getServiceName(),
+                  status,
+                  calenderId
+                }));
   }
 }
