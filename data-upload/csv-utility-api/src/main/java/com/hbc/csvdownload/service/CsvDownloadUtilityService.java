@@ -463,18 +463,20 @@ public class CsvDownloadUtilityService {
 
   private void writerProcessingTimeBufferDataToFile(
       CSVWriter writer, List<ProcessingTimeBufferResponse> responseList) {
-    List<String> csvData = new ArrayList<>();
+
     responseList.forEach(
         response -> {
-          csvData.add(response.getNodeId());
-          csvData.add(response.getNodeType());
-          csvData.add(response.getStreet());
-          csvData.add(response.getCity());
-          csvData.add(response.getOrgId());
-          csvData.add(response.getProvince());
-          csvData.add(response.getPostalCode());
           if (response.getServiceOptions().isEmpty()
               && response.getProcessingTimeBuffers().isEmpty()) {
+            List<String> csvData =
+                addNodeDetails(
+                    response.getNodeId(),
+                    response.getOrgId(),
+                    response.getNodeType(),
+                    response.getStreet(),
+                    response.getCity(),
+                    response.getProvince(),
+                    response.getPostalCode());
             csvData.add(NA);
             csvData.add(NA);
             csvData.add(NA);
@@ -486,6 +488,15 @@ public class CsvDownloadUtilityService {
                 .getProcessingTimeBuffers()
                 .forEach(
                     processingTimeBuffer -> {
+                      List<String> csvData =
+                          addNodeDetails(
+                              response.getNodeId(),
+                              response.getOrgId(),
+                              response.getNodeType(),
+                              response.getStreet(),
+                              response.getCity(),
+                              response.getProvince(),
+                              response.getPostalCode());
                       csvData.add(processingTimeBuffer.getServiceOption());
                       csvData.add(
                           checkForNullValues(processingTimeBuffer.getBufferHours().toString()));
@@ -500,6 +511,25 @@ public class CsvDownloadUtilityService {
                     });
           }
         });
+  }
+
+  private List<String> addNodeDetails(
+      String nodeId,
+      String orgId,
+      String nodeType,
+      String street,
+      String city,
+      String province,
+      String postalCode) {
+    List<String> csvData = new ArrayList<>();
+    csvData.add(nodeId);
+    csvData.add(orgId);
+    csvData.add(nodeType);
+    csvData.add(street);
+    csvData.add(city);
+    csvData.add(province);
+    csvData.add(postalCode);
+    return csvData;
   }
 
   private void writeToCSV(String[] data, CSVWriter writer) {
