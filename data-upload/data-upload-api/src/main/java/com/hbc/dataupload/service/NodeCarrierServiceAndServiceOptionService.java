@@ -1,8 +1,8 @@
 package com.hbc.dataupload.service;
 
 import com.hbc.common.base.PagePayload;
-import com.hbc.dataupload.domain.dto.NodeCarrierServiceAndServiceOptionResponse;
-import com.hbc.dataupload.domain.pojo.ActiveCombination;
+import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
+import com.hbc.dataupload.common.pojo.ActiveCombination;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.domain.dto.NodeDto;

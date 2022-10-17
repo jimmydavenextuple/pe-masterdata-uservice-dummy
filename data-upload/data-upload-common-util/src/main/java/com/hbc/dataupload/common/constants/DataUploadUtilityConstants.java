@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DataUploadUtilityConstants {
+
   public static final String CREATE = "CREATE";
   public static final String UPDATE = "UPDATE";
   public static final String DELETE = "DELETE";
@@ -16,6 +17,7 @@ public class DataUploadUtilityConstants {
   public static final String DELETE_D = "D";
   public static final String CARRIER_SERVICE_ID = "carrierServiceId";
   public static final String CARRIER_SERVICE = "Carrier Service:";
+  public static final String CARRIER_SERVICES = "carrierServices";
   public static final String SOURCE_AND_DESTINATION_GEO_ZONE = "Destination FSA / Source FSA ->";
   public static final String NODE_ID = "nodeId";
   public static final String SERVICE_OPTION = "serviceOption";
@@ -71,6 +73,6 @@ public class DataUploadUtilityConstants {
   public static final String END_TIME = "endTime";
   public static final String BUFFER_DAYS = "bufferDays";
   public static final String SELECTION_CRITERIA = "selectionCriteria";
-
+  public static final String STATUS = "status";
   public static final String INVALID_SELECTION_CRITERIA = "Invalid selection criteria";
 }

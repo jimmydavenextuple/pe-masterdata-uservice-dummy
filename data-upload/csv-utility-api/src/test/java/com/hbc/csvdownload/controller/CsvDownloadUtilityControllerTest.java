@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.TestUtil;
+import com.hbc.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
@@ -17,6 +18,9 @@ import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
@@ -188,5 +193,36 @@ class CsvDownloadUtilityControllerTest {
     csvDownloadUtilityController.downloadMarketRegionDataCSV(
         TestUtil.ORG_ID, TestUtil.COUNTRY, request, response);
     verify(response, times(1)).getOutputStream();
+  }
+
+  @Test
+  void downloadNodeCarrierServiceAndServiceOptionsDataCSV() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    ServletOutputStream servletOutputStream = Mockito.mock(ServletOutputStream.class);
+    Path path =
+        Paths.get(
+            "src",
+            "test",
+            "resources",
+            "nodeCarrierServiceOption",
+            "downloadNodeCarrierServiceAndServiceOptionDetails.csv");
+    DownloadNodeCarrierServiceAndServiceOptionPojo pojo =
+        DownloadNodeCarrierServiceAndServiceOptionPojo.builder()
+            .fileContents(Files.readAllBytes(path))
+            .contentsLength(path.toFile().length())
+            .build();
+
+    when(csvDownloadUtilityService.downloadNodeCarrierServiceAndServiceOptionsDataCSV(anyString()))
+        .thenReturn(pojo);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    doNothing().when(servletOutputStream).write(any());
+
+    csvDownloadUtilityController.downloadNodeCarrierServiceAndServiceOptionsDataCSV(
+        TestUtil.ORG_ID, request, response);
+    verify(csvDownloadUtilityService, times(1))
+        .downloadNodeCarrierServiceAndServiceOptionsDataCSV(anyString());
   }
 }
