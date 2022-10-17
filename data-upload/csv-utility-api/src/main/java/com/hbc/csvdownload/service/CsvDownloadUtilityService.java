@@ -355,8 +355,7 @@ public class CsvDownloadUtilityService {
               BUFFER_START_DATE,
               BUFFER_END_DATE,
               STATUS);
-      writer.append(header);
-      writer.append("\n");
+      appendRowToFile(header, writer);
 
       Map<String, List<NodeCarrierResponse>> nodeCarrierResponseMap =
           constructMap(nodeCarrierResponseList);

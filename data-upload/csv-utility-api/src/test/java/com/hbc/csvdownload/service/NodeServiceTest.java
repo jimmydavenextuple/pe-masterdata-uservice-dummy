@@ -45,7 +45,7 @@ class NodeServiceTest {
     List<NodeDto> response = nodeService.getNodeList(TestUtil.ORG_ID);
 
     assertNotNull(response);
-    assertEquals(pagePayloadBaseResponse.getPayload().getData().size(), response.size());
-    verify(nodeFeign, times(1)).getNodeList(any(), any(), any(), any(), any());
+    assertEquals(4, response.size());
+    verify(nodeFeign, times(2)).getNodeList(any(), any(), any(), any(), any());
   }
 }
