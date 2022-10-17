@@ -1,6 +1,7 @@
 package com.hbc.csvdownload.controller;
 
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
 import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
@@ -125,6 +126,20 @@ public class CsvDownloadUtilityController {
     response.setStatus(HttpStatus.OK.value());
     response.setContentLength(csvContent.length());
     response.getOutputStream().write(csvContent.getBytes());
+    response.flushBuffer();
+  }
+
+  @GetMapping(value = "org/{orgId}/download/node-carrier-service-option")
+  public void downloadNodeCarrierServiceAndServiceOptionsDataCSV(
+      @PathVariable String orgId, HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
+    log.debug("Processing download node carrier-service and service-options data CSV");
+
+    DownloadNodeCarrierServiceAndServiceOptionPojo pojo =
+        csvDownloadUtilityService.downloadNodeCarrierServiceAndServiceOptionsDataCSV(orgId);
+    response.setStatus(HttpStatus.OK.value());
+    response.setContentLength(Math.toIntExact(pojo.getContentsLength()));
+    response.getOutputStream().write(pojo.getFileContents());
     response.flushBuffer();
   }
 }

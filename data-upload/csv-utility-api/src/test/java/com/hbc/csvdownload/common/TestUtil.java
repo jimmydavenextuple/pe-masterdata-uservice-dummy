@@ -12,8 +12,12 @@ import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
+import com.hbc.common.base.PagePayload;
+import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
+import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
+import com.hbc.dataupload.common.pojo.ActiveCombination;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
@@ -44,6 +48,10 @@ public class TestUtil {
   public static final String JOB_ID = "jobId1";
   public static final String SERVICE_OPTION = "serviceOptions";
   public static final String COUNTRY = "CA";
+  public static final String STREET = "1963 Boul. Lionel-Bertrand";
+  public static final String CITY = "Boisbriand";
+  public static final String PROVINCE = "QC";
+  public static final String POSTAL_CODE = "J7H 1N8";
   public static final Double PROCESSING_TIME = 20.0;
   public static final String processingLeadTimesCsvData =
       "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
@@ -217,5 +225,51 @@ public class TestUtil {
         .serviceName(SERVICE_NAME)
         .serviceOptions(SERVICE_OPTION)
         .build();
+  }
+
+  public ActiveCombination getActiveCombination() {
+    return ActiveCombination.builder()
+        .nodeId(NODE_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .isActive(true)
+        .build();
+  }
+
+  public NodeCarrierServiceAndServiceOptionResponse
+      getNodeCarrierServiceAndServiceOptionResponse() {
+    NodeCarrierServiceAndServiceOptionResponse response =
+        new NodeCarrierServiceAndServiceOptionResponse();
+    response.setNodeId(NODE_ID);
+    response.setOrgId(ORG_ID);
+    response.setStreet(STREET);
+    response.setCity(CITY);
+    response.setProvince(PROVINCE);
+    response.setPostalCode(POSTAL_CODE);
+    response.setCarrierServices(List.of(CARRIER_SERVICE_ID));
+    response.setServiceOptions(List.of(SERVICE_OPTION));
+    response.setActiveCombination(List.of(getActiveCombination()));
+
+    return response;
+  }
+
+  public PagePayload<NodeCarrierServiceAndServiceOptionResponse>
+      getNodeCarrierServiceAndServiceOptionResponse(Integer pageNo) {
+    PagePayload<NodeCarrierServiceAndServiceOptionResponse> nodeCarrierServicePagePayload =
+        new PagePayload<>();
+
+    NodeCarrierServiceAndServiceOptionResponse response =
+        getNodeCarrierServiceAndServiceOptionResponse();
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(1);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("nodeId");
+    pagination.setSortOrder("ASC");
+    pagination.setTotalRecords(1);
+    nodeCarrierServicePagePayload.setPagination(pagination);
+    nodeCarrierServicePagePayload.setData(List.of(response));
+
+    return nodeCarrierServicePagePayload;
   }
 }

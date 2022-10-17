@@ -54,16 +54,16 @@ import com.hbc.common.base.PagePayload;
 import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
+import com.hbc.dataupload.common.pojo.ActiveCombination;
 import com.hbc.dataupload.domain.dto.CalendarDto;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
-import com.hbc.dataupload.domain.dto.NodeCarrierServiceAndServiceOptionResponse;
 import com.hbc.dataupload.domain.dto.NodeCarrierServiceResponse;
 import com.hbc.dataupload.domain.dto.NodeListDto;
 import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
 import com.hbc.dataupload.domain.dto.NodeWorkingCalendarDto;
 import com.hbc.dataupload.domain.dto.PickupTimeDto;
 import com.hbc.dataupload.domain.dto.ProcessingTimeBufferDto;
-import com.hbc.dataupload.domain.pojo.ActiveCombination;
 import com.hbc.dataupload.domain.pojo.CarrierServiceCalendars;
 import com.hbc.dataupload.domain.pojo.PickUpCalendar;
 import com.hbc.dataupload.domain.pojo.ProcessingTimeBuffer;
@@ -106,7 +106,7 @@ public class TestUtil {
   private static final String SERVICE_OPTION_2 = "SDND";
   public static String SOURCE_GEOZONE = "SGZ";
   public static String DESTINATION_GEOZONE = "DGZ";
-  public static Float TRANSIT_DAYS = Float.valueOf(1);
+  public static Float TRANSIT_DAYS = 1F;
   private static final String CARRIER_ID_2 = "Carrier_Id_2";
 
   private static final String BUFFER_START_DATE = "startTime";

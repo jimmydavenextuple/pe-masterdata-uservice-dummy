@@ -6,7 +6,7 @@ import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
-import com.hbc.dataupload.domain.dto.NodeCarrierServiceAndServiceOptionResponse;
+import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
 import com.hbc.dataupload.domain.pojo.NodeCarrierServicePageProperties;
 import com.hbc.dataupload.service.NodeCarrierServiceAndServiceOptionService;
 import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
