@@ -1,4 +1,4 @@
-name: reusable-workflow
+name: RELEASE FLOW
 
 on:
   workflow_call:
@@ -9,7 +9,7 @@ on:
 jobs:
   Deploy-To-Prod:
     runs-on: ubuntu-latest
-    environment: prod2
+    environment: prod
     permissions:
       id-token: write
       contents: write
@@ -36,6 +36,6 @@ jobs:
           ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
           NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
           COMMIT_HASH: ${{ github.sha }}
-          ENVIRONMENT: "prod2"
+          ENVIRONMENT: "prod"
           PROJECT: ${{ inputs.module }}
           TAG: ${{github.ref_name}}
