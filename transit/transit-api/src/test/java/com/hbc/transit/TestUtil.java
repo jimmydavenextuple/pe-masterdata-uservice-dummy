@@ -4,8 +4,8 @@ import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
-import com.hbc.transit.domain.entity.TransitBufferReqJobRefEntity;
 import com.hbc.transit.domain.entity.TransitBufferConfigRequestEntity;
+import com.hbc.transit.domain.entity.TransitBufferReqJobRefEntity;
 import com.hbc.transit.domain.entity.TransitEntity;
 import com.hbc.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
 import com.hbc.transit.domain.enums.TransitBufferReqJobRefEnum;
@@ -201,33 +201,30 @@ public class TestUtil {
         .build();
   }
 
-  public TransitBufferReqJobRefRequest getTransBufferReqJobRefRequest()
-  {
+  public TransitBufferReqJobRefRequest getTransBufferReqJobRefRequest() {
     return TransitBufferReqJobRefRequest.builder()
-            .transitBufferReqId(TRANS_BUFFER_REQ_JOB_REF_ID)
-            .extReferenceId(TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID)
-            .action(TransitBufferReqJobRefEnum.COMPLETED)
-            .build();
+        .transitBufferReqId(TRANS_BUFFER_REQ_JOB_REF_ID)
+        .extReferenceId(TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID)
+        .action(TransitBufferReqJobRefEnum.COMPLETED)
+        .build();
   }
 
-  public TransitBufferReqJobRefResponse getTransBufferReqJobRefResponse()
-  {
+  public TransitBufferReqJobRefResponse getTransBufferReqJobRefResponse() {
     return TransitBufferReqJobRefResponse.builder()
-            .id(Long.valueOf(1))
-            .transitBufferReqId(TRANS_BUFFER_REQ_JOB_REF_ID)
-            .extReferenceId(TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID)
-            .action(TransitBufferReqJobRefEnum.COMPLETED)
-            .build();
+        .id(Long.valueOf(1))
+        .transitBufferReqId(TRANS_BUFFER_REQ_JOB_REF_ID)
+        .extReferenceId(TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID)
+        .action(TransitBufferReqJobRefEnum.COMPLETED)
+        .build();
   }
 
-  public TransitBufferReqJobRefEntity getTransBufferReqJobRef()
-  {
+  public TransitBufferReqJobRefEntity getTransBufferReqJobRef() {
     return TransitBufferReqJobRefEntity.builder()
-            .id(TRANS_BUFFER_REQ_JOB_REF_ID)
-            .transitBufferReqId(TRANS_BUFFER_REQ_JOB_REF_ID)
-            .extReferenceId(TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID)
-            .action(TransitBufferReqJobRefEnum.COMPLETED)
-            .build();
+        .id(TRANS_BUFFER_REQ_JOB_REF_ID)
+        .transitBufferReqId(TRANS_BUFFER_REQ_JOB_REF_ID)
+        .extReferenceId(TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID)
+        .action(TransitBufferReqJobRefEnum.COMPLETED)
+        .build();
   }
 
   public DistinctGeozonesResponse geozonesResponse() {
