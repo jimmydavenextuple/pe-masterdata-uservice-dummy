@@ -128,4 +128,7 @@ public class ItemEntity extends BaseEntity {
   @Type(type = "jsonb")
   @Column(columnDefinition = "jsonb", name = "inventory_node_types")
   private Map<String, List<String>> inventoryNodeTypes;
+
+  @Column(name = "item_banner")
+  private String itemBanner;
 }
