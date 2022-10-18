@@ -42,4 +42,5 @@ public class ItemResponse implements Serializable {
   private Long leadTime;
   private Boolean isWhiteGlove;
   private Map<String, List<String>> inventoryNodeTypes;
+  private String itemBanner;
 }

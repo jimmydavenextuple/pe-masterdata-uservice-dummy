@@ -169,7 +169,7 @@ public class TransitController {
       @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
       @NotBlank(message = "destinationGeozone can't be empty") @PathVariable
           String destinationGeozone,
-      @NotNull @RequestParam List<String> sourceGeozones)
+      @NotEmpty @RequestParam List<String> sourceGeozones)
       throws TransitDomainException {
     logger.debug("Processing get transit details list");
     try {
