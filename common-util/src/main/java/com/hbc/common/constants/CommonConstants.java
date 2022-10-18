@@ -15,11 +15,6 @@ public class CommonConstants {
   public static final String DB_OPERATION_DELETE = "DELETE";
   public static final String NODE_ID = "nodeId";
   public static final String ORG_ID = "orgId";
-  public static final String CARRIER_ID = "carrierId";
-  public static final String CARRIER_SERVICE_ID = "carrierServiceId";
-  public static final String SERVICE_NAME = "serviceName";
-  public static final String SOURCE_GEOZONE = "sourceGeozone";
-  public static final String DESTINATION_GEOZONE = "destinationGeozone";
   public static final String SERVICE_OPTION = "serviceOptions";
   public static final String PROCESSING_TIME = "processingTime (in hrs)";
   public static final String ACTION_TYPE = "action";
