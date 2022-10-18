@@ -107,7 +107,7 @@ public class CalendarController {
 
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<CalendarResponse>>> getCalendarListWithPagination(
-      @PathVariable String orgId, PageParams pageParams)
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId, PageParams pageParams)
       throws CalendarDomainException, CommonServiceException {
     logger.debug("Processing get calendar list by orgId");
 

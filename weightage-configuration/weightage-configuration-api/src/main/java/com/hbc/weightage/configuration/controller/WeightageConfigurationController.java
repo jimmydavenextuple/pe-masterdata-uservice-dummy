@@ -90,7 +90,7 @@ public class WeightageConfigurationController {
   @GetMapping("/{key}")
   public ResponseEntity<BaseResponse<List<WeightageConfigurationDto>>>
       getWeightageConfigurationsByKey(
-          @NotBlank(message = "orgId can't be empty") @PathVariable String key)
+          @NotBlank(message = "key can't be empty") @PathVariable String key)
           throws PromiseEngineException {
     logger.debug("Processing get Weightage Configuration by weightageId request");
     try {

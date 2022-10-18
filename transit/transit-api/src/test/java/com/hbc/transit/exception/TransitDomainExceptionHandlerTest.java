@@ -43,15 +43,15 @@ class TransitDomainExceptionHandlerTest {
   @DisplayName("Test for handling transit buffer req job ref domain exception")
   void handleTransitBufferReqJobRefDomainException() {
     TransitBufferReqJobRefDomainException exception =
-            new TransitBufferReqJobRefDomainException(
-                    "Internal Server Error",
-                    TestUtil.TRANS_BUFFER_REQ_JOB_REF_ID,
-                    TestUtil.TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID);
+        new TransitBufferReqJobRefDomainException(
+            "Internal Server Error",
+            TestUtil.TRANS_BUFFER_REQ_JOB_REF_ID,
+            TestUtil.TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID);
 
     ResponseEntity<ErrorResponse> errorResponseResponseEntity =
-            transitExceptionHandler.handleTransitBufferReqJobRefDomainException(exception);
+        transitExceptionHandler.handleTransitBufferReqJobRefDomainException(exception);
 
     Assertions.assertEquals(
-            "Internal Server Error", errorResponseResponseEntity.getBody().getMessage());
+        "Internal Server Error", errorResponseResponseEntity.getBody().getMessage());
   }
 }
