@@ -233,9 +233,9 @@ class CsvDownloadUtilityControllerTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
 
     String CARRIER_SERVICE =
-            "   carrierServiceId,orgId,carrierName,carrierId,serviceName,status,carrierServiceWorkingCalendar\n"
-                    + " ALL-EXPRESS,BAY,ALL,01,service-1-name,INACTIVE,C002\n"
-                    + " ALL-EXPRESS,BAY,ALL,01,service-1-name,INACTIVE,C001\n";
+        "   carrierServiceId,orgId,carrierName,carrierId,serviceName,status,carrierServiceWorkingCalendar\n"
+            + " ALL-EXPRESS,BAY,ALL,01,service-1-name,INACTIVE,C002\n"
+            + " ALL-EXPRESS,BAY,ALL,01,service-1-name,INACTIVE,C001\n";
     File file = File.createTempFile(CARRIER_SERVICE, "");
     file.deleteOnExit();
     when(csvDownloadUtilityService.downloadCarrierServiceDataCSV(anyString())).thenReturn(file);
