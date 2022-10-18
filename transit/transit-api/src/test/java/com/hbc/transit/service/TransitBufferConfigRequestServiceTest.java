@@ -143,4 +143,31 @@ class TransitBufferConfigRequestServiceTest {
     verify(transitBufferConfigRepository, times(1))
         .findByOrgIdAndCarrierServiceId(anyString(), anyString(), any());
   }
+
+  @Test
+  void getTransitBufferRequestTest() throws CommonServiceException {
+    when(transitBufferConfigRepository.findById(anyLong()))
+        .thenReturn(
+            Optional.of(
+                testUtil.getTransitBufferConfigRequestEntity(
+                    TransitBufferConfigRequestStatusEnum.CREATED)));
+    TransitBufferConfigRequestEntity transitBufferConfigRequestEntity =
+        transitBufferConfigRequestService.getTransitBufferRequest(TestUtil.ID);
+    Assertions.assertEquals(
+        testUtil.getTransitBufferConfigRequestEntity(TransitBufferConfigRequestStatusEnum.CREATED),
+        transitBufferConfigRequestEntity);
+    verify(transitBufferConfigRepository, times(1)).findById(anyLong());
+  }
+
+  @Test
+  void getTransitBufferRequestExceptionTest() {
+    when(transitBufferConfigRepository.findById(anyLong())).thenReturn(Optional.empty());
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> transitBufferConfigRequestService.getTransitBufferRequest(TestUtil.ID));
+    Assertions.assertEquals(
+        "Transit buffer config request not found with given id", exception.getMessage());
+    verify(transitBufferConfigRepository, times(1)).findById(anyLong());
+  }
 }
