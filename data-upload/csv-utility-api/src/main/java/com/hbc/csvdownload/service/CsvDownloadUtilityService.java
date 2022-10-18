@@ -1,19 +1,30 @@
 package com.hbc.csvdownload.service;
 
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_NAME;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICES;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_NAME;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATUS;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.WORKING_CALENDER;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.ACTIVE;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.CARRIER_ID;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.CARRIER_NAME;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.CARRIER_SERVICES;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.CARRIER_SERVICE_ID;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.CITY;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.COUNTRY;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.ERROR_MESSAGE;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.INACTIVE;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.LATITUDE;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.LONGITUDE;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.NODE_ID;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.ORG_ID;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.POSTAL_CODE;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.PROCESSING_LEAD_TIME;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.PROVINCE;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.SERVICE_NAME;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.SERVICE_OPTION;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.SERVICE_OPTIONS;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.STATE;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.STATUS;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.STREET;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.TIMEZONE;
+import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.WORKING_CALENDER;
 
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
@@ -118,8 +129,8 @@ public class CsvDownloadUtilityService {
         String status =
             (!carrierServiceCalendarResponses.isEmpty()
                     && transitTimeEntriesDto.getTotalRecords() > 0)
-                ? "ACTIVE"
-                : "INACTIVE";
+                ? ACTIVE
+                : INACTIVE;
         writeDataOntoFile(csvWriter, orgId, carrierServiceResponse, status, calenderIds);
         csvWriter.flush();
       }
@@ -239,7 +250,7 @@ public class CsvDownloadUtilityService {
 
   private String downloadProcessingLeadTimeErrorLogs(List<RecordStatusDto> recordStatusDtoList) {
     var header =
-        String.join(",", "nodeId", "orgId", "serviceOption", "processingLeadTime", "errorMessage");
+        String.join(",", NODE_ID, ORG_ID, SERVICE_OPTION, PROCESSING_LEAD_TIME, ERROR_MESSAGE);
     String rows =
         recordStatusDtoList.stream()
             .map(this::constructRowContent)
@@ -363,15 +374,7 @@ public class CsvDownloadUtilityService {
         postalCodeTimeZoneService.getPostalCodeTimeZoneByOrgIdAndCountry(orgId, country);
     var header =
         String.join(
-            ",",
-            "orgId",
-            "postalCodePrefix",
-            "country",
-            "state",
-            "city",
-            "latitude",
-            "longitude",
-            "timeZone");
+            ",", ORG_ID, POSTAL_CODE_PREFIX, COUNTRY, STATE, CITY, LATITUDE, LONGITUDE, TIMEZONE);
     var rows =
         postalCodeTimezoneDtoList.stream().map(this::createRow).collect(Collectors.joining("\n"));
 

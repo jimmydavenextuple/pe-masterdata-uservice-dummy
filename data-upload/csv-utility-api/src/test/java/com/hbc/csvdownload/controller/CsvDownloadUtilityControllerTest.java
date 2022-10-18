@@ -252,7 +252,8 @@ class CsvDownloadUtilityControllerTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     ServletOutputStream servletOutputStream = Mockito.mock(ServletOutputStream.class);
     Path path =
-        Paths.get("src", "test", "resources", "carrierService", "downloadCarrierService.csv");
+        Paths.get(
+            "src", "test", "resources", "carrierService", "downloadCarrierServiceDetails.csv");
 
     when(csvDownloadUtilityService.downloadCarrierServiceDataCSV(anyString()))
         .thenReturn(path.toFile());

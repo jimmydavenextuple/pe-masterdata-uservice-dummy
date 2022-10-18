@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DataUploadUtilityConstants {
-  public static final String ACTION_TYPE = "action";
 
   public static final String CREATE = "CREATE";
   public static final String UPDATE = "UPDATE";
@@ -74,8 +73,6 @@ public class DataUploadUtilityConstants {
   public static final String END_TIME = "endTime";
   public static final String BUFFER_DAYS = "bufferDays";
   public static final String SELECTION_CRITERIA = "selectionCriteria";
-  public static final String STATUS = "status";
-  public static final String WORKING_CALENDER = "carrierServiceWorkingCalendar";
 
   public static final String INVALID_SELECTION_CRITERIA = "Invalid selection criteria";
 }
