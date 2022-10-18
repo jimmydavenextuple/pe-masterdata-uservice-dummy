@@ -43,7 +43,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain hbc --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
-          bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain publish -p ${{ inputs.module }}
+          bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotbugsMain publish -p ${{ inputs.module }}
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()

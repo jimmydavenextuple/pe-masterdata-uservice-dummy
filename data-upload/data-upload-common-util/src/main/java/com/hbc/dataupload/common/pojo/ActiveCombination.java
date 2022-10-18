@@ -1,4 +1,4 @@
-package com.hbc.dataupload.domain.pojo;
+package com.hbc.dataupload.common.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

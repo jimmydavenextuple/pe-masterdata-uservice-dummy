@@ -58,4 +58,21 @@ class JobDashboardExceptionHandlerTest {
         Objects.requireNonNull(responseEntity.getBody()).getClass().toString());
     verify(e, times(1)).getMessage();
   }
+
+  @Test
+  void handleFileMetaDataException() {
+    FileMetaDataException e = mock(FileMetaDataException.class);
+
+    when(e.getMessage()).thenReturn("testMsg");
+
+    ResponseEntity<ErrorResponse> responseEntity =
+        jobDashboardExceptionHandler.handleFileMetaDataException(e);
+
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    assertEquals(400, responseEntity.getStatusCodeValue());
+    assertEquals(
+        ErrorResponse.class.toString(),
+        Objects.requireNonNull(responseEntity.getBody()).getClass().toString());
+    verify(e, times(1)).getMessage();
+  }
 }

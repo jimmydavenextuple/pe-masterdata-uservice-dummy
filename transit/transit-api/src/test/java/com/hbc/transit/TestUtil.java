@@ -222,6 +222,7 @@ public class TestUtil {
         .build();
   }
 
+  public TransitBufferReqJobRefEntity getTransBufferReqJobRef() {
   public TransitBufferReqJobRefResponse getTransBufferReqJobRefResponse1(
       TransitBufferReqJobRefEnum transitBufferReqJobRefEnum) {
     return TransitBufferReqJobRefResponse.builder()
@@ -234,6 +235,11 @@ public class TestUtil {
 
   public TransitBufferReqJobRefEntity getTransBufferReqJobRef() {
     return TransitBufferReqJobRefEntity.builder()
+        .id(TRANS_BUFFER_REQ_JOB_REF_ID)
+        .transitBufferReqId(TRANS_BUFFER_REQ_JOB_REF_ID)
+        .extReferenceId(TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID)
+        .action(TransitBufferReqJobRefEnum.COMPLETED)
+        .build();
         .id(TRANS_BUFFER_REQ_JOB_REF_ID)
         .transitBufferReqId(TRANS_BUFFER_REQ_JOB_REF_ID)
         .extReferenceId(TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID)
