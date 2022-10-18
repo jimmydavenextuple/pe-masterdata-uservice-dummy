@@ -12,7 +12,9 @@ import com.hbc.promise.sourcing.rule.service.PromiseSourcingRuleService;
 import java.util.List;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +83,7 @@ public class PromiseSourcingRuleController {
       @NotBlank(message = "destinationGeoZone can't be empty") @RequestParam
           String destinationGeoZone,
       @NotBlank(message = "allocationRuleId can't be empty") @RequestParam String allocationRuleId,
-      @NotBlank(message = "priority can't be empty") @RequestParam int priority)
+      @NotNull(message = "priority can't be empty") @Min(value = 0) @RequestParam int priority)
       throws PromiseEngineException {
     logger.debug("Processing get Promise Sourcing Rule request");
     try {
@@ -120,7 +122,7 @@ public class PromiseSourcingRuleController {
   @GetMapping("/{priority}@pty")
   public ResponseEntity<BaseResponse<List<PromiseSourcingRuleDto>>>
       getPromiseSourcingRulesByPriority(
-          @NotBlank(message = "priority can't be empty") @PathVariable int priority)
+          @NotNull(message = "priority can't be empty") @Min(value = 0) @PathVariable int priority)
           throws PromiseEngineException {
     logger.debug("Processing get Promise Sourcing Rules by priority request");
     try {
@@ -142,7 +144,7 @@ public class PromiseSourcingRuleController {
       @NotBlank(message = "destinationGeoZone can't be empty") @RequestParam
           String destinationGeoZone,
       @NotBlank(message = "allocationRuleId can't be empty") @RequestParam String allocationRuleId,
-      @NotBlank(message = "priority can't be empty") @RequestParam int priority,
+      @NotNull(message = "priority can't be empty") @Min(value = 0) @RequestParam int priority,
       @Valid @RequestBody UpdatePromiseSourcingRuleRequest baseRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("Processing update Promise Sourcing Rule request");
@@ -170,7 +172,7 @@ public class PromiseSourcingRuleController {
       @NotBlank(message = "destinationGeoZone can't be empty") @RequestParam
           String destinationGeoZone,
       @NotBlank(message = "allocationRuleId can't be empty") @RequestParam String allocationRuleId,
-      @NotBlank(message = "priority can't be empty") @RequestParam int priority)
+      @NotNull(message = "priority can't be empty") @Min(value = 0) @RequestParam int priority)
       throws PromiseEngineException {
     logger.debug("Processing delete Promise Sourcing Rule request by sourcingRuleId");
     try {

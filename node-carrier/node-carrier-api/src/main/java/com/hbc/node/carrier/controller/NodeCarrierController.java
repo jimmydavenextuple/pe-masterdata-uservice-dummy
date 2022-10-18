@@ -286,7 +286,9 @@ public class NodeCarrierController {
 
   @GetMapping("/{orgId}/{nodeId}/carrier-service")
   public ResponseEntity<BaseResponse<List<String>>> getUniqueNodeCarrierServiceList(
-      @PathVariable String orgId, @PathVariable String nodeId) throws NodeCarrierDomainException {
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId)
+      throws NodeCarrierDomainException {
     logger.debug("Processing get list of unique node-carrier-service");
     return ResponseEntity.ok(
         BaseResponse.builder()
@@ -297,7 +299,8 @@ public class NodeCarrierController {
   @GetMapping("/v1/{nodeId}/{orgId}")
   public ResponseEntity<BaseResponse<List<NodeCarrierResponse>>>
       getNodeCarrierListWithLastPickUpTimeDetails(
-          @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId)
+          @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+          @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
           throws NodeCarrierDomainException {
     logger.debug("Processing get node carrier for nodeId and orgId");
     List<NodeCarrierResponse> nodeCarrierResponseList =

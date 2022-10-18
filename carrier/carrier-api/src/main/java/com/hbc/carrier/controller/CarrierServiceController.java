@@ -240,7 +240,8 @@ public class CarrierServiceController {
 
   @GetMapping("/orgId/{orgId}")
   public ResponseEntity<BaseResponse<List<CarrierServiceResponse>>> getCarrierServiceListByOrgId(
-      @PathVariable String orgId) throws CarrierServiceDomainException {
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
+      throws CarrierServiceDomainException {
     logger.debug("Processing get carrier service list by orgId");
     List<CarrierServiceResponse> carrierServiceResponses =
         carrierserviceService.getCarrierServiceListByOrgId(orgId);

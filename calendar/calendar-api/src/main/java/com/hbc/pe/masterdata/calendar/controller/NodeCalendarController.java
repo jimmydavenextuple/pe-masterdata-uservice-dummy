@@ -80,7 +80,9 @@ public class NodeCalendarController {
 
   @GetMapping("/get-calendar-association/{calendarId}/{orgId}")
   public ResponseEntity<BaseResponse<List<NodeCalendarResponse>>> getNodeCalendars(
-      @PathVariable String calendarId, @PathVariable String orgId) throws CalendarDomainException {
+      @NotBlank(message = "calendarId can't be empty") @PathVariable String calendarId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
+      throws CalendarDomainException {
     logger.debug("Processing get Node Calendars by orgId and calendarId");
 
     var response = nodeCalendarService.getNodeAssociationWithCalendar(calendarId, orgId);
