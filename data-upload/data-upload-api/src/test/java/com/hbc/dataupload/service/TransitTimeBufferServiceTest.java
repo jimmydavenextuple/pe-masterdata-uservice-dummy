@@ -56,6 +56,28 @@ class TransitTimeBufferServiceTest {
   }
 
   @Test
+  void getTransitTimeBufferDetailsEmptyTransitBufferResponse() {
+    when(carrierFeign.getCarrierServiceListWithPagination(any(), any(), any(), any(), any()))
+        .thenReturn(
+            BaseResponse.builder()
+                .payload(testUtil.getCarrierServiceResponsePagePayload(1))
+                .build());
+
+    when(transitBufferConfigRequestFeign.getTransitBufferConfigRequests(any(), any()))
+        .thenReturn(BaseResponse.builder().payload(Collections.emptyList()).build());
+
+    PagePayload<TransitBufferDetailsResponse> payload =
+        transitTimeBufferService.getTransitTimeBufferDetails(
+            TestUtil.ORG_ID, 1, 15, "carrierServiceId", "DESC");
+
+    Assertions.assertNotNull(payload);
+    Assertions.assertFalse(CollectionUtils.isEmpty(payload.getData()));
+    verify(carrierFeign, times(1))
+        .getCarrierServiceListWithPagination(any(), any(), any(), any(), any());
+    verify(transitBufferConfigRequestFeign, times(2)).getTransitBufferConfigRequests(any(), any());
+  }
+
+  @Test
   void getTransitTimeBufferDetailsNullResponse() {
     PagePayload<CarrierServiceResponse> pagePayload =
         testUtil.getCarrierServiceResponsePagePayload(1);
