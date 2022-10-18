@@ -21,7 +21,7 @@ public class TransitTimeBufferService {
   private final CarrierFeign carrierFeign;
   private final TransitBufferConfigRequestFeign transitBufferConfigRequestFeign;
 
-  public PagePayload<TransitBufferDetailsResponse> getTransitTimeBufferDetails(
+  public PagePayload<TransitBufferDetailsResponse> getTransitTimeBufferDetailsForCarrierServices(
       String orgId, int pageNo, int pageSize, String sortBy, String sortOrder) {
     BaseResponse<PagePayload<CarrierServiceResponse>> response =
         carrierFeign.getCarrierServiceListWithPagination(

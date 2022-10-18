@@ -25,12 +25,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 
 @ExtendWith(MockitoExtension.class)
-class TransitBufferControllerTest {
+class TransitTimeBufferForCarrerServiceControllerTest {
 
   @Mock private TransitTimeBufferService transitTimeBufferService;
   @Mock private TransitTimeBufferPageProperties transitTimeBufferPageProperties;
   @Mock private DefaultPageProperties defaultPageProperties;
-  @InjectMocks private TransitBufferController transitBufferController;
+
+  @InjectMocks
+  private TransitTimeBufferForCarrerServiceController transitTimeBufferForCarrerServiceController;
+
   @InjectMocks private TestUtil testUtil;
 
   @Test
@@ -39,12 +42,12 @@ class TransitBufferControllerTest {
     when(defaultPageProperties.getPageSize()).thenReturn(15);
     when(transitTimeBufferPageProperties.getSortOrder()).thenReturn("DESC");
     when(transitTimeBufferPageProperties.getSortBy()).thenReturn("carrierServiceId");
-    when(transitTimeBufferService.getTransitTimeBufferDetails(
+    when(transitTimeBufferService.getTransitTimeBufferDetailsForCarrierServices(
             anyString(), anyInt(), anyInt(), anyString(), anyString()))
         .thenReturn(testUtil.getTransitBufferDetailsResponsePagePayload(1));
 
     ResponseEntity<BaseResponse<PagePayload<TransitBufferDetailsResponse>>> response =
-        transitBufferController.getTransitTimeBufferDetails(
+        transitTimeBufferForCarrerServiceController.getTransitTimeBufferDetailsForCarrierServices(
             TestUtil.ORG_ID,
             testUtil.getPageParams(
                 Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()));
@@ -54,6 +57,7 @@ class TransitBufferControllerTest {
     Assertions.assertNotNull(response.getBody().getPayload());
     Assertions.assertFalse(CollectionUtils.isEmpty(response.getBody().getPayload().getData()));
     verify(transitTimeBufferService, times(1))
-        .getTransitTimeBufferDetails(anyString(), anyInt(), anyInt(), anyString(), anyString());
+        .getTransitTimeBufferDetailsForCarrierServices(
+            anyString(), anyInt(), anyInt(), anyString(), anyString());
   }
 }

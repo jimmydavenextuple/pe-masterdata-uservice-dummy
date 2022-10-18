@@ -20,22 +20,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/ui/transit-time-buffer-page")
 @RequiredArgsConstructor
-public class TransitBufferController {
+public class TransitTimeBufferForCarrerServiceController {
 
   private final TransitTimeBufferService transitTimeBufferService;
   private final TransitTimeBufferPageProperties transitTimeBufferPageProperties;
   private final DefaultPageProperties defaultPageProperties;
-  private final Logger logger = LoggerFactory.getLogger(TransitBufferController.class);
+  private final Logger logger =
+      LoggerFactory.getLogger(TransitTimeBufferForCarrerServiceController.class);
   private static final String PAGINATION_URL =
       "/data-upload/ui/transit-time-buffer-page/%s?pageNo=%d&pageSize=%d&sortBy=%s&sortOrder=%s";
 
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<TransitBufferDetailsResponse>>>
-      getTransitTimeBufferDetails(@PathVariable String orgId, PageParams pageParams) {
+      getTransitTimeBufferDetailsForCarrierServices(
+          @PathVariable String orgId, PageParams pageParams) {
     logger.debug("Processing get transit time buffer details");
 
     PagePayload<TransitBufferDetailsResponse> pagePayload =
-        transitTimeBufferService.getTransitTimeBufferDetails(
+        transitTimeBufferService.getTransitTimeBufferDetailsForCarrierServices(
             orgId,
             pageParams.getPageNo().orElse(defaultPageProperties.getPageNo()),
             pageParams.getPageSize().orElse(defaultPageProperties.getPageSize()),

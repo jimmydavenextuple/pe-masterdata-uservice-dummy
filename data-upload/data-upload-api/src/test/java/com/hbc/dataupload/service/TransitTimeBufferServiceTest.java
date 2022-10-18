@@ -45,7 +45,7 @@ class TransitTimeBufferServiceTest {
                 .build());
 
     PagePayload<TransitBufferDetailsResponse> payload =
-        transitTimeBufferService.getTransitTimeBufferDetails(
+        transitTimeBufferService.getTransitTimeBufferDetailsForCarrierServices(
             TestUtil.ORG_ID, 1, 15, "carrierServiceId", "DESC");
 
     Assertions.assertNotNull(payload);
@@ -67,7 +67,7 @@ class TransitTimeBufferServiceTest {
         .thenReturn(BaseResponse.builder().payload(Collections.emptyList()).build());
 
     PagePayload<TransitBufferDetailsResponse> payload =
-        transitTimeBufferService.getTransitTimeBufferDetails(
+        transitTimeBufferService.getTransitTimeBufferDetailsForCarrierServices(
             TestUtil.ORG_ID, 1, 15, "carrierServiceId", "DESC");
 
     Assertions.assertNotNull(payload);
@@ -86,7 +86,7 @@ class TransitTimeBufferServiceTest {
         .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
     PagePayload<TransitBufferDetailsResponse> responsePagePayload =
-        transitTimeBufferService.getTransitTimeBufferDetails(
+        transitTimeBufferService.getTransitTimeBufferDetailsForCarrierServices(
             TestUtil.ORG_ID, 1, 15, "carrierServiceId", "DESC");
 
     Assertions.assertNotNull(responsePagePayload);
