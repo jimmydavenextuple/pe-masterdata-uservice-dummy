@@ -15,11 +15,11 @@ import org.apache.avro.specific.SpecificData;
 @org.apache.avro.specific.AvroGenerated
 public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
     implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 6544548654572521015L;
+  private static final long serialVersionUID = -1174407435771556134L;
   public static final org.apache.avro.Schema SCHEMA$ =
       new org.apache.avro.Schema.Parser()
           .parse(
-              "{\"type\":\"record\",\"name\":\"PromisingRecord\",\"namespace\":\"com.hbc.streams.promising.messages\",\"doc\":\"SKU record to be published to Promising Engine destination topic\",\"fields\":[{\"name\":\"itemId\",\"type\":\"string\",\"doc\":\"Sku ID\"},{\"name\":\"itemSource\",\"type\":[\"null\",\"string\"],\"default\":\"BAY\"},{\"name\":\"orgId\",\"type\":\"string\",\"default\":\"BAY\"},{\"name\":\"uom\",\"type\":\"string\",\"default\":\"EACH\"},{\"name\":\"isDSVEligible\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"product\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"color\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"size\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"shipAlone\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"shipEligible\",\"type\":\"boolean\"},{\"name\":\"parcelShipmentEligible\",\"type\":\"boolean\"},{\"name\":\"bopisEligible\",\"type\":\"boolean\"},{\"name\":\"expressEligible\",\"type\":\"boolean\"},{\"name\":\"sdndEligible\",\"type\":\"boolean\"},{\"name\":\"isWhiteGlove\",\"type\":\"boolean\"},{\"name\":\"height\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"width\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"length\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"volume\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"dimensionUom\",\"type\":[\"null\",\"string\"],\"default\":\"IN\"},{\"name\":\"volumeUom\",\"type\":[\"null\",\"string\"],\"default\":\"CU IN\"},{\"name\":\"weight\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"weightUOM\",\"type\":[\"null\",\"string\"],\"default\":\"LB\"},{\"name\":\"processingTime\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"cost\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"isHazmat\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"shortDescription\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"departmentNumber\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"departmentName\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"imageUrl\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"lastModifiedDate\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"nextdayEligible\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"sdndEligibleForDC\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"nextdayEligibleForDC\",\"type\":[\"null\",\"boolean\"],\"default\":null}]}");
+              "{\"type\":\"record\",\"name\":\"PromisingRecord\",\"namespace\":\"com.hbc.streams.promising.messages\",\"doc\":\"SKU record to be published to Promising Engine destination topic\",\"fields\":[{\"name\":\"itemId\",\"type\":\"string\",\"doc\":\"Sku ID\"},{\"name\":\"itemSource\",\"type\":[\"null\",\"string\"],\"default\":\"BAY\"},{\"name\":\"orgId\",\"type\":\"string\",\"default\":\"BAY\"},{\"name\":\"uom\",\"type\":\"string\",\"default\":\"EACH\"},{\"name\":\"isDSVEligible\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"product\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"color\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"size\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"shipAlone\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"shipEligible\",\"type\":\"boolean\"},{\"name\":\"parcelShipmentEligible\",\"type\":\"boolean\"},{\"name\":\"bopisEligible\",\"type\":\"boolean\"},{\"name\":\"expressEligible\",\"type\":\"boolean\"},{\"name\":\"sdndEligible\",\"type\":\"boolean\"},{\"name\":\"isWhiteGlove\",\"type\":\"boolean\"},{\"name\":\"height\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"width\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"length\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"volume\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"dimensionUom\",\"type\":[\"null\",\"string\"],\"default\":\"IN\"},{\"name\":\"volumeUom\",\"type\":[\"null\",\"string\"],\"default\":\"CU IN\"},{\"name\":\"weight\",\"type\":[\"null\",\"double\"],\"default\":null},{\"name\":\"weightUOM\",\"type\":[\"null\",\"string\"],\"default\":\"LB\"},{\"name\":\"processingTime\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"cost\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"isHazmat\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"shortDescription\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"departmentNumber\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"departmentName\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"imageUrl\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"lastModifiedDate\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"nextdayEligible\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"sdndEligibleForDC\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"nextdayEligibleForDC\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"itemBanner\",\"type\":[\"null\",\"string\"],\"default\":null}]}");
 
   public static org.apache.avro.Schema getClassSchema() {
     return SCHEMA$;
@@ -94,6 +94,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
   @Deprecated public Boolean nextdayEligible;
   @Deprecated public Boolean sdndEligibleForDC;
   @Deprecated public Boolean nextdayEligibleForDC;
+  @Deprecated public CharSequence itemBanner;
 
   /**
    * Default constructor. Note that this does not initialize fields to their default values from the
@@ -138,6 +139,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
    * @param nextdayEligible The new value for nextdayEligible
    * @param sdndEligibleForDC The new value for sdndEligibleForDC
    * @param nextdayEligibleForDC The new value for nextdayEligibleForDC
+   * @param itemBanner The new value for itemBanner
    */
   public PromisingRecord(
       CharSequence itemId,
@@ -173,7 +175,8 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
       org.joda.time.DateTime lastModifiedDate,
       Boolean nextdayEligible,
       Boolean sdndEligibleForDC,
-      Boolean nextdayEligibleForDC) {
+      Boolean nextdayEligibleForDC,
+      CharSequence itemBanner) {
     this.itemId = itemId;
     this.itemSource = itemSource;
     this.orgId = orgId;
@@ -208,6 +211,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
     this.nextdayEligible = nextdayEligible;
     this.sdndEligibleForDC = sdndEligibleForDC;
     this.nextdayEligibleForDC = nextdayEligibleForDC;
+    this.itemBanner = itemBanner;
   }
 
   public org.apache.avro.Schema getSchema() {
@@ -284,6 +288,8 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         return sdndEligibleForDC;
       case 33:
         return nextdayEligibleForDC;
+      case 34:
+        return itemBanner;
       default:
         throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
@@ -331,6 +337,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         null,
         null,
         TIMESTAMP_CONVERSION,
+        null,
         null,
         null,
         null,
@@ -447,6 +454,9 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         break;
       case 33:
         nextdayEligibleForDC = (Boolean) value$;
+        break;
+      case 34:
+        itemBanner = (CharSequence) value$;
         break;
       default:
         throw new org.apache.avro.AvroRuntimeException("Bad index");
@@ -1066,6 +1076,24 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
   }
 
   /**
+   * Gets the value of the 'itemBanner' field.
+   *
+   * @return The value of the 'itemBanner' field.
+   */
+  public CharSequence getItemBanner() {
+    return itemBanner;
+  }
+
+  /**
+   * Sets the value of the 'itemBanner' field.
+   *
+   * @param value the value to set.
+   */
+  public void setItemBanner(CharSequence value) {
+    this.itemBanner = value;
+  }
+
+  /**
    * Creates a new PromisingRecord RecordBuilder.
    *
    * @return A new PromisingRecord RecordBuilder
@@ -1135,6 +1163,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
     private Boolean nextdayEligible;
     private Boolean sdndEligibleForDC;
     private Boolean nextdayEligibleForDC;
+    private CharSequence itemBanner;
 
     /** Creates a new Builder */
     private Builder() {
@@ -1286,6 +1315,10 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
             data().deepCopy(fields()[33].schema(), other.nextdayEligibleForDC);
         fieldSetFlags()[33] = true;
       }
+      if (isValidValue(fields()[34], other.itemBanner)) {
+        this.itemBanner = data().deepCopy(fields()[34].schema(), other.itemBanner);
+        fieldSetFlags()[34] = true;
+      }
     }
 
     /**
@@ -1432,6 +1465,10 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
         this.nextdayEligibleForDC =
             data().deepCopy(fields()[33].schema(), other.nextdayEligibleForDC);
         fieldSetFlags()[33] = true;
+      }
+      if (isValidValue(fields()[34], other.itemBanner)) {
+        this.itemBanner = data().deepCopy(fields()[34].schema(), other.itemBanner);
+        fieldSetFlags()[34] = true;
       }
     }
 
@@ -2856,6 +2893,48 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
+    /**
+     * Gets the value of the 'itemBanner' field.
+     *
+     * @return The value.
+     */
+    public CharSequence getItemBanner() {
+      return itemBanner;
+    }
+
+    /**
+     * Sets the value of the 'itemBanner' field.
+     *
+     * @param value The value of 'itemBanner'.
+     * @return This builder.
+     */
+    public Builder setItemBanner(CharSequence value) {
+      validate(fields()[34], value);
+      this.itemBanner = value;
+      fieldSetFlags()[34] = true;
+      return this;
+    }
+
+    /**
+     * Checks whether the 'itemBanner' field has been set.
+     *
+     * @return True if the 'itemBanner' field has been set, false otherwise.
+     */
+    public boolean hasItemBanner() {
+      return fieldSetFlags()[34];
+    }
+
+    /**
+     * Clears the value of the 'itemBanner' field.
+     *
+     * @return This builder.
+     */
+    public Builder clearItemBanner() {
+      itemBanner = null;
+      fieldSetFlags()[34] = false;
+      return this;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public PromisingRecord build() {
@@ -2997,6 +3076,10 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
             fieldSetFlags()[33]
                 ? this.nextdayEligibleForDC
                 : (Boolean) defaultValue(fields()[33], record.getConversion(33));
+        record.itemBanner =
+            fieldSetFlags()[34]
+                ? this.itemBanner
+                : (CharSequence) defaultValue(fields()[34], record.getConversion(34));
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
