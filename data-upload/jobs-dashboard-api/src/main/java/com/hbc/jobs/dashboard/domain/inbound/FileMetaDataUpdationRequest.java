@@ -14,13 +14,13 @@ public class FileMetaDataUpdationRequest implements Serializable {
 
   private static final long serialVersionUID = -2149282044801518838L;
 
-  private String fileName;
+  private String name;
 
-  private String filePath;
+  private String path;
 
   private String size;
 
-  private String fileType;
+  private String type;
 
   private String storageType;
 
