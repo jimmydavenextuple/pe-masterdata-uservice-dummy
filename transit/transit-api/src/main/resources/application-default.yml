@@ -20,3 +20,5 @@ entity-listener:
 pe:
   ui:
     allowed-origin-url: "*"
+auth:
+  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_FAqWuc7OP

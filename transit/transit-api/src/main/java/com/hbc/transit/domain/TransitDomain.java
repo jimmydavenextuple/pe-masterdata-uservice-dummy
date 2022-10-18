@@ -16,6 +16,8 @@ public class TransitDomain {
 
   private static final Logger logger = LoggerFactory.getLogger(TransitDomain.class);
 
+  private static final String ERROR_MESSAGE = "Error while fetching transit list";
+
   private final TransitRepository transitRepository;
 
   public TransitEntity saveTransitEntity(TransitEntity transitEntity)
@@ -95,8 +97,19 @@ public class TransitDomain {
           orgId, destinationGeozone, sourceGeozones);
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to fetch transit list");
-      throw new TransitDomainException(
-          "Error while fetching transit list", orgId, null, destinationGeozone, null);
+      throw new TransitDomainException(ERROR_MESSAGE, orgId, null, destinationGeozone, null);
+    }
+  }
+
+  public List<String> fetchDestinationGeozones(
+      String orgId, String sourceGeozone, List<String> carrierServiceIds)
+      throws TransitDomainException {
+    try {
+      return transitRepository.findByOrgIdAndSourceGeozoneAndCarrierServiceIds(
+          orgId, sourceGeozone, carrierServiceIds);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to fetch transit list");
+      throw new TransitDomainException(ERROR_MESSAGE, orgId, sourceGeozone, null, null);
     }
   }
 
@@ -121,8 +134,7 @@ public class TransitDomain {
           "Unable to fetch transit list for orgId: {} and destination geozone: {}",
           orgId,
           destinationGeozone);
-      throw new TransitDomainException(
-          "Error while fetching transit list", orgId, null, destinationGeozone, null);
+      throw new TransitDomainException(ERROR_MESSAGE, orgId, null, destinationGeozone, null);
     }
   }
 

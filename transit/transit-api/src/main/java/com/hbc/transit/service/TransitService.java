@@ -315,6 +315,13 @@ public class TransitService {
   }
 
   @ReaderDS
+  public List<String> getDistinctDFSA(
+      String orgId, String sourceGeozone, List<String> carrierServiceIds)
+      throws TransitDomainException {
+    return transitDomain.fetchDestinationGeozones(orgId, sourceGeozone, carrierServiceIds);
+  }
+
+  @ReaderDS
   public TransitTimeEntriesDto getTransitTimeEntries(String orgId, String carrierServiceId)
       throws TransitDomainException {
     return TransitTimeEntriesDto.builder()
