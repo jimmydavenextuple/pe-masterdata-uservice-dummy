@@ -1,19 +1,19 @@
 package com.hbc.csvdownload.service;
 
-import static com.hbc.common.constants.CommonConstants.CARRIER_ID;
-import static com.hbc.common.constants.CommonConstants.CARRIER_NAME;
-import static com.hbc.common.constants.CommonConstants.CARRIER_SERVICE_ID;
-import static com.hbc.common.constants.CommonConstants.SERVICE_NAME;
-import static com.hbc.common.constants.CommonConstants.WORKING_CALENDER;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICES;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATUS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.WORKING_CALENDER;
 
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
@@ -396,7 +396,7 @@ public class CsvDownloadUtilityService {
         + dto.getTimeZone();
   }
 
-  private static String constructCsvRows(
+  private String constructCsvRows(
       Map<String, Map<String, Float>> transitTimesDataMap, String destinationFsa) {
     var sourceFsaAndTransitTimesMap = transitTimesDataMap.get(destinationFsa);
     String transitTimes =

@@ -245,4 +245,21 @@ class CsvDownloadUtilityControllerTest {
             csvDownloadUtilityController.downloadCarrierServiceCSV(
                 TestUtil.ORG_ID, request, response));
   }
+
+  @Test
+  void downloadCarrierServiceCSVTestMockedFile() throws IOException, CarrierServiceException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    ServletOutputStream servletOutputStream = Mockito.mock(ServletOutputStream.class);
+    Path path =
+        Paths.get("src", "test", "resources", "carrierService", "downloadCarrierService.csv");
+
+    when(csvDownloadUtilityService.downloadCarrierServiceDataCSV(anyString()))
+        .thenReturn(path.toFile());
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    csvDownloadUtilityController.downloadCarrierServiceCSV(TestUtil.ORG_ID, request, response);
+    verify(csvDownloadUtilityService, times(1)).downloadCarrierServiceDataCSV(anyString());
+  }
 }
