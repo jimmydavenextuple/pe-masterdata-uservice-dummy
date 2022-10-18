@@ -15,7 +15,8 @@ import org.springframework.stereotype.Service;
 public class TransitDomain {
 
   private static final Logger logger = LoggerFactory.getLogger(TransitDomain.class);
-  public static final String FETCH_TRANSIT_LIST_ERROR_MESSAGE = "Error while fetching transit list";
+
+  private static final String ERROR_MESSAGE = "Error while fetching transit list";
 
   private final TransitRepository transitRepository;
 
@@ -96,8 +97,19 @@ public class TransitDomain {
           orgId, destinationGeozone, sourceGeozones);
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to fetch transit list");
-      throw new TransitDomainException(
-          FETCH_TRANSIT_LIST_ERROR_MESSAGE, orgId, null, destinationGeozone, null);
+      throw new TransitDomainException(ERROR_MESSAGE, orgId, null, destinationGeozone, null);
+    }
+  }
+
+  public List<String> fetchDestinationGeozones(
+      String orgId, String sourceGeozone, List<String> carrierServiceIds)
+      throws TransitDomainException {
+    try {
+      return transitRepository.findByOrgIdAndSourceGeozoneAndCarrierServiceIds(
+          orgId, sourceGeozone, carrierServiceIds);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to fetch transit list");
+      throw new TransitDomainException(ERROR_MESSAGE, orgId, sourceGeozone, null, null);
     }
   }
 
@@ -122,8 +134,7 @@ public class TransitDomain {
           "Unable to fetch transit list for orgId: {} and destination geozone: {}",
           orgId,
           destinationGeozone);
-      throw new TransitDomainException(
-          FETCH_TRANSIT_LIST_ERROR_MESSAGE, orgId, null, destinationGeozone, null);
+      throw new TransitDomainException(ERROR_MESSAGE, orgId, null, destinationGeozone, null);
     }
   }
 
