@@ -81,6 +81,12 @@ public interface NodeCarrierFeign {
       @RequestParam String carrierServiceId,
       @NotBlank @PathVariable String serviceOption);
 
+  @GetMapping("/node/carrier/{nodeId}/{orgId}/{serviceOption}")
+  BaseResponse<List<NodeCarrierResponse>> getNodeCarrierListForServiceOption(
+      @NotBlank @PathVariable String nodeId,
+      @NotBlank @PathVariable String orgId,
+      @NotBlank @PathVariable String serviceOption);
+
   @GetMapping("/node/carrier/get-all-cache-keys")
   BaseResponse<List<NodeCarrierListCacheKeyDto>> getNodeCarrierListCacheKeys(
       @NotNull @RequestParam Integer limit);
