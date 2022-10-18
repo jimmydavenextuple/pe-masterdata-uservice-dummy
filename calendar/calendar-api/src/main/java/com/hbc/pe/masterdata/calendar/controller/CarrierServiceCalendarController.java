@@ -94,7 +94,9 @@ public class CarrierServiceCalendarController {
 
   @GetMapping("/get-calendar-association/{calendarId}/{orgId}")
   public ResponseEntity<BaseResponse<List<CarrierServiceCalendarResponse>>> getCarrierCalendars(
-      @PathVariable String calendarId, @PathVariable String orgId) throws CalendarDomainException {
+      @NotBlank(message = "calendarId can't be empty") @PathVariable String calendarId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
+      throws CalendarDomainException {
     logger.debug("Processing get Carrier Calendars by orgId and calendarId");
 
     var response =

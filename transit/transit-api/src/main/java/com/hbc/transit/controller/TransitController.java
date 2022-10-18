@@ -14,7 +14,7 @@ import com.hbc.transit.service.TransitService;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -170,7 +170,7 @@ public class TransitController {
       @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
       @NotBlank(message = "destinationGeozone can't be empty") @PathVariable
           String destinationGeozone,
-      @NotNull @RequestParam List<String> sourceGeozones)
+      @NotEmpty @RequestParam List<String> sourceGeozones)
       throws TransitDomainException {
     logger.debug("Processing get transit details list");
     try {
