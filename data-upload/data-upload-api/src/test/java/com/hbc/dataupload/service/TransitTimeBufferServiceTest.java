@@ -3,6 +3,7 @@ package com.hbc.dataupload.service;
 import static org.mockito.Mockito.*;
 
 import com.hbc.carrier.domain.feign.CarrierFeign;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.common.outbound.TransitBufferDetailsResponse;
@@ -52,5 +53,23 @@ class TransitTimeBufferServiceTest {
     verify(carrierFeign, times(1))
         .getCarrierServiceListWithPagination(any(), any(), any(), any(), any());
     verify(transitBufferConfigRequestFeign, times(2)).getTransitBufferConfigRequests(any(), any());
+  }
+
+  @Test
+  void getTransitTimeBufferDetailsNullResponse() {
+    PagePayload<CarrierServiceResponse> pagePayload =
+        testUtil.getCarrierServiceResponsePagePayload(1);
+    pagePayload.setData(null);
+    when(carrierFeign.getCarrierServiceListWithPagination(any(), any(), any(), any(), any()))
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+
+    PagePayload<TransitBufferDetailsResponse> responsePagePayload =
+        transitTimeBufferService.getTransitTimeBufferDetails(
+            TestUtil.ORG_ID, 1, 15, "carrierServiceId", "DESC");
+
+    Assertions.assertNotNull(responsePagePayload);
+    Assertions.assertTrue(CollectionUtils.isEmpty(responsePagePayload.getData()));
+    verify(carrierFeign, times(1))
+        .getCarrierServiceListWithPagination(any(), any(), any(), any(), any());
   }
 }

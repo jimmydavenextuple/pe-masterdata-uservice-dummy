@@ -27,7 +27,7 @@ public class TransitBufferController {
   private final DefaultPageProperties defaultPageProperties;
   private final Logger logger = LoggerFactory.getLogger(TransitBufferController.class);
   private static final String PAGINATION_URL =
-      "/data-upload/ui/transit-time-buffer/%s?pageNo=%d&pageSize=%d&sortBy=%s&sortOrder=%s";
+      "/data-upload/ui/transit-time-buffer-page/%s?pageNo=%d&pageSize=%d&sortBy=%s&sortOrder=%s";
 
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<TransitBufferDetailsResponse>>>

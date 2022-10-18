@@ -7,6 +7,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.common.outbound.TransitBufferDetailsResponse;
 import com.hbc.transit.domain.feign.TransitBufferConfigRequestFeign;
 import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -37,20 +38,23 @@ public class TransitTimeBufferService {
 
   private List<TransitBufferDetailsResponse> formListOfTransitBufferDetailsResponseObjects(
       List<CarrierServiceResponse> carrierServiceResponseList) {
-    return carrierServiceResponseList.stream()
-        .map(
-            carrierServiceResponse -> {
-              var carrierServiceId = carrierServiceResponse.getCarrierServiceId();
-              var orgId = carrierServiceResponse.getOrgId();
-              BaseResponse<List<TransitBufferConfigResponse>> response =
-                  transitBufferConfigRequestFeign.getTransitBufferConfigRequests(
-                      orgId, carrierServiceId);
-              return TransitBufferDetailsResponse.builder()
-                  .carrierServiceId(carrierServiceId)
-                  .orgId(orgId)
-                  .hasTransitBuffer(!CollectionUtils.isEmpty(response.getPayload()))
-                  .build();
-            })
-        .collect(Collectors.toList());
+    if (!CollectionUtils.isEmpty(carrierServiceResponseList)) {
+      return carrierServiceResponseList.stream()
+          .map(
+              carrierServiceResponse -> {
+                var carrierServiceId = carrierServiceResponse.getCarrierServiceId();
+                var orgId = carrierServiceResponse.getOrgId();
+                BaseResponse<List<TransitBufferConfigResponse>> response =
+                    transitBufferConfigRequestFeign.getTransitBufferConfigRequests(
+                        orgId, carrierServiceId);
+                return TransitBufferDetailsResponse.builder()
+                    .carrierServiceId(carrierServiceId)
+                    .orgId(orgId)
+                    .hasTransitBuffer(!CollectionUtils.isEmpty(response.getPayload()))
+                    .build();
+              })
+          .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
   }
 }
