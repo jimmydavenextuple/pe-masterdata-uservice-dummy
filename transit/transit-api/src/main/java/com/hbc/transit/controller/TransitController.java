@@ -2,9 +2,6 @@ package com.hbc.transit.controller;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
-import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
-import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
-import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
@@ -12,7 +9,6 @@ import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.inbound.TransitDetailsRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
-import com.hbc.transit.exception.TransitBufferJobException;
 import com.hbc.transit.exception.TransitDomainException;
 import com.hbc.transit.service.TransitService;
 import java.util.List;
@@ -22,11 +18,7 @@ import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,11 +38,6 @@ public class TransitController {
 
   private static final Logger logger = LoggerFactory.getLogger(TransitController.class);
   private final TransitService transitService;
-
-  private final KafkaTemplate<Object, Object> kafkaTemplate;
-
-  @Value("${jobs-framework.jobs-details-consumer.topic-name}")
-  private String resultPublishTopicName;
 
   @PostMapping
   public ResponseEntity<BaseResponse<TransitResponse>> addTransitData(
@@ -282,30 +269,5 @@ public class TransitController {
             .payload(
                 transitService.getDistinctSourceAndDestinationGeoZones(orgId, carrierServiceId))
             .build());
-  }
-
-  @GetMapping("/dummy-api")
-  public void dummyApi() throws TransitDomainException, TransitBufferJobException {
-
-    JobDetailsDto jobDetailsDto = new JobDetailsDto();
-    jobDetailsDto.setOrgId("BAY");
-    jobDetailsDto.setJobId("11");
-    jobDetailsDto.setJobType(JobTypeEnum.TRANSIT_BUFFER_REQUEST);
-    jobDetailsDto.setStatus(JobStatusEnum.FAILED);
-    publishJobRecord(jobDetailsDto);
-  }
-
-  public void publishJobRecord(JobDetailsDto recordStatus) throws TransitBufferJobException {
-    try {
-      kafkaTemplate.send(
-          MessageBuilder.withPayload(recordStatus)
-              .setHeader(KafkaHeaders.TOPIC, resultPublishTopicName)
-              .setHeader(KafkaHeaders.MESSAGE_KEY, recordStatus.getJobId())
-              .build());
-    } catch (Exception e) {
-      logger.error("Error while publishing record from consumer to consumer", e);
-      throw new TransitBufferJobException(
-          "Exception while publishing the job record", e, recordStatus.getJobId());
-    }
   }
 }

@@ -37,7 +37,8 @@ public class TransitExceptionHandler {
   }
 
   @ExceptionHandler(TransitBufferJobException.class)
-  public ResponseEntity<Object> handleTransitBufferJobException(TransitBufferJobException e) {
+  public ResponseEntity<ErrorResponse> handleTransitBufferJobException(
+      TransitBufferJobException e) {
     return ResponseEntity.badRequest()
         .body(
             ErrorResponse.builder(ErrorType.ERROR, 0xffffd1)

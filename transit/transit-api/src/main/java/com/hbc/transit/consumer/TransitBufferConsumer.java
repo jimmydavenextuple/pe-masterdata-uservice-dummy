@@ -13,8 +13,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @KafkaListener(
-    topics = "${jobs-framework.jobs-details-consumer.topic-name}",
-    groupId = "${jobs-framework.jobs-details-consumer.group-id}")
+    topics = "${jobs-framework.job-completion-consumer.topic-name}",
+    groupId = "${jobs-framework.job-completion-consumer.group-id}")
 @Component
 @RequiredArgsConstructor
 @Slf4j

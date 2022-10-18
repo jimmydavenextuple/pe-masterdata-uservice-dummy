@@ -115,10 +115,10 @@ public class TransitBufferConfigRequestService {
   public TransitBufferConfigRequestEntity getTransitBufferRequest(Long id)
       throws CommonServiceException {
 
-    Optional<TransitBufferConfigRequestEntity> existingTransitBufferConfigRequestEntity =
+    Optional<TransitBufferConfigRequestEntity> transitBufferConfigRequestEntity =
         transitBufferConfigRepository.findById(id);
 
-    if (existingTransitBufferConfigRequestEntity.isEmpty()) {
+    if (transitBufferConfigRequestEntity.isEmpty()) {
       logger.error(TRANSIT_BUFFER_CONFIG_REQUEST_EXCEPTION_MESSAGE);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(
@@ -126,6 +126,6 @@ public class TransitBufferConfigRequestService {
       throw new CommonServiceException(
           TRANSIT_BUFFER_CONFIG_REQUEST_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-    return existingTransitBufferConfigRequestEntity.get();
+    return transitBufferConfigRequestEntity.get();
   }
 }
