@@ -1,4 +1,4 @@
-package com.hbc.dataupload.domain.pojo;
+package com.hbc.dataupload.common.outbound;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,13 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class ActiveCombination {
+public class TransitBufferDetailsResponse {
 
-  private String nodeId;
   private String carrierServiceId;
-  private String serviceOption;
-  private boolean isActive;
+  private String orgId;
+  private boolean hasTransitBuffer;
 }

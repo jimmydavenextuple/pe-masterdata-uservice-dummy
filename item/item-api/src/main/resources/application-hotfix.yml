@@ -6,7 +6,7 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://dev-db.co9l0bkmgaei.us-east-1.rds.amazonaws.com/peconfig
+    url: jdbc:postgresql://promise-engine-postgres-dev.co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe_hotfix
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
   kafka:
@@ -28,3 +28,5 @@ spring:
 logging:
   level:
     com.hbc: DEBUG
+auth:
+  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_FAqWuc7OP

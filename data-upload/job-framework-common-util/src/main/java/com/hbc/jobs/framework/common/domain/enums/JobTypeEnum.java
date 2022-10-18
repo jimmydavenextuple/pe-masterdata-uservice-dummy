@@ -11,7 +11,8 @@ import lombok.Getter;
 public enum JobTypeEnum {
   UPLOAD_TRANSIT_TIMES(MasterDataModule.TRANSIT),
   UPLOAD_PROCESSING_LEAD_TIMES(MasterDataModule.NODE_CARRIER),
-  DELETE_TRANSIT_BUFFER(MasterDataModule.TRANSIT);
+  DELETE_TRANSIT_BUFFER(MasterDataModule.TRANSIT),
+  TRANSIT_BUFFER_REQUEST(MasterDataModule.TRANSIT);
 
   private static final Map<String, JobTypeEnum> jobTypeMap =
       Collections.unmodifiableMap(initialize());

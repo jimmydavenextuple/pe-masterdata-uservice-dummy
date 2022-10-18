@@ -150,7 +150,9 @@ public class PostalCodeTimezoneController {
   @GetMapping("/market-region/org/{orgId}")
   public ResponseEntity<BaseResponse<List<PostalCodeTimezoneDto>>>
       getPostalCodeTimeZoneForOrgIdAndCountry(
-          @PathVariable String orgId, @RequestParam String country) throws PromiseEngineException {
+          @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+          @RequestParam String country)
+          throws PromiseEngineException {
     logger.debug("Processing get postal code prefix list for orgId and state");
     return ResponseEntity.ok(
         BaseResponse.builder()
@@ -162,7 +164,8 @@ public class PostalCodeTimezoneController {
 
   @GetMapping("/market-regions/org/{orgId}")
   public ResponseEntity<BaseResponse<List<MarketRegionInfo>>> getMarketRegionsForOrgId(
-      @PathVariable String orgId) throws PromiseEngineException {
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
+      throws PromiseEngineException {
     logger.debug("Processing get market regions for orgId");
     return ResponseEntity.ok(
         BaseResponse.builder()

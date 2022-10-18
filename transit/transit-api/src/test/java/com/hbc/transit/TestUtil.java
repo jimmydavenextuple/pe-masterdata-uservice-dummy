@@ -2,13 +2,24 @@ package com.hbc.transit;
 
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
+import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.entity.TransitBufferConfigRequestEntity;
+import com.hbc.transit.domain.entity.TransitBufferReqJobRefEntity;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
+import com.hbc.transit.domain.enums.TransitBufferReqJobRefEnum;
 import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
+import com.hbc.transit.domain.inbound.TransitBufferConfigRequest;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
+import com.hbc.transit.domain.inbound.TransitBufferReqJobRefRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
+import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
+import com.hbc.transit.domain.outbound.TransitBufferReqJobRefResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +27,17 @@ import java.util.List;
 public class TestUtil {
 
   public static final String ORG_ID = "org-1";
+
+  public static final Long TRANS_BUFFER_REQ_JOB_REF_ID = 1L;
+
+  public static final String TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID = "1";
+
+  public static final String TRANS_BUFFER_REQ_JOB_REF_ACTION = "action";
+  public static final Long TransitBufferReqId = 2L;
+  public static final String ACTION = "Create";
+  public static final Long Id = 1L;
+  public static final String EXTERNAL_REFERENCE = "1";
+
   public static String SOURCE_GEOZONE = "source-geozone-1";
   public static String DESTINATION_GEOZONE = "destination-geozone-1";
   public static String CARRIER_SERVICE_ID = "carrier-service-id-1";
@@ -29,6 +51,8 @@ public class TestUtil {
   public static Double BUFFER_DAYS = 3.0;
 
   public static final String SERVICE_OPTION = "serviceOption-1";
+  public static final Long ID = 1L;
+  public static final String JOB_ID = "1";
 
   public TransitEntity getTransitEntity(Float transitDays) {
     Date bufferStartDate = new Date(1000);
@@ -172,10 +196,106 @@ public class TestUtil {
     return PostalCodeTimezoneDto.builder().orgId(ORG_ID).postalCodePrefix(SOURCE_GEOZONE).build();
   }
 
+  public TransitBufferReqJobRefEntity getTransitBufferReqJobRefEntity() {
+    return TransitBufferReqJobRefEntity.builder()
+        .id(Id)
+        .transitBufferReqId(TransitBufferReqId)
+        .action(TransitBufferReqJobRefEnum.CREATE)
+        .extReferenceId(EXTERNAL_REFERENCE)
+        .build();
+  }
+
+  public TransitBufferReqJobRefRequest getTransBufferReqJobRefRequest() {
+    return TransitBufferReqJobRefRequest.builder()
+        .transitBufferReqId(TRANS_BUFFER_REQ_JOB_REF_ID)
+        .extReferenceId(TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID)
+        .action(TransitBufferReqJobRefEnum.CREATE)
+        .build();
+  }
+
+  public TransitBufferReqJobRefResponse getTransBufferReqJobRefResponse() {
+    return TransitBufferReqJobRefResponse.builder()
+        .id(Long.valueOf(1))
+        .transitBufferReqId(TRANS_BUFFER_REQ_JOB_REF_ID)
+        .extReferenceId(TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID)
+        .action(TransitBufferReqJobRefEnum.CREATE)
+        .build();
+  }
+
+  public TransitBufferReqJobRefResponse getTransBufferReqJobRefResponse1(
+      TransitBufferReqJobRefEnum transitBufferReqJobRefEnum) {
+    return TransitBufferReqJobRefResponse.builder()
+        .id(Long.valueOf(1))
+        .transitBufferReqId(TRANS_BUFFER_REQ_JOB_REF_ID)
+        .extReferenceId(TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID)
+        .action(transitBufferReqJobRefEnum)
+        .build();
+  }
+
+  public TransitBufferReqJobRefEntity getTransBufferReqJobRef() {
+    return TransitBufferReqJobRefEntity.builder()
+        .id(TRANS_BUFFER_REQ_JOB_REF_ID)
+        .transitBufferReqId(TRANS_BUFFER_REQ_JOB_REF_ID)
+        .extReferenceId(TRANS_BUFFER_REQ_JOB_REF_EXT_REF_ID)
+        .action(TransitBufferReqJobRefEnum.CREATE)
+        .build();
+  }
+
   public DistinctGeozonesResponse geozonesResponse() {
     DistinctGeozonesResponse geozonesResponse = new DistinctGeozonesResponse();
     geozonesResponse.setSourceGeozones(List.of(SOURCE_GEOZONE));
     geozonesResponse.setDestinationGeozones(List.of(DESTINATION_GEOZONE));
     return geozonesResponse;
+  }
+
+  public TransitBufferConfigRequest getTransitBufferConfigRequest() {
+    Date bufferStartDate = new Date(1000);
+    Date bufferEndDate = new Date(1000);
+    return TransitBufferConfigRequest.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .bufferDays(BUFFER_DAYS)
+        .startDate(bufferStartDate)
+        .endDate(bufferEndDate)
+        .build();
+  }
+
+  public TransitBufferConfigResponse getTransitBufferConfigResponse(
+      TransitBufferConfigRequestStatusEnum status) {
+    Date bufferStartDate = new Date(1000);
+    Date bufferEndDate = new Date(1000);
+    return TransitBufferConfigResponse.builder()
+        .id(ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .bufferDays(BUFFER_DAYS)
+        .startDate(bufferStartDate)
+        .endDate(bufferEndDate)
+        .status(status)
+        .build();
+  }
+
+  public TransitBufferConfigRequestEntity getTransitBufferConfigRequestEntity(
+      TransitBufferConfigRequestStatusEnum status) {
+    Date bufferStartDate = new Date(1000);
+    Date bufferEndDate = new Date(1000);
+    return TransitBufferConfigRequestEntity.builder()
+        .id(ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .bufferDays(BUFFER_DAYS)
+        .startDate(bufferStartDate)
+        .endDate(bufferEndDate)
+        .status(status)
+        .build();
+  }
+
+  public JobDetailsDto getJobDetailsDto(JobStatusEnum jobStatusEnum) {
+    JobDetailsDto jobDetailsDto = new JobDetailsDto();
+    jobDetailsDto.setJobId(JOB_ID);
+    jobDetailsDto.setOrgId(ORG_ID);
+    jobDetailsDto.setStatus(jobStatusEnum);
+    jobDetailsDto.setJobType(JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+    return jobDetailsDto;
   }
 }

@@ -40,6 +40,9 @@ storage:
 node-carrier-service-page-properties:
   sortBy: nodeId
   sortOrder: ASC
+transit-time-buffer-page-properties:
+  sortBy: carrierServiceId
+  sortOrder: DESC
 management:
   endpoints:
     web:
@@ -80,3 +83,5 @@ scheduled-processor:
   timeRangeInHours: 24
   fixed-rate:
     minutes: 1
+download-page-size:
+  node-carrier-service-options: 200
