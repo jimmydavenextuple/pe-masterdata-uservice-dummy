@@ -19,6 +19,8 @@ dependencies {
     implementation(project(":carrier:carrier-api"))
     implementation(project(":carrier:carrier-api-domain"))
     implementation(project(":postal-code-timezone:postal-code-timezone-api-domain"))
+    implementation(project(":data-upload:job-framework-common-util"))
+    implementation "org.springframework.kafka:spring-kafka:2.8.7"
 }
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
