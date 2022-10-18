@@ -61,4 +61,5 @@ public class ItemUpdationRequest implements Serializable {
   private String departmentName;
   private String imageUrl;
   private Map<String, List<String>> inventoryNodeTypes;
+  private String itemBanner;
 }
