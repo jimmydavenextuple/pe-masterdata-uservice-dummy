@@ -77,8 +77,8 @@ public class NodeDomain {
   }
 
   public Page<NodeResponse> getAllNodesPaginated(
-          Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
-          throws NodeDomainException {
+      Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
+      throws NodeDomainException {
     try {
       Pageable pageable = null;
       if (sortOrder.equalsIgnoreCase(DEFAULT_SORT_ORDER)) {

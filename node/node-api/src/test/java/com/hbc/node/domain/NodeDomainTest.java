@@ -173,12 +173,11 @@ class NodeDomainTest {
 
     Pageable pageable = PageRequest.of(1, 1, Sort.by(TestUtil.SORT_BY).ascending());
     Page<NodeEntity> nodeEntityPage =
-            new PageImpl<>(nodeEntityList, pageable, nodeEntityList.size());
+        new PageImpl<>(nodeEntityList, pageable, nodeEntityList.size());
 
     when(nodeRepository.findAll(any(Pageable.class))).thenReturn(nodeEntityPage);
 
-    Page<NodeResponse> response =
-            nodeDomain.getAllNodesPaginated(1, 1, TestUtil.SORT_BY, "ASC");
+    Page<NodeResponse> response = nodeDomain.getAllNodesPaginated(1, 1, TestUtil.SORT_BY, "ASC");
 
     Assertions.assertEquals(nodeEntityList.size(), response.getContent().size());
     Assertions.assertEquals(2, response.getTotalPages());
@@ -188,15 +187,16 @@ class NodeDomainTest {
 
     verify(nodeRepository, times(1)).findAll(any(Pageable.class));
   }
+
   @Test
   void getAllNodesPaginatedTestException() {
     when(nodeRepository.findAll(any(Pageable.class)))
-            .thenThrow(new RuntimeException("Error while fetching node list"));
+        .thenThrow(new RuntimeException("Error while fetching node list"));
 
     Exception exception =
-            assertThrows(
-                    NodeDomainException.class,
-                    () -> nodeDomain.getAllNodesPaginated(1, 1, TestUtil.SORT_BY, "ASC"));
+        assertThrows(
+            NodeDomainException.class,
+            () -> nodeDomain.getAllNodesPaginated(1, 1, TestUtil.SORT_BY, "ASC"));
     Assertions.assertEquals("Error while finding node list", exception.getMessage());
     verify(nodeRepository, times(1)).findAll(any(Pageable.class));
   }

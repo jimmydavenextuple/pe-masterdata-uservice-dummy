@@ -157,24 +157,24 @@ public class NodeController {
   }
 
   @GetMapping("/all-nodes")
-  public ResponseEntity<BaseResponse<PagePayload<NodeResponse>>> getAllNodesList(PageParams pageParams)
-          throws NodeDomainException {
+  public ResponseEntity<BaseResponse<PagePayload<NodeResponse>>> getAllNodesList(
+      PageParams pageParams) throws NodeDomainException {
     logger.debug("Processing get node list for an orgId");
 
     Page<NodeResponse> nodeResponsePage =
-            nodeService.getAllNodes(
-                    pageParams.getPageNo().orElse(pageProperties.getPageNo()),
-                    pageParams.getPageSize().orElse(pageProperties.getPageSize()),
-                    pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY),
-                    pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
+        nodeService.getAllNodes(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            pageParams.getPageSize().orElse(pageProperties.getPageSize()),
+            pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY),
+            pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
 
     PagePayload<NodeResponse> pagePayload = setNodePagePayload(nodeResponsePage, pageParams);
 
     return ResponseEntity.ok(
-            BaseResponse.builder()
-                    .message("Node List fetched successfully")
-                    .payload(pagePayload)
-                    .build());
+        BaseResponse.builder()
+            .message("Node List fetched successfully")
+            .payload(pagePayload)
+            .build());
   }
 
   @GetMapping("/get-all-cache-keys")
@@ -230,7 +230,7 @@ public class NodeController {
   }
 
   private PagePayload<NodeResponse> setNodePagePayload(
-          Page<NodeResponse> nodeResponsesPage, PageParams pageParams) {
+      Page<NodeResponse> nodeResponsesPage, PageParams pageParams) {
     PagePayload<NodeResponse> pagePayload = new PagePayload<>();
     var pagination = new PagePayload.Pagination();
     pagination.setTotalRecords((int) nodeResponsesPage.getTotalElements());
@@ -240,23 +240,23 @@ public class NodeController {
     pagination.setSortBy(pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY));
 
     String nextUri =
-            PaginationUtil.buildUriForPagination(
-                    pageParams.getPageNo().orElse(pageProperties.getPageNo()),
-                    nodeResponsesPage.getTotalPages(),
-                    "next",
-                    String.format(
-                            PAGINATION_URL_ALL_NODES,
-                            (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
-                            pageParams.getPageSize().orElse(pageProperties.getPageSize())));
+        PaginationUtil.buildUriForPagination(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            nodeResponsesPage.getTotalPages(),
+            "next",
+            String.format(
+                PAGINATION_URL_ALL_NODES,
+                (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
+                pageParams.getPageSize().orElse(pageProperties.getPageSize())));
     String previousUri =
-            PaginationUtil.buildUriForPagination(
-                    pageParams.getPageNo().orElse(pageProperties.getPageNo()),
-                    nodeResponsesPage.getTotalPages(),
-                    "previous",
-                    String.format(
-                            PAGINATION_URL_ALL_NODES,
-                            (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
-                            pageParams.getPageSize().orElse(pageProperties.getPageSize())));
+        PaginationUtil.buildUriForPagination(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            nodeResponsesPage.getTotalPages(),
+            "previous",
+            String.format(
+                PAGINATION_URL_ALL_NODES,
+                (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
+                pageParams.getPageSize().orElse(pageProperties.getPageSize())));
     pagination.setNext(nextUri);
     pagination.setPrevious(previousUri);
     pagePayload.setPagination(pagination);

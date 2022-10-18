@@ -257,43 +257,44 @@ class NodeControllerTest {
   }
 
   @Test
-  void getAllNodesListTest() throws NodeDomainException{
+  void getAllNodesListTest() throws NodeDomainException {
     List<NodeResponse> nodeResponseList = List.of(testUtil.getNodeResponse());
 
     when(nodeService.getAllNodes(any(), any(), any(), any()))
-            .thenReturn(testUtil.getNodeResponsePage(2, nodeResponseList, nodeResponseList.size()));
+        .thenReturn(testUtil.getNodeResponsePage(2, nodeResponseList, nodeResponseList.size()));
 
     ResponseEntity<BaseResponse<PagePayload<NodeResponse>>> response =
-            nodeController.getAllNodesList(
-                    testUtil.getPageParams(
-                            Optional.of(2),
-                            Optional.of(1),
-                            Optional.of(TestUtil.SORT_BY),
-                            Optional.of(TestUtil.SORT_ORDER_DESC)));
+        nodeController.getAllNodesList(
+            testUtil.getPageParams(
+                Optional.of(2),
+                Optional.of(1),
+                Optional.of(TestUtil.SORT_BY),
+                Optional.of(TestUtil.SORT_ORDER_DESC)));
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
     Assertions.assertEquals(
-            2,
-            (int) response.getBody().getPayload().getPagination().getTotalPages(),
-            "Pagination Total pages");
+        2,
+        (int) response.getBody().getPayload().getPagination().getTotalPages(),
+        "Pagination Total pages");
     Assertions.assertEquals(
-            nodeResponseList.size(),
-            (int) response.getBody().getPayload().getPagination().getTotalRecords(),
-            "Total Elements");
+        nodeResponseList.size(),
+        (int) response.getBody().getPayload().getPagination().getTotalRecords(),
+        "Total Elements");
     Assertions.assertEquals(
-            2,
-            (int) response.getBody().getPayload().getPagination().getCurrentPage(),
-            "Current page number");
+        2,
+        (int) response.getBody().getPayload().getPagination().getCurrentPage(),
+        "Current page number");
     Assertions.assertEquals(
-            nodeResponseList.size(), response.getBody().getPayload().getData().size(), "Paginated data");
+        nodeResponseList.size(),
+        response.getBody().getPayload().getData().size(),
+        "Paginated data");
     Assertions.assertEquals(
-            "", response.getBody().getPayload().getPagination().getNext(), "Next Uri should be empty");
+        "", response.getBody().getPayload().getPagination().getNext(), "Next Uri should be empty");
     Assertions.assertEquals(
-            Boolean.TRUE,
-            Objects.nonNull(response.getBody().getPayload().getPagination().getPrevious()),
-            "Previous Uri should not be null");
+        Boolean.TRUE,
+        Objects.nonNull(response.getBody().getPayload().getPagination().getPrevious()),
+        "Previous Uri should not be null");
 
     verify(nodeService, times(1)).getAllNodes(any(), any(), any(), any());
   }
-
 }

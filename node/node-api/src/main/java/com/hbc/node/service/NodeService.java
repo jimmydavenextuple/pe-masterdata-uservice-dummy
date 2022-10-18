@@ -140,9 +140,10 @@ public class NodeService {
   }
 
   @ReaderDS
-  public Page<NodeResponse> getAllNodes(Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
-          throws NodeDomainException {
-      return nodeDomain.getAllNodesPaginated(pageNo, pageSize, sortBy, sortOrder);
+  public Page<NodeResponse> getAllNodes(
+      Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
+      throws NodeDomainException {
+    return nodeDomain.getAllNodesPaginated(pageNo, pageSize, sortBy, sortOrder);
   }
 
   public List<NodeCacheKeyDto> getAllNodeCacheKeys(Integer limit) throws NodeDomainException {

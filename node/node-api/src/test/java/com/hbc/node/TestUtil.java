@@ -192,7 +192,7 @@ public class TestUtil {
   }
 
   public Page<NodeResponse> getNodeResponsePage(
-          int totalPages, List<NodeResponse> nodeResponses, int totalElements) {
+      int totalPages, List<NodeResponse> nodeResponses, int totalElements) {
     return new Page<NodeResponse>() {
       @Override
       public int getTotalPages() {
@@ -275,6 +275,7 @@ public class TestUtil {
       }
     };
   }
+
   public Page<NodeDto> getNodeDtoPage(
       int totalPages, List<NodeDto> nodeDtoList, int totalElements) {
     return new Page<NodeDto>() {
