@@ -3,10 +3,8 @@ package com.hbc.transit.service;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
-import com.hbc.transit.domain.entity.TransitBufferConfigRequestEntity;
 import com.hbc.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
 import com.hbc.transit.domain.enums.TransitBufferReqJobRefEnum;
-import com.hbc.transit.domain.outbound.TransitBufferReqJobRefResponse;
 import com.hbc.transit.exception.TransitBufferReqJobRefDomainException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +21,11 @@ public class TransitBufferConsumerService {
   public void processJobRecordForTransitBuffer(JobDetailsDto jobDetailsDto)
       throws TransitBufferReqJobRefDomainException, CommonServiceException {
     if (jobDetailsDto.getJobType().equals(JobTypeEnum.TRANSIT_BUFFER_REQUEST)) {
-      TransitBufferReqJobRefResponse transitBufferReqJobRefResponse =
+      var transitBufferReqJobRefResponse =
           transitBufferReqJobRefService
               .getTransitBufferReqJobRefByExtReferenceId(jobDetailsDto.getJobId())
               .get(0);
-      TransitBufferConfigRequestEntity transitBufferConfigRequest =
+      var transitBufferConfigRequest =
           transitBufferConfigRequestService.getTransitBufferRequest(
               transitBufferReqJobRefResponse.getTransitBufferReqId());
       switch (jobDetailsDto.getStatus()) {
