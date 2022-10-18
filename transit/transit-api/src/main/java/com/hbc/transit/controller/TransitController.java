@@ -188,7 +188,7 @@ public class TransitController {
   }
 
   @GetMapping("distinct/dFSA/{orgId}/{sourceGeozone}")
-  public ResponseEntity<BaseResponse<List<String>>> getDistinctDestinationFSAList(
+  public ResponseEntity<BaseResponse<List<String>>> getDistinctDestinationGeoZones(
       @NotBlank(message = "orgId can't be blank") @PathVariable String orgId,
       @NotBlank(message = "sourceGeozone can't be empty") @PathVariable String sourceGeozone,
       @NotEmpty(message = "carrier service id list can't be empty") @RequestBody

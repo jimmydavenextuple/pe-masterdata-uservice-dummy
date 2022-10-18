@@ -116,7 +116,7 @@ class TransitControllerTest {
     when(transitService.getDistinctDFSA(any(), any(), anyList())).thenReturn(dFSAResponse);
 
     ResponseEntity<BaseResponse<List<String>>> responseEntity =
-        transitController.getDistinctDestinationFSAList(
+        transitController.getDistinctDestinationGeoZones(
             TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE, List.of(TestUtil.CARRIER_SERVICE_ID));
 
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -134,7 +134,7 @@ class TransitControllerTest {
         Assertions.assertThrows(
             Exception.class,
             () ->
-                transitController.getDistinctDestinationFSAList(
+                transitController.getDistinctDestinationGeoZones(
                     TestUtil.ORG_ID,
                     TestUtil.SOURCE_GEOZONE,
                     List.of(TestUtil.CARRIER_SERVICE_ID)));

@@ -82,7 +82,7 @@ public interface NodeCarrierFeign {
       @NotBlank @PathVariable String serviceOption);
 
   @GetMapping("/node/carrier/{nodeId}/{orgId}/{serviceOption}")
-  BaseResponse<List<NodeCarrierResponse>> getNodeCarrier(
+  BaseResponse<List<NodeCarrierResponse>> getNodeCarrierListForServiceOption(
       @NotBlank @PathVariable String nodeId,
       @NotBlank @PathVariable String orgId,
       @NotBlank @PathVariable String serviceOption);

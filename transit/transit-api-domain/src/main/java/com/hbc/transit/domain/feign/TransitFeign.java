@@ -59,7 +59,7 @@ public interface TransitFeign {
       @RequestParam List<String> sourceGeozones);
 
   @GetMapping("/transit/distinct/dFSA/{orgId}/{sourceGeozone}")
-  BaseResponse<List<String>> getDistinctDestinationFSAList(
+  BaseResponse<List<String>> getDistinctDestinationGeoZones(
       @PathVariable(name = "orgId") String orgId,
       @PathVariable(name = "sourceGeozone") String sourceGeozone,
       @RequestBody List<String> carrierServiceId);
