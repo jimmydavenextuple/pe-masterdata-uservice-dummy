@@ -232,7 +232,11 @@ class CsvDownloadUtilityControllerTest {
 
     HttpServletRequest request = mock(HttpServletRequest.class);
 
-    File file = File.createTempFile("some-prefix", "some-ext");
+    String CARRIER_SERVICE =
+            "   carrierServiceId,orgId,carrierName,carrierId,serviceName,status,carrierServiceWorkingCalendar\n"
+                    + " ALL-EXPRESS,BAY,ALL,01,service-1-name,INACTIVE,C002\n"
+                    + " ALL-EXPRESS,BAY,ALL,01,service-1-name,INACTIVE,C001\n";
+    File file = File.createTempFile(CARRIER_SERVICE, "");
     file.deleteOnExit();
     when(csvDownloadUtilityService.downloadCarrierServiceDataCSV(anyString())).thenReturn(file);
     HttpServletResponse response = mock(HttpServletResponse.class);
@@ -244,23 +248,5 @@ class CsvDownloadUtilityControllerTest {
         () ->
             csvDownloadUtilityController.downloadCarrierServiceCSV(
                 TestUtil.ORG_ID, request, response));
-  }
-
-  @Test
-  void downloadCarrierServiceCSVTestMockedFile() throws IOException, CarrierServiceException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-    ServletOutputStream servletOutputStream = Mockito.mock(ServletOutputStream.class);
-    Path path =
-        Paths.get(
-            "src", "test", "resources", "carrierService", "downloadCarrierServiceDetails.csv");
-
-    when(csvDownloadUtilityService.downloadCarrierServiceDataCSV(anyString()))
-        .thenReturn(path.toFile());
-
-    when(response.getOutputStream()).thenReturn(servletOutputStream);
-
-    csvDownloadUtilityController.downloadCarrierServiceCSV(TestUtil.ORG_ID, request, response);
-    verify(csvDownloadUtilityService, times(1)).downloadCarrierServiceDataCSV(anyString());
   }
 }
