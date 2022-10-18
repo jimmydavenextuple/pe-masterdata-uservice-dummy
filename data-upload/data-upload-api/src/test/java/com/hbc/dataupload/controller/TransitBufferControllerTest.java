@@ -1,6 +1,7 @@
 package com.hbc.dataupload.controller;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -9,7 +10,7 @@ import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.common.outbound.TransitBufferDetailsResponse;
 import com.hbc.dataupload.domain.pojo.TransitTimeBufferPageProperties;
-import com.hbc.dataupload.service.TransitBufferService;
+import com.hbc.dataupload.service.TransitTimeBufferService;
 import com.hbc.dataupload.util.TestUtil;
 import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
 import java.util.Optional;
@@ -25,20 +26,23 @@ import org.springframework.util.CollectionUtils;
 
 @ExtendWith(MockitoExtension.class)
 class TransitBufferControllerTest {
+
+  @Mock private TransitTimeBufferService transitTimeBufferService;
   @Mock private TransitTimeBufferPageProperties transitTimeBufferPageProperties;
   @Mock private DefaultPageProperties defaultPageProperties;
-  @Mock private TransitBufferService transitBufferService;
   @InjectMocks private TransitBufferController transitBufferController;
   @InjectMocks private TestUtil testUtil;
 
   @Test
   void getTransitTimeBufferDetails() {
-    when(transitBufferService.getTransitTimeBufferDetails(any(), any(), any(), any(), any()))
-        .thenReturn(testUtil.getTransitBufferDetailsResponsePagePayload(1));
+    when(defaultPageProperties.getPageNo()).thenReturn(15);
+    when(defaultPageProperties.getPageSize()).thenReturn(15);
     when(transitTimeBufferPageProperties.getSortOrder()).thenReturn("DESC");
     when(transitTimeBufferPageProperties.getSortBy()).thenReturn("carrierServiceId");
-    when(defaultPageProperties.getPageSize()).thenReturn(15);
-    when(defaultPageProperties.getPageNo()).thenReturn(1);
+    when(transitTimeBufferService.getTransitTimeBufferDetails(
+            anyString(), anyInt(), anyInt(), anyString(), anyString()))
+        .thenReturn(testUtil.getTransitBufferDetailsResponsePagePayload(1));
+
     ResponseEntity<BaseResponse<PagePayload<TransitBufferDetailsResponse>>> response =
         transitBufferController.getTransitTimeBufferDetails(
             TestUtil.ORG_ID,
@@ -46,11 +50,10 @@ class TransitBufferControllerTest {
                 Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()));
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-    Assertions.assertNotNull(response);
     Assertions.assertNotNull(response.getBody());
     Assertions.assertNotNull(response.getBody().getPayload());
     Assertions.assertFalse(CollectionUtils.isEmpty(response.getBody().getPayload().getData()));
-    verify(transitBufferService, times(1))
-        .getTransitTimeBufferDetails(any(), any(), any(), any(), any());
+    verify(transitTimeBufferService, times(1))
+        .getTransitTimeBufferDetails(anyString(), anyInt(), anyInt(), anyString(), anyString());
   }
 }

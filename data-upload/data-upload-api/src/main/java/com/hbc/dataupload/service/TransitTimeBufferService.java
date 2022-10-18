@@ -15,7 +15,7 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 @RequiredArgsConstructor
-public class TransitBufferService {
+public class TransitTimeBufferService {
 
   private final CarrierFeign carrierFeign;
   private final TransitBufferConfigRequestFeign transitBufferConfigRequestFeign;

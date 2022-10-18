@@ -19,11 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.util.CollectionUtils;
 
 @ExtendWith(MockitoExtension.class)
-class TransitBufferServiceTest {
+class TransitTimeBufferServiceTest {
 
   @Mock private CarrierFeign carrierFeign;
   @Mock private TransitBufferConfigRequestFeign transitBufferConfigRequestFeign;
-  @InjectMocks private TransitBufferService transitBufferService;
+  @InjectMocks private TransitTimeBufferService transitTimeBufferService;
   @InjectMocks private TestUtil testUtil;
 
   @Test
@@ -44,7 +44,7 @@ class TransitBufferServiceTest {
                 .build());
 
     PagePayload<TransitBufferDetailsResponse> payload =
-        transitBufferService.getTransitTimeBufferDetails(
+        transitTimeBufferService.getTransitTimeBufferDetails(
             TestUtil.ORG_ID, 1, 15, "carrierServiceId", "DESC");
 
     Assertions.assertNotNull(payload);

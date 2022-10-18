@@ -8,7 +8,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.common.util.PaginationUtil;
 import com.hbc.dataupload.common.outbound.TransitBufferDetailsResponse;
 import com.hbc.dataupload.domain.pojo.TransitTimeBufferPageProperties;
-import com.hbc.dataupload.service.TransitBufferService;
+import com.hbc.dataupload.service.TransitTimeBufferService;
 import com.hbc.jobs.framework.common.domain.pojo.DefaultPageProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TransitBufferController {
 
-  private final TransitBufferService transitBufferService;
+  private final TransitTimeBufferService transitTimeBufferService;
   private final TransitTimeBufferPageProperties transitTimeBufferPageProperties;
   private final DefaultPageProperties defaultPageProperties;
   private final Logger logger = LoggerFactory.getLogger(TransitBufferController.class);
@@ -35,7 +35,7 @@ public class TransitBufferController {
     logger.debug("Processing get transit time buffer details");
 
     PagePayload<TransitBufferDetailsResponse> pagePayload =
-        transitBufferService.getTransitTimeBufferDetails(
+        transitTimeBufferService.getTransitTimeBufferDetails(
             orgId,
             pageParams.getPageNo().orElse(defaultPageProperties.getPageNo()),
             pageParams.getPageSize().orElse(defaultPageProperties.getPageSize()),
