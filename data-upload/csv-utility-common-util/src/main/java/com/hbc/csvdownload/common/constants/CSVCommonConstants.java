@@ -1,4 +1,4 @@
-package com.hbc.csvdownload.common.pojo;
+package com.hbc.csvdownload.common.constants;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

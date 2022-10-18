@@ -1,10 +1,10 @@
 package com.hbc.csvdownload.domain.pojo;
 
-import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.ACTION_TYPE;
-import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.NODE_ID;
-import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.ORG_ID;
-import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.PROCESSING_TIME;
-import static com.hbc.csvdownload.common.pojo.CSVCommonConstants.SERVICE_OPTIONS;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ACTION_TYPE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_ID;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ORG_ID;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.PROCESSING_TIME;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OPTIONS;
 
 import com.opencsv.bean.CsvBindByName;
 import javax.validation.constraints.NotBlank;
