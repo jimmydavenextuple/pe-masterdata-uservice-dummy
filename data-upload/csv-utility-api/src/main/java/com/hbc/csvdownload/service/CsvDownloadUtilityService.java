@@ -1,19 +1,19 @@
 package com.hbc.csvdownload.service;
 
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_END_DATE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_HOURS;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_START_DATE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICES;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATUS;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_END_DATE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_HOURS;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_START_DATE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_SERVICES;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CITY;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_ID;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_TYPE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ORG_ID;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.POSTAL_CODE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.PROVINCE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OPTION;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OPTIONS;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STATUS;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STREET;
 
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.context.Logger;
