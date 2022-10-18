@@ -28,7 +28,7 @@ public class ProcessingTimeBuffersService {
         new ArrayList<>(pagePayload.getData());
 
     while (currentPageNo < totalPages) {
-      currentPageNo += 1;
+      currentPageNo = currentPageNo + 1;
       PagePayload<ProcessingTimeBufferResponse> pagePayload1 =
           dataUploadFeign
               .getProcessingTimeBufferDetails(orgId, currentPageNo, pageSize, null, null)
