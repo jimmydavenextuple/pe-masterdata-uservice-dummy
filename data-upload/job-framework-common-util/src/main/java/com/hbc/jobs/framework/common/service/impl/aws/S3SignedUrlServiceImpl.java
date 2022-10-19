@@ -1,13 +1,13 @@
-package com.hbc.jobs.dashboard.service.impl.aws;
+package com.hbc.jobs.framework.common.service.impl.aws;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
-import com.hbc.jobs.dashboard.enums.ModuleEnum;
-import com.hbc.jobs.dashboard.service.PreSignedUrlInterface;
 import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
+import com.hbc.jobs.framework.common.enums.ModuleEnum;
+import com.hbc.jobs.framework.common.service.PreSignedUrlInterface;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;

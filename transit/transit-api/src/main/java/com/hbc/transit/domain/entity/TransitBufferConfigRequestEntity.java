@@ -48,4 +48,7 @@ public class TransitBufferConfigRequestEntity {
 
   @Column(name = "parent_request_id")
   private Long parentRequestId;
+
+  @Column(name = "file_meta_data_id")
+  private Long fileMetaDataId;
 }

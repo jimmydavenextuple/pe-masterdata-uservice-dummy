@@ -53,6 +53,7 @@ public class TestUtil {
   public static final String SERVICE_OPTION = "serviceOption-1";
   public static final Long ID = 1L;
   public static final String JOB_ID = "1";
+  public static final Long FILE_META_DATA_ID = 3L;
 
   public TransitEntity getTransitEntity(Float transitDays) {
     Date bufferStartDate = new Date(1000);
@@ -257,6 +258,7 @@ public class TestUtil {
         .bufferDays(BUFFER_DAYS)
         .startDate(bufferStartDate)
         .endDate(bufferEndDate)
+        .fileMetaDataId(FILE_META_DATA_ID)
         .build();
   }
 
@@ -272,6 +274,7 @@ public class TestUtil {
         .startDate(bufferStartDate)
         .endDate(bufferEndDate)
         .status(status)
+        .fileMetaDataId(FILE_META_DATA_ID)
         .build();
   }
 
@@ -287,6 +290,7 @@ public class TestUtil {
         .startDate(bufferStartDate)
         .endDate(bufferEndDate)
         .status(status)
+        .fileMetaDataId(FILE_META_DATA_ID)
         .build();
   }
 
