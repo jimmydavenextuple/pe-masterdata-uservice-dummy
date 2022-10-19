@@ -42,7 +42,7 @@ jobs:
           export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain hbc --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
           bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotlessApply spotbugsMain publish -p ${{ inputs.module }}
           bash ./gradlew -Pbuild_target=SNAPSHOT spotlessApply spotbugsMain test jacocoTestReport
-          aws eks update-kubeconfig --name dev-eks-cluster --region us-east-1 && kubectl port-forward pod/sonarqube-89-community-0 9000:9000 &
+          aws eks update-kubeconfig --name eks-cluster-promise-development --region us-east-1 && kubectl port-forward pod/sonarqube-89-community-0 9000:9000 &
           bash ./gradlew -Pbuild_target=SNAPSHOT -Dsonar.login=$SONAR_TOKEN sonarqube showSonarQubeLink --info
           fuser -k 9000/tcp
       - name: Publish Test Results
