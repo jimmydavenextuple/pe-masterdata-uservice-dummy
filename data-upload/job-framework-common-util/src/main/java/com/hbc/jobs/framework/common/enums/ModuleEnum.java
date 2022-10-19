@@ -1,4 +1,4 @@
-package com.hbc.jobs.dashboard.enums;
+package com.hbc.jobs.framework.common.enums;
 
 import lombok.Getter;
 

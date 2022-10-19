@@ -1,4 +1,4 @@
-package com.hbc.jobs.dashboard.domain.outbound;
+package com.hbc.jobs.framework.common.domain.outbound;
 
 import java.io.InputStream;
 import java.util.Date;

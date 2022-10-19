@@ -1,4 +1,4 @@
-package com.hbc.jobs.dashboard.service;
+package com.hbc.jobs.framework.common.service;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
@@ -12,8 +12,8 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.hbc.common.exception.CommonServiceException;
-import com.hbc.jobs.dashboard.domain.outbound.FileResponse;
-import com.hbc.jobs.dashboard.service.impl.aws.S3FileServiceImpl;
+import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
+import com.hbc.jobs.framework.common.service.impl.aws.S3FileServiceImpl;
 import java.io.File;
 import java.io.IOException;
 import org.junit.Assert;

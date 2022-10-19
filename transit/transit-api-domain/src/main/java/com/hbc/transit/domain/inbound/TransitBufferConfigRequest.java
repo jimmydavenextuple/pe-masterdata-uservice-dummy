@@ -39,4 +39,6 @@ public class TransitBufferConfigRequest implements Serializable {
   private TransitBufferConfigRequestStatusEnum status;
 
   private Long parentRequestId;
+
+  private Long fileMetaDataId;
 }

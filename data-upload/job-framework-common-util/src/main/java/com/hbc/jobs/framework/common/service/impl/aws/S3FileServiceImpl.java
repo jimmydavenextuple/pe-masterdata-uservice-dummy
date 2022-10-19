@@ -1,12 +1,12 @@
-package com.hbc.jobs.dashboard.service.impl.aws;
+package com.hbc.jobs.framework.common.service.impl.aws;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
-import com.hbc.jobs.dashboard.domain.mapper.FileMapper;
-import com.hbc.jobs.dashboard.domain.outbound.FileResponse;
-import com.hbc.jobs.dashboard.service.FileService;
+import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
+import com.hbc.jobs.framework.common.mapper.FileMapper;
+import com.hbc.jobs.framework.common.service.FileService;
 import java.io.File;
 import java.util.Map;
 import org.mapstruct.factory.Mappers;
@@ -29,6 +29,7 @@ public class S3FileServiceImpl implements FileService {
   public void uploadFile(String bucketName, String filePath, File file) {
     try {
       amazonS3.putObject(new PutObjectRequest(bucketName, filePath, file));
+
     } catch (Exception e) {
       logger.error("Error in uploading file ");
       throw e;

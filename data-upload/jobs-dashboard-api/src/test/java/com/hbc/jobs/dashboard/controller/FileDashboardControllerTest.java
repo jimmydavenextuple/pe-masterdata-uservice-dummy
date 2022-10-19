@@ -7,8 +7,8 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
-import com.hbc.jobs.dashboard.service.PreSignedUrlInterface;
 import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
+import com.hbc.jobs.framework.common.service.PreSignedUrlInterface;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,9 +18,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-class DataUploadDashboardControllerTest {
+class FileDashboardControllerTest {
 
-  @InjectMocks private DataUploadDashboardController dataUploadDashboardController;
+  @InjectMocks private FileDashboardController fileDashboardController;
   @Mock private PreSignedUrlInterface preSignedUrlInterface;
 
   @BeforeEach
@@ -33,7 +33,7 @@ class DataUploadDashboardControllerTest {
     when(preSignedUrlInterface.getPreSignedURL(any(), any()))
         .thenReturn(PreSignedUrlResponse.builder().build());
     ResponseEntity<BaseResponse<String>> response =
-        dataUploadDashboardController.getPreSignedUrl("test.csv", "transit");
+        fileDashboardController.getPreSignedUrl("test.csv", "transit");
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Status code");
     verify(preSignedUrlInterface, times(1)).getPreSignedURL(any(), any());
   }
@@ -44,8 +44,7 @@ class DataUploadDashboardControllerTest {
         .thenThrow(new RuntimeException("error"));
     Exception ex =
         Assertions.assertThrows(
-            Exception.class,
-            () -> dataUploadDashboardController.getPreSignedUrl("test.csv", "transit"));
+            Exception.class, () -> fileDashboardController.getPreSignedUrl("test.csv", "transit"));
     Assertions.assertEquals("error", ex.getMessage());
     verify(preSignedUrlInterface, times(1)).getPreSignedURL(any(), any());
   }

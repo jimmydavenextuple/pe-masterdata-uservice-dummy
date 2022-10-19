@@ -1,4 +1,4 @@
-package com.hbc.jobs.dashboard.service;
+package com.hbc.jobs.framework.common.service;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
