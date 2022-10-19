@@ -41,3 +41,5 @@ jobs-framework:
     group-id: jobs-completion-consumer-async-hotfix
 auth:
   issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_FAqWuc7OP
+dataupload:
+  bucket-name: "promise-s3-lambda-dev"

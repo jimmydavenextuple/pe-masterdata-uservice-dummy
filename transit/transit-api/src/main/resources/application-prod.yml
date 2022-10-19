@@ -55,3 +55,5 @@ jobs-framework:
     group-id: jobs-completion-consumer-async-prod
 auth:
   issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_MW21O5cnf
+dataupload:
+  bucket-name: "promise-s3-lambda-prod"
