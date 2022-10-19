@@ -41,3 +41,5 @@ jobs-framework:
     group-id: jobs-completion-consumer-async-stage
 auth:
   issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_5uCQJb6Il
+dataupload:
+  bucket-name: "promise-s3-lambda-stage"
