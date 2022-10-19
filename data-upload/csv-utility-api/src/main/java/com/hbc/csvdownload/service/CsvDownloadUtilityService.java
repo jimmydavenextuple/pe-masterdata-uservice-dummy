@@ -1,14 +1,19 @@
 package com.hbc.csvdownload.service;
 
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICES;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATUS;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_END_DATE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_HOURS;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_START_DATE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_SERVICES;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CITY;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_ID;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_TYPE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ORG_ID;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.POSTAL_CODE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.PROVINCE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OPTION;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OPTIONS;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STATUS;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STREET;
 
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.context.Logger;
@@ -25,17 +30,23 @@ import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.dataupload.common.feign.DataUploadFeign;
 import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
 import com.opencsv.CSVWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -63,6 +74,8 @@ public class CsvDownloadUtilityService {
   private final DataUploadFeign dataUploadFeign;
   private final JobsDashboardService jobsDashboardService;
   private final JobsConsumerService jobsConsumerService;
+  private final ProcessingTimeBuffersService processingTimeBuffersService;
+  private static final String NA = "NA";
 
   @Value("${download-page-size.node-carrier-service-options}")
   private Integer noOfRecordsPerPage;
@@ -337,7 +350,11 @@ public class CsvDownloadUtilityService {
         dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
             orgId, null, noOfRecordsPerPage, null, null);
     /** Create a temporary file to write the data */
-    Path tempFile = Files.createTempFile("download-node-carrierService-serviceOption", ".csv");
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile =
+        Files.createTempFile(
+            "download-node-carrierService-serviceOption" + new Date().getTime(), ".csv", attr);
     try (var csvWriter = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
       var headers =
           new String[] {
@@ -418,5 +435,132 @@ public class CsvDownloadUtilityService {
                             }));
           });
     }
+  }
+
+  public File downloadProcessingTimeBuffersByOrgId(String orgId) throws IOException {
+    logger.debug("Processing download processing time buffers for orgId");
+    List<ProcessingTimeBufferResponse> responses =
+        processingTimeBuffersService.getProcessingTimeBuffers(orgId);
+
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile =
+        Files.createTempFile(
+            "download-processing-time-buffers" + new Date().getTime(), ".csv", attr);
+    try (var writer = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+      var header =
+          new String[] {
+            NODE_ID,
+            ORG_ID,
+            NODE_TYPE,
+            STREET,
+            CITY,
+            PROVINCE,
+            POSTAL_CODE,
+            SERVICE_OPTION,
+            BUFFER_HOURS,
+            BUFFER_START_DATE,
+            BUFFER_END_DATE,
+            STATUS
+          };
+      writeToCSV(header, writer);
+
+      writerProcessingTimeBufferDataToFile(writer, responses);
+      writer.flush();
+    }
+
+    return tempFile.toFile();
+  }
+
+  private void writerProcessingTimeBufferDataToFile(
+      CSVWriter writer, List<ProcessingTimeBufferResponse> responseList) {
+
+    responseList.forEach(
+        response -> {
+          if (response.getServiceOptions().isEmpty()
+              && response.getProcessingTimeBuffers().isEmpty()) {
+            List<String> csvData =
+                addNodeDetails(
+                    response.getNodeId(),
+                    response.getOrgId(),
+                    response.getNodeType(),
+                    response.getStreet(),
+                    response.getCity(),
+                    response.getProvince(),
+                    response.getPostalCode());
+            csvData.add(NA);
+            csvData.add(NA);
+            csvData.add(NA);
+            csvData.add(NA);
+            csvData.add(NA);
+            writeToCSV(csvData.toArray(new String[0]), writer);
+          } else {
+            response
+                .getProcessingTimeBuffers()
+                .forEach(
+                    processingTimeBuffer -> {
+                      List<String> csvData =
+                          addNodeDetails(
+                              response.getNodeId(),
+                              response.getOrgId(),
+                              response.getNodeType(),
+                              response.getStreet(),
+                              response.getCity(),
+                              response.getProvince(),
+                              response.getPostalCode());
+                      csvData.add(processingTimeBuffer.getServiceOption());
+                      csvData.add(checkForNullValues(processingTimeBuffer.getBufferHours()));
+                      csvData.add(
+                          checkForNullValues(
+                              convertToStringUTC(processingTimeBuffer.getBufferStartDate())));
+                      csvData.add(
+                          checkForNullValues(
+                              convertToStringUTC(processingTimeBuffer.getBufferEndDate())));
+                      csvData.add(checkForNullValues(processingTimeBuffer.getStatus()));
+                      writeToCSV(csvData.toArray(new String[0]), writer);
+                    });
+          }
+        });
+  }
+
+  private List<String> addNodeDetails(
+      String nodeId,
+      String orgId,
+      String nodeType,
+      String street,
+      String city,
+      String province,
+      String postalCode) {
+    List<String> csvData = new ArrayList<>();
+    csvData.add(nodeId);
+    csvData.add(orgId);
+    csvData.add(nodeType);
+    csvData.add(street);
+    csvData.add(city);
+    csvData.add(province);
+    csvData.add(postalCode);
+    return csvData;
+  }
+
+  private void writeToCSV(String[] data, CSVWriter writer) {
+    writer.writeNext(data);
+  }
+
+  private String checkForNullValues(Object value) {
+    return (value == null) ? NA : value.toString();
+  }
+
+  private String convertToStringUTC(Date value) {
+    if (value != null) {
+      return value.toInstant().toString();
+    }
+    return null;
+  }
+
+  private Set<PosixFilePermission> setFilePermissions() {
+    Set<PosixFilePermission> posixFilePermissions = new HashSet<>();
+    posixFilePermissions.add(PosixFilePermission.OWNER_READ);
+    posixFilePermissions.add(PosixFilePermission.OWNER_WRITE);
+    return posixFilePermissions;
   }
 }

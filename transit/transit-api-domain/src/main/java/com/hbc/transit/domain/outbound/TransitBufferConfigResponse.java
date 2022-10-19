@@ -34,4 +34,6 @@ public class TransitBufferConfigResponse implements Serializable {
 
   @JsonInclude(Include.NON_NULL)
   private Long parentRequestId;
+
+  private Long fileMetaDataId;
 }

@@ -1,4 +1,4 @@
-package com.hbc.jobs.dashboard.service;
+package com.hbc.jobs.framework.common.service;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
@@ -7,8 +7,8 @@ import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.hbc.common.exception.CommonServiceException;
-import com.hbc.jobs.dashboard.service.impl.aws.S3SignedUrlServiceImpl;
 import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
+import com.hbc.jobs.framework.common.service.impl.aws.S3SignedUrlServiceImpl;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.jupiter.api.Assertions;

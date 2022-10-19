@@ -17,6 +17,7 @@ import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -224,5 +225,21 @@ class CsvDownloadUtilityControllerTest {
         TestUtil.ORG_ID, request, response);
     verify(csvDownloadUtilityService, times(1))
         .downloadNodeCarrierServiceAndServiceOptionsDataCSV(anyString());
+  }
+
+  @Test
+  void downloadProcessingTimeBufferDataCSVTest() throws IOException {
+    File file = File.createTempFile("some-prefix", "some-ext");
+    file.deleteOnExit();
+    when(csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(any())).thenReturn(file);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+    Assertions.assertDoesNotThrow(
+        () ->
+            csvDownloadUtilityController.downloadProcessingTimeBufferDataCSV(
+                TestUtil.ORG_ID, response));
   }
 }

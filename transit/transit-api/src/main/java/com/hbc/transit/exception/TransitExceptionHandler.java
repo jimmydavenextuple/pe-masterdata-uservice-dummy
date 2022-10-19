@@ -35,4 +35,15 @@ public class TransitExceptionHandler {
                     FieldError.builder().rejectedValue(e.getExtReferenceId()).build())
                 .build());
   }
+
+  @ExceptionHandler(TransitBufferJobException.class)
+  public ResponseEntity<ErrorResponse> handleTransitBufferJobException(
+      TransitBufferJobException e) {
+    return ResponseEntity.badRequest()
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0xffffd1)
+                .message(e.getMessage())
+                .errorField("jobId", FieldError.builder().rejectedValue(e.getJobId()).build())
+                .build());
+  }
 }

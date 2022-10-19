@@ -58,6 +58,12 @@ public interface TransitFeign {
       @PathVariable String destinationGeozone,
       @RequestParam List<String> sourceGeozones);
 
+  @GetMapping("/transit/distinct/dFSA/{orgId}/{sourceGeozone}")
+  BaseResponse<List<String>> getDistinctDestinationGeoZones(
+      @PathVariable(name = "orgId") String orgId,
+      @PathVariable(name = "sourceGeozone") String sourceGeozone,
+      @RequestBody List<String> carrierServiceId);
+
   @GetMapping("/transit/transit-entries/{orgId}/{carrierServiceId}")
   BaseResponse<TransitTimeEntriesDto> getTransitTimeEntries(
       @PathVariable String orgId, @PathVariable String carrierServiceId);

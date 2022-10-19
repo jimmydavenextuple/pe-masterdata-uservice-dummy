@@ -19,53 +19,53 @@ public class FileMetadataTestUtil {
   public FileMetaDataEntity getFileMetadata() {
     return FileMetaDataEntity.builder()
         .id(Id)
-        .fileType(TYPE)
-        .fileName(NAME)
+        .type(TYPE)
+        .name(NAME)
         .storageType(STORAGE)
-        .fileSize(SIZE)
+        .size(SIZE)
         .description(DESC)
         .extReferenceId(EXTERNAL_REFERENCE)
-        .filePath(PATH)
+        .path(PATH)
         .parentFileId(PARENT_FIELD)
         .build();
   }
 
   public FileMetaDataCreationRequest getFileMetadataRequest() {
     return FileMetaDataCreationRequest.builder()
-        .fileType(TYPE)
+        .type(TYPE)
         .storageType(STORAGE)
         .size(SIZE)
-        .fileName(NAME)
+        .name(NAME)
         .description(DESC)
         .extReferenceId(EXTERNAL_REFERENCE)
-        .filePath(PATH)
+        .path(PATH)
         .parentFileId(PARENT_FIELD)
         .build();
   }
 
   public FileMetaDataUpdationRequest getFileMetadataUpdationRequest() {
     return FileMetaDataUpdationRequest.builder()
-        .fileType(TYPE)
+        .type(TYPE)
         .storageType(STORAGE)
         .size(SIZE)
-        .fileName(NAME)
+        .name(NAME)
         .description(DESC)
         .extReferenceId(EXTERNAL_REFERENCE)
         .parentFileId(PARENT_FIELD)
-        .filePath(PATH)
+        .path(PATH)
         .build();
   }
 
   public FileMetaDataResponse getFileMetadataResponse() {
     return FileMetaDataResponse.builder()
         .id(Id)
-        .fileType(TYPE)
+        .type(TYPE)
         .storageType(STORAGE)
-        .fileSize(SIZE)
-        .fileName(NAME)
+        .size(SIZE)
+        .name(NAME)
         .description(DESC)
         .extReferenceId(EXTERNAL_REFERENCE)
-        .filePath(PATH)
+        .path(PATH)
         .parentFileId(PARENT_FIELD)
         .build();
   }

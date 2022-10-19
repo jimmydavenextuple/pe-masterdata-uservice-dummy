@@ -8,13 +8,17 @@ import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
@@ -90,6 +94,24 @@ public class CsvDownloadUtilityController {
     response.setContentLength(csvContents.length());
     response.getOutputStream().write(csvContents.getBytes());
     response.flushBuffer();
+  }
+
+  @GetMapping(value = "/org/{orgId}/download/processing-time-buffers")
+  public void downloadProcessingTimeBufferDataCSV(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      HttpServletResponse response)
+      throws IOException {
+    log.debug("Inside download processing time buffers data as csv");
+    final var file = csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(orgId);
+    try (var inputStream = new FileInputStream(file)) {
+      response.setStatus(HttpStatus.OK.value());
+      response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+      response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+      IOUtils.copy(inputStream, response.getOutputStream());
+      response.flushBuffer();
+    } finally {
+      Files.delete(file.toPath());
+    }
   }
 
   @GetMapping(path = "/org/{orgId}/jobs/{jobId}/download")

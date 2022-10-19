@@ -14,13 +14,13 @@ public class FileMetaDataResponse implements Serializable {
 
   private long id;
 
-  private String fileName;
+  private String name;
 
-  private String filePath;
+  private String path;
 
-  private String fileSize;
+  private String size;
 
-  private String fileType;
+  private String type;
 
   private String storageType;
 

@@ -92,4 +92,6 @@ public class ItemCreationRequest implements Serializable {
   private DateTime lastModifiedDate;
 
   private Map<String, List<String>> inventoryNodeTypes;
+
+  private String itemBanner;
 }

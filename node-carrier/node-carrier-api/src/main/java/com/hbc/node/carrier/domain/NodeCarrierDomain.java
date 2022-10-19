@@ -189,4 +189,20 @@ public class NodeCarrierDomain {
           "Error while fetching node carrier list for nodeId and orgId", nodeId, orgId, null, null);
     }
   }
+
+  public List<NodeCarrierEntity> getAllNodeCarriersByOrgId(String orgId)
+      throws NodeCarrierDomainException {
+    try {
+      return nodeCarrierRepository.findByOrgIdAndCarrierServiceId(orgId, "");
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e), "Unable to find node carrier details by orgId and carrierServiceId");
+      throw new NodeCarrierDomainException(
+          "Error while fetching node carrier details for orgId and carrierServiceId",
+          null,
+          orgId,
+          "",
+          null);
+    }
+  }
 }

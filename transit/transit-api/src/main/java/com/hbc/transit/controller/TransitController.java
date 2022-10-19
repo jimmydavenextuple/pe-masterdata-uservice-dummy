@@ -14,7 +14,7 @@ import com.hbc.transit.service.TransitService;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,7 +168,7 @@ public class TransitController {
       @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
       @NotBlank(message = "destinationGeozone can't be empty") @PathVariable
           String destinationGeozone,
-      @NotNull @RequestParam List<String> sourceGeozones)
+      @NotEmpty @RequestParam List<String> sourceGeozones)
       throws TransitDomainException {
     logger.debug("Processing get transit details list");
     try {
@@ -183,6 +183,27 @@ public class TransitController {
               .build());
     } catch (Exception e) {
       logger.error("Failed to fetch transit details list");
+      throw e;
+    }
+  }
+
+  @GetMapping("/distinct/dFSA/{orgId}/{sourceGeozone}")
+  public ResponseEntity<BaseResponse<List<String>>> getDistinctDestinationGeoZones(
+      @NotBlank(message = "orgId can't be blank") @PathVariable String orgId,
+      @NotBlank(message = "sourceGeozone can't be empty") @PathVariable String sourceGeozone,
+      @NotEmpty(message = "carrier service id list can't be empty") @RequestBody
+          List<String> carrierServiceIds)
+      throws TransitDomainException {
+    logger.debug("Processing distinct destination geozone request");
+    try {
+      var transitResponse = transitService.getDistinctDFSA(orgId, sourceGeozone, carrierServiceIds);
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Fetched distinct list of destination geozones")
+              .payload(transitResponse)
+              .build());
+    } catch (Exception e) {
+      logger.error("Failed to fetch distinct destination geozones");
       throw e;
     }
   }

@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.base.PagePayload;
-import com.hbc.dataupload.domain.dto.ProcessingTimeBufferDto;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.dataupload.util.TestUtil;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.domain.feign.NodeFeign;
@@ -35,7 +35,7 @@ class ProcessingTimeBufferServiceTest {
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
 
-    PagePayload<ProcessingTimeBufferDto> response =
+    PagePayload<ProcessingTimeBufferResponse> response =
         processingTimeBufferService.getProcessingTimeBuffers(
             TestUtil.ORG_ID, 1, 1, "nodeId", "ASC");
 
@@ -60,7 +60,7 @@ class ProcessingTimeBufferServiceTest {
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
 
-    PagePayload<ProcessingTimeBufferDto> response =
+    PagePayload<ProcessingTimeBufferResponse> response =
         processingTimeBufferService.getProcessingTimeBuffers(
             TestUtil.ORG_ID, 1, 1, "nodeId", "ASC");
 
@@ -85,7 +85,7 @@ class ProcessingTimeBufferServiceTest {
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponseWithNullValues());
 
-    PagePayload<ProcessingTimeBufferDto> response =
+    PagePayload<ProcessingTimeBufferResponse> response =
         processingTimeBufferService.getProcessingTimeBuffers(
             TestUtil.ORG_ID, 1, 1, "nodeId", "ASC");
 
@@ -107,7 +107,7 @@ class ProcessingTimeBufferServiceTest {
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponseWithPartialNullValues());
 
-    PagePayload<ProcessingTimeBufferDto> response =
+    PagePayload<ProcessingTimeBufferResponse> response =
         processingTimeBufferService.getProcessingTimeBuffers(
             TestUtil.ORG_ID, 1, 1, "nodeId", "ASC");
 

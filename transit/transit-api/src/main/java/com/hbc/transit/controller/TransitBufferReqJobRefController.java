@@ -24,51 +24,51 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TransitBufferReqJobRefController {
 
-    private static final Logger logger = LoggerFactory.getLogger(TransitBufferReqJobRefController.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(TransitBufferReqJobRefController.class);
 
-    private final TransitBufferReqJobRefService transitBufferReqJobRefService;
+  private final TransitBufferReqJobRefService transitBufferReqJobRefService;
 
-    @PostMapping
-    public ResponseEntity<BaseResponse<TransitBufferReqJobRefResponse>> createTransitBufferReqJobRef(
-            @Valid @RequestBody TransitBufferReqJobRefRequest transitBufferReqJobRefRequest)
-            throws TransitBufferReqJobRefDomainException {
-        logger.debug("Processing transit buffer request job reference creation request");
-        try {
-            var response =
-                    transitBufferReqJobRefService.createTransitBufferReqJobRef(transitBufferReqJobRefRequest);
-            logger.info("Response after creation of transit buffer request job reference:");
-            return ResponseEntity.ok(
-                    BaseResponse.builder()
-                            .message("transit buffer request job reference created successfully")
-                            .payload(response)
-                            .build());
-        } catch (Exception e) {
-            logger.error("Failed to create transit buffer request job reference");
-            throw new TransitBufferReqJobRefDomainException(
-                    e.getMessage(),
-                    transitBufferReqJobRefRequest.getTransitBufferReqId(),
-                    transitBufferReqJobRefRequest.getExtReferenceId());
-        }
+  @PostMapping
+  public ResponseEntity<BaseResponse<TransitBufferReqJobRefResponse>> createTransitBufferReqJobRef(
+      @Valid @RequestBody TransitBufferReqJobRefRequest transitBufferReqJobRefRequest)
+      throws TransitBufferReqJobRefDomainException {
+    logger.debug("Processing transit buffer request job reference creation request");
+    try {
+      var response =
+          transitBufferReqJobRefService.createTransitBufferReqJobRef(transitBufferReqJobRefRequest);
+      logger.info("Response after creation of transit buffer request job reference:");
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("transit buffer request job reference created successfully")
+              .payload(response)
+              .build());
+    } catch (Exception e) {
+      logger.error("Failed to create transit buffer request job reference");
+      throw new TransitBufferReqJobRefDomainException(
+          e.getMessage(),
+          transitBufferReqJobRefRequest.getTransitBufferReqId(),
+          transitBufferReqJobRefRequest.getExtReferenceId());
     }
+  }
 
-    @GetMapping("/{extReferenceId}")
-    public ResponseEntity<BaseResponse<List<TransitBufferReqJobRefResponse>>> findTransitBufferReqJobRefByExtRefId(
-            @NotBlank @PathVariable("extReferenceId") String extReferenceId) throws TransitBufferReqJobRefDomainException {
-        try {
-            var response = transitBufferReqJobRefService
-                    .getTransitBufferReqJobRefByExtReferenceId(extReferenceId);
+  @GetMapping("/{extReferenceId}")
+  public ResponseEntity<BaseResponse<List<TransitBufferReqJobRefResponse>>>
+      findTransitBufferReqJobRefByExtRefId(
+          @NotBlank @PathVariable("extReferenceId") String extReferenceId)
+          throws TransitBufferReqJobRefDomainException {
+    try {
+      var response =
+          transitBufferReqJobRefService.getTransitBufferReqJobRefByExtReferenceId(extReferenceId);
 
-            return ResponseEntity.ok(
-                    BaseResponse.builder()
-                            .message("Transit buffer request job reference fetched successfully")
-                            .payload(response)
-                            .build());
-        } catch (Exception e) {
-            logger.error("Failed to get transit buffer request job reference");
-            throw new TransitBufferReqJobRefDomainException(
-                    e.getMessage(),
-                    null,
-                    extReferenceId);
-        }
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Transit buffer request job reference fetched successfully")
+              .payload(response)
+              .build());
+    } catch (Exception e) {
+      logger.error("Failed to get transit buffer request job reference");
+      throw new TransitBufferReqJobRefDomainException(e.getMessage(), null, extReferenceId);
     }
+  }
 }
