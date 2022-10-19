@@ -2,16 +2,20 @@ package com.hbc.csvdownload.common;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
 import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.base.PagePayload.Pagination;
+import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.dataupload.common.pojo.ActiveCombination;
+import com.hbc.dataupload.common.pojo.ProcessingTimeBuffer;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
@@ -20,6 +24,8 @@ import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +50,8 @@ public class TestUtil {
   public static final String PROVINCE = "QC";
   public static final String POSTAL_CODE = "J7H 1N8";
   public static final Double PROCESSING_TIME = 20.0;
+  private static final String NODE_ID_2 = "nodeId2";
+  private static final String SERVICE_OPTION_2 = "EXPRESS";
   public static final String processingLeadTimesCsvData =
       "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
           + "1554,BAY,SDND,2,U\n"
@@ -237,5 +245,87 @@ public class TestUtil {
     nodeCarrierServicePagePayload.setData(List.of(response));
 
     return nodeCarrierServicePagePayload;
+  }
+
+  public BaseResponse<PagePayload<ProcessingTimeBufferResponse>>
+      getBaseResponseOfProcessingTimeBuffers() {
+    return BaseResponse.builder()
+        .message("Processing time buffers fetched successfully")
+        .payload(getProcessingTimeBufferPagePayload(1))
+        .build();
+  }
+
+  public PagePayload<ProcessingTimeBufferResponse> getProcessingTimeBufferPagePayload(int pageNo) {
+    PagePayload<ProcessingTimeBufferResponse> processingTimeBufferDtoPagePayload =
+        new PagePayload<>();
+
+    ProcessingTimeBufferResponse processingTimeBufferResponse1 =
+        getProcessingTimeBufferResponse(NODE_ID);
+    ProcessingTimeBufferResponse processingTimeBufferResponse2 =
+        getProcessingTimeBufferResponse(NODE_ID_2);
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(2);
+    processingTimeBufferDtoPagePayload.setPagination(pagination);
+    processingTimeBufferDtoPagePayload.setData(
+        Arrays.asList(processingTimeBufferResponse1, processingTimeBufferResponse2));
+
+    return processingTimeBufferDtoPagePayload;
+  }
+
+  public ProcessingTimeBufferResponse getProcessingTimeBufferResponse(String nodeId) {
+    return ProcessingTimeBufferResponse.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .nodeType(NODE_TYPE)
+        .serviceOptions(List.of(SERVICE_OPTION, SERVICE_OPTION_2))
+        .processingTimeBuffers(
+            List.of(
+                getProcessingTimeBuffer(SERVICE_OPTION), getProcessingTimeBuffer(SERVICE_OPTION_2)))
+        .build();
+  }
+
+  private ProcessingTimeBuffer getProcessingTimeBuffer(String serviceOption) {
+    ProcessingTimeBuffer processingTimeBuffer = new ProcessingTimeBuffer();
+    processingTimeBuffer.setServiceOption(serviceOption);
+    processingTimeBuffer.setBufferHours(2.5);
+    processingTimeBuffer.setBufferStartDate(new Date(1000));
+    processingTimeBuffer.setBufferEndDate(new Date(1000));
+    processingTimeBuffer.setStatus("Inactive");
+    return processingTimeBuffer;
+  }
+
+  public ProcessingTimeBufferResponse getProcessingTimeBufferResponseEmptyValues(String nodeId) {
+    return ProcessingTimeBufferResponse.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .nodeType(NODE_TYPE)
+        .serviceOptions(new ArrayList<>())
+        .processingTimeBuffers(new ArrayList<>())
+        .build();
+  }
+
+  public ProcessingTimeBufferResponse getProcessingTimeBufferResponsePartialEmptyValues(
+      String nodeId) {
+    return ProcessingTimeBufferResponse.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .nodeType(NODE_TYPE)
+        .serviceOptions(new ArrayList<>())
+        .processingTimeBuffers(List.of(getProcessingTimeBufferWithNullValues(SERVICE_OPTION)))
+        .build();
+  }
+
+  private ProcessingTimeBuffer getProcessingTimeBufferWithNullValues(String serviceOption) {
+    ProcessingTimeBuffer processingTimeBuffer = new ProcessingTimeBuffer();
+    processingTimeBuffer.setServiceOption(serviceOption);
+    processingTimeBuffer.setBufferHours(2.5);
+    processingTimeBuffer.setBufferStartDate(null);
+    processingTimeBuffer.setBufferEndDate(null);
+    processingTimeBuffer.setStatus(null);
+    return processingTimeBuffer;
   }
 }

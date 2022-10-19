@@ -1,8 +1,8 @@
 package com.hbc.dataupload.service;
 
 import com.hbc.common.base.PagePayload;
-import com.hbc.dataupload.domain.dto.ProcessingTimeBufferDto;
-import com.hbc.dataupload.domain.pojo.ProcessingTimeBuffer;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
+import com.hbc.dataupload.common.pojo.ProcessingTimeBuffer;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.domain.dto.NodeDto;
@@ -24,10 +24,11 @@ public class ProcessingTimeBufferService {
   private final NodeFeign nodeFeign;
   private final NodeCarrierFeign nodeCarrierFeign;
 
-  public PagePayload<ProcessingTimeBufferDto> getProcessingTimeBuffers(
+  public PagePayload<ProcessingTimeBufferResponse> getProcessingTimeBuffers(
       String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder) {
-    PagePayload<ProcessingTimeBufferDto> processingTimeBufferDtoPagePayload = new PagePayload<>();
-    List<ProcessingTimeBufferDto> responseList = new ArrayList<>();
+    PagePayload<ProcessingTimeBufferResponse> processingTimeBufferDtoPagePayload =
+        new PagePayload<>();
+    List<ProcessingTimeBufferResponse> responseList = new ArrayList<>();
 
     PagePayload<NodeDto> nodeDtoPagePayload =
         nodeFeign.getNodeList(orgId, pageNo, pageSize, sortBy, sortOrder).getPayload();
@@ -50,9 +51,9 @@ public class ProcessingTimeBufferService {
     return processingTimeBufferDtoPagePayload;
   }
 
-  private ProcessingTimeBufferDto setProcessingTimeBuffers(
+  private ProcessingTimeBufferResponse setProcessingTimeBuffers(
       NodeDto nodeDto, List<NodeCarrierResponse> nodeCarrierResponses) {
-    return ProcessingTimeBufferDto.builder()
+    return ProcessingTimeBufferResponse.builder()
         .nodeId(nodeDto.getNodeId())
         .orgId(nodeDto.getOrgId())
         .nodeType(nodeDto.getNodeType())

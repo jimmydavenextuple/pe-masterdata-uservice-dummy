@@ -3,6 +3,7 @@ package com.hbc.dataupload.common.feign;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -23,4 +24,12 @@ public interface DataUploadFeign {
           @RequestParam(required = false) Integer pageSize,
           @RequestParam(required = false) String sortBy,
           @RequestParam(required = false) String sortOrder);
+
+  @GetMapping("/ui/processing-time-buffer/orgId/{orgId}")
+  BaseResponse<PagePayload<ProcessingTimeBufferResponse>> getProcessingTimeBufferDetails(
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
+      @RequestParam(required = false) Integer pageNo,
+      @RequestParam(required = false) Integer pageSize,
+      @RequestParam(required = false) String sortBy,
+      @RequestParam(required = false) String sortOrder);
 }
