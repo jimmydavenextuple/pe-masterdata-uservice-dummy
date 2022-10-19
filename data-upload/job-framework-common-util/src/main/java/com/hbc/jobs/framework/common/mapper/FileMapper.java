@@ -1,8 +1,8 @@
-package com.hbc.jobs.dashboard.domain.mapper;
+package com.hbc.jobs.framework.common.mapper;
 
 import com.amazonaws.services.s3.model.S3Object;
-import com.hbc.jobs.dashboard.domain.outbound.FileResponse;
-import com.hbc.jobs.dashboard.domain.outbound.FileResponse.FileResponseBuilder;
+import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
+import com.hbc.jobs.framework.common.domain.outbound.FileResponse.FileResponseBuilder;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

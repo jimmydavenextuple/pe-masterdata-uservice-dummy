@@ -1,4 +1,4 @@
-package com.hbc.jobs.dashboard.config.aws;
+package com.hbc.jobs.framework.common.config.aws;
 
 import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.EC2ContainerCredentialsProviderWrapper;
