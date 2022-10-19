@@ -1,6 +1,6 @@
-package com.hbc.dataupload.domain.dto;
+package com.hbc.dataupload.common.outbound;
 
-import com.hbc.dataupload.domain.pojo.ProcessingTimeBuffer;
+import com.hbc.dataupload.common.pojo.ProcessingTimeBuffer;
 import java.io.Serializable;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProcessingTimeBufferDto implements Serializable {
+public class ProcessingTimeBufferResponse implements Serializable {
   private static final long serialVersionUID = -1766230774577746452L;
 
   private String nodeId;

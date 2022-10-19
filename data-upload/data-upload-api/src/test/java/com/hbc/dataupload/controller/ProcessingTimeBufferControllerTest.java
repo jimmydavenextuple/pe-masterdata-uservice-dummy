@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
-import com.hbc.dataupload.domain.dto.ProcessingTimeBufferDto;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.dataupload.service.ProcessingTimeBufferService;
 import com.hbc.dataupload.util.TestUtil;
 import java.util.Optional;
@@ -37,7 +37,7 @@ class ProcessingTimeBufferControllerTest {
     when(processingTimeBufferService.getProcessingTimeBuffers(any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getProcessingTimeBufferPagePayload(2));
 
-    ResponseEntity<BaseResponse<PagePayload<ProcessingTimeBufferDto>>> response =
+    ResponseEntity<BaseResponse<PagePayload<ProcessingTimeBufferResponse>>> response =
         processingTimeBufferController.getProcessingTimeBufferDetails(
             TestUtil.ORG_ID,
             testUtil.getPageParams(
@@ -62,7 +62,7 @@ class ProcessingTimeBufferControllerTest {
     when(processingTimeBufferService.getProcessingTimeBuffers(any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getProcessingTimeBufferPagePayload(1));
 
-    ResponseEntity<BaseResponse<PagePayload<ProcessingTimeBufferDto>>> response =
+    ResponseEntity<BaseResponse<PagePayload<ProcessingTimeBufferResponse>>> response =
         processingTimeBufferController.getProcessingTimeBufferDetails(
             TestUtil.ORG_ID,
             testUtil.getPageParams(

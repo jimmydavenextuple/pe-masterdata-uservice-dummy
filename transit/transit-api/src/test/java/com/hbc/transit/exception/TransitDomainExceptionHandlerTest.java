@@ -54,4 +54,16 @@ class TransitDomainExceptionHandlerTest {
     Assertions.assertEquals(
         "Internal Server Error", errorResponseResponseEntity.getBody().getMessage());
   }
+
+  @Test
+  @DisplayName("Test for handling transit buffer job exception")
+  void handleTransitBufferJobException() {
+    TransitBufferJobException exception =
+        new TransitBufferJobException("Error", null, TestUtil.JOB_ID);
+
+    ResponseEntity<ErrorResponse> errorResponseResponseEntity =
+        transitExceptionHandler.handleTransitBufferJobException(exception);
+
+    Assertions.assertEquals("Error", errorResponseResponseEntity.getBody().getMessage());
+  }
 }

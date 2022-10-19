@@ -1,4 +1,4 @@
-package com.hbc.dataupload.domain.pojo;
+package com.hbc.dataupload.common.pojo;
 
 import java.io.Serializable;
 import java.util.Date;

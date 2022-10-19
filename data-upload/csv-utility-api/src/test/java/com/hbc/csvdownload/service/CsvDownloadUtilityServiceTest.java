@@ -18,6 +18,7 @@ import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.dataupload.common.feign.DataUploadFeign;
 import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
@@ -46,6 +47,7 @@ class CsvDownloadUtilityServiceTest {
 
   @Mock private CarrierService carrierService;
   @Mock private CalenderService calenderService;
+  @Mock private ProcessingTimeBuffersService processingTimeBuffersService;
   @InjectMocks private CsvDownloadUtilityService csvDownloadUtilityService;
   @InjectMocks private TestUtil testUtil;
 
@@ -339,5 +341,42 @@ class CsvDownloadUtilityServiceTest {
     nodeCarrierServicePagePayload.setData(List.of(response));
 
     return nodeCarrierServicePagePayload;
+  }
+
+  @Test
+  void downloadProcessingTimeBuffersByOrgIdTest() throws IOException {
+    List<ProcessingTimeBufferResponse> responseList =
+        List.of(testUtil.getProcessingTimeBufferResponse(TestUtil.NODE_ID));
+    when(processingTimeBuffersService.getProcessingTimeBuffers(any())).thenReturn(responseList);
+
+    File file = csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(TestUtil.ORG_ID);
+
+    Assertions.assertNotNull(file);
+    verify(processingTimeBuffersService, times(1)).getProcessingTimeBuffers(any());
+  }
+
+  @Test
+  void downloadProcessingTimeBuffersByOrgIdWithEmptyValuesTest() throws IOException {
+    List<ProcessingTimeBufferResponse> responseList =
+        List.of(testUtil.getProcessingTimeBufferResponseEmptyValues(TestUtil.NODE_ID));
+    when(processingTimeBuffersService.getProcessingTimeBuffers(any())).thenReturn(responseList);
+
+    File file = csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(TestUtil.ORG_ID);
+
+    Assertions.assertNotNull(file);
+    verify(processingTimeBuffersService, times(1)).getProcessingTimeBuffers(any());
+  }
+
+  @Test
+  void downloadProcessingTimeBuffersByOrgIdWithPartialEmptyValuesAndNullValuesTest()
+      throws IOException {
+    List<ProcessingTimeBufferResponse> responseList =
+        List.of(testUtil.getProcessingTimeBufferResponsePartialEmptyValues(TestUtil.NODE_ID));
+    when(processingTimeBuffersService.getProcessingTimeBuffers(any())).thenReturn(responseList);
+
+    File file = csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(TestUtil.ORG_ID);
+
+    Assertions.assertNotNull(file);
+    verify(processingTimeBuffersService, times(1)).getProcessingTimeBuffers(any());
   }
 }

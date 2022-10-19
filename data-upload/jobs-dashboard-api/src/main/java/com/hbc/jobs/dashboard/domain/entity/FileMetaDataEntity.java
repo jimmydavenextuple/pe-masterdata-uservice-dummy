@@ -22,20 +22,20 @@ public class FileMetaDataEntity extends CommonBaseEntity {
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "file_name")
-  private String fileName;
+  @Column(name = "name")
+  private String name;
 
-  @Column(name = "file_path")
-  private String filePath;
+  @Column(name = "path")
+  private String path;
 
-  @Column(name = "file_size")
-  private String fileSize;
+  @Column(name = "size")
+  private String size;
 
   @Column(name = "storage_type")
   private String storageType;
 
-  @Column(name = "file_type")
-  private String fileType;
+  @Column(name = "type")
+  private String type;
 
   @Column(name = "description")
   private String description;

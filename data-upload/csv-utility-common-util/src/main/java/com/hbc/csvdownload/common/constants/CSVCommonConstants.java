@@ -32,8 +32,11 @@ public class CSVCommonConstants {
   public static final String LATITUDE = "latitude";
   public static final String LONGITUDE = "longitude";
   public static final String TIMEZONE = "timezone";
+  public static final String BUFFER_START_DATE = "bufferStartDate";
+  public static final String BUFFER_END_DATE = "bufferEndDate";
 
   public static final String PROCESSING_LEAD_TIME = "processingLeadTime";
-
+  public static final String NODE_TYPE = "nodeType";
+  public static final String BUFFER_HOURS = "bufferHours";
   public static final String ERROR_MESSAGE = "errorMessage";
 }

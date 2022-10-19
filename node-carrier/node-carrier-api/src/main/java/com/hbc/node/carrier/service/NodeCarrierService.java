@@ -448,4 +448,12 @@ public class NodeCarrierService {
             .filter(x -> !ObjectUtils.isEmpty(x.getCarrierServiceId()))
             .collect(Collectors.toList()));
   }
+
+  public List<NodeCarrierResponse> getAllNodeCarrierByOrgId(String orgId)
+      throws NodeCarrierDomainException {
+    List<NodeCarrierEntity> nodeCarrierEntityList =
+        nodeCarrierDomain.getAllNodeCarriersByOrgId(orgId);
+
+    return INSTANCE.toNodeCarrierResponseList(nodeCarrierEntityList);
+  }
 }
