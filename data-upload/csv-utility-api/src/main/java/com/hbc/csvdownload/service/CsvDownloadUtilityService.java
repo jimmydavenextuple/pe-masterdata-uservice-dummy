@@ -350,7 +350,11 @@ public class CsvDownloadUtilityService {
         dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
             orgId, null, noOfRecordsPerPage, null, null);
     /** Create a temporary file to write the data */
-    Path tempFile = Files.createTempFile("download-node-carrierService-serviceOption", ".csv");
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile =
+        Files.createTempFile(
+            "download-node-carrierService-serviceOption" + new Date().getTime(), ".csv", attr);
     try (var csvWriter = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
       var headers =
           new String[] {
@@ -438,11 +442,8 @@ public class CsvDownloadUtilityService {
     List<ProcessingTimeBufferResponse> responses =
         processingTimeBuffersService.getProcessingTimeBuffers(orgId);
 
-    Set<PosixFilePermission> posixFilePermissions = new HashSet<>();
-    posixFilePermissions.add(PosixFilePermission.OWNER_READ);
-    posixFilePermissions.add(PosixFilePermission.OWNER_WRITE);
     FileAttribute<Set<PosixFilePermission>> attr =
-        PosixFilePermissions.asFileAttribute(posixFilePermissions);
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
     Path tempFile =
         Files.createTempFile(
             "download-processing-time-buffers" + new Date().getTime(), ".csv", attr);
@@ -555,5 +556,12 @@ public class CsvDownloadUtilityService {
       return value.toInstant().toString();
     }
     return null;
+  }
+
+  private Set<PosixFilePermission> setFilePermissions() {
+    Set<PosixFilePermission> posixFilePermissions = new HashSet<>();
+    posixFilePermissions.add(PosixFilePermission.OWNER_READ);
+    posixFilePermissions.add(PosixFilePermission.OWNER_WRITE);
+    return posixFilePermissions;
   }
 }
