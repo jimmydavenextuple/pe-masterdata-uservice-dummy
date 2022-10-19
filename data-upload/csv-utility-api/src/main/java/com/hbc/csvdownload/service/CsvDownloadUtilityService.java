@@ -509,8 +509,7 @@ public class CsvDownloadUtilityService {
                               response.getProvince(),
                               response.getPostalCode());
                       csvData.add(processingTimeBuffer.getServiceOption());
-                      csvData.add(
-                          checkForNullValues(processingTimeBuffer.getBufferHours().toString()));
+                      csvData.add(checkForNullValues(processingTimeBuffer.getBufferHours()));
                       csvData.add(
                           checkForNullValues(
                               convertToStringUTC(processingTimeBuffer.getBufferStartDate())));
