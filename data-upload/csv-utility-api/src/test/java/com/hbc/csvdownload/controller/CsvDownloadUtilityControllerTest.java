@@ -12,6 +12,7 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
+import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
@@ -177,8 +178,7 @@ class CsvDownloadUtilityControllerTest {
   }
 
   @Test
-  void downloadMarketRegionDataCSVTest()
-      throws IOException, PostalCodeTimezoneServiceException, CsvDownloadUtilityServiceException {
+  void downloadMarketRegionDataCSVTest() throws IOException, PostalCodeTimezoneServiceException {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     String marketRegionTemplate = TemplateTypes.getTemplateData("marketRegion");
@@ -225,6 +225,29 @@ class CsvDownloadUtilityControllerTest {
         TestUtil.ORG_ID, request, response);
     verify(csvDownloadUtilityService, times(1))
         .downloadNodeCarrierServiceAndServiceOptionsDataCSV(anyString());
+  }
+
+  @Test
+  void downloadCarrierServiceCSVTest() throws IOException, CarrierServiceException {
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+
+    String CARRIER_SERVICE =
+        "   carrierServiceId,orgId,carrierName,carrierId,serviceName,status,carrierServiceWorkingCalendar\n"
+            + " ALL-EXPRESS,BAY,ALL,01,service-1-name,INACTIVE,C002\n"
+            + " ALL-EXPRESS,BAY,ALL,01,service-1-name,INACTIVE,C001\n";
+    File file = File.createTempFile(CARRIER_SERVICE, "");
+    file.deleteOnExit();
+    when(csvDownloadUtilityService.downloadCarrierServiceDataCSV(anyString())).thenReturn(file);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+    Assertions.assertDoesNotThrow(
+        () ->
+            csvDownloadUtilityController.downloadCarrierServiceCSV(
+                TestUtil.ORG_ID, request, response));
   }
 
   @Test

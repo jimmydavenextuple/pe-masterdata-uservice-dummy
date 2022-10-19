@@ -4,6 +4,7 @@ import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.feign.TransitFeign;
 import com.hbc.transit.domain.inbound.TransitDetailsRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -36,6 +37,20 @@ public class TransitService {
           "Transit details does not exist for given orgId, carrierServiceId and destinationGeoZones");
       throw new TransitServiceException(
           "Transit details does not exist for given orgId, carrierServiceId and destinationGeoZones",
+          orgId,
+          carrierServiceId);
+    }
+  }
+
+  public TransitTimeEntriesDto getTransitTimeEntries(String orgId, String carrierServiceId)
+      throws TransitServiceException {
+    try {
+      BaseResponse<TransitTimeEntriesDto> response =
+          transitFeign.getTransitTimeEntries(orgId, carrierServiceId);
+      return response.getPayload();
+    } catch (Exception e) {
+      throw new TransitServiceException(
+          "Transit details does not exist for given orgId and carrierServiceId  ",
           orgId,
           carrierServiceId);
     }
