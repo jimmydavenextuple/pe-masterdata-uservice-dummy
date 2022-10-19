@@ -40,6 +40,9 @@ storage:
 node-carrier-service-page-properties:
   sortBy: nodeId
   sortOrder: ASC
+transit-time-buffer-page-properties:
+  sortBy: carrierServiceId
+  sortOrder: DESC
 management:
   endpoints:
     web:

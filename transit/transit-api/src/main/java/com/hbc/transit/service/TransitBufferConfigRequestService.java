@@ -111,4 +111,21 @@ public class TransitBufferConfigRequestService {
           "Unable to fetch transit buffer requests", HttpStatus.BAD_REQUEST, 0x1772, errorMap);
     }
   }
+
+  public TransitBufferConfigRequestEntity getTransitBufferRequest(Long id)
+      throws CommonServiceException {
+
+    Optional<TransitBufferConfigRequestEntity> transitBufferConfigRequestEntity =
+        transitBufferConfigRepository.findById(id);
+
+    if (transitBufferConfigRequestEntity.isEmpty()) {
+      logger.error(TRANSIT_BUFFER_CONFIG_REQUEST_EXCEPTION_MESSAGE);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          TRANSIT_BUFFER_CONFIG_REQUEST_ID, FieldError.builder().rejectedValue(id).build());
+      throw new CommonServiceException(
+          TRANSIT_BUFFER_CONFIG_REQUEST_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
+    }
+    return transitBufferConfigRequestEntity.get();
+  }
 }

@@ -56,6 +56,7 @@ import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
 import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
+import com.hbc.dataupload.common.outbound.TransitBufferDetailsResponse;
 import com.hbc.dataupload.common.pojo.ActiveCombination;
 import com.hbc.dataupload.common.pojo.ProcessingTimeBuffer;
 import com.hbc.dataupload.domain.dto.CalendarDto;
@@ -76,6 +77,7 @@ import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
+import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import java.util.ArrayList;
@@ -107,7 +109,7 @@ public class TestUtil {
   public static String SOURCE_GEOZONE = "SGZ";
   public static String DESTINATION_GEOZONE = "DGZ";
   public static Float TRANSIT_DAYS = 1F;
-  private static final String CARRIER_ID_2 = "Carrier_Id_2";
+  public static final String CARRIER_ID_2 = "Carrier_Id_2";
 
   private static final String BUFFER_START_DATE = "startTime";
   public static final String KEY = "key";
@@ -1111,5 +1113,46 @@ public class TestUtil {
             Arrays.asList(
                 getNodeCarrierResponse2(SERVICE_OPTION, 5.5, null, getBufferDate(2023, 11, 20))))
         .build();
+  }
+
+  public TransitBufferDetailsResponse getTransitBufferDetailsResponse() {
+    return TransitBufferDetailsResponse.builder()
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .orgId(ORG_ID)
+        .hasTransitBuffer(true)
+        .build();
+  }
+
+  public PagePayload<TransitBufferDetailsResponse> getTransitBufferDetailsResponsePagePayload(
+      int pageNo) {
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(2);
+
+    PagePayload<TransitBufferDetailsResponse> payload = new PagePayload<>();
+    payload.setData(List.of(getTransitBufferDetailsResponse()));
+    payload.setPagination(pagination);
+
+    return payload;
+  }
+
+  public PagePayload<CarrierServiceResponse> getCarrierServiceResponsePagePayload(int pageNo) {
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(2);
+
+    PagePayload<CarrierServiceResponse> payload = new PagePayload<>();
+    payload.setData(List.of(getCarrierResponse(), getCarrierResponse2()));
+    payload.setPagination(pagination);
+
+    return payload;
+  }
+
+  public TransitBufferConfigResponse getTransitBufferConfigResponse(String carrierServiceId) {
+    return TransitBufferConfigResponse.builder().carrierServiceId(carrierServiceId).build();
   }
 }
