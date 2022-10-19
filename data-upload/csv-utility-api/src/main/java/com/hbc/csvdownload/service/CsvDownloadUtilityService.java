@@ -42,6 +42,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -435,7 +438,14 @@ public class CsvDownloadUtilityService {
     List<ProcessingTimeBufferResponse> responses =
         processingTimeBuffersService.getProcessingTimeBuffers(orgId);
 
-    Path tempFile = Files.createTempFile("download-processing-time-buffers", ".csv");
+    Set<PosixFilePermission> posixFilePermissions = new HashSet<>();
+    posixFilePermissions.add(PosixFilePermission.OWNER_READ);
+    posixFilePermissions.add(PosixFilePermission.OWNER_WRITE);
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(posixFilePermissions);
+    Path tempFile =
+        Files.createTempFile(
+            "download-processing-time-buffers" + new Date().getTime(), ".csv", attr);
     try (var writer = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
       var header =
           new String[] {
