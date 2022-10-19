@@ -1,6 +1,9 @@
 package com.hbc.csvdownload.service;
 
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ACTIVE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_END_DATE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_HOURS;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_START_DATE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_ID;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_NAME;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_SERVICES;
@@ -12,6 +15,7 @@ import static com.hbc.csvdownload.common.constants.CSVCommonConstants.INACTIVE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.LATITUDE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.LONGITUDE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_ID;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_TYPE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ORG_ID;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.POSTAL_CODE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.POSTAL_CODE_PREFIX;
@@ -25,20 +29,6 @@ import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STATUS;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STREET;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.TIMEZONE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.WORKING_CALENDER;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_END_DATE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_HOURS;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_START_DATE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_SERVICES;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CITY;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_ID;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_TYPE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ORG_ID;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.POSTAL_CODE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.PROVINCE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OPTION;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OPTIONS;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STATUS;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STREET;
 
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
@@ -116,8 +106,10 @@ public class CsvDownloadUtilityService {
       throws IOException, CarrierServiceException {
 
     List<CarrierServiceResponse> carrierServiceResponses = carrierService.getCarrierService(orgId);
-
-    Path tempFile = Files.createTempFile("download-carrierService" + new Date().getTime(), ".csv");
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile =
+        Files.createTempFile("download-carrierService" + new Date().getTime(), ".csv", attr);
 
     try (var csvWriter = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
 
