@@ -38,6 +38,5 @@ public class CSVCommonConstants {
   public static final String PROCESSING_LEAD_TIME = "processingLeadTime";
   public static final String NODE_TYPE = "nodeType";
   public static final String BUFFER_HOURS = "bufferHours";
-
   public static final String ERROR_MESSAGE = "errorMessage";
 }

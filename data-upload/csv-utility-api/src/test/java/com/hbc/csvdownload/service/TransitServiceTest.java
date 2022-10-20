@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.feign.TransitFeign;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Collections;
@@ -72,5 +73,25 @@ class TransitServiceTest {
     Assertions.assertNotNull(exception);
     verify(transitFeign, times(1))
         .getTransitTimeDetailsForDestinationGeoZonesList(any(), any(), any());
+  }
+
+  @Test
+  void gTransitTimeEntriesDto() throws TransitServiceException {
+    when(transitFeign.getTransitTimeEntries(anyString(), anyString()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getTransitTimeEntriesDto()).build());
+    TransitTimeEntriesDto transitResponses =
+        transitService.getTransitTimeEntries(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+    Assertions.assertNotNull(transitResponses);
+    verify(transitFeign, times(1)).getTransitTimeEntries(any(), any());
+  }
+
+  @Test
+  void getTransitDetailsForCarrierServiceIdTestException() {
+    when(transitFeign.getTransitTimeEntries(anyString(), anyString()))
+        .thenThrow(new RuntimeException());
+    Assertions.assertThrows(
+        TransitServiceException.class,
+        () -> transitService.getTransitTimeEntries(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+    verify(transitFeign, times(1)).getTransitTimeEntries(any(), any());
   }
 }

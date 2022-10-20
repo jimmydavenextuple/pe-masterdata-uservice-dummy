@@ -1,20 +1,37 @@
 package com.hbc.csvdownload.service;
 
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ACTIVE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_END_DATE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_HOURS;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_START_DATE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_ID;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_NAME;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_SERVICES;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_SERVICE_ID;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CITY;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.COUNTRY;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ERROR_MESSAGE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.INACTIVE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.LATITUDE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.LONGITUDE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_ID;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_TYPE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ORG_ID;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.POSTAL_CODE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.PROCESSING_LEAD_TIME;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.PROVINCE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_NAME;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OPTION;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OPTIONS;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STATE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STATUS;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STREET;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.TIMEZONE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.WORKING_CALENDER;
 
+import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
@@ -25,6 +42,7 @@ import com.hbc.csvdownload.domain.mapper.TransitDataRequestMapper;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorNodeCarrier;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.TransitDataErrorLogsPojo;
+import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
@@ -34,6 +52,7 @@ import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
 import com.opencsv.CSVWriter;
@@ -67,11 +86,14 @@ import org.springframework.util.ObjectUtils;
 @RequiredArgsConstructor
 public class CsvDownloadUtilityService {
 
+  private static final TransitDataRequestMapper INSTANCE =
+      Mappers.getMapper(TransitDataRequestMapper.class);
   private final Logger logger = LoggerFactory.getLogger(CsvDownloadUtilityService.class);
-
   private final PostalCodeTimeZoneService postalCodeTimeZoneService;
   private final TransitService transitService;
   private final DataUploadFeign dataUploadFeign;
+  private final CarrierService carrierService;
+  private final CalenderService calenderService;
   private final JobsDashboardService jobsDashboardService;
   private final JobsConsumerService jobsConsumerService;
   private final ProcessingTimeBuffersService processingTimeBuffersService;
@@ -80,8 +102,73 @@ public class CsvDownloadUtilityService {
   @Value("${download-page-size.node-carrier-service-options}")
   private Integer noOfRecordsPerPage;
 
-  private static final TransitDataRequestMapper INSTANCE =
-      Mappers.getMapper(TransitDataRequestMapper.class);
+  public File downloadCarrierServiceDataCSV(String orgId)
+      throws IOException, CarrierServiceException {
+
+    List<CarrierServiceResponse> carrierServiceResponses = carrierService.getCarrierService(orgId);
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile =
+        Files.createTempFile("download-carrierService" + new Date().getTime(), ".csv", attr);
+
+    try (var csvWriter = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+
+      var headers =
+          new String[] {
+            CARRIER_SERVICE_ID,
+            ORG_ID,
+            CARRIER_NAME,
+            CARRIER_ID,
+            SERVICE_NAME,
+            STATUS,
+            WORKING_CALENDER
+          };
+      csvWriter.writeNext(headers);
+      for (CarrierServiceResponse carrierServiceResponse : carrierServiceResponses) {
+        String carrierServiceId = carrierServiceResponse.getCarrierServiceId();
+        List<String> calenderIds = new ArrayList<>();
+        List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses = new ArrayList<>();
+        getCalenderIds(orgId, carrierServiceId, calenderIds, carrierServiceCalendarResponses);
+        var transitTimeEntriesDto = new TransitTimeEntriesDto();
+
+        try {
+          transitTimeEntriesDto = transitService.getTransitTimeEntries(orgId, carrierServiceId);
+        } catch (TransitServiceException e) {
+          transitTimeEntriesDto.setTotalRecords(0);
+          logger.debug("No transit entries found");
+        }
+
+        String status =
+            (!carrierServiceCalendarResponses.isEmpty()
+                    && transitTimeEntriesDto.getTotalRecords() > 0)
+                ? ACTIVE
+                : INACTIVE;
+        writeDataOntoFile(csvWriter, orgId, carrierServiceResponse, status, calenderIds);
+        csvWriter.flush();
+      }
+    }
+    return tempFile.toFile();
+  }
+
+  private void getCalenderIds(
+      String orgId,
+      String carrierServiceId,
+      List<String> calenderIds,
+      List<CarrierServiceCalendarResponse> serviceCalendarResponses) {
+    try {
+
+      serviceCalendarResponses.addAll(
+          calenderService.getCarrierServiceCalender(orgId, carrierServiceId));
+
+      calenderIds.addAll(
+          serviceCalendarResponses.stream()
+              .map(CarrierServiceCalendarResponse::getCalendarId)
+              .collect(Collectors.toSet()));
+
+    } catch (Exception e) {
+      logger.error("Empty Carrier Service Calendar Response List");
+    }
+  }
 
   public String downloadTransitTimesForSourceAndDestinationRegion(
       String orgId, String carrierServiceId, String sourceRegion, String destinationRegion)
@@ -149,16 +236,6 @@ public class CsvDownloadUtilityService {
     return String.join("\n", csvContents, rows);
   }
 
-  private static String constructCsvRows(
-      Map<String, Map<String, Float>> transitTimesDataMap, String destinationFsa) {
-    var sourceFsaAndTransitTimesMap = transitTimesDataMap.get(destinationFsa);
-    String transitTimes =
-        sourceFsaAndTransitTimesMap.keySet().stream()
-            .map(sourceFsa -> String.valueOf(sourceFsaAndTransitTimesMap.get(sourceFsa)))
-            .collect(Collectors.joining(","));
-    return String.join(",", destinationFsa, transitTimes);
-  }
-
   public String downloadLogsAsCsv(String jobId, String orgId, Optional<String> status)
       throws CommonServiceException {
     logger.debug("Processing download transit time and processing lead time");
@@ -185,7 +262,7 @@ public class CsvDownloadUtilityService {
 
   private String downloadProcessingLeadTimeErrorLogs(List<RecordStatusDto> recordStatusDtoList) {
     var header =
-        String.join(",", "nodeId", "orgId", "serviceOption", "processingLeadTime", "errorMessage");
+        String.join(",", NODE_ID, ORG_ID, SERVICE_OPTION, PROCESSING_LEAD_TIME, ERROR_MESSAGE);
     String rows =
         recordStatusDtoList.stream()
             .map(this::constructRowContent)
@@ -309,15 +386,7 @@ public class CsvDownloadUtilityService {
         postalCodeTimeZoneService.getPostalCodeTimeZoneByOrgIdAndCountry(orgId, country);
     var header =
         String.join(
-            ",",
-            "orgId",
-            "postalCodePrefix",
-            "country",
-            "state",
-            "city",
-            "latitude",
-            "longitude",
-            "timeZone");
+            ",", ORG_ID, POSTAL_CODE_PREFIX, COUNTRY, STATE, CITY, LATITUDE, LONGITUDE, TIMEZONE);
     var rows =
         postalCodeTimezoneDtoList.stream().map(this::createRow).collect(Collectors.joining("\n"));
 
@@ -340,6 +409,37 @@ public class CsvDownloadUtilityService {
         + dto.getLongitude()
         + ","
         + dto.getTimeZone();
+  }
+
+  private String constructCsvRows(
+      Map<String, Map<String, Float>> transitTimesDataMap, String destinationFsa) {
+    var sourceFsaAndTransitTimesMap = transitTimesDataMap.get(destinationFsa);
+    String transitTimes =
+        sourceFsaAndTransitTimesMap.keySet().stream()
+            .map(sourceFsa -> String.valueOf(sourceFsaAndTransitTimesMap.get(sourceFsa)))
+            .collect(Collectors.joining(","));
+    return String.join(",", destinationFsa, transitTimes);
+  }
+
+  private void writeDataOntoFile(
+      CSVWriter csvWriter,
+      String orgId,
+      CarrierServiceResponse carrierServiceResponse,
+      String status,
+      List<String> calenderIds) {
+
+    calenderIds.forEach(
+        calenderId ->
+            csvWriter.writeNext(
+                new String[] {
+                  carrierServiceResponse.getCarrierServiceId(),
+                  orgId,
+                  carrierServiceResponse.getCarrierName(),
+                  carrierServiceResponse.getCarrierId(),
+                  carrierServiceResponse.getServiceName(),
+                  status,
+                  calenderId
+                }));
   }
 
   public DownloadNodeCarrierServiceAndServiceOptionPojo
@@ -509,8 +609,7 @@ public class CsvDownloadUtilityService {
                               response.getProvince(),
                               response.getPostalCode());
                       csvData.add(processingTimeBuffer.getServiceOption());
-                      csvData.add(
-                          checkForNullValues(processingTimeBuffer.getBufferHours().toString()));
+                      csvData.add(checkForNullValues(processingTimeBuffer.getBufferHours()));
                       csvData.add(
                           checkForNullValues(
                               convertToStringUTC(processingTimeBuffer.getBufferStartDate())));

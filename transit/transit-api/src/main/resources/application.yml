@@ -20,6 +20,12 @@ server:
       min-spare: 50
       max: 200
 
+aws:
+  s3:
+    signed-url-expiry-minutes: 30
+storage:
+  type: S3
+
 logging:
   level:
     org.springframework: WARN

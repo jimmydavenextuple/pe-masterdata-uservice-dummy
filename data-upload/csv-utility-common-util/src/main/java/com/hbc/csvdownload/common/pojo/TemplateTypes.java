@@ -41,6 +41,13 @@ public class TemplateTypes {
           + "BAY,A0H,CA,NL,Badger,48.4864765,-54.7871645,America/St_Johns\n"
           + "BAY,A0J,CA,NL,Kings Point,49.355415,-55.5265845,America/St_Johns\n"
           + "BAY,A0K,CA,NL,Baie Verte,50.6864055,-56.432805,America/St_Johns";
+  private static final String CARRIER_SERVICE =
+      "orgId,carrierId,carrierName,carrierServiceId,serviceName,serviceOptions\n"
+          + "BAY,GoFor,GoFor,GoFor-SDND,GoFor,SDND\n"
+          + "BAY,TFORCE,TForce,TFORCE-NEXTDAY,TForce NextDay Guaranteed,NEXTDAY\n"
+          + "BAY,CanadaPost,Canada Post,CanadaPost-STANDARD,Canada Post Expedited Parcel,STANDARD\n"
+          + "BAY,CanadaPost,Canada Post,CanadaPost-EXPRESS,Canada Post Xpresspost,EXPRESS\n"
+          + "BAY,UPSN,UPS,UPSN-STANDARD,UPS Standard,STANDARD\n";
 
   public static String getTemplateData(String templateType) {
     switch (templateType) {
@@ -50,6 +57,9 @@ public class TemplateTypes {
         return PROCESSING_LEAD_TIME;
       case "marketRegion":
         return MARKET_REGION;
+
+      case "carrierService":
+        return CARRIER_SERVICE;
       default:
         return "";
     }

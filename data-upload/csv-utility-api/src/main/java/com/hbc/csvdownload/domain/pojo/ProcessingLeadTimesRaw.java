@@ -1,6 +1,10 @@
 package com.hbc.csvdownload.domain.pojo;
 
-import static com.hbc.common.constants.CommonConstants.*;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ACTION_TYPE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_ID;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ORG_ID;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.PROCESSING_TIME;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OPTIONS;
 
 import com.opencsv.bean.CsvBindByName;
 import javax.validation.constraints.NotBlank;
@@ -22,7 +26,7 @@ public class ProcessingLeadTimesRaw {
   @CsvBindByName(column = ORG_ID)
   private String orgId;
 
-  @CsvBindByName(column = SERVICE_OPTION)
+  @CsvBindByName(column = SERVICE_OPTIONS)
   private String serviceOption;
 
   @CsvBindByName(column = PROCESSING_TIME)
@@ -36,6 +40,6 @@ public class ProcessingLeadTimesRaw {
   private String carrierServiceId = "";
 
   public static String[] columnHeadersArray() {
-    return new String[] {NODE_ID, ORG_ID, SERVICE_OPTION, PROCESSING_TIME, ACTION_TYPE};
+    return new String[] {NODE_ID, ORG_ID, SERVICE_OPTIONS, PROCESSING_TIME, ACTION_TYPE};
   }
 }
