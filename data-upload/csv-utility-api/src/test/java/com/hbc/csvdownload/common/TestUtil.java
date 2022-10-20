@@ -61,6 +61,11 @@ public class TestUtil {
   public static final Double PROCESSING_TIME = 20.0;
   private static final String NODE_ID_2 = "nodeId2";
   private static final String SERVICE_OPTION_2 = "EXPRESS";
+  public static final String templateType = "nodeCarrier";
+
+  public static final String templateTypeInvalid = "invalid";
+
+  public static final String invalidTemplateTypeErrMsg = "Invalid template type";
   public static final String processingLeadTimesCsvData =
       "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
           + "1554,BAY,SDND,2,U\n"
@@ -71,6 +76,15 @@ public class TestUtil {
           + "1601,BAY,EXPRESS,22.55,U\n"
           + "1125,BAY,EXPRESS,19.90,D\n"
           + "1114,BAY,SDND,24.97,U";
+
+  public static final String nodeCarrierCsvData =
+      "orgId,carrierId,carrierName,carrierServiceId,serviceName,serviceOptions"
+          + "\n"
+          + "BAY,GoFor,GoFor,GoFor-SDND,GoFor,SDND\n"
+          + "BAY,TFORCE,TForce,TFORCE-NEXTDAY,TForce NextDay Guaranteed,NEXTDAY\n"
+          + "BAY,CanadaPost,Canada Post,CanadaPost-STANDARD,Canada Post Expedited Parcel,STANDARD\n"
+          + "BAY,CanadaPost,Canada Post,CanadaPost-EXPRESS,Canada Post Xpresspost,EXPRESS\n"
+          + "BAY,UPSN,UPS,UPSN-STANDARD,UPS Standard,STANDARD";
 
   public static final Optional<String> STATUS = Optional.empty();
 

@@ -18,8 +18,11 @@ import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
+import com.hbc.csvdownload.service.DownloadTemplateService;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,6 +43,7 @@ import org.springframework.http.HttpStatus;
 class CsvDownloadUtilityControllerTest {
 
   @Mock private CsvDownloadUtilityService csvDownloadUtilityService;
+  @Mock private DownloadTemplateService downloadTemplateService;
 
   @InjectMocks private CsvDownloadUtilityController csvDownloadUtilityController;
 
@@ -264,5 +268,52 @@ class CsvDownloadUtilityControllerTest {
         () ->
             csvDownloadUtilityController.downloadProcessingTimeBufferDataCSV(
                 TestUtil.ORG_ID, response));
+  }
+
+  @Test
+  void downloadTemplateByFile() throws Exception {
+
+    var is = new ByteArrayInputStream(TestUtil.nodeCarrierCsvData.getBytes(StandardCharsets.UTF_8));
+
+    when(downloadTemplateService.getTemplateData(any())).thenReturn(is);
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    csvDownloadUtilityController.downloadCSVTemplateFromFile(
+        TestUtil.templateType, request, response);
+
+    verify(downloadTemplateService, times(1)).getTemplateData(anyString());
+
+    Assertions.assertDoesNotThrow(
+        () ->
+            csvDownloadUtilityController.downloadCSVTemplateFromFile(
+                TestUtil.templateType, request, response));
+  }
+
+  @Test
+  void downloadTemplateByFileError() throws Exception {
+    when(downloadTemplateService.getTemplateData(any()))
+        .thenThrow(
+            new InvalidTemplateTypeException(
+                TestUtil.invalidTemplateTypeErrMsg, TestUtil.templateTypeInvalid));
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    Exception exception =
+        Assertions.assertThrows(
+            InvalidTemplateTypeException.class,
+            () ->
+                csvDownloadUtilityController.downloadCSVTemplateFromFile(
+                    TestUtil.templateTypeInvalid, request, response));
+
+    Assertions.assertNotNull(exception);
+
+    verify(downloadTemplateService, times(1)).getTemplateData(anyString());
   }
 }
