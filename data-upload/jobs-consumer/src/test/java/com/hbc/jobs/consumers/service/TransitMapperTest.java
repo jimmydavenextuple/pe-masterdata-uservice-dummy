@@ -9,6 +9,8 @@ import com.hbc.csvdownload.exception.CsvDataValidationException;
 import com.hbc.jobs.consumers.common.TestUtil;
 import com.hbc.jobs.consumers.exception.TransitMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.TransitBufferUpload;
+import com.hbc.transit.domain.feign.TransitBufferFeign;
 import com.hbc.transit.domain.feign.TransitFeign;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Map;
@@ -26,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 class TransitMapperTest {
 
   @Mock private TransitFeign transitFeign;
+  @Mock private TransitBufferFeign transitBufferFeign;
   @InjectMocks private TransitMapper transitMapper;
   @InjectMocks private TestUtil testUtil;
 
@@ -46,6 +49,13 @@ class TransitMapperTest {
     transitMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
     Class res = transitMapper.mapTODto();
     Assertions.assertEquals(TransitDataUpload.class, res);
+  }
+
+  @Test
+  void mapToDtoForTransitBufferRequest() throws TransitMapperException {
+    transitMapper.setJobTypeEnum(JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+    Class res = transitMapper.mapTODto();
+    Assertions.assertEquals(TransitBufferUpload.class, res);
   }
 
   @Test
@@ -122,6 +132,53 @@ class TransitMapperTest {
     Exception exception =
         Assertions.assertThrows(
             TransitMapperException.class, () -> transitMapper.callApi(transitDataUpload, null));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void callApiForCreateTransitBuffer() throws TransitMapperException {
+    Object object = testUtil.getTransitBufferUpload("2", "C");
+    transitMapper.setJobTypeEnum(JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+    when(transitBufferFeign.createTransitBuffer(any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getTransitBufferResponse()).build());
+    ResponseEntity<BaseResponse<?>> res =
+        (ResponseEntity<BaseResponse<?>>) transitMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
+  }
+
+  @Test
+  void callApiForUpdateTransitBuffer() throws TransitMapperException {
+    Object object = testUtil.getTransitBufferUpload("2", "U");
+    transitMapper.setJobTypeEnum(JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+    when(transitBufferFeign.updateTransitBuffer(any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getTransitBufferResponse()).build());
+    ResponseEntity<BaseResponse<?>> res =
+        (ResponseEntity<BaseResponse<?>>) transitMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
+  }
+
+  @Test
+  void callApiForDeleteTransitBufferUpload() throws TransitMapperException {
+    Object object = testUtil.getTransitBufferUpload("2", "D");
+    transitMapper.setJobTypeEnum(JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+    when(transitBufferFeign.deleteTransitBufferDetails(any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getTransitBufferResponse()).build());
+    ResponseEntity<BaseResponse<?>> res =
+        (ResponseEntity<BaseResponse<?>>) transitMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
+  }
+
+  @Test
+  void callApiForTransitBufferUploadInvalidAction() {
+    Object object = testUtil.getTransitBufferUpload("2", "Z");
+    transitMapper.setJobTypeEnum(JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+
+    Exception exception =
+        Assertions.assertThrows(
+            CsvDataValidationException.class, () -> transitMapper.callApi(object, null));
     Assertions.assertNotNull(exception);
   }
 }

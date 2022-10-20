@@ -28,4 +28,11 @@ public class CommonConstants {
   public static final String CARRIER_DEFAULT_SORT_BY = "carrierId";
   public static final String CALENDAR_DEFAULT_SORT_BY = "calendarId";
   public static final String NODE_DEFAULT_SORT_BY = "nodeId";
+  public static final String CARRIER_SERVICE_ID = "carrierServiceId";
+  public static final String SOURCE_GEOZONE = "sourceGeozone";
+  public static final String DESTINATION_GEOZONE = "destinationGeozone";
+  public static final String BUFFER_START_DATE = "bufferStartDate";
+  public static final String BUFFER_END_DATE = "bufferEndDate";
+  public static final String BUFFER_DAYS = "bufferDays";
+  public static final String CREATE_BY = "createdBy";
 }

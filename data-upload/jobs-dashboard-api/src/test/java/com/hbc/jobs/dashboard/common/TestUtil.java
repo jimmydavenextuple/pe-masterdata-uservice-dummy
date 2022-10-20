@@ -6,12 +6,15 @@ import com.hbc.jobs.consumers.domain.mapper.JobMapper;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.FileMetaDataResponse;
+import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
 import com.hbc.jobs.framework.common.domain.pojo.Metadata;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,11 +40,23 @@ public class TestUtil {
 
   public static final String fileName = "Bulk Data Upload.csv";
 
+  public static final String BUCKET_NAME = "bucketName";
+  public static final String FILE_PATH = "filePath";
+
   public static final String CSV_CONTENTS_PROCESSING_LEAD_TIMES =
       "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
           + "1554,BAY,SDND,2,U\n"
           + "1560,BAY,SDND,2,D\n"
           + "1101,BAY,SDND,2,U";
+
+  public static final String CSV_CONTENTS_TRANSIT_BUFFER_REQUEST =
+      "orgId,carrierServiceId,sourceGeozone,destinationGeozone,bufferDays,bufferStartDate,bufferEndDate,action,createdBy\n"
+          + "BAY,ALL-SDND,B1P,T0A,1,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,U,abc\n"
+          + "BAY,ALL-EXPRESS,B3A,T0A,2,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,D,def\n"
+          + "BAY,ALL-EXPRESS,B3B,T0C,1,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,C,ghi\n"
+          + "BAY,ALL-EXPRESS,B4A,T0A,1,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,U,abc\n"
+          + "BAY,ALL-STANDARD,B4A,T0C,1,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,D,def\n"
+          + "BAY,ALL-STANDARD,B1P,T0A,1,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,C,klm";
 
   public static final String CSV_CONTENTS_TRANSIT_TIMES =
       "orgId,BAY,,,,,,,,,\n"
@@ -72,7 +87,8 @@ public class TestUtil {
       String orgId,
       JobStatusEnum status,
       List<AuditLog> auditLogs,
-      JobTypeEnum jobTypeEnum) {
+      JobTypeEnum jobTypeEnum,
+      Long fileMetaDataId) {
     JobDto job = new JobDto();
     job.setOrgId(orgId);
     job.setStatus(status);
@@ -85,6 +101,7 @@ public class TestUtil {
     job.setUserId("User1");
     job.setAuditLog(auditLogs);
     job.setJobId(jobId);
+    job.setFileMetaDataId(fileMetaDataId);
     return job;
   }
 
@@ -93,8 +110,20 @@ public class TestUtil {
       String orgId,
       JobStatusEnum jobStatus,
       List<AuditLog> auditLog,
+      JobTypeEnum jobType,
+      Long fileMetaDataId) {
+    return JobMapper.INSTANCE.toJobEntity(
+        createJob(jobId, orgId, jobStatus, auditLog, jobType, fileMetaDataId));
+  }
+
+  public JobEntity createJobEntity(
+      String jobId,
+      String orgId,
+      JobStatusEnum jobStatus,
+      List<AuditLog> auditLog,
       JobTypeEnum jobType) {
-    return JobMapper.INSTANCE.toJobEntity(createJob(jobId, orgId, jobStatus, auditLog, jobType));
+    return JobMapper.INSTANCE.toJobEntity(
+        createJob(jobId, orgId, jobStatus, auditLog, jobType, null));
   }
 
   public JobResponse createJobResponse(
@@ -153,10 +182,20 @@ public class TestUtil {
 
     JobDto jobId1 =
         createJob(
-            "JobId1", orgId, JobStatusEnum.SUBMITTED, auditLogList1, JobTypeEnum.valueOf(jobType));
+            "JobId1",
+            orgId,
+            JobStatusEnum.SUBMITTED,
+            auditLogList1,
+            JobTypeEnum.valueOf(jobType),
+            null);
     JobDto jobId2 =
         createJob(
-            "JobId2", orgId, JobStatusEnum.RUNNING, auditLogList2, JobTypeEnum.valueOf(jobType));
+            "JobId2",
+            orgId,
+            JobStatusEnum.RUNNING,
+            auditLogList2,
+            JobTypeEnum.valueOf(jobType),
+            null);
     return Arrays.asList(jobId1, jobId2);
   }
 
@@ -286,5 +325,21 @@ public class TestUtil {
     jobFilters.setPageSize(DEFAULT_PAGE_SIZE);
 
     return jobFilters;
+  }
+
+  public FileMetaDataResponse getFileMetaDataResponse(Long fileMetaDataId) {
+    return FileMetaDataResponse.builder()
+        .id(fileMetaDataId)
+        .name("transitBufferRequest")
+        .path(String.join("/", BUCKET_NAME, FILE_PATH))
+        .build();
+  }
+
+  public FileResponse getFileResponse() {
+    return FileResponse.builder()
+        .bucketName(BUCKET_NAME)
+        .filePath(FILE_PATH)
+        .inputStream(new ByteArrayInputStream(CSV_CONTENTS_TRANSIT_BUFFER_REQUEST.getBytes()))
+        .build();
   }
 }

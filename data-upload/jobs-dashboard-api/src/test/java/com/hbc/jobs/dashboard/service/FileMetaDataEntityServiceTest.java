@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import com.hbc.jobs.dashboard.common.FileMetadataTestUtil;
-import com.hbc.jobs.dashboard.domain.outbound.FileMetaDataResponse;
 import com.hbc.jobs.dashboard.exception.FileMetaDataException;
 import com.hbc.jobs.dashboard.repository.FileMetaDataRepository;
+import com.hbc.jobs.framework.common.domain.outbound.FileMetaDataResponse;
 import java.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

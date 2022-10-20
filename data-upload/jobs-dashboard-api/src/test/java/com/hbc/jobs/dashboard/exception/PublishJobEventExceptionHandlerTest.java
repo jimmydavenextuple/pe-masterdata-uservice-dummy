@@ -20,7 +20,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @ExtendWith(MockitoExtension.class)
-class JobDashboardExceptionHandlerTest {
+class PublishJobEventExceptionHandlerTest {
 
   @InjectMocks private JobDashboardExceptionHandler jobDashboardExceptionHandler;
 

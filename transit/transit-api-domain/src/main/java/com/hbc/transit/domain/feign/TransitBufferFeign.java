@@ -6,6 +6,7 @@ import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,5 +30,9 @@ public interface TransitBufferFeign {
 
   @PutMapping("/transit/v1/buffer")
   BaseResponse<TransitBufferResponse> updateTransitBuffer(
+      @Valid @RequestBody TransitBufferRequest transitBufferRequest);
+
+  @DeleteMapping("/transit/v1/buffer")
+  BaseResponse<TransitBufferResponse> deleteTransitBufferDetails(
       @Valid @RequestBody TransitBufferRequest transitBufferRequest);
 }
