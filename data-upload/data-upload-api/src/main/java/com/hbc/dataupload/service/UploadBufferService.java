@@ -58,16 +58,14 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -478,7 +476,10 @@ public class UploadBufferService {
                 })
             .collect(Collectors.toList());
 
-    Path tempFile = Files.createTempFile(DELETE_TRANSIT_BUFFER, ".csv");
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile =
+        Files.createTempFile(DELETE_TRANSIT_BUFFER + new Date().getTime(), ".csv", attr);
 
     Writer writer = Files.newBufferedWriter(tempFile);
     try (var csvWriter =
@@ -527,5 +528,12 @@ public class UploadBufferService {
       csvFileContents = csvReader.readAll();
     }
     return csvFileContents;
+  }
+
+  private Set<PosixFilePermission> setFilePermissions() {
+    Set<PosixFilePermission> posixFilePermissions = new HashSet<>();
+    posixFilePermissions.add(PosixFilePermission.OWNER_READ);
+    posixFilePermissions.add(PosixFilePermission.OWNER_WRITE);
+    return posixFilePermissions;
   }
 }
