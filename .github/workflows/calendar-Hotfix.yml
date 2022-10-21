@@ -8,6 +8,8 @@ on:
       - "deploy-scripts/**"
       - "manifests/**"
       - ".github/**"
+      - "common-util/**"
+      - "build.gradle"
 jobs:
 
   Build-Deploy:

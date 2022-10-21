@@ -5,6 +5,7 @@ on:
     branches: [ development, hotfix ]
     paths:
       - "common-util/**"
+      - "build.gradle"
 jobs:
 
   Build-Publish:
