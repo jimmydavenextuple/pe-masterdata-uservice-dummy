@@ -20,7 +20,7 @@ public class PublishJobEventService {
   @Value("${jobs-framework.result-publish.topic-name}")
   private String resultPublishTopicName;
 
-  @Value("${jobs-framework.job-completion-publish.topic-name}")
+  @Value("${jobs-framework.job-completion-consumer.topic-name}")
   private String jobCompletionPublishTopic;
 
   public PublishJobEventService(KafkaTemplate<Object, Object> kafkaTemplate) {
