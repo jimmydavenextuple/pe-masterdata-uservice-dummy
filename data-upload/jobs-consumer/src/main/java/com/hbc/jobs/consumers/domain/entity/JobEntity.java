@@ -79,4 +79,7 @@ public class JobEntity extends BaseEntity {
 
   @Column(name = "error_message")
   private String errorMessage;
+
+  @Column(name = "file_metadata_id")
+  private Long fileMetaDataId;
 }

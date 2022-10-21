@@ -1,6 +1,7 @@
 package com.hbc.jobs.dashboard.controller;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyInt;
@@ -35,6 +36,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.ObjectUtils;
 
 class JobDashboardControllerTest {
 
@@ -228,7 +230,8 @@ class JobDashboardControllerTest {
             TestUtil.ORG_ID,
             JobStatusEnum.RUNNING,
             Collections.singletonList(new AuditLog()),
-            JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+            JobTypeEnum.UPLOAD_TRANSIT_TIMES,
+            null);
 
     when(jobService.getJob(TestUtil.ORG_ID, jobId)).thenReturn(job);
     ResponseEntity<BaseResponse<JobDto>> responseEntity =
@@ -362,5 +365,28 @@ class JobDashboardControllerTest {
         "Error while retrieving the job records", exception.getMessage(), "Exception Message");
 
     Assertions.assertEquals(TestUtil.JOB_ID, exception.getJobId(), "Exception Job Type");
+  }
+
+  @Test
+  void processJobOfflineWith() throws JobException {
+    JobResponse job =
+        testUtil.createJobResponse(
+            "jobId1",
+            TestUtil.ORG_ID,
+            JobStatusEnum.SUBMITTED,
+            Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
+            JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+
+    when(jobService.processJobOffline(anyString(), any(), anyLong())).thenReturn(job);
+
+    ResponseEntity<BaseResponse<JobResponse>> response =
+        jobDashboardController.processJobOffline(
+            TestUtil.ORG_ID, JobTypeEnum.TRANSIT_BUFFER_REQUEST, 23456L);
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertNotNull(response);
+    Assertions.assertNotNull(response.getBody());
+    Assertions.assertNotNull(response.getBody().getPayload());
+    Assertions.assertFalse(ObjectUtils.isEmpty(response.getBody().getPayload().getJobId()));
   }
 }

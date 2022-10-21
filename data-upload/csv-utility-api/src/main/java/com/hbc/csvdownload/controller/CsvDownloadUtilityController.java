@@ -3,13 +3,16 @@ package com.hbc.csvdownload.controller;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
+import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.InvalidTemplateTypeException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
+import com.hbc.csvdownload.service.DownloadTemplateService;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CsvDownloadUtilityController {
 
   private final CsvDownloadUtilityService csvDownloadUtilityService;
+  private final DownloadTemplateService downloadTemplateService;
 
   @GetMapping(value = "/{templateType}/download", produces = "text/csv")
   public void downloadCSVTemplate(
@@ -56,6 +60,30 @@ public class CsvDownloadUtilityController {
     } catch (Exception e) {
       log.error("Error while downloading the csv template", e);
       response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping(value = "/v1/{templateType}/download", produces = "text/csv")
+  public void downloadCSVTemplateFromFile(
+      @NotBlank(message = "templateType can't be empty") @PathVariable String templateType,
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws InvalidTemplateTypeException, IOException {
+    log.debug("Inside downloadCSVTemplate for type: {}", templateType);
+
+    try (var templateDataStream = downloadTemplateService.getTemplateData(templateType)) {
+
+      String templateData =
+          new String(templateDataStream.readAllBytes(), StandardCharsets.UTF_8).replace("\r", "");
+
+      response.setStatus(HttpStatus.OK.value());
+      response.setContentLength(templateData.length());
+      response.getOutputStream().write(templateData.getBytes());
+      response.flushBuffer();
+    } catch (Exception e) {
+      log.error("Error while downloading the csv template", e);
+      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      throw (e);
     }
   }
 
@@ -86,8 +114,8 @@ public class CsvDownloadUtilityController {
       @RequestParam String country,
       HttpServletRequest request,
       HttpServletResponse response)
-      throws PostalCodeTimezoneServiceException, IOException, CsvDownloadUtilityServiceException {
-    log.debug("Inside download transit times data as csv");
+      throws PostalCodeTimezoneServiceException, IOException {
+    log.debug("Inside download market region data as csv");
     String csvContents =
         csvDownloadUtilityService.downloadMarketRegionForOrgIdAndCountry(orgId, country);
     response.setStatus(HttpStatus.OK.value());
@@ -111,6 +139,25 @@ public class CsvDownloadUtilityController {
       response.flushBuffer();
     } finally {
       Files.delete(file.toPath());
+    }
+  }
+
+  @GetMapping(value = "/org/{orgId}/download/carrier-services")
+  public void downloadCarrierServiceCSV(
+      @PathVariable String orgId, HttpServletRequest request, HttpServletResponse response)
+      throws IOException, CarrierServiceException {
+    log.debug("Inside download carrier service data as csv");
+
+    var file = csvDownloadUtilityService.downloadCarrierServiceDataCSV(orgId);
+    try (var inputStream = new FileInputStream(file)) {
+
+      response.setStatus(HttpStatus.OK.value());
+      response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+      response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+      IOUtils.copy(inputStream, response.getOutputStream());
+      response.flushBuffer();
+    } finally {
+      file.delete(); // NOSONAR
     }
   }
 

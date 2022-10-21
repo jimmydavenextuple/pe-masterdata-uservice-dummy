@@ -357,7 +357,7 @@ class TransitControllerTest {
   }
 
   @Test
-  void deleteBufferDays() throws TransitDomainException, CommonServiceException {
+  void deleteBufferDays() throws TransitDomainException {
     TransitResponse transitResponse = testUtil.getTransitResponse(5F);
     transitResponse.setBufferDays(0D);
     when(transitService.updateTransitBufferDays(any(), any(), any(), any()))

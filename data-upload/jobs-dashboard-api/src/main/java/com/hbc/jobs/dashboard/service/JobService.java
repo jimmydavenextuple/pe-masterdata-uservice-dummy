@@ -9,11 +9,14 @@ import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.jobs.consumers.domain.JobDomain;
 import com.hbc.jobs.consumers.domain.mapper.JobMapper;
+import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.dashboard.exception.JobException;
+import com.hbc.jobs.framework.common.clients.FileMetaDataClient;
 import com.hbc.jobs.framework.common.clients.JobsConsumerClient;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.enums.RecordDataTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.FileMetaDataResponse;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
@@ -21,6 +24,8 @@ import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputWrapper;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.domain.pojo.TransitBufferUpload;
+import com.hbc.jobs.framework.common.service.FileService;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
@@ -61,9 +66,12 @@ import org.springframework.util.ObjectUtils;
 @RequiredArgsConstructor
 @Slf4j
 public class JobService {
+
   private final KafkaTemplate<String, RecordDto> kafkaTemplate;
   private final JobsConsumerClient jobsConsumerClient;
   private final JobDomain jobDomain;
+  private final FileMetaDataClient fileMetaDataClient;
+  private final FileService fileService;
   private static final JobMapper INSTANCE = Mappers.getMapper(JobMapper.class);
 
   @Value("${jobs-framework.kafka-publish.topic-name}")
@@ -84,8 +92,12 @@ public class JobService {
       throws JobException {
     log.debug("Inside processJobOffline service");
 
+    JobDto job = constructJob(0, orgId, jobType, inputFile, fileName, null);
+    return createJob(jobType, job);
+  }
+
+  private JobResponse createJob(JobTypeEnum jobType, JobDto job) throws JobException {
     try {
-      JobDto job = constructJob(0, orgId, jobType, inputFile, fileName);
       BaseResponse<JobResponse> baseResponse = jobsConsumerClient.createJob(job);
       return baseResponse.getPayload();
     } catch (FeignException e) {
@@ -182,26 +194,35 @@ public class JobService {
       String orgId,
       JobTypeEnum jobTypeEnum,
       ByteArrayResource inputFile,
-      String fileName) {
+      String fileName,
+      Long fileMetaDataId) {
     var job = new JobDto();
     job.setJobId(UUID.randomUUID().toString());
 
     job.setTotalRecords(totalRecords);
     job.setJobType(jobTypeEnum);
     job.setFileName(fileName);
-    job.setFile(inputFile.getByteArray());
+    if (inputFile != null) {
+      job.setFile(inputFile.getByteArray());
+    }
     job.setProcessedRecords(0);
     job.setRemainingRecords(totalRecords - job.getProcessedRecords());
     job.setFailureCount(0);
     job.setSuccessCount(0);
     job.setStatus(JobStatusEnum.SUBMITTED);
     job.setOrgId(orgId);
+    job.setFileMetaDataId(fileMetaDataId);
 
     var auditLog = new AuditLog();
     auditLog.setStatus(JobStatusEnum.SUBMITTED);
     auditLog.setTimeStamp(new Date());
     job.setAuditLog(Arrays.asList(auditLog));
     return job;
+  }
+
+  private JobDto constructJob(
+      int totalRecords, String orgId, JobTypeEnum jobTypeEnum, long fileMetaDataId) {
+    return constructJob(totalRecords, orgId, jobTypeEnum, null, null, fileMetaDataId);
   }
 
   /**
@@ -295,28 +316,22 @@ public class JobService {
       var uploadRequestList = new ArrayList<>();
       if (jobId.isPresent() && !ObjectUtils.isEmpty(jobId.orElse(null))) {
         var jobDto = jobsConsumerClient.getJob(orgId, jobId.get()).getPayload();
-        InputStream inputStream = new ByteArrayInputStream(jobDto.getFile());
-
-        updateRequestObjectsList(jobType, uploadRequestList, inputStream);
-
-        jobDto =
-            INSTANCE.toJob(
-                jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
-                    jobDto.getOrgId(), JobStatusEnum.PROCESSING, JobStatusEnum.PROCESSED));
-
-        jobDto.setTotalRecords(jobDto.getTotalRecords() + uploadRequestList.size());
-        jobDto.setRemainingRecords(jobDto.getRemainingRecords() + uploadRequestList.size());
-        jobResponse = jobsConsumerClient.updateJob(jobDto).getPayload();
+        InputStream inputStream = null;
+        if (!ObjectUtils.isEmpty(jobDto.getFileMetaDataId())) {
+          BaseResponse<FileMetaDataResponse> fileMetaDataResponse =
+              fileMetaDataClient.findFileMetadataById(jobDto.getFileMetaDataId());
+          if (!ObjectUtils.isEmpty(fileMetaDataResponse.getPayload())) {
+            String[] fileUrlList = fileMetaDataResponse.getPayload().getPath().split("/", 2);
+            String bucketName = fileUrlList[0];
+            var filePath = fileUrlList[1];
+            var fileResponse = fileService.getFile(bucketName, filePath);
+            inputStream = fileResponse.getInputStream();
+          }
+        } else if (jobDto.getFile().length != 0) {
+          inputStream = new ByteArrayInputStream(jobDto.getFile());
+        }
+        jobResponse = processFileContents(jobDto, uploadRequestList, inputStream);
       }
-      var finalJobResponse = jobResponse;
-      IntStream.range(0, uploadRequestList.size())
-          .forEach(
-              recordNumber ->
-                  publishToKafka(
-                      recordNumber,
-                      JsonUtil.convert(uploadRequestList.get(recordNumber)),
-                      finalJobResponse,
-                      RecordDataTypeEnum.JSON));
       return jobResponse;
     } catch (FeignException e) {
       log.error("Error while submitting the job", e);
@@ -325,6 +340,34 @@ public class JobService {
       log.error("Unable to process json request", e);
       throw new JobException("Exception while processing job json request", e, null, jobType);
     }
+  }
+
+  private JobResponse processFileContents(
+      JobDto jobDto, ArrayList<Object> uploadRequestList, InputStream inputStream)
+      throws IOException, CsvException, JobDomainException {
+    JobResponse jobResponse;
+
+    updateRequestObjectsList(jobDto.getJobType(), uploadRequestList, inputStream);
+
+    jobDto =
+        INSTANCE.toJob(
+            jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(
+                jobDto.getOrgId(), JobStatusEnum.PROCESSING, JobStatusEnum.PROCESSED));
+
+    jobDto.setTotalRecords(jobDto.getTotalRecords() + uploadRequestList.size());
+    jobDto.setRemainingRecords(jobDto.getRemainingRecords() + uploadRequestList.size());
+    jobResponse = jobsConsumerClient.updateJob(jobDto).getPayload();
+
+    var finalJobResponse = jobResponse;
+    IntStream.range(0, uploadRequestList.size())
+        .forEach(
+            recordNumber ->
+                publishToKafka(
+                    recordNumber,
+                    JsonUtil.convert(uploadRequestList.get(recordNumber)),
+                    finalJobResponse,
+                    RecordDataTypeEnum.JSON));
+    return jobResponse;
   }
 
   private void updateRequestObjectsList(
@@ -339,7 +382,42 @@ public class JobService {
     } else if (jobType == JobTypeEnum.DELETE_TRANSIT_BUFFER) {
       log.debug("Processing delete transit buffer upload data");
       uploadRequestList.addAll(createUploadTransitTimesJobRequest(inputStream));
+    } else if (jobType == JobTypeEnum.TRANSIT_BUFFER_REQUEST) {
+      log.debug("Processing transit buffer request upload data");
+      uploadRequestList.addAll(createUploadTransitBufferJobRequest(inputStream));
     }
+  }
+
+  private List<TransitBufferUpload> createUploadTransitBufferJobRequest(InputStream inputStream)
+      throws IOException {
+    var bufferedReader =
+        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    var csvFormat = CSVFormat.DEFAULT.withHeader(TransitBufferUpload.columnHeadersArray());
+    var csvParser = new CSVParser(bufferedReader, csvFormat);
+
+    Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+    Iterator<CSVRecord> iterator = csvRecords.iterator();
+    iterator.next();
+    List<TransitBufferUpload> transitBufferUploadList = new ArrayList<>();
+
+    while (iterator.hasNext()) {
+      var csvRecord = iterator.next();
+      var transitBufferUpload =
+          TransitBufferUpload.builder()
+              .orgId(csvRecord.get(CommonConstants.ORG_ID))
+              .carrierServiceId(csvRecord.get(CommonConstants.CARRIER_SERVICE_ID))
+              .sourceGeozone(csvRecord.get(CommonConstants.SOURCE_GEOZONE))
+              .destinationGeozone(csvRecord.get(CommonConstants.DESTINATION_GEOZONE))
+              .bufferDays(csvRecord.get(CommonConstants.BUFFER_DAYS))
+              .bufferStartDate(csvRecord.get(CommonConstants.BUFFER_START_DATE))
+              .bufferEndDate(csvRecord.get(CommonConstants.BUFFER_END_DATE))
+              .action(csvRecord.get(CommonConstants.ACTION_TYPE))
+              .createdBy(csvRecord.get(CommonConstants.CREATE_BY))
+              .build();
+      transitBufferUploadList.add(transitBufferUpload);
+    }
+
+    return transitBufferUploadList;
   }
 
   private List<ProcessingLeadTimesRaw> createUploadProcessingLeadTimesJobRequest(
@@ -464,5 +542,13 @@ public class JobService {
       log.error("Unable to retrieve the job records information", e);
       throw new JobException("Exception while retrieving the job results", e, null, null);
     }
+  }
+
+  public JobResponse processJobOffline(String orgId, JobTypeEnum jobType, long fileMetadataId)
+      throws JobException {
+    log.debug("Inside process job offline service for: {}", jobType.name());
+
+    JobDto job = constructJob(0, orgId, jobType, fileMetadataId);
+    return createJob(jobType, job);
   }
 }

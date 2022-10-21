@@ -43,6 +43,7 @@ public class NodeController {
 
   private static final Logger logger = LoggerFactory.getLogger(NodeController.class);
   private static final String PAGINATION_URL = "/%s?pageNo=%d&pageSize=%d";
+  private static final String PAGINATION_URL_ALL_NODES = "?pageNo=%d&pageSize=%d";
   private final NodeService nodeService;
   private final PageProperties pageProperties;
 
@@ -155,6 +156,27 @@ public class NodeController {
             .build());
   }
 
+  @GetMapping("/all-nodes")
+  public ResponseEntity<BaseResponse<PagePayload<NodeResponse>>> getAllNodesList(
+      PageParams pageParams) throws NodeDomainException {
+    logger.debug("Processing get node list for an orgId");
+
+    Page<NodeResponse> nodeResponsePage =
+        nodeService.getAllNodes(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            pageParams.getPageSize().orElse(pageProperties.getPageSize()),
+            pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY),
+            pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
+
+    PagePayload<NodeResponse> pagePayload = setNodePagePayload(nodeResponsePage, pageParams);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node List fetched successfully")
+            .payload(pagePayload)
+            .build());
+  }
+
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<NodeCacheKeyDto>>> getNodeCacheKeys(
       @RequestParam Integer limit) throws NodeDomainException {
@@ -203,6 +225,42 @@ public class NodeController {
     pagination.setPrevious(previousUri);
     pagePayload.setPagination(pagination);
     pagePayload.setData(nodeDtoPage.getContent());
+
+    return pagePayload;
+  }
+
+  private PagePayload<NodeResponse> setNodePagePayload(
+      Page<NodeResponse> nodeResponsesPage, PageParams pageParams) {
+    PagePayload<NodeResponse> pagePayload = new PagePayload<>();
+    var pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords((int) nodeResponsesPage.getTotalElements());
+    pagination.setTotalPages(nodeResponsesPage.getTotalPages());
+    pagination.setCurrentPage(pageParams.getPageNo().orElse(pageProperties.getPageNo()));
+    pagination.setSortOrder(pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
+    pagination.setSortBy(pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY));
+
+    String nextUri =
+        PaginationUtil.buildUriForPagination(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            nodeResponsesPage.getTotalPages(),
+            "next",
+            String.format(
+                PAGINATION_URL_ALL_NODES,
+                (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
+                pageParams.getPageSize().orElse(pageProperties.getPageSize())));
+    String previousUri =
+        PaginationUtil.buildUriForPagination(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            nodeResponsesPage.getTotalPages(),
+            "previous",
+            String.format(
+                PAGINATION_URL_ALL_NODES,
+                (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
+                pageParams.getPageSize().orElse(pageProperties.getPageSize())));
+    pagination.setNext(nextUri);
+    pagination.setPrevious(previousUri);
+    pagePayload.setPagination(pagination);
+    pagePayload.setData(nodeResponsesPage.getContent());
 
     return pagePayload;
   }

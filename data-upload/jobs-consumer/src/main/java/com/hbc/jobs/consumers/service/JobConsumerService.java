@@ -11,11 +11,13 @@ import com.hbc.jobs.consumers.exception.InvalidJobTypeException;
 import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.exception.JobIdNotFoundException;
+import com.hbc.jobs.consumers.exception.PublishJobEventException;
 import com.hbc.jobs.framework.common.aop.DBTransaction;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
+import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
@@ -42,7 +44,7 @@ public class JobConsumerService {
 
   private final JobDomain jobDomain;
 
-  private final JobDashboardService jobDashboardService;
+  private final PublishJobEventService publishJobEventService;
 
   /**
    * @param recordDto
@@ -70,7 +72,7 @@ public class JobConsumerService {
     log.debug("Inside publishRecordStatusToKafka service");
 
     try {
-      jobDashboardService.publishJobRecord(recordStatus);
+      publishJobEventService.publishJobRecord(recordStatus);
     } catch (Exception e) {
       log.error("Error while publishing the job record to kafka", e);
       throw new JobException(
@@ -154,7 +156,8 @@ public class JobConsumerService {
    * @param recordStatusDto
    * @return
    */
-  private JobEntity processJobStatus(JobEntity jobEntity, RecordStatusDto recordStatusDto) {
+  private JobEntity processJobStatus(JobEntity jobEntity, RecordStatusDto recordStatusDto)
+      throws PublishJobEventException {
     log.debug("Inside processJobStatus service");
 
     if (recordStatusDto.getStatus().equals(ApiStatusEnum.FAILURE)) {
@@ -174,6 +177,7 @@ public class JobConsumerService {
       jobEntity.setStatus(JobStatusEnum.COMPLETED);
       auditLog.setTimeStamp(new Date());
       oldAuditLog.add(auditLog);
+      publishTransitBufferJobStatus(jobEntity);
     } else if (jobEntity.getStatus().equals(JobStatusEnum.PROCESSED)) {
       var auditLog = new AuditLog();
       auditLog.setStatus(JobStatusEnum.RUNNING);
@@ -184,6 +188,16 @@ public class JobConsumerService {
 
     jobEntity.setAuditLog(oldAuditLog.toArray(new AuditLog[0]));
     return jobEntity;
+  }
+
+  private void publishTransitBufferJobStatus(JobEntity jobEntity) throws PublishJobEventException {
+    var jobDetailsDto = new JobDetailsDto();
+    jobDetailsDto.setJobId(jobEntity.getJobId());
+    jobDetailsDto.setTotalRecords(jobEntity.getTotalRecords());
+    jobDetailsDto.setJobType(jobEntity.getJobType());
+    jobDetailsDto.setStatus(jobEntity.getStatus());
+    jobDetailsDto.setOrgId(jobEntity.getOrgId());
+    publishJobEventService.publishJobDetailsEvent(jobDetailsDto);
   }
 
   /**

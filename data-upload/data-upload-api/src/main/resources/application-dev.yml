@@ -39,6 +39,8 @@ dataupload:
   bucket-name: "promise-s3-lambda-dev"
 
 jobs-framework:
+  job-completion-consumer:
+    topic-name: internal-dev-job-completion
   kafka-publish:
     topic-name: INTERNAL.DEV.JOBS.TASK
   result-publish:

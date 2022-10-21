@@ -1,12 +1,18 @@
 package com.hbc.csvdownload.common;
 
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
 import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
+import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.common.response.BaseResponse;
@@ -34,6 +40,7 @@ import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +55,8 @@ public class TestUtil {
 
   public static final String ORG_ID = "BAY";
   public static final String CARRIER_SERVICE_ID = "ALL_SDND";
+  public static final String CARRIER_ID = "01";
+
   public static final String SOURCE_REGION = "ON";
   public static final String DESTINATION_REGION = "DEL";
   public static final String SOURCE_FSA = "A0A";
@@ -63,6 +72,11 @@ public class TestUtil {
   public static final Double PROCESSING_TIME = 20.0;
   private static final String NODE_ID_2 = "nodeId2";
   private static final String SERVICE_OPTION_2 = "EXPRESS";
+  public static final String templateType = "nodeCarrier";
+
+  public static final String templateTypeInvalid = "invalid";
+
+  public static final String invalidTemplateTypeErrMsg = "Invalid template type";
   public static final String processingLeadTimesCsvData =
       "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
           + "1554,BAY,SDND,2,U\n"
@@ -73,6 +87,15 @@ public class TestUtil {
           + "1601,BAY,EXPRESS,22.55,U\n"
           + "1125,BAY,EXPRESS,19.90,D\n"
           + "1114,BAY,SDND,24.97,U";
+
+  public static final String nodeCarrierCsvData =
+      "orgId,carrierId,carrierName,carrierServiceId,serviceName,serviceOptions"
+          + "\n"
+          + "BAY,GoFor,GoFor,GoFor-SDND,GoFor,SDND\n"
+          + "BAY,TFORCE,TForce,TFORCE-NEXTDAY,TForce NextDay Guaranteed,NEXTDAY\n"
+          + "BAY,CanadaPost,Canada Post,CanadaPost-STANDARD,Canada Post Expedited Parcel,STANDARD\n"
+          + "BAY,CanadaPost,Canada Post,CanadaPost-EXPRESS,Canada Post Xpresspost,EXPRESS\n"
+          + "BAY,UPSN,UPS,UPSN-STANDARD,UPS Standard,STANDARD";
 
   public static final Optional<String> STATUS = Optional.empty();
 
@@ -189,6 +212,14 @@ public class TestUtil {
         .build();
   }
 
+  public TransitTimeEntriesDto getTransitTimeEntriesDto() {
+    return TransitTimeEntriesDto.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .totalRecords(2)
+        .build();
+  }
+
   public DownloadErrorTransitData getAddTransitDataRequest() {
     DownloadErrorTransitData downloadErrorTransitData = new DownloadErrorTransitData();
     downloadErrorTransitData.setOrgId(ORG_ID);
@@ -209,6 +240,23 @@ public class TestUtil {
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .timeZone(TIME_ZONE)
+        .build();
+  }
+
+  public CarrierServiceCalendarResponse getCarrierServiceCalendarResponse() {
+    return CarrierServiceCalendarResponse.builder()
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .build();
+  }
+
+  public CarrierServiceResponse getCarrierServiceResponse() {
+    return CarrierServiceResponse.builder()
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .carrierId(CARRIER_ID)
+        .serviceName(SERVICE_NAME)
+        .serviceOptions(SERVICE_OPTION)
         .build();
   }
 
