@@ -92,6 +92,13 @@ subprojects {
         maven {
             url = 'https://clojars.org/repo/'
         }
+        maven {
+            url "${artifactory_contextUrl}"
+            credentials {
+                username "aws"
+                password System.env.CODEARTIFACT_AUTH_TOKEN
+            }
+        }
     }
 
     dependencyManagement {
