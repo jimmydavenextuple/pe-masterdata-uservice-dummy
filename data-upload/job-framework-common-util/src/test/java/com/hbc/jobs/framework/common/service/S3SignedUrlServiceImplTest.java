@@ -35,7 +35,8 @@ class S3SignedUrlServiceImplTest {
   void getPreSignedUrlTest() throws MalformedURLException, CommonServiceException {
     when(amazonS3.generatePresignedUrl(any()))
         .thenReturn(new URL("https", "s3.amazonaws.com", 8080, "/test.csv"));
-    PreSignedUrlResponse response = s3SignedUrlServiceImpl.getPreSignedURL("test.csv", "transit");
+    PreSignedUrlResponse response =
+        s3SignedUrlServiceImpl.getPreSignedURL("test.csv", "transit-time");
     Assertions.assertEquals("https://s3.amazonaws.com:8080/test.csv", response.getSignedURL());
     verify(amazonS3, times(1)).generatePresignedUrl(any());
   }

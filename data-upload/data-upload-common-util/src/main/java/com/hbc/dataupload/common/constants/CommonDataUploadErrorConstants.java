@@ -9,6 +9,17 @@ public class CommonDataUploadErrorConstants {
       "Market Region data uploaded file has invalid headers.";
   public static final String MARKET_REGION_DATA_UPLOAD_INVALID_FILE_TYPE =
       "Market Region data uploaded file has invalid file type.";
-
+  public static final String NODE_DATA_UPLOAD_INVALID_FILE_TYPE =
+      "Node data uploaded file has invalid file type.";
+  public static final String NODE_DATA_UPLOAD_INVALID_FILE_HEADERS =
+      "Node data uploaded file has invalid headers.";
+  public static final String NODE_CARRIER_DATA_UPLOAD_INVALID_FILE_HEADERS =
+      "Node Carrier data uploaded file has invalid headers.";
+  public static final String NODE_CARRIER_DATA_UPLOAD_INVALID_FILE_TYPE =
+      "Node Carrier data uploaded file has invalid file type.";
+  public static final String NODE_CALENDER_DATA_UPLOAD_INVALID_FILE_HEADERS =
+      "Node Calender data uploaded file has invalid headers.";
+  public static final String NODE_CALENDER_DATA_UPLOAD_INVALID_FILE_TYPE =
+      "Node Calender data uploaded file has invalid file type.";
   public static final String NO_RECORDS_FOUND_IN_THE_CSV = "No Records found in the csv";
 }

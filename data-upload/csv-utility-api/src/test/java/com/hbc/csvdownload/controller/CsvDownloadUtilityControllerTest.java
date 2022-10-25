@@ -185,7 +185,7 @@ class CsvDownloadUtilityControllerTest {
   void downloadMarketRegionDataCSVTest() throws IOException, PostalCodeTimezoneServiceException {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    String marketRegionTemplate = TemplateTypes.getTemplateData("marketRegion");
+    String marketRegionTemplate = TemplateTypes.getTemplateData("postalCodeTimezone");
     when(csvDownloadUtilityService.downloadMarketRegionForOrgIdAndCountry(anyString(), anyString()))
         .thenReturn(marketRegionTemplate);
 
