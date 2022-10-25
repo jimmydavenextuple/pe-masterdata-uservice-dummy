@@ -123,8 +123,8 @@ public class EddComputationService {
           EddComputationUploadConstants.EDD_COMPUTATION_DATA_UPLOAD_INVALID_FILE_HEADERS);
       Iterator<CSVRecord> iterator = csvParser.iterator();
       List<SfccResponse> sfccResponseList = new ArrayList<>();
-      CSVRecord csvRecord = iterator.next();
-      SfccOrder sfccOrder = createSfccOrder(csvRecord);
+      var csvRecord = iterator.next();
+      var sfccOrder = createSfccOrder(csvRecord);
       while (iterator.hasNext()) {
         csvRecord = iterator.next();
         long row = csvParser.getCurrentLineNumber();
