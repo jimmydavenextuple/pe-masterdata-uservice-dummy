@@ -209,22 +209,22 @@ public class DataUploadUtilityExpectedHeaders {
                     SELECTION_CRITERIA,
                     ACTION)),
             Map.entry(
-                    "intermediary",
-                    List.of(
-                            ORGANIZATION_CODE,
-                            SESSION_ID,
-                            BASKET_ID,
-                            PAGE_NAME,
-                            SHIP_TO_ADDRESS_ZIPCODE,
-                            SHIP_TO_ADDRESS_PROVINCE,
-                            LINES_ITEM_ITEM_ID,
-                            LINES_ITEM_ITEM_TYPE,
-                            LINES_ITEM_UNIT_OF_MEASURE,
-                            LINES_ITEM_SELLER,
-                            LINES_LINE_ID,
-                            LINES_REQUIRED_QTY,
-                            LINES_SHIP_TO_ADDRESS_ZIPCODE,
-                            LINES_SHIP_TO_ADDRESS_PROVINCE)));
+                "intermediary",
+                List.of(
+                    ORGANIZATION_CODE,
+                    SESSION_ID,
+                    BASKET_ID,
+                    PAGE_NAME,
+                    SHIP_TO_ADDRESS_ZIPCODE,
+                    SHIP_TO_ADDRESS_PROVINCE,
+                    LINES_ITEM_ITEM_ID,
+                    LINES_ITEM_ITEM_TYPE,
+                    LINES_ITEM_UNIT_OF_MEASURE,
+                    LINES_ITEM_SELLER,
+                    LINES_LINE_ID,
+                    LINES_REQUIRED_QTY,
+                    LINES_SHIP_TO_ADDRESS_ZIPCODE,
+                    LINES_SHIP_TO_ADDRESS_PROVINCE)));
   }
 
   public static List<String> getCSVExpectedHeaders(String key) {
