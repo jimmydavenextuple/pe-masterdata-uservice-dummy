@@ -63,22 +63,21 @@ class EddComputationServiceTest {
   @Test
   void downloadEddComputationDataTest3() throws IOException {
     File csvContent =
-            eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse3()));
+        eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse3()));
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
   }
 
   @Test
   void downloadEddComputationDataTest4() throws IOException {
     File csvContent =
-            eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse4()));
+        eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse4()));
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
   }
 
   @Test
   void downloadEddComputationDataTest5() throws IOException {
     File csvContent =
-            eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse5()));
+        eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse5()));
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
   }
-
 }
