@@ -58,6 +58,9 @@ public class DataUploadUtilityConstants {
   public static final String PROCESSING_TIME = "processingTime";
   public static final String LAST_PICKUP_TIME = "lastPickupTime";
   public static final String FILE_URI = "fileUri";
+  public static final String CSV_FILE = "csvFile";
+  public static final String CSV_HEADERS = "csvHeaders";
+  public static final String FILE_TYPE = "fileType";
   public static final String SOURCE_GEO_ZONE = "sourceGeozone";
   public static final String DESTINATION_GEO_ZONE = "destinationGeozone";
   public static final String TRANSIT_DAYS = "transitDays";

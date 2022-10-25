@@ -1,11 +1,11 @@
 package com.hbc.jobs.dashboard.controller;
 
 import com.hbc.common.response.BaseResponse;
-import com.hbc.jobs.dashboard.domain.inbound.FileMetaDataCreationRequest;
-import com.hbc.jobs.dashboard.domain.inbound.FileMetaDataUpdationRequest;
 import com.hbc.jobs.dashboard.exception.FileMetaDataException;
 import com.hbc.jobs.dashboard.service.FileMetaDataService;
 import com.hbc.jobs.framework.common.domain.outbound.FileMetaDataResponse;
+import com.hbc.jobs.framework.common.inbound.FileMetaDataCreationRequest;
+import com.hbc.jobs.framework.common.inbound.FileMetaDataUpdationRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
