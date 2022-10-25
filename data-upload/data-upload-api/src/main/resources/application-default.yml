@@ -29,7 +29,7 @@ logging:
     com.hbc: INFO
 
 jobs-framework:
-  job-completion-publish:
+  job-completion-consumer:
     topic-name: job-completion-local
   kafka-publish:
     topic-name: jobs-task-local
