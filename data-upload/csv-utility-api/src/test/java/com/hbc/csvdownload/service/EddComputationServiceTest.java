@@ -47,16 +47,38 @@ class EddComputationServiceTest {
   }
 
   @Test
-  void downloadEddComputationDataTest() throws CommonServiceException, IOException {
+  void downloadEddComputationDataTest() throws IOException {
     File csvContent =
         eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse()));
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
   }
 
   @Test
-  void downloadEddComputationDataTest2() throws CommonServiceException, IOException {
+  void downloadEddComputationDataTest2() throws IOException {
     File csvContent =
         eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse2()));
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
   }
+
+  @Test
+  void downloadEddComputationDataTest3() throws IOException {
+    File csvContent =
+            eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse3()));
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
+
+  @Test
+  void downloadEddComputationDataTest4() throws IOException {
+    File csvContent =
+            eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse4()));
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
+
+  @Test
+  void downloadEddComputationDataTest5() throws IOException {
+    File csvContent =
+            eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse5()));
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
+
 }

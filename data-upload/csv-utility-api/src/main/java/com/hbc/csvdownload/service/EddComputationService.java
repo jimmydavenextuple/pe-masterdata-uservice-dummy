@@ -147,7 +147,7 @@ public class EddComputationService {
       String basketId = csvRecord.get(BASKET_ID);
       if (basketId.isEmpty() && Objects.nonNull(sfccOrder)) {
         List<SfccOrderLine> orderLines = new ArrayList<>(sfccOrder.getLines());
-        SfccOrderLine sfccOrderLine = createSfccOrderLine(csvRecord);
+        var sfccOrderLine = createSfccOrderLine(csvRecord);
         orderLines.add(sfccOrderLine);
         sfccOrder.setLines(orderLines);
       } else {
@@ -162,7 +162,7 @@ public class EddComputationService {
   }
 
   private void getIntermediaryResponse(SfccOrder sfccOrder, List<SfccResponse> sfccResponseList) {
-    SfccResponse sfccResponse = intermediaryServiceFeign.intermediaryCalculateEdd(sfccOrder);
+    var sfccResponse = intermediaryServiceFeign.intermediaryCalculateEdd(sfccOrder);
     boolean eddComputationResult = Objects.nonNull(sfccResponse) ? Boolean.TRUE : Boolean.FALSE;
     if (eddComputationResult) {
       sfccResponseList.add(sfccResponse);
@@ -177,7 +177,7 @@ public class EddComputationService {
     String linesItemUnitOfMeasure = csvRecord.get(LINES_ITEM_UNIT_OF_MEASURE);
     String linesItemSeller = csvRecord.get(LINES_ITEM_SELLER);
     String linesLineId = csvRecord.get(LINES_LINE_ID);
-    Double linesRequiredQty = Double.valueOf(csvRecord.get(LINES_REQUIRED_QTY));
+    var linesRequiredQty = Double.valueOf(csvRecord.get(LINES_REQUIRED_QTY));
     String linesShipToAddressZipCode = csvRecord.get(LINES_SHIP_TO_ADDRESS_ZIPCODE);
     String linesShipToAddressProvince = csvRecord.get(LINES_SHIP_TO_ADDRESS_PROVINCE);
 
@@ -211,7 +211,7 @@ public class EddComputationService {
     String linesItemUnitOfMeasure = csvRecord.get(LINES_ITEM_UNIT_OF_MEASURE);
     String linesItemSeller = csvRecord.get(LINES_ITEM_SELLER);
     String linesLineId = csvRecord.get(LINES_LINE_ID);
-    Double linesRequiredQty = Double.valueOf(csvRecord.get(LINES_REQUIRED_QTY));
+    var linesRequiredQty = Double.valueOf(csvRecord.get(LINES_REQUIRED_QTY));
     String linesShipToAddressZipCode = csvRecord.get(LINES_SHIP_TO_ADDRESS_ZIPCODE);
     String linesShipToAddressProvince = csvRecord.get(LINES_SHIP_TO_ADDRESS_PROVINCE);
 
@@ -420,7 +420,7 @@ public class EddComputationService {
       CSVWriter writer,
       SfccErrorResponseLine sfccErrorResponseLine,
       List<String> sfccErrorResponseCSV) {
-    for (int i = 0; i < 10; i++) {
+    for (var i = 0; i < 10; i++) {
       sfccErrorResponseCSV.add("");
     }
     sfccErrorResponseCSV.add(sfccErrorResponseLine.getItemId());
