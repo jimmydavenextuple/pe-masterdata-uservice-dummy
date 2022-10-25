@@ -19,6 +19,7 @@ public enum ModuleEnum {
   NODE_SERVICE_OPTION_BUFFER("node-service-option-buffer"),
   TRANSIT_BUFFER("transit-buffer"),
   EDD_COMPUTATION("edd-computation"),
+  MARKET_REGION("market-region"),
   UI("ui");
 
   private final String moduleValue;
