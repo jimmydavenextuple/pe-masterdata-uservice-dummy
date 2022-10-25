@@ -80,4 +80,19 @@ class EddComputationServiceTest {
         eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse5()));
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
   }
+
+  @Test
+  void downloadEddComputationDataTest6() throws IOException {
+    File csvContent =
+        eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse6()));
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
+
+  @Test
+  void downloadEddComputationDataTest7() throws IOException {
+
+    File csvContent =
+        eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse6()));
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
 }

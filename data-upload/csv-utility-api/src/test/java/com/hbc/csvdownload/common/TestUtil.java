@@ -621,4 +621,58 @@ public class TestUtil {
         .exceptions(sfccErrorResponse)
         .build();
   }
+
+  public SfccResponse getSfccResponse6() {
+    Double requiredQty = Double.valueOf(5);
+    Double maxAvailableQuantity = Double.valueOf(5);
+    Long qty = Long.valueOf(3);
+    SfccPromiseDetails sfccPromiseDetails =
+        SfccPromiseDetails.builder()
+            .fillQuantity(qty)
+            .sourceNodeId("node2")
+            .sourceNodeType("FC")
+            .build();
+    List<SfccPromiseDetails> sfccPromiseDetailsList = new ArrayList<>();
+    sfccPromiseDetailsList.add(sfccPromiseDetails);
+    SfccResponseLine sfccResponseLine =
+        SfccResponseLine.builder()
+            .maxAvailableQuantity(maxAvailableQuantity)
+            .requestQuantity(requiredQty)
+            .itemId("item1")
+            .promiseDetails(sfccPromiseDetailsList)
+            .build();
+    List<SfccResponseLine> sfccResponseLines = new ArrayList<>();
+    sfccResponseLines.add(sfccResponseLine);
+    String sDate1 = "2022-06-16T05:05:00";
+    SfccSuggestedPromiseOption sfccSuggestedPromiseOption =
+        SfccSuggestedPromiseOption.builder().edd(sDate1).lines(sfccResponseLines).build();
+    String sDate2 = "2022-06-17T05:05:00";
+    SfccSuggestedPromiseOption sfccSuggestedPromiseOption2 =
+        SfccSuggestedPromiseOption.builder().edd(sDate2).lines(sfccResponseLines).build();
+    List<SfccSuggestedPromiseOption> sfccSuggestedPromiseOptionList = new ArrayList<>();
+    sfccSuggestedPromiseOptionList.add(sfccSuggestedPromiseOption);
+    sfccSuggestedPromiseOptionList.add(sfccSuggestedPromiseOption2);
+
+    SfccSuggestedPromiseOptionError sfccSuggestedPromiseOptionError =
+        SfccSuggestedPromiseOptionError.builder().build();
+    SfccErrorResponse sfccErrorResponse =
+        SfccErrorResponse.builder()
+            .sdnd(sfccSuggestedPromiseOptionError)
+            .express(sfccSuggestedPromiseOptionError)
+            .standard(sfccSuggestedPromiseOptionError)
+            .nextday(sfccSuggestedPromiseOptionError)
+            .build();
+    return SfccResponse.builder()
+        .cartId("156465897")
+        .orgId("BAY")
+        .pageName("Basket/Checkout")
+        .sessionId("jkfdsj5748fdgf58gfh")
+        .sdnd(sfccSuggestedPromiseOptionList)
+        .express(sfccSuggestedPromiseOptionList)
+        .standard(sfccSuggestedPromiseOptionList)
+        .nextday(sfccSuggestedPromiseOptionList)
+        .hasExceptions(true)
+        .exceptions(sfccErrorResponse)
+        .build();
+  }
 }
