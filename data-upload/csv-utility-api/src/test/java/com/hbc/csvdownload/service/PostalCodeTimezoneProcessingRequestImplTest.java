@@ -43,7 +43,7 @@ class PostalCodeTimezoneProcessingRequestImplTest {
   @Test
   void submitJobTest() throws JobSubmissionException {
     when(jobsDashboardClient.processJobOffline(
-            TestUtil.ORG_ID, JobTypeEnum.POSTAL_CODE_TIMEZONE, TestUtil.FILE_METADATA_ID))
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_POSTAL_CODE_TIMEZONE, TestUtil.FILE_METADATA_ID))
         .thenReturn(BaseResponse.builder().payload(testUtil.getJobResponse()).build());
     String result =
         postalCodeTimezoneProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID);
@@ -53,7 +53,7 @@ class PostalCodeTimezoneProcessingRequestImplTest {
   @Test
   void submitJobFeignExceptionTest() {
     when(jobsDashboardClient.processJobOffline(
-            TestUtil.ORG_ID, JobTypeEnum.POSTAL_CODE_TIMEZONE, TestUtil.FILE_METADATA_ID))
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_POSTAL_CODE_TIMEZONE, TestUtil.FILE_METADATA_ID))
         .thenThrow(FeignException.class);
     Assertions.assertThrows(
         JobSubmissionException.class,
@@ -65,7 +65,7 @@ class PostalCodeTimezoneProcessingRequestImplTest {
   @Test
   void submitJobExceptionTest() {
     when(jobsDashboardClient.processJobOffline(
-            TestUtil.ORG_ID, JobTypeEnum.POSTAL_CODE_TIMEZONE, TestUtil.FILE_METADATA_ID))
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_POSTAL_CODE_TIMEZONE, TestUtil.FILE_METADATA_ID))
         .thenThrow(ArithmeticException.class);
     Assertions.assertThrows(
         JobSubmissionException.class,

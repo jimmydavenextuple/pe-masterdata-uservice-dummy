@@ -1,6 +1,8 @@
 package com.hbc.jobs.dashboard.common;
 
 import com.hbc.common.base.PagePayload;
+import com.hbc.csvdownload.common.pojo.TransitDataUpload;
+import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.domain.mapper.JobMapper;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
@@ -14,6 +16,7 @@ import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
 import com.hbc.jobs.framework.common.domain.pojo.Metadata;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.domain.pojo.TransitBufferUpload;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,13 +61,21 @@ public class TestUtil {
           + "BAY,ALL-STANDARD,B4A,T0C,1,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,D,def\n"
           + "BAY,ALL-STANDARD,B1P,T0A,1,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,C,klm";
 
+  public static final String CSV_CONTENTS_POSTAL_CODE_TIMEZONE =
+      "action,orgId,postalCodePrefix,country,state,city,latitude,longitude,timeZone\n"
+          + "CREATE,BAY,A0A,CA,NL,Witless Bay,47.545965,-53.138234, America/St_Johns\n"
+          + "UPDATE,BAY,A0B,CA,NL,Witless Bay1,47.545975,-53.138244, America/St_Johns\n"
+          + "CREATE,BAY,A0C,CA,NL,Witless Bay3,47.545985,-53.138254, America/St_Johns\n"
+          + "DELETE,BAY,A0D,CA,NL,Witless Bay4,47.545995,-53.138264, America/St_Johns";
+
   public static final String CSV_CONTENTS_TRANSIT_TIMES =
       "orgId,BAY,,,,,,,,,\n"
           + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
           + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
           + "DFSA1,,9.96,9.96\n"
           + "DFSA2,D,9,9.9\n"
-          + "DFSA3,10,9,9\n";
+          + "DFSA3,10,9,9\n"
+          + "\n";
 
   public static final String CSV_CONTENTS_DELETE_TRANSIT_BUFFER =
       "orgId,BAY,,,,,,,,,\n"
@@ -72,7 +83,8 @@ public class TestUtil {
           + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3\n"
           + "DFSA1,D,D.D,D\n"
           + "DFSA2,D,D,D\n"
-          + "DFSA3,D,D,D\n";
+          + "DFSA3,D,D,D\n"
+          + "\n";
 
   public static final Optional<String> DEFAULT_SORT_FIELD = Optional.of("created_date");
 
@@ -341,5 +353,39 @@ public class TestUtil {
         .filePath(FILE_PATH)
         .inputStream(new ByteArrayInputStream(CSV_CONTENTS_TRANSIT_BUFFER_REQUEST.getBytes()))
         .build();
+  }
+
+  public TransitDataUpload getTransitDataUpload() {
+    TransitDataUpload transitDataUpload = new TransitDataUpload();
+    transitDataUpload.setOrgId(ORG_ID);
+    transitDataUpload.setSourceGeozone("SSFA");
+    transitDataUpload.setDestinationGeozone("DSFA");
+    transitDataUpload.setCarrierServiceId("ALL-SDND");
+    transitDataUpload.setTransitDays("2F");
+    return transitDataUpload;
+  }
+
+  public TransitBufferUpload getTransitBufferUpload(String bufferDays, String action) {
+    TransitBufferUpload transitBufferUpload = new TransitBufferUpload();
+    transitBufferUpload.setOrgId(ORG_ID);
+    transitBufferUpload.setCarrierServiceId("ALL-EXPRESS");
+    transitBufferUpload.setBufferDays(bufferDays);
+    transitBufferUpload.setSourceGeozone("T0A");
+    transitBufferUpload.setDestinationGeozone("M1R");
+    transitBufferUpload.setBufferStartDate("2022-10-19T15:51:17Z");
+    transitBufferUpload.setBufferEndDate("2022-10-19T15:51:17Z");
+    transitBufferUpload.setAction(action);
+
+    return transitBufferUpload;
+  }
+
+  public ProcessingLeadTimesRaw getProcessingLeadTimesRaw() {
+    ProcessingLeadTimesRaw processingLeadTimesRaw = new ProcessingLeadTimesRaw();
+    processingLeadTimesRaw.setNodeId("NODE_ID");
+    processingLeadTimesRaw.setOrgId(ORG_ID);
+    processingLeadTimesRaw.setServiceOption("SERVICE_OPTION");
+    processingLeadTimesRaw.setProcessingTime(String.valueOf("PROCESSING_TIME"));
+
+    return processingLeadTimesRaw;
   }
 }
