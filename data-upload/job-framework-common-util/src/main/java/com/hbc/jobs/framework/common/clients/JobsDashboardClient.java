@@ -66,4 +66,10 @@ public interface JobsDashboardClient {
       @RequestParam("jobType") @NotNull @Valid JobTypeEnum jobType,
       @RequestBody byte[] csvFile,
       @RequestParam("fileName") String fileName);
+
+  @PostMapping("v1/org/{orgId}/jobs")
+  BaseResponse<JobResponse> processJobOffline(
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
+      @RequestParam @NotNull JobTypeEnum jobType,
+      @RequestParam("fileMetadataId") @NotNull long fileMetadataId);
 }

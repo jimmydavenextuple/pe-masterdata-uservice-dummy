@@ -1,5 +1,6 @@
 package com.hbc.jobs.consumers.common;
 
+import com.hbc.common.util.DateUtil;
 import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
@@ -12,11 +13,14 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
+import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.domain.pojo.TransitBufferUpload;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Arrays;
 import java.util.Collections;
@@ -417,5 +421,44 @@ public class TestUtil {
     authTokenResponse.setExpiresIn(20);
 
     return authTokenResponse;
+  }
+
+  public JobDetailsDto getJobDetailsDto() {
+    JobDetailsDto jobDetailsDto = new JobDetailsDto();
+    jobDetailsDto.setJobId(JOB_ID);
+    jobDetailsDto.setJobType(JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+    jobDetailsDto.setStatus(JobStatusEnum.COMPLETED);
+    jobDetailsDto.setOrgId(ORG_ID);
+    jobDetailsDto.setTotalRecords(2);
+
+    return jobDetailsDto;
+  }
+
+  public TransitBufferUpload getTransitBufferUpload(String bufferDays, String action) {
+    TransitBufferUpload transitBufferUpload = new TransitBufferUpload();
+    transitBufferUpload.setOrgId(ORG_ID);
+    transitBufferUpload.setCarrierServiceId("ALL-EXPRESS");
+    transitBufferUpload.setBufferDays(bufferDays);
+    transitBufferUpload.setSourceGeozone("T0A");
+    transitBufferUpload.setDestinationGeozone("M1R");
+    transitBufferUpload.setBufferStartDate("2022-10-19T15:51:17Z");
+    transitBufferUpload.setBufferEndDate("2022-10-19T15:51:17Z");
+    transitBufferUpload.setAction(action);
+
+    return transitBufferUpload;
+  }
+
+  public TransitBufferResponse getTransitBufferResponse() {
+    return TransitBufferResponse.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId("ALL-EXPRESS")
+        .sourceGeozone("T0A")
+        .destinationGeozone("M1R")
+        .bufferDays(2D)
+        .bufferEndDate(
+            DateUtil.getDate(DateUtil.convertDateLongFormUTC(DateUtil.addDaysToCurrentDate(1))))
+        .bufferStartDate(
+            DateUtil.getDate(DateUtil.convertDateLongFormUTC(DateUtil.getCurrentDate())))
+        .build();
   }
 }

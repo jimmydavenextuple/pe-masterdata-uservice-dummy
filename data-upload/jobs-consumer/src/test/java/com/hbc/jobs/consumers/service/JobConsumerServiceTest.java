@@ -1,5 +1,6 @@
 package com.hbc.jobs.consumers.service;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.doNothing;
@@ -16,10 +17,10 @@ import com.hbc.jobs.consumers.domain.JobRecordDomain;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.domain.entity.JobRecordEntity;
 import com.hbc.jobs.consumers.domain.mapper.JobMapper;
-import com.hbc.jobs.consumers.exception.JobDashboardException;
 import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.exception.JobRecordDomainException;
+import com.hbc.jobs.consumers.exception.PublishJobEventException;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
@@ -58,7 +59,7 @@ class JobConsumerServiceTest {
 
   @Mock private JobDomain jobDomain;
 
-  @Mock private JobDashboardService jobDashboardService;
+  @Mock private PublishJobEventService publishJobEventService;
 
   @BeforeEach
   public void init() {
@@ -70,36 +71,36 @@ class JobConsumerServiceTest {
   class ProcessRecord {
 
     @Test
-    void processRecord() throws JobDashboardException {
+    void processRecord() throws PublishJobEventException {
       RecordDto record = mock(RecordDto.class);
       FeignClientMapper feignClientMapper = mock(FeignClientMapper.class);
       RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
 
       when(feignClientMapper.getResponseFromAPI(any())).thenReturn(recordStatusDto);
       when(feignClientMapperFactory.getMapper(any())).thenReturn(feignClientMapper);
-      doNothing().when(jobDashboardService).publishJobRecord(any());
+      doNothing().when(publishJobEventService).publishJobRecord(any());
 
       Assertions.assertDoesNotThrow(() -> jobConsumerService.processRecord(record));
-      verify(jobDashboardService, times(1)).publishJobRecord(any());
+      verify(publishJobEventService, times(1)).publishJobRecord(any());
       verify(feignClientMapperFactory, times(1)).getMapper(any());
     }
 
     @Test
-    void processRecordError() throws JobDashboardException {
+    void processRecordError() throws PublishJobEventException {
       RecordDto record = mock(RecordDto.class);
       FeignClientMapper feignClientMapper = mock(FeignClientMapper.class);
       RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
 
       when(feignClientMapper.getResponseFromAPI(any())).thenReturn(recordStatusDto);
       when(feignClientMapperFactory.getMapper(any())).thenReturn(feignClientMapper);
-      doThrow(RuntimeException.class).when(jobDashboardService).publishJobRecord(any());
+      doThrow(RuntimeException.class).when(publishJobEventService).publishJobRecord(any());
 
       JobException e =
           Assertions.assertThrows(
               JobException.class, () -> jobConsumerService.processRecord(record));
       Assertions.assertEquals("Exception while processing the job record", e.getMessage());
       Assertions.assertNull(e.getJobId());
-      verify(jobDashboardService, times(1)).publishJobRecord(any());
+      verify(publishJobEventService, times(1)).publishJobRecord(any());
       verify(feignClientMapperFactory, times(1)).getMapper(any());
     }
   }
@@ -153,7 +154,7 @@ class JobConsumerServiceTest {
       JobConsumerService jobConsumerService =
           spy(
               new JobConsumerService(
-                  feignClientMapperFactory, jobRecordDomain, jobDomain, jobDashboardService));
+                  feignClientMapperFactory, jobRecordDomain, jobDomain, publishJobEventService));
 
       doNothing().when(jobConsumerService).updateJob(any(), anyInt());
       JobRecordEntity jobRecordEntity = mock(JobRecordEntity.class);
@@ -163,6 +164,40 @@ class JobConsumerServiceTest {
 
       Assertions.assertDoesNotThrow(() -> jobConsumerService.updateJobStatus(recordStatusDto));
       verify(jobRecordDomain, times(1)).create(any());
+    }
+
+    @Test
+    void updateJobStatusJobCompletion()
+        throws JobRecordDomainException, JobDomainException, PublishJobEventException {
+
+      JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.TRANSIT_BUFFER_REQUEST, 2);
+      jobEntity.setProcessedRecords(1);
+
+      RecordStatusDto recordStatusDto =
+          testUtil.createRecordStatus(
+              jobEntity.getJobId(),
+              jobEntity.getOrgId(),
+              ApiStatusEnum.SUCCESS,
+              HttpStatus.OK,
+              jobEntity.getUserId(),
+              jobEntity.getJobType(),
+              2);
+      recordStatusDto.setTotalRecordsInJob(2);
+      recordStatusDto.setJobType(JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+
+      when(jobRecordDomain.create(any())).thenReturn(testUtil.getJobRecordEntity());
+
+      when(jobDomain.findJobByJobIdAndOrgId(any(), anyString())).thenReturn(jobEntity);
+
+      doNothing().when(publishJobEventService).publishJobDetailsEvent(any());
+
+      when(jobDomain.save(any())).thenReturn(jobEntity);
+
+      Assertions.assertDoesNotThrow(() -> jobConsumerService.updateJobStatus(recordStatusDto));
+
+      verify(jobDomain, times(1)).save(any());
+      verify(jobRecordDomain, times(1)).create(any());
+      verify(publishJobEventService, times(1)).publishJobDetailsEvent(any());
     }
 
     @Test

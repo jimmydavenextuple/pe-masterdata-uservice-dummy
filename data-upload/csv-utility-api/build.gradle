@@ -16,6 +16,8 @@ dependencies {
     implementation(project(":common-util"))
     implementation(project(":postal-code-timezone:postal-code-timezone-api-domain"))
     implementation("com.hbc:pe-intermediary-domain:1.2.0-${build_target}")
+    implementation(project(":carrier:carrier-api-domain"))
+    implementation(project(":calendar:calendar-api-domain"))
     implementation(project(":data-upload:job-framework-common-util"))
     implementation(project(":node-carrier:node-carrier-api-domain"))
 }

@@ -7,15 +7,15 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class JobDashboardExceptionTest {
+class PublishJobEventExceptionTest {
   @Test
   void constructTest() {
-    JobDashboardException e = new JobDashboardException(JobId);
-    JobDashboardException e1 = new JobDashboardException(message, JobId);
-    JobDashboardException e2 = new JobDashboardException(message, cause, JobId);
-    JobDashboardException e3 = new JobDashboardException(cause, JobId);
-    JobDashboardException e4 =
-        new JobDashboardException(message, cause, enableSuppression, writableStackTrace, JobId);
+    PublishJobEventException e = new PublishJobEventException(JobId);
+    PublishJobEventException e1 = new PublishJobEventException(message, JobId);
+    PublishJobEventException e2 = new PublishJobEventException(message, cause, JobId);
+    PublishJobEventException e3 = new PublishJobEventException(cause, JobId);
+    PublishJobEventException e4 =
+        new PublishJobEventException(message, cause, enableSuppression, writableStackTrace, JobId);
 
     // construct1
     assertNotNull(e);

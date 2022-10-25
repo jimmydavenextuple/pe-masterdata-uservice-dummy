@@ -8,6 +8,7 @@ import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.entity.TransitBufferConfigRequestEntity;
+import com.hbc.transit.domain.entity.TransitBufferEntity;
 import com.hbc.transit.domain.entity.TransitBufferReqJobRefEntity;
 import com.hbc.transit.domain.entity.TransitEntity;
 import com.hbc.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
@@ -16,10 +17,12 @@ import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
 import com.hbc.transit.domain.inbound.TransitBufferConfigRequest;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitBufferReqJobRefRequest;
+import com.hbc.transit.domain.inbound.TransitBufferRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
 import com.hbc.transit.domain.outbound.TransitBufferReqJobRefResponse;
+import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +57,7 @@ public class TestUtil {
   public static final Long ID = 1L;
   public static final String JOB_ID = "1";
   public static final Long FILE_META_DATA_ID = 3L;
+  public static final String CREATED_BY = "created-by";
 
   public TransitEntity getTransitEntity(Float transitDays) {
     Date bufferStartDate = new Date(1000);
@@ -301,5 +305,42 @@ public class TestUtil {
     jobDetailsDto.setStatus(jobStatusEnum);
     jobDetailsDto.setJobType(JobTypeEnum.TRANSIT_BUFFER_REQUEST);
     return jobDetailsDto;
+  }
+
+  public TransitBufferEntity getTransitBufferEntity(String orgId) {
+    return TransitBufferEntity.builder()
+        .orgId(orgId)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .sourceGeozone(SOURCE_GEOZONE)
+        .destinationGeozone(DESTINATION_GEOZONE)
+        .bufferDays(BUFFER_DAYS)
+        .bufferStartDate(new Date(1000))
+        .bufferEndDate(new Date(1000))
+        .build();
+  }
+
+  public TransitBufferRequest getTransitBufferRequest() {
+    return TransitBufferRequest.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .sourceGeozone(SOURCE_GEOZONE)
+        .destinationGeozone(DESTINATION_GEOZONE)
+        .bufferDays(BUFFER_DAYS)
+        .bufferStartDate(new Date(1000))
+        .bufferEndDate(new Date(1000))
+        .build();
+  }
+
+  public TransitBufferResponse getTransitBufferResponse() {
+    return TransitBufferResponse.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .sourceGeozone(SOURCE_GEOZONE)
+        .destinationGeozone(DESTINATION_GEOZONE)
+        .bufferDays(BUFFER_DAYS)
+        .bufferStartDate(new Date(1000))
+        .bufferEndDate(new Date(1000))
+        .createdBy(CREATED_BY)
+        .build();
   }
 }

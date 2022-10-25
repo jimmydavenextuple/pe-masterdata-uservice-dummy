@@ -11,18 +11,21 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.base.PagePayload;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.consumers.domain.JobDomain;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.dashboard.common.TestUtil;
 import com.hbc.jobs.dashboard.exception.JobException;
+import com.hbc.jobs.framework.common.clients.FileMetaDataClient;
 import com.hbc.jobs.framework.common.clients.JobsConsumerClient;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.service.FileService;
 import feign.FeignException;
 import feign.Request;
 import feign.Request.HttpMethod;
@@ -44,6 +47,7 @@ import org.springframework.messaging.Message;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.concurrent.ListenableFuture;
 
 class JobServiceTest {
@@ -57,6 +61,10 @@ class JobServiceTest {
   @Mock private JobDomain jobDomain;
 
   @Mock private KafkaTemplate<String, Object> kafkaTemplate;
+
+  @Mock private FileMetaDataClient fileMetaDataClient;
+
+  @Mock private FileService fileService;
 
   @BeforeEach
   public void init() {
@@ -163,7 +171,8 @@ class JobServiceTest {
               TestUtil.ORG_ID,
               JobStatusEnum.SUBMITTED,
               Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+              null);
       when(jobsConsumerClient.getJob(TestUtil.ORG_ID, job.getJobId()))
           .thenReturn(
               BaseResponse.builder()
@@ -200,7 +209,8 @@ class JobServiceTest {
               TestUtil.ORG_ID,
               JobStatusEnum.SUBMITTED,
               Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+              null);
 
       when(jobsConsumerClient.getJob(TestUtil.ORG_ID, job.getJobId()))
           .thenThrow(
@@ -334,7 +344,8 @@ class JobServiceTest {
               TestUtil.ORG_ID,
               JobStatusEnum.SUBMITTED,
               Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+              null);
       job.setFile(TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES.getBytes());
       job.setTotalRecords(3);
       job.setRemainingRecords(3);
@@ -389,6 +400,86 @@ class JobServiceTest {
     }
 
     @Test
+    void processTransitBufferRequestJsonOfflineSuccess()
+        throws JobException, JobDomainException, CommonServiceException {
+      JobResponse jobResponse =
+          testUtil.createJobResponse(
+              "jobId1",
+              TestUtil.ORG_ID,
+              JobStatusEnum.SUBMITTED,
+              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
+              JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+      jobResponse.setFailureCount(0);
+
+      JobDto job =
+          testUtil.createJob(
+              "jobId1",
+              TestUtil.ORG_ID,
+              JobStatusEnum.SUBMITTED,
+              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
+              JobTypeEnum.TRANSIT_BUFFER_REQUEST,
+              23456L);
+      job.setFile(TestUtil.CSV_CONTENTS_TRANSIT_BUFFER_REQUEST.getBytes());
+      job.setTotalRecords(3);
+      job.setRemainingRecords(3);
+      job.setFailureCount(0);
+
+      when(jobsConsumerClient.getJob(any(), any()))
+          .thenReturn(
+              BaseResponse.builder()
+                  .message("Retrieved job" + " id " + " " + "successfully!!")
+                  .payload(job)
+                  .build());
+
+      when(jobsConsumerClient.createJob(any()))
+          .thenReturn(
+              BaseResponse.builder()
+                  .message("Retrieved job" + " id " + " " + "successfully!!")
+                  .payload(jobResponse)
+                  .build());
+
+      jobResponse.setTotalRecords(5);
+      jobResponse.setRemainingRecords(5);
+      when(jobsConsumerClient.updateJob(any()))
+          .thenReturn(BaseResponse.builder().payload(jobResponse).build());
+
+      JobEntity jobEntity =
+          testUtil.createJobEntity(
+              "jobId1",
+              TestUtil.ORG_ID,
+              JobStatusEnum.PROCESSED,
+              List.of(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
+              JobTypeEnum.TRANSIT_BUFFER_REQUEST,
+              23456L);
+      when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any()))
+          .thenReturn(jobEntity);
+      ListenableFuture<SendResult<String, Object>> future = mock(ListenableFuture.class);
+
+      doNothing().when(future).addCallback(any());
+      when(kafkaTemplate.send(any(Message.class))).thenReturn(future);
+
+      when(fileMetaDataClient.findFileMetadataById(any()))
+          .thenReturn(
+              BaseResponse.builder().payload(testUtil.getFileMetaDataResponse(23456L)).build());
+
+      when(fileService.getFile(any(), any())).thenReturn(testUtil.getFileResponse());
+
+      JobResponse jobDto =
+          jobService.processJobJsonOffline(
+              null,
+              TestUtil.ORG_ID,
+              JobTypeEnum.TRANSIT_BUFFER_REQUEST,
+              Optional.of(TestUtil.JOB_ID));
+      jobDto.setJobId("jobId1");
+      jobDto.setTotalRecords(1);
+
+      Assertions.assertEquals(0, jobDto.getFailureCount(), "failed count");
+
+      Assertions.assertEquals(1, jobDto.getTotalRecords(), "Job Id");
+      verify(kafkaTemplate, times(6)).send(any(Message.class));
+    }
+
+    @Test
     void processJobJsonOfflineUpdateExistingJob() throws JobException, JobDomainException {
 
       JobDto job =
@@ -397,7 +488,8 @@ class JobServiceTest {
               TestUtil.ORG_ID,
               JobStatusEnum.SUBMITTED,
               Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+              null);
       job.setFile(TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES.getBytes());
 
       JobResponse jobResponse =
@@ -462,7 +554,8 @@ class JobServiceTest {
               TestUtil.ORG_ID,
               JobStatusEnum.SUBMITTED,
               Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+              JobTypeEnum.UPLOAD_TRANSIT_TIMES,
+              null);
       job.setFile(TestUtil.CSV_CONTENTS_TRANSIT_TIMES.getBytes());
 
       JobResponse jobResponse =
@@ -524,7 +617,8 @@ class JobServiceTest {
               TestUtil.ORG_ID,
               JobStatusEnum.SUBMITTED,
               Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.DELETE_TRANSIT_BUFFER);
+              JobTypeEnum.DELETE_TRANSIT_BUFFER,
+              null);
       job.setFile(TestUtil.CSV_CONTENTS_DELETE_TRANSIT_BUFFER.getBytes());
 
       JobResponse jobResponse =
@@ -597,7 +691,8 @@ class JobServiceTest {
               TestUtil.ORG_ID,
               JobStatusEnum.SUBMITTED,
               Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+              null);
       job.setFile(TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES.getBytes());
       job.setTotalRecords(3);
       job.setRemainingRecords(3);
@@ -701,7 +796,8 @@ class JobServiceTest {
               TestUtil.ORG_ID,
               JobStatusEnum.SUBMITTED,
               Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+              null);
 
       JobResponse jobResponse =
           testUtil.createJobResponse(
@@ -826,5 +922,26 @@ class JobServiceTest {
 
     Assertions.assertEquals(
         "Error while parsing json file", exception.getMessage(), "Exception message");
+  }
+
+  @Test
+  void processJobOffline() throws JobException {
+    JobResponse job =
+        testUtil.createJobResponse(
+            "jobId1",
+            TestUtil.ORG_ID,
+            JobStatusEnum.SUBMITTED,
+            Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
+            JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+
+    when(jobsConsumerClient.createJob(any()))
+        .thenReturn(BaseResponse.builder().payload(job).build());
+
+    JobResponse jobResponse =
+        jobService.processJobOffline(TestUtil.ORG_ID, JobTypeEnum.TRANSIT_BUFFER_REQUEST, 23456L);
+
+    Assertions.assertNotNull(jobResponse);
+    Assertions.assertFalse(ObjectUtils.isEmpty(jobResponse.getJobId()));
+    verify(jobsConsumerClient, times(1)).createJob(any());
   }
 }

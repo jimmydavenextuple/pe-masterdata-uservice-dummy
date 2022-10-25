@@ -177,4 +177,19 @@ public class JobDashboardController {
                 .message("Retrieval of job records is successful")
                 .build());
   }
+
+  @PostMapping(path = "/v1/org/{orgId}/jobs", produces = APPLICATION_JSON_VALUE)
+  public ResponseEntity<BaseResponse<JobResponse>> processJobOffline(
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
+      @RequestParam @NotNull JobTypeEnum jobType,
+      @RequestParam("fileMetadataId") @NotNull long fileMetadataId)
+      throws JobException {
+    log.debug("Processing offline job request");
+
+    var jobDto = jobService.processJobOffline(orgId, jobType, fileMetadataId);
+
+    log.debug("Processing offline job request ends");
+
+    return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
+  }
 }

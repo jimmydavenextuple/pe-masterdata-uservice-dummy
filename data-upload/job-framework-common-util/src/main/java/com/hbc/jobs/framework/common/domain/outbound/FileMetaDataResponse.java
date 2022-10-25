@@ -1,4 +1,4 @@
-package com.hbc.jobs.dashboard.domain.outbound;
+package com.hbc.jobs.framework.common.domain.outbound;
 
 import java.io.Serializable;
 import lombok.AllArgsConstructor;

@@ -63,8 +63,8 @@ public class JobConsumerExceptionHandler {
                 .build());
   }
 
-  @ExceptionHandler(JobDashboardException.class)
-  public ResponseEntity<Object> handleJobDashboardException(JobDashboardException e) {
+  @ExceptionHandler(PublishJobEventException.class)
+  public ResponseEntity<Object> handleJobDashboardException(PublishJobEventException e) {
     return ResponseEntity.badRequest()
         .body(
             ErrorResponse.builder(ErrorType.ERROR, 0xfffff7)

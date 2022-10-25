@@ -27,4 +27,5 @@ public class JobDto implements Serializable {
   private Metadata metadata;
   private List<AuditLog> auditLog;
   private String errorMessage;
+  private Long fileMetaDataId;
 }

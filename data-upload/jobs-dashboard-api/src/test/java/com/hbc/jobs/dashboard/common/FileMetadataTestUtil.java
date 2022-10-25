@@ -3,7 +3,7 @@ package com.hbc.jobs.dashboard.common;
 import com.hbc.jobs.dashboard.domain.entity.FileMetaDataEntity;
 import com.hbc.jobs.dashboard.domain.inbound.FileMetaDataCreationRequest;
 import com.hbc.jobs.dashboard.domain.inbound.FileMetaDataUpdationRequest;
-import com.hbc.jobs.dashboard.domain.outbound.FileMetaDataResponse;
+import com.hbc.jobs.framework.common.domain.outbound.FileMetaDataResponse;
 
 public class FileMetadataTestUtil {
   public static final String NAME = "TestMetaDataFile";

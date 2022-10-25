@@ -37,6 +37,8 @@ dataupload:
   max-rows: 10000
   bucket-name: "promise-s3-lambda-dev"
 jobs-framework:
+  job-completion-consumer:
+    topic-name: internal-hotfix-job-completion
   kafka-publish:
     topic-name: INTERNAL.HOTFIX.JOBS.TASK
   result-publish:
