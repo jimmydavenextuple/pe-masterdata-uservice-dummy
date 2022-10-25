@@ -22,21 +22,21 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MarketRegionProcessingRequestImpl extends AbstractProcessingRequest
+public class PostalCodeTimezoneProcessingRequestImpl extends AbstractProcessingRequest
     implements ProcessingRequestInterface {
 
-  public MarketRegionProcessingRequestImpl(JobsDashboardClient jobsDashboardClient) {
+  public PostalCodeTimezoneProcessingRequestImpl(JobsDashboardClient jobsDashboardClient) {
     super(jobsDashboardClient);
   }
 
   @Override
   public String getModuleType() {
-    return ModuleEnum.MARKET_REGION.getModuleValue();
+    return ModuleEnum.POSTAL_CODE_TIMEZONE.getModuleValue();
   }
 
   @Override
   public String submitJob(String orgId, long fileMetadataId) throws JobSubmissionException {
-    return submitJob(orgId, JobTypeEnum.MARKET_REGION, fileMetadataId).getJobId();
+    return submitJob(orgId, JobTypeEnum.POSTAL_CODE_TIMEZONE, fileMetadataId).getJobId();
   }
 
   @Override
@@ -50,9 +50,12 @@ public class MarketRegionProcessingRequestImpl extends AbstractProcessingRequest
     var csvReader = new CSVReader(new InputStreamReader(fileResponse.getInputStream()));
     List<String[]> csvFileContents = csvReader.readAll();
 
-    DataUploadUtil.validateEmptyCSV(csvFileContents, NO_RECORDS_FOUND_IN_THE_CSV);
+    DataUploadUtil.validateEmptyCSV(csvFileContents, NO_RECORDS_FOUND_IN_THE_CSV, csvReader);
     DataUploadUtil.validateCSVHeaders(
-        csvFileContents.get(0), getModuleType(), MARKET_REGION_DATA_UPLOAD_INVALID_FILE_HEADERS);
+        csvFileContents.get(0),
+        getModuleType(),
+        MARKET_REGION_DATA_UPLOAD_INVALID_FILE_HEADERS,
+        csvReader);
 
     csvReader.close();
   }

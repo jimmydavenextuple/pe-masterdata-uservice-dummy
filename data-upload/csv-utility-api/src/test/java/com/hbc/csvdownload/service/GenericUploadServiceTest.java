@@ -47,7 +47,7 @@ class GenericUploadServiceTest {
 
     GenericUploadResponse response =
         configDataUploadService.processUploadConfigData(
-            "market-region", testUtil.getGenericUploadRequest());
+            "postal-code-timezone", testUtil.getGenericUploadRequest());
 
     Assertions.assertEquals(TestUtil.ORG_ID, response.getOrgId());
     verify(fileService, times(1)).getFile(any(), any());

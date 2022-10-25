@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.exception.JobSubmissionException;
-import com.hbc.csvdownload.service.v1.impl.MarketRegionProcessingRequestImpl;
+import com.hbc.csvdownload.service.v1.impl.PostalCodeTimezoneProcessingRequestImpl;
 import com.hbc.csvdownload.util.TestUtil;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
@@ -27,9 +27,9 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class MarketRegionProcessingRequestImplTest {
+class PostalCodeTimezoneProcessingRequestImplTest {
 
-  @InjectMocks MarketRegionProcessingRequestImpl marketRegionProcessingRequest;
+  @InjectMocks PostalCodeTimezoneProcessingRequestImpl postalCodeTimezoneProcessingRequest;
 
   @Spy JobsDashboardClient jobsDashboardClient;
 
@@ -43,55 +43,63 @@ class MarketRegionProcessingRequestImplTest {
   @Test
   void submitJobTest() throws JobSubmissionException {
     when(jobsDashboardClient.processJobOffline(
-            TestUtil.ORG_ID, JobTypeEnum.MARKET_REGION, TestUtil.FILE_METADATA_ID))
+            TestUtil.ORG_ID, JobTypeEnum.POSTAL_CODE_TIMEZONE, TestUtil.FILE_METADATA_ID))
         .thenReturn(BaseResponse.builder().payload(testUtil.getJobResponse()).build());
     String result =
-        marketRegionProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID);
+        postalCodeTimezoneProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID);
     Assertions.assertEquals(TestUtil.JOB_ID, result);
   }
 
   @Test
   void submitJobFeignExceptionTest() {
     when(jobsDashboardClient.processJobOffline(
-            TestUtil.ORG_ID, JobTypeEnum.MARKET_REGION, TestUtil.FILE_METADATA_ID))
+            TestUtil.ORG_ID, JobTypeEnum.POSTAL_CODE_TIMEZONE, TestUtil.FILE_METADATA_ID))
         .thenThrow(FeignException.class);
     Assertions.assertThrows(
         JobSubmissionException.class,
-        () -> marketRegionProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID));
+        () ->
+            postalCodeTimezoneProcessingRequest.submitJob(
+                TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID));
   }
 
   @Test
   void submitJobExceptionTest() {
     when(jobsDashboardClient.processJobOffline(
-            TestUtil.ORG_ID, JobTypeEnum.MARKET_REGION, TestUtil.FILE_METADATA_ID))
+            TestUtil.ORG_ID, JobTypeEnum.POSTAL_CODE_TIMEZONE, TestUtil.FILE_METADATA_ID))
         .thenThrow(ArithmeticException.class);
     Assertions.assertThrows(
         JobSubmissionException.class,
-        () -> marketRegionProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID));
+        () ->
+            postalCodeTimezoneProcessingRequest.submitJob(
+                TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID));
   }
 
   @Test
   void validateCsvTest() throws IOException, CommonServiceException, CsvException {
-    Path path = Paths.get("src", "test", "resources", "marketRegion", "marketRegion.csv");
+    Path path =
+        Paths.get("src", "test", "resources", "postalCodeTimezone", "postalCodeTimezone.csv");
     InputStream inputStream = Files.newInputStream(path);
     FileResponse response = testUtil.getFileResponse();
     response.setInputStream(inputStream);
-    marketRegionProcessingRequest.validate(testUtil.getGenericUploadRequest(), response);
-    Assertions.assertEquals("market-region.csv", response.getFileName());
+    postalCodeTimezoneProcessingRequest.validate(testUtil.getGenericUploadRequest(), response);
+    Assertions.assertEquals("postalCodeTimezone.csv", response.getFileName());
   }
 
   @Test
   void validateInvalidHeadersExceptionTest() throws IOException {
     Path path =
-        Paths.get("src", "test", "resources", "marketRegion", "marketRegionInvalidHeader.csv");
-    InputStream inputStream = Files.newInputStream(path);
-    FileResponse response = testUtil.getFileResponse();
-    response.setInputStream(inputStream);
+        Paths.get(
+            "src",
+            "test",
+            "resources",
+            "postalCodeTimezone",
+            "postalCodeTimezoneInvalidHeader.csv");
+    FileResponse response = getFileResponseWithInputStream(path);
     Exception ex =
         Assertions.assertThrows(
             Exception.class,
             () ->
-                marketRegionProcessingRequest.validate(
+                postalCodeTimezoneProcessingRequest.validate(
                     testUtil.getGenericUploadRequest(), response));
     Assertions.assertEquals(
         "Market Region data uploaded file has invalid headers.", ex.getMessage());
@@ -99,16 +107,30 @@ class MarketRegionProcessingRequestImplTest {
 
   @Test
   void validateEmptyCsvExceptionTest() throws IOException {
-    Path path = Paths.get("src", "test", "resources", "marketRegion", "marketRegionEmpty.csv");
-    InputStream inputStream = Files.newInputStream(path);
-    FileResponse response = testUtil.getFileResponse();
-    response.setInputStream(inputStream);
+    Path path =
+        Paths.get("src", "test", "resources", "postalCodeTimezone", "postalCodeTimezoneEmpty.csv");
+    FileResponse response = getFileResponseWithInputStream(path);
     Exception ex =
         Assertions.assertThrows(
             Exception.class,
             () ->
-                marketRegionProcessingRequest.validate(
+                postalCodeTimezoneProcessingRequest.validate(
                     testUtil.getGenericUploadRequest(), response));
+    Assertions.assertEquals("No Records found in the csv", ex.getMessage());
+  }
+
+  @Test
+  void validateFullEmptyCsvExceptionTest() throws IOException {
+    Path path =
+        Paths.get(
+            "src", "test", "resources", "postalCodeTimezone", "postalCodeTimezoneFullEmpty.csv");
+    FileResponse fileResponse = getFileResponseWithInputStream(path);
+    Exception ex =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                postalCodeTimezoneProcessingRequest.validate(
+                    testUtil.getGenericUploadRequest(), fileResponse));
     Assertions.assertEquals("No Records found in the csv", ex.getMessage());
   }
 
@@ -120,9 +142,16 @@ class MarketRegionProcessingRequestImplTest {
         Assertions.assertThrows(
             Exception.class,
             () ->
-                marketRegionProcessingRequest.validate(
+                postalCodeTimezoneProcessingRequest.validate(
                     testUtil.getGenericUploadRequest(), response));
     Assertions.assertEquals(
         "Market Region data uploaded file has invalid file type.", ex.getMessage());
+  }
+
+  private FileResponse getFileResponseWithInputStream(Path path) throws IOException {
+    InputStream inputStream = Files.newInputStream(path);
+    FileResponse response = testUtil.getFileResponse();
+    response.setInputStream(inputStream);
+    return response;
   }
 }

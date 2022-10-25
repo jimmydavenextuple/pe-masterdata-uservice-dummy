@@ -13,8 +13,10 @@ public enum JobTypeEnum {
   UPLOAD_PROCESSING_LEAD_TIMES(MasterDataModule.NODE_CARRIER),
   DELETE_TRANSIT_BUFFER(MasterDataModule.TRANSIT),
   TRANSIT_BUFFER_REQUEST(MasterDataModule.TRANSIT),
-  MARKET_REGION(MasterDataModule.TRANSIT);
-
+  POSTAL_CODE_TIMEZONE(MasterDataModule.POSTAL_CODE_TIMEZONE),
+  NODE(MasterDataModule.NODE),
+  UPLOAD_NODE_CARRIER(MasterDataModule.NODE_CARRIER),
+  UPLOAD_NODE_CALENDER(MasterDataModule.NODE_CALENDER);
   private static final Map<String, JobTypeEnum> jobTypeMap =
       Collections.unmodifiableMap(initialize());
   private final MasterDataModule module;
