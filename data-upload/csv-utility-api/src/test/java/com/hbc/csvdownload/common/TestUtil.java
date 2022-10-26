@@ -683,6 +683,7 @@ public class TestUtil {
         .hasExceptions(true)
         .exceptions(sfccErrorResponse)
         .build();
+  }
 
   public TransitBufferConfigRequest getTransitBufferConfigRequest() {
     Date bufferStartDate = new Date(1000);
@@ -718,6 +719,5 @@ public class TestUtil {
     transitBufferConfigResponseBaseResponse.setSuccess(Boolean.TRUE);
     transitBufferConfigResponseBaseResponse.setPayload(getTransitBufferConfigResponse());
     return transitBufferConfigResponseBaseResponse;
-
   }
 }
