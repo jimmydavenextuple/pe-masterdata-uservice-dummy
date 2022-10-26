@@ -2,23 +2,32 @@ package com.hbc.csvdownload.service;
 
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
+import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.error.FieldError;
 import com.hbc.csvdownload.domain.mapper.ProcessingLeadTimeMapper;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
 import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.csvdownload.util.CsvUtil;
+import com.hbc.dataupload.common.constants.DataUploadUtilityConstants;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
+import com.hbc.transit.domain.feign.TransitBufferConfigRequestFeign;
+import com.hbc.transit.domain.inbound.TransitBufferConfigRequest;
+import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +41,10 @@ public class CsvUploadUtilityService {
 
   public static final ProcessingLeadTimeMapper INSTANCE =
       Mappers.getMapper(ProcessingLeadTimeMapper.class);
+
+  private final TransitBufferConfigRequestFeign transitBufferConfigRequestFeign;
+
+  private static final String ORG_ID = "orgId";
 
   public String uploadProcessingLeadTimesCsv(String orgId, MultipartFile csvFile)
       throws CsvFormatValidationFailedException, JobSubmissionException, CsvParsingException,
@@ -93,7 +106,7 @@ public class CsvUploadUtilityService {
 
   private void validateHeaders(String orgIdHeader, String carrierServiceIdHeader, String fsaHeader)
       throws CsvFormatValidationFailedException {
-    if (!orgIdHeader.equals("orgId")) {
+    if (!orgIdHeader.equals(ORG_ID)) {
       logger.error("Invalid header orgId");
       throw new CsvFormatValidationFailedException("Invalid header orgId", orgIdHeader);
     }
@@ -130,5 +143,62 @@ public class CsvUploadUtilityService {
       logger.error("Error while submitting job to job framework", e);
       throw new JobSubmissionException("Error while submitting job to job framework", e, orgId);
     }
+  }
+
+  public TransitBufferConfigResponse uploadTransitBufferData(
+      TransitBufferConfigRequest transitBufferConfigRequest) throws CommonServiceException {
+
+    try {
+      transitBufferConfigRequest.setAction(DataUploadUtilityConstants.CREATE_C);
+      return callTransitBufferApi(transitBufferConfigRequest);
+    } catch (Exception e) {
+      logger.error("Error while processing transit buffer request", e);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          ORG_ID,
+          FieldError.builder().rejectedValue(transitBufferConfigRequest.getOrgId()).build());
+      throw new CommonServiceException(e.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff3, errorMap);
+    }
+  }
+
+  public TransitBufferConfigResponse updatingTransitBufferData(
+      TransitBufferConfigRequest transitBufferConfigRequest) throws CommonServiceException {
+
+    try {
+      transitBufferConfigRequest.setAction(DataUploadUtilityConstants.UPDATE_U);
+      return callTransitBufferApi(transitBufferConfigRequest);
+
+    } catch (Exception e) {
+      logger.error("Error while updating transit buffer records", e);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          ORG_ID,
+          FieldError.builder().rejectedValue(transitBufferConfigRequest.getOrgId()).build());
+      throw new CommonServiceException(e.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff4, errorMap);
+    }
+  }
+
+  public void deletingTransitBufferData(Long transitBufferRequestId, String createdBy)
+      throws CommonServiceException {
+
+    try {
+      transitBufferConfigRequestFeign.deleteTransitBufferConfigRequest(
+          transitBufferRequestId, createdBy);
+    } catch (Exception e) {
+      logger.error("Exception while deleting transit buffer records", e);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          "TransitBufferRequestId",
+          FieldError.builder().rejectedValue(transitBufferRequestId).build());
+      throw new CommonServiceException(e.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff5, errorMap);
+    }
+  }
+
+  private TransitBufferConfigResponse callTransitBufferApi(
+      TransitBufferConfigRequest transitBufferConfigRequest) {
+
+    return transitBufferConfigRequestFeign
+        .processTransitBufferConfigRequest(transitBufferConfigRequest)
+        .getPayload();
   }
 }

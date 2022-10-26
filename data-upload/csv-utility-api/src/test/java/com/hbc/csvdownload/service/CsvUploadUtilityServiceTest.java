@@ -1,7 +1,9 @@
 package com.hbc.csvdownload.service;
 
 import static org.mockito.Mockito.*;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
@@ -10,6 +12,8 @@ import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
+import com.hbc.transit.domain.feign.TransitBufferConfigRequestFeign;
+import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
 import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
 import feign.Request;
@@ -33,6 +37,8 @@ class CsvUploadUtilityServiceTest {
 
   @InjectMocks private CsvUploadUtilityService csvUploadUtilityService;
   @InjectMocks private TestUtil testUtil;
+
+  @Mock TransitBufferConfigRequestFeign transitBufferConfigRequestFeign;
 
   @Test
   void uploadProcessingLeadTimesCsv()
@@ -430,5 +436,131 @@ class CsvUploadUtilityServiceTest {
 
     Assertions.assertFalse(ObjectUtils.isEmpty(res));
     verify(jobsDashboardClient, times(1)).processJobOffline(any(), any(), any(), any());
+  }
+
+  @Test
+  void uploadTransitBufferDataTest() throws CommonServiceException {
+    when(transitBufferConfigRequestFeign.processTransitBufferConfigRequest(any()))
+        .thenReturn(testUtil.getTransitBufferConfigResponseBaseResponse());
+
+    TransitBufferConfigResponse transitBufferConfigResponse =
+        csvUploadUtilityService.uploadTransitBufferData(testUtil.getTransitBufferConfigRequest());
+    Assertions.assertNotNull(transitBufferConfigResponse);
+  }
+
+  @Test
+  void uploadTransitBufferDataTestFeignException() {
+    when(transitBufferConfigRequestFeign.processTransitBufferConfigRequest(any()))
+        .thenThrow(
+            new FeignException.BadRequest(
+                "Feign exception while processing transit buffer request",
+                Request.create(HttpMethod.GET, "", new HashMap<>(), null, null, null),
+                "Feign exception while processing transit buffer request".getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                csvUploadUtilityService.uploadTransitBufferData(
+                    testUtil.getTransitBufferConfigRequest()));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void uploadTransitBufferDataTestException() {
+    when(transitBufferConfigRequestFeign.processTransitBufferConfigRequest(any()))
+        .thenThrow(new RuntimeException("error"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                csvUploadUtilityService.uploadTransitBufferData(
+                    testUtil.getTransitBufferConfigRequest()));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void updateTransitBufferDataTest() throws CommonServiceException {
+    when(transitBufferConfigRequestFeign.processTransitBufferConfigRequest(any()))
+        .thenReturn(testUtil.getTransitBufferConfigResponseBaseResponse());
+
+    TransitBufferConfigResponse transitBufferConfigResponse =
+        csvUploadUtilityService.updatingTransitBufferData(testUtil.getTransitBufferConfigRequest());
+    Assertions.assertNotNull(transitBufferConfigResponse);
+  }
+
+  @Test
+  void updateTransitBufferDataTestFeignException() {
+    when(transitBufferConfigRequestFeign.processTransitBufferConfigRequest(any()))
+        .thenThrow(
+            new FeignException.BadRequest(
+                "Feign exception while updating transit buffer request",
+                Request.create(HttpMethod.GET, "", new HashMap<>(), null, null, null),
+                "Feign exception while updating transit buffer request".getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                csvUploadUtilityService.updatingTransitBufferData(
+                    testUtil.getTransitBufferConfigRequest()));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void updateTransitBufferDataTestException() {
+    when(transitBufferConfigRequestFeign.processTransitBufferConfigRequest(any()))
+        .thenThrow(new RuntimeException("error"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                csvUploadUtilityService.updatingTransitBufferData(
+                    testUtil.getTransitBufferConfigRequest()));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void deleteTransitBufferDataTest() throws CommonServiceException {
+    when(transitBufferConfigRequestFeign.deleteTransitBufferConfigRequest(any(), any()))
+        .thenReturn(testUtil.getTransitBufferConfigResponseBaseResponse());
+    csvUploadUtilityService.deletingTransitBufferData(
+        testUtil.getTransitBufferConfigResponse().getId(), TestUtil.CREATED_BY);
+    verify(transitBufferConfigRequestFeign, times(1))
+        .deleteTransitBufferConfigRequest(any(), any());
+  }
+
+  @Test
+  void deleteTransitBufferDataTestFeignException() {
+    when(transitBufferConfigRequestFeign.deleteTransitBufferConfigRequest(any(), any()))
+        .thenThrow(
+            new FeignException.BadRequest(
+                "Feign exception while deleting transit buffer request",
+                Request.create(HttpMethod.GET, "", new HashMap<>(), null, null, null),
+                "Feign exception while deleting transit buffer request".getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                csvUploadUtilityService.deletingTransitBufferData(
+                    testUtil.getTransitBufferConfigResponse().getId(), TestUtil.CREATED_BY));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void deleteTransitBufferDataTestException() {
+    when(transitBufferConfigRequestFeign.deleteTransitBufferConfigRequest(any(), any()))
+        .thenThrow(new RuntimeException("error"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                csvUploadUtilityService.deletingTransitBufferData(
+                    testUtil.getTransitBufferConfigResponse().getId(), TestUtil.CREATED_BY));
+    Assertions.assertNotNull(exception);
   }
 }

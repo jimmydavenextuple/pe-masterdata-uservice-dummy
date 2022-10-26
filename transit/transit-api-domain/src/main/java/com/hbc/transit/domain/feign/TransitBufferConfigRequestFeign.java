@@ -7,6 +7,7 @@ import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface TransitBufferConfigRequestFeign {
 
   @PostMapping("/transit/buffer-config-request")
-  BaseResponse<TransitBufferConfigResponse> createTransitBufferConfigRequest(
+  BaseResponse<TransitBufferConfigResponse> processTransitBufferConfigRequest(
       @Valid @RequestBody TransitBufferConfigRequest transitBufferConfigRequest);
 
   @PutMapping("/transit/buffer-config-request/update-status/{id}")
@@ -32,4 +33,8 @@ public interface TransitBufferConfigRequestFeign {
   BaseResponse<List<TransitBufferConfigResponse>> getTransitBufferConfigRequests(
       @PathVariable(name = "orgId") String orgId,
       @RequestParam(name = "carrierServiceId") String carrierServiceId);
+
+  @DeleteMapping("/transit/buffer-config-request")
+  BaseResponse<TransitBufferConfigResponse> deleteTransitBufferConfigRequest(
+      @RequestParam Long transitBufferRequestId, @RequestParam String createdBy);
 }

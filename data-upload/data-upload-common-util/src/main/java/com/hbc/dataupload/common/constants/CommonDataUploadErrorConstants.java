@@ -22,4 +22,10 @@ public class CommonDataUploadErrorConstants {
   public static final String NODE_CALENDER_DATA_UPLOAD_INVALID_FILE_TYPE =
       "Node Calender data uploaded file has invalid file type.";
   public static final String NO_RECORDS_FOUND_IN_THE_CSV = "No Records found in the csv";
+
+  public static final String TRANSIT_BUFFER_DATA_UPLOAD_INVALID_FILE_HEADERS =
+      "Transit buffer data uploaded file has invalid headers.";
+
+  public static final String TRANSIT_BUFFER_DATA_UPLOAD_INVALID_FILE_TYPE =
+      "Transit buffer data uploaded file is not a csv file.";
 }

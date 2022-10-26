@@ -12,7 +12,10 @@ import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
 import com.hbc.transit.domain.inbound.TransitBufferConfigRequest;
 import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
+import com.hbc.transit.exception.TransitBufferReqJobRefDomainException;
 import com.hbc.transit.service.TransitBufferConfigRequestService;
+import com.opencsv.exceptions.CsvException;
+import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 
 class TransitBufferConfigRequestControllerTest {
 
@@ -36,30 +40,34 @@ class TransitBufferConfigRequestControllerTest {
   }
 
   @Test
-  void createTransitBufferConfigRequestTest() throws CommonServiceException {
+  void createTransitBufferConfigRequestTest()
+      throws CommonServiceException, IOException, TransitBufferReqJobRefDomainException,
+          CsvException {
     TransitBufferConfigRequest transitBufferConfigRequest =
-        testUtil.getTransitBufferConfigRequest();
-    when(transitBufferConfigRequestService.createTransitBufferRequest(
+        testUtil.getTransitBufferConfigRequest(TestUtil.ACTION);
+    when(transitBufferConfigRequestService.processTransitBufferRequest(
             any(TransitBufferConfigRequest.class)))
         .thenReturn(
             testUtil.getTransitBufferConfigResponse(TransitBufferConfigRequestStatusEnum.CREATED));
 
     ResponseEntity<BaseResponse<TransitBufferConfigResponse>> responseEntity =
-        transitBufferConfigRequestController.createTransitBufferConfigRequest(
+        transitBufferConfigRequestController.processTransitBufferConfigRequest(
             transitBufferConfigRequest);
 
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertEquals(
         testUtil.getTransitBufferConfigResponse(TransitBufferConfigRequestStatusEnum.CREATED),
         responseEntity.getBody().getPayload());
-    verify(transitBufferConfigRequestService, times(1)).createTransitBufferRequest(any());
+    verify(transitBufferConfigRequestService, times(1)).processTransitBufferRequest(any());
   }
 
   @Test
-  void createTransitBufferConfigRequestExceptionTest() throws CommonServiceException {
+  void createTransitBufferConfigRequestExceptionTest()
+      throws CommonServiceException, IOException, TransitBufferReqJobRefDomainException,
+          CsvException {
     TransitBufferConfigRequest transitBufferConfigRequest =
-        testUtil.getTransitBufferConfigRequest();
-    when(transitBufferConfigRequestService.createTransitBufferRequest(
+        testUtil.getTransitBufferConfigRequest(TestUtil.ACTION);
+    when(transitBufferConfigRequestService.processTransitBufferRequest(
             any(TransitBufferConfigRequest.class)))
         .thenThrow(new RuntimeException("Failed to create transit buffer config request"));
 
@@ -67,12 +75,12 @@ class TransitBufferConfigRequestControllerTest {
         Assertions.assertThrows(
             Exception.class,
             () ->
-                transitBufferConfigRequestController.createTransitBufferConfigRequest(
+                transitBufferConfigRequestController.processTransitBufferConfigRequest(
                     transitBufferConfigRequest));
     Assertions.assertEquals(
         "Failed to create transit buffer config request", exception.getMessage());
 
-    verify(transitBufferConfigRequestService, times(1)).createTransitBufferRequest(any());
+    verify(transitBufferConfigRequestService, times(1)).processTransitBufferRequest(any());
   }
 
   @Test
@@ -149,5 +157,21 @@ class TransitBufferConfigRequestControllerTest {
     Assertions.assertEquals("Failed to get transit buffer config requests", exception.getMessage());
     verify(transitBufferConfigRequestService, times(1))
         .fetchTransitBufferRequests(anyString(), anyString());
+  }
+
+  @Test
+  void deleteTransitBufferRequestTest()
+      throws CommonServiceException, IOException, TransitBufferReqJobRefDomainException,
+          CsvException {
+    when(transitBufferConfigRequestService.deleteTransitBufferRequest(any(), any()))
+        .thenReturn(
+            testUtil.getTransitBufferConfigResponse(TransitBufferConfigRequestStatusEnum.CREATED));
+    ResponseEntity<BaseResponse<TransitBufferConfigResponse>> res =
+        transitBufferConfigRequestController.deleteTransitBufferConfigRequest(
+            TestUtil.ID, TestUtil.CREATED_BY);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res);
+    Assertions.assertNotNull(res.getBody());
+    Assertions.assertFalse(ObjectUtils.isEmpty(res.getBody().getMessage()));
   }
 }

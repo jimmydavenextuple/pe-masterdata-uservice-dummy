@@ -7,6 +7,7 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CAR
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESCRIPTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESTINATION_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EFFECTIVE_DATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXPRESS_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.IS_ACTIVE;
@@ -23,6 +24,7 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PRO
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SDND_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIP_TO_HOME;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.TIMEZONE;
@@ -79,12 +81,8 @@ public class DataUploadUtilityExpectedHeaders {
             Map.entry(
                 "node-carrier",
                 List.of(
-                    ACTION,
-                    NODE_ID,
-                    ORG_ID,
-                    CARRIER_SERVICE_ID,
-                    SERVICE_OPTION,
-                    LAST_PICKUP_TIME)));
+                    ACTION, NODE_ID, ORG_ID, CARRIER_SERVICE_ID, SERVICE_OPTION, LAST_PICKUP_TIME)),
+            Map.entry("transit-buffer", List.of(SOURCE_GEO_ZONE, DESTINATION_GEO_ZONE)));
   }
 
   public static List<String> getCSVExpectedHeaders(String key) {
