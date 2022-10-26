@@ -86,3 +86,6 @@ scheduled-processor:
 download-page-size:
   node-carrier-service-options: 200
   node: 200
+edd-computation:
+  lines: 30
+  orders: 10

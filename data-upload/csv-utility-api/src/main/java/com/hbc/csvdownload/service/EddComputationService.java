@@ -39,14 +39,14 @@ import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.helper.EddComputationUploadConstants;
 import com.hbc.dataupload.common.utils.DataUploadUtil;
-import com.hbc.intermediary.domain.Item;
-import com.hbc.intermediary.domain.SfccErrorResponseLine;
-import com.hbc.intermediary.domain.SfccOrder;
-import com.hbc.intermediary.domain.SfccOrderLine;
-import com.hbc.intermediary.domain.SfccResponse;
-import com.hbc.intermediary.domain.SfccSuggestedPromiseOption;
-import com.hbc.intermediary.domain.ShipToAddress;
-import com.hbc.intermediary.feign.IntermediaryServiceFeign;
+import com.hbc.promise.common.domain.Item;
+import com.hbc.promise.common.domain.SfccErrorResponseLine;
+import com.hbc.promise.common.domain.SfccOrder;
+import com.hbc.promise.common.domain.SfccOrderLine;
+import com.hbc.promise.common.domain.SfccResponse;
+import com.hbc.promise.common.domain.SfccSuggestedPromiseOption;
+import com.hbc.promise.common.domain.ShipToAddress;
+import com.hbc.promise.common.feign.IntermediaryServiceFeign;
 import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -82,6 +82,12 @@ public class EddComputationService {
 
   @Value("${dataupload.maxsize-in-kilobytes}")
   private double maxSizeInKiloBytes;
+
+  @Value("${edd-computation.lines}")
+  private int maxEddComputationLines;
+
+  @Value("${edd-computation.orders}")
+  private double maxEddComputationOrders;
 
   @Value("${dataupload.max-rows}")
   private long maxRows;
@@ -125,10 +131,15 @@ public class EddComputationService {
       List<SfccResponse> sfccResponseList = new ArrayList<>();
       var csvRecord = iterator.next();
       var sfccOrder = createSfccOrder(csvRecord);
-      while (iterator.hasNext()) {
+      var count = 0;
+      while (iterator.hasNext() && count < maxEddComputationLines) {
         csvRecord = iterator.next();
         long row = csvParser.getCurrentLineNumber();
+        if (sfccResponseList.size() >= maxEddComputationOrders) {
+          break;
+        }
         sfccOrder = eddComputation(sfccResponseList, sfccOrder, csvRecord, row);
+        count += 1;
       }
       if (Objects.nonNull(sfccOrder)) {
         getIntermediaryResponse(sfccOrder, sfccResponseList);
