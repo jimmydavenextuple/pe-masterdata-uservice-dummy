@@ -2,6 +2,7 @@ package com.hbc.dataupload.common.headers;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ALLOCATION_RULE_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BASKET_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BOPIS_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BUFFER_HOURS;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
@@ -28,11 +29,21 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.IS_
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.KEY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LAST_PICKUP_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LINES_ITEM_ITEM_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LINES_ITEM_ITEM_TYPE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LINES_ITEM_SELLER;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LINES_ITEM_UNIT_OF_MEASURE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LINES_LINE_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LINES_REQUIRED_QTY;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LINES_SHIP_TO_ADDRESS_PROVINCE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LINES_SHIP_TO_ADDRESS_ZIPCODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NEXTDAY_ELIGIBLE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORGANIZATION_CODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PAGE_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PRIORITY;
@@ -42,7 +53,10 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SEL
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SESSION_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIPPING_STAGE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIP_TO_ADDRESS_PROVINCE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIP_TO_ADDRESS_ZIPCODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIP_TO_HOME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_AND_DESTINATION_GEO_ZONE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_GEO_ZONE;
@@ -193,7 +207,24 @@ public class DataUploadUtilityExpectedHeaders {
                     DESTINATION_GEO_ZONE,
                     SERVICE_OPTION,
                     SELECTION_CRITERIA,
-                    ACTION)));
+                    ACTION)),
+            Map.entry(
+                "intermediary",
+                List.of(
+                    ORGANIZATION_CODE,
+                    SESSION_ID,
+                    BASKET_ID,
+                    PAGE_NAME,
+                    SHIP_TO_ADDRESS_ZIPCODE,
+                    SHIP_TO_ADDRESS_PROVINCE,
+                    LINES_ITEM_ITEM_ID,
+                    LINES_ITEM_ITEM_TYPE,
+                    LINES_ITEM_UNIT_OF_MEASURE,
+                    LINES_ITEM_SELLER,
+                    LINES_LINE_ID,
+                    LINES_REQUIRED_QTY,
+                    LINES_SHIP_TO_ADDRESS_ZIPCODE,
+                    LINES_SHIP_TO_ADDRESS_PROVINCE)));
   }
 
   public static List<String> getCSVExpectedHeaders(String key) {

@@ -85,12 +85,19 @@ subprojects {
     }
 
     repositories {
-//        mavenCentral()
+        mavenCentral()
         maven {
-            url = 'https://repo.maven.apache.org/maven2'
+            url = 'https://repo.maven.apache.org/m2'
         }
         maven {
             url = 'https://clojars.org/repo/'
+        }
+        maven {
+            url "${artifactory_contextUrl}"
+            credentials {
+                username "aws"
+                password System.env.CODEARTIFACT_AUTH_TOKEN
+            }
         }
     }
 

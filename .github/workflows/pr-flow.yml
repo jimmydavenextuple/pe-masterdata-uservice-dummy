@@ -59,6 +59,7 @@ jobs:
         if [ $BRANCH == 'hotfix' ]; then
           export BUILD_TARGET="SNAPSHOT"
         fi
+        export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain hbc --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
         bash ./gradlew -Pbuild_target=$BUILD_TARGET clean build jacocoTestReport  spotbugsMain -p ${{ inputs.module }}
         bash ./gradlew -Pbuild_target=$BUILD_TARGET spotbugsMain test jacocoTestReport
         bash ./gradlew -Pbuild_target=$BUILD_TARGET dependencyCheckAggregate --info

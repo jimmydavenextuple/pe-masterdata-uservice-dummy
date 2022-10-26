@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 public class CSVCommonConstants {
   public static final String PROCESSING_TIME = "processingTime (in hrs)";
   public static final String NODE_ID = "nodeId";
+  public static final String CART_ID = "cartId";
+  public static final String SFCC_RESPONSE = "sfccResponse";
   public static final String ORG_ID = "orgId";
   public static final String CARRIER_ID = "carrierId";
   public static final String CARRIER_SERVICE_ID = "carrierServiceId";

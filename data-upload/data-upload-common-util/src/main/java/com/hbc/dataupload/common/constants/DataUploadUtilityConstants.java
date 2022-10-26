@@ -11,6 +11,40 @@ public class DataUploadUtilityConstants {
   public static final String DELETE = "DELETE";
   public static final String ACTION = "action";
   public static final String ORG_ID = "orgId";
+  public static final String EDD = "edd";
+  public static final String CUTOFF_TIME = "cutOffTime";
+  public static final String LINES_ITEM_ID = "lines_itemId";
+  public static final String LINES_ITEM_TYPE = "lines_itemType";
+  public static final String LINES_REQUEST_QTY = "lines_requestQuantity";
+  public static final String LINES_MAX_AVAILABLE_QTY = "lines_maxAvailableQuantity";
+  public static final String LINES_PROMISE_DETAILS_SOURCE_NODE_ID =
+      "lines_promiseDetails_sourceNodeId";
+  public static final String LINES_PROMISE_DETAILS_SOURCE_NODE_TYPE =
+      "lines_promiseDetails_sourceNodeType";
+  public static final String LINES_PROMISE_DETAILS_SOURCE_NODE_TYPE_FILL_QTY =
+      "lines_promiseDetails_sourceNodeType_fillQuantity";
+  public static final String HAS_EXCEPTIONS = "hasExceptions";
+  public static final String EXCEPTION_LINES_ITEM_ID = "exception_lines_itemId";
+  public static final String EXCEPTION_LINES_ITEM_TYPE = "exception_lines_itemType";
+  public static final String EXCEPTION_LINES_ERROR_CODE = "exception_lines_errorCode";
+  public static final String EXCEPTION_LINES_ERROR_MESSAGE = "exception_lines_errorMessage";
+  public static final String EXCEPTION_LINES_REQUEST_QTY = "exception_lines_requestQuantity";
+  public static final String EXCEPTION_LINES_UNAVAILABLE_QTY =
+      "exception_lines_unavailableQuantity";
+  public static final String SESSION_ID = "sessionId";
+  public static final String BASKET_ID = "basketId";
+  public static final String PAGE_NAME = "pageName";
+  public static final String SHIP_TO_ADDRESS_ZIPCODE = "shipToAddress_zipCode";
+  public static final String SHIP_TO_ADDRESS_PROVINCE = "shipToAddress_province";
+  public static final String LINES_ITEM_ITEM_ID = "lines_item_itemId";
+  public static final String LINES_ITEM_ITEM_TYPE = "lines_item_itemType";
+  public static final String LINES_ITEM_UNIT_OF_MEASURE = "lines_item_unitOfMeasure";
+  public static final String LINES_ITEM_SELLER = "lines_item_seller";
+  public static final String LINES_LINE_ID = "lines_lineId";
+  public static final String LINES_REQUIRED_QTY = "lines_requiredQty";
+  public static final String LINES_SHIP_TO_ADDRESS_ZIPCODE = "lines_shipToAddress_zipCode";
+  public static final String LINES_SHIP_TO_ADDRESS_PROVINCE = "lines_shipToAddress_province";
+  public static final String ORGANIZATION_CODE = "organizationCode";
   public static final String UPDATE_ACTION = "U";
   public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
   public static final String UPDATE_U = "U";

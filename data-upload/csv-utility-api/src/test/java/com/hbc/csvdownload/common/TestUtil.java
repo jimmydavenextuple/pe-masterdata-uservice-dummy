@@ -1,8 +1,6 @@
 package com.hbc.csvdownload.common;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
@@ -29,6 +27,17 @@ import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.promise.common.domain.Item;
+import com.hbc.promise.common.domain.SfccErrorResponse;
+import com.hbc.promise.common.domain.SfccErrorResponseLine;
+import com.hbc.promise.common.domain.SfccOrder;
+import com.hbc.promise.common.domain.SfccOrderLine;
+import com.hbc.promise.common.domain.SfccPromiseDetails;
+import com.hbc.promise.common.domain.SfccResponse;
+import com.hbc.promise.common.domain.SfccResponseLine;
+import com.hbc.promise.common.domain.SfccSuggestedPromiseOption;
+import com.hbc.promise.common.domain.SfccSuggestedPromiseOptionError;
+import com.hbc.promise.common.domain.ShipToAddress;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
 import com.hbc.transit.domain.inbound.TransitBufferConfigRequest;
@@ -386,6 +395,294 @@ public class TestUtil {
     processingTimeBuffer.setBufferEndDate(null);
     processingTimeBuffer.setStatus(null);
     return processingTimeBuffer;
+  }
+
+  public SfccOrder getSfccOrder() {
+    ShipToAddress shipToAddress = ShipToAddress.builder().zipCode("V3G 1S3").province("ON").build();
+    Item item = Item.builder().itemId("item1").itemType("REGULAR").seller("HBC").build();
+    Double requiredQty = Double.valueOf(5);
+    SfccOrderLine line =
+        SfccOrderLine.builder()
+            .lineId("1")
+            .requiredQty(requiredQty)
+            .shipToAddress(shipToAddress)
+            .item(item)
+            .build();
+
+    List<SfccOrderLine> sfccOrderLineList = new ArrayList<>();
+    sfccOrderLineList.add(line);
+
+    return SfccOrder.builder()
+        .basketId("156465897")
+        .organizationCode("BAY")
+        .pageName("Basket/Checkout")
+        .sessionId("jkfdsj5748fdgf58gfh")
+        .lines(sfccOrderLineList)
+        .build();
+  }
+
+  public SfccResponse getSfccResponse() {
+    Double requiredQty = Double.valueOf(5);
+    Double maxAvailableQuantity = Double.valueOf(5);
+    Long qty = Long.valueOf(5);
+    SfccPromiseDetails sfccPromiseDetails =
+        SfccPromiseDetails.builder()
+            .fillQuantity(qty)
+            .sourceNodeId("node2")
+            .sourceNodeType("FC")
+            .build();
+    List<SfccPromiseDetails> sfccPromiseDetailsList = new ArrayList<>();
+    sfccPromiseDetailsList.add(sfccPromiseDetails);
+    SfccResponseLine sfccResponseLine =
+        SfccResponseLine.builder()
+            .maxAvailableQuantity(maxAvailableQuantity)
+            .requestQuantity(requiredQty)
+            .itemId("item1")
+            .itemType("BAY")
+            .promiseDetails(sfccPromiseDetailsList)
+            .build();
+    List<SfccResponseLine> sfccResponseLines = new ArrayList<>();
+    sfccResponseLines.add(sfccResponseLine);
+    String sDate1 = "2022-06-17T05:05:00";
+    SfccSuggestedPromiseOption sfccSuggestedPromiseOption =
+        SfccSuggestedPromiseOption.builder().edd(sDate1).lines(sfccResponseLines).build();
+    List<SfccSuggestedPromiseOption> sfccSuggestedPromiseOptionList = new ArrayList<>();
+    sfccSuggestedPromiseOptionList.add(sfccSuggestedPromiseOption);
+    return SfccResponse.builder()
+        .cartId("156465897")
+        .orgId("BAY")
+        .pageName("Basket/Checkout")
+        .sessionId("jkfdsj5748fdgf58gfh")
+        .sdnd(sfccSuggestedPromiseOptionList)
+        .express(sfccSuggestedPromiseOptionList)
+        .standard(sfccSuggestedPromiseOptionList)
+        .nextday(sfccSuggestedPromiseOptionList)
+        .hasExceptions(false)
+        .build();
+  }
+
+  public SfccResponse getSfccResponse2() {
+    Double requiredQty = Double.valueOf(5);
+    Double maxAvailableQuantity = Double.valueOf(5);
+    Long qty = Long.valueOf(3);
+    Long unavailableQty = Long.valueOf(2);
+    SfccPromiseDetails sfccPromiseDetails =
+        SfccPromiseDetails.builder()
+            .fillQuantity(qty)
+            .sourceNodeId("node2")
+            .sourceNodeType("FC")
+            .build();
+    List<SfccPromiseDetails> sfccPromiseDetailsList = new ArrayList<>();
+    sfccPromiseDetailsList.add(sfccPromiseDetails);
+    SfccResponseLine sfccResponseLine =
+        SfccResponseLine.builder()
+            .maxAvailableQuantity(maxAvailableQuantity)
+            .requestQuantity(requiredQty)
+            .itemId("item1")
+            .promiseDetails(sfccPromiseDetailsList)
+            .build();
+    List<SfccResponseLine> sfccResponseLines = new ArrayList<>();
+    sfccResponseLines.add(sfccResponseLine);
+    String sDate1 = "2022-06-16T05:05:00";
+    SfccSuggestedPromiseOption sfccSuggestedPromiseOption =
+        SfccSuggestedPromiseOption.builder().edd(sDate1).lines(sfccResponseLines).build();
+    String sDate2 = "2022-06-17T05:05:00";
+    SfccSuggestedPromiseOption sfccSuggestedPromiseOption2 =
+        SfccSuggestedPromiseOption.builder().edd(sDate2).lines(sfccResponseLines).build();
+    List<SfccSuggestedPromiseOption> sfccSuggestedPromiseOptionList = new ArrayList<>();
+    sfccSuggestedPromiseOptionList.add(sfccSuggestedPromiseOption);
+    sfccSuggestedPromiseOptionList.add(sfccSuggestedPromiseOption2);
+    SfccErrorResponseLine sfccErrorResponseLine =
+        SfccErrorResponseLine.builder()
+            .errorCode(1011)
+            .errorMessage("Unavailable")
+            .requestQuantity(5.0)
+            .itemId("item1")
+            .build();
+    List<SfccErrorResponseLine> sfccErrorResponseLineList = new ArrayList<>();
+    sfccErrorResponseLineList.add(sfccErrorResponseLine);
+    sfccErrorResponseLineList.add(sfccErrorResponseLine);
+    SfccSuggestedPromiseOptionError sfccSuggestedPromiseOptionError =
+        SfccSuggestedPromiseOptionError.builder().lines(sfccErrorResponseLineList).build();
+    SfccErrorResponse sfccErrorResponse =
+        SfccErrorResponse.builder()
+            .sdnd(sfccSuggestedPromiseOptionError)
+            .express(sfccSuggestedPromiseOptionError)
+            .standard(sfccSuggestedPromiseOptionError)
+            .nextday(sfccSuggestedPromiseOptionError)
+            .build();
+    return SfccResponse.builder()
+        .cartId("156465897")
+        .orgId("BAY")
+        .pageName("Basket/Checkout")
+        .sessionId("jkfdsj5748fdgf58gfh")
+        .sdnd(sfccSuggestedPromiseOptionList)
+        .express(sfccSuggestedPromiseOptionList)
+        .standard(sfccSuggestedPromiseOptionList)
+        .nextday(sfccSuggestedPromiseOptionList)
+        .hasExceptions(true)
+        .exceptions(sfccErrorResponse)
+        .build();
+  }
+
+  public SfccResponse getSfccResponse3() {
+    SfccErrorResponse sfccErrorResponse = SfccErrorResponse.builder().build();
+    return SfccResponse.builder()
+        .cartId("156465897")
+        .orgId("BAY")
+        .pageName("Basket/Checkout")
+        .sessionId("jkfdsj5748fdgf58gfh")
+        .exceptions(sfccErrorResponse)
+        .build();
+  }
+
+  public SfccResponse getSfccResponse4() {
+    SfccPromiseDetails sfccPromiseDetails =
+        SfccPromiseDetails.builder().sourceNodeId("node2").sourceNodeType("FC").build();
+    List<SfccPromiseDetails> sfccPromiseDetailsList = new ArrayList<>();
+    sfccPromiseDetailsList.add(sfccPromiseDetails);
+    SfccResponseLine sfccResponseLine =
+        SfccResponseLine.builder().itemId("item1").promiseDetails(sfccPromiseDetailsList).build();
+    List<SfccResponseLine> sfccResponseLines = new ArrayList<>();
+    sfccResponseLines.add(sfccResponseLine);
+    String sDate1 = "2022-06-16T05:05:00";
+    SfccSuggestedPromiseOption sfccSuggestedPromiseOption =
+        SfccSuggestedPromiseOption.builder().edd(sDate1).lines(sfccResponseLines).build();
+    String sDate2 = "2022-06-17T05:05:00";
+    SfccSuggestedPromiseOption sfccSuggestedPromiseOption2 =
+        SfccSuggestedPromiseOption.builder().edd(sDate2).lines(sfccResponseLines).build();
+    List<SfccSuggestedPromiseOption> sfccSuggestedPromiseOptionList = new ArrayList<>();
+    sfccSuggestedPromiseOptionList.add(sfccSuggestedPromiseOption);
+    sfccSuggestedPromiseOptionList.add(sfccSuggestedPromiseOption2);
+    SfccErrorResponseLine sfccErrorResponseLine =
+        SfccErrorResponseLine.builder()
+            .errorMessage("Unavailable")
+            .itemId("item1")
+            .unavailableQuantity(2.0)
+            .build();
+    List<SfccErrorResponseLine> sfccErrorResponseLineList = new ArrayList<>();
+    sfccErrorResponseLineList.add(sfccErrorResponseLine);
+    sfccErrorResponseLineList.add(sfccErrorResponseLine);
+    SfccSuggestedPromiseOptionError sfccSuggestedPromiseOptionError =
+        SfccSuggestedPromiseOptionError.builder().lines(sfccErrorResponseLineList).build();
+    SfccErrorResponse sfccErrorResponse =
+        SfccErrorResponse.builder()
+            .sdnd(sfccSuggestedPromiseOptionError)
+            .express(sfccSuggestedPromiseOptionError)
+            .standard(sfccSuggestedPromiseOptionError)
+            .nextday(sfccSuggestedPromiseOptionError)
+            .build();
+    return SfccResponse.builder()
+        .cartId("156465897")
+        .orgId("BAY")
+        .pageName("Basket/Checkout")
+        .sessionId("jkfdsj5748fdgf58gfh")
+        .sdnd(sfccSuggestedPromiseOptionList)
+        .express(sfccSuggestedPromiseOptionList)
+        .standard(sfccSuggestedPromiseOptionList)
+        .nextday(sfccSuggestedPromiseOptionList)
+        .hasExceptions(true)
+        .exceptions(sfccErrorResponse)
+        .build();
+  }
+
+  public SfccResponse getSfccResponse5() {
+    SfccPromiseDetails sfccPromiseDetails =
+        SfccPromiseDetails.builder().sourceNodeId("node2").sourceNodeType("FC").build();
+    List<SfccPromiseDetails> sfccPromiseDetailsList = new ArrayList<>();
+    sfccPromiseDetailsList.add(sfccPromiseDetails);
+    SfccResponseLine sfccResponseLine =
+        SfccResponseLine.builder().itemId("item1").promiseDetails(sfccPromiseDetailsList).build();
+    List<SfccResponseLine> sfccResponseLines = new ArrayList<>();
+    sfccResponseLines.add(sfccResponseLine);
+    String sDate1 = "2022-06-16T05:05:00";
+    SfccSuggestedPromiseOption sfccSuggestedPromiseOption =
+        SfccSuggestedPromiseOption.builder().edd(sDate1).lines(sfccResponseLines).build();
+    String sDate2 = "2022-06-17T05:05:00";
+    SfccSuggestedPromiseOption sfccSuggestedPromiseOption2 =
+        SfccSuggestedPromiseOption.builder().edd(sDate2).lines(sfccResponseLines).build();
+    List<SfccSuggestedPromiseOption> sfccSuggestedPromiseOptionList = new ArrayList<>();
+    sfccSuggestedPromiseOptionList.add(sfccSuggestedPromiseOption);
+    sfccSuggestedPromiseOptionList.add(sfccSuggestedPromiseOption2);
+    SfccErrorResponseLine sfccErrorResponseLine =
+        SfccErrorResponseLine.builder().errorMessage("Unavailable").itemId("item1").build();
+    List<SfccErrorResponseLine> sfccErrorResponseLineList = new ArrayList<>();
+    sfccErrorResponseLineList.add(sfccErrorResponseLine);
+    sfccErrorResponseLineList.add(sfccErrorResponseLine);
+    SfccSuggestedPromiseOptionError sfccSuggestedPromiseOptionError =
+        SfccSuggestedPromiseOptionError.builder().lines(sfccErrorResponseLineList).build();
+    SfccErrorResponse sfccErrorResponse =
+        SfccErrorResponse.builder()
+            .sdnd(sfccSuggestedPromiseOptionError)
+            .express(sfccSuggestedPromiseOptionError)
+            .standard(sfccSuggestedPromiseOptionError)
+            .nextday(sfccSuggestedPromiseOptionError)
+            .build();
+    return SfccResponse.builder()
+        .cartId("156465897")
+        .orgId("BAY")
+        .pageName("Basket/Checkout")
+        .sessionId("jkfdsj5748fdgf58gfh")
+        .sdnd(sfccSuggestedPromiseOptionList)
+        .express(sfccSuggestedPromiseOptionList)
+        .standard(sfccSuggestedPromiseOptionList)
+        .nextday(sfccSuggestedPromiseOptionList)
+        .exceptions(sfccErrorResponse)
+        .build();
+  }
+
+  public SfccResponse getSfccResponse6() {
+    Double requiredQty = Double.valueOf(5);
+    Double maxAvailableQuantity = Double.valueOf(5);
+    Long qty = Long.valueOf(3);
+    SfccPromiseDetails sfccPromiseDetails =
+        SfccPromiseDetails.builder()
+            .fillQuantity(qty)
+            .sourceNodeId("node2")
+            .sourceNodeType("FC")
+            .build();
+    List<SfccPromiseDetails> sfccPromiseDetailsList = new ArrayList<>();
+    sfccPromiseDetailsList.add(sfccPromiseDetails);
+    SfccResponseLine sfccResponseLine =
+        SfccResponseLine.builder()
+            .maxAvailableQuantity(maxAvailableQuantity)
+            .requestQuantity(requiredQty)
+            .itemId("item1")
+            .promiseDetails(sfccPromiseDetailsList)
+            .build();
+    List<SfccResponseLine> sfccResponseLines = new ArrayList<>();
+    sfccResponseLines.add(sfccResponseLine);
+    String sDate1 = "2022-06-16T05:05:00";
+    SfccSuggestedPromiseOption sfccSuggestedPromiseOption =
+        SfccSuggestedPromiseOption.builder().edd(sDate1).lines(sfccResponseLines).build();
+    String sDate2 = "2022-06-17T05:05:00";
+    SfccSuggestedPromiseOption sfccSuggestedPromiseOption2 =
+        SfccSuggestedPromiseOption.builder().edd(sDate2).lines(sfccResponseLines).build();
+    List<SfccSuggestedPromiseOption> sfccSuggestedPromiseOptionList = new ArrayList<>();
+    sfccSuggestedPromiseOptionList.add(sfccSuggestedPromiseOption);
+    sfccSuggestedPromiseOptionList.add(sfccSuggestedPromiseOption2);
+
+    SfccSuggestedPromiseOptionError sfccSuggestedPromiseOptionError =
+        SfccSuggestedPromiseOptionError.builder().build();
+    SfccErrorResponse sfccErrorResponse =
+        SfccErrorResponse.builder()
+            .sdnd(sfccSuggestedPromiseOptionError)
+            .express(sfccSuggestedPromiseOptionError)
+            .standard(sfccSuggestedPromiseOptionError)
+            .nextday(sfccSuggestedPromiseOptionError)
+            .build();
+    return SfccResponse.builder()
+        .cartId("156465897")
+        .orgId("BAY")
+        .pageName("Basket/Checkout")
+        .sessionId("jkfdsj5748fdgf58gfh")
+        .sdnd(sfccSuggestedPromiseOptionList)
+        .express(sfccSuggestedPromiseOptionList)
+        .standard(sfccSuggestedPromiseOptionList)
+        .nextday(sfccSuggestedPromiseOptionList)
+        .hasExceptions(true)
+        .exceptions(sfccErrorResponse)
+        .build();
   }
 
   public TransitBufferConfigRequest getTransitBufferConfigRequest() {
