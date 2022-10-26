@@ -1,8 +1,13 @@
 package com.hbc.jobs.consumers.common;
 
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESCRIPTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
 import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
@@ -22,12 +27,16 @@ import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
+import com.hbc.jobs.framework.common.domain.pojo.NodeCalendarUpload;
+import com.hbc.jobs.framework.common.domain.pojo.NodeCarrierUpload;
+import com.hbc.jobs.framework.common.domain.pojo.NodeDataUpload;
 import com.hbc.jobs.framework.common.domain.pojo.PostalCodeTimezoneUpload;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.jobs.framework.common.domain.pojo.TransitBufferUpload;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -50,6 +59,20 @@ public class TestUtil {
 
   public static final String ORG_ID = "BAY";
   public static final String JOB_ID = "JobId1";
+  public static final String STREET = "street-1";
+  public static final String CITY = "city-1";
+  public static final String PROVINCE = "province-1";
+  public static final String POSTAL_CODE = "33666";
+  public static final String COUNTRY = "country-1";
+  public static final String LATITUDE = "43.769912";
+  public static final String LONGITUDE = "-79.296678";
+  public static final String TIME_ZONE = "America/Toronto";
+  public static Boolean SHIP_TO_TIME = Boolean.TRUE;
+  public static Boolean BOPIS_ELIGIBLE = Boolean.TRUE;
+  public static Boolean SDND_ELIGIBLE = Boolean.TRUE;
+  public static Boolean EXPRESS_ELIGIBLE = Boolean.TRUE;
+  public static String NODE_TYPE = "MFC";
+  public static Boolean IS_ACTIVE = Boolean.TRUE;
 
   public static final String CSV_CONTENTS_PROCESSING_LEAD_TIMES =
       "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
@@ -380,6 +403,17 @@ public class TestUtil {
     return processingLeadTime;
   }
 
+  public NodeCarrierUpload getNodeCarrierUpload(String action) {
+    return NodeCarrierUpload.builder()
+        .action(action)
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .lastPickupTime("12:00")
+        .build();
+  }
+
   public NodeCarrierResponse getNodeCarrierResponse() {
     NodeCarrierResponse nodeCarrierResponse = new NodeCarrierResponse();
     nodeCarrierResponse.setNodeId("node-1");
@@ -506,5 +540,55 @@ public class TestUtil {
     record.setJobType(jobTypeEnum);
 
     return record;
+  }
+
+  public NodeResponse getNodeResponse() {
+    return NodeResponse.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .street(STREET)
+        .bopisEligible(BOPIS_ELIGIBLE)
+        .city(CITY)
+        .country(COUNTRY)
+        .nodeType(NODE_TYPE)
+        .isActive(IS_ACTIVE)
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .postalCode(POSTAL_CODE)
+        .province(PROVINCE)
+        .shipToHome(SHIP_TO_TIME)
+        .timezone(TIME_ZONE)
+        .build();
+  }
+
+  public NodeDataUpload getNodeDataUpload(String action) {
+    return NodeDataUpload.builder()
+        .action(action)
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .street(STREET)
+        .bopisEligible(String.valueOf(BOPIS_ELIGIBLE))
+        .city(CITY)
+        .country(COUNTRY)
+        .nodeType(NODE_TYPE)
+        .isActive(String.valueOf(IS_ACTIVE))
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .postalCode(POSTAL_CODE)
+        .province(PROVINCE)
+        .shipToHome(String.valueOf(SHIP_TO_TIME))
+        .timezone(TIME_ZONE)
+        .build();
+  }
+
+  public NodeCalendarUpload getNodeCalendarUpload(String action) {
+    return NodeCalendarUpload.builder()
+        .calendarId(CALENDAR_ID)
+        .description(DESCRIPTION)
+        .effectiveDate("2022-10-26")
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .action(action)
+        .build();
   }
 }

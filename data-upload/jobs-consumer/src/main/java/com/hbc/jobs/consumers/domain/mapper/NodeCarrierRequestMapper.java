@@ -1,7 +1,9 @@
 package com.hbc.jobs.consumers.domain.mapper;
 
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
+import com.hbc.jobs.framework.common.domain.pojo.NodeCarrierUpload;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -12,4 +14,8 @@ import org.mapstruct.ReportingPolicy;
 public interface NodeCarrierRequestMapper {
 
   NodeCarrierRequest convertToNodeCarrierRequest(ProcessingLeadTimesRaw processingLeadTimesRaw);
+
+  NodeCarrierRequest convertToNodeCarrierRequest(NodeCarrierUpload nodeCarrierUpload);
+
+  NodeCarrierUpdateRequest convertToNodeCarrierUpdateRequest(NodeCarrierUpload nodeCarrierUpload);
 }

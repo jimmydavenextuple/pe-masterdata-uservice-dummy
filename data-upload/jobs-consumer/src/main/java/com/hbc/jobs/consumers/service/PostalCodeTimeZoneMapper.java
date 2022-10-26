@@ -1,5 +1,9 @@
 package com.hbc.jobs.consumers.service;
 
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DELETE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.UPDATE;
+
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.csvdownload.exception.CsvDataValidationException;
@@ -24,12 +28,6 @@ public class PostalCodeTimeZoneMapper implements FeignClientMapper {
   private final PostalCodeTimezoneFeign postalCodeTimezoneFeign;
 
   @Setter private JobTypeEnum jobTypeEnum;
-
-  public static final String UPDATE = "UPDATE";
-
-  public static final String DELETE = "DELETE";
-
-  public static final String CREATE = "CREATE";
 
   public static final PostalCodeTimezoneRequestMapper INSTANCE =
       Mappers.getMapper(PostalCodeTimezoneRequestMapper.class);
