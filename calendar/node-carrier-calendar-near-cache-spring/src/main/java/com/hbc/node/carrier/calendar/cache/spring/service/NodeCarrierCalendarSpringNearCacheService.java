@@ -44,7 +44,7 @@ public class NodeCarrierCalendarSpringNearCacheService
   }
 
   @Override
-  @Cacheable(cacheManager = "caffeineCacheManager")
+  @Cacheable(cacheManager = "caffeineCacheManager", unless = "#result == null")
   public NodeCarrierCalendarCacheValue get(NodeCarrierCalendarCacheKey key) {
     logger.debug("Inside get NodeCarrierCalendarCacheValue");
     return super.get(key);
