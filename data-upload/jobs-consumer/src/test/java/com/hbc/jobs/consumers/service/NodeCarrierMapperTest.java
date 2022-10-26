@@ -1,5 +1,6 @@
 package com.hbc.jobs.consumers.service;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -11,6 +12,7 @@ import com.hbc.jobs.consumers.common.TestUtil;
 import com.hbc.jobs.consumers.exception.InvalidActionTypeException;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.NodeCarrierUpload;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import java.util.Map;
@@ -76,7 +78,9 @@ class NodeCarrierMapperTest {
   void mapTODto() throws NodeCarrierMapperException {
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     Class res = nodeCarrierMapper.mapTODto();
-    Assertions.assertEquals(ProcessingLeadTimesRaw.class, res);
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_NODE_CARRIER);
+    Class uploadNodeCarrier = nodeCarrierMapper.mapTODto();
+    Assertions.assertEquals(NodeCarrierUpload.class, uploadNodeCarrier);
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
     Exception exception =
         Assertions.assertThrows(
@@ -174,5 +178,56 @@ class NodeCarrierMapperTest {
 
     Assertions.assertThrows(
         CommonServiceException.class, () -> nodeCarrierMapper.callApi(object, null));
+  }
+
+  @Test
+  void callApiUploadNodeCarrierCreateAction()
+      throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
+    Object object = testUtil.getNodeCarrierUpload("CREATE");
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_NODE_CARRIER);
+    when(nodeCarrierFeign.createNodeCarrier(any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getNodeCarrierResponse()).build());
+    ResponseEntity<BaseResponse<NodeCarrierResponse>> res =
+        (ResponseEntity<BaseResponse<NodeCarrierResponse>>) nodeCarrierMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
+  }
+
+  @Test
+  void callApiUploadNodeCarrierUpdateAction()
+      throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
+    Object object = testUtil.getNodeCarrierUpload("UPDATE");
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_NODE_CARRIER);
+    when(nodeCarrierFeign.updateNodeCarrier(
+            anyString(), anyString(), anyString(), anyString(), any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getNodeCarrierResponse()).build());
+    ResponseEntity<BaseResponse<NodeCarrierResponse>> res =
+        (ResponseEntity<BaseResponse<NodeCarrierResponse>>) nodeCarrierMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
+  }
+
+  @Test
+  void callApiUploadNodeCarrierDeleteAction()
+      throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
+    Object object = testUtil.getNodeCarrierUpload("DELETE");
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_NODE_CARRIER);
+    when(nodeCarrierFeign.deleteNodeCarrier(anyString(), anyString(), anyString(), anyString()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getNodeCarrierResponse()).build());
+    ResponseEntity<BaseResponse<NodeCarrierResponse>> res =
+        (ResponseEntity<BaseResponse<NodeCarrierResponse>>) nodeCarrierMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
+  }
+
+  @Test
+  void callApiUploadNodeCarrierInvalidAction() {
+    Object object = testUtil.getNodeCarrierUpload("C");
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_NODE_CARRIER);
+
+    Exception exception =
+        Assertions.assertThrows(
+            CsvDataValidationException.class, () -> nodeCarrierMapper.callApi(object, null));
+    Assertions.assertNotNull(exception);
   }
 }

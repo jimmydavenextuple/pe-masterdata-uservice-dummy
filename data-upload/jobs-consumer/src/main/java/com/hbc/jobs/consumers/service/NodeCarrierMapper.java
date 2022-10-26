@@ -1,9 +1,14 @@
 package com.hbc.jobs.consumers.service;
 
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DELETE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.UPDATE;
+
 import com.hbc.common.constants.CommonConstants;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.CsvDataValidationException;
@@ -11,10 +16,12 @@ import com.hbc.jobs.consumers.domain.mapper.NodeCarrierRequestMapper;
 import com.hbc.jobs.consumers.exception.InvalidActionTypeException;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.NodeCarrierUpload;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.jobs.framework.common.enums.ModuleEnum;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -104,6 +111,8 @@ public class NodeCarrierMapper implements FeignClientMapper {
     try {
       if (jobTypeEnum == JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES) {
         return ProcessingLeadTimesRaw.class;
+      } else if (jobTypeEnum == JobTypeEnum.UPLOAD_NODE_CARRIER) {
+        return NodeCarrierUpload.class;
       }
       logger.error("Unable to map an object!");
       throw new NodeCarrierMapperException(
@@ -120,36 +129,75 @@ public class NodeCarrierMapper implements FeignClientMapper {
       throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
     if (jobTypeEnum == JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES) {
       var processingLeadTimesRaw = (ProcessingLeadTimesRaw) request;
+      return processProcessingLeadTimesUploadApiCall(processingLeadTimesRaw);
+    } else if (jobTypeEnum == JobTypeEnum.UPLOAD_NODE_CARRIER) {
+      var nodeCarrierUpload = (NodeCarrierUpload) request;
+      return processNodeCarrierUploadApiCall(nodeCarrierUpload);
+    }
+    logger.error("Failed to make a call based on job type");
+    throw new NodeCarrierMapperException("Please provide the valid job type", jobTypeEnum);
+  }
 
-      validateProcessingLeadTimeAndActionType(
-          processingLeadTimesRaw.getActionType(), processingLeadTimesRaw.getProcessingTime());
-
-      if (CommonConstants.UPDATE_U.equalsIgnoreCase(processingLeadTimesRaw.getActionType())) {
+  private ResponseEntity<?> processNodeCarrierUploadApiCall(NodeCarrierUpload nodeCarrierUpload) {
+    var action = nodeCarrierUpload.getAction();
+    switch (action) {
+      case CREATE:
         return ResponseEntity.ok(
             nodeCarrierFeign.createNodeCarrier(
-                INSTANCE.convertToNodeCarrierRequest(processingLeadTimesRaw)));
-      } else if (CommonConstants.DELETE_D.equalsIgnoreCase(
-          processingLeadTimesRaw.getActionType())) {
-        var nodeId = processingLeadTimesRaw.getNodeId();
-        var orgId = processingLeadTimesRaw.getOrgId();
-        var carrierServiceId = processingLeadTimesRaw.getCarrierServiceId();
-        var serviceOption = processingLeadTimesRaw.getServiceOption();
-
-        if (StringUtils.isEmpty(nodeId)) {
-          throwCommonServiceException("NodeId can't be empty", NODE_ID, nodeId);
-        }
-        if (StringUtils.isEmpty(orgId)) {
-          throwCommonServiceException("OrgId can't be empty", ORG_ID, orgId);
-        }
-        if (StringUtils.isEmpty(serviceOption)) {
-          throwCommonServiceException(
-              "ServiceOption can't be empty", SERVICE_OPTION, serviceOption);
-        }
-
+                INSTANCE.convertToNodeCarrierRequest(nodeCarrierUpload)));
+      case UPDATE:
         return ResponseEntity.ok(
-            nodeCarrierFeign.deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
-                nodeId, orgId, carrierServiceId, serviceOption));
+            nodeCarrierFeign.updateNodeCarrier(
+                nodeCarrierUpload.getNodeId(),
+                nodeCarrierUpload.getOrgId(),
+                nodeCarrierUpload.getCarrierServiceId(),
+                nodeCarrierUpload.getServiceOption(),
+                INSTANCE.convertToNodeCarrierUpdateRequest(nodeCarrierUpload)));
+      case DELETE:
+        return ResponseEntity.ok(
+            nodeCarrierFeign.deleteNodeCarrier(
+                nodeCarrierUpload.getNodeId(),
+                nodeCarrierUpload.getOrgId(),
+                nodeCarrierUpload.getCarrierServiceId(),
+                nodeCarrierUpload.getServiceOption()));
+      default:
+        {
+          logger.error("Invalid action type: {}", nodeCarrierUpload.getAction());
+          throw new CsvDataValidationException(
+              "Please provide the valid action: " + nodeCarrierUpload.getAction());
+        }
+    }
+  }
+
+  public ResponseEntity<BaseResponse<NodeCarrierResponse>> processProcessingLeadTimesUploadApiCall(
+      ProcessingLeadTimesRaw processingLeadTimesRaw)
+      throws InvalidActionTypeException, CommonServiceException, NodeCarrierMapperException {
+    validateProcessingLeadTimeAndActionType(
+        processingLeadTimesRaw.getActionType(), processingLeadTimesRaw.getProcessingTime());
+
+    if (CommonConstants.UPDATE_U.equalsIgnoreCase(processingLeadTimesRaw.getActionType())) {
+      return ResponseEntity.ok(
+          nodeCarrierFeign.createNodeCarrier(
+              INSTANCE.convertToNodeCarrierRequest(processingLeadTimesRaw)));
+    } else if (CommonConstants.DELETE_D.equalsIgnoreCase(processingLeadTimesRaw.getActionType())) {
+      var nodeId = processingLeadTimesRaw.getNodeId();
+      var orgId = processingLeadTimesRaw.getOrgId();
+      var carrierServiceId = processingLeadTimesRaw.getCarrierServiceId();
+      var serviceOption = processingLeadTimesRaw.getServiceOption();
+
+      if (StringUtils.isEmpty(nodeId)) {
+        throwCommonServiceException("NodeId can't be empty", NODE_ID, nodeId);
       }
+      if (StringUtils.isEmpty(orgId)) {
+        throwCommonServiceException("OrgId can't be empty", ORG_ID, orgId);
+      }
+      if (StringUtils.isEmpty(serviceOption)) {
+        throwCommonServiceException("ServiceOption can't be empty", SERVICE_OPTION, serviceOption);
+      }
+
+      return ResponseEntity.ok(
+          nodeCarrierFeign.deleteNodeCarrierByOrgIdNodeIdAndServiceOption(
+              nodeId, orgId, carrierServiceId, serviceOption));
     }
     logger.error("Failed to make a call based on job type");
     throw new NodeCarrierMapperException("Please provide the valid job type", jobTypeEnum);

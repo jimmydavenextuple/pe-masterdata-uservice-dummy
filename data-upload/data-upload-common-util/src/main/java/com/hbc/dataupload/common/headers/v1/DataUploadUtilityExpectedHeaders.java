@@ -1,34 +1,6 @@
 package com.hbc.dataupload.common.headers.v1;
 
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ACTION;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BOPIS_ELIGIBLE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CITY;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.COUNTRY;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESCRIPTION;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESTINATION_GEO_ZONE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EFFECTIVE_DATE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXPRESS_ELIGIBLE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.IS_ACTIVE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LAST_PICKUP_TIME;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NEXTDAY_ELIGIBLE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PROVINCE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SDND_ELIGIBLE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIP_TO_HOME;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_GEO_ZONE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STREET;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.TIMEZONE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.TIMEZONE1;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.*;
 
 import java.util.List;
 import java.util.Map;
@@ -79,10 +51,70 @@ public class DataUploadUtilityExpectedHeaders {
                 "node-calendar",
                 List.of(ACTION, CALENDAR_ID, NODE_ID, ORG_ID, DESCRIPTION, EFFECTIVE_DATE)),
             Map.entry(
+                "transit",
+                List.of(
+                    ACTION,
+                    ORG_ID,
+                    SOURCE_GEO_ZONE,
+                    DESTINATION_GEO_ZONE,
+                    CARRIER_SERVICE_ID,
+                    TRANSIT_DAYS)),
+            Map.entry(
+                "carrier-service",
+                List.of(
+                    ACTION,
+                    ORG_ID,
+                    CARRIER_ID,
+                    CARRIER_NAME,
+                    CARRIER_SERVICE_ID,
+                    SERVICE_NAME,
+                    SERVICE_OPTIONS)),
+            Map.entry(
+                "carrier-service-calendar",
+                List.of(
+                    ACTION,
+                    CALENDAR_ID,
+                    ORG_ID,
+                    CARRIER_SERVICE_ID,
+                    SHIPPING_STAGE,
+                    DESCRIPTION,
+                    EFFECTIVE_DATE)),
+            Map.entry(
                 "node-carrier",
                 List.of(
                     ACTION, NODE_ID, ORG_ID, CARRIER_SERVICE_ID, SERVICE_OPTION, LAST_PICKUP_TIME)),
-            Map.entry("transit-buffer", List.of(SOURCE_GEO_ZONE, DESTINATION_GEO_ZONE)));
+            Map.entry("transit-buffer", List.of(SOURCE_GEO_ZONE, DESTINATION_GEO_ZONE)),
+            Map.entry(
+                "calendar",
+                List.of(
+                    ACTION,
+                    CALENDAR_ID,
+                    ORG_ID,
+                    DESCRIPTION,
+                    IS_MONDAY_WORKING,
+                    IS_TUESDAY_WORKING,
+                    IS_WEDNESDAY_WORKING,
+                    IS_THURSDAY_WORKING,
+                    IS_FRIDAY_WORKING,
+                    IS_SATURDAY_WORKING,
+                    IS_SUNDAY_WORKING,
+                    EXCEPTION_DAYS)),
+            Map.entry(
+                "pickup-calendar",
+                List.of(
+                    ACTION,
+                    CALENDAR_ID,
+                    ORG_ID,
+                    NODE_ID,
+                    CARRIER_SERVICE_ID,
+                    DESCRIPTION,
+                    EFFECTIVE_DATE)),
+            Map.entry(
+                "processing-lead-times",
+                List.of(NODE_ID, ORG_ID, SERVICE_OPTIONS, PROCESSING_TIME, ACTION)),
+            Map.entry(
+                "node-service-option-buffer",
+                List.of(ORG_ID, NODE_ID, SERVICE_OPTION, BUFFER_HOURS, START_TIME, END_TIME)));
   }
 
   public static List<String> getCSVExpectedHeaders(String key) {

@@ -86,6 +86,24 @@ public class TestUtil {
           + "DFSA3,D,D,D\n"
           + "\n";
 
+  public static final String CSV_CONTENTS_UPLOAD_NODE_CALENDAR =
+      "action,calendarId,nodeId,orgId,description,effectiveDate\n"
+          + "CREATE,CGY_2022,1957,BAY,Calgary MFC - non peak,2022-02-02\n"
+          + "CREATE,SLC_2022,DC-963-565,BAY,SLC - non peak,2022-01-01\n"
+          + "CREATE,VLC_2022,DC-963-577,BAY,VLC - non peak, 2022-01-03";
+
+  public static final String CSV_CONTENTS_UPLOAD_NODE =
+      "action,nodeId,orgId,street,city,province,postalCode,country,latitude,longitude,timezone,shipToHome,sdndEligible,bopisEligible,expressEligible,nodeType,isActive,nextdayEligible\n"
+          + "CREATE,node,org,street0,city0,province0,postalCode0,country0,latitude0,longitude0,timezone0,true,true,false,true,nodeType0,true,true\n"
+          + "UPDATE,node,org,street1,city1,province1,postalCode1,country1,latitude1,longitude1,timezone1,true,true,false,true,nodeType1,true,true\n"
+          + "DELETE,node,org,street2,city2,province2,postalCode2,country2,latitude2,longitude2,timezone2,true,true,false,true,nodeType2,true,true";
+
+  public static final String CSV_CONTENTS_UPLOAD_NODE_CARRIER =
+      "action,nodeId,orgId,carrierServiceId,serviceOption,lastPickupTime\n"
+          + "  CREATE,1,BAY,ALL-EXPRESS,EXPRESS,20:00\n"
+          + "  UPDATE,1,BAY,ALL-EXPRESS,EXPRESS,10:00\n"
+          + "  DELETE,12,BAY,ALL-EXPRESS,EXPRESS,20:00";
+
   public static final Optional<String> DEFAULT_SORT_FIELD = Optional.of("created_date");
 
   public static final Optional<String> DEFAULT_SORT_ORDER = Optional.of("ASC");
