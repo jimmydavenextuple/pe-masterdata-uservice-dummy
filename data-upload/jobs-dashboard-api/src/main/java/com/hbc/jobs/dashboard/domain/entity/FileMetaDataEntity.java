@@ -44,5 +44,5 @@ public class FileMetaDataEntity extends CommonBaseEntity {
   private String extReferenceId;
 
   @Column(name = "parent_file_id")
-  private String parentFileId;
+  private Long parentFileId;
 }

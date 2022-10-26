@@ -78,4 +78,7 @@ public interface JobsDashboardClient {
   @PostMapping("/file-metadata")
   BaseResponse<FileMetaDataResponse> createFileMetadata(
       @Valid @RequestBody FileMetaDataCreationRequest fileMetadataCreationRequest);
+
+  @GetMapping("/file-metadata/{id}")
+  BaseResponse<FileMetaDataResponse> findFileMetadataById(@PathVariable(name = "id") Long id);
 }
