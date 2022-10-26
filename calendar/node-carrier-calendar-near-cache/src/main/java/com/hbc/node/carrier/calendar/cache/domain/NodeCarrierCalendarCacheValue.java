@@ -16,6 +16,6 @@ public class NodeCarrierCalendarCacheValue implements CacheValue {
 
   @Override
   public boolean isUndefined() {
-    return false;
+    return this.calendarDaysStatusInfo == null;
   }
 }

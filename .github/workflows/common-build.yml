@@ -6,6 +6,8 @@ on:
     paths:
       - "common/**"
       - "manifests/**"
+      - "common-util/**"
+      - "build.gradle"
 jobs:
 
   Build-Publish:

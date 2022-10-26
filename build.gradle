@@ -47,7 +47,7 @@ bootJar {
 }
 
 group = 'com.hbc'
-version = "1.1.1-${build_target}"
+version = "1.1.2-${build_target}"
 
 subprojects {
     apply from: "$rootProject.projectDir/dependencies.gradle"
@@ -67,7 +67,7 @@ subprojects {
     apply plugin: "org.sonatype.gradle.plugins.scan"
 
     group = 'com.hbc'
-    version = "1.1.1-${build_target}"
+    version = "1.1.2-${build_target}"
 
     sourceCompatibility = "${sourceJdkVersion}"
     targetCompatibility = "${targetJdkVersion}"

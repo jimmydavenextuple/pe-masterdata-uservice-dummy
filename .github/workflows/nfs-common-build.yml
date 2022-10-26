@@ -6,6 +6,8 @@ on:
     paths:
       - "nfs-common/**"
       - ".github/workflows/nfs-common-build.yml"
+      - "common-util/**"
+      - "build.gradle"
 jobs:
 
   Build-Publish:

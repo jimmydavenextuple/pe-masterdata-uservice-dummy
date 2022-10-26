@@ -2,6 +2,7 @@ package com.hbc.node.carrier.calendar.cache.spring.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -52,11 +53,30 @@ class NodeCarrierCalendarFeignClientServiceImplTest {
   }
 
   @Test
+  void getTestNullCheck() {
+    NodeCarrierCalendarCacheKey cacheKey = testUtil.getNodeCarrierCalendarCacheKey();
+    NodeCarrierCalendarCacheValue cacheValue = testUtil.getNodeCarrierCalendarCacheValue();
+
+    BaseResponse<List<CalendarDaysStatusInfo>> baseResponse = testUtil.getBaseResponseOfListOfCalendarDaysStatusInfo();
+    baseResponse.setPayload(null);
+    when(calendarCommonFeign.getNodeCarrierCalendar(any(), any(), any(), any()))
+            .thenReturn(baseResponse);
+    var response = nodeCarrierCalendarFeignClientService.get(cacheKey);
+
+    assertNotNull(response);
+    assertNull(response.getCalendarDaysStatusInfo());
+    verify(mapper, times(0)).responseToCacheValue(any());
+  }
+
+  @Test
   void getExceptionTest() {
     NodeCarrierCalendarCacheKey invalidCacheKey = testUtil.getNodeCarrierCalendarCacheKey();
 
-    when(mapper.responseToCacheValue(any())).thenThrow(new RuntimeException("Error message"));
-    assertNull(nodeCarrierCalendarFeignClientService.get(invalidCacheKey));
-    verify(mapper, times(1)).responseToCacheValue(any());
+    var response = nodeCarrierCalendarFeignClientService.get(invalidCacheKey);
+    assertNotNull(response);
+    assertNull(response.getCalendarDaysStatusInfo());
+    verify(mapper, times(0)).responseToCacheValue(any());
   }
+
+
 }
