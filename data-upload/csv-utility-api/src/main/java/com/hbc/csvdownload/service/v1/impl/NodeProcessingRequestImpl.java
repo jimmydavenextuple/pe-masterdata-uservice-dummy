@@ -36,7 +36,7 @@ public class NodeProcessingRequestImpl extends AbstractProcessingRequest
 
   @Override
   public String submitJob(String orgId, long fileMetadataId) throws JobSubmissionException {
-    return submitJob(orgId, JobTypeEnum.NODE, fileMetadataId).getJobId();
+    return submitJob(orgId, JobTypeEnum.UPLOAD_NODES, fileMetadataId).getJobId();
   }
 
   @Override

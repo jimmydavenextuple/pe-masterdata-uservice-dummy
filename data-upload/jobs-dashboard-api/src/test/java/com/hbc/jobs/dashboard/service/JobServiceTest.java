@@ -5,6 +5,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -13,6 +14,7 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.jobs.consumers.domain.JobDomain;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.exception.JobDomainException;
@@ -25,10 +27,13 @@ import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.domain.pojo.TransitBufferUpload;
 import com.hbc.jobs.framework.common.service.FileService;
+import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
 import feign.Request;
 import feign.Request.HttpMethod;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +42,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -65,6 +72,12 @@ class JobServiceTest {
   @Mock private FileMetaDataClient fileMetaDataClient;
 
   @Mock private FileService fileService;
+
+  @Mock private ProcessFileContentsMapperFactory processFileContentsMapperFactory;
+
+  @Mock private ProcessFileContents processFileContents;
+
+  @Captor ArgumentCaptor<List<Object>> objectListCaptor;
 
   @BeforeEach
   public void init() {
@@ -328,7 +341,9 @@ class JobServiceTest {
   class ProcessJobJsonOffline {
 
     @Test
-    void processJobJsonOfflineSuccess() throws JobException, JobDomainException {
+    void processJobJsonOfflineSuccess()
+        throws JobException, JobDomainException, IOException, CsvException {
+      TransitDataUpload transitDataUpload = testUtil.getTransitDataUpload();
       JobResponse jobResponse =
           testUtil.createJobResponse(
               "jobId1",
@@ -357,6 +372,11 @@ class JobServiceTest {
                   .message("Retrieved job" + " id " + " " + "successfully!!")
                   .payload(job)
                   .build());
+
+      when(processFileContentsMapperFactory.getProcessFileContentsMapper(any()))
+          .thenReturn(processFileContents);
+      when(processFileContents.updateRequestObjectsList(any(), any()))
+          .thenReturn(List.of(transitDataUpload, transitDataUpload, transitDataUpload));
 
       when(jobsConsumerClient.createJob(any()))
           .thenReturn(
@@ -401,7 +421,8 @@ class JobServiceTest {
 
     @Test
     void processTransitBufferRequestJsonOfflineSuccess()
-        throws JobException, JobDomainException, CommonServiceException {
+        throws JobException, JobDomainException, CommonServiceException, IOException, CsvException {
+      TransitBufferUpload transitBufferUpload = testUtil.getTransitBufferUpload("2", "C");
       JobResponse jobResponse =
           testUtil.createJobResponse(
               "jobId1",
@@ -455,6 +476,19 @@ class JobServiceTest {
           .thenReturn(jobEntity);
       ListenableFuture<SendResult<String, Object>> future = mock(ListenableFuture.class);
 
+      when(processFileContentsMapperFactory.getProcessFileContentsMapper(any()))
+          .thenReturn(processFileContents);
+      doReturn(
+              List.of(
+                  transitBufferUpload,
+                  transitBufferUpload,
+                  transitBufferUpload,
+                  transitBufferUpload,
+                  transitBufferUpload,
+                  transitBufferUpload))
+          .when(processFileContents)
+          .updateRequestObjectsList(any(), any());
+
       doNothing().when(future).addCallback(any());
       when(kafkaTemplate.send(any(Message.class))).thenReturn(future);
 
@@ -466,10 +500,7 @@ class JobServiceTest {
 
       JobResponse jobDto =
           jobService.processJobJsonOffline(
-              null,
-              TestUtil.ORG_ID,
-              JobTypeEnum.TRANSIT_BUFFER_REQUEST,
-              Optional.of(TestUtil.JOB_ID));
+              TestUtil.ORG_ID, JobTypeEnum.TRANSIT_BUFFER_REQUEST, Optional.of(TestUtil.JOB_ID));
       jobDto.setJobId("jobId1");
       jobDto.setTotalRecords(1);
 
@@ -477,266 +508,6 @@ class JobServiceTest {
 
       Assertions.assertEquals(1, jobDto.getTotalRecords(), "Job Id");
       verify(kafkaTemplate, times(6)).send(any(Message.class));
-    }
-
-    @Test
-    void processJobJsonOfflineUpdateExistingJob() throws JobException, JobDomainException {
-
-      JobDto job =
-          testUtil.createJob(
-              "jobId1",
-              TestUtil.ORG_ID,
-              JobStatusEnum.SUBMITTED,
-              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
-              null);
-      job.setFile(TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES.getBytes());
-
-      JobResponse jobResponse =
-          testUtil.createJobResponse(
-              "jobId1",
-              TestUtil.ORG_ID,
-              JobStatusEnum.SUBMITTED,
-              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
-
-      when(jobsConsumerClient.getJob(any(), any()))
-          .thenReturn(
-              BaseResponse.builder()
-                  .message("Retrieved job" + " id " + " " + "successfully!!")
-                  .payload(job)
-                  .build());
-
-      JobEntity jobEntity =
-          testUtil.createJobEntity(
-              "jobId1",
-              TestUtil.ORG_ID,
-              JobStatusEnum.PROCESSED,
-              List.of(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
-      when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any()))
-          .thenReturn(jobEntity);
-      job.setTotalRecords(5);
-      job.setRemainingRecords(5);
-      when(jobsConsumerClient.updateJob(any()))
-          .thenReturn(BaseResponse.builder().payload(jobResponse).build());
-
-      ListenableFuture<SendResult<String, Object>> future = mock(ListenableFuture.class);
-
-      doNothing().when(future).addCallback(any());
-      when(kafkaTemplate.send(any(Message.class))).thenReturn(future);
-
-      String UPLOAD_PROCESSING_LEAD_TIME_LIST_WITH_INPUTS =
-          "[{\"nodeId\": \"node-1\",\"orgId\": \"BAY\",\"carrierServiceId\": \"ALL-SDND\",\"serviceOption\": \"SDND\",\"processingTime\": 20.32,\"lastPickupTime\": \"12:22\",\"inputs\": {\"retryCount\" : \"7\"}}]";
-      JobResponse jobDto =
-          jobService.processJobJsonOffline(
-              UPLOAD_PROCESSING_LEAD_TIME_LIST_WITH_INPUTS,
-              TestUtil.ORG_ID,
-              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
-              Optional.of("jobId1"));
-      jobDto.setJobId("jobId1");
-      jobDto.setTotalRecords(1);
-
-      Assertions.assertEquals(0, jobDto.getFailureCount(), "Job Id");
-
-      Assertions.assertEquals(1, jobDto.getTotalRecords(), "Job Id");
-      verify(kafkaTemplate, times(3)).send(any(Message.class));
-      verify(jobsConsumerClient, times(1)).getJob(any(), any());
-    }
-
-    @Test
-    void processJobJsonOfflineUpdateExistingJobTransitTimesUpload()
-        throws JobException, JobDomainException {
-
-      JobDto job =
-          testUtil.createJob(
-              "jobId1",
-              TestUtil.ORG_ID,
-              JobStatusEnum.SUBMITTED,
-              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_TRANSIT_TIMES,
-              null);
-      job.setFile(TestUtil.CSV_CONTENTS_TRANSIT_TIMES.getBytes());
-
-      JobResponse jobResponse =
-          testUtil.createJobResponse(
-              "jobId1",
-              TestUtil.ORG_ID,
-              JobStatusEnum.SUBMITTED,
-              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_TRANSIT_TIMES);
-
-      when(jobsConsumerClient.getJob(any(), any()))
-          .thenReturn(
-              BaseResponse.builder()
-                  .message("Retrieved job" + " id " + " " + "successfully!!")
-                  .payload(job)
-                  .build());
-
-      JobEntity jobEntity =
-          testUtil.createJobEntity(
-              "jobId1",
-              TestUtil.ORG_ID,
-              JobStatusEnum.PROCESSED,
-              List.of(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_TRANSIT_TIMES);
-      when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any()))
-          .thenReturn(jobEntity);
-      job.setTotalRecords(5);
-      job.setRemainingRecords(5);
-      when(jobsConsumerClient.updateJob(any()))
-          .thenReturn(BaseResponse.builder().payload(jobResponse).build());
-
-      ListenableFuture<SendResult<String, Object>> future = mock(ListenableFuture.class);
-
-      doNothing().when(future).addCallback(any());
-      when(kafkaTemplate.send(any(Message.class))).thenReturn(future);
-
-      String UPLOAD_PROCESSING_LEAD_TIME_LIST_WITH_INPUTS =
-          "[{\"orgId\": \"BAY\",\"sourceGeozone\": \"sFsa1\",\"destinationGeozone\": \"dFsa1\",\"carrierServiceId\": \"ALL-SDND\",\"transitDays\": 20.32,\"lastPickupTime\": \"12:22\",\"inputs\": {\"retryCount\" : \"7\"}}]";
-      JobResponse jobDto =
-          jobService.processJobJsonOffline(
-              TestUtil.ORG_ID, JobTypeEnum.UPLOAD_TRANSIT_TIMES, Optional.of("jobId1"));
-      jobDto.setJobId("jobId1");
-      jobDto.setTotalRecords(1);
-
-      Assertions.assertEquals(0, jobDto.getFailureCount(), "Job Id");
-
-      Assertions.assertEquals(1, jobDto.getTotalRecords(), "Job Id");
-      verify(kafkaTemplate, times(8)).send(any(Message.class));
-      verify(jobsConsumerClient, times(1)).getJob(any(), any());
-    }
-
-    @Test
-    void processJobJsonOfflineUpdateExistingJobDeleteTransitBuffer()
-        throws JobException, JobDomainException {
-
-      JobDto job =
-          testUtil.createJob(
-              "jobId1",
-              TestUtil.ORG_ID,
-              JobStatusEnum.SUBMITTED,
-              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.DELETE_TRANSIT_BUFFER,
-              null);
-      job.setFile(TestUtil.CSV_CONTENTS_DELETE_TRANSIT_BUFFER.getBytes());
-
-      JobResponse jobResponse =
-          testUtil.createJobResponse(
-              "jobId1",
-              TestUtil.ORG_ID,
-              JobStatusEnum.SUBMITTED,
-              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.DELETE_TRANSIT_BUFFER);
-
-      when(jobsConsumerClient.getJob(any(), any()))
-          .thenReturn(
-              BaseResponse.builder()
-                  .message("Retrieved job" + " id " + " " + "successfully!!")
-                  .payload(job)
-                  .build());
-
-      JobEntity jobEntity =
-          testUtil.createJobEntity(
-              "jobId1",
-              TestUtil.ORG_ID,
-              JobStatusEnum.PROCESSED,
-              List.of(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_TRANSIT_TIMES);
-      when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any()))
-          .thenReturn(jobEntity);
-      job.setTotalRecords(5);
-      job.setRemainingRecords(5);
-      when(jobsConsumerClient.updateJob(any()))
-          .thenReturn(BaseResponse.builder().payload(jobResponse).build());
-
-      ListenableFuture<SendResult<String, Object>> future = mock(ListenableFuture.class);
-
-      doNothing().when(future).addCallback(any());
-      when(kafkaTemplate.send(any(Message.class))).thenReturn(future);
-
-      String UPLOAD_PROCESSING_LEAD_TIME_LIST_WITH_INPUTS =
-          "[{\"orgId\": \"BAY\",\"sourceGeozone\": \"sFsa1\",\"destinationGeozone\": \"dFsa1\",\"carrierServiceId\": \"ALL-SDND\",\"transitDays\": 20.32,\"lastPickupTime\": \"12:22\",\"inputs\": {\"retryCount\" : \"7\"}}]";
-      JobResponse jobDto =
-          jobService.processJobJsonOffline(
-              UPLOAD_PROCESSING_LEAD_TIME_LIST_WITH_INPUTS,
-              TestUtil.ORG_ID,
-              JobTypeEnum.DELETE_TRANSIT_BUFFER,
-              Optional.of("jobId1"));
-      jobDto.setJobId("jobId1");
-      jobDto.setTotalRecords(1);
-
-      Assertions.assertEquals(0, jobDto.getFailureCount(), "Job Id");
-
-      Assertions.assertEquals(1, jobDto.getTotalRecords(), "Job Id");
-      verify(kafkaTemplate, times(9)).send(any(Message.class));
-      verify(jobsConsumerClient, times(1)).getJob(any(), any());
-    }
-
-    @Test
-    void processJobJsonOfflineSuccessWithRetryCountInInputs()
-        throws JobException, JobDomainException {
-      JobResponse jobResponse =
-          testUtil.createJobResponse(
-              "jobId1",
-              TestUtil.ORG_ID,
-              JobStatusEnum.SUBMITTED,
-              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
-      jobResponse.setFailureCount(0);
-
-      JobDto job =
-          testUtil.createJob(
-              "jobId1",
-              TestUtil.ORG_ID,
-              JobStatusEnum.SUBMITTED,
-              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
-              null);
-      job.setFile(TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES.getBytes());
-      job.setTotalRecords(3);
-      job.setRemainingRecords(3);
-      job.setFailureCount(0);
-
-      when(jobsConsumerClient.getJob(any(), any()))
-          .thenReturn(
-              BaseResponse.builder()
-                  .message("Retrieved job" + " id " + " " + "successfully!!")
-                  .payload(job)
-                  .build());
-
-      when(jobsConsumerClient.updateJob(any()))
-          .thenReturn(BaseResponse.builder().payload(jobResponse).build());
-
-      JobEntity jobEntity =
-          testUtil.createJobEntity(
-              "jobId1",
-              TestUtil.ORG_ID,
-              JobStatusEnum.PROCESSED,
-              List.of(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
-              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
-      when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any()))
-          .thenReturn(jobEntity);
-      ListenableFuture<SendResult<String, Object>> future = mock(ListenableFuture.class);
-
-      doNothing().when(future).addCallback(any());
-      when(kafkaTemplate.send(any(Message.class))).thenReturn(future);
-
-      String UPLOAD_TRANSIT_TIMES_LIST =
-          "[{\"orgId\": \"BAY\",\"sourceGeozone\": \"SFSA\",\"destinationGeozone\": \"DSFA\",\"carrierServiceId\": \"ALL-SDND\",\"transitDays\": \"2\"}]";
-      JobResponse jobDto =
-          jobService.processJobJsonOffline(
-              UPLOAD_TRANSIT_TIMES_LIST,
-              TestUtil.ORG_ID,
-              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
-              Optional.of(TestUtil.JOB_ID));
-      jobDto.setJobId("jobId1");
-      jobDto.setTotalRecords(1);
-
-      Assertions.assertEquals(0, jobDto.getFailureCount(), "Job Id");
-
-      Assertions.assertEquals(1, jobDto.getTotalRecords(), "Job Id");
-      verify(kafkaTemplate, times(3)).send(any(Message.class));
     }
 
     @Test

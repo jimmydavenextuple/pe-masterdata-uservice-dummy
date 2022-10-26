@@ -1,0 +1,93 @@
+package com.hbc.jobs.consumers.service;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
+
+import com.hbc.common.response.BaseResponse;
+import com.hbc.csvdownload.exception.CsvDataValidationException;
+import com.hbc.jobs.consumers.common.TestUtil;
+import com.hbc.jobs.framework.common.domain.pojo.PostalCodeTimezoneUpload;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+@ExtendWith(MockitoExtension.class)
+class PostalCodeTimeZoneMapperTest {
+
+  @Mock private PostalCodeTimezoneFeign postalCodeTimezoneFeign;
+  @InjectMocks private PostalCodeTimeZoneMapper postalCodeTimeZoneMapper;
+  @InjectMocks private TestUtil testUtil;
+
+  @Test
+  void mapTODto() {
+    Class marketRegionMapper1 = postalCodeTimeZoneMapper.mapTODto();
+    Assertions.assertEquals(PostalCodeTimezoneUpload.class, marketRegionMapper1);
+  }
+
+  @Test
+  void getDTOFromCustomMapper() {
+    Assertions.assertNull(postalCodeTimeZoneMapper.getDTOFromCustomMapper("request"));
+  }
+
+  @Test
+  void getColumnNameMapping() {
+    Assertions.assertNull(postalCodeTimeZoneMapper.getColumnNameMapping(new String[] {"request"}));
+  }
+
+  @Test
+  void callApiCreatePostalCodeTimezone() {
+    Object object = testUtil.getPostalCodeTimezoneUpload("CREATE");
+    when(postalCodeTimezoneFeign.createPostalCodeTimezone(any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getPostalCodeTimezoneDto()).build());
+
+    ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> response =
+        (ResponseEntity<BaseResponse<PostalCodeTimezoneDto>>)
+            postalCodeTimeZoneMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertNotNull(response.getBody());
+  }
+
+  @Test
+  void callApiUpdatePostalCodeTimezone() {
+    Object object = testUtil.getPostalCodeTimezoneUpload("UPDATE");
+    when(postalCodeTimezoneFeign.updatePostalCodeTimezone(any(), any(), any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getPostalCodeTimezoneDto()).build());
+
+    ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> response =
+        (ResponseEntity<BaseResponse<PostalCodeTimezoneDto>>)
+            postalCodeTimeZoneMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertNotNull(response.getBody());
+  }
+
+  @Test
+  void callApiDeletePostalCodeTimezone() {
+    Object object = testUtil.getPostalCodeTimezoneUpload("DELETE");
+    when(postalCodeTimezoneFeign.deletePostalCodeTimezone(any(), any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getPostalCodeTimezoneDto()).build());
+
+    ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> response =
+        (ResponseEntity<BaseResponse<PostalCodeTimezoneDto>>)
+            postalCodeTimeZoneMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertNotNull(response.getBody());
+  }
+
+  @Test
+  void callApiInvalidAction() {
+    Object object = testUtil.getPostalCodeTimezoneUpload("DEL");
+
+    Exception exception =
+        Assertions.assertThrows(
+            CsvDataValidationException.class, () -> postalCodeTimeZoneMapper.callApi(object, null));
+
+    Assertions.assertNotNull(exception);
+  }
+}

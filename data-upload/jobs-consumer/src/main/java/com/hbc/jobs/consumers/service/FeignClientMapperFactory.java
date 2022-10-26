@@ -1,24 +1,39 @@
 package com.hbc.jobs.consumers.service;
 
+import com.hbc.common.context.Logger;
+import com.hbc.common.context.LoggerFactory;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
-import com.hbc.jobs.framework.common.domain.enums.MasterDataModule;
-import lombok.AllArgsConstructor;
+import com.hbc.jobs.framework.common.enums.ModuleEnum;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FeignClientMapperFactory {
-  private final TransitMapper transitMapper;
-  private final NodeCarrierMapper nodeCarrierMapper;
 
-  public FeignClientMapper getMapper(JobTypeEnum jobTypeEnum) {
-    if (jobTypeEnum.getModule() == MasterDataModule.TRANSIT) {
-      transitMapper.setJobTypeEnum(jobTypeEnum);
-      return transitMapper;
-    } else if (jobTypeEnum.getModule() == MasterDataModule.NODE_CARRIER) {
-      nodeCarrierMapper.setJobTypeEnum(jobTypeEnum);
-      return nodeCarrierMapper;
+  private final Logger logger = LoggerFactory.getLogger(FeignClientMapperFactory.class);
+  private final Map<ModuleEnum, FeignClientMapper> feignClientMapperMap;
+
+  @Autowired
+  private FeignClientMapperFactory(List<FeignClientMapper> feignClientMappers) {
+    this.feignClientMapperMap =
+        feignClientMappers.stream()
+            .collect(
+                Collectors.toUnmodifiableMap(FeignClientMapper::getModule, Function.identity()));
+  }
+
+  public FeignClientMapper getFeignClientMapper(JobTypeEnum jobTypeEnum) {
+    var feignClientMapper = feignClientMapperMap.get(jobTypeEnum.getModule());
+    if (feignClientMapper == null) {
+      logger.error("Invalid Job Type: {}", jobTypeEnum);
+      throw new IllegalArgumentException("Invalid Job Type: " + jobTypeEnum);
     }
-    return null;
+    feignClientMapper.setJobType(jobTypeEnum);
+    return feignClientMapper;
   }
 }

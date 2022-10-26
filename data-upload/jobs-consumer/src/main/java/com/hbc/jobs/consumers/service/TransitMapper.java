@@ -11,6 +11,7 @@ import com.hbc.jobs.consumers.exception.TransitMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.jobs.framework.common.domain.pojo.TransitBufferUpload;
+import com.hbc.jobs.framework.common.enums.ModuleEnum;
 import com.hbc.transit.domain.feign.TransitBufferFeign;
 import com.hbc.transit.domain.feign.TransitFeign;
 import com.hbc.transit.domain.outbound.TransitBufferResponse;
@@ -42,6 +43,16 @@ public class TransitMapper implements FeignClientMapper {
 
   public static final TransitDataUploadMapper INSTANCE =
       Mappers.getMapper(TransitDataUploadMapper.class);
+
+  @Override
+  public ModuleEnum getModule() {
+    return ModuleEnum.TRANSIT;
+  }
+
+  @Override
+  public void setJobType(JobTypeEnum jobType) {
+    this.jobTypeEnum = jobType;
+  }
 
   @Override
   public Object getDTOFromCustomMapper(String stringRecord) {

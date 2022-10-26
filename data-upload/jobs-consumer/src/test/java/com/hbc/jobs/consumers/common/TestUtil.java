@@ -1,5 +1,11 @@
 package com.hbc.jobs.consumers.common;
 
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
+import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
+
 import com.hbc.common.util.DateUtil;
 import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
@@ -16,10 +22,13 @@ import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
+import com.hbc.jobs.framework.common.domain.pojo.PostalCodeTimezoneUpload;
+import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.jobs.framework.common.domain.pojo.TransitBufferUpload;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Arrays;
@@ -460,5 +469,42 @@ public class TestUtil {
         .bufferStartDate(
             DateUtil.getDate(DateUtil.convertDateLongFormUTC(DateUtil.getCurrentDate())))
         .build();
+  }
+
+  public PostalCodeTimezoneDto getPostalCodeTimezoneDto() {
+    return PostalCodeTimezoneDto.builder()
+        .orgId(ORG_ID)
+        .postalCodePrefix(POSTAL_CODE_PREFIX)
+        .country("COUNTRY")
+        .state(STATE)
+        .city("CITY")
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .timeZone(TIME_ZONE)
+        .build();
+  }
+
+  public PostalCodeTimezoneUpload getPostalCodeTimezoneUpload(String action) {
+    return PostalCodeTimezoneUpload.builder()
+        .action(action)
+        .orgId(ORG_ID)
+        .postalCodePrefix(POSTAL_CODE_PREFIX)
+        .country("COUNTRY")
+        .state(STATE)
+        .city("CITY")
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .timeZone(TIME_ZONE)
+        .build();
+  }
+
+  public RecordDto getRecordDto(JobTypeEnum jobTypeEnum) {
+    RecordDto record = new RecordDto();
+    record.setOrgId(ORG_ID);
+    record.setJobId(TestUtil.JOB_ID);
+    record.setTotalRecords(2);
+    record.setJobType(jobTypeEnum);
+
+    return record;
   }
 }

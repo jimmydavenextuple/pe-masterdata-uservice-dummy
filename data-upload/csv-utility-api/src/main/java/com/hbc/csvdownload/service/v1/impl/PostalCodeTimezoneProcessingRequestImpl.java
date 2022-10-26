@@ -36,7 +36,7 @@ public class PostalCodeTimezoneProcessingRequestImpl extends AbstractProcessingR
 
   @Override
   public String submitJob(String orgId, long fileMetadataId) throws JobSubmissionException {
-    return submitJob(orgId, JobTypeEnum.POSTAL_CODE_TIMEZONE, fileMetadataId).getJobId();
+    return submitJob(orgId, JobTypeEnum.UPLOAD_POSTAL_CODE_TIMEZONE, fileMetadataId).getJobId();
   }
 
   @Override

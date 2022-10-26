@@ -80,10 +80,7 @@ public class JobDashboardController {
     return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
   }
 
-  @PutMapping(
-      path = "/org/{orgId}/jobs/{jobId}",
-      produces = APPLICATION_JSON_VALUE,
-      consumes = APPLICATION_JSON_VALUE)
+  @PutMapping(path = "/org/{orgId}/jobs/{jobId}", produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<JobResponse>> processJobJsonOffline(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestParam @NotNull @Valid JobTypeEnum jobType,

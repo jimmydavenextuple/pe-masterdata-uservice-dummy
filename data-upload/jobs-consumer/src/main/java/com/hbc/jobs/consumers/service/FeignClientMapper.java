@@ -14,9 +14,11 @@ import com.hbc.jobs.consumers.exception.FeignClientMapperException;
 import com.hbc.jobs.consumers.exception.InvalidActionTypeException;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.consumers.exception.TransitMapperException;
+import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.enums.ModuleEnum;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
@@ -48,6 +50,10 @@ import org.springframework.util.StringUtils;
 public interface FeignClientMapper {
 
   Logger log = LoggerFactory.getLogger(FeignClientMapper.class);
+
+  ModuleEnum getModule();
+
+  void setJobType(JobTypeEnum jobType);
 
   static HttpHeaders createHeaders(Headers headers) {
     var httpHeaders = new HttpHeaders();
