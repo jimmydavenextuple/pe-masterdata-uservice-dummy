@@ -6,7 +6,9 @@ import static org.mockito.Mockito.when;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.exception.CsvDataValidationException;
 import com.hbc.jobs.consumers.common.TestUtil;
+import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.PostalCodeTimezoneUpload;
+import com.hbc.jobs.framework.common.enums.ModuleEnum;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
 import org.junit.jupiter.api.Assertions;
@@ -29,6 +31,18 @@ class PostalCodeTimeZoneMapperTest {
   void mapTODto() {
     Class marketRegionMapper1 = postalCodeTimeZoneMapper.mapTODto();
     Assertions.assertEquals(PostalCodeTimezoneUpload.class, marketRegionMapper1);
+  }
+
+  @Test
+  void getModule() {
+    ModuleEnum moduleEnum = postalCodeTimeZoneMapper.getModule();
+    Assertions.assertEquals(ModuleEnum.POSTAL_CODE_TIMEZONE, moduleEnum);
+  }
+
+  @Test
+  void setJobType() {
+    Assertions.assertDoesNotThrow(
+        () -> postalCodeTimeZoneMapper.setJobType(JobTypeEnum.UPLOAD_POSTAL_CODE_TIMEZONE));
   }
 
   @Test

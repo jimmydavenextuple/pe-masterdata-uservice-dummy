@@ -22,7 +22,7 @@ class NodeCarrierRequestMapperTest {
         nodeCarrierRequestMapper.convertToNodeCarrierRequest(processingLeadTime);
     Assertions.assertNotNull(nodeCarrierRequest);
     NodeCarrierRequest nullNodeCarrierRequest =
-        nodeCarrierRequestMapper.convertToNodeCarrierRequest(null);
+        nodeCarrierRequestMapper.convertToNodeCarrierRequest((ProcessingLeadTimesRaw) null);
     Assertions.assertNull(nullNodeCarrierRequest);
   }
 }
