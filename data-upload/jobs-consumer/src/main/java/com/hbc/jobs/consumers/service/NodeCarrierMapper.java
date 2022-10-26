@@ -12,6 +12,7 @@ import com.hbc.jobs.consumers.exception.InvalidActionTypeException;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
+import com.hbc.jobs.framework.common.enums.ModuleEnum;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import java.util.HashMap;
@@ -43,6 +44,16 @@ public class NodeCarrierMapper implements FeignClientMapper {
       Mappers.getMapper(NodeCarrierRequestMapper.class);
 
   @Setter private JobTypeEnum jobTypeEnum;
+
+  @Override
+  public ModuleEnum getModule() {
+    return ModuleEnum.NODE_CARRIER;
+  }
+
+  @Override
+  public void setJobType(JobTypeEnum jobType) {
+    this.jobTypeEnum = jobType;
+  }
 
   @Override
   public Object getDTOFromCustomMapper(String stringRecord) {

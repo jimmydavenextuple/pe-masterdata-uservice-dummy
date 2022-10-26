@@ -28,7 +28,7 @@ public class FileMetaDataUpdationRequest implements Serializable {
 
   private String extReferenceId;
 
-  private String parentFileId;
+  private Long parentFileId;
 
   private String updatedBy;
 }

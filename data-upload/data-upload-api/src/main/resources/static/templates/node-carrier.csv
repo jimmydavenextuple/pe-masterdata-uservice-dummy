@@ -1,6 +1,2 @@
-orgId,carrierId,carrierName,carrierServiceId,serviceName,serviceOptions
-BAY,GoFor,GoFor,GoFor-SDND,GoFor,SDND
-BAY,TFORCE,TForce,TFORCE-NEXTDAY,TForce NextDay Guaranteed,NEXTDAY
-BAY,CanadaPost,Canada Post,CanadaPost-STANDARD,Canada Post Expedited Parcel,STANDARD
-BAY,CanadaPost,Canada Post,CanadaPost-EXPRESS,Canada Post Xpresspost,EXPRESS
-BAY,UPSN,UPS,UPSN-STANDARD,UPS Standard,STANDARD
+action,nodeId,orgId,carrierServiceId,serviceOption,lastPickupTime
+CREATE,1554,BAY,ALL-SDND,SDND,16:00

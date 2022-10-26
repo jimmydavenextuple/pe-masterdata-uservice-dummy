@@ -13,8 +13,8 @@ public class FileMetadataTestUtil {
   public static final String STORAGE = "MEMORY";
   public static final String DESC = "File meta data description";
   public static final String EXTERNAL_REFERENCE = "1";
-  public static final String PARENT_FIELD = "ParentField";
-  public final Long Id = Long.valueOf(1);
+  public static final Long PARENT_FILE_ID = 2L;
+  public final Long Id = 1L;
 
   public FileMetaDataEntity getFileMetadata() {
     return FileMetaDataEntity.builder()
@@ -26,7 +26,7 @@ public class FileMetadataTestUtil {
         .description(DESC)
         .extReferenceId(EXTERNAL_REFERENCE)
         .path(PATH)
-        .parentFileId(PARENT_FIELD)
+        .parentFileId(PARENT_FILE_ID)
         .build();
   }
 
@@ -39,7 +39,7 @@ public class FileMetadataTestUtil {
         .description(DESC)
         .extReferenceId(EXTERNAL_REFERENCE)
         .path(PATH)
-        .parentFileId(PARENT_FIELD)
+        .parentFileId(PARENT_FILE_ID)
         .build();
   }
 
@@ -51,7 +51,7 @@ public class FileMetadataTestUtil {
         .name(NAME)
         .description(DESC)
         .extReferenceId(EXTERNAL_REFERENCE)
-        .parentFileId(PARENT_FIELD)
+        .parentFileId(PARENT_FILE_ID)
         .path(PATH)
         .build();
   }
@@ -66,7 +66,7 @@ public class FileMetadataTestUtil {
         .description(DESC)
         .extReferenceId(EXTERNAL_REFERENCE)
         .path(PATH)
-        .parentFileId(PARENT_FIELD)
+        .parentFileId(PARENT_FILE_ID)
         .build();
   }
 }

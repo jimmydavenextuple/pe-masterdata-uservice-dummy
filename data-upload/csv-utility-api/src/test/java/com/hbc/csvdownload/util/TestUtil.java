@@ -15,7 +15,7 @@ public class TestUtil {
       "promise-s3-lambda-dev/ui/node-carrier/2022-10-21/market-region.csv";
   public static final long FILE_METADATA_ID = 1L;
   public static final String BUCKET_NAME = "promise-s3-lambda-dev";
-  public static final String FILE_NAME = "market-region.csv";
+  public static final String FILE_NAME = "postalCodeTimezone.csv";
   public static final String CONTENT_TYPE = "text/csv";
   public static final Long CONTENT_LENGTH = 100L;
   public static final String JOB_ID = "J1";

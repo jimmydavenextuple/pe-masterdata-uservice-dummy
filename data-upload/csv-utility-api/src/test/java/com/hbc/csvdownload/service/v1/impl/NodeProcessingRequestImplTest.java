@@ -1,11 +1,11 @@
-package com.hbc.csvdownload.service;
+package com.hbc.csvdownload.service.v1.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.exception.JobSubmissionException;
-import com.hbc.csvdownload.service.v1.impl.MarketRegionProcessingRequestImpl;
 import com.hbc.csvdownload.util.TestUtil;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
@@ -18,97 +18,81 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class MarketRegionProcessingRequestImplTest {
-
-  @InjectMocks MarketRegionProcessingRequestImpl marketRegionProcessingRequest;
+class NodeProcessingRequestImplTest {
+  @InjectMocks NodeProcessingRequestImpl nodeProcessingRequest;
 
   @Spy JobsDashboardClient jobsDashboardClient;
 
   @InjectMocks private TestUtil testUtil;
 
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.initMocks(this);
-  }
-
   @Test
   void submitJobTest() throws JobSubmissionException {
     when(jobsDashboardClient.processJobOffline(
-            TestUtil.ORG_ID, JobTypeEnum.MARKET_REGION, TestUtil.FILE_METADATA_ID))
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_NODES, TestUtil.FILE_METADATA_ID))
         .thenReturn(BaseResponse.builder().payload(testUtil.getJobResponse()).build());
-    String result =
-        marketRegionProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID);
+    String result = nodeProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID);
     Assertions.assertEquals(TestUtil.JOB_ID, result);
   }
 
   @Test
   void submitJobFeignExceptionTest() {
     when(jobsDashboardClient.processJobOffline(
-            TestUtil.ORG_ID, JobTypeEnum.MARKET_REGION, TestUtil.FILE_METADATA_ID))
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_NODES, TestUtil.FILE_METADATA_ID))
         .thenThrow(FeignException.class);
     Assertions.assertThrows(
         JobSubmissionException.class,
-        () -> marketRegionProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID));
+        () -> nodeProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID));
   }
 
   @Test
   void submitJobExceptionTest() {
     when(jobsDashboardClient.processJobOffline(
-            TestUtil.ORG_ID, JobTypeEnum.MARKET_REGION, TestUtil.FILE_METADATA_ID))
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_NODES, TestUtil.FILE_METADATA_ID))
         .thenThrow(ArithmeticException.class);
     Assertions.assertThrows(
         JobSubmissionException.class,
-        () -> marketRegionProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID));
+        () -> nodeProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID));
   }
 
   @Test
   void validateCsvTest() throws IOException, CommonServiceException, CsvException {
-    Path path = Paths.get("src", "test", "resources", "marketRegion", "marketRegion.csv");
+    Path path = Paths.get("src", "test", "resources", "node", "node.csv");
     InputStream inputStream = Files.newInputStream(path);
     FileResponse response = testUtil.getFileResponse();
     response.setInputStream(inputStream);
-    marketRegionProcessingRequest.validate(testUtil.getGenericUploadRequest(), response);
-    Assertions.assertEquals("market-region.csv", response.getFileName());
+    nodeProcessingRequest.validate(testUtil.getGenericUploadRequest(), response);
   }
 
   @Test
   void validateInvalidHeadersExceptionTest() throws IOException {
-    Path path =
-        Paths.get("src", "test", "resources", "marketRegion", "marketRegionInvalidHeader.csv");
+    Path path = Paths.get("src", "test", "resources", "node", "nodeInvalidHeader.csv");
     InputStream inputStream = Files.newInputStream(path);
     FileResponse response = testUtil.getFileResponse();
     response.setInputStream(inputStream);
     Exception ex =
         Assertions.assertThrows(
             Exception.class,
-            () ->
-                marketRegionProcessingRequest.validate(
-                    testUtil.getGenericUploadRequest(), response));
-    Assertions.assertEquals(
-        "Market Region data uploaded file has invalid headers.", ex.getMessage());
+            () -> nodeProcessingRequest.validate(testUtil.getGenericUploadRequest(), response));
+    Assertions.assertEquals("Node data uploaded file has invalid headers.", ex.getMessage());
   }
 
   @Test
   void validateEmptyCsvExceptionTest() throws IOException {
-    Path path = Paths.get("src", "test", "resources", "marketRegion", "marketRegionEmpty.csv");
+    Path path = Paths.get("src", "test", "resources", "node", "nodeEmpty.csv");
     InputStream inputStream = Files.newInputStream(path);
     FileResponse response = testUtil.getFileResponse();
     response.setInputStream(inputStream);
     Exception ex =
         Assertions.assertThrows(
             Exception.class,
-            () ->
-                marketRegionProcessingRequest.validate(
-                    testUtil.getGenericUploadRequest(), response));
+            () -> nodeProcessingRequest.validate(testUtil.getGenericUploadRequest(), response));
     Assertions.assertEquals("No Records found in the csv", ex.getMessage());
   }
 
@@ -119,10 +103,7 @@ class MarketRegionProcessingRequestImplTest {
     Exception ex =
         Assertions.assertThrows(
             Exception.class,
-            () ->
-                marketRegionProcessingRequest.validate(
-                    testUtil.getGenericUploadRequest(), response));
-    Assertions.assertEquals(
-        "Market Region data uploaded file has invalid file type.", ex.getMessage());
+            () -> nodeProcessingRequest.validate(testUtil.getGenericUploadRequest(), response));
+    Assertions.assertEquals("Node data uploaded file has invalid file type.", ex.getMessage());
   }
 }

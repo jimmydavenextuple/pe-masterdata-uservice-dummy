@@ -35,30 +35,38 @@ class DataUploadUtilTest {
 
   @Test
   void validateCsvHeaderTest() throws IOException, CommonServiceException, CsvException {
-    Path path = Paths.get("src", "test", "resources", "market", "market.csv");
+    Path path =
+        Paths.get("src", "test", "resources", "postalCodeTimezone", "postalCodeTimezone.csv");
     var csvReader = new CSVReader(new InputStreamReader(Files.newInputStream(path)));
     List<String[]> csvFileContents = csvReader.readAll();
-    DataUploadUtil.validateCSVHeaders(csvFileContents.get(0), "market-region", "");
-    DataUploadUtil.validateEmptyCSV(csvFileContents, "");
+    DataUploadUtil.validateCSVHeaders(
+        csvFileContents.get(0), "postal-code-timezone", "", csvReader);
+    DataUploadUtil.validateEmptyCSV(csvFileContents, "", csvReader);
     csvReader.close();
 
-    path = Paths.get("src", "test", "resources", "market", "marketInvalidHeader.csv");
-    csvReader = new CSVReader(new InputStreamReader(Files.newInputStream(path)));
-    csvFileContents = csvReader.readAll();
-    List<String[]> finalCsvFileContents = csvFileContents;
+    path =
+        Paths.get(
+            "src",
+            "test",
+            "resources",
+            "postalCodeTimezone",
+            "postalCodeTimezoneInvalidHeader.csv");
+    var csvReader1 = new CSVReader(new InputStreamReader(Files.newInputStream(path)));
+    List<String[]> csvFileContents1 = csvReader1.readAll();
     Assertions.assertThrows(
         Exception.class,
-        () -> DataUploadUtil.validateCSVHeaders(finalCsvFileContents.get(0), "market-region", ""));
-    csvReader.close();
+        () ->
+            DataUploadUtil.validateCSVHeaders(
+                csvFileContents1.get(0), "postal-code-timezone", "", csvReader1));
   }
 
   @Test
   void validateEmptyCsvTest() throws IOException, CsvException {
-    Path path = Paths.get("src", "test", "resources", "market", "marketEmpty.csv");
+    Path path =
+        Paths.get("src", "test", "resources", "postalCodeTimezone", "postalCodeTimezoneEmpty.csv");
     var csvReader = new CSVReader(new InputStreamReader(Files.newInputStream(path)));
     List<String[]> csvFileContents = csvReader.readAll();
     Assertions.assertThrows(
-        Exception.class, () -> DataUploadUtil.validateEmptyCSV(csvFileContents, ""));
-    csvReader.close();
+        Exception.class, () -> DataUploadUtil.validateEmptyCSV(csvFileContents, "", csvReader));
   }
 }

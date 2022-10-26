@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FileMetaDataResponse implements Serializable {
 
-  private long id;
+  private Long id;
 
   private String name;
 
@@ -28,5 +28,5 @@ public class FileMetaDataResponse implements Serializable {
 
   private String extReferenceId;
 
-  private String parentFileId;
+  private Long parentFileId;
 }

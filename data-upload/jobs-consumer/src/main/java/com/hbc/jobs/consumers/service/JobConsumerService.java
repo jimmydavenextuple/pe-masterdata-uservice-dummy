@@ -89,7 +89,7 @@ public class JobConsumerService {
     log.debug("Inside getRecordStatus service");
 
     try {
-      var feignClientMapper = feignClientMapperFactory.getMapper(recordDto.getJobType());
+      var feignClientMapper = feignClientMapperFactory.getFeignClientMapper(recordDto.getJobType());
       if (Objects.isNull(feignClientMapper)) {
         throw new InvalidJobTypeException(
             "Job type is not correct", recordDto.getJobType().toString());

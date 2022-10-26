@@ -39,6 +39,9 @@ import com.hbc.promise.common.domain.SfccSuggestedPromiseOption;
 import com.hbc.promise.common.domain.SfccSuggestedPromiseOptionError;
 import com.hbc.promise.common.domain.ShipToAddress;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
+import com.hbc.transit.domain.inbound.TransitBufferConfigRequest;
+import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,6 +106,14 @@ public class TestUtil {
 
   public static final String transitTimesRequestBodyJson =
       "{\"orgId\":\"BAY\",\"sourceGeozone\":\"A0A\",\"destinationGeozone\":\"M1R\",\"carrierServiceId\":\"ALL-SDND\",\"transitDays\":\"1.5\"}";
+
+  public static Double BUFFER_DAYS = 3.0;
+
+  public static final String STORAGE_TYPE = "S3";
+  public static final String FILE_PATH_WITH_BUCKET_NAME =
+      "promise-s3-lambda-dev/ui/transit-buffer/2022-10-18/fsa_upload..csv";
+
+  public static final String CREATED_BY = "createdBy";
 
   public JobDto getJobDto() {
     JobDto jobDto = new JobDto();
@@ -672,5 +683,41 @@ public class TestUtil {
         .hasExceptions(true)
         .exceptions(sfccErrorResponse)
         .build();
+
+  public TransitBufferConfigRequest getTransitBufferConfigRequest() {
+    Date bufferStartDate = new Date(1000);
+    Date bufferEndDate = new Date(1000);
+    return TransitBufferConfigRequest.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .bufferDays(BUFFER_DAYS)
+        .startDate(bufferStartDate)
+        .endDate(bufferEndDate)
+        .filePath(FILE_PATH_WITH_BUCKET_NAME)
+        .storageType(STORAGE_TYPE)
+        .build();
+  }
+
+  public TransitBufferConfigResponse getTransitBufferConfigResponse() {
+    Date bufferStartDate = new Date(1000);
+    Date bufferEndDate = new Date(1000);
+    return TransitBufferConfigResponse.builder()
+        .id(1L)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .bufferDays(BUFFER_DAYS)
+        .startDate(bufferStartDate)
+        .endDate(bufferEndDate)
+        .status(TransitBufferConfigRequestStatusEnum.CREATED)
+        .build();
+  }
+
+  public BaseResponse<TransitBufferConfigResponse> getTransitBufferConfigResponseBaseResponse() {
+    BaseResponse<TransitBufferConfigResponse> transitBufferConfigResponseBaseResponse =
+        new BaseResponse<>();
+    transitBufferConfigResponseBaseResponse.setSuccess(Boolean.TRUE);
+    transitBufferConfigResponseBaseResponse.setPayload(getTransitBufferConfigResponse());
+    return transitBufferConfigResponseBaseResponse;
+
   }
 }

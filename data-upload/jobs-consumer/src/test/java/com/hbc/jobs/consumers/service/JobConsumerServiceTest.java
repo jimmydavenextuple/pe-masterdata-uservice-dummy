@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -29,9 +28,11 @@ import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.enums.ModuleEnum;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,6 +55,8 @@ class JobConsumerServiceTest {
 
   @Mock private FeignClientMapperFactory feignClientMapperFactory;
 
+  @Mock private Map<ModuleEnum, FeignClientMapper> feignClientMapperMap;
+
   @Mock private NodeCarrierMapper nodeCarrierMapper;
   @Mock private JobRecordDomain jobRecordDomain;
 
@@ -72,36 +75,36 @@ class JobConsumerServiceTest {
 
     @Test
     void processRecord() throws PublishJobEventException {
-      RecordDto record = mock(RecordDto.class);
+      RecordDto record = testUtil.getRecordDto(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
       FeignClientMapper feignClientMapper = mock(FeignClientMapper.class);
       RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
 
+      when(feignClientMapperMap.get(ModuleEnum.NODE_CARRIER)).thenReturn(feignClientMapper);
       when(feignClientMapper.getResponseFromAPI(any())).thenReturn(recordStatusDto);
-      when(feignClientMapperFactory.getMapper(any())).thenReturn(feignClientMapper);
+      when(feignClientMapperFactory.getFeignClientMapper(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES))
+          .thenReturn(feignClientMapper);
       doNothing().when(publishJobEventService).publishJobRecord(any());
 
       Assertions.assertDoesNotThrow(() -> jobConsumerService.processRecord(record));
       verify(publishJobEventService, times(1)).publishJobRecord(any());
-      verify(feignClientMapperFactory, times(1)).getMapper(any());
+      verify(feignClientMapperFactory, times(1)).getFeignClientMapper(any());
     }
 
     @Test
-    void processRecordError() throws PublishJobEventException {
+    void processRecordError() {
       RecordDto record = mock(RecordDto.class);
       FeignClientMapper feignClientMapper = mock(FeignClientMapper.class);
       RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
 
+      when(feignClientMapperMap.get(any(ModuleEnum.class))).thenReturn(null);
       when(feignClientMapper.getResponseFromAPI(any())).thenReturn(recordStatusDto);
-      when(feignClientMapperFactory.getMapper(any())).thenReturn(feignClientMapper);
-      doThrow(RuntimeException.class).when(publishJobEventService).publishJobRecord(any());
+      when(feignClientMapperFactory.getFeignClientMapper(any(JobTypeEnum.class))).thenReturn(null);
 
       JobException e =
           Assertions.assertThrows(
               JobException.class, () -> jobConsumerService.processRecord(record));
       Assertions.assertEquals("Exception while processing the job record", e.getMessage());
       Assertions.assertNull(e.getJobId());
-      verify(publishJobEventService, times(1)).publishJobRecord(any());
-      verify(feignClientMapperFactory, times(1)).getMapper(any());
     }
   }
 
@@ -113,7 +116,7 @@ class JobConsumerServiceTest {
     record.setJobType(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     record.setOrgId(TestUtil.ORG_ID);
 
-    when(feignClientMapperFactory.getMapper(any())).thenReturn(nodeCarrierMapper);
+    when(feignClientMapperFactory.getFeignClientMapper(any())).thenReturn(nodeCarrierMapper);
     when(nodeCarrierMapper.getResponseFromAPI(any()))
         .thenReturn(
             testUtil.createRecordStatus(
@@ -127,7 +130,7 @@ class JobConsumerServiceTest {
 
     jobConsumerService.processRecord(record);
 
-    verify(feignClientMapperFactory, times(1)).getMapper(any());
+    verify(feignClientMapperFactory, times(1)).getFeignClientMapper(any());
     verify(nodeCarrierMapper, times(1)).getResponseFromAPI(any());
   }
 
@@ -138,7 +141,7 @@ class JobConsumerServiceTest {
     record.setTotalRecords(2);
     record.setJobType(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     record.setOrgId(TestUtil.ORG_ID);
-    when(feignClientMapperFactory.getMapper(any())).thenReturn(null);
+    when(feignClientMapperFactory.getFeignClientMapper(any())).thenReturn(null);
 
     Exception exception =
         Assertions.assertThrows(JobException.class, () -> jobConsumerService.processRecord(record));

@@ -4,6 +4,9 @@ import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.FileMetaDataResponse;
+import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
+import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
@@ -24,6 +27,7 @@ import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
 import com.hbc.transit.domain.outbound.TransitBufferReqJobRefResponse;
 import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +41,6 @@ public class TestUtil {
 
   public static final String TRANS_BUFFER_REQ_JOB_REF_ACTION = "action";
   public static final Long TransitBufferReqId = 2L;
-  public static final String ACTION = "Create";
   public static final Long Id = 1L;
   public static final String EXTERNAL_REFERENCE = "1";
 
@@ -58,6 +61,13 @@ public class TestUtil {
   public static final String JOB_ID = "1";
   public static final Long FILE_META_DATA_ID = 3L;
   public static final String CREATED_BY = "created-by";
+  public static final String STORAGE_TYPE = "S3";
+  public static final String FILE_PATH_WITH_BUCKET_NAME =
+      "promise-s3-lambda-dev/ui/transit-buffer/2022-10-18/fsa_upload..csv";
+  public static final String ACTION = "C";
+  public static final String BUCKET_NAME = "promise-s3-lambda-dev";
+  public static final String FILE_PATH = "ui/transit-buffer/2022-10-18/fsa_upload..csv";
+  public static final String FILE_NAME = "fsa_upload..csv";
 
   public TransitEntity getTransitEntity(Float transitDays) {
     Date bufferStartDate = new Date(1000);
@@ -253,7 +263,7 @@ public class TestUtil {
     return geozonesResponse;
   }
 
-  public TransitBufferConfigRequest getTransitBufferConfigRequest() {
+  public TransitBufferConfigRequest getTransitBufferConfigRequest(String action) {
     Date bufferStartDate = new Date(1000);
     Date bufferEndDate = new Date(1000);
     return TransitBufferConfigRequest.builder()
@@ -262,7 +272,9 @@ public class TestUtil {
         .bufferDays(BUFFER_DAYS)
         .startDate(bufferStartDate)
         .endDate(bufferEndDate)
-        .fileMetaDataId(FILE_META_DATA_ID)
+        .action(action)
+        .filePath(FILE_PATH_WITH_BUCKET_NAME)
+        .storageType(STORAGE_TYPE)
         .build();
   }
 
@@ -341,6 +353,91 @@ public class TestUtil {
         .bufferStartDate(new Date(1000))
         .bufferEndDate(new Date(1000))
         .createdBy(CREATED_BY)
+        .build();
+  }
+
+  public FileResponse getFileResponse() {
+    String csvFileContent = "sourceGeozone,destinationGeozone\n" + "H1B,R1B\n" + "H2B,R2B\n";
+    return FileResponse.builder()
+        .filePath(FILE_PATH)
+        .fileName(FILE_NAME)
+        .bucketName(BUCKET_NAME)
+        .contentLength(58L)
+        .contentType("text/csv")
+        .inputStream(new ByteArrayInputStream(csvFileContent.getBytes()))
+        .build();
+  }
+
+  public BaseResponse<FileMetaDataResponse> getFileMetaDataResponse() {
+    FileMetaDataResponse fileMetaDataResponse =
+        FileMetaDataResponse.builder()
+            .id(1L)
+            .storageType(STORAGE_TYPE)
+            .path(FILE_PATH_WITH_BUCKET_NAME)
+            .name(FILE_NAME)
+            .size("56")
+            .build();
+    BaseResponse<FileMetaDataResponse> fileMetaDataResponseBaseResponse = new BaseResponse<>();
+    fileMetaDataResponseBaseResponse.setPayload(fileMetaDataResponse);
+    fileMetaDataResponseBaseResponse.setSuccess(Boolean.TRUE);
+    return fileMetaDataResponseBaseResponse;
+  }
+
+  public BaseResponse<JobResponse> getJobResponse() {
+    JobResponse jobResponse = new JobResponse();
+    jobResponse.setJobId("1");
+    jobResponse.setOrgId(ORG_ID);
+    BaseResponse<JobResponse> jobResponseBaseResponse = new BaseResponse<>();
+    jobResponseBaseResponse.setPayload(jobResponse);
+    jobResponseBaseResponse.setSuccess(Boolean.TRUE);
+    return jobResponseBaseResponse;
+  }
+
+  public FileResponse getFileResponseWithEmptyCSVFile() {
+    String csvFileContent = "";
+    return FileResponse.builder()
+        .filePath(FILE_PATH)
+        .fileName(FILE_NAME)
+        .bucketName(BUCKET_NAME)
+        .contentLength(58L)
+        .contentType("text/csv")
+        .inputStream(new ByteArrayInputStream(csvFileContent.getBytes()))
+        .build();
+  }
+
+  public FileResponse getFileResponseWithInvalidHeaders() {
+    String csvFileContent = "invalidHeader,destinationGeozone\n" + "H1B,R1B\n" + "H2B,R2B\n";
+    return FileResponse.builder()
+        .filePath(FILE_PATH)
+        .fileName(FILE_NAME)
+        .bucketName(BUCKET_NAME)
+        .contentLength(58L)
+        .contentType("text/csv")
+        .inputStream(new ByteArrayInputStream(csvFileContent.getBytes()))
+        .build();
+  }
+
+  public FileResponse getFileResponse2() {
+    String csvFileContent = "sourceGeozone,destinationGeozone\n" + "H1B,\n" + "H2B,R2B\n";
+    return FileResponse.builder()
+        .filePath(FILE_PATH)
+        .fileName(FILE_NAME)
+        .bucketName(BUCKET_NAME)
+        .contentLength(58L)
+        .contentType("text/csv")
+        .inputStream(new ByteArrayInputStream(csvFileContent.getBytes()))
+        .build();
+  }
+
+  public FileResponse getFileResponse3() {
+    String csvFileContent = "sourceGeozone,destinationGeozone\n" + "H1B,R1B\n" + "H2B,\n";
+    return FileResponse.builder()
+        .filePath(FILE_PATH)
+        .fileName(FILE_NAME)
+        .bucketName(BUCKET_NAME)
+        .contentLength(58L)
+        .contentType("text/csv")
+        .inputStream(new ByteArrayInputStream(csvFileContent.getBytes()))
         .build();
   }
 }

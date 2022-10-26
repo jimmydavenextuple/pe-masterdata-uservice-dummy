@@ -1,7 +1,7 @@
 package com.hbc.csvdownload.service.v1.impl;
 
-import static com.hbc.dataupload.common.constants.CommonDataUploadErrorConstants.MARKET_REGION_DATA_UPLOAD_INVALID_FILE_HEADERS;
-import static com.hbc.dataupload.common.constants.CommonDataUploadErrorConstants.MARKET_REGION_DATA_UPLOAD_INVALID_FILE_TYPE;
+import static com.hbc.dataupload.common.constants.CommonDataUploadErrorConstants.NODE_DATA_UPLOAD_INVALID_FILE_HEADERS;
+import static com.hbc.dataupload.common.constants.CommonDataUploadErrorConstants.NODE_DATA_UPLOAD_INVALID_FILE_TYPE;
 import static com.hbc.dataupload.common.constants.CommonDataUploadErrorConstants.NO_RECORDS_FOUND_IN_THE_CSV;
 
 import com.hbc.common.exception.CommonServiceException;
@@ -22,21 +22,21 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MarketRegionProcessingRequestImpl extends AbstractProcessingRequest
+public class NodeProcessingRequestImpl extends AbstractProcessingRequest
     implements ProcessingRequestInterface {
 
-  public MarketRegionProcessingRequestImpl(JobsDashboardClient jobsDashboardClient) {
+  public NodeProcessingRequestImpl(JobsDashboardClient jobsDashboardClient) {
     super(jobsDashboardClient);
   }
 
   @Override
   public String getModuleType() {
-    return ModuleEnum.MARKET_REGION.getModuleValue();
+    return ModuleEnum.NODES.getModuleValue();
   }
 
   @Override
   public String submitJob(String orgId, long fileMetadataId) throws JobSubmissionException {
-    return submitJob(orgId, JobTypeEnum.MARKET_REGION, fileMetadataId).getJobId();
+    return submitJob(orgId, JobTypeEnum.UPLOAD_NODES, fileMetadataId).getJobId();
   }
 
   @Override
@@ -45,14 +45,14 @@ public class MarketRegionProcessingRequestImpl extends AbstractProcessingRequest
 
     // validate file type
     DataUploadUtil.validateFileType(
-        fileResponse.getContentType(), MARKET_REGION_DATA_UPLOAD_INVALID_FILE_TYPE);
+        fileResponse.getContentType(), NODE_DATA_UPLOAD_INVALID_FILE_TYPE);
 
     var csvReader = new CSVReader(new InputStreamReader(fileResponse.getInputStream()));
     List<String[]> csvFileContents = csvReader.readAll();
 
-    DataUploadUtil.validateEmptyCSV(csvFileContents, NO_RECORDS_FOUND_IN_THE_CSV);
+    DataUploadUtil.validateEmptyCSV(csvFileContents, NO_RECORDS_FOUND_IN_THE_CSV, csvReader);
     DataUploadUtil.validateCSVHeaders(
-        csvFileContents.get(0), getModuleType(), MARKET_REGION_DATA_UPLOAD_INVALID_FILE_HEADERS);
+        csvFileContents.get(0), getModuleType(), NODE_DATA_UPLOAD_INVALID_FILE_HEADERS, csvReader);
 
     csvReader.close();
   }
