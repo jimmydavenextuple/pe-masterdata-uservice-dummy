@@ -17,7 +17,9 @@ public enum JobTypeEnum {
   UPLOAD_POSTAL_CODE_TIMEZONE(ModuleEnum.POSTAL_CODE_TIMEZONE),
   UPLOAD_NODES(ModuleEnum.NODES),
   UPLOAD_NODE_CARRIER(ModuleEnum.NODE_CARRIER),
-  UPLOAD_NODE_CALENDER(ModuleEnum.NODE_CALENDAR);
+  UPLOAD_NODE_CALENDER(ModuleEnum.NODE_CALENDAR),
+  UPLOAD_CARRIER_SERVICE(ModuleEnum.CARRIER_SERVICE),
+  UPLOAD_CARRIER_SERVICE_CALENDER(ModuleEnum.CARRIER_SERVICE_CALENDAR);
   private static final Map<String, JobTypeEnum> jobTypeMap =
       Collections.unmodifiableMap(initialize());
   private final ModuleEnum module;

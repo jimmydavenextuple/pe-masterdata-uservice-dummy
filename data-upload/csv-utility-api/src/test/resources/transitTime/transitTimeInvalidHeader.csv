@@ -1,0 +1,4 @@
+action,orgId,sourceGeozone,destinationGeozone,carrierServiceId,transitDays,invalidColumn
+CREATE,org,SGZ1,DGZ1,CSI1,1,100
+UPDATE,org,SGZ2,DGZ2,CSI2,2,100
+DELETE,org,SGZ3,DGZ3,CSI3,3,100

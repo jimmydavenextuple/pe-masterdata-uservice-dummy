@@ -1,0 +1,3 @@
+action,calendarId,orgId,carrierServiceId,shippingStage,description,effectiveDate
+CREATE,SDND_2022,BAY,ALL_SDND,ALL,Yearly Calendar,2022-02-03
+CREATE,SDND_2022,BAY,ALL_SDND,ALL,Yearly Calendar

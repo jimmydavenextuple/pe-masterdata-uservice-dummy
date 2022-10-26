@@ -21,6 +21,18 @@ public class CommonDataUploadErrorConstants {
       "Node Calender data uploaded file has invalid headers.";
   public static final String NODE_CALENDER_DATA_UPLOAD_INVALID_FILE_TYPE =
       "Node Calender data uploaded file has invalid file type.";
+  public static final String TRANSIT_TIME_DATA_UPLOAD_INVALID_FILE_HEADERS =
+      "Transit Time data uploaded file has invalid headers.";
+  public static final String TRANSIT_TIME_DATA_UPLOAD_INVALID_FILE_TYPE =
+      "Transit Time data uploaded file has invalid file type.";
+  public static final String CARRIER_SERVICE_DATA_UPLOAD_INVALID_FILE_HEADERS =
+      "Carrier Service data uploaded file has invalid headers.";
+  public static final String CARRIER_SERVICE_DATA_UPLOAD_INVALID_FILE_TYPE =
+      "Carrier Service data uploaded file has invalid file type.";
+  public static final String CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_HEADERS =
+      "Carrier Calendar data uploaded file has invalid headers.";
+  public static final String CARRIER_CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE =
+      "Carrier Calendar data uploaded file has invalid file type.";
   public static final String NO_RECORDS_FOUND_IN_THE_CSV = "No Records found in the csv";
 
   public static final String TRANSIT_BUFFER_DATA_UPLOAD_INVALID_FILE_HEADERS =
