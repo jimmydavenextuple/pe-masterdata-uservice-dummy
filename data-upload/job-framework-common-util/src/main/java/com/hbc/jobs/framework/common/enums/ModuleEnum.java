@@ -15,11 +15,12 @@ public enum ModuleEnum {
   NODES("nodes"),
   PICKUP_CALENDAR("pickup-calendar"),
   POSTAL_CODE_TIMEZONE("postal-code-timezone"),
+  PROCESSING_LEAD_TIMES("processing-lead-times"),
   PROMISE_SOURCING_RULE("promise-sourcing-rule"),
   WEIGHTAGE("weightage"),
   TRANSIT_BUFFER("transit-buffer"),
   EDD_COMPUTATION("edd-computation"),
-  TRANSIT("transit-time"),
+  TRANSIT("transit"),
   UI("ui");
 
   private final String moduleValue;

@@ -24,8 +24,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class TransitTimeProcessingRequestImplTest {
-  @InjectMocks TransitTimeProcessingRequestImpl transitTimeProcessingRequest;
+class PickupCalendarProcessingRequestImplTest {
+  @InjectMocks PickupCalendarProcessingRequestImpl pickupCalendarProcessingRequest;
 
   @Spy JobsDashboardClient jobsDashboardClient;
 
@@ -34,70 +34,85 @@ class TransitTimeProcessingRequestImplTest {
   @Test
   void submitJobTest() throws JobSubmissionException {
     when(jobsDashboardClient.processJobOffline(
-            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_TRANSIT_TIMES, TestUtil.FILE_METADATA_ID))
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PICKUP_CALENDER, TestUtil.FILE_METADATA_ID))
         .thenReturn(BaseResponse.builder().payload(testUtil.getJobResponse()).build());
     String result =
-        transitTimeProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID);
+        pickupCalendarProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID);
     Assertions.assertEquals(TestUtil.JOB_ID, result);
   }
 
   @Test
   void submitJobFeignExceptionTest() {
     when(jobsDashboardClient.processJobOffline(
-            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_TRANSIT_TIMES, TestUtil.FILE_METADATA_ID))
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PICKUP_CALENDER, TestUtil.FILE_METADATA_ID))
         .thenThrow(FeignException.class);
     Assertions.assertThrows(
         JobSubmissionException.class,
-        () -> transitTimeProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID));
+        () ->
+            pickupCalendarProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID));
   }
 
   @Test
   void submitJobExceptionTest() {
     when(jobsDashboardClient.processJobOffline(
-            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_TRANSIT_TIMES, TestUtil.FILE_METADATA_ID))
+            TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PICKUP_CALENDER, TestUtil.FILE_METADATA_ID))
         .thenThrow(ArithmeticException.class);
     Assertions.assertThrows(
         JobSubmissionException.class,
-        () -> transitTimeProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID));
+        () ->
+            pickupCalendarProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID));
   }
 
   @Test
   void validateCsvTest() throws IOException, CommonServiceException, CsvException {
-    Path path = Paths.get("src", "test", "resources", "transit", "transit.csv");
+    Path path = Paths.get("src", "test", "resources", "pickupCalendar", "pickupCalendar.csv");
     InputStream inputStream = Files.newInputStream(path);
     FileResponse response = testUtil.getFileResponse();
+    response.setFileName("pickupCalendar.csv");
     response.setInputStream(inputStream);
-    transitTimeProcessingRequest.validate(testUtil.getGenericUploadRequest(), response);
+    pickupCalendarProcessingRequest.validate(testUtil.getGenericUploadRequest(), response);
+    Assertions.assertEquals("pickupCalendar.csv", response.getFileName());
   }
 
   @Test
   void validateInvalidHeadersExceptionTest() throws IOException {
-    Path path = Paths.get("src", "test", "resources", "transit", "transitInvalidHeader.csv");
-    InputStream inputStream = Files.newInputStream(path);
-    FileResponse response = testUtil.getFileResponse();
-    response.setInputStream(inputStream);
+    Path path =
+        Paths.get("src", "test", "resources", "pickupCalendar", "pickupCalendarInvalidHeaders.csv");
+    FileResponse response = getFileResponseWithInputStream(path);
     Exception ex =
         Assertions.assertThrows(
             Exception.class,
             () ->
-                transitTimeProcessingRequest.validate(
+                pickupCalendarProcessingRequest.validate(
                     testUtil.getGenericUploadRequest(), response));
     Assertions.assertEquals(
-        "Transit Time data uploaded file has invalid headers.", ex.getMessage());
+        "Pickup calendar data uploaded file has invalid headers.", ex.getMessage());
   }
 
   @Test
   void validateEmptyCsvExceptionTest() throws IOException {
-    Path path = Paths.get("src", "test", "resources", "transit", "transitEmpty.csv");
-    InputStream inputStream = Files.newInputStream(path);
-    FileResponse response = testUtil.getFileResponse();
-    response.setInputStream(inputStream);
+    Path path = Paths.get("src", "test", "resources", "pickupCalendar", "pickupCalendarEmpty.csv");
+    FileResponse response = getFileResponseWithInputStream(path);
     Exception ex =
         Assertions.assertThrows(
             Exception.class,
             () ->
-                transitTimeProcessingRequest.validate(
+                pickupCalendarProcessingRequest.validate(
                     testUtil.getGenericUploadRequest(), response));
+    Assertions.assertEquals("No Records found in the csv", ex.getMessage());
+  }
+
+  @Test
+  void validateFullEmptyCsvExceptionTest() throws IOException {
+    Path path =
+        Paths.get("src", "test", "resources", "pickupCalendar", "pickupCalendarFullEmpty.csv");
+    FileResponse fileResponse = getFileResponseWithInputStream(path);
+    Exception ex =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                pickupCalendarProcessingRequest.validate(
+                    testUtil.getGenericUploadRequest(), fileResponse));
     Assertions.assertEquals("No Records found in the csv", ex.getMessage());
   }
 
@@ -109,9 +124,16 @@ class TransitTimeProcessingRequestImplTest {
         Assertions.assertThrows(
             Exception.class,
             () ->
-                transitTimeProcessingRequest.validate(
+                pickupCalendarProcessingRequest.validate(
                     testUtil.getGenericUploadRequest(), response));
     Assertions.assertEquals(
-        "Transit Time data uploaded file has invalid file type.", ex.getMessage());
+        "Pickup calendar data uploaded file has invalid file type.", ex.getMessage());
+  }
+
+  private FileResponse getFileResponseWithInputStream(Path path) throws IOException {
+    InputStream inputStream = Files.newInputStream(path);
+    FileResponse response = testUtil.getFileResponse();
+    response.setInputStream(inputStream);
+    return response;
   }
 }

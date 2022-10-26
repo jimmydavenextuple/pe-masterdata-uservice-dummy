@@ -51,7 +51,7 @@ public class DataUploadUtilityExpectedHeaders {
                 "node-calendar",
                 List.of(ACTION, CALENDAR_ID, NODE_ID, ORG_ID, DESCRIPTION, EFFECTIVE_DATE)),
             Map.entry(
-                "transit-time",
+                "transit",
                 List.of(
                     ACTION,
                     ORG_ID,
@@ -83,7 +83,38 @@ public class DataUploadUtilityExpectedHeaders {
                 "node-carrier",
                 List.of(
                     ACTION, NODE_ID, ORG_ID, CARRIER_SERVICE_ID, SERVICE_OPTION, LAST_PICKUP_TIME)),
-            Map.entry("transit-buffer", List.of(SOURCE_GEO_ZONE, DESTINATION_GEO_ZONE)));
+            Map.entry("transit-buffer", List.of(SOURCE_GEO_ZONE, DESTINATION_GEO_ZONE)),
+            Map.entry(
+                "calendar",
+                List.of(
+                    ACTION,
+                    CALENDAR_ID,
+                    ORG_ID,
+                    DESCRIPTION,
+                    IS_MONDAY_WORKING,
+                    IS_TUESDAY_WORKING,
+                    IS_WEDNESDAY_WORKING,
+                    IS_THURSDAY_WORKING,
+                    IS_FRIDAY_WORKING,
+                    IS_SATURDAY_WORKING,
+                    IS_SUNDAY_WORKING,
+                    EXCEPTION_DAYS)),
+            Map.entry(
+                "pickup-calendar",
+                List.of(
+                    ACTION,
+                    CALENDAR_ID,
+                    ORG_ID,
+                    NODE_ID,
+                    CARRIER_SERVICE_ID,
+                    DESCRIPTION,
+                    EFFECTIVE_DATE)),
+            Map.entry(
+                "processing-lead-times",
+                List.of(NODE_ID, ORG_ID, SERVICE_OPTIONS, PROCESSING_TIME, ACTION)),
+            Map.entry(
+                "node-service-option-buffer",
+                List.of(ORG_ID, NODE_ID, SERVICE_OPTION, BUFFER_HOURS, START_TIME, END_TIME)));
   }
 
   public static List<String> getCSVExpectedHeaders(String key) {
