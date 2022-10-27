@@ -23,5 +23,6 @@ dependencies {
     implementation(project(":node:node-api-domain"))
     implementation(project(":calendar:calendar-api-domain"))
     implementation(project(":carrier:carrier-api-domain"))
+    implementation(project(":calendar:calendar-api-domain"))
     implementation group: 'com.opencsv', name: 'opencsv', version: '5.2'
 }

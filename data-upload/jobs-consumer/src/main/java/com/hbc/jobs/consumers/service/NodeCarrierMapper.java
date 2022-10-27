@@ -10,13 +10,16 @@ import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.common.response.error.FieldError;
+import com.hbc.common.util.DateUtil;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.CsvDataValidationException;
 import com.hbc.jobs.consumers.domain.mapper.NodeCarrierRequestMapper;
 import com.hbc.jobs.consumers.exception.InvalidActionTypeException;
+import com.hbc.jobs.consumers.exception.InvalidJobTypeException;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.NodeCarrierUpload;
+import com.hbc.jobs.framework.common.domain.pojo.ProcessingTimeBufferUpload;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.jobs.framework.common.enums.ModuleEnum;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
@@ -107,35 +110,46 @@ public class NodeCarrierMapper implements FeignClientMapper {
   }
 
   @Override
-  public Class mapTODto() throws NodeCarrierMapperException {
-    try {
-      if (jobTypeEnum == JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES) {
+  public Class mapTODto() throws NodeCarrierMapperException, InvalidJobTypeException {
+    switch (jobTypeEnum) {
+      case UPLOAD_PROCESSING_LEAD_TIMES:
         return ProcessingLeadTimesRaw.class;
-      } else if (jobTypeEnum == JobTypeEnum.UPLOAD_NODE_CARRIER) {
+      case UPLOAD_NODE_CARRIER:
         return NodeCarrierUpload.class;
-      }
-      logger.error("Unable to map an object!");
-      throw new NodeCarrierMapperException(
-          "Error while mapping an object to the expected object", jobTypeEnum);
-    } catch (Exception e) {
-      logger.error("Error while mapping to DTO");
-      throw new NodeCarrierMapperException(
-          "Exception while mapping an object to expected object", e, jobTypeEnum);
+      case UPLOAD_NODE_SERVICE_OPTION_BUFFER:
+        return ProcessingTimeBufferUpload.class;
+      default:
+        {
+          logger.error("Invalid JobType: {}", jobTypeEnum);
+          throw new InvalidJobTypeException("Invalid JobType provided", jobTypeEnum.name());
+        }
     }
   }
 
   @Override
   public ResponseEntity<?> callApi(Object request, RecordInputDto inputs)
       throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
-    if (jobTypeEnum == JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES) {
-      var processingLeadTimesRaw = (ProcessingLeadTimesRaw) request;
-      return processProcessingLeadTimesUploadApiCall(processingLeadTimesRaw);
-    } else if (jobTypeEnum == JobTypeEnum.UPLOAD_NODE_CARRIER) {
-      var nodeCarrierUpload = (NodeCarrierUpload) request;
-      return processNodeCarrierUploadApiCall(nodeCarrierUpload);
+    switch (jobTypeEnum) {
+      case UPLOAD_PROCESSING_LEAD_TIMES:
+        return processProcessingLeadTimesUploadApiCall((ProcessingLeadTimesRaw) request);
+      case UPLOAD_NODE_CARRIER:
+        return processNodeCarrierUploadApiCall((NodeCarrierUpload) request);
+      case UPLOAD_NODE_SERVICE_OPTION_BUFFER:
+        return invokeProcessingTimeBuffer((ProcessingTimeBufferUpload) request);
+      default:
+        {
+          logger.error("Failed to make a call based on job type");
+          throw new NodeCarrierMapperException("Please provide the valid job type", jobTypeEnum);
+        }
     }
-    logger.error("Failed to make a call based on job type");
-    throw new NodeCarrierMapperException("Please provide the valid job type", jobTypeEnum);
+  }
+
+  private ResponseEntity<?> invokeProcessingTimeBuffer(ProcessingTimeBufferUpload request) {
+    var nodeCarrierBufferRequest = INSTANCE.convertToNodeCarrierBufferRequest(request);
+    nodeCarrierBufferRequest.setBufferStartDate(DateUtil.getDateUTC(request.getBufferStartDate()));
+    nodeCarrierBufferRequest.setBufferEndDate(DateUtil.getDateUTC(request.getBufferEndDate()));
+    return ResponseEntity.ok(
+        nodeCarrierFeign.updateBuffer(INSTANCE.convertToNodeCarrierBufferRequest(request)));
   }
 
   private ResponseEntity<?> processNodeCarrierUploadApiCall(NodeCarrierUpload nodeCarrierUpload) {

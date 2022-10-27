@@ -116,6 +116,23 @@ public class TestUtil {
           + "  UPDATE,1,BAY,ALL-EXPRESS,EXPRESS,10:00\n"
           + "  DELETE,12,BAY,ALL-EXPRESS,EXPRESS,20:00";
 
+  public static final String CSV_CONTENTS_UPLOAD_CALENDAR_DATA =
+      "action,calendarId,orgId,description,isMondayWorking,isTuesdayWorking,isWednesdayWorking,isThursdayWorking,isFridayWorking,isSaturdayWorking,isSundayWorking,exceptionDays\n"
+          + "CREATE,Store_2022,BAY,Store calendar - non peak,true,true,true,true,true,true,true,\"[{\\\"date\\\": \\\"2022-01-01\\\",\\\"reason\\\": \\\"New Year's Day\\\"}]\"";
+  //          + "CREATE,SLC_2022,BAY,SLC Operations
+  // Calendar,true,true,true,true,true,true,true,\"[{\\\"date\\\":
+  // \\\"2022-01-01\\\",\\\"reason\\\": \\\"New Year's Day\\\"},{\\\"date\\\":
+  // \\\"2022-02-21\\\",\\\"reason\\\": \\\"Family Day\\\"},{\\\"date\\\":
+  // \\\"2022-04-15\\\",\\\"reason\\\": \\\"Good Friday\\\"},{\\\"date\\\":
+  // \\\"2022-04-18\\\",\\\"reason\\\": \\\"Easter Monday\\\"},{\\\"date\\\":
+  // \\\"2022-05-23\\\",\\\"reason\\\": \\\"Victoria Day\\\"},{\\\"date\\\":
+  // \\\"2022-07-01\\\",\\\"reason\\\": \\\"Canada Day\\\"},{\\\"date\\\":
+  // \\\"2022-08-01\\\",\\\"reason\\\": \\\"Civid Holiday\\\"},{\\\"date\\\":
+  // \\\"2022-09-05\\\",\\\"reason\\\": \\\"Labour Day\\\"},{\\\"date\\\":
+  // \\\"2022-10-10\\\",\\\"reason\\\": \\\"Thanksgiving\\\"},{\\\"date\\\":
+  // \\\"2022-11-11\\\",\\\"reason\\\": \\\"Remembrance Day\\\"},{\\\"date\\\":
+  // \\\"2022-12-25\\\",\\\"reason\\\": \\\"Christmas Day\\\"}]\"";
+
   public static final Optional<String> DEFAULT_SORT_FIELD = Optional.of("created_date");
 
   public static final Optional<String> DEFAULT_SORT_ORDER = Optional.of("ASC");

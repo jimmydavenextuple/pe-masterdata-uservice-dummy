@@ -17,5 +17,6 @@ dependencies {
     implementation(project(":data-upload:csv-utility-common-util"))
     implementation(project(":data-upload:jobs-consumer"))
     implementation(project(":data-upload:data-upload-common-util"))
+    implementation(project(":calendar:calendar-api-domain"))
     implementation(project(":postal-code-timezone:postal-code-timezone-api-domain"))
 }

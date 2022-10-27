@@ -3,6 +3,7 @@ package com.hbc.jobs.consumers.service;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CREATE;
 
 import com.hbc.calendar.domain.feign.CalendarFeign;
+import com.hbc.calendar.domain.outbound.CalendarResponse;
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.common.context.Logger;
@@ -16,8 +17,10 @@ import com.hbc.jobs.consumers.exception.InvalidJobTypeException;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.consumers.exception.TransitMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.CalendarDataUpload;
 import com.hbc.jobs.framework.common.domain.pojo.CarrierCalendarUpload;
 import com.hbc.jobs.framework.common.domain.pojo.NodeCalendarUpload;
+import com.hbc.jobs.framework.common.domain.pojo.PickUpCalendarUpload;
 import com.hbc.jobs.framework.common.domain.pojo.RecordInputDto;
 import com.hbc.jobs.framework.common.enums.ModuleEnum;
 import java.util.Map;
@@ -30,6 +33,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CalendarMapper implements FeignClientMapper {
 
+  private static final String INVALID_ACTION_TYPE_ERROR_MESSAGE =
+      "Please provide the valid action: ";
   private final CalendarFeign calendarFeign;
 
   private final Logger logger = LoggerFactory.getLogger(CalendarMapper.class);
@@ -51,26 +56,62 @@ public class CalendarMapper implements FeignClientMapper {
 
   @Override
   public Class mapTODto() throws InvalidJobTypeException { // NOSONAR
-    if (jobType == JobTypeEnum.UPLOAD_NODE_CALENDER) {
-      return NodeCalendarUpload.class;
-    } else if (jobType == JobTypeEnum.UPLOAD_CARRIER_SERVICE_CALENDER) {
-      return CarrierCalendarUpload.class;
+    switch (jobType) {
+      case UPLOAD_NODE_CALENDER:
+        return NodeCalendarUpload.class;
+      case UPLOAD_CARRIER_SERVICE_CALENDER:
+        return CarrierCalendarUpload.class;
+      case UPLOAD_CALENDER:
+        return CalendarDataUpload.class;
+      case UPLOAD_PICKUP_CALENDER:
+        return PickUpCalendarUpload.class;
+      default:
+        {
+          logger.error("Invalid Job type: {}", jobType);
+          throw new InvalidJobTypeException("Invalid Job type", jobType.name());
+        }
     }
-    logger.error("Invalid Job type: {}", jobType);
-    throw new InvalidJobTypeException("Invalid Job type", jobType.name());
   }
 
   @Override
   public ResponseEntity<?> callApi(Object request, RecordInputDto inputs)
       throws TransitMapperException, NodeCarrierMapperException, InvalidActionTypeException,
           CommonServiceException, InvalidJobTypeException {
-    if (jobType == JobTypeEnum.UPLOAD_NODE_CALENDER) {
-      return invokeUploadNodeCalendarApis((NodeCalendarUpload) request);
-    } else if (jobType == JobTypeEnum.UPLOAD_CARRIER_SERVICE_CALENDER) {
-      return invokeCarrierCalendarUploadApis((CarrierCalendarUpload) request);
+    switch (jobType) {
+      case UPLOAD_NODE_CALENDER:
+        return invokeUploadNodeCalendarApis((NodeCalendarUpload) request);
+      case UPLOAD_CARRIER_SERVICE_CALENDER:
+        return invokeCarrierCalendarUploadApis((CarrierCalendarUpload) request);
+      case UPLOAD_CALENDER:
+        return invokeCalendarDataUploadApis((CalendarDataUpload) request);
+      case UPLOAD_PICKUP_CALENDER:
+        return invokePickupCalendarUploadApis((PickUpCalendarUpload) request);
+      default:
+        {
+          logger.error("Invalid job type: {}", jobType);
+          throw new InvalidJobTypeException("Invalid job type", jobType.name());
+        }
     }
-    logger.error("Invalid job type: {}", jobType);
-    throw new InvalidJobTypeException("Invalid job type", jobType.name());
+  }
+
+  private ResponseEntity<?> invokePickupCalendarUploadApis(PickUpCalendarUpload request) {
+    if (CREATE.equals(request.getAction())) {
+      return ResponseEntity.ok(
+          calendarFeign.createNodeCarrierServiceCalendar(
+              INSTANCE.convertToNodeCarrierServiceCalendarRequest(request)));
+    }
+    logger.error("Invalid action provided: {}", request.getAction());
+    throw new CsvDataValidationException(INVALID_ACTION_TYPE_ERROR_MESSAGE + request.getAction());
+  }
+
+  private ResponseEntity<BaseResponse<CalendarResponse>> invokeCalendarDataUploadApis(
+      CalendarDataUpload request) {
+    if (CREATE.equals(request.getAction())) {
+      return ResponseEntity.ok(
+          calendarFeign.createCalendar(INSTANCE.convertToCalendarRequest(request)));
+    }
+    logger.error("Invalid action: {}", request.getAction());
+    throw new CsvDataValidationException(INVALID_ACTION_TYPE_ERROR_MESSAGE + request.getAction());
   }
 
   private ResponseEntity<BaseResponse<CarrierServiceCalendarResponse>>
@@ -83,7 +124,7 @@ public class CalendarMapper implements FeignClientMapper {
               INSTANCE.convertToCarrierServiceCalendarRequest(request)));
     }
     logger.error("Invalid action type: {}", request.getAction());
-    throw new CsvDataValidationException("Please provide the valid action: " + request.getAction());
+    throw new CsvDataValidationException(INVALID_ACTION_TYPE_ERROR_MESSAGE + request.getAction());
   }
 
   private ResponseEntity<BaseResponse<NodeCalendarResponse>> invokeUploadNodeCalendarApis(
@@ -96,7 +137,7 @@ public class CalendarMapper implements FeignClientMapper {
           calendarFeign.createNodeCalendar(INSTANCE.convertToNodeCalendarRequest(request)));
     }
     logger.error("Invalid action type: {}", request.getAction());
-    throw new CsvDataValidationException("Please provide the valid action: " + request.getAction());
+    throw new CsvDataValidationException(INVALID_ACTION_TYPE_ERROR_MESSAGE + request.getAction());
   }
 
   @Override

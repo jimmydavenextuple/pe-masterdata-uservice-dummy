@@ -14,7 +14,10 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SER
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIPPING_STAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
 
+import com.hbc.calendar.domain.outbound.CalendarResponse;
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
+import com.hbc.calendar.domain.pojo.ExceptionDays;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.util.DateUtil;
 import com.hbc.csvdownload.common.pojo.TransitDataUpload;
@@ -29,6 +32,7 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
+import com.hbc.jobs.framework.common.domain.pojo.CalendarDataUpload;
 import com.hbc.jobs.framework.common.domain.pojo.CarrierCalendarUpload;
 import com.hbc.jobs.framework.common.domain.pojo.CarrierServiceUpload;
 import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
@@ -37,7 +41,9 @@ import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
 import com.hbc.jobs.framework.common.domain.pojo.NodeCalendarUpload;
 import com.hbc.jobs.framework.common.domain.pojo.NodeCarrierUpload;
 import com.hbc.jobs.framework.common.domain.pojo.NodeDataUpload;
+import com.hbc.jobs.framework.common.domain.pojo.PickUpCalendarUpload;
 import com.hbc.jobs.framework.common.domain.pojo.PostalCodeTimezoneUpload;
+import com.hbc.jobs.framework.common.domain.pojo.ProcessingTimeBufferUpload;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.jobs.framework.common.domain.pojo.TransitBufferUpload;
@@ -80,6 +86,8 @@ public class TestUtil {
   public static Boolean EXPRESS_ELIGIBLE = Boolean.TRUE;
   public static String NODE_TYPE = "MFC";
   public static Boolean IS_ACTIVE = Boolean.TRUE;
+  public static final String EXCEPTION_DATE = String.valueOf(DateUtil.addDaysToCurrentDate(4));
+  public static final String EXCEPTION_REASON = "Public Holiday";
 
   public static final String CSV_CONTENTS_PROCESSING_LEAD_TIMES =
       "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
@@ -642,6 +650,79 @@ public class TestUtil {
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
         .serviceOptions(SERVICE_OPTIONS)
+        .build();
+  }
+
+  public NodeCarrierResponse getNodeCarrierBufferResponse() {
+    return NodeCarrierResponse.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .serviceOption(SERVICE_OPTION)
+        .bufferHours(2D)
+        .bufferStartDate(new Date())
+        .bufferEndDate(new Date())
+        .build();
+  }
+
+  public ProcessingTimeBufferUpload getProcessingTimeBufferUpload() {
+    return ProcessingTimeBufferUpload.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .serviceOption(SERVICE_OPTION)
+        .bufferHours("2")
+        .bufferStartDate(DateUtil.getCurrentUTCTimeStampInString())
+        .bufferEndDate(DateUtil.getCurrentUTCTimeStampInString())
+        .build();
+  }
+
+  public ExceptionDays getExceptionDays() {
+    ExceptionDays exceptionDays = new ExceptionDays();
+    exceptionDays.setDate(EXCEPTION_DATE);
+    exceptionDays.setReason(EXCEPTION_REASON);
+    return exceptionDays;
+  }
+
+  public CalendarDataUpload getCalendarDataUpload(String action) {
+    return CalendarDataUpload.builder()
+        .action(action)
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .description(DESCRIPTION)
+        .isMondayWorking(Boolean.TRUE)
+        .exceptionDays(Collections.singletonList(getExceptionDays()))
+        .build();
+  }
+
+  public CalendarResponse getCalendarResponse() {
+    return CalendarResponse.builder()
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .description(DESCRIPTION)
+        .isMondayWorking(Boolean.TRUE)
+        .exceptionDays(Collections.singletonList(getExceptionDays()))
+        .build();
+  }
+
+  public PickUpCalendarUpload getPickUpCalendarUpload(String action) {
+    return PickUpCalendarUpload.builder()
+        .action(action)
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .description(DESCRIPTION)
+        .effectiveDate(EFFECTIVE_DATE)
+        .nodeId(NODE_ID)
+        .build();
+  }
+
+  public NodeCarrierServiceCalendarResponse getNodeCarrierServiceCalendarResponse() {
+    return NodeCarrierServiceCalendarResponse.builder()
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .description(DESCRIPTION)
+        .effectiveDate(EFFECTIVE_DATE)
+        .nodeId(NODE_ID)
         .build();
   }
 }

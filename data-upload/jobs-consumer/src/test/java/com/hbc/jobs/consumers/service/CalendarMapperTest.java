@@ -13,8 +13,10 @@ import com.hbc.jobs.consumers.exception.InvalidJobTypeException;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.consumers.exception.TransitMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.CalendarDataUpload;
 import com.hbc.jobs.framework.common.domain.pojo.CarrierCalendarUpload;
 import com.hbc.jobs.framework.common.domain.pojo.NodeCalendarUpload;
+import com.hbc.jobs.framework.common.domain.pojo.PickUpCalendarUpload;
 import com.hbc.jobs.framework.common.enums.ModuleEnum;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import org.junit.jupiter.api.Assertions;
@@ -42,6 +44,14 @@ class CalendarMapperTest {
     calendarMapper.setJobType(JobTypeEnum.UPLOAD_CARRIER_SERVICE_CALENDER);
     Class carrierCalendarUpload = calendarMapper.mapTODto();
     Assertions.assertEquals(CarrierCalendarUpload.class, carrierCalendarUpload);
+
+    calendarMapper.setJobType(JobTypeEnum.UPLOAD_CALENDER);
+    Class calendarUpload = calendarMapper.mapTODto();
+    Assertions.assertEquals(CalendarDataUpload.class, calendarUpload);
+
+    calendarMapper.setJobType(JobTypeEnum.UPLOAD_PICKUP_CALENDER);
+    Class pickUpCalendarUpload = calendarMapper.mapTODto();
+    Assertions.assertEquals(PickUpCalendarUpload.class, pickUpCalendarUpload);
 
     calendarMapper.setJobType(JobTypeEnum.TRANSIT_BUFFER_REQUEST);
     Exception exception =
@@ -134,6 +144,63 @@ class CalendarMapperTest {
     Exception exception =
         Assertions.assertThrows(
             InvalidJobTypeException.class, () -> calendarMapper.callApi(object, null));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void callApiCreateCalendar()
+      throws TransitMapperException, NodeCarrierMapperException, CommonServiceException,
+          InvalidActionTypeException, InvalidJobTypeException {
+    calendarMapper.setJobType(JobTypeEnum.UPLOAD_CALENDER);
+    Object object = testUtil.getCalendarDataUpload("CREATE");
+    when(calendarFeign.createCalendar(any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getCalendarResponse()).build());
+
+    ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> response =
+        (ResponseEntity<BaseResponse<PostalCodeTimezoneDto>>) calendarMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertNotNull(response.getBody());
+  }
+
+  @Test
+  void callApiCreateCalendarInvalidAction() {
+    calendarMapper.setJobType(JobTypeEnum.UPLOAD_CALENDER);
+    Object object = testUtil.getCalendarDataUpload("DEL");
+
+    Exception exception =
+        Assertions.assertThrows(
+            CsvDataValidationException.class, () -> calendarMapper.callApi(object, null));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void callApiCreatePickUpCalendar()
+      throws TransitMapperException, NodeCarrierMapperException, CommonServiceException,
+          InvalidActionTypeException, InvalidJobTypeException {
+    calendarMapper.setJobType(JobTypeEnum.UPLOAD_PICKUP_CALENDER);
+    Object object = testUtil.getPickUpCalendarUpload("CREATE");
+    when(calendarFeign.createNodeCarrierServiceCalendar(any()))
+        .thenReturn(
+            BaseResponse.builder()
+                .payload(testUtil.getNodeCarrierServiceCalendarResponse())
+                .build());
+
+    ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> response =
+        (ResponseEntity<BaseResponse<PostalCodeTimezoneDto>>) calendarMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertNotNull(response.getBody());
+  }
+
+  @Test
+  void callApiCreatePickUpCalendarInvalidAction() {
+    calendarMapper.setJobType(JobTypeEnum.UPLOAD_PICKUP_CALENDER);
+    Object object = testUtil.getPickUpCalendarUpload("DEL");
+
+    Exception exception =
+        Assertions.assertThrows(
+            CsvDataValidationException.class, () -> calendarMapper.callApi(object, null));
 
     Assertions.assertNotNull(exception);
   }

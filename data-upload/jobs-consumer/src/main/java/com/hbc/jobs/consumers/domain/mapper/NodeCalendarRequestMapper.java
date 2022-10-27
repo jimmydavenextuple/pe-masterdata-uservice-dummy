@@ -1,9 +1,13 @@
 package com.hbc.jobs.consumers.domain.mapper;
 
+import com.hbc.calendar.domain.inbound.CalendarRequest;
 import com.hbc.calendar.domain.inbound.CarrierServiceCalendarRequest;
 import com.hbc.calendar.domain.inbound.NodeCalendarRequest;
+import com.hbc.calendar.domain.inbound.NodeCarrierServiceCalendarRequest;
+import com.hbc.jobs.framework.common.domain.pojo.CalendarDataUpload;
 import com.hbc.jobs.framework.common.domain.pojo.CarrierCalendarUpload;
 import com.hbc.jobs.framework.common.domain.pojo.NodeCalendarUpload;
+import com.hbc.jobs.framework.common.domain.pojo.PickUpCalendarUpload;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -17,4 +21,9 @@ public interface NodeCalendarRequestMapper {
 
   CarrierServiceCalendarRequest convertToCarrierServiceCalendarRequest(
       CarrierCalendarUpload carrierCalendarUpload);
+
+  CalendarRequest convertToCalendarRequest(CalendarDataUpload calendarDataUpload);
+
+  NodeCarrierServiceCalendarRequest convertToNodeCarrierServiceCalendarRequest(
+      PickUpCalendarUpload pickUpCalendarUpload);
 }
