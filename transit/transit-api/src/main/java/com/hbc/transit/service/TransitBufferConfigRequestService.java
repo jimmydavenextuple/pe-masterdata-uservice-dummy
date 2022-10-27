@@ -398,8 +398,14 @@ public class TransitBufferConfigRequestService {
       List<TransitBufferConfigRequestEntity> transitBufferConfigRequestEntities =
           transitBufferConfigRepository.findByOrgIdAndCarrierServiceId(
               orgId, carrierServiceId, filteredStatus);
+      List<TransitBufferConfigResponse> transitBufferConfigResponses = new ArrayList<>();
+      for (TransitBufferConfigRequestEntity transitBufferConfigRequestEntity :
+          transitBufferConfigRequestEntities) {
+        createTransitBufferConfigResponse(
+            transitBufferConfigResponses, transitBufferConfigRequestEntity);
+      }
 
-      return INSTANCE.toTransitBufferConfigResponseList(transitBufferConfigRequestEntities);
+      return transitBufferConfigResponses;
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to fetch transit buffer requests");
       Map<String, FieldError> errorMap = new HashMap<>();
@@ -408,6 +414,24 @@ public class TransitBufferConfigRequestService {
           CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
       throw new CommonServiceException(
           "Unable to fetch transit buffer requests", HttpStatus.BAD_REQUEST, 0x1772, errorMap);
+    }
+  }
+
+  private void createTransitBufferConfigResponse(
+      List<TransitBufferConfigResponse> transitBufferConfigResponses,
+      TransitBufferConfigRequestEntity transitBufferConfigRequestEntity) {
+    try {
+      var response =
+          jobsDashboardClient
+              .findFileMetadataById(transitBufferConfigRequestEntity.getFileMetaDataId())
+              .getPayload();
+
+      transitBufferConfigResponses.add(
+          INSTANCE.toTransitBufferConfigResponse(
+              transitBufferConfigRequestEntity, response.getName()));
+
+    } catch (Exception e) {
+      logger.debug("No Meta File Information Found");
     }
   }
 

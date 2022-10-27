@@ -359,6 +359,9 @@ class TransitBufferConfigRequestServiceTest {
     when(transitBufferConfigRepository.findByOrgIdAndCarrierServiceId(
             anyString(), anyString(), any()))
         .thenReturn(List.of(transitBufferConfigRequestEntity1, transitBufferConfigRequestEntity2));
+
+    when(jobsDashboardClient.findFileMetadataById(anyLong()))
+        .thenReturn(testUtil.getFileMetaDataResponse());
     List<TransitBufferConfigResponse> transitBufferConfigResponse =
         transitBufferConfigRequestService.fetchTransitBufferRequests(
             TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
@@ -368,7 +371,29 @@ class TransitBufferConfigRequestServiceTest {
   }
 
   @Test
-  void fetchTransitBufferRequestsTestException() throws CommonServiceException {
+  void fetchTransitBufferRequestsTestErrorWhileFetchingMetaDetails() throws CommonServiceException {
+    TransitBufferConfigRequestEntity transitBufferConfigRequestEntity1 =
+        testUtil.getTransitBufferConfigRequestEntity(TransitBufferConfigRequestStatusEnum.CREATED);
+    TransitBufferConfigRequestEntity transitBufferConfigRequestEntity2 =
+        testUtil.getTransitBufferConfigRequestEntity(
+            TransitBufferConfigRequestStatusEnum.COMPLETED);
+    when(transitBufferConfigRepository.findByOrgIdAndCarrierServiceId(
+            anyString(), anyString(), any()))
+        .thenReturn(List.of(transitBufferConfigRequestEntity1, transitBufferConfigRequestEntity2));
+
+    when(jobsDashboardClient.findFileMetadataById(anyLong()))
+        .thenReturn(testUtil.getFileMetaDataResponse())
+        .thenThrow(new RuntimeException());
+    List<TransitBufferConfigResponse> transitBufferConfigResponse =
+        transitBufferConfigRequestService.fetchTransitBufferRequests(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+    Assertions.assertEquals(1, transitBufferConfigResponse.size());
+    verify(transitBufferConfigRepository, times(1))
+        .findByOrgIdAndCarrierServiceId(anyString(), anyString(), any());
+  }
+
+  @Test
+  void fetchTransitBufferRequestsTestException() {
     when(transitBufferConfigRepository.findByOrgIdAndCarrierServiceId(
             anyString(), anyString(), any()))
         .thenThrow(new RuntimeException("Unable to fetch transit buffer requests"));

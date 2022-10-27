@@ -36,4 +36,5 @@ public class TransitBufferConfigResponse implements Serializable {
   private Long parentRequestId;
 
   private Long fileMetaDataId;
+  private String fileName;
 }

@@ -21,4 +21,7 @@ public interface TransitBufferConfigRequestMapper {
 
   List<TransitBufferConfigResponse> toTransitBufferConfigResponseList(
       List<TransitBufferConfigRequestEntity> transitBufferConfigRequestEntities);
+
+  TransitBufferConfigResponse toTransitBufferConfigResponse(
+      TransitBufferConfigRequestEntity transitBufferConfigRequestEntity, String fileName);
 }
