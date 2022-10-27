@@ -533,7 +533,7 @@ public class CsvDownloadUtilityService {
                               postalCode,
                               activeCombination.getCarrierServiceId(),
                               activeCombination.getServiceOption(),
-                              String.valueOf(activeCombination.isActive())
+                              activeCombination.isActive() ? ACTIVE : INACTIVE
                             }));
           });
     }
