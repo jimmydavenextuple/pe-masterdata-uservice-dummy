@@ -220,7 +220,6 @@ class CsvDownloadUtilityServiceTest {
     when(transitService.getTransitTimeEntries(anyString(), anyString()))
         .thenReturn(testUtil.getTransitTimeEntriesDto());
     File csvContents = csvDownloadUtilityService.downloadCarrierServiceDataCSV(TestUtil.ORG_ID);
-    System.out.println("file" + csvContents);
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
     verify(calenderService, times(1)).getCarrierServiceCalender(anyString(), anyString());
     verify(transitService, times(1)).getTransitTimeEntries(anyString(), anyString());
