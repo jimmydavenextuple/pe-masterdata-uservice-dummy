@@ -166,6 +166,8 @@ public class CsvDownloadUtilityService {
               .collect(Collectors.toSet()));
 
     } catch (Exception e) {
+      // No Calender exist for given orgId and carrierServiceId
+      calenderIds.add("NA");
       logger.error("Empty Carrier Service Calendar Response List");
     }
   }

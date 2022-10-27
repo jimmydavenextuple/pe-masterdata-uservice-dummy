@@ -210,6 +210,24 @@ class CsvDownloadUtilityServiceTest {
   }
 
   @Test
+  void downloadCarrierServiceData_TestNoCalenderExist()
+      throws CarrierServiceException, TransitServiceException, IOException {
+    when(carrierService.getCarrierService(anyString()))
+        .thenReturn(List.of(testUtil.getCarrierServiceResponse()));
+    when(calenderService.getCarrierServiceCalender(anyString(), anyString()))
+        .thenThrow(CarrierServiceException.class);
+
+    when(transitService.getTransitTimeEntries(anyString(), anyString()))
+        .thenReturn(testUtil.getTransitTimeEntriesDto());
+    File csvContents = csvDownloadUtilityService.downloadCarrierServiceDataCSV(TestUtil.ORG_ID);
+    System.out.println("file" + csvContents);
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContents));
+    verify(calenderService, times(1)).getCarrierServiceCalender(anyString(), anyString());
+    verify(transitService, times(1)).getTransitTimeEntries(anyString(), anyString());
+    verify(carrierService, times(1)).getCarrierService(anyString());
+  }
+
+  @Test
   void downloadCarrierServiceData_TestErrorTransitEntries()
       throws CarrierServiceException, TransitServiceException, IOException {
     when(carrierService.getCarrierService(anyString()))
