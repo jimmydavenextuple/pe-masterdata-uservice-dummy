@@ -86,6 +86,18 @@ public class TestUtil {
           + "DFSA3,D,D,D\n"
           + "\n";
 
+  public static final String CSV_CONTENTS_UPLOAD_CARRIER_SERVICE =
+      "action,orgId,carrierId,carrierName,carrierServiceId,serviceName,serviceOptions\n"
+          + "CREATE,org,cId998,cn998,cSId998,sN998,sOpt998\n"
+          + "UPDATE,org,cId999,cn999,cSId999,sN999,sOpt999\n"
+          + "DELETE,org,cId1000,cn1000,cSId1000,sN1000,sOpt1000\n"
+          + "CREATE,org,cId1001,cn1001,cSId1001,sN1001,sOpt1001";
+
+  public static final String CSV_CONTENTS_UPLOAD_CARRIER_CALENDAR =
+      "action,calendarId,orgId,carrierServiceId,shippingStage,description,effectiveDate\n"
+          + "CREATE,SDND_2022,BAY,ALL_SDND,ALL,Yearly Calendar,2022-02-03\n"
+          + "CREATE,SDND_2022,BAY,ALL_SDND,ALL,Yearly Calendar,2022-02-04";
+
   public static final String CSV_CONTENTS_UPLOAD_NODE_CALENDAR =
       "action,calendarId,nodeId,orgId,description,effectiveDate\n"
           + "CREATE,CGY_2022,1957,BAY,Calgary MFC - non peak,2022-02-02\n"

@@ -12,6 +12,7 @@ import com.hbc.common.response.error.FieldError;
 import com.hbc.common.util.JsonUtil;
 import com.hbc.jobs.consumers.exception.FeignClientMapperException;
 import com.hbc.jobs.consumers.exception.InvalidActionTypeException;
+import com.hbc.jobs.consumers.exception.InvalidJobTypeException;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.consumers.exception.TransitMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
@@ -139,7 +140,7 @@ public interface FeignClientMapper {
 
   default Object getDtoFromRecord(RecordDto recordDto)
       throws FeignClientMapperException, IOException, TransitMapperException,
-          NodeCarrierMapperException {
+          NodeCarrierMapperException, InvalidJobTypeException {
     switch (recordDto.getRecordType()) {
       case JSON:
         return getDTOFromJson(recordDto.getRecordData(), mapTODto());
@@ -183,9 +184,10 @@ public interface FeignClientMapper {
         .collect(Collectors.toMap(Function.identity(), Function.identity()));
   }
 
-  Class mapTODto() throws TransitMapperException, NodeCarrierMapperException; // NOSONAR
+  Class mapTODto() // NOSONAR
+      throws TransitMapperException, NodeCarrierMapperException, InvalidJobTypeException; // NOSONAR
 
   ResponseEntity<?> callApi(Object dtoFromJson, RecordInputDto inputs) // NOSONAR
       throws TransitMapperException, NodeCarrierMapperException, InvalidActionTypeException,
-          CommonServiceException;
+          CommonServiceException, InvalidJobTypeException;
 }

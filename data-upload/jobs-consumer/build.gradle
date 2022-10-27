@@ -22,5 +22,6 @@ dependencies {
     implementation(project(":postal-code-timezone:postal-code-timezone-api-domain"))
     implementation(project(":node:node-api-domain"))
     implementation(project(":calendar:calendar-api-domain"))
+    implementation(project(":carrier:carrier-api-domain"))
     implementation group: 'com.opencsv', name: 'opencsv', version: '5.2'
 }

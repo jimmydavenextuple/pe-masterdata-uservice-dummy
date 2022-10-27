@@ -177,7 +177,7 @@ public class JobConsumerService {
       jobEntity.setStatus(JobStatusEnum.COMPLETED);
       auditLog.setTimeStamp(new Date());
       oldAuditLog.add(auditLog);
-      publishTransitBufferJobStatus(jobEntity);
+      publishJobStatusOnCompletion(jobEntity);
     } else if (jobEntity.getStatus().equals(JobStatusEnum.PROCESSED)) {
       var auditLog = new AuditLog();
       auditLog.setStatus(JobStatusEnum.RUNNING);
@@ -190,7 +190,7 @@ public class JobConsumerService {
     return jobEntity;
   }
 
-  private void publishTransitBufferJobStatus(JobEntity jobEntity) throws PublishJobEventException {
+  private void publishJobStatusOnCompletion(JobEntity jobEntity) throws PublishJobEventException {
     var jobDetailsDto = new JobDetailsDto();
     jobDetailsDto.setJobId(jobEntity.getJobId());
     jobDetailsDto.setTotalRecords(jobEntity.getTotalRecords());

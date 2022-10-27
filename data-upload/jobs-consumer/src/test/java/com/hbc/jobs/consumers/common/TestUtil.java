@@ -1,16 +1,21 @@
 package com.hbc.jobs.consumers.common;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESCRIPTION;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EFFECTIVE_DATE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIPPING_STAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
-import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
+import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.util.DateUtil;
 import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
@@ -24,6 +29,8 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
+import com.hbc.jobs.framework.common.domain.pojo.CarrierCalendarUpload;
+import com.hbc.jobs.framework.common.domain.pojo.CarrierServiceUpload;
 import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
@@ -589,6 +596,52 @@ public class TestUtil {
         .nodeId(NODE_ID)
         .orgId(ORG_ID)
         .action(action)
+        .build();
+  }
+
+  public CarrierCalendarUpload getCarrierCalendarUpload(String action) {
+    return CarrierCalendarUpload.builder()
+        .calendarId(CALENDAR_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .description(DESCRIPTION)
+        .effectiveDate("2022-10-26")
+        .shippingStage(SHIPPING_STAGE)
+        .orgId(ORG_ID)
+        .action(action)
+        .build();
+  }
+
+  public CarrierServiceCalendarResponse getCarrierServiceCalendarResponse() {
+    return CarrierServiceCalendarResponse.builder()
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .shippingStage(SHIPPING_STAGE)
+        .effectiveDate(EFFECTIVE_DATE)
+        .description(DESCRIPTION)
+        .build();
+  }
+
+  public CarrierServiceResponse getCarrierServiceResponse() {
+    return CarrierServiceResponse.builder()
+        .orgId(ORG_ID)
+        .carrierId(CARRIER_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .carrierName(CARRIER_NAME)
+        .serviceName(SERVICE_NAME)
+        .serviceOptions(SERVICE_OPTIONS)
+        .build();
+  }
+
+  public CarrierServiceUpload getCarrierServiceUpload(String action) {
+    return CarrierServiceUpload.builder()
+        .action(action)
+        .orgId(ORG_ID)
+        .carrierId(CARRIER_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .carrierName(CARRIER_NAME)
+        .serviceName(SERVICE_NAME)
+        .serviceOptions(SERVICE_OPTIONS)
         .build();
   }
 }

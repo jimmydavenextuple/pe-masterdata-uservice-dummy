@@ -1,6 +1,5 @@
 package com.hbc.csvdownload.service.v1.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.response.BaseResponse;
