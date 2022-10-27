@@ -1,6 +1,8 @@
 package com.hbc.csvdownload.common;
 
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EFFECTIVE_DATE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LAST_PICKUP_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
@@ -10,6 +12,7 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STA
 import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.base.PagePayload.Pagination;
@@ -26,6 +29,8 @@ import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.promise.common.domain.Item;
 import com.hbc.promise.common.domain.SfccErrorResponse;
@@ -71,7 +76,7 @@ public class TestUtil {
   public static final String PROVINCE = "QC";
   public static final String POSTAL_CODE = "J7H 1N8";
   public static final Double PROCESSING_TIME = 20.0;
-  private static final String NODE_ID_2 = "nodeId2";
+  public static final String NODE_ID_2 = "nodeId2";
   private static final String SERVICE_OPTION_2 = "EXPRESS";
   public static final String templateType = "nodeCarrier";
 
@@ -719,5 +724,80 @@ public class TestUtil {
     transitBufferConfigResponseBaseResponse.setSuccess(Boolean.TRUE);
     transitBufferConfigResponseBaseResponse.setPayload(getTransitBufferConfigResponse());
     return transitBufferConfigResponseBaseResponse;
+  }
+
+  public NodeDto getNodeDto(String nodeId) {
+    return NodeDto.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .nodeType(NODE_TYPE)
+        .city(CITY)
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .isActive(true)
+        .build();
+  }
+
+  public PagePayload<NodeDto> getNodePagePayload() {
+    PagePayload<NodeDto> nodeDtoPagePayload = new PagePayload<>();
+
+    NodeDto nodeDto1 = getNodeDto(NODE_ID);
+    NodeDto nodeDto2 = getNodeDto(NODE_ID_2);
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(1);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(2);
+    nodeDtoPagePayload.setPagination(pagination);
+    nodeDtoPagePayload.setData(Arrays.asList(nodeDto1, nodeDto2));
+
+    return nodeDtoPagePayload;
+  }
+
+  public BaseResponse<PagePayload<NodeDto>> getBaseResponseOfNodePage() {
+    return BaseResponse.builder()
+        .message("Nodes fetched successfully")
+        .payload(getNodePagePayload())
+        .build();
+  }
+
+  public BaseResponse<List<NodeCarrierResponse>> getBaseResponseOfNodeCarrier() {
+    return BaseResponse.builder()
+        .message("Node Carriers fetched successfully")
+        .payload(getNodeCarrierResponseList())
+        .build();
+  }
+
+  public List<NodeCarrierResponse> getNodeCarrierResponseList() {
+    return List.of(getNodeCarrierResponse(NODE_ID), getNodeCarrierResponse(NODE_ID_2));
+  }
+
+  private NodeCarrierResponse getNodeCarrierResponse(String nodeId) {
+    return NodeCarrierResponse.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .lastPickupTime(LAST_PICKUP_TIME)
+        .build();
+  }
+
+  public BaseResponse<List<NodeCalendarResponse>> getNodeCalendarBaseResponse() {
+    return BaseResponse.builder()
+        .message("Node Calendars fetched successfully")
+        .payload(getNodeCalendarResponseList())
+        .build();
+  }
+
+  public List<NodeCalendarResponse> getNodeCalendarResponseList() {
+    NodeCalendarResponse nodeCalendarResponse =
+        NodeCalendarResponse.builder()
+            .nodeId(NODE_ID)
+            .orgId(ORG_ID)
+            .calendarId(CALENDAR_ID)
+            .effectiveDate(EFFECTIVE_DATE)
+            .build();
+    return List.of(nodeCalendarResponse);
   }
 }

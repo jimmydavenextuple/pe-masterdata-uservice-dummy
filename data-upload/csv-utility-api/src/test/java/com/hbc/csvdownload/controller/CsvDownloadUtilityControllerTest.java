@@ -316,4 +316,18 @@ class CsvDownloadUtilityControllerTest {
 
     verify(downloadTemplateService, times(1)).getTemplateData(anyString());
   }
+
+  @Test
+  void downloadNodesDataCSVTest() throws IOException {
+    File file = File.createTempFile("some-prefix", "some-ext");
+    file.deleteOnExit();
+    when(csvDownloadUtilityService.downloadNodesByOrgId(any())).thenReturn(file);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+    Assertions.assertDoesNotThrow(
+        () -> csvDownloadUtilityController.downloadNodesDataCSV(TestUtil.ORG_ID, response));
+  }
 }

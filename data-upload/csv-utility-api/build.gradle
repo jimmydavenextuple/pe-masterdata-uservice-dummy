@@ -20,4 +20,5 @@ dependencies {
     implementation(project(":calendar:calendar-api-domain"))
     implementation(project(":data-upload:job-framework-common-util"))
     implementation(project(":node-carrier:node-carrier-api-domain"))
+    implementation(project(":node:node-api-domain"))
 }

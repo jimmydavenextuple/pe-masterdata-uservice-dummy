@@ -190,4 +190,25 @@ public class CsvDownloadUtilityController {
     response.getOutputStream().write(pojo.getFileContents());
     response.flushBuffer();
   }
+
+  @GetMapping(value = "/org/{orgId}/download/nodes")
+  public void downloadNodesDataCSV(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      HttpServletResponse httpServletResponse)
+      throws IOException {
+    log.debug("Inside download nodes data as csv");
+    final var file = csvDownloadUtilityService.downloadNodesByOrgId(orgId);
+    try (var inputStream = new FileInputStream(file)) {
+
+      httpServletResponse.setStatus(HttpStatus.OK.value());
+      httpServletResponse.setHeader(
+          HttpHeaders.CONTENT_DISPOSITION,
+          String.format("attachment; filename=%s", file.getName()));
+      httpServletResponse.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+      IOUtils.copy(inputStream, httpServletResponse.getOutputStream());
+      httpServletResponse.flushBuffer();
+    } finally {
+      Files.delete(file.toPath());
+    }
+  }
 }

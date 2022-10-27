@@ -2,6 +2,7 @@ package com.hbc.csvdownload.service;
 
 import com.hbc.calendar.domain.feign.CalendarFeign;
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.response.BaseResponse;
@@ -32,5 +33,14 @@ public class CalenderService {
       throw new CarrierServiceException(
           "Carrier Service Calender does not exist for given orgId", orgId);
     }
+  }
+
+  public List<NodeCalendarResponse> getNodeCalendar(String orgId, String nodeId) {
+    logger.debug("Processing get node calendar by orgId and nodeId");
+
+    BaseResponse<List<NodeCalendarResponse>> response =
+        calendarFeign.handleGetNodeCalendar(orgId, nodeId);
+
+    return response.getPayload();
   }
 }

@@ -16,7 +16,9 @@ import static com.hbc.csvdownload.common.constants.CSVCommonConstants.LATITUDE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.LONGITUDE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_ID;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_TYPE;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_WORKING_CALENDAR;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ORG_ID;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.PICKUP_TIME;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.POSTAL_CODE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.POSTAL_CODE_PREFIX;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.PROCESSING_LEAD_TIME;
@@ -31,6 +33,7 @@ import static com.hbc.csvdownload.common.constants.CSVCommonConstants.TIMEZONE;
 import static com.hbc.csvdownload.common.constants.CSVCommonConstants.WORKING_CALENDER;
 
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.context.Logger;
@@ -51,6 +54,8 @@ import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResp
 import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
@@ -97,6 +102,8 @@ public class CsvDownloadUtilityService {
   private final JobsDashboardService jobsDashboardService;
   private final JobsConsumerService jobsConsumerService;
   private final ProcessingTimeBuffersService processingTimeBuffersService;
+  private final NodeService nodeService;
+  private final NodeCarrierService nodeCarrierService;
   private static final String NA = "NA";
 
   @Value("${download-page-size.node-carrier-service-options}")
@@ -664,5 +671,96 @@ public class CsvDownloadUtilityService {
     posixFilePermissions.add(PosixFilePermission.OWNER_READ);
     posixFilePermissions.add(PosixFilePermission.OWNER_WRITE);
     return posixFilePermissions;
+  }
+
+  public File downloadNodesByOrgId(String orgId) throws IOException {
+    List<NodeDto> nodeDtoList = nodeService.getNodeList(orgId);
+
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile = Files.createTempFile("download-nodes" + new Date().getTime(), ".csv", attr);
+    try (var writer = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+      var header =
+          new String[] {
+            NODE_ID,
+            ORG_ID,
+            NODE_TYPE,
+            STREET,
+            CITY,
+            PROVINCE,
+            POSTAL_CODE,
+            LATITUDE,
+            LONGITUDE,
+            TIMEZONE,
+            STATUS,
+            NODE_WORKING_CALENDAR,
+            CARRIER_SERVICES,
+            SERVICE_OPTIONS,
+            PICKUP_TIME
+          };
+      writeToCSV(header, writer);
+
+      writerNodesDataToFile(writer, nodeDtoList);
+      writer.flush();
+    }
+
+    return tempFile.toFile();
+  }
+
+  private void writerNodesDataToFile(CSVWriter writer, List<NodeDto> nodeDtoList) {
+    for (NodeDto node : nodeDtoList) {
+      List<NodeCalendarResponse> nodeCalendarResponses =
+          calenderService.getNodeCalendar(node.getOrgId(), node.getNodeId());
+      String nodeWorkingCalendar =
+          CollectionUtils.isEmpty(nodeCalendarResponses)
+              ? "NA"
+              : nodeCalendarResponses.get(0).getCalendarId();
+
+      List<NodeCarrierResponse> nodeCarrierResponses =
+          nodeCarrierService.getNodeCarrierResponse(node.getNodeId(), node.getOrgId());
+
+      if (nodeCarrierResponses.isEmpty()) {
+        List<String> csvData =
+            addNodeDetails(
+                node.getNodeId(),
+                node.getOrgId(),
+                node.getNodeType(),
+                node.getStreet(),
+                node.getCity(),
+                node.getProvince(),
+                node.getPostalCode());
+        csvData.add(node.getLatitude());
+        csvData.add(node.getLongitude());
+        csvData.add(node.getTimezone());
+        csvData.add(node.getIsActive() == Boolean.TRUE ? "ACTIVE" : "INACTIVE");
+        csvData.add(nodeWorkingCalendar);
+        csvData.add(NA);
+        csvData.add(NA);
+        csvData.add(NA);
+        writeToCSV(csvData.toArray(new String[0]), writer);
+      } else {
+        nodeCarrierResponses.forEach(
+            response -> {
+              List<String> csvData =
+                  addNodeDetails(
+                      node.getNodeId(),
+                      node.getOrgId(),
+                      node.getNodeType(),
+                      node.getStreet(),
+                      node.getCity(),
+                      node.getProvince(),
+                      node.getPostalCode());
+              csvData.add(node.getLatitude());
+              csvData.add(node.getLongitude());
+              csvData.add(node.getTimezone());
+              csvData.add(node.getIsActive() == Boolean.TRUE ? "ACTIVE" : "INACTIVE");
+              csvData.add(nodeWorkingCalendar);
+              csvData.add(checkForNullValues(response.getCarrierServiceId()));
+              csvData.add(checkForNullValues(response.getServiceOption()));
+              csvData.add(checkForNullValues(response.getLastPickupTime()));
+              writeToCSV(csvData.toArray(new String[0]), writer);
+            });
+      }
+    }
   }
 }

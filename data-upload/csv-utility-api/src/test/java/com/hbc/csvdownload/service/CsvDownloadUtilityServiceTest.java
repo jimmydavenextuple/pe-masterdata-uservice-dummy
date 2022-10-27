@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.common.exception.CommonServiceException;
@@ -23,8 +24,11 @@ import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.domain.dto.NodeDto;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -48,6 +52,8 @@ class CsvDownloadUtilityServiceTest {
   @Mock private CarrierService carrierService;
   @Mock private CalenderService calenderService;
   @Mock private ProcessingTimeBuffersService processingTimeBuffersService;
+  @Mock private NodeService nodeService;
+  @Mock private NodeCarrierService nodeCarrierService;
   @InjectMocks private CsvDownloadUtilityService csvDownloadUtilityService;
   @InjectMocks private TestUtil testUtil;
 
@@ -395,5 +401,41 @@ class CsvDownloadUtilityServiceTest {
 
     Assertions.assertNotNull(file);
     verify(processingTimeBuffersService, times(1)).getProcessingTimeBuffers(any());
+  }
+
+  @Test
+  void downloadNodesByOrgIdTest() throws IOException {
+    List<NodeDto> nodeDtoList =
+        List.of(testUtil.getNodeDto(TestUtil.NODE_ID), testUtil.getNodeDto(TestUtil.NODE_ID_2));
+    List<NodeCarrierResponse> nodeCarrierResponses = testUtil.getNodeCarrierResponseList();
+    List<NodeCalendarResponse> nodeCalendarResponses = testUtil.getNodeCalendarResponseList();
+
+    when(nodeService.getNodeList(any())).thenReturn(nodeDtoList);
+    when(calenderService.getNodeCalendar(any(), any())).thenReturn(nodeCalendarResponses);
+    when(nodeCarrierService.getNodeCarrierResponse(any(), any())).thenReturn(nodeCarrierResponses);
+
+    File file = csvDownloadUtilityService.downloadNodesByOrgId(TestUtil.ORG_ID);
+
+    Assertions.assertNotNull(file);
+    verify(nodeService, times(1)).getNodeList(any());
+    verify(nodeCarrierService, times(2)).getNodeCarrierResponse(any(), any());
+    verify(calenderService, times(2)).getNodeCalendar(any(), any());
+  }
+
+  @Test
+  void downloadNodesByOrgIdEmptyValuesTest() throws IOException {
+    List<NodeDto> nodeDtoList =
+        List.of(testUtil.getNodeDto(TestUtil.NODE_ID), testUtil.getNodeDto(TestUtil.NODE_ID_2));
+
+    when(nodeService.getNodeList(any())).thenReturn(nodeDtoList);
+    when(calenderService.getNodeCalendar(any(), any())).thenReturn(new ArrayList<>());
+    when(nodeCarrierService.getNodeCarrierResponse(any(), any())).thenReturn(new ArrayList<>());
+
+    File file = csvDownloadUtilityService.downloadNodesByOrgId(TestUtil.ORG_ID);
+
+    Assertions.assertNotNull(file);
+    verify(nodeService, times(1)).getNodeList(any());
+    verify(nodeCarrierService, times(2)).getNodeCarrierResponse(any(), any());
+    verify(calenderService, times(2)).getNodeCalendar(any(), any());
   }
 }
