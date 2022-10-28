@@ -173,7 +173,7 @@ public class NodeCarrierService {
 
   public void validateLastPickupTime(String lastPickupTime) throws InvalidDataException {
     var regex = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
-    if (!lastPickupTime.matches(regex)) {
+    if (!ObjectUtils.isEmpty(lastPickupTime) && !lastPickupTime.matches(regex)) {
       throw new InvalidDataException("LastPickupTime is invalid", lastPickupTime, null);
     }
   }
