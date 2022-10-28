@@ -1,6 +1,5 @@
 package com.hbc.jobs.framework.common.config.aws;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
@@ -19,8 +18,7 @@ public class AWSConfig {
   public AmazonS3 s3(DefaultAWSCredentialsProviderChain defaultAWSCredentialsProviderChain) {
     return AmazonS3ClientBuilder.standard()
         .withRegion(String.valueOf(Region.getRegion(Regions.US_EAST_1)))
-        .withCredentials(
-            new AWSStaticCredentialsProvider(defaultAWSCredentialsProviderChain.getCredentials()))
+        .withCredentials(defaultAWSCredentialsProviderChain)
         .build();
   }
 }
