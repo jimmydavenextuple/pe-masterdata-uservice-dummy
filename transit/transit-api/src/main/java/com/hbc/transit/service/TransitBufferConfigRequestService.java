@@ -213,7 +213,10 @@ public class TransitBufferConfigRequestService {
         INSTANCE.toTransitBufferConfigEntity(transitBufferConfigRequest);
     transitBufferConfigRequestEntity.setFileMetaDataId(fileMetaDataResponse.getId());
     transitBufferConfigRequestEntity.setStatus(TransitBufferConfigRequestStatusEnum.CREATED);
-
+    if (!ObjectUtils.isEmpty(transitBufferConfigRequest.getTransitBufferRequestId())) {
+      transitBufferConfigRequestEntity.setParentRequestId(
+          transitBufferConfigRequest.getTransitBufferRequestId());
+    }
     return transitBufferConfigRepository.save(transitBufferConfigRequestEntity);
   }
 
