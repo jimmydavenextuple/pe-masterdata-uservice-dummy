@@ -491,6 +491,30 @@ class TransitServiceTest {
   }
 
   @Test
+  void deleteNegativeTransitBufferDays() throws TransitDomainException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(-5F);
+    transitEntity.setBufferDays(1D);
+    when(transitDomain.findTransitDetails(
+            TestUtil.ORG_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE,
+            TestUtil.CARRIER_SERVICE_ID))
+        .thenReturn(Optional.of(transitEntity));
+
+    when(transitDomain.saveTransitEntity(any())).thenReturn(transitEntity);
+
+    TransitResponse response =
+        transitService.updateTransitBufferDays(
+            TestUtil.ORG_ID,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE);
+
+    Assertions.assertNotNull(response);
+    Assertions.assertEquals(0D, response.getBufferDays());
+  }
+
+  @Test
   void deleteTransitBufferDaysZeroTransitBufferDays() throws TransitDomainException {
     TransitEntity transitEntity = testUtil.getTransitEntity(5F);
     transitEntity.setBufferDays(0D);

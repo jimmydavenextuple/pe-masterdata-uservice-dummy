@@ -407,7 +407,7 @@ public class TransitService {
     if (transitEntity.isPresent()) {
       var tempEntity = transitEntity.get();
 
-      if ((tempEntity.getBufferDays() != null && tempEntity.getBufferDays() > 0)) {
+      if ((tempEntity.getBufferDays() != null && tempEntity.getBufferDays() != 0)) {
         tempEntity.setBufferDays(0D);
         tempEntity = transitDomain.saveTransitEntity(tempEntity);
       }
