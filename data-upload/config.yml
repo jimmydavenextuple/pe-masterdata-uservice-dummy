@@ -30,7 +30,7 @@ server:
           memory: "512Mi"
           cpu: "256m"
     perf:
-      java-opts: "-Xms768m -Xmx768m"
+      java-opts: "-Xms640m -Xmx640m"
       replicas: 3
       resources:
         min:
@@ -49,7 +49,7 @@ server:
           memory: "512Mi"
           cpu: "2000m"
     prod:
-      java-opts: "-Xms768m -Xmx768m"
+      java-opts: "-Xms640m -Xmx640m"
       replicas: 3
       resources:
         min:

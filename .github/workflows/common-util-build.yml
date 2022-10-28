@@ -5,7 +5,7 @@ on:
     branches: [ development, hotfix ]
     paths:
       - "common-util/**"
-      - ".github/workflows/common-util-build.yml"
+      - "build.gradle"
 jobs:
 
   Build-Publish:

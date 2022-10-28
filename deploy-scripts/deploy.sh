@@ -36,8 +36,6 @@ fi
 export REPO=`echo $GITHUB_REPOSITORY | awk -F "/" '{print $2}'`
 export SERVICE_NAME="$REPO-$PROJECT"
 
-
-
 if [ -z "$TAG" ]; then
     export VERSION=`bash ./gradlew -Pbuild_target=$BUILD_TARGET -q properties -p $PROJECT | grep version | sed -e "s@version: @@g"`
 else

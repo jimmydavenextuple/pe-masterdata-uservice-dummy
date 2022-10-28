@@ -6,7 +6,8 @@ on:
     paths:
       - "common/**"
       - "manifests/**"
-      - ".github/workflows/**"
+      - "common-util/**"
+      - "build.gradle"
 jobs:
 
   Build-Publish:
