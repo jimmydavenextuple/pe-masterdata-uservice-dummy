@@ -209,7 +209,7 @@ public class DataUploadUtilityExpectedHeaders {
                     SELECTION_CRITERIA,
                     ACTION)),
             Map.entry(
-                "intermediary",
+                "edd-computation",
                 List.of(
                     ORGANIZATION_CODE,
                     SESSION_ID,

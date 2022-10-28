@@ -25,6 +25,7 @@ import com.hbc.dataupload.common.pojo.ActiveCombination;
 import com.hbc.dataupload.common.pojo.ProcessingTimeBuffer;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
@@ -48,6 +49,7 @@ import com.hbc.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
 import com.hbc.transit.domain.inbound.TransitBufferConfigRequest;
 import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -83,6 +85,14 @@ public class TestUtil {
   public static final String templateTypeInvalid = "invalid";
 
   public static final String invalidTemplateTypeErrMsg = "Invalid template type";
+
+  public static final String FILE_PATH =
+      "promise-s3-lambda-dev/ui/node-carrier/2022-10-21/market-region.csv";
+  public static final long FILE_METADATA_ID = 1L;
+  public static final String BUCKET_NAME = "promise-s3-lambda-dev";
+  public static final String FILE_NAME = "postalCodeTimezone.csv";
+  public static final String CONTENT_TYPE = "text/csv";
+  public static final Long CONTENT_LENGTH = 100L;
   public static final String processingLeadTimesCsvData =
       "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
           + "1554,BAY,SDND,2,U\n"
@@ -102,6 +112,61 @@ public class TestUtil {
           + "BAY,CanadaPost,Canada Post,CanadaPost-STANDARD,Canada Post Expedited Parcel,STANDARD\n"
           + "BAY,CanadaPost,Canada Post,CanadaPost-EXPRESS,Canada Post Xpresspost,EXPRESS\n"
           + "BAY,UPSN,UPS,UPSN-STANDARD,UPS Standard,STANDARD";
+
+  public static final String eddComputationData =
+      "organizationCode,sessionId,basketId,pageName,shipToAddress_zipCode,shipToAddress_province,lines_item_itemId,lines_item_itemType,lines_item_unitOfMeasure,lines_item_seller,lines_lineId,lines_requiredQty,lines_shipToAddress_zipCode,lines_shipToAddress_province"
+          + "\n"
+          + "BAY,jkfdsj5748fdgf58gfh,156465897,Basket/Checkout,V0A 1B5,BC,12340008,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + "BAY,dsffsdsfdsgffdvddsf,156465823,Basket/Checkout,V0B 1B5,BC,1234000888,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,1234000819,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,";
+
+  public static final String eddComputationDataWith4Orders =
+      "organizationCode,sessionId,basketId,pageName,shipToAddress_zipCode,shipToAddress_province,lines_item_itemId,lines_item_itemType,lines_item_unitOfMeasure,lines_item_seller,lines_lineId,lines_requiredQty,lines_shipToAddress_zipCode,lines_shipToAddress_province"
+          + "\n"
+          + "BAY,jkfdsj5748fdgf58gfh,156465897,Basket/Checkout,V0A 1B5,BC,12340008,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + "BAY,dsffsdsfdsgffdvddsf,156465823,Basket/Checkout,V0B 1B5,BC,1234000888,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,1234000819,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + "BAY,jkfdsj5748fdgf58gfh,156465897,Basket/Checkout,V0A 1B5,BC,12340008,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + "BAY,dsffsdsfdsgffdvddsf,156465823,Basket/Checkout,V0B 1B5,BC,1234000888,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,1234000819,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,";
+
+  public static final String eddComputationDataWith6Orders =
+      "organizationCode,sessionId,basketId,pageName,shipToAddress_zipCode,shipToAddress_province,lines_item_itemId,lines_item_itemType,lines_item_unitOfMeasure,lines_item_seller,lines_lineId,lines_requiredQty,lines_shipToAddress_zipCode,lines_shipToAddress_province"
+          + "\n"
+          + "BAY,jkfdsj5748fdgf58gfh,156465897,Basket/Checkout,V0A 1B5,BC,12340008,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + "BAY,jkfdsj5748fdgf58gfh,156465897,Basket/Checkout,V0A 1B5,BC,12340008,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + "BAY,jkfdsj5748fdgf58gfh,156465897,Basket/Checkout,V0A 1B5,BC,12340008,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + "BAY,dsffsdsfdsgffdvddsf,156465823,Basket/Checkout,V0B 1B5,BC,1234000888,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,1234000819,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + "BAY,jkfdsj5748fdgf58gfh,156465897,Basket/Checkout,V0A 1B5,BC,12340008,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + "BAY,dsffsdsfdsgffdvddsf,156465823,Basket/Checkout,V0B 1B5,BC,1234000888,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,1234000819,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,";
+
+  public static final String eddComputationDataWith15Lines =
+      "organizationCode,sessionId,basketId,pageName,shipToAddress_zipCode,shipToAddress_province,lines_item_itemId,lines_item_itemType,lines_item_unitOfMeasure,lines_item_seller,lines_lineId,lines_requiredQty,lines_shipToAddress_zipCode,lines_shipToAddress_province"
+          + "\n"
+          + "BAY,jkfdsj5748fdgf58gfh,156465897,Basket/Checkout,V0A 1B5,BC,12340008,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,1234000819,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,\n"
+          + ",,,,,,1234000819,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC,";
 
   public static final Optional<String> STATUS = Optional.empty();
 
@@ -799,5 +864,49 @@ public class TestUtil {
             .effectiveDate(EFFECTIVE_DATE)
             .build();
     return List.of(nodeCalendarResponse);
+  }
+
+  public FileResponse getFileResponse() {
+    return FileResponse.builder()
+        .filePath(FILE_PATH)
+        .fileName(FILE_NAME)
+        .bucketName(BUCKET_NAME)
+        .contentLength(58L)
+        .contentType("text/csv")
+        .inputStream(new ByteArrayInputStream(eddComputationData.getBytes()))
+        .build();
+  }
+
+  public FileResponse getFileResponse2() {
+    return FileResponse.builder()
+        .filePath(FILE_PATH)
+        .fileName(FILE_NAME)
+        .bucketName(BUCKET_NAME)
+        .contentLength(58L)
+        .contentType("text/csv")
+        .inputStream(new ByteArrayInputStream(eddComputationDataWith4Orders.getBytes()))
+        .build();
+  }
+
+  public FileResponse getFileResponse3() {
+    return FileResponse.builder()
+        .filePath(FILE_PATH)
+        .fileName(FILE_NAME)
+        .bucketName(BUCKET_NAME)
+        .contentLength(58L)
+        .contentType("text/csv")
+        .inputStream(new ByteArrayInputStream(eddComputationDataWith6Orders.getBytes()))
+        .build();
+  }
+
+  public FileResponse getFileResponse4() {
+    return FileResponse.builder()
+        .filePath(FILE_PATH)
+        .fileName(FILE_NAME)
+        .bucketName(BUCKET_NAME)
+        .contentLength(58L)
+        .contentType("text/csv")
+        .inputStream(new ByteArrayInputStream(eddComputationDataWith15Lines.getBytes()))
+        .build();
   }
 }

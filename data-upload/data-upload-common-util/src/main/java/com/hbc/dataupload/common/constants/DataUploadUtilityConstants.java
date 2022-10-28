@@ -31,6 +31,12 @@ public class DataUploadUtilityConstants {
   public static final String EXCEPTION_LINES_REQUEST_QTY = "exception_lines_requestQuantity";
   public static final String EXCEPTION_LINES_UNAVAILABLE_QTY =
       "exception_lines_unavailableQuantity";
+  public static final String EDD_COMPUTATION_ORDER_AND_LINE_LIMIT_MESSAGE =
+      "Edd Computation limit exceeded";
+
+  public static final String SFCC_ORDER_LIMIT = "SfccOrderLimit";
+
+  public static final String SFCC_LINE_LIMIT = "SfccLineLimit";
   public static final String SESSION_ID = "sessionId";
   public static final String BASKET_ID = "basketId";
   public static final String PAGE_NAME = "pageName";

@@ -7,7 +7,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.csvdownload.common.inbound.GenericUploadRequest;
 import com.hbc.csvdownload.service.EddComputationService;
+import com.opencsv.exceptions.CsvException;
 import java.io.File;
 import java.io.IOException;
 import javax.servlet.ServletOutputStream;
@@ -28,27 +30,30 @@ class EddComputationUtilityControllerTest {
   @InjectMocks private EddComputationUtilityController eddComputationUtilityController;
 
   @Test
-  void eddComputationDataTest() throws CommonServiceException, IOException {
+  void eddComputationDataTest() throws CommonServiceException, IOException, CsvException {
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     doNothing().when(response).setStatus(HttpStatus.OK.value());
     ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
 
     when(response.getOutputStream()).thenReturn(servletOutputStream);
-    when(eddComputationService.uploadEddCompuationData("eddComputation"))
+    when(eddComputationService.uploadEddCompuationData(GenericUploadRequest.builder().build()))
         .thenReturn(File.createTempFile("BAY", "BAY"));
 
-    eddComputationUtilityController.eddComputationData("eddComputation", response);
+    eddComputationUtilityController.eddComputationData(
+        GenericUploadRequest.builder().build(), response);
     verify(response, times(1)).getOutputStream();
   }
 
   @Test
-  void eddComputationDataExceptionTest() throws CommonServiceException, IOException {
+  void eddComputationDataExceptionTest() throws CommonServiceException, IOException, CsvException {
     HttpServletResponse response = mock(HttpServletResponse.class);
-    when(eddComputationService.uploadEddCompuationData("eddComputation"))
+    when(eddComputationService.uploadEddCompuationData(GenericUploadRequest.builder().build()))
         .thenThrow(IOException.class);
     Assertions.assertThrows(
         IOException.class,
-        () -> eddComputationUtilityController.eddComputationData("eddComputation", response));
+        () ->
+            eddComputationUtilityController.eddComputationData(
+                GenericUploadRequest.builder().build(), response));
   }
 }

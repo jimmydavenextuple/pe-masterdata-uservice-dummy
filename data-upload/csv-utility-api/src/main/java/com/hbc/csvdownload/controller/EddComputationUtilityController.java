@@ -1,12 +1,13 @@
 package com.hbc.csvdownload.controller;
 
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.csvdownload.common.inbound.GenericUploadRequest;
 import com.hbc.csvdownload.service.EddComputationService;
+import com.opencsv.exceptions.CsvException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -14,7 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Validated
@@ -27,12 +28,11 @@ public class EddComputationUtilityController {
 
   @PostMapping("/edd-computation")
   public void eddComputationData(
-      @NotBlank(message = "fileUri can't be empty") @RequestParam String fileUri,
-      HttpServletResponse response)
-      throws IOException, CommonServiceException {
+      @RequestBody GenericUploadRequest uploadRequest, HttpServletResponse response)
+      throws IOException, CommonServiceException, CsvException {
     log.debug("Processing Edd Computation Data request");
     try {
-      final var file = eddComputationService.uploadEddCompuationData(fileUri);
+      final var file = eddComputationService.uploadEddCompuationData(uploadRequest);
       try (var inputStream = new FileInputStream(file)) {
         response.setStatus(HttpStatus.OK.value());
         response.setHeader(

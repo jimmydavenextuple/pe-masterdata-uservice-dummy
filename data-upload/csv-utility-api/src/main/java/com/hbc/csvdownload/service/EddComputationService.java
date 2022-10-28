@@ -5,6 +5,7 @@ import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OP
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.BASKET_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CUTOFF_TIME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EDD;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EDD_COMPUTATION_ORDER_AND_LINE_LIMIT_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXCEPTION_LINES_ERROR_CODE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXCEPTION_LINES_ERROR_MESSAGE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EXCEPTION_LINES_ITEM_ID;
@@ -31,14 +32,20 @@ import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.PAGE_NAME;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SESSION_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SFCC_LINE_LIMIT;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SFCC_ORDER_LIMIT;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIP_TO_ADDRESS_PROVINCE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIP_TO_ADDRESS_ZIPCODE;
 
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.error.FieldError;
+import com.hbc.csvdownload.common.inbound.GenericUploadRequest;
 import com.hbc.csvdownload.helper.EddComputationUploadConstants;
 import com.hbc.dataupload.common.utils.DataUploadUtil;
+import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
+import com.hbc.jobs.framework.common.service.FileService;
 import com.hbc.promise.common.domain.Item;
 import com.hbc.promise.common.domain.SfccErrorResponseLine;
 import com.hbc.promise.common.domain.SfccOrder;
@@ -48,9 +55,11 @@ import com.hbc.promise.common.domain.SfccSuggestedPromiseOption;
 import com.hbc.promise.common.domain.ShipToAddress;
 import com.hbc.promise.common.feign.IntermediaryServiceFeign;
 import com.opencsv.CSVWriter;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,15 +68,18 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -84,7 +96,7 @@ public class EddComputationService {
   private double maxSizeInKiloBytes;
 
   @Value("${edd-computation.lines}")
-  private int maxEddComputationLines;
+  private long maxEddComputationLines;
 
   @Value("${edd-computation.orders}")
   private double maxEddComputationOrders;
@@ -92,64 +104,68 @@ public class EddComputationService {
   @Value("${dataupload.max-rows}")
   private long maxRows;
 
+  private static int emptyColumnsForErrorResponse = 9;
+
+  private static int emptyColumnsForValidEddResponse = 6;
+
   private final IntermediaryServiceFeign intermediaryServiceFeign;
+
+  private final FileService fileService;
 
   private static final String NA = "NA";
 
-  public File uploadEddCompuationData(String fileUri) throws CommonServiceException, IOException {
-    var path = DataUploadUtil.getPath(basePath, fileUri);
+  public File uploadEddCompuationData(GenericUploadRequest uploadRequest)
+      throws CommonServiceException, IOException {
 
-    DataUploadUtil.validateFileType(
-        fileUri, EddComputationUploadConstants.EDD_COMPUTATION_DATA_UPLOAD_INVALID_FILE_TYPE);
-    DataUploadUtil.validateFileSize(
-        path,
-        fileUri,
-        maxSizeInKiloBytes,
-        EddComputationUploadConstants.EDD_COMPUTATION_DATA_UPLOAD_LARGE_FILE_SIZE);
-    DataUploadUtil.validateFileRows(
-        path,
-        fileUri,
-        maxRows,
-        EddComputationUploadConstants.EDD_COMPUTATION_DATA_UPLOAD_LARGE_ROW_SIZE);
-    DataUploadUtil.checkForEmptyRecords(
-        path,
-        fileUri,
-        EddComputationUploadConstants.EDD_COMPUTATION_DATA_UPLOAD_FILE_EMPTY_RECORDS);
+    String bucketName = uploadRequest.getFilePath().split("/", 2)[0];
+    String filePath = uploadRequest.getFilePath().split("/", 2)[1];
 
-    List<SfccResponse> sfccResponseList = csvReader(path);
+    // download file from storage
+    var fileResponse = fileService.getFile(bucketName, filePath);
+    List<SfccResponse> sfccResponseList = csvReader(fileResponse);
     return downloadEddComputation(sfccResponseList);
   }
 
-  private List<SfccResponse> csvReader(Path path) throws IOException, CommonServiceException {
-    try (Reader reader = Files.newBufferedReader(path);
+  private List<SfccResponse> csvReader(FileResponse fileResponse)
+      throws IOException, CommonServiceException {
+    try (Reader reader = new BufferedReader(new InputStreamReader(fileResponse.getInputStream()));
         var csvParser = DataUploadUtil.getCSVParserWithSetQuoteMode(reader)) {
       DataUploadUtil.compareHeaders(
           csvParser,
-          "intermediary",
+          "edd-computation",
           EddComputationUploadConstants.EDD_COMPUTATION_DATA_UPLOAD_INVALID_FILE_HEADERS);
       Iterator<CSVRecord> iterator = csvParser.iterator();
       List<SfccResponse> sfccResponseList = new ArrayList<>();
-      var csvRecord = iterator.next();
-      var sfccOrder = createSfccOrder(csvRecord);
-      var count = 0;
-      while (iterator.hasNext() && count < maxEddComputationLines) {
-        csvRecord = iterator.next();
+      List<SfccOrder> sfccOrders = new ArrayList<>();
+      SfccOrder sfccOrder = null;
+      while (iterator.hasNext()) {
+        var csvRecord = iterator.next();
         long row = csvParser.getCurrentLineNumber();
-        if (sfccResponseList.size() >= maxEddComputationOrders) {
-          break;
-        }
-        sfccOrder = eddComputation(sfccResponseList, sfccOrder, csvRecord, row);
-        count += 1;
+        sfccOrder = createSfccOrders(sfccOrder, csvRecord, row, sfccOrders);
       }
       if (Objects.nonNull(sfccOrder)) {
-        getIntermediaryResponse(sfccOrder, sfccResponseList);
+        sfccOrders.add(sfccOrder);
       }
+      long numberOfRows = csvParser.getRecordNumber();
+      if (numberOfRows > maxEddComputationLines || sfccOrders.size() > maxEddComputationOrders) {
+        Map<String, FieldError> errorMap = new HashMap<>();
+        errorMap.put(
+            SFCC_ORDER_LIMIT, FieldError.builder().rejectedValue(sfccOrders.size()).build());
+        errorMap.put(SFCC_LINE_LIMIT, FieldError.builder().rejectedValue(numberOfRows).build());
+        throw new CommonServiceException(
+            EDD_COMPUTATION_ORDER_AND_LINE_LIMIT_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
+      }
+      eddComputation(sfccOrders, sfccResponseList);
       return sfccResponseList;
     }
   }
 
-  private SfccOrder eddComputation(
-      List<SfccResponse> sfccResponseList, SfccOrder sfccOrder, CSVRecord csvRecord, long row) {
+  private void eddComputation(List<SfccOrder> sfccOrders, List<SfccResponse> sfccResponseList) {
+    sfccOrders.forEach(sfccOrder -> getIntermediaryResponse(sfccOrder, sfccResponseList));
+  }
+
+  private SfccOrder createSfccOrders(
+      SfccOrder sfccOrder, CSVRecord csvRecord, long row, List<SfccOrder> sfccOrders) {
     try {
       String basketId = csvRecord.get(BASKET_ID);
       if (basketId.isEmpty() && Objects.nonNull(sfccOrder)) {
@@ -158,7 +174,9 @@ public class EddComputationService {
         orderLines.add(sfccOrderLine);
         sfccOrder.setLines(orderLines);
       } else {
-        getIntermediaryResponse(sfccOrder, sfccResponseList);
+        if (Objects.nonNull(sfccOrder)) {
+          sfccOrders.add(sfccOrder);
+        }
         sfccOrder = null;
         sfccOrder = createSfccOrder(csvRecord);
       }
@@ -358,7 +376,12 @@ public class EddComputationService {
                     });
           }
           if (Boolean.TRUE.equals(response.getHasExceptions())) {
-            setExceptionLinesToCSV(writer, response, sfccSuggestedOptionResponseRow);
+            List<String> sfccSuggestedOptionResponseRowExceptionLines = new ArrayList<>();
+            sfccSuggestedOptionResponseRowExceptionLines.add(response.getOrgId());
+            sfccSuggestedOptionResponseRowExceptionLines.add(response.getCartId());
+            sfccSuggestedOptionResponseRowExceptionLines.add(response.getSessionId());
+            sfccSuggestedOptionResponseRowExceptionLines.add(response.getPageName());
+            setExceptionLinesToCSV(writer, response, sfccSuggestedOptionResponseRowExceptionLines);
           }
         });
   }
@@ -427,9 +450,10 @@ public class EddComputationService {
       CSVWriter writer,
       SfccErrorResponseLine sfccErrorResponseLine,
       List<String> sfccErrorResponseCSV) {
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < emptyColumnsForErrorResponse; i++) {
       sfccErrorResponseCSV.add("");
     }
+    sfccErrorResponseCSV.add("true");
     sfccErrorResponseCSV.add(sfccErrorResponseLine.getItemId());
     sfccErrorResponseCSV.add(sfccErrorResponseLine.getItemType());
     if (Objects.nonNull(sfccErrorResponseLine.getErrorCode())) {
@@ -496,8 +520,15 @@ public class EddComputationService {
                         } else {
                           sfccSuggestedPromiseDetailsRow.add("");
                         }
+                        addEmptyLines(sfccSuggestedPromiseDetailsRow);
                         writer.writeNext(sfccSuggestedPromiseDetailsRow.toArray(new String[0]));
                       });
             });
+  }
+
+  private static void addEmptyLines(List<String> sfccSuggestedPromiseDetailsRow) {
+    for (var i = 0; i < emptyColumnsForValidEddResponse; i++) {
+      sfccSuggestedPromiseDetailsRow.add("");
+    }
   }
 }
