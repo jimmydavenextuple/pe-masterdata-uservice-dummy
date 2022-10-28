@@ -9,6 +9,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.dataupload.common.outbound.TransitBufferDetailsResponse;
 import com.hbc.dataupload.util.TestUtil;
 import com.hbc.transit.domain.feign.TransitBufferConfigRequestFeign;
+import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -93,5 +94,18 @@ class TransitTimeBufferServiceTest {
     Assertions.assertTrue(CollectionUtils.isEmpty(responsePagePayload.getData()));
     verify(carrierFeign, times(1))
         .getCarrierServiceListWithPagination(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getTransitBufferConfigRequestsTest() {
+    when(transitBufferConfigRequestFeign.getTransitBufferConfigRequests(anyString(), anyString()))
+        .thenReturn(
+            testUtil.getBaseResponseTransitBufferConfigResponse(TestUtil.CARRIER_SERVICE_ID));
+    List<TransitBufferConfigResponse> responses =
+        Assertions.assertDoesNotThrow(
+            () ->
+                transitTimeBufferService.getTransitBufferConfigRequests(
+                    TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+    Assertions.assertEquals(1, responses.size());
   }
 }

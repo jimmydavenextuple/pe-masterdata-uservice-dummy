@@ -1155,4 +1155,13 @@ public class TestUtil {
   public TransitBufferConfigResponse getTransitBufferConfigResponse(String carrierServiceId) {
     return TransitBufferConfigResponse.builder().carrierServiceId(carrierServiceId).build();
   }
+
+  public BaseResponse<List<TransitBufferConfigResponse>> getBaseResponseTransitBufferConfigResponse(
+      String carrierServiceId) {
+    return BaseResponse.builder()
+        .message("Transit Buffer are fetched successfully")
+        .success(true)
+        .payload(Arrays.asList(getTransitBufferConfigResponse(carrierServiceId)))
+        .build();
+  }
 }

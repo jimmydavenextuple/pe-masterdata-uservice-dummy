@@ -57,4 +57,11 @@ public class TransitTimeBufferService {
     }
     return Collections.emptyList();
   }
+
+  public List<TransitBufferConfigResponse> getTransitBufferConfigRequests(
+      String orgId, String carrierServiceId) {
+    BaseResponse<List<TransitBufferConfigResponse>> response =
+        transitBufferConfigRequestFeign.getTransitBufferConfigRequests(orgId, carrierServiceId);
+    return response.getPayload();
+  }
 }
