@@ -5,6 +5,7 @@ import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.domain.mapper.JobMapper;
+import com.hbc.jobs.consumers.feign.AuthTokenResponse;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
@@ -400,6 +401,15 @@ public class TestUtil {
         .filePath(FILE_PATH)
         .inputStream(new ByteArrayInputStream(CSV_CONTENTS_TRANSIT_BUFFER_REQUEST.getBytes()))
         .build();
+  }
+
+  public AuthTokenResponse getAuthTokenResponse() {
+    com.hbc.jobs.consumers.feign.AuthTokenResponse authTokenResponse = new AuthTokenResponse();
+    authTokenResponse.setAccessToken("token");
+    authTokenResponse.setTokenType("tokenType");
+    authTokenResponse.setExpiresIn(20);
+
+    return authTokenResponse;
   }
 
   public TransitDataUpload getTransitDataUpload() {

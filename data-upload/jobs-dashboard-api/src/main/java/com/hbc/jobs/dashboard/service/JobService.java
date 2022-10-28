@@ -8,6 +8,8 @@ import com.hbc.common.util.JsonUtil;
 import com.hbc.jobs.consumers.domain.JobDomain;
 import com.hbc.jobs.consumers.domain.mapper.JobMapper;
 import com.hbc.jobs.consumers.exception.JobDomainException;
+import com.hbc.jobs.consumers.feign.AuthTokenResponse;
+import com.hbc.jobs.consumers.service.AuthTokenService;
 import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.framework.common.clients.FileMetaDataClient;
 import com.hbc.jobs.framework.common.clients.JobsConsumerClient;
@@ -29,6 +31,8 @@ import feign.FeignException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -59,6 +63,7 @@ public class JobService {
   private final JobDomain jobDomain;
   private final FileMetaDataClient fileMetaDataClient;
   private final FileService fileService;
+  private final AuthTokenService authTokenService;
   private final ProcessFileContentsMapperFactory processFileContentsMapperFactory;
   private static final JobMapper INSTANCE = Mappers.getMapper(JobMapper.class);
 
@@ -121,9 +126,15 @@ public class JobService {
    * @param data
    * @param jobResponse
    * @param fileType
+   * @param authToken
    */
   private void publishToKafka(
-      int recordId, String data, JobResponse jobResponse, RecordDataTypeEnum fileType) {
+      int recordId,
+      String data,
+      JobResponse jobResponse,
+      RecordDataTypeEnum fileType,
+      AuthTokenResponse authToken,
+      LocalDateTime expiryTs) {
     log.debug("Inside publish to kafka method");
     var recordDto = new RecordDto();
     recordDto.setRecordId(recordId);
@@ -138,6 +149,10 @@ public class JobService {
     message =
         MessageBuilder.withPayload(recordDto)
             .setHeader(KafkaHeaders.TOPIC, dashboardProducerName)
+            .setHeader(CommonConstants.AUTHORIZATION_HEADER, authToken.getAccessToken())
+            .setHeader(
+                CommonConstants.AUTH_EXPIRY_TIMESTAMP_HEADER,
+                expiryTs.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
             .setHeader(CommonConstants.HEADER_USER, jobResponse.getUserId())
             .build();
 
@@ -350,6 +365,8 @@ public class JobService {
     jobResponse = jobsConsumerClient.updateJob(jobDto).getPayload();
 
     var finalJobResponse = jobResponse;
+    AuthTokenResponse authToken = authTokenService.generateAuthToken();
+    LocalDateTime expiryTs = getAuthExpirationTime(authToken);
     IntStream.range(0, uploadRequestList.size())
         .forEach(
             recordNumber ->
@@ -357,8 +374,16 @@ public class JobService {
                     recordNumber,
                     JsonUtil.convert(uploadRequestList.get(recordNumber)),
                     finalJobResponse,
-                    RecordDataTypeEnum.JSON));
+                    RecordDataTypeEnum.JSON,
+                    authToken,
+                    expiryTs));
     return jobResponse;
+  }
+
+  private LocalDateTime getAuthExpirationTime(AuthTokenResponse authToken) {
+    var dateTime = LocalDateTime.now();
+    dateTime = dateTime.plusSeconds(authToken.getExpiresIn());
+    return dateTime;
   }
 
   /**

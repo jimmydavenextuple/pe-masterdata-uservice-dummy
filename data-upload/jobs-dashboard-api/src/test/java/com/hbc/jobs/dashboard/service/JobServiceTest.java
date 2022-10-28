@@ -18,6 +18,7 @@ import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.jobs.consumers.domain.JobDomain;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.exception.JobDomainException;
+import com.hbc.jobs.consumers.service.AuthTokenService;
 import com.hbc.jobs.dashboard.common.TestUtil;
 import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.framework.common.clients.FileMetaDataClient;
@@ -67,6 +68,8 @@ class JobServiceTest {
 
   @Mock private JobDomain jobDomain;
 
+  @Mock private AuthTokenService authTokenService;
+
   @Mock private KafkaTemplate<String, Object> kafkaTemplate;
 
   @Mock private FileMetaDataClient fileMetaDataClient;
@@ -84,6 +87,7 @@ class JobServiceTest {
     MockitoAnnotations.openMocks(this);
     MockMvcBuilders.standaloneSetup(jobService).build();
     ReflectionTestUtils.setField(jobService, "dashboardProducerName", "dashboardProcuderTopicName");
+    when(authTokenService.generateAuthToken()).thenReturn(testUtil.getAuthTokenResponse());
   }
 
   private final String UPLOAD_PROCESSING_LEAD_TIME_LIST =

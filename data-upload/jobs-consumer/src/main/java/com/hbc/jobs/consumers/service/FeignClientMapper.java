@@ -73,8 +73,8 @@ public interface FeignClientMapper {
     return objectMapper.readValue(jsonData, dtoClass);
   }
 
-  default RecordStatusDto getResponseFromAPI(RecordDto recordDto) {
-    log.debug("Inside getResponseFromAPI service");
+  default RecordStatusDto invokeAPI(RecordDto recordDto) {
+    log.debug("Inside invokeAPI service");
 
     var recordStatusDto = new RecordStatusDto();
     recordStatusDto.setCorrelationId(CurrentThreadContext.getLogContext().getCorrelationId());

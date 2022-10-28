@@ -1,12 +1,16 @@
 package com.hbc.jobs.consumers.domain.repository;
 
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
+import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
+import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import java.util.Date;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -23,6 +27,45 @@ public interface JobRepository extends JpaRepository<JobEntity, String> {
       nativeQuery = true)
   Page<JobEntity> findJobsByJobParam(
       String orgId, String jobType, Date pastDays, Pageable pageableElement);
+
+  @Modifying
+  @Query(
+      value =
+          "update jobs set failure_count = failure_count + 1, processed_records = processed_records + 1, "
+              + " remaining_records = total_records - processed_records - 1,"
+              + " status = :status, last_modified_date = :date"
+              + " where job_id= :jobid",
+      nativeQuery = true)
+  void updateJobStatusForFailure(
+      @Param("jobid") String jobId,
+      @Param("status") String status,
+      @Param("date") Date modifiedDate);
+
+  @Modifying
+  @Query(
+      value =
+          "update jobs set success_count = success_count + 1, processed_records = processed_records + 1, "
+              + " remaining_records = total_records - processed_records - 1,"
+              + " status = :status, last_modified_date = :date"
+              + " where job_id= :jobid",
+      nativeQuery = true)
+  void updateJobStatusForSuccess(
+      @Param("jobid") String jobId,
+      @Param("status") String status,
+      @Param("date") Date modifiedDate);
+
+  @Modifying
+  @Query(
+      value =
+          "update jobs set "
+              + " audit_log = :audit, status = :status, last_modified_date = :date"
+              + " where job_id= :jobid",
+      nativeQuery = true)
+  void updateJobStatus(
+      @Param("jobid") String jobId,
+      @Param("audit") AuditLog[] auditLog,
+      @Param("status") JobStatusEnum statusEnum,
+      @Param("date") Date modifiedDate);
 
   @Query(
       value = "SELECT * FROM JOBS WHERE org_id = ?1 AND status = ?2 FOR UPDATE SKIP LOCKED LIMIT 1",

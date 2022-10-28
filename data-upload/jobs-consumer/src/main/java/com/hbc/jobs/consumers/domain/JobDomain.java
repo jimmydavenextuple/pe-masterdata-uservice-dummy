@@ -63,6 +63,14 @@ public class JobDomain {
     }
   }
 
+  public void updateJobStatus(String jobId, JobStatusEnum statusEnum, boolean incrementSuccess) {
+    if (incrementSuccess) {
+      jobRepository.updateJobStatusForSuccess(jobId, statusEnum.toString(), new Date());
+    } else {
+      jobRepository.updateJobStatusForFailure(jobId, statusEnum.toString(), new Date());
+    }
+  }
+
   /**
    * @param orgId
    * @param jobType
