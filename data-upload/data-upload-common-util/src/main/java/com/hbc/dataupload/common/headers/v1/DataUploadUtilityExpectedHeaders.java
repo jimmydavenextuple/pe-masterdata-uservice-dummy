@@ -53,12 +53,7 @@ public class DataUploadUtilityExpectedHeaders {
             Map.entry(
                 "transit",
                 List.of(
-                    ACTION,
-                    ORG_ID,
-                    SOURCE_GEO_ZONE,
-                    DESTINATION_GEO_ZONE,
-                    CARRIER_SERVICE_ID,
-                    TRANSIT_DAYS)),
+                    ORG_ID, CARRIER_SERVICE_HEADER_TRANSIT_TIMES, DESTINATION_SOURCE_FSA_HEADER)),
             Map.entry(
                 "carrier-service",
                 List.of(
@@ -111,7 +106,7 @@ public class DataUploadUtilityExpectedHeaders {
                     EFFECTIVE_DATE)),
             Map.entry(
                 "processing-lead-times",
-                List.of(NODE_ID, ORG_ID, SERVICE_OPTIONS, PROCESSING_TIME, ACTION)),
+                List.of(NODE_ID, ORG_ID, SERVICE_OPTIONS, PROCESSING_TIME_IN_HRS, ACTION)),
             Map.entry(
                 "node-service-option-buffer",
                 List.of(ORG_ID, NODE_ID, SERVICE_OPTION, BUFFER_HOURS, START_TIME, END_TIME)));

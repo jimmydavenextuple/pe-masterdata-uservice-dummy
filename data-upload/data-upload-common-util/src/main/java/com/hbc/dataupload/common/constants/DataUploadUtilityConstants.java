@@ -55,13 +55,14 @@ public class DataUploadUtilityConstants {
   public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
   public static final String UPDATE_U = "U";
   public static final String DELETE_D = "D";
+  public static final String CARRIER_SERVICE_HEADER_TRANSIT_TIMES = "Carrier Service:";
   public static final String CARRIER_SERVICE_ID = "carrierServiceId";
   public static final String CARRIER_SERVICE = "Carrier Service:";
   public static final String CARRIER_SERVICES = "carrierServices";
   public static final String SOURCE_AND_DESTINATION_GEO_ZONE = "Destination FSA / Source FSA ->";
   public static final String NODE_ID = "nodeId";
   public static final String SERVICE_OPTION = "serviceOption";
-  public static final String PROCESSING_TIME = "processingTime";
+  public static final String PROCESSING_TIME_IN_HRS = "processingTime (in hrs)";
   public static final String LAST_PICKUP_TIME = "lastPickupTime";
   public static final String FILE_URI = "fileUri";
   public static final String CSV_FILE = "csvFile";
@@ -122,4 +123,5 @@ public class DataUploadUtilityConstants {
   public static final String CREATED_BY = "createdBy";
   public static final String BUFFER_START_DATE = "bufferStartDate";
   public static final String BUFFER_END_DATE = "bufferEndDate";
+  public static final String DESTINATION_SOURCE_FSA_HEADER = "Destination FSA / Source FSA ->";
 }

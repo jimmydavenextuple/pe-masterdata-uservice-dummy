@@ -1,4 +1,4 @@
-action,orgId,sourceGeozone,destinationGeozone,carrierServiceId,transitDays
-CREATE,org,SGZ1,DGZ1,CSI1,1
-UPDATE,org,SGZ2,DGZ2,CSI2,2
-DELETE,org,SGZ3,DGZ3,CSI3,3
+orgId,BAY,,,,,,,,,
+Carrier Service:,ALL-Standard,,,,,,,,,
+Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3
+DFSA1,10,9.96,9.96

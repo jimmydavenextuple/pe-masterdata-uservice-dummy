@@ -2,6 +2,7 @@ package com.hbc.jobs.dashboard.service.processfilecontentsmapper;
 
 import com.hbc.common.constants.CommonConstants;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
+import com.hbc.dataupload.common.constants.DataUploadUtilityConstants;
 import com.hbc.jobs.dashboard.service.ProcessFileContents;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.opencsv.exceptions.CsvException;
@@ -52,11 +53,11 @@ public class ProcessUploadProcessingLeadTimesData implements ProcessFileContents
       var csvRecord = iterator.next();
       var processingLeadTime =
           ProcessingLeadTimesRaw.builder()
-              .orgId(csvRecord.get(CommonConstants.ORG_ID))
-              .nodeId(csvRecord.get(CommonConstants.NODE_ID))
-              .processingTime(csvRecord.get(CommonConstants.PROCESSING_TIME))
+              .orgId(csvRecord.get(DataUploadUtilityConstants.ORG_ID))
+              .nodeId(csvRecord.get(DataUploadUtilityConstants.NODE_ID))
+              .processingTime(csvRecord.get(DataUploadUtilityConstants.PROCESSING_TIME_IN_HRS))
               .serviceOption(csvRecord.get(CommonConstants.SERVICE_OPTION))
-              .actionType(csvRecord.get(CommonConstants.ACTION_TYPE))
+              .actionType(csvRecord.get(DataUploadUtilityConstants.ACTION))
               .carrierServiceId("")
               .build();
       processingLeadTimesRawList.add(processingLeadTime);

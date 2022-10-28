@@ -19,7 +19,9 @@ import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class TransitTimeProcessingRequestImpl extends AbstractProcessingRequest
@@ -50,13 +52,29 @@ public class TransitTimeProcessingRequestImpl extends AbstractProcessingRequest
     var csvReader = new CSVReader(new InputStreamReader(fileResponse.getInputStream()));
     List<String[]> csvFileContents = csvReader.readAll();
 
-    DataUploadUtil.validateEmptyCSV(csvFileContents, NO_RECORDS_FOUND_IN_THE_CSV, csvReader);
+    // Extract orgId value
+    String orgIdHeader = csvFileContents.remove(0)[0];
+    // Extract carrierServiceId  value
+    String carrierServiceIdHeader = csvFileContents.remove(0)[0];
+    // Extract destination/sourceFsa header and sourceFsa values
+    String sFsaListHeader = csvFileContents.remove(0)[0];
+
+    validateEmptyCSV(csvFileContents, csvReader);
     DataUploadUtil.validateCSVHeaders(
-        csvFileContents.get(0),
+        new String[] {orgIdHeader, carrierServiceIdHeader, sFsaListHeader},
         getModuleType(),
         TRANSIT_TIME_DATA_UPLOAD_INVALID_FILE_HEADERS,
         csvReader);
 
     csvReader.close();
+  }
+
+  private void validateEmptyCSV(List<String[]> csvFileContents, CSVReader csvReader)
+      throws CommonServiceException, IOException {
+    if (CollectionUtils.isEmpty(csvFileContents)) {
+      csvReader.close();
+      throw new CommonServiceException(
+          NO_RECORDS_FOUND_IN_THE_CSV, HttpStatus.BAD_REQUEST, 0x2773, null);
+    }
   }
 }
