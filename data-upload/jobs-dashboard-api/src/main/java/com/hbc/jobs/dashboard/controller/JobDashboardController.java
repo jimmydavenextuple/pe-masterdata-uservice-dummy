@@ -5,6 +5,7 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.common.util.PaginationUtil;
 import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.dashboard.service.JobService;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
@@ -42,6 +43,8 @@ public class JobDashboardController {
 
   private final DefaultPageProperties defaultPageProperties;
   private static final String MESSAGE = "Job successfully created!";
+  private static final String PAGINATION_URL =
+      "/data-upload/org/%s/jobs/filters/?pageNo=%d&pageSize=%d";
 
   @PostMapping(
       path = "/org/{orgId}/jobs",
@@ -138,6 +141,30 @@ public class JobDashboardController {
             jobFilters.getSortOrder(),
             requiredPageNo,
             requiredPageSize);
+    String nextUri =
+        PaginationUtil.buildUriForPagination(
+            requiredPageNo,
+            pageResp.getPagination().getTotalPages(),
+            "next",
+            String.format(
+                PAGINATION_URL,
+                orgId,
+                requiredPageNo + 1,
+                jobFilters.getPageSize().orElse(defaultPageProperties.getPageSize())));
+
+    String previousUri =
+        PaginationUtil.buildUriForPagination(
+            requiredPageNo,
+            pageResp.getPagination().getTotalPages(),
+            "previous",
+            String.format(
+                PAGINATION_URL,
+                orgId,
+                requiredPageNo - 1,
+                jobFilters.getPageSize().orElse(defaultPageProperties.getPageSize())));
+
+    pageResp.getPagination().setNext(nextUri);
+    pageResp.getPagination().setPrevious(previousUri);
 
     return ResponseEntity.ok()
         .body(
