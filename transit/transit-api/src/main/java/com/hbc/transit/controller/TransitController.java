@@ -229,7 +229,7 @@ public class TransitController {
       @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
       @NotBlank(message = "destinationGeozone can't be empty") @PathVariable
           String destinationGeozone)
-      throws TransitDomainException, CommonServiceException {
+      throws CommonServiceException {
     logger.debug("Processing get transit details list");
     try {
       return BaseResponse.builder()

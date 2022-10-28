@@ -10,6 +10,7 @@ import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
 import com.hbc.postgres.config.ReaderDS;
 import com.hbc.transit.domain.TransitDomain;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.entity.TransitBufferEntity;
 import com.hbc.transit.domain.entity.TransitEntity;
 import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
@@ -18,18 +19,26 @@ import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.mapper.TransitMapper;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.transit.exception.TransitDomainException;
+import com.hbc.transit.repository.TransitBufferRepository;
+import com.hbc.transit.utils.TransitUtils;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -60,12 +69,25 @@ public class TransitService {
   private static final String INVALID_GEOZONE = "geoZone is not valid";
 
   @Autowired private final PostalCodeTimezoneFeign postalCodeTimezoneFeign;
+  private final TransitBufferRepository transitBufferRepository;
+
+  @Qualifier("threadPoolTaskExecutor")
+  @Autowired
+  ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
   public TransitResponse addTransitInfo(TransitDataCreationRequest transitDataCreationRequest)
       throws TransitDomainException, CommonServiceException {
-    validateTransitDetails(
+    Optional<TransitBufferEntity> existingTransitBufferEntity =
+        transitBufferRepository.findByOrgIdAndCarrierServiceIdAndSourceGeozoneAndDestinationGeozone(
+            transitDataCreationRequest.getOrgId(),
+            transitDataCreationRequest.getCarrierServiceId(),
+            transitDataCreationRequest.getSourceGeozone(),
+            transitDataCreationRequest.getDestinationGeozone());
+    TransitUtils.validateTransitDetails(
         transitDataCreationRequest.getTransitDays(),
-        transitDataCreationRequest.getBufferDays(),
+        existingTransitBufferEntity.isPresent()
+            ? existingTransitBufferEntity.get().getBufferDays()
+            : transitDataCreationRequest.getBufferDays(),
         transitDataCreationRequest.getOrgId(),
         transitDataCreationRequest.getSourceGeozone(),
         transitDataCreationRequest.getDestinationGeozone(),
@@ -83,7 +105,6 @@ public class TransitService {
       throw new CommonServiceException(
           INVALID_TRANSIT_DATA_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST, 0x1771, errorMap);
     }
-
     validateSourceAndDestinationGeozone(
         transitDataCreationRequest.getOrgId(), transitDataCreationRequest.getSourceGeozone());
     validateSourceAndDestinationGeozone(
@@ -99,20 +120,19 @@ public class TransitService {
       BaseResponse<PostalCodeTimezoneDto> postalCodeTimezoneDtoBaseResponse =
           postalCodeTimezoneFeign.getPostalCodeTimezone(orgId, geozone);
       if (Objects.isNull(postalCodeTimezoneDtoBaseResponse.getPayload())) {
-
-        commonServiceException(INVALID_GEOZONE, orgId, geozone);
+        commonServiceExceptionInvalidGeoZone(INVALID_GEOZONE, orgId, geozone);
       }
     } catch (Exception e) {
       logger.error(
           "Error while fetching postal code timezone details for orgId:{} , geoZone:{}",
           orgId,
           geozone);
-      commonServiceException(INVALID_GEOZONE, orgId, geozone);
+      commonServiceExceptionInvalidGeoZone(INVALID_GEOZONE, orgId, geozone);
     }
   }
 
-  public void commonServiceException(String errorMessage, String orgId, String geoZone)
-      throws CommonServiceException {
+  public void commonServiceExceptionInvalidGeoZone(
+      String errorMessage, String orgId, String geoZone) throws CommonServiceException {
     Map<String, FieldError> errorMap = new HashMap<>();
     errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
     errorMap.put("geoZone", FieldError.builder().rejectedValue(geoZone).build());
@@ -156,7 +176,7 @@ public class TransitService {
     if (existingTransitEntity.isPresent()) {
       var transitDays = existingTransitEntity.get().getTransitDays();
       var bufferDays = transitBufferCreationRequest.getBufferDays();
-      validateTransitDetails(
+      TransitUtils.validateTransitDetails(
           transitDays,
           bufferDays,
           transitBufferCreationRequest.getOrgId(),
@@ -333,12 +353,23 @@ public class TransitService {
 
   @ReaderDS
   public List<TransitResponse> getListOfTransitDetailsForDestinationGeoZone(
-      String orgId, String destinationGeozone)
-      throws TransitDomainException, CommonServiceException {
-
-    List<TransitEntity> transitEntities =
-        transitDomain.fetchTransitListForDestinationGeoZone(orgId, destinationGeozone);
-
+      String orgId, String destinationGeozone) throws CommonServiceException {
+    List<TransitEntity> transitEntities = new ArrayList<>();
+    List<TransitBufferEntity> transitBufferEntities = new ArrayList<>();
+    try {
+      List<Callable<Object>> tasks = getTransitCallables(orgId, destinationGeozone);
+      List<Future<Object>> results =
+          threadPoolTaskExecutor.getThreadPoolExecutor().invokeAll(tasks);
+      transitEntities = (List<TransitEntity>) results.get(0).get();
+      transitBufferEntities = (List<TransitBufferEntity>) results.get(1).get();
+    } catch (ExecutionException | InterruptedException e) {
+      Thread.currentThread().interrupt();
+      logger.error(
+          String.valueOf(e),
+          "Unable to fetch transit list for orgId: {} and destination geozone: {}",
+          orgId,
+          destinationGeozone);
+    }
     if (transitEntities.isEmpty()) {
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
@@ -346,8 +377,9 @@ public class TransitService {
           DESTINATION_GEOZONE, FieldError.builder().rejectedValue(destinationGeozone).build());
       throw new CommonServiceException(
           TRANSIT_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
+    } else {
+      updateBufferDetailsToTransitEntities(transitEntities, transitBufferEntities);
     }
-
     return INSTANCE.toTransitResponseList(transitEntities);
   }
 
@@ -357,33 +389,6 @@ public class TransitService {
     return INSTANCE.toTransitResponseList(
         transitDomain.fetchTransitListForDestinationGeoZones(
             orgId, carrierServiceId, destinationGeozones));
-  }
-
-  public void validateTransitDetails(
-      Float transitDays,
-      Double bufferDays,
-      String orgId,
-      String sourceGeozone,
-      String destinationGeozone,
-      String carrierServiceId)
-      throws CommonServiceException {
-    if (bufferDays == null) {
-      bufferDays = 0.0;
-    }
-    if ((transitDays + bufferDays) <= 0) {
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
-      errorMap.put(SOURCE_GEOZONE, FieldError.builder().rejectedValue(sourceGeozone).build());
-      errorMap.put(
-          DESTINATION_GEOZONE, FieldError.builder().rejectedValue(destinationGeozone).build());
-      errorMap.put(
-          CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
-      throw new CommonServiceException(
-          "The sum of transit and buffer days is less or equal to 0",
-          HttpStatus.BAD_REQUEST,
-          0x1776,
-          errorMap);
-    }
   }
 
   public DistinctGeozonesResponse getDistinctSourceAndDestinationGeoZones(
@@ -422,5 +427,60 @@ public class TransitService {
       throws TransitDomainException {
     return transitDomain.findTransitDetails(
         orgId, sourceGeozone, destinationGeozone, carrierServiceId);
+  }
+
+  private void updateBufferDetailsToTransitEntities(
+      List<TransitEntity> transitEntities, List<TransitBufferEntity> transitBufferEntities) {
+    Map<String, TransitBufferEntity> transitBufferDetailMap = new HashMap<>();
+    if (!transitBufferEntities.isEmpty()) {
+      for (TransitBufferEntity transitBufferEntity : transitBufferEntities) {
+        String transitBufferKey =
+            getTransitKey(
+                transitBufferEntity.getOrgId(),
+                transitBufferEntity.getSourceGeozone(),
+                transitBufferEntity.getDestinationGeozone(),
+                transitBufferEntity.getCarrierServiceId());
+        transitBufferDetailMap.put(transitBufferKey, transitBufferEntity);
+      }
+      for (TransitEntity transitEntity : transitEntities) {
+        String transitKey =
+            getTransitKey(
+                transitEntity.getOrgId(),
+                transitEntity.getSourceGeozone(),
+                transitEntity.getDestinationGeozone(),
+                transitEntity.getCarrierServiceId());
+        if (!transitBufferDetailMap.isEmpty() && transitBufferDetailMap.containsKey(transitKey)) {
+          var transitBufferEntity = transitBufferDetailMap.get(transitKey);
+          transitEntity.setBufferDays(transitBufferEntity.getBufferDays());
+          transitEntity.setBufferStartDate(transitBufferEntity.getBufferStartDate());
+          transitEntity.setBufferEndDate(transitBufferEntity.getBufferEndDate());
+        }
+      }
+    }
+  }
+
+  public static String getTransitKey(
+      String orgId, String sourceGeoZone, String destinationGeoZone, String carrierServiceId) {
+    var sBuilder = new StringBuilder();
+    return sBuilder
+        .append(orgId)
+        .append("-")
+        .append(sourceGeoZone)
+        .append("-")
+        .append(destinationGeoZone)
+        .append("-")
+        .append(carrierServiceId)
+        .toString();
+  }
+
+  private List<Callable<Object>> getTransitCallables(String orgId, String destinationGeozone) {
+    List<Callable<Object>> tasks = new ArrayList<>();
+    Callable<Object> transitCallable =
+        () -> transitDomain.fetchTransitListForDestinationGeoZone(orgId, destinationGeozone);
+    Callable<Object> transitBufferCallable =
+        () -> transitBufferRepository.findByOrgIdAndDestinationGeozone(orgId, destinationGeozone);
+    tasks.add(transitCallable);
+    tasks.add(transitBufferCallable);
+    return tasks;
   }
 }

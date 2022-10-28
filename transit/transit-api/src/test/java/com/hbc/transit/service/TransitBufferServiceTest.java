@@ -7,11 +7,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hbc.carrier.domain.feign.CarrierFeign;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
 import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.entity.TransitBufferEntity;
+import com.hbc.transit.domain.entity.TransitEntity;
 import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import com.hbc.transit.repository.TransitBufferRepository;
+import com.hbc.transit.repository.TransitRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -29,6 +33,9 @@ class TransitBufferServiceTest {
   @Mock private TransitBufferRepository transitBufferRepository;
 
   @InjectMocks private TestUtil testUtil;
+  @Mock private TransitRepository transitRepository;
+  @Mock private CarrierFeign carrierFeign;
+  @Mock private PostalCodeTimezoneFeign postalCodeTimezoneFeign;
 
   @Test
   void saveTransitBufferTest() throws CommonServiceException {
@@ -37,8 +44,14 @@ class TransitBufferServiceTest {
             .findByOrgIdAndCarrierServiceIdAndSourceGeozoneAndDestinationGeozone(
                 any(), any(), any(), any()))
         .thenReturn(Optional.empty());
-    when(transitBufferRepository.save(any())).thenReturn(transitBufferEntity);
 
+    Optional<TransitEntity> transitEntity =
+        Optional.of(testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS));
+    when(transitRepository.findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
+            any(), any(), any(), any()))
+        .thenReturn(transitEntity);
+
+    when(transitBufferRepository.save(any())).thenReturn(transitBufferEntity);
     TransitBufferResponse response =
         transitBufferService.saveTransitBuffer(testUtil.getTransitBufferRequest());
 
@@ -47,6 +60,9 @@ class TransitBufferServiceTest {
     assertEquals(transitBufferEntity.getSourceGeozone(), response.getSourceGeozone());
     assertEquals(transitBufferEntity.getDestinationGeozone(), response.getDestinationGeozone());
     verify(transitBufferRepository, times(1)).save(any());
+    verify(transitRepository, times(1))
+        .findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
+            any(), any(), any(), any());
   }
 
   @Test
@@ -58,6 +74,12 @@ class TransitBufferServiceTest {
         .thenReturn(Optional.empty());
     when(transitBufferRepository.save(any())).thenThrow(new RuntimeException("Error while saving"));
 
+    Optional<TransitEntity> transitEntity =
+        Optional.of(testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS));
+    when(transitRepository.findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
+            any(), any(), any(), any()))
+        .thenReturn(transitEntity);
+
     Exception ex =
         Assertions.assertThrows(
             CommonServiceException.class,
@@ -68,6 +90,20 @@ class TransitBufferServiceTest {
   }
 
   @Test
+  void saveTransitBufferEmptyTransitEntityTest() {
+    when(transitRepository.findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
+            any(), any(), any(), any()))
+        .thenReturn(Optional.empty());
+
+    Exception ex =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> transitBufferService.saveTransitBuffer(testUtil.getTransitBufferRequest()));
+
+    assertEquals("Transit details not found", ex.getMessage());
+  }
+
+  @Test
   void saveExistingTransitBufferExceptionTest() {
     TransitBufferEntity transitBufferEntity = testUtil.getTransitBufferEntity(TestUtil.ORG_ID);
     when(transitBufferRepository
@@ -75,6 +111,11 @@ class TransitBufferServiceTest {
                 any(), any(), any(), any()))
         .thenReturn(Optional.of(transitBufferEntity));
 
+    Optional<TransitEntity> transitEntity =
+        Optional.of(testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS));
+    when(transitRepository.findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
+            any(), any(), any(), any()))
+        .thenReturn(transitEntity);
     Exception ex =
         Assertions.assertThrows(
             CommonServiceException.class,
@@ -96,6 +137,12 @@ class TransitBufferServiceTest {
         .thenReturn(Optional.of(transitBufferEntity));
     when(transitBufferRepository.save(any())).thenReturn(transitBufferEntity);
 
+    Optional<TransitEntity> transitEntity =
+        Optional.of(testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS));
+    when(transitRepository.findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
+            any(), any(), any(), any()))
+        .thenReturn(transitEntity);
+
     TransitBufferResponse response =
         transitBufferService.updateTransitBuffer(testUtil.getTransitBufferRequest());
 
@@ -115,6 +162,12 @@ class TransitBufferServiceTest {
             .findByOrgIdAndCarrierServiceIdAndSourceGeozoneAndDestinationGeozone(
                 any(), any(), any(), any()))
         .thenReturn(Optional.empty());
+
+    Optional<TransitEntity> transitEntity =
+        Optional.of(testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS));
+    when(transitRepository.findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
+            any(), any(), any(), any()))
+        .thenReturn(transitEntity);
 
     Exception ex =
         Assertions.assertThrows(

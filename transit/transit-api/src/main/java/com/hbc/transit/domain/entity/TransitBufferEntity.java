@@ -1,9 +1,11 @@
 package com.hbc.transit.domain.entity;
 
 import com.hbc.common.base.CommonBaseEntity;
+import com.hbc.core.event.listeners.CommonEntityListener;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
@@ -21,6 +23,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @Table(name = "transit_buffer_data")
 @IdClass(TransitId.class)
+@EntityListeners(CommonEntityListener.class)
 public class TransitBufferEntity extends CommonBaseEntity {
 
   @Id

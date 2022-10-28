@@ -5,10 +5,14 @@ import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.error.FieldError;
 import com.hbc.transit.domain.entity.TransitBufferEntity;
+import com.hbc.transit.domain.entity.TransitEntity;
 import com.hbc.transit.domain.inbound.TransitBufferRequest;
 import com.hbc.transit.domain.mapper.TransitBufferMapper;
 import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import com.hbc.transit.repository.TransitBufferRepository;
+import com.hbc.transit.repository.TransitRepository;
+import com.hbc.transit.utils.TransitUtils;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,16 +36,18 @@ public class TransitBufferService {
   private static final String SOURCE_GEOZONE = "sourceGeozone";
   private static final String DESTINATION_GEOZONE = "destinationGeozone";
   private static final String TRANSIT_BUFFER_NOT_FOUND = "Transit buffer details not found";
+  private final TransitRepository transitRepository;
+  private static final String TRANSIT_NOT_FOUND = "Transit details not found";
 
   public TransitBufferResponse saveTransitBuffer(TransitBufferRequest transitBufferRequest)
       throws CommonServiceException {
+    getTransitDaysAndValidateTransitDetails(transitBufferRequest);
     Optional<TransitBufferEntity> existingTransitBufferEntity =
         transitBufferRepository.findByOrgIdAndCarrierServiceIdAndSourceGeozoneAndDestinationGeozone(
             transitBufferRequest.getOrgId(),
             transitBufferRequest.getCarrierServiceId(),
             transitBufferRequest.getSourceGeozone(),
             transitBufferRequest.getDestinationGeozone());
-
     if (existingTransitBufferEntity.isPresent()) {
       Map<String, FieldError> errorMap =
           getErrorMap(
@@ -89,13 +95,13 @@ public class TransitBufferService {
 
   public TransitBufferResponse updateTransitBuffer(TransitBufferRequest transitBufferRequest)
       throws CommonServiceException {
+    getTransitDaysAndValidateTransitDetails(transitBufferRequest);
     Optional<TransitBufferEntity> existingTransitBufferEntity =
         transitBufferRepository.findByOrgIdAndCarrierServiceIdAndSourceGeozoneAndDestinationGeozone(
             transitBufferRequest.getOrgId(),
             transitBufferRequest.getCarrierServiceId(),
             transitBufferRequest.getSourceGeozone(),
             transitBufferRequest.getDestinationGeozone());
-
     if (existingTransitBufferEntity.isPresent()) {
       existingTransitBufferEntity.get().setBufferDays(transitBufferRequest.getBufferDays());
       existingTransitBufferEntity
@@ -103,6 +109,7 @@ public class TransitBufferService {
           .setBufferStartDate(transitBufferRequest.getBufferStartDate());
       existingTransitBufferEntity.get().setBufferEndDate(transitBufferRequest.getBufferEndDate());
       existingTransitBufferEntity.get().setUpdatedBy(transitBufferRequest.getUpdatedBy());
+      existingTransitBufferEntity.get().setLastModifiedDate(new Date());
       return INSTANCE.toTransitBufferResponse(
           transitBufferRepository.save(existingTransitBufferEntity.get()));
     } else {
@@ -145,5 +152,39 @@ public class TransitBufferService {
     errorMap.put(
         DESTINATION_GEOZONE, FieldError.builder().rejectedValue(destinationGeozone).build());
     return errorMap;
+  }
+
+  private void getTransitDaysAndValidateTransitDetails(TransitBufferRequest transitBufferRequest)
+      throws CommonServiceException {
+    var transitDays =
+        getTransitDaysFromExistingTransitEntity(
+            transitBufferRequest.getOrgId(),
+            transitBufferRequest.getSourceGeozone(),
+            transitBufferRequest.getDestinationGeozone(),
+            transitBufferRequest.getCarrierServiceId());
+    TransitUtils.validateTransitDetails(
+        transitDays,
+        transitBufferRequest.getBufferDays(),
+        transitBufferRequest.getOrgId(),
+        transitBufferRequest.getSourceGeozone(),
+        transitBufferRequest.getDestinationGeozone(),
+        transitBufferRequest.getCarrierServiceId());
+  }
+
+  private Float getTransitDaysFromExistingTransitEntity(
+      String orgId, String sourceGeozone, String destinationGeozone, String carrierServiceId)
+      throws CommonServiceException {
+    Float transitDays;
+    Optional<TransitEntity> existingTransitEntity =
+        transitRepository.findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
+            orgId, sourceGeozone, destinationGeozone, carrierServiceId);
+    if (existingTransitEntity.isPresent()) {
+      transitDays = existingTransitEntity.get().getTransitDays();
+    } else {
+      Map<String, FieldError> errorMap =
+          getErrorMap(orgId, carrierServiceId, sourceGeozone, destinationGeozone);
+      throw new CommonServiceException(TRANSIT_NOT_FOUND, HttpStatus.NOT_FOUND, 0x1771, errorMap);
+    }
+    return transitDays;
   }
 }

@@ -309,8 +309,7 @@ class TransitControllerTest {
   }
 
   @Test
-  void getTransitDetailsListForDestinationGeoZoneTest()
-      throws TransitDomainException, CommonServiceException {
+  void getTransitDetailsListForDestinationGeoZoneTest() throws CommonServiceException {
     when(transitService.getListOfTransitDetailsForDestinationGeoZone(any(), any()))
         .thenReturn(List.of(testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS)));
 
@@ -323,8 +322,7 @@ class TransitControllerTest {
   }
 
   @Test
-  void getTransitDetailsListForDestinationGeoZoneTestException()
-      throws TransitDomainException, CommonServiceException {
+  void getTransitDetailsListForDestinationGeoZoneTestException() throws CommonServiceException {
     when(transitService.getListOfTransitDetailsForDestinationGeoZone(any(), any()))
         .thenThrow(new RuntimeException("Failed to fetch transit list"));
 
