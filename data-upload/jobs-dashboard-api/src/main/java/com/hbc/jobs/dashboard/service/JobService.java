@@ -161,7 +161,7 @@ public class JobService {
       kafkaTemplate
           .send(message)
           .addCallback(
-              e -> log.error("JobService::publishToKafka():success to publish record dto", e),
+              e -> log.debug("JobService::publishToKafka():success to publish record dto", e),
               e -> log.error("JobService::publishToKafka():failed to publish record dto", e));
       log.debug("Publish to kafka method ends");
     } catch (Exception e) {
@@ -327,7 +327,12 @@ public class JobService {
             String[] fileUrlList = fileMetaDataResponse.getPayload().getPath().split("/", 2);
             String bucketName = fileUrlList[0];
             var filePath = fileUrlList[1];
+            long fileDownloadTime = System.currentTimeMillis();
             var fileResponse = fileService.getFile(bucketName, filePath);
+            log.debug(
+                "File download task took {} milliseconds for jobId: {}",
+                System.currentTimeMillis() - fileDownloadTime,
+                jobId);
             inputStream = fileResponse.getInputStream();
           }
         } else if (jobDto.getFile().length != 0) {
@@ -352,8 +357,13 @@ public class JobService {
 
     var processFileContents =
         processFileContentsMapperFactory.getProcessFileContentsMapper(jobDto.getJobType());
+    long fileContentsProcessingTime = System.currentTimeMillis();
     uploadRequestList.addAll(
         processFileContents.updateRequestObjectsList(jobDto.getJobType(), inputStream));
+    log.debug(
+        "File contents processing task took {} milliseconds for jobId: {}",
+        System.currentTimeMillis() - fileContentsProcessingTime,
+        jobDto.getJobId());
 
     jobDto =
         INSTANCE.toJob(
@@ -367,16 +377,27 @@ public class JobService {
     var finalJobResponse = jobResponse;
     AuthTokenResponse authToken = authTokenService.generateAuthToken();
     LocalDateTime expiryTs = getAuthExpirationTime(authToken);
+    long totalKafkaPublishTime = System.currentTimeMillis();
     IntStream.range(0, uploadRequestList.size())
         .forEach(
-            recordNumber ->
-                publishToKafka(
-                    recordNumber,
-                    JsonUtil.convert(uploadRequestList.get(recordNumber)),
-                    finalJobResponse,
-                    RecordDataTypeEnum.JSON,
-                    authToken,
-                    expiryTs));
+            recordNumber -> {
+              long kafkaPublishTimePerRecord = System.currentTimeMillis();
+              publishToKafka(
+                  recordNumber,
+                  JsonUtil.convert(uploadRequestList.get(recordNumber)),
+                  finalJobResponse,
+                  RecordDataTypeEnum.JSON,
+                  authToken,
+                  expiryTs);
+              log.debug(
+                  "Kafka publish per record task took {} milliseconds for recordNumber: {}",
+                  System.currentTimeMillis() - kafkaPublishTimePerRecord,
+                  recordNumber);
+            });
+    log.debug(
+        "Total kafka publish for all records task took {} milliseconds",
+        System.currentTimeMillis() - totalKafkaPublishTime);
+
     return jobResponse;
   }
 

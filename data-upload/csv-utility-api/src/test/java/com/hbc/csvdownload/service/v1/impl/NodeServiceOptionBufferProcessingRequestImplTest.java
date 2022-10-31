@@ -34,7 +34,7 @@ class NodeServiceOptionBufferProcessingRequestImplTest {
 
   @Test
   void submitJobTest() throws JobSubmissionException {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID,
             JobTypeEnum.UPLOAD_NODE_SERVICE_OPTION_BUFFER,
             TestUtil.FILE_METADATA_ID))
@@ -47,7 +47,7 @@ class NodeServiceOptionBufferProcessingRequestImplTest {
 
   @Test
   void submitJobFeignExceptionTest() {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID,
             JobTypeEnum.UPLOAD_NODE_SERVICE_OPTION_BUFFER,
             TestUtil.FILE_METADATA_ID))
@@ -61,7 +61,7 @@ class NodeServiceOptionBufferProcessingRequestImplTest {
 
   @Test
   void submitJobExceptionTest() {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID,
             JobTypeEnum.UPLOAD_NODE_SERVICE_OPTION_BUFFER,
             TestUtil.FILE_METADATA_ID))

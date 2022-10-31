@@ -33,7 +33,7 @@ class CarrierServiceCalendarProcessingRequestImplTest {
 
   @Test
   void submitJobTest() throws JobSubmissionException {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID,
             JobTypeEnum.UPLOAD_CARRIER_SERVICE_CALENDER,
             TestUtil.FILE_METADATA_ID))
@@ -46,7 +46,7 @@ class CarrierServiceCalendarProcessingRequestImplTest {
 
   @Test
   void submitJobFeignExceptionTest() {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID,
             JobTypeEnum.UPLOAD_CARRIER_SERVICE_CALENDER,
             TestUtil.FILE_METADATA_ID))
@@ -60,7 +60,7 @@ class CarrierServiceCalendarProcessingRequestImplTest {
 
   @Test
   void submitJobExceptionTest() {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID,
             JobTypeEnum.UPLOAD_CARRIER_SERVICE_CALENDER,
             TestUtil.FILE_METADATA_ID))

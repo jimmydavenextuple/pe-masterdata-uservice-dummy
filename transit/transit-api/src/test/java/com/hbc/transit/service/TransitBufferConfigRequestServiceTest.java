@@ -66,7 +66,7 @@ class TransitBufferConfigRequestServiceTest {
     when(jobsDashboardClient.createFileMetadata(any(FileMetaDataCreationRequest.class)))
         .thenReturn(testUtil.getFileMetaDataResponse());
     doNothing().when(fileService).uploadFile(anyString(), anyString(), any());
-    when(jobsDashboardClient.processJobOffline(anyString(), any(), anyLong()))
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(anyString(), any(), anyLong()))
         .thenReturn(testUtil.getJobResponse());
     when(transitBufferReqJobRefService.createTransitBufferReqJobRef(
             any(TransitBufferReqJobRefRequest.class)))
@@ -100,7 +100,7 @@ class TransitBufferConfigRequestServiceTest {
     when(jobsDashboardClient.createFileMetadata(any(FileMetaDataCreationRequest.class)))
         .thenReturn(testUtil.getFileMetaDataResponse());
     doNothing().when(fileService).uploadFile(anyString(), anyString(), any());
-    when(jobsDashboardClient.processJobOffline(anyString(), any(), anyLong()))
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(anyString(), any(), anyLong()))
         .thenThrow(
             new FeignException.BadRequest(
                 "Failed to create job",
@@ -134,7 +134,7 @@ class TransitBufferConfigRequestServiceTest {
     when(jobsDashboardClient.createFileMetadata(any(FileMetaDataCreationRequest.class)))
         .thenReturn(testUtil.getFileMetaDataResponse());
     doNothing().when(fileService).uploadFile(anyString(), anyString(), any());
-    when(jobsDashboardClient.processJobOffline(anyString(), any(), anyLong()))
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(anyString(), any(), anyLong()))
         .thenReturn(testUtil.getJobResponse());
     when(transitBufferReqJobRefService.createTransitBufferReqJobRef(
             any(TransitBufferReqJobRefRequest.class)))
@@ -171,7 +171,7 @@ class TransitBufferConfigRequestServiceTest {
     when(jobsDashboardClient.createFileMetadata(any(FileMetaDataCreationRequest.class)))
         .thenReturn(testUtil.getFileMetaDataResponse());
     doNothing().when(fileService).uploadFile(anyString(), anyString(), any());
-    when(jobsDashboardClient.processJobOffline(anyString(), any(), anyLong()))
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(anyString(), any(), anyLong()))
         .thenReturn(testUtil.getJobResponse());
     when(transitBufferReqJobRefService.createTransitBufferReqJobRef(
             any(TransitBufferReqJobRefRequest.class)))
@@ -201,7 +201,7 @@ class TransitBufferConfigRequestServiceTest {
     when(jobsDashboardClient.createFileMetadata(any(FileMetaDataCreationRequest.class)))
         .thenReturn(testUtil.getFileMetaDataResponse());
     doNothing().when(fileService).uploadFile(anyString(), anyString(), any());
-    when(jobsDashboardClient.processJobOffline(anyString(), any(), anyLong()))
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(anyString(), any(), anyLong()))
         .thenReturn(testUtil.getJobResponse());
     when(transitBufferReqJobRefService.createTransitBufferReqJobRef(
             any(TransitBufferReqJobRefRequest.class)))
@@ -237,7 +237,7 @@ class TransitBufferConfigRequestServiceTest {
     when(jobsDashboardClient.createFileMetadata(any(FileMetaDataCreationRequest.class)))
         .thenReturn(testUtil.getFileMetaDataResponse());
     doNothing().when(fileService).uploadFile(anyString(), anyString(), any());
-    when(jobsDashboardClient.processJobOffline(anyString(), any(), anyLong()))
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(anyString(), any(), anyLong()))
         .thenReturn(testUtil.getJobResponse());
     when(transitBufferReqJobRefService.createTransitBufferReqJobRef(
             any(TransitBufferReqJobRefRequest.class)))

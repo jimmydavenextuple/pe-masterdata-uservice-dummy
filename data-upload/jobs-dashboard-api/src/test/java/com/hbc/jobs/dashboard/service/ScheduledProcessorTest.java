@@ -1,25 +1,20 @@
-package com.hbc.jobs.consumers.service;
+package com.hbc.jobs.dashboard.service;
 
 import static org.mockito.Mockito.*;
 
-import com.hbc.common.response.BaseResponse;
-import com.hbc.common.response.error.ErrorResponse;
 import com.hbc.common.util.DateUtil;
-import com.hbc.jobs.consumers.common.TestUtil;
 import com.hbc.jobs.consumers.domain.JobDomain;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
 import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.consumers.exception.PublishJobEventException;
 import com.hbc.jobs.consumers.feign.AuthTokenAPI;
+import com.hbc.jobs.consumers.service.PublishJobEventService;
+import com.hbc.jobs.dashboard.common.TestUtil;
+import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
-import com.hbc.jobs.framework.common.utils.ExceptionUtils;
-import feign.FeignException;
-import feign.Request;
-import feign.Request.HttpMethod;
-import java.util.HashMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,8 +38,10 @@ class ScheduledProcessorTest {
 
   @InjectMocks private TestUtil testUtil;
 
+  @Mock private JobService jobService;
+
   @Test
-  void processJobOffline() throws JobDomainException {
+  void processJobOffline() throws JobDomainException, JobException {
     ReflectionTestUtils.setField(scheduledProcessor, "grantType", "grant");
     ReflectionTestUtils.setField(scheduledProcessor, "scope", "scope");
     ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);
@@ -59,14 +56,15 @@ class ScheduledProcessorTest {
     when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any()))
         .thenReturn(jobEntity);
     when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
-    when(jobsDashboardClient.processJobsJsonOffline(any(), any(), any()))
-        .thenReturn(BaseResponse.builder().payload(jobDto).build());
+
+    when(jobService.processJobJsonOffline(any(), any(), any()))
+        .thenReturn(testUtil.createJobResponse(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5));
 
     Assertions.assertDoesNotThrow(() -> scheduledProcessor.processJobOffline());
   }
 
   @Test
-  void processJobOfflineQueuedJob() throws JobDomainException {
+  void processJobOfflineQueuedJob() throws JobDomainException, JobException {
     ReflectionTestUtils.setField(scheduledProcessor, "grantType", "grant");
     ReflectionTestUtils.setField(scheduledProcessor, "scope", "scope");
     ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);
@@ -87,11 +85,8 @@ class ScheduledProcessorTest {
         .thenReturn(null);
     when(jobDomain.fetchJobRecordInTimeRange(any(), any(), any())).thenReturn(jobEntity);
     when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
-    when(jobsDashboardClient.processJobsJsonOffline(any(), any(), any()))
-        .thenReturn(
-            BaseResponse.builder()
-                .payload(testUtil.createJobResponse(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2))
-                .build());
+    when(jobService.processJobJsonOffline(any(), any(), any()))
+        .thenReturn(testUtil.createJobResponse(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2));
     jobEntity.setStatus(JobStatusEnum.PROCESSED);
 
     Assertions.assertDoesNotThrow(() -> scheduledProcessor.processJobOffline());
@@ -111,43 +106,8 @@ class ScheduledProcessorTest {
   }
 
   @Test
-  void processJobOfflineFeignException() throws JobDomainException, PublishJobEventException {
-    ReflectionTestUtils.setField(scheduledProcessor, "grantType", "grant");
-    ReflectionTestUtils.setField(scheduledProcessor, "scope", "scope");
-    ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);
-
-    String csvContents = TestUtil.CSV_CONTENTS_PROCESSING_LEAD_TIMES;
-
-    JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
-    jobEntity.setStatus(JobStatusEnum.PROCESSING);
-    jobEntity.setFile(csvContents.getBytes());
-
-    JobDto jobDto = testUtil.createJob(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 5);
-    jobDto.setStatus(JobStatusEnum.PROCESSED);
-    jobDto.setFile(csvContents.getBytes());
-
-    FeignException exception =
-        new FeignException.BadRequest(
-            "Feign exception while processing the job",
-            Request.create(HttpMethod.PUT, "", new HashMap<>(), null, null, null),
-            "Feign exception while processing the job".getBytes());
-
-    doNothing().when(publishJobEventService).publishJobDetailsEvent(any());
-
-    when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any()))
-        .thenReturn(jobEntity);
-    when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
-    when(jobsDashboardClient.processJobsJsonOffline(any(), any(), any())).thenThrow(exception);
-    jobEntity.setStatus(JobStatusEnum.FAILED);
-    ErrorResponse errorResponse = ExceptionUtils.parseFeignException(exception);
-    jobEntity.setErrorMessage(errorResponse.getMessage());
-    when(jobDomain.save(jobEntity)).thenReturn(jobEntity);
-
-    Assertions.assertDoesNotThrow(() -> scheduledProcessor.processJobOffline());
-  }
-
-  @Test
-  void processJobOfflineException() throws JobDomainException, PublishJobEventException {
+  void processJobOfflineException()
+      throws JobDomainException, PublishJobEventException, JobException {
     ReflectionTestUtils.setField(scheduledProcessor, "grantType", "grant");
     ReflectionTestUtils.setField(scheduledProcessor, "scope", "scope");
     ReflectionTestUtils.setField(scheduledProcessor, "timeRangeInHours", 24);
@@ -167,7 +127,7 @@ class ScheduledProcessorTest {
     when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any()))
         .thenReturn(jobEntity);
     when(authTokenAPI.getAuthToken(any())).thenReturn(testUtil.getAuthTokenResponse());
-    when(jobsDashboardClient.processJobsJsonOffline(any(), any(), any()))
+    when(jobService.processJobJsonOffline(any(), any(), any()))
         .thenThrow(new RuntimeException("Error while fetching and updating job"));
     jobEntity.setStatus(JobStatusEnum.FAILED);
     jobEntity.setErrorMessage("Error while fetching and updating job");

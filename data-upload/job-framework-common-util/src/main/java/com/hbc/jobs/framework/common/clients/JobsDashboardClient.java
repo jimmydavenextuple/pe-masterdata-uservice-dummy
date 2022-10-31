@@ -41,7 +41,7 @@ public interface JobsDashboardClient {
       value = "/org/{orgId}/jobs/{jobId}",
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE)
-  BaseResponse<JobResponse> processJobsJsonOffline(
+  BaseResponse<JobResponse> processJobJsonByScheduler(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotNull @Valid @RequestParam("jobType") JobTypeEnum jobType,
       @PathVariable("jobId") String jobId);
@@ -70,7 +70,7 @@ public interface JobsDashboardClient {
       @RequestParam("fileName") String fileName);
 
   @PostMapping("v1/org/{orgId}/jobs")
-  BaseResponse<JobResponse> processJobOffline(
+  BaseResponse<JobResponse> processJobOfflineWithFileMetaDataId(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestParam @NotNull JobTypeEnum jobType,
       @RequestParam("fileMetadataId") @NotNull long fileMetadataId);

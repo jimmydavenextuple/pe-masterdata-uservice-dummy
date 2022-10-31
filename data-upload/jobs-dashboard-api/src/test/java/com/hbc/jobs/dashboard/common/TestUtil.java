@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import org.springframework.data.domain.Page;
@@ -444,5 +445,45 @@ public class TestUtil {
     processingLeadTimesRaw.setProcessingTime(String.valueOf("PROCESSING_TIME"));
 
     return processingLeadTimesRaw;
+  }
+
+  public JobEntity createJobEntity(JobTypeEnum jobTypeEnum, int totalRecords) {
+    return JobMapper.INSTANCE.toJobEntity(createJob(jobTypeEnum, totalRecords));
+  }
+
+  public JobDto createJob(JobTypeEnum jobTypeEnum, int totalRecords) {
+    JobDto job = new JobDto();
+    job.setJobId(UUID.randomUUID().toString());
+    job.setTotalRecords(totalRecords);
+    job.setJobType(jobTypeEnum);
+    job.setProcessedRecords(0);
+    job.setFailureCount(0);
+    job.setSuccessCount(0);
+    job.setStatus(JobStatusEnum.SUBMITTED);
+    job.setOrgId(ORG_ID);
+    job.setFile(new byte[] {1, 2, 3});
+    AuditLog auditLog = new AuditLog();
+    auditLog.setStatus(JobStatusEnum.SUBMITTED);
+    auditLog.setTimeStamp(new Date());
+    job.setAuditLog(Collections.singletonList(auditLog));
+    return job;
+  }
+
+  public JobResponse createJobResponse(JobTypeEnum jobTypeEnum, int totalRecords) {
+    JobResponse job = new JobResponse();
+    job.setJobId(UUID.randomUUID().toString());
+    job.setTotalRecords(totalRecords);
+    job.setJobType(jobTypeEnum);
+    job.setProcessedRecords(0);
+    job.setFailureCount(0);
+    job.setSuccessCount(0);
+    job.setStatus(JobStatusEnum.SUBMITTED);
+    job.setOrgId(ORG_ID);
+
+    AuditLog auditLog = new AuditLog();
+    auditLog.setStatus(JobStatusEnum.SUBMITTED);
+    auditLog.setTimeStamp(new Date());
+    job.setAuditLog(Collections.singletonList(auditLog));
+    return job;
   }
 }

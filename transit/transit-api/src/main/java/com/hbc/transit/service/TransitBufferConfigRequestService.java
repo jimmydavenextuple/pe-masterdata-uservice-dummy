@@ -239,7 +239,7 @@ public class TransitBufferConfigRequestService {
 
     try {
       return jobsDashboardClient
-          .processJobOffline(orgId, JobTypeEnum.TRANSIT_BUFFER_REQUEST, id)
+          .processJobOfflineWithFileMetaDataId(orgId, JobTypeEnum.TRANSIT_BUFFER_REQUEST, id)
           .getPayload();
     } catch (FeignException e) {
       logger.error("Feign exception while submitting job", e);
