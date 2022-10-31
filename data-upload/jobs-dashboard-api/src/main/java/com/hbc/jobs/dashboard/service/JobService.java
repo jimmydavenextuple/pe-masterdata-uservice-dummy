@@ -332,13 +332,13 @@ public class JobService {
             var filePath = fileUrlList[1];
             long fileDownloadTime = System.currentTimeMillis();
             var fileResponse = fileService.getFile(bucketName, filePath);
-            if (logger.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
               logger.debug(
                   "File download task took {} milliseconds for jobId: {}",
                   System.currentTimeMillis() - fileDownloadTime,
                   jobId);
+              inputStream = fileResponse.getInputStream();
             }
-            inputStream = fileResponse.getInputStream();
           }
         } else if (jobDto.getFile().length != 0) {
           inputStream = new ByteArrayInputStream(jobDto.getFile());
@@ -365,12 +365,10 @@ public class JobService {
     long fileContentsProcessingTime = System.currentTimeMillis();
     uploadRequestList.addAll(
         processFileContents.updateRequestObjectsList(jobDto.getJobType(), inputStream));
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "File contents processing task took {} milliseconds for jobId: {}",
-          System.currentTimeMillis() - fileContentsProcessingTime,
-          jobDto.getJobId());
-    }
+    logger.debug(
+        "File contents processing task took {} milliseconds for jobId: {}",
+        System.currentTimeMillis() - fileContentsProcessingTime,
+        jobDto.getJobId());
 
     jobDto =
         INSTANCE.toJob(
@@ -396,18 +394,14 @@ public class JobService {
                   RecordDataTypeEnum.JSON,
                   authToken,
                   expiryTs);
-              if (logger.isDebugEnabled()) {
-                logger.debug(
-                    "Kafka publish per record task took {} milliseconds for recordNumber: {}",
-                    System.currentTimeMillis() - kafkaPublishTimePerRecord,
-                    recordNumber);
-              }
+              logger.debug(
+                  "Kafka publish per record task took {} milliseconds for recordNumber: {}",
+                  System.currentTimeMillis() - kafkaPublishTimePerRecord,
+                  recordNumber);
             });
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "Total kafka publish for all records task took {} milliseconds",
-          System.currentTimeMillis() - totalKafkaPublishTime);
-    }
+    logger.debug(
+        "Total kafka publish for all records task took {} milliseconds",
+        System.currentTimeMillis() - totalKafkaPublishTime);
 
     return jobResponse;
   }
