@@ -64,11 +64,11 @@ public class JobRecordEntity extends BaseEntity {
   private ApiStatusEnum status;
 
   @Column(name = "request_body")
-  @Length(max = 500)
+  @Length(max = 10000)
   private String requestBody;
 
   @Column(name = "response_body")
-  @Length(max = 500)
+  @Length(max = 10000)
   private String responseBody;
 
   @Column(name = "error_message")
