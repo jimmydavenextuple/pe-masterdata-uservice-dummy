@@ -1,7 +1,9 @@
 package com.hbc.transit.domain.outbound;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import com.hbc.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
 import java.io.Serializable;
 import java.util.Date;
@@ -26,8 +28,10 @@ public class TransitBufferConfigResponse implements Serializable {
 
   private Double bufferDays;
 
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", lenient = OptBoolean.FALSE)
   private Date startDate;
 
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", lenient = OptBoolean.FALSE)
   private Date endDate;
 
   private TransitBufferConfigRequestStatusEnum status;
