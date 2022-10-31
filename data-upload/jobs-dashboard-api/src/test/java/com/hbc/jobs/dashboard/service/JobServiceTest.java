@@ -49,6 +49,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -82,6 +83,8 @@ class JobServiceTest {
   @Mock private ProcessFileContents processFileContents;
 
   @Captor ArgumentCaptor<List<Object>> objectListCaptor;
+
+  @Mock Logger logger;
 
   @BeforeEach
   public void init() {
@@ -348,6 +351,7 @@ class JobServiceTest {
     @Test
     void processJobJsonOfflineSuccess()
         throws JobException, JobDomainException, IOException, CsvException {
+      when(logger.isDebugEnabled()).thenReturn(Boolean.TRUE);
       TransitDataUpload transitDataUpload = testUtil.getTransitDataUpload();
       JobResponse jobResponse =
           testUtil.createJobResponse(
@@ -427,6 +431,7 @@ class JobServiceTest {
     @Test
     void processTransitBufferRequestJsonOfflineSuccess()
         throws JobException, JobDomainException, CommonServiceException, IOException, CsvException {
+      when(logger.isDebugEnabled()).thenReturn(Boolean.FALSE);
       TransitBufferUpload transitBufferUpload = testUtil.getTransitBufferUpload("2", "C");
       JobResponse jobResponse =
           testUtil.createJobResponse(
