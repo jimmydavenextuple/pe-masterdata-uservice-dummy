@@ -31,7 +31,7 @@ class NodeCarrierProcessingRequestImplTest {
 
   @Test
   void submitJobTest() throws JobSubmissionException {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID, JobTypeEnum.UPLOAD_NODE_CARRIER, TestUtil.FILE_METADATA_ID))
         .thenReturn(BaseResponse.builder().payload(testUtil.getJobResponse()).build());
     String result = carrierProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID);
@@ -40,7 +40,7 @@ class NodeCarrierProcessingRequestImplTest {
 
   @Test
   void submitJobFeignExceptionTest() {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID, JobTypeEnum.UPLOAD_NODE_CARRIER, TestUtil.FILE_METADATA_ID))
         .thenThrow(FeignException.class);
     Assertions.assertThrows(
@@ -50,7 +50,7 @@ class NodeCarrierProcessingRequestImplTest {
 
   @Test
   void submitJobExceptionTest() {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID, JobTypeEnum.UPLOAD_NODE_CARRIER, TestUtil.FILE_METADATA_ID))
         .thenThrow(ArithmeticException.class);
     Assertions.assertThrows(

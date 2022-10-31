@@ -155,7 +155,7 @@ class JobDashboardControllerTest {
 
     when(jobService.processJobJsonOffline(any(), any(), any())).thenReturn(new JobResponse());
     ResponseEntity<BaseResponse<JobResponse>> responseEntity =
-        jobDashboardController.processJobJsonOffline(
+        jobDashboardController.processJobJsonByScheduler(
             TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, TestUtil.JOB_ID);
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Status code");
 
@@ -167,7 +167,7 @@ class JobDashboardControllerTest {
 
     when(jobService.processJobJsonOffline(any(), any(), any())).thenReturn(new JobResponse());
     ResponseEntity<BaseResponse<JobResponse>> responseEntity =
-        jobDashboardController.processJobJsonOffline(
+        jobDashboardController.processJobJsonByScheduler(
             TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, "");
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Status code");
 
@@ -186,7 +186,7 @@ class JobDashboardControllerTest {
         assertThrows(
             JobException.class,
             () ->
-                jobDashboardController.processJobJsonOffline(
+                jobDashboardController.processJobJsonByScheduler(
                     TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, ""));
 
     Assertions.assertEquals(
@@ -211,7 +211,7 @@ class JobDashboardControllerTest {
         assertThrows(
             JobException.class,
             () ->
-                jobDashboardController.processJobJsonOffline(
+                jobDashboardController.processJobJsonByScheduler(
                     TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, ""));
 
     Assertions.assertEquals(
@@ -380,7 +380,7 @@ class JobDashboardControllerTest {
     when(jobService.processJobOffline(anyString(), any(), anyLong())).thenReturn(job);
 
     ResponseEntity<BaseResponse<JobResponse>> response =
-        jobDashboardController.processJobOffline(
+        jobDashboardController.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID, JobTypeEnum.TRANSIT_BUFFER_REQUEST, 23456L);
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());

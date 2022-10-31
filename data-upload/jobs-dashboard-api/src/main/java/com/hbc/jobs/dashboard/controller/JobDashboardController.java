@@ -84,7 +84,7 @@ public class JobDashboardController {
   }
 
   @PutMapping(path = "/org/{orgId}/jobs/{jobId}", produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<BaseResponse<JobResponse>> processJobJsonOffline(
+  public ResponseEntity<BaseResponse<JobResponse>> processJobJsonByScheduler(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestParam @NotNull @Valid JobTypeEnum jobType,
       @PathVariable String jobId)
@@ -203,7 +203,7 @@ public class JobDashboardController {
   }
 
   @PostMapping(path = "/v1/org/{orgId}/jobs", produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<BaseResponse<JobResponse>> processJobOffline(
+  public ResponseEntity<BaseResponse<JobResponse>> processJobOfflineWithFileMetaDataId(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestParam @NotNull JobTypeEnum jobType,
       @RequestParam("fileMetadataId") @NotNull long fileMetadataId)

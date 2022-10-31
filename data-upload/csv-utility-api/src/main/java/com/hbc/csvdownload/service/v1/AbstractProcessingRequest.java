@@ -21,7 +21,9 @@ public abstract class AbstractProcessingRequest {
   public JobResponse submitJob(String orgId, JobTypeEnum jobType, Long fileMetadataId)
       throws JobSubmissionException {
     try {
-      return jobsDashboardClient.processJobOffline(orgId, jobType, fileMetadataId).getPayload();
+      return jobsDashboardClient
+          .processJobOfflineWithFileMetaDataId(orgId, jobType, fileMetadataId)
+          .getPayload();
     } catch (FeignException e) {
       logger.error("Feign exception while submitting job", e);
       var errorResponse = ExceptionUtils.parseFeignException(e);

@@ -34,7 +34,7 @@ class NodeProcessingRequestImplTest {
 
   @Test
   void submitJobTest() throws JobSubmissionException {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID, JobTypeEnum.UPLOAD_NODES, TestUtil.FILE_METADATA_ID))
         .thenReturn(BaseResponse.builder().payload(testUtil.getJobResponse()).build());
     String result = nodeProcessingRequest.submitJob(TestUtil.ORG_ID, TestUtil.FILE_METADATA_ID);
@@ -43,7 +43,7 @@ class NodeProcessingRequestImplTest {
 
   @Test
   void submitJobFeignExceptionTest() {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID, JobTypeEnum.UPLOAD_NODES, TestUtil.FILE_METADATA_ID))
         .thenThrow(FeignException.class);
     Assertions.assertThrows(
@@ -53,7 +53,7 @@ class NodeProcessingRequestImplTest {
 
   @Test
   void submitJobExceptionTest() {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID, JobTypeEnum.UPLOAD_NODES, TestUtil.FILE_METADATA_ID))
         .thenThrow(ArithmeticException.class);
     Assertions.assertThrows(

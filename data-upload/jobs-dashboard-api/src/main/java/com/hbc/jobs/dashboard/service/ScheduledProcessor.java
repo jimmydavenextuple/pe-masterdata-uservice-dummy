@@ -1,4 +1,4 @@
-package com.hbc.jobs.consumers.service;
+package com.hbc.jobs.dashboard.service;
 
 import com.hbc.common.context.CurrentThreadContext;
 import com.hbc.common.context.Logger;
@@ -11,13 +11,14 @@ import com.hbc.jobs.consumers.exception.PublishJobEventException;
 import com.hbc.jobs.consumers.feign.AuthTokenAPI;
 import com.hbc.jobs.consumers.feign.AuthTokenRequest;
 import com.hbc.jobs.consumers.feign.AuthTokenResponse;
-import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
+import com.hbc.jobs.consumers.service.PublishJobEventService;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
 import feign.FeignException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -34,11 +35,11 @@ public class ScheduledProcessor {
 
   private final JobDomain jobDomain;
 
-  private final JobsDashboardClient jobsDashboardClient;
-
   private final AuthTokenAPI authTokenAPI;
 
   private final PublishJobEventService publishJobEventService;
+
+  private final JobService jobService;
 
   @Value("${auth-token.grant-type:client_credentials}")
   private String grantType;
@@ -70,7 +71,8 @@ public class ScheduledProcessor {
     }
 
     try {
-      jobsDashboardClient.processJobsJsonOffline(ORG_ID, jobDto.getJobType(), jobDto.getJobId());
+      jobService.processJobJsonOffline(
+          ORG_ID, jobDto.getJobType(), Optional.ofNullable(jobDto.getJobId()));
     } catch (FeignException e) {
       logger.error("Feign exception while processing the job", e);
       var errorResponse = ExceptionUtils.parseFeignException(e);

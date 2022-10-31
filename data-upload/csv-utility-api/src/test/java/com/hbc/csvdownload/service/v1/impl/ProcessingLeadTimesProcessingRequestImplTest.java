@@ -33,7 +33,7 @@ class ProcessingLeadTimesProcessingRequestImplTest {
 
   @Test
   void submitJobTest() throws JobSubmissionException {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, TestUtil.FILE_METADATA_ID))
         .thenReturn(BaseResponse.builder().payload(testUtil.getJobResponse()).build());
     String result =
@@ -43,7 +43,7 @@ class ProcessingLeadTimesProcessingRequestImplTest {
 
   @Test
   void submitJobFeignExceptionTest() {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, TestUtil.FILE_METADATA_ID))
         .thenThrow(FeignException.class);
     Assertions.assertThrows(
@@ -55,7 +55,7 @@ class ProcessingLeadTimesProcessingRequestImplTest {
 
   @Test
   void submitJobExceptionTest() {
-    when(jobsDashboardClient.processJobOffline(
+    when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(
             TestUtil.ORG_ID, JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, TestUtil.FILE_METADATA_ID))
         .thenThrow(ArithmeticException.class);
     Assertions.assertThrows(
