@@ -25,6 +25,7 @@ import com.hbc.jobs.framework.common.clients.FileMetaDataClient;
 import com.hbc.jobs.framework.common.clients.JobsConsumerClient;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.FileMetaDataResponse;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
@@ -512,6 +513,97 @@ class JobServiceTest {
 
       Assertions.assertEquals(1, jobDto.getTotalRecords(), "Job Id");
       verify(kafkaTemplate, times(6)).send(any(Message.class));
+    }
+
+    @Test
+    void processTransitBufferRequestJsonOfflineWithEmptyPayloadFromFileMetaData()
+        throws JobException, JobDomainException, CommonServiceException, IOException, CsvException {
+      TransitBufferUpload transitBufferUpload = testUtil.getTransitBufferUpload("2", "C");
+      JobResponse jobResponse =
+          testUtil.createJobResponse(
+              "jobId1",
+              TestUtil.ORG_ID,
+              JobStatusEnum.SUBMITTED,
+              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
+              JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+      jobResponse.setFailureCount(0);
+
+      JobDto job =
+          testUtil.createJob(
+              "jobId1",
+              TestUtil.ORG_ID,
+              JobStatusEnum.SUBMITTED,
+              Collections.singletonList(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
+              JobTypeEnum.TRANSIT_BUFFER_REQUEST,
+              23456L);
+      job.setFile(TestUtil.CSV_CONTENTS_TRANSIT_BUFFER_REQUEST.getBytes());
+      job.setTotalRecords(3);
+      job.setRemainingRecords(3);
+      job.setFailureCount(0);
+
+      when(jobsConsumerClient.getJob(any(), any()))
+          .thenReturn(
+              BaseResponse.builder()
+                  .message("Retrieved job" + " id " + " " + "successfully!!")
+                  .payload(job)
+                  .build());
+
+      when(jobsConsumerClient.createJob(any()))
+          .thenReturn(
+              BaseResponse.builder()
+                  .message("Retrieved job" + " id " + " " + "successfully!!")
+                  .payload(jobResponse)
+                  .build());
+
+      jobResponse.setTotalRecords(5);
+      jobResponse.setRemainingRecords(5);
+      when(jobsConsumerClient.updateJob(any()))
+          .thenReturn(BaseResponse.builder().payload(jobResponse).build());
+
+      JobEntity jobEntity =
+          testUtil.createJobEntity(
+              "jobId1",
+              TestUtil.ORG_ID,
+              JobStatusEnum.PROCESSED,
+              List.of(testUtil.createAuditLog(JobStatusEnum.SUBMITTED)),
+              JobTypeEnum.TRANSIT_BUFFER_REQUEST,
+              23456L);
+      when(jobDomain.getAndUpdateJobStatusByOrgIdAndStatus(any(), any(), any()))
+          .thenReturn(jobEntity);
+      ListenableFuture<SendResult<String, Object>> future = mock(ListenableFuture.class);
+
+      when(processFileContentsMapperFactory.getProcessFileContentsMapper(any()))
+          .thenReturn(processFileContents);
+      doReturn(
+              List.of(
+                  transitBufferUpload,
+                  transitBufferUpload,
+                  transitBufferUpload,
+                  transitBufferUpload,
+                  transitBufferUpload,
+                  transitBufferUpload))
+          .when(processFileContents)
+          .updateRequestObjectsList(any(), any());
+
+      doNothing().when(future).addCallback(any());
+      when(kafkaTemplate.send(any(Message.class))).thenReturn(future);
+
+      when(fileMetaDataClient.findFileMetadataById(any()))
+          .thenReturn(BaseResponse.builder().payload(new FileMetaDataResponse()).build());
+
+      JobException exception =
+          assertThrows(
+              JobException.class,
+              () ->
+                  jobService.processJobJsonOffline(
+                      TestUtil.ORG_ID,
+                      JobTypeEnum.TRANSIT_BUFFER_REQUEST,
+                      Optional.of(TestUtil.JOB_ID)));
+
+      Assertions.assertEquals(
+          "Exception while processing job json request",
+          exception.getMessage(),
+          "Exception message");
     }
 
     @Test

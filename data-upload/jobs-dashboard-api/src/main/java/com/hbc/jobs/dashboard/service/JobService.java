@@ -161,7 +161,7 @@ public class JobService {
       kafkaTemplate
           .send(message)
           .addCallback(
-              e -> log.error("JobService::publishToKafka():success to publish record dto", e),
+              e -> log.info("JobService::publishToKafka():success to publish record dto", e),
               e -> log.error("JobService::publishToKafka():failed to publish record dto", e));
       log.debug("Publish to kafka method ends");
     } catch (Exception e) {
