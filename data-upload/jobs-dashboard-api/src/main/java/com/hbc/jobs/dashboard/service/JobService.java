@@ -44,6 +44,8 @@ import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -66,6 +68,7 @@ public class JobService {
   private final AuthTokenService authTokenService;
   private final ProcessFileContentsMapperFactory processFileContentsMapperFactory;
   private static final JobMapper INSTANCE = Mappers.getMapper(JobMapper.class);
+  private static final Logger logger = LoggerFactory.getLogger(JobService.class);
 
   @Value("${jobs-framework.kafka-publish.topic-name}")
   String dashboardProducerName;
@@ -329,8 +332,8 @@ public class JobService {
             var filePath = fileUrlList[1];
             long fileDownloadTime = System.currentTimeMillis();
             var fileResponse = fileService.getFile(bucketName, filePath);
-            if (log.isDebugEnabled()) {
-              log.debug(
+            if (logger.isDebugEnabled()) {
+              logger.debug(
                   "File download task took {} milliseconds for jobId: {}",
                   System.currentTimeMillis() - fileDownloadTime,
                   jobId);
@@ -362,8 +365,8 @@ public class JobService {
     long fileContentsProcessingTime = System.currentTimeMillis();
     uploadRequestList.addAll(
         processFileContents.updateRequestObjectsList(jobDto.getJobType(), inputStream));
-    if (log.isDebugEnabled()) {
-      log.debug(
+    if (logger.isDebugEnabled()) {
+      logger.debug(
           "File contents processing task took {} milliseconds for jobId: {}",
           System.currentTimeMillis() - fileContentsProcessingTime,
           jobDto.getJobId());
@@ -393,15 +396,15 @@ public class JobService {
                   RecordDataTypeEnum.JSON,
                   authToken,
                   expiryTs);
-              if (log.isDebugEnabled()) {
-                log.debug(
+              if (logger.isDebugEnabled()) {
+                logger.debug(
                     "Kafka publish per record task took {} milliseconds for recordNumber: {}",
                     System.currentTimeMillis() - kafkaPublishTimePerRecord,
                     recordNumber);
               }
             });
-    if (log.isDebugEnabled()) {
-      log.debug(
+    if (logger.isDebugEnabled()) {
+      logger.debug(
           "Total kafka publish for all records task took {} milliseconds",
           System.currentTimeMillis() - totalKafkaPublishTime);
     }
