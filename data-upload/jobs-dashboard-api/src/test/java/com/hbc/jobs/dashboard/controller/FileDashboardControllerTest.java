@@ -1,5 +1,6 @@
 package com.hbc.jobs.dashboard.controller;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -32,7 +33,7 @@ class FileDashboardControllerTest {
   void getPreSignedUrlTest() throws CommonServiceException {
     when(preSignedUrlInterface.getPreSignedURL(any(), any()))
         .thenReturn(PreSignedUrlResponse.builder().build());
-    ResponseEntity<BaseResponse<String>> response =
+    ResponseEntity<BaseResponse<PreSignedUrlResponse>> response =
         fileDashboardController.getPreSignedUrl("test.csv", "transit");
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Status code");
     verify(preSignedUrlInterface, times(1)).getPreSignedURL(any(), any());
@@ -47,5 +48,25 @@ class FileDashboardControllerTest {
             Exception.class, () -> fileDashboardController.getPreSignedUrl("test.csv", "transit"));
     Assertions.assertEquals("error", ex.getMessage());
     verify(preSignedUrlInterface, times(1)).getPreSignedURL(any(), any());
+  }
+
+  @Test
+  void downloadFileURLTest() throws CommonServiceException {
+    when(preSignedUrlInterface.downloadFileURLById(anyLong()))
+        .thenReturn(PreSignedUrlResponse.builder().signedURL("").filePath("nodes/xyz.csv").build());
+    ResponseEntity<BaseResponse<PreSignedUrlResponse>> response =
+        fileDashboardController.downloadFileURL(1L);
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Status code");
+    verify(preSignedUrlInterface, times(1)).downloadFileURLById(anyLong());
+  }
+
+  @Test
+  void downloadFileURLExceptionTest() throws CommonServiceException {
+    when(preSignedUrlInterface.downloadFileURLById(anyLong()))
+        .thenThrow(new RuntimeException("error"));
+    Exception ex =
+        Assertions.assertThrows(Exception.class, () -> fileDashboardController.downloadFileURL(1L));
+    Assertions.assertEquals("error", ex.getMessage());
+    verify(preSignedUrlInterface, times(1)).downloadFileURLById(anyLong());
   }
 }
