@@ -176,24 +176,14 @@ class NodeCarrierServiceTest {
   }
 
   @Test
-  void createNodeCarrierIsSuccessFalseExceptionTest() {
-    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(testUtil.getBaseResponseOfNode1());
+  void createNodeCarrierExceptionTest() {
+    when(nodeFeign.getNodeDetails(any(), any())).thenThrow(RuntimeException.class);
     NodeCarrierRequest nodeCarrierRequest1 = testUtil.getNodeCarrierRequest5();
     Exception exception =
         Assertions.assertThrows(
             CommonServiceException.class,
             () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest1));
     Assertions.assertEquals("Invalid nodeId", exception.getMessage());
-  }
-
-  @Test
-  void createNodeCarrierExceptionTest() {
-    NodeCarrierRequest nodeCarrierRequest1 = testUtil.getNodeCarrierRequest5();
-    Exception exception =
-        Assertions.assertThrows(
-            CommonServiceException.class,
-            () -> nodeCarrierService.createNodeCarrier(nodeCarrierRequest1));
-    Assertions.assertEquals("NodeId and OrgId combination does not exists", exception.getMessage());
   }
 
   @Test
@@ -429,11 +419,40 @@ class NodeCarrierServiceTest {
 
   @Test
   @DisplayName("No Node Details found")
-  void deleteNodeCarrierTestException() throws NodeCarrierDomainException {
-    BaseResponse<NodeResponse> baseResponse = testUtil.getBaseResponseOfNode();
-    baseResponse.setSuccess(false);
+  void deleteNodeCarrierTestException1() throws NodeCarrierDomainException {
+    when(nodeFeign.getNodeDetails(any(), any())).thenThrow(RuntimeException.class);
 
-    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(baseResponse);
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
+            nodeCarrierService.deleteNodeCarrier(
+                TestUtil.NODE_ID, TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, "EXPRESS"));
+
+    verify(nodeCarrierDomain, times(0)).findNodeCarrierDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(0)).deleteNodeCarrierEntity(any());
+  }
+
+  @Test
+  @DisplayName("No Node Details found")
+  void deleteNodeCarrierTestExceptionNullNodeInfo() throws NodeCarrierDomainException {
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(null);
+
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
+            nodeCarrierService.deleteNodeCarrier(
+                TestUtil.NODE_ID, TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, "EXPRESS"));
+
+    verify(nodeCarrierDomain, times(0)).findNodeCarrierDetails(any(), any(), any(), any());
+    verify(nodeCarrierDomain, times(0)).deleteNodeCarrierEntity(any());
+  }
+
+  @Test
+  @DisplayName("No Node Details found")
+  void deleteNodeCarrierTestExceptionEmptyNodeInfo() throws NodeCarrierDomainException {
+    BaseResponse<NodeResponse> response = testUtil.getBaseResponseOfNode1();
+    response.setPayload(null);
+    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(response);
 
     Assertions.assertThrows(
         CommonServiceException.class,
@@ -660,10 +679,8 @@ class NodeCarrierServiceTest {
   @Test
   @DisplayName("No Node Details found")
   void deleteNodeCarrierTestException4() throws NodeCarrierDomainException {
-    BaseResponse<NodeResponse> baseResponse = testUtil.getBaseResponseOfNode();
-    baseResponse.setPayload(null);
 
-    when(nodeFeign.getNodeDetails(any(), any())).thenReturn(baseResponse);
+    when(nodeFeign.getNodeDetails(any(), any())).thenThrow(RuntimeException.class);
 
     Assertions.assertThrows(
         CommonServiceException.class,

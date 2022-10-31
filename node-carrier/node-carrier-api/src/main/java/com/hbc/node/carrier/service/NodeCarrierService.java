@@ -71,46 +71,33 @@ public class NodeCarrierService {
   public NodeCarrierResponse createNodeCarrier(NodeCarrierRequest nodeCarrierRequest)
       throws NodeCarrierDomainException, InvalidDataException, CommonServiceException {
     validateBufferHours(nodeCarrierRequest.getBufferHours());
-    try {
-      BaseResponse<NodeResponse> baseResponse =
-          nodeFeign.getNodeDetails(nodeCarrierRequest.getNodeId(), nodeCarrierRequest.getOrgId());
-      if (!baseResponse.isSuccess()) {
-        commonServiceExceptionMethod(
-            "Invalid nodeId",
-            nodeCarrierRequest.getNodeId(),
-            nodeCarrierRequest.getOrgId(),
-            nodeCarrierRequest.getCarrierServiceId(),
-            nodeCarrierRequest.getServiceOption());
-      }
-      if (!ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId())
-          && Boolean.FALSE.equals(
-              validateCarrierDetails(
-                  nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
-        commonServiceExceptionMethod(
-            INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
-            nodeCarrierRequest.getNodeId(),
-            nodeCarrierRequest.getOrgId(),
-            nodeCarrierRequest.getCarrierServiceId(),
-            nodeCarrierRequest.getServiceOption());
-      }
-      if (!serviceOptions.contains(nodeCarrierRequest.getServiceOption())) {
-        commonServiceExceptionMethod(
-            "Invalid serviceOption",
-            nodeCarrierRequest.getNodeId(),
-            nodeCarrierRequest.getOrgId(),
-            nodeCarrierRequest.getCarrierServiceId(),
-            nodeCarrierRequest.getServiceOption());
-      }
-    } catch (RuntimeException e) {
-      var errorMessage = "NodeId and OrgId combination does not exists";
-      logger.error(errorMessage, e);
+
+    getNodeDetails(
+        nodeCarrierRequest.getNodeId(),
+        nodeCarrierRequest.getOrgId(),
+        nodeCarrierRequest.getCarrierServiceId(),
+        nodeCarrierRequest.getServiceOption());
+
+    if (!ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId())
+        && Boolean.FALSE.equals(
+            validateCarrierDetails(
+                nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
       commonServiceExceptionMethod(
-          errorMessage,
+          INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
           nodeCarrierRequest.getNodeId(),
           nodeCarrierRequest.getOrgId(),
           nodeCarrierRequest.getCarrierServiceId(),
           nodeCarrierRequest.getServiceOption());
     }
+    if (!serviceOptions.contains(nodeCarrierRequest.getServiceOption())) {
+      commonServiceExceptionMethod(
+          "Invalid serviceOption",
+          nodeCarrierRequest.getNodeId(),
+          nodeCarrierRequest.getOrgId(),
+          nodeCarrierRequest.getCarrierServiceId(),
+          nodeCarrierRequest.getServiceOption());
+    }
+
     if (ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId())) {
       validateProcessingLeadTime(nodeCarrierRequest.getProcessingTime());
     } else {
@@ -256,17 +243,13 @@ public class NodeCarrierService {
   public NodeCarrierResponse deleteNodeCarrier(
       String nodeId, String orgId, String carrierServiceId, String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
+    NodeResponse baseResponse = getNodeDetails(nodeId, orgId, carrierServiceId, serviceOption);
 
-    BaseResponse<NodeResponse> baseResponse = nodeFeign.getNodeDetails(nodeId, orgId);
-    if (!baseResponse.isSuccess() || Objects.isNull(baseResponse.getPayload())) {
-      commonServiceExceptionMethod(
-          "Invalid nodeId", nodeId, orgId, carrierServiceId, serviceOption);
-    }
     if (!serviceOptions.contains(serviceOption)) {
       commonServiceExceptionMethod(
           "Invalid serviceOption", nodeId, orgId, carrierServiceId, serviceOption);
     }
-    if (!orgId.equals(baseResponse.getPayload().getOrgId())) {
+    if (!orgId.equals(baseResponse.getOrgId())) {
       commonServiceExceptionMethod("Invalid orgId", nodeId, orgId, carrierServiceId, serviceOption);
     }
 
@@ -290,6 +273,30 @@ public class NodeCarrierService {
     var nodeCarrierResponse = INSTANCE.toNodeCarrierDto(nodeCarrierEntity.get());
     nodeCarrierDomain.deleteNodeCarrierEntity(nodeCarrierEntity.get());
     return nodeCarrierResponse;
+  }
+
+  private NodeResponse getNodeDetails(
+      String nodeId, String orgId, String carrierServiceId, String serviceOption)
+      throws CommonServiceException {
+    BaseResponse<NodeResponse> response = null;
+
+    try {
+      response = nodeFeign.getNodeDetails(nodeId, orgId);
+    } catch (Exception e) {
+      commonServiceExceptionMethod(
+          "Invalid nodeId", nodeId, orgId, carrierServiceId, serviceOption);
+    }
+
+    if (response != null && !ObjectUtils.isEmpty(response.getPayload())) {
+      return response.getPayload();
+    } else {
+
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      throw new CommonServiceException(
+          "Node and OrgId combination doesn't exist", HttpStatus.NOT_FOUND, 0x1773, errorMap);
+    }
   }
 
   @ReaderDS
