@@ -15,8 +15,6 @@ import com.hbc.jobs.consumers.service.PublishJobEventService;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
-import com.hbc.jobs.framework.common.utils.ExceptionUtils;
-import feign.FeignException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -73,13 +71,6 @@ public class ScheduledProcessor {
     try {
       jobService.processJobJsonOffline(
           ORG_ID, jobDto.getJobType(), Optional.ofNullable(jobDto.getJobId()));
-    } catch (FeignException e) {
-      logger.error("Feign exception while processing the job", e);
-      var errorResponse = ExceptionUtils.parseFeignException(e);
-      jobDto.setStatus(JobStatusEnum.FAILED);
-      jobDto.setErrorMessage(errorResponse.getMessage());
-      jobDomain.save(INSTANCE.toJobEntity(jobDto));
-      publishJobFailureEvent(jobDto);
     } catch (Exception e) {
       logger.error("Error while processing csv data for job: {}", jobDto.getJobId(), e);
       jobDto.setStatus(JobStatusEnum.FAILED);
