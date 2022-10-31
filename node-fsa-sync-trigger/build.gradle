@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group 'com.hbc'
+version '1.2.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    implementation(project(":common-util"))
+    implementation(project(":node:node-api-domain"))
+    implementation(project(":node-carrier:node-carrier-api-domain"))
+    implementation(project(":transit:transit-api-domain"))
+}
+
+test {
+    useJUnitPlatform()
+}
