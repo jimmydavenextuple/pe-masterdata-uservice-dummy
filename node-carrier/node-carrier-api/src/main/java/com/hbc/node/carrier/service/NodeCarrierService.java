@@ -162,7 +162,8 @@ public class NodeCarrierService {
     var regex = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
 
     if (ObjectUtils.isEmpty(lastPickupTime)) {
-      throw new InvalidDataException("LastPickupTime cannot be empty", lastPickupTime, null);
+      throw new InvalidDataException(
+          "LastPickupTime cannot be null or empty", lastPickupTime, null);
     }
     if (!lastPickupTime.matches(regex)) {
       throw new InvalidDataException("LastPickupTime is invalid", lastPickupTime, null);
