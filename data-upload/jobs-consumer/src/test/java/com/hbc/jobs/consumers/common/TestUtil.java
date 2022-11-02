@@ -725,4 +725,178 @@ public class TestUtil {
         .nodeId(NODE_ID)
         .build();
   }
+
+  public Page<RecordStatusDto> createPageRecordStatusDtoDto(
+      int totalPage, List<RecordStatusDto> jobDtos, int totalElements) {
+
+    return (Page<RecordStatusDto>)
+        new Page() {
+          @Override
+          public int getTotalPages() {
+            return totalPage;
+          }
+
+          @Override
+          public long getTotalElements() {
+            return totalElements;
+          }
+
+          @Override
+          public Page map(Function converter) {
+            return null;
+          }
+
+          @Override
+          public int getNumber() {
+            return 0;
+          }
+
+          @Override
+          public int getSize() {
+            return 0;
+          }
+
+          @Override
+          public int getNumberOfElements() {
+            return 0;
+          }
+
+          @Override
+          public List getContent() {
+            return jobDtos;
+          }
+
+          @Override
+          public boolean hasContent() {
+            return false;
+          }
+
+          @Override
+          public Sort getSort() {
+            return null;
+          }
+
+          @Override
+          public boolean isFirst() {
+            return false;
+          }
+
+          @Override
+          public boolean isLast() {
+            return false;
+          }
+
+          @Override
+          public boolean hasNext() {
+            return false;
+          }
+
+          @Override
+          public boolean hasPrevious() {
+            return false;
+          }
+
+          @Override
+          public Pageable nextPageable() {
+            return null;
+          }
+
+          @Override
+          public Pageable previousPageable() {
+            return null;
+          }
+
+          @Override
+          public Iterator iterator() {
+            return null;
+          }
+        };
+  }
+
+  public Page<JobRecordEntity> createPageRecordEntity(
+      int totalPage, List<JobRecordEntity> jobDtos, int totalElements) {
+
+    return (Page<JobRecordEntity>)
+        new Page() {
+          @Override
+          public int getTotalPages() {
+            return totalPage;
+          }
+
+          @Override
+          public long getTotalElements() {
+            return totalElements;
+          }
+
+          @Override
+          public Page map(Function converter) {
+            return null;
+          }
+
+          @Override
+          public int getNumber() {
+            return 0;
+          }
+
+          @Override
+          public int getSize() {
+            return 0;
+          }
+
+          @Override
+          public int getNumberOfElements() {
+            return 0;
+          }
+
+          @Override
+          public List getContent() {
+            return jobDtos;
+          }
+
+          @Override
+          public boolean hasContent() {
+            return false;
+          }
+
+          @Override
+          public Sort getSort() {
+            return null;
+          }
+
+          @Override
+          public boolean isFirst() {
+            return false;
+          }
+
+          @Override
+          public boolean isLast() {
+            return false;
+          }
+
+          @Override
+          public boolean hasNext() {
+            return false;
+          }
+
+          @Override
+          public boolean hasPrevious() {
+            return false;
+          }
+
+          @Override
+          public Pageable nextPageable() {
+            return null;
+          }
+
+          @Override
+          public Pageable previousPageable() {
+            return null;
+          }
+
+          @Override
+          public Iterator iterator() {
+            return null;
+          }
+        };
+  }
 }

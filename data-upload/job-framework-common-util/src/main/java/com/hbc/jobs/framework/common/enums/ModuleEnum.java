@@ -21,7 +21,8 @@ public enum ModuleEnum {
   TRANSIT_BUFFER("transit-buffer"),
   EDD_COMPUTATION("edd-computation"),
   TRANSIT("transit"),
-  UI("ui");
+  UI("ui"),
+  UI_LOGS("ui-logs");
 
   private final String moduleValue;
 

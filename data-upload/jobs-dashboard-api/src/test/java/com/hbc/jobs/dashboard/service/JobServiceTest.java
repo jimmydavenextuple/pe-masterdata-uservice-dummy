@@ -23,6 +23,7 @@ import com.hbc.jobs.dashboard.common.TestUtil;
 import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.framework.common.clients.FileMetaDataClient;
 import com.hbc.jobs.framework.common.clients.JobsConsumerClient;
+import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.FileMetaDataResponse;
@@ -50,6 +51,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
@@ -517,7 +519,7 @@ class JobServiceTest {
 
     @Test
     void processTransitBufferRequestJsonOfflineWithEmptyPayloadFromFileMetaData()
-        throws JobException, JobDomainException, CommonServiceException, IOException, CsvException {
+        throws JobDomainException, IOException, CsvException {
       TransitBufferUpload transitBufferUpload = testUtil.getTransitBufferUpload("2", "C");
       JobResponse jobResponse =
           testUtil.createJobResponse(
@@ -810,5 +812,70 @@ class JobServiceTest {
     Assertions.assertNotNull(jobResponse);
     Assertions.assertFalse(ObjectUtils.isEmpty(jobResponse.getJobId()));
     verify(jobsConsumerClient, times(1)).createJob(any());
+  }
+
+  @Test
+  void getJobRecordsByFilters() throws JobException {
+    RecordStatusDto recordStatusDto =
+        testUtil.createRecordStatusDto(
+            TestUtil.JOB_ID, JobTypeEnum.UPLOAD_NODE_CARRIER, 3, HttpStatus.OK.value());
+    when(jobsConsumerClient.getJobRecordsByFilters(
+            anyString(), anyString(), any(), anyInt(), anyInt()))
+        .thenReturn(
+            BaseResponse.builder()
+                .payload(
+                    testUtil.createPagePayloadRecordStatusDto(List.of(recordStatusDto), 5, 20, 1))
+                .build());
+
+    PagePayload<RecordStatusDto> payload =
+        jobService.getJobRecordsByFilters(
+            TestUtil.ORG_ID, TestUtil.JOB_ID, Optional.of(ApiStatusEnum.SUCCESS.name()), 1, 15);
+
+    Assertions.assertNotNull(payload);
+    Assertions.assertFalse(CollectionUtils.isEmpty(payload.getData()));
+  }
+
+  @Test
+  void getJobRecordsByFiltersException() {
+    when(jobsConsumerClient.getJobRecordsByFilters(
+            anyString(), anyString(), any(), anyInt(), anyInt()))
+        .thenThrow(new RuntimeException("Error while fetching job records"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            JobException.class,
+            () ->
+                jobService.getJobRecordsByFilters(
+                    TestUtil.ORG_ID,
+                    TestUtil.JOB_ID,
+                    Optional.of(ApiStatusEnum.SUCCESS.name()),
+                    1,
+                    15));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void getJobRecordsByFiltersFeignException() {
+    when(jobsConsumerClient.getJobRecordsByFilters(
+            anyString(), anyString(), any(), anyInt(), anyInt()))
+        .thenThrow(
+            new FeignException.BadRequest(
+                "",
+                Request.create(HttpMethod.GET, "", new HashMap<>(), null, null, null),
+                "Error while retrieving the job records".getBytes()));
+
+    Exception exception =
+        Assertions.assertThrows(
+            JobException.class,
+            () ->
+                jobService.getJobRecordsByFilters(
+                    TestUtil.ORG_ID,
+                    TestUtil.JOB_ID,
+                    Optional.of(ApiStatusEnum.SUCCESS.name()),
+                    1,
+                    15));
+
+    Assertions.assertNotNull(exception);
   }
 }

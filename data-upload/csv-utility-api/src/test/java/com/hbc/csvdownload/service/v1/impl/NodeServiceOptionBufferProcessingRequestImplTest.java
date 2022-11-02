@@ -1,14 +1,25 @@
 package com.hbc.csvdownload.service.v1.impl;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.csvdownload.util.TestUtil;
+import com.hbc.jobs.framework.common.clients.FileMetaDataClient;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
+import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
+import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.service.FileService;
+import com.hbc.jobs.framework.common.service.PreSignedUrlInterface;
 import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
 import java.io.IOException;
@@ -16,12 +27,18 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import net.logstash.logback.encoder.org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class NodeServiceOptionBufferProcessingRequestImplTest {
@@ -30,7 +47,19 @@ class NodeServiceOptionBufferProcessingRequestImplTest {
 
   @Spy JobsDashboardClient jobsDashboardClient;
 
+  @Mock FileService fileService;
+
+  @Mock PreSignedUrlInterface preSignedUrlInterface;
+
+  @Mock FileMetaDataClient fileMetaDataClient;
+
   @InjectMocks private TestUtil testUtil;
+
+  @BeforeEach
+  public void init() {
+    ReflectionTestUtils.setField(nodeServiceOptionBufferProcessingRequest, "bucketName", "bucket");
+    ReflectionTestUtils.setField(nodeServiceOptionBufferProcessingRequest, "storageType", "s3");
+  }
 
   @Test
   void submitJobTest() throws JobSubmissionException {
@@ -158,10 +187,42 @@ class NodeServiceOptionBufferProcessingRequestImplTest {
         "Node service option buffer data uploaded file has invalid file type.", ex.getMessage());
   }
 
+  @Test
+  void downloadLogsTest() throws IOException, CommonServiceException, JobSubmissionException {
+    JobDto jobDto =
+        testUtil.createJobForDownloadLogs(TestUtil.JOB_ID, JobTypeEnum.UPLOAD_CALENDER, 20);
+    RecordStatusDto recordStatusDto = testUtil.getRecordStatusDtoForNodeServiceOptionBuffer();
+    when(jobsDashboardClient.getJobRecordsByFilters(
+            anyString(), anyString(), anyString(), anyInt(), anyInt()))
+        .thenReturn(
+            BaseResponse.builder()
+                .payload(
+                    testUtil.createPagePayloadRecordStatusDto(List.of(recordStatusDto), 5, 20, 1))
+                .build());
+    doNothing().when(fileService).uploadFile(anyString(), anyString(), any());
+    when(preSignedUrlInterface.downloadFileURLById(1L))
+        .thenReturn(testUtil.getPreSignedUrlResponseForNodeServiceOptionBuffer());
+    when(fileMetaDataClient.createFileMetadata(any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getFileMetaDataResponse()).build());
+
+    PreSignedUrlResponse preSignedUrlResponse =
+        nodeServiceOptionBufferProcessingRequest.downloadErrorLogs(
+            jobDto, Optional.of(ApiStatusEnum.FAILURE.name()));
+
+    Assertions.assertNotNull(preSignedUrlResponse);
+    Assertions.assertFalse(ObjectUtils.isEmpty(preSignedUrlResponse));
+  }
+
   private FileResponse getFileResponseWithInputStream(Path path) throws IOException {
     InputStream inputStream = Files.newInputStream(path);
     FileResponse response = testUtil.getFileResponse();
     response.setInputStream(inputStream);
     return response;
+  }
+
+  @Test
+  void getJobType() {
+    JobTypeEnum jobTypeEnum = nodeServiceOptionBufferProcessingRequest.getJobType();
+    Assertions.assertEquals(JobTypeEnum.UPLOAD_NODE_SERVICE_OPTION_BUFFER, jobTypeEnum);
   }
 }

@@ -722,4 +722,26 @@ class JobConsumerServiceTest {
           "Exception while updating job entity", exception.getMessage(), "Expected Error");
     }
   }
+
+  @Test
+  void getJobResults() throws JobException {
+    RecordStatusDto recordStatusDto =
+        testUtil.createRecordStatus(
+            TestUtil.JOB_ID,
+            TestUtil.ORG_ID,
+            ApiStatusEnum.FAILURE,
+            HttpStatus.BAD_REQUEST,
+            null,
+            JobTypeEnum.UPLOAD_NODE_CARRIER,
+            1);
+    when(jobRecordDomain.fetchJobRecordsByFiltersPaginatedOutput(
+            anyString(), anyString(), any(), anyInt(), anyInt()))
+        .thenReturn(testUtil.createPageRecordStatusDtoDto(5, List.of(recordStatusDto), 20));
+
+    Page<RecordStatusDto> page =
+        jobConsumerService.getJobResults(
+            TestUtil.ORG_ID, TestUtil.JOB_ID, Optional.of(ApiStatusEnum.FAILURE.name()), 1, 15);
+    Assertions.assertNotNull(page);
+    Assertions.assertFalse(CollectionUtils.isEmpty(page.getContent()));
+  }
 }

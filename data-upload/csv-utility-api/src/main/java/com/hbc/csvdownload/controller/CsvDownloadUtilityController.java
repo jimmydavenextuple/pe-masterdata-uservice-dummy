@@ -1,6 +1,7 @@
 package com.hbc.csvdownload.controller;
 
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
 import com.hbc.csvdownload.exception.CarrierServiceException;
@@ -10,6 +11,7 @@ import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
 import com.hbc.csvdownload.service.DownloadTemplateService;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -175,6 +178,24 @@ public class CsvDownloadUtilityController {
     response.setContentLength(csvContent.length());
     response.getOutputStream().write(csvContent.getBytes());
     response.flushBuffer();
+  }
+
+  @GetMapping(path = "/v1/org/{orgId}/jobs/{jobId}/download")
+  public ResponseEntity<BaseResponse<PreSignedUrlResponse>> downloadLogsByFiltersV1(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "jobId can't be empty") @PathVariable String jobId,
+      @RequestParam(required = false) Optional<String> status,
+      HttpServletRequest request,
+      HttpServletResponse httpServletResponse)
+      throws IOException, CommonServiceException {
+    log.debug("Inside download logs by filters");
+    final var file = csvDownloadUtilityService.downloadLogsAsCsvV1(jobId, orgId, status);
+    return ResponseEntity.ok()
+        .body(
+            BaseResponse.builder()
+                .payload(file)
+                .message("Log history URL fetched successfully")
+                .build());
   }
 
   @GetMapping(value = "org/{orgId}/download/node-carrier-service-option")

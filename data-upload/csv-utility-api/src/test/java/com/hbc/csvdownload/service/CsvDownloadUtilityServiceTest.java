@@ -15,8 +15,11 @@ import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
 import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
+import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.csvdownload.service.v1.ProcessingRequestFactory;
+import com.hbc.csvdownload.service.v1.impl.CalendarProcessingRequestImpl;
 import com.hbc.dataupload.common.feign.DataUploadFeign;
 import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
 import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
@@ -54,6 +57,8 @@ class CsvDownloadUtilityServiceTest {
   @Mock private ProcessingTimeBuffersService processingTimeBuffersService;
   @Mock private NodeService nodeService;
   @Mock private NodeCarrierService nodeCarrierService;
+  @Mock private ProcessingRequestFactory processingRequestFactory;
+  @Mock private CalendarProcessingRequestImpl calendarProcessingRequest;
   @InjectMocks private CsvDownloadUtilityService csvDownloadUtilityService;
   @InjectMocks private TestUtil testUtil;
 
@@ -114,6 +119,40 @@ class CsvDownloadUtilityServiceTest {
         csvDownloadUtilityService.downloadLogsAsCsv(
             TestUtil.JOB_ID, TestUtil.ORG_ID, Optional.of(ApiStatusEnum.FAILURE.name()));
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
+
+  @Test
+  void downloadLogsAsCsvForCalendarV1()
+      throws CommonServiceException, JobSubmissionException, IOException {
+    JobDto jobDto = testUtil.getJobDto();
+    jobDto.setJobType(JobTypeEnum.UPLOAD_CALENDER);
+    when(jobsConsumerService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID)).thenReturn(jobDto);
+    when(processingRequestFactory.getModuleByJobType(JobTypeEnum.UPLOAD_CALENDER))
+        .thenReturn(calendarProcessingRequest);
+    when(calendarProcessingRequest.downloadErrorLogs(any(), any()))
+        .thenReturn(testUtil.getPreSignedUrlResponse());
+
+    var csvContent =
+        csvDownloadUtilityService.downloadLogsAsCsvV1(
+            TestUtil.JOB_ID, TestUtil.ORG_ID, Optional.of(ApiStatusEnum.FAILURE.name()));
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
+
+  @Test
+  void downloadLogsAsCsvForCalendarV1Exception()
+      throws CommonServiceException, JobSubmissionException, IOException {
+    JobDto jobDto = testUtil.getJobDto();
+    jobDto.setJobType(JobTypeEnum.UPLOAD_CALENDER);
+    when(jobsConsumerService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID))
+        .thenThrow(new RuntimeException("Error while fetching job"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                csvDownloadUtilityService.downloadLogsAsCsvV1(
+                    TestUtil.JOB_ID, TestUtil.ORG_ID, Optional.of(ApiStatusEnum.FAILURE.name())));
+    Assertions.assertNotNull(exception);
   }
 
   @Test

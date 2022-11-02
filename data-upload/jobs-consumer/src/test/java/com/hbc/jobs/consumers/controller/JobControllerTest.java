@@ -1,6 +1,7 @@
 package com.hbc.jobs.consumers.controller;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.times;
@@ -295,5 +296,62 @@ class JobControllerTest {
         "Exception while retrieving the list of jobs", exception.getMessage(), "Exception message");
 
     Assertions.assertEquals(1, exception.getPageNo().intValue(), "Exception pageNo");
+  }
+
+  @Test
+  void getJobRecordsByFilters() throws JobException {
+    RecordStatusDto recordStatusDto =
+        testUtil.createRecordStatus(
+            TestUtil.JOB_ID,
+            TestUtil.ORG_ID,
+            ApiStatusEnum.FAILURE,
+            HttpStatus.BAD_REQUEST,
+            null,
+            JobTypeEnum.UPLOAD_NODE_CARRIER,
+            1);
+    when(defaultPageProperties.getPageNo()).thenReturn(1);
+    when(defaultPageProperties.getPageSize()).thenReturn(15);
+    when(jobConsumerService.getJobResults(anyString(), anyString(), any(), anyInt(), anyInt()))
+        .thenReturn(testUtil.createPageRecordStatusDtoDto(5, List.of(recordStatusDto), 20));
+
+    ResponseEntity<BaseResponse<PagePayload<RecordStatusDto>>> response =
+        jobsConsumerController.getJobRecordsByFilters(
+            TestUtil.ORG_ID,
+            TestUtil.JOB_ID,
+            Optional.of(ApiStatusEnum.FAILURE.name()),
+            Optional.of(1),
+            Optional.of(15));
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertNotNull(response);
+    Assertions.assertNotNull(response.getBody());
+    Assertions.assertNotNull(response.getBody().getPayload());
+    Assertions.assertFalse(CollectionUtils.isEmpty(response.getBody().getPayload().getData()));
+  }
+
+  @Test
+  void getJobRecordsByFiltersInvalidPageNo() {
+    RecordStatusDto recordStatusDto =
+        testUtil.createRecordStatus(
+            TestUtil.JOB_ID,
+            TestUtil.ORG_ID,
+            ApiStatusEnum.FAILURE,
+            HttpStatus.BAD_REQUEST,
+            null,
+            JobTypeEnum.UPLOAD_NODE_CARRIER,
+            1);
+
+    Exception exception =
+        Assertions.assertThrows(
+            JobException.class,
+            () ->
+                jobsConsumerController.getJobRecordsByFilters(
+                    TestUtil.ORG_ID,
+                    TestUtil.JOB_ID,
+                    Optional.of(ApiStatusEnum.FAILURE.name()),
+                    Optional.of(0),
+                    Optional.of(15)));
+
+    Assertions.assertNotNull(exception);
   }
 }

@@ -1,36 +1,6 @@
 package com.hbc.csvdownload.service;
 
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ACTIVE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_END_DATE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_HOURS;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.BUFFER_START_DATE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_ID;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_NAME;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_SERVICES;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CARRIER_SERVICE_ID;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.CITY;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.COUNTRY;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ERROR_MESSAGE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.INACTIVE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.LATITUDE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.LONGITUDE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_ID;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_TYPE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.NODE_WORKING_CALENDAR;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ORG_ID;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.PICKUP_TIME;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.POSTAL_CODE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.POSTAL_CODE_PREFIX;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.PROCESSING_LEAD_TIME;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.PROVINCE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_NAME;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OPTION;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.SERVICE_OPTIONS;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STATE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STATUS;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.STREET;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.TIMEZONE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.WORKING_CALENDER;
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.*;
 
 import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
@@ -49,11 +19,14 @@ import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.csvdownload.service.v1.ProcessingRequestFactory;
+import com.hbc.csvdownload.service.v1.ProcessingRequestInterface;
 import com.hbc.dataupload.common.feign.DataUploadFeign;
 import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
 import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
-import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
+import com.hbc.jobs.framework.common.domain.pojo.*;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
@@ -69,15 +42,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -104,6 +69,7 @@ public class CsvDownloadUtilityService {
   private final ProcessingTimeBuffersService processingTimeBuffersService;
   private final NodeService nodeService;
   private final NodeCarrierService nodeCarrierService;
+  private final ProcessingRequestFactory processingRequestFactory;
   private static final String NA = "NA";
 
   @Value("${download-page-size.node-carrier-service-options}")
@@ -761,6 +727,28 @@ public class CsvDownloadUtilityService {
               writeToCSV(csvData.toArray(new String[0]), writer);
             });
       }
+    }
+  }
+
+  public PreSignedUrlResponse downloadLogsAsCsvV1(
+      String jobId, String orgId, Optional<String> status) throws CommonServiceException {
+    logger.debug("Processing download transit time and processing lead time");
+    try {
+      var jobDto = jobsConsumerService.getJob(jobId, orgId);
+      var jobType = jobDto.getJobType();
+      if (ObjectUtils.isEmpty(JobTypeEnum.valueOf(jobType.name()))) {
+        throw new CommonServiceException(
+            "Incorrect jobType specified", HttpStatus.BAD_REQUEST, 0x1772, null);
+      }
+
+      ProcessingRequestInterface processingRequest =
+          processingRequestFactory.getModuleByJobType(jobType);
+
+      return processingRequest.downloadErrorLogs(jobDto, status);
+
+    } catch (Exception e) {
+      throw new CommonServiceException(
+          "Error while downloading error logs as csv", HttpStatus.BAD_REQUEST, 0x1772, null);
     }
   }
 }

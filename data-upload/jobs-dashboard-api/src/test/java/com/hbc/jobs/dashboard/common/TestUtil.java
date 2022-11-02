@@ -486,4 +486,106 @@ public class TestUtil {
     job.setAuditLog(Collections.singletonList(auditLog));
     return job;
   }
+
+  public PagePayload<RecordStatusDto> createPagePayloadRecordStatusDto(
+      List<RecordStatusDto> recordStatusDtos, int totalPage, int totalElements, int pageNo) {
+    PagePayload<RecordStatusDto> pagePayload = new PagePayload<>();
+    Page<RecordStatusDto> pageResp =
+        createPagerecordStatusDtos(totalPage, recordStatusDtos, totalElements);
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords((int) pageResp.getTotalElements());
+    pagination.setTotalPages(pageResp.getTotalPages());
+    pagination.setCurrentPage(pageNo);
+    pagePayload.setData(pageResp.getContent());
+    pagePayload.setPagination(pagination);
+    return pagePayload;
+  }
+
+  public Page<RecordStatusDto> createPagerecordStatusDtos(
+      int totalPage, List<RecordStatusDto> jobList, int totalElements) {
+    Page<RecordStatusDto> pageResponse =
+        new Page() {
+          @Override
+          public int getTotalPages() {
+            return totalPage;
+          }
+
+          @Override
+          public long getTotalElements() {
+            return totalElements;
+          }
+
+          @Override
+          public Page map(Function converter) {
+            return null;
+          }
+
+          @Override
+          public int getNumber() {
+            return 0;
+          }
+
+          @Override
+          public int getSize() {
+            return 0;
+          }
+
+          @Override
+          public int getNumberOfElements() {
+            return 0;
+          }
+
+          @Override
+          public List getContent() {
+            return jobList;
+          }
+
+          @Override
+          public boolean hasContent() {
+            return false;
+          }
+
+          @Override
+          public Sort getSort() {
+            return null;
+          }
+
+          @Override
+          public boolean isFirst() {
+            return false;
+          }
+
+          @Override
+          public boolean isLast() {
+            return false;
+          }
+
+          @Override
+          public boolean hasNext() {
+            return false;
+          }
+
+          @Override
+          public boolean hasPrevious() {
+            return false;
+          }
+
+          @Override
+          public Pageable nextPageable() {
+            return null;
+          }
+
+          @Override
+          public Pageable previousPageable() {
+            return null;
+          }
+
+          @Override
+          public Iterator iterator() {
+            return null;
+          }
+        };
+
+    return pageResponse;
+  }
 }

@@ -19,6 +19,7 @@ import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.CsvDownloadUtilityService;
 import com.hbc.csvdownload.service.DownloadTemplateService;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -179,6 +180,23 @@ class CsvDownloadUtilityControllerTest {
     csvDownloadUtilityController.downloadLogsByFilters(
         "BAY", "C-Id", Optional.empty(), request, response);
     verify(response, times(1)).getOutputStream();
+  }
+
+  @Test
+  void downloadLogsByFiltersV1() throws IOException, CommonServiceException {
+
+    PreSignedUrlResponse ErrorLogTemplate = new PreSignedUrlResponse("", "", "");
+
+    when(csvDownloadUtilityService.downloadLogsAsCsvV1(anyString(), anyString(), any()))
+        .thenReturn(ErrorLogTemplate);
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    csvDownloadUtilityController.downloadLogsByFiltersV1(
+        "BAY", "C-Id", Optional.empty(), request, response);
+    verify(csvDownloadUtilityService, times(1))
+        .downloadLogsAsCsvV1(anyString(), anyString(), any());
   }
 
   @Test

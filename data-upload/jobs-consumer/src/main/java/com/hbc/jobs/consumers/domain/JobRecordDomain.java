@@ -4,10 +4,16 @@ import com.hbc.jobs.consumers.domain.entity.JobRecordEntity;
 import com.hbc.jobs.consumers.domain.mapper.JobRecordMapper;
 import com.hbc.jobs.consumers.domain.repository.JobRecordRepository;
 import com.hbc.jobs.consumers.exception.JobRecordDomainException;
+import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,5 +47,19 @@ public class JobRecordDomain {
 
     return JobRecordMapper.INSTANCE.toRecordStatusDtoList(
         jobRecordRepository.findJobRecordsByFilters(orgId, jobId, status.orElse(null)));
+  }
+
+  public Page<RecordStatusDto> fetchJobRecordsByFiltersPaginatedOutput(
+      String jobId, String orgId, Optional<String> status, int pageNo, int pageSize) {
+
+    Pageable element = PageRequest.of(pageNo - 1, pageSize, Sort.unsorted());
+    Page<JobRecordEntity> entityPage =
+        jobRecordRepository.findJobRecordsByJobParam(
+            jobId, orgId, status.orElse(ApiStatusEnum.FAILURE.name()), element);
+
+    return new PageImpl<>(
+        JobRecordMapper.INSTANCE.toRecordStatusDtoList(entityPage.getContent()),
+        entityPage.getPageable(),
+        entityPage.getTotalElements());
   }
 }

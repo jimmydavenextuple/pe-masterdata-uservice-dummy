@@ -439,4 +439,23 @@ public class JobService {
     JobDto job = constructJob(0, orgId, jobType, fileMetadataId);
     return createJob(jobType, job);
   }
+
+  public PagePayload<RecordStatusDto> getJobRecordsByFilters(
+      String orgId, String jobId, Optional<String> status, Integer pageNo, Integer pageSize)
+      throws JobException {
+    log.debug("--Inside getJobResults()--");
+    try {
+      return jobsConsumerClient
+          .getJobRecordsByFilters(orgId, jobId, status.orElse(null), pageNo, pageSize)
+          .getPayload();
+
+    } catch (FeignException e) {
+      log.error("Error while retrieving the job results", e);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
+      throw new JobException(errorResponse.getMessage(), e, null, null);
+    } catch (Exception e) {
+      log.error("Unable to retrieve the job records information", e);
+      throw new JobException("Exception while retrieving the job results", e, null, null);
+    }
+  }
 }

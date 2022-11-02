@@ -14,6 +14,7 @@ import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.dashboard.common.TestUtil;
 import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.dashboard.service.JobService;
+import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
@@ -36,6 +37,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 class JobDashboardControllerTest {
@@ -388,5 +390,32 @@ class JobDashboardControllerTest {
     Assertions.assertNotNull(response.getBody());
     Assertions.assertNotNull(response.getBody().getPayload());
     Assertions.assertFalse(ObjectUtils.isEmpty(response.getBody().getPayload().getJobId()));
+  }
+
+  @Test
+  void getJobRecordsByFilters() throws JobException {
+    RecordStatusDto recordStatusDto =
+        testUtil.createRecordStatusDto(
+            TestUtil.JOB_ID, JobTypeEnum.UPLOAD_NODE_CARRIER, 1, HttpStatus.OK.value());
+    PagePayload<RecordStatusDto> payload =
+        testUtil.createPagePayloadRecordStatusDto(List.of(recordStatusDto), 5, 10, 1);
+    when(defaultPageProperties.getPageNo()).thenReturn(1);
+    when(defaultPageProperties.getPageSize()).thenReturn(15);
+    when(jobService.getJobRecordsByFilters(anyString(), anyString(), any(), anyInt(), anyInt()))
+        .thenReturn(payload);
+
+    ResponseEntity<BaseResponse<PagePayload<RecordStatusDto>>> response =
+        jobDashboardController.getJobRecordsByFilters(
+            TestUtil.ORG_ID,
+            TestUtil.JOB_ID,
+            Optional.of(ApiStatusEnum.FAILURE.name()),
+            Optional.of(1),
+            Optional.of(15));
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertNotNull(response);
+    Assertions.assertNotNull(response.getBody());
+    Assertions.assertNotNull(response.getBody().getPayload());
+    Assertions.assertFalse(CollectionUtils.isEmpty(response.getBody().getPayload().getData()));
   }
 }

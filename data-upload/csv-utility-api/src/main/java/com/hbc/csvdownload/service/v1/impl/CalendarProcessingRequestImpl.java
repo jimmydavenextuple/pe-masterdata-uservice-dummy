@@ -1,32 +1,44 @@
 package com.hbc.csvdownload.service.v1.impl;
 
-import static com.hbc.dataupload.common.constants.CommonDataUploadErrorConstants.CALENDAR_DATA_UPLOAD_INVALID_FILE_HEADERS;
-import static com.hbc.dataupload.common.constants.CommonDataUploadErrorConstants.CALENDAR_DATA_UPLOAD_INVALID_FILE_TYPE;
-import static com.hbc.dataupload.common.constants.CommonDataUploadErrorConstants.NO_RECORDS_FOUND_IN_THE_CSV;
+import static com.hbc.dataupload.common.constants.CommonDataUploadErrorConstants.*;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.inbound.GenericUploadRequest;
 import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.csvdownload.service.v1.AbstractProcessingRequest;
-import com.hbc.csvdownload.service.v1.ProcessingRequestInterface;
 import com.hbc.dataupload.common.utils.v1.DataUploadUtil;
+import com.hbc.jobs.framework.common.clients.FileMetaDataClient;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
+import com.hbc.jobs.framework.common.domain.pojo.CalendarDataUpload;
+import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.jobs.framework.common.enums.ModuleEnum;
+import com.hbc.jobs.framework.common.service.FileService;
+import com.hbc.jobs.framework.common.service.PreSignedUrlInterface;
+import com.newrelic.relocated.Gson;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Service
-public class CalendarProcessingRequestImpl extends AbstractProcessingRequest
-    implements ProcessingRequestInterface {
+public class CalendarProcessingRequestImpl extends AbstractProcessingRequest {
 
-  public CalendarProcessingRequestImpl(JobsDashboardClient jobsDashboardClient) {
-    super(jobsDashboardClient);
+  @Value("${download-page-size.node-carrier-service-options}")
+  private Integer noOfRecordsPerPage;
+
+  public CalendarProcessingRequestImpl(
+      JobsDashboardClient jobsDashboardClient,
+      FileService fileService,
+      PreSignedUrlInterface preSignedUrlInterface,
+      FileMetaDataClient fileMetaDataClient) {
+    super(jobsDashboardClient, fileService, preSignedUrlInterface, fileMetaDataClient);
   }
 
   @Override
@@ -57,5 +69,47 @@ public class CalendarProcessingRequestImpl extends AbstractProcessingRequest
         csvReader);
 
     csvReader.close();
+  }
+
+  @Override
+  public String tempFilePrefix() {
+    return "download-log-calendar-upload";
+  }
+
+  @Override
+  public void addErrorLine(CSVWriter writer, List<RecordStatusDto> recordStatusDtos)
+      throws IOException {
+    recordStatusDtos.forEach(dto -> constructCalendarError(writer, dto));
+    writer.flush();
+  }
+
+  private void constructCalendarError(CSVWriter writer, RecordStatusDto recordStatusDto) {
+    var gson = new Gson();
+    var requestBody = gson.fromJson(recordStatusDto.getRequestBody(), CalendarDataUpload.class);
+
+    var req =
+        new String[] {
+          requestBody.getAction(),
+          requestBody.getCalendarId(),
+          requestBody.getOrgId(),
+          requestBody.getDescription(),
+          requestBody.getIsMondayWorking().toString(),
+          requestBody.getIsTuesdayWorking().toString(),
+          requestBody.getIsWednesdayWorking().toString(),
+          requestBody.getIsThursdayWorking().toString(),
+          requestBody.getIsFridayWorking().toString(),
+          requestBody.getIsSaturdayWorking().toString(),
+          requestBody.getIsSundayWorking().toString(),
+          ObjectUtils.isEmpty(requestBody.getExceptionDays().toString())
+              ? ""
+              : requestBody.getExceptionDays().toString(),
+          recordStatusDto.getErrorMessage()
+        };
+    writeToCSV(req, writer);
+  }
+
+  @Override
+  public JobTypeEnum getJobType() {
+    return JobTypeEnum.UPLOAD_CALENDER;
   }
 }

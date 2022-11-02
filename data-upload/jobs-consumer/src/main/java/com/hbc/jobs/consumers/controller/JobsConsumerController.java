@@ -4,6 +4,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.common.util.PaginationUtil;
 import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.service.JobConsumerService;
@@ -37,7 +38,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class JobsConsumerController {
   private final JobConsumerService jobConsumerService;
-
+  private static final String PAGINATION_URL_JOB_RECORDS =
+      "/data-upload/v1/org/%s/jobs/%s/results?pageNo=%d&pageSize=%d";
   private final DefaultPageProperties defaultPageProperties;
 
   /**
@@ -195,6 +197,77 @@ public class JobsConsumerController {
             BaseResponse.builder()
                 .payload(pagePayload)
                 .message("Retrieval of the jobs by params is successful")
+                .build());
+  }
+
+  @GetMapping(
+      path = "/v1/org/{orgId}/jobs/{jobId}/results",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<BaseResponse<PagePayload<RecordStatusDto>>> getJobRecordsByFilters(
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
+      @NotEmpty @NotNull @PathVariable("jobId") String jobId,
+      @RequestParam(required = false) Optional<String> status,
+      @RequestParam(required = false) Optional<Integer> pageNo,
+      @RequestParam(required = false) Optional<Integer> pageSize)
+      throws JobException {
+    log.debug("--Inside getJobRecordsByFilter controller--");
+
+    int currentPage = pageNo.orElse(defaultPageProperties.getPageNo());
+
+    if (currentPage < 1) {
+      throw new JobException("PageNo can not be less than one", null, currentPage);
+    }
+
+    Page<RecordStatusDto> pageResp =
+        jobConsumerService.getJobResults(
+            orgId,
+            jobId,
+            status,
+            pageNo.orElse(defaultPageProperties.getPageNo()),
+            pageSize.orElse(defaultPageProperties.getPageSize()));
+
+    var pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords((int) pageResp.getTotalElements());
+    pagination.setTotalPages(pageResp.getTotalPages());
+    pagination.setCurrentPage(currentPage);
+
+    PagePayload<RecordStatusDto> pagePayload = new PagePayload<>();
+    pagePayload.setData(pageResp.getContent());
+    pagePayload.setPagination(pagination);
+    pagePayload.setAggregation(Collections.emptyList());
+
+    String nextUri =
+        PaginationUtil.buildUriForPagination(
+            currentPage,
+            pagePayload.getPagination().getTotalPages(),
+            "next",
+            String.format(
+                PAGINATION_URL_JOB_RECORDS,
+                orgId,
+                jobId,
+                currentPage + 1,
+                pageSize.orElse(defaultPageProperties.getPageSize())));
+
+    String previousUri =
+        PaginationUtil.buildUriForPagination(
+            currentPage,
+            pagePayload.getPagination().getTotalPages(),
+            "previous",
+            String.format(
+                PAGINATION_URL_JOB_RECORDS,
+                orgId,
+                jobId,
+                currentPage - 1,
+                pageSize.orElse(defaultPageProperties.getPageSize())));
+
+    pagination.setNext(nextUri);
+    pagination.setPrevious(previousUri);
+
+    return ResponseEntity.ok()
+        .body(
+            BaseResponse.builder()
+                .payload(pagePayload)
+                .message("Retrieval of the job information is successful")
                 .build());
   }
 }

@@ -8,25 +8,38 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.inbound.GenericUploadRequest;
 import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.csvdownload.service.v1.AbstractProcessingRequest;
-import com.hbc.csvdownload.service.v1.ProcessingRequestInterface;
 import com.hbc.dataupload.common.utils.v1.DataUploadUtil;
+import com.hbc.jobs.framework.common.clients.FileMetaDataClient;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
+import com.hbc.jobs.framework.common.domain.pojo.NodeCalendarUpload;
+import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.jobs.framework.common.enums.ModuleEnum;
+import com.hbc.jobs.framework.common.service.FileService;
+import com.hbc.jobs.framework.common.service.PreSignedUrlInterface;
+import com.newrelic.relocated.Gson;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NodeCalendarProcessingRequestImpl extends AbstractProcessingRequest
-    implements ProcessingRequestInterface {
+public class NodeCalendarProcessingRequestImpl extends AbstractProcessingRequest {
 
-  public NodeCalendarProcessingRequestImpl(JobsDashboardClient jobsDashboardClient) {
-    super(jobsDashboardClient);
+  @Value("${download-page-size.node-carrier-service-options}")
+  private Integer noOfRecordsPerPage;
+
+  public NodeCalendarProcessingRequestImpl(
+      JobsDashboardClient jobsDashboardClient,
+      FileService fileService,
+      PreSignedUrlInterface preSignedUrlInterface,
+      FileMetaDataClient fileMetaDataClient) {
+    super(jobsDashboardClient, fileService, preSignedUrlInterface, fileMetaDataClient);
   }
 
   @Override
@@ -58,5 +71,39 @@ public class NodeCalendarProcessingRequestImpl extends AbstractProcessingRequest
         csvReader);
 
     csvReader.close();
+  }
+
+  @Override
+  public String tempFilePrefix() {
+    return "download-log-node-calendar-upload";
+  }
+
+  @Override
+  public void addErrorLine(CSVWriter writer, List<RecordStatusDto> recordStatusDtos)
+      throws IOException {
+    recordStatusDtos.forEach(dto -> constructNodeCalendarError(writer, dto));
+    writer.flush();
+  }
+
+  private void constructNodeCalendarError(CSVWriter writer, RecordStatusDto recordStatusDto) {
+    var gson = new Gson();
+    var requestBody = gson.fromJson(recordStatusDto.getRequestBody(), NodeCalendarUpload.class);
+
+    var req =
+        new String[] {
+          requestBody.getAction(),
+          requestBody.getCalendarId(),
+          requestBody.getNodeId(),
+          requestBody.getOrgId(),
+          requestBody.getDescription(),
+          requestBody.getEffectiveDate(),
+          recordStatusDto.getErrorMessage()
+        };
+    writeToCSV(req, writer);
+  }
+
+  @Override
+  public JobTypeEnum getJobType() {
+    return JobTypeEnum.UPLOAD_NODE_CALENDER;
   }
 }

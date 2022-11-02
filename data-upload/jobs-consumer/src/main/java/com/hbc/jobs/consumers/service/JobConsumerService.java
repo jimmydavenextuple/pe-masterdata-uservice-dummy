@@ -183,6 +183,14 @@ public class JobConsumerService {
     }
   }
 
+  public Page<RecordStatusDto> getJobResults(
+      String orgId, String jobId, Optional<String> status, Integer pageNo, Integer pageSize)
+      throws JobException {
+    log.debug("--Inside getJobResults()--");
+    return jobRecordDomain.fetchJobRecordsByFiltersPaginatedOutput(
+        jobId, orgId, status, pageNo, pageSize);
+  }
+
   /**
    * @param jobDto
    * @return

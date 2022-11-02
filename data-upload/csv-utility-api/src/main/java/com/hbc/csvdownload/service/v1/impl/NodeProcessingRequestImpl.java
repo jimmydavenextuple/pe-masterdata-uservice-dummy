@@ -8,25 +8,39 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.common.inbound.GenericUploadRequest;
 import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.csvdownload.service.v1.AbstractProcessingRequest;
-import com.hbc.csvdownload.service.v1.ProcessingRequestInterface;
+import com.hbc.dataupload.common.constants.DataUploadUtilityConstants;
 import com.hbc.dataupload.common.utils.v1.DataUploadUtil;
+import com.hbc.jobs.framework.common.clients.FileMetaDataClient;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
+import com.hbc.jobs.framework.common.domain.pojo.NodeDataUpload;
+import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.jobs.framework.common.enums.ModuleEnum;
+import com.hbc.jobs.framework.common.service.FileService;
+import com.hbc.jobs.framework.common.service.PreSignedUrlInterface;
+import com.newrelic.relocated.Gson;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NodeProcessingRequestImpl extends AbstractProcessingRequest
-    implements ProcessingRequestInterface {
+public class NodeProcessingRequestImpl extends AbstractProcessingRequest {
 
-  public NodeProcessingRequestImpl(JobsDashboardClient jobsDashboardClient) {
-    super(jobsDashboardClient);
+  @Value("${download-page-size.node-carrier-service-options}")
+  private Integer noOfRecordsPerPage;
+
+  public NodeProcessingRequestImpl(
+      JobsDashboardClient jobsDashboardClient,
+      FileService fileService,
+      PreSignedUrlInterface preSignedUrlInterface,
+      FileMetaDataClient fileMetaDataClient) {
+    super(jobsDashboardClient, fileService, preSignedUrlInterface, fileMetaDataClient);
   }
 
   @Override
@@ -55,5 +69,87 @@ public class NodeProcessingRequestImpl extends AbstractProcessingRequest
         csvFileContents.get(0), getModuleType(), NODE_DATA_UPLOAD_INVALID_FILE_HEADERS, csvReader);
 
     csvReader.close();
+  }
+
+  @Override
+  public String tempFilePrefix() {
+    return "download-log-node-upload";
+  }
+
+  @Override
+  public void addErrorLine(CSVWriter writer, List<RecordStatusDto> recordStatusDtos)
+      throws IOException {
+    recordStatusDtos.forEach(dto -> constructNodeError(writer, dto));
+    writer.flush();
+  }
+
+  private void constructNodeError(CSVWriter writer, RecordStatusDto recordStatusDto) {
+    var gson = new Gson();
+    var requestBody = gson.fromJson(recordStatusDto.getRequestBody(), NodeDataUpload.class);
+
+    var sdndEligible =
+        requestBody.getServiceOptionEligibilities().get(DataUploadUtilityConstants.SDND_ELIGIBLE)
+                == null
+            ? ""
+            : requestBody
+                .getServiceOptionEligibilities()
+                .get(DataUploadUtilityConstants.SDND_ELIGIBLE)
+                .toString();
+
+    var bopisEligible =
+        requestBody.getServiceOptionEligibilities().get(DataUploadUtilityConstants.BOPIS_ELIGIBLE)
+                == null
+            ? ""
+            : requestBody
+                .getServiceOptionEligibilities()
+                .get(DataUploadUtilityConstants.BOPIS_ELIGIBLE)
+                .toString();
+
+    var expressEligible =
+        requestBody.getServiceOptionEligibilities().get(DataUploadUtilityConstants.EXPRESS_ELIGIBLE)
+                == null
+            ? ""
+            : requestBody
+                .getServiceOptionEligibilities()
+                .get(DataUploadUtilityConstants.EXPRESS_ELIGIBLE)
+                .toString();
+
+    var nextdayEligible =
+        requestBody.getServiceOptionEligibilities().get(DataUploadUtilityConstants.NEXTDAY_ELIGIBLE)
+                == null
+            ? ""
+            : requestBody
+                .getServiceOptionEligibilities()
+                .get(DataUploadUtilityConstants.NEXTDAY_ELIGIBLE)
+                .toString();
+
+    var req =
+        new String[] {
+          requestBody.getAction(),
+          requestBody.getNodeId(),
+          requestBody.getOrgId(),
+          requestBody.getStreet(),
+          requestBody.getCity(),
+          requestBody.getProvince(),
+          requestBody.getPostalCode(),
+          requestBody.getCountry(),
+          requestBody.getLatitude(),
+          requestBody.getLongitude(),
+          requestBody.getTimezone(),
+          requestBody.getShipToHome(),
+          sdndEligible,
+          bopisEligible,
+          expressEligible,
+          requestBody.getNodeType(),
+          requestBody.getIsActive(),
+          nextdayEligible,
+          recordStatusDto.getErrorMessage()
+        };
+    writeToCSV(req, writer);
+  }
+
+  @Override
+  public JobTypeEnum getJobType() {
+    return JobTypeEnum.UPLOAD_NODES;
   }
 }

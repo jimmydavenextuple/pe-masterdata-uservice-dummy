@@ -47,4 +47,12 @@ public interface JobsConsumerClient {
 
   @PutMapping("/jobs/update")
   BaseResponse<JobResponse> updateJob(@Valid @RequestBody JobDto jobDto);
+
+  @GetMapping("/v1/org/{orgId}/jobs/{jobId}/results")
+  BaseResponse<PagePayload<RecordStatusDto>> getJobRecordsByFilters(
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
+      @NotEmpty @NotNull @PathVariable("jobId") String jobId,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) Integer pageNo,
+      @RequestParam(required = false) Integer pageSize);
 }

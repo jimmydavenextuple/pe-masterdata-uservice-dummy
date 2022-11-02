@@ -81,4 +81,12 @@ public interface JobsDashboardClient {
 
   @GetMapping("/file-metadata/{id}")
   BaseResponse<FileMetaDataResponse> findFileMetadataById(@PathVariable(name = "id") Long id);
+
+  @GetMapping("/v1/org/{orgId}/jobs-dashboard/{jobId}/results")
+  BaseResponse<PagePayload<RecordStatusDto>> getJobRecordsByFilters(
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
+      @NotEmpty @NotNull @PathVariable("jobId") String jobId,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) Integer pageNo,
+      @RequestParam(required = false) Integer pageSize);
 }

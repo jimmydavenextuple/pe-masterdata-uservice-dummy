@@ -27,6 +27,7 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
@@ -173,9 +174,105 @@ public class TestUtil {
   public static final JobTypeEnum jobType = JobTypeEnum.getTypeFromString("any");
   public static final String processingLeadTimesRequestBodyJson =
       "{\"nodeId\":\"1554\",\"orgId\":\"BAY\",\"carrierServiceId\":\"ALL-SDND\",\"serviceOption\":\"SDND\",\"processingTime\":2.0,\"lastPickupTime\":\"00:00\"}";
-
   public static final String transitTimesRequestBodyJson =
       "{\"orgId\":\"BAY\",\"sourceGeozone\":\"A0A\",\"destinationGeozone\":\"M1R\",\"carrierServiceId\":\"ALL-SDND\",\"transitDays\":\"1.5\"}";
+
+  public static final String nodeRequestBodyJson =
+      "{\"nodeId\":\"1554\",\"orgId\":\"BAY\""
+          + "    \"street\": \"100 Metropolitan Rd.\",\n"
+          + "    \"city\": \"Scarborough\",\n"
+          + "    \"province\": \"ON\",\n"
+          + "    \"postalCode\": \"M1R 5A2\",\n"
+          + "    \"country\": \"Canada\",\n"
+          + "    \"latitude\": \"43.769912\",\n"
+          + "    \"longitude\": \"-79.296678\",\n"
+          + "    \"timezone\": \"America/Toronto\",\n"
+          + "    \"shipToHome\": true,\n"
+          + "    \"bopisEligible\": true,\n"
+          + "    \"serviceOptionEligibilities\": {\n"
+          + "        \"expressEligible\": true,\n"
+          + "        \"sdndEligible\": true,\n"
+          + "        \"nextdayEligible\": true\n"
+          + "    },\n"
+          + "    \"nodeType\": \"MFC\",\n"
+          + "    \"isActive\": true\n"
+          + "}";
+
+  public static final String nodeCarrierRequestBodyJson =
+      "{\n"
+          + "    \"nodeId\": \"NXTHBC01\",\n"
+          + "    \"orgId\": \"NXT\",\n"
+          + "    \"carrierServiceId\": \"A_STD\",\n"
+          + "    \"serviceOption\": \"Standard\",\n"
+          + "    \"processingTime\": 20.2,\n"
+          + "    \"lastPickupTime\": \"19:00\"\n"
+          + "}";
+  public static final String nodeCalendarRequestBodyJson =
+      "{\n"
+          + "    \"calendarId\": \"test_2\",\n"
+          + "    \"orgId\": \"BAY\",\n"
+          + "    \"nodeId\": \"DC-963-565\",\n"
+          + "    \"effectiveDate\": \"2022-07-24\",\n"
+          + "    \"description\": \"Monthly\"\n"
+          + "}";
+
+  public static final String calendarRequestBodyJson =
+      "{\"action\":\"CREATE\","
+          + "\"orgId\":\"BAY\","
+          + "\"calendarId\":\"DSV_2022\","
+          + "\"description\":\"DSVs Operations Calendar\","
+          + "\"isFridayWorking\":true,"
+          + "\"isMondayWorking\":true,"
+          + "\"isTuesdayWorking\":true,"
+          + "\"isSundayWorking\":false,"
+          + "\"isWednesdayWorking\":true,"
+          + "\"isSaturdayWorking\":false,"
+          + "\"isThursdayWorking\":true,"
+          + "\"exceptionDays\":[{\"date\":\"2022-01-01\",\"reason\":\"New Year's Day\"},{\"date\":\"2022-02-21\",\"reason\":\"Family Day\"},{\"date\":\"2022-04-15\",\"reason\":\"Good Friday\"},{\"date\":\"2022-04-18\",\"reason\":\"Easter Monday\"},{\"date\":\"2022-05-23\",\"reason\":\"Victoria Day\"},{\"date\":\"2022-07-01\",\"reason\":\"Canada Day\"},{\"date\":\"2022-08-01\",\"reason\":\"Civid Holiday\"},{\"date\":\"2022-09-05\",\"reason\":\"Labour Day\"},{\"date\":\"2022-10-10\",\"reason\":\"Thanksgiving\"},{\"date\":\"2022-11-11\",\"reason\":\"Remembrance Day\"},{\"date\":\"2022-12-25\",\"reason\":\"Christmas Day\"}]"
+          + "}";
+
+  public static final String calendarEmptyExceptionDaysRequestBodyJson =
+      "{\"action\":\"CREATE\","
+          + "\"orgId\":\"BAY\","
+          + "\"calendarId\":\"DSV_2022\","
+          + "\"description\":\"DSVs Operations Calendar\","
+          + "\"isFridayWorking\":true,"
+          + "\"isMondayWorking\":true,"
+          + "\"isTuesdayWorking\":true,"
+          + "\"isSundayWorking\":false,"
+          + "\"isWednesdayWorking\":true,"
+          + "\"isSaturdayWorking\":false,"
+          + "\"isThursdayWorking\":true,"
+          + "\"exceptionDays\":[]}";
+
+  public static final String carrierServiceRequestBodyJson =
+      "{\n"
+          + "    \"orgId\":\"BAY\",\n"
+          + "    \"carrierId\":\"A_STD\",\n"
+          + "    \"carrierServiceId\":\"ALL-STANDARD\",\n"
+          + "    \"carrierName\":\"ALL\",\n"
+          + "    \"serviceName\":\"service-1-name\",\n"
+          + "    \"serviceOptions\":\"Standard\"\n"
+          + "}";
+  public static final String carrierServiceCalendarRequestBodyJson =
+      "{\n"
+          + "    \"calendarId\": \"test_2\",\n"
+          + "    \"orgId\": \"BAY\",\n"
+          + "    \"carrierServiceId\": \"ALL-SDND\",\n"
+          + "    \"shippingStage\": \"ALL\",\n"
+          + "    \"effectiveDate\": \"2022-08-04\",\n"
+          + "    \"description\": \"Monthly\"\n"
+          + "}";
+
+  public static final String postalCodeTimezoneRequestBodyJson =
+      "{\n"
+          + "    \"calendarId\": \"test_2\",\n"
+          + "    \"orgId\": \"BAY\",\n"
+          + "    \"carrierServiceId\": \"ALL-SDND\",\n"
+          + "    \"shippingStage\": \"ALL\",\n"
+          + "    \"effectiveDate\": \"2022-08-04\",\n"
+          + "    \"description\": \"Monthly\"\n"
+          + "}";
 
   public static Double BUFFER_DAYS = 3.0;
 
@@ -244,6 +341,94 @@ public class TestUtil {
         .orgId(ORG_ID)
         .errorMessage("Invalid nodeId")
         .requestBody(transitTimesRequestBodyJson)
+        .build();
+  }
+
+  public RecordStatusDto getJobRecordsForNodes() {
+
+    return RecordStatusDto.builder()
+        .jobId(JOB_ID)
+        .jobType(JobTypeEnum.UPLOAD_NODES)
+        .orgId(ORG_ID)
+        .errorMessage("Invalid nodeId")
+        .requestBody(nodeRequestBodyJson)
+        .build();
+  }
+
+  public RecordStatusDto getJobRecordsForNodeCarrier() {
+
+    return RecordStatusDto.builder()
+        .jobId(JOB_ID)
+        .jobType(JobTypeEnum.UPLOAD_NODE_CARRIER)
+        .orgId(ORG_ID)
+        .errorMessage("Invalid nodeId")
+        .requestBody(nodeCarrierRequestBodyJson)
+        .build();
+  }
+
+  public RecordStatusDto getJobRecordsForNodeCalendar() {
+
+    return RecordStatusDto.builder()
+        .jobId(JOB_ID)
+        .jobType(JobTypeEnum.UPLOAD_NODE_CALENDER)
+        .orgId(ORG_ID)
+        .errorMessage("Invalid nodeId")
+        .requestBody(nodeCalendarRequestBodyJson)
+        .build();
+  }
+
+  public RecordStatusDto getJobRecordsForCalendar() {
+
+    return RecordStatusDto.builder()
+        .jobId(JOB_ID)
+        .jobType(JobTypeEnum.UPLOAD_CALENDER)
+        .orgId(ORG_ID)
+        .errorMessage("Invalid nodeId")
+        .requestBody(calendarRequestBodyJson)
+        .build();
+  }
+
+  public RecordStatusDto getJobRecordsForCalendarWithEmptyExceptionDays() {
+
+    return RecordStatusDto.builder()
+        .jobId(JOB_ID)
+        .jobType(JobTypeEnum.UPLOAD_CALENDER)
+        .orgId(ORG_ID)
+        .errorMessage("Invalid nodeId")
+        .requestBody(calendarEmptyExceptionDaysRequestBodyJson)
+        .build();
+  }
+
+  public RecordStatusDto getJobRecordsForCarrierService() {
+
+    return RecordStatusDto.builder()
+        .jobId(JOB_ID)
+        .jobType(JobTypeEnum.UPLOAD_CARRIER_SERVICE)
+        .orgId(ORG_ID)
+        .errorMessage("Invalid nodeId")
+        .requestBody(carrierServiceRequestBodyJson)
+        .build();
+  }
+
+  public RecordStatusDto getJobRecordsForCarrierServiceCalendar() {
+
+    return RecordStatusDto.builder()
+        .jobId(JOB_ID)
+        .jobType(JobTypeEnum.UPLOAD_CARRIER_SERVICE_CALENDER)
+        .orgId(ORG_ID)
+        .errorMessage("Invalid nodeId")
+        .requestBody(carrierServiceCalendarRequestBodyJson)
+        .build();
+  }
+
+  public RecordStatusDto getJobRecordsForPostalCodeTimezone() {
+
+    return RecordStatusDto.builder()
+        .jobId(JOB_ID)
+        .jobType(JobTypeEnum.UPLOAD_POSTAL_CODE_TIMEZONE)
+        .orgId(ORG_ID)
+        .errorMessage("Invalid nodeId")
+        .requestBody(postalCodeTimezoneRequestBodyJson)
         .build();
   }
 
@@ -907,6 +1092,14 @@ public class TestUtil {
         .contentLength(58L)
         .contentType("text/csv")
         .inputStream(new ByteArrayInputStream(eddComputationDataWith15Lines.getBytes()))
+        .build();
+  }
+
+  public PreSignedUrlResponse getPreSignedUrlResponse() {
+    return PreSignedUrlResponse.builder()
+        .signedURL("URL")
+        .storageType("s3")
+        .filePath("path")
         .build();
   }
 }

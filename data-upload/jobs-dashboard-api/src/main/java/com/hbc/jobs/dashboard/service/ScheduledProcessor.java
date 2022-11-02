@@ -53,7 +53,7 @@ public class ScheduledProcessor {
 
   @Scheduled(
       fixedRateString = "${scheduled-processor.fixed-rate.minutes:2}",
-      timeUnit = TimeUnit.MINUTES)
+      timeUnit = TimeUnit.SECONDS)
   @Transactional
   public void processJobOffline() throws JobDomainException, PublishJobEventException {
     String authToken = getAuthToken();

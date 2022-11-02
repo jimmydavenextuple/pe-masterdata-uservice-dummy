@@ -1,14 +1,25 @@
 package com.hbc.csvdownload.service.v1.impl;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.csvdownload.util.TestUtil;
+import com.hbc.jobs.framework.common.clients.FileMetaDataClient;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
+import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
+import com.hbc.jobs.framework.common.domain.pojo.JobDto;
+import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.service.FileService;
+import com.hbc.jobs.framework.common.service.PreSignedUrlInterface;
 import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
 import java.io.IOException;
@@ -16,20 +27,35 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.ObjectUtils;
 
 @ExtendWith(MockitoExtension.class)
 class CalendarProcessingRequestImplTest {
   @InjectMocks CalendarProcessingRequestImpl calendarProcessingRequest;
-
+  @Mock private FileService fileService;
+  @Mock private PreSignedUrlInterface preSignedUrlInterface;
+  @Mock private FileMetaDataClient fileMetaDataClient;
+  @InjectMocks com.hbc.csvdownload.common.TestUtil testUtil1;
   @Spy JobsDashboardClient jobsDashboardClient;
-
   @InjectMocks private TestUtil testUtil;
+
+  @BeforeEach
+  public void init() {
+    ReflectionTestUtils.setField(calendarProcessingRequest, "bucketName", "bucket");
+    ReflectionTestUtils.setField(calendarProcessingRequest, "storageType", "s3");
+  }
 
   @Test
   void submitJobTest() throws JobSubmissionException {
@@ -122,5 +148,82 @@ class CalendarProcessingRequestImplTest {
     FileResponse response = testUtil.getFileResponse();
     response.setInputStream(inputStream);
     return response;
+  }
+
+  @Test
+  void downloadErrorLogs() throws CommonServiceException, JobSubmissionException, IOException {
+    JobDto jobDto = testUtil.createJob(TestUtil.JOB_ID, JobTypeEnum.UPLOAD_CALENDER, 20);
+    RecordStatusDto recordStatusDto = testUtil1.getJobRecordsForCalendar();
+    when(jobsDashboardClient.getJobRecordsByFilters(
+            anyString(), anyString(), anyString(), anyInt(), anyInt()))
+        .thenReturn(
+            BaseResponse.builder()
+                .payload(
+                    testUtil.createPagePayloadRecordStatusDto(List.of(recordStatusDto), 5, 20, 1))
+                .build());
+    doNothing().when(fileService).uploadFile(anyString(), anyString(), any());
+    when(preSignedUrlInterface.downloadFileURLById(1L))
+        .thenReturn(testUtil.getPreSignedUrlResponse());
+    when(fileMetaDataClient.createFileMetadata(any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getFileMetaDataResponse()).build());
+
+    PreSignedUrlResponse preSignedUrlResponse =
+        calendarProcessingRequest.downloadErrorLogs(
+            jobDto, Optional.of(ApiStatusEnum.FAILURE.name()));
+
+    Assertions.assertNotNull(preSignedUrlResponse);
+    Assertions.assertFalse(ObjectUtils.isEmpty(preSignedUrlResponse));
+  }
+
+  @Test
+  void downloadErrorLogsEmptyExceptionDays()
+      throws CommonServiceException, JobSubmissionException, IOException {
+    JobDto jobDto = testUtil.createJob(TestUtil.JOB_ID, JobTypeEnum.UPLOAD_CALENDER, 20);
+    RecordStatusDto recordStatusDto = testUtil1.getJobRecordsForCalendarWithEmptyExceptionDays();
+    when(jobsDashboardClient.getJobRecordsByFilters(
+            anyString(), anyString(), anyString(), anyInt(), anyInt()))
+        .thenReturn(
+            BaseResponse.builder()
+                .payload(
+                    testUtil.createPagePayloadRecordStatusDto(List.of(recordStatusDto), 5, 20, 1))
+                .build());
+    doNothing().when(fileService).uploadFile(anyString(), anyString(), any());
+    when(preSignedUrlInterface.downloadFileURLById(1L))
+        .thenReturn(testUtil.getPreSignedUrlResponse());
+    when(fileMetaDataClient.createFileMetadata(any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getFileMetaDataResponse()).build());
+
+    PreSignedUrlResponse preSignedUrlResponse =
+        calendarProcessingRequest.downloadErrorLogs(
+            jobDto, Optional.of(ApiStatusEnum.FAILURE.name()));
+
+    Assertions.assertNotNull(preSignedUrlResponse);
+    Assertions.assertFalse(ObjectUtils.isEmpty(preSignedUrlResponse));
+  }
+
+  @Test
+  void downloadErrorLogsEmptyNoFailedTasks()
+      throws CommonServiceException, JobSubmissionException, IOException {
+    JobDto jobDto = testUtil.createJob(TestUtil.JOB_ID, JobTypeEnum.UPLOAD_CALENDER, 20);
+    when(jobsDashboardClient.getJobRecordsByFilters(
+            anyString(), anyString(), anyString(), anyInt(), anyInt()))
+        .thenReturn(
+            BaseResponse.builder()
+                .payload(
+                    testUtil.createPagePayloadRecordStatusDto(Collections.emptyList(), 1, 0, 1))
+                .build());
+
+    PreSignedUrlResponse preSignedUrlResponse =
+        calendarProcessingRequest.downloadErrorLogs(
+            jobDto, Optional.of(ApiStatusEnum.FAILURE.name()));
+
+    Assertions.assertNotNull(preSignedUrlResponse);
+    Assertions.assertFalse(ObjectUtils.isEmpty(preSignedUrlResponse));
+  }
+
+  @Test
+  void getJobType() {
+    JobTypeEnum jobTypeEnum = calendarProcessingRequest.getJobType();
+    Assertions.assertEquals(JobTypeEnum.UPLOAD_CALENDER, jobTypeEnum);
   }
 }
