@@ -67,3 +67,6 @@ entity-listener:
 pe:
   ui:
     allowed-origin-url: \${PE_UI_URL}
+feign:
+  okhttp:
+    enabled: true

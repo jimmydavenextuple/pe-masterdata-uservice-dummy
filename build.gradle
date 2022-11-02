@@ -113,6 +113,7 @@ subprojects {
         api "org.springframework.boot:spring-boot-starter-web"
         api "org.springframework.boot:spring-boot-starter-actuator"
         api "org.springframework.cloud:spring-cloud-starter-openfeign"
+        api 'io.github.openfeign:feign-okhttp'
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
         compileOnly 'org.projectlombok:lombok'
@@ -168,6 +169,9 @@ subprojects {
         suppressionFile = 'suppressions.xml'
         autoUpdate = true
         cveValidForHours = 24
+        analyzers {
+            assemblyEnabled = false
+        }
 //        if (System.getenv("CI") == 'true') {
 //            data {
 //                directory = "/root/.cve"

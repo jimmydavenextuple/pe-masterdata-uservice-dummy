@@ -89,3 +89,6 @@ download-page-size:
 edd-computation:
   lines: 30
   orders: 10
+feign:
+  okhttp:
+    enabled: true

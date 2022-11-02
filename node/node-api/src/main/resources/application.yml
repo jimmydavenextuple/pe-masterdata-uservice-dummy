@@ -62,6 +62,8 @@ pagination:
   pageSize: 15
   sortBy: nodeId
   sortOrder: ASC
-
+feign:
+  okhttp:
+    enabled: true
 node:
   type: "STORE,FC,MFC,DROPSHIP VENDOR"
