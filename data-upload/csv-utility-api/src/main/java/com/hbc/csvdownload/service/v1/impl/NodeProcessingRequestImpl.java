@@ -73,7 +73,7 @@ public class NodeProcessingRequestImpl extends AbstractProcessingRequest {
 
   @Override
   public String tempFilePrefix() {
-    return "download-log-node-upload";
+    return "download-log-node";
   }
 
   @Override

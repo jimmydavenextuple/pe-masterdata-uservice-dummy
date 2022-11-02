@@ -75,7 +75,7 @@ public class NodeCarrierProcessingRequestImpl extends AbstractProcessingRequest 
 
   @Override
   public String tempFilePrefix() {
-    return "download-log-node-carrier-upload";
+    return "download-log-node-carrier";
   }
 
   @Override

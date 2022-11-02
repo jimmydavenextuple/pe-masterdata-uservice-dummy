@@ -75,7 +75,7 @@ public class NodeServiceOptionBufferProcessingRequestImpl extends AbstractProces
 
   @Override
   public String tempFilePrefix() {
-    return "download-log-node-service-option-upload";
+    return "download-log-node-service-option-buffer";
   }
 
   @Override

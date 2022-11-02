@@ -20,6 +20,7 @@ import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
 import com.hbc.csvdownload.service.v1.ProcessingRequestFactory;
 import com.hbc.csvdownload.service.v1.impl.CalendarProcessingRequestImpl;
+import com.hbc.csvdownload.service.v1.impl.TransitTimeProcessingRequestImpl;
 import com.hbc.dataupload.common.feign.DataUploadFeign;
 import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
 import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
@@ -59,6 +60,7 @@ class CsvDownloadUtilityServiceTest {
   @Mock private NodeCarrierService nodeCarrierService;
   @Mock private ProcessingRequestFactory processingRequestFactory;
   @Mock private CalendarProcessingRequestImpl calendarProcessingRequest;
+  @Mock private TransitTimeProcessingRequestImpl transitTimeProcessingRequest;
   @InjectMocks private CsvDownloadUtilityService csvDownloadUtilityService;
   @InjectMocks private TestUtil testUtil;
 
@@ -130,6 +132,23 @@ class CsvDownloadUtilityServiceTest {
     when(processingRequestFactory.getModuleByJobType(JobTypeEnum.UPLOAD_CALENDER))
         .thenReturn(calendarProcessingRequest);
     when(calendarProcessingRequest.downloadErrorLogs(any(), any()))
+        .thenReturn(testUtil.getPreSignedUrlResponse());
+
+    var csvContent =
+        csvDownloadUtilityService.downloadLogsAsCsvV1(
+            TestUtil.JOB_ID, TestUtil.ORG_ID, Optional.of(ApiStatusEnum.FAILURE.name()));
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
+
+  @Test
+  void downloadLogsAsCsvForCalendarV1UploadTransitTimes()
+      throws CommonServiceException, JobSubmissionException, IOException {
+    JobDto jobDto = testUtil.getJobDto();
+    jobDto.setJobType(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
+    when(jobsConsumerService.getJob(TestUtil.JOB_ID, TestUtil.ORG_ID)).thenReturn(jobDto);
+    when(processingRequestFactory.getModuleByJobType(JobTypeEnum.UPLOAD_TRANSIT_TIMES))
+        .thenReturn(transitTimeProcessingRequest);
+    when(transitTimeProcessingRequest.downloadTransitTimeErrorLogs(any(), any()))
         .thenReturn(testUtil.getPreSignedUrlResponse());
 
     var csvContent =

@@ -24,4 +24,7 @@ public interface ProcessingRequestInterface {
       throws JobSubmissionException, IOException, CommonServiceException;
 
   JobTypeEnum getJobType();
+
+  PreSignedUrlResponse downloadTransitTimeErrorLogs(JobDto jobDto, Optional<String> status)
+      throws JobSubmissionException, IOException, CommonServiceException;
 }

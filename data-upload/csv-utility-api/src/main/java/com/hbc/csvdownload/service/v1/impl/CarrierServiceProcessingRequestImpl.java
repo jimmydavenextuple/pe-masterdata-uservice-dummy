@@ -105,6 +105,6 @@ public class CarrierServiceProcessingRequestImpl extends AbstractProcessingReque
 
   @Override
   public String tempFilePrefix() {
-    return "download-log-carrier-service-upload";
+    return "download-log-carrier-service";
   }
 }

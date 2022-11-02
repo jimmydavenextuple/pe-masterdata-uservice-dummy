@@ -169,7 +169,7 @@ public abstract class AbstractProcessingRequest implements ProcessingRequestInte
         for (var currentPage = 2; currentPage <= totalPages; currentPage++) {
           PagePayload<RecordStatusDto> nextPage =
               this.getJobRecordsByFilters(
-                  jobDto.getOrgId(), jobDto.getJobId(), status, currentPage, 1);
+                  jobDto.getOrgId(), jobDto.getJobId(), status, currentPage, RECORDS_PER_PAGE);
           addErrorLine(writer, nextPage.getData());
         }
         preSignedURL = generateURLResponse(tempFile.toFile(), jobDto);
@@ -185,4 +185,24 @@ public abstract class AbstractProcessingRequest implements ProcessingRequestInte
 
   public abstract void addErrorLine(CSVWriter writer, List<RecordStatusDto> recordStatusDto)
       throws IOException;
+
+  @Override
+  public PreSignedUrlResponse downloadTransitTimeErrorLogs(JobDto jobDto, Optional<String> status)
+      throws JobSubmissionException, IOException, CommonServiceException {
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile = Files.createTempFile(tempFilePrefix() + new Date().getTime(), ".csv", attr);
+    PagePayload<RecordStatusDto> recordStatusDtos =
+        this.getJobRecordsByFilters(
+            jobDto.getOrgId(), jobDto.getJobId(), status, 1, jobDto.getFailureCount());
+    var preSignedURL = new PreSignedUrlResponse();
+    try (var writer = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+      addErrorLine(writer, recordStatusDtos.getData());
+      preSignedURL = generateURLResponse(tempFile.toFile(), jobDto);
+      writer.flush();
+    } finally {
+      Files.delete(tempFile);
+    }
+    return preSignedURL;
+  }
 }

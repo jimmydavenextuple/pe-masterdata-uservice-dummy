@@ -4,6 +4,7 @@ import static com.hbc.dataupload.common.constants.CommonDataUploadErrorConstants
 import static com.hbc.dataupload.common.constants.CommonDataUploadErrorConstants.TRANSIT_TIME_DATA_UPLOAD_INVALID_FILE_HEADERS;
 import static com.hbc.dataupload.common.constants.CommonDataUploadErrorConstants.TRANSIT_TIME_DATA_UPLOAD_INVALID_FILE_TYPE;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_HEADER_TRANSIT_TIMES;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.ORG_ID;
 import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_AND_DESTINATION_GEO_ZONE;
 
 import com.hbc.common.context.Logger;
@@ -122,9 +123,8 @@ public class TransitTimeProcessingRequestImpl extends AbstractProcessingRequest 
     var transitDataErrorLogsList =
         recordStatusDtoList.stream().map(this::getRequestBody).collect(Collectors.toList());
 
-    String carrierServiceId = transitDataErrorLogsList.get(0).getCarrierServiceId();
-
-    writer.writeNext(new String[] {CARRIER_SERVICE_HEADER_TRANSIT_TIMES, carrierServiceId});
+    var orgId = transitDataErrorLogsList.get(0).getOrgId();
+    var carrierServiceId = transitDataErrorLogsList.get(0).getCarrierServiceId();
 
     Set<String> sourceFsaSet =
         transitDataErrorLogsList.stream()
@@ -135,6 +135,8 @@ public class TransitTimeProcessingRequestImpl extends AbstractProcessingRequest 
 
     sourceFsaList.add(0, SOURCE_AND_DESTINATION_GEO_ZONE);
 
+    writer.writeNext(new String[] {ORG_ID, orgId});
+    writer.writeNext(new String[] {CARRIER_SERVICE_HEADER_TRANSIT_TIMES, carrierServiceId});
     writer.writeNext(sourceFsaList.toArray(new String[0]));
 
     sourceFsaList.clear();

@@ -73,7 +73,7 @@ public class CalendarProcessingRequestImpl extends AbstractProcessingRequest {
 
   @Override
   public String tempFilePrefix() {
-    return "download-log-calendar-upload";
+    return "download-log-calendar";
   }
 
   @Override

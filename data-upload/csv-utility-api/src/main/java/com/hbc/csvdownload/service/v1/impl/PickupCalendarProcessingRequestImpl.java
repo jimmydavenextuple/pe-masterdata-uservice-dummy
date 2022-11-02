@@ -74,7 +74,7 @@ public class PickupCalendarProcessingRequestImpl extends AbstractProcessingReque
 
   @Override
   public String tempFilePrefix() {
-    return "download-log-carrier-service-calendar-upload";
+    return "download-log-pickup-calendar";
   }
 
   @Override

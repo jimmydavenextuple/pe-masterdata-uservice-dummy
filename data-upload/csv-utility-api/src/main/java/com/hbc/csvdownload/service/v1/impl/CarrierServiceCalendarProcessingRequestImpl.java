@@ -75,7 +75,7 @@ public class CarrierServiceCalendarProcessingRequestImpl extends AbstractProcess
 
   @Override
   public String tempFilePrefix() {
-    return "download-log-transit-time";
+    return "download-log-carrier-service-calendar";
   }
 
   @Override

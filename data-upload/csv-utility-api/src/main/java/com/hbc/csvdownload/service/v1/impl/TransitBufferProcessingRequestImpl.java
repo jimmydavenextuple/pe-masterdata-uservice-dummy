@@ -1,10 +1,5 @@
 package com.hbc.csvdownload.service.v1.impl;
 
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ACTION_TYPE;
-import static com.hbc.csvdownload.common.constants.CSVCommonConstants.ERROR_MESSAGE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESTINATION_GEO_ZONE;
-import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SOURCE_GEO_ZONE;
-
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
@@ -65,10 +60,6 @@ public class TransitBufferProcessingRequestImpl extends AbstractProcessingReques
   @Override
   public void addErrorLine(CSVWriter writer, List<RecordStatusDto> recordStatusDtos)
       throws IOException {
-    List<String> expectedHeaders =
-        List.of(ACTION_TYPE, SOURCE_GEO_ZONE, DESTINATION_GEO_ZONE, ERROR_MESSAGE);
-    var header = expectedHeaders.toArray(new String[0]);
-    writeToCSV(header, writer);
     writerProcessingLeadTimesError(writer, recordStatusDtos);
     writer.flush();
   }

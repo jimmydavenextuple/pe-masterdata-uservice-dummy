@@ -75,7 +75,7 @@ public class NodeCalendarProcessingRequestImpl extends AbstractProcessingRequest
 
   @Override
   public String tempFilePrefix() {
-    return "download-log-node-calendar-upload";
+    return "download-log-node-calendar";
   }
 
   @Override

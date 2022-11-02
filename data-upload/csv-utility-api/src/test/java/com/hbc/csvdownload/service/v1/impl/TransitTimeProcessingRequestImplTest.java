@@ -162,7 +162,7 @@ class TransitTimeProcessingRequestImplTest {
         .thenReturn(BaseResponse.builder().payload(testUtil.getFileMetaDataResponse()).build());
 
     PreSignedUrlResponse response =
-        transitTimeProcessingRequest.downloadErrorLogs(
+        transitTimeProcessingRequest.downloadTransitTimeErrorLogs(
             jobDto, Optional.of(ApiStatusEnum.FAILURE.name()));
 
     Assertions.assertNotNull(response);
@@ -188,7 +188,7 @@ class TransitTimeProcessingRequestImplTest {
         Assertions.assertThrows(
             Exception.class,
             () ->
-                transitTimeProcessingRequest.downloadErrorLogs(
+                transitTimeProcessingRequest.downloadTransitTimeErrorLogs(
                     jobDto, Optional.of(ApiStatusEnum.FAILURE.name())));
     Assertions.assertEquals("Error Creating the file meta", ex.getMessage());
   }

@@ -743,7 +743,9 @@ public class CsvDownloadUtilityService {
 
       ProcessingRequestInterface processingRequest =
           processingRequestFactory.getModuleByJobType(jobType);
-
+      if (jobType.equals(JobTypeEnum.UPLOAD_TRANSIT_TIMES)) {
+        return processingRequest.downloadTransitTimeErrorLogs(jobDto, status);
+      }
       return processingRequest.downloadErrorLogs(jobDto, status);
 
     } catch (Exception e) {
