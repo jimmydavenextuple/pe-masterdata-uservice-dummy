@@ -75,7 +75,6 @@ public class TransitBufferProcessingRequestImpl extends AbstractProcessingReques
 
     var req =
         new String[] {
-          requestBody.getAction(),
           requestBody.getSourceGeozone(),
           requestBody.getDestinationGeozone(),
           recordStatusDto.getErrorMessage()
