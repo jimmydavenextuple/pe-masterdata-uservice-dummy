@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.pojo.ProjectedTransitEntity;
 import com.hbc.transit.exception.TransitDomainException;
 import com.hbc.transit.repository.TransitRepository;
 import java.util.ArrayList;
@@ -194,7 +195,7 @@ class TransitDomainTest {
   }
 
   @Test
-  void getListOfTransitDetailsTestException() throws TransitDomainException {
+  void getListOfTransitDetailsTestException() {
     TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
     when(transitRepository.findByOrgIdAndDestinationGeozoneAndSourceGeoZones(any(), any(), any()))
         .thenThrow(new RuntimeException("Error while fetching transit list"));
@@ -225,7 +226,7 @@ class TransitDomainTest {
   }
 
   @Test
-  void fetchTransitEntitiesCountTestException() throws TransitDomainException {
+  void fetchTransitEntitiesCountTestException() {
     when(transitRepository.findTransitCountByOrgIdAndCarrierServiceId(any(), any()))
         .thenThrow(new RuntimeException("Error while fetching transit entities count"));
 
@@ -274,9 +275,9 @@ class TransitDomainTest {
   void fetchTransitListForDestinationGeoZones() throws TransitDomainException {
     when(transitRepository.findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
             TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE)))
-        .thenReturn(List.of(testUtil.getTransitEntities(TestUtil.CARRIER_SERVICE_ID)));
+        .thenReturn(List.of(testUtil.getProjectedTransitEntity()));
 
-    List<TransitEntity> transitEntities =
+    List<ProjectedTransitEntity> transitEntities =
         transitDomain.fetchTransitListForDestinationGeoZones(
             TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE));
     Assertions.assertFalse(CollectionUtils.isEmpty(transitEntities));
@@ -285,7 +286,7 @@ class TransitDomainTest {
   }
 
   @Test
-  void fetchTransitListForDestinationGeoZonesException() throws TransitDomainException {
+  void fetchTransitListForDestinationGeoZonesException() {
     when(transitRepository.findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
             TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE)))
         .thenThrow(new RuntimeException("Error while fetching transit entities"));

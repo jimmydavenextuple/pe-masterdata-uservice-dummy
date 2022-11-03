@@ -386,7 +386,7 @@ public class TransitService {
   public List<TransitResponse> getTransitDetailsForDestinationGeozones(
       String orgId, String carrierServiceId, List<String> destinationGeozones)
       throws TransitDomainException {
-    return INSTANCE.toTransitResponseList(
+    return INSTANCE.convertToTransitResponseList(
         transitDomain.fetchTransitListForDestinationGeoZones(
             orgId, carrierServiceId, destinationGeozones));
   }

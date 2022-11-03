@@ -27,6 +27,7 @@ import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
 import com.hbc.transit.domain.outbound.TransitBufferReqJobRefResponse;
 import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import com.hbc.transit.domain.pojo.ProjectedTransitEntity;
 import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.List;
@@ -114,6 +115,25 @@ public class TestUtil {
         .carrierServiceId(carrierServiceId)
         .transitDays(TRANSIT_DAYS)
         .build();
+  }
+
+  public ProjectedTransitEntity getProjectedTransitEntity() {
+    return new ProjectedTransitEntity() {
+      @Override
+      public String getSourceGeozone() {
+        return SOURCE_GEOZONE;
+      }
+
+      @Override
+      public String getDestinationGeozone() {
+        return DESTINATION_GEOZONE;
+      }
+
+      @Override
+      public Float getTransitDays() {
+        return TRANSIT_DAYS;
+      }
+    };
   }
 
   public TransitResponse getTransitResponse(Float transitDays) {

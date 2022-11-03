@@ -4,6 +4,7 @@ import com.hbc.transit.domain.entity.TransitEntity;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
 import com.hbc.transit.domain.outbound.TransitResponse;
+import com.hbc.transit.domain.pojo.ProjectedTransitEntity;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -24,4 +25,9 @@ public interface TransitMapper {
       @MappingTarget TransitEntity updatedTransitEntity);
 
   List<TransitResponse> toTransitResponseList(List<TransitEntity> transitEntity);
+
+  TransitResponse convertToTransitResponse(ProjectedTransitEntity projectedTransitEntity);
+
+  List<TransitResponse> convertToTransitResponseList(
+      List<ProjectedTransitEntity> projectedTransitEntities);
 }

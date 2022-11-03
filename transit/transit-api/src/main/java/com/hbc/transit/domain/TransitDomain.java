@@ -1,6 +1,7 @@
 package com.hbc.transit.domain;
 
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.pojo.ProjectedTransitEntity;
 import com.hbc.transit.exception.TransitDomainException;
 import com.hbc.transit.repository.TransitRepository;
 import java.util.List;
@@ -138,7 +139,7 @@ public class TransitDomain {
     }
   }
 
-  public List<TransitEntity> fetchTransitListForDestinationGeoZones(
+  public List<ProjectedTransitEntity> fetchTransitListForDestinationGeoZones(
       String orgId, String carrierServiceId, List<String> destinationGeozones)
       throws TransitDomainException {
     try {

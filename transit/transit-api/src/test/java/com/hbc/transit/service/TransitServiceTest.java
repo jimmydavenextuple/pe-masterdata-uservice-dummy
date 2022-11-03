@@ -69,7 +69,7 @@ class TransitServiceTest {
   @Test
   void addTransitDetailsTest() throws TransitDomainException, CommonServiceException {
     TransitDataCreationRequest transitDataCreationRequest =
-        testUtil.getTransitDataCreationRequest(testUtil.TRANSIT_DAYS);
+        testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS);
     when(postalCodeTimezoneFeign.getPostalCodeTimezone(any(), any()))
         .thenReturn(testUtil.getBaseResponseOfPostalCodeTimezoneDto());
     when(transitDomain.saveTransitEntity(any(TransitEntity.class)))
@@ -325,7 +325,7 @@ class TransitServiceTest {
 
   @Test
   void getTransitDetailsTestException() throws TransitDomainException {
-    List<TransitEntity> transitEntityList = Collections.<TransitEntity>emptyList();
+    List<TransitEntity> transitEntityList = Collections.emptyList();
     when(transitDomain.filterAndGetTransitDetails(any(), any(), any(), any(), any()))
         .thenReturn(transitEntityList);
 
@@ -490,7 +490,7 @@ class TransitServiceTest {
 
   @Test
   void getTransitDetailsForDestinationGeoZoneTestException() throws TransitDomainException {
-    List<TransitEntity> transitEntityList = Collections.<TransitEntity>emptyList();
+    List<TransitEntity> transitEntityList = Collections.emptyList();
     when(transitDomain.fetchTransitListForDestinationGeoZone(any(), any()))
         .thenReturn(transitEntityList);
     Exception exception =
@@ -506,7 +506,7 @@ class TransitServiceTest {
   @Test
   void getTransitDetailsForDestinationGeozones() throws TransitDomainException {
     when(transitDomain.fetchTransitListForDestinationGeoZones(any(), any(), any()))
-        .thenReturn(List.of(testUtil.getTransitEntities(TestUtil.CARRIER_SERVICE_ID)));
+        .thenReturn(List.of(testUtil.getProjectedTransitEntity()));
 
     List<TransitResponse> responses =
         transitService.getTransitDetailsForDestinationGeozones(
