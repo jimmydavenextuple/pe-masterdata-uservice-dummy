@@ -1,6 +1,7 @@
 package com.hbc.transit.repository;
 
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.pojo.ProjectedTransitEntity;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -45,7 +46,7 @@ public interface TransitRepository extends JpaRepository<TransitEntity, String> 
 
   List<TransitEntity> findByOrgIdAndDestinationGeozone(String orgId, String destinationGeozone);
 
-  List<TransitEntity> findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
+  List<ProjectedTransitEntity> findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
       String orgId, String carrierServiceId, List<String> destinationGeozones);
 
   @Query(
