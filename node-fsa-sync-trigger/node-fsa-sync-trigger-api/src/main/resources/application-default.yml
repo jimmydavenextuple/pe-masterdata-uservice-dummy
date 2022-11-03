@@ -28,27 +28,12 @@ logging:
   level:
     com.hbc: INFO
 
-jobs-framework:
-  job-completion-consumer:
-    topic-name: job-completion-local
-  kafka-publish:
-    topic-name: jobs-task-local
-  result-publish:
-    topic-name: jobs-result-local
-  result-consumer:
-    topic-name: jobs-result-local
-    group-id: jobs-result-consumer-async-local
-  record-consumer:
-    topic-name: jobs-task-local
-    group-id: jobs-task-consumer-async-local
-dataupload:
-  base-path: "/s3-bucket/"
-  maxsize-in-kilobytes: 10240
-  max-rows: 1000
-  bucket-name: "promise-s3-lambda-dev"
-pe:
-  ui:
-    allowed-origin-url: "*"
+fsa-updates:
+  activated: true
+  publish-topic: fsatopic
+  sync-trigger-topic:
+    name: nodefsa-sync-trigger-requests
+    group-id: nodefsa-group
 auth-token:
   url: https://promise-engine-domain-development.auth.us-east-1.amazoncognito.com
   username: user

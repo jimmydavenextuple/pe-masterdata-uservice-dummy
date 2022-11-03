@@ -1,0 +1,15 @@
+name: PR-NODE-FSA-SYNC-TRIGGER
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "node-fsa-sync-trigger/**"
+    branches: [ development, hotfix ]
+
+jobs:
+  PR-Analysis:
+    uses: ./.github/workflows/pr-flow.yml
+    with:
+      module: node-fsa-sync-trigger
+    secrets: inherit
