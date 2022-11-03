@@ -39,3 +39,7 @@ auth:
   issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_FAqWuc7OP
 fsa-updates:
   activated: false
+  publish-topic: fsatopic-hotfix
+  sync-trigger-topic:
+    name: nodefsa-sync-trigger-requests-hotfix
+    group-id: nodefsa-sync-trigger-hotfix

@@ -53,3 +53,8 @@ management:
             requests: true
         persistence: true
         cache: true
+fsa-updates:
+  eligibility-defaults:
+    item: false
+    node: false
+  serviceOptions: SDND

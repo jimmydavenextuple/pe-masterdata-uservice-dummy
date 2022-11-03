@@ -53,3 +53,7 @@ auth-token:
   password: \${COGNITO_CLIENT_SECRET}
 fsa-updates:
   activated: false
+  publish-topic: fsatopic-prod
+  sync-trigger-topic:
+    name: nodefsa-sync-trigger-requests-prod
+    group-id: nodefsa-group-prod
