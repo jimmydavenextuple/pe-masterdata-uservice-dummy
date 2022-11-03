@@ -3,7 +3,6 @@ package com.hbc.csvdownload.service;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
-import com.hbc.common.response.error.FieldError;
 import com.hbc.csvdownload.domain.mapper.ProcessingLeadTimeMapper;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
@@ -22,9 +21,7 @@ import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
@@ -147,58 +144,46 @@ public class CsvUploadUtilityService {
 
   public TransitBufferConfigResponse uploadTransitBufferData(
       TransitBufferConfigRequest transitBufferConfigRequest) throws CommonServiceException {
-
-    try {
-      transitBufferConfigRequest.setAction(DataUploadUtilityConstants.CREATE_C);
-      return callTransitBufferApi(transitBufferConfigRequest);
-    } catch (Exception e) {
-      logger.error("Error while processing transit buffer request", e);
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          ORG_ID,
-          FieldError.builder().rejectedValue(transitBufferConfigRequest.getOrgId()).build());
-      throw new CommonServiceException(e.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff3, errorMap);
-    }
+    transitBufferConfigRequest.setAction(DataUploadUtilityConstants.CREATE_C);
+    return callTransitBufferApi(transitBufferConfigRequest);
   }
 
   public TransitBufferConfigResponse updatingTransitBufferData(
       TransitBufferConfigRequest transitBufferConfigRequest) throws CommonServiceException {
-
-    try {
-      transitBufferConfigRequest.setAction(DataUploadUtilityConstants.UPDATE_U);
-      return callTransitBufferApi(transitBufferConfigRequest);
-
-    } catch (Exception e) {
-      logger.error("Error while updating transit buffer records", e);
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          ORG_ID,
-          FieldError.builder().rejectedValue(transitBufferConfigRequest.getOrgId()).build());
-      throw new CommonServiceException(e.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff4, errorMap);
-    }
+    transitBufferConfigRequest.setAction(DataUploadUtilityConstants.UPDATE_U);
+    return callTransitBufferApi(transitBufferConfigRequest);
   }
 
   public void deletingTransitBufferData(Long transitBufferRequestId, String createdBy)
       throws CommonServiceException {
-
     try {
       transitBufferConfigRequestFeign.deleteTransitBufferConfigRequest(
           transitBufferRequestId, createdBy);
+    } catch (FeignException e) {
+      logger.error("Feign exception while deleting transit buffer records", e);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
+      throw new CommonServiceException(
+          errorResponse.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff5, null);
     } catch (Exception e) {
-      logger.error("Exception while deleting transit buffer records", e);
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          "TransitBufferRequestId",
-          FieldError.builder().rejectedValue(transitBufferRequestId).build());
-      throw new CommonServiceException(e.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff5, errorMap);
+      logger.error("Error while deleting transit buffer records", e);
+      throw new CommonServiceException(e.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff5, null);
     }
   }
 
   private TransitBufferConfigResponse callTransitBufferApi(
-      TransitBufferConfigRequest transitBufferConfigRequest) {
-
-    return transitBufferConfigRequestFeign
-        .processTransitBufferConfigRequest(transitBufferConfigRequest)
-        .getPayload();
+      TransitBufferConfigRequest transitBufferConfigRequest) throws CommonServiceException {
+    try {
+      return transitBufferConfigRequestFeign
+          .processTransitBufferConfigRequest(transitBufferConfigRequest)
+          .getPayload();
+    } catch (FeignException e) {
+      logger.error("Feign exception while processing transit buffer records", e);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
+      throw new CommonServiceException(
+          errorResponse.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff4, null);
+    } catch (Exception e) {
+      logger.error("Error while processing transit buffer records", e);
+      throw new CommonServiceException(e.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff4, null);
+    }
   }
 }
