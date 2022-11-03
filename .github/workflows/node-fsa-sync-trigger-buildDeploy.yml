@@ -1,0 +1,21 @@
+name: NODE-FSA-SYNC-TRIGGER BUILD-DEPLOY
+
+on:
+  push:
+    branches: [ development ]
+    paths:
+      - "node-fsa-sync-trigger/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+jobs:
+
+  Build-Deploy:
+    uses: ./.github/workflows/build&deploy.yml
+    with:
+      module: node-fsa-sync-trigger
+    secrets: inherit
+
+
+
+

@@ -1,0 +1,23 @@
+name: NODE-FSA-SYNC-TRIGGER HOTFIX
+
+on:
+  push:
+    branches: [ hotfix ]
+    paths:
+      - "node-fsa-sync-trigger/**"
+      - "deploy-scripts/**"
+      - "manifests/**"
+      - ".github/**"
+      - "common-util/**"
+      - "build.gradle"
+     
+jobs:
+  Build-Deploy:
+    uses: ./.github/workflows/Build&Deploy_Hotfix.yml
+    with:
+      module: node-fsa-sync-trigger
+    secrets: inherit
+
+
+
+

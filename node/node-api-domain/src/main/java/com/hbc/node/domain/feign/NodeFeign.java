@@ -50,7 +50,7 @@ public interface NodeFeign {
       @RequestParam(required = false) String sortBy,
       @RequestParam(required = false) String sortOrder);
 
-  @GetMapping("/node/all-nodes}")
+  @GetMapping("/node/all-nodes")
   BaseResponse<PagePayload<NodeResponse>> getAllNodesList(
       @RequestParam(required = false) Integer pageNo,
       @RequestParam(required = false) Integer pageSize,
