@@ -37,3 +37,5 @@ auth-token:
   password: \${COGNITO_CLIENT_SECRET}
 auth:
   issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_FAqWuc7OP
+fsa-updates:
+  activated: false

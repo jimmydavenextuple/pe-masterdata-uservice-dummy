@@ -37,6 +37,7 @@ auth-token:
   username: \${COGNITO_CLIENT_ID}
   password: \${COGNITO_CLIENT_SECRET}
 fsa-updates:
+  activated: false
   publish-topic: fsatopic-stage
   sync-trigger-topic:
     name: nodefsa-sync-trigger-requests-stage

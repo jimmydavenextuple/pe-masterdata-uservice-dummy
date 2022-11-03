@@ -39,6 +39,7 @@ auth-token:
 auth:
   issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_FAqWuc7OP
 fsa-updates:
+  activated: true
   publish-topic: fsatopic-qa
   sync-trigger-topic:
     name: nodefsa-sync-trigger-requests-qa
