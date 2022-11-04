@@ -57,12 +57,10 @@ public class ProcessUploadCalendarData implements ProcessFileContents {
     var bufferedReader =
         new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
     var csvFormat =
-        CSVFormat.DEFAULT
-            .withHeader(
-                DataUploadUtilityExpectedHeaders.getCSVExpectedHeaders(
-                        ModuleEnum.CALENDAR.getModuleValue())
-                    .toArray(new String[0]))
-            .withEscape('\\');
+        CSVFormat.DEFAULT.withHeader(
+            DataUploadUtilityExpectedHeaders.getCSVExpectedHeaders(
+                    ModuleEnum.CALENDAR.getModuleValue())
+                .toArray(new String[0]));
     var csvParser = new CSVParser(bufferedReader, csvFormat);
 
     Iterable<CSVRecord> csvRecords = csvParser.getRecords();

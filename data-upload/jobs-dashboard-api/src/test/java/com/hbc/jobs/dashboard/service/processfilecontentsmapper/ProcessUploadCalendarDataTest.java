@@ -23,7 +23,7 @@ class ProcessUploadCalendarDataTest {
 
   @Test
   void updateRequestObjectsList() throws IOException, CsvException {
-    Path resourceDirectory = Paths.get("src", "test", "resources", "calendar", "calendar.csv");
+    Path resourceDirectory = Paths.get("src", "test", "resources", "calendar", "calendarV1.csv");
     InputStream inputStream = new ByteArrayInputStream(Files.readAllBytes(resourceDirectory));
 
     List<Object> objectList =
