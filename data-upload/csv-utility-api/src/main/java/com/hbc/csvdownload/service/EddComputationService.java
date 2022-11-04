@@ -318,16 +318,13 @@ public class EddComputationService {
   private void writeSfccResponseToFile(CSVWriter writer, List<SfccResponse> responseList) {
     responseList.forEach(
         response -> {
-          List<String> sfccSuggestedOptionResponseRow = new ArrayList<>();
-          sfccSuggestedOptionResponseRow.add(response.getOrgId());
-          sfccSuggestedOptionResponseRow.add(response.getCartId());
-          sfccSuggestedOptionResponseRow.add(response.getSessionId());
-          sfccSuggestedOptionResponseRow.add(response.getPageName());
           if (Objects.nonNull(response.getSdnd())) {
             response
                 .getSdnd()
                 .forEach(
                     sfccSuggestedPromiseOption -> {
+                      List<String> sfccSuggestedOptionResponseRow =
+                          getSfccSuggestedOptionResponseRow(response);
                       sfccSuggestedOptionResponseRow.add("SDND");
                       writeSfccSuggestedPromiseOptionToCSV(
                           writer,
@@ -341,6 +338,8 @@ public class EddComputationService {
                 .getStandard()
                 .forEach(
                     sfccSuggestedPromiseOption -> {
+                      List<String> sfccSuggestedOptionResponseRow =
+                          getSfccSuggestedOptionResponseRow(response);
                       sfccSuggestedOptionResponseRow.add("STANDARD");
                       writeSfccSuggestedPromiseOptionToCSV(
                           writer,
@@ -354,6 +353,8 @@ public class EddComputationService {
                 .getExpress()
                 .forEach(
                     sfccSuggestedPromiseOption -> {
+                      List<String> sfccSuggestedOptionResponseRow =
+                          getSfccSuggestedOptionResponseRow(response);
                       sfccSuggestedOptionResponseRow.add("EXPRESS");
                       writeSfccSuggestedPromiseOptionToCSV(
                           writer,
@@ -367,6 +368,8 @@ public class EddComputationService {
                 .getNextday()
                 .forEach(
                     sfccSuggestedPromiseOption -> {
+                      List<String> sfccSuggestedOptionResponseRow =
+                          getSfccSuggestedOptionResponseRow(response);
                       sfccSuggestedOptionResponseRow.add("NEXTDAY");
                       writeSfccSuggestedPromiseOptionToCSV(
                           writer,
@@ -376,14 +379,20 @@ public class EddComputationService {
                     });
           }
           if (Boolean.TRUE.equals(response.getHasExceptions())) {
-            List<String> sfccSuggestedOptionResponseRowExceptionLines = new ArrayList<>();
-            sfccSuggestedOptionResponseRowExceptionLines.add(response.getOrgId());
-            sfccSuggestedOptionResponseRowExceptionLines.add(response.getCartId());
-            sfccSuggestedOptionResponseRowExceptionLines.add(response.getSessionId());
-            sfccSuggestedOptionResponseRowExceptionLines.add(response.getPageName());
+            List<String> sfccSuggestedOptionResponseRowExceptionLines =
+                getSfccSuggestedOptionResponseRow(response);
             setExceptionLinesToCSV(writer, response, sfccSuggestedOptionResponseRowExceptionLines);
           }
         });
+  }
+
+  private static List<String> getSfccSuggestedOptionResponseRow(SfccResponse response) {
+    List<String> sfccSuggestedOptionResponseRow = new ArrayList<>();
+    sfccSuggestedOptionResponseRow.add(response.getOrgId());
+    sfccSuggestedOptionResponseRow.add(response.getCartId());
+    sfccSuggestedOptionResponseRow.add(response.getSessionId());
+    sfccSuggestedOptionResponseRow.add(response.getPageName());
+    return sfccSuggestedOptionResponseRow;
   }
 
   private static void setExceptionLinesToCSV(
