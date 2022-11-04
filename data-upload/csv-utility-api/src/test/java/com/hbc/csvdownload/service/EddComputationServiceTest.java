@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -152,6 +153,25 @@ class EddComputationServiceTest {
   void downloadEddComputationDataTest6() throws IOException {
     File csvContent =
         eddComputationService.downloadEddComputation(List.of(testUtil.getSfccResponse6()));
+    Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
+  }
+
+  @Test
+  void uploadEddComputationDataTestForMultipleLineOrder()
+      throws CommonServiceException, IOException {
+    Path resourceDirectory =
+        Paths.get("src", "test", "resources", "eddComputation", "edd_comp.csv");
+    InputStream inputStream = Files.newInputStream(resourceDirectory);
+    FileResponse response = testUtil.getFileResponse();
+    response.setInputStream(inputStream);
+    when(intermediaryServiceFeign.intermediaryCalculateEdd(any(SfccOrder.class)))
+        .thenReturn(testUtil.getSfccResponse());
+    when(fileService.getFile(anyString(), anyString())).thenReturn(testUtil.getFileResponse());
+    File csvContent =
+        eddComputationService.uploadEddCompuationData(
+            GenericUploadRequest.builder().filePath(FILE_PATH).build());
+    String data = FileUtils.readFileToString(csvContent, "UTF-8");
+    Assertions.assertEquals(data, testUtil.outPutDataForMultipleLineOrder());
     Assertions.assertFalse(ObjectUtils.isEmpty(csvContent));
   }
 }
