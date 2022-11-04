@@ -157,7 +157,8 @@ class EddComputationServiceTest {
   }
 
   @Test
-  void uploadEddComputationDataTestForMultipleLineOrder() throws CommonServiceException, IOException {
+  void uploadEddComputationDataTestForMultipleLineOrder()
+      throws CommonServiceException, IOException {
     Path resourceDirectory =
         Paths.get("src", "test", "resources", "eddComputation", "edd_comp.csv");
     InputStream inputStream = Files.newInputStream(resourceDirectory);
