@@ -27,7 +27,7 @@ public class NodeFSASyncTriggerController {
 
   private static final Logger logger = LoggerFactory.getLogger(NodeFSASyncTriggerController.class);
 
-  @PostMapping(value = "/")
+  @PostMapping(value = "/trigger")
   public ResponseEntity<BaseResponse<String>> nodeFSASync(@RequestBody NodeFSASyncRequest request) {
     logger.debug("Processing request for node fsa sync");
     try {
