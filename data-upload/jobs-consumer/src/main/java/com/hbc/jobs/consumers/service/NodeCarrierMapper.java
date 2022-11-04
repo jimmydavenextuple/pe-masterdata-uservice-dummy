@@ -148,8 +148,7 @@ public class NodeCarrierMapper implements FeignClientMapper {
     var nodeCarrierBufferRequest = INSTANCE.convertToNodeCarrierBufferRequest(request);
     nodeCarrierBufferRequest.setBufferStartDate(DateUtil.getDateUTC(request.getBufferStartDate()));
     nodeCarrierBufferRequest.setBufferEndDate(DateUtil.getDateUTC(request.getBufferEndDate()));
-    return ResponseEntity.ok(
-        nodeCarrierFeign.updateBuffer(INSTANCE.convertToNodeCarrierBufferRequest(request)));
+    return ResponseEntity.ok(nodeCarrierFeign.updateBuffer(nodeCarrierBufferRequest));
   }
 
   private ResponseEntity<?> processNodeCarrierUploadApiCall(NodeCarrierUpload nodeCarrierUpload) {
