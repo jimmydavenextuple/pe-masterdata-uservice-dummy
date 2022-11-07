@@ -7,7 +7,9 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.calendar.domain.CalendarDaysStatusInfo;
 import com.hbc.calendar.domain.outbound.CalendarResponse;
+import com.hbc.common.base.PagePayload;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.pojo.PageProperties;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.pe.masterdata.calendar.exception.CalendarDomainException;
 import com.hbc.pe.masterdata.calendar.exception.CalenderServiceException;
@@ -23,12 +25,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.internal.verification.VerificationModeFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 class CalendarControllerTest {
 
   @Mock private CalendarService calendarService;
+  @Mock private PageProperties pageProperties;
   @InjectMocks private CalendarController calendarController;
   @InjectMocks private TestUtil testUtil;
 
@@ -141,5 +145,46 @@ class CalendarControllerTest {
     Assertions.assertEquals("error", ex.getMessage());
     verify(calendarService, times(1))
         .processGetUpcomingDaysCalendarStatus(any(), any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getCalendarListWithPaginationTest() throws CommonServiceException, CalendarDomainException {
+    List<CalendarResponse> calendarResponseList =
+        List.of(testUtil.getCalendarResponse(), testUtil.getCalendarResponse1());
+
+    when(calendarService.getCalendarList(any(), any(), any(), any(), any()))
+        .thenReturn(
+            testUtil.getCalendarPageResponses(
+                2, calendarResponseList, calendarResponseList.size(), TestUtil.SORT_ORDER_DESC));
+
+    ResponseEntity<BaseResponse<PagePayload<CalendarResponse>>> response =
+        calendarController.getCalendarListWithPagination(
+            TestUtil.ORG_ID,
+            testUtil.getPageParams(
+                Optional.of(2),
+                Optional.of(1),
+                Optional.of(TestUtil.SORT_BY),
+                Optional.of(TestUtil.SORT_ORDER_DESC)));
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
+    Assertions.assertEquals(
+        2,
+        (int) response.getBody().getPayload().getPagination().getTotalPages(),
+        "Pagination Total pages");
+    Assertions.assertEquals(
+        calendarResponseList.size(),
+        (int) response.getBody().getPayload().getPagination().getTotalRecords(),
+        "Total Elements");
+    Assertions.assertEquals(
+        2,
+        (int) response.getBody().getPayload().getPagination().getCurrentPage(),
+        "Current page number");
+    Assertions.assertEquals(
+        calendarResponseList.size(),
+        response.getBody().getPayload().getData().size(),
+        "Paginated data");
+
+    verify(calendarService, VerificationModeFactory.times(1))
+        .getCalendarList(any(), any(), any(), any(), any());
   }
 }

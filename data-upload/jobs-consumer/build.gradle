@@ -19,5 +19,10 @@ dependencies {
     implementation(project(":data-upload:job-framework-common-util"))
     implementation(project(":node-carrier:node-carrier-api-domain"))
     implementation(project(":transit:transit-api-domain"))
+    implementation(project(":postal-code-timezone:postal-code-timezone-api-domain"))
+    implementation(project(":node:node-api-domain"))
+    implementation(project(":calendar:calendar-api-domain"))
+    implementation(project(":carrier:carrier-api-domain"))
+    implementation(project(":calendar:calendar-api-domain"))
     implementation group: 'com.opencsv', name: 'opencsv', version: '5.2'
 }

@@ -50,6 +50,13 @@ public interface NodeFeign {
       @RequestParam(required = false) String sortBy,
       @RequestParam(required = false) String sortOrder);
 
+  @GetMapping("/node/all-nodes")
+  BaseResponse<PagePayload<NodeResponse>> getAllNodesList(
+      @RequestParam(required = false) Integer pageNo,
+      @RequestParam(required = false) Integer pageSize,
+      @RequestParam(required = false) String sortBy,
+      @RequestParam(required = false) String sortOrder);
+
   @GetMapping("/node/get-all-cache-keys")
   BaseResponse<List<NodeCacheKeyDto>> getNodeCacheKeys(@NotNull @RequestParam Integer limit);
 }

@@ -1,7 +1,6 @@
 package com.hbc.transit.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -10,6 +9,7 @@ import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
@@ -108,6 +108,38 @@ class TransitControllerTest {
                     TestUtil.SERVICE_OPTION));
     Assertions.assertEquals("Failed to fetch transit details", exception.getMessage());
     verify(transitService, times(1)).getTransitDetails(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getDistinctDestinationFSAListTest() throws TransitDomainException {
+    List<String> dFSAResponse = List.of("A1P", "B1P", "M1R");
+    when(transitService.getDistinctDFSA(any(), any(), anyList())).thenReturn(dFSAResponse);
+
+    ResponseEntity<BaseResponse<List<String>>> responseEntity =
+        transitController.getDistinctDestinationGeoZones(
+            TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE, List.of(TestUtil.CARRIER_SERVICE_ID));
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals(dFSAResponse, responseEntity.getBody().getPayload());
+
+    verify(transitService, times(1)).getDistinctDFSA(any(), any(), anyList());
+  }
+
+  @Test
+  void getDistinctDestinationFSAListExceptionTest() throws TransitDomainException {
+    when(transitService.getDistinctDFSA(any(), any(), anyList()))
+        .thenThrow(new RuntimeException("Failed to fetch DFSAs"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                transitController.getDistinctDestinationGeoZones(
+                    TestUtil.ORG_ID,
+                    TestUtil.SOURCE_GEOZONE,
+                    List.of(TestUtil.CARRIER_SERVICE_ID)));
+    Assertions.assertEquals("Failed to fetch DFSAs", exception.getMessage());
+    verify(transitService, times(1)).getDistinctDFSA(any(), any(), anyList());
   }
 
   @Test
@@ -277,8 +309,7 @@ class TransitControllerTest {
   }
 
   @Test
-  void getTransitDetailsListForDestinationGeoZoneTest()
-      throws TransitDomainException, CommonServiceException {
+  void getTransitDetailsListForDestinationGeoZoneTest() throws CommonServiceException {
     when(transitService.getListOfTransitDetailsForDestinationGeoZone(any(), any()))
         .thenReturn(List.of(testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS)));
 
@@ -291,8 +322,7 @@ class TransitControllerTest {
   }
 
   @Test
-  void getTransitDetailsListForDestinationGeoZoneTestException()
-      throws TransitDomainException, CommonServiceException {
+  void getTransitDetailsListForDestinationGeoZoneTestException() throws CommonServiceException {
     when(transitService.getListOfTransitDetailsForDestinationGeoZone(any(), any()))
         .thenThrow(new RuntimeException("Failed to fetch transit list"));
 
@@ -325,7 +355,7 @@ class TransitControllerTest {
   }
 
   @Test
-  void deleteBufferDays() throws TransitDomainException, CommonServiceException {
+  void deleteBufferDays() throws TransitDomainException {
     TransitResponse transitResponse = testUtil.getTransitResponse(5F);
     transitResponse.setBufferDays(0D);
     when(transitService.updateTransitBufferDays(any(), any(), any(), any()))
@@ -342,5 +372,24 @@ class TransitControllerTest {
     Assertions.assertNotNull(responseEntity.getBody());
     Assertions.assertNotNull(responseEntity.getBody().getPayload());
     verify(transitService, times(1)).updateTransitBufferDays(any(), any(), any(), any());
+  }
+
+  @Test
+  void getDistinctSourceAndDestinationGeozones() throws TransitDomainException {
+    when(transitService.getDistinctSourceAndDestinationGeoZones(anyString(), anyString()))
+        .thenReturn(testUtil.geozonesResponse());
+
+    ResponseEntity<BaseResponse<DistinctGeozonesResponse>> responseEntity =
+        transitController.getDistinctSourceAndDestinationGeozones(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertNotNull(responseEntity.getBody());
+    Assertions.assertNotNull(responseEntity.getBody().getPayload());
+    Assertions.assertFalse(
+        CollectionUtils.isEmpty(responseEntity.getBody().getPayload().getDestinationGeozones()));
+    Assertions.assertFalse(
+        CollectionUtils.isEmpty(responseEntity.getBody().getPayload().getSourceGeozones()));
+    verify(transitService, times(1))
+        .getDistinctSourceAndDestinationGeoZones(anyString(), anyString());
   }
 }

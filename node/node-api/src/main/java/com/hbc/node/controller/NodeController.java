@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/node")
 @RequiredArgsConstructor
@@ -41,12 +43,14 @@ public class NodeController {
 
   private static final Logger logger = LoggerFactory.getLogger(NodeController.class);
   private static final String PAGINATION_URL = "/%s?pageNo=%d&pageSize=%d";
+  private static final String PAGINATION_URL_ALL_NODES = "?pageNo=%d&pageSize=%d";
   private final NodeService nodeService;
   private final PageProperties pageProperties;
 
   @PostMapping
   public ResponseEntity<BaseResponse<NodeResponse>> createNode(
-      @Valid @RequestBody NodeRequest nodeRequest) throws NodeDomainException {
+      @Valid @RequestBody NodeRequest nodeRequest)
+      throws NodeDomainException, CommonServiceException {
     logger.debug("Processing node creation request");
     try {
       var nodeResponse = nodeService.createNode(nodeRequest);
@@ -65,8 +69,8 @@ public class NodeController {
 
   @PutMapping("/{nodeId}/{orgId}")
   public ResponseEntity<BaseResponse<NodeResponse>> updateNodeDetails(
-      @NotBlank @PathVariable String nodeId,
-      @NotBlank @PathVariable String orgId,
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
       @Valid @RequestBody NodeUpdationRequest nodeUpdationRequest)
       throws NodeDomainException, CommonServiceException {
     logger.debug("Processing update node details");
@@ -88,7 +92,8 @@ public class NodeController {
 
   @GetMapping("/{nodeId}/{orgId}")
   public ResponseEntity<BaseResponse<NodeResponse>> getNodeDetails(
-      @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId)
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
       throws NodeDomainException, CommonServiceException {
     logger.debug("Processing get node details");
     try {
@@ -108,7 +113,8 @@ public class NodeController {
 
   @DeleteMapping("/{nodeId}/{orgId}")
   public ResponseEntity<BaseResponse<NodeResponse>> deleteNode(
-      @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId)
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
       throws NodeDomainException, CommonServiceException {
     logger.debug("Processing delete node");
     try {
@@ -129,7 +135,7 @@ public class NodeController {
 
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<NodeDto>>> getNodeList(
-      @NotBlank @PathVariable String orgId, PageParams pageParams)
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId, PageParams pageParams)
       throws NodeDomainException, CommonServiceException {
     logger.debug("Processing get node list for an orgId");
 
@@ -142,6 +148,27 @@ public class NodeController {
             pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
 
     PagePayload<NodeDto> pagePayload = setNodePagePayload(nodeDtoPage, pageParams, orgId);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node List fetched successfully")
+            .payload(pagePayload)
+            .build());
+  }
+
+  @GetMapping("/all-nodes")
+  public ResponseEntity<BaseResponse<PagePayload<NodeResponse>>> getAllNodesList(
+      PageParams pageParams) throws NodeDomainException {
+    logger.debug("Processing get node list for an orgId");
+
+    Page<NodeResponse> nodeResponsePage =
+        nodeService.getAllNodes(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            pageParams.getPageSize().orElse(pageProperties.getPageSize()),
+            pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY),
+            pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
+
+    PagePayload<NodeResponse> pagePayload = setNodePagePayload(nodeResponsePage, pageParams);
 
     return ResponseEntity.ok(
         BaseResponse.builder()
@@ -198,6 +225,42 @@ public class NodeController {
     pagination.setPrevious(previousUri);
     pagePayload.setPagination(pagination);
     pagePayload.setData(nodeDtoPage.getContent());
+
+    return pagePayload;
+  }
+
+  private PagePayload<NodeResponse> setNodePagePayload(
+      Page<NodeResponse> nodeResponsesPage, PageParams pageParams) {
+    PagePayload<NodeResponse> pagePayload = new PagePayload<>();
+    var pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords((int) nodeResponsesPage.getTotalElements());
+    pagination.setTotalPages(nodeResponsesPage.getTotalPages());
+    pagination.setCurrentPage(pageParams.getPageNo().orElse(pageProperties.getPageNo()));
+    pagination.setSortOrder(pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
+    pagination.setSortBy(pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY));
+
+    String nextUri =
+        PaginationUtil.buildUriForPagination(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            nodeResponsesPage.getTotalPages(),
+            "next",
+            String.format(
+                PAGINATION_URL_ALL_NODES,
+                (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
+                pageParams.getPageSize().orElse(pageProperties.getPageSize())));
+    String previousUri =
+        PaginationUtil.buildUriForPagination(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            nodeResponsesPage.getTotalPages(),
+            "previous",
+            String.format(
+                PAGINATION_URL_ALL_NODES,
+                (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
+                pageParams.getPageSize().orElse(pageProperties.getPageSize())));
+    pagination.setNext(nextUri);
+    pagination.setPrevious(previousUri);
+    pagePayload.setPagination(pagination);
+    pagePayload.setData(nodeResponsesPage.getContent());
 
     return pagePayload;
   }

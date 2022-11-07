@@ -2,6 +2,7 @@ package com.hbc.transit.domain;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.pojo.ProjectedTransitEntity;
 import com.hbc.transit.exception.TransitDomainException;
 import com.hbc.transit.repository.TransitRepository;
 import java.util.ArrayList;
@@ -77,6 +79,35 @@ class TransitDomainTest {
     verify(transitRepository, times(1))
         .findByOrgIdAndSourceGeozoneAndDestinationGeozoneAndCarrierServiceId(
             any(), any(), any(), any());
+  }
+
+  @Test
+  void fetchDestinationGeozonesTest() throws TransitDomainException {
+    when(transitRepository.findByOrgIdAndSourceGeozoneAndCarrierServiceIds(any(), any(), anyList()))
+        .thenReturn(List.of("B1P", "M1R", "A1F"));
+    List<String> response =
+        transitDomain.fetchDestinationGeozones(
+            TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE, List.of(TestUtil.CARRIER_SERVICE_ID));
+    Assertions.assertEquals(3, response.size());
+    verify(transitRepository, times(1))
+        .findByOrgIdAndSourceGeozoneAndCarrierServiceIds(any(), any(), anyList());
+  }
+
+  @Test
+  void fetchDestinationGeozonesExceptionTest() {
+    when(transitRepository.findByOrgIdAndSourceGeozoneAndCarrierServiceIds(any(), any(), anyList()))
+        .thenThrow(new RuntimeException("Eror while fetching DFSAs"));
+    TransitDomainException e =
+        Assertions.assertThrows(
+            TransitDomainException.class,
+            () -> {
+              transitDomain.fetchDestinationGeozones(
+                  TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE, List.of(TestUtil.CARRIER_SERVICE_ID));
+            });
+    Assertions.assertEquals(TestUtil.ORG_ID, e.getOrgId());
+    Assertions.assertEquals(TestUtil.SOURCE_GEOZONE, e.getSourceGeozone());
+    verify(transitRepository, times(1))
+        .findByOrgIdAndSourceGeozoneAndCarrierServiceIds(any(), any(), anyList());
   }
 
   @Test
@@ -164,7 +195,7 @@ class TransitDomainTest {
   }
 
   @Test
-  void getListOfTransitDetailsTestException() throws TransitDomainException {
+  void getListOfTransitDetailsTestException() {
     TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
     when(transitRepository.findByOrgIdAndDestinationGeozoneAndSourceGeoZones(any(), any(), any()))
         .thenThrow(new RuntimeException("Error while fetching transit list"));
@@ -195,7 +226,7 @@ class TransitDomainTest {
   }
 
   @Test
-  void fetchTransitEntitiesCountTestException() throws TransitDomainException {
+  void fetchTransitEntitiesCountTestException() {
     when(transitRepository.findTransitCountByOrgIdAndCarrierServiceId(any(), any()))
         .thenThrow(new RuntimeException("Error while fetching transit entities count"));
 
@@ -244,9 +275,9 @@ class TransitDomainTest {
   void fetchTransitListForDestinationGeoZones() throws TransitDomainException {
     when(transitRepository.findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
             TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE)))
-        .thenReturn(List.of(testUtil.getTransitEntities(TestUtil.CARRIER_SERVICE_ID)));
+        .thenReturn(List.of(testUtil.getProjectedTransitEntity()));
 
-    List<TransitEntity> transitEntities =
+    List<ProjectedTransitEntity> transitEntities =
         transitDomain.fetchTransitListForDestinationGeoZones(
             TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE));
     Assertions.assertFalse(CollectionUtils.isEmpty(transitEntities));
@@ -255,7 +286,7 @@ class TransitDomainTest {
   }
 
   @Test
-  void fetchTransitListForDestinationGeoZonesException() throws TransitDomainException {
+  void fetchTransitListForDestinationGeoZonesException() {
     when(transitRepository.findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(
             TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE)))
         .thenThrow(new RuntimeException("Error while fetching transit entities"));
@@ -271,5 +302,54 @@ class TransitDomainTest {
     Assertions.assertNotNull(exception);
     verify(transitRepository, times(1))
         .findByOrgIdAndCarrierServiceIdAndDestinationGeozoneIn(any(), any(), any());
+  }
+
+  @Test
+  void fetchDistinctSourceGeoZones() throws TransitDomainException {
+    when(transitRepository.findDistinctSourceGeoZones(any(), any()))
+        .thenReturn(List.of(TestUtil.SOURCE_GEOZONE));
+
+    List<String> sourceGeozones =
+        transitDomain.fetchDistinctSourceGeoZones(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+    Assertions.assertFalse(CollectionUtils.isEmpty(sourceGeozones));
+  }
+
+  @Test
+  void fetchDistinctSourceGeoZonesException() throws TransitDomainException {
+    when(transitRepository.findDistinctSourceGeoZones(any(), any()))
+        .thenThrow(new RuntimeException("Error"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitDomain.fetchDistinctSourceGeoZones(
+                    TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void fetchDistinctDestinationGeoZones() throws TransitDomainException {
+    when(transitRepository.findDistinctDestinationGeoZones(any(), any()))
+        .thenReturn(List.of(TestUtil.DESTINATION_GEOZONE));
+
+    List<String> sourceGeozones =
+        transitDomain.fetchDistinctDestinationGeoZones(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+    Assertions.assertFalse(CollectionUtils.isEmpty(sourceGeozones));
+  }
+
+  @Test
+  void fetchDistinctDestinationGeoZonesException() throws TransitDomainException {
+    when(transitRepository.findDistinctDestinationGeoZones(any(), any()))
+        .thenThrow(new RuntimeException("Error"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitDomain.fetchDistinctDestinationGeoZones(
+                    TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID));
+    Assertions.assertNotNull(exception);
   }
 }

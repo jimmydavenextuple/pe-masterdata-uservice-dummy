@@ -11,11 +11,13 @@ import com.hbc.jobs.consumers.exception.InvalidJobTypeException;
 import com.hbc.jobs.consumers.exception.JobDomainException;
 import com.hbc.jobs.consumers.exception.JobException;
 import com.hbc.jobs.consumers.exception.JobIdNotFoundException;
+import com.hbc.jobs.consumers.exception.PublishJobEventException;
 import com.hbc.jobs.framework.common.aop.DBTransaction;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
+import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
@@ -42,62 +44,21 @@ public class JobConsumerService {
 
   private final JobDomain jobDomain;
 
-  private final JobDashboardService jobDashboardService;
-
-  /**
-   * @param recordDto
-   * @throws JobException
-   */
-  public void processRecord(RecordDto recordDto) throws JobException {
-    log.debug("Inside processRecord service");
-
-    try {
-      RecordStatusDto recordStatus = getRecordStatus(recordDto);
-      publishRecordStatusToKafka(recordStatus);
-      log.debug("Inside processRecord service ends");
-    } catch (Exception e) {
-      log.error("Error while processing the job record.", e);
-      throw new JobException(
-          "Exception while processing the job record", e, recordDto.getJobId(), null);
-    }
-  }
-
-  /**
-   * @param recordStatus
-   * @throws JobException
-   */
-  private void publishRecordStatusToKafka(RecordStatusDto recordStatus) throws JobException {
-    log.debug("Inside publishRecordStatusToKafka service");
-
-    try {
-      jobDashboardService.publishJobRecord(recordStatus);
-    } catch (Exception e) {
-      log.error("Error while publishing the job record to kafka", e);
-      throw new JobException(
-          "Exception while publishing the job record to kafka", e, recordStatus.getJobId(), null);
-    }
-  }
+  private final PublishJobEventService publishJobEventService;
 
   /**
    * @param recordDto
    * @return
    * @throws JobException
    */
-  public RecordStatusDto getRecordStatus(RecordDto recordDto) throws JobException {
+  public RecordStatusDto executeTask(RecordDto recordDto) throws InvalidJobTypeException {
     log.debug("Inside getRecordStatus service");
-
-    try {
-      var feignClientMapper = feignClientMapperFactory.getMapper(recordDto.getJobType());
-      if (Objects.isNull(feignClientMapper)) {
-        throw new InvalidJobTypeException(
-            "Job type is not correct", recordDto.getJobType().toString());
-      }
-      return feignClientMapper.getResponseFromAPI(recordDto);
-    } catch (Exception e) {
-      log.error("Error while retrieving the job record", e);
-      throw new JobException(
-          "Exception while retrieving the job record", e, recordDto.getJobId(), null);
+    var feignClientMapper = feignClientMapperFactory.getFeignClientMapper(recordDto.getJobType());
+    if (Objects.isNull(feignClientMapper)) {
+      throw new InvalidJobTypeException(
+          "Job type is not correct", recordDto.getJobType().toString());
     }
+    return feignClientMapper.invokeAPI(recordDto);
   }
 
   /**
@@ -109,6 +70,7 @@ public class JobConsumerService {
     log.debug("Inside updateJobStatus service");
 
     try {
+      // Create JobRecord entry
       jobRecordDomain.create(JobRecordMapper.INSTANCE.toJobRecordEntity(recordStatusDto));
     } catch (Exception e) {
       log.error("Error while persisting job record entity.", e);
@@ -126,9 +88,54 @@ public class JobConsumerService {
    */
   public void updateJob(RecordStatusDto recordStatusDto, int retryCount) throws JobException {
     try {
-      var jobEntity = getJobEntity(recordStatusDto.getJobId(), recordStatusDto.getOrgId());
-      var updateJobEntity = processJobStatus(jobEntity, recordStatusDto);
-      jobDomain.save(updateJobEntity);
+      long currentTime = System.currentTimeMillis();
+      jobDomain.updateJobStatus(
+          recordStatusDto.getJobId(),
+          JobStatusEnum.RUNNING,
+          recordStatusDto.getStatus().equals(ApiStatusEnum.SUCCESS));
+      if (log.isDebugEnabled()) {
+        log.debug(
+            "updateJob: Update JOBS status took {} for jobId: {}",
+            System.currentTimeMillis() - currentTime,
+            recordStatusDto.getJobId());
+      }
+      currentTime = System.currentTimeMillis();
+      var jobEntity =
+          jobDomain.findJobByJobIdAndOrgId(recordStatusDto.getJobId(), recordStatusDto.getOrgId());
+      if (log.isDebugEnabled()) {
+        log.debug(
+            "updateJob: Retrieving JOBS status took {} for jobId: {}",
+            System.currentTimeMillis() - currentTime,
+            recordStatusDto.getJobId());
+      }
+      if (Objects.isNull(jobEntity)) {
+        throw new JobIdNotFoundException("Job is not found!", recordStatusDto.getJobId());
+      }
+
+      List<AuditLog> oldAuditLog = new ArrayList<>(Arrays.asList(jobEntity.getAuditLog()));
+
+      if (jobEntity.getProcessedRecords() >= jobEntity.getTotalRecords()
+          && !JobStatusEnum.COMPLETED.equals(jobEntity.getStatus())) {
+        var auditLog = new AuditLog();
+        auditLog.setStatus(JobStatusEnum.COMPLETED);
+        auditLog.setTimeStamp(new Date());
+        oldAuditLog.add(auditLog);
+        jobEntity.setStatus(JobStatusEnum.COMPLETED);
+        jobEntity.setAuditLog(oldAuditLog.toArray(new AuditLog[0]));
+        jobEntity.setLastModifiedDate(new Date());
+        jobDomain.save(jobEntity);
+        publishJobStatusOnCompletion(jobEntity);
+      } else if (jobEntity.getProcessedRecords() == 1) {
+        var auditLog = new AuditLog();
+        auditLog.setStatus(JobStatusEnum.RUNNING);
+        auditLog.setTimeStamp(new Date());
+        oldAuditLog.add(auditLog);
+        jobEntity.setAuditLog(oldAuditLog.toArray(new AuditLog[0]));
+        jobEntity.setLastModifiedDate(new Date());
+        jobEntity.setStatus(JobStatusEnum.RUNNING);
+        jobDomain.save(jobEntity);
+      }
+
     } catch (Exception e) {
       if (e.getCause() instanceof OptimisticLockingFailureException) {
         if (retryCount > 0) {
@@ -149,41 +156,14 @@ public class JobConsumerService {
     }
   }
 
-  /**
-   * @param jobEntity
-   * @param recordStatusDto
-   * @return
-   */
-  private JobEntity processJobStatus(JobEntity jobEntity, RecordStatusDto recordStatusDto) {
-    log.debug("Inside processJobStatus service");
-
-    if (recordStatusDto.getStatus().equals(ApiStatusEnum.FAILURE)) {
-      jobEntity.setFailureCount(jobEntity.getFailureCount() + 1);
-    } else {
-      jobEntity.setSuccessCount(jobEntity.getSuccessCount() + 1);
-    }
-    jobEntity.setProcessedRecords(jobEntity.getProcessedRecords() + 1);
-
-    jobEntity.setRemainingRecords(jobEntity.getTotalRecords() - jobEntity.getProcessedRecords());
-
-    List<AuditLog> oldAuditLog = new ArrayList<>(Arrays.asList(jobEntity.getAuditLog()));
-
-    if (jobEntity.getProcessedRecords() == jobEntity.getTotalRecords()) {
-      var auditLog = new AuditLog();
-      auditLog.setStatus(JobStatusEnum.COMPLETED);
-      jobEntity.setStatus(JobStatusEnum.COMPLETED);
-      auditLog.setTimeStamp(new Date());
-      oldAuditLog.add(auditLog);
-    } else if (jobEntity.getStatus().equals(JobStatusEnum.PROCESSED)) {
-      var auditLog = new AuditLog();
-      auditLog.setStatus(JobStatusEnum.RUNNING);
-      jobEntity.setStatus(JobStatusEnum.RUNNING);
-      auditLog.setTimeStamp(new Date());
-      oldAuditLog.add(auditLog);
-    }
-
-    jobEntity.setAuditLog(oldAuditLog.toArray(new AuditLog[0]));
-    return jobEntity;
+  private void publishJobStatusOnCompletion(JobEntity jobEntity) throws PublishJobEventException {
+    var jobDetailsDto = new JobDetailsDto();
+    jobDetailsDto.setJobId(jobEntity.getJobId());
+    jobDetailsDto.setTotalRecords(jobEntity.getTotalRecords());
+    jobDetailsDto.setJobType(jobEntity.getJobType());
+    jobDetailsDto.setStatus(jobEntity.getStatus());
+    jobDetailsDto.setOrgId(jobEntity.getOrgId());
+    publishJobEventService.publishJobDetailsEvent(jobDetailsDto);
   }
 
   /**
@@ -201,6 +181,14 @@ public class JobConsumerService {
     } catch (Exception e) {
       throw new JobException("Exception while retrieving the job records", e, jobId, null);
     }
+  }
+
+  public Page<RecordStatusDto> getJobResults(
+      String orgId, String jobId, Optional<String> status, Integer pageNo, Integer pageSize)
+      throws JobException {
+    log.debug("--Inside getJobResults()--");
+    return jobRecordDomain.fetchJobRecordsByFiltersPaginatedOutput(
+        jobId, orgId, status, pageNo, pageSize);
   }
 
   /**

@@ -57,10 +57,11 @@ class NodeCarrierCalendarFeignClientServiceImplTest {
     NodeCarrierCalendarCacheKey cacheKey = testUtil.getNodeCarrierCalendarCacheKey();
     NodeCarrierCalendarCacheValue cacheValue = testUtil.getNodeCarrierCalendarCacheValue();
 
-    BaseResponse<List<CalendarDaysStatusInfo>> baseResponse = testUtil.getBaseResponseOfListOfCalendarDaysStatusInfo();
+    BaseResponse<List<CalendarDaysStatusInfo>> baseResponse =
+        testUtil.getBaseResponseOfListOfCalendarDaysStatusInfo();
     baseResponse.setPayload(null);
     when(calendarCommonFeign.getNodeCarrierCalendar(any(), any(), any(), any()))
-            .thenReturn(baseResponse);
+        .thenReturn(baseResponse);
     var response = nodeCarrierCalendarFeignClientService.get(cacheKey);
 
     assertNotNull(response);
@@ -77,6 +78,4 @@ class NodeCarrierCalendarFeignClientServiceImplTest {
     assertNull(response.getCalendarDaysStatusInfo());
     verify(mapper, times(0)).responseToCacheValue(any());
   }
-
-
 }

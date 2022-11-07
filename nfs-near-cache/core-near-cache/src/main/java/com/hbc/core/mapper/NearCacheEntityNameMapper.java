@@ -35,6 +35,7 @@ public class NearCacheEntityNameMapper {
       registry.put("WeightageConfiguration", WEIGHTAGE_CONFIGURATION_ENTITY_NAME);
       registry.put("PostalCodeTimezoneEntity", POSTAL_CODE_ENTITY_NAME);
       registry.put("TransitEntity", TRANSIT_ENTITY_NAME);
+      registry.put("TransitBufferEntity", TRANSIT_ENTITY_NAME);
       registry.put("CommonConfiguration", COMMON_CONFIG_ENTITY_NAME);
     }
     log.debug("Registry value : {}", registry);

@@ -1,5 +1,6 @@
 package com.hbc.jobs.consumers.service;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -9,8 +10,11 @@ import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.CsvDataValidationException;
 import com.hbc.jobs.consumers.common.TestUtil;
 import com.hbc.jobs.consumers.exception.InvalidActionTypeException;
+import com.hbc.jobs.consumers.exception.InvalidJobTypeException;
 import com.hbc.jobs.consumers.exception.NodeCarrierMapperException;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.pojo.NodeCarrierUpload;
+import com.hbc.jobs.framework.common.domain.pojo.ProcessingTimeBufferUpload;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import java.util.Map;
@@ -73,14 +77,18 @@ class NodeCarrierMapperTest {
   }
 
   @Test
-  void mapTODto() throws NodeCarrierMapperException {
+  void mapTODto() throws NodeCarrierMapperException, InvalidJobTypeException {
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES);
     Class res = nodeCarrierMapper.mapTODto();
-    Assertions.assertEquals(ProcessingLeadTimesRaw.class, res);
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_NODE_CARRIER);
+    Class uploadNodeCarrier = nodeCarrierMapper.mapTODto();
+    Assertions.assertEquals(NodeCarrierUpload.class, uploadNodeCarrier);
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_NODE_SERVICE_OPTION_BUFFER);
+    Class processingTimeBufferUpload = nodeCarrierMapper.mapTODto();
+    Assertions.assertEquals(ProcessingTimeBufferUpload.class, processingTimeBufferUpload);
     nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_TRANSIT_TIMES);
     Exception exception =
-        Assertions.assertThrows(
-            NodeCarrierMapperException.class, () -> nodeCarrierMapper.mapTODto());
+        Assertions.assertThrows(InvalidJobTypeException.class, () -> nodeCarrierMapper.mapTODto());
     Assertions.assertNotNull(exception);
   }
 
@@ -174,5 +182,70 @@ class NodeCarrierMapperTest {
 
     Assertions.assertThrows(
         CommonServiceException.class, () -> nodeCarrierMapper.callApi(object, null));
+  }
+
+  @Test
+  void callApiUploadNodeCarrierCreateAction()
+      throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
+    Object object = testUtil.getNodeCarrierUpload("CREATE");
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_NODE_CARRIER);
+    when(nodeCarrierFeign.createNodeCarrier(any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getNodeCarrierResponse()).build());
+    ResponseEntity<BaseResponse<NodeCarrierResponse>> res =
+        (ResponseEntity<BaseResponse<NodeCarrierResponse>>) nodeCarrierMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
+  }
+
+  @Test
+  void callApiUploadNodeCarrierUpdateAction()
+      throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
+    Object object = testUtil.getNodeCarrierUpload("UPDATE");
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_NODE_CARRIER);
+    when(nodeCarrierFeign.updateNodeCarrier(
+            anyString(), anyString(), anyString(), anyString(), any()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getNodeCarrierResponse()).build());
+    ResponseEntity<BaseResponse<NodeCarrierResponse>> res =
+        (ResponseEntity<BaseResponse<NodeCarrierResponse>>) nodeCarrierMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
+  }
+
+  @Test
+  void callApiUploadNodeCarrierDeleteAction()
+      throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
+    Object object = testUtil.getNodeCarrierUpload("DELETE");
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_NODE_CARRIER);
+    when(nodeCarrierFeign.deleteNodeCarrier(anyString(), anyString(), anyString(), anyString()))
+        .thenReturn(BaseResponse.builder().payload(testUtil.getNodeCarrierResponse()).build());
+    ResponseEntity<BaseResponse<NodeCarrierResponse>> res =
+        (ResponseEntity<BaseResponse<NodeCarrierResponse>>) nodeCarrierMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
+  }
+
+  @Test
+  void callApiUploadNodeCarrierInvalidAction() {
+    Object object = testUtil.getNodeCarrierUpload("C");
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_NODE_CARRIER);
+
+    Exception exception =
+        Assertions.assertThrows(
+            CsvDataValidationException.class, () -> nodeCarrierMapper.callApi(object, null));
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void callApiUploadProcessingTimeBufferUpload()
+      throws NodeCarrierMapperException, InvalidActionTypeException, CommonServiceException {
+    Object object = testUtil.getProcessingTimeBufferUpload();
+    nodeCarrierMapper.setJobTypeEnum(JobTypeEnum.UPLOAD_NODE_SERVICE_OPTION_BUFFER);
+    when(nodeCarrierFeign.updateBuffer(any()))
+        .thenReturn(
+            BaseResponse.builder().payload(testUtil.getNodeCarrierBufferResponse()).build());
+    ResponseEntity<BaseResponse<NodeCarrierResponse>> res =
+        (ResponseEntity<BaseResponse<NodeCarrierResponse>>) nodeCarrierMapper.callApi(object, null);
+    Assertions.assertEquals(HttpStatus.OK, res.getStatusCode());
+    Assertions.assertNotNull(res.getBody());
   }
 }

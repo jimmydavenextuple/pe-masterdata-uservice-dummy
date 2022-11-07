@@ -47,7 +47,7 @@ class JobConsumerExceptionHandlerTest {
 
   @Test
   void handleJobDashboardException() {
-    JobDashboardException e = mock(JobDashboardException.class);
+    PublishJobEventException e = mock(PublishJobEventException.class);
     when(e.getMessage()).thenReturn(msg);
 
     ResponseEntity<Object> responseEntity = handler.handleJobDashboardException(e);

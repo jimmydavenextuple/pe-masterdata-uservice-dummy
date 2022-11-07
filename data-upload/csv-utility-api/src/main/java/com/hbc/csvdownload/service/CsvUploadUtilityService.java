@@ -2,15 +2,20 @@ package com.hbc.csvdownload.service;
 
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
+import com.hbc.common.exception.CommonServiceException;
 import com.hbc.csvdownload.domain.mapper.ProcessingLeadTimeMapper;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
 import com.hbc.csvdownload.exception.CsvParsingException;
 import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.csvdownload.util.CsvUtil;
+import com.hbc.dataupload.common.constants.DataUploadUtilityConstants;
 import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.utils.ExceptionUtils;
+import com.hbc.transit.domain.feign.TransitBufferConfigRequestFeign;
+import com.hbc.transit.domain.inbound.TransitBufferConfigRequest;
+import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import feign.FeignException;
@@ -19,6 +24,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +38,10 @@ public class CsvUploadUtilityService {
 
   public static final ProcessingLeadTimeMapper INSTANCE =
       Mappers.getMapper(ProcessingLeadTimeMapper.class);
+
+  private final TransitBufferConfigRequestFeign transitBufferConfigRequestFeign;
+
+  private static final String ORG_ID = "orgId";
 
   public String uploadProcessingLeadTimesCsv(String orgId, MultipartFile csvFile)
       throws CsvFormatValidationFailedException, JobSubmissionException, CsvParsingException,
@@ -93,7 +103,7 @@ public class CsvUploadUtilityService {
 
   private void validateHeaders(String orgIdHeader, String carrierServiceIdHeader, String fsaHeader)
       throws CsvFormatValidationFailedException {
-    if (!orgIdHeader.equals("orgId")) {
+    if (!orgIdHeader.equals(ORG_ID)) {
       logger.error("Invalid header orgId");
       throw new CsvFormatValidationFailedException("Invalid header orgId", orgIdHeader);
     }
@@ -129,6 +139,51 @@ public class CsvUploadUtilityService {
     } catch (Exception e) {
       logger.error("Error while submitting job to job framework", e);
       throw new JobSubmissionException("Error while submitting job to job framework", e, orgId);
+    }
+  }
+
+  public TransitBufferConfigResponse uploadTransitBufferData(
+      TransitBufferConfigRequest transitBufferConfigRequest) throws CommonServiceException {
+    transitBufferConfigRequest.setAction(DataUploadUtilityConstants.CREATE_C);
+    return callTransitBufferApi(transitBufferConfigRequest);
+  }
+
+  public TransitBufferConfigResponse updatingTransitBufferData(
+      TransitBufferConfigRequest transitBufferConfigRequest) throws CommonServiceException {
+    transitBufferConfigRequest.setAction(DataUploadUtilityConstants.UPDATE_U);
+    return callTransitBufferApi(transitBufferConfigRequest);
+  }
+
+  public void deletingTransitBufferData(Long transitBufferRequestId, String createdBy)
+      throws CommonServiceException {
+    try {
+      transitBufferConfigRequestFeign.deleteTransitBufferConfigRequest(
+          transitBufferRequestId, createdBy);
+    } catch (FeignException e) {
+      logger.error("Feign exception while deleting transit buffer records", e);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
+      throw new CommonServiceException(
+          errorResponse.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff5, null);
+    } catch (Exception e) {
+      logger.error("Error while deleting transit buffer records", e);
+      throw new CommonServiceException(e.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff5, null);
+    }
+  }
+
+  private TransitBufferConfigResponse callTransitBufferApi(
+      TransitBufferConfigRequest transitBufferConfigRequest) throws CommonServiceException {
+    try {
+      return transitBufferConfigRequestFeign
+          .processTransitBufferConfigRequest(transitBufferConfigRequest)
+          .getPayload();
+    } catch (FeignException e) {
+      logger.error("Feign exception while processing transit buffer records", e);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
+      throw new CommonServiceException(
+          errorResponse.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff4, null);
+    } catch (Exception e) {
+      logger.error("Error while processing transit buffer records", e);
+      throw new CommonServiceException(e.getMessage(), HttpStatus.BAD_REQUEST, 0xfffff4, null);
     }
   }
 }

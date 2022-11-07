@@ -1,0 +1,4 @@
+action,orgId,postalCodePrefix,country,state,city,latitude,longitude,timeZone
+CREATE,BAY,A0A,CA,NL,Witless Bay,47.545965,-53.138234,America/St_Johns
+UPDATE,BAY,A0A,CA,NL,Witless Bay,47.545965,-53.138234,America/St_Johns
+DELETE,BAY,A0A,CA,NL,Witless Bay,47.545965,-53.138234,America/St_Johns

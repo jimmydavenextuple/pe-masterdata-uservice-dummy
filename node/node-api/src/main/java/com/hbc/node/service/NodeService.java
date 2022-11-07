@@ -17,12 +17,16 @@ import com.hbc.node.exception.NodeDomainException;
 import com.hbc.postgres.config.ReaderDS;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.joda.time.DateTimeZone;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,6 +38,7 @@ public class NodeService {
   private static final Logger logger = LoggerFactory.getLogger(NodeService.class);
   private static final String ORG_ID = "orgId";
   private static final String NODE_ID = "nodeId";
+  private static final String NODE_TYPE = "nodeType";
   private static final String SORT_ORDER = "sortOrder";
 
   private final NodeDomain nodeDomain;
@@ -41,9 +46,17 @@ public class NodeService {
   public static final NodeMapper INSTANCE = Mappers.getMapper(NodeMapper.class);
 
   private static final String NODE_EXCEPTION_MESSAGE = "Node not found with given details";
+  private static final String NODE_TYPE_EXCEPTION_MESSAGE = "Invalid Node Type Found";
+  private static final String TIMEZONE_EXCEPTION_MESSAGE = "Invalid Timezone Found";
+  private static final String COUNTRY_EXCEPTION_MESSAGE = "Invalid Country Found";
 
-  public NodeResponse createNode(NodeRequest nodeRequest) throws NodeDomainException {
+  @Value("#{'${node.type}'.split('\\s*,\\s*')}")
+  public Set<String> nodeTypes;
 
+  public NodeResponse createNode(NodeRequest nodeRequest)
+      throws NodeDomainException, CommonServiceException {
+    validateNodeTypeTimezoneAndCountry(
+        nodeRequest.getNodeType(), nodeRequest.getTimezone(), nodeRequest.getCountry());
     var nodeEntity = INSTANCE.nodeRequestToNodeEntity(nodeRequest);
 
     return INSTANCE.toNodeResponse(nodeDomain.saveNodeEntity(nodeEntity));
@@ -52,7 +65,10 @@ public class NodeService {
   public NodeResponse updateNodeDetails(
       String nodeId, String orgId, NodeUpdationRequest nodeUpdationRequest)
       throws NodeDomainException, CommonServiceException {
-
+    validateNodeTypeTimezoneAndCountry(
+        nodeUpdationRequest.getNodeType(),
+        nodeUpdationRequest.getTimezone(),
+        nodeUpdationRequest.getCountry());
     Optional<NodeEntity> existingNodeEntity = nodeDomain.findNodeByNodeIdAndOrgId(nodeId, orgId);
 
     if (existingNodeEntity.isEmpty()) {
@@ -123,9 +139,34 @@ public class NodeService {
     }
   }
 
+  @ReaderDS
+  public Page<NodeResponse> getAllNodes(
+      Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
+      throws NodeDomainException {
+    return nodeDomain.getAllNodesPaginated(pageNo, pageSize, sortBy, sortOrder);
+  }
+
   public List<NodeCacheKeyDto> getAllNodeCacheKeys(Integer limit) throws NodeDomainException {
     var nodeEntities = nodeDomain.getAllNodeEntities(limit);
 
     return INSTANCE.toNodeCacheKeyResponseList(nodeEntities);
+  }
+
+  private void validateNodeTypeTimezoneAndCountry(String nodeType, String timezone, String country)
+      throws CommonServiceException {
+    if (!nodeTypes.contains(nodeType.toUpperCase()))
+      throwCommonServiceException(NODE_TYPE, nodeType, NODE_TYPE_EXCEPTION_MESSAGE);
+    if (!Set.of(Locale.getISOCountries()).contains(country))
+      throwCommonServiceException("country", country, COUNTRY_EXCEPTION_MESSAGE);
+    if (!DateTimeZone.getAvailableIDs().contains(timezone))
+      throwCommonServiceException("timezone", timezone, TIMEZONE_EXCEPTION_MESSAGE);
+  }
+
+  private void throwCommonServiceException(String field, String fieldValue, String errorMessage)
+      throws CommonServiceException {
+    logger.error(errorMessage);
+    Map<String, FieldError> errorMap = new HashMap<>();
+    errorMap.put(field, FieldError.builder().rejectedValue(fieldValue).build());
+    throw new CommonServiceException(errorMessage, HttpStatus.NOT_FOUND, 0x1771, errorMap);
   }
 }

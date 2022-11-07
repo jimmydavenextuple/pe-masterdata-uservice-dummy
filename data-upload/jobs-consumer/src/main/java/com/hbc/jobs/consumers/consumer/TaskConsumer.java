@@ -1,14 +1,15 @@
 package com.hbc.jobs.consumers.consumer;
 
+import com.hbc.common.constants.CommonConstants;
 import com.hbc.common.context.CurrentThreadContext;
 import com.hbc.jobs.consumers.exception.JobException;
-import com.hbc.jobs.consumers.feign.AuthTokenAPI;
-import com.hbc.jobs.consumers.feign.AuthTokenRequest;
-import com.hbc.jobs.consumers.feign.AuthTokenResponse;
+import com.hbc.jobs.consumers.service.AuthTokenService;
 import com.hbc.jobs.consumers.service.JobConsumerService;
 import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
+import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.converter.KafkaMessageHeaders;
@@ -23,32 +24,56 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TaskConsumer {
 
-  @Value("${auth-token.grant-type:client_credentials}")
-  public String grantType;
-
-  @Value("${auth-token.scope:sfcc-resources/edd}")
-  public String scope;
-
   private final JobConsumerService jobConsumerService;
 
-  private final AuthTokenAPI authTokenAPI;
+  private final AuthTokenService authTokenService;
 
-  public TaskConsumer(JobConsumerService jobConsumerService, AuthTokenAPI authTokenAPI) {
+  private static final Logger logger = LoggerFactory.getLogger(TaskConsumer.class);
+
+  public TaskConsumer(JobConsumerService jobConsumerService, AuthTokenService authTokenAPI) {
     this.jobConsumerService = jobConsumerService;
-    this.authTokenAPI = authTokenAPI;
+    this.authTokenService = authTokenAPI;
   }
 
   @KafkaHandler(isDefault = true)
   public void receiveRecordFromDashboardProducer(
       @Payload RecordDto recordDto, @Headers KafkaMessageHeaders headers) throws JobException {
-    log.debug("Inside receiveRecordFromDashboardProducer service");
+    logger.debug("Inside receiveRecordFromDashboardProducer service");
 
     try {
-      log.debug("Auth token received in consumer");
-      String authToken = getAuthToken();
+      long systime = System.currentTimeMillis();
+      logger.debug("Auth token received in consumer");
+      String authToken =
+          authTokenService.getAuthToken(
+              headers == null ? null : (String) headers.get(CommonConstants.AUTHORIZATION_HEADER),
+              headers == null
+                  ? null
+                  : (String) headers.get(CommonConstants.AUTH_EXPIRY_TIMESTAMP_HEADER));
+
+      logger.debug("Auth token took: {}", System.currentTimeMillis() - systime);
+
       CurrentThreadContext.getLogContext().setAuthorizationHeader(authToken);
-      jobConsumerService.processRecord(recordDto);
-      log.debug("receiveRecordFromDashboardProducer service ends");
+      long executTime = System.currentTimeMillis();
+      RecordStatusDto recordStatus = jobConsumerService.executeTask(recordDto);
+
+      logger.debug(
+          "Execute task took {} for jobId: {}",
+          System.currentTimeMillis() - executTime,
+          recordStatus.getJobId());
+
+      long jobUpdTime = System.currentTimeMillis();
+      jobConsumerService.updateJobStatus(recordStatus);
+
+      logger.debug(
+          "Update job status took {} for jobId: {}",
+          System.currentTimeMillis() - jobUpdTime,
+          recordStatus.getJobId());
+      logger.debug(
+          "Overall record consumption took: {} for jobId: {}",
+          System.currentTimeMillis() - systime,
+          recordStatus.getJobId());
+      logger.debug("receiveRecordFromDashboardProducer service ends");
+
     } catch (Exception e) {
       log.error("Error while receiving the job record from the kafka producer", e);
       throw new JobException(
@@ -57,14 +82,5 @@ public class TaskConsumer {
           recordDto.getJobId(),
           null);
     }
-  }
-
-  private String getAuthToken() {
-    var authTokenRequest = AuthTokenRequest.builder().grant_type(grantType).scope(scope).build();
-
-    AuthTokenResponse response = authTokenAPI.getAuthToken(authTokenRequest);
-    String authToken = response.getAccessToken();
-    log.debug("Auth Token generated is : {}", authToken);
-    return "Bearer " + authToken;
   }
 }

@@ -1,29 +1,52 @@
 package com.hbc.csvdownload.service;
 
+import static com.hbc.csvdownload.common.constants.CSVCommonConstants.*;
+
+import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
+import com.hbc.common.base.PagePayload;
 import com.hbc.common.context.Logger;
 import com.hbc.common.context.LoggerFactory;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
 import com.hbc.csvdownload.domain.mapper.TransitDataRequestMapper;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorNodeCarrier;
 import com.hbc.csvdownload.domain.pojo.DownloadErrorTransitData;
 import com.hbc.csvdownload.domain.pojo.TransitDataErrorLogsPojo;
+import com.hbc.csvdownload.exception.CarrierServiceException;
 import com.hbc.csvdownload.exception.CsvDownloadUtilityServiceException;
 import com.hbc.csvdownload.exception.PostalCodeTimezoneServiceException;
 import com.hbc.csvdownload.exception.TransitServiceException;
+import com.hbc.csvdownload.service.v1.ProcessingRequestFactory;
+import com.hbc.csvdownload.service.v1.ProcessingRequestInterface;
+import com.hbc.dataupload.common.feign.DataUploadFeign;
+import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
-import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
+import com.hbc.jobs.framework.common.domain.pojo.*;
+import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.domain.dto.NodeDto;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import com.opencsv.CSVWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -33,16 +56,94 @@ import org.springframework.util.ObjectUtils;
 @RequiredArgsConstructor
 public class CsvDownloadUtilityService {
 
-  private final Logger logger = LoggerFactory.getLogger(CsvDownloadUtilityService.class);
-
-  private final PostalCodeTimeZoneService postalCodeTimeZoneService;
-  private final TransitService transitService;
-
-  private final JobsDashboardService jobsDashboardService;
-  private final JobsConsumerService jobsConsumerService;
-
   private static final TransitDataRequestMapper INSTANCE =
       Mappers.getMapper(TransitDataRequestMapper.class);
+  private final Logger logger = LoggerFactory.getLogger(CsvDownloadUtilityService.class);
+  private final PostalCodeTimeZoneService postalCodeTimeZoneService;
+  private final TransitService transitService;
+  private final DataUploadFeign dataUploadFeign;
+  private final CarrierService carrierService;
+  private final CalenderService calenderService;
+  private final JobsDashboardService jobsDashboardService;
+  private final JobsConsumerService jobsConsumerService;
+  private final ProcessingTimeBuffersService processingTimeBuffersService;
+  private final NodeService nodeService;
+  private final NodeCarrierService nodeCarrierService;
+  private final ProcessingRequestFactory processingRequestFactory;
+  private static final String NA = "NA";
+
+  @Value("${download-page-size.node-carrier-service-options}")
+  private Integer noOfRecordsPerPage;
+
+  public File downloadCarrierServiceDataCSV(String orgId)
+      throws IOException, CarrierServiceException {
+
+    List<CarrierServiceResponse> carrierServiceResponses = carrierService.getCarrierService(orgId);
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile =
+        Files.createTempFile("download-carrierService" + new Date().getTime(), ".csv", attr);
+
+    try (var csvWriter = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+
+      var headers =
+          new String[] {
+            CARRIER_SERVICE_ID,
+            ORG_ID,
+            CARRIER_NAME,
+            CARRIER_ID,
+            SERVICE_NAME,
+            STATUS,
+            WORKING_CALENDER
+          };
+      csvWriter.writeNext(headers);
+      for (CarrierServiceResponse carrierServiceResponse : carrierServiceResponses) {
+        String carrierServiceId = carrierServiceResponse.getCarrierServiceId();
+        List<String> calenderIds = new ArrayList<>();
+        List<CarrierServiceCalendarResponse> carrierServiceCalendarResponses = new ArrayList<>();
+        getCalenderIds(orgId, carrierServiceId, calenderIds, carrierServiceCalendarResponses);
+        var transitTimeEntriesDto = new TransitTimeEntriesDto();
+
+        try {
+          transitTimeEntriesDto = transitService.getTransitTimeEntries(orgId, carrierServiceId);
+        } catch (TransitServiceException e) {
+          transitTimeEntriesDto.setTotalRecords(0);
+          logger.debug("No transit entries found");
+        }
+
+        String status =
+            (!carrierServiceCalendarResponses.isEmpty()
+                    && transitTimeEntriesDto.getTotalRecords() > 0)
+                ? ACTIVE
+                : INACTIVE;
+        writeDataOntoFile(csvWriter, orgId, carrierServiceResponse, status, calenderIds);
+        csvWriter.flush();
+      }
+    }
+    return tempFile.toFile();
+  }
+
+  private void getCalenderIds(
+      String orgId,
+      String carrierServiceId,
+      List<String> calenderIds,
+      List<CarrierServiceCalendarResponse> serviceCalendarResponses) {
+    try {
+
+      serviceCalendarResponses.addAll(
+          calenderService.getCarrierServiceCalender(orgId, carrierServiceId));
+
+      calenderIds.addAll(
+          serviceCalendarResponses.stream()
+              .map(CarrierServiceCalendarResponse::getCalendarId)
+              .collect(Collectors.toSet()));
+
+    } catch (Exception e) {
+      // No Calender exist for given orgId and carrierServiceId
+      calenderIds.add("NA");
+      logger.error("Empty Carrier Service Calendar Response List");
+    }
+  }
 
   public String downloadTransitTimesForSourceAndDestinationRegion(
       String orgId, String carrierServiceId, String sourceRegion, String destinationRegion)
@@ -52,6 +153,7 @@ public class CsvDownloadUtilityService {
 
     List<String> destinationFsaList =
         postalCodeTimeZoneService.getFSAsByOrgIdAndState(orgId, destinationRegion);
+
     Set<String> sourceFsaSet =
         new HashSet<>(postalCodeTimeZoneService.getFSAsByOrgIdAndState(orgId, sourceRegion));
     List<TransitResponse> filteredTransitResponseList =
@@ -109,16 +211,6 @@ public class CsvDownloadUtilityService {
     return String.join("\n", csvContents, rows);
   }
 
-  private static String constructCsvRows(
-      Map<String, Map<String, Float>> transitTimesDataMap, String destinationFsa) {
-    var sourceFsaAndTransitTimesMap = transitTimesDataMap.get(destinationFsa);
-    String transitTimes =
-        sourceFsaAndTransitTimesMap.keySet().stream()
-            .map(sourceFsa -> String.valueOf(sourceFsaAndTransitTimesMap.get(sourceFsa)))
-            .collect(Collectors.joining(","));
-    return String.join(",", destinationFsa, transitTimes);
-  }
-
   public String downloadLogsAsCsv(String jobId, String orgId, Optional<String> status)
       throws CommonServiceException {
     logger.debug("Processing download transit time and processing lead time");
@@ -145,7 +237,7 @@ public class CsvDownloadUtilityService {
 
   private String downloadProcessingLeadTimeErrorLogs(List<RecordStatusDto> recordStatusDtoList) {
     var header =
-        String.join(",", "nodeId", "orgId", "serviceOption", "processingLeadTime", "errorMessage");
+        String.join(",", NODE_ID, ORG_ID, SERVICE_OPTION, PROCESSING_LEAD_TIME, ERROR_MESSAGE);
     String rows =
         recordStatusDtoList.stream()
             .map(this::constructRowContent)
@@ -260,5 +352,405 @@ public class CsvDownloadUtilityService {
     errorLogsPojo.setErrorMessage(recordStatusDto.getErrorMessage());
     errorLogsPojo.setException(recordStatusDto.getException());
     return errorLogsPojo;
+  }
+
+  public String downloadMarketRegionForOrgIdAndCountry(String orgId, String country)
+      throws PostalCodeTimezoneServiceException {
+    logger.debug("Processing download market regions for orgId and country");
+    List<PostalCodeTimezoneDto> postalCodeTimezoneDtoList =
+        postalCodeTimeZoneService.getPostalCodeTimeZoneByOrgIdAndCountry(orgId, country);
+    var header =
+        String.join(
+            ",", ORG_ID, POSTAL_CODE_PREFIX, COUNTRY, STATE, CITY, LATITUDE, LONGITUDE, TIMEZONE);
+    var rows =
+        postalCodeTimezoneDtoList.stream().map(this::createRow).collect(Collectors.joining("\n"));
+
+    return String.join("\n", header, rows);
+  }
+
+  private String createRow(PostalCodeTimezoneDto dto) {
+    return dto.getOrgId()
+        + ","
+        + dto.getPostalCodePrefix()
+        + ","
+        + dto.getCountry()
+        + ","
+        + dto.getState()
+        + ","
+        + dto.getCity()
+        + ","
+        + dto.getLatitude()
+        + ","
+        + dto.getLongitude()
+        + ","
+        + dto.getTimeZone();
+  }
+
+  private String constructCsvRows(
+      Map<String, Map<String, Float>> transitTimesDataMap, String destinationFsa) {
+    var sourceFsaAndTransitTimesMap = transitTimesDataMap.get(destinationFsa);
+    String transitTimes =
+        sourceFsaAndTransitTimesMap.keySet().stream()
+            .map(sourceFsa -> String.valueOf(sourceFsaAndTransitTimesMap.get(sourceFsa)))
+            .collect(Collectors.joining(","));
+    return String.join(",", destinationFsa, transitTimes);
+  }
+
+  private void writeDataOntoFile(
+      CSVWriter csvWriter,
+      String orgId,
+      CarrierServiceResponse carrierServiceResponse,
+      String status,
+      List<String> calenderIds) {
+
+    calenderIds.forEach(
+        calenderId ->
+            csvWriter.writeNext(
+                new String[] {
+                  carrierServiceResponse.getCarrierServiceId(),
+                  orgId,
+                  carrierServiceResponse.getCarrierName(),
+                  carrierServiceResponse.getCarrierId(),
+                  carrierServiceResponse.getServiceName(),
+                  status,
+                  calenderId
+                }));
+  }
+
+  public DownloadNodeCarrierServiceAndServiceOptionPojo
+      downloadNodeCarrierServiceAndServiceOptionsDataCSV(String orgId) throws IOException {
+
+    /** feign client call to get data */
+    BaseResponse<PagePayload<NodeCarrierServiceAndServiceOptionResponse>> response =
+        dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
+            orgId, null, noOfRecordsPerPage, null, null);
+    /** Create a temporary file to write the data */
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile =
+        Files.createTempFile(
+            "download-node-carrierService-serviceOption" + new Date().getTime(), ".csv", attr);
+    try (var csvWriter = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+      var headers =
+          new String[] {
+            NODE_ID,
+            ORG_ID,
+            STREET,
+            CITY,
+            PROVINCE,
+            POSTAL_CODE,
+            CARRIER_SERVICES,
+            SERVICE_OPTIONS,
+            STATUS
+          };
+      Integer currentPageNo = 1;
+      Integer totalPages = 0;
+      List<NodeCarrierServiceAndServiceOptionResponse> responses = new ArrayList<>();
+      if (response != null && response.getPayload() != null) {
+        csvWriter.writeNext(headers);
+        responses = response.getPayload().getData();
+        totalPages = response.getPayload().getPagination().getTotalPages();
+        currentPageNo = response.getPayload().getPagination().getCurrentPage();
+      }
+
+      writeDataOntoFile(csvWriter, responses);
+      csvWriter.flush();
+
+      if (totalPages > 0) {
+        while (currentPageNo < totalPages) {
+          BaseResponse<PagePayload<NodeCarrierServiceAndServiceOptionResponse>> response2 =
+              dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
+                  orgId, currentPageNo + 1, noOfRecordsPerPage, null, null);
+          if (response2 != null && response2.getPayload() != null) {
+            responses = response2.getPayload().getData();
+            totalPages = response2.getPayload().getPagination().getTotalPages();
+            currentPageNo = response2.getPayload().getPagination().getCurrentPage();
+            writeDataOntoFile(csvWriter, responses);
+            csvWriter.flush();
+          }
+        }
+      }
+
+      return DownloadNodeCarrierServiceAndServiceOptionPojo.builder()
+          .contentsLength(tempFile.toFile().length())
+          .fileContents(Files.readAllBytes(tempFile))
+          .build();
+    } finally {
+      tempFile.toFile().delete(); // NOSONAR
+    }
+  }
+
+  private void writeDataOntoFile(
+      CSVWriter csvWriter, List<NodeCarrierServiceAndServiceOptionResponse> responses) {
+
+    if (!CollectionUtils.isEmpty(responses)) {
+      responses.forEach(
+          response -> {
+            var nodeId = response.getNodeId();
+            var orgId = response.getOrgId();
+            var street = response.getStreet();
+            var city = response.getCity();
+            var province = response.getProvince();
+            var postalCode = response.getPostalCode();
+            response
+                .getActiveCombination()
+                .forEach(
+                    activeCombination ->
+                        csvWriter.writeNext(
+                            new String[] {
+                              nodeId,
+                              orgId,
+                              street,
+                              city,
+                              province,
+                              postalCode,
+                              activeCombination.getCarrierServiceId(),
+                              activeCombination.getServiceOption(),
+                              activeCombination.isActive() ? ACTIVE : INACTIVE
+                            }));
+          });
+    }
+  }
+
+  public File downloadProcessingTimeBuffersByOrgId(String orgId) throws IOException {
+    logger.debug("Processing download processing time buffers for orgId");
+    List<ProcessingTimeBufferResponse> responses =
+        processingTimeBuffersService.getProcessingTimeBuffers(orgId);
+
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile =
+        Files.createTempFile(
+            "download-processing-time-buffers" + new Date().getTime(), ".csv", attr);
+    try (var writer = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+      var header =
+          new String[] {
+            NODE_ID,
+            ORG_ID,
+            NODE_TYPE,
+            STREET,
+            CITY,
+            PROVINCE,
+            POSTAL_CODE,
+            SERVICE_OPTION,
+            BUFFER_HOURS,
+            BUFFER_START_DATE,
+            BUFFER_END_DATE,
+            STATUS
+          };
+      writeToCSV(header, writer);
+
+      writerProcessingTimeBufferDataToFile(writer, responses);
+      writer.flush();
+    }
+
+    return tempFile.toFile();
+  }
+
+  private void writerProcessingTimeBufferDataToFile(
+      CSVWriter writer, List<ProcessingTimeBufferResponse> responseList) {
+
+    responseList.forEach(
+        response -> {
+          if (response.getServiceOptions().isEmpty()
+              && response.getProcessingTimeBuffers().isEmpty()) {
+            List<String> csvData =
+                addNodeDetails(
+                    response.getNodeId(),
+                    response.getOrgId(),
+                    response.getNodeType(),
+                    response.getStreet(),
+                    response.getCity(),
+                    response.getProvince(),
+                    response.getPostalCode());
+            csvData.add(NA);
+            csvData.add(NA);
+            csvData.add(NA);
+            csvData.add(NA);
+            csvData.add(NA);
+            writeToCSV(csvData.toArray(new String[0]), writer);
+          } else {
+            response
+                .getProcessingTimeBuffers()
+                .forEach(
+                    processingTimeBuffer -> {
+                      List<String> csvData =
+                          addNodeDetails(
+                              response.getNodeId(),
+                              response.getOrgId(),
+                              response.getNodeType(),
+                              response.getStreet(),
+                              response.getCity(),
+                              response.getProvince(),
+                              response.getPostalCode());
+                      csvData.add(processingTimeBuffer.getServiceOption());
+                      csvData.add(checkForNullValues(processingTimeBuffer.getBufferHours()));
+                      csvData.add(
+                          checkForNullValues(
+                              convertToStringUTC(processingTimeBuffer.getBufferStartDate())));
+                      csvData.add(
+                          checkForNullValues(
+                              convertToStringUTC(processingTimeBuffer.getBufferEndDate())));
+                      csvData.add(checkForNullValues(processingTimeBuffer.getStatus()));
+                      writeToCSV(csvData.toArray(new String[0]), writer);
+                    });
+          }
+        });
+  }
+
+  private List<String> addNodeDetails(
+      String nodeId,
+      String orgId,
+      String nodeType,
+      String street,
+      String city,
+      String province,
+      String postalCode) {
+    List<String> csvData = new ArrayList<>();
+    csvData.add(nodeId);
+    csvData.add(orgId);
+    csvData.add(nodeType);
+    csvData.add(street);
+    csvData.add(city);
+    csvData.add(province);
+    csvData.add(postalCode);
+    return csvData;
+  }
+
+  private void writeToCSV(String[] data, CSVWriter writer) {
+    writer.writeNext(data);
+  }
+
+  private String checkForNullValues(Object value) {
+    return (value == null) ? NA : value.toString();
+  }
+
+  private String convertToStringUTC(Date value) {
+    if (value != null) {
+      return value.toInstant().toString();
+    }
+    return null;
+  }
+
+  private Set<PosixFilePermission> setFilePermissions() {
+    Set<PosixFilePermission> posixFilePermissions = new HashSet<>();
+    posixFilePermissions.add(PosixFilePermission.OWNER_READ);
+    posixFilePermissions.add(PosixFilePermission.OWNER_WRITE);
+    return posixFilePermissions;
+  }
+
+  public File downloadNodesByOrgId(String orgId) throws IOException {
+    List<NodeDto> nodeDtoList = nodeService.getNodeList(orgId);
+
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile = Files.createTempFile("download-nodes" + new Date().getTime(), ".csv", attr);
+    try (var writer = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+      var header =
+          new String[] {
+            NODE_ID,
+            ORG_ID,
+            NODE_TYPE,
+            STREET,
+            CITY,
+            PROVINCE,
+            POSTAL_CODE,
+            LATITUDE,
+            LONGITUDE,
+            TIMEZONE,
+            STATUS,
+            NODE_WORKING_CALENDAR,
+            CARRIER_SERVICES,
+            SERVICE_OPTIONS,
+            PICKUP_TIME
+          };
+      writeToCSV(header, writer);
+
+      writerNodesDataToFile(writer, nodeDtoList);
+      writer.flush();
+    }
+
+    return tempFile.toFile();
+  }
+
+  private void writerNodesDataToFile(CSVWriter writer, List<NodeDto> nodeDtoList) {
+    for (NodeDto node : nodeDtoList) {
+      List<NodeCalendarResponse> nodeCalendarResponses =
+          calenderService.getNodeCalendar(node.getOrgId(), node.getNodeId());
+      String nodeWorkingCalendar =
+          CollectionUtils.isEmpty(nodeCalendarResponses)
+              ? "NA"
+              : nodeCalendarResponses.get(0).getCalendarId();
+
+      List<NodeCarrierResponse> nodeCarrierResponses =
+          nodeCarrierService.getNodeCarrierResponse(node.getNodeId(), node.getOrgId());
+
+      if (nodeCarrierResponses.isEmpty()) {
+        List<String> csvData =
+            addNodeDetails(
+                node.getNodeId(),
+                node.getOrgId(),
+                node.getNodeType(),
+                node.getStreet(),
+                node.getCity(),
+                node.getProvince(),
+                node.getPostalCode());
+        csvData.add(node.getLatitude());
+        csvData.add(node.getLongitude());
+        csvData.add(node.getTimezone());
+        csvData.add(node.getIsActive() == Boolean.TRUE ? "ACTIVE" : "INACTIVE");
+        csvData.add(nodeWorkingCalendar);
+        csvData.add(NA);
+        csvData.add(NA);
+        csvData.add(NA);
+        writeToCSV(csvData.toArray(new String[0]), writer);
+      } else {
+        nodeCarrierResponses.forEach(
+            response -> {
+              List<String> csvData =
+                  addNodeDetails(
+                      node.getNodeId(),
+                      node.getOrgId(),
+                      node.getNodeType(),
+                      node.getStreet(),
+                      node.getCity(),
+                      node.getProvince(),
+                      node.getPostalCode());
+              csvData.add(node.getLatitude());
+              csvData.add(node.getLongitude());
+              csvData.add(node.getTimezone());
+              csvData.add(node.getIsActive() == Boolean.TRUE ? "ACTIVE" : "INACTIVE");
+              csvData.add(nodeWorkingCalendar);
+              csvData.add(checkForNullValues(response.getCarrierServiceId()));
+              csvData.add(checkForNullValues(response.getServiceOption()));
+              csvData.add(checkForNullValues(response.getLastPickupTime()));
+              writeToCSV(csvData.toArray(new String[0]), writer);
+            });
+      }
+    }
+  }
+
+  public PreSignedUrlResponse downloadLogsAsCsvV1(
+      String jobId, String orgId, Optional<String> status) throws CommonServiceException {
+    logger.debug("Processing download transit time and processing lead time");
+    try {
+      var jobDto = jobsConsumerService.getJob(jobId, orgId);
+      var jobType = jobDto.getJobType();
+      if (ObjectUtils.isEmpty(JobTypeEnum.valueOf(jobType.name()))) {
+        throw new CommonServiceException(
+            "Incorrect jobType specified", HttpStatus.BAD_REQUEST, 0x1772, null);
+      }
+
+      ProcessingRequestInterface processingRequest =
+          processingRequestFactory.getModuleByJobType(jobType);
+      if (jobType.equals(JobTypeEnum.UPLOAD_TRANSIT_TIMES)) {
+        return processingRequest.downloadTransitTimeErrorLogs(jobDto, status);
+      }
+      return processingRequest.downloadErrorLogs(jobDto, status);
+
+    } catch (Exception e) {
+      throw new CommonServiceException(
+          "Error while downloading error logs as csv", HttpStatus.BAD_REQUEST, 0x1772, null);
+    }
   }
 }

@@ -47,7 +47,7 @@ bootJar {
 }
 
 group = 'com.hbc'
-version = "1.1.2-${build_target}"
+version = "1.2.0-${build_target}"
 
 subprojects {
     apply from: "$rootProject.projectDir/dependencies.gradle"
@@ -67,7 +67,7 @@ subprojects {
     apply plugin: "org.sonatype.gradle.plugins.scan"
 
     group = 'com.hbc'
-    version = "1.1.2-${build_target}"
+    version = "1.2.0-${build_target}"
 
     sourceCompatibility = "${sourceJdkVersion}"
     targetCompatibility = "${targetJdkVersion}"
@@ -85,12 +85,19 @@ subprojects {
     }
 
     repositories {
-//        mavenCentral()
+        mavenCentral()
         maven {
-            url = 'https://repo.maven.apache.org/maven2'
+            url = 'https://repo.maven.apache.org/m2'
         }
         maven {
             url = 'https://clojars.org/repo/'
+        }
+        maven {
+            url "${artifactory_contextUrl}"
+            credentials {
+                username "aws"
+                password System.env.CODEARTIFACT_AUTH_TOKEN
+            }
         }
     }
 
@@ -106,6 +113,7 @@ subprojects {
         api "org.springframework.boot:spring-boot-starter-web"
         api "org.springframework.boot:spring-boot-starter-actuator"
         api "org.springframework.cloud:spring-cloud-starter-openfeign"
+        api 'io.github.openfeign:feign-okhttp'
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
         compileOnly 'org.projectlombok:lombok'
@@ -161,6 +169,9 @@ subprojects {
         suppressionFile = 'suppressions.xml'
         autoUpdate = true
         cveValidForHours = 24
+        analyzers {
+            assemblyEnabled = false
+        }
 //        if (System.getenv("CI") == 'true') {
 //            data {
 //                directory = "/root/.cve"

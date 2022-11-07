@@ -2,7 +2,10 @@ package com.hbc.jobs.framework.common.domain.enums;
 
 public enum MasterDataModule {
   TRANSIT("TRANSIT", "Transit"),
-  NODE_CARRIER("NODE_CARRIER", "Node Carrier");
+  NODE_CARRIER("NODE_CARRIER", "Node Carrier"),
+  POSTAL_CODE_TIMEZONE("POSTAL_CODE_TIMEZONE", "Postal Code Timezone"),
+  NODE_CALENDER("CALENDER", "Calendar"),
+  NODE("NODE", "Node");
 
   private final String moduleName;
   private final String displayName;

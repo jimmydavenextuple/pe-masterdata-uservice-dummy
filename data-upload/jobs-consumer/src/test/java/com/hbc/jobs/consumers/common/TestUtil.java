@@ -1,5 +1,25 @@
 package com.hbc.jobs.consumers.common;
 
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CALENDAR_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_NAME;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.CARRIER_SERVICE_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.DESCRIPTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.EFFECTIVE_DATE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.NODE_ID;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.POSTAL_CODE_PREFIX;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_NAME;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTION;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_OPTIONS;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.SHIPPING_STAGE;
+import static com.hbc.dataupload.common.constants.DataUploadUtilityConstants.STATE;
+
+import com.hbc.calendar.domain.outbound.CalendarResponse;
+import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
+import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
+import com.hbc.calendar.domain.pojo.ExceptionDays;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
+import com.hbc.common.util.DateUtil;
 import com.hbc.csvdownload.common.pojo.TransitDataUpload;
 import com.hbc.csvdownload.domain.pojo.ProcessingLeadTimesRaw;
 import com.hbc.jobs.consumers.domain.entity.JobEntity;
@@ -12,11 +32,26 @@ import com.hbc.jobs.framework.common.domain.enums.JobStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.AuditLog;
+import com.hbc.jobs.framework.common.domain.pojo.CalendarDataUpload;
+import com.hbc.jobs.framework.common.domain.pojo.CarrierCalendarUpload;
+import com.hbc.jobs.framework.common.domain.pojo.CarrierServiceUpload;
+import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.JobFilters;
+import com.hbc.jobs.framework.common.domain.pojo.NodeCalendarUpload;
+import com.hbc.jobs.framework.common.domain.pojo.NodeCarrierUpload;
+import com.hbc.jobs.framework.common.domain.pojo.NodeDataUpload;
+import com.hbc.jobs.framework.common.domain.pojo.PickUpCalendarUpload;
+import com.hbc.jobs.framework.common.domain.pojo.PostalCodeTimezoneUpload;
+import com.hbc.jobs.framework.common.domain.pojo.ProcessingTimeBufferUpload;
+import com.hbc.jobs.framework.common.domain.pojo.RecordDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.domain.pojo.TransitBufferUpload;
 import com.hbc.node.carrier.domain.inbound.NodeCarrierRequest;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.hbc.node.domain.outbound.NodeResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +72,22 @@ public class TestUtil {
 
   public static final String ORG_ID = "BAY";
   public static final String JOB_ID = "JobId1";
+  public static final String STREET = "street-1";
+  public static final String CITY = "city-1";
+  public static final String PROVINCE = "province-1";
+  public static final String POSTAL_CODE = "33666";
+  public static final String COUNTRY = "country-1";
+  public static final String LATITUDE = "43.769912";
+  public static final String LONGITUDE = "-79.296678";
+  public static final String TIME_ZONE = "America/Toronto";
+  public static Boolean SHIP_TO_TIME = Boolean.TRUE;
+  public static Boolean BOPIS_ELIGIBLE = Boolean.TRUE;
+  public static Boolean SDND_ELIGIBLE = Boolean.TRUE;
+  public static Boolean EXPRESS_ELIGIBLE = Boolean.TRUE;
+  public static String NODE_TYPE = "MFC";
+  public static Boolean IS_ACTIVE = Boolean.TRUE;
+  public static final String EXCEPTION_DATE = String.valueOf(DateUtil.addDaysToCurrentDate(4));
+  public static final String EXCEPTION_REASON = "Public Holiday";
 
   public static final String CSV_CONTENTS_PROCESSING_LEAD_TIMES =
       "nodeId,orgId,serviceOptions,processingTime (in hrs),action\n"
@@ -367,6 +418,17 @@ public class TestUtil {
     return processingLeadTime;
   }
 
+  public NodeCarrierUpload getNodeCarrierUpload(String action) {
+    return NodeCarrierUpload.builder()
+        .action(action)
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .lastPickupTime("12:00")
+        .build();
+  }
+
   public NodeCarrierResponse getNodeCarrierResponse() {
     NodeCarrierResponse nodeCarrierResponse = new NodeCarrierResponse();
     nodeCarrierResponse.setNodeId("node-1");
@@ -417,5 +479,424 @@ public class TestUtil {
     authTokenResponse.setExpiresIn(20);
 
     return authTokenResponse;
+  }
+
+  public JobDetailsDto getJobDetailsDto() {
+    JobDetailsDto jobDetailsDto = new JobDetailsDto();
+    jobDetailsDto.setJobId(JOB_ID);
+    jobDetailsDto.setJobType(JobTypeEnum.TRANSIT_BUFFER_REQUEST);
+    jobDetailsDto.setStatus(JobStatusEnum.COMPLETED);
+    jobDetailsDto.setOrgId(ORG_ID);
+    jobDetailsDto.setTotalRecords(2);
+
+    return jobDetailsDto;
+  }
+
+  public TransitBufferUpload getTransitBufferUpload(String bufferDays, String action) {
+    TransitBufferUpload transitBufferUpload = new TransitBufferUpload();
+    transitBufferUpload.setOrgId(ORG_ID);
+    transitBufferUpload.setCarrierServiceId("ALL-EXPRESS");
+    transitBufferUpload.setBufferDays(bufferDays);
+    transitBufferUpload.setSourceGeozone("T0A");
+    transitBufferUpload.setDestinationGeozone("M1R");
+    transitBufferUpload.setBufferStartDate("2022-10-19T15:51:17Z");
+    transitBufferUpload.setBufferEndDate("2022-10-19T15:51:17Z");
+    transitBufferUpload.setAction(action);
+
+    return transitBufferUpload;
+  }
+
+  public TransitBufferResponse getTransitBufferResponse() {
+    return TransitBufferResponse.builder()
+        .orgId(ORG_ID)
+        .carrierServiceId("ALL-EXPRESS")
+        .sourceGeozone("T0A")
+        .destinationGeozone("M1R")
+        .bufferDays(2D)
+        .bufferEndDate(
+            DateUtil.getDate(DateUtil.convertDateLongFormUTC(DateUtil.addDaysToCurrentDate(1))))
+        .bufferStartDate(
+            DateUtil.getDate(DateUtil.convertDateLongFormUTC(DateUtil.getCurrentDate())))
+        .build();
+  }
+
+  public PostalCodeTimezoneDto getPostalCodeTimezoneDto() {
+    return PostalCodeTimezoneDto.builder()
+        .orgId(ORG_ID)
+        .postalCodePrefix(POSTAL_CODE_PREFIX)
+        .country("COUNTRY")
+        .state(STATE)
+        .city("CITY")
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .timeZone(TIME_ZONE)
+        .build();
+  }
+
+  public PostalCodeTimezoneUpload getPostalCodeTimezoneUpload(String action) {
+    return PostalCodeTimezoneUpload.builder()
+        .action(action)
+        .orgId(ORG_ID)
+        .postalCodePrefix(POSTAL_CODE_PREFIX)
+        .country("COUNTRY")
+        .state(STATE)
+        .city("CITY")
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .timeZone(TIME_ZONE)
+        .build();
+  }
+
+  public RecordDto getRecordDto(JobTypeEnum jobTypeEnum) {
+    RecordDto record = new RecordDto();
+    record.setOrgId(ORG_ID);
+    record.setJobId(TestUtil.JOB_ID);
+    record.setTotalRecords(2);
+    record.setJobType(jobTypeEnum);
+
+    return record;
+  }
+
+  public NodeResponse getNodeResponse() {
+    return NodeResponse.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .street(STREET)
+        .bopisEligible(BOPIS_ELIGIBLE)
+        .city(CITY)
+        .country(COUNTRY)
+        .nodeType(NODE_TYPE)
+        .isActive(IS_ACTIVE)
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .postalCode(POSTAL_CODE)
+        .province(PROVINCE)
+        .shipToHome(SHIP_TO_TIME)
+        .timezone(TIME_ZONE)
+        .build();
+  }
+
+  public NodeDataUpload getNodeDataUpload(String action) {
+    return NodeDataUpload.builder()
+        .action(action)
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .street(STREET)
+        .bopisEligible(String.valueOf(BOPIS_ELIGIBLE))
+        .city(CITY)
+        .country(COUNTRY)
+        .nodeType(NODE_TYPE)
+        .isActive(String.valueOf(IS_ACTIVE))
+        .latitude(LATITUDE)
+        .longitude(LONGITUDE)
+        .postalCode(POSTAL_CODE)
+        .province(PROVINCE)
+        .shipToHome(String.valueOf(SHIP_TO_TIME))
+        .timezone(TIME_ZONE)
+        .build();
+  }
+
+  public NodeCalendarUpload getNodeCalendarUpload(String action) {
+    return NodeCalendarUpload.builder()
+        .calendarId(CALENDAR_ID)
+        .description(DESCRIPTION)
+        .effectiveDate("2022-10-26")
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .action(action)
+        .build();
+  }
+
+  public CarrierCalendarUpload getCarrierCalendarUpload(String action) {
+    return CarrierCalendarUpload.builder()
+        .calendarId(CALENDAR_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .description(DESCRIPTION)
+        .effectiveDate("2022-10-26")
+        .shippingStage(SHIPPING_STAGE)
+        .orgId(ORG_ID)
+        .action(action)
+        .build();
+  }
+
+  public CarrierServiceCalendarResponse getCarrierServiceCalendarResponse() {
+    return CarrierServiceCalendarResponse.builder()
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .shippingStage(SHIPPING_STAGE)
+        .effectiveDate(EFFECTIVE_DATE)
+        .description(DESCRIPTION)
+        .build();
+  }
+
+  public CarrierServiceResponse getCarrierServiceResponse() {
+    return CarrierServiceResponse.builder()
+        .orgId(ORG_ID)
+        .carrierId(CARRIER_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .carrierName(CARRIER_NAME)
+        .serviceName(SERVICE_NAME)
+        .serviceOptions(SERVICE_OPTIONS)
+        .build();
+  }
+
+  public CarrierServiceUpload getCarrierServiceUpload(String action) {
+    return CarrierServiceUpload.builder()
+        .action(action)
+        .orgId(ORG_ID)
+        .carrierId(CARRIER_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .carrierName(CARRIER_NAME)
+        .serviceName(SERVICE_NAME)
+        .serviceOptions(SERVICE_OPTIONS)
+        .build();
+  }
+
+  public NodeCarrierResponse getNodeCarrierBufferResponse() {
+    return NodeCarrierResponse.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .serviceOption(SERVICE_OPTION)
+        .bufferHours(2D)
+        .bufferStartDate(new Date())
+        .bufferEndDate(new Date())
+        .build();
+  }
+
+  public ProcessingTimeBufferUpload getProcessingTimeBufferUpload() {
+    return ProcessingTimeBufferUpload.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .serviceOption(SERVICE_OPTION)
+        .bufferHours("2")
+        .bufferStartDate(DateUtil.getCurrentUTCTimeStampInString())
+        .bufferEndDate(DateUtil.getCurrentUTCTimeStampInString())
+        .build();
+  }
+
+  public ExceptionDays getExceptionDays() {
+    ExceptionDays exceptionDays = new ExceptionDays();
+    exceptionDays.setDate(EXCEPTION_DATE);
+    exceptionDays.setReason(EXCEPTION_REASON);
+    return exceptionDays;
+  }
+
+  public CalendarDataUpload getCalendarDataUpload(String action) {
+    return CalendarDataUpload.builder()
+        .action(action)
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .description(DESCRIPTION)
+        .isMondayWorking(Boolean.TRUE)
+        .exceptionDays(Collections.singletonList(getExceptionDays()))
+        .build();
+  }
+
+  public CalendarResponse getCalendarResponse() {
+    return CalendarResponse.builder()
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .description(DESCRIPTION)
+        .isMondayWorking(Boolean.TRUE)
+        .exceptionDays(Collections.singletonList(getExceptionDays()))
+        .build();
+  }
+
+  public PickUpCalendarUpload getPickUpCalendarUpload(String action) {
+    return PickUpCalendarUpload.builder()
+        .action(action)
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .description(DESCRIPTION)
+        .effectiveDate(EFFECTIVE_DATE)
+        .nodeId(NODE_ID)
+        .build();
+  }
+
+  public NodeCarrierServiceCalendarResponse getNodeCarrierServiceCalendarResponse() {
+    return NodeCarrierServiceCalendarResponse.builder()
+        .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .description(DESCRIPTION)
+        .effectiveDate(EFFECTIVE_DATE)
+        .nodeId(NODE_ID)
+        .build();
+  }
+
+  public Page<RecordStatusDto> createPageRecordStatusDtoDto(
+      int totalPage, List<RecordStatusDto> jobDtos, int totalElements) {
+
+    return (Page<RecordStatusDto>)
+        new Page() {
+          @Override
+          public int getTotalPages() {
+            return totalPage;
+          }
+
+          @Override
+          public long getTotalElements() {
+            return totalElements;
+          }
+
+          @Override
+          public Page map(Function converter) {
+            return null;
+          }
+
+          @Override
+          public int getNumber() {
+            return 0;
+          }
+
+          @Override
+          public int getSize() {
+            return 0;
+          }
+
+          @Override
+          public int getNumberOfElements() {
+            return 0;
+          }
+
+          @Override
+          public List getContent() {
+            return jobDtos;
+          }
+
+          @Override
+          public boolean hasContent() {
+            return false;
+          }
+
+          @Override
+          public Sort getSort() {
+            return null;
+          }
+
+          @Override
+          public boolean isFirst() {
+            return false;
+          }
+
+          @Override
+          public boolean isLast() {
+            return false;
+          }
+
+          @Override
+          public boolean hasNext() {
+            return false;
+          }
+
+          @Override
+          public boolean hasPrevious() {
+            return false;
+          }
+
+          @Override
+          public Pageable nextPageable() {
+            return null;
+          }
+
+          @Override
+          public Pageable previousPageable() {
+            return null;
+          }
+
+          @Override
+          public Iterator iterator() {
+            return null;
+          }
+        };
+  }
+
+  public Page<JobRecordEntity> createPageRecordEntity(
+      int totalPage, List<JobRecordEntity> jobDtos, int totalElements) {
+
+    return (Page<JobRecordEntity>)
+        new Page() {
+          @Override
+          public int getTotalPages() {
+            return totalPage;
+          }
+
+          @Override
+          public long getTotalElements() {
+            return totalElements;
+          }
+
+          @Override
+          public Page map(Function converter) {
+            return null;
+          }
+
+          @Override
+          public int getNumber() {
+            return 0;
+          }
+
+          @Override
+          public int getSize() {
+            return 0;
+          }
+
+          @Override
+          public int getNumberOfElements() {
+            return 0;
+          }
+
+          @Override
+          public List getContent() {
+            return jobDtos;
+          }
+
+          @Override
+          public boolean hasContent() {
+            return false;
+          }
+
+          @Override
+          public Sort getSort() {
+            return null;
+          }
+
+          @Override
+          public boolean isFirst() {
+            return false;
+          }
+
+          @Override
+          public boolean isLast() {
+            return false;
+          }
+
+          @Override
+          public boolean hasNext() {
+            return false;
+          }
+
+          @Override
+          public boolean hasPrevious() {
+            return false;
+          }
+
+          @Override
+          public Pageable nextPageable() {
+            return null;
+          }
+
+          @Override
+          public Pageable previousPageable() {
+            return null;
+          }
+
+          @Override
+          public Iterator iterator() {
+            return null;
+          }
+        };
   }
 }

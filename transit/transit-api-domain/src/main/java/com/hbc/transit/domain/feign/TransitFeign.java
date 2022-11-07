@@ -2,6 +2,7 @@ package com.hbc.transit.domain.feign;
 
 import com.hbc.common.response.BaseResponse;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
 import com.hbc.transit.domain.inbound.TransitBufferCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataCreationRequest;
 import com.hbc.transit.domain.inbound.TransitDataUpdationRequest;
@@ -57,6 +58,12 @@ public interface TransitFeign {
       @PathVariable String destinationGeozone,
       @RequestParam List<String> sourceGeozones);
 
+  @PostMapping("/transit/distinct/dFSA/{orgId}/{sourceGeozone}")
+  BaseResponse<List<String>> getDistinctDestinationGeoZones(
+      @PathVariable(name = "orgId") String orgId,
+      @PathVariable(name = "sourceGeozone") String sourceGeozone,
+      @RequestBody List<String> carrierServiceId);
+
   @GetMapping("/transit/transit-entries/{orgId}/{carrierServiceId}")
   BaseResponse<TransitTimeEntriesDto> getTransitTimeEntries(
       @PathVariable String orgId, @PathVariable String carrierServiceId);
@@ -81,4 +88,9 @@ public interface TransitFeign {
       @PathVariable String carrierServiceId,
       @RequestParam String sourceGeoZone,
       @RequestParam String destinationGeoZone);
+
+  @GetMapping("/transit")
+  BaseResponse<DistinctGeozonesResponse> getDistinctSourceAndDestinationGeozones(
+      @RequestParam(name = "orgId") String orgId,
+      @RequestParam(name = "carrierServiceId") String carrierServiceId);
 }

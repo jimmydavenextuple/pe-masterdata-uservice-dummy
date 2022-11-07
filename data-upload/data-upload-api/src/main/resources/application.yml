@@ -27,13 +27,22 @@ logging:
 pagination:
   pageNo: 1
   pageSize: 15
-  sortBy: carrierId
-  sortOrder: ASC
 page-properties:
   pageNo: 1
   pageSize: 15
   sortBy: created_date
   sortOrder: ASC
+aws:
+  s3:
+    signed-url-expiry-minutes: 30
+storage:
+  type: S3
+node-carrier-service-page-properties:
+  sortBy: nodeId
+  sortOrder: ASC
+transit-time-buffer-page-properties:
+  sortBy: carrierServiceId
+  sortOrder: DESC
 management:
   endpoints:
     web:
@@ -74,3 +83,12 @@ scheduled-processor:
   timeRangeInHours: 24
   fixed-rate:
     minutes: 1
+download-page-size:
+  node-carrier-service-options: 200
+  node: 200
+edd-computation:
+  lines: 30
+  orders: 10
+feign:
+  okhttp:
+    enabled: true

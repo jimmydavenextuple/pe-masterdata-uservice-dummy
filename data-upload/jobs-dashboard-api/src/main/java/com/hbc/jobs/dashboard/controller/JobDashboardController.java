@@ -5,6 +5,7 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.common.util.PaginationUtil;
 import com.hbc.jobs.dashboard.exception.JobException;
 import com.hbc.jobs.dashboard.service.JobService;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,15 +33,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 public class JobDashboardController {
 
+  private static final String GET_JOB_RECORDS_BY_FILTERS_PAGINATION_URL =
+      "/data-upload/v1/org/%s/jobs-dashboard/%s/results?pageNo=%d&pageSize=%d";
+
   private final JobService jobService;
 
   private final DefaultPageProperties defaultPageProperties;
   private static final String MESSAGE = "Job successfully created!";
+  private static final String PAGINATION_URL =
+      "/data-upload/org/%s/jobs/filters/?pageNo=%d&pageSize=%d";
 
   @PostMapping(
       path = "/org/{orgId}/jobs",
@@ -78,11 +86,8 @@ public class JobDashboardController {
     return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
   }
 
-  @PutMapping(
-      path = "/org/{orgId}/jobs/{jobId}",
-      produces = APPLICATION_JSON_VALUE,
-      consumes = APPLICATION_JSON_VALUE)
-  public ResponseEntity<BaseResponse<JobResponse>> processJobJsonOffline(
+  @PutMapping(path = "/org/{orgId}/jobs/{jobId}", produces = APPLICATION_JSON_VALUE)
+  public ResponseEntity<BaseResponse<JobResponse>> processJobJsonByScheduler(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @RequestParam @NotNull @Valid JobTypeEnum jobType,
       @PathVariable String jobId)
@@ -139,6 +144,30 @@ public class JobDashboardController {
             jobFilters.getSortOrder(),
             requiredPageNo,
             requiredPageSize);
+    String nextUri =
+        PaginationUtil.buildUriForPagination(
+            requiredPageNo,
+            pageResp.getPagination().getTotalPages(),
+            "next",
+            String.format(
+                PAGINATION_URL,
+                orgId,
+                requiredPageNo + 1,
+                jobFilters.getPageSize().orElse(defaultPageProperties.getPageSize())));
+
+    String previousUri =
+        PaginationUtil.buildUriForPagination(
+            requiredPageNo,
+            pageResp.getPagination().getTotalPages(),
+            "previous",
+            String.format(
+                PAGINATION_URL,
+                orgId,
+                requiredPageNo - 1,
+                jobFilters.getPageSize().orElse(defaultPageProperties.getPageSize())));
+
+    pageResp.getPagination().setNext(nextUri);
+    pageResp.getPagination().setPrevious(previousUri);
 
     return ResponseEntity.ok()
         .body(
@@ -167,6 +196,74 @@ public class JobDashboardController {
     log.debug("--Inside getJobRecordsByFilter()--");
 
     List<RecordStatusDto> pageResp = jobService.getJobResults(orgId, jobId, status);
+
+    return ResponseEntity.ok()
+        .body(
+            BaseResponse.builder()
+                .payload(pageResp)
+                .message("Retrieval of job records is successful")
+                .build());
+  }
+
+  @PostMapping(path = "/v1/org/{orgId}/jobs", produces = APPLICATION_JSON_VALUE)
+  public ResponseEntity<BaseResponse<JobResponse>> processJobOfflineWithFileMetaDataId(
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
+      @RequestParam @NotNull JobTypeEnum jobType,
+      @RequestParam("fileMetadataId") @NotNull long fileMetadataId)
+      throws JobException {
+    log.debug("Processing offline job request");
+
+    var jobDto = jobService.processJobOffline(orgId, jobType, fileMetadataId);
+
+    log.debug("Processing offline job request ends");
+
+    return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
+  }
+
+  @GetMapping(
+      path = "/v1/org/{orgId}/jobs-dashboard/{jobId}/results",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<BaseResponse<PagePayload<RecordStatusDto>>> getJobRecordsByFilters(
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
+      @NotEmpty @NotNull @PathVariable("jobId") String jobId,
+      @RequestParam(required = false) Optional<String> status,
+      @RequestParam(required = false) Optional<Integer> pageNo,
+      @RequestParam(required = false) Optional<Integer> pageSize)
+      throws JobException {
+    log.debug("--Inside getJobRecordsByFilter()--");
+
+    int currentPageNo = pageNo.orElse(defaultPageProperties.getPageNo());
+    int currentPageSize = pageSize.orElse(defaultPageProperties.getPageSize());
+
+    PagePayload<RecordStatusDto> pageResp =
+        jobService.getJobRecordsByFilters(orgId, jobId, status, currentPageNo, currentPageSize);
+
+    String nextUri =
+        PaginationUtil.buildUriForPagination(
+            currentPageNo,
+            pageResp.getPagination().getTotalPages(),
+            "next",
+            String.format(
+                GET_JOB_RECORDS_BY_FILTERS_PAGINATION_URL,
+                orgId,
+                jobId,
+                currentPageNo + 1,
+                currentPageSize));
+
+    String previousUri =
+        PaginationUtil.buildUriForPagination(
+            currentPageNo,
+            pageResp.getPagination().getTotalPages(),
+            "previous",
+            String.format(
+                GET_JOB_RECORDS_BY_FILTERS_PAGINATION_URL,
+                orgId,
+                jobId,
+                currentPageNo - 1,
+                currentPageSize));
+
+    pageResp.getPagination().setNext(nextUri);
+    pageResp.getPagination().setPrevious(previousUri);
 
     return ResponseEntity.ok()
         .body(

@@ -26,7 +26,7 @@ public class TestUtil {
   public static final String CITY = "city-1";
   public static final String PROVINCE = "province-1";
   public static final String POSTAL_CODE = "33666";
-  public static final String COUNTRY = "country-1";
+  public static final String COUNTRY = "IN";
   public static final String LATITUDE = "43.769912";
   public static final String LONGITUDE = "-79.296678";
   public static final String TIME_ZONE = "America/Toronto";
@@ -67,6 +67,7 @@ public class TestUtil {
         .street(STREET)
         .bopisEligible(BOPIS_ELIGIBLE)
         .city(CITY)
+        .nodeType("Store")
         .country(COUNTRY)
         .nodeType(NODE_TYPE)
         .isActive(IS_ACTIVE)
@@ -104,6 +105,9 @@ public class TestUtil {
     return NodeUpdationRequest.builder()
         .isActive(Boolean.FALSE)
         .city("city-2")
+        .country(COUNTRY)
+        .nodeType("Store")
+        .timezone(TIME_ZONE)
         .latitude("3526.5262")
         .build();
   }
@@ -185,6 +189,91 @@ public class TestUtil {
         .nodeType(NODE_TYPE)
         .province(PROVINCE)
         .build();
+  }
+
+  public Page<NodeResponse> getNodeResponsePage(
+      int totalPages, List<NodeResponse> nodeResponses, int totalElements) {
+    return new Page<NodeResponse>() {
+      @Override
+      public int getTotalPages() {
+        return totalPages;
+      }
+
+      @Override
+      public long getTotalElements() {
+        return totalElements;
+      }
+
+      @Override
+      public <U> Page<U> map(Function<? super NodeResponse, ? extends U> converter) {
+        return null;
+      }
+
+      @Override
+      public int getNumber() {
+        return 0;
+      }
+
+      @Override
+      public int getSize() {
+        return 0;
+      }
+
+      @Override
+      public int getNumberOfElements() {
+        return 0;
+      }
+
+      @Override
+      public List<NodeResponse> getContent() {
+        return nodeResponses;
+      }
+
+      @Override
+      public boolean hasContent() {
+        return false;
+      }
+
+      @Override
+      public Sort getSort() {
+        return null;
+      }
+
+      @Override
+      public boolean isFirst() {
+        return false;
+      }
+
+      @Override
+      public boolean isLast() {
+        return false;
+      }
+
+      @Override
+      public boolean hasNext() {
+        return false;
+      }
+
+      @Override
+      public boolean hasPrevious() {
+        return false;
+      }
+
+      @Override
+      public Pageable nextPageable() {
+        return null;
+      }
+
+      @Override
+      public Pageable previousPageable() {
+        return null;
+      }
+
+      @Override
+      public Iterator<NodeResponse> iterator() {
+        return null;
+      }
+    };
   }
 
   public Page<NodeDto> getNodeDtoPage(

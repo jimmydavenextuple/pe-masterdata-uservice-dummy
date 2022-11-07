@@ -37,8 +37,11 @@ dataupload:
   base-path: "/s3-bucket/"
   maxsize-in-kilobytes: 10240
   max-rows: 10000
+  bucket-name: "promise-s3-lambda-stage"
 
 jobs-framework:
+  job-completion-consumer:
+    topic-name: internal-stage-job-completion
   kafka-publish:
     topic-name: INTERNAL.STAGE.JOBS.TASK
   result-publish:

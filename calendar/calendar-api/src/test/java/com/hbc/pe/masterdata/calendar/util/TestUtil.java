@@ -13,6 +13,8 @@ import com.hbc.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCalendarResponse;
 import com.hbc.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.hbc.calendar.domain.pojo.ExceptionDays;
+import com.hbc.carrier.domain.outbound.CarrierServiceResponse;
+import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.pe.masterdata.calendar.domain.entity.CalendarEntity;
@@ -20,7 +22,13 @@ import com.hbc.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
 import com.hbc.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 public class TestUtil {
 
@@ -38,10 +46,23 @@ public class TestUtil {
   public static final String SERVICE_OPTION = "SDND";
   private static final String CARRIER_SERVICE_ID_2 = "Puro-Express";
   public static final String EFFECTIVE_DATE_2 = "2022-09-09";
+  public static final String SORT_BY = "calendarId";
+  public static final String SORT_ORDER_DESC = "desc";
+  public static final String SORT_ORDER_ASC = "ASC";
 
   public CalendarResponse getCalendarResponse() {
     return CalendarResponse.builder()
         .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .description(DESCRIPTION)
+        .isMondayWorking(Boolean.TRUE)
+        .exceptionDays(Collections.singletonList(getExceptionDays()))
+        .build();
+  }
+
+  public CalendarResponse getCalendarResponse1() {
+    return CalendarResponse.builder()
+        .calendarId(CALENDAR_ID_2)
         .orgId(ORG_ID)
         .description(DESCRIPTION)
         .isMondayWorking(Boolean.TRUE)
@@ -62,6 +83,22 @@ public class TestUtil {
   public CalendarEntity getCalendarEntity() {
     return CalendarEntity.builder()
         .calendarId(CALENDAR_ID)
+        .orgId(ORG_ID)
+        .description(DESCRIPTION)
+        .isMondayWorking(Boolean.TRUE)
+        .isTuesdayWorking(Boolean.TRUE)
+        .isWednesdayWorking(Boolean.TRUE)
+        .isThursdayWorking(Boolean.TRUE)
+        .isFridayWorking(Boolean.TRUE)
+        .isSaturdayWorking(Boolean.TRUE)
+        .isSundayWorking(Boolean.FALSE)
+        .exceptionDays(Collections.singletonList(getExceptionDays()))
+        .build();
+  }
+
+  public CalendarEntity getCalendarEntity1() {
+    return CalendarEntity.builder()
+        .calendarId(CALENDAR_ID_2)
         .orgId(ORG_ID)
         .description(DESCRIPTION)
         .isMondayWorking(Boolean.TRUE)
@@ -334,5 +371,119 @@ public class TestUtil {
         .effectiveDate(EFFECTIVE_DATE_2)
         .nodeId(NODE_ID)
         .build();
+  }
+
+  public List<CalendarEntity> getCalendarEntityList() {
+    return List.of(getCalendarEntity1(), getCalendarEntity());
+  }
+
+  public Page<CalendarResponse> getCalendarPageResponses(
+      int totalPage,
+      List<CalendarResponse> calendarResponses,
+      int totalElements,
+      String sortOrder) {
+    return new Page<CalendarResponse>() {
+      @Override
+      public int getTotalPages() {
+        return totalPage;
+      }
+
+      @Override
+      public long getTotalElements() {
+        return totalElements;
+      }
+
+      @Override
+      public <U> Page<U> map(Function<? super CalendarResponse, ? extends U> converter) {
+        return null;
+      }
+
+      @Override
+      public int getNumber() {
+        return 0;
+      }
+
+      @Override
+      public int getSize() {
+        return 0;
+      }
+
+      @Override
+      public int getNumberOfElements() {
+        return 0;
+      }
+
+      @Override
+      public List<CalendarResponse> getContent() {
+        return calendarResponses;
+      }
+
+      @Override
+      public boolean hasContent() {
+        return false;
+      }
+
+      @Override
+      public Sort getSort() {
+        return SORT_ORDER_ASC.equals(sortOrder)
+            ? Sort.by(SORT_BY).ascending()
+            : Sort.by(SORT_BY).descending();
+      }
+
+      @Override
+      public boolean isFirst() {
+        return false;
+      }
+
+      @Override
+      public boolean isLast() {
+        return false;
+      }
+
+      @Override
+      public boolean hasNext() {
+        return false;
+      }
+
+      @Override
+      public boolean hasPrevious() {
+        return false;
+      }
+
+      @Override
+      public Pageable nextPageable() {
+        return null;
+      }
+
+      @Override
+      public Pageable previousPageable() {
+        return null;
+      }
+
+      @Override
+      public Iterator<CalendarResponse> iterator() {
+        return null;
+      }
+    };
+  }
+
+  public PageParams getPageParams(
+      Optional<Integer> pageNo,
+      Optional<Integer> pageSize,
+      Optional<String> sortBy,
+      Optional<String> sortOrder) {
+    PageParams pageParams = new PageParams();
+    pageParams.setPageNo(pageNo);
+    pageParams.setPageSize(pageSize);
+    pageParams.setSortBy(sortBy);
+    pageParams.setSortOrder(sortOrder);
+    return pageParams;
+  }
+
+  public BaseResponse<List<CarrierServiceResponse>> getCarrierServiceResponse() {
+    CarrierServiceResponse response = new CarrierServiceResponse();
+    response.setOrgId(ORG_ID);
+    response.setCarrierServiceId(CARRIER_SERVICE_ID);
+    return BaseResponse.builder().payload(List.of(response)).build();
   }
 }

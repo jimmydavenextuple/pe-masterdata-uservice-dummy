@@ -3,9 +3,11 @@ package com.hbc.jobs.framework.common.clients;
 import com.hbc.common.base.PagePayload;
 import com.hbc.common.response.BaseResponse;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.FileMetaDataResponse;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.hbc.jobs.framework.common.inbound.FileMetaDataCreationRequest;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -39,7 +41,7 @@ public interface JobsDashboardClient {
       value = "/org/{orgId}/jobs/{jobId}",
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE)
-  BaseResponse<JobResponse> processJobsJsonOffline(
+  BaseResponse<JobResponse> processJobJsonByScheduler(
       @NotEmpty @NotNull @PathVariable("orgId") String orgId,
       @NotNull @Valid @RequestParam("jobType") JobTypeEnum jobType,
       @PathVariable("jobId") String jobId);
@@ -66,4 +68,25 @@ public interface JobsDashboardClient {
       @RequestParam("jobType") @NotNull @Valid JobTypeEnum jobType,
       @RequestBody byte[] csvFile,
       @RequestParam("fileName") String fileName);
+
+  @PostMapping("v1/org/{orgId}/jobs")
+  BaseResponse<JobResponse> processJobOfflineWithFileMetaDataId(
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
+      @RequestParam @NotNull JobTypeEnum jobType,
+      @RequestParam("fileMetadataId") @NotNull long fileMetadataId);
+
+  @PostMapping("/file-metadata")
+  BaseResponse<FileMetaDataResponse> createFileMetadata(
+      @Valid @RequestBody FileMetaDataCreationRequest fileMetadataCreationRequest);
+
+  @GetMapping("/file-metadata/{id}")
+  BaseResponse<FileMetaDataResponse> findFileMetadataById(@PathVariable(name = "id") Long id);
+
+  @GetMapping("/v1/org/{orgId}/jobs-dashboard/{jobId}/results")
+  BaseResponse<PagePayload<RecordStatusDto>> getJobRecordsByFilters(
+      @NotEmpty @NotNull @PathVariable("orgId") String orgId,
+      @NotEmpty @NotNull @PathVariable("jobId") String jobId,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) Integer pageNo,
+      @RequestParam(required = false) Integer pageSize);
 }

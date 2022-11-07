@@ -18,15 +18,23 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.csvdownload.exception.CsvFormatValidationFailedException;
+import com.hbc.csvdownload.exception.JobSubmissionException;
 import com.hbc.dataupload.util.TestUtil;
+import com.hbc.jobs.framework.common.clients.JobsDashboardClient;
+import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.transit.domain.feign.TransitFeign;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.opencsv.exceptions.CsvException;
+import feign.FeignException;
+import feign.Request;
+import feign.Request.HttpMethod;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +47,7 @@ import org.mockito.quality.Strictness;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.ObjectUtils;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -48,6 +57,8 @@ class UploadBufferDataServiceTest {
   @InjectMocks private TestUtil testUtil;
   @Mock NodeCarrierFeign nodeCarrierFeign;
   @Mock TransitFeign transitFeign;
+  @Mock TransitDataService transitDataService;
+  @Mock JobsDashboardClient jobsDashboardClient;
 
   @BeforeEach
   public void setUp() {
@@ -369,5 +380,137 @@ class UploadBufferDataServiceTest {
         uploadBufferService.uploadTransitBufferData(absolutePath);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     Assertions.assertEquals("Transit Buffer Data upload failed!", response.getBody().getMessage());
+  }
+
+  @Test
+  void deleteTransitBuffer()
+      throws CsvFormatValidationFailedException, CommonServiceException, IOException,
+          JobSubmissionException, CsvException {
+    Path resourceDirectory =
+        Paths.get(
+            "src", "test", "resources", "transitBufferData", "deleteTransitBuffer_happyPath.csv");
+
+    when(transitDataService.getDistinctGeozonesList(any(), any()))
+        .thenReturn(testUtil.geozonesResponse());
+
+    when(jobsDashboardClient.processJobOffline(any(), any(), any(), any()))
+        .thenReturn(BaseResponse.builder().payload(new JobDto()).build());
+
+    String absolutePath = resourceDirectory.toFile().getAbsolutePath();
+
+    String res = uploadBufferService.deleteTransitBuffer(absolutePath);
+
+    Assertions.assertFalse(ObjectUtils.isEmpty(res));
+  }
+
+  @Test
+  void deleteTransitBufferInvalidHeaders() {
+    Path resourceDirectory =
+        Paths.get(
+            "src",
+            "test",
+            "resources",
+            "transitBufferData",
+            "deleteTransitBuffer_invalidHeaders.csv");
+
+    String absolutePath = resourceDirectory.toFile().getAbsolutePath();
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> uploadBufferService.deleteTransitBuffer(absolutePath));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void deleteTransitBufferInvalidValues() {
+    Path resourceDirectory1 =
+        Paths.get(
+            "src", "test", "resources", "transitBufferData", "deleteTransitBuffer_EmptyOrgId.csv");
+
+    Path resourceDirectory2 =
+        Paths.get(
+            "src",
+            "test",
+            "resources",
+            "transitBufferData",
+            "deleteTransitBuffer_emptyCarrierServiceId.csv");
+
+    Path resourceDirectory3 =
+        Paths.get(
+            "src", "test", "resources", "transitBufferData", "deleteTransitBuffer_emptyAction.csv");
+
+    String emptyOrgId = resourceDirectory1.toFile().getAbsolutePath();
+
+    String emptyCarrierServiceId = resourceDirectory2.toFile().getAbsolutePath();
+
+    String emptyAction = resourceDirectory3.toFile().getAbsolutePath();
+    Exception emptyOrgIdException =
+        Assertions.assertThrows(
+            CsvFormatValidationFailedException.class,
+            () -> uploadBufferService.deleteTransitBuffer(emptyOrgId));
+
+    Exception emptyCarrierServiceIdException =
+        Assertions.assertThrows(
+            CsvFormatValidationFailedException.class,
+            () -> uploadBufferService.deleteTransitBuffer(emptyCarrierServiceId));
+
+    Exception emptyActionException =
+        Assertions.assertThrows(
+            CsvFormatValidationFailedException.class,
+            () -> uploadBufferService.deleteTransitBuffer(emptyAction));
+
+    Assertions.assertNotNull(emptyOrgIdException);
+    Assertions.assertNotNull(emptyCarrierServiceIdException);
+    Assertions.assertNotNull(emptyActionException);
+  }
+
+  @Test
+  void deleteTransitBufferFeignException() throws CommonServiceException {
+    Path resourceDirectory =
+        Paths.get(
+            "src", "test", "resources", "transitBufferData", "deleteTransitBuffer_happyPath.csv");
+
+    when(transitDataService.getDistinctGeozonesList(any(), any()))
+        .thenReturn(testUtil.geozonesResponse());
+
+    when(jobsDashboardClient.processJobOffline(any(), any(), any(), any()))
+        .thenThrow(
+            new FeignException.BadRequest(
+                "Failed to create job",
+                Request.create(HttpMethod.GET, "", new HashMap<>(), null, null, null),
+                "Failed to create job".getBytes()));
+
+    String absolutePath = resourceDirectory.toFile().getAbsolutePath();
+
+    Exception exception =
+        Assertions.assertThrows(
+            JobSubmissionException.class,
+            () -> uploadBufferService.deleteTransitBuffer(absolutePath));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void deleteTransitBufferException() throws CommonServiceException {
+    Path resourceDirectory =
+        Paths.get(
+            "src", "test", "resources", "transitBufferData", "deleteTransitBuffer_happyPath.csv");
+
+    when(transitDataService.getDistinctGeozonesList(any(), any()))
+        .thenReturn(testUtil.geozonesResponse());
+
+    when(jobsDashboardClient.processJobOffline(any(), any(), any(), any()))
+        .thenThrow(new RuntimeException("Error while creating job"));
+
+    String absolutePath = resourceDirectory.toFile().getAbsolutePath();
+
+    Exception exception =
+        Assertions.assertThrows(
+            JobSubmissionException.class,
+            () -> uploadBufferService.deleteTransitBuffer(absolutePath));
+
+    Assertions.assertNotNull(exception);
   }
 }

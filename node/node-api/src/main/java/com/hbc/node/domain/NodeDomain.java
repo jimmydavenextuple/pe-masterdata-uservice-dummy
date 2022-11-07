@@ -5,6 +5,7 @@ import static com.hbc.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.entity.NodeEntity;
 import com.hbc.node.domain.mapper.NodeMapper;
+import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.node.exception.NodeDomainException;
 import com.hbc.node.repository.NodeRepository;
 import java.util.List;
@@ -72,6 +73,23 @@ public class NodeDomain {
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to find node list");
       throw new NodeDomainException("Error while finding node list", null, orgId);
+    }
+  }
+
+  public Page<NodeResponse> getAllNodesPaginated(
+      Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
+      throws NodeDomainException {
+    try {
+      Pageable pageable = null;
+      if (sortOrder.equalsIgnoreCase(DEFAULT_SORT_ORDER)) {
+        pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).ascending());
+      } else {
+        pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).descending());
+      }
+      return nodeRepository.findAll(pageable).map(INSTANCE::toNodeResponse);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to find node list");
+      throw new NodeDomainException("Error while finding node list", null, null);
     }
   }
 

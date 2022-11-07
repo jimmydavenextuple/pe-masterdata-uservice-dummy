@@ -19,8 +19,7 @@ class PostalCodeTimezoneEntityPKTest {
   @Test
   void postalCodeTimezoneEntityPKTest() {
     PostalCodeTimezoneEntityPK postalCodeTimezoneEntityPK =
-        new PostalCodeTimezoneEntityPK(
-            ORG_ID, POSTAL_CODE_PREFIX);
+        new PostalCodeTimezoneEntityPK(ORG_ID, POSTAL_CODE_PREFIX);
     assertNotNull(postalCodeTimezoneEntityPK.getOrgId());
     assertNotNull(postalCodeTimezoneEntityPK.getPostalCodePrefix());
   }

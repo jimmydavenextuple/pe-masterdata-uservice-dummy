@@ -18,8 +18,10 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
 @RequestMapping("/weightage")
 @RequiredArgsConstructor
@@ -68,9 +70,9 @@ public class WeightageConfigurationController {
 
   @GetMapping
   public ResponseEntity<BaseResponse<WeightageConfigurationDto>> getWeightageConfiguration(
-      @NotBlank @RequestParam String orgId,
-      @NotBlank @RequestParam String type,
-      @NotBlank @RequestParam String key)
+      @NotBlank(message = "orgId can't be empty") @RequestParam String orgId,
+      @NotBlank(message = "type can't be empty") @RequestParam String type,
+      @NotBlank(message = "key can't be empty") @RequestParam String key)
       throws PromiseEngineException {
     logger.debug("Processing get Weightage Configuration by weightageId request");
     try {
@@ -87,7 +89,8 @@ public class WeightageConfigurationController {
 
   @GetMapping("/{key}")
   public ResponseEntity<BaseResponse<List<WeightageConfigurationDto>>>
-      getWeightageConfigurationsByKey(@NotBlank @PathVariable String key)
+      getWeightageConfigurationsByKey(
+          @NotBlank(message = "key can't be empty") @PathVariable String key)
           throws PromiseEngineException {
     logger.debug("Processing get Weightage Configuration by weightageId request");
     try {
@@ -104,9 +107,9 @@ public class WeightageConfigurationController {
 
   @PutMapping
   public ResponseEntity<BaseResponse<WeightageConfigurationDto>> updateWeightageConfiguration(
-      @NotBlank @RequestParam String orgId,
-      @NotBlank @RequestParam String type,
-      @NotBlank @RequestParam String key,
+      @NotBlank(message = "orgId can't be empty") @RequestParam String orgId,
+      @NotBlank(message = "type can't be empty") @RequestParam String type,
+      @NotBlank(message = "key can't be empty") @RequestParam String key,
       @Valid @RequestBody UpdateWeightageConfigurationRequest baseRequest)
       throws PromiseEngineException {
     logger.debug("Processing update Weightage Configuration request by weightageId");
@@ -130,9 +133,9 @@ public class WeightageConfigurationController {
   @Transactional
   @DeleteMapping
   public ResponseEntity<BaseResponse<WeightageConfigurationDto>> deleteWeightageConfiguration(
-      @NotBlank @RequestParam String orgId,
-      @NotBlank @RequestParam String type,
-      @NotBlank @RequestParam String key)
+      @NotBlank(message = "orgId can't be empty") @RequestParam String orgId,
+      @NotBlank(message = "type can't be empty") @RequestParam String type,
+      @NotBlank(message = "key can't be empty") @RequestParam String key)
       throws PromiseEngineException {
     logger.debug("Processing delete Weightage Configuration request by tenant id");
     try {

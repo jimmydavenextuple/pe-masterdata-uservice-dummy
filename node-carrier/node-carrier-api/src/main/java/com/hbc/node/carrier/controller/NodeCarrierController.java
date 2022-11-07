@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/node/carrier")
 @RequiredArgsConstructor
@@ -78,10 +80,10 @@ public class NodeCarrierController {
 
   @GetMapping("/{nodeId}/{orgId}/{carrierServiceId}/{serviceOption}")
   public ResponseEntity<BaseResponse<NodeCarrierResponse>> getNodeCarrier(
-      @NotBlank @PathVariable String nodeId,
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @PathVariable String carrierServiceId,
-      @NotBlank @PathVariable String serviceOption)
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId,
+      @NotBlank(message = "serviceOption can't be empty") @PathVariable String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
     logger.debug("Processing get node carrier details");
     try {
@@ -101,10 +103,10 @@ public class NodeCarrierController {
 
   @PutMapping("/{nodeId}/{orgId}/{carrierServiceId}/{serviceOption}")
   public ResponseEntity<BaseResponse<NodeCarrierResponse>> updateNodeCarrier(
-      @NotBlank @PathVariable String nodeId,
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @PathVariable String carrierServiceId,
-      @NotBlank @PathVariable String serviceOption,
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId,
+      @NotBlank(message = "serviceOption can't be empty") @PathVariable String serviceOption,
       @Valid @RequestBody NodeCarrierUpdateRequest nodeCarrierUpdateRequest)
       throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
     logger.debug("Processing update node carrier details");
@@ -127,10 +129,10 @@ public class NodeCarrierController {
 
   @DeleteMapping("/{nodeId}/{orgId}/{carrierServiceId}/{serviceOption}")
   public ResponseEntity<BaseResponse<NodeCarrierResponse>> deleteNodeCarrier(
-      @NotBlank @PathVariable String nodeId,
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @PathVariable String carrierServiceId,
-      @NotBlank @PathVariable String serviceOption)
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId,
+      @NotBlank(message = "serviceOption can't be empty") @PathVariable String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
     logger.debug("Processing delete node carrier");
     try {
@@ -150,9 +152,9 @@ public class NodeCarrierController {
 
   @GetMapping("/{nodeId}/{orgId}/{serviceOption}")
   public ResponseEntity<BaseResponse<List<NodeCarrierResponse>>> getNodeCarrier(
-      @NotBlank @PathVariable String nodeId,
-      @NotBlank @PathVariable String orgId,
-      @NotBlank @PathVariable String serviceOption)
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "serviceOption can't be empty") @PathVariable String serviceOption)
       throws NodeCarrierDomainException, CommonServiceException {
     logger.debug("Processing get node carrier for nodeId, orgId and serviceOption");
     try {
@@ -173,7 +175,8 @@ public class NodeCarrierController {
 
   @GetMapping("/{nodeId}/{orgId}")
   public ResponseEntity<BaseResponse<List<NodeCarrierResponse>>> getNodeCarrierList(
-      @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId)
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
       throws NodeCarrierDomainException {
     logger.debug("Processing get node carrier for nodeId and orgId");
     List<NodeCarrierResponse> nodeCarrierResponseList =
@@ -218,9 +221,10 @@ public class NodeCarrierController {
   @GetMapping("/node-carrier-selection/{orgId}/{serviceOption}/{destinationGeozone}")
   public ResponseEntity<BaseResponse<List<NodeCarrierSelectionResponse>>>
       getNodeCarrierSelectionDetails(
-          @NotBlank @PathVariable String orgId,
-          @NotBlank @PathVariable String serviceOption,
-          @NotBlank @PathVariable String destinationGeozone) {
+          @NotBlank(message = "orgId cannot be empty") @PathVariable String orgId,
+          @NotBlank(message = "serviceOption cannot be empty") @PathVariable String serviceOption,
+          @NotBlank(message = "destinationGeozone cannot be empty") @PathVariable
+              String destinationGeozone) {
     var nodeCarrierSelectionList =
         nodeCarrierService.getNodeCarrierSelectionDetails(orgId, serviceOption, destinationGeozone);
 
@@ -277,6 +281,49 @@ public class NodeCarrierController {
         BaseResponse.builder()
             .message("Node Carrier selection deleted successfully")
             .payload(nodeCarrierSelectionResponse)
+            .build());
+  }
+
+  @GetMapping("/{orgId}/{nodeId}/carrier-service")
+  public ResponseEntity<BaseResponse<List<String>>> getUniqueNodeCarrierServiceList(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId)
+      throws NodeCarrierDomainException {
+    logger.debug("Processing get list of unique node-carrier-service");
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .payload(nodeCarrierService.getUniqueNodeCarrierServiceList(nodeId, orgId))
+            .build());
+  }
+
+  @GetMapping("/v1/{nodeId}/{orgId}")
+  public ResponseEntity<BaseResponse<List<NodeCarrierResponse>>>
+      getNodeCarrierListWithLastPickUpTimeDetails(
+          @NotBlank(message = "nodeId can't be empty") @PathVariable String nodeId,
+          @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
+          throws NodeCarrierDomainException {
+    logger.debug("Processing get node carrier for nodeId and orgId");
+    List<NodeCarrierResponse> nodeCarrierResponseList =
+        nodeCarrierService.getNodeCarrierListForNodeIdAndOrgId(nodeId, orgId);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier list with last pickup time details fetched successfully")
+            .payload(nodeCarrierResponseList)
+            .build());
+  }
+
+  @GetMapping("/{orgId}/node-carriers")
+  public ResponseEntity<BaseResponse<List<NodeCarrierResponse>>> getAllNodeCarriersByOrgId(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
+      throws NodeCarrierDomainException {
+    logger.debug("Processing get all node carriers for a given orgId");
+    var nodeCarrierResponseList = nodeCarrierService.getAllNodeCarrierByOrgId(orgId);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier list fetched successfully")
+            .payload(nodeCarrierResponseList)
             .build());
   }
 }

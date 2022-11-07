@@ -1,0 +1,4 @@
+action,nodeId,orgId,street,city,province,postalCode,country,latitude,longitude,timezone,shipToHome,sdndEligible,bopisEligible,expressEligible,nodeType,isActive,nextdayEligible
+CREATE,1957,BAY,Calgary Downtown,Calgary,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,FALSE,FALSE,TRUE,MFC,TRUE,FALSE
+UPDATE,1957,BAY,Calgary Downtown,Calgary,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,FALSE,FALSE,TRUE,MFC,TRUE,FALSE
+DELETE,1957,BAY,Calgary Downtown,Calgary,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,FALSE,FALSE,TRUE,MFC,TRUE,FALSE

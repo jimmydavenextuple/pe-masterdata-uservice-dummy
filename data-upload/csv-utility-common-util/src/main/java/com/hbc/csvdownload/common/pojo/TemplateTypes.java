@@ -31,6 +31,23 @@ public class TemplateTypes {
           + "1601,BAY,EXPRESS,22.55,U\n"
           + "1125,BAY,EXPRESS,19.90,D\n"
           + "1114,BAY,SDND,24.97,U";
+  private static final String MARKET_REGION =
+      "orgId,postalCodePrefix,country,state,city,latitude,longitude,timeZone\n"
+          + "BAY,A0A,CA,NL,Witless Bay,47.545965,-53.138234,America/St_Johns\n"
+          + "BAY,A0B,CA,NL,Brigus Junction,47.41876,-53.844888,America/St_Johns\n"
+          + "BAY,A0C,CA,NL,Little Catalina,49.8279955,-54.4173245,America/St_Johns\n"
+          + "BAY,A0E,CA,NL,Baine Harbour,47.45083,-54.73319,America/St_Johns\n"
+          + "BAY,A0G,CA,NL,Baytona,49.1776,-54.442205,America/St_Johns\n"
+          + "BAY,A0H,CA,NL,Badger,48.4864765,-54.7871645,America/St_Johns\n"
+          + "BAY,A0J,CA,NL,Kings Point,49.355415,-55.5265845,America/St_Johns\n"
+          + "BAY,A0K,CA,NL,Baie Verte,50.6864055,-56.432805,America/St_Johns";
+  private static final String CARRIER_SERVICE =
+      "orgId,carrierId,carrierName,carrierServiceId,serviceName,serviceOptions\n"
+          + "BAY,GoFor,GoFor,GoFor-SDND,GoFor,SDND\n"
+          + "BAY,TFORCE,TForce,TFORCE-NEXTDAY,TForce NextDay Guaranteed,NEXTDAY\n"
+          + "BAY,CanadaPost,Canada Post,CanadaPost-STANDARD,Canada Post Expedited Parcel,STANDARD\n"
+          + "BAY,CanadaPost,Canada Post,CanadaPost-EXPRESS,Canada Post Xpresspost,EXPRESS\n"
+          + "BAY,UPSN,UPS,UPSN-STANDARD,UPS Standard,STANDARD\n";
 
   public static String getTemplateData(String templateType) {
     switch (templateType) {
@@ -38,6 +55,11 @@ public class TemplateTypes {
         return TRANSIT_TIME_TEMPLATE;
       case "processingLeadTime":
         return PROCESSING_LEAD_TIME;
+      case "marketRegion":
+        return MARKET_REGION;
+
+      case "carrierService":
+        return CARRIER_SERVICE;
       default:
         return "";
     }

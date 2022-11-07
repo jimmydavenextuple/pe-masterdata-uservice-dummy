@@ -45,6 +45,16 @@ public class JobDashboardExceptionHandler {
                 .build());
   }
 
+  @ExceptionHandler(FileMetaDataException.class)
+  public ResponseEntity<ErrorResponse> handleFileMetaDataException(FileMetaDataException e) {
+    return ResponseEntity.badRequest()
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0xfffff9)
+                .message(e.getMessage())
+                .errorField("Id", FieldError.builder().rejectedValue(e.getId()).build())
+                .build());
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleCommonExceptions(Exception e) {
     return ResponseEntity.badRequest()

@@ -54,20 +54,37 @@ import com.hbc.common.base.PagePayload;
 import com.hbc.common.base.PagePayload.Pagination;
 import com.hbc.common.pojo.PageParams;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
+import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
+import com.hbc.dataupload.common.outbound.TransitBufferDetailsResponse;
+import com.hbc.dataupload.common.pojo.ActiveCombination;
+import com.hbc.dataupload.common.pojo.ProcessingTimeBuffer;
+import com.hbc.dataupload.domain.dto.CalendarDto;
 import com.hbc.dataupload.domain.dto.CarrierTransitDto;
+import com.hbc.dataupload.domain.dto.NodeCarrierServiceResponse;
+import com.hbc.dataupload.domain.dto.NodeListDto;
 import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
+import com.hbc.dataupload.domain.dto.NodeWorkingCalendarDto;
+import com.hbc.dataupload.domain.dto.PickupTimeDto;
 import com.hbc.dataupload.domain.pojo.CarrierServiceCalendars;
+import com.hbc.dataupload.domain.pojo.PickUpCalendar;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.node.domain.outbound.NodeResponse;
+import com.hbc.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.promise.sourcing.rule.api.domain.dto.PromiseSourcingRuleDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.inbound.DistinctGeozonesResponse;
+import com.hbc.transit.domain.outbound.TransitBufferConfigResponse;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.hbc.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,8 +108,8 @@ public class TestUtil {
   private static final String SERVICE_OPTION_2 = "SDND";
   public static String SOURCE_GEOZONE = "SGZ";
   public static String DESTINATION_GEOZONE = "DGZ";
-  public static Float TRANSIT_DAYS = Float.valueOf(1);
-  private static final String CARRIER_ID_2 = "Carrier_Id_2";
+  public static Float TRANSIT_DAYS = 1F;
+  public static final String CARRIER_ID_2 = "Carrier_Id_2";
 
   private static final String BUFFER_START_DATE = "startTime";
   public static final String KEY = "key";
@@ -100,6 +117,7 @@ public class TestUtil {
   public static final String VALUE = "value";
 
   public static final String TYPE = "type";
+  public static final String CALENDAR_ID_2 = "Calendar_Id_02";
 
   private NodeCarrierResponse getNodeCarrierResponse() {
     return NodeCarrierResponse.builder()
@@ -505,7 +523,7 @@ public class TestUtil {
 
   public BaseResponse<PagePayload<NodeDto>> getNodeListPaginationBaseResponse() {
     return BaseResponse.builder()
-        .message("Carrier Service List fetched successfully")
+        .message("Node Service List fetched successfully")
         .payload(getNodeListPaginationResponse())
         .build();
   }
@@ -544,20 +562,34 @@ public class TestUtil {
         .success(true)
         .payload(
             Arrays.asList(
-                getNodeCarrierResponse2(CARRIER_SERVICE_ID_2, SERVICE_OPTION),
-                getNodeCarrierResponse2(CARRIER_SERVICE_ID_2, SERVICE_OPTION_2)))
+                getNodeCarrierResponse2(
+                    SERVICE_OPTION, 2.5, getBufferDate(2022, 10, 23), getBufferDate(2023, 11, 20)),
+                getNodeCarrierResponse2(
+                    SERVICE_OPTION_2,
+                    4.5,
+                    getBufferDate(2021, 10, 23),
+                    getBufferDate(2021, 11, 20))))
         .build();
   }
 
+  public Date getBufferDate(int year, int month, int date) {
+    Calendar bufferDate = Calendar.getInstance();
+    bufferDate.set(year, month, date);
+    return bufferDate.getTime();
+  }
+
   private NodeCarrierResponse getNodeCarrierResponse2(
-      String carrierServiceId, String serviceOption) {
+      String serviceOption, Double bufferHours, Date bufferStartDate, Date bufferEndDate) {
     return NodeCarrierResponse.builder()
         .nodeId(NODE_ID)
         .orgId(ORG_ID)
-        .carrierServiceId(carrierServiceId)
+        .carrierServiceId("")
         .serviceOption(serviceOption)
         .processingTime(PROCESSING_TIME)
         .lastPickupTime(LAST_PICK_UP_TIME)
+        .bufferHours(bufferHours)
+        .bufferStartDate(bufferStartDate)
+        .bufferEndDate(bufferEndDate)
         .build();
   }
 
@@ -749,5 +781,387 @@ public class TestUtil {
 
   public BaseResponse<NodeCarrierSelectionResponse> getFailedBaseResponseForNodeCarrierSelection() {
     return BaseResponse.builder().success(false).payload(getNodeCarrierSelectionResponse()).build();
+  }
+
+  public DistinctGeozonesResponse geozonesResponse() {
+    DistinctGeozonesResponse response = new DistinctGeozonesResponse();
+    response.setDestinationGeozones(Arrays.asList(DESTINATION_GEOZONE, DESTINATION_GEOZONE + "1"));
+    response.setSourceGeozones(Arrays.asList(SOURCE_GEOZONE, SOURCE_GEOZONE + "1"));
+
+    return response;
+  }
+
+  private CalendarResponse getCalendarResponse2() {
+    ExceptionDays exceptionDays1 = new ExceptionDays();
+    exceptionDays1.setDate("2022-01-01");
+    exceptionDays1.setReason("New Year's Day");
+
+    List<ExceptionDays> exceptionDaysList = List.of(exceptionDays1);
+
+    return CalendarResponse.builder()
+        .calendarId(CALENDAR_ID_2)
+        .orgId(ORG_ID)
+        .description(DESCRIPTION)
+        .isMondayWorking(true)
+        .isTuesdayWorking(true)
+        .isWednesdayWorking(true)
+        .isThursdayWorking(true)
+        .isFridayWorking(true)
+        .isSaturdayWorking(false)
+        .isSundayWorking(false)
+        .exceptionDays(exceptionDaysList)
+        .build();
+  }
+
+  public BaseResponse<PagePayload<CalendarResponse>> getCalendarWithPaginationBaseResponse() {
+    return BaseResponse.builder()
+        .message("Carrier Service Calendars fetched successfully")
+        .payload(getCarrierServiceCalendarWithPaginationResponse())
+        .build();
+  }
+
+  private PagePayload<CalendarResponse> getCarrierServiceCalendarWithPaginationResponse() {
+    PagePayload<CalendarResponse> payload = new PagePayload<>();
+
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords(2);
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(1);
+    pagination.setSortOrder("ASC");
+    pagination.setSortBy("carrierId");
+    pagination.setPrevious(null);
+    pagination.setNext("/test/{orgId}?pageNo=2,pageSize=1");
+    payload.setPagination(pagination);
+    payload.setData(List.of(getCalendarResponse(), getCalendarResponse2()));
+
+    return payload;
+  }
+
+  public BaseResponse<List<NodeCalendarResponse>> getNodeCalendarBaseResponse() {
+    return BaseResponse.builder()
+        .message("Node Service Calendars fetched successfully")
+        .payload(List.of(getNodeCalendarResponse()))
+        .build();
+  }
+
+  public BaseResponse<List<CarrierServiceCalendarResponse>> getCarrierCalendarBaseResponse() {
+    return BaseResponse.builder()
+        .message("Carrier Service Calendars fetched successfully")
+        .payload(List.of(getCarrierResponse()))
+        .build();
+  }
+
+  public BaseResponse<List<NodeCalendarResponse>> getEmptyNodeCalendarBaseResponse() {
+    return BaseResponse.builder()
+        .message("Node Service Calendars fetched successfully")
+        .payload(new ArrayList<>())
+        .build();
+  }
+
+  public BaseResponse<List<CarrierServiceCalendarResponse>> getEmptyCarrierCalendarBaseResponse() {
+    return BaseResponse.builder()
+        .message("Carrier Service Calendars fetched successfully")
+        .payload(new ArrayList<>())
+        .build();
+  }
+
+  public PagePayload<CalendarDto> getCalendarPagePayload(int pageNo) {
+    PagePayload<CalendarDto> calendarDtoPagePayload = new PagePayload<>();
+
+    CalendarDto calendarDto1 = getCalendarDto(CALENDAR_ID);
+    CalendarDto calendarDto2 = getCalendarDto(CALENDAR_ID_2);
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(2);
+    calendarDtoPagePayload.setPagination(pagination);
+    calendarDtoPagePayload.setData(Arrays.asList(calendarDto1, calendarDto2));
+
+    return calendarDtoPagePayload;
+  }
+
+  private CalendarDto getCalendarDto(String calendarId) {
+    ExceptionDays exceptionDays1 = new ExceptionDays();
+    exceptionDays1.setDate("2022-01-01");
+    exceptionDays1.setReason("New Year's Day");
+
+    List<ExceptionDays> exceptionDaysList = List.of(exceptionDays1);
+    CalendarDto calendarDto = new CalendarDto();
+
+    calendarDto.setCalendarId(calendarId);
+    calendarDto.setOrgId(ORG_ID);
+    calendarDto.setDescription(DESCRIPTION);
+    calendarDto.setExceptionDays(exceptionDaysList);
+    calendarDto.setIsActive(true);
+    calendarDto.setIsMondayWorking(true);
+    calendarDto.setIsSundayWorking(false);
+    calendarDto.setIsFridayWorking(true);
+
+    return calendarDto;
+  }
+
+  public BaseResponse<List<MarketRegionInfo>> getMarketRegionInfo() {
+    MarketRegionInfo marketRegionInfo = new MarketRegionInfo();
+    marketRegionInfo.setCountry("CA");
+    marketRegionInfo.setUploadDate(new Date().toString());
+    return BaseResponse.builder()
+        .message("Market Region fetched successfully")
+        .payload(List.of(marketRegionInfo))
+        .build();
+  }
+
+  public PickUpCalendar getPickUpCalendar() {
+    PickUpCalendar pickUpCalendar = new PickUpCalendar();
+    pickUpCalendar.setCalendarId(CALENDAR_ID);
+    pickUpCalendar.setCarrierServiceId(CARRIER_SERVICE_ID);
+    pickUpCalendar.setNodeId(NODE_ID);
+
+    return pickUpCalendar;
+  }
+
+  public NodeCarrierServiceResponse getNodeCarrierServiceResponse() {
+    NodeCarrierServiceResponse nodeCarrierServiceResponse = new NodeCarrierServiceResponse();
+    nodeCarrierServiceResponse.setNodeId(NODE_ID);
+    nodeCarrierServiceResponse.setOrgId(ORG_ID);
+    nodeCarrierServiceResponse.setStreet(STREET);
+    nodeCarrierServiceResponse.setCity(CITY);
+    nodeCarrierServiceResponse.setProvince(PROVINCE);
+    nodeCarrierServiceResponse.setPostalCode(POSTAL_CODE);
+    nodeCarrierServiceResponse.setCarrierServices(List.of(CARRIER_SERVICE_ID));
+    nodeCarrierServiceResponse.setPickupCalendar(List.of(getPickUpCalendar()));
+
+    return nodeCarrierServiceResponse;
+  }
+
+  public PagePayload<NodeCarrierServiceResponse> getNodeCarrierServicePagePayload(Integer pageNo) {
+    PagePayload<NodeCarrierServiceResponse> nodeCarrierServicePagePayload = new PagePayload<>();
+
+    NodeCarrierServiceResponse nodeCarrierServiceResponse = getNodeCarrierServiceResponse();
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(4);
+    nodeCarrierServicePagePayload.setPagination(pagination);
+    nodeCarrierServicePagePayload.setData(List.of(nodeCarrierServiceResponse));
+
+    return nodeCarrierServicePagePayload;
+  }
+
+  public ActiveCombination getActiveCombination() {
+    return ActiveCombination.builder()
+        .nodeId(NODE_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .isActive(true)
+        .build();
+  }
+
+  public NodeCarrierServiceAndServiceOptionResponse
+      getNodeCarrierServiceAndServiceOptionResponse() {
+    NodeCarrierServiceAndServiceOptionResponse response =
+        new NodeCarrierServiceAndServiceOptionResponse();
+    response.setNodeId(NODE_ID);
+    response.setOrgId(ORG_ID);
+    response.setStreet(STREET);
+    response.setCity(CITY);
+    response.setProvince(PROVINCE);
+    response.setPostalCode(POSTAL_CODE);
+    response.setCarrierServices(List.of(CARRIER_SERVICE_ID));
+    response.setServiceOptions(List.of(SERVICE_OPTION));
+    response.setActiveCombination(List.of(getActiveCombination()));
+
+    return response;
+  }
+
+  public PagePayload<NodeCarrierServiceAndServiceOptionResponse>
+      getNodeCarrierServiceAndServiceOptionResponse(Integer pageNo) {
+    PagePayload<NodeCarrierServiceAndServiceOptionResponse> nodeCarrierServicePagePayload =
+        new PagePayload<>();
+
+    NodeCarrierServiceAndServiceOptionResponse response =
+        getNodeCarrierServiceAndServiceOptionResponse();
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(4);
+    nodeCarrierServicePagePayload.setPagination(pagination);
+    nodeCarrierServicePagePayload.setData(List.of(response));
+
+    return nodeCarrierServicePagePayload;
+  }
+
+  public NodeCarrierServiceCalendarResponse getNodeCarrierServiceCalendarResponse() {
+    NodeCarrierServiceCalendarResponse nodeCarrierServiceCalendarResponse =
+        new NodeCarrierServiceCalendarResponse();
+    nodeCarrierServiceCalendarResponse.setNodeId(NODE_ID);
+    nodeCarrierServiceCalendarResponse.setCarrierServiceId(CARRIER_SERVICE_ID);
+    nodeCarrierServiceCalendarResponse.setCalendarId(CALENDAR_ID);
+    nodeCarrierServiceCalendarResponse.setOrgId(ORG_ID);
+    nodeCarrierServiceCalendarResponse.setEffectiveDate(EFFECTIVE_DATE);
+    nodeCarrierServiceCalendarResponse.setDescription(DESCRIPTION);
+
+    return nodeCarrierServiceCalendarResponse;
+  }
+
+  public PagePayload<NodeListDto> getNodeListPagePayload(Integer pageNo) {
+    PagePayload<NodeListDto> nodeListDtoPagePayload = new PagePayload<>();
+
+    NodeListDto nodeListDto = getNodeListDto(NODE_ID);
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(4);
+    nodeListDtoPagePayload.setPagination(pagination);
+    nodeListDtoPagePayload.setData(Arrays.asList(nodeListDto));
+
+    return nodeListDtoPagePayload;
+  }
+
+  private NodeListDto getNodeListDto(String nodeId) {
+    NodeListDto nodeListDto = new NodeListDto();
+    nodeListDto.setNodeId(nodeId);
+    nodeListDto.setOrgId(ORG_ID);
+    nodeListDto.setIsActive(Boolean.TRUE);
+    nodeListDto.setCarrierServices(List.of(CARRIER_SERVICE_ID));
+    nodeListDto.setServiceOptions(List.of(SERVICE_OPTION));
+    PickupTimeDto pickupTimeDto = new PickupTimeDto();
+    pickupTimeDto.setNodeId(nodeId);
+    pickupTimeDto.setCarrierServiceId(CARRIER_SERVICE_ID);
+    pickupTimeDto.setPickupTime(LAST_PICK_UP_TIME);
+    nodeListDto.setPickupTime(List.of(pickupTimeDto));
+    NodeWorkingCalendarDto nodeWorkingCalendarDto = new NodeWorkingCalendarDto();
+    nodeWorkingCalendarDto.setCalendarId(CALENDAR_ID);
+    nodeWorkingCalendarDto.setEffectiveDate(EFFECTIVE_DATE);
+    nodeListDto.setNodeWorkingCalendar(nodeWorkingCalendarDto);
+    return nodeListDto;
+  }
+
+  public BaseResponse<List<NodeCalendarResponse>> getBaseResponseOfNodeCalendarList() {
+    return BaseResponse.builder()
+        .message("Node Calendar details added successfully")
+        .success(true)
+        .payload(List.of(getNodeCalendarResponse()))
+        .build();
+  }
+
+  public BaseResponse<List<NodeCarrierResponse>>
+      getBaseResponseOfNodeCarrierListResponseWithNullValues() {
+    return BaseResponse.builder()
+        .message("Node Carrier List fetched successfully")
+        .success(true)
+        .payload(Arrays.asList(getNodeCarrierResponse2(SERVICE_OPTION, null, null, null)))
+        .build();
+  }
+
+  public PagePayload<ProcessingTimeBufferResponse> getProcessingTimeBufferPagePayload(int pageNo) {
+    PagePayload<ProcessingTimeBufferResponse> processingTimeBufferDtoPagePayload =
+        new PagePayload<>();
+
+    ProcessingTimeBufferResponse processingTimeBufferResponse1 =
+        getProcessingTimeBufferDto(NODE_ID);
+    ProcessingTimeBufferResponse processingTimeBufferResponse2 =
+        getProcessingTimeBufferDto(NODE_ID_2);
+
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(2);
+    processingTimeBufferDtoPagePayload.setPagination(pagination);
+    processingTimeBufferDtoPagePayload.setData(
+        Arrays.asList(processingTimeBufferResponse1, processingTimeBufferResponse2));
+
+    return processingTimeBufferDtoPagePayload;
+  }
+
+  private ProcessingTimeBufferResponse getProcessingTimeBufferDto(String nodeId) {
+    return ProcessingTimeBufferResponse.builder()
+        .nodeId(nodeId)
+        .orgId(ORG_ID)
+        .nodeType(NODE_TYPE)
+        .serviceOptions(List.of(SERVICE_OPTION, SERVICE_OPTION_2))
+        .processingTimeBuffers(
+            List.of(
+                getProcessingTimeBuffer(SERVICE_OPTION), getProcessingTimeBuffer(SERVICE_OPTION_2)))
+        .build();
+  }
+
+  private ProcessingTimeBuffer getProcessingTimeBuffer(String serviceOption) {
+    ProcessingTimeBuffer processingTimeBuffer = new ProcessingTimeBuffer();
+    processingTimeBuffer.setServiceOption(serviceOption);
+    processingTimeBuffer.setBufferHours(2.5);
+    processingTimeBuffer.setBufferStartDate(getBufferDate(2022, 10, 10));
+    processingTimeBuffer.setBufferEndDate(getBufferDate(2022, 11, 10));
+    processingTimeBuffer.setStatus("Active");
+    return processingTimeBuffer;
+  }
+
+  public BaseResponse<List<NodeCarrierResponse>>
+      getBaseResponseOfNodeCarrierListResponseWithPartialNullValues() {
+    return BaseResponse.builder()
+        .message("Node Carrier List fetched successfully")
+        .success(true)
+        .payload(
+            Arrays.asList(
+                getNodeCarrierResponse2(SERVICE_OPTION, 5.5, null, getBufferDate(2023, 11, 20))))
+        .build();
+  }
+
+  public TransitBufferDetailsResponse getTransitBufferDetailsResponse() {
+    return TransitBufferDetailsResponse.builder()
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .orgId(ORG_ID)
+        .hasTransitBuffer(true)
+        .build();
+  }
+
+  public PagePayload<TransitBufferDetailsResponse> getTransitBufferDetailsResponsePagePayload(
+      int pageNo) {
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(2);
+
+    PagePayload<TransitBufferDetailsResponse> payload = new PagePayload<>();
+    payload.setData(List.of(getTransitBufferDetailsResponse()));
+    payload.setPagination(pagination);
+
+    return payload;
+  }
+
+  public PagePayload<CarrierServiceResponse> getCarrierServiceResponsePagePayload(int pageNo) {
+    Pagination pagination = new Pagination();
+    pagination.setTotalPages(2);
+    pagination.setCurrentPage(pageNo);
+    pagination.setSortBy("DESC");
+    pagination.setTotalRecords(2);
+
+    PagePayload<CarrierServiceResponse> payload = new PagePayload<>();
+    payload.setData(List.of(getCarrierResponse(), getCarrierResponse2()));
+    payload.setPagination(pagination);
+
+    return payload;
+  }
+
+  public TransitBufferConfigResponse getTransitBufferConfigResponse(String carrierServiceId) {
+    return TransitBufferConfigResponse.builder().carrierServiceId(carrierServiceId).build();
+  }
+
+  public BaseResponse<List<TransitBufferConfigResponse>> getBaseResponseTransitBufferConfigResponse(
+      String carrierServiceId) {
+    return BaseResponse.builder()
+        .message("Transit Buffer are fetched successfully")
+        .success(true)
+        .payload(Arrays.asList(getTransitBufferConfigResponse(carrierServiceId)))
+        .build();
   }
 }

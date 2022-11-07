@@ -1,6 +1,7 @@
 package com.hbc.transit.domain;
 
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.pojo.ProjectedTransitEntity;
 import com.hbc.transit.exception.TransitDomainException;
 import com.hbc.transit.repository.TransitRepository;
 import java.util.List;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 public class TransitDomain {
 
   private static final Logger logger = LoggerFactory.getLogger(TransitDomain.class);
+
+  private static final String ERROR_MESSAGE = "Error while fetching transit list";
 
   private final TransitRepository transitRepository;
 
@@ -95,8 +98,19 @@ public class TransitDomain {
           orgId, destinationGeozone, sourceGeozones);
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to fetch transit list");
-      throw new TransitDomainException(
-          "Error while fetching transit list", orgId, null, destinationGeozone, null);
+      throw new TransitDomainException(ERROR_MESSAGE, orgId, null, destinationGeozone, null);
+    }
+  }
+
+  public List<String> fetchDestinationGeozones(
+      String orgId, String sourceGeozone, List<String> carrierServiceIds)
+      throws TransitDomainException {
+    try {
+      return transitRepository.findByOrgIdAndSourceGeozoneAndCarrierServiceIds(
+          orgId, sourceGeozone, carrierServiceIds);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to fetch transit list");
+      throw new TransitDomainException(ERROR_MESSAGE, orgId, sourceGeozone, null, null);
     }
   }
 
@@ -121,12 +135,11 @@ public class TransitDomain {
           "Unable to fetch transit list for orgId: {} and destination geozone: {}",
           orgId,
           destinationGeozone);
-      throw new TransitDomainException(
-          "Error while fetching transit list", orgId, null, destinationGeozone, null);
+      throw new TransitDomainException(ERROR_MESSAGE, orgId, null, destinationGeozone, null);
     }
   }
 
-  public List<TransitEntity> fetchTransitListForDestinationGeoZones(
+  public List<ProjectedTransitEntity> fetchTransitListForDestinationGeoZones(
       String orgId, String carrierServiceId, List<String> destinationGeozones)
       throws TransitDomainException {
     try {
@@ -139,6 +152,44 @@ public class TransitDomain {
           orgId);
       throw new TransitDomainException(
           "Error while fetching transit entity list", orgId, null, null, carrierServiceId);
+    }
+  }
+
+  public List<String> fetchDistinctSourceGeoZones(String orgId, String carrierServiceId)
+      throws TransitDomainException {
+    try {
+      return transitRepository.findDistinctSourceGeoZones(orgId, carrierServiceId);
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e),
+          "Unable to fetch distinct source geozones list for orgId: {} and carrierServiceId: {}",
+          orgId,
+          carrierServiceId);
+      throw new TransitDomainException(
+          "Unable to fetch distinct source geozones list for orgId and carrierServiceId",
+          orgId,
+          null,
+          null,
+          carrierServiceId);
+    }
+  }
+
+  public List<String> fetchDistinctDestinationGeoZones(String orgId, String carrierServiceId)
+      throws TransitDomainException {
+    try {
+      return transitRepository.findDistinctDestinationGeoZones(orgId, carrierServiceId);
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e),
+          "Unable to fetch distinct destination geozones list for orgId: {} and carrierServiceId: {}",
+          orgId,
+          carrierServiceId);
+      throw new TransitDomainException(
+          "Unable to fetch distinct destination geozones list for given orgId and carrierServiceId",
+          orgId,
+          null,
+          null,
+          carrierServiceId);
     }
   }
 }

@@ -50,4 +50,14 @@ public class NodeCalendarDomain {
           "Unable to fetch all node calendars", e, null, null, null, null);
     }
   }
+
+  public List<NodeCalendarEntity> getNodeServiceCalendarByOrgIdAndCalendarId(
+      String calendarId, String orgId) throws CalendarDomainException {
+    try {
+      return nodeCalendarRepository.findNodeCalendarByCalendarIdAndOrgId(calendarId, orgId);
+    } catch (Exception e) {
+      throw new CalendarDomainException(
+          "Unable to fetch node calendar list", e, calendarId, orgId, null, null);
+    }
+  }
 }

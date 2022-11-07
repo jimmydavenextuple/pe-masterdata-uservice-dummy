@@ -11,6 +11,7 @@ import com.hbc.pe.masterdata.calendar.service.NodeCarrierServiceCalendarService;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,9 +56,9 @@ public class NodeCarrierServiceCalendarController {
   @GetMapping("/{orgId}/{nodeId}/{carrierServiceId}")
   public ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>>
       handleGetNodeCarrierServiceCalendar(
-          @PathVariable String orgId,
-          @PathVariable String nodeId,
-          @PathVariable String carrierServiceId,
+          @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+          @NotBlank(message = "orgId can't be empty") @PathVariable String nodeId,
+          @NotBlank(message = "orgId can't be empty") @PathVariable String carrierServiceId,
           @RequestParam Optional<String> serviceOption)
           throws CalendarDomainException {
     try {
