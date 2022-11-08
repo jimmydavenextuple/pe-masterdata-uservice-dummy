@@ -1,0 +1,640 @@
+package com.nextuple.transit.service;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
+
+import com.nextuple.carrier.domain.feign.CarrierFeign;
+import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.response.BaseResponse;
+import com.nextuple.common.util.DateValidationUtil;
+import com.nextuple.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
+import com.nextuple.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
+import com.nextuple.transit.TestUtil;
+import com.nextuple.transit.domain.TransitDomain;
+import com.nextuple.transit.domain.dto.TransitTimeEntriesDto;
+import com.nextuple.transit.domain.entity.TransitBufferEntity;
+import com.nextuple.transit.domain.entity.TransitEntity;
+import com.nextuple.transit.domain.inbound.DistinctGeozonesResponse;
+import com.nextuple.transit.domain.inbound.TransitBufferCreationRequest;
+import com.nextuple.transit.domain.inbound.TransitDataCreationRequest;
+import com.nextuple.transit.domain.inbound.TransitDataUpdationRequest;
+import com.nextuple.transit.domain.outbound.TransitResponse;
+import com.nextuple.transit.exception.TransitDomainException;
+import com.nextuple.transit.repository.TransitBufferRepository;
+import feign.FeignException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.CollectionUtils;
+
+class TransitServiceTest {
+
+  @InjectMocks private TransitService transitService;
+
+  @InjectMocks private TestUtil testUtil;
+
+  @Mock private TransitDomain transitDomain;
+
+  @Mock private TransitBufferRepository transitBufferRepository;
+
+  @Mock private DateValidationUtil dateValidationUtil;
+
+  @Mock private CarrierFeign carrierFeign;
+
+  @Mock private PostalCodeTimezoneFeign postalCodeTimezoneFeign;
+  private final ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+
+  @BeforeEach
+  void setUp() {
+    MockitoAnnotations.openMocks(this);
+    threadPoolTaskExecutor.initialize();
+    ReflectionTestUtils.setField(transitService, "threadPoolTaskExecutor", threadPoolTaskExecutor);
+  }
+
+  @Test
+  void addTransitDetailsTest() throws TransitDomainException, CommonServiceException {
+    TransitDataCreationRequest transitDataCreationRequest =
+        testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS);
+    when(postalCodeTimezoneFeign.getPostalCodeTimezone(any(), any()))
+        .thenReturn(testUtil.getBaseResponseOfPostalCodeTimezoneDto());
+    when(transitDomain.saveTransitEntity(any(TransitEntity.class)))
+        .thenReturn(testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS));
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
+    TransitBufferEntity transitBufferEntity = testUtil.getTransitBufferEntity(testUtil.ORG_ID);
+    when(transitBufferRepository
+            .findByOrgIdAndCarrierServiceIdAndSourceGeozoneAndDestinationGeozone(
+                any(), any(), any(), any()))
+        .thenReturn(Optional.of(transitBufferEntity));
+    TransitResponse transitResponse =
+        transitService.addTransitInfo(
+            testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS));
+    Assertions.assertEquals(
+        testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS).getCarrierServiceId(),
+        transitResponse.getCarrierServiceId());
+    Assertions.assertEquals(
+        transitDataCreationRequest.getBufferDays(), transitResponse.getBufferDays());
+
+    when(transitBufferRepository
+            .findByOrgIdAndCarrierServiceIdAndSourceGeozoneAndDestinationGeozone(
+                any(), any(), any(), any()))
+        .thenReturn(Optional.empty());
+    transitResponse =
+        transitService.addTransitInfo(
+            testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS));
+    Assertions.assertEquals(
+        testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS).getCarrierServiceId(),
+        transitResponse.getCarrierServiceId());
+    Assertions.assertEquals(
+        transitDataCreationRequest.getBufferDays(), transitResponse.getBufferDays());
+
+    verify(transitDomain, times(2)).saveTransitEntity(any(TransitEntity.class));
+  }
+
+  @Test
+  void addTransitDetailsTestException() {
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(null);
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
+            transitService.addTransitInfo(
+                testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS)));
+  }
+
+  @Test
+  void addTransitDetailsTestException2() {
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenThrow(FeignException.class);
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
+            transitService.addTransitInfo(
+                testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS)));
+  }
+
+  @Test
+  void addTransitDetailsForInvalidGeoZoneTest2() throws TransitDomainException {
+    BaseResponse<PostalCodeTimezoneDto> response = new BaseResponse<>();
+    response.setPayload(null);
+    response.setSuccess(true);
+    when(postalCodeTimezoneFeign.getPostalCodeTimezone(any(), any())).thenReturn(response);
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
+    Exception ex =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                transitService.addTransitInfo(
+                    testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS)));
+    assertEquals("geoZone is not valid", ex.getMessage());
+    verify(transitDomain, times(0)).saveTransitEntity(any(TransitEntity.class));
+  }
+
+  @Test
+  void addTransitDetailsNullBufferDaysTest() throws TransitDomainException, CommonServiceException {
+    TransitDataCreationRequest transitDataCreationRequest =
+        testUtil.getTransitDataCreationRequest(TestUtil.TRANSIT_DAYS);
+    when(postalCodeTimezoneFeign.getPostalCodeTimezone(any(), any()))
+        .thenReturn(testUtil.getBaseResponseOfPostalCodeTimezoneDto());
+    transitDataCreationRequest.setBufferDays(null);
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    transitEntity.setBufferDays(null);
+    when(transitDomain.saveTransitEntity(any(TransitEntity.class))).thenReturn(transitEntity);
+    when(carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(any(), any()))
+        .thenReturn(testUtil.getCarrierServiceUpdateResponse());
+    TransitResponse transitResponse = transitService.addTransitInfo(transitDataCreationRequest);
+    Assertions.assertEquals(
+        testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS).getCarrierServiceId(),
+        transitResponse.getCarrierServiceId());
+    Assertions.assertNull(transitResponse.getBufferDays());
+    verify(transitDomain, times(1)).saveTransitEntity(any(TransitEntity.class));
+  }
+
+  @Test
+  void updateTransitBufferDetailsTest() throws TransitDomainException, CommonServiceException {
+    TransitEntity transitEntity = testUtil.getTransitEntity3(TestUtil.BUFFER_DAYS);
+    TransitBufferCreationRequest transitBufferCreationRequest =
+        testUtil.getTransitBufferCreationRequest(5.0);
+    doNothing().when(dateValidationUtil).validateBufferStartAndEndDate(any(), any());
+    when(transitDomain.findTransitDetails(any(), any(), any(), any()))
+        .thenReturn(Optional.of(transitEntity));
+    when(transitDomain.saveTransitEntity(any())).thenReturn(testUtil.getTransitEntity3(5.0));
+
+    TransitResponse transitResponse =
+        transitService.updateTransitBufferDetails(transitBufferCreationRequest);
+    Assertions.assertEquals(testUtil.getTransitResponse2(5.0), transitResponse);
+
+    verify(transitDomain, times(1)).saveTransitEntity(any(TransitEntity.class));
+    verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
+  }
+
+  @Test
+  void updateTransitBufferDetailsTestException()
+      throws TransitDomainException, CommonServiceException {
+
+    TransitBufferCreationRequest transitBufferCreationRequest = new TransitBufferCreationRequest();
+    transitBufferCreationRequest.setBufferDays(5.0);
+    doNothing().when(dateValidationUtil).validateBufferStartAndEndDate(any(), any());
+    when(transitDomain.findTransitDetails(any(), any(), any(), any())).thenReturn(Optional.empty());
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> transitService.updateTransitBufferDetails(transitBufferCreationRequest));
+    Assertions.assertEquals("Transit data not found with given details", exception.getMessage());
+
+    verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
+  }
+
+  @Test
+  void updateTransitBufferDetailsNegativeTransitSumTestException()
+      throws TransitDomainException, CommonServiceException {
+    TransitEntity transitEntity = testUtil.getTransitEntity3(TestUtil.BUFFER_DAYS);
+    TransitBufferCreationRequest transitBufferCreationRequest =
+        testUtil.getTransitBufferCreationRequest(-15.0);
+    doNothing().when(dateValidationUtil).validateBufferStartAndEndDate(any(), any());
+    when(transitDomain.findTransitDetails(any(), any(), any(), any()))
+        .thenReturn((Optional.of(transitEntity)));
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> transitService.updateTransitBufferDetails(transitBufferCreationRequest));
+    Assertions.assertEquals(
+        "The sum of transit and buffer days is less or equal to 0", exception.getMessage());
+
+    verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
+  }
+
+  @Test
+  void updateTransitDetailsTest() throws TransitDomainException, CommonServiceException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    TransitDataUpdationRequest transitDataUpdationRequest =
+        testUtil.getTransitDataUpdationRequest(13.5F);
+    when(transitDomain.findTransitDetails(any(), any(), any(), any()))
+        .thenReturn(Optional.of(transitEntity));
+    when(transitDomain.saveTransitEntity(any())).thenReturn(testUtil.getTransitEntity(13.5F));
+
+    TransitResponse transitResponse =
+        transitService.updateTransitDetails(
+            TestUtil.ORG_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE,
+            TestUtil.CARRIER_SERVICE_ID,
+            transitDataUpdationRequest);
+    Assertions.assertEquals(testUtil.getTransitResponse(13.5F), transitResponse);
+
+    verify(transitDomain, times(1)).saveTransitEntity(any(TransitEntity.class));
+    verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
+  }
+
+  @Test
+  void updateTransitDetailsTestException() throws TransitDomainException {
+
+    TransitDataUpdationRequest transitDataUpdationRequest = new TransitDataUpdationRequest();
+    transitDataUpdationRequest.setTransitDays(13.5F);
+    when(transitDomain.findTransitDetails(any(), any(), any(), any())).thenReturn(Optional.empty());
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                transitService.updateTransitDetails(
+                    TestUtil.ORG_ID,
+                    TestUtil.SOURCE_GEOZONE,
+                    TestUtil.DESTINATION_GEOZONE,
+                    TestUtil.CARRIER_SERVICE_ID,
+                    transitDataUpdationRequest));
+    Assertions.assertEquals("Transit data not found with given details", exception.getMessage());
+
+    verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
+  }
+
+  @Test
+  void getTransitDetailsTest1() throws TransitDomainException, CommonServiceException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    when(transitDomain.filterAndGetTransitDetails(any(), any(), any(), any(), any()))
+        .thenReturn(List.of(transitEntity));
+
+    TransitResponse transitResponse =
+        transitService.getTransitDetails(
+            TestUtil.ORG_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.SERVICE_OPTION);
+    Assertions.assertEquals(testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS), transitResponse);
+    verify(transitDomain, times(1)).filterAndGetTransitDetails(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getTransitDetailsTest2() throws TransitDomainException, CommonServiceException {
+    List<TransitEntity> transitEntityList = new ArrayList<>();
+    transitEntityList.add(testUtil.getTransitEntities("ALL"));
+    transitEntityList.add(testUtil.getTransitEntities("ALL-" + TestUtil.SERVICE_OPTION));
+    when(transitDomain.filterAndGetTransitDetails(any(), any(), any(), any(), any()))
+        .thenReturn(transitEntityList);
+
+    TransitResponse transitResponse =
+        transitService.getTransitDetails(
+            TestUtil.ORG_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE,
+            "ALL",
+            TestUtil.SERVICE_OPTION);
+    Assertions.assertEquals(
+        "ALL-" + TestUtil.SERVICE_OPTION, transitResponse.getCarrierServiceId());
+    verify(transitDomain, times(1)).filterAndGetTransitDetails(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getTransitDetailsTest3() throws TransitDomainException, CommonServiceException {
+    List<TransitEntity> transitEntityList = new ArrayList<>();
+    transitEntityList.add(testUtil.getTransitEntities("ALL"));
+    transitEntityList.add(testUtil.getTransitEntities("ALL-" + TestUtil.SERVICE_OPTION));
+    transitEntityList.add(testUtil.getTransitEntities("PURO-EXPRESS"));
+    when(transitDomain.filterAndGetTransitDetails(any(), any(), any(), any(), any()))
+        .thenReturn(transitEntityList);
+
+    TransitResponse transitResponse =
+        transitService.getTransitDetails(
+            TestUtil.ORG_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE,
+            "PURO-EXPRESS",
+            TestUtil.SERVICE_OPTION);
+    Assertions.assertEquals("PURO-EXPRESS", transitResponse.getCarrierServiceId());
+    verify(transitDomain, times(1)).filterAndGetTransitDetails(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getTransitDetailsTestException() throws TransitDomainException {
+    List<TransitEntity> transitEntityList = Collections.emptyList();
+    when(transitDomain.filterAndGetTransitDetails(any(), any(), any(), any(), any()))
+        .thenReturn(transitEntityList);
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                transitService.getTransitDetails(
+                    TestUtil.ORG_ID,
+                    TestUtil.SOURCE_GEOZONE,
+                    TestUtil.DESTINATION_GEOZONE,
+                    TestUtil.CARRIER_SERVICE_ID,
+                    TestUtil.SERVICE_OPTION));
+    Assertions.assertEquals("Transit data not found with given details", exception.getMessage());
+    verify(transitDomain, times(1)).filterAndGetTransitDetails(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getDistinctDFSATest() throws TransitDomainException {
+    when(transitDomain.fetchDestinationGeozones(any(), any(), any()))
+        .thenReturn(List.of("B1P", "M1R", "A1F"));
+    List<String> dFSAs =
+        transitService.getDistinctDFSA(
+            TestUtil.ORG_ID, TestUtil.SOURCE_GEOZONE, List.of(TestUtil.CARRIER_SERVICE_ID));
+    Assertions.assertEquals(3, dFSAs.size());
+    verify(transitDomain, times(1)).fetchDestinationGeozones(any(), any(), anyList());
+  }
+
+  @Test
+  void getDistinctDFSAExceptionTest() throws TransitDomainException {
+    when(transitDomain.fetchDestinationGeozones(any(), any(), any()))
+        .thenThrow(
+            new TransitDomainException(
+                "Failure while fetching DFSAs",
+                TestUtil.ORG_ID,
+                TestUtil.SOURCE_GEOZONE,
+                null,
+                null));
+    TransitDomainException e =
+        Assertions.assertThrows(
+            TransitDomainException.class,
+            () ->
+                transitService.getDistinctDFSA(
+                    TestUtil.ORG_ID,
+                    TestUtil.SOURCE_GEOZONE,
+                    List.of(TestUtil.CARRIER_SERVICE_ID)));
+
+    Assertions.assertEquals(TestUtil.ORG_ID, e.getOrgId());
+    Assertions.assertEquals(TestUtil.SOURCE_GEOZONE, e.getSourceGeozone());
+    verify(transitDomain, times(1)).fetchDestinationGeozones(any(), any(), anyList());
+  }
+
+  @Test
+  void deleteTransitDetailsTest() throws TransitDomainException, CommonServiceException {
+    TransitEntity transitEntity = testUtil.getTransitEntity2(TestUtil.TRANSIT_DAYS);
+    when(transitDomain.findTransitDetails(any(), any(), any(), any()))
+        .thenReturn(Optional.of(transitEntity));
+
+    TransitResponse transitResponse =
+        transitService.deleteTransitDetails(
+            TestUtil.ORG_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE,
+            TestUtil.CARRIER_SERVICE_ID);
+    Assertions.assertEquals(testUtil.getTransitResponse2(TestUtil.TRANSIT_DAYS), transitResponse);
+    verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
+  }
+
+  @Test
+  void deleteTransitDetailsTestException() throws TransitDomainException {
+    when(transitDomain.findTransitDetails(any(), any(), any(), any())).thenReturn(Optional.empty());
+
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                transitService.deleteTransitDetails(
+                    TestUtil.ORG_ID,
+                    TestUtil.SOURCE_GEOZONE,
+                    TestUtil.DESTINATION_GEOZONE,
+                    TestUtil.CARRIER_SERVICE_ID));
+    Assertions.assertEquals("Transit data not found with given details", exception.getMessage());
+    verify(transitDomain, times(1)).findTransitDetails(any(), any(), any(), any());
+  }
+
+  @Test
+  void getListOfTransitDetailsTest() throws TransitDomainException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    when(transitDomain.fetchTransitList(any(), any(), any())).thenReturn(List.of(transitEntity));
+
+    List<TransitResponse> transitResponse =
+        transitService.getListOfTransitDetails(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE, List.of(TestUtil.SOURCE_GEOZONE));
+    Assertions.assertEquals(
+        transitEntity.getTransitDays(), transitResponse.get(0).getTransitDays());
+    verify(transitDomain, times(1)).fetchTransitList(any(), any(), any());
+  }
+
+  @Test
+  void getTransitTimeEntriesTest() throws TransitDomainException {
+    when(transitDomain.fetchTransitEntitiesCount(any(), any())).thenReturn(5);
+
+    TransitTimeEntriesDto transitResponse =
+        transitService.getTransitTimeEntries(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertEquals(TestUtil.ORG_ID, transitResponse.getOrgId());
+    Assertions.assertEquals(5, transitResponse.getTotalRecords());
+
+    verify(transitDomain, times(1)).fetchTransitEntitiesCount(any(), any());
+  }
+
+  @Test
+  void getTransitTimeZeroEntriesTest() throws TransitDomainException {
+    when(transitDomain.fetchTransitEntitiesCount(any(), any())).thenReturn(0);
+
+    TransitTimeEntriesDto transitResponse =
+        transitService.getTransitTimeEntries(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertEquals(TestUtil.ORG_ID, transitResponse.getOrgId());
+    Assertions.assertEquals(0, transitResponse.getTotalRecords());
+
+    verify(transitDomain, times(1)).fetchTransitEntitiesCount(any(), any());
+  }
+
+  @Test
+  void getListOfTransitDetailsForDestinationGeoZoneTest()
+      throws TransitDomainException, CommonServiceException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    when(transitDomain.fetchTransitListForDestinationGeoZone(any(), any()))
+        .thenReturn(List.of(transitEntity));
+    List<TransitBufferEntity> transitBufferEntities =
+        List.of(testUtil.getTransitBufferEntity(TestUtil.ORG_ID));
+    when(transitBufferRepository.findByOrgIdAndDestinationGeozone(any(), any()))
+        .thenReturn(transitBufferEntities);
+
+    List<TransitResponse> transitResponse =
+        transitService.getListOfTransitDetailsForDestinationGeoZone(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
+    Assertions.assertEquals(
+        transitEntity.getTransitDays(), transitResponse.get(0).getTransitDays());
+    verify(transitDomain, times(1)).fetchTransitListForDestinationGeoZone(any(), any());
+    verify(transitBufferRepository, times(1)).findByOrgIdAndDestinationGeozone(any(), any());
+  }
+
+  @Test
+  void getListOfTransitDetailsForDestinationGeoZoneTest2()
+      throws TransitDomainException, CommonServiceException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(TestUtil.TRANSIT_DAYS);
+    when(transitDomain.fetchTransitListForDestinationGeoZone(any(), any()))
+        .thenReturn(List.of(transitEntity));
+    when(transitBufferRepository.findByOrgIdAndDestinationGeozone(any(), any()))
+        .thenReturn(new ArrayList<>());
+
+    List<TransitResponse> transitResponse =
+        transitService.getListOfTransitDetailsForDestinationGeoZone(
+            TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
+    Assertions.assertEquals(
+        transitEntity.getTransitDays(), transitResponse.get(0).getTransitDays());
+    verify(transitDomain, times(1)).fetchTransitListForDestinationGeoZone(any(), any());
+    verify(transitBufferRepository, times(1)).findByOrgIdAndDestinationGeozone(any(), any());
+  }
+
+  @Test
+  void getTransitDetailsForDestinationGeoZoneTestException() throws TransitDomainException {
+    List<TransitEntity> transitEntityList = Collections.emptyList();
+    when(transitDomain.fetchTransitListForDestinationGeoZone(any(), any()))
+        .thenReturn(transitEntityList);
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                transitService.getListOfTransitDetailsForDestinationGeoZone(
+                    TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE));
+    Assertions.assertEquals("Transit data not found with given details", exception.getMessage());
+    verify(transitDomain, times(1)).fetchTransitListForDestinationGeoZone(any(), any());
+  }
+
+  @Test
+  void getTransitDetailsForDestinationGeozones() throws TransitDomainException {
+    when(transitDomain.fetchTransitListForDestinationGeoZones(any(), any(), any()))
+        .thenReturn(List.of(testUtil.getProjectedTransitEntity()));
+
+    List<TransitResponse> responses =
+        transitService.getTransitDetailsForDestinationGeozones(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID, List.of(TestUtil.DESTINATION_GEOZONE));
+    Assertions.assertFalse(CollectionUtils.isEmpty(responses));
+    verify(transitDomain, Mockito.times(1))
+        .fetchTransitListForDestinationGeoZones(any(), any(), any());
+  }
+
+  @Test
+  void deleteTransitBufferDays() throws TransitDomainException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(5F);
+    transitEntity.setBufferDays(1D);
+    when(transitDomain.findTransitDetails(
+            TestUtil.ORG_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE,
+            TestUtil.CARRIER_SERVICE_ID))
+        .thenReturn(Optional.of(transitEntity));
+
+    when(transitDomain.saveTransitEntity(any())).thenReturn(transitEntity);
+
+    TransitResponse response =
+        transitService.updateTransitBufferDays(
+            TestUtil.ORG_ID,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE);
+
+    Assertions.assertNotNull(response);
+    Assertions.assertEquals(0D, response.getBufferDays());
+  }
+
+  @Test
+  void deleteNegativeTransitBufferDays() throws TransitDomainException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(-5F);
+    transitEntity.setBufferDays(1D);
+    when(transitDomain.findTransitDetails(
+            TestUtil.ORG_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE,
+            TestUtil.CARRIER_SERVICE_ID))
+        .thenReturn(Optional.of(transitEntity));
+
+    when(transitDomain.saveTransitEntity(any())).thenReturn(transitEntity);
+
+    TransitResponse response =
+        transitService.updateTransitBufferDays(
+            TestUtil.ORG_ID,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE);
+
+    Assertions.assertNotNull(response);
+    Assertions.assertEquals(0D, response.getBufferDays());
+  }
+
+  @Test
+  void deleteTransitBufferDaysZeroTransitBufferDays() throws TransitDomainException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(5F);
+    transitEntity.setBufferDays(0D);
+    when(transitDomain.findTransitDetails(any(), any(), any(), any()))
+        .thenReturn(Optional.of(transitEntity));
+
+    when(transitDomain.saveTransitEntity(any())).thenReturn(transitEntity);
+
+    TransitResponse response =
+        transitService.updateTransitBufferDays(
+            TestUtil.ORG_ID,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE);
+
+    Assertions.assertNotNull(response);
+    Assertions.assertEquals(0, response.getBufferDays());
+  }
+
+  @Test
+  void deleteTransitBufferDaysNullTransitBufferDays() throws TransitDomainException {
+    TransitEntity transitEntity = testUtil.getTransitEntity(5F);
+    transitEntity.setBufferDays(null);
+    when(transitDomain.findTransitDetails(any(), any(), any(), any()))
+        .thenReturn(Optional.of(transitEntity));
+
+    when(transitDomain.saveTransitEntity(any())).thenReturn(transitEntity);
+
+    TransitResponse response =
+        transitService.updateTransitBufferDays(
+            TestUtil.ORG_ID,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE);
+
+    Assertions.assertNotNull(response);
+    Assertions.assertNull(response.getBufferDays());
+  }
+
+  @Test
+  void deleteTransitBufferDaysTransitDetailsNotFound() throws TransitDomainException {
+    when(transitDomain.findTransitDetails(any(), any(), any(), any())).thenReturn(Optional.empty());
+
+    TransitResponse response =
+        transitService.updateTransitBufferDays(
+            TestUtil.ORG_ID,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.SOURCE_GEOZONE,
+            TestUtil.DESTINATION_GEOZONE);
+
+    Assertions.assertNull(response);
+  }
+
+  @Test
+  void getDistinctSourceAndDestinationGeoZones() throws TransitDomainException {
+    when(transitDomain.fetchDistinctSourceGeoZones(any(), any()))
+        .thenReturn(List.of(TestUtil.SOURCE_GEOZONE));
+
+    when(transitDomain.fetchDistinctDestinationGeoZones(any(), any()))
+        .thenReturn(List.of(TestUtil.DESTINATION_GEOZONE));
+
+    DistinctGeozonesResponse response =
+        transitService.getDistinctSourceAndDestinationGeoZones(
+            TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID);
+
+    Assertions.assertNotNull(response);
+    Assertions.assertFalse(CollectionUtils.isEmpty(response.getDestinationGeozones()));
+    Assertions.assertFalse(CollectionUtils.isEmpty(response.getSourceGeozones()));
+
+    verify(transitDomain, times(1)).fetchDistinctSourceGeoZones(any(), any());
+    verify(transitDomain, times(1)).fetchDistinctDestinationGeoZones(any(), any());
+  }
+}

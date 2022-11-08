@@ -1,0 +1,376 @@
+package com.nextuple.pe.masterdata.calendar.service;
+
+import static com.nextuple.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+import static com.nextuple.common.constants.CommonConstants.DESC_SORT_ORDER;
+
+import com.nextuple.calendar.domain.CalendarDaysStatusInfo;
+import com.nextuple.calendar.domain.inbound.CalendarRequest;
+import com.nextuple.calendar.domain.outbound.CalendarResponse;
+import com.nextuple.calendar.domain.pojo.ExceptionDays;
+import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.response.error.FieldError;
+import com.nextuple.pe.masterdata.calendar.domain.CalendarDomain;
+import com.nextuple.pe.masterdata.calendar.domain.NodeCalendarDomain;
+import com.nextuple.pe.masterdata.calendar.domain.entity.CalendarEntity;
+import com.nextuple.pe.masterdata.calendar.domain.entity.CarrierServiceCalendarEntity;
+import com.nextuple.pe.masterdata.calendar.domain.entity.NodeCalendarEntity;
+import com.nextuple.pe.masterdata.calendar.domain.entity.NodeCarrierServiceCalendarEntity;
+import com.nextuple.pe.masterdata.calendar.domain.mapper.CalendarMapper;
+import com.nextuple.pe.masterdata.calendar.domain.repository.CalendarRepository;
+import com.nextuple.pe.masterdata.calendar.exception.CalendarDomainException;
+import com.nextuple.pe.masterdata.calendar.exception.CalenderServiceException;
+import com.nextuple.pe.masterdata.calendar.exception.DateException;
+import com.nextuple.pe.masterdata.calendar.util.DateUtil;
+import com.nextuple.pe.masterdata.calendar.util.DateValidation;
+import com.nextuple.postgres.config.ReaderDS;
+import java.util.*;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+
+@Service
+@RequiredArgsConstructor
+public class CalendarService {
+
+  private static final Logger logger = LoggerFactory.getLogger(CalendarService.class);
+  private static final CalendarMapper INSTANCE = Mappers.getMapper(CalendarMapper.class);
+  private final CalendarDomain calendarDomain;
+  private final CalendarRepository calendarRepository;
+  private final NodeCalendarDomain nodeCalendarDomain;
+  private final CarrierServiceCalendarService carrierServiceCalendarService;
+  private final DateValidation dateValidation;
+  private final NodeCarrierServiceCalendarService nodeCarrierServiceCalendarService;
+  // will need to get via node master data feign client
+  private static final String NODE_TIMEZONE = "America/Chicago";
+  private static final String ORG_ID = "orgId";
+  private static final String NODE_ID = "nodeId";
+  private static final String CARRIER_SERVICE_ID = "carrierServiceId";
+  private static final String CALENDAR_ID = "calendarId";
+  private static final String SORT_ORDER = "sortOrder";
+
+  @Value("${constants.default-number-of-days-in-future}")
+  private Integer defaultNumberOfDaysInFuture;
+
+  /** Creates a new Calendar */
+  public CalendarResponse processCreateCalendar(CalendarRequest calendarRequest)
+      throws CalendarDomainException, DateException, CommonServiceException {
+    if (Objects.nonNull(calendarRequest.getExceptionDays())
+        && !dateValidation.validateExceptionDays(calendarRequest.getExceptionDays())) {
+      throw new DateException(
+          "Date is invalid / missing", calendarRequest.getCalendarId(), calendarRequest.getOrgId());
+    }
+    var calendarEntity = INSTANCE.convertToCalendarEntity(calendarRequest);
+    Optional<CalendarEntity> existingCalendarEntity =
+        calendarRepository.findCalendarDetailsByCalendarIdAndOrgId(
+            calendarRequest.getCalendarId(), calendarRequest.getOrgId());
+    if (existingCalendarEntity.isPresent()) {
+      logger.error(
+          "Calendar already exists for calendarId:{} , orgId:{}",
+          calendarEntity.getCalendarId(),
+          calendarEntity.getOrgId());
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          CALENDAR_ID, FieldError.builder().rejectedValue(calendarEntity.getCalendarId()).build());
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(calendarEntity.getOrgId()).build());
+      throw new CommonServiceException(
+          "Calendar already exists for the given details",
+          HttpStatus.BAD_REQUEST,
+          0x1772,
+          errorMap);
+    }
+    var savedCalendarEntity = calendarDomain.saveCalendarEntity(calendarEntity);
+    return INSTANCE.convertToCalendarResponse(savedCalendarEntity);
+  }
+
+  /** Get Calendar details by calendarId and OrgId */
+  @ReaderDS
+  public CalendarResponse processGetCalendar(String orgId, String calendarId)
+      throws CalendarDomainException, CommonServiceException {
+    validateCalendarId(calendarId, orgId);
+    return INSTANCE.convertToCalendarResponse(calendarDomain.getCalendar(orgId, calendarId));
+  }
+
+  @ReaderDS
+  public List<CalendarDaysStatusInfo> processGetUpcomingDaysCalendarStatus(
+      String orgId,
+      Optional<String> nodeId,
+      Optional<String> carrierServiceId,
+      Optional<String> serviceOption,
+      Optional<Integer> numberOfDaysInFuture,
+      Optional<String> shippingStage)
+      throws CalendarDomainException, CommonServiceException, CalenderServiceException {
+    validateRequestFields(orgId, nodeId, carrierServiceId);
+
+    List<CalendarDaysStatusInfo> calendarDaysStatusInfoList = new ArrayList<>();
+
+    int numDays = numberOfDaysInFuture.orElseGet(() -> defaultNumberOfDaysInFuture);
+    for (var i = -1; i < numDays; i++) {
+      calendarDaysStatusInfoList.add(
+          CalendarDaysStatusInfo.builder()
+              .date(DateUtil.addDaysToCurrentDate(i))
+              .isActive(Boolean.TRUE)
+              .build());
+    }
+    String startDate = DateUtil.addDaysToCurrentDate(-1);
+    String endDate = DateUtil.addDaysToCurrentDate(numDays);
+    var currentCalendarId = "";
+    Map<String, String> nextCalendarIds = new HashMap<>();
+
+    if (nodeId.isPresent() && carrierServiceId.isEmpty()) {
+      List<NodeCalendarEntity> nodeCalendarEntityList =
+          nodeCalendarDomain.getNodeCalendar(orgId, nodeId.get());
+      Optional<NodeCalendarEntity> nodeCalendarEntity =
+          nodeCalendarEntityList.stream()
+              .filter(x -> x.getEffectiveDate().compareTo(startDate) <= 0)
+              .max(Comparator.comparing(NodeCalendarEntity::getEffectiveDate));
+
+      currentCalendarId = validateNodeCalendar(orgId, nodeId.get(), nodeCalendarEntity);
+      nextCalendarIds =
+          nodeCalendarEntityList.stream()
+              .filter(
+                  x ->
+                      x.getEffectiveDate().compareTo(startDate) > 0
+                          && x.getEffectiveDate().compareTo(endDate) <= 0)
+              .collect(
+                  Collectors.toMap(
+                      NodeCalendarEntity::getEffectiveDate, NodeCalendarEntity::getCalendarId));
+    }
+
+    if (carrierServiceId.isPresent() && nodeId.isEmpty()) {
+      List<CarrierServiceCalendarEntity> carrierServiceCalendarEntityList =
+          carrierServiceCalendarService.getAndFilterCarrierServiceCalendar(
+              orgId, carrierServiceId.get(), serviceOption, shippingStage);
+      Optional<CarrierServiceCalendarEntity> carrierServiceCalendarEntity =
+          carrierServiceCalendarEntityList.stream()
+              .filter(x -> x.getEffectiveDate().compareTo(startDate) <= 0)
+              .max(Comparator.comparing(CarrierServiceCalendarEntity::getEffectiveDate));
+
+      currentCalendarId =
+          validateCarrierServiceCalendar(
+              orgId, carrierServiceId.get(), carrierServiceCalendarEntity);
+
+      nextCalendarIds =
+          carrierServiceCalendarEntityList.stream()
+              .filter(
+                  x ->
+                      x.getEffectiveDate().compareTo(startDate) > 0
+                          && x.getEffectiveDate().compareTo(endDate) <= 0)
+              .collect(
+                  Collectors.toMap(
+                      CarrierServiceCalendarEntity::getEffectiveDate,
+                      CarrierServiceCalendarEntity::getCalendarId));
+    }
+
+    if (nodeId.isPresent() && carrierServiceId.isPresent()) {
+      List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntityList =
+          nodeCarrierServiceCalendarService.getAndFilterNodeCarrierServiceCalendar(
+              orgId, nodeId.get(), carrierServiceId.get(), serviceOption);
+      Optional<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntity =
+          nodeCarrierServiceCalendarEntityList.stream()
+              .filter(x -> x.getEffectiveDate().compareTo(startDate) <= 0)
+              .max(Comparator.comparing(NodeCarrierServiceCalendarEntity::getEffectiveDate));
+
+      currentCalendarId =
+          validateNodeCarrierServiceCalendar(
+              orgId, nodeId.get(), carrierServiceId.get(), nodeCarrierServiceCalendarEntity);
+      nextCalendarIds =
+          nodeCarrierServiceCalendarEntityList.stream()
+              .filter(
+                  x ->
+                      x.getEffectiveDate().compareTo(startDate) > 0
+                          && x.getEffectiveDate().compareTo(endDate) <= 0)
+              .collect(
+                  Collectors.toMap(
+                      NodeCarrierServiceCalendarEntity::getEffectiveDate,
+                      NodeCarrierServiceCalendarEntity::getCalendarId));
+    }
+
+    var calendarEntity = calendarDomain.getCalendar(orgId, currentCalendarId);
+    if (ObjectUtils.isEmpty(calendarEntity)) {
+      throw new CommonServiceException(
+          "No Calendar with calendarId = "
+              + currentCalendarId
+              + " found that exist with the association calendar ",
+          HttpStatus.BAD_REQUEST,
+          0xfffff5,
+          Map.of(ORG_ID, FieldError.builder().rejectedValue(orgId).build()));
+    }
+    List<String> exceptionDays =
+        CollectionUtils.isEmpty(calendarEntity.getExceptionDays())
+            ? new ArrayList<>()
+            : calendarEntity.getExceptionDays().stream()
+                .map(ExceptionDays::getDate)
+                .collect(Collectors.toList());
+    calendarDaysStatusInfoList.forEach(
+        info -> {
+          info.setIsActive(findWeekInfo(DateUtil.getDayOfWeek(info.getDate()), calendarEntity));
+          if (exceptionDays.stream().anyMatch(e -> e.equals(info.getDate()))) {
+            info.setIsActive(Boolean.FALSE);
+          }
+        });
+
+    if (nextCalendarIds.isEmpty()) return calendarDaysStatusInfoList;
+
+    return calculateOtherActiveCalendarStatuses(orgId, calendarDaysStatusInfoList, nextCalendarIds);
+  }
+
+  private void validateRequestFields(
+      String orgId, Optional<String> nodeId, Optional<String> carrierServiceId)
+      throws CommonServiceException {
+    if (nodeId.isEmpty() && carrierServiceId.isEmpty()) {
+      throw new CommonServiceException(
+          "Either nodeId or carrierServiceId must pe provided",
+          HttpStatus.BAD_REQUEST,
+          0xfffff4,
+          Map.of(ORG_ID, FieldError.builder().rejectedValue(orgId).build()));
+    }
+  }
+
+  private List<CalendarDaysStatusInfo> calculateOtherActiveCalendarStatuses(
+      String orgId,
+      List<CalendarDaysStatusInfo> calendarDaysStatusInfoList,
+      Map<String, String> calendarIds)
+      throws CalendarDomainException {
+    for (CalendarDaysStatusInfo x : calendarDaysStatusInfoList) {
+      if (calendarIds.containsKey(x.getDate())) {
+        var calendarEntity = calendarDomain.getCalendar(orgId, calendarIds.get(x.getDate()));
+
+        List<String> exceptionDays =
+            CollectionUtils.isEmpty(calendarEntity.getExceptionDays())
+                ? new ArrayList<>()
+                : calendarEntity.getExceptionDays().stream()
+                    .map(ExceptionDays::getDate)
+                    .collect(Collectors.toList());
+        calendarDaysStatusInfoList.stream()
+            .filter(info -> info.getDate().compareTo(x.getDate()) >= 0)
+            .forEach(
+                info -> {
+                  info.setIsActive(
+                      findWeekInfo(DateUtil.getDayOfWeek(info.getDate()), calendarEntity));
+                  if (exceptionDays.stream().anyMatch(e -> e.equals(info.getDate()))) {
+                    info.setIsActive(Boolean.FALSE);
+                  }
+                });
+      }
+    }
+    return calendarDaysStatusInfoList;
+  }
+
+  private String validateNodeCarrierServiceCalendar(
+      String orgId,
+      String nodeId,
+      String carrierServiceId,
+      Optional<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntity)
+      throws CommonServiceException {
+    String calendarId;
+    if (nodeCarrierServiceCalendarEntity.isPresent()) {
+      calendarId = nodeCarrierServiceCalendarEntity.get().getCalendarId();
+    } else {
+      throw new CommonServiceException(
+          "No active calendar associated to the node, carrier & service",
+          HttpStatus.NOT_FOUND,
+          0xfffff3,
+          Map.of(
+              ORG_ID,
+              FieldError.builder().rejectedValue(orgId).build(),
+              NODE_ID,
+              FieldError.builder().rejectedValue(nodeId).build(),
+              CARRIER_SERVICE_ID,
+              FieldError.builder().rejectedValue(carrierServiceId).build()));
+    }
+    return calendarId;
+  }
+
+  private String validateCarrierServiceCalendar(
+      String orgId,
+      String carrierServiceId,
+      Optional<CarrierServiceCalendarEntity> carrierServiceCalendarEntity)
+      throws CommonServiceException {
+    String calendarId;
+    if (carrierServiceCalendarEntity.isPresent()) {
+      calendarId = carrierServiceCalendarEntity.get().getCalendarId();
+    } else {
+      throw new CommonServiceException(
+          "No active calendar associated to the carrier & service",
+          HttpStatus.NOT_FOUND,
+          0xfffff2,
+          Map.of(
+              ORG_ID,
+              FieldError.builder().rejectedValue(orgId).build(),
+              CARRIER_SERVICE_ID,
+              FieldError.builder().rejectedValue(carrierServiceId).build()));
+    }
+    return calendarId;
+  }
+
+  private String validateNodeCalendar(
+      String orgId, String nodeId, Optional<NodeCalendarEntity> nodeCalendarEntity)
+      throws CommonServiceException {
+    String calendarId;
+    if (nodeCalendarEntity.isPresent()) {
+      calendarId = nodeCalendarEntity.get().getCalendarId();
+    } else {
+      throw new CommonServiceException(
+          "No active calendar associated to the node",
+          HttpStatus.NOT_FOUND,
+          0xfffff1,
+          Map.of(
+              ORG_ID,
+              FieldError.builder().rejectedValue(orgId).build(),
+              NODE_ID,
+              FieldError.builder().rejectedValue(nodeId).build()));
+    }
+    return calendarId;
+  }
+
+  public void validateCalendarId(String calendarId, String orgId)
+      throws CalendarDomainException, CommonServiceException {
+    var calendarEntity = calendarDomain.getCalendar(orgId, calendarId);
+
+    if (ObjectUtils.isEmpty(calendarEntity)) {
+      logger.error("Calendar does not exists");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(CALENDAR_ID, FieldError.builder().rejectedValue(calendarId).build());
+      throw new CommonServiceException(
+          "Calendar does not exists", HttpStatus.NOT_FOUND, 0x1771, errorMap);
+    }
+  }
+
+  private boolean findWeekInfo(int x, CalendarEntity calendarEntity) {
+    if (x == 1) return calendarEntity.getIsMondayWorking();
+    if (x == 2) return calendarEntity.getIsTuesdayWorking();
+    if (x == 3) return calendarEntity.getIsWednesdayWorking();
+    if (x == 4) return calendarEntity.getIsThursdayWorking();
+    if (x == 5) return calendarEntity.getIsFridayWorking();
+    if (x == 6) return calendarEntity.getIsSaturdayWorking();
+    if (x == 7) return calendarEntity.getIsSundayWorking();
+    return false;
+  }
+
+  public Page<CalendarResponse> getCalendarList(
+      String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
+      throws CommonServiceException, CalendarDomainException {
+    if (sortOrder.equalsIgnoreCase(DEFAULT_SORT_ORDER)
+        || sortOrder.equalsIgnoreCase(DESC_SORT_ORDER)) {
+      return calendarDomain.findCalendarListByOrgId(orgId, pageNo, pageSize, sortBy, sortOrder);
+    } else {
+      logger.error("Invalid sort order");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(SORT_ORDER, FieldError.builder().rejectedValue(sortOrder).build());
+      throw new CommonServiceException(
+          "Invalid sort order, consider giving either ASC or DESC",
+          HttpStatus.BAD_REQUEST,
+          0x1771,
+          errorMap);
+    }
+  }
+}

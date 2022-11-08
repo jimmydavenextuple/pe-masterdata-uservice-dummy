@@ -20,7 +20,7 @@ logging:
   level:
     org.springframework: WARN
     root: WARN
-    com.hbc: INFO
+    com.nextuple: INFO
 management:
   endpoints:
     web:

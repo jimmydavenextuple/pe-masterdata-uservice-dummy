@@ -6,10 +6,10 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.hbc.core.constants.NearCacheConstants;
-import com.hbc.core.consumer.LocalCacheUpdateEventConsumer;
-import com.hbc.core.consumer.LocalCacheUpdateService;
-import com.hbc.core.event.LocalCacheUpdateEvent;
+import com.nextuple.core.constants.NearCacheConstants;
+import com.nextuple.core.consumer.LocalCacheUpdateEventConsumer;
+import com.nextuple.core.consumer.LocalCacheUpdateService;
+import com.nextuple.core.event.LocalCacheUpdateEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;

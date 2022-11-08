@@ -23,7 +23,7 @@ logging:
   level:
     org.springframework: WARN
     root: WARN
-    com.hbc: INFO
+    com.nextuple: INFO
 pagination:
   pageNo: 1
   pageSize: 15

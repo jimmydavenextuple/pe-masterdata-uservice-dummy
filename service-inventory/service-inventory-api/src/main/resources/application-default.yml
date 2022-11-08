@@ -15,4 +15,4 @@ pe:
 
 logging:
   level:
-    com.hbc: INFO
+    com.nextuple: INFO

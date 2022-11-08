@@ -30,7 +30,7 @@ spring:
 
 logging:
   level:
-    com.hbc: INFO
+    com.nextuple: INFO
 
 dataupload:
   base-path: "/s3-bucket/"

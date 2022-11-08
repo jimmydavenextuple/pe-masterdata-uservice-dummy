@@ -16,18 +16,18 @@ spring:
       enable-auto-commit: true
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: com.hbc.item.consumer.serializer.ItemDeserializer
+      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
       topics:
         item_master:
           name: ITEM_MASTER_INTEGRATION
           group-id: item-master-local
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: com.hbc.item.consumer.serializer.ItemSerializer
+      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
 
 logging:
   level:
-    com.hbc: INFO
+    com.nextuple: INFO
 pe:
   ui:
     allowed-origin-url: "*"

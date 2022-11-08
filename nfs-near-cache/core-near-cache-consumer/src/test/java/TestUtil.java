@@ -1,5 +1,5 @@
-import com.hbc.core.event.LocalCacheUpdateEvent;
-import com.hbc.core.event.LocalCacheUpdateMessage;
+import com.nextuple.core.event.LocalCacheUpdateEvent;
+import com.nextuple.core.event.LocalCacheUpdateMessage;
 import java.util.Map;
 
 public class TestUtil {

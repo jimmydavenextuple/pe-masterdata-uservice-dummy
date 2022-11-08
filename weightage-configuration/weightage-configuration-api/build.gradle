@@ -1,6 +1,6 @@
 bootJar {
     enabled = true
-    mainClass.set("com.hbc.weightage.configuration.WeightageConfigurationApplication")
+    mainClass.set("com.nextuple.weightage.configuration.WeightageConfigurationApplication")
 }
 
 configurations {

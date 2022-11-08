@@ -48,7 +48,7 @@ spring:
 logging:
   level:
     root: WARN
-    com.hbc: INFO
+    com.nextuple: INFO
 jobs-framework:
   job-completion-consumer:
     topic-name: internal-prod-job-completion

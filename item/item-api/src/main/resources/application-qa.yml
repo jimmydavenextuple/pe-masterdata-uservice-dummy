@@ -16,17 +16,17 @@ spring:
       enable-auto-commit: true
       auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: com.hbc.item.consumer.serializer.ItemDeserializer
+      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
       topics:
         item_master:
           name: items.promise.bay.v1
           group-id: item-master-qa
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: com.hbc.item.consumer.serializer.ItemSerializer
+      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
 
 logging:
   level:
-    com.hbc: DEBUG
+    com.nextuple: DEBUG
 auth:
   issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_FAqWuc7OP

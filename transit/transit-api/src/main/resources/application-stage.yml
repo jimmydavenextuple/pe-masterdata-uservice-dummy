@@ -34,7 +34,7 @@ spring:
 
 logging:
   level:
-    com.hbc: DEBUG
+    com.nextuple: DEBUG
 jobs-framework:
   job-completion-consumer:
     topic-name: internal-stage-job-completion

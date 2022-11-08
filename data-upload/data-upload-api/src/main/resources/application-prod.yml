@@ -43,7 +43,7 @@ spring:
 logging:
   level:
     root: WARN
-    com.hbc: INFO
+    com.nextuple: INFO
 auth:
   issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_MW21O5cnf
 

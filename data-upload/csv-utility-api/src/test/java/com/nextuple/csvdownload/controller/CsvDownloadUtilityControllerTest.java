@@ -1,0 +1,351 @@
+package com.nextuple.csvdownload.controller;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.csvdownload.common.TestUtil;
+import com.nextuple.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
+import com.nextuple.csvdownload.common.pojo.TemplateTypes;
+import com.nextuple.csvdownload.exception.CarrierServiceException;
+import com.nextuple.csvdownload.exception.CsvDownloadUtilityServiceException;
+import com.nextuple.csvdownload.exception.InvalidTemplateTypeException;
+import com.nextuple.csvdownload.exception.PostalCodeTimezoneServiceException;
+import com.nextuple.csvdownload.exception.TransitServiceException;
+import com.nextuple.csvdownload.service.CsvDownloadUtilityService;
+import com.nextuple.csvdownload.service.DownloadTemplateService;
+import com.nextuple.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+
+@ExtendWith(MockitoExtension.class)
+class CsvDownloadUtilityControllerTest {
+
+  @Mock private CsvDownloadUtilityService csvDownloadUtilityService;
+  @Mock private DownloadTemplateService downloadTemplateService;
+
+  @InjectMocks private CsvDownloadUtilityController csvDownloadUtilityController;
+
+  @Test
+  void downloadCSVTemplateTransitTimes() throws IOException, InvalidTemplateTypeException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    String transitTimesTemplate = TemplateTypes.getTemplateData("transitTime");
+
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    doNothing().when(response).setContentLength(transitTimesTemplate.length());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    csvDownloadUtilityController.downloadCSVTemplate("transitTime", request, response);
+    verify(response, times(1)).getOutputStream();
+  }
+
+  @Test
+  void downloadCSVTemplateProcessingLeadTimes() throws IOException, InvalidTemplateTypeException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    String leadProcessingTimesTemplate = TemplateTypes.getTemplateData("processingLeadTime");
+
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    doNothing().when(response).setContentLength(leadProcessingTimesTemplate.length());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    csvDownloadUtilityController.downloadCSVTemplate("processingLeadTime", request, response);
+    verify(response, times(1)).getOutputStream();
+  }
+
+  @Test
+  void downloadCSVTemplateInvalidTemplateTypeException() {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    Exception exception =
+        Assertions.assertThrows(
+            InvalidTemplateTypeException.class,
+            () ->
+                csvDownloadUtilityController.downloadCSVTemplate(
+                    "transitTime1", request, response));
+
+    Assertions.assertNotNull(exception);
+  }
+
+  @Test
+  void downloadCSVTemplateException() throws IOException, InvalidTemplateTypeException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    String transitTimesTemplate =
+        "orgId,BAY,,,,,,,,,\n"
+            + "Carrier Service:,ALL-Standard,,,,,,,,,\n"
+            + "Destination FSA / Source FSA ->,SFSA1,SFSA2,SFSA3,SFSA4,SFSA5,SFSA6,SFSA7,SFSA8,SFSA9,SFSA10\n"
+            + "DFSA1,10,9.96,9.96,9.96,9.96,7,7,8.09,7,7\n"
+            + "DFSA2,10,9,9,9,9,7.81,7.81,7.89,7.89,7.89\n"
+            + "DFSA3,10,9,9,9,9,9.5,9.5,7,7.89,7.89\n"
+            + "DFSA4,10,9.96,9.96,9.96,9.96,8.09,8.09,7.89,8.09,8.09\n"
+            + "DFSA5,10,9.96,9.96,9.96,9.96,7.81,7.81,7.89,7.89,7.89\n"
+            + "DFSA6,10,9.96,9.96,9.96,9.96,7,7,8.09,8.09,8.09\n"
+            + "DFSA7,10,10,10,10,10,7.81,7.81,7.89,7.89,7.89\n"
+            + "DFSA8,10,9.96,9.96,9.96,9.96,7.81,7.81,8.09,6,6\n"
+            + "DFSA9,10,9.5,9.5,9.5,9.5,8.09,8.09,7.89,8.09,8.09\n"
+            + "DFSA10,8,8,8,8,8,8.09,8.09,6,7,7";
+
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    doNothing().when(response).setContentLength(transitTimesTemplate.length());
+
+    when(response.getOutputStream()).thenThrow(new IOException("Unexpected error"));
+
+    csvDownloadUtilityController.downloadCSVTemplate("transitTime", request, response);
+    verify(response, times(1)).getOutputStream();
+  }
+
+  @Test
+  void downloadTransitTimesDataCSV()
+      throws IOException, TransitServiceException, PostalCodeTimezoneServiceException,
+          CsvDownloadUtilityServiceException {
+
+    String csvContents =
+        "orgId,BAY\n"
+            + "Carrier Service:,ALL-SDND\n"
+            + "Destination FSA / Source FSA ->,A0A,M1R\n"
+            + "K1A,0.5,0.5\n"
+            + "K2A,null,1.0";
+
+    when(csvDownloadUtilityService.downloadTransitTimesForSourceAndDestinationRegion(
+            anyString(), anyString(), anyString(), anyString()))
+        .thenReturn(csvContents);
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    doNothing().when(response).setContentLength(csvContents.length());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    csvDownloadUtilityController.downloadTransitTimesDataCSV(
+        "BAY", "ALL-SDND", "ON", "DEL", request, response);
+    verify(response, times(1)).getOutputStream();
+  }
+
+  @Test
+  void downloadLogsByFiltersForProcessingLeadTime() throws IOException, CommonServiceException {
+
+    String ProcessingLeadTimeErrorLogTemplate =
+        "nodeId,orgId,serviceOptions,processingTime (in hrs),errorMessage\n"
+            + "1554,BAY,SDND,2,Invalid nodeId\n"
+            + "1560,BAY,SDND,2,Invalid nodeId\n"
+            + "1101,BAY,SDND,2,Invalid nodeId\n"
+            + "1518,BAY,NEXTDAY,6,Invalid nodeId";
+
+    when(csvDownloadUtilityService.downloadLogsAsCsv(anyString(), anyString(), any()))
+        .thenReturn(ProcessingLeadTimeErrorLogTemplate);
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    doNothing().when(response).setContentLength(ProcessingLeadTimeErrorLogTemplate.length());
+
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    csvDownloadUtilityController.downloadLogsByFilters(
+        "BAY", "C-Id", Optional.empty(), request, response);
+    verify(response, times(1)).getOutputStream();
+  }
+
+  @Test
+  void downloadLogsByFiltersV1() throws IOException, CommonServiceException {
+
+    PreSignedUrlResponse ErrorLogTemplate = new PreSignedUrlResponse("", "", "");
+
+    when(csvDownloadUtilityService.downloadLogsAsCsvV1(anyString(), anyString(), any()))
+        .thenReturn(ErrorLogTemplate);
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    csvDownloadUtilityController.downloadLogsByFiltersV1(
+        "BAY", "C-Id", Optional.empty(), request, response);
+    verify(csvDownloadUtilityService, times(1))
+        .downloadLogsAsCsvV1(anyString(), anyString(), any());
+  }
+
+  @Test
+  void downloadMarketRegionDataCSVTest() throws IOException, PostalCodeTimezoneServiceException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    String marketRegionTemplate = TemplateTypes.getTemplateData("postalCodeTimezone");
+    when(csvDownloadUtilityService.downloadMarketRegionForOrgIdAndCountry(anyString(), anyString()))
+        .thenReturn(marketRegionTemplate);
+
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    doNothing().when(response).setContentLength(marketRegionTemplate.length());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    csvDownloadUtilityController.downloadMarketRegionDataCSV(
+        TestUtil.ORG_ID, TestUtil.COUNTRY, request, response);
+    verify(response, times(1)).getOutputStream();
+  }
+
+  @Test
+  void downloadNodeCarrierServiceAndServiceOptionsDataCSV() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    ServletOutputStream servletOutputStream = Mockito.mock(ServletOutputStream.class);
+    Path path =
+        Paths.get(
+            "src",
+            "test",
+            "resources",
+            "nodeCarrierServiceOption",
+            "downloadNodeCarrierServiceAndServiceOptionDetails.csv");
+    DownloadNodeCarrierServiceAndServiceOptionPojo pojo =
+        DownloadNodeCarrierServiceAndServiceOptionPojo.builder()
+            .fileContents(Files.readAllBytes(path))
+            .contentsLength(path.toFile().length())
+            .build();
+
+    when(csvDownloadUtilityService.downloadNodeCarrierServiceAndServiceOptionsDataCSV(anyString()))
+        .thenReturn(pojo);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    doNothing().when(servletOutputStream).write(any());
+
+    csvDownloadUtilityController.downloadNodeCarrierServiceAndServiceOptionsDataCSV(
+        TestUtil.ORG_ID, request, response);
+    verify(csvDownloadUtilityService, times(1))
+        .downloadNodeCarrierServiceAndServiceOptionsDataCSV(anyString());
+  }
+
+  @Test
+  void downloadCarrierServiceCSVTest() throws IOException, CarrierServiceException {
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+
+    String CARRIER_SERVICE =
+        "   carrierServiceId,orgId,carrierName,carrierId,serviceName,status,carrierServiceWorkingCalendar\n"
+            + " ALL-EXPRESS,BAY,ALL,01,service-1-name,INACTIVE,C002\n"
+            + " ALL-EXPRESS,BAY,ALL,01,service-1-name,INACTIVE,C001\n";
+    File file = File.createTempFile(CARRIER_SERVICE, "");
+    file.deleteOnExit();
+    when(csvDownloadUtilityService.downloadCarrierServiceDataCSV(anyString())).thenReturn(file);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+    Assertions.assertDoesNotThrow(
+        () ->
+            csvDownloadUtilityController.downloadCarrierServiceCSV(
+                TestUtil.ORG_ID, request, response));
+  }
+
+  @Test
+  void downloadProcessingTimeBufferDataCSVTest() throws IOException {
+    File file = File.createTempFile("some-prefix", "some-ext");
+    file.deleteOnExit();
+    when(csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(any())).thenReturn(file);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+    Assertions.assertDoesNotThrow(
+        () ->
+            csvDownloadUtilityController.downloadProcessingTimeBufferDataCSV(
+                TestUtil.ORG_ID, response));
+  }
+
+  @Test
+  void downloadTemplateByFile() throws Exception {
+
+    var is = new ByteArrayInputStream(TestUtil.nodeCarrierCsvData.getBytes(StandardCharsets.UTF_8));
+
+    when(downloadTemplateService.getTemplateData(any())).thenReturn(is);
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    csvDownloadUtilityController.downloadCSVTemplateFromFile(
+        TestUtil.templateType, request, response);
+
+    verify(downloadTemplateService, times(1)).getTemplateData(anyString());
+
+    Assertions.assertDoesNotThrow(
+        () ->
+            csvDownloadUtilityController.downloadCSVTemplateFromFile(
+                TestUtil.templateType, request, response));
+  }
+
+  @Test
+  void downloadTemplateByFileError() throws Exception {
+    when(downloadTemplateService.getTemplateData(any()))
+        .thenThrow(
+            new InvalidTemplateTypeException(
+                TestUtil.invalidTemplateTypeErrMsg, TestUtil.templateTypeInvalid));
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    Exception exception =
+        Assertions.assertThrows(
+            InvalidTemplateTypeException.class,
+            () ->
+                csvDownloadUtilityController.downloadCSVTemplateFromFile(
+                    TestUtil.templateTypeInvalid, request, response));
+
+    Assertions.assertNotNull(exception);
+
+    verify(downloadTemplateService, times(1)).getTemplateData(anyString());
+  }
+
+  @Test
+  void downloadNodesDataCSVTest() throws IOException {
+    File file = File.createTempFile("some-prefix", "some-ext");
+    file.deleteOnExit();
+    when(csvDownloadUtilityService.downloadNodesByOrgId(any())).thenReturn(file);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+    Assertions.assertDoesNotThrow(
+        () -> csvDownloadUtilityController.downloadNodesDataCSV(TestUtil.ORG_ID, response));
+  }
+}

@@ -1,0 +1,109 @@
+package com.nextuple.common.configuration.controller;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+import com.nextuple.common.configuration.TestUtil;
+import com.nextuple.common.configuration.api.domain.dto.CommonConfigurationDto;
+import com.nextuple.common.configuration.api.domain.inbound.CreateCommonConfigurationRequest;
+import com.nextuple.common.configuration.service.CommonConfigurationService;
+import com.nextuple.common.enums.ApplicationLayer;
+import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.exception.PromiseEngineException;
+import com.nextuple.common.response.BaseResponse;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+@ExtendWith(MockitoExtension.class)
+class CommonConfigurationControllerTest {
+  @InjectMocks private CommonConfigurationController configurationController;
+
+  @Mock private CommonConfigurationService configurationService;
+
+  @InjectMocks private TestUtil testUtil;
+
+  @Test
+  void createCommonConfiguration_Test() throws PromiseEngineException {
+    when(configurationService.createCommonConfig(any(CreateCommonConfigurationRequest.class)))
+        .thenReturn(testUtil.getCommonConfigurationDto());
+    Assertions.assertDoesNotThrow(
+        () -> configurationController.createCommonConfiguration(testUtil.getCreateRequest()));
+  }
+
+  @Test
+  void createCommonConfiguration_TestException() throws PromiseEngineException {
+    when(configurationService.createCommonConfig(any(CreateCommonConfigurationRequest.class)))
+        .thenThrow(new PromiseEngineException(ApplicationLayer.SERVICE_LAYER, null, null));
+    Assertions.assertThrows(
+        PromiseEngineException.class,
+        () -> configurationController.createCommonConfiguration(testUtil.getCreateRequest()));
+  }
+
+  @Test
+  void fetchValue_Test() throws PromiseEngineException {
+    when(configurationService.fetchValue(anyString(), anyString(), anyString()))
+        .thenReturn(testUtil.getCommonConfigurationDto());
+    ResponseEntity<BaseResponse<CommonConfigurationDto>> commonConfigurationDto =
+        Assertions.assertDoesNotThrow(
+            () -> configurationController.fetchValue(TestUtil.ORGID, TestUtil.TYPE, TestUtil.KEY));
+
+    Assertions.assertEquals("PICK", commonConfigurationDto.getBody().getPayload().getValue());
+  }
+
+  @Test
+  void fetchValue_TestException() throws PromiseEngineException {
+    when(configurationService.fetchValue(anyString(), anyString(), anyString()))
+        .thenThrow(new RuntimeException());
+    Assertions.assertThrows(
+        RuntimeException.class,
+        () -> configurationController.fetchValue(TestUtil.ORGID, TestUtil.TYPE, TestUtil.KEY));
+  }
+
+  @Test
+  void updateCommonConfiguration_Test() throws PromiseEngineException {
+    when(configurationService.updateCommonConfiguration(
+            any(CreateCommonConfigurationRequest.class)))
+        .thenReturn(testUtil.getCommonConfigurationDto());
+    Assertions.assertDoesNotThrow(
+        () -> configurationController.updateCommonConfiguration(testUtil.getCreateRequest()));
+  }
+
+  @Test
+  void updateCommonConfiguration_TestException() throws PromiseEngineException {
+    when(configurationService.updateCommonConfiguration(
+            any(CreateCommonConfigurationRequest.class)))
+        .thenThrow(new PromiseEngineException(ApplicationLayer.SERVICE_LAYER, null, null));
+    Assertions.assertThrows(
+        PromiseEngineException.class,
+        () -> configurationController.updateCommonConfiguration(testUtil.getCreateRequest()));
+  }
+
+  @Test
+  void deleteCommonConfiguration_Test() throws PromiseEngineException, CommonServiceException {
+    when(configurationService.deleteCommonConfiguration(anyString(), anyString(), anyString()))
+        .thenReturn(testUtil.getCommonConfigurationDto());
+    Assertions.assertDoesNotThrow(
+        () ->
+            configurationController.deleteCommonConfiguration(
+                TestUtil.ORGID, TestUtil.TYPE, TestUtil.KEY));
+  }
+
+  @Test
+  void deleteCommonConfiguration_TestException()
+      throws PromiseEngineException, CommonServiceException {
+    when(configurationService.deleteCommonConfiguration(anyString(), anyString(), anyString()))
+        .thenThrow(new CommonServiceException(HttpStatus.BAD_GATEWAY, null, null));
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
+            configurationController.deleteCommonConfiguration(
+                TestUtil.ORGID, TestUtil.TYPE, TestUtil.KEY));
+  }
+}

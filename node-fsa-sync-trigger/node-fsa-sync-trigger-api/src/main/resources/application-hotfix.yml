@@ -29,7 +29,7 @@ spring:
         spring.json.trusted.packages: "*"
 logging:
   level:
-    com.hbc: DEBUG
+    com.nextuple: DEBUG
 
 auth-token:
   url: https://promise-engine-domain-development.auth.us-east-1.amazoncognito.com

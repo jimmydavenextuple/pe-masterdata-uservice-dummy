@@ -1,0 +1,87 @@
+package com.nextuple.common.configuration.service;
+
+import com.nextuple.common.configuration.api.domain.dto.CommonConfigurationDto;
+import com.nextuple.common.configuration.api.domain.inbound.CreateCommonConfigurationRequest;
+import com.nextuple.common.configuration.domain.CommonConfigurationDomain;
+import com.nextuple.common.configuration.domain.entity.CommonConfiguration;
+import com.nextuple.common.configuration.mapper.CommonConfigMapper;
+import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.exception.PromiseEngineException;
+import com.nextuple.common.response.error.FieldError;
+import com.nextuple.postgres.config.ReaderDS;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class CommonConfigurationService {
+
+  public static final CommonConfigMapper INSTANCE = Mappers.getMapper(CommonConfigMapper.class);
+  private static final Logger logger = LoggerFactory.getLogger(CommonConfigurationService.class);
+  private static final String ORG_ID = "orgId";
+  private static final String KEY = "key";
+  private static final String TYPE = "type";
+
+  private static final String COMMON_CONFIG_NOT_FOUND_ERROR_MSG =
+      "Common Configuration not found for given details";
+  private final CommonConfigurationDomain configurationDomain;
+
+  @ReaderDS
+  public CommonConfigurationDto fetchValue(String orgId, String type, String key)
+      throws PromiseEngineException {
+
+    Optional<CommonConfiguration> commonConfiguration =
+        configurationDomain.getCommonConfiguration(orgId, type, key);
+    if (commonConfiguration.isEmpty()) {
+      return null;
+    }
+    return INSTANCE.toCommonConfigurationDto(commonConfiguration.get());
+  }
+
+  public CommonConfigurationDto createCommonConfig(
+      CreateCommonConfigurationRequest createCommonConfigurationRequest)
+      throws PromiseEngineException {
+
+    return INSTANCE.toCommonConfigurationDto(
+        configurationDomain.saveCommonConfiguration(
+            INSTANCE.fromCommonConfigurationRequest(createCommonConfigurationRequest)));
+  }
+
+  public CommonConfigurationDto updateCommonConfiguration(
+      CreateCommonConfigurationRequest baseRequest) throws PromiseEngineException {
+    return INSTANCE.toCommonConfigurationDto(
+        configurationDomain.saveCommonConfiguration(
+            INSTANCE.fromCommonConfigurationRequest(baseRequest)));
+  }
+
+  public CommonConfigurationDto deleteCommonConfiguration(String orgId, String type, String key)
+      throws PromiseEngineException, CommonServiceException {
+
+    Optional<CommonConfiguration> commonConfiguration =
+        configurationDomain.getCommonConfiguration(orgId, type, key);
+
+    if (commonConfiguration.isEmpty()) {
+      throwCommonServiceException(orgId, type, key);
+    }
+    configurationDomain.deleteCommonConfiguration(commonConfiguration.get());
+    return INSTANCE.toCommonConfigurationDto(commonConfiguration.get());
+  }
+
+  private static void throwCommonServiceException(String orgId, String type, String key)
+      throws CommonServiceException {
+    logger.error(COMMON_CONFIG_NOT_FOUND_ERROR_MSG);
+    Map<String, FieldError> errorMap = new HashMap<>();
+    errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+    errorMap.put(TYPE, FieldError.builder().rejectedValue(type).build());
+    errorMap.put(KEY, FieldError.builder().rejectedValue(key).build());
+    throw new CommonServiceException(
+        COMMON_CONFIG_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1774, errorMap);
+  }
+}

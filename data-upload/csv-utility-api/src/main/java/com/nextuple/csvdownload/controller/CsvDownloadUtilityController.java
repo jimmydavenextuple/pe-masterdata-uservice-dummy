@@ -1,0 +1,235 @@
+package com.nextuple.csvdownload.controller;
+
+import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.response.BaseResponse;
+import com.nextuple.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
+import com.nextuple.csvdownload.common.pojo.TemplateTypes;
+import com.nextuple.csvdownload.exception.CarrierServiceException;
+import com.nextuple.csvdownload.exception.CsvDownloadUtilityServiceException;
+import com.nextuple.csvdownload.exception.InvalidTemplateTypeException;
+import com.nextuple.csvdownload.exception.PostalCodeTimezoneServiceException;
+import com.nextuple.csvdownload.exception.TransitServiceException;
+import com.nextuple.csvdownload.service.CsvDownloadUtilityService;
+import com.nextuple.csvdownload.service.DownloadTemplateService;
+import com.nextuple.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@Validated
+@RestController
+@Slf4j
+@RequiredArgsConstructor
+public class CsvDownloadUtilityController {
+
+  private final CsvDownloadUtilityService csvDownloadUtilityService;
+  private final DownloadTemplateService downloadTemplateService;
+
+  @GetMapping(value = "/{templateType}/download", produces = "text/csv")
+  public void downloadCSVTemplate(
+      @NotBlank(message = "templateType can't be empty") @PathVariable String templateType,
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws InvalidTemplateTypeException {
+    log.debug("Inside downloadCSVTemplate for type: {}", templateType);
+
+    String templateData = TemplateTypes.getTemplateData(templateType);
+    if (ObjectUtils.isEmpty(templateData)) {
+      throw new InvalidTemplateTypeException("Invalid template type", templateType);
+    }
+
+    try {
+      response.setStatus(HttpStatus.OK.value());
+      response.setContentLength(templateData.length());
+      response.getOutputStream().write(templateData.getBytes());
+      response.flushBuffer();
+    } catch (Exception e) {
+      log.error("Error while downloading the csv template", e);
+      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping(value = "/v1/{templateType}/download", produces = "text/csv")
+  public void downloadCSVTemplateFromFile(
+      @NotBlank(message = "templateType can't be empty") @PathVariable String templateType,
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws InvalidTemplateTypeException, IOException {
+    log.debug("Inside downloadCSVTemplate for type: {}", templateType);
+
+    try (var templateDataStream = downloadTemplateService.getTemplateData(templateType)) {
+
+      String templateData =
+          new String(templateDataStream.readAllBytes(), StandardCharsets.UTF_8).replace("\r", "");
+
+      response.setStatus(HttpStatus.OK.value());
+      response.setContentLength(templateData.length());
+      response.getOutputStream().write(templateData.getBytes());
+      response.flushBuffer();
+    } catch (Exception e) {
+      log.error("Error while downloading the csv template", e);
+      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      throw (e);
+    }
+  }
+
+  @GetMapping(value = "/org/{orgId}/download/carrier-services/{carrierServiceId}/transit-time")
+  public void downloadTransitTimesDataCSV(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId,
+      @NotBlank(message = "sourceRegion can't be empty") @RequestParam String sourceRegion,
+      @NotBlank(message = "destinationRegion can't be empty") @RequestParam
+          String destinationRegion,
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws TransitServiceException, PostalCodeTimezoneServiceException, IOException,
+          CsvDownloadUtilityServiceException {
+    log.debug("Inside download transit times data as csv");
+    String csvContents =
+        csvDownloadUtilityService.downloadTransitTimesForSourceAndDestinationRegion(
+            orgId, carrierServiceId, sourceRegion, destinationRegion);
+    response.setStatus(HttpStatus.OK.value());
+    response.setContentLength(csvContents.length());
+    response.getOutputStream().write(csvContents.getBytes());
+    response.flushBuffer();
+  }
+
+  @GetMapping(value = "/org/{orgId}/download/market-regions")
+  public void downloadMarketRegionDataCSV(
+      @PathVariable String orgId,
+      @RequestParam String country,
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws PostalCodeTimezoneServiceException, IOException {
+    log.debug("Inside download market region data as csv");
+    String csvContents =
+        csvDownloadUtilityService.downloadMarketRegionForOrgIdAndCountry(orgId, country);
+    response.setStatus(HttpStatus.OK.value());
+    response.setContentLength(csvContents.length());
+    response.getOutputStream().write(csvContents.getBytes());
+    response.flushBuffer();
+  }
+
+  @GetMapping(value = "/org/{orgId}/download/processing-time-buffers")
+  public void downloadProcessingTimeBufferDataCSV(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      HttpServletResponse response)
+      throws IOException {
+    log.debug("Inside download processing time buffers data as csv");
+    final var file = csvDownloadUtilityService.downloadProcessingTimeBuffersByOrgId(orgId);
+    try (var inputStream = new FileInputStream(file)) {
+      response.setStatus(HttpStatus.OK.value());
+      response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+      response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+      IOUtils.copy(inputStream, response.getOutputStream());
+      response.flushBuffer();
+    } finally {
+      Files.delete(file.toPath());
+    }
+  }
+
+  @GetMapping(value = "/org/{orgId}/download/carrier-services")
+  public void downloadCarrierServiceCSV(
+      @PathVariable String orgId, HttpServletRequest request, HttpServletResponse response)
+      throws IOException, CarrierServiceException {
+    log.debug("Inside download carrier service data as csv");
+
+    var file = csvDownloadUtilityService.downloadCarrierServiceDataCSV(orgId);
+    try (var inputStream = new FileInputStream(file)) {
+
+      response.setStatus(HttpStatus.OK.value());
+      response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+      response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+      IOUtils.copy(inputStream, response.getOutputStream());
+      response.flushBuffer();
+    } finally {
+      file.delete(); // NOSONAR
+    }
+  }
+
+  @GetMapping(path = "/org/{orgId}/jobs/{jobId}/download")
+  public void downloadLogsByFilters(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "jobId can't be empty") @PathVariable String jobId,
+      @RequestParam(required = false) Optional<String> status,
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws IOException, CommonServiceException {
+    log.debug("Inside download logs by filters");
+    String csvContent = csvDownloadUtilityService.downloadLogsAsCsv(jobId, orgId, status);
+    response.setStatus(HttpStatus.OK.value());
+    response.setContentLength(csvContent.length());
+    response.getOutputStream().write(csvContent.getBytes());
+    response.flushBuffer();
+  }
+
+  @GetMapping(path = "/v1/org/{orgId}/jobs/{jobId}/download")
+  public ResponseEntity<BaseResponse<PreSignedUrlResponse>> downloadLogsByFiltersV1(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      @NotBlank(message = "jobId can't be empty") @PathVariable String jobId,
+      @RequestParam(required = false) Optional<String> status,
+      HttpServletRequest request,
+      HttpServletResponse httpServletResponse)
+      throws IOException, CommonServiceException {
+    log.debug("Inside download logs by filters");
+    final var file = csvDownloadUtilityService.downloadLogsAsCsvV1(jobId, orgId, status);
+    return ResponseEntity.ok()
+        .body(
+            BaseResponse.builder()
+                .payload(file)
+                .message("Log history URL fetched successfully")
+                .build());
+  }
+
+  @GetMapping(value = "org/{orgId}/download/node-carrier-service-option")
+  public void downloadNodeCarrierServiceAndServiceOptionsDataCSV(
+      @PathVariable String orgId, HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
+    log.debug("Processing download node carrier-service and service-options data CSV");
+
+    DownloadNodeCarrierServiceAndServiceOptionPojo pojo =
+        csvDownloadUtilityService.downloadNodeCarrierServiceAndServiceOptionsDataCSV(orgId);
+    response.setStatus(HttpStatus.OK.value());
+    response.setContentLength(Math.toIntExact(pojo.getContentsLength()));
+    response.getOutputStream().write(pojo.getFileContents());
+    response.flushBuffer();
+  }
+
+  @GetMapping(value = "/org/{orgId}/download/nodes")
+  public void downloadNodesDataCSV(
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+      HttpServletResponse httpServletResponse)
+      throws IOException {
+    log.debug("Inside download nodes data as csv");
+    final var file = csvDownloadUtilityService.downloadNodesByOrgId(orgId);
+    try (var inputStream = new FileInputStream(file)) {
+
+      httpServletResponse.setStatus(HttpStatus.OK.value());
+      httpServletResponse.setHeader(
+          HttpHeaders.CONTENT_DISPOSITION,
+          String.format("attachment; filename=%s", file.getName()));
+      httpServletResponse.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+      IOUtils.copy(inputStream, httpServletResponse.getOutputStream());
+      httpServletResponse.flushBuffer();
+    } finally {
+      Files.delete(file.toPath());
+    }
+  }
+}

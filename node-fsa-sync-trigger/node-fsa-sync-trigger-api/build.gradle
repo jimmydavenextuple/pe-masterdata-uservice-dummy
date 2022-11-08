@@ -1,6 +1,6 @@
 bootJar {
     enabled = true
-    mainClass.set("com.hbc.fsa.node.NodeFSASyncApplication")
+    mainClass.set("com.nextuple.fsa.node.NodeFSASyncApplication")
 }
 
 configurations {

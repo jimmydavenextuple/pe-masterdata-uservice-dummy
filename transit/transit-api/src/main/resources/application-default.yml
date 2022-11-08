@@ -20,7 +20,7 @@ spring:
 
 logging:
   level:
-    com.hbc: INFO
+    com.nextuple: INFO
 
 entity-listener:
   kafka:

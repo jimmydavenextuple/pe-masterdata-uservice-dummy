@@ -1,0 +1,25 @@
+package com.nextuple.common.interceptor;
+
+import com.nextuple.common.constants.CommonConstants;
+import com.nextuple.common.context.CurrentThreadContext;
+import feign.RequestInterceptor;
+import feign.RequestTemplate;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+@Component
+@Slf4j
+public class FeignClientInterceptor implements RequestInterceptor {
+  @Override
+  public void apply(RequestTemplate requestTemplate) {
+
+    log.debug("------ Inside FeignClientInterceptor ------");
+
+    // Attach Authorization header
+    if (!requestTemplate.headers().containsKey(CommonConstants.AUTHORIZATION_HEADER)) {
+      requestTemplate.header(
+          CommonConstants.AUTHORIZATION_HEADER,
+          CurrentThreadContext.getLogContext().getAuthorizationHeader());
+    }
+  }
+}

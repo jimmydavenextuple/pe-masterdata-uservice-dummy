@@ -1,6 +1,6 @@
 bootJar {
     enabled = true
-    mainClass.set("com.hbc.dataupload.DataUploadApplication")
+    mainClass.set("com.nextuple.dataupload.DataUploadApplication")
 }
 
 configurations {

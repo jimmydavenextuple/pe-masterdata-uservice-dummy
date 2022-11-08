@@ -1,6 +1,6 @@
 bootJar {
     enabled = true
-    mainClass.set("com.hbc.common.configuration.CommonConfigurationApplication")
+    mainClass.set("com.nextuple.common.configuration.CommonConfigurationApplication")
 }
 
 configurations {

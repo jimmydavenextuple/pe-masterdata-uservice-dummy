@@ -1,6 +1,6 @@
 bootJar {
     enabled = true
-    mainClass.set("com.hbc.postal.code.timezone.PostalCodeTimezoneApplication")
+    mainClass.set("com.nextuple.postal.code.timezone.PostalCodeTimezoneApplication")
 }
 
 

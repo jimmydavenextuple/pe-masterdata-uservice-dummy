@@ -29,7 +29,7 @@ spring:
         spring.json.trusted.packages: "*"
 logging:
   level:
-    com.hbc: DEBUG
+    com.nextuple: DEBUG
 auth:
   issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_5uCQJb6Il
 
