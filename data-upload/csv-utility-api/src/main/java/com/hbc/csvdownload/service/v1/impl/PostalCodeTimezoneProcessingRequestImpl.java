@@ -98,7 +98,7 @@ public class PostalCodeTimezoneProcessingRequestImpl extends AbstractProcessingR
           requestBody.getState(),
           requestBody.getCity(),
           requestBody.getLatitude(),
-          requestBody.getLatitude(),
+          requestBody.getLongitude(),
           requestBody.getTimeZone(),
           recordStatusDto.getErrorMessage()
         };
