@@ -31,6 +31,7 @@ import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.domain.dto.NodeDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
+import com.hbc.transit.domain.feign.TransitBufferFeign;
 import com.hbc.transit.domain.outbound.TransitResponse;
 import com.newrelic.relocated.Gson;
 import com.opencsv.CSVWriter;
@@ -70,6 +71,7 @@ public class CsvDownloadUtilityService {
   private final NodeService nodeService;
   private final NodeCarrierService nodeCarrierService;
   private final ProcessingRequestFactory processingRequestFactory;
+  private final TransitBufferFeign transitBufferFeign;
   private static final String NA = "NA";
 
   @Value("${download-page-size.node-carrier-service-options}")
@@ -752,5 +754,12 @@ public class CsvDownloadUtilityService {
       throw new CommonServiceException(
           "Error while downloading error logs as csv", HttpStatus.BAD_REQUEST, 0x1772, null);
     }
+  }
+
+  public PreSignedUrlResponse downloadTransitBufferDetails(
+      Long transitBufferConfigRequestId, String createdBy) {
+    return transitBufferFeign
+        .getTransitBufferDetails(transitBufferConfigRequestId, createdBy)
+        .getPayload();
   }
 }

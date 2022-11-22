@@ -13,4 +13,6 @@ public interface TransitBufferRepository extends JpaRepository<TransitBufferEnti
 
   Optional<TransitBufferEntity> findByOrgIdAndCarrierServiceIdAndSourceGeozoneAndDestinationGeozone(
       String orgId, String carrierServiceId, String sourceGeozone, String destinationGeozone);
+
+  List<TransitBufferEntity> findByTransitBufferConfigRequestId(Long transitBufferConfigRequestId);
 }

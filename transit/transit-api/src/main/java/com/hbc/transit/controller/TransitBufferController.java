@@ -2,9 +2,11 @@ package com.hbc.transit.controller;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
 import com.hbc.transit.domain.inbound.TransitBufferRequest;
 import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import com.hbc.transit.service.TransitBufferService;
+import java.io.IOException;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -89,6 +91,23 @@ public class TransitBufferController {
     return ResponseEntity.ok(
         BaseResponse.builder()
             .message("Transit buffer deleted successfully")
+            .payload(response)
+            .build());
+  }
+
+  @GetMapping("/{transitBufferConfigRequestId}")
+  public ResponseEntity<BaseResponse<PreSignedUrlResponse>> getTransitBufferDetails(
+      @PathVariable Long transitBufferConfigRequestId,
+      @NotBlank(message = "createdBy can't be empty") @RequestParam String createdBy)
+      throws IOException, CommonServiceException {
+    logger.debug("Processing get transit buffer details by transitBufferRequestId");
+
+    var response =
+        transitBufferService.getTransitBufferDetails(transitBufferConfigRequestId, createdBy);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Transit buffer details with pre signed url fetched successfully")
             .payload(response)
             .build());
   }

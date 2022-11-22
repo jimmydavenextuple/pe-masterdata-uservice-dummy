@@ -7,9 +7,11 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.hbc.common.exception.CommonServiceException;
 import com.hbc.common.response.BaseResponse;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
 import com.hbc.transit.TestUtil;
 import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import com.hbc.transit.service.TransitBufferService;
+import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -88,5 +90,20 @@ class TransitBufferControllerTest {
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     Assertions.assertEquals(transitBufferResponse, response.getBody().getPayload());
     verify(transitBufferService, times(1)).deleteTransitBufferDetails(any(), any(), any(), any());
+  }
+
+  @Test
+  void getTransitBufferDetailsTest() throws CommonServiceException, IOException {
+    PreSignedUrlResponse preSignedUrlResponse = testUtil.getPreSignedUrl();
+
+    when(transitBufferService.getTransitBufferDetails(any(), any()))
+        .thenReturn(preSignedUrlResponse);
+
+    ResponseEntity<BaseResponse<PreSignedUrlResponse>> response =
+        transitBufferController.getTransitBufferDetails(1L, "user1");
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(preSignedUrlResponse, response.getBody().getPayload());
+    verify(transitBufferService, times(1)).getTransitBufferDetails(any(), any());
   }
 }

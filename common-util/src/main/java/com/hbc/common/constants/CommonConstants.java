@@ -36,4 +36,5 @@ public class CommonConstants {
   public static final String BUFFER_DAYS = "bufferDays";
   public static final String CREATE_BY = "createdBy";
   public static final String AUTH_EXPIRY_TIMESTAMP_HEADER = "AuthExpiryTimestamp";
+  public static final String TRANSIT_BUFFER_CONFIG_REQUEST_ID = "transitBufferConfigRequestId";
 }

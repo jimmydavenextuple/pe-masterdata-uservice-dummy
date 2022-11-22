@@ -232,4 +232,21 @@ public class CsvDownloadUtilityController {
       Files.delete(file.toPath());
     }
   }
+
+  @GetMapping(value = "/download/transitBuffer/{transitBufferConfigRequestId}")
+  public ResponseEntity<BaseResponse<PreSignedUrlResponse>> downloadTransitBuffer(
+      @PathVariable Long transitBufferConfigRequestId,
+      @NotBlank(message = "createdBy can't be empty") @RequestParam String createdBy) {
+    log.debug("Inside download transit buffer data as csv");
+
+    var response =
+        csvDownloadUtilityService.downloadTransitBufferDetails(
+            transitBufferConfigRequestId, createdBy);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Transit buffer details downloaded successfully")
+            .payload(response)
+            .build());
+  }
 }

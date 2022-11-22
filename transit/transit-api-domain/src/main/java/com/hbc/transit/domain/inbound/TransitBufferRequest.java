@@ -48,4 +48,6 @@ public class TransitBufferRequest implements Serializable {
   private String createdBy;
 
   private String updatedBy;
+
+  private Long transitBufferConfigRequestId;
 }

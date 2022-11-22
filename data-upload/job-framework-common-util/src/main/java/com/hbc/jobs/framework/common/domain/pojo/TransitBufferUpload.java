@@ -5,10 +5,11 @@ import static com.hbc.common.constants.CommonConstants.BUFFER_DAYS;
 import static com.hbc.common.constants.CommonConstants.BUFFER_END_DATE;
 import static com.hbc.common.constants.CommonConstants.BUFFER_START_DATE;
 import static com.hbc.common.constants.CommonConstants.CARRIER_SERVICE_ID;
+import static com.hbc.common.constants.CommonConstants.CREATE_BY;
 import static com.hbc.common.constants.CommonConstants.DESTINATION_GEOZONE;
 import static com.hbc.common.constants.CommonConstants.ORG_ID;
 import static com.hbc.common.constants.CommonConstants.SOURCE_GEOZONE;
-import static org.springframework.data.jpa.domain.AbstractAuditable_.CREATED_BY;
+import static com.hbc.common.constants.CommonConstants.TRANSIT_BUFFER_CONFIG_REQUEST_ID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,7 @@ public class TransitBufferUpload {
   private String bufferEndDate;
   private String action;
   private String createdBy;
+  private String transitBufferConfigRequestId;
 
   public static String[] columnHeadersArray() {
     return new String[] {
@@ -41,7 +43,8 @@ public class TransitBufferUpload {
       BUFFER_START_DATE,
       BUFFER_END_DATE,
       ACTION_TYPE,
-      CREATED_BY
+      CREATE_BY,
+      TRANSIT_BUFFER_CONFIG_REQUEST_ID
     };
   }
 }

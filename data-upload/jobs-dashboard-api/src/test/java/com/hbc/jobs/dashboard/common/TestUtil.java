@@ -55,13 +55,13 @@ public class TestUtil {
           + "1101,BAY,SDND,2,U";
 
   public static final String CSV_CONTENTS_TRANSIT_BUFFER_REQUEST =
-      "orgId,carrierServiceId,sourceGeozone,destinationGeozone,bufferDays,bufferStartDate,bufferEndDate,action,createdBy\n"
-          + "BAY,ALL-SDND,B1P,T0A,1,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,U,abc\n"
-          + "BAY,ALL-EXPRESS,B3A,T0A,2,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,D,def\n"
-          + "BAY,ALL-EXPRESS,B3B,T0C,1,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,C,ghi\n"
-          + "BAY,ALL-EXPRESS,B4A,T0A,1,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,U,abc\n"
-          + "BAY,ALL-STANDARD,B4A,T0C,1,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,D,def\n"
-          + "BAY,ALL-STANDARD,B1P,T0A,1,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,C,klm";
+      "orgId,carrierServiceId,sourceGeozone,destinationGeozone,bufferDays,bufferStartDate,bufferEndDate,action,createdBy,transitBufferConfigRequestId\n"
+          + "BAY,ALL-SDND,B1P,T0A,1,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,U,abc,1\n"
+          + "BAY,ALL-EXPRESS,B3A,T0A,2,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,D,def,1\n"
+          + "BAY,ALL-EXPRESS,B3B,T0C,1,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,C,ghi,1\n"
+          + "BAY,ALL-EXPRESS,B4A,T0A,1,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,U,abc,1\n"
+          + "BAY,ALL-STANDARD,B4A,T0C,1,2022-10-01T17:30:00Z,2022-11-10T17:30:00Z,D,def,1\n"
+          + "BAY,ALL-STANDARD,B1P,T0A,1,2022-08-01T17:30:00Z,2022-08-11T01:30:00Z,C,klm,1";
 
   public static final String CSV_CONTENTS_POSTAL_CODE_TIMEZONE =
       "action,orgId,postalCodePrefix,country,state,city,latitude,longitude,timeZone\n"

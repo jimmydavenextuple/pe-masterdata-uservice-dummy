@@ -1,5 +1,6 @@
 package com.hbc.csvdownload.service;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.times;
@@ -26,10 +27,12 @@ import com.hbc.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResp
 import com.hbc.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.hbc.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
 import com.hbc.jobs.framework.common.domain.pojo.JobDto;
 import com.hbc.jobs.framework.common.domain.pojo.RecordStatusDto;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.domain.dto.NodeDto;
+import com.hbc.transit.domain.feign.TransitBufferFeign;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -61,6 +64,7 @@ class CsvDownloadUtilityServiceTest {
   @Mock private ProcessingRequestFactory processingRequestFactory;
   @Mock private CalendarProcessingRequestImpl calendarProcessingRequest;
   @Mock private TransitTimeProcessingRequestImpl transitTimeProcessingRequest;
+  @Mock private TransitBufferFeign transitBufferFeign;
   @InjectMocks private CsvDownloadUtilityService csvDownloadUtilityService;
   @InjectMocks private TestUtil testUtil;
 
@@ -495,5 +499,18 @@ class CsvDownloadUtilityServiceTest {
     verify(nodeService, times(1)).getNodeList(any());
     verify(nodeCarrierService, times(2)).getNodeCarrierResponse(any(), any());
     verify(calenderService, times(2)).getNodeCalendar(any(), any());
+  }
+
+  @Test
+  void downloadTransitBufferDetailsTest() {
+    PreSignedUrlResponse preSignedUrlResponse = testUtil.getPreSignedUrlResponse();
+    when(transitBufferFeign.getTransitBufferDetails(anyLong(), anyString()))
+        .thenReturn(BaseResponse.builder().payload(preSignedUrlResponse).build());
+
+    PreSignedUrlResponse response =
+        csvDownloadUtilityService.downloadTransitBufferDetails(1L, "user1");
+
+    Assertions.assertEquals(preSignedUrlResponse, response);
+    verify(transitBufferFeign, times(1)).getTransitBufferDetails(anyLong(), anyString());
   }
 }

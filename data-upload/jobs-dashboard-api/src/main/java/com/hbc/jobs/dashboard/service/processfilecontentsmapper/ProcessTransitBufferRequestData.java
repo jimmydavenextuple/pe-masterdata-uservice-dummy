@@ -64,6 +64,8 @@ public class ProcessTransitBufferRequestData implements ProcessFileContents {
               .bufferEndDate(csvRecord.get(CommonConstants.BUFFER_END_DATE))
               .action(csvRecord.get(CommonConstants.ACTION_TYPE))
               .createdBy(csvRecord.get(CommonConstants.CREATE_BY))
+              .transitBufferConfigRequestId(
+                  csvRecord.get(CommonConstants.TRANSIT_BUFFER_CONFIG_REQUEST_ID))
               .build();
       transitBufferUploadList.add(transitBufferUpload);
     }

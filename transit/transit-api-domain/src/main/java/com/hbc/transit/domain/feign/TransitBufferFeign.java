@@ -1,6 +1,7 @@
 package com.hbc.transit.domain.feign;
 
 import com.hbc.common.response.BaseResponse;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
 import com.hbc.transit.domain.inbound.TransitBufferRequest;
 import com.hbc.transit.domain.outbound.TransitBufferResponse;
 import java.util.List;
@@ -35,4 +36,9 @@ public interface TransitBufferFeign {
   @DeleteMapping("/transit/v1/buffer")
   BaseResponse<TransitBufferResponse> deleteTransitBufferDetails(
       @Valid @RequestBody TransitBufferRequest transitBufferRequest);
+
+  @GetMapping("/transit/v1/buffer/{transitBufferConfigRequestId}")
+  BaseResponse<PreSignedUrlResponse> getTransitBufferDetails(
+      @PathVariable Long transitBufferConfigRequestId,
+      @RequestParam(name = "createdBy") String createdBy);
 }

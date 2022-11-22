@@ -1,7 +1,10 @@
 package com.hbc.transit.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -9,13 +12,24 @@ import static org.mockito.Mockito.when;
 
 import com.hbc.carrier.domain.feign.CarrierFeign;
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
+import com.hbc.jobs.framework.common.clients.FileMetaDataClient;
+import com.hbc.jobs.framework.common.domain.outbound.FileMetaDataResponse;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
+import com.hbc.jobs.framework.common.service.FileService;
+import com.hbc.jobs.framework.common.service.PreSignedUrlInterface;
 import com.hbc.postal.code.timezone.api.domain.feign.PostalCodeTimezoneFeign;
 import com.hbc.transit.TestUtil;
+import com.hbc.transit.domain.entity.TransitBufferConfigRequestEntity;
 import com.hbc.transit.domain.entity.TransitBufferEntity;
 import com.hbc.transit.domain.entity.TransitEntity;
+import com.hbc.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
 import com.hbc.transit.domain.outbound.TransitBufferResponse;
+import com.hbc.transit.repository.TransitBufferConfigRepository;
 import com.hbc.transit.repository.TransitBufferRepository;
 import com.hbc.transit.repository.TransitRepository;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -31,6 +45,10 @@ class TransitBufferServiceTest {
   @InjectMocks private TransitBufferService transitBufferService;
 
   @Mock private TransitBufferRepository transitBufferRepository;
+  @Mock private TransitBufferConfigRepository transitBufferConfigRepository;
+  @Mock private FileMetaDataClient fileMetaDataClient;
+  @Mock private PreSignedUrlInterface preSignedUrlInterface;
+  @Mock private FileService fileService;
 
   @InjectMocks private TestUtil testUtil;
   @Mock private TransitRepository transitRepository;
@@ -268,5 +286,117 @@ class TransitBufferServiceTest {
         .findByOrgIdAndCarrierServiceIdAndSourceGeozoneAndDestinationGeozone(
             any(), any(), any(), any());
     verify(transitBufferRepository, times(0)).delete(any());
+  }
+
+  @Test
+  void getTransitBufferDetailsTest() throws CommonServiceException, IOException {
+    List<TransitBufferEntity> transitBufferEntityList =
+        List.of(testUtil.getTransitBufferEntity(TestUtil.ORG_ID));
+    TransitBufferConfigRequestEntity transitBufferConfigRequestEntity =
+        testUtil.getTransitBufferConfigRequestEntity(TransitBufferConfigRequestStatusEnum.CREATED);
+    BaseResponse<FileMetaDataResponse> fileMetaDataResponse = testUtil.getFileMetaDataResponse();
+    PreSignedUrlResponse preSignedUrlResponse = testUtil.getPreSignedUrl();
+
+    when(transitBufferRepository.findByTransitBufferConfigRequestId(anyLong()))
+        .thenReturn(transitBufferEntityList);
+    when(transitBufferConfigRepository.findById(anyLong()))
+        .thenReturn(Optional.of(transitBufferConfigRequestEntity));
+    when(fileMetaDataClient.findFileMetadataById(anyLong())).thenReturn(fileMetaDataResponse);
+    when(fileMetaDataClient.createFileMetadata(any())).thenReturn(fileMetaDataResponse);
+    when(fileService.getFile(anyString(), anyString())).thenReturn(testUtil.getFileResponse());
+    doNothing().when(fileService).uploadFile(any(), any(), any());
+    when(preSignedUrlInterface.downloadFileURLById(anyLong())).thenReturn(preSignedUrlResponse);
+
+    PreSignedUrlResponse response = transitBufferService.getTransitBufferDetails(1L, "user1");
+
+    assertNotNull(response);
+    assertEquals(preSignedUrlResponse, response);
+
+    verify(transitBufferRepository, times(1)).findByTransitBufferConfigRequestId(anyLong());
+    verify(transitBufferConfigRepository, times(1)).findById(anyLong());
+    verify(fileMetaDataClient, times(1)).findFileMetadataById(anyLong());
+    verify(fileMetaDataClient, times(1)).createFileMetadata(any());
+    verify(fileService, times(1)).getFile(anyString(), anyString());
+    verify(fileService, times(1)).uploadFile(any(), any(), any());
+    verify(preSignedUrlInterface, times(1)).downloadFileURLById(anyLong());
+  }
+
+  @Test
+  void getTransitBufferDetailsFileAlreadyExistTest() throws CommonServiceException, IOException {
+    List<TransitBufferEntity> transitBufferEntityList =
+        List.of(testUtil.getTransitBufferEntity(TestUtil.ORG_ID));
+    TransitBufferConfigRequestEntity transitBufferConfigRequestEntity =
+        testUtil.getTransitBufferConfigRequestEntity1(TransitBufferConfigRequestStatusEnum.CREATED);
+    BaseResponse<FileMetaDataResponse> fileMetaDataResponse = testUtil.getFileMetaDataResponse();
+    PreSignedUrlResponse preSignedUrlResponse = testUtil.getPreSignedUrl();
+
+    when(transitBufferRepository.findByTransitBufferConfigRequestId(anyLong()))
+        .thenReturn(transitBufferEntityList);
+    when(transitBufferConfigRepository.findById(anyLong()))
+        .thenReturn(Optional.of(transitBufferConfigRequestEntity));
+    when(fileMetaDataClient.findFileMetadataById(anyLong())).thenReturn(fileMetaDataResponse);
+    when(preSignedUrlInterface.downloadFileURLById(anyLong())).thenReturn(preSignedUrlResponse);
+
+    PreSignedUrlResponse response = transitBufferService.getTransitBufferDetails(1L, "user1");
+
+    assertNotNull(response);
+    assertEquals(preSignedUrlResponse, response);
+
+    verify(transitBufferRepository, times(1)).findByTransitBufferConfigRequestId(anyLong());
+    verify(transitBufferConfigRepository, times(1)).findById(anyLong());
+    verify(fileMetaDataClient, times(1)).findFileMetadataById(anyLong());
+    verify(preSignedUrlInterface, times(1)).downloadFileURLById(anyLong());
+  }
+
+  @Test
+  void getTransitBufferDetailsFileExceptionTest() {
+    List<TransitBufferEntity> transitBufferEntityList =
+        List.of(testUtil.getTransitBufferEntity(TestUtil.ORG_ID));
+
+    when(transitBufferRepository.findByTransitBufferConfigRequestId(anyLong()))
+        .thenReturn(transitBufferEntityList);
+    when(transitBufferConfigRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+    Exception ex =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> transitBufferService.getTransitBufferDetails(1L, "user1"));
+
+    assertEquals("Transit Buffer Config Request not found", ex.getMessage());
+
+    verify(transitBufferRepository, times(1)).findByTransitBufferConfigRequestId(anyLong());
+    verify(transitBufferConfigRepository, times(1)).findById(anyLong());
+  }
+
+  @Test
+  void getTransitBufferDetailsWithEmptyDataTest() throws CommonServiceException, IOException {
+    List<TransitBufferEntity> transitBufferEntityList = new ArrayList<>();
+    TransitBufferConfigRequestEntity transitBufferConfigRequestEntity =
+        testUtil.getTransitBufferConfigRequestEntity(TransitBufferConfigRequestStatusEnum.CREATED);
+    BaseResponse<FileMetaDataResponse> fileMetaDataResponse = testUtil.getFileMetaDataResponse();
+    PreSignedUrlResponse preSignedUrlResponse = testUtil.getPreSignedUrl();
+
+    when(transitBufferRepository.findByTransitBufferConfigRequestId(anyLong()))
+        .thenReturn(transitBufferEntityList);
+    when(transitBufferConfigRepository.findById(anyLong()))
+        .thenReturn(Optional.of(transitBufferConfigRequestEntity));
+    when(fileMetaDataClient.findFileMetadataById(anyLong())).thenReturn(fileMetaDataResponse);
+    when(fileMetaDataClient.createFileMetadata(any())).thenReturn(fileMetaDataResponse);
+    when(fileService.getFile(anyString(), anyString())).thenReturn(testUtil.getFileResponse());
+    doNothing().when(fileService).uploadFile(any(), any(), any());
+    when(preSignedUrlInterface.downloadFileURLById(anyLong())).thenReturn(preSignedUrlResponse);
+
+    PreSignedUrlResponse response = transitBufferService.getTransitBufferDetails(1L, "user1");
+
+    assertNotNull(response);
+    assertEquals(preSignedUrlResponse, response);
+
+    verify(transitBufferRepository, times(1)).findByTransitBufferConfigRequestId(anyLong());
+    verify(transitBufferConfigRepository, times(1)).findById(anyLong());
+    verify(fileMetaDataClient, times(1)).findFileMetadataById(anyLong());
+    verify(fileMetaDataClient, times(1)).createFileMetadata(any());
+    verify(fileService, times(1)).getFile(anyString(), anyString());
+    verify(fileService, times(1)).uploadFile(any(), any(), any());
+    verify(preSignedUrlInterface, times(1)).downloadFileURLById(anyLong());
   }
 }

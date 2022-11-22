@@ -8,4 +8,5 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     implementation(project(":common-util"))
     implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
+    implementation(project(":data-upload:job-framework-common-util"))
 }

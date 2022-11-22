@@ -1,6 +1,7 @@
 package com.hbc.csvdownload.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.hbc.common.exception.CommonServiceException;
+import com.hbc.common.response.BaseResponse;
 import com.hbc.csvdownload.common.TestUtil;
 import com.hbc.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
 import com.hbc.csvdownload.common.pojo.TemplateTypes;
@@ -39,6 +41,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class CsvDownloadUtilityControllerTest {
@@ -47,6 +50,7 @@ class CsvDownloadUtilityControllerTest {
   @Mock private DownloadTemplateService downloadTemplateService;
 
   @InjectMocks private CsvDownloadUtilityController csvDownloadUtilityController;
+  @InjectMocks private com.hbc.csvdownload.util.TestUtil testUtil;
 
   @Test
   void downloadCSVTemplateTransitTimes() throws IOException, InvalidTemplateTypeException {
@@ -347,5 +351,21 @@ class CsvDownloadUtilityControllerTest {
     when(response.getOutputStream()).thenReturn(servletOutputStream);
     Assertions.assertDoesNotThrow(
         () -> csvDownloadUtilityController.downloadNodesDataCSV(TestUtil.ORG_ID, response));
+  }
+
+  @Test
+  void downloadTransitBufferTest() {
+    PreSignedUrlResponse preSignedUrlResponse = testUtil.getPreSignedUrlResponse();
+    when(csvDownloadUtilityService.downloadTransitBufferDetails(anyLong(), anyString()))
+        .thenReturn(preSignedUrlResponse);
+
+    ResponseEntity<BaseResponse<PreSignedUrlResponse>> response =
+        csvDownloadUtilityController.downloadTransitBuffer(1L, "user1");
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(preSignedUrlResponse, response.getBody().getPayload());
+
+    verify(csvDownloadUtilityService, times(1))
+        .downloadTransitBufferDetails(anyLong(), anyString());
   }
 }

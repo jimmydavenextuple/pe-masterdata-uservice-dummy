@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,12 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Data
-@Table(name = "transit_buffer_data")
+@Table(
+    name = "transit_buffer_data",
+    indexes =
+        @Index(
+            name = "transitBufferConfigRequestId_key",
+            columnList = "transit_buffer_config_request_id"))
 @IdClass(TransitId.class)
 @EntityListeners(CommonEntityListener.class)
 public class TransitBufferEntity extends CommonBaseEntity {
@@ -50,4 +56,7 @@ public class TransitBufferEntity extends CommonBaseEntity {
 
   @Column(name = "buffer_end_date")
   private Date bufferEndDate;
+
+  @Column(name = "transit_buffer_config_request_id")
+  private Long transitBufferConfigRequestId;
 }

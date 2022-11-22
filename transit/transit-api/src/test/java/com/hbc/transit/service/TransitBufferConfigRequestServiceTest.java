@@ -100,6 +100,10 @@ class TransitBufferConfigRequestServiceTest {
     when(jobsDashboardClient.createFileMetadata(any(FileMetaDataCreationRequest.class)))
         .thenReturn(testUtil.getFileMetaDataResponse());
     doNothing().when(fileService).uploadFile(anyString(), anyString(), any());
+    when(transitBufferConfigRepository.save(any()))
+        .thenReturn(
+            testUtil.getTransitBufferConfigRequestEntity(
+                TransitBufferConfigRequestStatusEnum.CREATED));
     when(jobsDashboardClient.processJobOfflineWithFileMetaDataId(anyString(), any(), anyLong()))
         .thenThrow(
             new FeignException.BadRequest(

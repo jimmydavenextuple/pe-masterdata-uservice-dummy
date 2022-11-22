@@ -155,12 +155,17 @@ public class TransitBufferConfigRequestService {
     var fileMetaDataResponse =
         jobsDashboardClient.createFileMetadata(fileMetaDataCreationRequest).getPayload();
 
-    var fileMetaDataResponseForNewFile =
-        readCsvFileAndCreateNewFile(
-            fileResponse, transitBufferConfigRequest, fileMetaDataResponse, csvFileContents);
-
     var newTransitBufferConfigRequestEntity =
         createTransitBufferConfigEntity(transitBufferConfigRequest, fileMetaDataResponse);
+
+    var fileMetaDataResponseForNewFile =
+        readCsvFileAndCreateNewFile(
+            fileResponse,
+            transitBufferConfigRequest,
+            fileMetaDataResponse,
+            csvFileContents,
+            newTransitBufferConfigRequestEntity.getId());
+
     var jobResponse =
         submitJob(transitBufferConfigRequest.getOrgId(), fileMetaDataResponseForNewFile.getId());
     createTransitBufferRequestJobReference(
@@ -186,13 +191,17 @@ public class TransitBufferConfigRequestService {
     var fileResponse = fileService.getFile(bucketName, filePath);
     var csvReader = new CSVReader(new InputStreamReader(fileResponse.getInputStream()));
     List<String[]> csvFileContents = csvReader.readAll();
-    var fileMetaDataResponseForNewFile =
-        readCsvFileAndCreateNewFile(
-            fileResponse, transitBufferConfigRequest, fileMetaDataResponse, csvFileContents);
-    csvReader.close();
-    transitBufferConfigRequestEntity.setStatus(TransitBufferConfigRequestStatusEnum.INACTIVE);
     var newTransitBufferConfigRequestEntity =
         createTransitBufferConfigEntity(transitBufferConfigRequest, fileMetaDataResponse);
+    var fileMetaDataResponseForNewFile =
+        readCsvFileAndCreateNewFile(
+            fileResponse,
+            transitBufferConfigRequest,
+            fileMetaDataResponse,
+            csvFileContents,
+            newTransitBufferConfigRequestEntity.getId());
+    csvReader.close();
+    transitBufferConfigRequestEntity.setStatus(TransitBufferConfigRequestStatusEnum.INACTIVE);
     var jobResponse =
         submitJob(transitBufferConfigRequest.getOrgId(), fileMetaDataResponseForNewFile.getId());
     if (transitBufferConfigRequest.getAction().equals(UPDATE_U))
@@ -272,7 +281,8 @@ public class TransitBufferConfigRequestService {
       FileResponse fileResponse,
       TransitBufferConfigRequest transitBufferConfigRequest,
       FileMetaDataResponse fileMetaDataResponse,
-      List<String[]> csvFileContents)
+      List<String[]> csvFileContents,
+      Long transitBufferConfigRequestId)
       throws IOException {
     List<String> sourceFSAList = new ArrayList<>();
     List<String> destinationFSAList = new ArrayList<>();
@@ -310,10 +320,16 @@ public class TransitBufferConfigRequestService {
             BUFFER_START_DATE,
             BUFFER_END_DATE,
             ACTION,
-            CREATED_BY
+            CREATED_BY,
+            TRANSIT_BUFFER_CONFIG_REQUEST_ID
           };
       csvWriter.writeNext(headers);
-      writeDataOntoFile(csvWriter, sourceFSAList, destinationFSAList, transitBufferConfigRequest);
+      writeDataOntoFile(
+          csvWriter,
+          sourceFSAList,
+          destinationFSAList,
+          transitBufferConfigRequest,
+          transitBufferConfigRequestId);
       csvWriter.flush();
 
       String newPath = fileResponse.getFilePath().replace(fileResponse.getFileName(), newFileName);
@@ -340,7 +356,8 @@ public class TransitBufferConfigRequestService {
       CSVWriter csvWriter,
       List<String> sourceFSAList,
       List<String> destinationFSAList,
-      TransitBufferConfigRequest transitBufferConfigRequest) {
+      TransitBufferConfigRequest transitBufferConfigRequest,
+      Long transitBufferConfigRequestId) {
     if (!CollectionUtils.isEmpty(sourceFSAList) && !CollectionUtils.isEmpty(destinationFSAList)) {
       sourceFSAList.forEach(
           sourceFSA -> {
@@ -366,7 +383,8 @@ public class TransitBufferConfigRequestService {
                           bufferStartDate,
                           bufferEndDate,
                           action,
-                          createdBy
+                          createdBy,
+                          String.valueOf(transitBufferConfigRequestId)
                         }));
           });
     }

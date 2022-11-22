@@ -7,6 +7,7 @@ import com.hbc.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.hbc.jobs.framework.common.domain.outbound.FileMetaDataResponse;
 import com.hbc.jobs.framework.common.domain.outbound.FileResponse;
 import com.hbc.jobs.framework.common.domain.outbound.JobResponse;
+import com.hbc.jobs.framework.common.domain.outbound.PreSignedUrlResponse;
 import com.hbc.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.hbc.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
@@ -69,6 +70,7 @@ public class TestUtil {
   public static final String BUCKET_NAME = "promise-s3-lambda-dev";
   public static final String FILE_PATH = "ui/transit-buffer/2022-10-18/fsa_upload..csv";
   public static final String FILE_NAME = "fsa_upload..csv";
+  public static final Long TRANS_BUFFER_CONFIG_REQUEST_ID = 1L;
 
   public TransitEntity getTransitEntity(Float transitDays) {
     Date bufferStartDate = new Date(1000);
@@ -348,6 +350,7 @@ public class TestUtil {
         .bufferDays(BUFFER_DAYS)
         .bufferStartDate(new Date(1000))
         .bufferEndDate(new Date(1000))
+        .transitBufferConfigRequestId(TRANS_BUFFER_CONFIG_REQUEST_ID)
         .build();
   }
 
@@ -458,6 +461,31 @@ public class TestUtil {
         .contentLength(58L)
         .contentType("text/csv")
         .inputStream(new ByteArrayInputStream(csvFileContent.getBytes()))
+        .build();
+  }
+
+  public PreSignedUrlResponse getPreSignedUrl() {
+    return PreSignedUrlResponse.builder()
+        .signedURL("signedUrl")
+        .filePath("filePath")
+        .storageType("S3")
+        .build();
+  }
+
+  public TransitBufferConfigRequestEntity getTransitBufferConfigRequestEntity1(
+      TransitBufferConfigRequestStatusEnum status) {
+    Date bufferStartDate = new Date(1000);
+    Date bufferEndDate = new Date(1000);
+    return TransitBufferConfigRequestEntity.builder()
+        .id(ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .bufferDays(BUFFER_DAYS)
+        .startDate(bufferStartDate)
+        .endDate(bufferEndDate)
+        .status(status)
+        .fileMetaDataId(FILE_META_DATA_ID)
+        .downloadFileMetaDataId(2L)
         .build();
   }
 }
