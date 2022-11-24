@@ -415,7 +415,8 @@ public class TransitBufferConfigRequestService {
       List<String> filteredStatus =
           List.of(
               TransitBufferConfigRequestStatusEnum.INACTIVE.getStatus(),
-              TransitBufferConfigRequestStatusEnum.DELETED.getStatus());
+              TransitBufferConfigRequestStatusEnum.DELETED.getStatus(),
+              TransitBufferConfigRequestStatusEnum.ERROR.getStatus());
       List<TransitBufferConfigRequestEntity> transitBufferConfigRequestEntities =
           transitBufferConfigRepository.findByOrgIdAndCarrierServiceId(
               orgId, carrierServiceId, filteredStatus);

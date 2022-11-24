@@ -161,7 +161,10 @@ public class JobConsumerService {
     jobDetailsDto.setJobId(jobEntity.getJobId());
     jobDetailsDto.setTotalRecords(jobEntity.getTotalRecords());
     jobDetailsDto.setJobType(jobEntity.getJobType());
-    jobDetailsDto.setStatus(jobEntity.getStatus());
+    jobDetailsDto.setStatus(
+        (jobEntity.getFailureCount() == jobEntity.getTotalRecords())
+            ? JobStatusEnum.FAILED
+            : jobEntity.getStatus());
     jobDetailsDto.setOrgId(jobEntity.getOrgId());
     publishJobEventService.publishJobDetailsEvent(jobDetailsDto);
   }

@@ -594,6 +594,66 @@ class JobConsumerServiceTest {
     }
 
     @Test
+    void updateJobSuccessWhenAllRecordsFailed() throws Exception {
+      JobEntity jobEntity = testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      jobEntity.setProcessedRecords(2);
+      jobEntity.setFailureCount(2);
+      jobEntity.setJobId(TestUtil.JOB_ID);
+      jobEntity.setStatus(JobStatusEnum.PROCESSED);
+
+      RecordStatusDto recordStatus =
+          testUtil.createRecordStatus(
+              TestUtil.JOB_ID,
+              TestUtil.ORG_ID,
+              ApiStatusEnum.SUCCESS,
+              HttpStatus.OK,
+              null,
+              JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES,
+              1);
+      when(jobDomain.save(any())).thenReturn(jobEntity);
+      when(jobDomain.findJobByJobIdAndOrgId(any(), any())).thenReturn(jobEntity);
+      jobConsumerService.updateJob(recordStatus, jobEntity.getTotalRecords());
+
+      AuditLog auditLog = new AuditLog();
+      auditLog.setStatus(JobStatusEnum.RUNNING);
+      jobEntity.setStatus(JobStatusEnum.RUNNING);
+
+      JobEntity updatedJobEntity =
+          testUtil.createJobEntity(JobTypeEnum.UPLOAD_PROCESSING_LEAD_TIMES, 2);
+      updatedJobEntity.setJobId(TestUtil.JOB_ID);
+      updatedJobEntity.setSuccessCount(0);
+      updatedJobEntity.setProcessedRecords(1);
+      updatedJobEntity.setStatus(JobStatusEnum.RUNNING);
+      List<AuditLog> oldAuditLog = new ArrayList<>(Arrays.asList(jobEntity.getAuditLog()));
+      oldAuditLog.add(auditLog);
+      updatedJobEntity.setAuditLog(oldAuditLog.toArray(new AuditLog[0]));
+
+      when(jobDomain.save(any(JobEntity.class)))
+          .thenAnswer(
+              je -> {
+                JobEntity actualJobEntity = je.getArgument(0);
+                Assertions.assertEquals(
+                    updatedJobEntity.getJobId(), actualJobEntity.getJobId(), "Job Id");
+                Assertions.assertEquals(
+                    updatedJobEntity.getSuccessCount(),
+                    actualJobEntity.getSuccessCount(),
+                    "Success count");
+                Assertions.assertEquals(
+                    updatedJobEntity.getProcessedRecords(),
+                    actualJobEntity.getProcessedRecords(),
+                    "Total processed records");
+                Assertions.assertEquals(
+                    updatedJobEntity.getStatus(), actualJobEntity.getStatus(), "Status");
+                Assertions.assertEquals(
+                    updatedJobEntity.getAuditLog().length,
+                    actualJobEntity.getAuditLog().length,
+                    "Audit log length");
+                return actualJobEntity;
+              });
+      verify(jobDomain, times(1)).updateJobStatus(any(), any(), anyBoolean());
+    }
+
+    @Test
     void updateJobRecordStatusFailure() throws JobDomainException {
       RecordStatusDto recordStatusDto = mock(RecordStatusDto.class);
       int retryCount = 5;
