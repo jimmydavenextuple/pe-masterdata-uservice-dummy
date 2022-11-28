@@ -66,7 +66,7 @@ import com.hbc.dataupload.domain.dto.NodeListDto;
 import com.hbc.dataupload.domain.dto.NodeServiceOptionDto;
 import com.hbc.dataupload.domain.dto.NodeWorkingCalendarDto;
 import com.hbc.dataupload.domain.dto.PickupTimeDto;
-import com.hbc.dataupload.domain.pojo.CarrierServiceCalendars;
+import com.hbc.dataupload.domain.pojo.CarrierServiceCalendar;
 import com.hbc.dataupload.domain.pojo.PickUpCalendar;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
@@ -118,6 +118,7 @@ public class TestUtil {
 
   public static final String TYPE = "type";
   public static final String CALENDAR_ID_2 = "Calendar_Id_02";
+  public static final String EFFECTIVE_DATE_2 = "2024-01-01";
 
   private NodeCarrierResponse getNodeCarrierResponse() {
     return NodeCarrierResponse.builder()
@@ -382,18 +383,18 @@ public class TestUtil {
     return BaseResponse.builder()
         .message("Carrier Calendar added fetched successfully")
         .success(true)
-        .payload(getCarrierCalendarResponse())
+        .payload(getCarrierCalendarResponse(EFFECTIVE_DATE))
         .build();
   }
 
-  private CarrierServiceCalendarResponse getCarrierCalendarResponse() {
+  private CarrierServiceCalendarResponse getCarrierCalendarResponse(String effectiveDate) {
     return CarrierServiceCalendarResponse.builder()
         .calendarId(CALENDAR_ID)
         .orgId(ORG_ID)
         .carrierServiceId(CARRIER_SERVICE_ID)
         .shippingStage(SHIPPING_STAGE)
         .description(DESCRIPTION)
-        .effectiveDate(EFFECTIVE_DATE)
+        .effectiveDate(effectiveDate)
         .build();
   }
 
@@ -669,7 +670,7 @@ public class TestUtil {
       getCarrierServiceCalendarBaseResponse() {
     return BaseResponse.builder()
         .message("Carrier Calendar fetched successfully")
-        .payload(Arrays.asList(getCarrierCalendarResponse()))
+        .payload(Arrays.asList(getCarrierCalendarResponse(EFFECTIVE_DATE)))
         .build();
   }
 
@@ -714,19 +715,16 @@ public class TestUtil {
         .isCalendarAssigned(true)
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
-        .carrierServiceCalendars(
-            Arrays.asList(
-                getCarrierServiceCalendars(CALENDAR_ID, EFFECTIVE_DATE),
-                getCarrierServiceCalendars(CARRIER_ID_2, EFFECTIVE_DATE)))
+        .carrierServiceCalendar(getCarrierServiceCalendars(CALENDAR_ID, EFFECTIVE_DATE))
         .build();
   }
 
-  private CarrierServiceCalendars getCarrierServiceCalendars(
+  private CarrierServiceCalendar getCarrierServiceCalendars(
       String calendarId, String effectiveDate) {
-    CarrierServiceCalendars carrierServiceCalendars = new CarrierServiceCalendars();
-    carrierServiceCalendars.setCalendarId(calendarId);
-    carrierServiceCalendars.setEffectiveDate(effectiveDate);
-    return carrierServiceCalendars;
+    CarrierServiceCalendar carrierServiceCalendar = new CarrierServiceCalendar();
+    carrierServiceCalendar.setCalendarId(calendarId);
+    carrierServiceCalendar.setEffectiveDate(effectiveDate);
+    return carrierServiceCalendar;
   }
 
   public BaseResponse<TransitResponse> getBaseResponseOfTransitResponse() {
@@ -1162,6 +1160,14 @@ public class TestUtil {
         .message("Transit Buffer are fetched successfully")
         .success(true)
         .payload(Arrays.asList(getTransitBufferConfigResponse(carrierServiceId)))
+        .build();
+  }
+
+  public BaseResponse<List<CarrierServiceCalendarResponse>>
+      getCarrierServiceCalendarWithFutureEffectiveDates() {
+    return BaseResponse.builder()
+        .message("Carrier Calendar fetched successfully")
+        .payload(Arrays.asList(getCarrierCalendarResponse(EFFECTIVE_DATE_2)))
         .build();
   }
 }

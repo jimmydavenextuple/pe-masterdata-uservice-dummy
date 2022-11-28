@@ -11,9 +11,13 @@ import com.hbc.postgres.config.ReaderDS;
 import com.hbc.transit.domain.dto.TransitTimeEntriesDto;
 import com.hbc.transit.domain.feign.TransitFeign;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
@@ -74,6 +78,9 @@ public class CarrierTransitTimeService {
       CarrierServiceResponse carrierServiceResponse,
       List<CarrierServiceCalendarResponse> carrierServiceCalendarResponseList,
       TransitTimeEntriesDto transitTimeEntries) {
+    Optional<CarrierServiceCalendarResponse> carrierServiceCalendarResponse =
+        getActiveCarrierCalendar(carrierServiceCalendarResponseList);
+
     var carrierTransitDto = new CarrierTransitDto();
     carrierTransitDto.setOrgId(carrierServiceResponse.getOrgId());
     carrierTransitDto.setCarrierId(carrierServiceResponse.getCarrierId());
@@ -83,8 +90,36 @@ public class CarrierTransitTimeService {
     carrierTransitDto.setIsCarrierActive(
         !carrierServiceCalendarResponseList.isEmpty() && transitTimeEntries.getTotalRecords() > 0);
     carrierTransitDto.setIsCalendarAssigned(!carrierServiceCalendarResponseList.isEmpty());
-    carrierTransitDto.setCarrierServiceCalendars(
-        INSTANCE.toCarrierServiceCalendars(carrierServiceCalendarResponseList));
+    carrierServiceCalendarResponse.ifPresent(
+        calendarResponse ->
+            carrierTransitDto.setCarrierServiceCalendar(
+                INSTANCE.toCarrierServiceCalendars(calendarResponse)));
     return carrierTransitDto;
+  }
+
+  private Optional<CarrierServiceCalendarResponse> getActiveCarrierCalendar(
+      List<CarrierServiceCalendarResponse> carrierServiceCalendarResponseList) {
+    String presentDate = getPresentDate();
+
+    Optional<CarrierServiceCalendarResponse> activeCarrierCalendar =
+        carrierServiceCalendarResponseList.stream()
+            .filter(x -> x.getEffectiveDate().compareTo(presentDate) <= 0)
+            .max(Comparator.comparing(CarrierServiceCalendarResponse::getEffectiveDate));
+
+    if (activeCarrierCalendar.isEmpty()) {
+      activeCarrierCalendar =
+          carrierServiceCalendarResponseList.stream()
+              .filter(x -> x.getEffectiveDate().compareTo(presentDate) > 0)
+              .min(Comparator.comparing(CarrierServiceCalendarResponse::getEffectiveDate));
+    }
+
+    return activeCarrierCalendar;
+  }
+
+  private String getPresentDate() {
+    var dt = new DateTime();
+    var dtWithUTC = dt.withZone(DateTimeZone.forID("UTC"));
+
+    return dtWithUTC.toString("yyyy-MM-dd");
   }
 }

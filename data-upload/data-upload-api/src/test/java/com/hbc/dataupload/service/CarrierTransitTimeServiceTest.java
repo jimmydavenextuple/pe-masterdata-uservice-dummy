@@ -49,6 +49,9 @@ class CarrierTransitTimeServiceTest {
     assertNull(response.getPagination().getPrevious());
     assertTrue(response.getData().get((0)).getIsCarrierActive());
     assertTrue(response.getData().get((0)).getIsCalendarAssigned());
+    assertEquals(
+        TestUtil.EFFECTIVE_DATE,
+        response.getData().get((0)).getCarrierServiceCalendar().getEffectiveDate());
 
     verify(carrierFeign, times(1))
         .getCarrierServiceListWithPagination(any(), any(), any(), any(), any());
@@ -77,6 +80,37 @@ class CarrierTransitTimeServiceTest {
     assertNull(response.getPagination().getPrevious());
     assertFalse(response.getData().get((0)).getIsCarrierActive());
     assertFalse(response.getData().get((0)).getIsCalendarAssigned());
+
+    verify(carrierFeign, times(1))
+        .getCarrierServiceListWithPagination(any(), any(), any(), any(), any());
+    verify(calendarFeign, times(2)).getCarrierServiceCalendar(any(), any());
+    verify(transitFeign, times(2)).getTransitTimeEntries(any(), any());
+  }
+
+  @Test
+  void getCarrierTransitTimeListWithEffectiveDatesInFutureTest() {
+
+    when(carrierFeign.getCarrierServiceListWithPagination(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getCarrierServiceListWithPaginationBaseResponse());
+    when(calendarFeign.getCarrierServiceCalendar(TestUtil.ORG_ID, TestUtil.CARRIER_SERVICE_ID))
+        .thenReturn(testUtil.getCarrierServiceCalendarWithFutureEffectiveDates());
+    when(transitFeign.getTransitTimeEntries(any(), any()))
+        .thenReturn(testUtil.getTransitTimeEntriesDtoBaseResponse(5));
+
+    PagePayload<CarrierTransitDto> response =
+        carrierTransitTimeService.getCarrierTransitTimeList(
+            TestUtil.ORG_ID, 1, 1, "carrierId", "DESC");
+
+    assertEquals(2, response.getPagination().getTotalPages());
+    assertEquals(1, response.getPagination().getCurrentPage());
+    assertEquals(2, response.getPagination().getTotalRecords());
+    assertNotNull(response.getPagination().getNext());
+    assertNull(response.getPagination().getPrevious());
+    assertTrue(response.getData().get((0)).getIsCarrierActive());
+    assertTrue(response.getData().get((0)).getIsCalendarAssigned());
+    assertEquals(
+        TestUtil.EFFECTIVE_DATE_2,
+        response.getData().get((0)).getCarrierServiceCalendar().getEffectiveDate());
 
     verify(carrierFeign, times(1))
         .getCarrierServiceListWithPagination(any(), any(), any(), any(), any());
