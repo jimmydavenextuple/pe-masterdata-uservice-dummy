@@ -12,6 +12,7 @@ import com.hbc.fsa.node.utils.TestUtils;
 import com.hbc.node.carrier.domain.feign.NodeCarrierFeign;
 import com.hbc.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.hbc.node.domain.feign.NodeFeign;
+import com.hbc.node.domain.outbound.NodeResponse;
 import com.hbc.transit.domain.feign.TransitFeign;
 import java.util.List;
 import java.util.Set;
@@ -75,7 +76,7 @@ class NodeFSASyncServiceImplTest {
   }
 
   @Test
-  @DisplayName("FSA updates for list of nodes")
+  @DisplayName("FSA updates for inactive node")
   void sendNodeFSAMappingTest3() {
     when(nodeFeign.getNodeDetails(any(), any()))
         .thenReturn(BaseResponse.builder().payload(testUtils.getNodeResponse()).build());
@@ -92,5 +93,27 @@ class NodeFSASyncServiceImplTest {
     verify(nodeCarrierFeign, times(1)).getNodeCarrierListForServiceOption(any(), any(), any());
     verify(transitFeign, times(1)).getDistinctDestinationGeoZones(any(), any(), anyList());
     verify(publisher, times(1)).publish(any(), any());
+  }
+
+  @Test
+  @DisplayName("FSA updates for list of nodes")
+  void sendNodeFSAMappingTest4() {
+    NodeResponse nodeResponse = testUtils.getNodeResponse();
+    nodeResponse.setIsActive(Boolean.FALSE);
+    when(nodeFeign.getNodeDetails(any(), any()))
+            .thenReturn(BaseResponse.builder().payload(nodeResponse).build());
+    List<NodeCarrierResponse> carrierResponses = testUtils.getNodeCarrierResponses(3);
+    carrierResponses.get(2).setCarrierServiceId("");
+    when(nodeCarrierFeign.getNodeCarrierListForServiceOption(any(), any(), any()))
+            .thenReturn(BaseResponse.builder().payload(carrierResponses).build());
+    when(transitFeign.getDistinctDestinationGeoZones(any(), any(), anyList()))
+            .thenReturn(BaseResponse.builder().payload(TestUtils.FSA_LIST).build());
+
+    nodeFSASyncService.sendNodeFSAMapping(
+            new NodeFSASyncRequest(List.of(new Node("BAY", "Node-1"))));
+    verify(nodeFeign, times(1)).getNodeDetails(any(), any());
+    verify(nodeCarrierFeign, times(0)).getNodeCarrierListForServiceOption(any(), any(), any());
+    verify(transitFeign, times(0)).getDistinctDestinationGeoZones(any(), any(), anyList());
+    verify(publisher, times(0)).publish(any(), any());
   }
 }

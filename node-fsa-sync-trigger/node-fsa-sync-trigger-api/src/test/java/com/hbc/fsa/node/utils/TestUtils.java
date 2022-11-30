@@ -42,6 +42,7 @@ public class TestUtils {
     nodeResponse.setOrgId(ORG_ID);
     nodeResponse.setNodeId(NODE_ID);
     nodeResponse.setPostalCode(POSTAL_CODE);
+    nodeResponse.setIsActive(Boolean.TRUE);
     Map<String, Boolean> serviceOptionEligibility = new HashMap<>();
     serviceOptionEligibility.put(SERVICE_OPTION_1.toLowerCase() + "Eligible", Boolean.TRUE);
     serviceOptionEligibility.put(SERVICE_OPTION_2.toLowerCase() + "Eligible", Boolean.FALSE);

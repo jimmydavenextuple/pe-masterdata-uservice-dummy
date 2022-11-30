@@ -74,6 +74,7 @@ public class NodeFSASyncServiceImpl implements NodeFSASyncService {
 
   void publishForNodeList(List<NodeResponse> nodeResponses) {
     for (NodeResponse nodeResponse : nodeResponses) {
+      if (!Boolean.TRUE.equals(nodeResponse.getIsActive())) continue;
       var message = createNodeFSAMessage(nodeResponse);
       try {
         for (String serviceOption : serviceOptions) {
