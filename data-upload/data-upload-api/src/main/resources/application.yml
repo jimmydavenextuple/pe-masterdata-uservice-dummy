@@ -52,7 +52,7 @@ management:
     health:
       show-details: always
     prometheus:
-      enabled: false
+      enabled: true
     metrics:
       enabled: true
     loggers:
@@ -60,7 +60,7 @@ management:
   metrics:
     export:
       prometheus:
-        enabled: false
+        enabled: true
       newrelic:
         enabled: true
         api-key: \${NEW_RELIC_API_KEY}

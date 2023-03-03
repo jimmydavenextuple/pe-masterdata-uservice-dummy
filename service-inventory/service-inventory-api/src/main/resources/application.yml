@@ -39,7 +39,7 @@ management:
   metrics:
     export:
       prometheus:
-        enabled: false
+        enabled: true
       newrelic:
         enabled: true
         api-key: \${NEW_RELIC_API_KEY}
