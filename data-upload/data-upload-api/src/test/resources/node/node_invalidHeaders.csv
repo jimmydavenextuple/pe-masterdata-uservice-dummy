@@ -1,4 +1,0 @@
-nodeId,orgId,street,city,province,postalCode,country,latitude,longitude,timezone,shipToHome,sdndEligible,bopisEligible,expressEligible,nodeType,isActive
-DC-963-565,BAY,100 Metropolitan Rd,Scarborough,ON,M1R 5A2,CA,49.1606,-123.0182,America/Toronto,TRUE,FALSE,FALSE,TRUE,FC,TRUE
-DC-963-577,BAY,18111 Blundell Rd,Richmond,BC,V6W 1L8,CA,43.7699,-79.2967,America/Vancouver,TRUE,FALSE,FALSE,TRUE,MFC,TRUE
-DC-963-578,BAY,160 Carrier Dr,Etobicoke,ON,M9W 5R1,CA,43.7428,-79.6120,America/Toronto,TRUE,FALSE,FALSE,TRUE,MFC,TRUE
