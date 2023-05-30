@@ -5,11 +5,3 @@ pluginManagement {
 }
 
 rootProject.name = 'pe-master-data'
-
-include 'node-api'
-include 'node-api-domain'
-include 'node-services'
-include 'carrier-services'
-include 'carrier-api-domain'
-include 'node-carrier-api-domain'
-
