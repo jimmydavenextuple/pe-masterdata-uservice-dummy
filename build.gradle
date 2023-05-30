@@ -54,6 +54,7 @@ dependencies {
     implementation("io.github.openfeign:feign-okhttp:10.12")
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation("com.nextuple.pe:node-services:1.0.0-${build_target}")
+    implementation("com.nextuple.pe:carrier-services:1.0.0-${build_target}")
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
