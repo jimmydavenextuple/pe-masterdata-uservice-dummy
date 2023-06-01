@@ -3,7 +3,7 @@ spring:
     name: "pe-masterdata-uservice"
     version: 2.6.0
     title: "Master Data Service"
-    description: "Promising engine carrier service"
+    description: "Promising engine master data services"
     properties:
       group: promising-and-sourcing
       customerFacing: false
