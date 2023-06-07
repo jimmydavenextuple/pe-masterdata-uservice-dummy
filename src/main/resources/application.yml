@@ -26,6 +26,7 @@ logging:
 entity-listener:
   kafka:
     enabled: true
+
 constants:
   default-number-of-days-in-future: 45
 
@@ -70,6 +71,9 @@ auth:
 node:
   type: "STORE,FC,MFC,DROPSHIP VENDOR"
 carrier:
+  service:
+    options: "SDND,STANDARD,EXPRESS,NEXTDAY"
+promise:
   service:
     options: "SDND,STANDARD,EXPRESS,NEXTDAY"
 
