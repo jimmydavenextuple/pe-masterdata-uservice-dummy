@@ -22,9 +22,13 @@ logging:
     org.springframework: WARN
     root: WARN
     com.nextuple: INFO
+
 entity-listener:
   kafka:
     enabled: true
+constants:
+  default-number-of-days-in-future: 45
+
 pagination:
   pageNo: 1
   pageSize: 15
@@ -62,6 +66,7 @@ feign:
     enabled: true
 auth:
   filterEnabled: false
+
 node:
   type: "STORE,FC,MFC,DROPSHIP VENDOR"
 carrier:

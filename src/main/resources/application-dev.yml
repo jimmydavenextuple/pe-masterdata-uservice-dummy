@@ -1,0 +1,34 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
+  kafka:
+    bootstrap-servers: "kbrk-nonprod.nextuple.net:9092"
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
+    consumer-retry-count: 1
+    consumer:
+      enable-auto-commit: true
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
+      topics:
+        item_master:
+          name: INTERNAL.DEV.PROMISE_ITEMS
+          group-id: item-master-dev
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
+
+logging:
+  level:
+    com.nextuple: INFO
