@@ -34,3 +34,14 @@ entity-listener:
 pe:
   ui:
     allowed-origin-url: "*"
+
+dataupload:
+  base-path: "https://pedataupload.blob.core.windows.net"
+  bucket-name: "dataupload"
+  type: BLOB
+  signed-url-expiry-minutes: 30
+
+jobs-framework:
+  job-completion-consumer:
+    topic-name: INTERNAL.DEV.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-dev

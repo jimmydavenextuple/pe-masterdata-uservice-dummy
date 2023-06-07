@@ -9,6 +9,10 @@ spring:
       customerFacing: false
   main:
     allow-bean-definition-overriding: true
+  jpa:
+    properties:
+      hibernate:
+        generate_statistics: true
 server:
   port: 8080
   tomcat:
@@ -19,6 +23,10 @@ server:
 
 logging:
   level:
+    org.apache.kafka: WARN
+    org.springframework.kafka: WARN
+    com.zaxxer.hikari: WARN
+    reactor.netty: WARN
     org.springframework: WARN
     root: WARN
     com.nextuple: INFO
