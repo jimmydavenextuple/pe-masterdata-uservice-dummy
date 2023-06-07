@@ -85,3 +85,6 @@ promise:
   service:
     options: "SDND,STANDARD,EXPRESS,NEXTDAY"
 
+availability:
+  keys: LINE,ORDER
+

@@ -119,6 +119,7 @@ dependencies {
     implementation 'io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:2.4.1'
     api "com.azure.spring:azure-spring-boot-starter-keyvault-secrets:3.10.0"
 
+    implementation("com.nextuple.pe:postal-code-timezone-services:1.0.1-${build_target}")
     implementation("com.nextuple.pe:transit-services:1.0.1-${build_target}")
     implementation("com.nextuple.pe:node-carrier-services:1.0.1-${build_target}")
     implementation("com.nextuple.pe:item-services:1.0.1-${build_target}")
