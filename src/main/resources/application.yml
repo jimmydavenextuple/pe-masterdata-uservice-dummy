@@ -88,3 +88,4 @@ promise:
 availability:
   keys: LINE,ORDER
 
+base-api-url: '/promising-engine/pe-promise-sourcing-rule'
