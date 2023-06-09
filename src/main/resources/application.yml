@@ -89,3 +89,30 @@ availability:
   keys: LINE,ORDER
 
 base-api-url: '/promising-engine/pe-promise-sourcing-rule'
+
+node-carrier-service-page-properties:
+  sortBy: nodeId
+  sortOrder: ASC
+transit-time-buffer-page-properties:
+  sortBy: carrierServiceId
+  sortOrder: DESC
+
+
+scheduled-processor:
+  timeRangeInHours: 24
+  fixed-rate:
+    minutes: 1
+download-page-size:
+  node-carrier-service-options: 200
+  node: 200
+edd-computation:
+  lines: 30
+  orders: 10
+csv-utility-api:
+  csv-download:
+    records-per-page: 200
+    max-no-of-pages: 5
+    max-no-of-failed-transit-entries: 1000
+    max-no-of-carrier-services-for-download: 100
+item:
+  listenerContainerFactory: ItemDeserializerConsumer

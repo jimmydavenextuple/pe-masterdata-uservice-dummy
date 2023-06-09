@@ -16,19 +16,64 @@ spring:
       sasl.mechanism: SCRAM-SHA-256
       sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
     consumer-retry-count: 1
-    consumer:
+    consumer-item:
       enable-auto-commit: true
       auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
+      properties:
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         item_master:
           name: INTERNAL.QA.PROMISE_ITEMS
           group-id: item-master-qa
-    producer:
+    producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.QA.MASTER_DATA_UPDATE_EVENTS
+      properties:
+        acks: 1
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
 
 logging:
   level:
     com.nextuple: INFO
+pe-public-webhook:
+  iv-feed:
+    topic: INTERNAL.QA_ATP
+  item-feed:
+    topic: INTERNAL.QA.PROMISE_ITEMS
+
+dataupload:
+  base-path: "https://pedataupload.blob.core.windows.net"
+  maxsize-in-kilobytes: 10240
+  max-rows: 1000
+  bucket-name: "qadataupload"
+  type: BLOB
+  signed-url-expiry-minutes: 30
+
+jobs-framework:
+  job-completion-consumer:
+    topic-name: INTERNAL.QA.PE.JOB_COMPLETION
+  kafka-publish:
+    topic-name: INTERNAL.QA.PE.JOB_TASK
+  result-publish:
+    topic-name: INTERNAL.QA.PE.JOB_RESULT
+  result-consumer:
+    topic-name: INTERNAL.QA.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async-qa
+  record-consumer:
+    topic-name: INTERNAL.QA.PE.JOB_TASK
+    group-id: jobs-task-consumer-async-qa
