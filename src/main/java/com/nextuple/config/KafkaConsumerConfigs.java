@@ -7,19 +7,18 @@
 
 package com.nextuple.config;
 
+import com.nextuple.streams.promising.messages.PromisingRecord;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.SerializationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -30,6 +29,7 @@ import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.util.backoff.FixedBackOff;
 
 @Configuration
 @EnableKafka
@@ -47,6 +47,9 @@ public class KafkaConsumerConfigs {
 
   @Value(value = "${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
+
+  @Value(value = "${spring.kafka.consumer-retry-count}")
+  private long maxRetryCount;
 
   @Value(value = "${spring.kafka.consumer-item.enable-auto-commit}")
   private Boolean enableAutoCommit;
@@ -66,15 +69,20 @@ public class KafkaConsumerConfigs {
     return this.kafkaProperties.buildConsumerProperties();
   }
 
+  @Bean("itemDeserializerProperties")
+  @ConfigurationProperties(prefix = "spring.kafka.consumer-item")
+  public Map<String, Object> itemDeserializerProperties() {
+    return this.kafkaProperties.buildConsumerProperties();
+  }
+
   @Bean
-  public ConsumerFactory<Object, Object> itemConsumerFactory() {
-    HashMap<String, Object> prop = new HashMap<>();
-    prop.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer);
-    prop.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer);
-    prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    prop.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, enableAutoCommit);
-    prop.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
-    prop.put(ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, interceptorClasses);
+  public ConsumerFactory<String, Object> itemConsumerFactory() {
+    HashMap<String, Object> prop = new HashMap<>(itemDeserializerProperties());
+    Map<String, Object> properties = (Map<String, Object>) prop.get("properties");
+    prop.put(
+        ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS,
+        properties.get("spring-deserializer-value-delegate-class"));
+    prop.put(JsonDeserializer.TRUSTED_PACKAGES, properties.get("spring-json-trusted-packages"));
     return new DefaultKafkaConsumerFactory<>(prop);
   }
 
@@ -93,7 +101,7 @@ public class KafkaConsumerConfigs {
   @Primary
   @Bean(name = "JsonDeserializerConsumer")
   public ConcurrentKafkaListenerContainerFactory<Object, Object> jsonKafkaContainerListenerFactory(
-      ConsumerFactory<Object, Object> consumerFactory,
+      ConsumerFactory<Object, Object> jsonconsumerFactory,
       KafkaOperations<Object, Object> kafkaOperations) {
     ConcurrentKafkaListenerContainerFactory<Object, Object> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
@@ -102,28 +110,37 @@ public class KafkaConsumerConfigs {
   }
 
   @Bean(name = "ItemDeserializerConsumer")
-  public ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaContainerListenerFactory(
-      ConsumerFactory<Object, Object> consumerFactory,
-      KafkaOperations<Object, Object> kafkaOperations) {
-    ConcurrentKafkaListenerContainerFactory<Object, Object> factory =
+  @ConditionalOnProperty(name = "spring.kafka.consumer-item.type", havingValue = "avro")
+  public ConcurrentKafkaListenerContainerFactory<String, PromisingRecord>
+      kafkaListenerContainerFactory(
+          KafkaOperations<String, Object> kafkaOperations,
+          ConsumerFactory<String, Object> consumerFactory) {
+
+    ConcurrentKafkaListenerContainerFactory<String, PromisingRecord> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(itemConsumerFactory());
-    factory.setConcurrency(listenerConcurrency);
+    factory.setCommonErrorHandler(kafkaErrorHandler(kafkaOperations));
+    return factory;
+  }
+
+  @Bean(name = "ItemDeserializerConsumer")
+  @ConditionalOnProperty(name = "spring.kafka.consumer-item.type", havingValue = "json")
+  public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactoryJSON(
+      KafkaOperations<String, Object> kafkaOperations,
+      ConsumerFactory<String, Object> consumerFactory) {
+
+    ConcurrentKafkaListenerContainerFactory<String, Object> factory =
+        new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(itemConsumerFactory());
     factory.setCommonErrorHandler(kafkaErrorHandler(kafkaOperations));
     return factory;
   }
 
   @Bean
-  public CommonErrorHandler kafkaErrorHandler(KafkaOperations<Object, Object> kafkaOperations) {
-    var defaultErrorHandler =
-        new DefaultErrorHandler(
-            new DeadLetterPublishingRecoverer(
-                kafkaOperations,
-                (cr, e) -> new TopicPartition(cr.topic() + ".err", cr.partition())));
-    defaultErrorHandler.addNotRetryableExceptions(
-        SerializationException.class, ClassCastException.class,
-        OptimisticLockingFailureException.class, NullPointerException.class);
-
-    return defaultErrorHandler;
+  public CommonErrorHandler kafkaErrorHandler(KafkaOperations<String, Object> kafkaOperations) {
+    return new DefaultErrorHandler(
+        new DeadLetterPublishingRecoverer(
+            kafkaOperations, (cr, e) -> new TopicPartition(cr.topic() + ".err", cr.partition())),
+        new FixedBackOff(0L, maxRetryCount));
   }
 }

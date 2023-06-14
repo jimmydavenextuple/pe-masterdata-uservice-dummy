@@ -114,5 +114,5 @@ csv-utility-api:
     max-no-of-pages: 5
     max-no-of-failed-transit-entries: 1000
     max-no-of-carrier-services-for-download: 100
-item:
-  listenerContainerFactory: ItemDeserializerConsumer
+#item:
+#  listenerContainerFactory: ItemDeserializerConsumer
