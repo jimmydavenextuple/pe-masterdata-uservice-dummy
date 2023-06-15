@@ -47,7 +47,7 @@ spring:
       topics:
         item_master:
           name: ITEM_MASTER_INTEGRATION_1
-          group-id: item-master-local
+          group-id: item-master-local_1
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
@@ -91,7 +91,7 @@ jobs-framework:
     topic-name: INTERNAL.DEV.PE.JOB_RESULT_1
   result-consumer:
     topic-name: INTERNAL.DEV.PE.JOB_RESULT_1
-    group-id: jobs-result-consumer-async
+    group-id: jobs-result-consumer-async_1
   record-consumer:
     topic-name: INTERNAL.DEV.PE.JOB_TASK_1
-    group-id: jobs-task-consumer-async
+    group-id: jobs-task-consumer-async_1
