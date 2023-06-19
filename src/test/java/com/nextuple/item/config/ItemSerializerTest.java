@@ -8,8 +8,8 @@
 package com.nextuple.item.config;
 
 import com.nextuple.item.TestUtil;
-import com.nextuple.item.consumer.serializer.ItemDeserializer;
-import com.nextuple.item.consumer.serializer.ItemSerializer;
+import com.nextuple.serializer.ItemDeserializer;
+import com.nextuple.serializer.ItemSerializer;
 import com.nextuple.streams.promising.messages.PromisingRecord;
 import javax.xml.bind.DatatypeConverter;
 import org.junit.jupiter.api.Assertions;
