@@ -1,5 +1,6 @@
 package com.nextuple.config;
 
+import com.nextuple.jobs.framework.common.domain.pojo.RecordDto;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class KafkaProducerConfigs {
   }
 
   @Bean
-  public ProducerFactory<String, Object> kafkaJsonProducerFactory() {
+  public ProducerFactory<String, RecordDto> kafkaJsonProducerFactory() {
     Map<String, Object> prop = new HashMap<>(jsonSerializerProperties());
     prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get("key.serializer"));
     prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get("value.serializer"));
@@ -59,7 +60,7 @@ public class KafkaProducerConfigs {
     //    prop.put(
     //        SaslConfigs.SASL_JAAS_CONFIG, ((Map<String, Object>)
     // saslProps.get("jaas")).get("config"));
-    return new DefaultKafkaProducerFactory<>(prop);
+    return new DefaultKafkaProducerFactory<String, RecordDto>(prop);
   }
 
   @Bean
@@ -88,13 +89,13 @@ public class KafkaProducerConfigs {
     return new DefaultKafkaProducerFactory<>(prop);
   }
 
+  @Primary
   @Bean(name = "JsonSerializerProducer")
-  public KafkaTemplate<String, Object> kafkaTemplate() {
+  public KafkaTemplate<String, RecordDto> kafkaTemplate() {
     return new KafkaTemplate<>(kafkaJsonProducerFactory());
   }
 
   @Bean(name = "ItemSerializerProducer")
-  @Primary
   public KafkaTemplate<Object, Object> avroKafkaTemplate() {
     return new KafkaTemplate<>(kafkaItemProducerFactory());
   }

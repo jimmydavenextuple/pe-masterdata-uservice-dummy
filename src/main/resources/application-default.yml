@@ -72,12 +72,6 @@ pe:
   ui:
     allowed-origin-url: "*"
 
-dataupload:
-  base-path: "https://pedataupload.blob.core.windows.net"
-  bucket-name: "dataupload"
-  type: BLOB
-  signed-url-expiry-minutes: 30
-
 jobs-framework:
   job-completion-consumer:
     topic-name: job-completion-local
@@ -92,3 +86,11 @@ jobs-framework:
   record-consumer:
     topic-name: jobs-task-local
     group-id: jobs-task-consumer-async-local
+
+dataupload:
+  base-path: "https://pedataupload.blob.core.windows.net"
+  maxsize-in-kilobytes: 10240
+  max-rows: 1000
+  bucket-name: "dataupload"
+  type: BLOB
+  signed-url-expiry-minutes: 30
