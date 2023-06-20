@@ -5,7 +5,7 @@ import java.util.regex.Matcher
 
 buildscript {
     repositories {
-        mavenLocal()
+//        mavenLocal()
         mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -35,7 +35,7 @@ ext {
 }
 
 repositories {
-    mavenLocal()
+//    mavenLocal()
     mavenCentral()
 }
 
@@ -43,9 +43,6 @@ bootJar {
     enabled = true
     mainClass.set("com.nextuple.PeMasterDataUserviceApplication")
 }
-
-group = 'com.nextuple'
-version = '0.0.1-SNAPSHOT'
 
 test {
     useJUnitPlatform()
@@ -85,7 +82,7 @@ configurations {
 
 repositories {
     mavenCentral()
-    mavenLocal()
+//    mavenLocal()
     maven {
         url = 'https://repo.maven.apache.org/m2'
     }
