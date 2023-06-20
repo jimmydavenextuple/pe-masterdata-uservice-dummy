@@ -110,7 +110,7 @@ definitions:
           - export SPACE=" "
           - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
         artifacts:
-          - '**/build/**'
+          - build/**
           - service-version.txt
     - step: &build-qa
         name: Build QA
