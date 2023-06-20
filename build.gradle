@@ -203,6 +203,7 @@ task showSonarQubeLink {
         print("Checkout SonarQube report at ${getProperty("systemProp.sonar.host.url")}/dashboard?id=${getProperty("systemProp.sonar.projectKey")}\n")
     }
 }
+artifactoryPublish.skip = false
 
 artifactory {
     contextUrl = "${artifactory_contextUrl}"
