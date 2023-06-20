@@ -57,7 +57,7 @@ spring:
       topics:
         master_data_update_event:
           name: INTERNAL.DEV.MASTER_DATA_UPDATE_EVENTS
-          group-id: master-data-update-dev-${random.value}
+          group-id: master-data-update-dev-1
       properties:
         spring.json.trusted.packages: "*"
         acks: 1
