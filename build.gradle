@@ -166,3 +166,98 @@ dependencies {
 
 
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled true
+    }
+}
+spotbugs {
+    toolVersion = '4.1.4'
+    ignoreFailures = true
+    onlyAnalyze = ['com.nextuple.*']
+    showStackTraces = false
+}
+dependencyCheck {
+    format = 'ALL'
+    suppressionFile = 'suppressions.xml'
+    autoUpdate = true
+    cveValidForHours = 24
+    if (System.getenv("CI") == 'true') {
+        data {
+            directory = "/root/.cve"
+        }
+    }
+}
+spotless {
+    java {
+        importOrder()
+        removeUnusedImports()
+        googleJavaFormat()
+    }
+}
+task showSonarQubeLink {
+    doLast {
+        print("Checkout SonarQube report at ${getProperty("systemProp.sonar.host.url")}/dashboard?id=${getProperty("systemProp.sonar.projectKey")}\n")
+    }
+}
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"
+    publish {
+        repository {
+            repoKey = 'gradle-dev-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+        }
+        defaults {
+            publications('mavenJava')
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'gradle-dev'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+jar {
+    enabled = false
+    classifier('')
+}
+processResources {
+    filesMatching("**/application*.yml") {
+        expand(project.properties)
+    }
+}
+test {
+    useJUnitPlatform()
+}
+task fixPom {
+    doLast {
+        File file = new File("$buildDir/publications/mavenJava/pom-default.xml")
+        def text = file.text
+        def pattern = "(?s)(<dependencyManagement>.+?<dependencies>)(.+?)(</dependencies>.+?</dependencyManagement>)"
+        Matcher matcher = text =~ pattern
+        if (matcher.find()) {
+            text = text.replaceFirst(pattern, "")
+            def firstDeps = matcher.group(2)
+            text = text.replaceFirst(pattern, '$1$2' + firstDeps + '$3')
+        }
+        file.write(text)
+    }
+}
+generatePomFileForMavenJavaPublication.finalizedBy fixPom
