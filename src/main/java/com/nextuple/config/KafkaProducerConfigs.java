@@ -1,6 +1,5 @@
 package com.nextuple.config;
 
-import com.nextuple.core.event.LocalCacheUpdateEvent;
 import com.nextuple.jobs.framework.common.domain.pojo.RecordDto;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,32 +90,6 @@ public class KafkaProducerConfigs {
   }
 
   @Bean
-  public ProducerFactory<String, LocalCacheUpdateEvent> kafkaJsonProducerFactoryCommon() {
-    Map<String, Object> prop = new HashMap<>(jsonSerializerProperties());
-    prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get("key.serializer"));
-    prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get("value.serializer"));
-    prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    // Map<String, Object> properties = (Map<String, Object>) prop.get("properties");
-    // Map<String, Object> interceptor = (Map<String, Object>) prop.get("interceptor");
-    // Map<String, Object> saslProps = (Map<String, Object>) properties.get("sasl");
-
-    prop.put(ProducerConfig.ACKS_CONFIG, prop.get("acks").toString());
-    // prop.put(CommonClientConfigs.RETRIES_CONFIG, properties.get("retries"));
-    // prop.put(CommonClientConfigs.RETRY_BACKOFF_MS_CONFIG, properties.get("retry-backoff-ms"));
-
-    prop.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, prop.get("interceptor.classes"));
-    //    prop.put(
-    //        CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-    //        ((Map<String, Object>) properties.get("security"))
-    //            .get("protocol")); // properties -> security -> protocol
-    //    prop.put(SaslConfigs.SASL_MECHANISM, saslProps.get("mechanism"));
-    //    prop.put(
-    //        SaslConfigs.SASL_JAAS_CONFIG, ((Map<String, Object>)
-    // saslProps.get("jaas")).get("config"));
-    return new DefaultKafkaProducerFactory<>(prop);
-  }
-
-  @Bean
   public ProducerFactory<String, Object> kafkaJsonProducerFactoryStr() {
     Map<String, Object> prop = new HashMap<>(jsonSerializerProperties());
     prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get("key.serializer"));
@@ -177,11 +150,6 @@ public class KafkaProducerConfigs {
   @Bean(name = "JsonSerializerProducerObj")
   public KafkaTemplate<Object, Object> kafkaTemplateObj() {
     return new KafkaTemplate<>(kafkaJsonProducerFactoryObj());
-  }
-
-  @Bean
-  public KafkaTemplate<String, LocalCacheUpdateEvent> kafkaTemplateCommon() {
-    return new KafkaTemplate<>(kafkaJsonProducerFactoryCommon());
   }
 
   @Bean(name = "ItemSerializerProducer")
