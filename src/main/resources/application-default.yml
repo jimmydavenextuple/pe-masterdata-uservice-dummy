@@ -87,6 +87,12 @@ jobs-framework:
     topic-name: jobs-task-local
     group-id: jobs-task-consumer-async-local
 
+pe-public-webhook:
+  iv-feed:
+    topic: INTERNAL.DEV_ATP
+  item-feed:
+    topic: ITEM_MASTER_INTEGRATION
+
 dataupload:
   base-path: "https://pedataupload.blob.core.windows.net"
   maxsize-in-kilobytes: 10240
