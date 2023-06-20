@@ -54,6 +54,10 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event:
+          name: INTERNAL.DEV.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-dev-${random.value}
       properties:
         spring.json.trusted.packages: "*"
         acks: 1
