@@ -21,6 +21,9 @@ import org.springframework.kafka.core.ProducerFactory;
 @RequiredArgsConstructor
 public class KafkaProducerConfigs {
   private final KafkaProperties kafkaProperties;
+  private static final String KEYSERIALIZER = "key.serializer";
+  private static final String INTERCEPTORCLASSES = "interceptor.classes";
+  private static final String VALUESERIALIZER = "value.serializer";
 
   @Value(value = "${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
@@ -40,104 +43,52 @@ public class KafkaProducerConfigs {
   @Bean
   public ProducerFactory<String, RecordDto> kafkaJsonProducerFactory() {
     Map<String, Object> prop = new HashMap<>(jsonSerializerProperties());
-    prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get("key.serializer"));
-    prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get("value.serializer"));
+    prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get(KEYSERIALIZER));
+    prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get(VALUESERIALIZER));
     prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    // Map<String, Object> properties = (Map<String, Object>) prop.get("properties");
-    // Map<String, Object> interceptor = (Map<String, Object>) prop.get("interceptor");
-    // Map<String, Object> saslProps = (Map<String, Object>) properties.get("sasl");
 
     prop.put(ProducerConfig.ACKS_CONFIG, prop.get("acks").toString());
-    // prop.put(CommonClientConfigs.RETRIES_CONFIG, properties.get("retries"));
-    // prop.put(CommonClientConfigs.RETRY_BACKOFF_MS_CONFIG, properties.get("retry-backoff-ms"));
 
-    prop.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, prop.get("interceptor.classes"));
-    //    prop.put(
-    //        CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-    //        ((Map<String, Object>) properties.get("security"))
-    //            .get("protocol")); // properties -> security -> protocol
-    //    prop.put(SaslConfigs.SASL_MECHANISM, saslProps.get("mechanism"));
-    //    prop.put(
-    //        SaslConfigs.SASL_JAAS_CONFIG, ((Map<String, Object>)
-    // saslProps.get("jaas")).get("config"));
-    return new DefaultKafkaProducerFactory<String, RecordDto>(prop);
+    prop.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, prop.get(INTERCEPTORCLASSES));
+
+    return new DefaultKafkaProducerFactory<>(prop);
   }
 
   @Bean
   public ProducerFactory<Object, Object> kafkaJsonProducerFactoryObj() {
     Map<String, Object> prop = new HashMap<>(jsonSerializerProperties());
-    prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get("key.serializer"));
-    prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get("value.serializer"));
+    prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get(KEYSERIALIZER));
+    prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get(VALUESERIALIZER));
     prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    // Map<String, Object> properties = (Map<String, Object>) prop.get("properties");
-    // Map<String, Object> interceptor = (Map<String, Object>) prop.get("interceptor");
-    // Map<String, Object> saslProps = (Map<String, Object>) properties.get("sasl");
 
     prop.put(ProducerConfig.ACKS_CONFIG, prop.get("acks").toString());
-    // prop.put(CommonClientConfigs.RETRIES_CONFIG, properties.get("retries"));
-    // prop.put(CommonClientConfigs.RETRY_BACKOFF_MS_CONFIG, properties.get("retry-backoff-ms"));
 
-    prop.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, prop.get("interceptor.classes"));
-    //    prop.put(
-    //        CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-    //        ((Map<String, Object>) properties.get("security"))
-    //            .get("protocol")); // properties -> security -> protocol
-    //    prop.put(SaslConfigs.SASL_MECHANISM, saslProps.get("mechanism"));
-    //    prop.put(
-    //        SaslConfigs.SASL_JAAS_CONFIG, ((Map<String, Object>)
-    // saslProps.get("jaas")).get("config"));
+    prop.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, prop.get(INTERCEPTORCLASSES));
+
     return new DefaultKafkaProducerFactory<>(prop);
   }
 
   @Bean
   public ProducerFactory<String, Object> kafkaJsonProducerFactoryStr() {
     Map<String, Object> prop = new HashMap<>(jsonSerializerProperties());
-    prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get("key.serializer"));
-    prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get("value.serializer"));
+    prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get(KEYSERIALIZER));
+    prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get(VALUESERIALIZER));
     prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    // Map<String, Object> properties = (Map<String, Object>) prop.get("properties");
-    // Map<String, Object> interceptor = (Map<String, Object>) prop.get("interceptor");
-    // Map<String, Object> saslProps = (Map<String, Object>) properties.get("sasl");
 
     prop.put(ProducerConfig.ACKS_CONFIG, prop.get("acks").toString());
-    // prop.put(CommonClientConfigs.RETRIES_CONFIG, properties.get("retries"));
-    // prop.put(CommonClientConfigs.RETRY_BACKOFF_MS_CONFIG, properties.get("retry-backoff-ms"));
 
-    prop.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, prop.get("interceptor.classes"));
-    //    prop.put(
-    //        CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-    //        ((Map<String, Object>) properties.get("security"))
-    //            .get("protocol")); // properties -> security -> protocol
-    //    prop.put(SaslConfigs.SASL_MECHANISM, saslProps.get("mechanism"));
-    //    prop.put(
-    //        SaslConfigs.SASL_JAAS_CONFIG, ((Map<String, Object>)
-    // saslProps.get("jaas")).get("config"));
+    prop.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, prop.get(INTERCEPTORCLASSES));
+
     return new DefaultKafkaProducerFactory<>(prop);
   }
 
   @Bean
   public ProducerFactory<String, Object> kafkaItemProducerFactory() {
     HashMap<String, Object> prop = new HashMap<>(itemSerializerProperties());
-    prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get("key.serializer"));
-    prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get("value.serializer"));
+    prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get(KEYSERIALIZER));
+    prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get(VALUESERIALIZER));
     prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    //    prop.put("schema.registry.url", prop.get("schema-registry-url"));
-    //    Map<String, Object> properties = (Map<String, Object>) prop.get("properties");
-    //    Map<String, Object> interceptor = (Map<String, Object>) properties.get("interceptor");
-    //    Map<String, Object> saslProps = (Map<String, Object>) properties.get("sasl");
-    //
-    //    prop.put(ProducerConfig.ACKS_CONFIG, properties.get("acks").toString());
-    //    prop.put(CommonClientConfigs.RETRIES_CONFIG, properties.get("retries"));
-    //    prop.put(CommonClientConfigs.RETRY_BACKOFF_MS_CONFIG, properties.get("retry-backoff-ms"));
-    //    prop.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, interceptor.get("classes"));
-    //    prop.put(
-    //        CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-    //        ((Map<String, Object>) properties.get("security"))
-    //            .get("protocol")); // properties -> security -> protocol
-    //    prop.put(SaslConfigs.SASL_MECHANISM, saslProps.get("mechanism"));
-    //    prop.put(
-    //        SaslConfigs.SASL_JAAS_CONFIG, ((Map<String, Object>)
-    // saslProps.get("jaas")).get("config"));
+
     return new DefaultKafkaProducerFactory<>(prop);
   }
 
