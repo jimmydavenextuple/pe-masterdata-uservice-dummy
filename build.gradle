@@ -16,7 +16,7 @@ buildscript {
     }
     dependencies {
 //        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.5.10"
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.15.2"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.32.0"
         classpath "org.owasp:dependency-check-gradle:6.1.6"
         classpath "org.sonatype.gradle.plugins:scan-gradle-plugin:1.2.4"
     }
