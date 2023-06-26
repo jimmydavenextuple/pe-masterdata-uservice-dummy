@@ -33,7 +33,7 @@ logging:
 
 entity-listener:
   kafka:
-    enabled: false
+    enabled: true
 
 constants:
   default-number-of-days-in-future: 45
