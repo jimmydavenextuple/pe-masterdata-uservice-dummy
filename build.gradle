@@ -139,6 +139,8 @@ dependencies {
     implementation("com.nextuple.pe:node-services:1.0.1-${build_target}")
     implementation("com.nextuple.pe:carrier-services:1.0.1-${build_target}")
 
+    implementation("com.nextuple.pe:core-near-cache:1.0.0-${build_target}")
+
     runtimeOnly 'org.postgresql:postgresql'
     implementation("com.nextuple.pe:common-util:1.0.0-${build_target}")
     implementation("com.nextuple.pe:common-postgres:1.0.0-${build_target}")
@@ -155,6 +157,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 
     testImplementation 'org.mockito:mockito-inline:2.13.0'
+    testImplementation 'org.powermock:powermock-api-mockito2:1.7.0'
 
     // Others
     testImplementation "com.github.javafaker:javafaker:0.15"
