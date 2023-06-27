@@ -42,39 +42,11 @@ public class KafkaProducerConfigs {
   }
 
   @Bean
-  public ProducerFactory<String, RecordDto> kafkaJsonProducerFactory() {
-    Map<String, Object> prop = getStringObjectMap();
-
-    return new DefaultKafkaProducerFactory<>(prop);
-  }
-
-  @Bean
-  public ProducerFactory<Object, Object> kafkaJsonProducerFactoryObj() {
-    Map<String, Object> prop = getStringObjectMap();
-
-    return new DefaultKafkaProducerFactory<>(prop);
-  }
-
-  @Bean
-  public ProducerFactory<String, Object> kafkaJsonProducerFactoryStr() {
-    Map<String, Object> prop = getStringObjectMap();
-
-    return new DefaultKafkaProducerFactory<>(prop);
-  }
-
-  @Bean
   public ProducerFactory<String, Object> kafkaItemProducerFactory() {
     HashMap<String, Object> prop = new HashMap<>(itemSerializerProperties());
     prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get(KEYSERIALIZER));
     prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get(VALUESERIALIZER));
     prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-
-    return new DefaultKafkaProducerFactory<>(prop);
-  }
-
-  @Bean
-  public ProducerFactory<String, LocalCacheUpdateEvent> kafkaJsonProducerFactoryEventListener() {
-    Map<String, Object> prop = getStringObjectMap();
 
     return new DefaultKafkaProducerFactory<>(prop);
   }
@@ -93,18 +65,21 @@ public class KafkaProducerConfigs {
 
   @Primary
   @Bean
-  public KafkaTemplate<String, LocalCacheUpdateEvent> kafkaTemplateEventListerner() {
-    return new KafkaTemplate<>(kafkaJsonProducerFactoryEventListener());
+  public KafkaTemplate<String, LocalCacheUpdateEvent> cacheUpdateKafkaTemplate() {
+    Map<String, Object> prop = getStringObjectMap();
+    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
   }
 
   @Bean(name = "JsonSerializerProducer")
-  public KafkaTemplate<String, RecordDto> kafkaTemplate() {
-    return new KafkaTemplate<>(kafkaJsonProducerFactory());
+  public KafkaTemplate<String, RecordDto> jobServiceKafkaTemplate() {
+    Map<String, Object> prop = getStringObjectMap();
+    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
   }
 
   @Bean(name = "JsonSerializerProducerObj")
-  public KafkaTemplate<Object, Object> kafkaTemplateObj() {
-    return new KafkaTemplate<>(kafkaJsonProducerFactoryObj());
+  public KafkaTemplate<Object, Object> jobEventKafkaTemplate() {
+    Map<String, Object> prop = getStringObjectMap();
+    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
   }
 
   @Bean(name = "ItemSerializerProducer")
