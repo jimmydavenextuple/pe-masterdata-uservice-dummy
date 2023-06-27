@@ -16,7 +16,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @ComponentScan("com.nextuple")
-@EntityScan("com.nextuple.*")
+@EntityScan("com.nextuple")
 @EnableJpaRepositories(basePackages = {"com.nextuple"})
 @EnableFeignClients(basePackages = {"com.nextuple"})
 public class PeMasterDataUserviceApplication {
