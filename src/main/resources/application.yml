@@ -77,7 +77,7 @@ auth:
   filterEnabled: false
 
 node:
-  type: "STORE,FC,MFC,DROPSHIP VENDOR"
+  type: "STORE,FC,MFC,DROPSHIP VENDOR,DC"
 carrier:
   service:
     options: "SDND,STANDARD,EXPRESS,NEXTDAY,BOPA,BOPIS,SAMEDAY"
