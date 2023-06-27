@@ -83,7 +83,7 @@ carrier:
     options: "SDND,STANDARD,EXPRESS,NEXTDAY,BOPA,BOPIS,SAMEDAY"
 promise:
   service:
-    options: "SDND,STANDARD,EXPRESS,NEXTDAY"
+    options: "SDND,STANDARD,EXPRESS,NEXTDAY,BOPA,BOPIS,SAMEDAY"
 
 availability:
   keys: LINE,ORDER
