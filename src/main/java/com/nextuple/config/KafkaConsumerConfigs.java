@@ -142,10 +142,10 @@ public class KafkaConsumerConfigs {
 
   @Bean(name = "StringDeserializerConsumer")
   public ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaContainerListenerFactory(
-          ConsumerFactory<Object, Object> consumerFactory,
-          KafkaOperations<Object, Object> kafkaOperations) {
+      ConsumerFactory<Object, Object> consumerFactory,
+      KafkaOperations<Object, Object> kafkaOperations) {
     ConcurrentKafkaListenerContainerFactory<Object, Object> factory =
-            new ConcurrentKafkaListenerContainerFactory<>();
+        new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(stringConsumerFactory());
     factory.setCommonErrorHandler(errorHandler(kafkaOperations));
     return factory;
@@ -163,19 +163,19 @@ public class KafkaConsumerConfigs {
   public ConsumerFactory<Object, Object> stringConsumerFactory() {
     HashMap<String, Object> prop = new HashMap<>();
     prop.put(
-            ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaStringProperties.getKeyDeserializer());
+        ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaStringProperties.getKeyDeserializer());
     prop.put(
-            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-            kafkaStringProperties.getValueDeserializer());
+        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+        kafkaStringProperties.getValueDeserializer());
     prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
     prop.put(
-            ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, kafkaStringProperties.getInterceptorClasses());
+        ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, kafkaStringProperties.getInterceptorClasses());
     prop.put(
-            ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS,
-            kafkaStringProperties.getKeyDelegateClass());
+        ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS,
+        kafkaStringProperties.getKeyDelegateClass());
     prop.put(
-            ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS,
-            kafkaStringProperties.getKeyDelegateClass());
+        ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS,
+        kafkaStringProperties.getKeyDelegateClass());
     prop.put(JsonDeserializer.TRUSTED_PACKAGES, kafkaStringProperties.getTrustedPackages());
     prop.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, kafkaStringProperties.getEnableAutoCommit());
     prop.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaStringProperties.getAutoOffsetReset());
