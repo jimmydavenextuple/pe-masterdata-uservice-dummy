@@ -7,10 +7,12 @@
 
 package com.nextuple.config;
 
+import com.nextuple.dataupload.configuration.KafkaStringProperties;
 import com.nextuple.streams.promising.messages.PromisingRecord;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -61,6 +63,8 @@ public class KafkaConsumerConfigs {
   private String interceptorClasses;
 
   private final KafkaProperties kafkaProperties;
+
+  private final KafkaStringProperties kafkaStringProperties;
 
   @Primary
   @Bean("jsonDeserializerProperties")
@@ -136,11 +140,50 @@ public class KafkaConsumerConfigs {
     return factory;
   }
 
+  @Bean(name = "StringDeserializerConsumer")
+  public ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaContainerListenerFactory(
+          ConsumerFactory<Object, Object> consumerFactory,
+          KafkaOperations<Object, Object> kafkaOperations) {
+    ConcurrentKafkaListenerContainerFactory<Object, Object> factory =
+            new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(stringConsumerFactory());
+    factory.setCommonErrorHandler(errorHandler(kafkaOperations));
+    return factory;
+  }
+
   @Bean
   public CommonErrorHandler kafkaErrorHandler(KafkaOperations<String, Object> kafkaOperations) {
     return new DefaultErrorHandler(
         new DeadLetterPublishingRecoverer(
             kafkaOperations, (cr, e) -> new TopicPartition(cr.topic() + ".err", cr.partition())),
         new FixedBackOff(0L, maxRetryCount));
+  }
+
+  @Bean
+  public ConsumerFactory<Object, Object> stringConsumerFactory() {
+    HashMap<String, Object> prop = new HashMap<>();
+    prop.put(
+            ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaStringProperties.getKeyDeserializer());
+    prop.put(
+            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+            kafkaStringProperties.getValueDeserializer());
+    prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
+    prop.put(
+            ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, kafkaStringProperties.getInterceptorClasses());
+    prop.put(
+            ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS,
+            kafkaStringProperties.getKeyDelegateClass());
+    prop.put(
+            ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS,
+            kafkaStringProperties.getKeyDelegateClass());
+    prop.put(JsonDeserializer.TRUSTED_PACKAGES, kafkaStringProperties.getTrustedPackages());
+    prop.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, kafkaStringProperties.getEnableAutoCommit());
+    prop.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaStringProperties.getAutoOffsetReset());
+    return new DefaultKafkaConsumerFactory<>(prop);
+  }
+
+  @Bean
+  public CommonErrorHandler errorHandler(KafkaOperations<Object, Object> kafkaOperations) {
+    return new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaOperations));
   }
 }

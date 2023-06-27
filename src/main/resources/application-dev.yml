@@ -71,14 +71,14 @@ spring:
         spring-deserializer-value-delegate-class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring-json-trusted-packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
-      consumer-string:
-        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-        value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-        key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
-        trusted-packages: "*"
-        interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
-        enable-auto-commit: true
-        auto-offset-reset: earliest
+    consumer-string:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+      trusted-packages: "*"
+      interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      enable-auto-commit: true
+      auto-offset-reset: earliest
 
 logging:
   level:
@@ -96,11 +96,11 @@ pe-public-webhook:
       moduleName: PROMISING
       webhookName: PROMISING_INTERMEDIATE_EVENT
       webhookDetail:
-        endpoint: "https://c06600d7-52c7-441f-997b-ba565088af41.mock.pstmn.io"
+        endpoint: "https://dc5647e2-a0d6-436b-bfba-6097594abe60.mock.pstmn.io"
         method: POST
         headers:
           contentType: "application/json"
-          x-api-key: ""
+          x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
 dataupload:
   base-path: "https://pedataupload.blob.core.windows.net"
   maxsize-in-kilobytes: 10240
