@@ -5,14 +5,14 @@ import java.util.regex.Matcher
 
 buildscript {
     repositories {
-        mavenLocal()
+//        mavenLocal()
         mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.15.2"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.32.0"
         classpath "org.owasp:dependency-check-gradle:6.1.6"
         classpath "org.sonatype.gradle.plugins:scan-gradle-plugin:1.2.4"
     }
@@ -35,7 +35,7 @@ ext {
 }
 
 repositories {
-    mavenLocal()
+//    mavenLocal()
     mavenCentral()
 }
 
@@ -77,7 +77,7 @@ configurations {
 
 repositories {
     mavenCentral()
-    mavenLocal()
+//    mavenLocal()
     maven {
         url = 'https://repo.maven.apache.org/m2'
     }
