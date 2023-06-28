@@ -94,11 +94,6 @@ public class KafkaConsumerConfigs {
   @Primary
   public ConsumerFactory<Object, Object> jsonConsumerFactory() {
     HashMap<String, Object> prop = new HashMap<>(jsonDeserializerProperties());
-    Map<String, Object> properties = (Map<String, Object>) prop.get("properties");
-    prop.put(
-        ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS,
-        properties.get("spring-deserializer-value-delegate-class"));
-    prop.put(JsonDeserializer.TRUSTED_PACKAGES, properties.get("spring-json-trusted-packages"));
     return new DefaultKafkaConsumerFactory<>(prop);
   }
 
