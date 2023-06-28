@@ -58,6 +58,7 @@ server:
       ingress: yes
       middleman: yes
       prometheus: yes
+      storage: yes
       keyvault: yes
       scale:
         replicas: 1
@@ -72,6 +73,7 @@ server:
       ingress: yes
       middleman: yes
       prometheus: yes
+      storage: yes
       keyvault: yes
       scale:
         replicas: 1
