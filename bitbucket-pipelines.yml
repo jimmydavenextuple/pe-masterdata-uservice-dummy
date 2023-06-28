@@ -14,6 +14,7 @@ server:
       middleman: yes
       prometheus: yes
       keyvault: yes
+      storage: yes
       scale:
         replicas: 2
       resources:
@@ -28,6 +29,7 @@ server:
       middleman: yes
       prometheus: yes
       keyvault: yes
+      storage: yes
       scale:
         replicas: 2
       resources:
@@ -42,6 +44,7 @@ server:
       middleman: yes
       prometheus: yes
       keyvault: yes
+      storage: yes
       scale:
         replicas: 2
       resources:
@@ -84,6 +87,7 @@ server:
       middleman: yes
       prometheus: yes
       keyvault: yes
+      storage: yes
       scale:
         replicas: 1
       resources:
@@ -147,8 +151,8 @@ definitions:
         image: mcr.microsoft.com/azure-cli
         script:
           - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
-          - chmod +x ./deployment-scripts/deploy-k8s-service-v3.sh
-          - ./deployment-scripts/deploy-k8s-service-v3.sh
+          - chmod +x ./deployment-scripts/deploy-k8s-service-v5.sh
+          - ./deployment-scripts/deploy-k8s-service-v5.sh
         after-script:
           - chmod +x ./deployment-scripts/after-deploy-k8s-service-v3.sh
           - ./deployment-scripts/after-deploy-k8s-service-v3.sh
