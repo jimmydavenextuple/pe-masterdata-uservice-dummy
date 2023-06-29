@@ -97,6 +97,11 @@ transit-time-buffer-page-properties:
   sortBy: carrierServiceId
   sortOrder: DESC
 
+page-properties:
+  pageNo: 1
+  pageSize: 15
+  sortBy: created_date
+  sortOrder: ASC
 
 scheduled-processor:
   timeRangeInHours: 24
