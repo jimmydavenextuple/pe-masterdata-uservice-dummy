@@ -9,6 +9,14 @@ server:
     path:
       - promising-engine/pe-node-masterdata
       - promising-engine/pe-item-masterdata
+      - promising-engine/pe-data-upload-masterdata
+      - promising-engine/pe-promise-sourcing-rule-masterdata
+      - promising-engine/pe-weightage-configuration-masterdata
+      - promising-engine/pe-postal-code-timezone-masterdata
+      - promising-engine/pe-transit-masterdata
+      - promising-engine/pe-node-carrier-masterdata
+      - promising-engine/pe-calendar-masterdata
+      - promising-engine/pe-carrier-masterdata
     health-check-endpoint: "/actuator/health"
   environments:
     vapt:
