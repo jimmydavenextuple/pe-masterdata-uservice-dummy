@@ -6,7 +6,9 @@ clone:
 server:
   service:
     name: "pe-masterdata-uservice"
-    path: "promising-engine/pe-masterdata"
+    path:
+      - promising-engine/pe-node-masterdata
+      - promising-engine/pe-item-masterdata
     health-check-endpoint: "/actuator/health"
   environments:
     vapt:
@@ -153,8 +155,8 @@ definitions:
         image: mcr.microsoft.com/azure-cli
         script:
           - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
-          - chmod +x ./deployment-scripts/deploy-k8s-service-v5.sh
-          - ./deployment-scripts/deploy-k8s-service-v5.sh
+          - chmod +x ./deployment-scripts/deploy-k8s-service-v7.sh
+          - ./deployment-scripts/deploy-k8s-service-v7.sh
         after-script:
           - chmod +x ./deployment-scripts/after-deploy-k8s-service-v3.sh
           - ./deployment-scripts/after-deploy-k8s-service-v3.sh
