@@ -12,8 +12,10 @@ import com.nextuple.streams.promising.messages.PromisingRecord;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -171,6 +173,10 @@ public class KafkaConsumerConfigs {
     prop.put(
         ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS,
         kafkaStringProperties.getKeyDelegateClass());
+    Map<String, String> securityProps = kafkaProperties.getProperties();
+    prop.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProps.get("security.protocol"));
+    prop.put(SaslConfigs.SASL_MECHANISM, securityProps.get("sasl.mechanism"));
+    prop.put(SaslConfigs.SASL_JAAS_CONFIG, securityProps.get("sasl.jaas.config"));
     prop.put(JsonDeserializer.TRUSTED_PACKAGES, kafkaStringProperties.getTrustedPackages());
     prop.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, kafkaStringProperties.getEnableAutoCommit());
     prop.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaStringProperties.getAutoOffsetReset());

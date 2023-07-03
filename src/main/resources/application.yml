@@ -80,10 +80,10 @@ node:
   type: "STORE,FC,MFC,DROPSHIP VENDOR,DC"
 carrier:
   service:
-    options: "SDND,STANDARD,EXPRESS,NEXTDAY,BOPA,BOPIS,SAMEDAY"
+    options: "SDND,STANDARD,EXPRESS,NEXTDAY,BOPA"
 promise:
   service:
-    options: "SDND,STANDARD,EXPRESS,NEXTDAY,BOPA,BOPIS,SAMEDAY"
+    options: "SDND,STANDARD,EXPRESS,NEXTDAY,BOPA"
 
 availability:
   keys: LINE,ORDER
