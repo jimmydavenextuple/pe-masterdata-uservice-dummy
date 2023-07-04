@@ -46,8 +46,8 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         item_master:
-          name: ITEM_MASTER_INTEGRATION_1
-          group-id: item-master-local_1
+          name: ITEM_MASTER_INTEGRATION
+          group-id: item-master-local
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
@@ -70,7 +70,7 @@ spring:
       topics:
         master_data_update_event:
           name: INTERNAL.DEV.MASTER_DATA_UPDATE_EVENTS
-          group-id: master-data-update-dev-1
+          group-id: master-data-update-dev
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -122,15 +122,15 @@ dataupload:
 
 jobs-framework:
   job-completion-consumer:
-    topic-name: INTERNAL.DEV.PE.JOB_COMPLETION_1
-    group-id: jobs-completion-consumer-async-dev_1
+    topic-name: INTERNAL.DEV.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-dev
   kafka-publish:
-    topic-name: INTERNAL.DEV.PE.JOB_TASK_1
+    topic-name: INTERNAL.DEV.PE.JOB_TASK
   result-publish:
-    topic-name: INTERNAL.DEV.PE.JOB_RESULT_1
+    topic-name: INTERNAL.DEV.PE.JOB_RESULT
   result-consumer:
-    topic-name: INTERNAL.DEV.PE.JOB_RESULT_1
-    group-id: jobs-result-consumer-async_1
+    topic-name: INTERNAL.DEV.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async
   record-consumer:
-    topic-name: INTERNAL.DEV.PE.JOB_TASK_1
-    group-id: jobs-task-consumer-async_1
+    topic-name: INTERNAL.DEV.PE.JOB_TASK
+    group-id: jobs-task-consumer-async
