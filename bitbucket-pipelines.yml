@@ -109,6 +109,51 @@ server:
         max:
           memory: 1024Mi
           cpu: 256m
+    sdev:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: "1024Mi"
+          cpu: 256m
+        max:
+          memory: "1024Mi"
+          cpu: 256m
+    sqa:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 1024Mi
+          cpu: 256m
+        max:
+          memory: 1024Mi
+          cpu: 256m 
+    sperf:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: "1024Mi"
+          cpu: 256m
+        max:
+          memory: "1024Mi"
+          cpu: 256m                   
 definitions:
   caches:
     sonar: ~/.sonar/cache
@@ -228,15 +273,32 @@ pipelines:
           deployment: vapt
     development:
       - step: *build
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Dev
-          deployment: dev
-      - step:
-          !!merge <<: *deploy
-          name: Deploy QA
-          trigger: manual
-          deployment: qa
+      - parallel:      
+          - step:
+              !!merge <<: *deploy
+              name: Deploy Dev
+              deployment: dev
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SDEV
+              trigger: manual
+              deployment: sdev
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SPerf
+              trigger: manual
+              deployment: sperf          
+      - parallel:          
+          - step:
+              !!merge <<: *deploy
+              name: Deploy QA
+              trigger: manual
+              deployment: qa
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SQA
+              trigger: manual
+              deployment: sqa           
       - parallel:
           - step:
               !!merge <<: *deploy
