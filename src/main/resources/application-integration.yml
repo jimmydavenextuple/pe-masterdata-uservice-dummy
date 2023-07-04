@@ -1,0 +1,63 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://postgres:5432/pe_intgeration
+    username: nextuple_user
+    password: nextuple@123
+  kafka:
+    bootstrap-servers: kafka:9092
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"kafka\" password=\"kafka\";"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.INTEGRATION.MASTER_DATA_UPDATE_EVENTS
+      properties:
+        acks: 1
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+    consumer-string:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+      trusted-packages: "*"
+      interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      enable-auto-commit: true
+      auto-offset-reset: latest
+
+logging:
+  level:
+    com.nextuple: INFO
+pe-public-webhook:
+  iv-feed:
+    topic: INTERNAL.INTEGRATION_ATP
+  item-feed:
+    topic: INTERNAL.INTEGRATION.PROMISE_ITEMS
+jobs-framework:
+  job-completion-consumer:
+    topic-name: INTERNAL.INTEGRATION.PE.JOB_COMPLETION
+  kafka-publish:
+    topic-name: INTERNAL.INTEGRATION.PE.JOB_TASK
+  result-publish:
+    topic-name: INTERNAL.INTEGRATION.PE.JOB_RESULT
+  result-consumer:
+    topic-name: INTERNAL.INTEGRATION.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async
+  record-consumer:
+    topic-name: INTERNAL.INTEGRATION.PE.JOB_TASK
+    group-id: jobs-task-consumer-async

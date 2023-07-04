@@ -6,9 +6,9 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe
-    username: \${COMMON-PE-POSTGRES-USER}
-    password: \${COMMON-PE-POSTGRES-PASSWORD}
+    url: \${POSTGRES-URI}
+    username: \${COMMON-POSTGRES-USER}
+    password: \${COMMON-POSTGRES-PASSWORD}
   kafka:
     bootstrap-servers: "kbrk-nonprod.nextuple.net:9092"
     properties:
@@ -47,7 +47,7 @@ spring:
       topics:
         item_master:
           name: ITEM_MASTER_INTEGRATION
-          group-id: item-master-dev
+          group-id: item-master-sperf
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
@@ -55,7 +55,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       topics:
-        master_data_update_event: INTERNAL.DEV.MASTER_DATA_UPDATE_EVENTS
+        master_data_update_event: INTERNAL.SPERF.MASTER_DATA_UPDATE_EVENTS
       properties:
         spring.json.trusted.packages: "*"
         acks: 1
@@ -69,27 +69,19 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         master_data_update_event:
-          name: INTERNAL.DEV.MASTER_DATA_UPDATE_EVENTS
-          group-id: master-data-update-dev
-    consumer-string:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
-      trusted-packages: "*"
-      interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
-      enable-auto-commit: true
-      auto-offset-reset: latest
+          name: INTERNAL.SPERF.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-sperf
 
 logging:
   level:
     com.nextuple: INFO
 pe-public-webhook:
   iv-feed:
-    topic: INTERNAL.DEV_ATP
+    topic: INTERNAL.SPERF_ATP
   item-feed:
-    topic: INTERNAL.DEV.PROMISE_ITEMS
+    topic: INTERNAL.SPERF.PROMISE_ITEMS
   pe-response:
-    topic: INTERNAL.DEV.CART_EDD
+    topic: INTERNAL.SPERF.CART_EDD
     group-id: pe-response-consumer-async
   webhook:
     - tenantId: NEXTUPLE_GR
@@ -111,26 +103,25 @@ pe-public-webhook:
         headers:
           contentType: "application/json"
           x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
-          #          Dummy API Keydataupload:
+          #          Dummy API Key
 dataupload:
-  base-path: "https://pedataupload.blob.core.windows.net"
+  base-path: "https://pesignetperf.blob.core.windows.net"
   maxsize-in-kilobytes: 10240
   max-rows: 1000
-  bucket-name: "dataupload"
+  bucket-name: "pesperfdataupload"
   type: BLOB
   signed-url-expiry-minutes: 30
 
 jobs-framework:
   job-completion-consumer:
-    topic-name: INTERNAL.DEV.PE.JOB_COMPLETION
-    group-id: jobs-completion-consumer-async-dev
+    topic-name: INTERNAL.SPERF.PE.JOB_COMPLETION
   kafka-publish:
-    topic-name: INTERNAL.DEV.PE.JOB_TASK
+    topic-name: INTERNAL.SPERF.PE.JOB_TASK
   result-publish:
-    topic-name: INTERNAL.DEV.PE.JOB_RESULT
+    topic-name: INTERNAL.SPERF.PE.JOB_RESULT
   result-consumer:
-    topic-name: INTERNAL.DEV.PE.JOB_RESULT
+    topic-name: INTERNAL.SPERF.PE.JOB_RESULT
     group-id: jobs-result-consumer-async
   record-consumer:
-    topic-name: INTERNAL.DEV.PE.JOB_TASK
+    topic-name: INTERNAL.SPERF.PE.JOB_TASK
     group-id: jobs-task-consumer-async
