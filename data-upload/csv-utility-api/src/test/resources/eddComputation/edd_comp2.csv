@@ -1,9 +1,0 @@
-organizationCode,sessionId,basketId,pageName,shipToAddress_zipCode,shipToAddress_province,lines_item_itemId,lines_item_itemType,lines_item_unitOfMeasure,lines_item_seller,lines_lineId,lines_requiredQty,lines_shipToAddress_zipCode,lines_shipToAddress_province
-BAY,jkfdsj5748fdgf58gfh,156465897,Basket/Checkout,V0A 1B5,BC,12340008,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC
-,,,,,,123400081,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC
-BAY,dsffsdsfdsgffdvddsf,156465823,Basket/Checkout,V0B 1B5,BC,1234000888,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC
-,,,,,,1234000819,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC
-BAY,dsffsdsfdsgffdvddsf,156465824,Basket/Checkout,V0B 1B5,BC,1234000888,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC
-,,,,,,1234000819,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC
-BAY,dsffsdsfdsgffdvddsf,156465825,Basket/Checkout,V0B 1B5,BC,1234000888,EVERYDAY,EACH,HBC,1,5,V0A 1B5,BC
-,,,,,,1234000819,EVERYDAY,EACH,HBC,2,5,T2P 1B5,BC

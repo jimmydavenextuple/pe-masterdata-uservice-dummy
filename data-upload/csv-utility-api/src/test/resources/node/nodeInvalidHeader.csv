@@ -1,2 +1,0 @@
-action,street,city,province,postalCode,country,latitude,longitude,timezone,shipToHome,sdndEligible,bopisEligible,expressEligible,nodeType,isActive,nextdayEligible
-CREATE,N1,BAY,S,X,P,PC,CA,LAT,LONG,TM,Y,Y,Y,YY,Y,Y

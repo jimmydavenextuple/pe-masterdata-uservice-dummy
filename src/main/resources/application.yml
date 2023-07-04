@@ -1,0 +1,123 @@
+spring:
+  application:
+    name: "pe-masterdata-uservice"
+    version: 2.6.0
+    title: "Master Data Service"
+    description: "Promising engine master data services"
+    properties:
+      group: promising-and-sourcing
+      customerFacing: false
+  main:
+    allow-bean-definition-overriding: true
+  jpa:
+    properties:
+      hibernate:
+        generate_statistics: true
+server:
+  port: 8080
+  tomcat:
+    max-connections: 500
+    threads:
+      min-spare: 50
+      max: 200
+
+logging:
+  level:
+    org.apache.kafka: WARN
+    org.springframework.kafka: WARN
+    com.zaxxer.hikari: WARN
+    reactor.netty: WARN
+    org.springframework: WARN
+    root: WARN
+    com.nextuple: INFO
+
+entity-listener:
+  kafka:
+    enabled: true
+
+constants:
+  default-number-of-days-in-future: 45
+
+pagination:
+  pageNo: 1
+  pageSize: 15
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+    loggers:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+        persistence: true
+        cache: true
+#pe:
+#  ui:
+#    allowed-origin-url: \${PE_UI_URL}
+feign:
+  okhttp:
+    enabled: true
+auth:
+  filterEnabled: false
+
+node:
+  type: "STORE,FC,MFC,DROPSHIP VENDOR,DC"
+carrier:
+  service:
+    options: "SDND,STANDARD,EXPRESS,NEXTDAY,BOPA"
+promise:
+  service:
+    options: "SDND,STANDARD,EXPRESS,NEXTDAY,BOPA"
+
+availability:
+  keys: LINE,ORDER
+
+base-api-url: '/promising-engine/pe-promise-sourcing-rule'
+
+node-carrier-service-page-properties:
+  sortBy: nodeId
+  sortOrder: ASC
+transit-time-buffer-page-properties:
+  sortBy: carrierServiceId
+  sortOrder: DESC
+
+page-properties:
+  pageNo: 1
+  pageSize: 15
+  sortBy: created_date
+  sortOrder: ASC
+
+scheduled-processor:
+  timeRangeInHours: 24
+  fixed-rate:
+    minutes: 1
+download-page-size:
+  node-carrier-service-options: 200
+  node: 200
+edd-computation:
+  lines: 30
+  orders: 10
+csv-utility-api:
+  csv-download:
+    records-per-page: 200
+    max-no-of-pages: 5
+    max-no-of-failed-transit-entries: 1000
+    max-no-of-carrier-services-for-download: 100
+#item:
+#  listenerContainerFactory: ItemDeserializerConsumer

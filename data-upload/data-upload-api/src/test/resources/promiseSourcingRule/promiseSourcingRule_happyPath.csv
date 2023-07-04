@@ -1,5 +1,0 @@
-action,orgId,serviceOption,destinationGeozone,sourceNodes,priority,allocationRuleId
-CREATE,org,SDND,dgz0,"[node01,node02]",1,DEFAULT
-CREATE,org,SDND,dgz1,"[node01,node02]",1,DEFAULT
-UPDATE,org,SDND,dgz0,"[node03,node04]",1,DEFAULT
-DELETE,org,SDND,dgz1,"[node01,node02]",1,DEFAULT

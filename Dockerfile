@@ -1,8 +1,6 @@
 FROM openjdk:11-jre-slim
 VOLUME /tmp
 COPY "./build/libs/*[^plain].jar" app.jar
-COPY ./newrelic.jar newrelic.jar
-COPY ./newrelic.yml newrelic.yml
-COPY ./entrypoint.sh entrypoint.sh
 EXPOSE 8080
+COPY ./entrypoint.sh entrypoint.sh
 ENTRYPOINT ["/bin/sh","entrypoint.sh"]
