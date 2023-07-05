@@ -115,6 +115,7 @@ dataupload:
 jobs-framework:
   job-completion-consumer:
     topic-name: INTERNAL.SPERF.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-sperf
   kafka-publish:
     topic-name: INTERNAL.SPERF.PE.JOB_TASK
   result-publish:

@@ -115,6 +115,7 @@ dataupload:
 jobs-framework:
   job-completion-consumer:
     topic-name: INTERNAL.SDEV.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-sdev
   kafka-publish:
     topic-name: INTERNAL.SDEV.PE.JOB_TASK
   result-publish:
