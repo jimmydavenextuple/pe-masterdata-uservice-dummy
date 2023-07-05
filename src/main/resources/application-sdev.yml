@@ -47,7 +47,7 @@ spring:
       topics:
         item_master:
           name: ITEM_MASTER_INTEGRATION
-          group-id: item-master-dev
+          group-id: item-master-sdev
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
@@ -70,7 +70,16 @@ spring:
       topics:
         master_data_update_event:
           name: INTERNAL.SDEV.MASTER_DATA_UPDATE_EVENTS
-          group-id: master-data-update-dev
+          group-id: master-data-update-sdev
+    consumer-string:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+      trusted-packages: "*"
+      interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      enable-auto-commit: true
+      auto-offset-reset: latest
+
 
 logging:
   level:
