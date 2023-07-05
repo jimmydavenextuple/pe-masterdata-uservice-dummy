@@ -47,7 +47,7 @@ spring:
       topics:
         item_master:
           name: ITEM_MASTER_INTEGRATION
-          group-id: item-master-dev
+          group-id: item-master-sdev
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
