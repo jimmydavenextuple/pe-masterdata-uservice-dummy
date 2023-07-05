@@ -114,6 +114,7 @@ dataupload:
 jobs-framework:
   job-completion-consumer:
     topic-name: INTERNAL.SQA.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-sqa
   kafka-publish:
     topic-name: INTERNAL.SQA.PE.JOB_TASK
   result-publish:
