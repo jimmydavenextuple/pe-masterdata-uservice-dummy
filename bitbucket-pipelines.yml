@@ -105,10 +105,10 @@ server:
       resources:
         min:
           memory: 1024Mi
-          cpu: 256m
+          cpu: 1024m
         max:
           memory: 1024Mi
-          cpu: 256m
+          cpu: 1024m
     sdev:
       ingress: yes
       middleman: yes
