@@ -22,6 +22,8 @@ spring:
         master_data_update_event: INTERNAL.SIMEXEC.MASTER_DATA_UPDATE_EVENTS
       properties:
         acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
         spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
     consumer:

@@ -57,8 +57,10 @@ spring:
       topics:
         master_data_update_event: INTERNAL.SANDBOX.MASTER_DATA_UPDATE_EVENTS
       properties:
-        spring.json.trusted.packages: "*"
         acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
