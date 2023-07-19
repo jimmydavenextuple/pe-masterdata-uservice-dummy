@@ -225,6 +225,13 @@ definitions:
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotbugsMain
           - bash ./gradlew dependencyCheckAggregate --info
           - bash ./gradlew sonarqube showSonarQubeLink --info
+    - step: &Clear-Cache
+        name: Clear Pipeline Cache
+        script:
+          - pipe: atlassian/bitbucket-clear-cache:3.3.0
+            variables:
+              BITBUCKET_ACCESS_TOKEN: $BITBUCKET_ACCESS_TOKEN
+              CACHES: ["gradle"]
 pipelines:
   pull-requests:
     '**':
@@ -272,6 +279,7 @@ pipelines:
           name: Deploy vapt
           deployment: vapt
     development:
+      - step: *Clear-Cache
       - step: *build
       - parallel:      
           - step:
