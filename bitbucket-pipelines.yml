@@ -146,14 +146,14 @@ server:
       storage: yes
       keyvault: yes
       scale:
-        replicas: 1
+        replicas: 3
       resources:
         min:
-          memory: "1024Mi"
-          cpu: 256m
+          memory: "3072Mi"
+          cpu: "3072m"
         max:
-          memory: "1024Mi"
-          cpu: 256m                   
+          memory: "3072Mi"
+          cpu: "3072m"                  
 definitions:
   caches:
     sonar: ~/.sonar/cache
