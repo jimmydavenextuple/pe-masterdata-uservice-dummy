@@ -5,7 +5,7 @@
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
  */
 
-package com.nextuple;
+package com.nextuple.masterdata;
 
 import com.nextuple.pe.webhook.config.WebhookConfiguration;
 import lombok.extern.slf4j.Slf4j;

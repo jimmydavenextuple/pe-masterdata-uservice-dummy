@@ -7,8 +7,8 @@
 
 package com.nextuple.item.messages;
 
-import com.nextuple.messages.PromisingRecord;
-import com.nextuple.messages.PromisingRecord.Builder;
+import com.nextuple.masterdata.messages.PromisingRecord;
+import com.nextuple.masterdata.messages.PromisingRecord.Builder;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

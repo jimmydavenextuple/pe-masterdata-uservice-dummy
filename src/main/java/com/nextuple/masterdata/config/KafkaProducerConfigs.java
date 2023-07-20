@@ -1,4 +1,4 @@
-package com.nextuple.config;
+package com.nextuple.masterdata.config;
 
 import com.nextuple.core.event.LocalCacheUpdateEvent;
 import com.nextuple.jobs.framework.common.domain.pojo.RecordDto;

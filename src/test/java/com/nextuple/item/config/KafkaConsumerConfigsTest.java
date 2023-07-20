@@ -8,8 +8,8 @@ package com.nextuple.item.config; /*
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import com.nextuple.config.KafkaConsumerConfigs;
 import com.nextuple.item.TestUtil;
+import com.nextuple.masterdata.config.KafkaConsumerConfigs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -10,7 +10,7 @@
  *
  * <p>DO NOT EDIT DIRECTLY
  */
-package com.nextuple.messages;
+package com.nextuple.masterdata.messages;
 
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.BinaryMessageEncoder;
