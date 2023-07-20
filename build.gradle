@@ -95,7 +95,7 @@ dependencyManagement {
 
 bootJar {
     enabled = true
-    mainClass.set("com.nextuple.PeMasterDataUserviceApplication")
+    mainClass.set("com.nextuple.masterdata.PeMasterDataUserviceApplication")
 }
 
 configurations {
