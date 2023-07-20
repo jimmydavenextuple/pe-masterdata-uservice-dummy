@@ -5,45 +5,47 @@
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
  */
 
-package com.nextuple.serializer;
+package com.nextuple.masterdata.serializer;
 
-import java.io.ByteArrayOutputStream;
+import com.nextuple.streams.promising.messages.PromisingRecord;
 import java.util.Map;
 import javax.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.io.DatumWriter;
-import org.apache.avro.io.EncoderFactory;
-import org.apache.avro.specific.SpecificDatumWriter;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.*;
+import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.Deserializer;
 
 @Slf4j
-public class ItemSerializer<T extends SpecificRecordBase> implements Serializer<T> {
+public class ItemDeserializer<T extends SpecificRecordBase> implements Deserializer<T> {
 
   @Override
-  public void configure(Map<String, ?> configs, boolean isKey) {
+  public void configure(Map configs, boolean isKey) {
     // do nothing
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public byte[] serialize(String topic, T payload) {
-    byte[] bytes = null;
+  public T deserialize(String topic, byte[] bytes) {
+    T returnObject = null;
+
     try {
-      if (payload != null) {
-        var byteArrayOutputStream = new ByteArrayOutputStream();
-        var binaryEncoder = EncoderFactory.get().binaryEncoder(byteArrayOutputStream, null);
-        DatumWriter<SpecificRecordBase> datumWriter =
-            new SpecificDatumWriter<>(payload.getSchema());
-        datumWriter.write(payload, binaryEncoder);
-        binaryEncoder.flush();
-        byteArrayOutputStream.close();
-        bytes = byteArrayOutputStream.toByteArray();
-        log.debug("serialized payload='{}'", DatatypeConverter.printHexBinary(bytes));
+      if (bytes != null) {
+        log.debug("data='{}'", DatatypeConverter.printHexBinary(bytes));
+
+        DatumReader<GenericRecord> datumReader =
+            new SpecificDatumReader<>(PromisingRecord.getClassSchema());
+        Decoder decoder = DecoderFactory.get().binaryDecoder(bytes, null);
+
+        returnObject = (T) datumReader.read(null, decoder);
+        log.debug("deserialized data='{}'", returnObject);
       }
     } catch (Exception e) {
-      log.error("Unable to serialize payload ", e);
+      log.error("Unable to Deserialize bytes[] ", e);
     }
-    return bytes;
+
+    return returnObject;
   }
 
   @Override

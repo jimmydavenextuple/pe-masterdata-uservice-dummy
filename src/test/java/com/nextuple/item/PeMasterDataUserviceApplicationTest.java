@@ -1,6 +1,6 @@
 package com.nextuple.item;
 
-import com.nextuple.PeMasterDataUserviceApplication;
+import com.nextuple.masterdata.PeMasterDataUserviceApplication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
