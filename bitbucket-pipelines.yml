@@ -106,7 +106,7 @@ server:
       resources:
         min:
           memory: 3Gi
-          cpu: 2
+          cpu: 1
         max:
           memory: 3Gi
           cpu: 2
