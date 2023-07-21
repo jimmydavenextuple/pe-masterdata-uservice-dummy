@@ -21,7 +21,7 @@ spring:
       hikari:
         readOnly: true
         connectionTimeout: 5000
-        maximumPoolSize: 20
+        maximumPoolSize: 30
   kafka:
     bootstrap-servers: \${KAFKA-BROKER-URI}
     properties:
