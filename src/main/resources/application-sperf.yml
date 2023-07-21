@@ -9,6 +9,9 @@ spring:
     url: \${POSTGRES-URI}
     username: \${COMMON-POSTGRES-USER}
     password: \${COMMON-POSTGRES-PASSWORD}
+    hikari:
+      MAXIMUM_POOL_SIZE: 30
+      connectionTimeout: 5000    
   kafka:
     bootstrap-servers: \${KAFKA-BROKER-URI}
     properties:
