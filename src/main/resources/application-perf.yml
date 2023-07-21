@@ -21,6 +21,7 @@ spring:
       hikari:
         readOnly: true
         connectionTimeout: 5000
+        maximumPoolSize: 20
   kafka:
     bootstrap-servers: "b-3.promisemksperformance.o5d7t4.c25.kafka.us-east-1.amazonaws.com:9096,b-1.promisemksperformance.o5d7t4.c25.kafka.us-east-1.amazonaws.com:9096,b-2.promisemksperformance.o5d7t4.c25.kafka.us-east-1.amazonaws.com:9096"
     properties:

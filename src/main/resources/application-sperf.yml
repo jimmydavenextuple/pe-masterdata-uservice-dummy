@@ -9,6 +9,19 @@ spring:
     url: \${POSTGRES-URI}
     username: \${COMMON-POSTGRES-USER}
     password: \${COMMON-POSTGRES-PASSWORD}
+    hikari:
+      connectionTimeout: 5000
+  replica:
+    datasource:
+      platform: postgres
+      url: \${POSTGRES-URI}?readOnly=true
+      username: \${COMMON-POSTGRES-USER}
+      password: \${COMMON-POSTGRES-PASSWORD}
+      required: true
+      hikari:
+        readOnly: true
+        connectionTimeout: 5000
+        maximumPoolSize: 20
   kafka:
     bootstrap-servers: \${KAFKA-BROKER-URI}
     properties:
