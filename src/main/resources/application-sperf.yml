@@ -14,7 +14,7 @@ spring:
   replica:
     datasource:
       platform: postgres
-      url: \${POSTGRES-URI}?readOnly=true
+      url: \${POSTGRES-URI}
       username: \${COMMON-POSTGRES-USER}
       password: \${COMMON-POSTGRES-PASSWORD}
       required: true
