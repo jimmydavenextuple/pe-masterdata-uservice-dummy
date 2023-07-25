@@ -1,4 +1,4 @@
-organizationCode,pageName,cartId,sessionId,shipToAddress_zipCode,shipToAddress_region,shipToAddress_state,shipToAddress_country,shipToAddress_timezone,serviceOptions,lines_requiredQty,lines_lineId,lines_item_itemId,lines_item_unitOfMeasure,lines_shipToAddress_zipCode,lines_shipToAddress_region,lines_shipToAddress_state,lines_shipToAddress_country,lines_shipToAddress_timezone
+organizationCode,pageName,sessionId,cartId,shipToAddress_zipCode,shipToAddress_region,shipToAddress_state,shipToAddress_country,shipToAddress_timezone,serviceOptions,lines_requiredQty,lines_lineId,lines_item_itemId,lines_item_unitOfMeasure,lines_shipToAddress_zipCode,lines_shipToAddress_region,lines_shipToAddress_state,lines_shipToAddress_country,lines_shipToAddress_timezone
 NEXTUPLE,CART,1286,pgsjkdhamphp,RRR 1B5,RRR,BC,US,America/Toronto,STANDARD,5,1,item1,in,RRR 1B5,RRR,BC,US,America/Toronto,
 NEXTUPLE,CART,1286,itfakdjsijjt,RRR 1B5,RRR,BC,US,America/Toronto,STANDARD,10,2,item2,pcs,RRR 1B5,RRR,BC,US,America/Toronto,
 NEXTUPLE,CART,3214,kfslkfdsklst,AAA 1AB,AAA,FL,US,UTC,EXPRESS,12,1,item3,ton,AAA 1AB,AAA,FL,US,UTC
