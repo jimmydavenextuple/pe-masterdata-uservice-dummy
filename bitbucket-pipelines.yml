@@ -304,16 +304,16 @@ pipelines:
               !!merge <<: *deploy
               name: Deploy Dev
               deployment: dev
-          - step:
-              !!merge <<: *deploy
-              name: Deploy SDEV
-              trigger: manual
-              deployment: sdev
-          - step:
-              !!merge <<: *deploy
-              name: Deploy SPerf
-              trigger: manual
-              deployment: sperf          
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy SDEV
+          #     trigger: manual
+          #     deployment: sdev
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy SPerf
+          #     trigger: manual
+          #     deployment: sperf          
       - parallel:          
           - step:
               !!merge <<: *deploy
