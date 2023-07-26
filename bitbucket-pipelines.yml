@@ -162,15 +162,16 @@ server:
       prometheus: yes
       keyvault: yes
       storage: yes
+      java-opts: "-Xms2048m -Xmx2048m"
       scale:
-        replicas: 2
+        replicas: 1
       resources:
         min:
-          memory: "1024Mi"
-          cpu: "500m"
+          memory: 3Gi
+          cpu: 1
         max:
-          memory: "1024Mi"
-          cpu: "500m"          
+          memory: 3Gi
+          cpu: 2         
 definitions:
   caches:
     sonar: ~/.sonar/cache
