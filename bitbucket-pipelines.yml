@@ -156,6 +156,21 @@ server:
         max:
           memory: 3Gi
           cpu: 3
+    demo:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      storage: yes
+      scale:
+        replicas: 2
+      resources:
+        min:
+          memory: "1024Mi"
+          cpu: "500m"
+        max:
+          memory: "1024Mi"
+          cpu: "500m"          
 definitions:
   caches:
     sonar: ~/.sonar/cache
