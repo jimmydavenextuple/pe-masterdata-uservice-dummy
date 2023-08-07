@@ -298,12 +298,12 @@ pipelines:
           deployment: vapt
     development:
       - step: *Clear-Cache
-      - step: *build
-      - parallel:      
-          - step:
-              !!merge <<: *deploy
-              name: Deploy Dev
-              deployment: dev
+      - step: *build     
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Dev
+          deployment: dev
+      - parallel:              
           - step:
               !!merge <<: *deploy
               name: Deploy SDEV
@@ -313,8 +313,7 @@ pipelines:
               !!merge <<: *deploy
               name: Deploy SPerf
               trigger: manual
-              deployment: sperf          
-      - parallel:          
+              deployment: sperf                    
           - step:
               !!merge <<: *deploy
               name: Deploy QA
@@ -324,7 +323,7 @@ pipelines:
               !!merge <<: *deploy
               name: Deploy SQA
               trigger: manual
-              deployment: sqa           
+              deployment: sqa
       - parallel:
           - step:
               !!merge <<: *deploy
