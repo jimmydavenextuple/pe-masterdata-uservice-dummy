@@ -133,3 +133,9 @@ csv-utility-api:
     max-no-of-carrier-services-for-download: 100
 #item:
 #  listenerContainerFactory: ItemDeserializerConsumer
+tenant:
+  service:
+    options:
+      NEXTUPLE_GR: "SDND,STANDARD,EXPRESS,NEXTDAY"
+      NEEDNOW: "BOPA,STANDARD,EXPRESS"
+      DEFAULT: "SDND,STANDARD,EXPRESS,NEXTDAY"
