@@ -89,6 +89,7 @@ public class KafkaConsumerConfigs {
         ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS,
         properties.get("spring-deserializer-value-delegate-class"));
     prop.put(JsonDeserializer.TRUSTED_PACKAGES, properties.get("spring-json-trusted-packages"));
+    prop.put(JsonDeserializer.TYPE_MAPPINGS, properties.get("spring-json-type-mapping"));
     return new DefaultKafkaConsumerFactory<>(prop);
   }
 
