@@ -15,6 +15,25 @@ spring:
       security.protocol: SASL_PLAINTEXT
       sasl.mechanism: SCRAM-SHA-256
       sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"kafka\" password=\"kafka\";"
+    consumer-item:
+      type: json
+      enable-auto-commit: true
+      auto-offset-reset: latest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring-deserializer-key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+        spring-deserializer-value-delegate-class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring-json-trusted-packages: "*"
+        spring-json-type-mapping: com.nextuple.pe.webhook.domain.dtos.Item:com.nextuple.item.domain.events.ItemMasterEvent
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      topics:
+        item_master:
+          name: INTERNAL.INTEGRATION.PROMISE_ITEMS
+          group-id: item-master-integration
+    producer-item:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
