@@ -349,7 +349,7 @@ pipelines:
               name: Deploy Prod
               trigger: manual
               deployment: prod
-    feature/*:
+    demo:
       - step: *Clear-Cache
       - step: *build    
       - step:
