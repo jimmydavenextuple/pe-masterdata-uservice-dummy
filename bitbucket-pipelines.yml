@@ -171,7 +171,7 @@ server:
           cpu: 1
         max:
           memory: 3Gi
-          cpu: 2         
+          cpu: 2
 definitions:
   caches:
     sonar: ~/.sonar/cache
@@ -291,6 +291,7 @@ pipelines:
           deployment: prod
   branches:
     vapt:
+      - step: *Clear-Cache    
       - step: *build
       - step:
           !!merge <<: *deploy
@@ -306,39 +307,77 @@ pipelines:
       - parallel:              
           - step:
               !!merge <<: *deploy
+              name: Deploy QA
+              trigger: manual
+              deployment: qa
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy PERF
+          #     trigger: manual
+          #     deployment: perf
+    master:
+      - step: *Clear-Cache    
+      - step: *build
+      - parallel:
+          - step:
+              !!merge <<: *deploy
+              name: Deploy demo
+              trigger: manual
+              deployment: demo
+          - step:
+              !!merge <<: *deploy
+              name: Deploy Sandbox
+              trigger: manual
+              deployment: sandbox
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy Pre-prod
+          #     trigger: manual
+          #     deployment: preprod
+          - step:
+              !!merge <<: *deploy
               name: Deploy SDEV
               trigger: manual
               deployment: sdev
           - step:
               !!merge <<: *deploy
-              name: Deploy SPerf
+              name: Deploy SQA
               trigger: manual
-              deployment: sperf                    
+              deployment: sqa
           - step:
               !!merge <<: *deploy
-              name: Deploy QA
+              name: Deploy Prod
               trigger: manual
-              deployment: qa
+              deployment: prod
+    feature/*:
+      - step: *Clear-Cache
+      - step: *build    
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Demo
+          trigger: manual
+          deployment: demo
+    hotfixes/*:
+      - step: *Clear-Cache
+      - step: *build
+      - parallel:
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy Pre-prod
+          #     trigger: manual
+          #     deployment: preprod
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SDEV
+              trigger: manual
+              deployment: sdev
           - step:
               !!merge <<: *deploy
               name: Deploy SQA
               trigger: manual
               deployment: sqa
-      - parallel:
           - step:
               !!merge <<: *deploy
-              name: Deploy Test
+              name: Deploy Prod
               trigger: manual
-              deployment: test
-          - step:
-              !!merge <<: *deploy
-              name: Deploy Demo
-              trigger: manual
-              deployment: demo
-    master:
-      - step: *build-release
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Prod
-          trigger: manual
-          deployment: prod
+              deployment: prod
