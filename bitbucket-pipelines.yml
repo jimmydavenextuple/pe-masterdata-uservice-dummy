@@ -257,12 +257,12 @@ pipelines:
   tags:
     '*-SNAPSHOT':
       - step: *Clear-Cache
-      - step: *build     
+      - step: *build-release
       - step:
           !!merge <<: *deploy
           name: Deploy Dev
           deployment: dev
-      - parallel:              
+      - parallel:
           - step:
               !!merge <<: *deploy
               name: Deploy QA
@@ -274,12 +274,14 @@ pipelines:
           #     trigger: manual
           #     deployment: perf
     '*-SANDBOX':
+      - step: *Clear-Cache
       - step: *build-release
       - step:
           !!merge <<: *deploy
           name: Deploy Sandbox
           deployment: sandbox
     '*-RELEASE':
+      - step: *Clear-Cache    
       - step: *build-release
       - step:
           !!merge <<: *deploy
