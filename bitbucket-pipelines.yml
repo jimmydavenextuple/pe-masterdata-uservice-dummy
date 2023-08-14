@@ -256,26 +256,23 @@ pipelines:
       - step: *pr-build
   tags:
     '*-SNAPSHOT':
-      - step: *build
+      - step: *Clear-Cache
+      - step: *build     
       - step:
           !!merge <<: *deploy
           name: Deploy Dev
           deployment: dev
-      - step:
-          !!merge <<: *deploy
-          name: Deploy QA
-          trigger: manual
-          deployment: qa
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Test
-          trigger: manual
-          deployment: test
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Demo
-          trigger: manual
-          deployment: demo
+      - parallel:              
+          - step:
+              !!merge <<: *deploy
+              name: Deploy QA
+              trigger: manual
+              deployment: qa
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy PERF
+          #     trigger: manual
+          #     deployment: perf
     '*-SANDBOX':
       - step: *build-release
       - step:
