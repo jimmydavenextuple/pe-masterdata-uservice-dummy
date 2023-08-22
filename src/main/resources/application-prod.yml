@@ -68,7 +68,7 @@ spring:
       topics:
         item_master:
           name: INTERNAL.PROD.PROMISE_ITEMS
-          group-id: item-master-prod
+          group-id: item-master-prod-\${random.value}
 
 logging:
   level:

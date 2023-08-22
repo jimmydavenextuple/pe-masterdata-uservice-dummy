@@ -30,7 +30,7 @@ spring:
       topics:
         item_master:
           name: INTERNAL.SIMMASTER.PROMISE_ITEMS
-          group-id: item-master-simmaster
+          group-id: item-master-simmaster-\${random.value}
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
