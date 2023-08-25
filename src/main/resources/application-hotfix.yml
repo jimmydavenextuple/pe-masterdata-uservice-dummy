@@ -30,7 +30,7 @@ spring:
       topics:
         item_master:
           name: INTERNAL.HOTFIX.PROMISE_ITEMS
-          group-id: item-master-hotfix
+          group-id: item-master-hotfix-\${random.value}
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer

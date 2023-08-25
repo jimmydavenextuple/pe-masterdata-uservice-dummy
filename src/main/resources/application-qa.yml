@@ -47,7 +47,7 @@ spring:
       topics:
         item_master:
           name: INTERNAL.QA.PROMISE_ITEMS
-          group-id: item-master-qa
+          group-id: item-master-qa-\${random.value}
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer

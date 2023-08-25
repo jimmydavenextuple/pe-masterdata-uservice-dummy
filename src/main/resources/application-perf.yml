@@ -60,7 +60,7 @@ spring:
       topics:
         item_master:
           name: INTERNAL.PERF.PROMISE_ITEMS
-          group-id: item-master-perf
+          group-id: item-master-perf-\${random.value}
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
