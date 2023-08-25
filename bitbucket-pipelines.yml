@@ -351,7 +351,7 @@ pipelines:
               name: Deploy Prod
               trigger: manual
               deployment: prod
-    demo:
+    master2:
       - step: *Clear-Cache
       - step: *build    
       - step:
@@ -359,6 +359,11 @@ pipelines:
           name: Deploy Demo
           trigger: manual
           deployment: demo
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Prod
+          trigger: manual
+          deployment: prod          
     hotfixes/*:
       - step: *Clear-Cache
       - step: *build
