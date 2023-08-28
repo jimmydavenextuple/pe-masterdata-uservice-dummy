@@ -70,33 +70,33 @@ server:
       middleman: yes
       prometheus: yes
       storage: yes
-      java-opts: "-Xms512m -Xmx768m"
+      java-opts: "-Xms1024m -Xmx1024m"
       keyvault: yes
       scale:
         replicas: 1
       resources:
         min:
-          memory: "1024Mi"
-          cpu: 256m
+          memory: 2Gi
+          cpu: 1
         max:
-          memory: "1024Mi"
-          cpu: 512m
+          memory: 2Gi
+          cpu: 1
     qa:
       ingress: yes
       middleman: yes
       prometheus: yes
       storage: yes
-      java-opts: "-Xms512m -Xmx768m"
+      java-opts: "-Xms1024m -Xmx1024m"
       keyvault: yes
       scale:
         replicas: 1
       resources:
         min:
-          memory: 1024Mi
-          cpu: 256m
+          memory: 2Gi
+          cpu: 1
         max:
-          memory: 1024Mi
-          cpu: 512m
+          memory: 2Gi
+          cpu: 1
     sandbox:
       ingress: yes
       middleman: yes
