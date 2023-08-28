@@ -1,58 +1,50 @@
 spring:
   jpa:
     database: POSTGRESQL
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://promise-engine-postgres-production.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/peconfig
-    username: \${POSTGRES_USER}
-    password: \${POSTGRES_PWD}
+    url: \${PE-POSTGRES-URI}
+    username: \${PE-COMMON-POSTGRES-USER}
+    password: \${PE-COMMON-POSTGRES-PASSWORD}
     hikari:
       connectionTimeout: 5000
   replica:
     datasource:
       platform: postgres
-      url: jdbc:postgresql://promise-engine-postgres-production.cluster-ro-cboxgnkbeo0q.us-east-1.rds.amazonaws.com,promise-engine-postgres-production.cluster-cboxgnkbeo0q.us-east-1.rds.amazonaws.com/peconfig?readOnly=true
-      username: \${POSTGRES_USER}
-      password: \${POSTGRES_PWD}
+      url: \${PE-POSTGRES-URI}
+      username: \${PE-COMMON-POSTGRES-USER}
+      password: \${PE-COMMON-POSTGRES-PASSWORD}
       required: true
       hikari:
         readOnly: true
         connectionTimeout: 5000
         maximumPoolSize: 30
   kafka:
-    bootstrap-servers: "b-3.promisemksproduction.wo9ili.c19.kafka.us-east-1.amazonaws.com:9096,b-1.promisemksproduction.wo9ili.c19.kafka.us-east-1.amazonaws.com:9096,b-2.promisemksproduction.wo9ili.c19.kafka.us-east-1.amazonaws.com:9096"
+    bootstrap-servers: \${PE-KAFKA-BROKER-URI}
     properties:
-      security.protocol: SASL_SSL
-      sasl.mechanism: SCRAM-SHA-512
-      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"\${KAFKA_USER}\" password=\"\${KAFKA_PWD}\";"
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      topics:
-        master_data_update_event: INTERNAL.PROD.MASTER_DATA_UPDATE_EVENTS
-      properties:
-        acks: 1
-        retries: 5
-        retry.backoff.ms: 1000
-        spring.json.trusted.packages: "*"
-        interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      properties:
-        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-        spring.json.trusted.packages: "*"
-    consumer-string:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
-      trusted-packages: "*"
-      interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
-      enable-auto-commit: true
-      auto-offset-reset: latest
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: \${PE-COMMON-KAFKA-CONFIG}
+    consumer-retry-count: 1
+    # NOTE: Below commented code is for the Avro consumer.
+    # If we need to consume an avro record, please uncomment Avro properties and comment out the JSON Consumer and Producer.
+    #
+    #    consumer:
+    #      type: avro
+    #      enable-auto-commit: true
+    #      auto-offset-reset: latest
+    #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    #      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
+    #      topics:
+    #        item_master:
+    #          name: INTERNAL.PROD.PE.PROMISE_ITEMS
+    #          group-id: item-master-prod
+    #    producer:
+    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    #      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
     consumer-item:
       type: json
       enable-auto-commit: true
@@ -67,42 +59,73 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         item_master:
-          name: INTERNAL.PROD.PROMISE_ITEMS
+          name: INTERNAL.PROD.PE.PROMISE_ITEMS
           group-id: item-master-prod-\${random.value}
+    producer-item:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.PROD.PE.MASTER_DATA_UPDATE_EVENTS
+      properties:
+        acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      topics:
+        master_data_update_event:
+          name: INTERNAL.PROD.PE.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-prod
+    consumer-string:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+      trusted-packages: "*"
+      interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      enable-auto-commit: true
+      auto-offset-reset: latest
+
 
 logging:
   level:
-    root: WARN
     com.nextuple: INFO
 pe-public-webhook:
   iv-feed:
-    topic: INTERNAL.PROD_ATP
+    topic: INTERNAL.PROD.PE.ATP
   item-feed:
-    topic: INTERNAL.PROD.PROMISE_ITEMS
-auth:
-  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_MW21O5cnf
+    topic: INTERNAL.PROD.PE.PROMISE_ITEMS
+  pe-response:
+    topic: INTERNAL.PROD.PE.CART_EDD
+    group-id: pe-response-consumer-async
 dataupload:
-  base-path: "https://pedataupload.blob.core.windows.net"
+  base-path: "https://pesignetprod.blob.core.windows.net"
   maxsize-in-kilobytes: 10240
   max-rows: 1000
-  bucket-name: "dataupload"
+  bucket-name: "peproddataupload"
   type: BLOB
   signed-url-expiry-minutes: 30
 
 jobs-framework:
   job-completion-consumer:
-    topic-name: internal-prod-job-completion
+    topic-name: INTERNAL.PROD.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-prod
   kafka-publish:
-    topic-name: INTERNAL.PROD.JOBS.TASK
+    topic-name: INTERNAL.PROD.PE.JOB_TASK
   result-publish:
-    topic-name: INTERNAL.PROD.JOBS.RESULT
+    topic-name: INTERNAL.PROD.PE.JOB_RESULT
   result-consumer:
-    topic-name: INTERNAL.PROD.JOBS.RESULT
-    group-id: jobs-result-consumer-async-prod
+    topic-name: INTERNAL.PROD.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async
   record-consumer:
-    topic-name: INTERNAL.PROD.JOBS.TASK
-    group-id: jobs-task-consumer-async-prod
-auth-token:
-  url: https://promise-engine-domain-production.auth.us-east-1.amazoncognito.com
-  username: \${COGNITO_CLIENT_ID}
-  password: \${COGNITO_CLIENT_SECRET}
+    topic-name: INTERNAL.PROD.PE.JOB_TASK
+    group-id: jobs-task-consumer-async
