@@ -38,17 +38,18 @@ server:
       ingress: yes
       middleman: yes
       prometheus: yes
-      keyvault: yes
       storage: yes
+      keyvault: yes
+      java-opts: "-Xms2048m -Xmx2048m"
       scale:
         replicas: 2
       resources:
         min:
-          memory: "1024Mi"
-          cpu: "500m"
+          memory: 3Gi
+          cpu: 3
         max:
-          memory: "1024Mi"
-          cpu: "500m"
+          memory: 3Gi
+          cpu: 3
     test:
       ingress: yes
       middleman: yes
@@ -150,7 +151,7 @@ server:
       keyvault: yes
       java-opts: "-Xms2048m -Xmx2048m"
       scale:
-        replicas: 3
+        replicas: 2
       resources:
         min:
           memory: 3Gi
