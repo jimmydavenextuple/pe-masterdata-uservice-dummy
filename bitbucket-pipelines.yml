@@ -348,11 +348,11 @@ pipelines:
               name: Deploy SQA
               trigger: manual
               deployment: sqa
-          - step:
-              !!merge <<: *deploy
-              name: Deploy Prod
-              trigger: manual
-              deployment: prod
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Prod
+          trigger: manual
+          deployment: prod
     master2:
       - step: *Clear-Cache
       - step: *build
@@ -385,8 +385,8 @@ pipelines:
               name: Deploy SQA
               trigger: manual
               deployment: sqa
-          - step:
-              !!merge <<: *deploy
-              name: Deploy Prod
-              trigger: manual
-              deployment: prod
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Prod
+          trigger: manual
+          deployment: prod
