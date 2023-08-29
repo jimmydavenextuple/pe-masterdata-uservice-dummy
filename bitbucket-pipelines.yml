@@ -38,8 +38,9 @@ server:
       ingress: yes
       middleman: yes
       prometheus: yes
-      storage: yes
       keyvault: yes
+      storage: yes
+      pe: yes
       java-opts: "-Xms2048m -Xmx2048m"
       scale:
         replicas: 2
@@ -174,7 +175,7 @@ server:
           cpu: 1
         max:
           memory: 3Gi
-          cpu: 2         
+          cpu: 2
 definitions:
   caches:
     sonar: ~/.sonar/cache
@@ -256,36 +257,36 @@ definitions:
 pipelines:
   pull-requests:
     '**':
+      - step: *Clear-Cache
       - step: *pr-build
   tags:
     '*-SNAPSHOT':
-      - step: *build
+      - step: *Clear-Cache
+      - step: *build-release
       - step:
           !!merge <<: *deploy
           name: Deploy Dev
           deployment: dev
-      - step:
-          !!merge <<: *deploy
-          name: Deploy QA
-          trigger: manual
-          deployment: qa
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Test
-          trigger: manual
-          deployment: test
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Demo
-          trigger: manual
-          deployment: demo
+      - parallel:
+          - step:
+              !!merge <<: *deploy
+              name: Deploy QA
+              trigger: manual
+              deployment: qa
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy PERF
+          #     trigger: manual
+          #     deployment: perf
     '*-SANDBOX':
+      - step: *Clear-Cache
       - step: *build-release
       - step:
           !!merge <<: *deploy
           name: Deploy Sandbox
           deployment: sandbox
     '*-RELEASE':
+      - step: *Clear-Cache
       - step: *build-release
       - step:
           !!merge <<: *deploy
@@ -294,6 +295,7 @@ pipelines:
           deployment: prod
   branches:
     vapt:
+      - step: *Clear-Cache
       - step: *build
       - step:
           !!merge <<: *deploy
@@ -309,39 +311,82 @@ pipelines:
       - parallel:              
           - step:
               !!merge <<: *deploy
+              name: Deploy QA
+              trigger: manual
+              deployment: qa
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy PERF
+          #     trigger: manual
+          #     deployment: perf
+    master:
+      - step: *Clear-Cache
+      - step: *build
+      - parallel:
+          - step:
+              !!merge <<: *deploy
+              name: Deploy demo
+              trigger: manual
+              deployment: demo
+          - step:
+              !!merge <<: *deploy
+              name: Deploy Sandbox
+              trigger: manual
+              deployment: sandbox
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy Pre-prod
+          #     trigger: manual
+          #     deployment: preprod
+          - step:
+              !!merge <<: *deploy
               name: Deploy SDEV
               trigger: manual
               deployment: sdev
           - step:
               !!merge <<: *deploy
-              name: Deploy SPerf
-              trigger: manual
-              deployment: sperf                    
-          - step:
-              !!merge <<: *deploy
-              name: Deploy QA
-              trigger: manual
-              deployment: qa
-          - step:
-              !!merge <<: *deploy
               name: Deploy SQA
               trigger: manual
               deployment: sqa
-      - parallel:
           - step:
               !!merge <<: *deploy
-              name: Deploy Test
+              name: Deploy Prod
               trigger: manual
-              deployment: test
-          - step:
-              !!merge <<: *deploy
-              name: Deploy Demo
-              trigger: manual
-              deployment: demo
-    master:
-      - step: *build-release
+              deployment: prod
+    master2:
+      - step: *Clear-Cache
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Demo
+          trigger: manual
+          deployment: demo
       - step:
           !!merge <<: *deploy
           name: Deploy Prod
           trigger: manual
           deployment: prod
+    hotfixes/*:
+      - step: *Clear-Cache
+      - step: *build
+      - parallel:
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy Pre-prod
+          #     trigger: manual
+          #     deployment: preprod
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SDEV
+              trigger: manual
+              deployment: sdev
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SQA
+              trigger: manual
+              deployment: sqa
+          - step:
+              !!merge <<: *deploy
+              name: Deploy Prod
+              trigger: manual
+              deployment: prod
