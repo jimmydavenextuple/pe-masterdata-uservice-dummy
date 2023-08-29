@@ -343,11 +343,11 @@ pipelines:
               name: Deploy SDEV
               trigger: manual
               deployment: sdev
-          - step:
-              !!merge <<: *deploy
-              name: Deploy Sandbox
-              trigger: manual
-              deployment: sandbox              
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Sandbox
+          trigger: manual
+          deployment: sandbox              
       - step:
           !!merge <<: *deploy
           name: Deploy Prod
