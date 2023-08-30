@@ -5,7 +5,6 @@ import java.util.regex.Matcher
 
 buildscript {
     repositories {
-//        mavenLocal()
         mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -20,7 +19,7 @@ buildscript {
 
 plugins {
     id 'java-library'
-    id "org.springframework.boot" version "2.5.10"
+    id "org.springframework.boot" version "2.6.7"
     id "io.spring.dependency-management" version "1.0.11.RELEASE"
     id "org.sonarqube" version "3.0"
     id "com.diffplug.spotless" version "5.7.0"
@@ -31,11 +30,10 @@ plugins {
 ext {
     build_target = project.hasProperty("build_target") ? project.build_target : "SNAPSHOT"
     mapstructVersion = "1.3.1.Final"
-    commonsCsvVersion = "1.9.0"
+    commonsCsvVersion = "1.10.0"
 }
 
 repositories {
-//    mavenLocal()
     mavenCentral()
 }
 
@@ -77,7 +75,6 @@ configurations {
 
 repositories {
     mavenCentral()
-//    mavenLocal()
     maven {
         url = 'https://repo.maven.apache.org/m2'
     }
@@ -88,7 +85,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:2.5.10")
+        mavenBom("org.springframework.boot:spring-boot-dependencies:2.6.7")
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
     }
 }
@@ -111,8 +108,8 @@ dependencies {
     implementation libs.logstash
     api "org.springframework.boot:spring-boot-starter-web"
     api "org.springframework.boot:spring-boot-starter-actuator"
-    api "org.springframework.cloud:spring-cloud-starter-openfeign"
-    api 'io.github.openfeign:feign-okhttp'
+    api "org.springframework.cloud:spring-cloud-starter-openfeign:4.0.4"
+    api 'io.github.openfeign:feign-okhttp:12.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     compileOnly 'org.projectlombok:lombok'
@@ -120,11 +117,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-    implementation 'org.springframework.kafka:spring-kafka'
     implementation "org.apache.commons:commons-csv:${commonsCsvVersion}"
-    api "io.micrometer:micrometer-registry-prometheus"
-    implementation 'io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:2.4.1'
-    api "com.azure.spring:azure-spring-boot-starter-keyvault-secrets:3.10.0"
+    api "io.micrometer:micrometer-registry-prometheus:1.10.7"
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:2.4.4'
+    api 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:4.0.0'
 
 
     implementation("com.nextuple.pe:job-framework-common-util:1.0.1-${build_target}")
@@ -147,7 +143,7 @@ dependencies {
     implementation("com.nextuple.pe:common-postgres:1.0.0-${build_target}")
     implementation "org.apache.avro:avro:1.8.2"
 
-    implementation "org.springframework.kafka:spring-kafka:2.8.7"
+    implementation "org.springframework.kafka:spring-kafka:2.9.10"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.hamcrest:hamcrest-junit:${hamcrestJunitVersion}"
@@ -157,8 +153,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 
-    testImplementation 'org.mockito:mockito-inline:2.13.0'
-    testImplementation 'org.powermock:powermock-api-mockito2:1.7.0'
+    testImplementation 'org.mockito:mockito-inline:3.5.0'
+    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
 
     // Others
     testImplementation "com.github.javafaker:javafaker:0.15"
