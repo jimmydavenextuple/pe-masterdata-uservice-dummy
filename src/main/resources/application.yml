@@ -140,3 +140,10 @@ tenant:
       NEEDNOW: "BOPA,STANDARD,EXPRESS"
       KOHLS: "SDND,STANDARD,EXPRESS,NEXTDAY,PRIME"
       DEFAULT: "SDND,STANDARD,EXPRESS,NEXTDAY"
+
+custom-attributes:
+  tenant-details:
+    NEXTUPLE_GR:
+      bannerId: banner1
+      isSizingRequired: false
+
