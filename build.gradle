@@ -148,16 +148,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.hamcrest:hamcrest-junit:${hamcrestJunitVersion}"
     testImplementation "com.jayway.jsonpath:json-path-assert:${jsonpathVersion}"
-    testImplementation "com.github.javafaker:javafaker:1.0.2"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.5.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 
     testImplementation 'org.mockito:mockito-inline:3.5.0'
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
-
-    // Others
-    testImplementation "com.github.javafaker:javafaker:0.15"
 
     //Caffeine
     implementation "org.springframework.boot:spring-boot-starter-cache"

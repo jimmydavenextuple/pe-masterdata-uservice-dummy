@@ -15,7 +15,6 @@ ext.libTests = [
 //        'mongo': 'de.flapdoodle.embed:de.flapdoodle.embed.mongo',
         'hamcrest': 'org.hamcrest:hamcrest-junit:${hamcrestJunitVersion}',
         'jayway': 'com.jayway.jsonpath:json-path-assert:${jsonpathVersion}',
-        'javakafer' : 'com.github.javafaker:javafaker:1.0.2',
         'jupiter' : 'org.junit.jupiter:junit-jupiter:5.6.2',
         'jupiterApi' : 'org.junit.jupiter:junit-jupiter-api:5.3.1',
         'jupiterEngine': 'org.junit.jupiter:junit-jupiter-engine:5.3.1',
