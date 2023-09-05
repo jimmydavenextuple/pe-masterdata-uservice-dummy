@@ -358,14 +358,9 @@ pipelines:
       - step: *build
       - step:
           !!merge <<: *deploy
-          name: Deploy Demo
+          name: Deploy Test
           trigger: manual
-          deployment: demo
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Prod
-          trigger: manual
-          deployment: prod
+          deployment: test 
     hotfixes/*:
       - step: *Clear-Cache
       - step: *build
