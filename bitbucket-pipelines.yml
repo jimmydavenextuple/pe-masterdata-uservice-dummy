@@ -328,11 +328,6 @@ pipelines:
               name: Deploy demo
               trigger: manual
               deployment: demo
-          # - step:
-          #     !!merge <<: *deploy
-          #     name: Deploy Pre-prod
-          #     trigger: manual
-          #     deployment: preprod
           - step:
               !!merge <<: *deploy
               name: Deploy SQA
@@ -347,7 +342,12 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy Sandbox
           trigger: manual
-          deployment: sandbox              
+          deployment: sandbox
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Test
+          trigger: manual
+          deployment: test          
       - step:
           !!merge <<: *deploy
           name: Deploy Prod
@@ -370,11 +370,6 @@ pipelines:
       - step: *Clear-Cache
       - step: *build
       - parallel:
-          # - step:
-          #     !!merge <<: *deploy
-          #     name: Deploy Pre-prod
-          #     trigger: manual
-          #     deployment: preprod
           - step:
               !!merge <<: *deploy
               name: Deploy SDEV
@@ -385,6 +380,11 @@ pipelines:
               name: Deploy SQA
               trigger: manual
               deployment: sqa
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Test
+          trigger: manual
+          deployment: test              
       - step:
           !!merge <<: *deploy
           name: Deploy Prod
