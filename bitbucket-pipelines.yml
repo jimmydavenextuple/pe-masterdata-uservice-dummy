@@ -17,6 +17,7 @@ server:
       - promising-engine/pe-node-carrier
       - promising-engine/pe-calendar
       - promising-engine/pe-carrier
+      - promising-engine/pe-configuration
     health-check-endpoint: "/actuator/health"
   environments:
     vapt:

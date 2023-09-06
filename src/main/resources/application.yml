@@ -12,6 +12,7 @@ spring:
       postal-code-timezone: "http://pe-masterdata-uservice:8080/"
       weightage-configuration: "http://pe-masterdata-uservice:8080/"
       userexit: "http://pe-masterdata-uservice:8080/"
+      configuration: "http://pe-masterdata-uservice:8080/"
     name: "pe-masterdata-uservice"
     version: 2.6.0
     title: "Master Data Service"
