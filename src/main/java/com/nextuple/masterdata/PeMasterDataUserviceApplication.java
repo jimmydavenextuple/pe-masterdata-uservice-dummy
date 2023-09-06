@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -24,6 +25,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableJpaRepositories(basePackages = {"com.nextuple"})
 @EnableFeignClients(basePackages = {"com.nextuple"})
 @EnableConfigurationProperties({WebhookConfiguration.class})
+@EnableJpaAuditing
 @EnableScheduling
 @Slf4j
 public class PeMasterDataUserviceApplication {

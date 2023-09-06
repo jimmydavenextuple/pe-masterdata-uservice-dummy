@@ -123,7 +123,7 @@ dependencies {
     api 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:4.0.0'
 
 
-    implementation("com.nextuple.pe:job-framework-common-util:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:job-framework-common-util:1.1.0-${build_target}")
     implementation("com.nextuple.pe:data-upload-services:1.1.0-${build_target}")
     implementation("com.nextuple.pe:promise-sourcing-rule-services:1.1.0-${build_target}")
     implementation("com.nextuple.pe:weightage-configuration-services:1.0.1-${build_target}")
@@ -140,8 +140,8 @@ dependencies {
     implementation("com.nextuple.pe:core-near-cache:1.0.0-${build_target}")
 
     runtimeOnly 'org.postgresql:postgresql'
-    implementation("com.nextuple.pe:common-util:1.0.0-${build_target}")
-    implementation("com.nextuple.pe:common-postgres:1.0.0-${build_target}")
+    implementation("com.nextuple.pe:common-util:1.1.0-${build_target}")
+    implementation("com.nextuple.pe:common-postgres:1.1.0-${build_target}")
     implementation "org.apache.avro:avro:1.8.2"
 
     implementation "org.springframework.kafka:spring-kafka:2.9.10"
