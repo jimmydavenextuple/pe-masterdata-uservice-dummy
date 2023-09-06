@@ -282,10 +282,16 @@ pipelines:
     '*-SANDBOX':
       - step: *Clear-Cache
       - step: *build-release
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Sandbox
-          deployment: sandbox
+      - parallel:
+          - step:
+              !!merge <<: *deploy
+              name: Deploy Sandbox
+              deployment: sandbox
+          - step:
+              !!merge <<: *deploy
+              name: Deploy demo
+              trigger: manual
+              deployment: demo          
     '*-RELEASE':
       - step: *Clear-Cache
       - step: *build-release
