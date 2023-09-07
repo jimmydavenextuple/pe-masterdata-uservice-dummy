@@ -89,11 +89,6 @@ feign:
 auth:
   filterEnabled: false
 
-node:
-  type: "STORE,FC,MFC,DROPSHIP VENDOR,DC"
-carrier:
-  service:
-    options: "SDND,STANDARD,EXPRESS,NEXTDAY,BOPA,PRIME"
 promise:
   service:
     options: "SDND,STANDARD,EXPRESS,NEXTDAY,BOPA,PRIME"
@@ -135,13 +130,6 @@ csv-utility-api:
     max-no-of-carrier-services-for-download: 100
 #item:
 #  listenerContainerFactory: ItemDeserializerConsumer
-tenant:
-  service:
-    options:
-      NEXTUPLE_GR: "SDND,STANDARD,EXPRESS,NEXTDAY"
-      NEEDNOW: "BOPA,STANDARD,EXPRESS"
-      KOHLS: "SDND,STANDARD,EXPRESS,NEXTDAY,PRIME"
-      DEFAULT: "SDND,STANDARD,EXPRESS,NEXTDAY"
 
 custom-attributes:
   tenant-details:

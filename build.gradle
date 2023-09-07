@@ -133,7 +133,7 @@ dependencies {
     implementation("com.nextuple.pe:item-services:1.0.1-${build_target}")
     implementation("com.nextuple.pe:calendar-services:1.0.1-${build_target}")
     implementation("com.nextuple.pe:node-services:1.1.0-${build_target}")
-    implementation("com.nextuple.pe:carrier-services:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:carrier-services:1.1.0-${build_target}")
     implementation("com.nextuple.pe:pe-public-webhook:1.0.1-${build_target}")
     implementation("com.nextuple.pe:configuration-services:1.0.0-${build_target}")
 
