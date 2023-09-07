@@ -1,0 +1,4 @@
+action,orgId,regionId,customRegionName,customRegionDescription,geozones
+CREATE,NEXTUPLE,ID1011,Bay Area,Bay Area Region,901:902
+UPDATE,NEXTUPLE,ID1011,Bay Area,Bay Area Region,903:904
+DELETE,NEXTUPLE,ID2011,Non-Bay Area,Non Bay Area Region,906
