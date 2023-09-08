@@ -343,7 +343,16 @@ pipelines:
               !!merge <<: *deploy
               name: Deploy QA
               trigger: manual
-              deployment: qa
+              deployment: qa                           
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy PERF
+          #     trigger: manual
+          #     deployment: perf
+    master:
+      - step: *Clear-Cache
+      - step: *build
+      - parallel:      
           - step:
               !!merge <<: *deploy
               name: Deploy SQA1
@@ -353,15 +362,7 @@ pipelines:
               !!merge <<: *deploy
               name: Deploy SQA2
               trigger: manual
-              deployment: sqa2                            
-          # - step:
-          #     !!merge <<: *deploy
-          #     name: Deploy PERF
-          #     trigger: manual
-          #     deployment: perf
-    master:
-      - step: *Clear-Cache
-      - step: *build
+              deployment: sqa2       
       - parallel:
           - step:
               !!merge <<: *deploy
