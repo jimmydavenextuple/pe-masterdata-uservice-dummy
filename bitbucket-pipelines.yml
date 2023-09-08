@@ -143,7 +143,37 @@ server:
           cpu: 256m
         max:
           memory: 1024Mi
-          cpu: 256m 
+          cpu: 256m
+    sqa1:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 1024Mi
+          cpu: 256m
+        max:
+          memory: 1024Mi
+          cpu: 256m
+    sqa1:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 1024Mi
+          cpu: 256m
+        max:
+          memory: 1024Mi
+          cpu: 256m                     
     sperf:
       ingress: yes
       middleman: yes
@@ -314,6 +344,16 @@ pipelines:
               name: Deploy QA
               trigger: manual
               deployment: qa
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SQA1
+              trigger: manual
+              deployment: sqa1
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SQA2
+              trigger: manual
+              deployment: sqa2                            
           # - step:
           #     !!merge <<: *deploy
           #     name: Deploy PERF
