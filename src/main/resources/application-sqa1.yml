@@ -6,7 +6,7 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_sqa
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_sqa1
     username: \${COMMON-PE-POSTGRES-USER}
     password: \${COMMON-PE-POSTGRES-PASSWORD}
   kafka:
@@ -46,8 +46,8 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         item_master:
-          name: INTERNAL.SQA.PROMISE_ITEMS
-          group-id: item-master-sqa-\${random.value}
+          name: INTERNAL.SQA1.PROMISE_ITEMS
+          group-id: item-master-sqa1-\${random.value}
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
@@ -55,7 +55,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       topics:
-        master_data_update_event: INTERNAL.SQA.MASTER_DATA_UPDATE_EVENTS
+        master_data_update_event: INTERNAL.SQA1.MASTER_DATA_UPDATE_EVENTS
       properties:
         acks: 1
         retries: 5
@@ -71,8 +71,8 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         master_data_update_event:
-          name: INTERNAL.SQA.MASTER_DATA_UPDATE_EVENTS
-          group-id: master-data-update-sqa
+          name: INTERNAL.SQA1.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-sqa1
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -87,12 +87,12 @@ logging:
     com.nextuple: INFO
 pe-public-webhook:
   iv-feed:
-    topic: INTERNAL.SQA_ATP
+    topic: INTERNAL.SQA1_ATP
   item-feed:
-    topic: INTERNAL.SQA.PROMISE_ITEMS
+    topic: INTERNAL.SQA1.PROMISE_ITEMS
   pe-response:
-    topic: INTERNAL.SQA.CART_EDD
-    group-id: pe-response-consumer-async-sqa
+    topic: INTERNAL.SQA1.CART_EDD
+    group-id: pe-response-consumer-async-sqa1
   webhook:
     - tenantId: NEXTUPLE_GR
       moduleName: PROMISING
@@ -118,21 +118,21 @@ dataupload:
   base-path: "https://pedataupload.blob.core.windows.net"
   maxsize-in-kilobytes: 10240
   max-rows: 1000
-  bucket-name: "sqadataupload"
+  bucket-name: "sqa1dataupload"
   type: BLOB
   signed-url-expiry-minutes: 30
 
 jobs-framework:
   job-completion-consumer:
-    topic-name: INTERNAL.SQA.PE.JOB_COMPLETION
-    group-id: jobs-completion-consumer-async-sqa
+    topic-name: INTERNAL.SQA1.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-sqa1
   kafka-publish:
-    topic-name: INTERNAL.SQA.PE.JOB_TASK
+    topic-name: INTERNAL.SQA1.PE.JOB_TASK
   result-publish:
-    topic-name: INTERNAL.SQA.PE.JOB_RESULT
+    topic-name: INTERNAL.SQA1.PE.JOB_RESULT
   result-consumer:
-    topic-name: INTERNAL.SQA.PE.JOB_RESULT
-    group-id: jobs-result-consumer-async-sqa
+    topic-name: INTERNAL.SQA1.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async-sqa1
   record-consumer:
-    topic-name: INTERNAL.SQA.PE.JOB_TASK
-    group-id: jobs-task-consumer-async-sqa
+    topic-name: INTERNAL.SQA1.PE.JOB_TASK
+    group-id: jobs-task-consumer-async-sqa1
