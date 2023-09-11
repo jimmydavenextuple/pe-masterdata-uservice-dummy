@@ -159,7 +159,7 @@ server:
         max:
           memory: 1024Mi
           cpu: 256m
-    sqa1:
+    sqa2:
       ingress: yes
       middleman: yes
       prometheus: yes
