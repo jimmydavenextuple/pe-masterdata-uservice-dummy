@@ -1,0 +1,4 @@
+action,nodeId,orgId,street,city,province,postalCode,country,latitude,longitude,timezone,shipToHome,bopisEligible,nodeType,isActive
+CREATE,1957,NEXTUPLE,Calgary Downtown,Calgary,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,FALSE,MFC,TRUE
+UPDATE,1957,NEXTUPLE,Calgary Downtown,Calgary,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,FALSE,MFC,TRUE
+DELETE,1957,NEXTUPLE,Calgary Downtown,Calgary,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,FALSE,MFC,TRUE

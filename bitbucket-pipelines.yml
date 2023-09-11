@@ -1,0 +1,392 @@
+options:
+  docker: true
+image: openjdk:11
+clone:
+  depth: full
+server:
+  service:
+    name: "pe-masterdata-uservice"
+    path:
+      - promising-engine/pe-node
+      - promising-engine/pe-item
+      - promising-engine/pe-data-upload
+      - promising-engine/pe-promise-sourcing-rule
+      - promising-engine/pe-weightage-configuration
+      - promising-engine/pe-postal-code-timezone
+      - promising-engine/pe-transit
+      - promising-engine/pe-node-carrier
+      - promising-engine/pe-calendar
+      - promising-engine/pe-carrier
+    health-check-endpoint: "/actuator/health"
+  environments:
+    vapt:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      storage: yes
+      scale:
+        replicas: 2
+      resources:
+        min:
+          memory: "1024Mi"
+          cpu: 256m
+        max:
+          memory: "1024Mi"
+          cpu: 256m
+    prod:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      storage: yes
+      pe: yes
+      java-opts: "-Xms2048m -Xmx2048m"
+      scale:
+        replicas: 2
+      resources:
+        min:
+          memory: 3Gi
+          cpu: 3
+        max:
+          memory: 3Gi
+          cpu: 3
+    test:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      storage: yes
+      scale:
+        replicas: 2
+      resources:
+        min:
+          memory: "1024Mi"
+          cpu: 256m
+        max:
+          memory: "1024Mi"
+          cpu: 256m
+    dev:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      java-opts: "-Xms1024m -Xmx1024m"
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 2Gi
+          cpu: 1
+        max:
+          memory: 2Gi
+          cpu: 1
+    qa:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      java-opts: "-Xms1024m -Xmx1024m"
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 2Gi
+          cpu: 1
+        max:
+          memory: 2Gi
+          cpu: 1
+    sandbox:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      storage: yes
+      java-opts: "-Xms2048m -Xmx2048m"
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 3Gi
+          cpu: 1
+        max:
+          memory: 3Gi
+          cpu: 2
+    sdev:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: "1024Mi"
+          cpu: 256m
+        max:
+          memory: "1024Mi"
+          cpu: 256m
+    sqa:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 1024Mi
+          cpu: 256m
+        max:
+          memory: 1024Mi
+          cpu: 256m 
+    sperf:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      keyvault: yes
+      java-opts: "-Xms2048m -Xmx2048m"
+      scale:
+        replicas: 2
+      resources:
+        min:
+          memory: 3Gi
+          cpu: 3
+        max:
+          memory: 3Gi
+          cpu: 3
+    demo:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      storage: yes
+      java-opts: "-Xms2048m -Xmx2048m"
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 3Gi
+          cpu: 1
+        max:
+          memory: 3Gi
+          cpu: 2
+definitions:
+  caches:
+    sonar: ~/.sonar/cache
+    cve: ~/.cve
+  steps:
+    - step: &build
+        name: Build Snapshot
+        caches:
+          - gradle
+          - sonar
+        script:
+          - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
+          - cp ./infra-automation/suppressions.xml ./suppressions.xml
+          - bash ./gradlew -Pbuild_target=SNAPSHOT clean build artifactoryPublish
+          - export SPACE=" "
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
+        artifacts:
+          - build/**
+          - service-version.txt
+    - step: &build-qa
+        name: Build QA
+        caches:
+          - gradle
+          - sonar
+        script:
+          - bash ./gradlew -Pbuild_target=QA clean build --refresh-dependencies artifactoryPublish
+          - export SPACE=" "
+          - bash ./gradlew -Pbuild_target=QA -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
+        artifacts:
+          - build/**
+          - service-version.txt
+    - step: &build-stage
+        name: Build Stage
+        caches:
+          - gradle
+        script:
+          - bash ./gradlew -Pbuild_target=STAGED clean build artifactoryPublish
+          - export SPACE=" "
+          - bash ./gradlew -Pbuild_target=STAGED -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
+        artifacts:
+          - build/**
+          - service-version.txt
+    - step: &build-release
+        name: Build Release
+        script:
+          - echo "Pre Deploy Step"
+    - step: &deploy
+        caches:
+          - gradle
+        services:
+          - docker
+        image: mcr.microsoft.com/azure-cli
+        script:
+          - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
+          - chmod +x ./deployment-scripts/deploy-k8s-service-v7.sh
+          - ./deployment-scripts/deploy-k8s-service-v7.sh
+        after-script:
+          - chmod +x ./deployment-scripts/after-deploy-k8s-service-v3.sh
+          - ./deployment-scripts/after-deploy-k8s-service-v3.sh
+    - step: &pr-build
+        name: PR Build
+        caches:
+          - gradle
+          - sonar
+          - cve
+        script:
+          - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
+          - cp ./infra-automation/suppressions.xml ./suppressions.xml
+          - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotbugsMain
+          - bash ./gradlew dependencyCheckAggregate --info
+          - bash ./gradlew sonarqube showSonarQubeLink --info
+    - step: &Clear-Cache
+        name: Clear Pipeline Cache
+        script:
+          - pipe: atlassian/bitbucket-clear-cache:3.3.0
+            variables:
+              BITBUCKET_ACCESS_TOKEN: $BITBUCKET_ACCESS_TOKEN
+              CACHES: ["gradle"]
+pipelines:
+  pull-requests:
+    '**':
+      - step: *Clear-Cache
+      - step: *pr-build
+  tags:
+    '*-SNAPSHOT':
+      - step: *Clear-Cache
+      - step: *build-release
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Dev
+          deployment: dev
+      - parallel:
+          - step:
+              !!merge <<: *deploy
+              name: Deploy QA
+              trigger: manual
+              deployment: qa
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy PERF
+          #     trigger: manual
+          #     deployment: perf
+    '*-SANDBOX':
+      - step: *Clear-Cache
+      - step: *build-release
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Sandbox
+          deployment: sandbox
+    '*-RELEASE':
+      - step: *Clear-Cache
+      - step: *build-release
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Prod
+          trigger: manual
+          deployment: prod
+  branches:
+    vapt:
+      - step: *Clear-Cache
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy vapt
+          deployment: vapt
+    development:
+      - step: *Clear-Cache
+      - step: *build     
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Dev
+          deployment: dev
+      - parallel:              
+          - step:
+              !!merge <<: *deploy
+              name: Deploy QA
+              trigger: manual
+              deployment: qa
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy PERF
+          #     trigger: manual
+          #     deployment: perf
+    master:
+      - step: *Clear-Cache
+      - step: *build
+      - parallel:
+          - step:
+              !!merge <<: *deploy
+              name: Deploy demo
+              trigger: manual
+              deployment: demo
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy Pre-prod
+          #     trigger: manual
+          #     deployment: preprod
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SQA
+              trigger: manual
+              deployment: sqa          
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SDEV
+              trigger: manual
+              deployment: sdev
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Sandbox
+          trigger: manual
+          deployment: sandbox              
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Prod
+          trigger: manual
+          deployment: prod
+    master2:
+      - step: *Clear-Cache
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Demo
+          trigger: manual
+          deployment: demo
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Prod
+          trigger: manual
+          deployment: prod
+    hotfixes/*:
+      - step: *Clear-Cache
+      - step: *build
+      - parallel:
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy Pre-prod
+          #     trigger: manual
+          #     deployment: preprod
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SDEV
+              trigger: manual
+              deployment: sdev
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SQA
+              trigger: manual
+              deployment: sqa
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Prod
+          trigger: manual
+          deployment: prod

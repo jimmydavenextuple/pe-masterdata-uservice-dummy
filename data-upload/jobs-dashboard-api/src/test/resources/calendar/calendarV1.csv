@@ -1,2 +1,0 @@
-action,calendarId,orgId,description,isMondayWorking,isTuesdayWorking,isWednesdayWorking,isThursdayWorking,isFridayWorking,isSaturdayWorking,isSundayWorking,exceptionDays
-CREATE,my-calendar,BAY,GoFor Sameday Calendar,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,"[{""date"":""2022-01-01"",""reason"":""NewYear'sDay""},{""date"":""2022-02-21"",""reason"":""FamilyDay""},{""date"":""2022-02-27"",""reason"":""Independence Day""}]"

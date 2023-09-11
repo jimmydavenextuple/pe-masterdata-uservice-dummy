@@ -1,0 +1,92 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    platform: postgres
+    url: \${POSTGRES-URI}
+    username: \${COMMON-POSTGRES-USER}
+    password: \${COMMON-POSTGRES-PASSWORD}
+  kafka:
+    bootstrap-servers: \${KAFKA-BROKER-URI}
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
+    consumer-item:
+      type: json
+      enable-auto-commit: true
+      auto-offset-reset: latest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring-deserializer-key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+        spring-deserializer-value-delegate-class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring-json-trusted-packages: "*"
+        spring-json-type-mapping: com.nextuple.pe.webhook.domain.dtos.Item:com.nextuple.item.domain.events.ItemMasterEvent
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      topics:
+        item_master:
+          name: INTERNAL.SIMMASTER.PROMISE_ITEMS
+          group-id: item-master-simmaster-\${random.value}
+    producer-item:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.SIMMASTER.MASTER_DATA_UPDATE_EVENTS
+      properties:
+        acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+    consumer-string:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+      trusted-packages: "*"
+      interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      enable-auto-commit: true
+      auto-offset-reset: latest
+
+logging:
+  level:
+    com.nextuple: INFO
+pe-public-webhook:
+  iv-feed:
+    topic: INTERNAL.SIMMASTER_ATP
+  item-feed:
+    topic: INTERNAL.SIMMASTER.PROMISE_ITEMS
+dataupload:
+  base-path: "https://sourcingsimulation.blob.core.windows.net"
+  maxsize-in-kilobytes: 10240
+  max-rows: 1000
+  bucket-name: "masterdataupload"
+  type: BLOB
+  signed-url-expiry-minutes: 30
+
+jobs-framework:
+  job-completion-consumer:
+    topic-name: INTERNAL.SIMMASTER.PE.JOB_COMPLETION
+  kafka-publish:
+    topic-name: INTERNAL.SIMMASTER.PE.JOB_TASK
+  result-publish:
+    topic-name: INTERNAL.SIMMASTER.PE.JOB_RESULT
+  result-consumer:
+    topic-name: INTERNAL.SIMMASTER.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async
+  record-consumer:
+    topic-name: INTERNAL.SIMMASTER.PE.JOB_TASK
+    group-id: jobs-task-consumer-async

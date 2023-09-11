@@ -1,0 +1,5 @@
+action,orgId,serviceOption,destinationGeozone,sourceNodes,priority,allocationRuleId
+CREATE,NEXTUPLE,SDND,dgz0,"[node01,node02]",1,DEFAULT
+CREATE,NEXTUPLE,SDND,dgz1,"[node01,node02]",1,DEFAULT
+UPDATE,NEXTUPLE,SDND,dgz0,"[node03,node04]",1,DEFAULT
+DELETE,NEXTUPLE,SDND,dgz1,"[node01,node02]",1,DEFAULT

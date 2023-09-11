@@ -1,3 +1,0 @@
-action,calendarId,orgId,carrierServiceId,shippingStage,description,effectiveDate,invalidColumn
-CREATE,SDND_2022,BAY,ALL_SDND,ALL,Yearly Calendar,2022-02-03,DESC
-CREATE,SDND_2022,BAY,ALL_SDND,ALL,Yearly Calendar,DESC

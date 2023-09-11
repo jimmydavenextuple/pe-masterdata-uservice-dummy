@@ -1,4 +1,0 @@
-action,orgId,carrierId,carrierName,carrierServiceId,serviceName,serviceOptions
-DELETE,BAY,A_SDND,ALL,ALL-SDND,All SDND Carrier Services,SDND
-CREATE,BAY,GoFor,GoFor,GoFor-SDND,GoFor,SDND
-UPDATE,BAY,GoFor,GoFor,GoFor-SDND,GoFor,SDND

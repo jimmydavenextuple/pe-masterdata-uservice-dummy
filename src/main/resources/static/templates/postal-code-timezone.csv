@@ -1,0 +1,4 @@
+action,orgId,postalCode,postalCodePrefix,country,state,city,latitude,longitude,timeZone
+CREATE,NEXTUPLE,A0A123,A0A,CA,NL,Witless NEXTUPLE,47.545965,-53.138234,America/St_Johns
+UPDATE,NEXTUPLE,A0A123,A0A,CA,NL,Witless NEXTUPLE,47.545965,-53.138234,America/St_Johns
+DELETE,NEXTUPLE,A0A123,A0A,CA,NL,Witless NEXTUPLE,47.545965,-53.138234,America/St_Johns

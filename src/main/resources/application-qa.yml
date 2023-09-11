@@ -1,0 +1,138 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_qa
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
+  kafka:
+    bootstrap-servers: "kbrk-nonprod.nextuple.net:9092"
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
+    consumer-retry-count: 1
+    # NOTE: Below commented code is for the Avro consumer.
+    # If we need to consume an avro record, please uncomment Avro properties and comment out the JSON Consumer and Producer.
+    #
+    #    consumer:
+    #      type: avro
+    #      enable-auto-commit: true
+    #      auto-offset-reset: latest
+    #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    #      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
+    #      topics:
+    #        item_master:
+    #          name: INTERNAL.QA.PROMISE_ITEMS
+    #          group-id: item-master-qa
+    #    producer:
+    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    #      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
+    consumer-item:
+      type: json
+      enable-auto-commit: true
+      auto-offset-reset: latest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring-deserializer-key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+        spring-deserializer-value-delegate-class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring-json-trusted-packages: "*"
+        spring-json-type-mapping: com.nextuple.pe.webhook.domain.dtos.Item:com.nextuple.item.domain.events.ItemMasterEvent
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      topics:
+        item_master:
+          name: INTERNAL.QA.PROMISE_ITEMS
+          group-id: item-master-qa-\${random.value}
+    producer-item:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.QA.MASTER_DATA_UPDATE_EVENTS
+      properties:
+        acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      topics:
+        master_data_update_event:
+          name: INTERNAL.QA.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-qa
+    consumer-string:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+      trusted-packages: "*"
+      interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      enable-auto-commit: true
+      auto-offset-reset: latest
+
+logging:
+  level:
+    com.nextuple: INFO
+pe-public-webhook:
+  iv-feed:
+    topic: INTERNAL.QA_ATP
+  item-feed:
+    topic: INTERNAL.QA.PROMISE_ITEMS
+  pe-response:
+    topic: INTERNAL.QA.CART_EDD
+    group-id: pe-response-consumer-async-qa
+  webhook:
+    - tenantId: NEXTUPLE_GR
+      moduleName: PROMISING
+      webhookName: PROMISING_INTERMEDIATE_EVENT
+      webhookDetail:
+        endpoint: "https://225aed84-a428-4edc-a997-29ec1daee504.mock.pstmn.io"
+        method: POST
+        headers:
+          contentType: "application/json"
+          x-api-key: "PMAK-649a8bdac1cdd700425b7f2d-382143ed5331700e39637f015dfd580b09"
+          #          Dummy API Key
+    - tenantId: ABCINC
+      moduleName: PROMISING
+      webhookName: PROMISING_INTERMEDIATE_EVENT
+      webhookDetail:
+        endpoint: "https://225aed84-a428-4edc-a997-29ec1daee504.mock.pstmn.io"
+        method: POST
+        headers:
+          contentType: "application/json"
+          x-api-key: "PMAK-649a8bdac1cdd700425b7f2d-382143ed5331700e39637f015dfd580b09"
+          #          Dummy API Key
+dataupload:
+  base-path: "https://pedataupload.blob.core.windows.net"
+  maxsize-in-kilobytes: 10240
+  max-rows: 1000
+  bucket-name: "qadataupload"
+  type: BLOB
+  signed-url-expiry-minutes: 30
+
+jobs-framework:
+  job-completion-consumer:
+    topic-name: INTERNAL.QA.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-qa
+  kafka-publish:
+    topic-name: INTERNAL.QA.PE.JOB_TASK
+  result-publish:
+    topic-name: INTERNAL.QA.PE.JOB_RESULT
+  result-consumer:
+    topic-name: INTERNAL.QA.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async-qa
+  record-consumer:
+    topic-name: INTERNAL.QA.PE.JOB_TASK
+    group-id: jobs-task-consumer-async-qa

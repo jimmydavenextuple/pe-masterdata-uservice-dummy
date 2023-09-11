@@ -1,22 +1,18 @@
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.compile.JavaCompile
+
 import java.util.regex.Matcher
 
 buildscript {
     repositories {
+//        mavenLocal()
         mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
-        maven {
-            url "${artifactory_contextUrl}"
-            credentials {
-                username "aws"
-                password System.env.CODEARTIFACT_AUTH_TOKEN
-            }
-        }
     }
     dependencies {
-//        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.5.10"
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.15.2"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.32.0"
         classpath "org.owasp:dependency-check-gradle:6.1.6"
         classpath "org.sonatype.gradle.plugins:scan-gradle-plugin:1.2.4"
     }
@@ -39,236 +35,233 @@ ext {
 }
 
 repositories {
+//    mavenLocal()
     mavenCentral()
 }
 
+test {
+    useJUnitPlatform()
+}
+
+apply from: "$rootProject.projectDir/dependencies.gradle"
+
+
+apply plugin: 'idea'
+apply plugin: 'maven-publish'
+apply plugin: "com.jfrog.artifactory"
+apply plugin: 'java-library'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: "org.springframework.boot"
+apply plugin: 'jacoco'
+apply plugin: 'org.owasp.dependencycheck'
+apply plugin: "com.github.spotbugs"
+apply plugin: "com.diffplug.spotless"
+apply plugin: "org.sonatype.gradle.plugins.scan"
+
+group = 'com.nextuple.pe'
+version = "1.0.1-${build_target}"
+
+sourceCompatibility = "${sourceJdkVersion}"
+targetCompatibility = "${targetJdkVersion}"
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+//    mavenLocal()
+    maven {
+        url = 'https://repo.maven.apache.org/m2'
+    }
+    maven {
+        url = 'https://clojars.org/repo/'
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:2.5.10")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+    }
+}
+
 bootJar {
+    enabled = true
+    mainClass.set("com.nextuple.masterdata.PeMasterDataUserviceApplication")
+}
+
+configurations {
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
+}
+
+
+dependencies {
+
+    implementation libs.logstash
+    api "org.springframework.boot:spring-boot-starter-web"
+    api "org.springframework.boot:spring-boot-starter-actuator"
+    api "org.springframework.cloud:spring-cloud-starter-openfeign"
+    api 'io.github.openfeign:feign-okhttp'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation "org.apache.commons:commons-csv:${commonsCsvVersion}"
+    api "io.micrometer:micrometer-registry-prometheus"
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:2.4.1'
+    api "com.azure.spring:azure-spring-boot-starter-keyvault-secrets:3.10.0"
+
+
+    implementation("com.nextuple.pe:job-framework-common-util:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:data-upload-services:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:promise-sourcing-rule-services:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:weightage-configuration-services:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:postal-code-timezone-services:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:transit-services:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:node-carrier-services:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:item-services:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:calendar-services:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:node-services:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:carrier-services:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:pe-public-webhook:1.0.1-${build_target}")
+
+    implementation("com.nextuple.pe:core-near-cache:1.0.0-${build_target}")
+
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation("com.nextuple.pe:common-util:1.0.0-${build_target}")
+    implementation("com.nextuple.pe:common-postgres:1.0.0-${build_target}")
+    implementation "org.apache.avro:avro:1.8.2"
+
+    implementation "org.springframework.kafka:spring-kafka:2.8.7"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "org.hamcrest:hamcrest-junit:${hamcrestJunitVersion}"
+    testImplementation "com.jayway.jsonpath:json-path-assert:${jsonpathVersion}"
+    testImplementation "com.github.javafaker:javafaker:1.0.2"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.5.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+
+    testImplementation 'org.mockito:mockito-inline:2.13.0'
+    testImplementation 'org.powermock:powermock-api-mockito2:1.7.0'
+
+    // Others
+    testImplementation "com.github.javafaker:javafaker:0.15"
+
+    //Caffeine
+    implementation "org.springframework.boot:spring-boot-starter-cache"
+    implementation "com.github.ben-manes.caffeine:caffeine"
+
+
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled true
+    }
+}
+spotbugs {
+    toolVersion = '4.1.4'
+    ignoreFailures = true
+    onlyAnalyze = ['com.nextuple.*']
+    showStackTraces = false
+}
+dependencyCheck {
+    format = 'ALL'
+    suppressionFile = 'suppressions.xml'
+    autoUpdate = true
+    cveValidForHours = 24
+    if (System.getenv("CI") == 'true') {
+        data {
+            directory = "/root/.cve"
+        }
+    }
+}
+spotless {
+    java {
+        importOrder()
+        removeUnusedImports()
+        googleJavaFormat()
+    }
+}
+task showSonarQubeLink {
+    doLast {
+        print("Checkout SonarQube report at ${getProperty("systemProp.sonar.host.url")}/dashboard?id=${getProperty("systemProp.sonar.projectKey")}\n")
+    }
+}
+artifactoryPublish.skip = false
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"
+    publish {
+        repository {
+            repoKey = 'gradle-dev-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+        }
+        defaults {
+            publications('mavenJava')
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'gradle-dev'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+jar {
     enabled = false
+    classifier('')
 }
-
-group = 'com.hbc'
-version = "1.2.0-${build_target}"
-
-subprojects {
-    apply from: "$rootProject.projectDir/dependencies.gradle"
-
-
-    apply plugin: 'idea'
-    apply plugin: 'maven-publish'
-    apply plugin: "com.jfrog.artifactory"
-//    apply plugin: 'java'
-    apply plugin: 'java-library'
-    apply plugin: 'io.spring.dependency-management'
-    apply plugin: "org.springframework.boot"
-    apply plugin: 'jacoco'
-    apply plugin: 'org.owasp.dependencycheck'
-    apply plugin: "com.github.spotbugs"
-    apply plugin: "com.diffplug.spotless"
-    apply plugin: "org.sonatype.gradle.plugins.scan"
-
-    group = 'com.hbc'
-    version = "1.2.0-${build_target}"
-
-    sourceCompatibility = "${sourceJdkVersion}"
-    targetCompatibility = "${targetJdkVersion}"
-
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
+processResources {
+    filesMatching("**/application*.yml") {
+        expand(project.properties)
     }
-
-
-
-    configurations {
-        compileOnly {
-            extendsFrom annotationProcessor
-        }
-    }
-
-    repositories {
-        mavenCentral()
-        maven {
-            url = 'https://repo.maven.apache.org/m2'
-        }
-        maven {
-            url = 'https://clojars.org/repo/'
-        }
-        maven {
-            url "${artifactory_contextUrl}"
-            credentials {
-                username "aws"
-                password System.env.CODEARTIFACT_AUTH_TOKEN
-            }
-        }
-    }
-
-    dependencyManagement {
-        imports {
-            mavenBom("org.springframework.boot:spring-boot-dependencies:2.5.10")
-            mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
-        }
-    }
-
-    dependencies {
-        implementation libs.logstash
-        api "org.springframework.boot:spring-boot-starter-web"
-        api "org.springframework.boot:spring-boot-starter-actuator"
-        api "org.springframework.cloud:spring-cloud-starter-openfeign"
-        api 'io.github.openfeign:feign-okhttp'
-        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-        implementation 'org.springframework.boot:spring-boot-starter-validation'
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-        annotationProcessor 'org.projectlombok:lombok'
-        annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-        implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-        implementation 'org.springframework.kafka:spring-kafka'
-        implementation "org.apache.commons:commons-csv:${commonsCsvVersion}"
-        api "io.micrometer:micrometer-registry-prometheus"
-        implementation 'io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:2.4.1'
-
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        testImplementation "org.hamcrest:hamcrest-junit:${hamcrestJunitVersion}"
-        testImplementation "com.jayway.jsonpath:json-path-assert:${jsonpathVersion}"
-        testImplementation "com.github.javafaker:javafaker:1.0.2"
-        testImplementation 'org.junit.jupiter:junit-jupiter:5.5.2'
-        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
-
-        testImplementation 'org.mockito:mockito-inline:2.13.0'
-
-        // Others
-        testImplementation "com.github.javafaker:javafaker:0.15"
-
-        //Caffeine
-        implementation "org.springframework.boot:spring-boot-starter-cache"
-        implementation "com.github.ben-manes.caffeine:caffeine"
-
-        //micrometer new relic
-        implementation 'com.newrelic.telemetry:micrometer-registry-new-relic:0.9.0'
-        implementation 'io.micrometer:micrometer-core:1.6.4'
-
-    }
-
-    jacocoTestReport {
-        reports {
-            xml.enabled true
-            html.enabled true
-            csv.enabled true
-        }
-    }
-
-    spotbugs {
-        toolVersion = '4.1.4'
-        ignoreFailures = true
-        onlyAnalyze = ['com.hbc.*']
-        showStackTraces = false
-    }
-
-    dependencyCheck {
-        format = 'ALL'
-        suppressionFile = 'suppressions.xml'
-        autoUpdate = true
-        cveValidForHours = 24
-        analyzers {
-            assemblyEnabled = false
-        }
-//        if (System.getenv("CI") == 'true') {
-//            data {
-//                directory = "/root/.cve"
-//            }
-//        }
-    }
-
-    spotless {
-        java {
-            importOrder()
-            removeUnusedImports()
-            googleJavaFormat()
-        }
-    }
-
-    task showSonarQubeLink {
-        doLast {
-            print("Checkout SonarQube report at ${getProperty("systemProp.sonar.host.url")}/dashboard?id=${getProperty("systemProp.sonar.projectKey")}\n")
-        }
-    }
-
-    artifactoryPublish.skip = false
-
-    artifactoryPublish {
-        dependsOn jar
-    }
-
-    artifactory {
-        contextUrl = System.env.JFROG_URL
-        publish {
-            repository {
-                repoKey = 'gradle-dev-local'
-                username = System.env.JFROG_USER
-                password = System.env.JFROG_PWD
-                maven = true
-            }
-            defaults {
-                publications('mavenJava')
-            }
-        }
-        resolve {
-            repository {
-                repoKey = 'gradle-dev'
-                username = System.env.JFROG_USER
-                password = System.env.JFROG_PWD
-                maven = true
-            }
-        }
-    }
-
-    jar {
-        enabled = false
-        classifier('')
-    }
-
-
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                from components.java
-            }
-        }
-        repositories {
-            maven {
-                url "${artifactory_contextUrl}"
-                credentials {
-                    username "aws"
-                    password System.env.CODEARTIFACT_AUTH_TOKEN
-                }
-            }
-        }
-    }
-
-    processResources {
-        filesMatching("**/application*.yml") {
-            expand(project.properties)
-        }
-    }
-
-    test {
-        useJUnitPlatform()
-    }
-
-    task fixPom {
-        doLast {
-            File file = new File("$buildDir/publications/mavenJava/pom-default.xml")
-            def text = file.text
-            def pattern = "(?s)(<dependencyManagement>.+?<dependencies>)(.+?)(</dependencies>.+?</dependencyManagement>)"
-            Matcher matcher = text =~ pattern
-            if (matcher.find()) {
-                text = text.replaceFirst(pattern, "")
-                def firstDeps = matcher.group(2)
-                text = text.replaceFirst(pattern, '$1$2' + firstDeps + '$3')
-            }
-            file.write(text)
-        }
-    }
-    generatePomFileForMavenJavaPublication.finalizedBy fixPom
 }
-
+test {
+    useJUnitPlatform()
+}
+task fixPom {
+    doLast {
+        File file = new File("$buildDir/publications/mavenJava/pom-default.xml")
+        def text = file.text
+        def pattern = "(?s)(<dependencyManagement>.+?<dependencies>)(.+?)(</dependencies>.+?</dependencyManagement>)"
+        Matcher matcher = text =~ pattern
+        if (matcher.find()) {
+            text = text.replaceFirst(pattern, "")
+            def firstDeps = matcher.group(2)
+            text = text.replaceFirst(pattern, '$1$2' + firstDeps + '$3')
+        }
+        file.write(text)
+    }
+}
+generatePomFileForMavenJavaPublication.finalizedBy fixPom
