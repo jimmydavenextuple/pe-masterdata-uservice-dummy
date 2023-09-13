@@ -7,9 +7,9 @@
 
 package com.nextuple.masterdata.serializer;
 
+import jakarta.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
-import javax.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.EncoderFactory;

@@ -8,8 +8,8 @@
 package com.nextuple.masterdata.serializer;
 
 import com.nextuple.streams.promising.messages.PromisingRecord;
+import jakarta.xml.bind.DatatypeConverter;
 import java.util.Map;
-import javax.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;

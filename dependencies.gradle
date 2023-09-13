@@ -25,7 +25,7 @@ ext.libTests = [
 
 ext {
     build_target = project.hasProperty("build_target") ? project.build_target : "SNAPSHOT"
-    springCloudVersion = "2021.0.3"
+    springCloudVersion = "2022.0.0"
     mapstructVersion = "1.3.1.Final"
     jodaTimeVersion = "2.10.14"
     fasterxmlJacksonVersion = "2.11.0"
@@ -34,6 +34,6 @@ ext {
     hamcrestJunitVersion = "2.0.0.0"
     lombokVersion = "1.18.26"
 //    micrometerPrometheusVersion = "1.5.1"
-    sourceJdkVersion = JavaVersion.VERSION_11
-    targetJdkVersion = JavaVersion.VERSION_11
+    sourceJdkVersion = JavaVersion.VERSION_17
+    targetJdkVersion = JavaVersion.VERSION_17
 }

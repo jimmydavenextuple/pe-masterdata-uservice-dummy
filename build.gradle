@@ -12,18 +12,18 @@ buildscript {
     }
     dependencies {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.32.0"
-        classpath "org.owasp:dependency-check-gradle:6.1.6"
-        classpath "org.sonatype.gradle.plugins:scan-gradle-plugin:1.2.4"
+        classpath "org.owasp:dependency-check-gradle:8.2.0"
+        classpath "org.sonatype.gradle.plugins:scan-gradle-plugin:2.5.5"
     }
 }
 
 plugins {
     id 'java-library'
-    id "org.springframework.boot" version "2.6.8"
+    id "org.springframework.boot" version "3.0.7"
     id "io.spring.dependency-management" version "1.0.11.RELEASE"
-    id "org.sonarqube" version "3.0"
-    id "com.diffplug.spotless" version "5.7.0"
-    id "com.github.spotbugs" version "4.5.1"
+    id "org.sonarqube" version "4.0.0.2929"
+    id "com.diffplug.spotless" version "6.13.0"
+    id "com.github.spotbugs" version "4.7.3"
 
 }
 
@@ -57,7 +57,7 @@ apply plugin: "com.diffplug.spotless"
 apply plugin: "org.sonatype.gradle.plugins.scan"
 
 group = 'com.nextuple.pe'
-version = "1.1.0-${build_target}"
+version = "1.1.1-${build_target}"
 
 sourceCompatibility = "${sourceJdkVersion}"
 targetCompatibility = "${targetJdkVersion}"
@@ -85,7 +85,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:2.6.8")
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.0.7")
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
     }
 }
@@ -123,28 +123,28 @@ dependencies {
     api 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:4.0.0'
 
 
-    implementation("com.nextuple.pe:job-framework-common-util:1.1.0-${build_target}")
-    implementation("com.nextuple.pe:data-upload-services:1.1.0-${build_target}")
-    implementation("com.nextuple.pe:promise-sourcing-rule-services:1.1.0-${build_target}")
-    implementation("com.nextuple.pe:weightage-configuration-services:1.0.1-${build_target}")
-    implementation("com.nextuple.pe:postal-code-timezone-services:1.1.0-${build_target}")
-    implementation("com.nextuple.pe:transit-services:1.1.0-${build_target}")
-    implementation("com.nextuple.pe:node-carrier-services:1.1.0-${build_target}")
-    implementation("com.nextuple.pe:item-services:1.0.1-${build_target}")
-    implementation("com.nextuple.pe:calendar-services:1.0.1-${build_target}")
-    implementation("com.nextuple.pe:node-services:1.1.0-${build_target}")
-    implementation("com.nextuple.pe:carrier-services:1.1.0-${build_target}")
-    implementation("com.nextuple.pe:pe-public-webhook:1.0.1-${build_target}")
-    implementation("com.nextuple.pe:configuration-services:1.0.0-${build_target}")
+    implementation("com.nextuple.pe:job-framework-common-util:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:data-upload-services:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:promise-sourcing-rule-services:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:weightage-configuration-services:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:postal-code-timezone-services:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:transit-services:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:node-carrier-services:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:item-services:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:calendar-services:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:node-services:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:carrier-services:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:pe-public-webhook:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:configuration-services:1.1.1-${build_target}")
 
     implementation("com.nextuple.pe:core-near-cache:1.1.0-${build_target}")
 
     runtimeOnly 'org.postgresql:postgresql'
-    implementation("com.nextuple.pe:common-util:1.1.0-${build_target}")
-    implementation("com.nextuple.pe:common-postgres:1.1.0-${build_target}")
+    implementation("com.nextuple.pe:common-util:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:common-postgres:1.1.1-${build_target}")
     implementation "org.apache.avro:avro:1.8.2"
 
-    implementation "org.springframework.kafka:spring-kafka:2.9.10"
+    implementation "org.springframework.kafka:spring-kafka:3.0.7"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.hamcrest:hamcrest-junit:${hamcrestJunitVersion}"
@@ -164,18 +164,17 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "com.github.ben-manes.caffeine:caffeine"
 
-
 }
 
 jacocoTestReport {
     reports {
-        xml.enabled true
-        html.enabled true
-        csv.enabled true
+        xml.required = true
+        html.required = true
+        csv.required = true
     }
 }
 spotbugs {
-    toolVersion = '4.1.4'
+    toolVersion = '4.6.0'
     ignoreFailures = true
     onlyAnalyze = ['com.nextuple.*']
     showStackTraces = false
@@ -237,7 +236,7 @@ publishing {
 }
 jar {
     enabled = false
-    classifier('')
+    archiveClassifier=''
 }
 processResources {
     filesMatching("**/application*.yml") {

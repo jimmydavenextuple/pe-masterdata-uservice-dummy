@@ -11,7 +11,7 @@ import com.nextuple.item.TestUtil;
 import com.nextuple.masterdata.serializer.ItemDeserializer;
 import com.nextuple.masterdata.serializer.ItemSerializer;
 import com.nextuple.streams.promising.messages.PromisingRecord;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

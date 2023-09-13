@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-slim
+FROM openjdk:17.0.1-jdk-slim
 VOLUME /tmp
 COPY "./build/libs/*[^plain].jar" app.jar
 EXPOSE 8080
