@@ -144,7 +144,22 @@ server:
           cpu: 256m
         max:
           memory: 1024Mi
-          cpu: 256m 
+          cpu: 256m
+    auth0:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 1024Mi
+          cpu: 256m
+        max:
+          memory: 1024Mi
+          cpu: 256m            
     sperf:
       ingress: yes
       middleman: yes
@@ -304,6 +319,13 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy vapt
           deployment: vapt
+    auth0:
+      - step: *Clear-Cache
+      - step: *build     
+      - step:
+          !!merge <<: *deploy
+          name: Deploy auth0
+          deployment: auth0          
     development:
       - step: *Clear-Cache
       - step: *build     
