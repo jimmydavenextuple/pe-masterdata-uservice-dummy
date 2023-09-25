@@ -136,6 +136,7 @@ dependencies {
     implementation("com.nextuple.pe:carrier-services:1.1.1-${build_target}")
     implementation("com.nextuple.pe:pe-public-webhook:1.1.1-${build_target}")
     implementation("com.nextuple.pe:configuration-services:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:sourcing-cost-config-services:1.1.1-${build_target}")
 
     implementation("com.nextuple.pe:core-near-cache:1.1.1-${build_target}")
 
