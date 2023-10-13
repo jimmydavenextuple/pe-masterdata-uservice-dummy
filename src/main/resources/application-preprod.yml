@@ -6,17 +6,17 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: \${PE-POSTGRES-URI}
-    username: \${PE-COMMON-POSTGRES-USER}
-    password: \${PE-COMMON-POSTGRES-PASSWORD}
+    url: jdbc:postgresql://hippo-ha-primary.postgres-operator.svc.cluster.local:5432/pe
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
     hikari:
       connectionTimeout: 5000
   replica:
     datasource:
       platform: postgres
-      url: \${PE-POSTGRES-URI}
-      username: \${PE-COMMON-POSTGRES-USER}
-      password: \${PE-COMMON-POSTGRES-PASSWORD}
+      url: jdbc:postgresql://hippo-ha-primary.postgres-operator.svc.cluster.local:5432/pe
+      username: \${COMMON-PE-POSTGRES-USER}
+      password: \${COMMON-PE-POSTGRES-PASSWORD}
       required: true
       hikari:
         readOnly: true
