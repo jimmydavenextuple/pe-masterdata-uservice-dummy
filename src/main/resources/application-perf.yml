@@ -6,28 +6,51 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://promise-engine-postgres-performance.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
-    username: \${POSTGRES_USER}
-    password: \${POSTGRES_PWD}
-    hikari:
-      connectionTimeout: 5000
-  replica:
-    datasource:
-      platform: postgres
-      url: jdbc:postgresql://promise-engine-postgres-performance.cluster-ro-co9l0bkmgaei.us-east-1.rds.amazonaws.com,promise-engine-postgres-performance.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe?readOnly=true
-      username: \${POSTGRES_USER}
-      password: \${POSTGRES_PWD}
-      required: true
-      hikari:
-        readOnly: true
-        connectionTimeout: 5000
-        maximumPoolSize: 30
+    url: jdbc:postgresql://postgres.postgres.svc.cluster.local:5432/pe
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
   kafka:
-    bootstrap-servers: "b-3.promisemksperformance.o5d7t4.c25.kafka.us-east-1.amazonaws.com:9096,b-1.promisemksperformance.o5d7t4.c25.kafka.us-east-1.amazonaws.com:9096,b-2.promisemksperformance.o5d7t4.c25.kafka.us-east-1.amazonaws.com:9096"
+    bootstrap-servers: "bootstrap.kafka.svc.cluster.local:9092"
     properties:
-      security.protocol: SASL_SSL
-      sasl.mechanism: SCRAM-SHA-512
-      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"\${KAFKA_USER}\" password=\"\${KAFKA_PWD}\";"
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
+    consumer-retry-count: 1
+    # NOTE: Below commented code is for the Avro consumer.
+    # If we need to consume an avro record, please uncomment Avro properties and comment out the JSON Consumer and Producer.
+    #
+    #    consumer:
+    #      type: avro
+    #      enable-auto-commit: true
+    #      auto-offset-reset: latest
+    #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    #      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
+    #      topics:
+    #        item_master:
+    #          name: INTERNAL.PERF.PROMISE_ITEMS
+    #          group-id: item-master-perf
+    #    producer:
+    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    #      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
+    consumer-item:
+      type: json
+      enable-auto-commit: true
+      auto-offset-reset: latest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring-deserializer-key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+        spring-deserializer-value-delegate-class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring-json-trusted-packages: "*"
+        spring-json-type-mapping: com.nextuple.pe.webhook.domain.dtos.Item:com.nextuple.item.domain.events.ItemMasterEvent
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      topics:
+        item_master:
+          name: INTERNAL.PERF.PROMISE_ITEMS
+          group-id: item-master-perf-\${random.value}
+    producer-item:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -45,22 +68,11 @@ spring:
       properties:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: "*"
-    consumer-item:
-      type: json
-      enable-auto-commit: true
-      auto-offset-reset: latest
-      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      properties:
-        spring-deserializer-key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
-        spring-deserializer-value-delegate-class: org.springframework.kafka.support.serializer.JsonDeserializer
-        spring-json-trusted-packages: "*"
-        spring-json-type-mapping: com.nextuple.pe.webhook.domain.dtos.Item:com.nextuple.item.domain.events.ItemMasterEvent
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
-        item_master:
-          name: INTERNAL.PERF.PROMISE_ITEMS
-          group-id: item-master-perf-\${random.value}
+        master_data_update_event:
+          name: INTERNAL.PERF.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-perf
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -69,13 +81,10 @@ spring:
       interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       enable-auto-commit: true
       auto-offset-reset: latest
+
 logging:
   level:
-    root: WARN
     com.nextuple: INFO
-
-auth:
-  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_SJ1yMwanC
 pe-public-webhook:
   iv-feed:
     topic: INTERNAL.PERF_ATP
@@ -115,18 +124,15 @@ dataupload:
 
 jobs-framework:
   job-completion-consumer:
-    topic-name: internal-perf-job-completion
+    topic-name: INTERNAL.PERF.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-perf
   kafka-publish:
-    topic-name: INTERNAL.PERF.JOBS.TASK
+    topic-name: INTERNAL.PERF.PE.JOB_TASK
   result-publish:
-    topic-name: INTERNAL.PERF.JOBS.RESULT
+    topic-name: INTERNAL.PERF.PE.JOB_RESULT
   result-consumer:
-    topic-name: INTERNAL.PERF.JOBS.RESULT
-    group-id: jobs-result-consumer-async-perf
+    topic-name: INTERNAL.PERF.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async
   record-consumer:
-    topic-name: INTERNAL.PERF.JOBS.TASK
-    group-id: jobs-task-consumer-async-perf
-auth-token:
-  url: https://promise-engine-domain-performance.auth.us-east-1.amazoncognito.com
-  username: \${COGNITO_CLIENT_ID}
-  password: \${COGNITO_CLIENT_SECRET}
+    topic-name: INTERNAL.PERF.PE.JOB_TASK
+    group-id: jobs-task-consumer-async
