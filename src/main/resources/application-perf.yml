@@ -118,7 +118,7 @@ dataupload:
   base-path: "https://pedataupload.blob.core.windows.net"
   maxsize-in-kilobytes: 10240
   max-rows: 1000
-  bucket-name: "dataupload"
+  bucket-name: "perfdataupload"
   type: BLOB
   signed-url-expiry-minutes: 30
 
