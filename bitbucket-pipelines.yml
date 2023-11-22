@@ -1,6 +1,6 @@
 options:
   docker: true
-image: openjdk:17
+image: openjdk:21
 clone:
   depth: full
 server:
@@ -189,6 +189,7 @@ definitions:
           - sonar
         script:
           - microdnf install git
+          - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
           - cp ./infra-automation/suppressions.xml ./suppressions.xml
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build artifactoryPublish
@@ -245,6 +246,7 @@ definitions:
           - cve
         script:
           - microdnf install git
+          - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
           - cp ./infra-automation/suppressions.xml ./suppressions.xml
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotbugsMain

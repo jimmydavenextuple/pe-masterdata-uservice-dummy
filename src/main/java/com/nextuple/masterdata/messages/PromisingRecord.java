@@ -224,6 +224,7 @@ public class PromisingRecord extends org.apache.avro.specific.SpecificRecordBase
   public org.apache.avro.Schema getSchema() {
     return SCHEMA$;
   }
+
   // Used by DatumWriter.  Applications should not call.
   public Object get(int field$) {
     switch (field$) {
