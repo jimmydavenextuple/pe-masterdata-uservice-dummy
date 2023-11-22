@@ -232,7 +232,6 @@ definitions:
           - docker
         image: mcr.microsoft.com/azure-cli:2.53.1
         script:
-          - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
           - chmod +x ./deployment-scripts/deploy-k8s-service-v7.sh
           - ./deployment-scripts/deploy-k8s-service-v7.sh
