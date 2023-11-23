@@ -140,11 +140,11 @@ dependencies {
     implementation("com.nextuple.pe:carrier-services:1.0.1-${build_target}")
     implementation("com.nextuple.pe:pe-public-webhook:1.0.1-${build_target}")
 
-    implementation("com.nextuple.pe:core-near-cache:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache:1.0.2-${build_target}")
 
     runtimeOnly 'org.postgresql:postgresql'
-    implementation("com.nextuple.pe:common-util:1.0.1-${build_target}")
-    implementation("com.nextuple.pe:common-postgres:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:common-util:1.0.2-${build_target}")
+    implementation("com.nextuple.pe:common-postgres:1.0.2-${build_target}")
     implementation "org.apache.avro:avro:1.8.2"
 
     implementation "org.springframework.kafka:spring-kafka:2.8.7"
