@@ -59,7 +59,7 @@ apply plugin: "com.diffplug.spotless"
 apply plugin: "org.sonatype.gradle.plugins.scan"
 
 group = 'com.nextuple.pe'
-version = "1.0.1-${build_target}"
+version = "1.0.3-${build_target}"
 
 sourceCompatibility = "${sourceJdkVersion}"
 targetCompatibility = "${targetJdkVersion}"
@@ -129,7 +129,7 @@ dependencies {
 
     implementation("com.nextuple.pe:job-framework-common-util:1.0.1-${build_target}")
     implementation("com.nextuple.pe:data-upload-services:1.0.1-${build_target}")
-    implementation("com.nextuple.pe:promise-sourcing-rule-services:1.0.1-${build_target}")
+    implementation("com.nextuple.pe:promise-sourcing-rule-services:1.0.2-${build_target}")
     implementation("com.nextuple.pe:weightage-configuration-services:1.0.1-${build_target}")
     implementation("com.nextuple.pe:postal-code-timezone-services:1.0.1-${build_target}")
     implementation("com.nextuple.pe:transit-services:1.0.1-${build_target}")
