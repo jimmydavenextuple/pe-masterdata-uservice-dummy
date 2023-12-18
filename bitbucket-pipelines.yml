@@ -191,7 +191,7 @@ definitions:
           - microdnf install git
           - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
-          - cp ./infra-automation/suppressions.xml ./suppressions.xml
+          - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build artifactoryPublish
           - export SPACE=" "
           - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
@@ -248,7 +248,7 @@ definitions:
           - microdnf install git
           - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
-          - cp ./infra-automation/suppressions.xml ./suppressions.xml
+          - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotbugsMain
           - bash ./gradlew dependencyCheckAggregate --info
           - bash ./gradlew sonarqube showSonarQubeLink --info
