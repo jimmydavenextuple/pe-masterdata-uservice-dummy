@@ -9,6 +9,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
+    hikari:
+      maximumPoolSize: 100
+      minimumIdle: 10
   kafka:
     bootstrap-servers: "localhost:9092"
     consumer-retry-count: 1
