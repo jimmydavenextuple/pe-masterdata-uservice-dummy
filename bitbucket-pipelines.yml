@@ -255,7 +255,7 @@ definitions:
     - step: &integration-run
         name: Run integration tests
         script:
-          - git clone git@bitbucket.org:nextuple_engineering/pe-masterdata-uservice.git
+          - git clone git@bitbucket.org:nextuple_engineering/pe-api-automation.git
           -
           - ./gradlew test -Dcucumber.filter.tags="@AutomatePECarrierServiceCalendar or @CreateCalendarAPI"
 #          - cd ./integration-tests
