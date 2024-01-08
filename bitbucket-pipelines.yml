@@ -83,6 +83,20 @@ server:
         max:
           memory: 2Gi
           cpu: 1
+    integration:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 1024Mi
+          cpu: 256m
+        max:
+          memory: 1024Mi
+          cpu: 1000m
     qa:
       ingress: yes
       middleman: yes
@@ -238,6 +252,30 @@ definitions:
         after-script:
           - chmod +x ./deployment-scripts/after-deploy-k8s-service-v3.sh
           - ./deployment-scripts/after-deploy-k8s-service-v3.sh
+    - step: &integration-run
+        name: Run integration tests
+        script:
+          - git clone git@bitbucket.org:nextuple_engineering/pe-masterdata-uservice.git
+          -
+          - ./gradlew test -Dcucumber.filter.tags="@AutomatePECarrierServiceCalendar or @CreateCalendarAPI"
+#          - cd ./integration-tests
+#          - ../gradlew test -Duservice="capacity" -Dhost="internal-integration.nextuple.com" -Dport="443" -DcontextPath="/capacity/api" -Dprotocol="https" || true
+
+          - step: &integration-reportgen
+              name: Run report generation
+              image: mcr.microsoft.com/azure-cli:2.53.1
+              script:
+                - az login --service-principal --username "${APP_ID}" --password "${PASSWORD}" --tenant "${TENANT_ID}" --output none
+                - az aks install-cli --kubelogin-version 0.0.31
+                - az account set --subscription "nextuple-nonprod-subscription"
+                - az aks get-credentials --resource-group "saas-deployments-wu2" --name "nonprod-k8s-wu2-1" --file .kube/kubeconfig --overwrite-existing
+                - export KUBECONFIG=.kube/kubeconfig
+                - pod_name=$(kubectl get pods -n integration --selector=uservice=pe-masterdata-uservice --output=jsonpath={.items..metadata.name})
+                - kubectl exec -it $pod_name -n integration -- java -jar cli.jar merge jacoco-server.exec unit.exec  --destfile output.exec
+                - kubectl exec -it $pod_name -n integration -- java -jar cli.jar report output.exec --html ./report --sourcefiles src/main/java --classfiles build/classes/java/main
+                - kubectl cp --retries=-1 integration/$pod_name:report report
+              artifacts:
+                - "report/**"
     - step: &pr-build
         name: PR Build
         caches:
@@ -395,3 +433,12 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
+    integration:
+      - step: *build-integration
+      #      - step:
+      #          !!merge <<: *deploy
+      #          name: Deploy integration
+      #          trigger: manual
+      #          deployment: integration
+      - step: *integration-run
+      - step: *integration-reportgen
