@@ -257,9 +257,7 @@ definitions:
         script:
           - git clone git@bitbucket.org:nextuple_engineering/pe-api-automation.git
           - cd pe-api-automation
-          - ./gradlew test -Dcucumber.filter.tags="@AutomatePECarrierServiceCalendar or @CreateCalendarAPI"
-#          - cd ./integration-tests
-#          - ../gradlew test -Duservice="capacity" -Dhost="internal-integration.nextuple.com" -Dport="443" -DcontextPath="/capacity/api" -Dprotocol="https" || true
+          - ./gradlew test -Dcucumber.filter.tags="@AutomatePECarrierServiceCalendar or @CreateCalendarAPI" -Dhost=internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,pedataupload.blob.core.windows.net,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com -Dport=443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443 -Duservice=pe-postal-code-timezone,pe-calendar,pe-node-carrier,pe-node,pe-carrier-service,pe-postal-code-timezone,pe-weightage-configuration,pe-promise-sourcing-rule,pe-transit,pe-core-engine,pe-item-inventory,pe-ingest-item,azure,Pe-data-upload,inventory,pe-sourcing,weightage,pe-promise-group-definition,pe-promise-optimization_strategy,pe-item,pe-promise-sourcing-rule-ui,postal-code-timezone,custom-region,group-definition,node-group,sourcing-rules,sourcing-constraint,postal-code,pe-node,regions,pe-sourcing,core-engine,pe-configuration -Dprotocol=https,https,https,https,https,https,https,https,https,http,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https -DcontextPath=/promising-engine/pe-postal-code-timezone,/promising-engine/pe-calendar,/promising-engine/pe-node-carrier,/promising-engine/pe-node,/promising-engine/pe-carrier,/promising-engine/pe-postal-code-timezone,/promising-engine/pe-weightage-configuration,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-transit,/,/promising-engine/pe-data-upload/pe-webhook/ingest-data,/promising-engine/pe-data-upload/pe-webhook/ingest-data,/,/promising-engine/pe-data-upload,/services/inventory,/promising-engine/pe-sourcing,/promising-engine/pe-weightage-configuration,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-item,/promising-engine/ui,/promising-engine/pe-postal-code-timezone,/promising-engine/pe-postal-code-timezone,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-postal-code-timezone,/promising-engine/pe-node,/promising-engine/pe-postal-code-timezone,/promising-engine/pe-sourcing,/promising-engine/pe-sourcing,/promising-engine/pe-configuration
     - step: &integration-reportgen
         name: Run report generation
         image: mcr.microsoft.com/azure-cli:2.53.1
@@ -413,32 +411,32 @@ pipelines:
       - step: *Clear-Cache
       - step: *build
       - parallel:
-          # - step:
-          #     !!merge <<: *deploy
-          #     name: Deploy Pre-prod
-          #     trigger: manual
-          #     deployment: preprod
-          - step:
-              !!merge <<: *deploy
-              name: Deploy SDEV
-              trigger: manual
-              deployment: sdev
-          - step:
-              !!merge <<: *deploy
-              name: Deploy SQA
-              trigger: manual
-              deployment: sqa
+        - step:
+           !!merge <<: *deploy
+           name: Deploy Pre-prod
+           trigger: manual
+           deployment: preprod
+        - step:
+           !!merge <<: *deploy
+           name: Deploy SDEV
+           trigger: manual
+           deployment: sdev
+        - step:
+           !!merge <<: *deploy
+           name: Deploy SQA
+           trigger: manual
+           deployment: sqa
       - step:
           !!merge <<: *deploy
           name: Deploy Prod
           trigger: manual
           deployment: prod
     integration:
-      - step: *build-integration
-      #      - step:
-      #          !!merge <<: *deploy
-      #          name: Deploy integration
-      #          trigger: manual
-      #          deployment: integration
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy integration
+          trigger: manual
+          deployment: integration
       - step: *integration-run
-      - step: *integration-reportgen
+#      - step: *integration-reportgen
