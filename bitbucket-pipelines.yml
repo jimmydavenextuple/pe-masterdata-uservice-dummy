@@ -319,6 +319,12 @@ pipelines:
           #     name: Deploy PERF
           #     trigger: manual
           #     deployment: perf
+    PSE-1581-signet-ai-ml-demo:
+      - step: *build
+      - step:
+          !!merge <<: *deploy-pe-sourcing-engine
+          name: Deploy pe-sourcing-engine Demo
+          deployment: demo-pe-sourcing-engine
     master:
       - step: *Clear-Cache
       - step: *build
