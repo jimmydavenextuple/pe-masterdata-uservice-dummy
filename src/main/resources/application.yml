@@ -89,7 +89,7 @@ auth:
   filterEnabled: false
 
 node:
-  type: "STORE,FC,MFC,DROPSHIP VENDOR,DC"
+  type: "STORE,FC,MFC,DROPSHIP VENDOR,DC,DSV"
 carrier:
   service:
     options: "SDND,STANDARD,EXPRESS,NEXTDAY,BOPA,PRIME"
