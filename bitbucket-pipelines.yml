@@ -436,7 +436,6 @@ pipelines:
       - step:
           !!merge <<: *deploy
           name: Deploy integration
-          trigger: manual
           deployment: integration
       - step: *integration-run
 #      - step: *integration-reportgen
