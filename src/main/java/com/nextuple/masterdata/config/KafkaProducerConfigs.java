@@ -85,6 +85,7 @@ public class KafkaProducerConfigs {
   public KafkaTemplate<String, Object> itemKafkaTemplate() {
     return new KafkaTemplate<>(kafkaItemProducerFactory());
   }
+
   @Bean
   @Primary
   public KafkaTemplate<String, String> platformTaskKafkaTemplate() {
