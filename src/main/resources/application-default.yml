@@ -6,9 +6,9 @@ spring:
       ddl-auto: update
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
     hikari:
       maximumPoolSize: 100
       minimumIdle: 10
@@ -134,3 +134,31 @@ dataupload:
   bucket-name: "dataupload"
   type: BLOB
   signed-url-expiry-minutes: 30
+azure.keyvault:
+  client-id: e558951a-8c66-4a66-a75f-f71254e23397
+  client-key: cnz8Q~J3ViSHlCmhkXVkSsccIz36Me.GEqdh2aP_
+  enabled: true
+  tenant-id: a504dc87-820c-4014-a6f7-9bd271ec731f
+  uri: https://nextuple-dev.vault.azure.net/
+  secret-keys: "COMMON-KAFKA-CONFIG,COMMON-PE-POSTGRES-USER,COMMON-PE-POSTGRES-PASSWORD"
+next-cache:
+  caches:
+    -
+      cacheName: task-info
+      ttlSeconds: 14400
+      maxLimit: 50
+  refresh-cache:
+    topic: INTERNAL.DEV.IPS.REFRESH_CACHE_INV
+  cacheManager: caffeine
+platform:
+  tasks:
+    enabled: true
+  tasks-scheduler:
+    enabled: true
+    milliseconds: 5000
+  authFilter:
+    enabled: false
+kafka:
+  input:
+    taskTopics: INTERNAL.DEV.IPS.RETRY_TOPIC_INV
+    taskGroupId: inventory

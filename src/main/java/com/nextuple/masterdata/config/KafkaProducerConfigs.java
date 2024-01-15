@@ -63,8 +63,7 @@ public class KafkaProducerConfigs {
     return prop;
   }
 
-  @Primary
-  @Bean
+  @Bean(name = "CacheUpdateProducer")
   public KafkaTemplate<String, LocalCacheUpdateEvent> cacheUpdateKafkaTemplate() {
     Map<String, Object> prop = getStringObjectMap();
     return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
@@ -85,5 +84,11 @@ public class KafkaProducerConfigs {
   @Bean(name = "ItemSerializerProducer")
   public KafkaTemplate<String, Object> itemKafkaTemplate() {
     return new KafkaTemplate<>(kafkaItemProducerFactory());
+  }
+  @Bean
+  @Primary
+  public KafkaTemplate<String, String> platformTaskKafkaTemplate() {
+    Map<String, Object> prop = getStringObjectMap();
+    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
   }
 }

@@ -5,6 +5,7 @@ import java.util.regex.Matcher
 
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -39,6 +40,7 @@ java {
 
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -79,6 +81,7 @@ configurations {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven {
         url = 'https://repo.maven.apache.org/m2'
@@ -145,6 +148,13 @@ dependencies {
 
     implementation("com.nextuple.pe:core-near-cache:1.1.2-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-spring:1.1.2-${build_target}")
+    implementation "com.nextuple.platform:common:1.1.5Som-SNAPSHOT"
+    implementation "com.nextuple.platform:sql:1.1.5Som-SNAPSHOT"
+    implementation "com.nextuple.platform:kafka:1.1.5Som-SNAPSHOT"
+    implementation "com.nextuple.platform:tasks:1.1.5Som-SNAPSHOT"
+    implementation "com.nextuple.platform:tasks-sql:1.1.5Som-SNAPSHOT"
+    implementation "com.nextuple.platform:tasks-sql:1.1.5Som-SNAPSHOT"
+    implementation "com.nextuple.platform:next-cache:1.1.5Som-SNAPSHOT"
 
     runtimeOnly 'org.postgresql:postgresql'
     implementation("com.nextuple.pe:common-util:1.1.2-${build_target}")
