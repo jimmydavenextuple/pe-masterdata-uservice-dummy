@@ -6,13 +6,13 @@ spring:
       carrier: "http://pe-masterdata-uservice:8080/"
       transit: "http://pe-masterdata-uservice:8080/"
       data-upload: "http://pe-masterdata-uservice:8080/"
-      node: "http://pe-masterdata-uservice:8080/"
+      node: "http://localhost:8080/"
       promise-sourcing-rule: "http://pe-masterdata-uservice:8080/"
       calendar: "http://pe-masterdata-uservice:8080/"
       postal-code-timezone: "http://pe-masterdata-uservice:8080/"
       weightage-configuration: "http://pe-masterdata-uservice:8080/"
       userexit: "http://pe-masterdata-uservice:8080/"
-      configuration: "http://pe-masterdata-uservice:8080/"
+      configuration: "http://localhost:8080/"
     name: "pe-masterdata-uservice"
     version: 2.6.0
     title: "Master Data Service"
@@ -137,5 +137,5 @@ custom-attributes:
       bannerId: banner1
       isSizingRequired: false
 platform:
-  groupIdPrefix: inventory
+  groupIdPrefix: pe-retry
 
