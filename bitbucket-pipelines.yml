@@ -252,6 +252,19 @@ definitions:
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotbugsMain
           - bash ./gradlew dependencyCheckAggregate --info
           - bash ./gradlew sonarqube showSonarQubeLink --info
+    - step: &deployibm
+        caches:
+          - gradle
+        services:
+          - docker
+        image: icr.io/continuous-delivery/pipeline/pipeline-base-image:2.9
+        script:
+          - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
+          - chmod +x ./deployment-scripts/deploy-k8s-ibmcloud.sh
+          - ./deployment-scripts/deploy-k8s-ibmcloud.sh
+        after-script:
+          - chmod +x ./deployment-scripts/after-deploy-k8s-service-v3.sh
+          - ./deployment-scripts/after-deploy-k8s-service-v3.sh
     - step: &Clear-Cache
         name: Clear Pipeline Cache
         script:
@@ -272,6 +285,11 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy Dev
           deployment: dev
+      - step:
+          !!merge <<: *deployibm
+          name: Deploy ibmdemo
+          trigger: manual
+          deployment: ibmdemo
       - parallel:
           - step:
               !!merge <<: *deploy
@@ -324,6 +342,15 @@ pipelines:
           #     name: Deploy PERF
           #     trigger: manual
           #     deployment: perf
+    ibm_cloud:
+      - step: *Clear-Cache
+      - step: *build
+      - step:
+          !!merge <<: *deployibm
+          name: Deploy ibmdemo
+          trigger: manual
+          deployment: ibmdemo
+
     master:
       - step: *Clear-Cache
       - step: *build
