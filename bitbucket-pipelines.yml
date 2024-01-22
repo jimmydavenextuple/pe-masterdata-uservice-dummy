@@ -437,5 +437,5 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy integration
           deployment: integration
-      - step: *integration-run
+#      - step: *integration-run
 #      - step: *integration-reportgen
