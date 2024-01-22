@@ -272,6 +272,8 @@ definitions:
     - step: &integration-reportgen
         name: Run report generation
         script:
+          - microdnf install git
+          - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
           - ./deployment-scripts/jacoco/generate-report.sh
 
