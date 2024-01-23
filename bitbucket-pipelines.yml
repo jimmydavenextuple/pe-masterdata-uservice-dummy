@@ -278,7 +278,7 @@ definitions:
           - ./deployment-scripts/jacoco/generate-report.sh pe-masterdata-uservice "pe-item-uservice,pe-calendar-uservice"
 
         artifacts:
-          - "report/**"
+          - "report**"
 
 
     - step: &pr-build
