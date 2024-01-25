@@ -5,7 +5,7 @@ spring:
       node-carrier: "http://pe-masterdata-uservice:8080/"
       carrier: "http://pe-masterdata-uservice:8080/"
       transit: "http://pe-masterdata-uservice:8080/"
-      data-upload: "http://pe-masterdata-uservice:8080/"
+      data-upload: "http://localhost:8080/"
       node: "http://localhost:8080/"
       promise-sourcing-rule: "http://pe-masterdata-uservice:8080/"
       calendar: "http://pe-masterdata-uservice:8080/"

@@ -1,7 +1,6 @@
 package com.nextuple.masterdata.config;
 
 import com.nextuple.core.event.LocalCacheUpdateEvent;
-import com.nextuple.jobs.framework.common.domain.pojo.RecordDto;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -69,11 +68,11 @@ public class KafkaProducerConfigs {
     return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
   }
 
-  @Bean(name = "JsonSerializerProducer")
-  public KafkaTemplate<String, RecordDto> jobServiceKafkaTemplate() {
-    Map<String, Object> prop = getStringObjectMap();
-    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
-  }
+  //  @Bean(name = "JsonSerializerProducer")
+  //  public KafkaTemplate<String, RecordDto> jobServiceKafkaTemplate() {
+  //    Map<String, Object> prop = getStringObjectMap();
+  //    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
+  //  }
 
   @Bean(name = "JsonSerializerProducerObj")
   public KafkaTemplate<Object, Object> jobEventKafkaTemplate() {

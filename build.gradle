@@ -131,8 +131,8 @@ dependencies {
     api 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:4.0.0'
 
 
-    implementation("com.nextuple.pe:job-framework-common-util:1.1.1-${build_target}")
-    implementation("com.nextuple.pe:data-upload-services:1.1.1-${build_target}")
+//    implementation("com.nextuple.pe:job-framework-common-util:1.1.1-${build_target}")
+//    implementation("com.nextuple.pe:data-upload-services:1.1.1-${build_target}")
     implementation("com.nextuple.pe:promise-sourcing-rule-services:1.1.2-${build_target}")
     implementation("com.nextuple.pe:weightage-configuration-services:1.1.2-${build_target}")
     implementation("com.nextuple.pe:postal-code-timezone-services:1.1.2-${build_target}")
@@ -140,9 +140,10 @@ dependencies {
     implementation("com.nextuple.pe:node-carrier-services:1.1.2-${build_target}")
     implementation("com.nextuple.pe:item-services:1.1.1-${build_target}")
     implementation("com.nextuple.pe:calendar-services:1.1.2-${build_target}")
-    implementation("com.nextuple.pe:node-services:1.1.2-${build_target}")
+    implementation("com.nextuple.pe:node-services:1.1.2Som-${build_target}")
+    implementation("com.nextuple.pe:node-consumer:1.1.2Som-${build_target}")
     implementation("com.nextuple.pe:carrier-services:1.1.2-${build_target}")
-    implementation("com.nextuple.pe:pe-public-webhook:1.1.1-${build_target}")
+    implementation("com.nextuple.pe:pe-public-webhook:1.1.1Som-${build_target}")
     implementation("com.nextuple.pe:configuration-services:1.1.2-${build_target}")
     implementation("com.nextuple.pe:sourcing-cost-config-services:1.1.2-${build_target}")
 
@@ -150,7 +151,7 @@ dependencies {
     implementation("com.nextuple.pe:core-near-cache-spring:1.1.2-${build_target}")
 
     runtimeOnly 'org.postgresql:postgresql'
-    implementation("com.nextuple.pe:common-util:1.1.2-${build_target}")
+    implementation("com.nextuple.pe:common-util:1.1.2Som-${build_target}")
     implementation("com.nextuple.pe:common-postgres:1.1.2-${build_target}")
     implementation("com.nextuple.pe:master-data-integration-framework:1.1.2Som-${build_target}")
     implementation "org.apache.avro:avro:1.8.2"
