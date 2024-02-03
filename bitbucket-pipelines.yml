@@ -283,6 +283,7 @@ definitions:
     - step: &upload-report
         name: Run report generation
         script:
+          - microdnf install git
           - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
           - ./deployment-scripts/jacoco/send-report.sh
 
