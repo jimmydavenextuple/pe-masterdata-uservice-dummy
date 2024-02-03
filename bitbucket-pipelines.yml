@@ -281,7 +281,7 @@ definitions:
           - "report**"
 
     - step: &upload-report
-        name: Run report generation
+        name: Upload report
         image: mcr.microsoft.com/azure-cli:2.53.1
         script:
           - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
