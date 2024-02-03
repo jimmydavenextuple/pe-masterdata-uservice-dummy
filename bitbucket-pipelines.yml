@@ -282,6 +282,7 @@ definitions:
 
     - step: &upload-report
         name: Run report generation
+        image: mcr.microsoft.com/azure-cli:2.53.1
         script:
           - microdnf install git
           - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
