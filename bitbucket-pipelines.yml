@@ -280,6 +280,12 @@ definitions:
         artifacts:
           - "report**"
 
+    - step: &upload-report
+        name: Run report generation
+        script:
+          - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
+          - ./deployment-scripts/jacoco/send-report.sh
+
 
     - step: &pr-build
         name: PR Build
@@ -447,3 +453,4 @@ pipelines:
 #      - step: *integration-run
       - step: *extract-exec
       - step: *integration-reportgen
+      - step: *upload-report
