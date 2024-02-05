@@ -275,7 +275,7 @@ definitions:
           - microdnf install git
           - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
-          - ./deployment-scripts/jacoco/generate-report.sh pe-masterdata-uservice "pe-item-uservice,pe-calendar-uservice"
+          - ./deployment-scripts/jacoco/generate-report.sh pe-masterdata-uservice "pe-item-uservice,pe-calendar-uservice,pe-node-uservice,pe-transit-uservice,pe-configuration-uservice,pe-carrier-uservice,pe-postal-code-timezone-uservice"
 
         artifacts:
           - "report**"
