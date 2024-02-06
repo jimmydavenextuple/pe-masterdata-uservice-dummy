@@ -447,11 +447,11 @@ pipelines:
           deployment: prod
     integration:
       - step: *build
-#      - step:
-#          !!merge <<: *deploy
-#          name: Deploy integration
-#          deployment: integration
-#      - step: *integration-run
+      - step:
+          !!merge <<: *deploy
+          name: Deploy integration
+          deployment: integration
+      - step: *integration-run
       - step: *extract-exec
       - step: *integration-reportgen
       - step: *upload-report
