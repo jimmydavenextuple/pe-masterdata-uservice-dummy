@@ -285,7 +285,7 @@ definitions:
         image: mcr.microsoft.com/azure-cli:2.53.1
         script:
           - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
-          - ./deployment-scripts/jacoco/send-report.sh
+          - ./deployment-scripts/jacoco/send-report.sh pe
 
 
     - step: &pr-build
@@ -447,11 +447,11 @@ pipelines:
           deployment: prod
     integration:
       - step: *build
-      - step:
-          !!merge <<: *deploy
-          name: Deploy integration
-          deployment: integration
-      - step: *integration-run
+#      - step:
+#          !!merge <<: *deploy
+#          name: Deploy integration
+#          deployment: integration
+#      - step: *integration-run
       - step: *extract-exec
       - step: *integration-reportgen
       - step: *upload-report
