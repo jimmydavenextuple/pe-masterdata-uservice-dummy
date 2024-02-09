@@ -9,6 +9,8 @@ spring:
     url: jdbc:postgresql://postgres.postgres.svc.cluster.local:5432/pe
     username: \${COMMON-PE-POSTGRES-USER}
     password: \${COMMON-PE-POSTGRES-PASSWORD}
+  flyway:
+    enabled: false
   kafka:
     bootstrap-servers: "bootstrap.kafka.svc.cluster.local:9092"
     properties:

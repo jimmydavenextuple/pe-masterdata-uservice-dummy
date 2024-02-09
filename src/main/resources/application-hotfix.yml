@@ -9,6 +9,8 @@ spring:
     url: jdbc:postgresql://promise-engine-postgres-dev.co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe_hotfix
     username: \${POSTGRES_USER}
     password: \${POSTGRES_PWD}
+  flyway:
+    enabled: false
   kafka:
     bootstrap-servers: "b-3.promisemksdevelopment.kmb9h1.c25.kafka.us-east-1.amazonaws.com:9096,b-2.promisemksdevelopment.kmb9h1.c25.kafka.us-east-1.amazonaws.com:9096,b-1.promisemksdevelopment.kmb9h1.c25.kafka.us-east-1.amazonaws.com:9096"
     properties:
