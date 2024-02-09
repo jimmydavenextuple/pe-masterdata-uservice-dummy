@@ -64,6 +64,7 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+        max.poll.records: 10
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -134,3 +135,38 @@ dataupload:
   bucket-name: "dataupload"
   type: BLOB
   signed-url-expiry-minutes: 30
+
+master-data:
+  node:
+    topic-name: INTERNAL.DEV.PE.NODE_INTEGRATION
+    group-id: node-master-dev
+  node-carrier:
+    topic-name: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-dev
+  carrier:
+    topic-name: INTERNAL.DEV.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-dev
+  processing-lead-time:
+    topic-name: INTERNAL.DEV.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-dev
+  calendar:
+    topic-name: INTERNAL.DEV.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-dev
+  node-calendar:
+    topic-name: INTERNAL.DEV.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-dev
+  carrier-service-calendar:
+    topic-name: INTERNAL.DEV.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-dev
+  pickup-calendar:
+    topic-name: INTERNAL.DEV.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-dev
+  node-service-option-buffer:
+    topic-name: INTERNAL.DEV.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-dev
+  transit:
+    topic-name: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-dev
+  transit-buffer:
+    topic-name: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-dev
