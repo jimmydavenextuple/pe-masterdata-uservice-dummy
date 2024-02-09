@@ -174,3 +174,25 @@ master-data:
   transit-buffer:
     topic-name: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-dev
+
+next-cache:
+  caches:
+    -
+      cacheName: task-info
+      ttlSeconds: 14400
+      maxLimit: 50
+  refresh-cache:
+    topic: INTERNAL.DEV.PE.REFRESH_CACHE_INV
+  cacheManager: caffeine
+platform:
+  tasks:
+    enabled: true
+  tasks-scheduler:
+    enabled: true
+    milliseconds: 5000
+  authFilter:
+    enabled: false
+kafka:
+  input:
+    taskTopics: INTERNAL.DEV.PE.RETRY_TOPIC_INV
+    taskGroupId: pe-retry

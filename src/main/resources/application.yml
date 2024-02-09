@@ -136,4 +136,6 @@ custom-attributes:
     NEXTUPLE_GR:
       bannerId: banner1
       isSizingRequired: false
+platform:
+  groupIdPrefix: pe-retry
 

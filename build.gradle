@@ -142,6 +142,8 @@ dependencies {
     implementation("com.nextuple.pe:pe-public-webhook:1.2.0-${build_target}")
     implementation("com.nextuple.pe:configuration-services:1.2.0-${build_target}")
     implementation("com.nextuple.pe:sourcing-cost-config-services:1.2.0-${build_target}")
+    implementation("com.nextuple.pe:node-consumer:1.2.0-${build_target}")
+    implementation("com.nextuple.pe:carrier-consumer:1.2.0-${build_target}")
 
     implementation("com.nextuple.pe:core-near-cache:1.2.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-spring:1.2.0-${build_target}")
@@ -149,6 +151,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     implementation("com.nextuple.pe:common-util:1.2.0-${build_target}")
     implementation("com.nextuple.pe:common-postgres:1.2.0-${build_target}")
+    implementation("com.nextuple.pe:master-data-integration-framework:1.2.0-${build_target}")
     implementation "org.apache.avro:avro:1.8.2"
 
     implementation "org.springframework.kafka:spring-kafka:3.0.7"
