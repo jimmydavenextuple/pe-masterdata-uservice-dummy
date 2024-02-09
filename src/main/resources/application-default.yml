@@ -185,7 +185,7 @@ platform:
   tasks:
     enabled: false
   tasks-scheduler:
-    enabled: false
+    enabled: true
     milliseconds: 5000
   authFilter:
     enabled: false
