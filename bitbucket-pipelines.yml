@@ -252,41 +252,6 @@ definitions:
         after-script:
           - chmod +x ./deployment-scripts/after-deploy-k8s-service-v3.sh
           - ./deployment-scripts/after-deploy-k8s-service-v3.sh
-    - step: &integration-run
-        name: Run integration tests
-        script:
-          - microdnf install git
-          - microdnf install findutils
-          - git clone -b development git@bitbucket.org:nextuple_engineering/pe-api-automation.git
-          - cd pe-api-automation
-          - ./gradlew test -Dcucumber.filter.tags="@AutomatePECarrierServiceCalendar or @CreateCalendarAPI" -Dhost=internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,pedataupload.blob.core.windows.net,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com,internal-integration.nextuple.com -Dport=443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443,443 -Duservice=pe-postal-code-timezone,pe-calendar,pe-node-carrier,pe-node,pe-carrier-service,pe-postal-code-timezone,pe-weightage-configuration,pe-promise-sourcing-rule,pe-transit,pe-core-engine,pe-item-inventory,pe-ingest-item,azure,Pe-data-upload,inventory,pe-sourcing,weightage,pe-promise-group-definition,pe-promise-optimization_strategy,pe-item,pe-promise-sourcing-rule-ui,postal-code-timezone,custom-region,group-definition,node-group,sourcing-rules,sourcing-constraint,postal-code,pe-node,regions,pe-sourcing,core-engine,pe-configuration -Dprotocol=https,https,https,https,https,https,https,https,https,http,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https,https -DcontextPath=/promising-engine/pe-postal-code-timezone,/promising-engine/pe-calendar,/promising-engine/pe-node-carrier,/promising-engine/pe-node,/promising-engine/pe-carrier,/promising-engine/pe-postal-code-timezone,/promising-engine/pe-weightage-configuration,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-transit,/,/promising-engine/pe-data-upload/pe-webhook/ingest-data,/promising-engine/pe-data-upload/pe-webhook/ingest-data,/,/promising-engine/pe-data-upload,/services/inventory,/promising-engine/pe-sourcing,/promising-engine/pe-weightage-configuration,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-item,/promising-engine/ui,/promising-engine/pe-postal-code-timezone,/promising-engine/pe-postal-code-timezone,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-promise-sourcing-rule,/promising-engine/pe-postal-code-timezone,/promising-engine/pe-node,/promising-engine/pe-postal-code-timezone,/promising-engine/pe-sourcing,/promising-engine/pe-sourcing,/promising-engine/pe-configuration
-    - step: &extract-exec
-        name: extract exec files
-        image: mcr.microsoft.com/azure-cli:2.53.1
-        script:
-          - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
-          - ./deployment-scripts/jacoco/copy-exec.sh pe-masterdata-uservice
-
-        artifacts:
-          - "*.exec"
-    - step: &integration-reportgen
-        name: Run report generation
-        script:
-          - microdnf install git
-          - microdnf install findutils
-          - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
-          - ./deployment-scripts/jacoco/generate-report.sh pe-masterdata-uservice "pe-item-uservice,pe-calendar-uservice,pe-node-uservice,pe-transit-uservice,pe-configuration-uservice,pe-carrier-uservice,pe-postal-code-timezone-uservice,pe-weightage-configuration-uservice,pe-node-carrier-uservice,pe-data-upload-uservice,pe-promise-sourcing-rule-uservice"
-
-        artifacts:
-          - "report**"
-
-    - step: &upload-report
-        name: Upload report
-        image: mcr.microsoft.com/azure-cli:2.53.1
-        script:
-          - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
-          - ./deployment-scripts/jacoco/send-report.sh pe
-
 
     - step: &pr-build
         name: PR Build
@@ -447,11 +412,7 @@ pipelines:
           deployment: prod
     integration:
       - step: *build
-#      - step:
-#          !!merge <<: *deploy
-#          name: Deploy integration
-#          deployment: integration
-#      - step: *integration-run
-      - step: *extract-exec
-      - step: *integration-reportgen
-      - step: *upload-report
+      - step:
+          !!merge <<: *deploy
+          name: Deploy integration
+          deployment: integration
