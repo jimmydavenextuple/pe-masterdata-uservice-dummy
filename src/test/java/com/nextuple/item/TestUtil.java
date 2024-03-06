@@ -7,7 +7,6 @@
 
 package com.nextuple.item;
 
-import com.nextuple.item.domain.entity.ItemPK;
 import com.nextuple.streams.promising.messages.PromisingRecord;
 import java.util.HashMap;
 import java.util.Map;
@@ -175,14 +174,6 @@ public class TestUtil {
     record.setNextdayEligible(Boolean.FALSE);
     record.setNextdayEligibleForDC(Boolean.FALSE);
     return record;
-  }
-
-  public ItemPK getItemId() {
-    ItemPK id = new ItemPK();
-    id.setItemId(ITEM_ID);
-    id.setOrgId(ORG_ID);
-    id.setUom(UOM);
-    return id;
   }
 
   public static Map<String, Boolean> getServiceOptionEligibitiesMapForTest() {
