@@ -4,11 +4,14 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
   datasource:
-    platform: postgres
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
+    platform: mysql
+    url: jdbc:mysql://localhost:3306/pe
+    username: root
+    password: abhishek
     hikari:
       maximumPoolSize: 100
       minimumIdle: 10

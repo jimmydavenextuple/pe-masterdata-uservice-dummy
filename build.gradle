@@ -14,6 +14,7 @@ buildscript {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.32.0"
         classpath "org.owasp:dependency-check-gradle:8.2.0"
         classpath "org.sonatype.gradle.plugins:scan-gradle-plugin:2.5.5"
+        classpath("org.flywaydb:flyway-mysql:10.8.1")
     }
 }
 
@@ -175,7 +176,9 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "com.github.ben-manes.caffeine:caffeine"
 
-    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-core:10.8.1'
+    implementation 'mysql:mysql-connector-java:8.0.28'
+    implementation 'org.flywaydb:flyway-mysql:10.8.1'
 }
 
 jacocoTestReport {
