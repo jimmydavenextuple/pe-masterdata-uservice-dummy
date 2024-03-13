@@ -131,12 +131,21 @@ pe-public-webhook:
           x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
           #          Dummy API Keydataupload:
 dataupload:
-  base-path: "https://pedataupload.blob.core.windows.net"
+  type: IBM-S3
+  signed-url-expiry-minutes: 30
   maxsize-in-kilobytes: 10240
   max-rows: 1000
-  bucket-name: "dataupload"
-  type: BLOB
-  signed-url-expiry-minutes: 30
+  bucket-name: "pe-data-upload"
+  azure:
+    base-path: "https://pedataupload.blob.core.windows.net"
+    bucket-name: "dataupload"
+    type: BLOB
+  ibm:
+    base-path: "https://s3.us-east.cloud-object-storage.appdomain.cloud"
+    bucket-name: "pe-data-upload"
+    type: IBM-S3
+    access-key: "7d282782c4cd4ea0905483416e0bdbd9"  #\${COMMON-ACCESS_KEY}
+    secret-key: "c811f5f47fb126f24fdc90c4e60bbaf1d22b383553d61b99" #\${COMMON-SECRET_KEY}
 
 master-data:
   node:
