@@ -11,6 +11,8 @@ spring:
     password: \${COMMON-POSTGRES-PASSWORD}
     hikari:
       connectionTimeout: 5000
+  flyway:
+    enabled: false
   replica:
     datasource:
       platform: postgres

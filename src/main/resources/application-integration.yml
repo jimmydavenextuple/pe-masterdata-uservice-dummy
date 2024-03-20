@@ -9,6 +9,8 @@ spring:
     url: jdbc:postgresql://postgres:5432/pe_intgeration
     username: nextuple_user
     password: nextuple@123
+  flyway:
+    enabled: false
   kafka:
     bootstrap-servers: kafka:9092
     properties:
