@@ -9,6 +9,8 @@ spring:
     url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_qa
     username: \${COMMON-PE-POSTGRES-USER}
     password: \${COMMON-PE-POSTGRES-PASSWORD}
+  flyway:
+    enabled: false
   kafka:
     bootstrap-servers: "kbrk-nonprod.nextuple.net:9092"
     properties:
@@ -69,6 +71,7 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+        max.poll.records: 10
       topics:
         master_data_update_event:
           name: INTERNAL.QA.MASTER_DATA_UPDATE_EVENTS
@@ -136,3 +139,61 @@ jobs-framework:
   record-consumer:
     topic-name: INTERNAL.QA.PE.JOB_TASK
     group-id: jobs-task-consumer-async-qa
+
+master-data:
+  node:
+    topic-name: INTERNAL.QA.PE.NODE_INTEGRATION
+    group-id: node-master-qa
+  node-carrier:
+    topic-name: INTERNAL.QA.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-qa
+  carrier:
+    topic-name: INTERNAL.QA.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-qa
+  processing-lead-time:
+    topic-name: INTERNAL.QA.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-qa
+  calendar:
+    topic-name: INTERNAL.QA.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-qa
+  node-calendar:
+    topic-name: INTERNAL.QA.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-qa
+  carrier-service-calendar:
+    topic-name: INTERNAL.QA.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-qa
+  pickup-calendar:
+    topic-name: INTERNAL.QA.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-qa
+  node-service-option-buffer:
+    topic-name: INTERNAL.QA.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-qa
+  transit:
+    topic-name: INTERNAL.QA.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-qa
+  transit-buffer:
+    topic-name: INTERNAL.QA.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-qa
+
+
+next-cache:
+  caches:
+    -
+      cacheName: task-info
+      ttlSeconds: 14400
+      maxLimit: 50
+  refresh-cache:
+    topic: INTERNAL.QA.PE.REFRESH_CACHE_INV
+  cacheManager: caffeine
+platform:
+  tasks:
+    enabled: true
+  tasks-scheduler:
+    enabled: true
+    milliseconds: 5000
+  authFilter:
+    enabled: false
+kafka:
+  input:
+    taskTopics: INTERNAL.QA.PE.RETRY_TOPIC_INV
+    taskGroupId: pe-retry

@@ -9,6 +9,8 @@ spring:
     url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_demo
     username: \${COMMON-PE-POSTGRES-USER}
     password: \${COMMON-PE-POSTGRES-PASSWORD}
+  flyway:
+    enabled: false
   kafka:
     bootstrap-servers: kbrk-nonprod.nextuple.net:9092
     properties:

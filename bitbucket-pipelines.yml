@@ -205,6 +205,7 @@ definitions:
           - microdnf install git
           - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
+          - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build artifactoryPublish
           - export SPACE=" "
@@ -263,6 +264,7 @@ definitions:
           - microdnf install git
           - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
+          - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotbugsMain
           - bash ./gradlew dependencyCheckAggregate --info

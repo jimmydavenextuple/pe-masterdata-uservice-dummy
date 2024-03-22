@@ -136,4 +136,8 @@ custom-attributes:
     NEXTUPLE_GR:
       bannerId: banner1
       isSizingRequired: false
-
+platform:
+  groupIdPrefix: pe-retry
+holiday-cutoff:
+  days: 0.0
+  days-type: BUSINESS_DAYS

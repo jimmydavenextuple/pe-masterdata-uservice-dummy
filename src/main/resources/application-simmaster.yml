@@ -9,6 +9,8 @@ spring:
     url: \${POSTGRES-URI}
     username: \${COMMON-POSTGRES-USER}
     password: \${COMMON-POSTGRES-PASSWORD}
+  flyway:
+    enabled: false
   kafka:
     bootstrap-servers: \${KAFKA-BROKER-URI}
     properties:
