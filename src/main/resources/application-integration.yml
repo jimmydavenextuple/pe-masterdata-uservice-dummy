@@ -121,7 +121,6 @@ dataupload:
   bucket-name: "dataupload"
   type: BLOB
   signed-url-expiry-minutes: 30
-
 jobs-framework:
   job-completion-consumer:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_COMPLETION
