@@ -111,6 +111,9 @@ page-properties:
   sortBy: created_date
   sortOrder: ASC
 
+holidaycutoff-page-properties:
+  sortBy: ruleName
+
 scheduled-processor:
   timeRangeInHours: 24
   fixed-rate:
