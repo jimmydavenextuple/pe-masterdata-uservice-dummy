@@ -136,3 +136,60 @@ jobs-framework:
   record-consumer:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_TASK
     group-id: jobs-task-consumer-async
+
+master-data:
+  node:
+    topic-name: INTERNAL.INTEGRATION.PE.NODE_INTEGRATION
+    group-id: node-master-integration
+  node-carrier:
+    topic-name: INTERNAL.INTEGRATION.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-integration
+  carrier:
+    topic-name: INTERNAL.INTEGRATION.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-integration
+  processing-lead-time:
+    topic-name: INTERNAL.INTEGRATION.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-integration
+  calendar:
+    topic-name: INTERNAL.INTEGRATION.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-integration
+  node-calendar:
+    topic-name: INTERNAL.INTEGRATION.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-integration
+  carrier-service-calendar:
+    topic-name: INTERNAL.INTEGRATION.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-integration
+  pickup-calendar:
+    topic-name: INTERNAL.INTEGRATION.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-integration
+  node-service-option-buffer:
+    topic-name: INTERNAL.INTEGRATION.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-integration
+  transit:
+    topic-name: INTERNAL.INTEGRATION.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-integration
+  transit-buffer:
+    topic-name: INTERNAL.INTEGRATION.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-integration
+
+next-cache:
+  caches:
+    -
+      cacheName: task-info
+      ttlSeconds: 14400
+      maxLimit: 50
+  refresh-cache:
+    topic: INTERNAL.INTEGRATION.PE.REFRESH_CACHE_INV
+  cacheManager: caffeine
+platform:
+  tasks:
+    enabled: true
+  tasks-scheduler:
+    enabled: true
+    milliseconds: 5000
+  authFilter:
+    enabled: false
+kafka:
+  input:
+    taskTopics: INTERNAL.INTEGRATION.PE.RETRY_TOPIC_INV
+    taskGroupId: pe-retry
