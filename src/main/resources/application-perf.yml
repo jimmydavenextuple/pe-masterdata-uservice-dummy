@@ -5,7 +5,6 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    platform: postgres
     url: jdbc:postgresql://postgres.postgres.svc.cluster.local:5432/pe
     username: \${COMMON-PE-POSTGRES-USER}
     password: \${COMMON-PE-POSTGRES-PASSWORD}
@@ -83,6 +82,7 @@ spring:
       interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       enable-auto-commit: true
       auto-offset-reset: latest
+  sql.init.platform: postgres
 
 logging:
   level:
