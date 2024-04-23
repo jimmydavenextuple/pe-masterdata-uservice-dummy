@@ -89,6 +89,9 @@ jobs-framework:
   record-consumer:
     topic-name: INTERNAL.HOTFIX.JOBS.TASK
     group-id: jobs-task-consumer-async-hotfix
+  plt-neip:
+    topic-name: INTERNAL.HOTFIX.PLT_NEIP_FPM_METRICS
+    group-id: plt-neip-frm-metrics
 auth-token:
   url: https://promise-engine-domain-development.auth.us-east-1.amazoncognito.com
   username: \${COGNITO_CLIENT_ID}

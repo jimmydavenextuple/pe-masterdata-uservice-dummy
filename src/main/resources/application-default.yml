@@ -120,6 +120,9 @@ jobs-framework:
   record-consumer:
     topic-name: jobs-task-local
     group-id: jobs-task-consumer-async-local
+  plt-neip:
+    topic-name: INTERNAL.DEV.PLT_NEIP_FPM_METRICS_LOCAL
+    group-id: plt-neip-frm-metrics-local
 
 pe-public-webhook:
   iv-feed:

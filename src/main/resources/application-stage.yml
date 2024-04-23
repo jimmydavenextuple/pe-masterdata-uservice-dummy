@@ -93,6 +93,9 @@ jobs-framework:
   record-consumer:
     topic-name: INTERNAL.STAGE.JOBS.TASK
     group-id: jobs-task-consumer-async-stage
+  plt-neip:
+    topic-name: INTERNAL.STAGE.PLT_NEIP_FPM_METRICS
+    group-id: plt-neip-frm-metrics
 auth-token:
   url: https://promise-engine-domain-stage.auth.us-east-1.amazoncognito.com
   username: \${COGNITO_CLIENT_ID}

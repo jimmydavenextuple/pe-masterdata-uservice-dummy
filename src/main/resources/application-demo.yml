@@ -138,3 +138,6 @@ jobs-framework:
   record-consumer:
     topic-name: INTERNAL.DEMO.PE.JOB_TASK
     group-id: jobs-task-consumer-async-demo
+  plt-neip:
+    topic-name: INTERNAL.DEMO.PLT_NEIP_FPM_METRICS
+    group-id: plt-neip-frm-metrics

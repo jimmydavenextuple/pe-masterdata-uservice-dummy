@@ -139,6 +139,9 @@ jobs-framework:
   record-consumer:
     topic-name: INTERNAL.DEV.PE.JOB_TASK
     group-id: jobs-task-consumer-async
+  plt-neip:
+    topic-name: INTERNAL.DEV.PLT_NEIP_FPM_METRICS
+    group-id: plt-neip-frm-metrics
 
 master-data:
   node:
