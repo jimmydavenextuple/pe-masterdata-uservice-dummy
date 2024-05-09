@@ -70,9 +70,6 @@ management:
     loggers:
       enabled: true
   metrics:
-    export:
-      prometheus:
-        enabled: true
     distribution:
       percentiles-histogram:
         http:
@@ -80,6 +77,7 @@ management:
             requests: true
         persistence: true
         cache: true
+  prometheus.metrics.export.enabled: true
 #pe:
 #  ui:
 #    allowed-origin-url: \${PE_UI_URL}
