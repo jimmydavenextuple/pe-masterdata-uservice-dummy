@@ -138,3 +138,60 @@ jobs-framework:
   record-consumer:
     topic-name: INTERNAL.PERF.PE.JOB_TASK
     group-id: jobs-task-consumer-async
+
+master-data:
+  node:
+    topic-name: INTERNAL.PERF.PE.NODE_INTEGRATION
+    group-id: node-master-perf
+  node-carrier:
+    topic-name: INTERNAL.PERF.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-perf
+  carrier:
+    topic-name: INTERNAL.PERF.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-perf
+  processing-lead-time:
+    topic-name: INTERNAL.PERF.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-perf
+  calendar:
+    topic-name: INTERNAL.PERF.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-perf
+  node-calendar:
+    topic-name: INTERNAL.PERF.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-perf
+  carrier-service-calendar:
+    topic-name: INTERNAL.PERF.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-perf
+  pickup-calendar:
+    topic-name: INTERNAL.PERF.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-perf
+  node-service-option-buffer:
+    topic-name: INTERNAL.PERF.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-perf
+  transit:
+    topic-name: INTERNAL.PERF.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-perf
+  transit-buffer:
+    topic-name: INTERNAL.PERF.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-perf
+
+next-cache:
+  caches:
+    -
+      cacheName: task-info
+      ttlSeconds: 14400
+      maxLimit: 50
+  refresh-cache:
+    topic: INTERNAL.PERF.PE.REFRESH_CACHE_INV
+  cacheManager: caffeine
+platform:
+  tasks:
+    enabled: true
+  tasks-scheduler:
+    enabled: true
+    milliseconds: 5000
+  authFilter:
+    enabled: false
+kafka:
+  input:
+    taskTopics: INTERNAL.PERF.PE.RETRY_TOPIC_INV
+    taskGroupId: pe-retry
