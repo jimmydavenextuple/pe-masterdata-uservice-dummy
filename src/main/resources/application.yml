@@ -131,12 +131,6 @@ csv-utility-api:
     max-no-of-carrier-services-for-download: 100
 #item:
 #  listenerContainerFactory: ItemDeserializerConsumer
-
-custom-attributes:
-  tenant-details:
-    NEXTUPLE_GR:
-      bannerId: banner1
-      isSizingRequired: false
 platform:
   groupIdPrefix: pe-retry
 holiday-cutoff:
