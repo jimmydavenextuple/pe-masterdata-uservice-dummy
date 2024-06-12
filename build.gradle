@@ -177,6 +177,10 @@ dependencies {
     implementation "com.github.ben-manes.caffeine:caffeine"
 
     implementation 'org.flywaydb:flyway-core'
+
+    implementation("com.nextuple.plt:plt-common:1.0.3-${build_target}")
+    implementation("com.nextuple.plt:plt-fpm-service:1.0.4-${build_target}")
+    implementation("com.nextuple.plt:plt-postgress-dao:1.0.3-${build_target}")
 }
 
 jacocoTestReport {
