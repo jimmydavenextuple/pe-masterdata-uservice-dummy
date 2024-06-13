@@ -77,6 +77,9 @@ dataupload:
   signed-url-expiry-minutes: 30
 
 jobs-framework:
+  feed-metrics-consumer:
+    topic-name: INTERNAL.HOTFIX.PE_JOB_FPM_METRICS, INTERNAL.HOTFIX.PE_JOB_RECORD_FPM_METRICS, INTERNAL.HOTFIX.PE_NEIP_FPM_METRICS
+    group-id: pe-fpm-metrics-hotfix
   job-completion-consumer:
     topic-name: internal-hotfix-job-completion
   kafka-publish:

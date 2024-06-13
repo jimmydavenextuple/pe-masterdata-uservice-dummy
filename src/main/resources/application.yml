@@ -103,6 +103,9 @@ transit-time-buffer-page-properties:
   sortBy: carrierServiceId
   sortOrder: DESC
 
+retry-properties:
+  count: 5
+
 page-properties:
   pageNo: 1
   pageSize: 15

@@ -81,6 +81,9 @@ dataupload:
   signed-url-expiry-minutes: 30
 
 jobs-framework:
+  feed-metrics-consumer:
+    topic-name: INTERNAL.STAGE.PE_JOB_FPM_METRICS, INTERNAL.STAGE.PE_JOB_RECORD_FPM_METRICS, INTERNAL.STAGE.PE_NEIP_FPM_METRICS
+    group-id: pe-fpm-metrics-stage
   job-completion-consumer:
     topic-name: internal-stage-job-completion
   kafka-publish:

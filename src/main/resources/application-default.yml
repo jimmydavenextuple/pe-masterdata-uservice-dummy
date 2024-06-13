@@ -107,6 +107,9 @@ pe:
     allowed-origin-url: "*"
 
 jobs-framework:
+  feed-metrics-consumer:
+    topic-name: INTERNAL.DEV.PE_JOB_FPM_METRICS_LOCAL, INTERNAL.DEV.PE_JOB_RECORD_FPM_METRICS_LOCAL, INTERNAL.DEV.PE_NEIP_FPM_METRICS_LOCAL
+    group-id: pe-fpm-metrics-local
   job-completion-consumer:
     topic-name: job-completion-local
     group-id: jobs-completion-consumer-async-dev
