@@ -259,6 +259,19 @@ definitions:
             variables:
               BITBUCKET_ACCESS_TOKEN: $BITBUCKET_ACCESS_TOKEN
               CACHES: ["gradle"]
+    - step: &deployibm
+        caches:
+          - gradle
+        services:
+          - docker
+        image: icr.io/continuous-delivery/pipeline/pipeline-base-image:2.9
+        script:
+          - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
+          - chmod +x ./deployment-scripts/deploy-k8s-ibmcloud.sh
+          - ./deployment-scripts/deploy-k8s-ibmcloud.sh
+        after-script:
+          - chmod +x ./deployment-scripts/after-deploy-k8s-service-v3.sh
+          - ./deployment-scripts/after-deploy-k8s-service-v3.sh
 pipelines:
   pull-requests:
     '**':
@@ -324,6 +337,15 @@ pipelines:
           #     name: Deploy PERF
           #     trigger: manual
           #     deployment: perf
+    idm_demodev:
+      - step: *Clear-Cache
+      - step: *build
+      - step:
+          !!merge <<: *deployibm
+          name: Deploy demodev
+          deployment: demodev
+
+
     master:
       - step: *Clear-Cache
       - step: *build
