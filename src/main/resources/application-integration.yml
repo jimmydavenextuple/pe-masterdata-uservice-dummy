@@ -71,6 +71,9 @@ pe-public-webhook:
   item-feed:
     topic: INTERNAL.INTEGRATION.PROMISE_ITEMS
 jobs-framework:
+  feed-metrics-consumer:
+    topic-name: INTERNAL.INTEGRATION.PE_JOB_FPM_METRICS, INTERNAL.INTEGRATION.PE_JOB_RECORD_FPM_METRICS, INTERNAL.INTEGRATION.PE_NEIP_FPM_METRICS
+    group-id: pe-fpm-metrics-integration
   job-completion-consumer:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_COMPLETION
   kafka-publish:
