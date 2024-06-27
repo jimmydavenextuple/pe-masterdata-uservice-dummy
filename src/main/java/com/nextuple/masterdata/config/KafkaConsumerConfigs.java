@@ -8,7 +8,6 @@
 package com.nextuple.masterdata.config;
 
 import com.nextuple.dataupload.configuration.KafkaStringProperties;
-import com.nextuple.streams.promising.messages.PromisingRecord;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -108,20 +107,6 @@ public class KafkaConsumerConfigs {
     ConcurrentKafkaListenerContainerFactory<Object, Object> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(jsonConsumerFactory());
-    return factory;
-  }
-
-  @Bean(name = "ItemDeserializerConsumer")
-  @ConditionalOnProperty(name = "spring.kafka.consumer-item.type", havingValue = "avro")
-  public ConcurrentKafkaListenerContainerFactory<String, PromisingRecord>
-      kafkaListenerContainerFactory(
-          KafkaOperations<String, Object> kafkaOperations,
-          ConsumerFactory<String, Object> consumerFactory) {
-
-    ConcurrentKafkaListenerContainerFactory<String, PromisingRecord> factory =
-        new ConcurrentKafkaListenerContainerFactory<>();
-    factory.setConsumerFactory(itemConsumerFactory());
-    factory.setCommonErrorHandler(kafkaErrorHandler(kafkaOperations));
     return factory;
   }
 
