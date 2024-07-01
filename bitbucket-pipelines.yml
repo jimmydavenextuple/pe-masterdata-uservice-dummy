@@ -236,7 +236,10 @@ definitions:
         script:
           - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
           - chmod +x ./deployment-scripts/deploy-k8s-service-v7.sh
+          - chmod +x ./deployment-scripts/trivy.sh
           - ./deployment-scripts/deploy-k8s-service-v7.sh
+        artifacts:
+          - trivy_report*.txt
         after-script:
           - chmod +x ./deployment-scripts/after-deploy-k8s-service-v3.sh
           - ./deployment-scripts/after-deploy-k8s-service-v3.sh
