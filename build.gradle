@@ -126,6 +126,9 @@ dependencies {
     api "io.micrometer:micrometer-registry-prometheus:1.10.7"
     implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.13.0'
 
+    // Dependency version override to resolve high CVE coming transitively for tomcat-embed-core
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.25'
+
 
     implementation("com.nextuple.pe:job-framework-common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:data-upload-services:1.4.0-${build_target}")
@@ -178,9 +181,9 @@ dependencies {
 
     implementation 'org.flywaydb:flyway-core'
 
-    implementation("com.nextuple.plt:plt-common:1.0.5-${build_target}")
-    implementation("com.nextuple.plt:plt-fpm-service:1.0.5-${build_target}")
-    implementation("com.nextuple.plt:plt-postgress-dao:1.0.5-${build_target}")
+    implementation("com.nextuple.plt:plt-common:1.0.7-${build_target}")
+    implementation("com.nextuple.plt:plt-fpm-service:1.0.7-${build_target}")
+    implementation("com.nextuple.plt:plt-postgress-dao:1.0.7-${build_target}")
 }
 
 jacocoTestReport {
