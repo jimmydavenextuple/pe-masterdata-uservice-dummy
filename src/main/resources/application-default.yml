@@ -15,6 +15,7 @@ spring:
       weightage-configuration: "http://localhost:8082/"
       userexit: "http://localhost:8082/"
       configuration: "http://localhost:8082/"
+      fpm-service: "http://localhost:8082/"
   jpa:
     database: POSTGRESQL
     show-sql: true
