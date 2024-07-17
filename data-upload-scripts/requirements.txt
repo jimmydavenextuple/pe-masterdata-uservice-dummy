@@ -1,0 +1,6 @@
+cassandra_driver==3.25.0
+numpy==1.24.3
+pandas==2.0.2
+psycopg2_binary==2.9.6
+SQLAlchemy==2.0.16
+cassandra-csv==0.3
