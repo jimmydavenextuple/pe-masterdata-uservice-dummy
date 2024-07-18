@@ -13,6 +13,7 @@ spring:
       weightage-configuration: "http://pe-masterdata-uservice:8080/"
       userexit: "http://pe-masterdata-uservice:8080/"
       configuration: "http://pe-masterdata-uservice:8080/"
+      fpm-service: "http://pe-masterdata-uservice:8080/"
     name: "pe-masterdata-uservice"
     version: 2.6.0
     title: "Master Data Service"
@@ -110,6 +111,12 @@ page-properties:
   pageNo: 1
   pageSize: 15
   sortBy: created_date
+  sortOrder: ASC
+
+fpm-page-properties:
+  pageNo: 1
+  pageSize: 15
+  sortBy: processing_started_at
   sortOrder: ASC
 
 holidaycutoff-page-properties:
