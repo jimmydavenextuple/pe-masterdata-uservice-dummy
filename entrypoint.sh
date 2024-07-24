@@ -12,7 +12,7 @@ fi
 
 export PROFILE="$SPRING_PROFILES_ACTIVE"
 
-if [ $PROFILE = "performance" ]; then
+if [ $PROFILE = "perf" ]; then
   java -javaagent:newrelic.jar -jar $OPTS app.jar
 else
   java -jar $OPTS app.jar
