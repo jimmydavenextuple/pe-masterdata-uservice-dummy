@@ -146,3 +146,8 @@ platform:
 holiday-cutoff:
   days: 0.0
   days-type: BUSINESS_DAYS
+
+neip:
+  job-types: itembuffer
+  headers:
+    itembuffer: "RecordNo,action,orgId,itemId,uom,bufferHours,bufferStartDate,bufferEndDate,Error Message"
