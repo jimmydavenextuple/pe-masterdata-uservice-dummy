@@ -6,13 +6,14 @@ from sqlalchemy import create_engine
 
 host = "host"
 port = "5432"
-user = "user"
+user = "pe_user"
 password = "password"
+db_name = "pe_sandbox"
 
 tenantId = input("Tenant Id : ")
 
 
-connection = psycopg2.connect(database="db_name_from_where_teh_dump_to_be_taken",
+connection = psycopg2.connect(database=db_name,
                     host=host,
                     user=user,
                     password=password,

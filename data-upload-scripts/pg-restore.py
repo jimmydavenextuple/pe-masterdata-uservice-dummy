@@ -4,11 +4,17 @@ import os
 import glob
 import math
 
+host = "host"
+port = "5432"
+user = "postgres"
+password = "postgres"
+db_name = "postgres"
+
 ## Restore
 def is_nan(variable):
     return isinstance(variable, (int, float)) and math.isnan(variable) 
 
-engine = create_engine('postgresql://user:password@localhost:port/db_name')
+engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db_name}')
 prospectIndex = int(input("Prospect DB Index: "))
 prospectName = input("Prospect Name: ")
 tenantId = input("Tenant Id : ")
