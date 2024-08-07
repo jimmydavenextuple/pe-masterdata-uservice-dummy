@@ -1,0 +1,7 @@
+action,calendarId,orgId,description,isMondayWorking,isTuesdayWorking,isWednesdayWorking,isThursdayWorking,isFridayWorking,isSaturdayWorking,isSundayWorking,exceptionDays
+CREATE,Store Calendar,CTPPT,Store Calendar,TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,"[{""date"":""2022-01-01"",""reason"":""NewYear'sDay""},{""date"":""2022-02-21"",""reason"":""FamilyDay""},{""date"":""2022-02-27"",""reason"":""Independence Day""}]"
+CREATE,DC Calendar,CTPPT,DC Calendar,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+CREATE,FC Calendar,CTPPT,FC Calendar,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,
+CREATE,Carrier Calendar 1,CTPPT,Standard service Calendar,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,"[{""date"":""2022-01-01"",""reason"":""NewYear'sDay""},{""date"":""2022-02-21"",""reason"":""FamilyDay""},{""date"":""2022-02-27"",""reason"":""Independence Day""}]"
+CREATE,Carrier Calendar 2,CTPPT,Express service Calendar,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+CREATE,Pickup Calendar,CTPPT,Pickup Calendar,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,

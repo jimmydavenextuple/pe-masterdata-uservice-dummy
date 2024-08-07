@@ -1,0 +1,61 @@
+action,nodeId,orgId,carrierServiceId,serviceOption,lastPickupTime
+CREATE,Los Angeles Store,CTPPT,UPS Standard,STANDARD,17:00
+CREATE,San Diego Store,CTPPT,UPS Standard,STANDARD,17:00
+CREATE,New York Store,CTPPT,UPS Standard,STANDARD,17:00
+CREATE,Anderson Store,CTPPT,UPS Standard,STANDARD,17:00
+CREATE,Miami-Dade Store,CTPPT,UPS Standard,STANDARD,17:00
+CREATE,Jefferson DC,CTPPT,UPS Standard,STANDARD,17:00
+CREATE,Campbell DC,CTPPT,UPS Standard,STANDARD,17:00
+CREATE,Saginaw FC,CTPPT,UPS Standard,STANDARD,17:00
+CREATE,Woodbury Store,CTPPT,UPS Standard,STANDARD,17:00
+CREATE,Yellowstone FC,CTPPT,UPS Standard,STANDARD,17:00
+CREATE,Los Angeles Store,CTPPT,UPS Express,EXPRESS,18:00
+CREATE,San Diego Store,CTPPT,UPS Express,EXPRESS,18:00
+CREATE,New York Store,CTPPT,UPS Express,EXPRESS,18:00
+CREATE,Anderson Store,CTPPT,UPS Express,EXPRESS,18:00
+CREATE,Miami-Dade Store,CTPPT,UPS Express,EXPRESS,18:00
+CREATE,Jefferson DC,CTPPT,UPS Express,EXPRESS,18:00
+CREATE,Campbell DC,CTPPT,UPS Express,EXPRESS,18:00
+CREATE,Saginaw FC,CTPPT,UPS Express,EXPRESS,18:00
+CREATE,Woodbury Store,CTPPT,UPS Express,EXPRESS,18:00
+CREATE,Yellowstone FC,CTPPT,UPS Express,EXPRESS,18:00
+CREATE,Los Angeles Store,CTPPT,Fedex Standard,STANDARD,17:00
+CREATE,San Diego Store,CTPPT,Fedex Standard,STANDARD,17:00
+CREATE,New York Store,CTPPT,Fedex Standard,STANDARD,17:00
+CREATE,Anderson Store,CTPPT,Fedex Standard,STANDARD,17:00
+CREATE,Miami-Dade Store,CTPPT,Fedex Standard,STANDARD,17:00
+CREATE,Jefferson DC,CTPPT,Fedex Standard,STANDARD,17:00
+CREATE,Campbell DC,CTPPT,Fedex Standard,STANDARD,17:00
+CREATE,Saginaw FC,CTPPT,Fedex Standard,STANDARD,17:00
+CREATE,Woodbury Store,CTPPT,Fedex Standard,STANDARD,17:00
+CREATE,Yellowstone FC,CTPPT,Fedex Standard,STANDARD,17:00
+CREATE,Los Angeles Store,CTPPT,Fedex Express,EXPRESS,18:00
+CREATE,San Diego Store,CTPPT,Fedex Express,EXPRESS,18:00
+CREATE,New York Store,CTPPT,Fedex Express,EXPRESS,18:00
+CREATE,Anderson Store,CTPPT,Fedex Express,EXPRESS,18:00
+CREATE,Miami-Dade Store,CTPPT,Fedex Express,EXPRESS,18:00
+CREATE,Jefferson DC,CTPPT,Fedex Express,EXPRESS,18:00
+CREATE,Campbell DC,CTPPT,Fedex Express,EXPRESS,18:00
+CREATE,Saginaw FC,CTPPT,Fedex Express,EXPRESS,18:00
+CREATE,Woodbury Store,CTPPT,Fedex Express,EXPRESS,18:00
+CREATE,Yellowstone FC,CTPPT,Fedex Express,EXPRESS,18:00
+CREATE,Los Angeles Store,CTPPT,DHL Standard,STANDARD,17:00
+CREATE,San Diego Store,CTPPT,DHL Standard,STANDARD,17:00
+CREATE,New York Store,CTPPT,DHL Standard,STANDARD,17:00
+CREATE,Anderson Store,CTPPT,DHL Standard,STANDARD,17:00
+CREATE,Miami-Dade Store,CTPPT,DHL Standard,STANDARD,17:00
+CREATE,Jefferson DC,CTPPT,DHL Standard,STANDARD,17:00
+CREATE,Campbell DC,CTPPT,DHL Standard,STANDARD,17:00
+CREATE,Saginaw FC,CTPPT,DHL Standard,STANDARD,17:00
+CREATE,Woodbury Store,CTPPT,DHL Standard,STANDARD,17:00
+CREATE,Yellowstone FC,CTPPT,DHL Standard,STANDARD,17:00
+CREATE,Los Angeles Store,CTPPT,DHL Express,EXPRESS,18:00
+CREATE,San Diego Store,CTPPT,DHL Express,EXPRESS,18:00
+CREATE,New York Store,CTPPT,DHL Express,EXPRESS,18:00
+CREATE,Anderson Store,CTPPT,DHL Express,EXPRESS,18:00
+CREATE,Miami-Dade Store,CTPPT,DHL Express,EXPRESS,18:00
+CREATE,Jefferson DC,CTPPT,DHL Express,EXPRESS,18:00
+CREATE,Campbell DC,CTPPT,DHL Express,EXPRESS,18:00
+CREATE,Saginaw FC,CTPPT,DHL Express,EXPRESS,18:00
+CREATE,Woodbury Store,CTPPT,DHL Express,EXPRESS,18:00
+CREATE,Yellowstone FC,CTPPT,DHL Express,EXPRESS,18:00

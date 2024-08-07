@@ -1,0 +1,7 @@
+action,orgId,carrierId,carrierName,carrierServiceId,serviceName,serviceOptions
+CREATE,CTPPT,U1,UPS,UPS Standard,Standard,STANDARD
+CREATE,CTPPT,U2,UPS,UPS Express,Express,EXPRESS
+CREATE,CTPPT,F1,Fedex,Fedex Standard,Standard,STANDARD
+CREATE,CTPPT,F2,Fedex,Fedex Express,Express,EXPRESS
+CREATE,CTPPT,D1,DHL,DHL Standard,Standard,STANDARD
+CREATE,CTPPT,D2,DHL,DHL Express,Express,EXPRESS

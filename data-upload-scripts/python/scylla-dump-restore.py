@@ -4,13 +4,19 @@ from cassandracsv import CassandraCsv
 import pandas as pd
 import numpy as np
 
+user = "user"
+password = "password"
+host = "host"
+port = "port"
+db_name = "pe_inventory_sandbox"
 
-ap = PlainTextAuthProvider(username="user", password="password")
+ap = PlainTextAuthProvider(username=user, password=password)
 
-cluster = Cluster(['host'], port=9042, auth_provider=ap)
-session = cluster.connect('pe_inventory_sandbox')
+cluster = Cluster([host], port=9042, auth_provider=ap)
+session = cluster.connect(db_name)
 
-result = session.execute("""select * from inventory_atp where org_id = 'NEXTUPLE_GR' ALLOW FILTERING;""")
+tenant = input("TenantId of the tenant to take dump of: ")
+result = session.execute("""select * from inventory_atp where org_id = '{tenant}' ALLOW FILTERING;""")
 
 CassandraCsv.export(
     result,
@@ -19,7 +25,7 @@ CassandraCsv.export(
 )
 
 df = pd.read_csv('backups/iv_dump.csv')
-df.replace("NEXTUPLE_GR",input("Prospect ID: "),inplace=True)
+df.replace(tenant,input("Prospect ID: "),inplace=True)
 df.replace(np.nan,0,inplace=True)
 
 prepared = session.prepare("""

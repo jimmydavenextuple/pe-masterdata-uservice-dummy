@@ -1,0 +1,61 @@
+action,calendarId,orgId,nodeId,carrierServiceId,description,effectiveDate
+CREATE,Pickup Calendar,CTPPT,Los Angeles Store,UPS Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,San Diego Store,UPS Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,New York Store,UPS Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Anderson Store,UPS Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Miami-Dade Store,UPS Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Jefferson DC,UPS Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Campbell DC,UPS Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Saginaw FC,UPS Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Woodbury Store,UPS Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Yellowstone FC,UPS Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Los Angeles Store,UPS Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,San Diego Store,UPS Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,New York Store,UPS Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Anderson Store,UPS Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Miami-Dade Store,UPS Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Jefferson DC,UPS Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Campbell DC,UPS Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Saginaw FC,UPS Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Woodbury Store,UPS Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Yellowstone FC,UPS Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Los Angeles Store,Fedex Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,San Diego Store,Fedex Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,New York Store,Fedex Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Anderson Store,Fedex Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Miami-Dade Store,Fedex Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Jefferson DC,Fedex Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Campbell DC,Fedex Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Saginaw FC,Fedex Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Woodbury Store,Fedex Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Yellowstone FC,Fedex Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Los Angeles Store,Fedex Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,San Diego Store,Fedex Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,New York Store,Fedex Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Anderson Store,Fedex Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Miami-Dade Store,Fedex Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Jefferson DC,Fedex Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Campbell DC,Fedex Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Saginaw FC,Fedex Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Woodbury Store,Fedex Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Yellowstone FC,Fedex Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Los Angeles Store,DHL Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,San Diego Store,DHL Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,New York Store,DHL Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Anderson Store,DHL Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Miami-Dade Store,DHL Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Jefferson DC,DHL Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Campbell DC,DHL Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Saginaw FC,DHL Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Woodbury Store,DHL Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Yellowstone FC,DHL Standard,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Los Angeles Store,DHL Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,San Diego Store,DHL Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,New York Store,DHL Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Anderson Store,DHL Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Miami-Dade Store,DHL Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Jefferson DC,DHL Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Campbell DC,DHL Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Saginaw FC,DHL Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Woodbury Store,DHL Express,Pickup Calendar,2024-01-01
+CREATE,Pickup Calendar,CTPPT,Yellowstone FC,DHL Express,Pickup Calendar,2024-01-01

@@ -8,7 +8,7 @@ host = "host"
 port = "5432"
 user = "postgres"
 password = "postgres"
-db_name = "postgres"
+db_name = "pe_sandbox"
 
 ## Restore
 def is_nan(variable):
@@ -17,7 +17,7 @@ def is_nan(variable):
 engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db_name}')
 prospectIndex = int(input("Prospect DB Index: "))
 prospectName = input("Prospect Name: ")
-tenantId = input("Tenant Id : ")
+tenantId = input("TenantId of the tenant to take dump of: ")
 
 count = 0
 path = os.getcwd()
@@ -74,7 +74,7 @@ for file in csv_files:
             df['name_id'] = df['name_id'] + prospectIndex
 
         elif table == 'rules_configuration':
-            df['attribute_definition_id'] + prospectIndex    
+            df['attribute_definition_id'] = df['attribute_definition_id'] + prospectIndex
 
     elif table == 'holiday_cutoff':
         df['sourcing_attributes_definition_id'] = df['sourcing_attributes_definition_id'] + prospectIndex        

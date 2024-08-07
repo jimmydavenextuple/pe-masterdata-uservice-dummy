@@ -1,0 +1,9 @@
+Notes: Filled in values will be in USD,,,
+Org Id,CTPPT,,
+Cost Type,PROCESSING_COST,,
+Item Handling Type,Non-conveyable,,
+Dynamic - incremental per pound cost bucket ( Item Weight: 80-120),FALSE,,
+Item Weight/Node Type,FC,DC,Store
+0-40,4.5,3,1.5
+40-80,9,7.5,6
+80-120,13.5,12,10.5

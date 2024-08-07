@@ -1,0 +1,7 @@
+action,calendarId,orgId,carrierServiceId,shippingStage,description,effectiveDate
+CREATE,Carrier Calendar 1,CTPPT,UPS Standard,ALL,Yearly Calendar,2024-01-01
+CREATE,Carrier Calendar 2,CTPPT,UPS Express,ALL,Yearly Calendar,2024-01-01
+CREATE,Carrier Calendar 1,CTPPT,Fedex Standard,ALL,Yearly Calendar,2024-01-01
+CREATE,Carrier Calendar 2,CTPPT,Fedex Express,ALL,Yearly Calendar,2024-01-01
+CREATE,Carrier Calendar 1,CTPPT,DHL Standard,ALL,Yearly Calendar,2024-01-01
+CREATE,Carrier Calendar 2,CTPPT,DHL Express,ALL,Yearly Calendar,2024-01-01

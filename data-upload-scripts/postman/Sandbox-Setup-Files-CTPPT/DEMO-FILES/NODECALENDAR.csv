@@ -1,0 +1,11 @@
+action,calendarId,nodeId,orgId,description,effectiveDate
+CREATE,Store Calendar,Los Angeles Store,CTPPT,Store Calendar,2024-01-01
+CREATE,Store Calendar,San Diego Store,CTPPT,Store Calendar,2024-01-01
+CREATE,Store Calendar,New York Store,CTPPT,Store Calendar,2024-01-01
+CREATE,Store Calendar,Anderson Store,CTPPT,Store Calendar,2024-01-01
+CREATE,Store Calendar,Miami-Dade Store,CTPPT,Store Calendar,2024-01-01
+CREATE,DC Calendar,Jefferson DC,CTPPT,DC Calendar,2024-01-01
+CREATE,DC Calendar,Campbell DC,CTPPT,DC Calendar,2024-01-01
+CREATE,FC Calendar,Saginaw FC,CTPPT,FC Calendar,2024-01-01
+CREATE,Store Calendar,Woodbury Store,CTPPT,Store Calendar,2024-01-01
+CREATE,FC Calendar,Yellowstone FC,CTPPT,FC Calendar,2024-01-01

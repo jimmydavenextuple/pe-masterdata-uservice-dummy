@@ -10,7 +10,7 @@ user = "pe_user"
 password = "password"
 db_name = "pe_sandbox"
 
-tenantId = input("Tenant Id : ")
+tenantId = input("TenantId of the tenant to take dump of: ")
 
 
 connection = psycopg2.connect(database=db_name,

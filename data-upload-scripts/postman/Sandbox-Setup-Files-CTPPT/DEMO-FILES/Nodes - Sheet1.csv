@@ -1,0 +1,11 @@
+action,nodeId,orgId,street,city,state,zipCode,country,latitude,longitude,timezone,shipToHome,bopisEligible,nodeType,nodeLabourTier,isActive,startWorkingTime,lastWorkingTime,sdndEligible,standardEligible,expressEligible,nextdayEligible
+CREATE,Los Angeles Store,CTPPT,NY1,Los Angeles,CA,90045,US,33.95297,-118.40014,America/Los_Angeles,TRUE,TRUE,Store,Tier 1,TRUE,09:00,17:00,TRUE,TRUE,TRUE,TRUE
+CREATE,San Diego Store,CTPPT,NY2,San Diego,CA,92007,US,33.0219,-117.2735,America/Los_Angeles,TRUE,TRUE,Store,Tier 1,TRUE,09:00,17:00,TRUE,TRUE,TRUE,TRUE
+CREATE,New York Store,CTPPT,NY3,New York,NY,10032,US,40.83884,-73.94279,America/New_York,TRUE,TRUE,Store,Tier 1,TRUE,09:00,17:00,TRUE,TRUE,TRUE,TRUE
+CREATE,Anderson Store,CTPPT,NY4,Anderson,SC,29626,US,34.45956,-82.76133,America/New_York,TRUE,TRUE,Store,Tier 1,TRUE,09:00,17:00,TRUE,TRUE,TRUE,TRUE
+CREATE,Miami-Dade Store,CTPPT,NY5,Miami-Dade,FL,33109,US,25.76135,-80.14247,America/New_York,TRUE,TRUE,Store,Tier 1,TRUE,09:00,17:00,TRUE,TRUE,TRUE,TRUE
+CREATE,Jefferson DC,CTPPT,NY6,Jefferson,AL,35203,US,33.51867,-86.80971,America/Chicago,TRUE,FALSE,DC,Tier 2,TRUE,09:00,17:00,TRUE,TRUE,TRUE,TRUE
+CREATE,Campbell DC,CTPPT,NY7,Campbell,KY,41076,US,39.01784,-84.43591,America/New_York,TRUE,FALSE,DC,Tier 2,TRUE,09:00,17:00,FALSE,TRUE,FALSE,FALSE
+CREATE,Saginaw FC,CTPPT,NY8,Saginaw,MI,48724,US,43.46004,-83.92283,America/Detroit,TRUE,FALSE,FC,Tier 2,TRUE,09:00,17:00,TRUE,TRUE,TRUE,TRUE
+CREATE,Woodbury Store,CTPPT,NY9,Woodbury,IA,51105,US,42.50866,-96.36643,America/Chicago,TRUE,TRUE,Store,Tier 1,TRUE,09:00,17:00,TRUE,TRUE,TRUE,TRUE
+CREATE,Yellowstone FC,CTPPT,NY10,Yellowstone,MT,59064,US,45.88238,-107.90781,America/Denver,TRUE,FALSE,FC,Tier 2,TRUE,09:00,17:00,FALSE,TRUE,FALSE,FALSE
