@@ -87,7 +87,7 @@ spring:
 
 logging:
   level:
-    com.nextuple: INFO
+    com.nextuple: DEBUG
 pe-public-webhook:
   iv-feed:
     topic: INTERNAL.DEV_ATP
