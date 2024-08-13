@@ -95,11 +95,11 @@ server:
         replicas: 1
       resources:
         min:
-          memory: 2Gi
-          cpu: 1
+          memory: 1Gi
+          cpu: 256m
         max:
-          memory: 2Gi
-          cpu: 1
+          memory: 1Gi
+          cpu: 256m
     qa:
       ingress: yes
       middleman: yes
@@ -330,17 +330,23 @@ pipelines:
           deployment: vapt
     development:
       - step: *Clear-Cache
-      - step: *build     
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Dev
-          deployment: dev
-      - parallel:              
+      - step: *build
+      - parallel:
+          - step:
+              !!merge <<: *deploy
+              trigger: manual
+              name: Deploy Dev
+              deployment: dev
           - step:
               !!merge <<: *deploy
               name: Deploy QA
               trigger: manual
               deployment: qa
+          - step:
+              !!merge <<: *deploy
+              name: Deploy DevPE
+              trigger: manual
+              deployment: devpe
           # - step:
           #     !!merge <<: *deploy
           #     name: Deploy PERF
