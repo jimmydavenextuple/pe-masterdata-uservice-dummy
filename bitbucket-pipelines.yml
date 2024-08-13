@@ -330,6 +330,13 @@ pipelines:
           #     name: Deploy PERF
           #     trigger: manual
           #     deployment: perf
+    dev_pe:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy DevPE
+          trigger: manual
+          deployment: devpe
     master:
       - step: *Clear-Cache
       - step: *build
