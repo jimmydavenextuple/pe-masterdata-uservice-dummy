@@ -5,7 +5,6 @@ import java.util.regex.Matcher
 
 buildscript {
     repositories {
-        mavenLocal()
         mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -40,7 +39,6 @@ java {
 
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
@@ -81,7 +79,6 @@ configurations {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven {
         url = 'https://repo.maven.apache.org/m2'
