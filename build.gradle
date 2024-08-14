@@ -131,7 +131,7 @@ dependencies {
 
     implementation("com.nextuple.pe:job-framework-common-util:1.3.1-${build_target}")
     implementation("com.nextuple.pe:data-upload-services:1.3.1-${build_target}")
-    implementation("com.nextuple.pe:promise-sourcing-rule-services:1.3.0-${build_target}")
+    implementation("com.nextuple.pe:promise-sourcing-rule-services:1.3.1-${build_target}")
     implementation("com.nextuple.pe:weightage-configuration-services:1.3.0-${build_target}")
     implementation("com.nextuple.pe:postal-code-timezone-services:1.3.0-${build_target}")
     implementation("com.nextuple.pe:transit-services:1.3.0-${build_target}")
