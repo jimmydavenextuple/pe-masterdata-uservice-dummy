@@ -8,6 +8,8 @@
 package com.nextuple.masterdata.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,8 @@ public class MapperConfig {
   @Bean
   public ObjectMapper mapper() {
     ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    objectMapper.setDateFormat(new StdDateFormat().withColonInTimeZone(true));
     objectMapper.registerModule(new JodaModule());
     return objectMapper;
   }
