@@ -7,12 +7,12 @@
 
 package com.nextuple.masterdata.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 
 class MapperConfigTest {
   @InjectMocks MapperConfig mapperConfig;
@@ -24,7 +24,8 @@ class MapperConfigTest {
 
   @Test
   void mapperTest() {
-    ObjectMapper mapper = mapperConfig.mapper();
-    Assertions.assertEquals(mapper.getClass(), ObjectMapper.class);
+    Jackson2ObjectMapperBuilderCustomizer mapper =
+        mapperConfig.jackson2ObjectMapperBuilderCustomizer();
+    Assertions.assertNotNull(mapper);
   }
 }
