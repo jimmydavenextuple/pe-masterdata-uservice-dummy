@@ -5,9 +5,9 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://postgres:5432/pe_intgeration
-    username: nextuple_user
-    password: nextuple@123
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_plt
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
   flyway:
     enabled: false
   kafka:
