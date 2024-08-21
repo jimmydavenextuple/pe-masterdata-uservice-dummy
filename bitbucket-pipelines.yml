@@ -36,6 +36,22 @@ server:
         max:
           memory: "1024Mi"
           cpu: 256m
+    pltqa:
+      kong-class: plt-kong
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      keyvault: yes
+      storage: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: "1024Mi"
+          cpu: 256m
+        max:
+          memory: "1024Mi"
+          cpu: 256m
     prod:
       ingress: yes
       middleman: yes
@@ -377,6 +393,12 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
+    plt_deployment:
+    - step: *build
+    - step:
+        !!merge <<: *deploy
+        name: Deploy Pltqa
+        deployment: pltqa
     hotfixes/*:
       - step: *Clear-Cache
       - step: *build
