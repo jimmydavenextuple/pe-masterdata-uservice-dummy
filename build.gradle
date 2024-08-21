@@ -128,6 +128,8 @@ dependencies {
 
     // Dependency version override to resolve high CVE coming transitively for tomcat-embed-core
     implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.25'
+    // Dependency version override to resolve low CVE for spring web
+    implementation 'org.springframework:spring-web:6.0.23'
 
 
     implementation("com.nextuple.pe:job-framework-common-util:1.4.0-${build_target}")
