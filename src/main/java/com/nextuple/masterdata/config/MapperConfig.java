@@ -7,7 +7,9 @@
 
 package com.nextuple.masterdata.config;
 
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 public class MapperConfig {
   @Bean
   public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
-    return builder -> builder.modulesToInstall(new JodaModule());
+    return builder ->
+        builder.modulesToInstall(new JodaModule(), new ParameterNamesModule(Mode.PROPERTIES));
   }
 }
