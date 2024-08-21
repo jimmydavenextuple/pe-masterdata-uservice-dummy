@@ -5,7 +5,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_intgeration
+    url: jdbc:postgresql://postgres:5432/pe_intgeration
     username: nextuple_user
     password: nextuple@123
   flyway:
