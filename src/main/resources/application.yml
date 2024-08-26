@@ -147,6 +147,10 @@ holiday-cutoff:
   days: 0.0
   days-type: BUSINESS_DAYS
 
+jobs-framework:
+  consumer:
+    enabled: true
+
 neip:
   job-types: itembuffer
   headers:
