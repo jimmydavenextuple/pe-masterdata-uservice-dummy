@@ -37,7 +37,6 @@ server:
           memory: "1024Mi"
           cpu: 256m
     pltqa:
-      kong-class: plt-kong
       ingress: yes
       middleman: yes
       prometheus: yes
