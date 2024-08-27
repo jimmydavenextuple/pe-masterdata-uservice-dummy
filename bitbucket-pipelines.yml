@@ -84,6 +84,22 @@ server:
         max:
           memory: 2Gi
           cpu: 1
+    devpe:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      java-opts: "-Xms1024m -Xmx1024m"
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 1Gi
+          cpu: 256m
+        max:
+          memory: 1Gi
+          cpu: 256m
     qa:
       ingress: yes
       middleman: yes
@@ -377,6 +393,13 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
+    patch-1.3.1:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy DevPE
+          trigger: manual
+          deployment: devpe
     hotfixes/*:
       - step: *Clear-Cache
       - step: *build
