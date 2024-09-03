@@ -95,11 +95,11 @@ server:
         replicas: 1
       resources:
         min:
-          memory: 1Gi
-          cpu: 256m
+          memory: 2Gi
+          cpu: 1
         max:
-          memory: 1Gi
-          cpu: 256m
+          memory: 2Gi
+          cpu: 1
     qa:
       ingress: yes
       middleman: yes
