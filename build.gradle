@@ -180,9 +180,9 @@ dependencies {
 
     implementation 'org.flywaydb:flyway-core'
 
-    implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
-    implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")
-    implementation("com.nextuple.plt:plt-postgress-dao:1.0.8-${build_target}")
+    implementation("com.nextuple.plt:plt-common:1.0.8-FPM-TEST-${build_target}")
+    implementation("com.nextuple.plt:plt-fpm-service:1.0.8-FPM-TEST-${build_target}")
+    implementation("com.nextuple.plt:plt-postgress-dao:1.0.8-FPM-TEST-${build_target}")
 }
 
 jacocoTestReport {
