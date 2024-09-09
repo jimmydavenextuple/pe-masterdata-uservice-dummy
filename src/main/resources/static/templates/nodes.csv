@@ -1,4 +1,4 @@
-action,nodeId,orgId,street,city,state,zipCode,country,latitude,longitude,timezone,shipToHome,bopisEligible,nodeType,nodeLabourTier,isActive
-CREATE,1957,NEXTUPLE,Lombard Street,San Fransisco,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,FALSE,MFC,tier1,TRUE
-UPDATE,1957,NEXTUPLE,Lombard Street,San Fransisco,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,FALSE,MFC,tier1,TRUE
-DELETE,1957,NEXTUPLE,Lombard Street,San Fransisco,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,FALSE,MFC,tier1,TRUE
+action,nodeId,orgId,street,city,state,zipCode,country,latitude,longitude,timezone,shipToHome,bopisEligible,nodeType,nodeLabourTier,isActive,startWorkingTime,lastWorkingTime
+CREATE,1957,NEXTUPLE,Lombard Street,San Fransisco,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,FALSE,MFC,tier1,TRUE,08:00,16:00
+UPDATE,1957,NEXTUPLE,Lombard Street,San Fransisco,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,FALSE,MFC,tier1,TRUE,08:00,16:00
+DELETE,1957,NEXTUPLE,Lombard Street,San Fransisco,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,FALSE,MFC,tier1,TRUE,08:00,16:00

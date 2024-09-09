@@ -80,6 +80,9 @@ dataupload:
   signed-url-expiry-minutes: 30
 
 jobs-framework:
+  feed-metrics-consumer:
+    topic-name: INTERNAL.SIMEXEC.PE_JOB_FPM_METRICS, INTERNAL.SIMEXEC.PE_JOB_RECORD_FPM_METRICS, INTERNAL.SIMEXEC.PE_NEIP_FPM_METRICS
+    group-id: pe-fpm-metrics-simexec
   job-completion-consumer:
     topic-name: INTERNAL.SIMEXEC.PE.JOB_COMPLETION
   kafka-publish:

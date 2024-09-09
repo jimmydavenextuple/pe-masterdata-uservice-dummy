@@ -144,7 +144,7 @@ server:
           cpu: 256m
         max:
           memory: 1024Mi
-          cpu: 256m
+          cpu: 256m 
     sperf:
       ingress: yes
       middleman: yes
@@ -255,7 +255,6 @@ definitions:
         after-script:
           - chmod +x ./deployment-scripts/after-deploy-k8s-service-v3.sh
           - ./deployment-scripts/after-deploy-k8s-service-v3.sh
-
     - step: &pr-build
         name: PR Build
         caches:
@@ -327,12 +326,12 @@ pipelines:
           deployment: vapt
     development:
       - step: *Clear-Cache
-      - step: *build
+      - step: *build     
       - step:
           !!merge <<: *deploy
           name: Deploy Dev
           deployment: dev
-      - parallel:
+      - parallel:              
           - step:
               !!merge <<: *deploy
               name: Deploy QA
@@ -361,7 +360,7 @@ pipelines:
               !!merge <<: *deploy
               name: Deploy SQA
               trigger: manual
-              deployment: sqa
+              deployment: sqa          
           - step:
               !!merge <<: *deploy
               name: Deploy SDEV
@@ -371,7 +370,7 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy Sandbox
           trigger: manual
-          deployment: sandbox
+          deployment: sandbox              
       - step:
           !!merge <<: *deploy
           name: Deploy Prod
@@ -394,21 +393,21 @@ pipelines:
       - step: *Clear-Cache
       - step: *build
       - parallel:
-        - step:
-           !!merge <<: *deploy
-           name: Deploy Pre-prod
-           trigger: manual
-           deployment: preprod
-        - step:
-           !!merge <<: *deploy
-           name: Deploy SDEV
-           trigger: manual
-           deployment: sdev
-        - step:
-           !!merge <<: *deploy
-           name: Deploy SQA
-           trigger: manual
-           deployment: sqa
+          # - step:
+          #     !!merge <<: *deploy
+          #     name: Deploy Pre-prod
+          #     trigger: manual
+          #     deployment: preprod
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SDEV
+              trigger: manual
+              deployment: sdev
+          - step:
+              !!merge <<: *deploy
+              name: Deploy SQA
+              trigger: manual
+              deployment: sqa
       - step:
           !!merge <<: *deploy
           name: Deploy Prod

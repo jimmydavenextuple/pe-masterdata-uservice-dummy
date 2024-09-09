@@ -13,6 +13,7 @@ spring:
       weightage-configuration: "http://pe-masterdata-uservice:8080/"
       userexit: "http://pe-masterdata-uservice:8080/"
       configuration: "http://pe-masterdata-uservice:8080/"
+      fpm-service: "http://pe-masterdata-uservice:8080/"
     name: "pe-masterdata-uservice"
     version: 2.6.0
     title: "Master Data Service"
@@ -103,10 +104,19 @@ transit-time-buffer-page-properties:
   sortBy: carrierServiceId
   sortOrder: DESC
 
+retry-properties:
+  count: 5
+
 page-properties:
   pageNo: 1
   pageSize: 15
   sortBy: created_date
+  sortOrder: ASC
+
+fpm-page-properties:
+  pageNo: 1
+  pageSize: 15
+  sortBy: processing_started_at
   sortOrder: ASC
 
 holidaycutoff-page-properties:
@@ -131,14 +141,17 @@ csv-utility-api:
     max-no-of-carrier-services-for-download: 100
 #item:
 #  listenerContainerFactory: ItemDeserializerConsumer
-
-custom-attributes:
-  tenant-details:
-    NEXTUPLE_GR:
-      bannerId: banner1
-      isSizingRequired: false
 platform:
   groupIdPrefix: pe-retry
 holiday-cutoff:
   days: 0.0
   days-type: BUSINESS_DAYS
+
+jobs-framework:
+  consumer:
+    enabled: true
+
+neip:
+  job-types: itembuffer
+  headers:
+    itembuffer: "RecordNo,action,orgId,itemId,uom,bufferHours,bufferStartDate,bufferEndDate,Error Message"

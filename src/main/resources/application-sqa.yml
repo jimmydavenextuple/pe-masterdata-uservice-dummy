@@ -125,6 +125,9 @@ dataupload:
   signed-url-expiry-minutes: 30
 
 jobs-framework:
+  feed-metrics-consumer:
+    topic-name: INTERNAL.SQA.PE_JOB_FPM_METRICS, INTERNAL.SQA.PE_JOB_RECORD_FPM_METRICS, INTERNAL.SQA.PE_NEIP_FPM_METRICS
+    group-id: pe-fpm-metrics-sqa
   job-completion-consumer:
     topic-name: INTERNAL.SQA.PE.JOB_COMPLETION
     group-id: jobs-completion-consumer-async-sqa
