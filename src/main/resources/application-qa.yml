@@ -70,7 +70,6 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
-        max.poll.records: 10
       topics:
         master_data_update_event:
           name: INTERNAL.QA.MASTER_DATA_UPDATE_EVENTS
