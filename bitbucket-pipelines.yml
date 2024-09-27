@@ -239,6 +239,14 @@ definitions:
         artifacts:
           - build/**
           - service-version.txt
+    - step: &publish-release
+        name: Build and publish release
+        caches:
+          - gradle
+          - sonar
+        script:
+          - microdnf install findutils
+          - bash ./gradlew -Pbuild_target=RELEASE clean build jacocoTestReport artifactoryPublish
     - step: &build-release
         name: Build Release
         script:
@@ -313,8 +321,7 @@ pipelines:
           name: Deploy Sandbox
           deployment: sandbox
     '*-RELEASE':
-      - step: *Clear-Cache
-      - step: *build-release
+      - step: *publish-release
       - step:
           !!merge <<: *deploy
           name: Deploy Prod
@@ -393,13 +400,6 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
-    patch-1.3.1:
-      - step: *build
-      - step:
-          !!merge <<: *deploy
-          name: Deploy DevPE
-          trigger: manual
-          deployment: devpe
     hotfixes/*:
       - step: *Clear-Cache
       - step: *build
