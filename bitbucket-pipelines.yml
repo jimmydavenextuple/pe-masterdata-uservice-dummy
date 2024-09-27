@@ -321,6 +321,7 @@ pipelines:
           name: Deploy Sandbox
           deployment: sandbox
     '*-RELEASE':
+      - step: *Clear-Cache
       - step: *publish-release
       - step:
           !!merge <<: *deploy
