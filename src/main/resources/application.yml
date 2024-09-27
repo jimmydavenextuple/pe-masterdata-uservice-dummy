@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: default
   application:
     dependencies:
       item: "http://pe-masterdata-uservice:8080/"

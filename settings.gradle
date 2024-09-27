@@ -5,3 +5,13 @@ pluginManagement {
 }
 
 rootProject.name = 'pe-master-data'
+include 'configuration-api'
+include 'configuration-api-domain'
+include 'configuration-services'
+include 'configuration-near-cache'
+include 'configuration-near-cache-spring'
+include 'item-api-domain'
+include 'item-api'
+include 'item-services'
+include 'item-persistence-domain'
+include 'item-persistence-postgres'

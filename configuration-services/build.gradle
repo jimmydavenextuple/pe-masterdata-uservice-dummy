@@ -1,0 +1,44 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+jar {
+    enabled = true
+}
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation(project(":configuration-api-domain"))
+    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
+    implementation(project(":configuration-near-cache"))
+    implementation(project(":configuration-near-cache-spring"))
+
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
+
+    constraints {
+        implementation('io.github.openfeign:feign-core:11.8') {
+            because 'versions below are vulnerable to CVE-2019-16942'
+        }
+    }
+}
+
+//tasks.named('test') {
+//    dependsOn ':configuration-near-cache:jar',':configuration-api-domain:jar'
+//}
+
+tasks.named('test') {
+    mustRunAfter project(':configuration-api-domain').tasks.named('jar')
+}
+
+
+tasks.test {
+    useJUnitPlatform()
+}

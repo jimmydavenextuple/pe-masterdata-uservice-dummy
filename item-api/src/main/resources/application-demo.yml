@@ -1,0 +1,57 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_demo
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
+  kafka:
+    bootstrap-servers: "kbrk-nonprod.nextuple.net:9092"
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
+    consumer-retry-count: 1
+# NOTE: Below commented code is for the Avro consumer.
+# If we need to consume an avro record, please uncomment Avro properties and comment out the JSON Consumer and Producer.
+#
+#    consumer:
+#      type: avro
+#      enable-auto-commit: true
+#      auto-offset-reset: latest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
+#      topics:
+#        item_master:
+#          name: INTERNAL.DEMO.PROMISE_ITEMS
+#          group-id: item-master-demo
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
+    consumer:
+      type: json
+      enable-auto-commit: true
+      auto-offset-reset: latest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        spring.json.type.mapping: com.nextuple.pe.webhook.domain.dtos.Item:com.nextuple.item.domain.events.ItemMasterEvent
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      topics:
+        item_master:
+          name: INTERNAL.DEMO.PROMISE_ITEMS
+          group-id: item-master-demo
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  sql.init.platform: postgres
+
+logging:
+  level:
+    com.nextuple: INFO

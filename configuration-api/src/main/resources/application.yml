@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: "pe-configuration-uservice"
+    version: ${version}
+    title: "Configuration Service"
+    description: "Configuration Service"
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8080
+  tomcat:
+    max-connections: 500
+    threads:
+      min-spare: 50
+      max: 200
+
+logging:
+  level:
+    org.springframework: WARN
+    root: WARN
+    com.nextuple: INFO
+entity-listener:
+  kafka:
+    enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: false
+    metrics:
+      enabled: true
+    loggers:
+      enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+        persistence: true
+        cache: true
+  prometheus.metrics.export.enabled: false
+#pe:
+#  ui:
+#    allowed-origin-url: \${PE_UI_URL}
+feign:
+  okhttp:
+    enabled: true
+auth:
+  filterEnabled: false

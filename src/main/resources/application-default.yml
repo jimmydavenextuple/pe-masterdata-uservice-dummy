@@ -1,37 +1,34 @@
-server:
-  port: 8082
 spring:
   application:
-    dependencies:
-      item: "http://localhost:8082/"
-      node-carrier: "http://localhost:8082/"
-      carrier: "http://localhost:8082/"
-      transit: "http://localhost:8082/"
-      data-upload: "http://localhost:8082/"
-      node: "http://localhost:8082/"
-      promise-sourcing-rule: "http://localhost:8082/"
-      calendar: "http://localhost:8082/"
-      postal-code-timezone: "http://localhost:8082/"
-      weightage-configuration: "http://localhost:8082/"
-      userexit: "http://localhost:8082/"
-      configuration: "http://localhost:8082/"
-      fpm-service: "http://localhost:8082/"
+  #    dependencies:
+  #      item: "http://localhost:8082/"
+  #      node-carrier: "http://localhost:8082/"
+  #      carrier: "http://localhost:8082/"
+  #      transit: "http://localhost:8082/"
+  #      data-upload: "http://localhost:8081/"
+  #      node: "http://localhost:8082/"
+  #      promise-sourcing-rule: "http://localhost:8082/"
+  #      calendar: "http://localhost:8082/"
+  #      postal-code-timezone: "http://localhost:8082/"
+  #      weightage-configuration: "http://localhost:8082/"
+  #      userexit: "http://localhost:8082/"
+  #      configuration: "http://localhost:8082/"
   jpa:
     database: POSTGRESQL
     show-sql: true
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://postgres:5432/postgres
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://170.7.0.16/pe
+    username: pe_users_pgadmin
+    password: E7E56EAB-9B03-4C95-8E71-FA871251A7D4
     hikari:
       maximumPoolSize: 100
       minimumIdle: 10
   flyway:
     enabled: false
   kafka:
-    bootstrap-servers: "kafka:9092"
+    bootstrap-servers: "localhost:9092"
     properties:
       security.protocol: PLAINTEXT
       sasl.mechanism: NA

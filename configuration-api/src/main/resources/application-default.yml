@@ -1,0 +1,23 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://170.7.0.16/pe
+    username: pe_users_pgadmin
+    password: E7E56EAB-9B03-4C95-8E71-FA871251A7D4
+  sql.init.platform: postgres
+logging:
+  level:
+    com.nextuple: INFO
+entity-listener:
+  kafka:
+    enabled: false
+feign:
+  okhttp:
+    enabled: true
+pe:
+  ui:
+    allowed-origin-url: "*"
