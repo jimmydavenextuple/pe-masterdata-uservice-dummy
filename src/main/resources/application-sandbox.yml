@@ -146,37 +146,37 @@ jobs-framework:
 master-data:
   node:
     topic-name: INTERNAL.SANDBOX.PE.NODE_INTEGRATION
-    group-id: node-master-dev
+    group-id: node-master-sandbox
   node-carrier:
     topic-name: INTERNAL.SANDBOX.PE.NODE_CARRIER_INTEGRATION
-    group-id: node-carrier-master-SANDBOX
+    group-id: node-carrier-master-sanbox
   carrier:
     topic-name: INTERNAL.SANDBOX.PE.CARRIER_INTEGRATION
-    group-id: carrier-master-dev
+    group-id: carrier-master-sandbox
   processing-lead-time:
     topic-name: INTERNAL.SANDBOX.PE.PROCESSING_LEAD_TIME_INTEGRATION
-    group-id: processing-lead-time-master-dev
+    group-id: processing-lead-time-master-sandbox
   calendar:
     topic-name: INTERNAL.SANDBOX.PE.CALENDAR_INTEGRATION
-    group-id: calendar-master-dev
+    group-id: calendar-master-sandbox
   node-calendar:
     topic-name: INTERNAL.SANDBOX.PE.NODE_CALENDAR_INTEGRATION
-    group-id: node-calendar-master-dev
+    group-id: node-calendar-master-sandbox
   carrier-service-calendar:
     topic-name: INTERNAL.SANDBOX.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
-    group-id: carrier-service-calendar-master-dev
+    group-id: carrier-service-calendar-master-sandbox
   pickup-calendar:
     topic-name: INTERNAL.SANDBOX.PE.PICKUP_CALENDAR_INTEGRATION
-    group-id: pickup-calendar-master-dev
+    group-id: pickup-calendar-master-sandbox
   node-service-option-buffer:
     topic-name: INTERNAL.SANDBOX.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
-    group-id: node-service-option-buffer-master-dev
+    group-id: node-service-option-buffer-master-sandbox
   transit:
     topic-name: INTERNAL.SANDBOX.PE.TRANSIT_INTEGRATION
-    group-id: transit-master-dev
+    group-id: transit-master-sandbox
   transit-buffer:
     topic-name: INTERNAL.SANDBOX.PE.TRANSIT_BUFFER_INTEGRATION
-    group-id: transit-buffer-master-dev
+    group-id: transit-buffer-master-sandbox
 
 next-cache:
   caches:
@@ -199,10 +199,3 @@ kafka:
   input:
     taskTopics: INTERNAL.SANDBOX.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry
-azure.keyvault:
-  client-id: e558951a-8c66-4a66-a75f-f71254e23397
-  client-key: vXs8Q~TDX7DlnTJUjSRalM12tGbZixcn0qS3WcFO
-  enabled: true
-  tenant-id: a504dc87-820c-4014-a6f7-9bd271ec731f
-  uri: https://nextuple-dev.vault.azure.net/
-  secret-keys: "COMMON-PE-POSTGRES-USER,COMMON-PE-POSTGRES-PASSWORD,COMMON-KAFKA-CONFIG"
