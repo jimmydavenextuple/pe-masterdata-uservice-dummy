@@ -142,3 +142,60 @@ jobs-framework:
   record-consumer:
     topic-name: INTERNAL.SANDBOX.PE.JOB_TASK
     group-id: jobs-task-consumer-async-sandbox
+
+master-data:
+  node:
+    topic-name: INTERNAL.SANDBOX.PE.NODE_INTEGRATION
+    group-id: node-master-sandbox
+  node-carrier:
+    topic-name: INTERNAL.SANDBOX.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-sanbox
+  carrier:
+    topic-name: INTERNAL.SANDBOX.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-sandbox
+  processing-lead-time:
+    topic-name: INTERNAL.SANDBOX.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-sandbox
+  calendar:
+    topic-name: INTERNAL.SANDBOX.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-sandbox
+  node-calendar:
+    topic-name: INTERNAL.SANDBOX.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-sandbox
+  carrier-service-calendar:
+    topic-name: INTERNAL.SANDBOX.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-sandbox
+  pickup-calendar:
+    topic-name: INTERNAL.SANDBOX.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-sandbox
+  node-service-option-buffer:
+    topic-name: INTERNAL.SANDBOX.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-sandbox
+  transit:
+    topic-name: INTERNAL.SANDBOX.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-sandbox
+  transit-buffer:
+    topic-name: INTERNAL.SANDBOX.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-sandbox
+
+next-cache:
+  caches:
+    -
+      cacheName: task-info
+      ttlSeconds: 14400
+      maxLimit: 50
+  refresh-cache:
+    topic: INTERNAL.SANDBOX.PE.REFRESH_CACHE_INV
+  cacheManager: caffeine
+platform:
+  tasks:
+    enabled: true
+  tasks-scheduler:
+    enabled: true
+    milliseconds: 5000
+  authFilter:
+    enabled: false
+kafka:
+  input:
+    taskTopics: INTERNAL.SANDBOX.PE.RETRY_TOPIC_INV
+    taskGroupId: pe-retry
