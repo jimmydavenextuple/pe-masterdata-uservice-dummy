@@ -1,0 +1,40 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+jar{
+    enabled = true
+}
+
+bootJar {
+    enabled = false
+}
+
+
+dependencies {
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation(project(":configuration-api-domain"))
+    implementation(project(":node-api-domain"))
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
+    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation(project(":node-carrier-api-domain"))
+    implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
+
+//    implementation("com.nextuple.pe:node-api-domain:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:carrier-api-domain:1.4.0-${build_target}")
+//    implementation("com.nextuple.pe:configuration-api-domain:1.4.0-${build_target}")
+}
+
+tasks.named('test') {
+    dependsOn ':configuration-api-domain:jar'
+    dependsOn ':node-api-domain:jar'
+    dependsOn ':node-carrier-api-domain:jar'
+}
+
+
+test {
+    useJUnitPlatform()
+}

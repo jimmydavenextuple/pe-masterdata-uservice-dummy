@@ -1,0 +1,493 @@
+/*
+ * Copyright (c) 2022., Nextuple, Inc. and/or its affiliates. All rights reserved.
+ *
+ * The software, code and related documentation made available to you by Nextuple, Inc. are provided under a written agreement containing restrictions on use and disclosure and are protected by copyright and other intellectual property laws. As described in and unless expressly permitted in your agreement, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or de-compilation of this software, unless required by law or permitted via contract for interoperability, is strictly prohibited.
+ * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
+ */
+
+package com.nextuple.node.carrier.service;
+
+import com.nextuple.carrier.domain.feign.CarrierFeign;
+import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.response.BaseResponse;
+import com.nextuple.common.response.error.FieldError;
+import com.nextuple.common.util.DateValidationUtil;
+import com.nextuple.node.carrier.config.NodeCarrierTenantBasedDBConfig;
+import com.nextuple.node.carrier.domain.NodeCarrierDomain;
+import com.nextuple.node.carrier.domain.dto.NodeCarrierListCacheKeyDto;
+import com.nextuple.node.carrier.domain.entity.NodeCarrierEntity;
+import com.nextuple.node.carrier.domain.entity.NodeCarrierSelectionEntity;
+import com.nextuple.node.carrier.domain.inbound.NodeCarrierBufferRequest;
+import com.nextuple.node.carrier.domain.inbound.NodeCarrierRequest;
+import com.nextuple.node.carrier.domain.inbound.NodeCarrierSelectionRequest;
+import com.nextuple.node.carrier.domain.inbound.NodeCarrierUpdateRequest;
+import com.nextuple.node.carrier.domain.mapper.NodeCarrierMapper;
+import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
+import com.nextuple.node.carrier.domain.outbound.NodeCarrierSelectionResponse;
+import com.nextuple.node.carrier.exception.InvalidDataException;
+import com.nextuple.node.carrier.exception.NodeCarrierDomainException;
+import com.nextuple.node.carrier.exception.NodeCarrierSelectionDomainException;
+import com.nextuple.node.domain.feign.NodeFeign;
+import com.nextuple.node.domain.outbound.NodeResponse;
+import com.nextuple.postgres.config.ReaderDS;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+@RequiredArgsConstructor
+@Service
+public class NodeCarrierService {
+
+  private static final Logger logger = LoggerFactory.getLogger(NodeCarrierService.class);
+  private static final String ORG_ID = "orgId";
+  private static final String NODE_ID = "nodeId";
+  private static final String CARRIER_SERVICE_ID = "carrierServiceId";
+  private static final String SERVICE_OPTION = "serviceOption";
+  private static final String SOURCE_GEOZONE = "sourceGeozone";
+  private static final String DESTINATION_GEOZONE = "destinationGeozone";
+  private static final String NODE_CARRIER_NOT_FOUND_ERROR_MSG =
+      "Node Carrier Service Option not found for given details";
+
+  private final NodeCarrierDomain nodeCarrierDomain;
+  private final NodeFeign nodeFeign;
+
+  private final DateValidationUtil dateValidationUtil;
+
+  private final CarrierFeign carrierFeign;
+
+  private final NodeCarrierTenantBasedDBConfig nodeCarrierTenantBasedDBConfig;
+
+  private static final String INVALID_CARRIER_DATA_EXCEPTION_MESSAGE =
+      "Node carrier data cannot be created with given carrierServiceId and orgId";
+
+  public static final NodeCarrierMapper INSTANCE = Mappers.getMapper(NodeCarrierMapper.class);
+
+  public NodeCarrierResponse createNodeCarrier(NodeCarrierRequest nodeCarrierRequest)
+      throws NodeCarrierDomainException, InvalidDataException, CommonServiceException {
+    validateBufferHours(nodeCarrierRequest.getBufferHours());
+
+    getNodeDetails(
+        nodeCarrierRequest.getNodeId(),
+        nodeCarrierRequest.getOrgId(),
+        nodeCarrierRequest.getCarrierServiceId(),
+        nodeCarrierRequest.getServiceOption());
+
+    if (!ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId())
+        && Boolean.FALSE.equals(
+            validateCarrierDetails(
+                nodeCarrierRequest.getOrgId(), nodeCarrierRequest.getCarrierServiceId()))) {
+      commonServiceExceptionMethod(
+          INVALID_CARRIER_DATA_EXCEPTION_MESSAGE,
+          nodeCarrierRequest.getNodeId(),
+          nodeCarrierRequest.getOrgId(),
+          nodeCarrierRequest.getCarrierServiceId(),
+          nodeCarrierRequest.getServiceOption());
+    }
+    validateServiceOption(
+        nodeCarrierRequest.getOrgId(),
+        nodeCarrierRequest.getNodeId(),
+        nodeCarrierRequest.getCarrierServiceId(),
+        nodeCarrierRequest.getServiceOption());
+
+    if (ObjectUtils.isEmpty(nodeCarrierRequest.getCarrierServiceId())) {
+      validateProcessingLeadTime(nodeCarrierRequest.getProcessingTime());
+    } else {
+      validateLastPickupTime(nodeCarrierRequest.getLastPickupTime());
+    }
+    var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
+    return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
+  }
+
+  private Boolean validateCarrierDetails(String orgId, String carrierServiceId) {
+    try {
+      var carrierServiceResponse =
+          carrierFeign.getCarrierServiceDetailsByCarrierServiceIdAndOrgId(carrierServiceId, orgId);
+      if (Objects.nonNull(carrierServiceResponse)) {
+        var payload = carrierServiceResponse.getPayload();
+        if (Objects.nonNull(payload) && Boolean.FALSE.equals(payload.isEmpty())) {
+          return true;
+        }
+      }
+      return false;
+    } catch (Exception e) {
+      logger.error(
+          "Error while fetching carrier details for orgId:{} , carrierServiceId:{}",
+          orgId,
+          carrierServiceId);
+      return false;
+    }
+  }
+
+  private void validateServiceOption(
+      String orgId, String nodeId, String carrierServiceId, String serviceOption)
+      throws CommonServiceException {
+    if (!nodeCarrierTenantBasedDBConfig.getServiceOptions(orgId).contains(serviceOption)) {
+      commonServiceExceptionMethod(
+          "Invalid serviceOption", nodeId, orgId, carrierServiceId, serviceOption);
+    }
+  }
+
+  public NodeCarrierResponse updateBufferData(NodeCarrierBufferRequest nodeCarrierBufferRequest)
+      throws NodeCarrierDomainException, CommonServiceException {
+    dateValidationUtil.validateBufferStartAndEndDate(
+        nodeCarrierBufferRequest.getBufferStartDate(), nodeCarrierBufferRequest.getBufferEndDate());
+    validateBufferHours(nodeCarrierBufferRequest.getBufferHours());
+    validateServiceOption(
+        nodeCarrierBufferRequest.getOrgId(),
+        nodeCarrierBufferRequest.getNodeId(),
+        "",
+        nodeCarrierBufferRequest.getServiceOption());
+    var nodeCarrierEntity = INSTANCE.nodeCarrierBufferRequestToEntity(nodeCarrierBufferRequest);
+
+    Optional<NodeCarrierEntity> existingNodeEntity =
+        nodeCarrierDomain.findNodeCarrierDetails(
+            nodeCarrierEntity.getNodeId(),
+            nodeCarrierEntity.getOrgId(),
+            "",
+            nodeCarrierEntity.getServiceOption());
+
+    if (existingNodeEntity.isEmpty()) {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          NODE_ID, FieldError.builder().rejectedValue(nodeCarrierEntity.getNodeId()).build());
+      errorMap.put(
+          ORG_ID, FieldError.builder().rejectedValue(nodeCarrierEntity.getOrgId()).build());
+      errorMap.put(
+          SERVICE_OPTION,
+          FieldError.builder().rejectedValue(nodeCarrierEntity.getServiceOption()).build());
+      throw new CommonServiceException(
+          NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.BAD_REQUEST, 0x1773, errorMap);
+    }
+    INSTANCE.updateNodeCarrierEntityWithBuffer(nodeCarrierBufferRequest, existingNodeEntity.get());
+    return INSTANCE.toNodeCarrierDto(
+        nodeCarrierDomain.saveNodeCarrierEntity(existingNodeEntity.get()));
+  }
+
+  public void validateLastPickupTime(String lastPickupTime) throws InvalidDataException {
+    var regex = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+
+    if (ObjectUtils.isEmpty(lastPickupTime)) {
+      throw new InvalidDataException(
+          "LastPickupTime cannot be null or empty", lastPickupTime, null);
+    }
+    if (!lastPickupTime.matches(regex)) {
+      throw new InvalidDataException("LastPickupTime is invalid", lastPickupTime, null);
+    }
+  }
+
+  @ReaderDS
+  public NodeCarrierResponse getNodeCarrierDetails(
+      String nodeId, String orgId, String carrierServiceId, String serviceOption)
+      throws NodeCarrierDomainException, CommonServiceException {
+    String allServiceOption = "ALL-" + serviceOption;
+    List<NodeCarrierEntity> nodeCarrierEntityList =
+        nodeCarrierDomain.filterAndGetNodeCarrierDetails(
+            nodeId, orgId, carrierServiceId, allServiceOption);
+
+    Optional<NodeCarrierEntity> nodeCarrierEntity = Optional.empty();
+    if (!"ALL".equals(carrierServiceId)) {
+      nodeCarrierEntity =
+          nodeCarrierEntityList.stream()
+              .filter(x -> carrierServiceId.equals(x.getCarrierServiceId()))
+              .findFirst();
+    }
+    if (nodeCarrierEntity.isEmpty()) {
+      nodeCarrierEntity =
+          nodeCarrierEntityList.stream()
+              .filter(x -> allServiceOption.equals(x.getCarrierServiceId()))
+              .findAny();
+    }
+    if (nodeCarrierEntity.isEmpty()) {
+      nodeCarrierEntity =
+          nodeCarrierEntityList.stream()
+              .filter(x -> "ALL".equals(x.getCarrierServiceId()))
+              .findAny();
+    }
+
+    if (nodeCarrierEntity.isEmpty()
+        || !Objects.equals(nodeCarrierEntity.get().getServiceOption(), serviceOption)) {
+      logger.error(NODE_CARRIER_NOT_FOUND_ERROR_MSG);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(
+          CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
+      errorMap.put(SERVICE_OPTION, FieldError.builder().rejectedValue(serviceOption).build());
+      throw new CommonServiceException(
+          NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
+    }
+    return INSTANCE.toNodeCarrierDto(nodeCarrierEntity.get());
+  }
+
+  public NodeCarrierResponse updateNodeCarrier(
+      String nodeId,
+      String orgId,
+      String carrierServiceId,
+      String serviceOption,
+      NodeCarrierUpdateRequest nodeCarrierUpdateRequest)
+      throws NodeCarrierDomainException, CommonServiceException, InvalidDataException {
+
+    validateLastPickupTime(nodeCarrierUpdateRequest.getLastPickupTime());
+    Optional<NodeCarrierEntity> existingNodeEntity =
+        nodeCarrierDomain.findNodeCarrierDetails(nodeId, orgId, carrierServiceId, serviceOption);
+
+    if (existingNodeEntity.isEmpty()) {
+      logger.error(NODE_CARRIER_NOT_FOUND_ERROR_MSG);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(
+          CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
+      errorMap.put(SERVICE_OPTION, FieldError.builder().rejectedValue(serviceOption).build());
+      throw new CommonServiceException(
+          NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
+    }
+    logger.info(
+        "Response before updation of node-carrier :{}",
+        INSTANCE.toNodeCarrierDto(existingNodeEntity.get()));
+    INSTANCE.updateNodeCarrierEntity(nodeCarrierUpdateRequest, existingNodeEntity.get());
+    return INSTANCE.toNodeCarrierDto(
+        nodeCarrierDomain.saveNodeCarrierEntity(existingNodeEntity.get()));
+  }
+
+  public NodeCarrierResponse deleteNodeCarrier(
+      String nodeId, String orgId, String carrierServiceId, String serviceOption)
+      throws NodeCarrierDomainException, CommonServiceException {
+    NodeResponse baseResponse = getNodeDetails(nodeId, orgId, carrierServiceId, serviceOption);
+
+    validateServiceOption(orgId, nodeId, carrierServiceId, serviceOption);
+
+    if (!orgId.equals(baseResponse.getOrgId())) {
+      commonServiceExceptionMethod("Invalid orgId", nodeId, orgId, carrierServiceId, serviceOption);
+    }
+
+    Optional<NodeCarrierEntity> nodeCarrierEntity =
+        nodeCarrierDomain.findNodeCarrierDetails(nodeId, orgId, carrierServiceId, serviceOption);
+
+    if (nodeCarrierEntity.isEmpty()) {
+      logger.error(NODE_CARRIER_NOT_FOUND_ERROR_MSG);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(
+          CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
+      errorMap.put(SERVICE_OPTION, FieldError.builder().rejectedValue(serviceOption).build());
+      throw new CommonServiceException(
+          NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
+    }
+    logger.info(
+        "Response before deletion of node-carrier :{}",
+        INSTANCE.toNodeCarrierDto(nodeCarrierEntity.get()));
+    var nodeCarrierResponse = INSTANCE.toNodeCarrierDto(nodeCarrierEntity.get());
+    nodeCarrierDomain.deleteNodeCarrierEntity(nodeCarrierEntity.get());
+    return nodeCarrierResponse;
+  }
+
+  private NodeResponse getNodeDetails(
+      String nodeId, String orgId, String carrierServiceId, String serviceOption)
+      throws CommonServiceException {
+    BaseResponse<NodeResponse> response = null;
+
+    try {
+      response = nodeFeign.getNodeDetails(nodeId, orgId);
+    } catch (Exception e) {
+      commonServiceExceptionMethod(
+          "Invalid nodeId and orgId combination", nodeId, orgId, carrierServiceId, serviceOption);
+    }
+
+    if (response != null && !ObjectUtils.isEmpty(response.getPayload())) {
+      return response.getPayload();
+    } else {
+
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      throw new CommonServiceException(
+          "Node and OrgId combination doesn't exist", HttpStatus.NOT_FOUND, 0x1773, errorMap);
+    }
+  }
+
+  @ReaderDS
+  public List<NodeCarrierResponse> getNodeCarrierForNodeIdAOrgIdAndServiceOption(
+      String nodeId, String orgId, String serviceOption)
+      throws NodeCarrierDomainException, CommonServiceException {
+
+    List<NodeCarrierEntity> nodeCarrierEntityList =
+        nodeCarrierDomain.findNodeCarrierByNodeIdAOrgIdAndServiceOption(
+            nodeId, orgId, serviceOption);
+
+    if (nodeCarrierEntityList.isEmpty()) {
+      logger.error(NODE_CARRIER_NOT_FOUND_ERROR_MSG);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(SERVICE_OPTION, FieldError.builder().rejectedValue(serviceOption).build());
+      throw new CommonServiceException(
+          NODE_CARRIER_NOT_FOUND_ERROR_MSG, HttpStatus.NOT_FOUND, 0x1773, errorMap);
+    }
+    List<NodeCarrierResponse> nodeCarrierResponseList = new ArrayList<>();
+
+    nodeCarrierEntityList.forEach(
+        nodeCarrierEntity ->
+            nodeCarrierResponseList.add(INSTANCE.toNodeCarrierDto(nodeCarrierEntity)));
+
+    return nodeCarrierResponseList;
+  }
+
+  @ReaderDS
+  public List<NodeCarrierResponse> getNodeCarrierForNodeIdAndOrgId(String nodeId, String orgId)
+      throws NodeCarrierDomainException {
+    List<NodeCarrierEntity> nodeCarrierEntity =
+        nodeCarrierDomain.findNodeCarrierByNodeIdAndOrgId(nodeId, orgId);
+
+    return INSTANCE.toNodeCarrierResponseList(nodeCarrierEntity);
+  }
+
+  public void validateBufferHours(Double bufferHours) throws CommonServiceException {
+    if (bufferHours != null && bufferHours < 0) {
+      throw new CommonServiceException(
+          "bufferHours cannot be negative", HttpStatus.BAD_REQUEST, 0x1775, null);
+    }
+  }
+
+  public NodeCarrierResponse updateProcessingLeadTime(NodeCarrierRequest nodeCarrierRequest)
+      throws NodeCarrierDomainException {
+    var nodeCarrierEntity = INSTANCE.nodeCarrierRequestToEntity(nodeCarrierRequest);
+    return INSTANCE.toNodeCarrierDto(nodeCarrierDomain.saveNodeCarrierEntity(nodeCarrierEntity));
+  }
+
+  private void validateProcessingLeadTime(Double processingLeadTime) throws InvalidDataException {
+    if (ObjectUtils.isEmpty(processingLeadTime) || processingLeadTime < 0) {
+      logger.error("Processing lead time can not be negative or empty");
+      throw new InvalidDataException(
+          "Processing lead time can not be negative or empty", null, processingLeadTime);
+    }
+  }
+
+  public List<NodeCarrierListCacheKeyDto> getAllNodeCarrierCacheKeys(Integer limit)
+      throws NodeCarrierDomainException {
+    var nodeCarrierEntities = nodeCarrierDomain.getAllNodeCarriers(limit);
+
+    return INSTANCE.toNodeCarrierListCacheKeyDto(nodeCarrierEntities);
+  }
+
+  public NodeCarrierSelectionResponse addNodeCarrierSelectionPriority(
+      NodeCarrierSelectionRequest nodeCarrierSelectionRequest) {
+
+    var nodeCarrierSelectionEntity =
+        INSTANCE.nodeCarrierSelectionRequestToEntity(nodeCarrierSelectionRequest);
+    return INSTANCE.toNodeCarrierSelectionResponse(
+        nodeCarrierDomain.saveNodeCarrierSelectionEntity(nodeCarrierSelectionEntity));
+  }
+
+  @ReaderDS
+  public List<NodeCarrierSelectionResponse> getNodeCarrierSelectionDetails(
+      String orgId, String serviceOption, String destinationGeozone) {
+
+    return INSTANCE.toNodeCarrierSelectionResponseList(
+        nodeCarrierDomain.findNodeCarrierByOrgIdAndServiceOptionAndDestinationGeoZone(
+            orgId, serviceOption, destinationGeozone));
+  }
+
+  public NodeCarrierSelectionResponse deleteNodeCarrierSelection(
+      NodeCarrierSelectionRequest nodeCarrierSelectionRequest)
+      throws CommonServiceException, NodeCarrierSelectionDomainException {
+    Optional<NodeCarrierSelectionEntity> nodeCarrierSelectionEntity =
+        nodeCarrierDomain.findNodeCarrierSelectionDetails(
+            nodeCarrierSelectionRequest.getOrgId(),
+            nodeCarrierSelectionRequest.getServiceOption(),
+            nodeCarrierSelectionRequest.getSourceGeozone(),
+            nodeCarrierSelectionRequest.getDestinationGeozone());
+
+    if (nodeCarrierSelectionEntity.isEmpty()) {
+      logger.error("Node Carrier Selection not found for given details");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          ORG_ID,
+          FieldError.builder().rejectedValue(nodeCarrierSelectionRequest.getOrgId()).build());
+      errorMap.put(
+          SERVICE_OPTION,
+          FieldError.builder()
+              .rejectedValue(nodeCarrierSelectionRequest.getServiceOption())
+              .build());
+      errorMap.put(
+          SOURCE_GEOZONE,
+          FieldError.builder()
+              .rejectedValue(nodeCarrierSelectionRequest.getSourceGeozone())
+              .build());
+      errorMap.put(
+          DESTINATION_GEOZONE,
+          FieldError.builder()
+              .rejectedValue(nodeCarrierSelectionRequest.getDestinationGeozone())
+              .build());
+      throw new CommonServiceException(
+          "Node Carrier Selection not found for given details",
+          HttpStatus.NOT_FOUND,
+          0x1773,
+          errorMap);
+    }
+    var nodeCarrierSelectionResponse =
+        INSTANCE.toNodeCarrierSelectionResponse(nodeCarrierSelectionEntity.get());
+    nodeCarrierDomain.deleteNodeCarrierSelectionEntity(nodeCarrierSelectionEntity.get());
+    return nodeCarrierSelectionResponse;
+  }
+
+  public List<String> getUniqueNodeCarrierServiceList(String nodeId, String orgId)
+      throws NodeCarrierDomainException {
+    return nodeCarrierDomain.fetchUniqueNodeCarrierServiceListByOrgIdAndNodeId(orgId, nodeId);
+  }
+
+  public void commonServiceExceptionMethod(
+      String errorMessage,
+      String nodeId,
+      String orgId,
+      String carrierServiceId,
+      String serviceOption)
+      throws CommonServiceException {
+    Map<String, FieldError> errorMap = new HashMap<>();
+    errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
+    errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+    errorMap.put(CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
+    errorMap.put(SERVICE_OPTION, FieldError.builder().rejectedValue(serviceOption).build());
+    throw new CommonServiceException(errorMessage, HttpStatus.BAD_REQUEST, 0x1772, errorMap);
+  }
+
+  public List<NodeCarrierResponse> getNodeCarrierListForNodeIdAndOrgId(String nodeId, String orgId)
+      throws NodeCarrierDomainException {
+
+    List<NodeCarrierEntity> nodeCarrierEntity =
+        nodeCarrierDomain.findNodeCarrierDetailsByNodeIdAndOrgId(nodeId, orgId);
+
+    return INSTANCE.toNodeCarrierResponseList(
+        nodeCarrierEntity.stream()
+            .filter(x -> !ObjectUtils.isEmpty(x.getCarrierServiceId()))
+            .collect(Collectors.toList()));
+  }
+
+  public List<NodeCarrierResponse> getAllNodeCarrierByOrgId(String orgId)
+      throws NodeCarrierDomainException {
+    List<NodeCarrierEntity> nodeCarrierEntityList =
+        nodeCarrierDomain.getAllNodeCarriersByOrgId(orgId);
+
+    return INSTANCE.toNodeCarrierResponseList(nodeCarrierEntityList);
+  }
+
+  public List<NodeCarrierResponse> getAllNodeCarriersByOrgIdCarrierServiceId(
+      String orgId, String carrierServiceId) throws NodeCarrierDomainException {
+    List<NodeCarrierEntity> nodeCarrierEntityList =
+        nodeCarrierDomain.getAllNodeCarriersByOrgIdCarrierServiceId(orgId, carrierServiceId);
+
+    return INSTANCE.toNodeCarrierResponseList(nodeCarrierEntityList);
+  }
+}

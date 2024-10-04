@@ -18,6 +18,7 @@ dependencies {
     implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
     implementation(project(":item-persistence-domain"))
+
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
@@ -25,4 +26,12 @@ dependencies {
 }
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
+}
+
+tasks.named('test') {
+    dependsOn ':item-persistence-domain:jar'
+    dependsOn ':item-api-domain:jar'
+//    mustRunAfter ':item-persistence-domain:jar'
+//    mustRunAfter ':item-persistence-postgres:jar'
+//    mustRunAfter ':item-api-domain:jar'
 }

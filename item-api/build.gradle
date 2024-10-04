@@ -26,6 +26,8 @@ configurations {
 dependencies {
     implementation(project(":item-services"))
     implementation(project(":item-api-domain"))
+    implementation(project(":item-persistence-domain"))
+    implementation(project(":item-persistence-postgres"))
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"

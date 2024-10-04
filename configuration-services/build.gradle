@@ -30,9 +30,10 @@ dependencies {
     }
 }
 
-//tasks.named('test') {
-//    dependsOn ':configuration-near-cache:jar',':configuration-api-domain:jar'
-//}
+tasks.named('test') {
+    dependsOn ':configuration-near-cache:jar',':configuration-api-domain:jar'
+    dependsOn ':configuration-near-cache-spring:jar',':configuration-api-domain:jar'
+}
 
 tasks.named('test') {
     mustRunAfter project(':configuration-api-domain').tasks.named('jar')

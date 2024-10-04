@@ -1,0 +1,40 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+bootJar {
+    enabled = true
+    mainClass.set("com.nextuple.node.MasterDataNodeApplication")
+}
+
+configurations {
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
+}
+
+dependencies {
+    implementation(project(":node-services"))
+    implementation(project(":node-api-domain"))
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
+    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
+}
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+tasks.named('test') {
+    dependsOn ':configuration-api-domain:jar'
+}
+
+tasks.named('bootJar') {
+    mustRunAfter ':configuration-api-domain:jar'
+}

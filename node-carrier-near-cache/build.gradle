@@ -1,0 +1,18 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+jar.enabled=true
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
+    implementation(project(":node-carrier-api-domain"))
+}
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}

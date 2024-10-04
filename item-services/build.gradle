@@ -29,3 +29,16 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+tasks.named('test') {
+    dependsOn ':item-persistence-domain:jar',':item-api-domain:jar',':item-persistence-postgres:jar'
+}
+
+tasks.named('test') {
+    mustRunAfter project(':item-api-domain').tasks.named('jar')
+}
+
+
+tasks.test {
+    useJUnitPlatform()
+}

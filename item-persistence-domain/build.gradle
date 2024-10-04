@@ -22,3 +22,15 @@ dependencies {
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
+
+tasks.named('test') {
+    dependsOn ':item-persistence-domain:jar',':item-api-domain:jar'
+}
+
+tasks.named('test') {
+    mustRunAfter project(':item-api-domain').tasks.named('jar')
+}
+
+tasks.test {
+    useJUnitPlatform()
+}

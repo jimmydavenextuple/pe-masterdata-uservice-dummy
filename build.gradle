@@ -178,7 +178,7 @@ subprojects {
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 
         testImplementation 'org.mockito:mockito-inline:5.2.0'
-        testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
+//        testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
         testImplementation 'net.bytebuddy:byte-buddy:1.14.9'
         testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
 
@@ -382,14 +382,14 @@ dependencies {
     implementation("com.nextuple.pe:weightage-configuration-services:1.4.0-${build_target}")
     implementation("com.nextuple.pe:postal-code-timezone-services:1.4.0-${build_target}")
     implementation("com.nextuple.pe:transit-services:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:node-carrier-services:1.4.0-${build_target}")
+//    implementation("com.nextuple.pe:node-carrier-services:1.4.0-${build_target}")
     //implementation("com.nextuple.pe:item-services:1.4.0-${build_target}")
     implementation("com.nextuple.pe:calendar-services:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:node-services:1.4.0-${build_target}")
+//    implementation("com.nextuple.pe:node-services:1.4.0-${build_target}")
     implementation("com.nextuple.pe:carrier-services:1.4.0-${build_target}")
     implementation("com.nextuple.pe:pe-public-webhook:1.4.0-${build_target}")
     implementation("com.nextuple.pe:sourcing-cost-config-services:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:node-consumer:1.4.0-${build_target}")
+//    implementation("com.nextuple.pe:node-consumer:1.4.0-${build_target}")
     implementation("com.nextuple.pe:carrier-consumer:1.4.0-${build_target}")
 
     implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
@@ -416,7 +416,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 
     testImplementation 'org.mockito:mockito-inline:5.2.0'
-    testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
+//    testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
     testImplementation 'net.bytebuddy:byte-buddy:1.14.9'
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
 

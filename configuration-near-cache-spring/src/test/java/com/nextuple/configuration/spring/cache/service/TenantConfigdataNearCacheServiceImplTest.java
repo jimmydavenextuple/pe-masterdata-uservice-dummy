@@ -12,19 +12,22 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.nextuple.configuration.cache.domain.TenantConfigdataCacheKey;
 import com.nextuple.configuration.cache.domain.TenantConfigdataCacheValue;
 import com.nextuple.configuration.spring.cache.util.TestUtil;
+import com.nextuple.core.cache.domain.CacheValue;
 import com.nextuple.core.cache.service.GenericFeignCacheService;
 import com.nextuple.core.constants.NearCacheConstants;
 import com.nextuple.core.registry.NearCacheRegistry;
+import com.nextuple.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -43,56 +46,58 @@ class TenantConfigdataNearCacheServiceImplTest {
 
   @BeforeEach
   void setup() {
-    MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         tenantConfigdataNearCacheService, "cacheManager", caffeineCacheManager);
+    // Added this
+    ReflectionTestUtils.setField(
+        tenantConfigdataNearCacheService, "feignCacheService", feignCacheService);
   }
 
-  //  @Test
-  //  void getTestForValidData() {
-  //    TenantConfigdataCacheKey cacheKey = testUtil.getTenantConfigdataCacheKey();
-  //    TenantConfigdataCacheValue cacheValue = testUtil.getTenantConfigCacheValue();
-  //
-  //    when(feignCacheService.get(any())).thenReturn(cacheValue);
-  //    AbstractGenericFeignClientServiceImpl abstractGenericSpringLocalCacheService =
-  //        Mockito.mock(AbstractGenericFeignClientServiceImpl.class, Mockito.RETURNS_MOCKS);
-  //    Mockito.when(abstractGenericSpringLocalCacheService.get(any())).thenReturn(cacheValue);
-  //
-  //    CacheValue cacheValue1 = tenantConfigdataNearCacheService.get(cacheKey);
-  //    assertEquals(cacheValue, cacheValue1);
-  //
-  //    CacheValue cacheValue2 = abstractGenericSpringLocalCacheService.get(cacheKey);
-  //    assertEquals(cacheValue, cacheValue2);
-  //
-  //    CacheValue cacheValue3 = abstractGenericSpringLocalCacheService.get(cacheKey);
-  //    assertEquals(cacheValue, cacheValue3);
-  //
-  //    verify(feignCacheService, times(1)).get(cacheKey);
-  //  }
+  @Test
+  void getTestForValidData() {
+    TenantConfigdataCacheKey cacheKey = testUtil.getTenantConfigdataCacheKey();
+    TenantConfigdataCacheValue cacheValue = testUtil.getTenantConfigCacheValue();
 
-  //  @Test
-  //  void getTestForInValidData() {
-  //    TenantConfigdataCacheKey cacheKey = testUtil.getTenantConfigdataCacheKey();
-  //    when(feignCacheService.get(any())).thenReturn(null);
-  //    assertNull(tenantConfigdataNearCacheService.get(cacheKey));
-  //    verify(feignCacheService, times(1)).get(cacheKey);
-  //  }
+    when(feignCacheService.get(any())).thenReturn(cacheValue);
+    AbstractGenericFeignClientServiceImpl abstractGenericSpringLocalCacheService =
+        Mockito.mock(AbstractGenericFeignClientServiceImpl.class, Mockito.RETURNS_MOCKS);
+    Mockito.when(abstractGenericSpringLocalCacheService.get(any())).thenReturn(cacheValue);
 
-  //  @Test
-  //  void deleteTest() {
-  //    TenantConfigdataCacheKey cacheKey = testUtil.getTenantConfigdataCacheKey();
-  //    tenantConfigdataNearCacheService.delete(cacheKey);
-  //    CacheValue cacheValue = tenantConfigdataNearCacheService.get(cacheKey);
-  //    assertNull(cacheValue);
-  //  }
+    CacheValue cacheValue1 = tenantConfigdataNearCacheService.get(cacheKey);
+    assertEquals(cacheValue, cacheValue1);
 
-  //  @Test
-  //  void deleteAllTest() {
-  //    TenantConfigdataCacheKey cacheKey = testUtil.getTenantConfigdataCacheKey();
-  //    tenantConfigdataNearCacheService.deleteAll();
-  //    CacheValue cacheValue = tenantConfigdataNearCacheService.get(cacheKey);
-  //    assertNull(cacheValue);
-  //  }
+    CacheValue cacheValue2 = abstractGenericSpringLocalCacheService.get(cacheKey);
+    assertEquals(cacheValue, cacheValue2);
+
+    CacheValue cacheValue3 = abstractGenericSpringLocalCacheService.get(cacheKey);
+    assertEquals(cacheValue, cacheValue3);
+
+    verify(feignCacheService, times(1)).get(cacheKey);
+  }
+
+  @Test
+  void getTestForInValidData() {
+    TenantConfigdataCacheKey cacheKey = testUtil.getTenantConfigdataCacheKey();
+    when(feignCacheService.get(any())).thenReturn(null);
+    assertNull(tenantConfigdataNearCacheService.get(cacheKey));
+    verify(feignCacheService, times(1)).get(cacheKey);
+  }
+
+  @Test
+  void deleteTest() {
+    TenantConfigdataCacheKey cacheKey = testUtil.getTenantConfigdataCacheKey();
+    tenantConfigdataNearCacheService.delete(cacheKey);
+    CacheValue cacheValue = tenantConfigdataNearCacheService.get(cacheKey);
+    assertNull(cacheValue);
+  }
+
+  @Test
+  void deleteAllTest() {
+    TenantConfigdataCacheKey cacheKey = testUtil.getTenantConfigdataCacheKey();
+    tenantConfigdataNearCacheService.deleteAll();
+    CacheValue cacheValue = tenantConfigdataNearCacheService.get(cacheKey);
+    assertNull(cacheValue);
+  }
 
   @Test
   void selfRegister() {
