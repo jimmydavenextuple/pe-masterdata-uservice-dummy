@@ -1,0 +1,46 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+bootJar {
+    enabled = true
+    mainClass.set("com.nextuple.carrier.MasterDataCarrierApplication")
+}
+
+configurations {
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
+}
+
+dependencies {
+    implementation(project(":carrier-api-domain"))
+    implementation(project(":carrier-services"))
+    implementation(project(":node-carrier-api-domain"))
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
+    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
+
+//    implementation("com.nextuple.pe:node-carrier-api-domain:1.4.0-${build_target}")
+
+    api "com.azure.spring:azure-spring-boot-starter-keyvault-secrets:3.10.0"
+}
+
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+
+tasks.named('bootJar') {
+    dependsOn ':carrier-api-domain:jar'
+}
+
+tasks.named('test') {
+    dependsOn ':carrier-api-domain:jar'
+}

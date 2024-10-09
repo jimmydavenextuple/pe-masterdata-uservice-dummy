@@ -1,0 +1,35 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+jar.enabled=true
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation(project(":postal-code-timezone-api-domain"))
+    implementation("com.nextuple.pe:common-util:1.3.0-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache:1.3.0-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache-spring:1.3.0-${build_target}")
+    implementation(project(":postal-code-timezone-near-cache"))
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
+
+    constraints {
+        implementation('io.github.openfeign:feign-core:11.8') {
+            because 'versions below are vulnerable to CVE-2019-16942'
+        }
+    }
+}
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+tasks.named('test') {
+    dependsOn(
+            ':postal-code-timezone-near-cache:jar',
+            ':postal-code-timezone-api-domain:jar'
+    )
+}

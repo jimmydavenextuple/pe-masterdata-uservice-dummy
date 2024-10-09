@@ -1,0 +1,32 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://postgres:5432/pe_intgeration
+    username: nextuple_user
+    password: nextuple@123
+  kafka:
+    bootstrap-servers: kafka:9092
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"kafka\" password=\"kafka\";"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.INTEGRATION.MASTER_DATA_UPDATE_EVENTS
+      properties:
+        acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
+  sql.init.platform: postgres
+
+logging:
+  level:
+    com.nextuple: INFO

@@ -1,0 +1,39 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+jar{
+    enabled = true
+}
+
+bootJar {
+    enabled = false
+}
+
+
+dependencies {
+    implementation(project(":weightage-configuration-api-domain"))
+    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
+    implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
+    implementation(project(":weightage-configuration-persistence-domain"))
+    implementation(project(":weightage-configuration-persistence-postgres"))
+    runtimeOnly 'org.postgresql:postgresql'
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.named('test') {
+    dependsOn(
+            ':weightage-configuration-persistence-postgres:jar',
+            ':weightage-configuration-persistence-domain:jar',
+            ':weightage-configuration-api-domain:jar'
+    )
+}
