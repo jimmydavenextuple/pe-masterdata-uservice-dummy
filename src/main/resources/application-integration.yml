@@ -45,6 +45,7 @@ spring:
         spring-json-trusted-packages: "*"
         spring-json-type-mapping: com.nextuple.pe.webhook.domain.dtos.Item:com.nextuple.item.domain.events.ItemMasterEvent
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+        max.poll.records: 10
       topics:
         item_master:
           name: INTERNAL.INTEGRATION.PROMISE_ITEMS
@@ -120,7 +121,7 @@ dataupload:
   base-path: "https://pedataupload.blob.core.windows.net"
   maxsize-in-kilobytes: 10240
   max-rows: 1000
-  bucket-name: "dataupload"
+  bucket-name: "integrationdataupload"
   type: BLOB
   signed-url-expiry-minutes: 30
 jobs-framework:
@@ -136,10 +137,10 @@ jobs-framework:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_RESULT
   result-consumer:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_RESULT
-    group-id: jobs-result-consumer-async
+    group-id: jobs-result-consumer-async-integration
   record-consumer:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_TASK
-    group-id: jobs-task-consumer-async
+    group-id: jobs-task-consumer-async-integration
 
 master-data:
   node:
