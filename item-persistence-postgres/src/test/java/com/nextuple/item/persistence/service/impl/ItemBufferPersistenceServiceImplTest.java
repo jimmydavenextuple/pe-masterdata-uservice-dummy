@@ -41,6 +41,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class ItemBufferPersistenceServiceImplTest {
 
@@ -59,6 +60,9 @@ class ItemBufferPersistenceServiceImplTest {
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
+    // Added this
+    ReflectionTestUtils.setField(itemBufferPersistenceService, "repository", itemBufferRepository);
+    ReflectionTestUtils.setField(itemBufferPersistenceService, "mapper", itemBufferEntityMapper);
   }
 
   @Test

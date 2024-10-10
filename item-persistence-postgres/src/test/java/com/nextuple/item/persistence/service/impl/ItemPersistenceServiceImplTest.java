@@ -39,6 +39,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class ItemPersistenceServiceImplTest {
   @InjectMocks private ItemPersistenceServiceImpl itemPersistenceService;
@@ -51,6 +52,9 @@ class ItemPersistenceServiceImplTest {
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
+    // Added this
+    ReflectionTestUtils.setField(itemPersistenceService, "repository", itemRepository);
+    ReflectionTestUtils.setField(itemPersistenceService, "mapper", itemEntityMapper);
   }
 
   @Test

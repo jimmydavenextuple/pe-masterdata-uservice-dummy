@@ -384,7 +384,7 @@ dependencies {
 //    implementation("com.nextuple.pe:transit-services:1.4.0-${build_target}")
 //    implementation("com.nextuple.pe:node-carrier-services:1.4.0-${build_target}")
     //implementation("com.nextuple.pe:item-services:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:calendar-services:1.4.0-${build_target}")
+//    implementation("com.nextuple.pe:calendar-services:1.4.0-${build_target}")
 //    implementation("com.nextuple.pe:node-services:1.4.0-${build_target}")
 //    implementation("com.nextuple.pe:carrier-services:1.4.0-${build_target}")
     implementation("com.nextuple.pe:pe-public-webhook:1.4.0-${build_target}")
