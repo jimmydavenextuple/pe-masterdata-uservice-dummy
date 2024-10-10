@@ -33,13 +33,9 @@ tasks.named('test') {
     dependsOn ':node-carrier-api-domain:jar'
     dependsOn ':configuration-api-domain:jar'
     dependsOn ':node-api-domain:jar'
-    dependsOn ':node-carrier-consumer:jar'
-    dependsOn ':node-carrier-services:jar'
 }
 
 tasks.named('test') {
     mustRunAfter ':node-api-domain:jar'
-    mustRunAfter ':node-consumer:jar'
     mustRunAfter ':configuration-api-domain:jar'
-    mustRunAfter ':node-carrier-services:jar'
 }

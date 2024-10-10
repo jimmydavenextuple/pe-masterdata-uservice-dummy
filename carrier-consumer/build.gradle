@@ -26,9 +26,6 @@ dependencies {
     implementation(project(":carrier-services"))
     implementation(project(":carrier-persistence-domain"))
     implementation(project(":carrier-persistence-postgres"))
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.3'
-
 }
 
 test {
@@ -36,20 +33,9 @@ test {
 }
 
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 tasks.named('test') {
     dependsOn ':carrier-api-domain:jar'
-    dependsOn ':carrier-consumer:jar'
-    dependsOn ':carrier-persistence-postgres:jar'
     dependsOn ':configuration-api-domain:jar'
-}
-
-tasks.named('test') {
-    mustRunAfter ':carrier-api-domain:jar'
-    mustRunAfter ':carrier-consumer:jar'
-    mustRunAfter ':carrier-persistence-postgres:jar'
-    mustRunAfter ':configuration-api-domain:jar'
+    dependsOn ':carrier-persistence-postgres:jar'
+    dependsOn ':carrier-persistence-domain:jar'
 }
