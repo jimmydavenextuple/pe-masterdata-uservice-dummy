@@ -18,6 +18,7 @@ configurations {
 dependencies {
     implementation(project(":node-carrier-services"))
     implementation(project(":node-api-domain"))
+    implementation(project(":carrier-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
@@ -27,7 +28,7 @@ dependencies {
     implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
 
 //    implementation("com.nextuple.pe:node-api-domain:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:carrier-api-domain:1.4.0-${build_target}")
+//    implementation("com.nextuple.pe:carrier-api-domain:1.4.0-${build_target}")
 }
 sourceCompatibility = JavaVersion.VERSION_21
 targetCompatibility = JavaVersion.VERSION_21
@@ -38,9 +39,11 @@ tasks.withType(Test).configureEach {
 tasks.named('bootJar') {
     dependsOn ':node-api-domain:jar'
     dependsOn ':configuration-api-domain:jar'
+    dependsOn ':carrier-api-domain:jar'
 }
 
 tasks.named('test') {
     dependsOn ':node-api-domain:jar'
     dependsOn ':configuration-api-domain:jar'
+    dependsOn ':carrier-api-domain:jar'
 }

@@ -22,25 +22,22 @@ import com.nextuple.configuration.TestUtil;
 import com.nextuple.configuration.inbound.TenantConfigdataRequest;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
 import com.nextuple.configuration.service.TenantConfigdataService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+// Added this
+@ExtendWith(MockitoExtension.class)
 class TenantConfigdataControllerTest {
   @InjectMocks private TenantConfigdataController tenantConfigdataController;
 
   @Mock private TenantConfigdataService tenantConfigdataService;
 
   @InjectMocks private TestUtil testUtil;
-
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
-  }
 
   @Test
   void addTenantConfigdataTest() throws PromiseEngineException, CommonServiceException {

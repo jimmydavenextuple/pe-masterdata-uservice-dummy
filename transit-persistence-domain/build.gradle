@@ -1,0 +1,18 @@
+jar{
+    enabled=true
+}
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.4.2'
+    implementation(project(":transit-api-domain"))
+}
+
+tasks.named('test') {
+    dependsOn ':transit-persistence-domain:jar'
+}

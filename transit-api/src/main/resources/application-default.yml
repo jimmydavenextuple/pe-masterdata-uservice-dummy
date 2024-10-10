@@ -1,0 +1,32 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  sql.init.platform: postgres
+
+logging:
+  level:
+    com.nextuple: INFO
+entity-listener:
+  kafka:
+    enabled: false
+pe:
+  ui:
+    allowed-origin-url: "*"
+
+dataupload:
+  base-path: "https://pedataupload.blob.core.windows.net"
+  bucket-name: "dataupload"
+  type: BLOB
+  signed-url-expiry-minutes: 30
+
+jobs-framework:
+  job-completion-consumer:
+    topic-name: INTERNAL.DEV.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-dev

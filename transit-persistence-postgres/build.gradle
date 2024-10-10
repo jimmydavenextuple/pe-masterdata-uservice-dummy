@@ -1,0 +1,21 @@
+jar {
+    enabled=true
+}
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation(project(":transit-api-domain"))
+    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
+    implementation(project(":transit-persistence-domain"))
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.4.2'
+}
+
+tasks.named('test') {
+    dependsOn ':transit-persistence-domain:jar'
+}

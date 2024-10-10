@@ -1,0 +1,53 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+
+jar{
+    enabled = true
+}
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    testImplementation(platform("org.junit:junit-bom:5.9.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:master-data-integration-framework:1.4.0-${build_target}")
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
+    implementation(project(":transit-api-domain"))
+    implementation(project(":transit-services"))
+    implementation(project(":transit-persistence-domain"))
+    implementation(project(":transit-persistence-postgres"))
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.named('test') {
+    dependsOn ':carrier-api-domain:jar'
+    dependsOn ':postal-code-timezone-api-domain:jar'
+    dependsOn ':node-api-domain:jar'
+    dependsOn ':transit-api-domain:jar'
+    dependsOn ':transit-consumer:jar'
+    dependsOn ':transit-persistence-postgres:jar'
+    dependsOn ':transit-persistence-domain:jar'
+}
+
+tasks.named('test') {
+    mustRunAfter ':carrier-api-domain:jar'
+    mustRunAfter ':postal-code-timezone-api-domain:jar'
+    mustRunAfter ':node-api-domain:jar'
+    mustRunAfter ':transit-api-domain:jar'
+    mustRunAfter ':transit-consumer:jar'
+    mustRunAfter ':transit-persistence-postgres:jar'
+    mustRunAfter ':transit-persistence-domain:jar'
+}
