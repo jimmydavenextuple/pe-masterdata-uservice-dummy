@@ -32,3 +32,8 @@ tasks.named('test') {
             ':postal-code-timezone-api-domain:jar'
     )
 }
+
+tasks.named('test') {
+    dependsOn ':promise-sourcing-rule-persistence-domain:jar'
+    dependsOn ':promise-sourcing-rule-api-domain:jar'
+}

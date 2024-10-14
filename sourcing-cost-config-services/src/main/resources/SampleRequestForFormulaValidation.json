@@ -1,0 +1,35 @@
+{
+  "orgId": "NEXTUPLE_GR",
+  "serviceOption": "EXPRESS",
+  "orderDate": "2023-03-15",
+  "orderNo": "SO-100201",
+  "orderType": "MARKETPLACE",
+  "shipDestinationDetails": {
+    "zipCode": "RRR 1B5",
+    "region": "RRR",
+    "state": "Ontario",
+    "country": "CA",
+    "timezone": "UTC"
+  },
+  "carrierServiceId": "FEDEX_GROUND",
+  "customAttributes": {},
+  "orderLines": [
+    {
+      "orderedQuantity": 6,
+      "carrierServiceId": "FEDEX_GROUND",
+      "shipDestinationDetails": {
+        "zipCode": "RRR 1B5",
+        "region": "RRR",
+        "state": "Ontario",
+        "country": "Canada",
+        "timezone": "UTC"
+      },
+      "item": {
+        "itemId": "OPT-ITEM-4",
+        "productClass": "ELECTRONICS",
+        "unitOfMeasure": "EACH"
+      },
+      "customAttributes": {}
+    }
+  ]
+}
