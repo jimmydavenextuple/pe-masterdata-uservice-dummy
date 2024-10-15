@@ -22,10 +22,10 @@ dependencies {
     implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
     implementation("com.nextuple.pe:master-data-integration-framework:1.4.0-${build_target}")
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
-    implementation(project(":transit-api-domain"))
-    implementation(project(":transit-services"))
-    implementation(project(":transit-persistence-domain"))
-    implementation(project(":transit-persistence-postgres"))
+    implementation(project(":pe-transit-uservice:transit-api-domain"))
+    implementation(project(":pe-transit-uservice:transit-services"))
+    implementation(project(":pe-transit-uservice:transit-persistence-domain"))
+    implementation(project(":pe-transit-uservice:transit-persistence-postgres"))
 }
 
 tasks.test {
@@ -36,18 +36,18 @@ tasks.named('test') {
     dependsOn ':carrier-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     dependsOn ':node-api-domain:jar'
-    dependsOn ':transit-api-domain:jar'
-    dependsOn ':transit-consumer:jar'
-    dependsOn ':transit-persistence-postgres:jar'
-    dependsOn ':transit-persistence-domain:jar'
+    dependsOn ':pe-transit-uservice:transit-api-domain:jar'
+    dependsOn ':pe-transit-uservice:transit-consumer:jar'
+    dependsOn ':pe-transit-uservice:transit-persistence-postgres:jar'
+    dependsOn ':pe-transit-uservice:transit-persistence-domain:jar'
 }
 
 tasks.named('test') {
     mustRunAfter ':carrier-api-domain:jar'
     mustRunAfter ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     mustRunAfter ':node-api-domain:jar'
-    mustRunAfter ':transit-api-domain:jar'
-    mustRunAfter ':transit-consumer:jar'
-    mustRunAfter ':transit-persistence-postgres:jar'
-    mustRunAfter ':transit-persistence-domain:jar'
+    mustRunAfter ':pe-transit-uservice:transit-api-domain:jar'
+    mustRunAfter ':pe-transit-uservice:transit-consumer:jar'
+    mustRunAfter ':pe-transit-uservice:transit-persistence-postgres:jar'
+    mustRunAfter ':pe-transit-uservice:transit-persistence-domain:jar'
 }

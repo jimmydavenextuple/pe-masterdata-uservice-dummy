@@ -17,7 +17,7 @@ dependencies {
 }
 
 tasks.named('test') {
-    dependsOn ':transit-api-domain:jar'
+    dependsOn ':pe-transit-uservice:transit-api-domain:jar'
 }
 
 tasks.withType(Test).configureEach {

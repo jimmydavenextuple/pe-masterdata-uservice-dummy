@@ -9,7 +9,7 @@ bootJar {
 }
 
 dependencies {
-    implementation(project(":weightage-configuration-api-domain"))
+    implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api-domain"))
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
 }
@@ -19,7 +19,8 @@ tasks.withType(Test).configureEach {
 
 tasks.named('test') {
     dependsOn(
-            ':weightage-configuration-near-cache:jar',
-            ':weightage-configuration-api-domain:jar'
+            ':pe-weightage-configuration-uservice:weightage-configuration-near-cache:jar',
+            ':pe-weightage-configuration-uservice:weightage-configuration-api-domain:jar'
+
     )
 }

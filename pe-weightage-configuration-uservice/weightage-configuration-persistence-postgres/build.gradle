@@ -12,12 +12,12 @@ bootJar {
 
 dependencies {
 
-    implementation(project(":weightage-configuration-api-domain"))
+    implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api-domain"))
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
     implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
-    implementation(project(":weightage-configuration-persistence-domain"))
+    implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-persistence-domain"))
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
@@ -29,7 +29,7 @@ tasks.withType(Test).configureEach {
 
 tasks.named('test') {
     dependsOn(
-            ':weightage-configuration-persistence-domain:jar',
-            ':weightage-configuration-api-domain:jar'
+            ':pe-weightage-configuration-uservice:weightage-configuration-persistence-domain:jar',
+            ':pe-weightage-configuration-uservice:weightage-configuration-api-domain:jar'
     )
 }

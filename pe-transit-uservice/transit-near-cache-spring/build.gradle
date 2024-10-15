@@ -9,11 +9,12 @@ bootJar {
 }
 
 dependencies {
-    implementation(project(":weightage-configuration-api-domain"))
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
+    implementation(project(":pe-transit-uservice:transit-api-domain"))
+    implementation("com.nextuple.pe:core-near-cache-consumer:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
-    implementation(project(":weightage-configuration-near-cache"))
+    implementation(project(":pe-transit-uservice:transit-near-cache"))
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
 
@@ -28,8 +29,7 @@ tasks.withType(Test).configureEach {
 }
 
 tasks.named('test') {
-    dependsOn(
-            ':weightage-configuration-near-cache:jar',
-            ':weightage-configuration-api-domain:jar'
-    )
+    dependsOn ':pe-transit-uservice:transit-near-cache:jar'
+    dependsOn ':pe-transit-uservice:transit-near-cache-spring:jar'
+    dependsOn ':pe-transit-uservice:transit-api-domain:jar'
 }
