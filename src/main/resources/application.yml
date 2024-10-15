@@ -212,6 +212,11 @@ kafka-topic-flags:
 
 keycloak:
   application-client: applicationclient-PE_DEV
+  auth-server-url: https://keycloak-nonprod.nextuple.com/
+  realm: NOMS
+  client-id: applicationclient-PE_DEV
+  credentials:
+    secret: SjWVda5jN5WS0YJdw5OP7zUPsHfquXlE
 
 security:
   open-urls:  /swagger-ui.html,/swagger-ui/**,/v3/api-docs/**,/actuator/prometheus,/actuator/health,/error
