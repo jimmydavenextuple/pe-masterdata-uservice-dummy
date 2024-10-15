@@ -14,6 +14,7 @@ spring:
       userexit: "http://pe-masterdata-uservice:8080/"
       configuration: "http://pe-masterdata-uservice:8080/"
       fpm-service: "http://pe-masterdata-uservice:8080/"
+      keycloak: "https://keycloak-nonprod.nextuple.com/"
     name: "pe-masterdata-uservice"
     version: 2.6.0
     title: "Master Data Service"
@@ -208,3 +209,9 @@ kafka-topic-flags:
   input:
     taskTopics:
       enabled: false
+
+keycloak:
+  application-client: applicationclient-PE_DEV
+
+security:
+  open-urls:  /swagger-ui.html,/swagger-ui/**,/v3/api-docs/**,/actuator/prometheus,/actuator/health,/error
