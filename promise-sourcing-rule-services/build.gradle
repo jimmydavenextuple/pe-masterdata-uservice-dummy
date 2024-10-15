@@ -27,7 +27,7 @@ dependencies {
 //    implementation("com.nextuple.pe:node-api-domain:1.4.0-${build_target}")
 //    implementation("com.nextuple.pe:postal-code-timezone-api-domain:1.4.0-${build_target}")
     implementation(project(":node-api-domain"))
-    implementation(project(":postal-code-timezone-api-domain"))
+    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
 
 }
 
@@ -40,5 +40,5 @@ tasks.named('test') {
     dependsOn ':promise-sourcing-rule-persistence-domain:jar'
     dependsOn ':promise-sourcing-rule-api-domain:jar'
     dependsOn ':node-api-domain:jar'
-    dependsOn ':postal-code-timezone-api-domain:jar'
+    dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
 }

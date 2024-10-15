@@ -35,7 +35,7 @@ test {
 
 tasks.named('test') {
     dependsOn ':carrier-api-domain:jar'
-    dependsOn ':configuration-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
     dependsOn ':carrier-persistence-postgres:jar'
     dependsOn ':carrier-persistence-domain:jar'
 }

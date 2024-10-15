@@ -34,7 +34,7 @@ tasks.test {
 
 tasks.named('test') {
     dependsOn ':carrier-api-domain:jar'
-    dependsOn ':postal-code-timezone-api-domain:jar'
+    dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     dependsOn ':node-api-domain:jar'
     dependsOn ':transit-api-domain:jar'
     dependsOn ':transit-consumer:jar'
@@ -44,7 +44,7 @@ tasks.named('test') {
 
 tasks.named('test') {
     mustRunAfter ':carrier-api-domain:jar'
-    mustRunAfter ':postal-code-timezone-api-domain:jar'
+    mustRunAfter ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     mustRunAfter ':node-api-domain:jar'
     mustRunAfter ':transit-api-domain:jar'
     mustRunAfter ':transit-consumer:jar'

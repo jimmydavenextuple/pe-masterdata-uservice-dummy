@@ -19,7 +19,7 @@ dependencies {
     implementation(project(":promise-sourcing-rule-services"))
     implementation(project(":promise-sourcing-rule-api-domain"))
     implementation(project(":node-api-domain"))
-    implementation(project(":postal-code-timezone-api-domain"))
+    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
 
     implementation(project(":sourcing-cost-config-services"))
     implementation(project(":sourcing-cost-config-api-domain"))
@@ -42,16 +42,16 @@ tasks.withType(Test).configureEach {
 
 tasks.named('bootJar') {
     dependsOn ':node-api-domain:jar'
-    dependsOn ':postal-code-timezone-api-domain:jar'
-    dependsOn ':configuration-api-domain:jar'
+    dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
     dependsOn ':promise-sourcing-rule-persistence-domain:jar'
     dependsOn ':promise-sourcing-rule-api-domain:jar'
 }
 
 tasks.named('test') {
     dependsOn ':node-api-domain:jar'
-    dependsOn ':postal-code-timezone-api-domain:jar'
-    dependsOn ':configuration-api-domain:jar'
+    dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
     dependsOn ':promise-sourcing-rule-persistence-domain:jar'
     dependsOn ':promise-sourcing-rule-api-domain:jar'
 }

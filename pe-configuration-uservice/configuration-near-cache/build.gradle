@@ -9,7 +9,8 @@ bootJar {
 }
 
 dependencies {
-    implementation(project(":configuration-api-domain"))
+    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
+
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
 }

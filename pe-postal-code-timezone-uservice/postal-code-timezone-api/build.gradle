@@ -17,8 +17,8 @@ configurations {
 
 
 dependencies {
-    implementation(project(":postal-code-timezone-services"))
-    implementation(project(":postal-code-timezone-api-domain"))
+    implementation(project(":pe-postal-code-timezone-uservice::postal-code-timezone-services"))
+    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
     implementation("com.nextuple.pe:common-util:1.3.0-${build_target}")
     implementation("com.nextuple.pe:common-postgres:1.3.0-${build_target}")
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
@@ -32,4 +32,11 @@ sourceCompatibility = JavaVersion.VERSION_21
 targetCompatibility = JavaVersion.VERSION_21
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
+}
+
+tasks.named('bootJar') {
+    dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
+}
+tasks.named('test') {
+    dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
 }

@@ -24,7 +24,8 @@ dependencies {
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
 
 //    implementation("com.nextuple.pe:configuration-api-domain:1.4.0-${build_target}")
-    implementation(project(":configuration-api-domain"))
+    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
+
 
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
     implementation 'com.scireum:parsii:4.0'
@@ -42,5 +43,5 @@ tasks.named('test') {
     dependsOn ':promise-sourcing-rule-persistence-postgres:jar'
     dependsOn ':promise-sourcing-rule-persistence-domain:jar'
     dependsOn ':promise-sourcing-rule-api-domain:jar'
-    dependsOn ':configuration-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
 }

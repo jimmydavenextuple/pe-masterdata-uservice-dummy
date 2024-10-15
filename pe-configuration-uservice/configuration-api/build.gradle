@@ -16,8 +16,9 @@ configurations {
 }
 
 dependencies {
-    implementation(project(":configuration-api-domain"))
-    implementation(project(":configuration-services"))
+    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
+
+    implementation(project(":pe-configuration-uservice:configuration-services"))
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
     runtimeOnly 'org.postgresql:postgresql'
@@ -33,9 +34,9 @@ tasks.withType(Test).configureEach {
 }
 
 tasks.named('test') {
-    dependsOn(':configuration-api-domain:jar')
+    dependsOn(':pe-configuration-uservice:configuration-api-domain:jar')
 }
 
 tasks.named('bootJar') {
-    dependsOn(':configuration-api-domain:jar')
+    dependsOn(':pe-configuration-uservice:configuration-api-domain:jar')
 }

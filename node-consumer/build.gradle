@@ -2,7 +2,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.4'
 }
 
-jar{
+jar {
     enabled = true
 }
 
@@ -13,7 +13,6 @@ bootJar {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     runtimeOnly 'org.postgresql:postgresql'
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
@@ -25,6 +24,7 @@ dependencies {
     implementation(project(":node-persistence-domain"))
     implementation(project(":node-persistence-postgres"))
     implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
+    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
 }
 
 tasks.test {
@@ -33,12 +33,8 @@ tasks.test {
 
 tasks.named('test') {
     dependsOn ':node-api-domain:jar'
-    dependsOn ':configuration-api-domain:jar'
     dependsOn ':node-consumer:jar'
 }
-
 tasks.named('test') {
-    mustRunAfter ':node-api-domain:jar'
-    mustRunAfter ':node-consumer:jar'
-    mustRunAfter ':configuration-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
 }

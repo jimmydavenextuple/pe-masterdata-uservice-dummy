@@ -15,3 +15,7 @@ dependencies {
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
+
+tasks.named('test') {
+    dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
+}

@@ -9,13 +9,15 @@ bootJar {
 }
 
 dependencies {
-    implementation(project(":configuration-api-domain"))
+    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
+    implementation(project(":pe-configuration-uservice:configuration-near-cache"))
+
+
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
 
 
-    implementation(project(":configuration-near-cache"))
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
 
@@ -25,12 +27,23 @@ dependencies {
         }
     }
 }
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
+//sourceCompatibility = JavaVersion.VERSION_21
+//targetCompatibility = JavaVersion.VERSION_21
+
+//tasks.named('test') {
+//    dependsOn ':pe-configuration-uservice:configuration-near-cache:jar'
+//    dependsOn ':pe-configuration-uservice:configuration-api-domain'
+//}
 
 tasks.named('test') {
-    dependsOn ':configuration-near-cache:jar',':configuration-api-domain:jar'
+    dependsOn(':pe-configuration-uservice:configuration-api-domain:jar')
+    dependsOn ':pe-configuration-uservice:configuration-near-cache:jar'
+
 }
+
+//tasks.named('bootJar') {
+//    dependsOn(':pe-configuration-uservice:configuration-api-domain:jar')
+//}
 
 tasks.withType(Test).configureEach {
     useJUnitPlatform()

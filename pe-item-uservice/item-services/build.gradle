@@ -11,9 +11,9 @@ bootJar {
 }
 
 dependencies {
-    implementation(project(":item-api-domain"))
-    implementation(project(":item-persistence-domain"))
-    implementation(project(":item-persistence-postgres"))
+    implementation(project(":pe-item-uservice:item-api-domain"))
+    implementation(project(":pe-item-uservice:item-persistence-domain"))
+    implementation(project(":pe-item-uservice:item-persistence-postgres"))
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
@@ -31,13 +31,8 @@ test {
 }
 
 tasks.named('test') {
-    dependsOn ':item-persistence-domain:jar',':item-api-domain:jar',':item-persistence-postgres:jar'
+    dependsOn ':pe-item-uservice:item-persistence-domain:jar',':pe-item-uservice:item-api-domain:jar',':pe-item-uservice:item-persistence-postgres:jar'
 }
-
-tasks.named('test') {
-    mustRunAfter project(':item-api-domain').tasks.named('jar')
-}
-
 
 tasks.test {
     useJUnitPlatform()

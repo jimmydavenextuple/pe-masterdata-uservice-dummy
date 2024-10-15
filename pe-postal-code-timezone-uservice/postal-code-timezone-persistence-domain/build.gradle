@@ -13,7 +13,7 @@ bootJar {
 dependencies {
     implementation("com.nextuple.pe:common-domain:1.3.0-${build_target}")
     implementation("com.nextuple.pe:common-util:1.3.0-${build_target}")
-    implementation(project(":postal-code-timezone-api-domain"))
+    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
 }
 
 tasks.named('test') {

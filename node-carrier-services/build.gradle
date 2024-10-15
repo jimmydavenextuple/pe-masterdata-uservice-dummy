@@ -13,7 +13,8 @@ bootJar {
 
 dependencies {
     runtimeOnly 'org.postgresql:postgresql'
-    implementation(project(":configuration-api-domain"))
+    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
+
     implementation(project(":node-api-domain"))
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
@@ -29,7 +30,7 @@ dependencies {
 }
 
 tasks.named('test') {
-    dependsOn ':configuration-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
     dependsOn ':node-api-domain:jar'
     dependsOn ':node-carrier-api-domain:jar'
 }

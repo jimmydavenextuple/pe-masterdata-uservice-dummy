@@ -10,14 +10,15 @@ bootJar {
 }
 
 dependencies {
-    implementation(project(":configuration-api-domain"))
+    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
+
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
-    implementation(project(":configuration-near-cache"))
-    implementation(project(":configuration-near-cache-spring"))
+    implementation(project(":pe-configuration-uservice:configuration-near-cache"))
+    implementation(project(":pe-configuration-uservice:configuration-near-cache-spring"))
 
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
@@ -30,13 +31,11 @@ dependencies {
     }
 }
 
-tasks.named('test') {
-    dependsOn ':configuration-near-cache:jar',':configuration-api-domain:jar'
-    dependsOn ':configuration-near-cache-spring:jar',':configuration-api-domain:jar'
-}
 
 tasks.named('test') {
-    mustRunAfter project(':configuration-api-domain').tasks.named('jar')
+    dependsOn(':pe-configuration-uservice:configuration-api-domain:jar')
+    dependsOn(':pe-configuration-uservice:configuration-near-cache:jar')
+    dependsOn(':pe-configuration-uservice:configuration-near-cache-spring:jar')
 }
 
 
