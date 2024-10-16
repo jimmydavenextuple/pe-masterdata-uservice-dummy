@@ -16,13 +16,13 @@ configurations {
 }
 
 dependencies {
-    implementation(project(":promise-sourcing-rule-services"))
-    implementation(project(":promise-sourcing-rule-api-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-services"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
     implementation(project(":pe-node-uservice:node-api-domain"))
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
 
-    implementation(project(":sourcing-cost-config-services"))
-    implementation(project(":sourcing-cost-config-api-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-services"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
 
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
@@ -44,15 +44,15 @@ tasks.named('bootJar') {
     dependsOn ':pe-node-uservice:node-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
-    dependsOn ':promise-sourcing-rule-persistence-domain:jar'
-    dependsOn ':promise-sourcing-rule-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-persistence-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
 }
 
 tasks.named('test') {
     dependsOn ':pe-node-uservice:node-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
-    dependsOn ':promise-sourcing-rule-persistence-domain:jar'
-    dependsOn ':promise-sourcing-rule-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-persistence-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
 }
 

@@ -12,9 +12,9 @@ bootJar {
 
 
 dependencies {
-    implementation(project(":promise-sourcing-rule-api-domain"))
-    implementation(project(":promise-sourcing-rule-persistence-domain"))
-    implementation(project(":promise-sourcing-rule-persistence-postgres"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-persistence-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-persistence-postgres"))
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
     implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
@@ -36,9 +36,9 @@ test {
 }
 
 tasks.named('test') {
-    dependsOn ':promise-sourcing-rule-persistence-postgres:jar'
-    dependsOn ':promise-sourcing-rule-persistence-domain:jar'
-    dependsOn ':promise-sourcing-rule-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-persistence-postgres:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-persistence-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
     dependsOn ':pe-node-uservice:node-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
 }
