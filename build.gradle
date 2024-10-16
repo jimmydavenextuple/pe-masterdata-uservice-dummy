@@ -136,7 +136,7 @@ dependencies {
     implementation("com.nextuple.pe:data-upload-services:1.4.0-${build_target}")
     implementation("com.nextuple.pe:promise-sourcing-rule-services:1.4.0-${build_target}")
     implementation("com.nextuple.pe:weightage-configuration-services:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:postal-code-timezone-services:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:postal-code-timezone-services:1.4.2-${build_target}")
     implementation("com.nextuple.pe:transit-services:1.4.0-${build_target}")
     implementation("com.nextuple.pe:node-carrier-services:1.4.0-${build_target}")
     implementation("com.nextuple.pe:item-services:1.4.0-${build_target}")
