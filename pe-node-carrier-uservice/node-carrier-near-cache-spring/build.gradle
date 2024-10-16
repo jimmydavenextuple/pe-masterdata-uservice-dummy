@@ -11,8 +11,8 @@ jar {
 }
 
 dependencies {
-    implementation(project(":node-carrier-near-cache"))
-    implementation(project(":node-carrier-api-domain"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-near-cache"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
@@ -35,10 +35,6 @@ tasks.withType(Test).configureEach {
 }
 
 tasks.named('test') {
-    dependsOn ':node-carrier-near-cache:jar', ':node-carrier-api-domain:jar'
-}
-
-tasks.named('test') {
-    mustRunAfter ':node-carrier-near-cache:jar'
-    mustRunAfter ':node-carrier-api-domain:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-near-cache:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
 }

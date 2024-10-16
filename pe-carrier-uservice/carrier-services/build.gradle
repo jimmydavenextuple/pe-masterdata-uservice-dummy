@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":pe-carrier-uservice:carrier-persistence-domain"))
     implementation(project(":pe-carrier-uservice:carrier-persistence-postgres"))
     implementation(project(":pe-configuration-uservice:configuration-api-domain"))
-    implementation(project(":node-carrier-api-domain"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
 
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
@@ -28,15 +28,11 @@ dependencies {
     api "com.azure.spring:azure-spring-boot-starter-keyvault-secrets:3.10.0"
 }
 
-tasks.test {
-    useJUnitPlatform()
-    dependsOn(
-            ':pe-carrier-uservice:carrier-persistence-postgres:jar',
-            ':pe-carrier-uservice:carrier-persistence-domain:jar',
-            ':pe-carrier-uservice:carrier-api-domain:jar',
-            ':pe-configuration-uservice:configuration-api-domain:jar',
-            ':node-carrier-api-domain:jar'
-    )
+tasks.named('test') {
+    dependsOn ':pe-carrier-uservice:carrier-persistence-postgres:jar'
+    dependsOn ':pe-carrier-uservice:carrier-persistence-domain:jar'
+    dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
 }
 
 tasks.named('bootJar') {

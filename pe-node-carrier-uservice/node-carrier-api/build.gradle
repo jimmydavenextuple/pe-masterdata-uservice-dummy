@@ -16,14 +16,14 @@ configurations {
 
 
 dependencies {
-    implementation(project(":node-carrier-services"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-services"))
     implementation(project(":pe-node-uservice:node-api-domain"))
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
-    implementation(project(":node-carrier-api-domain"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
     implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
 

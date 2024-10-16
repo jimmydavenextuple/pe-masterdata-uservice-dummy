@@ -17,7 +17,7 @@ configurations {
 dependencies {
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-carrier-uservice:carrier-services"))
-    implementation(project(":node-carrier-api-domain"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
@@ -37,12 +37,13 @@ tasks.withType(Test).configureEach {
 }
 
 
-tasks.named('bootJar') {
-    dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
-    dependsOn ':node-carrier-api-domain:jar'
-}
+//tasks.named('bootJar') {
+//    dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
+//    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain'
+//}
+//
+//tasks.named('test') {
+//    dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
+//    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain'
+//}
 
-tasks.named('test') {
-    dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
-    dependsOn ':node-carrier-api-domain:jar'
-}
