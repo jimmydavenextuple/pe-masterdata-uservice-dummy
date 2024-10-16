@@ -6,7 +6,6 @@ bootJar {
     enabled = false
 }
 
-
 jar {
     enabled = true
 }
@@ -20,10 +19,10 @@ dependencies {
     implementation("com.nextuple.pe:core-near-cache-consumer:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
-    implementation(project(":node-calendar-near-cache"))
-    implementation(project(":calendar-api-domain"))
+    implementation(project(":pe-calendar-uservice:carrier-calendar-near-cache"))
+    implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
-    api(project(":calendar-common-near-cache"))
+    api(project(":pe-calendar-uservice:calendar-common-near-cache"))
 
     constraints {
         implementation('io.github.openfeign:feign-core:11.8') {
@@ -36,7 +35,7 @@ tasks.withType(Test).configureEach {
 }
 
 tasks.named('test') {
-    dependsOn ':calendar-common-near-cache:jar'
-    dependsOn ':node-calendar-near-cache:jar'
-    dependsOn ':calendar-api-domain:jar'
+    dependsOn ':pe-calendar-uservice:calendar-common-near-cache:jar'
+    dependsOn ':pe-calendar-uservice:carrier-calendar-near-cache:jar'
+    dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
 }
