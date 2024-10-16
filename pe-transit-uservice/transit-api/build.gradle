@@ -25,7 +25,7 @@ dependencies {
     implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
 
 //    implementation("com.nextuple.pe:carrier-api-domain:1.4.0-${build_target}")
-    implementation(project(":carrier-api-domain"))
+    implementation(project(":pe-carrier-uservice:carrier-api-domain"))
 //    implementation("com.nextuple.pe:postal-code-timezone-api-domain:1.4.0-${build_target}")
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
     implementation("com.nextuple.pe:job-framework-common-util:1.4.0-${build_target}")
@@ -43,13 +43,13 @@ tasks.withType(Test).configureEach {
 
 
 tasks.named('bootJar') {
-    dependsOn ':carrier-api-domain:jar'
+    dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     dependsOn ':pe-node-uservice:node-api-domain:jar'
 }
 
 tasks.named('test') {
-    dependsOn ':carrier-api-domain:jar'
+    dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     dependsOn ':pe-node-uservice:node-api-domain:jar'
 }

@@ -18,8 +18,8 @@ dependencies {
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
-    implementation(project(":carrier-near-cache"))
-    implementation(project(":carrier-api-domain"))
+    implementation(project(":pe-carrier-uservice:carrier-near-cache"))
+    implementation(project(":pe-carrier-uservice:carrier-api-domain"))
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     constraints {
@@ -33,13 +33,13 @@ tasks.withType(Test).configureEach {
 }
 
 tasks.named('test') {
-    dependsOn ':carrier-persistence-domain:jar',':carrier-api-domain:jar',':carrier-persistence-postgres:jar',
-            ':carrier-near-cache:jar'
+    dependsOn ':pe-carrier-uservice:carrier-persistence-domain:jar',':pe-carrier-uservice:carrier-api-domain:jar',':pe-carrier-uservice:carrier-persistence-postgres:jar',
+            ':pe-carrier-uservice:carrier-near-cache:jar'
 }
 
 tasks.named('test') {
-    mustRunAfter project(':carrier-api-domain').tasks.named('jar')
-    mustRunAfter project(':carrier-near-cache').tasks.named('jar')
+    mustRunAfter project(':pe-carrier-uservice:carrier-api-domain').tasks.named('jar')
+    mustRunAfter project(':pe-carrier-uservice:carrier-near-cache').tasks.named('jar')
 }
 
 

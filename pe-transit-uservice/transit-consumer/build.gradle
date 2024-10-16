@@ -33,7 +33,7 @@ tasks.test {
 }
 
 tasks.named('test') {
-    dependsOn ':carrier-api-domain:jar'
+    dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     dependsOn ':pe-node-uservice:node-api-domain:jar'
     dependsOn ':pe-transit-uservice:transit-api-domain:jar'
@@ -43,7 +43,7 @@ tasks.named('test') {
 }
 
 tasks.named('test') {
-    mustRunAfter ':carrier-api-domain:jar'
+    mustRunAfter ':pe-carrier-uservice:carrier-api-domain:jar'
     mustRunAfter ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     mustRunAfter ':pe-node-uservice:node-api-domain:jar'
     mustRunAfter ':pe-transit-uservice:transit-api-domain:jar'

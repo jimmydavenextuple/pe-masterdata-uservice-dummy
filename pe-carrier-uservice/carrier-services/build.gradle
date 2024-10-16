@@ -11,9 +11,9 @@ bootJar {
 }
 
 dependencies {
-    implementation(project(":carrier-api-domain"))
-    implementation(project(":carrier-persistence-domain"))
-    implementation(project(":carrier-persistence-postgres"))
+    implementation(project(":pe-carrier-uservice:carrier-api-domain"))
+    implementation(project(":pe-carrier-uservice:carrier-persistence-domain"))
+    implementation(project(":pe-carrier-uservice:carrier-persistence-postgres"))
     implementation(project(":pe-configuration-uservice:configuration-api-domain"))
     implementation(project(":node-carrier-api-domain"))
 
@@ -31,10 +31,11 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
     dependsOn(
-            ':carrier-persistence-postgres:jar',
-            ':carrier-persistence-domain:jar',
-            ':carrier-api-domain:jar',
-            ':pe-configuration-uservice:configuration-api-domain:jar'
+            ':pe-carrier-uservice:carrier-persistence-postgres:jar',
+            ':pe-carrier-uservice:carrier-persistence-domain:jar',
+            ':pe-carrier-uservice:carrier-api-domain:jar',
+            ':pe-configuration-uservice:configuration-api-domain:jar',
+            ':node-carrier-api-domain:jar'
     )
 }
 
