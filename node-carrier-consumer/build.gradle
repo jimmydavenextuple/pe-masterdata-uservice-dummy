@@ -30,8 +30,8 @@ tasks.test {
 tasks.named('test') {
     dependsOn ':node-carrier-api-domain:jar'
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
-    dependsOn ':node-api-domain:jar'
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
 
-    mustRunAfter ':node-api-domain:jar'
+    mustRunAfter ':pe-node-uservice:node-api-domain:jar'
     mustRunAfter ':pe-configuration-uservice:configuration-api-domain:jar'
 }

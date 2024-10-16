@@ -45,11 +45,11 @@ tasks.withType(Test).configureEach {
 tasks.named('bootJar') {
     dependsOn ':carrier-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
-    dependsOn ':node-api-domain:jar'
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
 }
 
 tasks.named('test') {
     dependsOn ':carrier-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
-    dependsOn ':node-api-domain:jar'
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
 }

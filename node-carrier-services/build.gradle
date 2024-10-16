@@ -15,7 +15,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     implementation(project(":pe-configuration-uservice:configuration-api-domain"))
 
-    implementation(project(":node-api-domain"))
+    implementation(project(":pe-node-uservice:node-api-domain"))
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
@@ -31,7 +31,7 @@ dependencies {
 
 tasks.named('test') {
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
-    dependsOn ':node-api-domain:jar'
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
     dependsOn ':node-carrier-api-domain:jar'
 }
 

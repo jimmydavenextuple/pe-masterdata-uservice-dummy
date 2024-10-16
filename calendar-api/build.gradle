@@ -21,7 +21,7 @@ dependencies {
     implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
 
 //    implementation("com.nextuple.pe:node-api-domain:1.4.0-${build_target}")
-    implementation(project(":node-api-domain"))
+    implementation(project(":pe-node-uservice:node-api-domain"))
 
 //    implementation("com.nextuple.pe:carrier-api-domain:1.4.0-${build_target}")
     implementation(project(":carrier-api-domain"))

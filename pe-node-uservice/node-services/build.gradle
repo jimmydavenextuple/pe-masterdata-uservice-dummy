@@ -11,15 +11,15 @@ bootJar {
 }
 
 dependencies {
-    implementation(project(":node-persistence-domain"))
-    implementation(project(":node-persistence-postgres"))
+    implementation(project(":pe-node-uservice:node-persistence-domain"))
+    implementation(project(":pe-node-uservice:node-persistence-postgres"))
     implementation(project(":pe-configuration-uservice:configuration-api-domain"))
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
-    implementation(project(":node-api-domain"))
+    implementation(project(":pe-node-uservice:node-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
@@ -34,8 +34,8 @@ tasks.test {
 }
 
 tasks.named('test') {
-    dependsOn ':node-persistence-postgres:jar'
-    dependsOn ':node-persistence-domain:jar'
+    dependsOn ':pe-node-uservice:node-persistence-postgres:jar'
+    dependsOn ':pe-node-uservice:node-persistence-domain:jar'
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
-    dependsOn ':node-api-domain:jar'
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
 }

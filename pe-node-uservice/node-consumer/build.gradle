@@ -19,10 +19,10 @@ dependencies {
     implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
     implementation("com.nextuple.pe:master-data-integration-framework:1.4.0-${build_target}")
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
-    implementation(project(":node-api-domain"))
-    implementation(project(":node-services"))
-    implementation(project(":node-persistence-domain"))
-    implementation(project(":node-persistence-postgres"))
+    implementation(project(":pe-node-uservice:node-api-domain"))
+    implementation(project(":pe-node-uservice:node-services"))
+    implementation(project(":pe-node-uservice:node-persistence-domain"))
+    implementation(project(":pe-node-uservice:node-persistence-postgres"))
     implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
     implementation(project(":pe-configuration-uservice:configuration-api-domain"))
 }
@@ -32,8 +32,8 @@ tasks.test {
 }
 
 tasks.named('test') {
-    dependsOn ':node-api-domain:jar'
-    dependsOn ':node-consumer:jar'
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
+    dependsOn ':pe-node-uservice:node-consumer:jar'
 }
 tasks.named('test') {
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'

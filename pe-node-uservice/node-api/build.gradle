@@ -15,8 +15,8 @@ configurations {
 }
 
 dependencies {
-    implementation(project(":node-services"))
-    implementation(project(":node-api-domain"))
+    implementation(project(":pe-node-uservice:node-services"))
+    implementation(project(":pe-node-uservice:node-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
@@ -32,10 +32,13 @@ tasks.withType(Test).configureEach {
 }
 
 tasks.named('test') {
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
 }
 
 tasks.named('bootJar') {
     mustRunAfter(':pe-configuration-uservice:configuration-api-domain:jar')
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
+
 }
 

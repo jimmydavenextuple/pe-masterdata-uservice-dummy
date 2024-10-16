@@ -12,8 +12,8 @@ bootJar {
 
 dependencies {
 
-    implementation(project(":node-api-domain"))
-    implementation(project(":node-persistence-domain"))
+    implementation(project(":pe-node-uservice:node-api-domain"))
+    implementation(project(":pe-node-uservice:node-persistence-domain"))
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
     implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
@@ -29,6 +29,6 @@ tasks.withType(Test).configureEach {
 }
 
 tasks.named('test') {
-    dependsOn ':node-persistence-domain:jar'
-    dependsOn ':node-api-domain:jar'
+    dependsOn ':pe-node-uservice:node-persistence-domain:jar'
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
 }

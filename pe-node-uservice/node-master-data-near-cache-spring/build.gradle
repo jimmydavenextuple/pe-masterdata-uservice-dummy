@@ -19,8 +19,9 @@ dependencies {
     implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-consumer:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
-    implementation(project(":node-master-data-near-cache"))
-    implementation(project(":node-api-domain"))
+    implementation(project(":pe-node-uservice:node-master-data-near-cache"))
+    implementation(project(":pe-node-uservice:node-api-domain"))
+
 
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
@@ -32,18 +33,18 @@ dependencies {
 }
 
 tasks.named('test') {
-    inputs.files(':node-master-data-near-cache:jar', ':node-api-domain:jar')
+    inputs.files(':pe-node-uservice::node-master-data-near-cache:jar', ':pe-node-uservice:node-api-domain:jar')
 }
 
 tasks.named('test') {
-    dependsOn ':node-master-data-near-cache:jar'
-    dependsOn ':node-api-domain:jar'
+    dependsOn ':pe-node-uservice::node-master-data-near-cache:jar'
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
 }
 
 tasks.named('test') {
-    mustRunAfter ':node-master-data-near-cache:jar'
-    mustRunAfter ':node-master-data-near-cache-spring:jar'
-    mustRunAfter ':node-api-domain:jar'
+    mustRunAfter ':pe-node-uservice::node-master-data-near-cache:jar'
+    mustRunAfter ':pe-node-uservice::node-master-data-near-cache-spring:jar'
+    mustRunAfter ':pe-node-uservice:node-api-domain:jar'
 }
 
 tasks.withType(Test).configureEach {
