@@ -16,7 +16,6 @@ import com.nextuple.postal.code.timezone.cache.domain.PostalCodeTimezoneCacheKey
 import com.nextuple.postal.code.timezone.cache.domain.PostalCodeTimezoneCacheValue;
 import com.nextuple.postal.code.timezone.cache.service.PostalCodeTimezoneNearCacheService;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(cacheNames = POSTAL_CODE_TIMEZONE_CACHE_NAME)
-@AllArgsConstructor
 public class PostalCodeTimezoneNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<
         PostalCodeTimezoneCacheKey, PostalCodeTimezoneCacheValue>

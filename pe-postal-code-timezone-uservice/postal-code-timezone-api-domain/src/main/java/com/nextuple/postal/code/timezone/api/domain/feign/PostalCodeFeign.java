@@ -10,8 +10,10 @@ package com.nextuple.postal.code.timezone.api.domain.feign;
 import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.postal.code.timezone.api.domain.dto.CustomRegionDto;
+import com.nextuple.postal.code.timezone.api.domain.dto.CustomRegionInfo;
 import com.nextuple.postal.code.timezone.api.domain.dto.MarketRegionInfo;
 import com.nextuple.postal.code.timezone.api.domain.inbound.CustomRegionRequest;
+import com.nextuple.postal.code.timezone.api.domain.inbound.DeleteCustomRegionGeozonesRequest;
 import com.nextuple.postal.code.timezone.api.domain.inbound.PostalCodeRequest;
 import com.nextuple.postal.code.timezone.api.domain.outbound.CustomRegionResponse;
 import com.nextuple.postal.code.timezone.api.domain.outbound.PostalCodeResponse;
@@ -84,9 +86,25 @@ public interface PostalCodeFeign {
   BaseResponse<CustomRegionResponse> deleteCustomRegion(
       @NotBlank @PathVariable String orgId, @NotBlank @PathVariable String id);
 
+  @DeleteMapping("/custom-region/orgId/{orgId}/custom-region")
+  BaseResponse<CustomRegionResponse> deleteCustomRegionGeozones(
+      @NotBlank @PathVariable String orgId,
+      @RequestBody DeleteCustomRegionGeozonesRequest deleteCustomRegionGeozonesRequest);
+
   @GetMapping("/custom-region/list/orgId/{orgId}")
   BaseResponse<PagePayload<CustomRegionDto>> getCustomRegionList(
       @NotBlank @PathVariable String orgId,
+      @RequestParam(required = false) Integer pageNo,
+      @RequestParam(required = false) Integer pageSize,
+      @RequestParam(required = false) String sortBy,
+      @RequestParam(required = false) String sortOrder);
+
+  @GetMapping("/custom-region/orgId/{orgId}/country/{country}")
+  BaseResponse<PagePayload<CustomRegionInfo>> getCustomRegionInfo(
+      @PathVariable String orgId,
+      @PathVariable String country,
+      @RequestParam(required = false) String customRegionIds,
+      @RequestParam(required = false) String customRegionNames,
       @RequestParam(required = false) Integer pageNo,
       @RequestParam(required = false) Integer pageSize,
       @RequestParam(required = false) String sortBy,

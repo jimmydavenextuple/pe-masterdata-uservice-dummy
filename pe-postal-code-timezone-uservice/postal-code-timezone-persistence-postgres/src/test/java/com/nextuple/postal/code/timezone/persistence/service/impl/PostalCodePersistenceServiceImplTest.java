@@ -8,6 +8,8 @@
 package com.nextuple.postal.code.timezone.persistence.service.impl;
 
 import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.COUNTRY;
+import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.ID;
+import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.ID_2;
 import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.ORG_ID;
 import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.POSTAL_CODE_PREFIX_2;
 import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.STATE;
@@ -25,6 +27,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.common.exception.PromiseEngineException;
+import com.nextuple.common.pojo.PageParams;
+import com.nextuple.common.pojo.PageProperties;
+import com.nextuple.postal.code.timezone.api.domain.projection.CustomRegionProjection;
 import com.nextuple.postal.code.timezone.persistence.domain.PostalCodeDomainDto;
 import com.nextuple.postal.code.timezone.persistence.entity.PostalCodeEntity;
 import com.nextuple.postal.code.timezone.persistence.mapper.PostalCodeEntityMapper;
@@ -35,12 +40,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.util.CollectionUtils;
 
+@ExtendWith(MockitoExtension.class)
 class PostalCodePersistenceServiceImplTest {
 
   @InjectMocks private PostalCodePersistenceServiceImpl postalCodePersistenceService;
@@ -49,14 +57,13 @@ class PostalCodePersistenceServiceImplTest {
 
   @Mock private PostalCodeEntityMapper postalCodeEntityMapper;
 
+  @Mock private PageProperties pageProperties;
+
   @InjectMocks private TestUtil testUtil;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
-    ReflectionTestUtils.setField(postalCodePersistenceService, "repository", postalCodeRepository);
-    ReflectionTestUtils.setField(postalCodePersistenceService, "mapper", postalCodeEntityMapper);
   }
 
   @Test
@@ -67,9 +74,9 @@ class PostalCodePersistenceServiceImplTest {
     when(postalCodeEntityMapper.toEntity(postalCodeDomainDto)).thenReturn(postalCodeEntity);
     when(postalCodeEntityMapper.toDomain(postalCodeEntity)).thenReturn(postalCodeDomainDto);
     when(postalCodeRepository.save(any(PostalCodeEntity.class))).thenReturn(postalCodeEntity);
-    PostalCodeDomainDto received_postalCodeEntityResponse =
+    PostalCodeDomainDto postalCodeEntityResponse =
         postalCodePersistenceService.savePostalCode(postalCodeDomainDto);
-    assertEquals(postalCodeDomainDto, received_postalCodeEntityResponse);
+    assertEquals(postalCodeDomainDto, postalCodeEntityResponse);
     verify(postalCodeRepository, times(1)).save(postalCodeEntity);
   }
 
@@ -131,7 +138,7 @@ class PostalCodePersistenceServiceImplTest {
 
   @Test
   @DisplayName("Delete Postal Code Test: Exception")
-  void deletePostalCodeExceptionTest() throws PromiseEngineException {
+  void deletePostalCodeExceptionTest() {
     PostalCodeEntity postalCodeEntity = testUtil.getPostalCodeEntity();
     when(postalCodeEntityMapper.toEntity(any(PostalCodeDomainDto.class)))
         .thenReturn(postalCodeEntity);
@@ -187,7 +194,7 @@ class PostalCodePersistenceServiceImplTest {
 
   @Test
   @DisplayName("Get Postal Code Prefix For OrgId And State Test: Exception")
-  void getPostalCodePrefixForOrgIdAndStateException() throws PromiseEngineException {
+  void getPostalCodePrefixForOrgIdAndStateException() {
     when(postalCodeRepository.findByOrgIdAndState(anyString(), anyString()))
         .thenThrow(new RuntimeException("Error while fetching postal code prefix list"));
 
@@ -277,5 +284,94 @@ class PostalCodePersistenceServiceImplTest {
 
     assertEquals("Zip Code not found for a given orgId.", ex.getMessage());
     verify(postalCodeRepository, times(1)).findByOrgIdOrderByStateAscZipCodePrefixAsc(anyString());
+  }
+
+  @Test
+  @DisplayName("fetch custom region by orgId and country")
+  void fetchCustomRegionsByOrgIdAndCountry() throws PromiseEngineException {
+    when(postalCodeRepository.findRecordsByCountryAndOrgId(any(), any(), any()))
+        .thenReturn(testUtil.getCustomRegionProjectionPage());
+    PageParams pageParams =
+        new PageParams(
+            Optional.of(1), Optional.of(10), Optional.of("customRegion"), Optional.of("ASC"));
+    Page<CustomRegionProjection> customRegionProjectionPage =
+        postalCodePersistenceService.getCustomRegionInfoByOrgIdAndCountry(
+            ORG_ID, COUNTRY, pageParams);
+    assertEquals(2, customRegionProjectionPage.getContent().getFirst().getZipCodePrefixesCount());
+    verify(postalCodeRepository, times(1)).findRecordsByCountryAndOrgId(any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Exception while fetching custom region projections")
+  void fetchCustomRegionProjectionsException() {
+    when(postalCodeRepository.findRecordsByCountryAndOrgId(any(), any(), any()))
+        .thenThrow(RuntimeException.class);
+    PageParams pageParams =
+        new PageParams(
+            Optional.of(1), Optional.of(10), Optional.of("customRegion"), Optional.of("ASC"));
+    Exception ex =
+        assertThrows(
+            PromiseEngineException.class,
+            () -> {
+              postalCodePersistenceService.getCustomRegionInfoByOrgIdAndCountry(
+                  ORG_ID, COUNTRY, pageParams);
+            });
+
+    assertEquals("Error while fetching custom region details", ex.getMessage());
+    verify(postalCodeRepository, times(1)).findRecordsByCountryAndOrgId(any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("fetch custom region by orgId and regionId")
+  void fetchCustomRegionInfoByOrgIdAndRegionId() throws PromiseEngineException {
+    when(postalCodeRepository.findByCustomRegionInAndOrgId(any(), any(), any()))
+        .thenReturn(testUtil.getCustomRegionProjectionPage());
+    PageParams pageParams =
+        new PageParams(
+            Optional.of(1), Optional.of(10), Optional.of("customRegion"), Optional.of("ASC"));
+    Page<CustomRegionProjection> customRegionProjectionPage =
+        postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+            ORG_ID, List.of(ID), pageParams);
+    assertEquals(2, customRegionProjectionPage.getContent().getFirst().getZipCodePrefixesCount());
+    assertEquals(2, customRegionProjectionPage.getContent().getLast().getZipCodePrefixesCount());
+    verify(postalCodeRepository, times(1)).findByCustomRegionInAndOrgId(any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("fetch custom region by orgId and regionId sort order being DESC")
+  void fetchCustomRegionInfoByOrgIdAndRegionIdSortOrderDesc() throws PromiseEngineException {
+    when(postalCodeRepository.findByCustomRegionInAndOrgId(any(), any(), any()))
+        .thenReturn(testUtil.getCustomRegionProjectionPage());
+    PageParams pageParams =
+        new PageParams(
+            Optional.of(1), Optional.of(10), Optional.of("customRegion"), Optional.of("DESC"));
+    Page<CustomRegionProjection> customRegionProjectionPage =
+        postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+            ORG_ID, List.of(ID), pageParams);
+    assertEquals(2, customRegionProjectionPage.getContent().getFirst().getZipCodePrefixesCount());
+    assertEquals(2, customRegionProjectionPage.getContent().getLast().getZipCodePrefixesCount());
+    assertEquals(ID, customRegionProjectionPage.getContent().getFirst().getCustomRegionId());
+    assertEquals(ID_2, customRegionProjectionPage.getContent().getLast().getCustomRegionId());
+    verify(postalCodeRepository, times(1)).findByCustomRegionInAndOrgId(any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Exception while fetching custom region projections given region id and orgId")
+  void fetchCustomRegionInfoByOrgIdAndRegionIdException() {
+    when(postalCodeRepository.findByCustomRegionInAndOrgId(any(), any(), any()))
+        .thenThrow(RuntimeException.class);
+    PageParams pageParams =
+        new PageParams(
+            Optional.of(1), Optional.of(10), Optional.of("customRegion"), Optional.of("ASC"));
+    Exception ex =
+        assertThrows(
+            PromiseEngineException.class,
+            () -> {
+              postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+                  ORG_ID, List.of(ID), pageParams);
+            });
+
+    assertEquals("Error while fetching custom region details", ex.getMessage());
+    verify(postalCodeRepository, times(1)).findByCustomRegionInAndOrgId(any(), any(), any());
   }
 }

@@ -10,6 +10,7 @@ import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.service.DomainPersistenceService;
 import com.nextuple.postal.code.timezone.persistence.domain.CustomRegionDomainDto;
 import com.nextuple.postal.code.timezone.persistence.domain.key.CustomRegionDomainKey;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 
@@ -27,4 +28,14 @@ public interface CustomRegionPersistenceService
   Page<CustomRegionDomainDto> getCustomRegionListByOrgId(
       String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
       throws PromiseEngineException;
+
+  List<CustomRegionDomainDto> fetchCustomRegionByNamesAndOrgId(
+      List<String> customRegionNames, String orgId) throws PromiseEngineException;
+
+  Optional<List<CustomRegionDomainDto>> fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
+      List<String> customRegionIds, List<String> customRegionNames, String orgId)
+      throws PromiseEngineException;
+
+  List<CustomRegionDomainDto> fetchCustomRegionsByIdsAndOrgId(
+      List<String> customRegionIds, String orgId) throws PromiseEngineException;
 }

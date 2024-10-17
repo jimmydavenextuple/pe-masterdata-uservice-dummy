@@ -7,6 +7,7 @@
 
 package com.nextuple.postal.code.timezone.persistence.service.impl;
 
+import com.nextuple.postal.code.timezone.api.domain.projection.CustomRegionProjection;
 import com.nextuple.postal.code.timezone.api.domain.projection.MarketRegionProjection;
 import com.nextuple.postal.code.timezone.persistence.domain.CustomRegionDomainDto;
 import com.nextuple.postal.code.timezone.persistence.domain.PostalCodeDomainDto;
@@ -19,8 +20,14 @@ import com.nextuple.postal.code.timezone.persistence.mapper.PostalCodeEntityMapp
 import com.nextuple.postal.code.timezone.persistence.mapper.PostalCodeTimezoneEntityMapper;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
+import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 public class TestUtil {
   public static final String ORG_ID = "ABC";
@@ -39,6 +46,7 @@ public class TestUtil {
   public static final String LONGITUDE = "LONGITUDE";
   public static final String TIME_ZONE = "America/Whitehorse";
   public static final String SORT_BY = "id";
+  public static final String UPLOAD_DATE = "2024-10-10";
   private static final PostalCodeTimezoneEntityMapper POSTAL_CODE_TIMEZONE_ENTITY_MAPPER =
       Mappers.getMapper(PostalCodeTimezoneEntityMapper.class);
 
@@ -161,5 +169,133 @@ public class TestUtil {
 
   public List<CustomRegionEntity> getCustomRegionEntityList() {
     return Arrays.asList(getCustomRegionEntity(), getCustomRegionEntity2());
+  }
+
+  public Page<CustomRegionProjection> getCustomRegionProjectionPage() {
+
+    return new Page<CustomRegionProjection>() {
+      @Override
+      public int getTotalPages() {
+        return 0;
+      }
+
+      @Override
+      public long getTotalElements() {
+        return 0;
+      }
+
+      @Override
+      public <U> Page<U> map(Function<? super CustomRegionProjection, ? extends U> converter) {
+        return null;
+      }
+
+      @Override
+      public int getNumber() {
+        return 0;
+      }
+
+      @Override
+      public int getSize() {
+        return 5;
+      }
+
+      @Override
+      public int getNumberOfElements() {
+        return 0;
+      }
+
+      @Override
+      public List<CustomRegionProjection> getContent() {
+        return List.of(
+            getCustomRegionProjection(ORG_ID, ID, UPLOAD_DATE, 1, 1, 2),
+            getCustomRegionProjection(ORG_ID, ID_2, UPLOAD_DATE, 1, 1, 2));
+      }
+
+      @Override
+      public boolean hasContent() {
+        return false;
+      }
+
+      @Override
+      public Sort getSort() {
+        return Sort.by(Sort.Direction.ASC, "customRegionId");
+      }
+
+      @Override
+      public boolean isFirst() {
+        return false;
+      }
+
+      @Override
+      public boolean isLast() {
+        return false;
+      }
+
+      @Override
+      public boolean hasNext() {
+        return false;
+      }
+
+      @Override
+      public boolean hasPrevious() {
+        return false;
+      }
+
+      @Override
+      public Pageable nextPageable() {
+        return null;
+      }
+
+      @Override
+      public Pageable previousPageable() {
+        return null;
+      }
+
+      @NotNull
+      @Override
+      public Iterator<CustomRegionProjection> iterator() {
+        return null;
+      }
+    };
+  }
+
+  public CustomRegionProjection getCustomRegionProjection(
+      String orgId,
+      String customRegionId,
+      String uploadDate,
+      Integer nosOfStates,
+      Integer nosOfCities,
+      Integer nosOfZipCodePrefixes) {
+    return new CustomRegionProjection() {
+      @Override
+      public String getOrgId() {
+        return orgId;
+      }
+
+      @Override
+      public String getCustomRegionId() {
+        return customRegionId;
+      }
+
+      @Override
+      public long getStatesCount() {
+        return nosOfStates;
+      }
+
+      @Override
+      public long getCitiesCount() {
+        return nosOfCities;
+      }
+
+      @Override
+      public long getZipCodePrefixesCount() {
+        return nosOfZipCodePrefixes;
+      }
+
+      @Override
+      public String getUploadDate() {
+        return uploadDate;
+      }
+    };
   }
 }

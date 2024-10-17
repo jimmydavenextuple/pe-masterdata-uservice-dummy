@@ -1,0 +1,4 @@
+action,nodeId,orgId,street,city,state,zipCode,country,latitude,longitude,timezone,shipToHome,sdndEligible,bopisEligible,expressEligible,nodeType,isActive,nextdayEligible,startWorkingTime,lastWorkingTime
+CREATE,node,org,street,city0,state0,zipCode0,country0,latitude0,longitude0,timezone0,true,true,false,true,nodeType0,true,true,,
+UPDATE,node,org,street,city1,state1,zipCode1,country1,latitude1,longitude1,timezone1,true,true,false,true,nodeType1,true,true,,
+DELETE,node,org,street,city2,state2,zipCode2,country2,latitude2,longitude2,timezone2,true,true,false,true,nodeType2,true,true,,

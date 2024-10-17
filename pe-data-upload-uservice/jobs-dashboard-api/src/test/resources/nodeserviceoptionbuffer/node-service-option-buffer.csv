@@ -1,0 +1,3 @@
+action,orgId,nodeId,serviceoption,bufferHours,startTime,endTime
+CREATE,BAY,node1,SDND,2,2022-08-23T09:38:57Z,2022-08-24T00:00:00Z
+DELETE,BAY,node2,STANDARD,8,2022-08-23T09:38:57Z,2022-08-24T00:00:00Z

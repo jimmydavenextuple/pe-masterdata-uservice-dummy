@@ -26,7 +26,8 @@ import org.springframework.stereotype.Component;
 @KafkaListener(
     topics = "${master-data.pickup-calendar.topic-name}",
     groupId = "${master-data.pickup-calendar.group-id}",
-    batch = "true")
+    batch = "true",
+    autoStartup = "${kafka-topic-flags.master-data.pickup-calendar.enabled:false}")
 public class PickupCalendarConsumer extends MasterDataFeedConsumer<PickupCalendarFeedDto> {
 
   private final PickupCalendarBatchServiceImpl pickupCalendarBatchService;

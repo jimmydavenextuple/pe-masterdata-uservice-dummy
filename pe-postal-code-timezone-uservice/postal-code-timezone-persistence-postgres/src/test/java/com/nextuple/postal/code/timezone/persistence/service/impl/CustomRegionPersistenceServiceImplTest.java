@@ -38,7 +38,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.util.ReflectionTestUtils;
 
 class CustomRegionPersistenceServiceImplTest {
   @InjectMocks private CustomRegionPersistenceServiceImpl customRegionPersistenceService;
@@ -50,13 +49,8 @@ class CustomRegionPersistenceServiceImplTest {
   @InjectMocks private TestUtil testUtil;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
-    ReflectionTestUtils.setField(
-        customRegionPersistenceService, "repository", customRegionRepository);
-    ReflectionTestUtils.setField(
-        customRegionPersistenceService, "mapper", customRegionEntityMapper);
   }
 
   @Test

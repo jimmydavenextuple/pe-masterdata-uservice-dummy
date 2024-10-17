@@ -26,7 +26,8 @@ import org.springframework.stereotype.Component;
 @KafkaListener(
     topics = "${master-data.calendar.topic-name}",
     groupId = "${master-data.calendar.group-id}",
-    batch = "true")
+    batch = "true",
+    autoStartup = "${kafka-topic-flags.master-data.calendar.enabled:false}")
 public class CalendarConsumer extends MasterDataFeedConsumer<CalendarFeedDto> {
 
   private final CalendarBatchServiceImpl calendarBatchService;

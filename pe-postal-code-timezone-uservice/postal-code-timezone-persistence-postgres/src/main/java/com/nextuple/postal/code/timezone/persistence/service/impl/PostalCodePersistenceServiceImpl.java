@@ -6,11 +6,16 @@
  */
 package com.nextuple.postal.code.timezone.persistence.service.impl;
 
+import static com.nextuple.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.enums.ApplicationLayer;
 import com.nextuple.common.enums.ExceptionCodeMapping;
 import com.nextuple.common.exception.PromiseEngineException;
+import com.nextuple.common.pojo.PageParams;
+import com.nextuple.common.pojo.PageProperties;
+import com.nextuple.postal.code.timezone.api.domain.projection.CustomRegionProjection;
 import com.nextuple.postal.code.timezone.api.domain.projection.MarketRegionProjection;
 import com.nextuple.postal.code.timezone.persistence.domain.PostalCodeDomainDto;
 import com.nextuple.postal.code.timezone.persistence.domain.key.PostalCodeDomainKey;
@@ -23,6 +28,10 @@ import com.nextuple.postgres.service.CommonPersistenceService;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,6 +48,8 @@ public class PostalCodePersistenceServiceImpl
 
   private static final Logger logger =
       LoggerFactory.getLogger(PostalCodePersistenceServiceImpl.class);
+
+  private final PageProperties pageProperties;
 
   private static final String ERROR_MESSAGE = "Unable to find zip code";
   public static final String ZIP_CODE_NOT_FOUND = "Zip Code not found for a given orgId.";
@@ -157,5 +168,58 @@ public class PostalCodePersistenceServiceImpl
       throw new PromiseEngineException(
           ApplicationLayer.DAO_LAYER, ExceptionCodeMapping.DAO_FIND_FAILED, ZIP_CODE_NOT_FOUND);
     }
+  }
+
+  @Override
+  public Page<CustomRegionProjection> fetchCustomRegionInfoByOrgIdAndRegionId(
+      String orgId, List<String> customRegionIdList, PageParams pageParams)
+      throws PromiseEngineException {
+    try {
+      Pageable pageable = getPageable(pageParams);
+      return getRepository().findByCustomRegionInAndOrgId(customRegionIdList, orgId, pageable);
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e),
+          "Error while fetching custom region details for orgID {} and custom region ID(s) {}",
+          orgId,
+          customRegionIdList);
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Error while fetching custom region details");
+    }
+  }
+
+  @Override
+  public Page<CustomRegionProjection> getCustomRegionInfoByOrgIdAndCountry(
+      String orgId, String country, PageParams pageParams) throws PromiseEngineException {
+    try {
+      Pageable pageable = getPageable(pageParams);
+      return getRepository().findRecordsByCountryAndOrgId(orgId, country, pageable);
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e),
+          "Error while fetching custom region details for orgID {} and country {}",
+          orgId,
+          country);
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Error while fetching custom region details");
+    }
+  }
+
+  private Pageable getPageable(PageParams pageParams) {
+    Integer pageNo = pageParams.getPageNo().orElse(pageProperties.getPageNo());
+    Integer pageSize = pageParams.getPageSize().orElse(pageProperties.getPageSize());
+    String sortBy = pageParams.getSortBy().orElse("custom_region");
+    String sortOrder = pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER);
+    Pageable pageable;
+    if (sortOrder.equalsIgnoreCase(DEFAULT_SORT_ORDER)) {
+      pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).ascending());
+    } else {
+      pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).descending());
+    }
+    return pageable;
   }
 }

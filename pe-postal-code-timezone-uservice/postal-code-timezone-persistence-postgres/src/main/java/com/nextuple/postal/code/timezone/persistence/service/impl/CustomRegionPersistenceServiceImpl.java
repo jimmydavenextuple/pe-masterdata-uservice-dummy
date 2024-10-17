@@ -21,6 +21,7 @@ import com.nextuple.postal.code.timezone.persistence.mapper.CustomRegionEntityMa
 import com.nextuple.postal.code.timezone.persistence.repository.CustomRegionRepository;
 import com.nextuple.postal.code.timezone.persistence.service.CustomRegionPersistenceService;
 import com.nextuple.postgres.service.CommonPersistenceService;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -80,6 +81,60 @@ public class CustomRegionPersistenceServiceImpl
         pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).descending());
       }
       return getRepository().findCustomRegionByOrgId(orgId, pageable).map(getMapper()::toDomain);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Error while fetching custom region list");
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Error while fetching custom region list");
+    }
+  }
+
+  @Override
+  public List<CustomRegionDomainDto> fetchCustomRegionByNamesAndOrgId(
+      List<String> customRegionNames, String orgId) throws PromiseEngineException {
+    try {
+      return getRepository()
+          .fetchCustomRegionsByCustomRegionNamesAndOrgId(customRegionNames, orgId)
+          .stream()
+          .map(getMapper()::toDomain)
+          .toList();
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Error while fetching custom region list");
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Error while fetching custom region list");
+    }
+  }
+
+  @Override
+  public Optional<List<CustomRegionDomainDto>> fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
+      List<String> customRegionIds, List<String> customRegionNames, String orgId)
+      throws PromiseEngineException {
+    try {
+      return Optional.of(
+          getRepository()
+              .findByIdInOrCustomRegionNameInAndOrgId(customRegionIds, customRegionNames, orgId)
+              .stream()
+              .map(getMapper()::toDomain)
+              .toList());
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Error while fetching custom region list");
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Error while fetching custom region list");
+    }
+  }
+
+  @Override
+  public List<CustomRegionDomainDto> fetchCustomRegionsByIdsAndOrgId(
+      List<String> customRegionIds, String orgId) throws PromiseEngineException {
+    try {
+      return getRepository().findByIdInAndOrgId(customRegionIds, orgId).stream()
+          .map(getMapper()::toDomain)
+          .toList();
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Error while fetching custom region list");
       throw new PromiseEngineException(

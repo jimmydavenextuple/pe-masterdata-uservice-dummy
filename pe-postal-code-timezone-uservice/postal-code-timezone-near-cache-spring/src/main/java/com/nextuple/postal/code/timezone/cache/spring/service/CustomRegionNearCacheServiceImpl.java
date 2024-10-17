@@ -14,7 +14,6 @@ import com.nextuple.postal.code.timezone.cache.domain.CustomRegionCacheKey;
 import com.nextuple.postal.code.timezone.cache.domain.CustomRegionCacheValue;
 import com.nextuple.postal.code.timezone.cache.service.CustomRegionNearCacheService;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
 @CacheConfig(cacheNames = CustomRegionNearCacheServiceImpl.CUSTOM_REGION_CACHE_NAME)
 public class CustomRegionNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<CustomRegionCacheKey, CustomRegionCacheValue>

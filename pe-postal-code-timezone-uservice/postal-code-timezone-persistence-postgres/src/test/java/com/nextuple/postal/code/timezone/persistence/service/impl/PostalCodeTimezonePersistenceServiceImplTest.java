@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.util.ReflectionTestUtils;
 
 class PostalCodeTimezonePersistenceServiceImplTest {
 
@@ -43,13 +42,8 @@ class PostalCodeTimezonePersistenceServiceImplTest {
   @InjectMocks private TestUtil testUtil;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
-    ReflectionTestUtils.setField(
-        postalCodeTimezonePersistenceService, "repository", postalCodeTimezoneRepository);
-    ReflectionTestUtils.setField(
-        postalCodeTimezonePersistenceService, "mapper", postalCodeTimezoneEntityMapper);
   }
 
   @Test

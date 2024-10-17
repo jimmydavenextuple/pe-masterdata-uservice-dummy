@@ -16,3 +16,7 @@ dependencies {
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
+
+tasks.named('bootJar') {
+    dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
+}

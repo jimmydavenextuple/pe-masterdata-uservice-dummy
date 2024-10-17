@@ -33,6 +33,7 @@ tasks.named('test') {
     dependsOn ':pe-carrier-uservice:carrier-persistence-domain:jar'
     dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
 }
 
 tasks.named('bootJar') {

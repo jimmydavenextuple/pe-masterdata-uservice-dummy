@@ -1,0 +1,24 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: "jdbc:postgresql://170.7.0.16:5432/pe"
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
+  sql.init.platform: postgres
+logging:
+  level:
+    com.nextuple: INFO
+pe:
+  ui:
+    allowed-origin-url: "*"
+azure.keyvault:
+  client-id: e558951a-8c66-4a66-a75f-f71254e23397
+  client-key: ~887Q~K4T-_v8MzIBUddGC53c6RtqtbUfYqIo
+  enabled: true
+  tenant-id: a504dc87-820c-4014-a6f7-9bd271ec731f
+  uri: https://nextuple-dev.vault.azure.net/
+  secret-keys: "COMMON-KAFKA-CONFIG,COMMON-PE-POSTGRES-USER,COMMON-PE-POSTGRES-PASSWORD"

@@ -25,7 +25,7 @@ dependencies {
     implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
 
-//    implementation("com.nextuple.pe:node-carrier-api-domain:1.4.0-${build_target}")
+//    implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
 
     api "com.azure.spring:azure-spring-boot-starter-keyvault-secrets:3.10.0"
 }
@@ -47,3 +47,11 @@ tasks.withType(Test).configureEach {
 //    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain'
 //}
 
+//// Check this
+//tasks.named('bootJar') {
+//    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
+//}
+//
+//tasks.named('test') {
+//    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
+//}

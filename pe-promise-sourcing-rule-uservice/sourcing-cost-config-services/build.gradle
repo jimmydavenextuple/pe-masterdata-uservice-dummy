@@ -23,7 +23,7 @@ dependencies {
     implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
 
-//    implementation("com.nextuple.pe:configuration-api-domain:1.4.0-${build_target}")
+//    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
     implementation(project(":pe-configuration-uservice:configuration-api-domain"))
 
 

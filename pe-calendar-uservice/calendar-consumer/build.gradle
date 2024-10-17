@@ -37,5 +37,10 @@ tasks.test {
 
 tasks.named('test') {
     dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
+    dependsOn ':pe-calendar-uservice:calendar-services:jar'
+    dependsOn ':pe-calendar-uservice:calendar-persistence-domain:jar'
+    dependsOn ':pe-calendar-uservice:calendar-persistence-postgres:jar'
     dependsOn ':pe-node-uservice:node-api-domain:jar'
+
 }
+

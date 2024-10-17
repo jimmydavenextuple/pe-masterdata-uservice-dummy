@@ -1,0 +1,2 @@
+action,nodeId,orgId,carrierServiceId,serviceOption,lastPickupTime
+NEW,1,BAY,ALL-EXPRESS,EXPRESS,20:00

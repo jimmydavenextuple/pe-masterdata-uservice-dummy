@@ -7,12 +7,15 @@
 package com.nextuple.postal.code.timezone.persistence.service;
 
 import com.nextuple.common.exception.PromiseEngineException;
+import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.service.DomainPersistenceService;
+import com.nextuple.postal.code.timezone.api.domain.projection.CustomRegionProjection;
 import com.nextuple.postal.code.timezone.api.domain.projection.MarketRegionProjection;
 import com.nextuple.postal.code.timezone.persistence.domain.PostalCodeDomainDto;
 import com.nextuple.postal.code.timezone.persistence.domain.key.PostalCodeDomainKey;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 
 public interface PostalCodePersistenceService
     extends DomainPersistenceService<PostalCodeDomainDto, PostalCodeDomainKey> {
@@ -37,4 +40,11 @@ public interface PostalCodePersistenceService
       throws PromiseEngineException;
 
   List<PostalCodeDomainDto> getPostalCodeForOrgId(String orgId) throws PromiseEngineException;
+
+  Page<CustomRegionProjection> fetchCustomRegionInfoByOrgIdAndRegionId(
+      String orgId, List<String> customRegionIdList, PageParams pageParams)
+      throws PromiseEngineException;
+
+  Page<CustomRegionProjection> getCustomRegionInfoByOrgIdAndCountry(
+      String orgId, String country, PageParams pageParams) throws PromiseEngineException;
 }

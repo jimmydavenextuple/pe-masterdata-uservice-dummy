@@ -19,11 +19,15 @@ import com.nextuple.common.pojo.PageProperties;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.util.PaginationUtil;
 import com.nextuple.postal.code.timezone.api.domain.dto.CustomRegionDto;
+import com.nextuple.postal.code.timezone.api.domain.dto.CustomRegionInfo;
 import com.nextuple.postal.code.timezone.api.domain.inbound.CustomRegionRequest;
+import com.nextuple.postal.code.timezone.api.domain.inbound.DeleteCustomRegionGeozonesRequest;
 import com.nextuple.postal.code.timezone.api.domain.outbound.CustomRegionResponse;
 import com.nextuple.postal.code.timezone.controller.docs.CreateCustomRegionDetails;
 import com.nextuple.postal.code.timezone.controller.docs.DeleteCustomRegionDetails;
+import com.nextuple.postal.code.timezone.controller.docs.DeleteCustomRegionGeozones;
 import com.nextuple.postal.code.timezone.controller.docs.GetCustomRegionDetails;
+import com.nextuple.postal.code.timezone.controller.docs.GetCustomRegionInfoDoc;
 import com.nextuple.postal.code.timezone.controller.docs.GetCustomRegionListDoc;
 import com.nextuple.postal.code.timezone.controller.docs.UpdateCustomRegionDetails;
 import com.nextuple.postal.code.timezone.service.CustomRegionService;
@@ -37,7 +41,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
@@ -133,6 +145,34 @@ public class CustomRegionController {
             .build());
   }
 
+  @Operation(
+      summary = "Delete Custom Region",
+      description = "Deletes the custom region by the organization ID and custom region ID.")
+  @DeleteCustomRegionGeozones
+  @DeleteMapping("/orgId/{orgId}/custom-region")
+  public ResponseEntity<BaseResponse<CustomRegionResponse>> deleteCustomRegionGeoZones(
+      @NotBlank(message = "orgId can't be empty")
+          @PathVariable
+          @Parameter(description = "Unique identifier of the organization.", example = "NEXTUPLE")
+          String orgId,
+      @RequestBody DeleteCustomRegionGeozonesRequest deleteCustomRegionGeozonesRequest)
+      throws PromiseEngineException, CommonServiceException {
+    logger.debug(
+        "Processing delete custom region request for id {} orgId {} and zipcode_prefixes {}",
+        deleteCustomRegionGeozonesRequest.getId(),
+        orgId,
+        deleteCustomRegionGeozonesRequest);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Custom region geozones deleted successfully.")
+            .payload(
+                customRegionService.deleteCustomRegionGeozones(
+                    orgId,
+                    deleteCustomRegionGeozonesRequest.getId(),
+                    deleteCustomRegionGeozonesRequest))
+            .build());
+  }
+
   @GetCustomRegionListDoc
   @GetMapping("/list/orgId/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<CustomRegionDto>>> getCustomRegionList(
@@ -158,6 +198,43 @@ public class CustomRegionController {
     return ResponseEntity.ok(
         BaseResponse.builder()
             .message("Custom Region List fetched successfully")
+            .payload(pagePayload)
+            .build());
+  }
+
+  @GetCustomRegionInfoDoc
+  @GetMapping("/orgId/{orgId}/country/{country}")
+  public ResponseEntity<BaseResponse<PagePayload<CustomRegionInfo>>> getCustomRegionInfo(
+      @NotBlank(message = "orgId can't be empty")
+          @Parameter(description = "Unique identifier of the organization.", example = "NEXTUPLE")
+          @PathVariable
+          String orgId,
+      @NotBlank(message = "country can't be empty")
+          @Parameter(description = "Unique identifier of the Country.", example = "CA")
+          @PathVariable
+          String country,
+      @RequestParam(required = false)
+          @Parameter(
+              description = "Comma Separated values for unique identifier of the custom region.",
+              example = "CRID1,CRID2")
+          String customRegionIds,
+      @RequestParam(required = false)
+          @Parameter(
+              description = "Comma Separated values for custom region names.",
+              example = "Manhattan North Area,Manhattan South Area")
+          String customRegionNames,
+      PageParams pageParams)
+      throws CommonServiceException, PromiseEngineException {
+    Page<CustomRegionInfo> customRegionInfoPage =
+        customRegionService.getCustomRegionByCountryRegionIdAndName(
+            orgId, country, customRegionIds, customRegionNames, pageParams);
+
+    PagePayload<CustomRegionInfo> pagePayload =
+        setCustomRegionInfoPagePayload(customRegionInfoPage, pageParams, orgId);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Custom Regions fetched successfully")
             .payload(pagePayload)
             .build());
   }
@@ -195,6 +272,41 @@ public class CustomRegionController {
     pagePayload.setPagination(pagination);
     pagePayload.setData(customRegionDtoPage.getContent());
 
+    return pagePayload;
+  }
+
+  private PagePayload<CustomRegionInfo> setCustomRegionInfoPagePayload(
+      Page<CustomRegionInfo> customRegionInfoPage, PageParams pageParams, String orgId) {
+    PagePayload<CustomRegionInfo> pagePayload = new PagePayload<>();
+    var pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords((int) customRegionInfoPage.getTotalElements());
+    pagination.setTotalPages(customRegionInfoPage.getTotalPages());
+    pagination.setCurrentPage(pageParams.getPageNo().orElse(pageProperties.getPageNo()));
+    pagination.setSortOrder(pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER));
+    pagination.setSortBy(pageParams.getSortBy().orElse("customRegionId"));
+
+    String nextUri =
+        PaginationUtil.buildUriForPagination(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            customRegionInfoPage.getTotalPages(),
+            "next",
+            PAGINATION_URL.formatted(
+                orgId,
+                (pageParams.getPageNo().orElse(pageProperties.getPageNo()) + 1),
+                pageParams.getPageSize().orElse(pageProperties.getPageSize())));
+    String previousUri =
+        PaginationUtil.buildUriForPagination(
+            pageParams.getPageNo().orElse(pageProperties.getPageNo()),
+            customRegionInfoPage.getTotalPages(),
+            "previous",
+            PAGINATION_URL.formatted(
+                orgId,
+                (pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1),
+                pageParams.getPageSize().orElse(pageProperties.getPageSize())));
+    pagination.setNext(nextUri);
+    pagination.setPrevious(previousUri);
+    pagePayload.setPagination(pagination);
+    pagePayload.setData(customRegionInfoPage.getContent());
     return pagePayload;
   }
 }

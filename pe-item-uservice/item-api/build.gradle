@@ -44,3 +44,11 @@ targetCompatibility = JavaVersion.VERSION_21
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
+
+tasks.named('bootJar') {
+    dependsOn ':pe-item-uservice:item-api-domain:jar'
+}
+
+tasks.named('test') {
+    dependsOn ':pe-item-uservice:item-api-domain:jar'
+}

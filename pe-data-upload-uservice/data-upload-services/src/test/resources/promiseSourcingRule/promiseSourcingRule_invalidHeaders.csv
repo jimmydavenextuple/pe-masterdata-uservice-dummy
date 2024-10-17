@@ -1,0 +1,3 @@
+orgId,serviceOption,destinationGeozone,sourceNodes,priority,allocationRuleId
+org,SDND,dgz0,['0'],1,DEFAULT
+org,SDND,dgz1,['1'],1,DEFAULT

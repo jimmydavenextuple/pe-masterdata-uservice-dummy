@@ -46,9 +46,6 @@ class PostalCodeNearCacheServiceImplTest {
   void setup() {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(postalCodeNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
-    ReflectionTestUtils.setField(
-        postalCodeNearCacheService, "feignCacheService", feignCacheService);
   }
 
   @Mock

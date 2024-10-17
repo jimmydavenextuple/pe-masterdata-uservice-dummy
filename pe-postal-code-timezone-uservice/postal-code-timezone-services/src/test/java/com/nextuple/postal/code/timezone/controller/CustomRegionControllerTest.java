@@ -1,5 +1,6 @@
 package com.nextuple.postal.code.timezone.controller;
 
+import static com.nextuple.postal.code.timezone.TestUtil.COUNTRY;
 import static com.nextuple.postal.code.timezone.TestUtil.ID;
 import static com.nextuple.postal.code.timezone.TestUtil.ORG_ID;
 import static com.nextuple.postal.code.timezone.TestUtil.STATUS_CODE;
@@ -18,7 +19,9 @@ import com.nextuple.common.pojo.PageProperties;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.postal.code.timezone.TestUtil;
 import com.nextuple.postal.code.timezone.api.domain.dto.CustomRegionDto;
+import com.nextuple.postal.code.timezone.api.domain.dto.CustomRegionInfo;
 import com.nextuple.postal.code.timezone.api.domain.inbound.CustomRegionRequest;
+import com.nextuple.postal.code.timezone.api.domain.inbound.DeleteCustomRegionGeozonesRequest;
 import com.nextuple.postal.code.timezone.api.domain.outbound.CustomRegionResponse;
 import com.nextuple.postal.code.timezone.service.CustomRegionService;
 import java.util.List;
@@ -26,10 +29,16 @@ import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -76,7 +85,7 @@ class CustomRegionControllerTest {
   }
 
   @Test
-  void getCustomRegionResponseTest() throws PromiseEngineException, CommonServiceException {
+  void getCustomRegionResponseTest() throws CommonServiceException {
     CustomRegionResponse customRegionResponse = testUtil.getCustomRegionResponse();
     when(customRegionService.fetchRegionByOrgIdAndId(anyString(), anyString()))
         .thenReturn(customRegionResponse);
@@ -143,6 +152,25 @@ class CustomRegionControllerTest {
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), STATUS_CODE);
     assertEquals(customRegionResponse, responseEntity.getBody().getPayload());
     verify(customRegionService, times(1)).deleteCustomRegion(anyString(), anyString());
+  }
+
+  @Test
+  @DisplayName("Happy Path : Delete zip_code_prefixes from given custom region")
+  void deleteCustomRegionZipCodePrefixesTest()
+      throws PromiseEngineException, CommonServiceException {
+    CustomRegionResponse customRegionResponse = testUtil.getCustomRegionResponse();
+    DeleteCustomRegionGeozonesRequest request =
+        DeleteCustomRegionGeozonesRequest.builder().codes(List.of("T2P")).id(ID).build();
+    when(customRegionService.deleteCustomRegionGeozones(anyString(), anyString(), any()))
+        .thenReturn(customRegionResponse);
+
+    ResponseEntity<BaseResponse<CustomRegionResponse>> responseEntity =
+        customRegionController.deleteCustomRegionGeoZones(ORG_ID, request);
+
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), STATUS_CODE);
+    assertEquals(customRegionResponse, responseEntity.getBody().getPayload());
+    verify(customRegionService, times(1))
+        .deleteCustomRegionGeozones(anyString(), anyString(), any());
   }
 
   @Test
@@ -248,5 +276,53 @@ class CustomRegionControllerTest {
 
     verify(customRegionService, times(1))
         .getCustomRegionListByOrgId(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Fetch Custom region information")
+  void getPaginatedCustomRegionInfoTest() throws CommonServiceException, PromiseEngineException {
+    List<CustomRegionInfo> customRegionInfo = testUtil.getTwoCustomRegionInfoList();
+    Pageable pageable = PageRequest.of(1, 10, Sort.by(TestUtil.SORT_BY).ascending());
+    Page<CustomRegionInfo> customRegionDtoPage =
+        new PageImpl<>(customRegionInfo, pageable, customRegionInfo.size());
+
+    when(customRegionService.getCustomRegionByCountryRegionIdAndName(
+            any(), any(), any(), any(), any()))
+        .thenReturn(customRegionDtoPage);
+
+    ResponseEntity<BaseResponse<PagePayload<CustomRegionInfo>>> response =
+        customRegionController.getCustomRegionInfo(
+            ORG_ID,
+            COUNTRY,
+            null,
+            null,
+            testUtil.getPageParams(
+                Optional.of(2),
+                Optional.of(1),
+                Optional.of(TestUtil.SORT_BY),
+                Optional.of(TestUtil.SORT_ORDER_DESC)));
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Success response");
+    Assertions.assertEquals(
+        2,
+        (int) response.getBody().getPayload().getPagination().getTotalPages(),
+        "Pagination Total pages");
+    Assertions.assertEquals(
+        2,
+        (int) response.getBody().getPayload().getPagination().getCurrentPage(),
+        "Current page number");
+    Assertions.assertEquals(
+        customRegionInfo.size(),
+        response.getBody().getPayload().getData().size(),
+        "Paginated data");
+    Assertions.assertEquals(
+        "", response.getBody().getPayload().getPagination().getNext(), "Next Uri should be empty");
+    Assertions.assertEquals(
+        Boolean.TRUE,
+        Objects.nonNull(response.getBody().getPayload().getPagination().getPrevious()),
+        "Previous Uri should not be null");
+
+    verify(customRegionService, times(1))
+        .getCustomRegionByCountryRegionIdAndName(any(), any(), any(), any(), any());
   }
 }

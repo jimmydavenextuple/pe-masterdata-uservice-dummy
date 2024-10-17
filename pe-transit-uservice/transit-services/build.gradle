@@ -23,13 +23,14 @@ dependencies {
     implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-producer:1.4.0-${build_target}")
 
-//    implementation("com.nextuple.pe:carrier-api-domain:1.4.0-${build_target}")
+//    implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
-//    implementation("com.nextuple.pe:postal-code-timezone-api-domain:1.4.0-${build_target}")
+//    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
-    implementation("com.nextuple.pe:job-framework-common-util:1.4.0-${build_target}")
+    implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
+//    implementation("com.nextuple.pe:pe-data-upload-uservice:job-framework-common-util:1.4.0-${build_target}")
     implementation("com.nextuple.pe:data-upload-common-util:1.4.0-${build_target}")
-//    implementation("com.nextuple.pe:node-api-domain:1.4.0-${build_target}")
+//    implementation(project(":pe-node-uservice:node-api-domain"))
     implementation(project(":pe-node-uservice:node-api-domain"))
 
     implementation "org.springframework.kafka:spring-kafka"

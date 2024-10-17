@@ -7,14 +7,18 @@
 
 package com.nextuple.postal.code.timezone.persistence.repository;
 
+import com.nextuple.postal.code.timezone.api.domain.projection.CustomRegionProjection;
 import com.nextuple.postal.code.timezone.api.domain.projection.MarketRegionProjection;
 import com.nextuple.postal.code.timezone.persistence.entity.PostalCodeEntity;
 import com.nextuple.postal.code.timezone.persistence.entity.key.PostalCodeKey;
 import com.nextuple.postgres.repository.CommonJpaRepository;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -36,6 +40,28 @@ public interface PostalCodeRepository extends CommonJpaRepository<PostalCodeEnti
               + "GROUP BY v.country ",
       nativeQuery = true)
   List<MarketRegionProjection> findRecordsByOrgId(String orgId);
+
+  @Query(
+      value =
+          "SELECT COUNT(DISTINCT v.city) AS citiesCount, v.org_id AS orgId, COUNT(DISTINCT v.state) AS statesCount, "
+              + "COUNT(DISTINCT v.zip_code_prefix) AS zipCodePrefixesCount, CAST(MAX(v.last_modified_date) AS DATE)"
+              + " AS uploadDate, v.custom_region AS customRegionId FROM postal_code v WHERE v.country = ?2 "
+              + "AND v.org_id = ?1 AND v.custom_region IS NOT NULL GROUP BY v.custom_region,v.org_id ",
+      nativeQuery = true)
+  Page<CustomRegionProjection> findRecordsByCountryAndOrgId(
+      String orgId, String country, Pageable pageable);
+
+  @Query(
+      value =
+          "SELECT COUNT(DISTINCT v.city) AS citiesCount, v.org_id AS orgId, COUNT(DISTINCT v.state) AS statesCount, "
+              + "COUNT(DISTINCT v.zip_code_prefix) AS zipCodePrefixesCount, CAST(MAX(v.last_modified_date) AS DATE)"
+              + " AS uploadDate, v.custom_region AS customRegionId FROM postal_code v WHERE v.custom_region in :customRegions "
+              + "AND v.org_id = :orgId GROUP BY v.custom_region,v.org_id ",
+      nativeQuery = true)
+  Page<CustomRegionProjection> findByCustomRegionInAndOrgId(
+      @Param("customRegions") List<String> customRegionId,
+      @Param("orgId") String orgId,
+      Pageable pageable);
 
   List<PostalCodeEntity> findByOrgIdAndCountry(String orgId, String country);
 

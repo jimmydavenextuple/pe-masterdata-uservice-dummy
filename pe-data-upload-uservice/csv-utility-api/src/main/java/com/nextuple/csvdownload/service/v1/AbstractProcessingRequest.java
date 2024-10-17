@@ -1,0 +1,241 @@
+/*
+ * Copyright (c) 2022., Nextuple, Inc. and/or its affiliates. All rights reserved.
+ *
+ * The software, code and related documentation made available to you by Nextuple, Inc. are provided under a written agreement containing restrictions on use and disclosure and are protected by copyright and other intellectual property laws. As described in and unless expressly permitted in your agreement, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or de-compilation of this software, unless required by law or permitted via contract for interoperability, is strictly prohibited.
+ * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
+ */
+
+package com.nextuple.csvdownload.service.v1;
+
+import static com.nextuple.csvdownload.common.constants.CSVCommonConstants.ERROR_MESSAGE;
+
+import com.nextuple.common.base.PagePayload;
+import com.nextuple.common.context.Logger;
+import com.nextuple.common.context.LoggerFactory;
+import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.response.BaseResponse;
+import com.nextuple.common.response.PreSignedUrlResponse;
+import com.nextuple.csvdownload.exception.JobSubmissionException;
+import com.nextuple.dataupload.common.config.TenantDatabaseConfig;
+import com.nextuple.dataupload.common.headers.v1.DataUploadUtilityExpectedHeaders;
+import com.nextuple.jobs.framework.common.clients.FileMetaDataClient;
+import com.nextuple.jobs.framework.common.clients.JobsDashboardClient;
+import com.nextuple.jobs.framework.common.domain.enums.JobTypeEnum;
+import com.nextuple.jobs.framework.common.domain.outbound.FileMetaDataResponse;
+import com.nextuple.jobs.framework.common.domain.outbound.JobResponse;
+import com.nextuple.jobs.framework.common.domain.pojo.JobDto;
+import com.nextuple.jobs.framework.common.domain.pojo.RecordStatusDto;
+import com.nextuple.jobs.framework.common.enums.ModuleEnum;
+import com.nextuple.jobs.framework.common.inbound.FileMetaDataCreationRequest;
+import com.nextuple.jobs.framework.common.service.FileService;
+import com.nextuple.jobs.framework.common.service.PreSignedUrlInterface;
+import com.nextuple.jobs.framework.common.utils.ExceptionUtils;
+import com.opencsv.CSVWriter;
+import feign.FeignException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.*;
+import lombok.RequiredArgsConstructor;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+@Service
+@RequiredArgsConstructor
+public abstract class AbstractProcessingRequest implements ProcessingRequestInterface {
+
+  private final Logger logger = LoggerFactory.getLogger(AbstractProcessingRequest.class);
+  private final JobsDashboardClient jobsDashboardClient;
+
+  @Value("${csv-utility-api.csv-download.records-per-page}")
+  public int recordsPerPage;
+
+  @Value("${csv-utility-api.csv-download.max-no-of-pages}")
+  public int maxNoOfPages;
+
+  @Autowired public TenantDatabaseConfig tenantDatabaseConfig;
+
+  @Value("${csv-utility-api.csv-download.max-no-of-failed-transit-entries}")
+  public int maxNoOfFailedTransitEntries;
+
+  private static final int PAGE_NO = 1;
+  private final FileService fileService;
+  private final PreSignedUrlInterface preSignedUrlInterface;
+  private final FileMetaDataClient fileMetaDataClient;
+
+  @Value("${dataupload.bucket-name}")
+  private String bucketName;
+
+  @Value("${dataupload.type}")
+  private String storageType;
+
+  public JobResponse submitJob(String orgId, JobTypeEnum jobType, Long fileMetadataId)
+      throws JobSubmissionException {
+    try {
+      return jobsDashboardClient
+          .processJobOfflineWithFileMetaDataId(orgId, jobType, fileMetadataId)
+          .getPayload();
+    } catch (FeignException e) {
+      logger.error("Feign exception while submitting job", e);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
+      throw new JobSubmissionException(errorResponse.getMessage(), e, orgId);
+    } catch (Exception e) {
+      logger.error("Error while submitting job to job framework", e);
+      throw new JobSubmissionException("Error while submitting job to job framework", e, orgId);
+    }
+  }
+
+  public Set<PosixFilePermission> setFilePermissions() {
+    Set<PosixFilePermission> posixFilePermissions = new HashSet<>();
+    posixFilePermissions.add(PosixFilePermission.OWNER_READ);
+    posixFilePermissions.add(PosixFilePermission.OWNER_WRITE);
+    return posixFilePermissions;
+  }
+
+  public PagePayload<RecordStatusDto> getJobRecordsByFilters(
+      String orgId, String jobId, Optional<String> status, Integer pageNo, Integer pageSize)
+      throws JobSubmissionException {
+    try {
+      return jobsDashboardClient
+          .getJobRecordsByFilters(orgId, jobId, status.orElse(null), pageNo, pageSize)
+          .getPayload();
+    } catch (FeignException e) {
+      logger.error("Feign exception while fetching job records by filters for job: {}", jobId, e);
+      var errorResponse = ExceptionUtils.parseFeignException(e);
+      throw new JobSubmissionException(errorResponse.getMessage(), e, orgId);
+    } catch (Exception e) {
+      logger.error("Error while fetching job records by filters for job: {}", jobId, e);
+      throw new JobSubmissionException("Error while fetching job records by filters", e, orgId);
+    }
+  }
+
+  public void writeToCSV(String[] data, CSVWriter writer) {
+    writer.writeNext(data);
+  }
+
+  public Path createErrorLogCSV(String fileName) throws IOException {
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    return Files.createTempFile(fileName, ".csv", attr);
+  }
+
+  public List<String> getHeaderWithErrorColumn(String module) throws CommonServiceException {
+    List<String> expectedHeaders =
+        new ArrayList<>(DataUploadUtilityExpectedHeaders.getCSVExpectedHeaders(module));
+    if (module.equals("nodes")) {
+      String[] serviceOptions = tenantDatabaseConfig.getCurrentTenantServiceOptions();
+      expectedHeaders.addAll(Arrays.asList(serviceOptions));
+    }
+    expectedHeaders.add(ERROR_MESSAGE);
+    return expectedHeaders;
+  }
+
+  public PreSignedUrlResponse generateURLResponse(File csv, JobDto jobDto, String feedType)
+      throws CommonServiceException, IOException {
+    var filePath =
+        "%s/%s/%s/%s"
+            .formatted(
+                ModuleEnum.UI_LOGS.getModuleValue(),
+                Objects.nonNull(feedType)
+                    ? feedType
+                    : jobDto.getJobType().getModule().getModuleValue(),
+                DateTime.now().toString("yyyy-MM-dd"),
+                csv.getName());
+    fileService.uploadFile(bucketName, filePath, csv);
+    var bucketPath = "%s/%s".formatted(bucketName, filePath);
+    var response = createFileMetaData(csv.getName(), bucketPath, csv.length(), jobDto);
+    if (response.isSuccess()) {
+      return preSignedUrlInterface.downloadFileURLById(response.getPayload().getId());
+    }
+    throw new CommonServiceException(
+        "Error Creating the file meta", HttpStatus.INTERNAL_SERVER_ERROR, 0x1771, null);
+  }
+
+  public BaseResponse<FileMetaDataResponse> createFileMetaData(
+      String fileName, String bucketPath, long fileSize, JobDto jobDto) {
+    var fileMetaDataCreationRequest =
+        FileMetaDataCreationRequest.builder()
+            .name(fileName)
+            .path(bucketPath.formatted())
+            .size(String.valueOf(fileSize))
+            .description("Error log file metadata")
+            .storageType(storageType)
+            .extReferenceId(jobDto.getJobId())
+            .type(ModuleEnum.UI_LOGS.getModuleValue())
+            .createdBy("SYSTEM")
+            .build();
+    return fileMetaDataClient.createFileMetadata(fileMetaDataCreationRequest);
+  }
+
+  @Override
+  public PreSignedUrlResponse downloadErrorLogs(JobDto jobDto, Optional<String> status)
+      throws JobSubmissionException, IOException, CommonServiceException {
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile = Files.createTempFile(tempFilePrefix() + new Date().getTime(), ".csv", attr);
+    List<String> expectedHeaders = getHeaderWithErrorColumn(getModuleType());
+    PagePayload<RecordStatusDto> recordStatusDtos =
+        this.getJobRecordsByFilters(
+            jobDto.getOrgId(), jobDto.getJobId(), status, 1, recordsPerPage);
+    var preSignedURL = new PreSignedUrlResponse();
+    if (!CollectionUtils.isEmpty(recordStatusDtos.getData())) {
+      var header = expectedHeaders.toArray(new String[0]);
+      try (var writer = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+        writeToCSV(header, writer);
+        addErrorLine(writer, recordStatusDtos.getData());
+        int totalPages = recordStatusDtos.getPagination().getTotalPages();
+        for (var currentPage = 2;
+            currentPage <= Math.min(totalPages, maxNoOfPages);
+            currentPage++) {
+          PagePayload<RecordStatusDto> nextPage =
+              this.getJobRecordsByFilters(
+                  jobDto.getOrgId(), jobDto.getJobId(), status, currentPage, recordsPerPage);
+          addErrorLine(writer, nextPage.getData());
+        }
+        preSignedURL = generateURLResponse(tempFile.toFile(), jobDto, null);
+        writer.flush();
+      } finally {
+        Files.delete(tempFile);
+      }
+    }
+    return preSignedURL;
+  }
+
+  public abstract String tempFilePrefix();
+
+  public abstract void addErrorLine(CSVWriter writer, List<RecordStatusDto> recordStatusDto)
+      throws IOException, CommonServiceException;
+
+  @Override
+  public PreSignedUrlResponse downloadTransitTimeErrorLogs(JobDto jobDto, Optional<String> status)
+      throws JobSubmissionException, IOException, CommonServiceException {
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile = Files.createTempFile(tempFilePrefix() + new Date().getTime(), ".csv", attr);
+    PagePayload<RecordStatusDto> recordStatusDtos =
+        this.getJobRecordsByFilters(
+            jobDto.getOrgId(),
+            jobDto.getJobId(),
+            status,
+            PAGE_NO,
+            Math.min(jobDto.getFailureCount(), maxNoOfFailedTransitEntries));
+    var preSignedURL = new PreSignedUrlResponse();
+    try (var writer = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+      addErrorLine(writer, recordStatusDtos.getData());
+      preSignedURL = generateURLResponse(tempFile.toFile(), jobDto, null);
+      writer.flush();
+    } finally {
+      Files.delete(tempFile);
+    }
+    return preSignedURL;
+  }
+}

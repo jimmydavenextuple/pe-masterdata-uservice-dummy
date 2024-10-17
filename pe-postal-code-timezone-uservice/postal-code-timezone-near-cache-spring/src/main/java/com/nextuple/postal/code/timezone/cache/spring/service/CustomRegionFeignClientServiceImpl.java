@@ -14,12 +14,10 @@ import com.nextuple.postal.code.timezone.cache.domain.CustomRegionCacheKey;
 import com.nextuple.postal.code.timezone.cache.domain.CustomRegionCacheValue;
 import com.nextuple.postal.code.timezone.cache.spring.feign.CustomRegionFeignImpl;
 import com.nextuple.postal.code.timezone.cache.spring.mapper.CustomRegionMapper;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
 public class CustomRegionFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         CustomRegionCacheKey, CustomRegionCacheValue, String, BaseResponse<CustomRegionResponse>> {

@@ -34,4 +34,7 @@ test {
 
 tasks.named('test') {
     dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
+    dependsOn ':pe-carrier-uservice:carrier-persistence-postgres:jar'
+    dependsOn ':pe-carrier-uservice:carrier-persistence-domain:jar'
 }
+

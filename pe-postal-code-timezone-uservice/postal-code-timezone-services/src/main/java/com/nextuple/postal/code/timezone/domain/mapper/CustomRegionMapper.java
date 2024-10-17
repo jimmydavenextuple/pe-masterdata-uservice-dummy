@@ -8,9 +8,12 @@
 package com.nextuple.postal.code.timezone.domain.mapper;
 
 import com.nextuple.postal.code.timezone.api.domain.dto.CustomRegionDto;
+import com.nextuple.postal.code.timezone.api.domain.dto.CustomRegionInfo;
 import com.nextuple.postal.code.timezone.api.domain.inbound.CustomRegionRequest;
 import com.nextuple.postal.code.timezone.api.domain.outbound.CustomRegionResponse;
+import com.nextuple.postal.code.timezone.api.domain.projection.CustomRegionProjection;
 import com.nextuple.postal.code.timezone.persistence.domain.CustomRegionDomainDto;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -32,4 +35,6 @@ public interface CustomRegionMapper {
 
   @Mapping(source = "lastModifiedDate", target = "lastUpdatedDate", dateFormat = "yyyy-MM-dd")
   CustomRegionDto toCustomRegionDto(CustomRegionDomainDto customRegion);
+
+  List<CustomRegionInfo> toCustomRegionInfo(List<CustomRegionProjection> projections);
 }

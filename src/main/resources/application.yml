@@ -154,6 +154,61 @@ jobs-framework:
     enabled: true
 
 neip:
-  job-types: itembuffer
+  job-types: itembuffer,
   headers:
     itembuffer: "RecordNo,action,orgId,itemId,uom,bufferHours,bufferStartDate,bufferEndDate,Error Message"
+
+
+kafka-topic-flags:
+  item-master:
+    enabled: true
+  master_data_update_event:
+    enabled: true
+  jobs-framework:
+    feed-metrics-consumer:
+      enabled: true
+    job-completion-consumer:
+      enabled: true
+    kafka-publish:
+      enabled: true
+    result-publish:
+      enabled: true
+    result-consumer:
+      enabled: true
+    record-consumer:
+      enabled: true
+  pe-public-webhook:
+    iv-feed:
+      enabled: true
+    item-feed:
+      enabled: true
+    pe-response:
+      enabled: true
+  master-data:
+    node:
+      enabled: false
+    node-carrier:
+      enabled: false
+    carrier:
+      enabled: false
+    processing-lead-time:
+      enabled: false
+    calendar:
+      enabled: false
+    node-calendar:
+      enabled: false
+    carrier-service-calendar:
+      enabled: false
+    pickup-calendar:
+      enabled: false
+    node-service-option-buffer:
+      enabled: false
+    transit:
+      enabled: false
+    transit-buffer:
+      enabled: false
+  refresh-cache:
+    enabled: false
+  input:
+    taskTopics:
+      enabled: false

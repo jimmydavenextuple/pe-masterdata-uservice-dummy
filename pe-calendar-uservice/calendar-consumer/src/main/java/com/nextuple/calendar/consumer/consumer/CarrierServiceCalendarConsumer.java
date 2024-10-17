@@ -26,7 +26,8 @@ import org.springframework.stereotype.Component;
 @KafkaListener(
     topics = "${master-data.carrier-service-calendar.topic-name}",
     groupId = "${master-data.carrier-service-calendar.group-id}",
-    batch = "true")
+    batch = "true",
+    autoStartup = "${kafka-topic-flags.master-data.carrier-service-calendar.enabled:false}")
 public class CarrierServiceCalendarConsumer
     extends MasterDataFeedConsumer<CarrierServiceCalendarFeedDto> {
 

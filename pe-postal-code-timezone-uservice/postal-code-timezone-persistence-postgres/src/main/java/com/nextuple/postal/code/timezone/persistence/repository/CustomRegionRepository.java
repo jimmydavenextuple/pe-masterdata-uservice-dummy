@@ -10,6 +10,7 @@ package com.nextuple.postal.code.timezone.persistence.repository;
 import com.nextuple.postal.code.timezone.persistence.entity.CustomRegionEntity;
 import com.nextuple.postal.code.timezone.persistence.entity.key.CustomRegionKey;
 import com.nextuple.postgres.repository.CommonJpaRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +18,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CustomRegionRepository
-    extends CommonJpaRepository<CustomRegionEntity, CustomRegionKey> {
+    extends CommonJpaRepository<CustomRegionEntity, CustomRegionKey>, CustomRegionCustomRepository {
   Optional<CustomRegionEntity> findByOrgIdAndId(String orgId, String id);
 
   Optional<CustomRegionEntity> findByOrgIdAndCustomRegionName(
       String orgId, String customRegionName);
 
   Page<CustomRegionEntity> findCustomRegionByOrgId(String orgId, Pageable pageable);
+
+  List<CustomRegionEntity> findByIdInOrCustomRegionNameInAndOrgId(
+      List<String> customRegionIds, List<String> customRegionNames, String orgId);
+
+  List<CustomRegionEntity> findByIdInAndOrgId(List<String> customRegionIds, String orgId);
 }
