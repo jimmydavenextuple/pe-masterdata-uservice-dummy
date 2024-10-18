@@ -37,4 +37,5 @@ tasks.named('test') {
 }
 tasks.named('test') {
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
+    dependsOn ':pe-node-uservice:node-persistence-domain:jar'
 }

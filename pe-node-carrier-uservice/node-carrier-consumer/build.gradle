@@ -31,4 +31,5 @@ tasks.named('test') {
     dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
     dependsOn ':pe-node-uservice:node-api-domain:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-services:jar'
 }

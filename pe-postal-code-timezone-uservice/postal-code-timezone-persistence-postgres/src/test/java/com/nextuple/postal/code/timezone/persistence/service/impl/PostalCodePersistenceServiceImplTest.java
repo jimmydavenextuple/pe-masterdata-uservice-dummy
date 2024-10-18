@@ -46,6 +46,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.CollectionUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,6 +65,9 @@ class PostalCodePersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
+    // Added this
+    ReflectionTestUtils.setField(postalCodePersistenceService, "repository", postalCodeRepository);
+    ReflectionTestUtils.setField(postalCodePersistenceService, "mapper", postalCodeEntityMapper);
   }
 
   @Test

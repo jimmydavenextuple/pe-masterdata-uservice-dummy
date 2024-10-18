@@ -31,3 +31,11 @@ targetCompatibility = JavaVersion.VERSION_21
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
+
+tasks.named('bootJar') {
+    dependsOn ':pe-weightage-configuration-uservice:weightage-configuration-api-domain:jar'
+}
+
+tasks.named('test') {
+    dependsOn ':pe-weightage-configuration-uservice:weightage-configuration-api-domain:jar'
+}

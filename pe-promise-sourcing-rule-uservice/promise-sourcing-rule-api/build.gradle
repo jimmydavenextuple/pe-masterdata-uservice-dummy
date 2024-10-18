@@ -46,6 +46,7 @@ tasks.named('bootJar') {
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
     dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-persistence-domain:jar'
     dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain:jar'
 }
 
 tasks.named('test') {
@@ -54,5 +55,6 @@ tasks.named('test') {
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
     dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-persistence-domain:jar'
     dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain:jar'
 }
 

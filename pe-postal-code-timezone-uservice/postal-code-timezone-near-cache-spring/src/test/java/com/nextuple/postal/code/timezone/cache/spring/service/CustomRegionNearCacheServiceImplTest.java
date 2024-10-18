@@ -48,6 +48,9 @@ class CustomRegionNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         customRegionNearCacheService, "cacheManager", caffeineCacheManager);
+    // Added this
+    ReflectionTestUtils.setField(
+        customRegionNearCacheService, "feignCacheService", feignCacheService);
   }
 
   @Mock

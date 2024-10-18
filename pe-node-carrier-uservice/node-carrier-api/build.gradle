@@ -36,25 +36,16 @@ tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
 
-//tasks.named('bootJar') {
-//    dependsOn ':pe-node-uservice:node-api-domain:jar'
-//    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
-//    dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
-//}
-//
-//tasks.named('test') {
-//    dependsOn ':pe-node-uservice:node-api-domain:jar'
-//    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
-//    dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
-//}
-
-
 tasks.named('bootJar') {
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
     dependsOn project(':pe-node-carrier-uservice:node-carrier-api-domain').tasks.named('jar')
     dependsOn project(':pe-node-carrier-uservice:node-carrier-services').tasks.named('jar')
 }
 
 tasks.named('test') {
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
     dependsOn project(':pe-node-carrier-uservice:node-carrier-api-domain').tasks.named('jar')
     dependsOn project(':pe-node-carrier-uservice:node-carrier-services').tasks.named('jar')
 }

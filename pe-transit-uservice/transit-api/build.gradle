@@ -49,10 +49,22 @@ tasks.named('bootJar') {
     dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     dependsOn ':pe-node-uservice:node-api-domain:jar'
+    dependsOn ':pe-transit-uservice:transit-persistence-domain:jar'
+    dependsOn ':pe-data-upload-uservice:job-framework-common-util:jar'
+    dependsOn ':pe-data-upload-uservice:data-upload-common-util:jar'
+    dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
 }
 
 tasks.named('test') {
     dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     dependsOn ':pe-node-uservice:node-api-domain:jar'
+    dependsOn ':pe-transit-uservice:transit-persistence-domain:jar'
+    dependsOn ':pe-data-upload-uservice:job-framework-common-util:jar'
+    dependsOn ':pe-data-upload-uservice:data-upload-common-util:jar'
+    dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
 }
