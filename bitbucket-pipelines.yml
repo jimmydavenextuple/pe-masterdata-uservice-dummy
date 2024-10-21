@@ -277,7 +277,7 @@ definitions:
           - docker
         image: mcr.microsoft.com/azure-cli:2.53.1
         script:
-          - git clone jfrog-for-masterdata git@bitbucket.org:nextuple_engineering/deployment-scripts.git
+          - git clone -b jfrog-for-masterdata git@bitbucket.org:nextuple_engineering/deployment-scripts.git
           - chmod +x ./deployment-scripts/deploy-k8s-service-v7.sh
           - chmod +x ./deployment-scripts/trivy.sh
           - chmod +x ./deployment-scripts/promote-jars.sh
