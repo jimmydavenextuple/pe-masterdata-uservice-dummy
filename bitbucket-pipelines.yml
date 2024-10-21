@@ -227,6 +227,7 @@ definitions:
           - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build artifactoryPublish
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -PazureStorageConnectionString=$AZURE_CONNECTION_STRING copyJar uploadCommitJarToAzure
           - export SPACE=" "
           - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
           - |
@@ -276,9 +277,10 @@ definitions:
           - docker
         image: mcr.microsoft.com/azure-cli:2.53.1
         script:
-          - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
+          - git clone jfrog-for-masterdata git@bitbucket.org:nextuple_engineering/deployment-scripts.git
           - chmod +x ./deployment-scripts/deploy-k8s-service-v7.sh
           - chmod +x ./deployment-scripts/trivy.sh
+          - chmod +x ./deployment-scripts/promote-jars.sh
           - ./deployment-scripts/deploy-k8s-service-v7.sh
         artifacts:
           - trivy_report*.txt
@@ -354,6 +356,13 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy vapt
           deployment: vapt
+    jfrog-optimization:
+      - step: *Clear-Cache
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Dev
+          deployment: dev
     development:
       - step: *Clear-Cache
       - step: *build     

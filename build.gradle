@@ -78,6 +78,7 @@ apply plugin: 'org.owasp.dependencycheck'
 apply plugin: "com.github.spotbugs"
 apply plugin: "com.diffplug.spotless"
 apply plugin: "org.sonatype.gradle.plugins.scan"
+apply from: 'azure.gradle'
 
 group = 'com.nextuple.pe'
 //version = "1.4.0-${build_target}"
