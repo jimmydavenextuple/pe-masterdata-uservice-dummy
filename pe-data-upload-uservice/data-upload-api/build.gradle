@@ -33,8 +33,8 @@ dependencies {
     implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
 
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-common:common-postgres"))
     implementation(project(":pe-data-upload-uservice:jobs-consumer"))
     implementation(project(":pe-data-upload-uservice:jobs-dashboard-api"))
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
@@ -71,6 +71,10 @@ tasks.bootJar {
     dependsOn ':pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain:jar'
     dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
     dependsOn ':pe-calendar-uservice:calendar-persistence-domain:jar'
+    dependsOn ':pe-common:master-data-integration-framework:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache-producer:jar'
+    dependsOn ':pe-common:common-util:jar'
+    dependsOn ':pe-common:common-postgres:jar'
 }
 
 tasks.test {

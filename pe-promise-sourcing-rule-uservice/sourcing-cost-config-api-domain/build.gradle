@@ -10,9 +10,10 @@ bootJar {
 }
 dependencies {
     runtimeOnly 'org.postgresql:postgresql'
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
     implementation "jakarta.validation:jakarta.validation-api:3.0.2"
     implementation "org.springframework.boot:spring-boot-starter-validation:3.2.4"
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }
 tasks.withType(Test).configureEach {
     useJUnitPlatform()

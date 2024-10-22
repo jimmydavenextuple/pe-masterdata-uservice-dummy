@@ -15,8 +15,8 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:master-data-integration-framework:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-common:master-data-integration-framework"))
 
     implementation(project(":pe-node-uservice:node-consumer"))
     implementation(project(":pe-carrier-uservice:carrier-consumer"))
@@ -55,5 +55,8 @@ tasks.named('test') {
     dependsOn ':pe-transit-uservice:transit-consumer:jar'
     dependsOn ':pe-transit-uservice:transit-persistence-domain:jar'
     dependsOn ':pe-carrier-uservice:carrier-consumer:jar'
-
+    dependsOn ':pe-common:common-util:jar'
+    dependsOn ':pe-common:master-data-integration-framework:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache-producer:jar'
+    dependsOn ':pe-common:common-postgres:jar'
 }

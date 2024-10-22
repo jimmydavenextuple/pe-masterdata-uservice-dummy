@@ -11,8 +11,8 @@ bootJar {
 }
 
 dependencies {
-    implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-domain"))
+    implementation(project(":pe-common:common-util"))
     implementation(project(":pe-item-uservice:item-api-domain"))
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
 
@@ -25,11 +25,10 @@ tasks.withType(Test).configureEach {
 
 tasks.named('test') {
     dependsOn ':pe-item-uservice:item-persistence-domain:jar',':pe-item-uservice:item-api-domain:jar'
+    dependsOn ':pe-common:common-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
 }
 
-tasks.named('test') {
-    mustRunAfter project(':pe-item-uservice:item-api-domain').tasks.named('jar')
-}
 
 tasks.test {
     useJUnitPlatform()

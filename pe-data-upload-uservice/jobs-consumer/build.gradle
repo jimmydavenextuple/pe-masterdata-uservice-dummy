@@ -17,7 +17,7 @@ dependencies {
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
     implementation "org.springframework.kafka:spring-kafka"
     implementation group: 'com.google.guava', name: 'guava', version: '33.2.0-jre'
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
     implementation(project(":pe-data-upload-uservice:csv-utility-api"))
     implementation 'org.apache.commons:commons-csv:1.5'
     implementation(project(":pe-data-upload-uservice:data-upload-common-util"))
@@ -33,6 +33,7 @@ dependencies {
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
     implementation group: 'com.opencsv', name: 'opencsv', version: '5.2'
     implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
@@ -50,4 +51,5 @@ tasks.named('test') {
     dependsOn ':pe-data-upload-uservice:csv-utility-common-util:jar'
     dependsOn ':pe-data-upload-uservice:job-framework-common-util:jar'
     dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
 }

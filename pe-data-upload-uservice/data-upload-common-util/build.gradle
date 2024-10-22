@@ -12,7 +12,7 @@ jar {
 
 dependencies {
     implementation 'com.google.code.gson:gson:2.9.0'
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
     implementation 'com.opencsv:opencsv:5.9'
@@ -20,6 +20,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     implementation(project(":pe-configuration-uservice:configuration-api-domain"))
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }
 sourceCompatibility = JavaVersion.VERSION_21
 targetCompatibility = JavaVersion.VERSION_21
@@ -31,8 +32,8 @@ tasks.named('test') {
     dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
     dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
 
-    // Ensure these tasks must run before the test task
     mustRunAfter ':pe-calendar-uservice:calendar-api-domain:jar'
     mustRunAfter ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
     mustRunAfter ':pe-configuration-uservice:configuration-api-domain:jar'

@@ -11,7 +11,7 @@ jar {
 }
 
 dependencies {
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation 'org.springframework.kafka:spring-kafka'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
@@ -25,11 +25,13 @@ dependencies {
     implementation 'commons-io:commons-io:2.13.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    }
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
+}
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
 
 tasks.named('test') {
     dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
 }

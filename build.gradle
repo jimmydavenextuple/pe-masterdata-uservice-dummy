@@ -158,9 +158,9 @@ subprojects {
 //        implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
 
         runtimeOnly 'org.postgresql:postgresql:42.7.2'
-        implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
-        implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
- //       implementation("com.nextuple.pe:master-data-integration-framework:1.4.0-${build_target}")
+//        implementation(project(":pe-common:common-util"))
+//        implementation(project(":pe-common:common-postgres"))
+ //       implementation(project(":pe-common:master-data-integration-framework"))
 
         implementation "org.springframework.kafka:spring-kafka:3.2.1"
         implementation 'org.yaml:snakeyaml:2.2'
@@ -395,13 +395,16 @@ dependencies {
 //    implementation("com.nextuple.pe:node-consumer:1.4.0-${build_target}")
 //    implementation("com.nextuple.pe:carrier-consumer:1.4.0-${build_target}")
 
+
     implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
 
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:master-data-integration-framework:1.4.0-${build_target}")
+//    implementation(project(":pe-common:common-util"))
+//    implementation(project(":pe-common:common-postgres"))
+//    implementation(project(":pe-common:common-postgres"))
+//    implementation(project(":pe-common:master-data-integration-framework"))
+//    implementation(project(":pe-common:master-data-integration-framework"))
 
     implementation "org.springframework.kafka:spring-kafka:3.2.1"
     implementation 'org.yaml:snakeyaml:2.2'

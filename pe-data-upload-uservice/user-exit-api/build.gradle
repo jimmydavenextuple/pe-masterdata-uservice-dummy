@@ -16,9 +16,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
-    implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-postgres"))
     api "com.azure.spring:azure-spring-boot-starter-keyvault-secrets:3.10.0"
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
     implementation "jakarta.validation:jakarta.validation-api:3.0.2"
     implementation "org.springframework.boot:spring-boot-starter-validation:3.2.4"
@@ -26,4 +26,9 @@ dependencies {
 }
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
+}
+tasks.test {
+    dependsOn ':pe-common:common-postgres:jar'
+    dependsOn ':pe-common:common-util:jar'
+    dependsOn ':pe-common:common-domain:jar'
 }

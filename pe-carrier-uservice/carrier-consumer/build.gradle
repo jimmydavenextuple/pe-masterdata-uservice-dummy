@@ -17,15 +17,16 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     runtimeOnly 'org.postgresql:postgresql'
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:master-data-integration-framework:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-common:common-domain"))
+    implementation(project(":pe-common:common-postgres"))
+    implementation(project(":pe-common:master-data-integration-framework"))
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-carrier-uservice:carrier-services"))
     implementation(project(":pe-carrier-uservice:carrier-persistence-domain"))
     implementation(project(":pe-carrier-uservice:carrier-persistence-postgres"))
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }
 
 test {
@@ -36,5 +37,10 @@ tasks.named('test') {
     dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
     dependsOn ':pe-carrier-uservice:carrier-persistence-postgres:jar'
     dependsOn ':pe-carrier-uservice:carrier-persistence-domain:jar'
+    dependsOn ':pe-common:master-data-integration-framework:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache-producer:jar'
+    dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
+    dependsOn ':pe-common:common-postgres:jar'
 }
 

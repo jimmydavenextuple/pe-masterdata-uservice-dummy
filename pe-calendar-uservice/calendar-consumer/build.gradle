@@ -17,10 +17,10 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     runtimeOnly 'org.postgresql:postgresql'
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:master-data-integration-framework:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-common:common-postgres"))
+    implementation(project(":pe-common:common-domain"))
+    implementation(project(":pe-common:master-data-integration-framework"))
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
     implementation "jakarta.validation:jakarta.validation-api:3.0.2"
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
@@ -28,6 +28,7 @@ dependencies {
 
     implementation(project(":pe-calendar-uservice:calendar-persistence-domain"))
     implementation(project(":pe-calendar-uservice:calendar-persistence-postgres"))
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 
 }
 
@@ -41,6 +42,7 @@ tasks.named('test') {
     dependsOn ':pe-calendar-uservice:calendar-persistence-domain:jar'
     dependsOn ':pe-calendar-uservice:calendar-persistence-postgres:jar'
     dependsOn ':pe-node-uservice:node-api-domain:jar'
-
+    dependsOn ':pe-common:master-data-integration-framework:jar'
+    dependsOn ':pe-common:common-util:jar'
 }
 

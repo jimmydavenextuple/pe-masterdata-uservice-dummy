@@ -15,7 +15,7 @@ dependencies {
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
     implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
     implementation(project(":pe-carrier-uservice:carrier-near-cache"))
@@ -40,6 +40,7 @@ tasks.named('test') {
 tasks.named('test') {
     mustRunAfter project(':pe-carrier-uservice:carrier-api-domain').tasks.named('jar')
     mustRunAfter project(':pe-carrier-uservice:carrier-near-cache').tasks.named('jar')
+    dependsOn ':pe-common:common-util:jar'
 }
 
 

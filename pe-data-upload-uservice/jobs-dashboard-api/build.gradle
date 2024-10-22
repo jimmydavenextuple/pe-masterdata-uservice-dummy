@@ -14,7 +14,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
     implementation "org.springframework.kafka:spring-kafka"
     implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'
@@ -28,6 +28,8 @@ dependencies {
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
     implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")
     implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
+    implementation 'io.swagger.core.v3:swagger-models:2.2.0'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
@@ -47,4 +49,5 @@ tasks.named('test') {
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
     dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
 }

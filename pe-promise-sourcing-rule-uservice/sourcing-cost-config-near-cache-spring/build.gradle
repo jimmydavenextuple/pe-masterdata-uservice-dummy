@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-near-cache"))
 
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
     implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
 
@@ -34,4 +34,5 @@ tasks.withType(Test).configureEach {
 tasks.named('test') {
     dependsOn ':pe-promise-sourcing-rule-uservice:sourcing-cost-config-near-cache:jar'
     dependsOn ':pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
 }

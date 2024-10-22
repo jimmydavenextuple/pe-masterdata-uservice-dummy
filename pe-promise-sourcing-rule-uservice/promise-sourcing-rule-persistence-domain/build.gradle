@@ -11,8 +11,8 @@ bootJar {
 }
 
 dependencies {
-    implementation("com.nextuple.pe:common-domain:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation(project(":pe-common:common-domain"))
+    implementation(project(":pe-common:common-util"))
     implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
 
@@ -25,4 +25,6 @@ tasks.withType(Test).configureEach {
 
 tasks.named('test') {
     dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
+    dependsOn ':pe-common:common-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
 }
