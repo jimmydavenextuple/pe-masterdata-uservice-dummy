@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022., Nextuple, Inc. and/or its affiliates. All rights reserved.
+ * Copyright (c) 2024., Nextuple, Inc. and/or its affiliates. All rights reserved.
  *
  * The software, code and related documentation made available to you by Nextuple, Inc. are provided under a written agreement containing restrictions on use and disclosure and are protected by copyright and other intellectual property laws. As described in and unless expressly permitted in your agreement, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or de-compilation of this software, unless required by law or permitted via contract for interoperability, is strictly prohibited.
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
@@ -18,12 +18,12 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.configuration.TestUtil;
-import com.nextuple.configuration.domain.ConfigMetadataDomain;
-import com.nextuple.configuration.domain.TenantConfigdataDomain;
-import com.nextuple.configuration.domain.entity.ConfigMetadataEntity;
-import com.nextuple.configuration.domain.entity.TenantConfigdataEntity;
 import com.nextuple.configuration.inbound.TenantConfigdataRequest;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
+import com.nextuple.configuration.persistence.domain.ConfigMetadataDomainDto;
+import com.nextuple.configuration.persistence.domain.TenantConfigdataDomainDto;
+import com.nextuple.configuration.persistence.service.ConfigMetadataPersistenceService;
+import com.nextuple.configuration.persistence.service.TenantConfigdataPersistenceService;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,10 +32,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 class TenantConfigdataServiceTest {
+
   @InjectMocks private TenantConfigdataService tenantConfigdataService;
 
-  @Mock private TenantConfigdataDomain tenantConfigdataDomain;
-  @Mock private ConfigMetadataDomain configMetadataDomain;
+  @Mock private TenantConfigdataPersistenceService tenantConfigdataPersistenceService;
+
+  @Mock private ConfigMetadataPersistenceService configMetadataPersistenceService;
+
   @InjectMocks private TestUtil testUtil;
 
   @BeforeEach
@@ -46,17 +49,19 @@ class TenantConfigdataServiceTest {
   @Test
   void processAddTenantConfigdataTest() throws PromiseEngineException, CommonServiceException {
     TenantConfigdataResponse tenantConfigdataResponse = testUtil.getTenantConfigdataResponse();
-    when(tenantConfigdataDomain.fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString()))
+    when(tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
+            anyString(), anyString()))
         .thenReturn(Optional.empty());
-    when(tenantConfigdataDomain.saveTenantConfigdata(any(TenantConfigdataEntity.class)))
-        .thenReturn(testUtil.getTenantConfigdataEntity());
+    when(tenantConfigdataPersistenceService.saveTenantConfigdata(
+            any(TenantConfigdataDomainDto.class)))
+        .thenReturn(testUtil.getTenantConfigdataDomainDto());
 
     TenantConfigdataResponse response =
         tenantConfigdataService.processAddTenantConfigdata(testUtil.getTenantConfigdataRequest());
     assertEquals(tenantConfigdataResponse.getId(), response.getId());
-    verify(tenantConfigdataDomain, times(1))
+    verify(tenantConfigdataPersistenceService, times(1))
         .fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString());
-    verify(tenantConfigdataDomain, times(1)).saveTenantConfigdata(any());
+    verify(tenantConfigdataPersistenceService, times(1)).saveTenantConfigdata(any());
   }
 
   @Test
@@ -77,8 +82,9 @@ class TenantConfigdataServiceTest {
   @Test
   void processAddTenantConfigdataExceptionTest()
       throws PromiseEngineException, CommonServiceException {
-    when(tenantConfigdataDomain.fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString()))
-        .thenReturn(Optional.of(testUtil.getTenantConfigdataEntity()));
+    when(tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
+            anyString(), anyString()))
+        .thenReturn(Optional.of(testUtil.getTenantConfigdataDomainDto()));
     Exception ex =
         assertThrows(
             CommonServiceException.class,
@@ -89,7 +95,7 @@ class TenantConfigdataServiceTest {
     assertEquals(
         "Tenant configuration data already associated for given orgId and configKey",
         ex.getMessage());
-    verify(tenantConfigdataDomain, times(1))
+    verify(tenantConfigdataPersistenceService, times(1))
         .fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString());
   }
 
@@ -97,39 +103,42 @@ class TenantConfigdataServiceTest {
   void processGetTenantConfigdataByOrgIdAndConfigKeyTest()
       throws PromiseEngineException, CommonServiceException {
     TenantConfigdataResponse tenantConfigdataResponse = testUtil.getTenantConfigdataResponse();
-    when(tenantConfigdataDomain.fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString()))
-        .thenReturn(Optional.of(testUtil.getTenantConfigdataEntity()));
+    when(tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
+            anyString(), anyString()))
+        .thenReturn(Optional.of(testUtil.getTenantConfigdataDomainDto()));
     TenantConfigdataResponse response =
         tenantConfigdataService.processGetTenantConfigdataByOrgIdAndConfigKey(
             TestUtil.ORG_ID, TestUtil.CONFIG_KEY);
     assertEquals(tenantConfigdataResponse.getId(), response.getId());
-    verify(tenantConfigdataDomain, times(1))
+    verify(tenantConfigdataPersistenceService, times(1))
         .fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString());
   }
 
   @Test
   void processGetTenantConfigdataByOrgIdAndConfigKeyDefaultValueTest()
       throws PromiseEngineException, CommonServiceException {
-    ConfigMetadataEntity configMetadataEntity = testUtil.getConfigMetadataEntity();
-    when(tenantConfigdataDomain.fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString()))
+    ConfigMetadataDomainDto configMetadataEntity = testUtil.getConfigMetadataDomainDto();
+    when(tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
+            anyString(), anyString()))
         .thenReturn(Optional.empty());
-    when(configMetadataDomain.fetchConfigMetadataByConfigKey(anyString()))
+    when(configMetadataPersistenceService.fetchConfigMetadataByConfigKey(anyString()))
         .thenReturn(Optional.of(configMetadataEntity));
     TenantConfigdataResponse response =
         tenantConfigdataService.processGetTenantConfigdataByOrgIdAndConfigKey(
             TestUtil.ORG_ID_2, TestUtil.CONFIG_KEY);
     assertEquals(configMetadataEntity.getDefaultConfigValue(), response.getConfigValue());
-    verify(tenantConfigdataDomain, times(1))
+    verify(tenantConfigdataPersistenceService, times(1))
         .fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString());
-    verify(configMetadataDomain, times(1)).fetchConfigMetadataByConfigKey(anyString());
+    verify(configMetadataPersistenceService, times(1)).fetchConfigMetadataByConfigKey(anyString());
   }
 
   @Test
   void processGetTenantConfigdataByOrgIdAndConfigKeyExceptionTest()
       throws PromiseEngineException, CommonServiceException {
-    when(tenantConfigdataDomain.fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString()))
+    when(tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
+            anyString(), anyString()))
         .thenReturn(Optional.empty());
-    when(configMetadataDomain.fetchConfigMetadataByConfigKey(anyString()))
+    when(configMetadataPersistenceService.fetchConfigMetadataByConfigKey(anyString()))
         .thenReturn(Optional.empty());
     Exception ex =
         assertThrows(
@@ -139,33 +148,36 @@ class TenantConfigdataServiceTest {
                   TestUtil.ORG_ID, TestUtil.CONFIG_KEY);
             });
     assertEquals("Tenant configuration data not found", ex.getMessage());
-    verify(tenantConfigdataDomain, times(1))
+    verify(tenantConfigdataPersistenceService, times(1))
         .fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString());
-    verify(configMetadataDomain, times(1)).fetchConfigMetadataByConfigKey(anyString());
+    verify(configMetadataPersistenceService, times(1)).fetchConfigMetadataByConfigKey(anyString());
   }
 
   @Test
   void processUpdateTenantConfigdataTest() throws PromiseEngineException, CommonServiceException {
     TenantConfigdataResponse tenantConfigdataResponse = testUtil.getTenantConfigdataResponse();
     tenantConfigdataResponse.setConfigValue(TestUtil.CONFIG_VALUE_2);
-    when(tenantConfigdataDomain.fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString()))
-        .thenReturn(Optional.of(testUtil.getTenantConfigdataEntity()));
-    when(tenantConfigdataDomain.saveTenantConfigdata(any(TenantConfigdataEntity.class)))
-        .thenReturn(testUtil.getUpdatedConfigdataEntity());
+    when(tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
+            anyString(), anyString()))
+        .thenReturn(Optional.of(testUtil.getTenantConfigdataDomainDto()));
+    when(tenantConfigdataPersistenceService.saveTenantConfigdata(
+            any(TenantConfigdataDomainDto.class)))
+        .thenReturn(testUtil.getUpdatedTenantConfigdataDomainDto());
     TenantConfigdataResponse response =
         tenantConfigdataService.processUpdateTenantConfigdata(
             TestUtil.ORG_ID, TestUtil.CONFIG_KEY, testUtil.getTenantConfigdataUpdateRequest());
     assertEquals(tenantConfigdataResponse.getId(), response.getId());
     assertEquals(tenantConfigdataResponse.getConfigKey(), response.getConfigKey());
     assertEquals(tenantConfigdataResponse.getConfigValue(), response.getConfigValue());
-    verify(tenantConfigdataDomain, times(1))
+    verify(tenantConfigdataPersistenceService, times(1))
         .fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString());
   }
 
   @Test
   void processUpdateTenantConfigdataExceptionTest()
       throws PromiseEngineException, CommonServiceException {
-    when(tenantConfigdataDomain.fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString()))
+    when(tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
+            anyString(), anyString()))
         .thenReturn(Optional.empty());
     Exception ex =
         assertThrows(
@@ -177,7 +189,7 @@ class TenantConfigdataServiceTest {
                   testUtil.getTenantConfigdataUpdateRequest());
             });
     assertEquals("Tenant configuration data not found", ex.getMessage());
-    verify(tenantConfigdataDomain, times(1))
+    verify(tenantConfigdataPersistenceService, times(1))
         .fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString());
   }
 
@@ -185,18 +197,20 @@ class TenantConfigdataServiceTest {
   void processDeleteTenantConfigdataExceptionTest()
       throws PromiseEngineException, CommonServiceException {
     TenantConfigdataResponse tenantConfigdataResponse = testUtil.getTenantConfigdataResponse();
-    when(tenantConfigdataDomain.fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString()))
-        .thenReturn(Optional.of(testUtil.getTenantConfigdataEntity()));
+    when(tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
+            anyString(), anyString()))
+        .thenReturn(Optional.of(testUtil.getTenantConfigdataDomainDto()));
     TenantConfigdataResponse response =
         tenantConfigdataService.processDeleteTenantConfigdata(TestUtil.ORG_ID, TestUtil.CONFIG_KEY);
     assertEquals(tenantConfigdataResponse.getId(), response.getId());
-    verify(tenantConfigdataDomain, times(1))
+    verify(tenantConfigdataPersistenceService, times(1))
         .fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString());
   }
 
   @Test
   void processDeleteTenantConfigdataTest() throws PromiseEngineException, CommonServiceException {
-    when(tenantConfigdataDomain.fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString()))
+    when(tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
+            anyString(), anyString()))
         .thenReturn(Optional.empty());
 
     Exception ex =
@@ -207,7 +221,7 @@ class TenantConfigdataServiceTest {
                   TestUtil.ORG_ID, TestUtil.CONFIG_KEY);
             });
     assertEquals("Tenant configuration data not found", ex.getMessage());
-    verify(tenantConfigdataDomain, times(1))
+    verify(tenantConfigdataPersistenceService, times(1))
         .fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString());
   }
 }

@@ -7,14 +7,14 @@
 
 package com.nextuple.configuration;
 
-import com.nextuple.configuration.domain.entity.ConfigMetadataEntity;
-import com.nextuple.configuration.domain.entity.TenantConfigdataEntity;
 import com.nextuple.configuration.inbound.ConfigMetadataRequest;
 import com.nextuple.configuration.inbound.ConfigMetadataUpdateRequest;
 import com.nextuple.configuration.inbound.TenantConfigdataRequest;
 import com.nextuple.configuration.inbound.TenantConfigdataUpdateRequest;
 import com.nextuple.configuration.outbound.ConfigMetadataResponse;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
+import com.nextuple.configuration.persistence.domain.ConfigMetadataDomainDto;
+import com.nextuple.configuration.persistence.domain.TenantConfigdataDomainDto;
 
 public class TestUtil {
   public static final String ORG_ID = "ABC";
@@ -29,22 +29,22 @@ public class TestUtil {
   public static final String CONFIG_VALUE = "SDND,EXPRESS,STANDARD";
   public static final String CONFIG_VALUE_2 = "SDND";
 
-  public ConfigMetadataEntity getConfigMetadataEntity() {
-    ConfigMetadataEntity configMetadataEntity = new ConfigMetadataEntity();
-    configMetadataEntity.setId(CONFIG_METADATA_ID);
-    configMetadataEntity.setConfigKey(CONFIG_KEY);
-    configMetadataEntity.setAppName(APP_NAME);
-    configMetadataEntity.setDefaultConfigValue(DEFAULT_CONFIG_VALUE);
-    return configMetadataEntity;
+  public ConfigMetadataDomainDto getConfigMetadataDomainDto() {
+    ConfigMetadataDomainDto configMetadataDomainDto = new ConfigMetadataDomainDto();
+    configMetadataDomainDto.setId(CONFIG_METADATA_ID);
+    configMetadataDomainDto.setConfigKey(CONFIG_KEY);
+    configMetadataDomainDto.setAppName(APP_NAME);
+    configMetadataDomainDto.setDefaultConfigValue(DEFAULT_CONFIG_VALUE);
+    return configMetadataDomainDto;
   }
 
-  public ConfigMetadataEntity getUpdatedConfigMetadataEntity() {
-    ConfigMetadataEntity configMetadataEntity = new ConfigMetadataEntity();
-    configMetadataEntity.setId(CONFIG_METADATA_ID);
-    configMetadataEntity.setConfigKey(CONFIG_KEY);
-    configMetadataEntity.setAppName(APP_NAME);
-    configMetadataEntity.setDefaultConfigValue(DEFAULT_CONFIG_VALUE_2);
-    return configMetadataEntity;
+  public ConfigMetadataDomainDto getUpdatedConfigMetadataDomainDto() {
+    ConfigMetadataDomainDto configMetadataDomainDto = new ConfigMetadataDomainDto();
+    configMetadataDomainDto.setId(CONFIG_METADATA_ID);
+    configMetadataDomainDto.setConfigKey(CONFIG_KEY);
+    configMetadataDomainDto.setAppName(APP_NAME);
+    configMetadataDomainDto.setDefaultConfigValue(DEFAULT_CONFIG_VALUE_2);
+    return configMetadataDomainDto;
   }
 
   public ConfigMetadataRequest getConfigMetadataRequest() {
@@ -68,22 +68,22 @@ public class TestUtil {
     return ConfigMetadataUpdateRequest.builder().defaultConfigValue(DEFAULT_CONFIG_VALUE_2).build();
   }
 
-  public TenantConfigdataEntity getTenantConfigdataEntity() {
-    TenantConfigdataEntity tenantConfigdataEntity = new TenantConfigdataEntity();
-    tenantConfigdataEntity.setId(TENANT_CONFIGDATA_ID);
-    tenantConfigdataEntity.setOrgId(ORG_ID);
-    tenantConfigdataEntity.setConfigKey(CONFIG_KEY);
-    tenantConfigdataEntity.setConfigValue(CONFIG_VALUE);
-    return tenantConfigdataEntity;
+  public TenantConfigdataDomainDto getTenantConfigdataDomainDto() {
+    TenantConfigdataDomainDto tenantConfigdataDomainDto = new TenantConfigdataDomainDto();
+    tenantConfigdataDomainDto.setId(TENANT_CONFIGDATA_ID);
+    tenantConfigdataDomainDto.setOrgId(ORG_ID);
+    tenantConfigdataDomainDto.setConfigKey(CONFIG_KEY);
+    tenantConfigdataDomainDto.setConfigValue(CONFIG_VALUE);
+    return tenantConfigdataDomainDto;
   }
 
-  public TenantConfigdataEntity getUpdatedConfigdataEntity() {
-    TenantConfigdataEntity tenantConfigdataEntity = new TenantConfigdataEntity();
-    tenantConfigdataEntity.setId(TENANT_CONFIGDATA_ID);
-    tenantConfigdataEntity.setOrgId(ORG_ID);
-    tenantConfigdataEntity.setConfigKey(CONFIG_KEY);
-    tenantConfigdataEntity.setConfigValue(CONFIG_VALUE_2);
-    return tenantConfigdataEntity;
+  public TenantConfigdataDomainDto getUpdatedTenantConfigdataDomainDto() {
+    TenantConfigdataDomainDto tenantConfigdataDomainDto = new TenantConfigdataDomainDto();
+    tenantConfigdataDomainDto.setId(TENANT_CONFIGDATA_ID);
+    tenantConfigdataDomainDto.setOrgId(ORG_ID);
+    tenantConfigdataDomainDto.setConfigKey(CONFIG_KEY);
+    tenantConfigdataDomainDto.setConfigValue(CONFIG_VALUE_2);
+    return tenantConfigdataDomainDto;
   }
 
   public TenantConfigdataRequest getTenantConfigdataRequest() {

@@ -12,6 +12,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     implementation(project(":pe-common:common-util"))
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
+
 }
 tasks.withType(Test).configureEach {
     useJUnitPlatform()

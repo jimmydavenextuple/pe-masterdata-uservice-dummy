@@ -10,6 +10,8 @@ include 'pe-configuration-uservice:configuration-api'
 include 'pe-configuration-uservice:configuration-api-domain'
 include 'pe-configuration-uservice:configuration-near-cache'
 include 'pe-configuration-uservice:configuration-near-cache-spring'
+include 'pe-configuration-uservice:configuration-persistence-domain'
+include 'pe-configuration-uservice:configuration-persistence-postgres'
 include 'pe-configuration-uservice:configuration-services'
 
 

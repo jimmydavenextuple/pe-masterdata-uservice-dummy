@@ -5,28 +5,24 @@
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
  */
 
-package com.nextuple.configuration.domain.mapper;
+package com.nextuple.configuration.persistence.mapper;
 
-import com.nextuple.configuration.inbound.TenantConfigdataRequest;
-import com.nextuple.configuration.inbound.TenantConfigdataUpdateRequest;
-import com.nextuple.configuration.outbound.TenantConfigdataResponse;
-import com.nextuple.configuration.persistence.domain.TenantConfigdataDomainDto;
+import com.nextuple.configuration.persistence.domain.ConfigMetadataDomainDto;
+import com.nextuple.configuration.persistence.domain.key.ConfigMetadataDomainKey;
+import com.nextuple.configuration.persistence.entity.ConfigMetadataEntity;
+import com.nextuple.configuration.persistence.entity.key.ConfigMetadataKey;
+import com.nextuple.postgres.mapper.DomainToEntityMapper;
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface TenantConfigdataMapper {
-  TenantConfigdataResponse toTenantConfigdataResponse(
-      TenantConfigdataDomainDto tenantConfigdataDomainDto);
-
-  void updateTenantConfigdata(
-      TenantConfigdataUpdateRequest tenantConfigdataUpdateRequest,
-      @MappingTarget TenantConfigdataDomainDto tenantConfigdataDomainDto);
-
-  TenantConfigdataDomainDto toTenantConfigdataDomainDto(
-      TenantConfigdataRequest tenantConfigdataRequest);
-}
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    componentModel = "spring")
+public interface ConfigMetadataEntityMapper
+    extends DomainToEntityMapper<
+        ConfigMetadataDomainDto,
+        ConfigMetadataDomainKey,
+        ConfigMetadataEntity,
+        ConfigMetadataKey> {}
