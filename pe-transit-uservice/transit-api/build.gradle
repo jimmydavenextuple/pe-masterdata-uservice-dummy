@@ -32,7 +32,7 @@ dependencies {
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
     implementation(project(":pe-data-upload-uservice:data-upload-common-util"))
 
-//    implementation("com.nextuple.pe:data-upload-common-util:1.4.0-${build_target}")
+//    implementation(project(":pe-data-upload-uservice:data-upload-common-util"))
 
     implementation "org.springframework.kafka:spring-kafka"
     implementation 'org.apache.commons:commons-csv:1.5'
@@ -59,6 +59,7 @@ tasks.named('bootJar') {
     dependsOn ':pe-common:common-postgres:jar'
     dependsOn ':pe-common:common-domain:jar'
     dependsOn ':pe-common:nfs-near-cache:core-near-cache-producer:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
 }
 
 tasks.named('test') {
@@ -75,4 +76,5 @@ tasks.named('test') {
     dependsOn ':pe-common:common-postgres:jar'
     dependsOn ':pe-common:common-domain:jar'
     dependsOn ':pe-common:nfs-near-cache:core-near-cache-producer:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
 }

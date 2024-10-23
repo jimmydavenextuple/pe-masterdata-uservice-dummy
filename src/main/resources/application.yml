@@ -154,11 +154,10 @@ jobs-framework:
     enabled: true
 
 neip:
-  job-types: itembuffer,
+  job-types: itembuffer,customregion
   headers:
     itembuffer: "RecordNo,action,orgId,itemId,uom,bufferHours,bufferStartDate,bufferEndDate,Error Message"
-
-
+    customregion: "RecordNo,action,orgId,regionId,customRegionName,customRegionDescription,geozones,Error Message"
 kafka-topic-flags:
   item-master:
     enabled: true

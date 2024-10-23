@@ -59,4 +59,6 @@ tasks.named('test') {
     dependsOn ':pe-common:master-data-integration-framework:jar'
     dependsOn ':pe-common:nfs-near-cache:core-near-cache-producer:jar'
     dependsOn ':pe-common:common-postgres:jar'
+    dependsOn ':pe-data-upload-uservice:data-upload-common-util:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
 }

@@ -42,5 +42,9 @@ tasks.named('test') {
     dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
     dependsOn ':pe-common:common-util:jar'
     dependsOn ':pe-common:common-postgres:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
+    dependsOn ':pe-carrier-uservice:carrier-services:jar'
+    dependsOn ':pe-data-upload-uservice:job-framework-common-util:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
 }
 

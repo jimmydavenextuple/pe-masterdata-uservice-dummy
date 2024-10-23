@@ -75,6 +75,9 @@ tasks.bootJar {
     dependsOn ':pe-common:nfs-near-cache:core-near-cache-producer:jar'
     dependsOn ':pe-common:common-util:jar'
     dependsOn ':pe-common:common-postgres:jar'
+
+    dependsOn ':pe-data-upload-uservice:data-upload-services:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
 }
 
 tasks.test {
@@ -84,8 +87,8 @@ tasks.test {
     dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
 
-    dependsOn ':pe-calendar-uservice:calendar-persistence-domain:jar' // If not already added
-    dependsOn ':pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain:jar' // If not already added
+    dependsOn ':pe-calendar-uservice:calendar-persistence-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain:jar'
     useJUnitPlatform()
 }
 
@@ -93,4 +96,11 @@ tasks.test {
     mustRunAfter ':pe-calendar-uservice:calendar-api-domain:jar'
     mustRunAfter ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
     mustRunAfter ':pe-configuration-uservice:configuration-api-domain:jar'
+    dependsOn ':pe-data-upload-uservice:data-upload-services:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
+
+    dependsOn ':pe-node-uservice:node-persistence-domain:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-services:jar'
+    dependsOn ':pe-transit-uservice:transit-persistence-domain:jar'
+    dependsOn ':pe-weightage-configuration-uservice:weightage-configuration-api-domain:jar'
 }

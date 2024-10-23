@@ -25,8 +25,6 @@ dependencies {
     implementation(project(":pe-common:common-postgres"))
     implementation(project(":pe-common:nfs-near-cache:core-near-cache-producer"))
 
-//    implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
-
     api "com.azure.spring:azure-spring-boot-starter-keyvault-secrets:3.10.0"
 }
 
@@ -41,6 +39,7 @@ tasks.bootJar {
     dependsOn(':pe-common:common-postgres:jar')
     dependsOn(':pe-common:common-domain:jar')
     dependsOn(':pe-common:nfs-near-cache:core-near-cache-producer:jar')
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
 }
 
 tasks.named('test') {
@@ -48,4 +47,9 @@ tasks.named('test') {
     dependsOn(':pe-common:common-postgres:jar')
     dependsOn(':pe-common:common-domain:jar')
     dependsOn(':pe-common:nfs-near-cache:core-near-cache-producer:jar')
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
+    dependsOn ':pe-carrier-uservice:carrier-services:jar'
+    dependsOn ':pe-carrier-uservice:carrier-persistence-postgres:jar'
+    dependsOn ':pe-carrier-uservice:carrier-persistence-domain:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
 }

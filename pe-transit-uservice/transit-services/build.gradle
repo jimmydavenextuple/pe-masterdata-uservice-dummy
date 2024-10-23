@@ -25,11 +25,10 @@ dependencies {
 
 //    implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
-//    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
 //    implementation("com.nextuple.pe:pe-data-upload-uservice:job-framework-common-util:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:data-upload-common-util:1.4.0-${build_target}")
+    implementation(project(":pe-data-upload-uservice:data-upload-common-util"))
 //    implementation(project(":pe-node-uservice:node-api-domain"))
     implementation(project(":pe-node-uservice:node-api-domain"))
 
@@ -58,4 +57,8 @@ tasks.named('test') {
     dependsOn ':pe-common:common-util:jar'
     dependsOn ':pe-common:common-postgres:jar'
     dependsOn ':pe-common:common-domain:jar'
+    dependsOn ':pe-data-upload-uservice:data-upload-common-util:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
 }

@@ -16,8 +16,8 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
     implementation(project(":pe-common:common-util"))
-    implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
     implementation(project(":pe-carrier-uservice:carrier-near-cache"))
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
 
@@ -35,14 +35,10 @@ tasks.withType(Test).configureEach {
 tasks.named('test') {
     dependsOn ':pe-carrier-uservice:carrier-persistence-domain:jar',':pe-carrier-uservice:carrier-api-domain:jar',':pe-carrier-uservice:carrier-persistence-postgres:jar',
             ':pe-carrier-uservice:carrier-near-cache:jar'
-}
-
-tasks.named('test') {
-    mustRunAfter project(':pe-carrier-uservice:carrier-api-domain').tasks.named('jar')
-    mustRunAfter project(':pe-carrier-uservice:carrier-near-cache').tasks.named('jar')
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache-spring:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
     dependsOn ':pe-common:common-util:jar'
 }
-
 
 tasks.test {
     useJUnitPlatform()

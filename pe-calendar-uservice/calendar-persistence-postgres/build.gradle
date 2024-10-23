@@ -33,4 +33,5 @@ tasks.named('test') {
     dependsOn(':pe-common:common-domain:jar')
     dependsOn(':pe-common:common-postgres:jar')
     dependsOn(':pe-common:nfs-near-cache:core-near-cache-producer:jar')
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
 }

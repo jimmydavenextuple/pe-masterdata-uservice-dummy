@@ -47,7 +47,7 @@ test {
 }
 
 allprojects {
-    version = "1.4.0-${build_target}"
+    version = "1.4.10-${build_target}"
 }
 
 subprojects {
@@ -154,8 +154,8 @@ subprojects {
 //        implementation("com.nextuple.pe:node-consumer:1.4.0-${build_target}")
 //        implementation("com.nextuple.pe:carrier-consumer:1.4.0-${build_target}")
 //
-//        implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
+//        implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
+//        implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
 
         runtimeOnly 'org.postgresql:postgresql:42.7.2'
 //        implementation(project(":pe-common:common-util"))
@@ -376,16 +376,25 @@ dependencies {
     implementation 'org.springframework:spring-web:6.0.23'
 
 
-//    implementation("com.nextuple.pe:pe-data-upload-uservice:job-framework-common-util:1.4.0-${build_target}")
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
     implementation(project(":pe-data-upload-uservice:data-upload-services"))
-//    implementation("com.nextuple.pe:data-upload-services:1.4.0-${build_target}")
-//    implementation("com.nextuple.pe:promise-sourcing-rule-services:1.4.0-${build_target}")
-//    implementation("com.nextuple.pe:weightage-configuration-services:1.4.0-${build_target}")
-//    implementation("com.nextuple.pe:postal-code-timezone-services:1.4.0-${build_target}")
-//    implementation("com.nextuple.pe:transit-services:1.4.0-${build_target}")
-//    implementation("com.nextuple.pe:node-carrier-services:1.4.0-${build_target}")
-    //implementation("com.nextuple.pe:item-services:1.4.0-${build_target}")
+
+    implementation(project(":pe-calendar-uservice:calendar-api"))
+    implementation(project(":pe-carrier-uservice:carrier-api"))
+    implementation(project(":pe-configuration-uservice:configuration-api"))
+    implementation(project(":pe-data-upload-uservice:data-upload-api"))
+    implementation(project(":pe-item-uservice:item-services"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-api"))
+    implementation(project(":pe-node-uservice:node-api"))
+    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api"))
+    implementation(project(":pe-transit-uservice:transit-api"))
+    implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api"))
+
+
+
+
+
 //    implementation("com.nextuple.pe:calendar-services:1.4.0-${build_target}")
 //    implementation("com.nextuple.pe:node-services:1.4.0-${build_target}")
 //    implementation("com.nextuple.pe:carrier-services:1.4.0-${build_target}")
@@ -396,8 +405,9 @@ dependencies {
 //    implementation("com.nextuple.pe:carrier-consumer:1.4.0-${build_target}")
 
 
-    implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
+
 
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
 //    implementation(project(":pe-common:common-util"))
@@ -518,6 +528,10 @@ processResources {
 test {
     useJUnitPlatform()
 }
+tasks.named('test') {
+    dependsOn ':pe-data-upload-uservice:data-upload-services:jar'
+}
+
 task fixPom {
     doLast {
         File file = new File("$buildDir/publications/mavenJava/pom-default.xml")

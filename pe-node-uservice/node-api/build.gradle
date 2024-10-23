@@ -39,6 +39,7 @@ tasks.named('test') {
     dependsOn ':pe-common:common-util:jar'
     dependsOn ':pe-common:common-postgres:jar'
     dependsOn ':pe-common:common-domain:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
 }
 
 tasks.named('bootJar') {
@@ -49,5 +50,6 @@ tasks.named('bootJar') {
     dependsOn ':pe-common:common-util:jar'
     dependsOn ':pe-common:common-postgres:jar'
     dependsOn ':pe-common:common-domain:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
 }
 

@@ -5,28 +5,28 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://170.7.0.16/pe
-    username: pe_users_pgadmin
-    password: E7E56EAB-9B03-4C95-8E71-FA871251A7D4
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
   kafka:
     bootstrap-servers: "localhost:9092"
     consumer-retry-count: 1
-# NOTE: Below commented code is for the Avro consumer.
-# If we need to consume an avro record, please uncomment Avro properties and comment out the JSON Consumer and Producer.
-#
-#    consumer:
-#      type: avro
-#      enable-auto-commit: true
-#      auto-offset-reset: earliest
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
-#      topics:
-#        item_master:
-#          name: ITEM_MASTER_INTEGRATION
-#          group-id: item-master-local
-#    producer:
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
+    # NOTE: Below commented code is for the Avro consumer.
+    # If we need to consume an avro record, please uncomment Avro properties and comment out the JSON Consumer and Producer.
+    #
+    #    consumer:
+    #      type: avro
+    #      enable-auto-commit: true
+    #      auto-offset-reset: earliest
+    #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    #      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
+    #      topics:
+    #        item_master:
+    #          name: ITEM_MASTER_INTEGRATION
+    #          group-id: item-master-local
+    #    producer:
+    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    #      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
     consumer:
       type: json
       enable-auto-commit: true

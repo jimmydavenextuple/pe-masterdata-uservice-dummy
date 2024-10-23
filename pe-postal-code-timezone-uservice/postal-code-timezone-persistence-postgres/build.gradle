@@ -13,9 +13,9 @@ bootJar {
 dependencies {
 
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
-    implementation("com.nextuple.pe:common-util:1.3.0-${build_target}")
-    implementation("com.nextuple.pe:common-domain:1.3.0-${build_target}")
-    implementation("com.nextuple.pe:common-postgres:1.3.0-${build_target}")
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-common:common-domain"))
+    implementation(project(":pe-common:common-postgres"))
     implementation("com.nextuple.pe:core-near-cache-producer:1.3.0-${build_target}")
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-persistence-domain"))
 
@@ -29,5 +29,8 @@ tasks.withType(Test).configureEach {
 tasks.named('test') {
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-persistence-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
+    dependsOn ':pe-common:common-postgres:jar'
+    dependsOn ':pe-common:common-domain:jar'
 }
 

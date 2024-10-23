@@ -1,27 +1,27 @@
 spring:
   application:
-  #    dependencies:
-  #      item: "http://localhost:8082/"
-  #      node-carrier: "http://localhost:8082/"
-  #      carrier: "http://localhost:8082/"
-  #      transit: "http://localhost:8082/"
-  #      data-upload: "http://localhost:8081/"
-  #      node: "http://localhost:8082/"
-  #      promise-sourcing-rule: "http://localhost:8082/"
-  #      calendar: "http://localhost:8082/"
-  #      postal-code-timezone: "http://localhost:8082/"
-  #      weightage-configuration: "http://localhost:8082/"
-  #      userexit: "http://localhost:8082/"
-  #      configuration: "http://localhost:8082/"
+      dependencies:
+        item: "http://localhost:8080/"
+        node-carrier: "http://localhost:8080/"
+        carrier: "http://localhost:8080/"
+        transit: "http://localhost:8080/"
+        data-upload: "http://localhost:8080/"
+        node: "http://localhost:8080/"
+        promise-sourcing-rule: "http://localhost:8080/"
+        calendar: "http://localhost:8080/"
+        postal-code-timezone: "http://localhost:8080/"
+        weightage-configuration: "http://localhost:8080/"
+        userexit: "http://localhost:8080/"
+        configuration: "http://localhost:8080/"
   jpa:
     database: POSTGRESQL
     show-sql: true
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://170.7.0.16/pe
-    username: pe_users_pgadmin
-    password: E7E56EAB-9B03-4C95-8E71-FA871251A7D4
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: kiran
     hikari:
       maximumPoolSize: 100
       minimumIdle: 10
@@ -214,3 +214,5 @@ kafka:
   input:
     taskTopics: INTERNAL.DEV.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry
+
+tenantcheck: false

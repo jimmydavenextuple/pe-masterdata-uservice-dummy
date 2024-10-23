@@ -11,8 +11,8 @@ bootJar {
 dependencies {
     implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api-domain"))
     implementation(project(":pe-common:common-util"))
-    implementation("com.nextuple.pe:core-near-cache:1.4.0-${build_target}")
-    implementation("com.nextuple.pe:core-near-cache-spring:1.4.0-${build_target}")
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
     implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-near-cache"))
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
@@ -33,4 +33,6 @@ tasks.named('test') {
             ':pe-weightage-configuration-uservice:weightage-configuration-api-domain:jar'
     )
     dependsOn ':pe-common:common-util:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache-spring:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
 }
