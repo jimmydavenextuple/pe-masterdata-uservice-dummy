@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
     topics = "#{'${master-data.node-carrier.topic-names}'.split(',')}",
     groupId = "${master-data.node-carrier.group-id}",
     batch = "true",
+    autoStartup = "${kafka-topic-flags.master-data.node-carrier.enabled:false}",
     containerFactory = "nodeCarrierDeserializerConsumer")
 public class NodeCarrierFeedConsumer extends MasterDataFeedConsumer<NodeCarrierFeedDto> {
 

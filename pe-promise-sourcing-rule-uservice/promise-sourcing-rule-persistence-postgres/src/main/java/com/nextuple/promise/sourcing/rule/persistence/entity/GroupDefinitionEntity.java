@@ -47,6 +47,9 @@ public class GroupDefinitionEntity extends CommonBaseEntity {
   @Column(name = "req_attributes_value")
   private String reqAttributesValue;
 
+  @Column(name = "optional_attributes_value")
+  private String optionalAttributesValue;
+
   @Column(name = "sourcing_attributes_definition_id")
   private Long sourcingAttributesDefinitionId;
 

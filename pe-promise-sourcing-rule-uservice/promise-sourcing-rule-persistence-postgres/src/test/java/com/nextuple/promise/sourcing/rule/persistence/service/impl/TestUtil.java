@@ -90,6 +90,7 @@ public class TestUtil {
       SourcingConstraintEnum.SHIP_COMPLETE_LINE;
   public static final String SOURCING_CONSTRAINT_VALUE_1 = "1";
   public static final String REQUIRED_ATTRIBUTES_VALUE = "V1:V2";
+  public static final String OPTIONAL_ATTRIBUTES_VALUE = "V3:V4";
   public static final String GROUP_NAME = "group1";
   public static final String GROUP_ID = "1";
   public static final Long OPTIMIZATION_STRATEGY_ID = 1L;

@@ -39,6 +39,9 @@ public class OptimizationRuleUIResponse implements Serializable {
   @Schema(description = "List of the attributes.")
   private List<AttributeDetailsUIResponse> requiredAttributes;
 
+  @Schema(description = "List of the attributes.")
+  private List<AttributeDetailsUIResponse> optionalAttributes;
+
   @Schema(description = "Optimization strategy.", example = "SPEED,PRIORITY")
   private String strategy;
 

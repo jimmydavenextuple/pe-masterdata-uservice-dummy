@@ -15,11 +15,13 @@ import com.nextuple.common.response.error.FieldError;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionStatus;
 import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingAttributesDefinitionDomainDto;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -128,6 +130,7 @@ public class PromiseSourcingRuleUtil {
 
   public static void validateSourcingAttributesDefinitionId(
       String reqAttributesValue,
+      String optionalAttributesValue,
       Optional<SourcingAttributesDefinitionDomainDto> existingSourcingAttributesDefinitionDto,
       Long sourcingAttributesDefinitionId,
       String message)
@@ -158,14 +161,41 @@ public class PromiseSourcingRuleUtil {
     String[] requiredAttributeReferencesList =
         existingSourcingAttributesDefinitionDto.get().getReqAttributes().split("\\s*,\\s*");
     String[] requiredAttributeValuesList = reqAttributesValue.split("\\s*:\\s*");
-    if (requiredAttributeValuesList.length < requiredAttributeReferencesList.length) {
-      logger.error(
-          "Can't add the group definition as all the required attributes values are not present");
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          REQ_ATTRIBUTES_VALUE, FieldError.builder().rejectedValue(reqAttributesValue).build());
-      throw new CommonServiceException(message, HttpStatus.BAD_REQUEST, 0x1771, errorMap);
+    int optionalAttributesLength = 0;
+    String[] optionalAttributeValuesList = new String[0];
+    if (StringUtils.hasLength(existingSourcingAttributesDefinitionDto.get().getOptAttributes())) {
+      optionalAttributeValuesList =
+          existingSourcingAttributesDefinitionDto.get().getOptAttributes().split("\\s*,\\s*");
+      optionalAttributesLength = optionalAttributeValuesList.length;
     }
+
+    String optimizationRuleString = reqAttributesValue;
+    String[] attributeValuesList = requiredAttributeValuesList;
+    if (StringUtils.hasLength(optionalAttributesValue)) {
+      optimizationRuleString = optimizationRuleString + ":" + optionalAttributesValue;
+      attributeValuesList =
+          Stream.concat(
+                  Arrays.stream(requiredAttributeValuesList),
+                  Arrays.stream(optionalAttributeValuesList))
+              .toArray(String[]::new);
+    }
+
+    PromiseSourcingRuleUtil.checkForRequiredAttributesLength(
+        optimizationRuleString,
+        requiredAttributeReferencesList,
+        attributeValuesList,
+        "Can't add the group definition as all the required attributes values are not present",
+        "attributesValue",
+        0x1771);
+
+    PromiseSourcingRuleUtil.checkForTotalAttributesLength(
+        optimizationRuleString,
+        requiredAttributeReferencesList,
+        optionalAttributesLength,
+        attributeValuesList,
+        "Can't add the optimization rule as length of attributes is more than optional and required attributes combined",
+        "attributesValue",
+        0x1774);
   }
 
   public static void checkForRequiredAttributesLength(

@@ -55,8 +55,8 @@ class GroupDefinitionServiceTest {
     GroupDefinitionRequest groupDefinitionRequest = testUtil.getGroupDefinitionRequest();
 
     when(groupDefinitionDomain
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+                anyString(), anyLong(), anyString(), anyString()))
         .thenReturn(List.of());
     when(groupDefinitionDomain.fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString()))
         .thenReturn(List.of());
@@ -74,8 +74,8 @@ class GroupDefinitionServiceTest {
     assertEquals(testUtil.getGroupDefinitionEntity().getId(), groupDefinitionResponse.getId());
 
     verify(groupDefinitionDomain, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+            anyString(), anyLong(), anyString(), anyString());
     verify(groupDefinitionDomain, times(1))
         .fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString());
     verify(sourcingAttributesDefinitionDomain, times(1))
@@ -88,8 +88,8 @@ class GroupDefinitionServiceTest {
   void addGroupDefinitionExceptionTest1() throws PromiseEngineException {
 
     when(groupDefinitionDomain
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+                anyString(), anyLong(), anyString(), anyString()))
         .thenReturn(List.of(testUtil.getGroupDefinitionEntity()));
 
     Exception ex =
@@ -100,20 +100,20 @@ class GroupDefinitionServiceTest {
                   testUtil.getGroupDefinitionRequest());
             });
     assertEquals(
-        "Group already exist for given orgId , sourcingAttributesDefinitionId and reqAttributesValue",
+        "Group already exist for given orgId , sourcingAttributesDefinitionId, reqAttributesValue and optionalAttributesValue.",
         ex.getMessage());
 
     verify(groupDefinitionDomain, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+            anyString(), anyLong(), anyString(), anyString());
   }
 
   @Test
   void addGroupDefinitionExceptionTest2() throws PromiseEngineException {
 
     when(groupDefinitionDomain
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+                anyString(), anyLong(), anyString(), anyString()))
         .thenReturn(List.of());
     when(groupDefinitionDomain.fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString()))
         .thenReturn(List.of(testUtil.getGroupDefinitionEntity()));
@@ -128,8 +128,8 @@ class GroupDefinitionServiceTest {
     assertEquals("Combination of orgId and groupName should be unique", ex.getMessage());
 
     verify(groupDefinitionDomain, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+            anyString(), anyLong(), anyString(), anyString());
     verify(groupDefinitionDomain, times(1))
         .fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString());
   }
@@ -138,8 +138,8 @@ class GroupDefinitionServiceTest {
   void addGroupDefinitionExceptionTest3() throws PromiseEngineException {
 
     when(groupDefinitionDomain
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+                anyString(), anyLong(), anyString(), anyString()))
         .thenReturn(List.of());
     when(groupDefinitionDomain.fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString()))
         .thenReturn(List.of());
@@ -162,8 +162,8 @@ class GroupDefinitionServiceTest {
         ex.getMessage());
 
     verify(groupDefinitionDomain, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+            anyString(), anyLong(), anyString(), anyString());
     verify(groupDefinitionDomain, times(1))
         .fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString());
     verify(sourcingAttributesDefinitionDomain, times(1))
@@ -174,8 +174,8 @@ class GroupDefinitionServiceTest {
   void addGroupDefinitionExceptionTest4() throws PromiseEngineException {
 
     when(groupDefinitionDomain
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+                anyString(), anyLong(), anyString(), anyString()))
         .thenReturn(List.of());
     when(groupDefinitionDomain.fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString()))
         .thenReturn(List.of());
@@ -195,8 +195,8 @@ class GroupDefinitionServiceTest {
         ex.getMessage());
 
     verify(groupDefinitionDomain, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+            anyString(), anyLong(), anyString(), anyString());
     verify(groupDefinitionDomain, times(1))
         .fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString());
     verify(sourcingAttributesDefinitionDomain, times(1))
@@ -209,8 +209,8 @@ class GroupDefinitionServiceTest {
     groupDefinitionRequest.setReqAttributesValue("V1");
 
     when(groupDefinitionDomain
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+                anyString(), anyLong(), anyString(), anyString()))
         .thenReturn(List.of());
     when(groupDefinitionDomain.fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString()))
         .thenReturn(List.of());
@@ -232,8 +232,8 @@ class GroupDefinitionServiceTest {
         ex.getMessage());
 
     verify(groupDefinitionDomain, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+            anyString(), anyLong(), anyString(), anyString());
     verify(groupDefinitionDomain, times(1))
         .fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString());
     verify(sourcingAttributesDefinitionDomain, times(1))
@@ -324,8 +324,8 @@ class GroupDefinitionServiceTest {
     updatedGroupDefinitionEntity.setGroupName(updatedGroupName);
 
     when(groupDefinitionDomain
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+                anyString(), anyLong(), anyString(), anyString()))
         .thenReturn(List.of(testUtil.getGroupDefinitionEntity()));
     when(groupDefinitionDomain.fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString()))
         .thenReturn(List.of());
@@ -337,8 +337,8 @@ class GroupDefinitionServiceTest {
     assertEquals(testUtil.getGroupDefinitionEntity().getId(), groupDefinitionResponse.getId());
 
     verify(groupDefinitionDomain, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+            anyString(), anyLong(), anyString(), anyString());
     verify(groupDefinitionDomain, times(1))
         .fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString());
     verify(groupDefinitionDomain, times(1))
@@ -352,8 +352,8 @@ class GroupDefinitionServiceTest {
     groupDefinitionRequest.setGroupName(updatedGroupName);
 
     when(groupDefinitionDomain
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+                anyString(), anyLong(), anyString(), anyString()))
         .thenReturn(List.of());
 
     Exception ex =
@@ -363,12 +363,12 @@ class GroupDefinitionServiceTest {
               groupDefinitionService.processUpdateGroupDefinition(groupDefinitionRequest);
             });
     assertEquals(
-        "Group definition not found for given orgId , sourcingAttributesDefinitionId and reqAttributesValue",
+        "Group definition not found for given orgId , sourcingAttributesDefinitionId, reqAttributesValue and optionalAttributesValue",
         ex.getMessage());
 
     verify(groupDefinitionDomain, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+            anyString(), anyLong(), anyString(), anyString());
   }
 
   @Test
@@ -450,41 +450,6 @@ class GroupDefinitionServiceTest {
             CommonServiceException.class,
             () -> {
               groupDefinitionService.processDeleteGroupDefinition(TestUtil.ID, TestUtil.ORG_ID);
-            });
-    assertEquals("Group definition not found", ex.getMessage());
-
-    verify(groupDefinitionDomain, times(1))
-        .fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString());
-  }
-
-  @Test
-  void processGetGroupDefinitionByOrgIdAndIdTest()
-      throws PromiseEngineException, CommonServiceException {
-
-    when(groupDefinitionDomain.fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
-        .thenReturn(Optional.of(testUtil.getGroupDefinitionEntity()));
-
-    GroupDefinitionResponse groupDefinitionResponse =
-        groupDefinitionService.processGetGroupDefinitionByOrgIdAndId(
-            TestUtil.ORG_ID, Long.valueOf(TestUtil.GROUP_ID));
-    assertEquals(testUtil.getGroupDefinitionEntity().getId(), groupDefinitionResponse.getId());
-
-    verify(groupDefinitionDomain, times(1))
-        .fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString());
-  }
-
-  @Test
-  void processGetGroupDefinitionByOrgIdAndIdExceptionTest() throws PromiseEngineException {
-
-    when(groupDefinitionDomain.fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
-        .thenReturn(Optional.empty());
-
-    Exception ex =
-        assertThrows(
-            CommonServiceException.class,
-            () -> {
-              groupDefinitionService.processGetGroupDefinitionByOrgIdAndId(
-                  TestUtil.ORG_ID, Long.valueOf(TestUtil.GROUP_ID));
             });
     assertEquals("Group definition not found", ex.getMessage());
 

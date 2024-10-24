@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":pe-node-uservice:node-api-domain"))
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
+    implementation 'org.jetbrains:annotations:16.0.2'
 
 }
 

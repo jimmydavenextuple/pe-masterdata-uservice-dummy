@@ -9,7 +9,6 @@ package com.nextuple.promise.sourcing.rule.service;
 
 import static com.nextuple.promise.sourcing.rule.service.SourcingRulesConfigurationService.COLON_SPLIT_REGEX;
 import static com.nextuple.promise.sourcing.rule.service.SourcingRulesConfigurationService.SPLIT_REGEX;
-import static com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleUtil.validateSourcingAttributesDefinitionId;
 
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
@@ -24,6 +23,7 @@ import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDef
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingConstraintEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.AttributeDetailsUIRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.DeleteOptimizationRulesRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.GroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.NamedOptimizationStrategyRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.NamedOptimizationStrategyUpdationRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.OptimizationRuleUpdationUIRequest;
@@ -38,6 +38,7 @@ import com.nextuple.promise.sourcing.rule.api.domain.outbound.PaginationAttribut
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributeResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.AttributeInfo;
+import com.nextuple.promise.sourcing.rule.domain.mapper.GroupDefinitionMapper;
 import com.nextuple.promise.sourcing.rule.domain.mapper.NamedOptimizationStrategyMapper;
 import com.nextuple.promise.sourcing.rule.persistence.domain.GroupDefinitionDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.NamedOptimizationStrategyDomainDto;
@@ -62,6 +63,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -72,6 +74,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -111,6 +114,8 @@ public class NamedOptimizationStrategyService {
 
   private static final NamedOptimizationStrategyMapper INSTANCE =
       Mappers.getMapper(NamedOptimizationStrategyMapper.class);
+  private static final GroupDefinitionMapper GROUP_DEFINITION_MAPPER =
+      Mappers.getMapper(GroupDefinitionMapper.class);
 
   private static final String OPTIMIZATION_RULE_PAGINATION_URL =
       "/ui/optimization-rules/%s?pageNo=%d&pageSize=%d";
@@ -430,9 +435,16 @@ public class NamedOptimizationStrategyService {
     NamedOptimizationStrategyDomainDto namedOptimizationStrategyResponse =
         namedOptimizationStrategyPersistenceService.saveOptimizationStrategy(
             namedOptimizationStrategyDomainDto.get());
-    Optional<GroupDefinitionDomainDto> groupDefinitionResponse =
+    Optional<GroupDefinitionDomainDto> groupDefinitionDomainDtoOptional =
         groupDefinitionPersistenceService.fetchGroupDefinitionById(
             Long.valueOf(namedOptimizationStrategyResponse.getGroupId()));
+    Optional<GroupDefinitionResponse> groupDefinitionResponseOptional = Optional.empty();
+    if (groupDefinitionDomainDtoOptional.isPresent()) {
+      GroupDefinitionResponse response =
+          GROUP_DEFINITION_MAPPER.toGroupDefinitionResponse(groupDefinitionDomainDtoOptional.get());
+      groupDefinitionResponseOptional = Optional.of(response);
+    }
+
     List<SourcingConstraintDomainDto> sourcingConstraintDomainDtos =
         sourcingConstraintPersistenceService.fetchByOrgIdAndGroupId(
             orgId, namedOptimizationStrategyResponse.getGroupId());
@@ -466,7 +478,7 @@ public class NamedOptimizationStrategyService {
 
     return prepareOptimizationStrategyUIResponse(
         orgId,
-        groupDefinitionResponse,
+        groupDefinitionResponseOptional,
         namedOptimizationStrategyResponse,
         updatedSourcingConstraintDomainDtos);
   }
@@ -575,8 +587,8 @@ public class NamedOptimizationStrategyService {
       throws PromiseEngineException, CommonServiceException {
 
     GroupDefinitionResponse groupDefinitionResponse =
-        groupDefinitionService.processGetGroupDefinitionByOrgIdAndId(
-            orgId, Long.valueOf(namedOptimizationStrategyResponse.getGroupId()));
+        groupDefinitionService.processGetGroupDefinitionByIdAndOrgId(
+            Long.valueOf(namedOptimizationStrategyResponse.getGroupId()), orgId);
 
     SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
         sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
@@ -834,7 +846,11 @@ public class NamedOptimizationStrategyService {
         response.setSourcingAttributesDefinitionId(sourcingAttributeDefinitionId);
         response.setOptimizationRuleName(strategy.get().getOptimizationStrategyName());
         response.setRequiredAttributes(
-            prepareReqAttributesResponse(orgId, groupDefinitionDomainDto));
+            prepareReqAttributesResponse(
+                orgId,
+                Optional.of(
+                    GROUP_DEFINITION_MAPPER.toGroupDefinitionResponse(
+                        groupDefinitionDomainDto.get()))));
         response.setStrategy(strategy.get().getOptimizationStrategyDetails());
         List<AllConstraintUIDto> sourcingConstraints =
             prepareSourcingConstraintsResponse(orgId, strategy.get().getGroupId());
@@ -852,16 +868,10 @@ public class NamedOptimizationStrategyService {
       throws CommonServiceException, PromiseEngineException {
     logger.debug("-- inside createOptimizationRuleUI service --");
 
-    String reqAttributesValueForGroup =
-        request.getRequiredAttributes().stream()
-            .map(AttributeDetailsUIRequest::getAttributeValue)
-            .collect(Collectors.joining(":"));
-
     validateStrategyName(orgId, request.getOptimizationRuleName());
     String groupName = request.getOptimizationRuleName().concat(" ").concat("group");
 
-    GroupDefinitionDomainDto groupDefinitionResponse =
-        addGroupDefinition(orgId, groupName, reqAttributesValueForGroup, request);
+    GroupDefinitionResponse groupDefinitionResponse = addGroupDefinition(orgId, groupName, request);
     Long groupId = groupDefinitionResponse.getId();
 
     NamedOptimizationStrategyDomainDto optimizationStrategyResponse =
@@ -879,61 +889,30 @@ public class NamedOptimizationStrategyService {
         sourcingConstraintDomainDtos);
   }
 
-  private GroupDefinitionDomainDto addGroupDefinition(
-      String orgId,
-      String groupName,
-      String reqAttributesValueForGroup,
-      OptimizationStrategyUIRequest request)
+  private GroupDefinitionResponse addGroupDefinition(
+      String orgId, String groupName, OptimizationStrategyUIRequest request)
       throws PromiseEngineException, CommonServiceException {
-    GroupDefinitionDomainDto groupDefinitionDomainDto = new GroupDefinitionDomainDto();
-    groupDefinitionDomainDto.setOrgId(orgId);
-    groupDefinitionDomainDto.setGroupName(groupName);
-    groupDefinitionDomainDto.setReqAttributesValue(reqAttributesValueForGroup);
-    groupDefinitionDomainDto.setSourcingAttributesDefinitionId(
-        Long.valueOf(request.getSourcingAttributesDefinitionId()));
-    List<GroupDefinitionDomainDto> groupDefinitionDomainDtoList =
-        groupDefinitionPersistenceService
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                groupDefinitionDomainDto.getOrgId(),
-                groupDefinitionDomainDto.getSourcingAttributesDefinitionId(),
-                groupDefinitionDomainDto.getReqAttributesValue());
-    if (!groupDefinitionDomainDtoList.isEmpty()) {
-      logger.error(
-          "Group already exists for given orgId :{} , sourcingAttributesDefinitionId : {} and reqAttributesValue :{}",
-          groupDefinitionDomainDto.getOrgId(),
-          groupDefinitionDomainDto.getSourcingAttributesDefinitionId(),
-          groupDefinitionDomainDto.getReqAttributesValue());
-
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          ORG_ID, FieldError.builder().rejectedValue(groupDefinitionDomainDto.getOrgId()).build());
-      errorMap.put(
-          REQ_ATTRIBUTES_VALUE,
-          FieldError.builder()
-              .rejectedValue(groupDefinitionDomainDto.getReqAttributesValue())
-              .build());
-      errorMap.put(
-          SOURCING_ATTRIBUTES_DEFINITION_ID,
-          FieldError.builder()
-              .rejectedValue(groupDefinitionDomainDto.getSourcingAttributesDefinitionId())
-              .build());
-      throw new CommonServiceException(
-          "Group already exist for given orgId , sourcingAttributesDefinitionId and reqAttributesValue",
-          HttpStatus.BAD_REQUEST,
-          0X1771,
-          errorMap);
-    }
-    validateGroupName(groupDefinitionDomainDto.getOrgId(), groupDefinitionDomainDto.getGroupName());
-    Optional<SourcingAttributesDefinitionDomainDto> existingSourcingAttributesDefinitionDomainDto =
-        sourcingAttributesDefinitionPersistenceService
-            .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
-                groupDefinitionDomainDto.getSourcingAttributesDefinitionId(), orgId);
-    validateSourcingAttributesDefinitionId(
-        reqAttributesValueForGroup,
-        existingSourcingAttributesDefinitionDomainDto,
-        groupDefinitionDomainDto.getSourcingAttributesDefinitionId(),
-        STATUS_INACTIVE_MESSAGE);
-    return groupDefinitionPersistenceService.saveGroupDefinition(groupDefinitionDomainDto);
+    String reqAttributesValueForGroup =
+        request.getRequiredAttributes().stream()
+            .map(AttributeDetailsUIRequest::getAttributeValue)
+            .collect(Collectors.joining(":"));
+    String optionalAttributesValuesForGroup = null;
+    if (Objects.nonNull(request.getOptionalAttributes())
+        && !request.getOptionalAttributes().isEmpty())
+      optionalAttributesValuesForGroup =
+          request.getOptionalAttributes().stream()
+              .map(AttributeDetailsUIRequest::getAttributeValue)
+              .collect(Collectors.joining(":"));
+    GroupDefinitionRequest groupDefinitionRequest =
+        GroupDefinitionRequest.builder()
+            .orgId(orgId)
+            .groupName(groupName)
+            .reqAttributesValue(reqAttributesValueForGroup)
+            .optionalAttributesValue(optionalAttributesValuesForGroup)
+            .sourcingAttributesDefinitionId(
+                Long.valueOf(request.getSourcingAttributesDefinitionId()))
+            .build();
+    return groupDefinitionService.processAddGroupDefinition(groupDefinitionRequest);
   }
 
   private NamedOptimizationStrategyDomainDto addOptimizationStrategy(
@@ -1016,22 +995,6 @@ public class NamedOptimizationStrategyService {
     return sourcingConstraintEntities;
   }
 
-  private void validateGroupName(String orgId, String groupName)
-      throws CommonServiceException, PromiseEngineException {
-    List<GroupDefinitionDomainDto> groupDefinitionDomainDtos =
-        groupDefinitionPersistenceService.fetchGroupDefinitionListByOrgIdAndName(orgId, groupName);
-    if (!groupDefinitionDomainDtos.isEmpty()) {
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
-      errorMap.put(GROUP_NAME, FieldError.builder().rejectedValue(groupName).build());
-      throw new CommonServiceException(
-          "Combination of orgId and groupName should be unique",
-          HttpStatus.BAD_REQUEST,
-          0X1771,
-          errorMap);
-    }
-  }
-
   private void validateSourcingConstraintValue(String sourcingConstraintValue)
       throws CommonServiceException {
 
@@ -1048,7 +1011,7 @@ public class NamedOptimizationStrategyService {
 
   private OptimizationRuleUIResponse prepareOptimizationStrategyUIResponse(
       String orgId,
-      Optional<GroupDefinitionDomainDto> groupDefinitionResponse,
+      Optional<GroupDefinitionResponse> groupDefinitionResponse,
       NamedOptimizationStrategyDomainDto optimizationStrategyResponse,
       List<SourcingConstraintDomainDto> sourcingConstraintDomainDtos)
       throws PromiseEngineException, CommonServiceException {
@@ -1062,6 +1025,7 @@ public class NamedOptimizationStrategyService {
     response.setOptimizationRuleName(optimizationStrategyResponse.getOptimizationStrategyName());
     response.setStrategy(optimizationStrategyResponse.getOptimizationStrategyDetails());
     response.setRequiredAttributes(prepareReqAttributesResponse(orgId, groupDefinitionResponse));
+    response.setOptionalAttributes(prepareOptAttributesResponse(orgId, groupDefinitionResponse));
     if (CollectionUtils.isEmpty(sourcingConstraintDomainDtos)) {
       response.setConstraints(List.of());
     } else {
@@ -1098,9 +1062,42 @@ public class NamedOptimizationStrategyService {
     return constraints;
   }
 
-  private List<AttributeDetailsUIResponse> prepareReqAttributesResponse(
-      String orgId, Optional<GroupDefinitionDomainDto> groupDefinitionDomainDto)
+  private List<AttributeDetailsUIResponse> prepareOptAttributesResponse(
+      String orgId, Optional<GroupDefinitionResponse> groupDefinitionDomainDto)
       throws PromiseEngineException, CommonServiceException {
+    validateEmptyGroupDefinition(orgId, groupDefinitionDomainDto);
+    String optAttributeValue = groupDefinitionDomainDto.get().getOptionalAttributesValue();
+    if (!StringUtils.hasLength(optAttributeValue)) return Collections.emptyList();
+    Long sourcingAttributesDefinitionId =
+        groupDefinitionDomainDto.get().getSourcingAttributesDefinitionId();
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionDomainDto =
+        getSourcingAttributesDefinitionDomainDto(sourcingAttributesDefinitionId);
+    if (!StringUtils.hasLength(sourcingAttributesDefinitionDomainDto.getOptAttributes()))
+      return Collections.emptyList();
+    List<String> attributeValues = Arrays.asList(optAttributeValue.split(":"));
+    List<String> attributeIds =
+        Arrays.asList(sourcingAttributesDefinitionDomainDto.getOptAttributes().split(","));
+    return getAttributeDetailsList(orgId, attributeValues, attributeIds);
+  }
+
+  private List<AttributeDetailsUIResponse> prepareReqAttributesResponse(
+      String orgId, Optional<GroupDefinitionResponse> groupDefinitionDomainDto)
+      throws PromiseEngineException, CommonServiceException {
+    validateEmptyGroupDefinition(orgId, groupDefinitionDomainDto);
+    String reqAttributeValue = groupDefinitionDomainDto.get().getReqAttributesValue();
+    Long sourcingAttributesDefinitionId =
+        groupDefinitionDomainDto.get().getSourcingAttributesDefinitionId();
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionDomainDto =
+        getSourcingAttributesDefinitionDomainDto(sourcingAttributesDefinitionId);
+    List<String> attributeValues = Arrays.asList(reqAttributeValue.split(":"));
+    List<String> attributeIds =
+        Arrays.asList(sourcingAttributesDefinitionDomainDto.getReqAttributes().split(","));
+    return getAttributeDetailsList(orgId, attributeValues, attributeIds);
+  }
+
+  private static void validateEmptyGroupDefinition(
+      String orgId, Optional<GroupDefinitionResponse> groupDefinitionDomainDto)
+      throws CommonServiceException {
     if (groupDefinitionDomainDto.isEmpty()) {
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
@@ -1110,26 +1107,12 @@ public class NamedOptimizationStrategyService {
           0X1771,
           errorMap);
     }
-    String reqAttributeValue = groupDefinitionDomainDto.get().getReqAttributesValue();
-    Long sourcingAttributesDefinitionId =
-        groupDefinitionDomainDto.get().getSourcingAttributesDefinitionId();
-    Optional<SourcingAttributesDefinitionDomainDto> sourcingAttributesDefinitionDomainDto =
-        sourcingAttributesDefinitionPersistenceService
-            .getSourcingRuleAttributesDefinitionEntityById(sourcingAttributesDefinitionId);
-    if (sourcingAttributesDefinitionDomainDto.isEmpty()) {
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          SOURCING_ATTRIBUTE_DEFINITION_ID,
-          FieldError.builder().rejectedValue(sourcingAttributesDefinitionId).build());
-      throw new CommonServiceException(
-          "No sourcing attributes definition entity found for the given sourcingAttributeDefinitionId",
-          HttpStatus.NOT_FOUND,
-          0X1772,
-          errorMap);
-    }
-    List<String> attributeValues = Arrays.asList(reqAttributeValue.split(":"));
-    List<String> attributeIds =
-        Arrays.asList(sourcingAttributesDefinitionDomainDto.get().getReqAttributes().split(","));
+  }
+
+  @NotNull
+  private List<AttributeDetailsUIResponse> getAttributeDetailsList(
+      String orgId, List<String> attributeValues, List<String> attributeIds)
+      throws PromiseEngineException, CommonServiceException {
     List<AttributeDetailsUIResponse> reqAttributes = new ArrayList<>();
     for (int i = 0; i < attributeValues.size() && i < attributeIds.size(); i++) {
       Long id = Long.parseLong(attributeIds.get(i).trim());
@@ -1145,12 +1128,40 @@ public class NamedOptimizationStrategyService {
             0X1771,
             errorMap);
       }
-      AttributeDetailsUIResponse attribute = new AttributeDetailsUIResponse();
-      attribute.setAttributeId(id);
-      attribute.setAttributeName(sourcingAttributeDomainDto.get().getAttributeName());
-      attribute.setAttributeValue(attributeValues.get(i));
+      AttributeDetailsUIResponse attribute =
+          getAttributeDetailsUIResponse(
+              id, sourcingAttributeDomainDto.get(), attributeValues.get(i));
       reqAttributes.add(attribute);
     }
     return reqAttributes;
+  }
+
+  private SourcingAttributesDefinitionDomainDto getSourcingAttributesDefinitionDomainDto(
+      Long sourcingAttributesDefinitionId) throws PromiseEngineException, CommonServiceException {
+    Optional<SourcingAttributesDefinitionDomainDto> sourcingAttributesDefinitionDomainDto =
+        sourcingAttributesDefinitionPersistenceService
+            .getSourcingRuleAttributesDefinitionEntityById(sourcingAttributesDefinitionId);
+    if (sourcingAttributesDefinitionDomainDto.isEmpty()) {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          SOURCING_ATTRIBUTE_DEFINITION_ID,
+          FieldError.builder().rejectedValue(sourcingAttributesDefinitionId).build());
+      throw new CommonServiceException(
+          "No sourcing attributes definition entity found for the given sourcingAttributeDefinitionId",
+          HttpStatus.NOT_FOUND,
+          0X1772,
+          errorMap);
+    }
+    return sourcingAttributesDefinitionDomainDto.get();
+  }
+
+  @NotNull
+  private static AttributeDetailsUIResponse getAttributeDetailsUIResponse(
+      Long id, SourcingAttributeDomainDto sourcingAttributeDomainDto, String attributeValue) {
+    AttributeDetailsUIResponse attribute = new AttributeDetailsUIResponse();
+    attribute.setAttributeId(id);
+    attribute.setAttributeName(sourcingAttributeDomainDto.getAttributeName());
+    attribute.setAttributeValue(attributeValue);
+    return attribute;
   }
 }

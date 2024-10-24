@@ -27,6 +27,13 @@ public interface GroupDefinitionRepository
   List<GroupDefinitionEntity> findByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
       String orgId, Long sourcingAttributesDefinitionId, String reqAttributesValue);
 
+  List<GroupDefinitionEntity>
+      findBySourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributesValueAndOrgId(
+          Long sourcingAttributesDefinitionId,
+          String reqAttributesValue,
+          String optionalAttributesValue,
+          String orgId);
+
   List<GroupDefinitionEntity> findByOrgIdAndSourcingAttributesDefinitionId(
       String orgId, Long sourcingAttributesDefinitionId);
 

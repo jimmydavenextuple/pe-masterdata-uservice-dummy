@@ -31,4 +31,9 @@ public class GroupDefinitionInfo implements Serializable {
       description = "Colon separated values of the required attributes.",
       example = "EXPRESS:T2P")
   private String reqAttributesValue;
+
+  @Schema(
+      description = "Colon separated values of the optional attributes.",
+      example = "EXPRESS:T2P")
+  private String optionalAttributesValue;
 }

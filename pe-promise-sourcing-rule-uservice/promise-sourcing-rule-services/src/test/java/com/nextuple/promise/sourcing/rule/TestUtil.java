@@ -993,6 +993,7 @@ public class TestUtil {
         .groupName(GROUP_NAME)
         .sourcingAttributesDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
         .reqAttributesValue(REQUIRED_ATTRIBUTES_VALUE)
+        .optionalAttributesValue(OPTIONAL_ATTRIBUTES_VALUE)
         .build();
   }
 
@@ -1003,6 +1004,7 @@ public class TestUtil {
         .groupName(GROUP_NAME)
         .sourcingAttributesDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
         .reqAttributesValue(REQUIRED_ATTRIBUTES_VALUE)
+        .optionalAttributesValue(OPTIONAL_ATTRIBUTES_VALUE)
         .build();
   }
 

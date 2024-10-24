@@ -225,5 +225,3 @@ kafka:
   input:
     taskTopics: INTERNAL.DEV.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry
-
-tenantcheck: false

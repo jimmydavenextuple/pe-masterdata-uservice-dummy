@@ -29,7 +29,8 @@ import org.springframework.stereotype.Component;
     topics = "#{'${master-data.transit.topic-names}'.split(',')}",
     groupId = "${master-data.transit.group-id}",
     batch = "true",
-    containerFactory = "transitBufferFeedDeserializerConsumer")
+    containerFactory = "transitBufferFeedDeserializerConsumer",
+    autoStartup = "${kafka-topic-flags.master-data.transit.enabled:false}")
 public class TransitFeedConsumer extends MasterDataFeedConsumer<TransitFeedDto> {
 
   private final TransitBatchServiceImpl transitBatchService;

@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
     topics = "#{'${master-data.processing-lead-time.topic-names}'.split(',')}",
     groupId = "${master-data.processing-lead-time.group-id}",
     batch = "true",
+    autoStartup = "${kafka-topic-flags.master-data.processing-lead-time.enabled:false}",
     containerFactory = "processingLeadTimeDeserializerConsumer")
 public class ProcessingLeadTimeConsumer extends MasterDataFeedConsumer<ProcessingLeadTimeFeedDto> {
 

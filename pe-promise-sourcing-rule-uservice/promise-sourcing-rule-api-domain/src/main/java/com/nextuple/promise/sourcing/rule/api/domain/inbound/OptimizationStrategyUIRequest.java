@@ -42,6 +42,9 @@ public class OptimizationStrategyUIRequest implements Serializable {
   @Schema(description = "List of required attributes for a given sourcing attribute definition ID.")
   private List<AttributeDetailsUIRequest> requiredAttributes;
 
+  @Schema(description = "List of required attributes for a given sourcing attribute definition ID.")
+  private List<AttributeDetailsUIRequest> optionalAttributes;
+
   @NotBlank(message = "strategy can't be empty")
   @Schema(description = "Details of the optimization strategy", example = "SPEED,PRIORITY")
   private String strategy;

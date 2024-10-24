@@ -136,6 +136,40 @@ public class GroupDefinitionPersistenceServiceImpl
 
   @Override
   public List<GroupDefinitionDomainDto>
+      fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+          String orgId,
+          Long sourcingAttributesDefinitionId,
+          String reqAttributesValue,
+          String optionalAttributeValue)
+          throws PromiseEngineException {
+    logger.debug(
+        "-- inside fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue domain -- with orgId:{} sourcingAttributesDefinitionId:{} reqAttributesValue:{} optionalAttributeValue: {}",
+        orgId,
+        sourcingAttributesDefinitionId,
+        reqAttributesValue,
+        optionalAttributeValue);
+    try {
+      List<GroupDefinitionEntity> groupDefinitionEntities =
+          getRepository()
+              .findBySourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributesValueAndOrgId(
+                  sourcingAttributesDefinitionId,
+                  reqAttributesValue,
+                  optionalAttributeValue,
+                  orgId);
+      return getMapper().toDomain(groupDefinitionEntities);
+    } catch (Exception e) {
+      logger.error(
+          "Unable to fetch group definition list by orgId , sourcingAttributesDefinitionId, reqAttributesValue and optionalAttributesValue",
+          e);
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Unable to fetch group definition list by orgId , sourcingAttributesDefinitionId, reqAttributesValue and optionalAttributesValue");
+    }
+  }
+
+  @Override
+  public List<GroupDefinitionDomainDto>
       fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionId(
           String orgId, Long sourcingAttributesDefinitionId) throws PromiseEngineException {
     logger.debug(

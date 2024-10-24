@@ -29,7 +29,8 @@ import org.springframework.stereotype.Component;
     topics = "#{'${master-data.node-service-option-buffer.topic-names}'.split(',')}",
     groupId = "${master-data.node-service-option-buffer.group-id}",
     batch = "true",
-    containerFactory = "nodeServiceOptionBufferDeserializerConsumer")
+    containerFactory = "nodeServiceOptionBufferDeserializerConsumer",
+    autoStartup = "${kafka-topic-flags.master-data.node-service-option-buffer.enabled:false}")
 public class NodeServiceOptionBufferFeedConsumer
     extends MasterDataFeedConsumer<NodeServiceOptionBufferFeedDto> {
 

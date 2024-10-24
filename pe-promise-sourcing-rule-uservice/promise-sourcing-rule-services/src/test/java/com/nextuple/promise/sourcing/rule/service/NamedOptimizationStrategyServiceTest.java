@@ -62,6 +62,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 
 class NamedOptimizationStrategyServiceTest {
   @InjectMocks private NamedOptimizationStrategyService namedOptimizationStrategyService;
@@ -454,7 +455,7 @@ class NamedOptimizationStrategyServiceTest {
             anyLong(), anyString()))
         .thenReturn(Optional.of(namedOptimizationStrategyEntity));
 
-    when(groupDefinitionService.processGetGroupDefinitionByOrgIdAndId(anyString(), anyLong()))
+    when(groupDefinitionService.processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(groupDefinitionResponse);
 
     when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
@@ -486,7 +487,7 @@ class NamedOptimizationStrategyServiceTest {
     verify(namedOptimizationStrategyPersistenceService, times(1))
         .fetchOptimizationStrategyByIdAndOrgId(anyLong(), anyString());
     verify(groupDefinitionService, times(1))
-        .processGetGroupDefinitionByOrgIdAndId(anyString(), anyLong());
+        .processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString());
     verify(sourcingAttributesDefinitionService, times(1))
         .processGetSourcingAttributesDefinitionByIdandOrgId(anyLong(), anyString());
     verify(sourcingAttributeService, times(2))
@@ -516,7 +517,7 @@ class NamedOptimizationStrategyServiceTest {
             anyLong(), anyString()))
         .thenReturn(Optional.of(namedOptimizationStrategyEntity));
 
-    when(groupDefinitionService.processGetGroupDefinitionByOrgIdAndId(anyString(), anyLong()))
+    when(groupDefinitionService.processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(groupDefinitionResponse);
 
     when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
@@ -553,7 +554,7 @@ class NamedOptimizationStrategyServiceTest {
     verify(namedOptimizationStrategyPersistenceService, times(1))
         .fetchOptimizationStrategyByIdAndOrgId(anyLong(), anyString());
     verify(groupDefinitionService, times(1))
-        .processGetGroupDefinitionByOrgIdAndId(anyString(), anyLong());
+        .processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString());
     verify(sourcingAttributesDefinitionService, times(1))
         .processGetSourcingAttributesDefinitionByIdandOrgId(anyLong(), anyString());
     verify(sourcingAttributeService, times(2))
@@ -655,7 +656,7 @@ class NamedOptimizationStrategyServiceTest {
 
     SourcingAttributeResponse sourcingAttributeResponse = testUtil.getSourcingAttributeResponse();
 
-    when(groupDefinitionService.processGetGroupDefinitionByOrgIdAndId(anyString(), anyLong()))
+    when(groupDefinitionService.processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(groupDefinitionResponse);
 
     when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
@@ -686,7 +687,7 @@ class NamedOptimizationStrategyServiceTest {
                 optimizationRuleUIResponse.getRequiredAttributes().get(0).getAttributeValue()));
 
     verify(groupDefinitionService, times(1))
-        .processGetGroupDefinitionByOrgIdAndId(anyString(), anyLong());
+        .processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString());
     verify(sourcingAttributesDefinitionService, times(1))
         .processGetSourcingAttributesDefinitionByIdandOrgId(anyLong(), anyString());
     verify(sourcingAttributeService, times(2))
@@ -708,9 +709,7 @@ class NamedOptimizationStrategyServiceTest {
         testUtil.getSourcingRuleAttributesDefinitionResponseWithRequiredAttributeInconsistency(
             SourcingAttributesDefinitionStatus.ACTIVE);
 
-    SourcingAttributeResponse sourcingAttributeResponse = testUtil.getSourcingAttributeResponse();
-
-    when(groupDefinitionService.processGetGroupDefinitionByOrgIdAndId(anyString(), anyLong()))
+    when(groupDefinitionService.processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(groupDefinitionResponse);
 
     when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
@@ -732,7 +731,7 @@ class NamedOptimizationStrategyServiceTest {
         ex.getMessage());
 
     verify(groupDefinitionService, times(1))
-        .processGetGroupDefinitionByOrgIdAndId(anyString(), anyLong());
+        .processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString());
     verify(sourcingAttributesDefinitionService, times(1))
         .processGetSourcingAttributesDefinitionByIdandOrgId(anyLong(), anyString());
     verify(sourcingAttributeService, times(0))
@@ -778,7 +777,7 @@ class NamedOptimizationStrategyServiceTest {
 
     SourcingAttributeResponse sourcingAttributeResponse = testUtil.getSourcingAttributeResponse();
 
-    when(groupDefinitionService.processGetGroupDefinitionByOrgIdAndId(anyString(), anyLong()))
+    when(groupDefinitionService.processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(groupDefinitionResponse);
 
     when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
@@ -811,7 +810,7 @@ class NamedOptimizationStrategyServiceTest {
         .fetchOptimizationStrategyByOrgIdAndGroupId(anyString(), anyString(), any());
 
     verify(groupDefinitionService, times(1))
-        .processGetGroupDefinitionByOrgIdAndId(anyString(), anyLong());
+        .processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString());
     verify(sourcingAttributesDefinitionService, times(1))
         .processGetSourcingAttributesDefinitionByIdandOrgId(anyLong(), anyString());
     verify(sourcingAttributeService, times(2))
@@ -1006,15 +1005,12 @@ class NamedOptimizationStrategyServiceTest {
     GroupDefinitionDomainDto groupDefinitionEntity = testUtil.getGroupDefinitionEntity();
     NamedOptimizationStrategyDomainDto namedOptimizationStrategyEntity =
         testUtil.getNamedOptimizationStrategyEntity();
-
+    when(groupDefinitionService.processAddGroupDefinition(any()))
+        .thenReturn(testUtil.getGroupDefinitionResponse());
     when(namedOptimizationStrategyPersistenceService
             .fetchOptimizationStrategyByOrgIdAndStrategyName(anyString(), anyString()))
         .thenReturn(List.of());
 
-    when(groupDefinitionPersistenceService
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
-        .thenReturn(List.of());
     when(groupDefinitionPersistenceService.fetchGroupDefinitionListByOrgIdAndName(
             anyString(), anyString()))
         .thenReturn(List.of());
@@ -1030,8 +1026,6 @@ class NamedOptimizationStrategyServiceTest {
             Optional.of(
                 testUtil.getSourcingRuleAttributesDefinitionEntityForOptimization(
                     SourcingAttributesDefinitionStatus.ACTIVE)));
-    when(groupDefinitionPersistenceService.saveGroupDefinition(any(GroupDefinitionDomainDto.class)))
-        .thenReturn(testUtil.getGroupDefinitionEntity());
 
     when(groupDefinitionPersistenceService.fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(Optional.of(groupDefinitionEntity));
@@ -1062,9 +1056,6 @@ class NamedOptimizationStrategyServiceTest {
     assertEquals(
         groupDefinitionEntity.getSourcingAttributesDefinitionId(), sourcingAttributeDefinitionId);
 
-    verify(groupDefinitionPersistenceService, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
     verify(groupDefinitionPersistenceService, times(1))
         .fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString());
     verify(namedOptimizationStrategyPersistenceService, times(1))
@@ -1105,8 +1096,8 @@ class NamedOptimizationStrategyServiceTest {
             Optional.of(
                 testUtil.getSourcingRuleAttributesDefinitionEntityForOptimization(
                     SourcingAttributesDefinitionStatus.ACTIVE)));
-    when(groupDefinitionPersistenceService.saveGroupDefinition(any(GroupDefinitionDomainDto.class)))
-        .thenReturn(testUtil.getGroupDefinitionEntity());
+    when(groupDefinitionService.processAddGroupDefinition(any()))
+        .thenReturn(testUtil.getGroupDefinitionResponse());
 
     when(groupDefinitionPersistenceService.fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(Optional.of(groupDefinitionEntity));
@@ -1138,9 +1129,6 @@ class NamedOptimizationStrategyServiceTest {
         groupDefinitionEntity.getSourcingAttributesDefinitionId(), sourcingAttributeDefinitionId);
 
     verify(groupDefinitionPersistenceService, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
-    verify(groupDefinitionPersistenceService, times(1))
         .fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString());
     verify(namedOptimizationStrategyPersistenceService, times(1))
         .fetchOptimizationStrategyByOrgIdAndGroupId(anyString(), anyString());
@@ -1161,10 +1149,6 @@ class NamedOptimizationStrategyServiceTest {
             .fetchOptimizationStrategyByOrgIdAndStrategyName(anyString(), anyString()))
         .thenReturn(List.of());
 
-    when(groupDefinitionPersistenceService
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
-        .thenReturn(List.of());
     when(groupDefinitionPersistenceService.fetchGroupDefinitionListByOrgIdAndName(
             anyString(), anyString()))
         .thenReturn(List.of());
@@ -1180,8 +1164,8 @@ class NamedOptimizationStrategyServiceTest {
             Optional.of(
                 testUtil.getSourcingRuleAttributesDefinitionEntityForOptimization(
                     SourcingAttributesDefinitionStatus.ACTIVE)));
-    when(groupDefinitionPersistenceService.saveGroupDefinition(any(GroupDefinitionDomainDto.class)))
-        .thenReturn(testUtil.getGroupDefinitionEntity());
+    when(groupDefinitionService.processAddGroupDefinition(any()))
+        .thenReturn(testUtil.getGroupDefinitionResponse());
 
     when(groupDefinitionPersistenceService.fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(Optional.of(groupDefinitionEntity));
@@ -1205,9 +1189,6 @@ class NamedOptimizationStrategyServiceTest {
     assertEquals(
         groupDefinitionEntity.getSourcingAttributesDefinitionId(), sourcingAttributeDefinitionId);
     assertEquals(0, response.getConstraints().size());
-    verify(groupDefinitionPersistenceService, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
     verify(groupDefinitionPersistenceService, times(1))
         .fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString());
     verify(namedOptimizationStrategyPersistenceService, times(1))
@@ -1226,10 +1207,6 @@ class NamedOptimizationStrategyServiceTest {
             .fetchOptimizationStrategyByOrgIdAndStrategyName(anyString(), anyString()))
         .thenReturn(List.of());
 
-    when(groupDefinitionPersistenceService
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
-        .thenReturn(List.of());
     when(groupDefinitionPersistenceService.fetchGroupDefinitionListByOrgIdAndName(
             anyString(), anyString()))
         .thenReturn(List.of());
@@ -1245,9 +1222,8 @@ class NamedOptimizationStrategyServiceTest {
             Optional.of(
                 testUtil.getSourcingRuleAttributesDefinitionEntityForOptimization(
                     SourcingAttributesDefinitionStatus.ACTIVE)));
-    when(groupDefinitionPersistenceService.saveGroupDefinition(any(GroupDefinitionDomainDto.class)))
-        .thenReturn(testUtil.getGroupDefinitionEntity());
-
+    when(groupDefinitionService.processAddGroupDefinition(any()))
+        .thenReturn(testUtil.getGroupDefinitionResponse());
     when(groupDefinitionPersistenceService.fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(Optional.of(groupDefinitionEntity));
     when(namedOptimizationStrategyPersistenceService.fetchOptimizationStrategyByOrgIdAndGroupId(
@@ -1271,9 +1247,6 @@ class NamedOptimizationStrategyServiceTest {
         groupDefinitionEntity.getSourcingAttributesDefinitionId(), sourcingAttributeDefinitionId);
     assertEquals(0, response.getConstraints().size());
     verify(groupDefinitionPersistenceService, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
-    verify(groupDefinitionPersistenceService, times(1))
         .fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString());
     verify(namedOptimizationStrategyPersistenceService, times(1))
         .fetchOptimizationStrategyByOrgIdAndGroupId(anyString(), anyString());
@@ -1282,10 +1255,13 @@ class NamedOptimizationStrategyServiceTest {
   @Test
   void createOptimizationRuleUIExceptionTestGroupDefinitionAlreadyExists()
       throws PromiseEngineException, CommonServiceException {
-    when(groupDefinitionPersistenceService
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
-        .thenReturn(List.of(testUtil.getGroupDefinitionEntity()));
+    when(groupDefinitionService.processAddGroupDefinition(any()))
+        .thenThrow(
+            new CommonServiceException(
+                "Group already exist for given orgId , sourcingAttributesDefinitionId, reqAttributesValue and optionalAttributesValue.",
+                HttpStatus.BAD_REQUEST,
+                0X1771,
+                null));
 
     Exception ex =
         assertThrows(
@@ -1295,12 +1271,8 @@ class NamedOptimizationStrategyServiceTest {
                   TestUtil.ORG_ID, testUtil.getOptimizationStrategyUIRequest());
             });
     assertEquals(
-        "Group already exist for given orgId , sourcingAttributesDefinitionId and reqAttributesValue",
+        "Group already exist for given orgId , sourcingAttributesDefinitionId, reqAttributesValue and optionalAttributesValue.",
         ex.getMessage());
-
-    verify(groupDefinitionPersistenceService, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
   }
 
   @Test
@@ -1308,11 +1280,6 @@ class NamedOptimizationStrategyServiceTest {
       throws PromiseEngineException, CommonServiceException {
     when(namedOptimizationStrategyPersistenceService
             .fetchOptimizationStrategyByOrgIdAndStrategyName(anyString(), anyString()))
-        .thenReturn(List.of());
-
-    when(groupDefinitionPersistenceService
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
         .thenReturn(List.of());
     when(groupDefinitionPersistenceService.fetchGroupDefinitionListByOrgIdAndName(
             anyString(), anyString()))
@@ -1329,8 +1296,8 @@ class NamedOptimizationStrategyServiceTest {
             Optional.of(
                 testUtil.getSourcingRuleAttributesDefinitionEntityForOptimization(
                     SourcingAttributesDefinitionStatus.ACTIVE)));
-    when(groupDefinitionPersistenceService.saveGroupDefinition(any(GroupDefinitionDomainDto.class)))
-        .thenReturn(testUtil.getGroupDefinitionEntity());
+    when(groupDefinitionService.processAddGroupDefinition(any()))
+        .thenReturn(testUtil.getGroupDefinitionResponse());
 
     when(groupDefinitionPersistenceService.fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(Optional.of(testUtil.getGroupDefinitionEntity()));
@@ -1364,10 +1331,6 @@ class NamedOptimizationStrategyServiceTest {
             .fetchOptimizationStrategyByOrgIdAndStrategyName(anyString(), anyString()))
         .thenReturn(List.of());
 
-    when(groupDefinitionPersistenceService
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
-        .thenReturn(List.of());
     when(groupDefinitionPersistenceService.fetchGroupDefinitionListByOrgIdAndName(
             anyString(), anyString()))
         .thenReturn(List.of());
@@ -1383,8 +1346,8 @@ class NamedOptimizationStrategyServiceTest {
             Optional.of(
                 testUtil.getSourcingRuleAttributesDefinitionEntityForOptimization(
                     SourcingAttributesDefinitionStatus.ACTIVE)));
-    when(groupDefinitionPersistenceService.saveGroupDefinition(any(GroupDefinitionDomainDto.class)))
-        .thenReturn(testUtil.getGroupDefinitionEntity());
+    when(groupDefinitionService.processAddGroupDefinition(any()))
+        .thenReturn(testUtil.getGroupDefinitionResponse());
 
     when(groupDefinitionPersistenceService.fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(Optional.of(testUtil.getGroupDefinitionEntity()));
@@ -1416,19 +1379,13 @@ class NamedOptimizationStrategyServiceTest {
   @Test
   void createOptimizationRuleUIWithInactiveSourcingAttributeDefinitionExceptionTest()
       throws PromiseEngineException, CommonServiceException {
-    when(groupDefinitionPersistenceService
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
-        .thenReturn(List.of());
-    when(groupDefinitionPersistenceService.fetchGroupDefinitionListByOrgIdAndName(
-            anyString(), anyString()))
-        .thenReturn(List.of());
-    when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
-            anyLong(), anyString()))
-        .thenReturn(
-            Optional.of(
-                testUtil.getSourcingRuleAttributesDefinitionEntityForOptimization(
-                    SourcingAttributesDefinitionStatus.INACTIVE)));
+    when(groupDefinitionService.processAddGroupDefinition(any()))
+        .thenThrow(
+            new CommonServiceException(
+                "Invalid sourcing attributes definition for OPTIMIZATION scope/ Sourcing  attributes definition exists but not in ACTIVE status",
+                HttpStatus.BAD_REQUEST,
+                0x1771,
+                null));
     Exception ex =
         assertThrows(
             CommonServiceException.class,
@@ -1440,22 +1397,19 @@ class NamedOptimizationStrategyServiceTest {
         "Invalid sourcing attributes definition for OPTIMIZATION scope/ Sourcing  attributes definition exists but not in ACTIVE status",
         ex.getMessage());
 
-    verify(groupDefinitionPersistenceService, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
-    verify(groupDefinitionPersistenceService, times(1))
-        .fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString());
-    verify(sourcingAttributesDefinitionDomain, times(1))
-        .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
+    verify(groupDefinitionService, times(1)).processAddGroupDefinition(any());
   }
 
   @Test
   void createOptimizationRuleUIWhenSourcingAttributeDefinitionDoesNotExistExceptionTest()
       throws PromiseEngineException, CommonServiceException {
-    when(groupDefinitionPersistenceService
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
-        .thenReturn(List.of());
+    when(groupDefinitionService.processAddGroupDefinition(any()))
+        .thenThrow(
+            new CommonServiceException(
+                "Invalid sourcing attributes definition for OPTIMIZATION scope/ Sourcing  attributes definition exists but not in ACTIVE status",
+                HttpStatus.BAD_REQUEST,
+                0x1771,
+                null));
     when(groupDefinitionPersistenceService.fetchGroupDefinitionListByOrgIdAndName(
             anyString(), anyString()))
         .thenReturn(List.of());
@@ -1472,33 +1426,18 @@ class NamedOptimizationStrategyServiceTest {
     assertEquals(
         "Invalid sourcing attributes definition for OPTIMIZATION scope/ Sourcing  attributes definition exists but not in ACTIVE status",
         ex.getMessage());
-
-    verify(groupDefinitionPersistenceService, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
-    verify(groupDefinitionPersistenceService, times(1))
-        .fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString());
-    verify(sourcingAttributesDefinitionDomain, times(1))
-        .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
   }
 
   @Test
   void createOptimizationRuleUIWhenAllRequiredAttributesNotProvidedExceptionTest()
       throws PromiseEngineException, CommonServiceException {
-
-    when(groupDefinitionPersistenceService
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-                anyString(), anyLong(), anyString()))
-        .thenReturn(List.of());
-    when(groupDefinitionPersistenceService.fetchGroupDefinitionListByOrgIdAndName(
-            anyString(), anyString()))
-        .thenReturn(List.of());
-    when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
-            anyLong(), anyString()))
-        .thenReturn(
-            Optional.of(
-                testUtil.getSourcingRuleAttributesDefinitionEntityForOptimization(
-                    SourcingAttributesDefinitionStatus.ACTIVE)));
+    when(groupDefinitionService.processAddGroupDefinition(any()))
+        .thenThrow(
+            new CommonServiceException(
+                "Can't add the group definition as all the required attributes values are not present",
+                HttpStatus.BAD_REQUEST,
+                null,
+                null));
     Exception ex =
         assertThrows(
             CommonServiceException.class,
@@ -1507,16 +1446,8 @@ class NamedOptimizationStrategyServiceTest {
                   TestUtil.ORG_ID, testUtil.getOptimizationStrategyUIRequest5());
             });
     assertEquals(
-        "Can't add the optimization strategy as all the required attributes values are not present",
+        "Can't add the group definition as all the required attributes values are not present",
         ex.getMessage());
-
-    verify(groupDefinitionPersistenceService, times(1))
-        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
-            anyString(), anyLong(), anyString());
-    verify(groupDefinitionPersistenceService, times(1))
-        .fetchGroupDefinitionListByOrgIdAndName(anyString(), anyString());
-    verify(sourcingAttributesDefinitionDomain, times(1))
-        .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
   }
 
   @Test

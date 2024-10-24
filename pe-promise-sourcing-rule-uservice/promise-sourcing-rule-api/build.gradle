@@ -31,8 +31,6 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
-//    implementation(project(":pe-node-uservice:node-api-domain"))
-//    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
 }
 sourceCompatibility = JavaVersion.VERSION_21
 targetCompatibility = JavaVersion.VERSION_21

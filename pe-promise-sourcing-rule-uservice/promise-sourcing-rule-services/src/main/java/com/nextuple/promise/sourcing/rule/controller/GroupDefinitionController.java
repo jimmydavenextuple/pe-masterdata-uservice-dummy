@@ -176,7 +176,7 @@ public class GroupDefinitionController {
       var groupDefinitionResponse = groupDefinitionService.processDeleteGroupDefinition(id, orgId);
       return ResponseEntity.ok(
           BaseResponse.builder()
-              .message("Node group successfully deleted")
+              .message("Group definition successfully deleted")
               .payload(groupDefinitionResponse)
               .build());
     } catch (Exception e) {

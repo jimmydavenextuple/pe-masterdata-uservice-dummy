@@ -7,7 +7,6 @@
 
 package com.nextuple.promise.sourcing.rule.service;
 
-import static com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleUtil.validateAttributeValuesFormat;
 import static com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleUtil.validateSourcingAttributesDefinitionId;
 
 import com.nextuple.common.context.Logger;
@@ -26,6 +25,7 @@ import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingAttributesD
 import com.nextuple.promise.sourcing.rule.persistence.service.GroupDefinitionPersistenceService;
 import com.nextuple.promise.sourcing.rule.persistence.service.NamedOptimizationStrategyPersistenceService;
 import com.nextuple.promise.sourcing.rule.persistence.service.SourcingAttributesDefinitionPersistenceService;
+import com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +50,7 @@ public class GroupDefinitionService {
 
   private static final String SOURCING_ATTRIBUTES_DEFINITION_ID = "sourcingAttributesDefinitionId";
   private static final String REQ_ATTRIBUTES_VALUE = "reqAttributesValue";
+  private static final String OPT_ATTRIBUTES_VALUE = "optionalAttributesValue";
   private static final String GROUP_DEFINITION_EXCEPTION_MESSAGE = "Group definition not found";
   private static final String STATUS_INACTIVE_MESSAGE =
       "Can't add the group definition as all the required attributes values are not present";
@@ -66,12 +68,18 @@ public class GroupDefinitionService {
       GroupDefinitionRequest groupDefinitionRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside processAddGroupDefinition service --");
+    PromiseSourcingRuleUtil.validateAttributeValuesFormat(
+        groupDefinitionRequest.getReqAttributesValue());
+    if (StringUtils.hasLength(groupDefinitionRequest.getOptionalAttributesValue()))
+      PromiseSourcingRuleUtil.validateAttributeValuesFormat(
+          groupDefinitionRequest.getOptionalAttributesValue());
     List<GroupDefinitionDomainDto> groupDefinitionDomainDtos =
         groupDefinitionPersistenceService
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
                 groupDefinitionRequest.getOrgId(),
                 groupDefinitionRequest.getSourcingAttributesDefinitionId(),
-                groupDefinitionRequest.getReqAttributesValue());
+                groupDefinitionRequest.getReqAttributesValue(),
+                groupDefinitionRequest.getOptionalAttributesValue());
     if (!groupDefinitionDomainDtos.isEmpty()) {
       logger.error(
           "Group already exists for given orgId :{} , sourcingAttributesDefinitionId : {} and reqAttributesValue :{}",
@@ -93,7 +101,7 @@ public class GroupDefinitionService {
               .rejectedValue(groupDefinitionRequest.getSourcingAttributesDefinitionId())
               .build());
       throw new CommonServiceException(
-          "Group already exist for given orgId , sourcingAttributesDefinitionId and reqAttributesValue",
+          "Group already exist for given orgId , sourcingAttributesDefinitionId, reqAttributesValue and optionalAttributesValue.",
           HttpStatus.BAD_REQUEST,
           0X1771,
           errorMap);
@@ -106,6 +114,7 @@ public class GroupDefinitionService {
                 groupDefinitionRequest.getOrgId());
     validateSourcingAttributesDefinitionId(
         groupDefinitionRequest.getReqAttributesValue(),
+        groupDefinitionRequest.getOptionalAttributesValue(),
         existingSourcingAttributesDefinitionEntity,
         groupDefinitionRequest.getSourcingAttributesDefinitionId(),
         STATUS_INACTIVE_MESSAGE);
@@ -169,6 +178,8 @@ public class GroupDefinitionService {
       groupDefinitionInfo.setId(groupDefinitionDomainDto.getId());
       groupDefinitionInfo.setGroupName(groupDefinitionDomainDto.getGroupName());
       groupDefinitionInfo.setReqAttributesValue(groupDefinitionDomainDto.getReqAttributesValue());
+      groupDefinitionInfo.setOptionalAttributesValue(
+          groupDefinitionDomainDto.getOptionalAttributesValue());
       groupDefinitionInfoList.add(groupDefinitionInfo);
     }
 
@@ -183,19 +194,25 @@ public class GroupDefinitionService {
       GroupDefinitionRequest groupDefinitionRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside processUpdateGroupDefinition service --");
-    validateAttributeValuesFormat(groupDefinitionRequest.getReqAttributesValue());
+    PromiseSourcingRuleUtil.validateAttributeValuesFormat(
+        groupDefinitionRequest.getReqAttributesValue());
+    if (StringUtils.hasLength(groupDefinitionRequest.getOptionalAttributesValue()))
+      PromiseSourcingRuleUtil.validateAttributeValuesFormat(
+          groupDefinitionRequest.getOptionalAttributesValue());
     List<GroupDefinitionDomainDto> groupDefinitionEntityList =
         groupDefinitionPersistenceService
-            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
                 groupDefinitionRequest.getOrgId(),
                 groupDefinitionRequest.getSourcingAttributesDefinitionId(),
-                groupDefinitionRequest.getReqAttributesValue());
+                groupDefinitionRequest.getReqAttributesValue(),
+                groupDefinitionRequest.getOptionalAttributesValue());
     if (groupDefinitionEntityList.isEmpty()) {
       logger.error(
-          "Group definition not found for given orgId :{} , sourcingAttributesDefinitionId : {} and reqAttributesValue :{}",
+          "Group definition not found for given orgId :{} , sourcingAttributesDefinitionId : {}, reqAttributesValue : {} and optionalAttributesValue : {}",
           groupDefinitionRequest.getOrgId(),
           groupDefinitionRequest.getSourcingAttributesDefinitionId(),
-          groupDefinitionRequest.getReqAttributesValue());
+          groupDefinitionRequest.getReqAttributesValue(),
+          groupDefinitionRequest.getOptionalAttributesValue());
 
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(
@@ -210,8 +227,14 @@ public class GroupDefinitionService {
           FieldError.builder()
               .rejectedValue(groupDefinitionRequest.getSourcingAttributesDefinitionId())
               .build());
+      if (StringUtils.hasLength(groupDefinitionRequest.getOptionalAttributesValue()))
+        errorMap.put(
+            OPT_ATTRIBUTES_VALUE,
+            FieldError.builder()
+                .rejectedValue(groupDefinitionRequest.getOptionalAttributesValue())
+                .build());
       throw new CommonServiceException(
-          "Group definition not found for given orgId , sourcingAttributesDefinitionId and reqAttributesValue",
+          "Group definition not found for given orgId , sourcingAttributesDefinitionId, reqAttributesValue and optionalAttributesValue",
           HttpStatus.BAD_REQUEST,
           0X1771,
           errorMap);
@@ -246,21 +269,5 @@ public class GroupDefinitionService {
     var groupDefinitionResponse = INSTANCE.toGroupDefinitionResponse(groupDefinition);
     groupDefinitionPersistenceService.deleteGroupDefinition(groupDefinition);
     return groupDefinitionResponse;
-  }
-
-  public GroupDefinitionResponse processGetGroupDefinitionByOrgIdAndId(String orgId, Long id)
-      throws PromiseEngineException, CommonServiceException {
-    logger.debug("-- inside fetchGroupDefinitionByOrgIdAndId service --");
-    Optional<GroupDefinitionDomainDto> groupDefinitionEntity =
-        groupDefinitionPersistenceService.fetchGroupDefinitionByIdAndOrgId(id, orgId);
-    if (groupDefinitionEntity.isEmpty()) {
-      logger.error(GROUP_DEFINITION_EXCEPTION_MESSAGE);
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(ID, FieldError.builder().rejectedValue(id).build());
-      throw new CommonServiceException(
-          GROUP_DEFINITION_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
-    }
-
-    return INSTANCE.toGroupDefinitionResponse(groupDefinitionEntity.get());
   }
 }
