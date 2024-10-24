@@ -20,10 +20,8 @@ dependencies {
     implementation(project(":pe-common:common-postgres"))
     implementation(project(":pe-common:nfs-near-cache:core-near-cache-producer"))
 
-//    implementation(project(":pe-node-uservice:node-api-domain"))
     implementation(project(":pe-node-uservice:node-api-domain"))
 
-//    implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
 
 
@@ -39,9 +37,5 @@ tasks.withType(Test).configureEach {
 tasks.named('bootJar') {
     dependsOn ':pe-node-uservice:node-api-domain:jar'
     dependsOn(':pe-common:common-domain:jar')
-}
-
-// Added this
-tasks.named('bootJar') {
     dependsOn ':pe-calendar-uservice:calendar-persistence-postgres:jar'
 }
