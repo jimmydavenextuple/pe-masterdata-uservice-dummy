@@ -35,6 +35,11 @@ public class GroupDefinitionResponse implements Serializable {
       example = "EXPRESS:T2P")
   private String reqAttributesValue;
 
+  @Schema(
+      description = "Colon separated values of the optional attributes.",
+      example = "EXPRESS:T2P")
+  private String optionalAttributesValue;
+
   @Schema(description = "Reference to the sourcing attributes definition.")
   private Long sourcingAttributesDefinitionId;
 }

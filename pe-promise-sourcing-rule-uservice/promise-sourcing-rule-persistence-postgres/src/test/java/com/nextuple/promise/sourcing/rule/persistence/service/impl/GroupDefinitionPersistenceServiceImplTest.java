@@ -27,6 +27,7 @@ import com.nextuple.promise.sourcing.rule.persistence.repository.GroupDefinition
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
@@ -232,6 +233,63 @@ class GroupDefinitionPersistenceServiceImplTest {
     verify(groupDefinitionRepository, times(1))
         .findByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
             anyString(), anyLong(), anyString());
+  }
+
+  @Test
+  @DisplayName("Fetch group definition by org, definition and attribute values")
+  void
+      fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValueTest()
+          throws PromiseEngineException {
+    List<GroupDefinitionEntity> groupDefinitionEntityList = testUtil.getGroupDefinitionEntityList();
+    List<GroupDefinitionDomainDto> groupDefinitionDomainDtoList =
+        testUtil.getGroupDefinitionDomainDtoList();
+    when(groupDefinitionRepository
+            .findBySourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributesValueAndOrgId(
+                anyLong(), anyString(), anyString(), anyString()))
+        .thenReturn(groupDefinitionEntityList);
+    when(getGroupDefinitionEntityMapper.toDomain(anyList()))
+        .thenReturn(groupDefinitionDomainDtoList);
+    List<GroupDefinitionDomainDto> groupDefinitionEntityListResponse =
+        groupDefinitionPersistenceService
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+                TestUtil.ORG_ID,
+                TestUtil.SOURCING_ATTRIBUTES_DEFINITION_ID,
+                TestUtil.REQUIRED_ATTRIBUTES_VALUE,
+                TestUtil.OPTIONAL_ATTRIBUTES_VALUE);
+    assertEquals(groupDefinitionDomainDtoList.get(0), groupDefinitionEntityListResponse.get(0));
+    verify(groupDefinitionRepository, times(1))
+        .findBySourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributesValueAndOrgId(
+            anyLong(), anyString(), anyString(), anyString());
+  }
+
+  @Test
+  @DisplayName(
+      "Fetch group definition by org, definition and attribute values - exception scenario")
+  void
+      fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValueExceptionTest() {
+    when(groupDefinitionRepository
+            .findBySourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributesValueAndOrgId(
+                anyLong(), anyString(), anyString(), anyString()))
+        .thenThrow(new RuntimeException("error"));
+
+    Exception exception =
+        assertThrows(
+            PromiseEngineException.class,
+            () -> {
+              groupDefinitionPersistenceService
+                  .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+                      TestUtil.ORG_ID,
+                      TestUtil.SOURCING_ATTRIBUTES_DEFINITION_ID,
+                      TestUtil.REQUIRED_ATTRIBUTES_VALUE,
+                      TestUtil.OPTIONAL_ATTRIBUTES_VALUE);
+            });
+    assertEquals(
+        "Unable to fetch group definition list by orgId , sourcingAttributesDefinitionId, reqAttributesValue and optionalAttributesValue",
+        exception.getMessage());
+
+    verify(groupDefinitionRepository, times(1))
+        .findBySourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributesValueAndOrgId(
+            anyLong(), anyString(), anyString(), anyString());
   }
 
   @Test

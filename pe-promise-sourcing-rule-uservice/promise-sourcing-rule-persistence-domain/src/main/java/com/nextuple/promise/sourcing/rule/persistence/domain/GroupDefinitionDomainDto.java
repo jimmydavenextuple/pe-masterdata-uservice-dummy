@@ -24,6 +24,7 @@ public class GroupDefinitionDomainDto extends DomainBaseEntity implements Serial
   private Long id;
   private String orgId;
   private String reqAttributesValue;
+  private String optionalAttributesValue;
   private Long sourcingAttributesDefinitionId;
   private String groupName;
 }

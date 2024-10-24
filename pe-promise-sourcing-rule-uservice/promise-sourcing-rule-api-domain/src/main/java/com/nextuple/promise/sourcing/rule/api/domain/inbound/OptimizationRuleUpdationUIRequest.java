@@ -40,4 +40,7 @@ public class OptimizationRuleUpdationUIRequest implements Serializable {
   @NotEmpty(message = "requiredAttributes can't be empty")
   @Schema(description = "List of required attributes for the optimization rule")
   private List<AttributeDetailsUIRequest> requiredAttributes;
+
+  @Schema(description = "List of optional attributes for the optimization rule")
+  private List<AttributeDetailsUIRequest> optionalAttributes;
 }

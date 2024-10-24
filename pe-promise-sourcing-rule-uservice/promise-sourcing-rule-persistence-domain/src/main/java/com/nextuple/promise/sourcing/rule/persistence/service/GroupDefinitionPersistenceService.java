@@ -34,6 +34,14 @@ public interface GroupDefinitionPersistenceService
           String orgId, Long sourcingAttributesDefinitionId, String reqAttributesValue)
           throws PromiseEngineException;
 
+  List<GroupDefinitionDomainDto>
+      fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(
+          String orgId,
+          Long sourcingAttributesDefinitionId,
+          String reqAttributesValue,
+          String optionalAttributeValue)
+          throws PromiseEngineException;
+
   List<GroupDefinitionDomainDto> fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionId(
       String orgId, Long sourcingAttributesDefinitionId) throws PromiseEngineException;
 
