@@ -52,7 +52,7 @@ pe-public-webhook:
   item-feed:
     topic: INTERNAL.SANDBOX.PROMISE_ITEMS
   pe-response:
-    topic: INTERNAL.SANDBOX.CART_EDD
+    topics: INTERNAL.SANDBOX.CART_EDD
     group-id: pe-response-consumer-async-sandbox
   webhook:
     - tenantId: NEXTUPLE_GR
@@ -94,5 +94,5 @@ jobs-framework:
     topic-name: INTERNAL.SANDBOX.PE.JOB_RESULT
     group-id: jobs-result-consumer-async-SANDBOX
   record-consumer:
-    topic-name: INTERNAL.SANDBOX.PE.JOB_TASK
+    topic-names: INTERNAL.SANDBOX.PE.JOB_TASK
     group-id: jobs-task-consumer-async-sandbox

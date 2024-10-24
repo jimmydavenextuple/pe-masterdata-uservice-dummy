@@ -14,6 +14,7 @@ import com.nextuple.transit.consumer.dto.TransitBufferFeedDto;
 import com.nextuple.transit.consumer.impl.TransitBufferBatchServiceImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.converter.KafkaMessageHeaders;
@@ -21,12 +22,14 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-    topics = "${master-data.transit-buffer.topic-name}",
+    topics = "#{'${master-data.transit-buffer.topic-names}'.split(',')}",
     groupId = "${master-data.transit-buffer.group-id}",
-    batch = "true")
+    batch = "true",
+    containerFactory = "transitBufferFeedDeserializerConsumer")
 public class TransitBufferFeedConsumer extends MasterDataFeedConsumer<TransitBufferFeedDto> {
 
   private final TransitBufferBatchServiceImpl transitBufferBatchService;
@@ -37,7 +40,12 @@ public class TransitBufferFeedConsumer extends MasterDataFeedConsumer<TransitBuf
   public void consumeTransitBufferFeed(
       @Payload List<BatchRequest<TransitBufferFeedDto>> transitBufferFeed,
       @Headers KafkaMessageHeaders headers) {
-    consumeMasterDataFeed(transitBufferFeed);
+    try {
+      consumeMasterDataFeed(transitBufferFeed);
+    } catch (Exception e) {
+      log.error("Exception occurred while consuming transit buffer feed : {}", transitBufferFeed);
+      throw e;
+    }
   }
 
   @Override

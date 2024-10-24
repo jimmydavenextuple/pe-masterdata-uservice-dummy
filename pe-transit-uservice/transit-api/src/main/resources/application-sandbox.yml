@@ -50,8 +50,8 @@ jobs-framework:
     group-id: jobs-completion-consumer-async-sandbox
 master-data:
   transit:
-    topic-name: INTERNAL.SANDBOX.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.SANDBOX.PE.TRANSIT_INTEGRATION
     group-id: transit-master-sandbox
   transit-buffer:
-    topic-name: INTERNAL.SANDBOX.PE.TRANSIT_BUFFER_INTEGRATION
+    topic-names: INTERNAL.SANDBOX.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-sandbox

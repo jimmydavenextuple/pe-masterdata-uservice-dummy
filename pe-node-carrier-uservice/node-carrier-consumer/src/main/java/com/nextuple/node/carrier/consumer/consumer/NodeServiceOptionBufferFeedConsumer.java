@@ -14,6 +14,7 @@ import com.nextuple.node.carrier.consumer.dto.NodeServiceOptionBufferFeedDto;
 import com.nextuple.node.carrier.consumer.impl.NodeServiceOptionBufferBatchServiceImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.converter.KafkaMessageHeaders;
@@ -21,12 +22,14 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-    topics = "${master-data.node-service-option-buffer.topic-name}",
+    topics = "#{'${master-data.node-service-option-buffer.topic-names}'.split(',')}",
     groupId = "${master-data.node-service-option-buffer.group-id}",
-    batch = "true")
+    batch = "true",
+    containerFactory = "nodeServiceOptionBufferDeserializerConsumer")
 public class NodeServiceOptionBufferFeedConsumer
     extends MasterDataFeedConsumer<NodeServiceOptionBufferFeedDto> {
 
@@ -38,7 +41,14 @@ public class NodeServiceOptionBufferFeedConsumer
   public void consumeMasterDataFeed(
       @Payload List<BatchRequest<NodeServiceOptionBufferFeedDto>> nodeServiceOptionBufferFeed,
       @Headers KafkaMessageHeaders headers) {
-    consumeMasterDataFeed(nodeServiceOptionBufferFeed);
+    try {
+      consumeMasterDataFeed(nodeServiceOptionBufferFeed);
+    } catch (Exception e) {
+      log.error(
+          "Exception occurred while consuming node service option buffer feed : {}",
+          nodeServiceOptionBufferFeed);
+      throw e;
+    }
   }
 
   @Override

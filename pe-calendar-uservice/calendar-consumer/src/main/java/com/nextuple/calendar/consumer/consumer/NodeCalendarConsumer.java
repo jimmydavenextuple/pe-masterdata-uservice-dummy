@@ -24,10 +24,11 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-    topics = "${master-data.node-calendar.topic-name}",
+    topics = "#{'${master-data.node-calendar.topic-names}'.split(',')}",
     groupId = "${master-data.node-calendar.group-id}",
     batch = "true",
-    autoStartup = "${kafka-topic-flags.master-data.node-calendar.enabled:false}")
+    autoStartup = "${kafka-topic-flags.master-data.node-calendar.enabled:false}",
+    containerFactory = "nodeCalendarDeserializerConsumer")
 public class NodeCalendarConsumer extends MasterDataFeedConsumer<NodeCalendarFeedDto> {
 
   private final NodeCalendarBatchServiceImpl nodeCalendarBatchService;

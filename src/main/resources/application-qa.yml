@@ -93,7 +93,7 @@ pe-public-webhook:
   item-feed:
     topic: INTERNAL.QA.PROMISE_ITEMS
   pe-response:
-    topic: INTERNAL.QA.CART_EDD
+    topics: INTERNAL.QA.CART_EDD
     group-id: pe-response-consumer-async-qa
   webhook:
     - tenantId: NEXTUPLE_GR
@@ -139,42 +139,42 @@ jobs-framework:
     topic-name: INTERNAL.QA.PE.JOB_RESULT
     group-id: jobs-result-consumer-async-qa
   record-consumer:
-    topic-name: INTERNAL.QA.PE.JOB_TASK
+    topic-names: INTERNAL.QA.PE.JOB_TASK
     group-id: jobs-task-consumer-async-qa
 
 master-data:
   node:
-    topic-name: INTERNAL.QA.PE.NODE_INTEGRATION
+    topic-names: INTERNAL.QA.PE.NODE_INTEGRATION
     group-id: node-master-qa
   node-carrier:
-    topic-name: INTERNAL.QA.PE.NODE_CARRIER_INTEGRATION
+    topic-names: INTERNAL.QA.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-qa
   carrier:
-    topic-name: INTERNAL.QA.PE.CARRIER_INTEGRATION
+    topic-names: INTERNAL.QA.PE.CARRIER_INTEGRATION
     group-id: carrier-master-qa
   processing-lead-time:
-    topic-name: INTERNAL.QA.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    topic-names: INTERNAL.QA.PE.PROCESSING_LEAD_TIME_INTEGRATION
     group-id: processing-lead-time-master-qa
   calendar:
-    topic-name: INTERNAL.QA.PE.CALENDAR_INTEGRATION
+    topic-names: INTERNAL.QA.PE.CALENDAR_INTEGRATION
     group-id: calendar-master-qa
   node-calendar:
-    topic-name: INTERNAL.QA.PE.NODE_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.QA.PE.NODE_CALENDAR_INTEGRATION
     group-id: node-calendar-master-qa
   carrier-service-calendar:
-    topic-name: INTERNAL.QA.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.QA.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
     group-id: carrier-service-calendar-master-qa
   pickup-calendar:
-    topic-name: INTERNAL.QA.PE.PICKUP_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.QA.PE.PICKUP_CALENDAR_INTEGRATION
     group-id: pickup-calendar-master-qa
   node-service-option-buffer:
-    topic-name: INTERNAL.QA.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    topic-names: INTERNAL.QA.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
     group-id: node-service-option-buffer-master-qa
   transit:
-    topic-name: INTERNAL.QA.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.QA.PE.TRANSIT_INTEGRATION
     group-id: transit-master-qa
   transit-buffer:
-    topic-name: INTERNAL.QA.PE.TRANSIT_BUFFER_INTEGRATION
+    topic-names: INTERNAL.QA.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-qa
 
 

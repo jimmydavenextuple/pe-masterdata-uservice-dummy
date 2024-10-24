@@ -47,7 +47,7 @@ pe-public-webhook:
   item-feed:
     topic: ITEM_MASTER_INTEGRATION
   pe-response:
-    topic: INTERNAL.DEV.CART_EDD
+    topics: INTERNAL.DEV.CART_EDD
     group-id: pe-response-consumer-async-local
   webhook:
     -
@@ -90,7 +90,7 @@ jobs-framework:
     topic-name: jobs-result-local
     group-id: jobs-result-consumer-async-local
   record-consumer:
-    topic-name: jobs-task-local
+    topic-names: jobs-task-local
     group-id: jobs-task-consumer-async-local
 
 entity-listener:
@@ -99,37 +99,37 @@ entity-listener:
 
 master-data:
   node:
-    topic-name: INTERNAL.DEV.PE.NODE_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.NODE_INTEGRATION
     group-id: node-master-dev
   node-carrier:
-    topic-name: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-dev
   carrier:
-    topic-name: INTERNAL.DEV.PE.CARRIER_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.CARRIER_INTEGRATION
     group-id: carrier-master-dev
   processing-lead-time:
-    topic-name: INTERNAL.DEV.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.PROCESSING_LEAD_TIME_INTEGRATION
     group-id: processing-lead-time-master-dev
   calendar:
-    topic-name: INTERNAL.DEV.PE.CALENDAR_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.CALENDAR_INTEGRATION
     group-id: calendar-master-dev
   node-calendar:
-    topic-name: INTERNAL.DEV.PE.NODE_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.NODE_CALENDAR_INTEGRATION
     group-id: node-calendar-master-dev
   carrier-service-calendar:
-    topic-name: INTERNAL.DEV.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
     group-id: carrier-service-calendar-master-dev
   pickup-calendar:
-    topic-name: INTERNAL.DEV.PE.PICKUP_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.PICKUP_CALENDAR_INTEGRATION
     group-id: pickup-calendar-master-dev
   node-service-option-buffer:
-    topic-name: INTERNAL.DEV.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
     group-id: node-service-option-buffer-master-dev
   transit:
-    topic-name: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
     group-id: transit-master-dev
   transit-buffer:
-    topic-name: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-dev
 
 next-cache:

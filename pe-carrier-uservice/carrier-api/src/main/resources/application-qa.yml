@@ -43,5 +43,5 @@ logging:
 
 master-data:
   node:
-    topic-name: INTERNAL.QA.PE.CARRIER_INTEGRATION
+    topic-names: INTERNAL.QA.PE.CARRIER_INTEGRATION
     group-id: carrier-master-dev

@@ -32,11 +32,11 @@ logging:
 
 master-data:
   node-carrier:
-    topic-name: INTERNAL.HOTFIX.PE.NODE_CARRIER_INTEGRATION
+    topic-names: INTERNAL.HOTFIX.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-hotfix
   processing-lead-time:
-    topic-name: INTERNAL.HOTFIX.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    topic-names: INTERNAL.HOTFIX.PE.PROCESSING_LEAD_TIME_INTEGRATION
     group-id: processing-lead-time-master-hotfix
   node-service-option-buffer:
-    topic-name: INTERNAL.HOTFIX.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    topic-names: INTERNAL.HOTFIX.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
     group-id: node-service-option-buffer-master-hotfix

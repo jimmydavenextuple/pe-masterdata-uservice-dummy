@@ -51,8 +51,8 @@ jobs-framework:
 
 master-data:
   transit:
-    topic-name: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
     group-id: transit-master-dev
   transit-buffer:
-    topic-name: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-dev

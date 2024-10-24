@@ -21,7 +21,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: kiran
+    password: password
     hikari:
       maximumPoolSize: 100
       minimumIdle: 10
@@ -64,7 +64,7 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         item_master:
-          name: ITEM_MASTER_INTEGRATION
+          names: ITEM_MASTER_INTEGRATION
           group-id: item-master-local
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -109,7 +109,7 @@ jobs-framework:
     topic-name: INTERNAL.DEV.PE_JOB_FPM_METRICS_LOCAL, INTERNAL.DEV.PE_JOB_RECORD_FPM_METRICS_LOCAL, INTERNAL.DEV.PE_NEIP_FPM_METRICS_LOCAL
     group-id: pe-fpm-metrics-local
   job-completion-consumer:
-    topic-name: job-completion-local
+    topic-names: job-completion-local
     group-id: jobs-completion-consumer-async-dev
   kafka-publish:
     topic-name: jobs-task-local
@@ -119,7 +119,7 @@ jobs-framework:
     topic-name: jobs-result-local
     group-id: jobs-result-consumer-async-local
   record-consumer:
-    topic-name: jobs-task-local
+    topic-names: jobs-task-local
     group-id: jobs-task-consumer-async-local
 
 pe-public-webhook:
@@ -128,7 +128,7 @@ pe-public-webhook:
   item-feed:
     topic: ITEM_MASTER_INTEGRATION
   pe-response:
-    topic: INTERNAL.DEV.CART_EDD
+    topics: INTERNAL.DEV.CART_EDD
     group-id: pe-response-consumer-async-local
   webhook:
     - tenantId: NEXTUPLE_GR
@@ -163,36 +163,47 @@ master-data:
   node:
     topic-name: INTERNAL.DEV.PE.NODE_INTEGRATION
     group-id: node-master-dev
+    dlt-topic: INTERNAL.DEV.PE.NODE_INTEGRATION.DLT
   node-carrier:
-    topic-name: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-dev
+    dlt-topic: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION.DLT
   carrier:
-    topic-name: INTERNAL.DEV.PE.CARRIER_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.CARRIER_INTEGRATION
     group-id: carrier-master-dev
+    dlt-topic: INTERNAL.DEV.PE.CARRIER_INTEGRATION.DLT
   processing-lead-time:
-    topic-name: INTERNAL.DEV.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.PROCESSING_LEAD_TIME_INTEGRATION
     group-id: processing-lead-time-master-dev
+    dlt-topic: INTERNAL.DEV.PE.PROCESSING_LEAD_TIME_INTEGRATION.DLT
   calendar:
-    topic-name: INTERNAL.DEV.PE.CALENDAR_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.CALENDAR_INTEGRATION
     group-id: calendar-master-dev
+    dlt-topic: INTERNAL.DEV.PE.CALENDAR_INTEGRATION.DLT
   node-calendar:
-    topic-name: INTERNAL.DEV.PE.NODE_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.NODE_CALENDAR_INTEGRATION
     group-id: node-calendar-master-dev
+    dlt-topic: INTERNAL.DEV.PE.NODE_CALENDAR_INTEGRATION.DLT
   carrier-service-calendar:
-    topic-name: INTERNAL.DEV.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
     group-id: carrier-service-calendar-master-dev
+    dlt-topic: INTERNAL.DEV.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION.DLT
   pickup-calendar:
-    topic-name: INTERNAL.DEV.PE.PICKUP_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.PICKUP_CALENDAR_INTEGRATION
     group-id: pickup-calendar-master-dev
+    dlt-topic: INTERNAL.DEV.PE.PICKUP_CALENDAR_INTEGRATION.DLT
   node-service-option-buffer:
-    topic-name: INTERNAL.DEV.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
     group-id: node-service-option-buffer-master-dev
+    dlt-topic: INTERNAL.DEV.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION.DLT
   transit:
-    topic-name: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
     group-id: transit-master-dev
+    dlt-topic: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
   transit-buffer:
-    topic-name: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-dev
+    dlt-topic: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION.DLT
 next-cache:
   caches:
     -

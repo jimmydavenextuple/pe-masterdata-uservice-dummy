@@ -14,6 +14,7 @@ import com.nextuple.master.data.integration.consumer.MasterDataFeedConsumer;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.converter.KafkaMessageHeaders;
@@ -21,13 +22,15 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-    topics = "${master-data.calendar.topic-name}",
+    topics = "#{'${master-data.calendar.topic-names}'.split(',')}",
     groupId = "${master-data.calendar.group-id}",
     batch = "true",
-    autoStartup = "${kafka-topic-flags.master-data.calendar.enabled:false}")
+    autoStartup = "${kafka-topic-flags.master-data.calendar.enabled:false}",
+    containerFactory = "calendarDeserializerConsumer")
 public class CalendarConsumer extends MasterDataFeedConsumer<CalendarFeedDto> {
 
   private final CalendarBatchServiceImpl calendarBatchService;
@@ -38,7 +41,12 @@ public class CalendarConsumer extends MasterDataFeedConsumer<CalendarFeedDto> {
   public void consumeCalendarFeed(
       @Payload List<BatchRequest<CalendarFeedDto>> calendarFeed,
       @Headers KafkaMessageHeaders headers) {
-    consumeMasterDataFeed(calendarFeed);
+    try {
+      consumeMasterDataFeed(calendarFeed);
+    } catch (Exception e) {
+      log.error("Exception occurred while consuming calendar feed : {}", calendarFeed);
+      throw e;
+    }
   }
 
   @Override

@@ -83,7 +83,7 @@ jobs-framework:
     topic-name: INTERNAL.PROD.JOBS.RESULT
     group-id: jobs-result-consumer-async-prod
   record-consumer:
-    topic-name: INTERNAL.PROD.JOBS.TASK
+    topic-names: INTERNAL.PROD.JOBS.TASK
     group-id: jobs-task-consumer-async-prod
 auth-token:
   url: https://promise-engine-domain-production.auth.us-east-1.amazoncognito.com
