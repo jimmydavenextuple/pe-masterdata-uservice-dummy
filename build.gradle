@@ -284,17 +284,17 @@ subprojects {
 apply from: "$rootProject.projectDir/dependencies.gradle"
 
 
-    apply plugin: 'idea'
-    apply plugin: 'maven-publish'
-    apply plugin: "com.jfrog.artifactory"
-    apply plugin: 'java-library'
-    apply plugin: 'io.spring.dependency-management'
-    apply plugin: "org.springframework.boot"
-    apply plugin: 'jacoco'
-    apply plugin: 'org.owasp.dependencycheck'
-    apply plugin: "com.github.spotbugs"
-    apply plugin: "com.diffplug.spotless"
-    apply plugin: "org.sonatype.gradle.plugins.scan"
+apply plugin: 'idea'
+apply plugin: 'maven-publish'
+apply plugin: "com.jfrog.artifactory"
+apply plugin: 'java-library'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: "org.springframework.boot"
+apply plugin: 'jacoco'
+apply plugin: 'org.owasp.dependencycheck'
+apply plugin: "com.github.spotbugs"
+apply plugin: "com.diffplug.spotless"
+apply plugin: "org.sonatype.gradle.plugins.scan"
 
 group = 'com.nextuple.pe'
 //version = "1.4.0-${build_target}"
