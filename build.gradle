@@ -137,30 +137,7 @@ subprojects {
         // Dependency version override to resolve low CVE for spring web
         implementation 'org.springframework:spring-web:6.0.23'
 
-
-//        implementation("com.nextuple.pe:pe-data-upload-uservice:job-framework-common-util:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:data-upload-services:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:promise-sourcing-rule-services:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:weightage-configuration-services:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:postal-code-timezone-services:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:transit-services:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:node-carrier-services:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:item-services:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:calendar-services:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:node-services:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:carrier-services:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:pe-public-webhook:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:sourcing-cost-config-services:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:node-consumer:1.4.0-${build_target}")
-//        implementation("com.nextuple.pe:carrier-consumer:1.4.0-${build_target}")
-//
-//        implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
-//        implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
-
         runtimeOnly 'org.postgresql:postgresql:42.7.2'
-//        implementation(project(":pe-common:common-util"))
-//        implementation(project(":pe-common:common-postgres"))
- //       implementation(project(":pe-common:master-data-integration-framework"))
 
         implementation "org.springframework.kafka:spring-kafka:3.2.1"
         implementation 'org.yaml:snakeyaml:2.2'
@@ -178,7 +155,6 @@ subprojects {
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 
         testImplementation 'org.mockito:mockito-inline:5.2.0'
-//        testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
         testImplementation 'net.bytebuddy:byte-buddy:1.14.9'
         testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
 
@@ -188,9 +164,6 @@ subprojects {
 
         implementation 'org.flywaydb:flyway-core'
 
-   //     implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
-   //     implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")
-   //     implementation("com.nextuple.plt:plt-postgress-dao:1.0.8-${build_target}")
     }
 
     jacocoTestReport {
@@ -393,16 +366,7 @@ dependencies {
 
 
 
-
-
-//    implementation("com.nextuple.pe:calendar-services:1.4.0-${build_target}")
-//    implementation("com.nextuple.pe:node-services:1.4.0-${build_target}")
-//    implementation("com.nextuple.pe:carrier-services:1.4.0-${build_target}")
-//    implementation("com.nextuple.pe:pe-public-webhook:1.4.0-${build_target}")
     implementation(project(":pe-data-upload-uservice:pe-public-webhook"))
-//    implementation("com.nextuple.pe:sourcing-cost-config-services:1.4.0-${build_target}")
-//    implementation("com.nextuple.pe:node-consumer:1.4.0-${build_target}")
-//    implementation("com.nextuple.pe:carrier-consumer:1.4.0-${build_target}")
 
 
     implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
@@ -410,11 +374,6 @@ dependencies {
 
 
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
-//    implementation(project(":pe-common:common-util"))
-//    implementation(project(":pe-common:common-postgres"))
-//    implementation(project(":pe-common:common-postgres"))
-//    implementation(project(":pe-common:master-data-integration-framework"))
-//    implementation(project(":pe-common:master-data-integration-framework"))
 
     implementation "org.springframework.kafka:spring-kafka:3.2.1"
     implementation 'org.yaml:snakeyaml:2.2'
@@ -432,7 +391,6 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 
     testImplementation 'org.mockito:mockito-inline:5.2.0'
-//    testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
     testImplementation 'net.bytebuddy:byte-buddy:1.14.9'
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
 

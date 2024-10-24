@@ -41,7 +41,6 @@ dependencies {
     implementation(project(":pe-data-upload-uservice:csv-utility-api"))
     implementation(project(":pe-data-upload-uservice:csv-utility-common-util"))
     implementation "org.springframework.kafka:spring-kafka"
-    //implementation("com.nextuple.pe:common-configuration-api-domain:1.0.0-${build_target}")
     implementation(project(":pe-data-upload-uservice:csv-utility-api"))
     implementation(project(":pe-data-upload-uservice:csv-utility-common-util"))
     implementation(project(":pe-data-upload-uservice:pe-public-webhook"))
