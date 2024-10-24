@@ -26,7 +26,8 @@ import org.springframework.stereotype.Component;
 @KafkaListener(
     topics = "${master-data.node-carrier.topic-name}",
     groupId = "${master-data.node-carrier.group-id}",
-    batch = "true")
+    batch = "true",
+    autoStartup = "${kafka-topic-flags.master-data.node-carrier.enabled:false}")
 public class NodeCarrierFeedConsumer extends MasterDataFeedConsumer<NodeCarrierFeedDto> {
 
   private final NodeCarrierBatchServiceImpl nodeCarrierBatchService;

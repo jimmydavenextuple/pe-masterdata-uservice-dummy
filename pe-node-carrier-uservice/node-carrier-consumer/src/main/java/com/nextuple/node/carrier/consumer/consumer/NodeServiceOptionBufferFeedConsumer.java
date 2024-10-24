@@ -26,7 +26,8 @@ import org.springframework.stereotype.Component;
 @KafkaListener(
     topics = "${master-data.node-service-option-buffer.topic-name}",
     groupId = "${master-data.node-service-option-buffer.group-id}",
-    batch = "true")
+    batch = "true",
+    autoStartup = "${kafka-topic-flags.master-data.node-service-option-buffer.enabled:false}")
 public class NodeServiceOptionBufferFeedConsumer
     extends MasterDataFeedConsumer<NodeServiceOptionBufferFeedDto> {
 

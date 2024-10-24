@@ -26,7 +26,8 @@ import org.springframework.stereotype.Component;
 @KafkaListener(
     topics = "${master-data.processing-lead-time.topic-name}",
     groupId = "${master-data.processing-lead-time.group-id}",
-    batch = "true")
+    batch = "true",
+    autoStartup = "${kafka-topic-flags.master-data.processing-lead-time.enabled:false}")
 public class ProcessingLeadTimeConsumer extends MasterDataFeedConsumer<ProcessingLeadTimeFeedDto> {
 
   final ProcessingLeadTimeBatchServiceImpl processingLeadTimeBatchService;

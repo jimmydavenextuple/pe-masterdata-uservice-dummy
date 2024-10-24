@@ -26,7 +26,8 @@ import org.springframework.stereotype.Component;
 @KafkaListener(
     topics = "${master-data.transit-buffer.topic-name}",
     groupId = "${master-data.transit-buffer.group-id}",
-    batch = "true")
+    batch = "true",
+    autoStartup = "${kafka-topic-flags.master-data.transit-buffer.enabled:false}")
 public class TransitBufferFeedConsumer extends MasterDataFeedConsumer<TransitBufferFeedDto> {
 
   private final TransitBufferBatchServiceImpl transitBufferBatchService;

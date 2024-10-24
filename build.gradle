@@ -532,6 +532,10 @@ tasks.named('test') {
     dependsOn ':pe-data-upload-uservice:data-upload-services:jar'
 }
 
+tasks.withType(Test) {
+    maxParallelForks = Runtime.runtime.availableProcessors() / 2 // Or another appropriate value
+}
+
 task fixPom {
     doLast {
         File file = new File("$buildDir/publications/mavenJava/pom-default.xml")
