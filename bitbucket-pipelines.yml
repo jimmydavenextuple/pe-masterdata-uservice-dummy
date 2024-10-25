@@ -28,7 +28,7 @@ server:
       keyvault: yes
       storage: yes
       scale:
-        replicas: 2
+        replicas: 1
       resources:
         min:
           memory: "1024Mi"
