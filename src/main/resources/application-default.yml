@@ -21,7 +21,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: postgres
+    password: kiran
     hikari:
       maximumPoolSize: 100
       minimumIdle: 10
