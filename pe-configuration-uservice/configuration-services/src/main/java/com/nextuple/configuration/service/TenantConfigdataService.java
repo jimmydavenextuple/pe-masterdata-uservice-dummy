@@ -44,10 +44,16 @@ public class TenantConfigdataService {
   private static final String TENANT_CONFIG_DATA_EXCEPTION_MESSAGE =
       "Tenant configuration data not found";
 
+  private static final String SELECTED_ATTR_CONFIG_KEY =
+      "target-gross-profit-margins-selected-attribute";
+  private static final String CONFIG_VAL_FORMAT_ERROR_MSG =
+      "The config value for %s can not contain comma separated string";
+
   public TenantConfigdataResponse processAddTenantConfigdata(
       TenantConfigdataRequest tenantConfigdataRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside processAddTenantConfigdata Service --");
+    validateConfigValueFormat(tenantConfigdataRequest);
     ConfigurationUtil.validateConfigKeyFormat(tenantConfigdataRequest.getConfigKey());
     Optional<TenantConfigdataDomainDto> existingTenantConfigdataDomainDto =
         tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
@@ -104,6 +110,12 @@ public class TenantConfigdataService {
       String orgId, String configKey, TenantConfigdataUpdateRequest tenantConfigdataUpdateRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside processUpdateTenantConfigdata Service --");
+    validateConfigValueFormat(
+        TenantConfigdataRequest.builder()
+            .orgId(orgId)
+            .configValue(tenantConfigdataUpdateRequest.getConfigValue())
+            .configKey(configKey)
+            .build());
     var existingTenantConfigdataDomainDto =
         getTenantConfigdataByOrgIdAndConfigKey(orgId, configKey);
     INSTANCE.updateTenantConfigdata(
@@ -135,5 +147,26 @@ public class TenantConfigdataService {
           TENANT_CONFIG_DATA_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST, 0X1771, errorMap);
     }
     return existingTenantConfigdataDomainDto.get();
+  }
+
+  void validateConfigValueFormat(TenantConfigdataRequest tenantConfigdataRequest)
+      throws CommonServiceException {
+    if (SELECTED_ATTR_CONFIG_KEY.equals(tenantConfigdataRequest.getConfigKey())
+        && !tenantConfigdataRequest.getConfigValue().isEmpty()
+        && tenantConfigdataRequest.getConfigValue().contains(",")) {
+      logger.error(
+          String.format(CONFIG_VAL_FORMAT_ERROR_MSG, tenantConfigdataRequest.getConfigKey()));
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          ORG_ID, FieldError.builder().rejectedValue(tenantConfigdataRequest.getOrgId()).build());
+      errorMap.put(
+          CONFIG_KEY,
+          FieldError.builder().rejectedValue(tenantConfigdataRequest.getConfigKey()).build());
+      throw new CommonServiceException(
+          String.format(CONFIG_VAL_FORMAT_ERROR_MSG, tenantConfigdataRequest.getConfigKey()),
+          HttpStatus.BAD_REQUEST,
+          0X1771,
+          errorMap);
+    }
   }
 }
