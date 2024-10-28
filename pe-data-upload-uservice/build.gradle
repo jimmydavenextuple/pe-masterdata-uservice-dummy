@@ -17,13 +17,3 @@ jar {
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
-
-
-test {
-    filter {
-        excludeTestsMatching "*.CsvDownloadUtilityServiceTest"
-        excludeTestsMatching "*.CsvDownloadUtilityControllerTest"
-        excludeTestsMatching "*.TransferSchedulesControllerTest"
-        excludeTestsMatching "*.TransferScheduleServiceTest"
-    }
-}
