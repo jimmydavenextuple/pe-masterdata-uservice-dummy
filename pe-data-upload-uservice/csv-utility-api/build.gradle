@@ -49,6 +49,7 @@ tasks.named('test') {
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
     dependsOn ':pe-common:common-util:jar'
     dependsOn ':pe-transit-uservice:transit-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
 }
 
 test {
