@@ -286,7 +286,7 @@ definitions:
           - chmod +x ./deployment-scripts/after-deploy-k8s-service-v3.sh
           - ./deployment-scripts/after-deploy-k8s-service-v3.sh
     - step: &pr-build
-        size: 2x
+        size: 4x
         name: PR Build
         caches:
           - gradle
