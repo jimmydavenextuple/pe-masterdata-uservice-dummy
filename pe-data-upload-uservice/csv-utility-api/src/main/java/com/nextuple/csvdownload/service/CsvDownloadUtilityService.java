@@ -37,6 +37,7 @@ import com.nextuple.csvdownload.service.v1.ProcessingRequestFactory;
 import com.nextuple.csvdownload.service.v1.ProcessingRequestInterface;
 import com.nextuple.csvdownload.service.v1.impl.NeipProcessingRequestImpl;
 import com.nextuple.csvdownload.util.CsvUtil;
+import com.nextuple.dataupload.common.config.TenantDatabaseConfig;
 import com.nextuple.dataupload.common.feign.DataUploadFeign;
 import com.nextuple.dataupload.common.outbound.NodeAndServiceOptionResponse;
 import com.nextuple.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
@@ -44,7 +45,6 @@ import com.nextuple.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.nextuple.dataupload.common.utils.DataUploadUtil;
 import com.nextuple.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.nextuple.jobs.framework.common.domain.pojo.*;
-import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.nextuple.node.domain.dto.NodeDto;
 import com.nextuple.plt.client.FPMServiceClient;
 import com.nextuple.plt.domain.pojo.JobRecordDto;
@@ -135,6 +135,8 @@ public class CsvDownloadUtilityService {
 
   @Autowired NeipProcessingRequestImpl neipProcessingRequest;
 
+  private final TenantDatabaseConfig tenantDatabaseConfig;
+
   @Autowired
   public CsvDownloadUtilityService(
       PostalCodeTimeZoneResponseService postalCodeTimeZoneResponseService,
@@ -152,7 +154,8 @@ public class CsvDownloadUtilityService {
       HolidayCutoffUIFeign holidayCutoffUIFeign,
       ITransitBufferFeign<?, ?> transitBufferFeign,
       TransferScheduleFeign transferScheduleFeign,
-      CostDefinitionService costDefinitionService) {
+      CostDefinitionService costDefinitionService,
+      TenantDatabaseConfig tenantDatabaseConfig) {
     this.postalCodeTimeZoneResponseService = postalCodeTimeZoneResponseService;
     this.transitResponseService = transitResponseService;
     this.dataUploadFeign = dataUploadFeign;
@@ -169,6 +172,7 @@ public class CsvDownloadUtilityService {
     this.transitBufferFeign = transitBufferFeign;
     this.transferScheduleFeign = transferScheduleFeign;
     this.costDefinitionService = costDefinitionService;
+    this.tenantDatabaseConfig = tenantDatabaseConfig;
   }
 
   @Value("${download-page-size.node-carrier-service-options}")
@@ -1032,44 +1036,45 @@ public class CsvDownloadUtilityService {
   }
 
   public File downloadNodesByOrgId(String orgId, String nodeIds, String nodeType)
-      throws IOException {
+      throws IOException, CommonServiceException {
     List<NodeDto> nodeDtoList = nodeResponseService.getNodeList(orgId, nodeIds, nodeType);
-
+    String serviceOptionString = tenantDatabaseConfig.fetchServiceOptions(orgId);
+    String[] serviceOptions = serviceOptionString.split(",");
     FileAttribute<Set<PosixFilePermission>> attr =
         PosixFilePermissions.asFileAttribute(setFilePermissions());
     Path tempFile = Files.createTempFile("download-nodes" + new Date().getTime(), ".csv", attr);
     try (var writer = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
-      var header =
-          new String[] {
-            NODE_ID,
-            ORG_ID,
-            NODE_TYPE,
-            NODE_LABOUR_TIER,
-            STREET,
-            CITY,
-            STATE,
-            ZIP_CODE,
-            LATITUDE,
-            LONGITUDE,
-            TIMEZONE,
-            STATUS,
-            NODE_WORKING_CALENDAR,
-            CARRIER_SERVICES,
-            SERVICE_OPTIONS,
-            PICKUP_TIME,
-            START_WORKING_TIME,
-            LAST_WORKING_TIME
-          };
-      writeToCSV(header, writer);
-
-      writerNodesDataToFile(writer, nodeDtoList);
+      List<String> header =
+          new ArrayList<>(
+              Arrays.asList(
+                  NODE_ID,
+                  ORG_ID,
+                  NODE_TYPE,
+                  NODE_LABOUR_TIER,
+                  STREET,
+                  CITY,
+                  STATE,
+                  ZIP_CODE,
+                  LATITUDE,
+                  LONGITUDE,
+                  TIMEZONE,
+                  STATUS,
+                  NODE_WORKING_CALENDAR,
+                  START_WORKING_TIME,
+                  LAST_WORKING_TIME));
+      List<String> configuredEligibilities =
+          Arrays.stream(serviceOptions).map(option -> option.toLowerCase() + "Eligible").toList();
+      header.addAll(configuredEligibilities);
+      writeToCSV(header.toArray(new String[0]), writer);
+      writerNodesDataToFile(writer, nodeDtoList, configuredEligibilities);
       writer.flush();
     }
 
     return tempFile.toFile();
   }
 
-  private void writerNodesDataToFile(CSVWriter writer, List<NodeDto> nodeDtoList) {
+  private void writerNodesDataToFile(
+      CSVWriter writer, List<NodeDto> nodeDtoList, List<String> serviceOptionsEligibilities) {
     for (NodeDto node : nodeDtoList) {
       List<NodeCalendarResponse> nodeCalendarResponses =
           calenderResponseService.getNodeCalendar(node.getOrgId(), node.getNodeId());
@@ -1078,39 +1083,21 @@ public class CsvDownloadUtilityService {
               ? "NA"
               : nodeCalendarResponses.get(0).getCalendarId();
 
-      List<NodeCarrierResponse> nodeCarrierResponses =
-          nodeCarrierResponseService.getNodeCarrierResponse(node.getNodeId(), node.getOrgId());
-
-      if (nodeCarrierResponses.isEmpty()) {
-        List<String> csvData = addRequiredNodeDetails(node);
-        csvData.add(node.getLatitude());
-        csvData.add(node.getLongitude());
-        csvData.add(node.getTimezone());
-        csvData.add(node.getIsActive().equals(Boolean.TRUE) ? "ACTIVE" : "INACTIVE");
-        csvData.add(nodeWorkingCalendar);
-        csvData.add(NA);
-        csvData.add(NA);
-        csvData.add(NA);
-        csvData.add(node.getStartWorkingTime());
-        csvData.add(node.getLastWorkingTime());
-        writeToCSV(csvData.toArray(new String[0]), writer);
-      } else {
-        nodeCarrierResponses.forEach(
-            response -> {
-              List<String> csvData = addRequiredNodeDetails(node);
-              csvData.add(node.getLatitude());
-              csvData.add(node.getLongitude());
-              csvData.add(node.getTimezone());
-              csvData.add(node.getIsActive().equals(Boolean.TRUE) ? "ACTIVE" : "INACTIVE");
-              csvData.add(nodeWorkingCalendar);
-              csvData.add(checkForNullValues(response.getCarrierServiceId()));
-              csvData.add(checkForNullValues(response.getServiceOption()));
-              csvData.add(checkForNullValues(response.getLastPickupTime()));
-              csvData.add(node.getStartWorkingTime());
-              csvData.add(node.getLastWorkingTime());
-              writeToCSV(csvData.toArray(new String[0]), writer);
-            });
+      List<String> csvData = addRequiredNodeDetails(node);
+      csvData.add(node.getLatitude());
+      csvData.add(node.getLongitude());
+      csvData.add(node.getTimezone());
+      csvData.add(node.getIsActive().equals(Boolean.TRUE) ? "ACTIVE" : "INACTIVE");
+      csvData.add(nodeWorkingCalendar);
+      csvData.add(node.getStartWorkingTime());
+      csvData.add(node.getLastWorkingTime());
+      for (String serviceOptionEligibility : serviceOptionsEligibilities) {
+        csvData.add(
+            node.getServiceOptionEligibilities()
+                .getOrDefault(serviceOptionEligibility, Boolean.FALSE)
+                .toString());
       }
+      writeToCSV(csvData.toArray(new String[0]), writer);
     }
   }
 

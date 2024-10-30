@@ -355,7 +355,7 @@ public class CsvDownloadUtilityController {
       @RequestParam(required = false) @Parameter(description = "Identifier for type of node.")
           String nodeType,
       HttpServletResponse httpServletResponse)
-      throws IOException {
+      throws IOException, CommonServiceException {
     log.debug("Inside download nodes data as csv");
     final var file = csvDownloadUtilityService.downloadNodesByOrgId(orgId, nodeIds, nodeType);
     try (var inputStream = new FileInputStream(file)) {
