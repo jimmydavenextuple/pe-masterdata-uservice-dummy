@@ -321,7 +321,7 @@ pipelines:
           trigger: manual
           deployment: prod
   branches:
-    vapt:
+    vapt-2024:
       - step: *Clear-Cache
       - step: *build
       - step:
