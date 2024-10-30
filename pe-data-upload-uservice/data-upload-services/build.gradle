@@ -47,10 +47,16 @@ test {
     useJUnitPlatform()
 }
 
+tasks.named('bootJar') {
+    dependsOn ':pe-transit-uservice:transit-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
+}
+
 tasks.named('test') {
     dependsOn ':pe-calendar-uservice:calendar-persistence-domain:jar'
     dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
     dependsOn ':pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
     dependsOn ':pe-data-upload-uservice:csv-utility-api:jar'
     dependsOn ':pe-data-upload-uservice:data-upload-common-util:jar'
     dependsOn ':pe-calendar-uservice:calendar-consumer:jar'
@@ -61,7 +67,6 @@ tasks.named('test') {
     dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
     dependsOn ':pe-carrier-uservice:carrier-persistence-postgres:jar'
     dependsOn ':pe-carrier-uservice:carrier-persistence-domain:jar'
-    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     dependsOn ':pe-data-upload-uservice:csv-utility-common-util:jar'
     dependsOn ':pe-data-upload-uservice:job-framework-common-util:jar'
@@ -76,8 +81,5 @@ tasks.named('test') {
     dependsOn ':pe-node-uservice:node-persistence-domain:jar'
     dependsOn ':pe-node-carrier-uservice:node-carrier-services:jar'
     dependsOn ':pe-transit-uservice:transit-persistence-domain:jar'
-    dependsOn ':pe-weightage-configuration-uservice:weightage-configuration-api-domain:jar'
+    dependsOn ':pe-transit-uservice:transit-api-domain:jar'
 }
-
-
-
