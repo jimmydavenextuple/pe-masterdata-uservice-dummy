@@ -356,7 +356,6 @@ pipelines:
           name: Deploy vapt
           deployment: vapt
     development:
-      - step: *Clear-Cache
       - step: *build     
       - step:
           !!merge <<: *deploy
