@@ -53,10 +53,3 @@ tasks.named('test') {
     dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
     dependsOn ':pe-node-uservice:node-api-domain:jar'
 }
-
-test {
-    filter {
-        excludeTestsMatching "*.CsvDownloadUtilityServiceTest"
-        excludeTestsMatching "*.CsvDownloadUtilityControllerTest"
-    }
-}
