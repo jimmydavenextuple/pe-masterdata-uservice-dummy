@@ -143,7 +143,7 @@ subprojects {
         implementation "org.mapstruct:mapstruct:${mapstructVersion}"
         implementation "org.apache.commons:commons-csv:${commonsCsvVersion}"
         api "io.micrometer:micrometer-registry-prometheus:1.10.7"
-        implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.17.0'
+        implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.13.0'
 
         // Dependency version override to resolve high CVE coming transitively for tomcat-embed-core
         implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.25'
@@ -347,7 +347,7 @@ dependencies {
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     implementation "org.apache.commons:commons-csv:${commonsCsvVersion}"
     api "io.micrometer:micrometer-registry-prometheus:1.10.7"
-    implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.17.0'
+    implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.13.0'
 
     // Dependency version override to resolve high CVE coming transitively for tomcat-embed-core
     implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.25'
