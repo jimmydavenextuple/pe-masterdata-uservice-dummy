@@ -24,4 +24,5 @@ public class PickupTimeDto implements Serializable {
   private String nodeId;
   private String carrierServiceId;
   private String pickupTime;
+  private String pickupCalendarId;
 }

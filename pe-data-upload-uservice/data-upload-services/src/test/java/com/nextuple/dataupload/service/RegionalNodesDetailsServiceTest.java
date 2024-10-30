@@ -227,4 +227,37 @@ class RegionalNodesDetailsServiceTest {
     verify(nodeCarrierFeign, times(2)).getNodeCarrierList(any(), any());
     verify(calendarFeign, times(2)).handleGetNodeCalendar(any(), any());
   }
+
+  @Test
+  @DisplayName("Get node list will all the pickup times details")
+  void getNodeListWithPickupTimeDetails() {
+    when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeListPaginationBaseResponse());
+    when(calendarFeign.handleGetNodeCalendar(any(), any()))
+        .thenReturn((testUtil.getBaseResponseOfNodeCalendarList()));
+    when(nodeCarrierFeign.getNodeCarrierListWithLastPickUpTimeDetails(any(), any()))
+        .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
+    when(calendarFeign.getCalendar(any(), any())).thenReturn(testUtil.getBaseResponseOfCalendar());
+    when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
+        .thenReturn(testUtil.getBaseResponseNodeServiceOptions());
+    when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeCarrierServiceOptionCalendarResponse());
+    PageParams pageParams =
+        new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
+    PagePayload<NodeListDto> response =
+        regionalNodesDetailsService.getNodesList(TestUtil.ORG_ID, null, null, pageParams);
+    assertEquals(2, response.getData().getFirst().getPickupTime().size());
+    assertEquals(
+        TestUtil.CARRIER_SERVICE_ID,
+        response.getData().getFirst().getPickupTime().getFirst().getCarrierServiceId());
+    assertEquals(
+        TestUtil.NODE_ID, response.getData().getFirst().getPickupTime().getFirst().getNodeId());
+    assertEquals(
+        TestUtil.CALENDAR_ID,
+        response.getData().getFirst().getPickupTime().getFirst().getPickupCalendarId());
+    assertEquals(
+        TestUtil.LAST_PICK_UP_TIME,
+        response.getData().getFirst().getPickupTime().getFirst().getPickupTime());
+    verify(calendarFeign, times(4)).getNodeCarrierServiceCalendar(any(), any(), any(), any());
+  }
 }
