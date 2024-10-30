@@ -311,11 +311,9 @@ definitions:
 pipelines:
   pull-requests:
     '**':
-      - step: *Clear-Cache
       - step: *pr-build
   tags:
     '*-SNAPSHOT':
-      - step: *Clear-Cache
       - step: *build-release
       - step:
           !!merge <<: *deploy
@@ -333,14 +331,12 @@ pipelines:
           #     trigger: manual
           #     deployment: perf
     '*-SANDBOX':
-      - step: *Clear-Cache
       - step: *build-release
       - step:
           !!merge <<: *deploy
           name: Deploy Sandbox
           deployment: sandbox
     '*-RELEASE':
-      - step: *Clear-Cache
       - step: *build-release
       - step:
           !!merge <<: *deploy
@@ -349,7 +345,6 @@ pipelines:
           deployment: prod
   branches:
     vapt:
-      - step: *Clear-Cache
       - step: *build
       - step:
           !!merge <<: *deploy
@@ -373,7 +368,6 @@ pipelines:
           #     trigger: manual
           #     deployment: perf
     master:
-      - step: *Clear-Cache
       - step: *build
       - parallel:
           - step:
@@ -407,7 +401,6 @@ pipelines:
           trigger: manual
           deployment: prod
     master2:
-      - step: *Clear-Cache
       - step: *build
       - step:
           !!merge <<: *deploy
@@ -420,7 +413,6 @@ pipelines:
           trigger: manual
           deployment: prod
     hotfixes/*:
-      - step: *Clear-Cache
       - step: *build
       - parallel:
           # - step:
