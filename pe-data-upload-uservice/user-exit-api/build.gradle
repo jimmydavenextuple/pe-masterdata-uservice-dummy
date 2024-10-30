@@ -18,7 +18,7 @@ dependencies {
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
     implementation(project(":pe-common:common-postgres"))
     implementation(project(":pe-common:userexit-framework:userexit-domain"))
-    api "com.azure.spring:azure-spring-boot-starter-keyvault-secrets:3.10.0"
+    api "com.azure.spring:azure-spring-boot-starter-keyvault-secrets:5.13.0"
     implementation(project(":pe-common:common-util"))
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
     implementation "jakarta.validation:jakarta.validation-api:3.0.2"

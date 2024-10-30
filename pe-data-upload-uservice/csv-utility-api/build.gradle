@@ -20,7 +20,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.9.0'
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
     implementation("com.nextuple.pe:core-common-util:1.6.0-${build_target}")
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
