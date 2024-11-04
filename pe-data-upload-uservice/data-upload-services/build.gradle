@@ -83,14 +83,3 @@ tasks.named('test') {
     dependsOn ':pe-transit-uservice:transit-persistence-domain:jar'
     dependsOn ':pe-transit-uservice:transit-api-domain:jar'
 }
-
-
-
-test {
-    filter {
-        excludeTestsMatching "*.HolidayCutoffDetailsServiceTest"
-        excludeTestsMatching "*.HolidayCutoffDashboardControllerTest"
-        excludeTestsMatching "*.TransferSchedulesControllerTest"
-        excludeTestsMatching "*.TransferScheduleServiceTest"
-    }
-}
