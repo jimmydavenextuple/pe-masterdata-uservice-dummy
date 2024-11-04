@@ -57,6 +57,9 @@ pagination:
   pageSize: 15
 
 management:
+  health:
+    azure-key-vault:
+      enabled: false
   endpoints:
     web:
       exposure:
