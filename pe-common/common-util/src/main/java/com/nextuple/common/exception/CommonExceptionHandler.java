@@ -174,12 +174,13 @@ public class CommonExceptionHandler {
     return ResponseEntity.status(e.getStatusCode())
         .body(ErrorResponse.builder(ErrorType.ERROR, 0x000005).message(e.getMessage()).build());
   }
+
   @ExceptionHandler(NoHandlerFoundException.class)
   public ResponseEntity<ErrorResponse> handleNotFound(NoHandlerFoundException ex) {
     return ResponseEntity.status(ex.getStatusCode())
-            .body(
-                    ErrorResponse.builder(ErrorType.ERROR, 0x000006)
-                            .message("The requested resource was not found for + " + ex.getRequestURL())
-                            .build());
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0x000006)
+                .message("The requested resource was not found for + " + ex.getRequestURL())
+                .build());
   }
 }
