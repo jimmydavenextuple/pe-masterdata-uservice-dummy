@@ -366,7 +366,7 @@ public class TransitBufferConfigRequestService {
       fileResponse.setFilePath(newPath);
       fileResponse.setContentLength(tempFile.toFile().length());
       if (ObjectUtils.isEmpty(transitBufferConfigRequest.getStorageType()))
-        transitBufferConfigRequest.setStorageType(fileMetaDataResponse.getStorageType());
+        transitBufferConfigRequest.setStorageType(fileMetaDataResponse.getType());
 
       var fileMetaDataCreationRequest =
           getFileMetaDataCreationRequest(

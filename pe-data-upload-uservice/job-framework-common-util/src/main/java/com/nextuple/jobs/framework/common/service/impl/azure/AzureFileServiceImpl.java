@@ -13,8 +13,8 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.specialized.BlockBlobClient;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
+import com.nextuple.jobs.framework.common.config.StorageConfigProperties;
 import com.nextuple.jobs.framework.common.domain.outbound.FileResponse;
-import com.nextuple.jobs.framework.common.domain.pojo.StorageConfigProperties;
 import com.nextuple.jobs.framework.common.service.FileService;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -58,7 +58,7 @@ public class AzureFileServiceImpl implements FileService {
   public FileResponse getFile(String bucketName, String filePath) throws CommonServiceException {
     try {
       BlobContainerClient blobContainerClient =
-          blobServiceClient.getBlobContainerClient(storageConfigProperties.getContainerName());
+          blobServiceClient.getBlobContainerClient(storageConfigProperties.getBucketName());
       BlobClient blobClient = blobContainerClient.getBlobClient(filePath);
       if (ObjectUtils.isEmpty(blobClient)) {
         logger.error(

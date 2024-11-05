@@ -18,7 +18,7 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.PreSignedUrlResponse;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.jobs.framework.common.clients.FileMetaDataClient;
-import com.nextuple.jobs.framework.common.domain.pojo.StorageConfigProperties;
+import com.nextuple.jobs.framework.common.config.StorageConfigProperties;
 import com.nextuple.jobs.framework.common.enums.ModuleEnum;
 import com.nextuple.jobs.framework.common.service.PreSignedUrlInterface;
 import java.time.OffsetDateTime;
@@ -63,7 +63,7 @@ public class AzureSignedUrlServiceImpl implements PreSignedUrlInterface {
     var bucketPath =
         String.format(
             "%s/%s/%s/%s",
-            storageConfigProperties.getContainerName(),
+            storageConfigProperties.getBucketName(),
             ModuleEnum.UI.getModuleValue(),
             moduleName,
             DateTime.now().toString("yyyy-MM-dd"));
@@ -72,7 +72,7 @@ public class AzureSignedUrlServiceImpl implements PreSignedUrlInterface {
     return PreSignedUrlResponse.builder()
         .signedURL(signedUrl)
         .filePath(String.format("%s/%s", bucketPath, file))
-        .storageType(storageConfigProperties.getStorageType())
+        .storageType(storageConfigProperties.getType())
         .build();
   }
 
@@ -94,13 +94,13 @@ public class AzureSignedUrlServiceImpl implements PreSignedUrlInterface {
     return PreSignedUrlResponse.builder()
         .signedURL(url)
         .filePath(fileMetaDataResponse.getPath())
-        .storageType(storageConfigProperties.getStorageType())
+        .storageType(storageConfigProperties.getType())
         .build();
   }
 
   public String generatePreSignedUrl(String bucketPath, String fileName) {
     BlobContainerClient blobContainerClient =
-        blobServiceClient.getBlobContainerClient(storageConfigProperties.getContainerName());
+        blobServiceClient.getBlobContainerClient(storageConfigProperties.getBucketName());
     OffsetDateTime offsetDateTime =
         OffsetDateTime.now().plusMinutes(storageConfigProperties.getSignedUrlExpiryMinutes());
     UserDelegationKey userDelegationKey =

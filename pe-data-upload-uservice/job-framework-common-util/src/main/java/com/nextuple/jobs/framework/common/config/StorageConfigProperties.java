@@ -5,22 +5,22 @@
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
  */
 
-package com.nextuple.jobs.framework.common.domain.pojo;
+package com.nextuple.jobs.framework.common.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Component
+@ConfigurationProperties(prefix = "dataupload")
+@Getter
+@Setter
 public class StorageConfigProperties {
 
   private Integer signedUrlExpiryMinutes;
 
-  private String containerName;
+  private String bucketName;
 
-  private String storageType;
+  private String type;
 }

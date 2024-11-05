@@ -384,7 +384,7 @@ public class TransitBufferService {
         .size(String.valueOf(fileResponse.getContentLength()))
         .type(fileResponse.getContentType())
         .description(description)
-        .storageType(fileMetaDataResponse.getStorageType())
+        .storageType(fileMetaDataResponse.getType())
         .createdBy(createdBy)
         .build();
   }
