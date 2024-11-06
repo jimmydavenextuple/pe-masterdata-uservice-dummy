@@ -48,8 +48,8 @@ class S3SignedUrlServiceImplTest {
   public void init() {
     MockitoAnnotations.initMocks(this);
     ReflectionTestUtils.setField(storageConfig, "signedUrlExpiryMinutes", 30);
-    ReflectionTestUtils.setField(storageConfig, "containerName", "dataupload");
-    ReflectionTestUtils.setField(storageConfig, "storageType", "S3");
+    ReflectionTestUtils.setField(storageConfig, "bucketName", "dataupload");
+    ReflectionTestUtils.setField(storageConfig, "type", "S3");
   }
 
   @Test
