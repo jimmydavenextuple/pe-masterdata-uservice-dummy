@@ -152,7 +152,7 @@ dependencies {
 
     implementation("com.nextuple.pe:job-framework-common-util:1.6.0-${build_target}")
     implementation("com.nextuple.pe:data-upload-services:1.6.0-${build_target}")
-    implementation("com.nextuple.pe:promise-sourcing-rule-services:1.6.2-${build_target}")
+    implementation("com.nextuple.pe:promise-sourcing-rule-services:1.6.6-${build_target}")
     implementation("com.nextuple.pe:weightage-configuration-services:1.6.0-${build_target}")
     implementation("com.nextuple.pe:postal-code-timezone-services:1.6.1-${build_target}")
     implementation("com.nextuple.pe:transit-services:1.6.0-${build_target}")
@@ -167,8 +167,8 @@ dependencies {
     implementation("com.nextuple.pe:node-consumer:1.6.0-${build_target}")
     implementation("com.nextuple.pe:carrier-consumer:1.6.0-${build_target}")
 
-    implementation("com.nextuple.pe:core-near-cache:1.6.0-${build_target}")
-    implementation("com.nextuple.pe:core-near-cache-spring:1.6.0-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache:1.6.2-${build_target}")
+    implementation("com.nextuple.pe:core-near-cache-spring:1.6.2-${build_target}")
 
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
     implementation("com.nextuple.pe:common-util:1.6.0-${build_target}")
