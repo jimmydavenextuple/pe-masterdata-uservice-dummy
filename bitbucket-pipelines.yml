@@ -84,6 +84,22 @@ server:
         max:
           memory: 2Gi
           cpu: 1
+    orielly:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      java-opts: "-Xms1024m -Xmx1024m"
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 2Gi
+          cpu: 1
+        max:
+          memory: 2Gi
+          cpu: 1
     qa:
       ingress: yes
       middleman: yes
@@ -356,12 +372,18 @@ pipelines:
           deployment: vapt
     development:
       - step: *Clear-Cache
-      - step: *build     
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Dev
-          deployment: dev
-      - parallel:              
+      - step: *build
+      - parallel:
+          - step:
+              !!merge <<: *deploy
+              trigger: manual
+              name: Deploy Dev
+              deployment: dev
+          - step:
+              !!merge <<: *deploy
+              trigger: manual
+              name: Deploy Orielly
+              deployment: orielly
           - step:
               !!merge <<: *deploy
               name: Deploy QA
