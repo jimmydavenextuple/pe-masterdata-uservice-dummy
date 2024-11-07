@@ -118,7 +118,7 @@ pe-public-webhook:
           x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
           #          Dummy API Keydataupload:
 dataupload:
-  base-path: "https://pedataupload.blob.core.windows.net"
+  base-path: "https://vaptpedataupload.blob.core.windows.net"
   maxsize-in-kilobytes: 10240
   max-rows: 1000
   bucket-name: "dataupload"
