@@ -23,7 +23,7 @@ server:
   environments:
     vapt:
       ingress: yes
-      middleman: no
+      middleman: yes
       prometheus: yes
       keyvault: yes
       storage: yes
