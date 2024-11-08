@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -13,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
@@ -41,14 +41,13 @@ public class KafkaProducerConfigs {
     return this.kafkaProperties.buildProducerProperties();
   }
 
-  @Bean
-  public ProducerFactory<String, Object> kafkaItemProducerFactory() {
+  @NotNull
+  private HashMap<String, Object> getItemProducerProps() {
     HashMap<String, Object> prop = new HashMap<>(itemSerializerProperties());
     prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get(KEYSERIALIZER));
     prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get(VALUESERIALIZER));
     prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-
-    return new DefaultKafkaProducerFactory<>(prop);
+    return prop;
   }
 
   private Map<String, Object> getStringObjectMap() {
@@ -64,32 +63,38 @@ public class KafkaProducerConfigs {
   }
 
   @Bean(name = "CacheUpdateProducer")
-  public KafkaTemplate<String, LocalCacheUpdateEvent> cacheUpdateKafkaTemplate() {
-    Map<String, Object> prop = getStringObjectMap();
-    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
+  public KafkaTemplate<String, LocalCacheUpdateEvent> cacheUpdateKafkaTemplate(
+      ProducerFactory<String, LocalCacheUpdateEvent> producerFactory) {
+    producerFactory.updateConfigs(getStringObjectMap());
+    return new KafkaTemplate<>(producerFactory);
   }
 
   @Bean(name = "JsonSerializerProducer")
-  public KafkaTemplate<String, RecordDto> jobServiceKafkaTemplate() {
-    Map<String, Object> prop = getStringObjectMap();
-    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
+  public KafkaTemplate<String, RecordDto> jobServiceKafkaTemplate(
+      ProducerFactory<String, RecordDto> producerFactory) {
+    producerFactory.updateConfigs(getStringObjectMap());
+    return new KafkaTemplate<>(producerFactory);
   }
 
   @Bean(name = "JsonSerializerProducerObj")
-  public KafkaTemplate<Object, Object> jobEventKafkaTemplate() {
-    Map<String, Object> prop = getStringObjectMap();
-    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
+  public KafkaTemplate<Object, Object> jobEventKafkaTemplate(
+      ProducerFactory<Object, Object> producerFactory) {
+    producerFactory.updateConfigs(getStringObjectMap());
+    return new KafkaTemplate<>(producerFactory);
   }
 
   @Bean(name = "ItemSerializerProducer")
-  public KafkaTemplate<String, Object> itemKafkaTemplate() {
-    return new KafkaTemplate<>(kafkaItemProducerFactory());
+  public KafkaTemplate<String, Object> itemKafkaTemplate(
+      ProducerFactory<String, Object> producerFactory) {
+    producerFactory.updateConfigs(getItemProducerProps());
+    return new KafkaTemplate<>(producerFactory);
   }
 
   @Bean
   @Primary
-  public KafkaTemplate<String, String> platformTaskKafkaTemplate() {
-    Map<String, Object> prop = getStringObjectMap();
-    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
+  public KafkaTemplate<String, String> platformTaskKafkaTemplate(
+      ProducerFactory<String, String> producerFactory) {
+    producerFactory.updateConfigs(getStringObjectMap());
+    return new KafkaTemplate<>(producerFactory);
   }
 }
