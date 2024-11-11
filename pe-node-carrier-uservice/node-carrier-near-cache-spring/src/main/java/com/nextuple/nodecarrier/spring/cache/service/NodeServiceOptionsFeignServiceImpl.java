@@ -14,13 +14,12 @@ import com.nextuple.nodecarrier.cache.domain.NodeServiceOptionCacheKey;
 import com.nextuple.nodecarrier.cache.domain.NodeServiceOptionCacheValue;
 import com.nextuple.nodecarrier.spring.cache.feign.NodeServiceOptionsFeignImpl;
 import com.nextuple.nodecarrier.spring.cache.mapper.NodeServiceOptionMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NodeServiceOptionsFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         NodeServiceOptionCacheKey,
@@ -28,9 +27,9 @@ public class NodeServiceOptionsFeignServiceImpl
         String,
         BaseResponse<NodeServiceOptionResponse>> {
 
-  @Autowired NodeServiceOptionsFeignImpl nodeServiceOptionFeign;
+  private final NodeServiceOptionsFeignImpl nodeServiceOptionFeign;
 
-  @Autowired NodeServiceOptionMapper nodeServiceOptionMapper;
+  private final NodeServiceOptionMapper nodeServiceOptionMapper;
 
   @Override
   public NodeServiceOptionCacheValue get(NodeServiceOptionCacheKey key) {

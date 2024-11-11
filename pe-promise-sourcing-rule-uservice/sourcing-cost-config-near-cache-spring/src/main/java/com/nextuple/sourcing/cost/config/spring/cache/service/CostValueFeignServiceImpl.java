@@ -16,20 +16,19 @@ import com.nextuple.sourcing.cost.config.spring.cache.feign.CostValueFeignImpl;
 import com.nextuple.sourcing.cost.config.spring.cache.mapper.CostValueMapper;
 import feign.FeignException.NotFound;
 import feign.RetryableException;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CostValueFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         CostValueCacheKey, CostValueCacheValue, String, BaseResponse<CostValueResponse>> {
 
-  @Autowired CostValueFeignImpl costValueFeign;
+  private final CostValueFeignImpl costValueFeign;
 
-  @Autowired CostValueMapper costValueMapper;
+  private final CostValueMapper costValueMapper;
 
   @Override
   public CostValueCacheValue get(CostValueCacheKey key) {

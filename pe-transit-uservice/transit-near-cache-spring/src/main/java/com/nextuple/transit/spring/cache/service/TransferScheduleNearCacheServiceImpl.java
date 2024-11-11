@@ -14,17 +14,16 @@ import com.nextuple.transit.cache.domain.TransferScheduleCacheKey;
 import com.nextuple.transit.cache.domain.TransferScheduleCacheValue;
 import com.nextuple.transit.cache.service.TransferScheduleNearCacheService;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(cacheNames = TransferScheduleNearCacheServiceImpl.TRANSFER_SCHEDULE)
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TransferScheduleNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<
         TransferScheduleCacheKey, TransferScheduleCacheValue>
@@ -32,7 +31,7 @@ public class TransferScheduleNearCacheServiceImpl
   private static final Logger logger =
       LoggerFactory.getLogger(TransferScheduleNearCacheServiceImpl.class);
   public static final String TRANSFER_SCHEDULE = "transfer_schedules";
-  @Autowired NearCacheRegistry nearCacheRegistry;
+  private final NearCacheRegistry nearCacheRegistry;
 
   @Override
   public String getCacheName() {

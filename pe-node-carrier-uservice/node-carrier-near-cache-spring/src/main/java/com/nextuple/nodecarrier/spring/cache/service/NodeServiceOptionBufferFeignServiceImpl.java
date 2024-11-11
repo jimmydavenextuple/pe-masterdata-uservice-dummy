@@ -16,21 +16,20 @@ import com.nextuple.nodecarrier.cache.domain.NodeServiceOptionBufferCacheValue;
 import com.nextuple.nodecarrier.spring.cache.feign.NodeServiceOptionBufferFeignImpl;
 import com.nextuple.nodecarrier.spring.cache.mapper.NodeServiceOptionBufferMapper;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NodeServiceOptionBufferFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         NodeServiceOptionBufferCacheKey,
         NodeServiceOptionBufferCacheValue,
         String,
         BaseResponse<List<NodeServiceOptionBufferResponse>>> {
-  @Autowired NodeServiceOptionBufferFeignImpl nodeServiceOptionBufferFeign;
-  @Autowired NodeServiceOptionBufferMapper nodeServiceOptionBufferMapper;
+  private final NodeServiceOptionBufferFeignImpl nodeServiceOptionBufferFeign;
+  private final NodeServiceOptionBufferMapper nodeServiceOptionBufferMapper;
 
   @Override
   public NodeServiceOptionBufferCacheValue get(NodeServiceOptionBufferCacheKey key) {

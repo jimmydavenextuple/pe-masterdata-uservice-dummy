@@ -14,17 +14,16 @@ import com.nextuple.nodecarrier.cache.domain.NodeCarrierListCacheKey;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierListCacheValue;
 import com.nextuple.nodecarrier.cache.service.NodeCarrierListNearCacheService;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(cacheNames = NodeCarrierListNearCacheServiceImpl.NODE_CARRIER_LIST_CACHE_NAME)
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NodeCarrierListNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<
         NodeCarrierListCacheKey, NodeCarrierListCacheValue>
@@ -34,7 +33,7 @@ public class NodeCarrierListNearCacheServiceImpl
       LoggerFactory.getLogger(NodeCarrierListNearCacheServiceImpl.class);
   public static final String NODE_CARRIER_LIST_CACHE_NAME = "node_carrier_list";
 
-  @Autowired NearCacheRegistry nearCacheRegistry;
+  private final NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override

@@ -14,13 +14,12 @@ import com.nextuple.sourcing.cost.config.cache.domain.CostItineraryAndFactorsCac
 import com.nextuple.sourcing.cost.config.dto.CostItineraryAndFactorsDto;
 import com.nextuple.sourcing.cost.config.spring.cache.feign.CostItineraryAndFactorsDtoFeignImpl;
 import com.nextuple.sourcing.cost.config.spring.cache.mapper.CostItineraryAndFactorsMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CostItineraryAndFactorsFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         CostItineraryAndFactorsCacheKey,
@@ -28,9 +27,9 @@ public class CostItineraryAndFactorsFeignClientServiceImpl
         String,
         BaseResponse<CostItineraryAndFactorsDto>> {
 
-  @Autowired CostItineraryAndFactorsDtoFeignImpl costItineraryAndFactorsDtoFeign;
+  private final CostItineraryAndFactorsDtoFeignImpl costItineraryAndFactorsDtoFeign;
 
-  @Autowired CostItineraryAndFactorsMapper costItineraryAndFactorsMapper;
+  private final CostItineraryAndFactorsMapper costItineraryAndFactorsMapper;
 
   @Override
   public CostItineraryAndFactorsCacheValue get(CostItineraryAndFactorsCacheKey key) {

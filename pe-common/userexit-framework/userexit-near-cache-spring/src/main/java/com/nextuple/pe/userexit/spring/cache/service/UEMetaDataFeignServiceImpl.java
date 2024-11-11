@@ -15,19 +15,18 @@ import com.nextuple.pe.userexit.cache.domain.UEMetaDataCacheValue;
 import com.nextuple.pe.userexit.spring.cache.feign.UEMetaDataFeignImpl;
 import com.nextuple.pe.userexit.spring.cache.mapper.UEMetaDataMapper;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UEMetaDataFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         UEMetaDataCacheKey, UEMetaDataCacheValue, String, BaseResponse<UserExitMetaDataDto>> {
 
-  @Autowired UEMetaDataFeignImpl ueMetaDataFeign;
-  @Autowired UEMetaDataMapper ueMetaDataMapper;
+  private final UEMetaDataFeignImpl ueMetaDataFeign;
+  private final UEMetaDataMapper ueMetaDataMapper;
 
   @Override
   public UEMetaDataCacheValue get(UEMetaDataCacheKey key) {

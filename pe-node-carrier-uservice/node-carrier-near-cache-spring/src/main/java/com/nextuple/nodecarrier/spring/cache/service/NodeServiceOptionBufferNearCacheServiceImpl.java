@@ -14,10 +14,9 @@ import com.nextuple.nodecarrier.cache.domain.NodeServiceOptionBufferCacheKey;
 import com.nextuple.nodecarrier.cache.domain.NodeServiceOptionBufferCacheValue;
 import com.nextuple.nodecarrier.cache.service.NodeServiceOptionBufferNearCacheService;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Service;
 @CacheConfig(
     cacheNames = NodeServiceOptionBufferNearCacheServiceImpl.NODE_SERVICE_OPTION_BUFFER_CACHE_NAME)
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NodeServiceOptionBufferNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<
         NodeServiceOptionBufferCacheKey, NodeServiceOptionBufferCacheValue>
@@ -34,7 +33,7 @@ public class NodeServiceOptionBufferNearCacheServiceImpl
       LoggerFactory.getLogger(NodeServiceOptionBufferNearCacheServiceImpl.class);
   public static final String NODE_SERVICE_OPTION_BUFFER_CACHE_NAME = "node_service_option_buffers";
 
-  @Autowired NearCacheRegistry nearCacheRegistry;
+  private final NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override

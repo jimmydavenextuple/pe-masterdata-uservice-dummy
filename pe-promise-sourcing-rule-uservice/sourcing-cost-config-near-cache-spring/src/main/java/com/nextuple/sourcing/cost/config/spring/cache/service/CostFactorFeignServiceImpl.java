@@ -14,20 +14,19 @@ import com.nextuple.sourcing.cost.config.cache.domain.CostFactorCacheValue;
 import com.nextuple.sourcing.cost.config.dto.CostFactorDto;
 import com.nextuple.sourcing.cost.config.spring.cache.feign.CostFactorFeignImpl;
 import com.nextuple.sourcing.cost.config.spring.cache.mapper.CostFactorMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CostFactorFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         CostFactorCacheKey, CostFactorCacheValue, String, BaseResponse<CostFactorDto>> {
 
-  @Autowired CostFactorFeignImpl costFactorFeign;
+  private final CostFactorFeignImpl costFactorFeign;
 
-  @Autowired CostFactorMapper costFactorMapper;
+  private final CostFactorMapper costFactorMapper;
 
   @Override
   public CostFactorCacheValue get(CostFactorCacheKey key) {

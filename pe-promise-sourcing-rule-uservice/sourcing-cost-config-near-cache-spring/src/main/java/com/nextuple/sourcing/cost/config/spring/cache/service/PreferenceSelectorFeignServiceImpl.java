@@ -14,13 +14,12 @@ import com.nextuple.sourcing.cost.config.cache.domain.PreferenceSelectorCacheVal
 import com.nextuple.sourcing.cost.config.dto.PreferenceSelectorDto;
 import com.nextuple.sourcing.cost.config.spring.cache.feign.PreferenceSelectorFeignImpl;
 import com.nextuple.sourcing.cost.config.spring.cache.mapper.PreferenceSelectorMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PreferenceSelectorFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         PreferenceSelectorCacheKey,
@@ -28,9 +27,9 @@ public class PreferenceSelectorFeignServiceImpl
         String,
         BaseResponse<PreferenceSelectorDto>> {
 
-  @Autowired PreferenceSelectorFeignImpl preferenceSelectorFeign;
+  private final PreferenceSelectorFeignImpl preferenceSelectorFeign;
 
-  @Autowired PreferenceSelectorMapper preferenceSelectorMapper;
+  private final PreferenceSelectorMapper preferenceSelectorMapper;
 
   @Override
   public PreferenceSelectorCacheValue get(PreferenceSelectorCacheKey key) {

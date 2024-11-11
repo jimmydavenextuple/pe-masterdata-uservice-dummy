@@ -16,17 +16,16 @@ import com.nextuple.transit.cache.domain.ZoneCacheKey;
 import com.nextuple.transit.cache.domain.ZoneCacheValue;
 import com.nextuple.transit.cache.service.ZoneNearCacheService;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(cacheNames = ZONE_CACHE_NAME)
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ZoneNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<ZoneCacheKey, ZoneCacheValue>
     implements ZoneNearCacheService {
@@ -35,7 +34,7 @@ public class ZoneNearCacheServiceImpl
 
   public static final String ZONE_CACHE_NAME = "zone";
 
-  @Autowired NearCacheRegistry nearCacheRegistry;
+  private final NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override

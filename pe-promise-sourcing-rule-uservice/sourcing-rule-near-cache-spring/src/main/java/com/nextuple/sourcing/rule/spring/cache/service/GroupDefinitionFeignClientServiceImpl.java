@@ -14,22 +14,21 @@ import com.nextuple.sourcing.rule.cache.domain.GroupDefinitionCacheKey;
 import com.nextuple.sourcing.rule.cache.domain.GroupDefinitionCacheValue;
 import com.nextuple.sourcing.rule.spring.cache.feign.GroupDefinitionFeignImpl;
 import com.nextuple.sourcing.rule.spring.cache.mapper.GroupDefinitionMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GroupDefinitionFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         GroupDefinitionCacheKey,
         GroupDefinitionCacheValue,
         String,
         BaseResponse<GroupDefinitionListResponse>> {
-  @Autowired GroupDefinitionFeignImpl groupDefinitionFeign;
+  private final GroupDefinitionFeignImpl groupDefinitionFeign;
 
-  @Autowired GroupDefinitionMapper groupDefinitionMapper;
+  private final GroupDefinitionMapper groupDefinitionMapper;
 
   @Override
   public GroupDefinitionCacheValue get(GroupDefinitionCacheKey key) {

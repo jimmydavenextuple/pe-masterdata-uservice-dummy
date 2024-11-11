@@ -14,21 +14,19 @@ import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierCacheKey;
 import com.nextuple.nodecarrier.cache.domain.NodeCarrierCacheValue;
 import com.nextuple.nodecarrier.spring.cache.feign.NodeCarrierFeignImpl;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NodeCarrierFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         NodeCarrierCacheKey, NodeCarrierCacheValue, String, BaseResponse<NodeCarrierResponse>> {
 
-  @Autowired NodeCarrierFeignImpl nodeCarrierFeign;
+  private final NodeCarrierFeignImpl nodeCarrierFeign;
 
-  @Autowired
-  GenericMapper<
+  private final GenericMapper<
           NodeCarrierCacheKey, NodeCarrierCacheValue, String, BaseResponse<NodeCarrierResponse>>
       nodeCarrierMapper;
 

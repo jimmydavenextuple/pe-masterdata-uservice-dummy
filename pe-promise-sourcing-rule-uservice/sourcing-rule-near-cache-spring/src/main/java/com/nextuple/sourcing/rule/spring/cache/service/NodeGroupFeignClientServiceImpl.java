@@ -13,22 +13,21 @@ import com.nextuple.sourcing.rule.cache.domain.NodeGroupCacheKey;
 import com.nextuple.sourcing.rule.cache.domain.NodeGroupCacheValue;
 import com.nextuple.sourcing.rule.spring.cache.feign.NodeGroupFeignImpl;
 import com.nextuple.sourcing.rule.spring.cache.mapper.NodeGroupMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NodeGroupFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         NodeGroupCacheKey,
         NodeGroupCacheValue,
         String,
         BaseResponse<java.util.List<NodePriorityResponse>>> {
-  @Autowired NodeGroupFeignImpl nodeGroupFeign;
+  private final NodeGroupFeignImpl nodeGroupFeign;
 
-  @Autowired NodeGroupMapper nodeGroupMapper;
+  private final NodeGroupMapper nodeGroupMapper;
 
   @Override
   public NodeGroupCacheValue get(NodeGroupCacheKey key) {

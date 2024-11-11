@@ -14,21 +14,20 @@ import com.nextuple.node.data.cache.domain.NodeDataCacheKey;
 import com.nextuple.node.data.cache.domain.NodeDataCacheValue;
 import com.nextuple.node.data.spring.cache.feign.NodeDataFeignImpl;
 import com.nextuple.node.domain.outbound.NodeResponse;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NodeDataFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         NodeDataCacheKey, NodeDataCacheValue, String, BaseResponse<NodeResponse>> {
 
-  @Autowired NodeDataFeignImpl nodeFeign;
+  private final NodeDataFeignImpl nodeFeign;
 
-  @Autowired
-  GenericMapper<NodeDataCacheKey, NodeDataCacheValue, String, BaseResponse<NodeResponse>>
+  private final GenericMapper<
+          NodeDataCacheKey, NodeDataCacheValue, String, BaseResponse<NodeResponse>>
       nodeMapper;
 
   @Override

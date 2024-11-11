@@ -15,23 +15,21 @@ import com.nextuple.weightage.configuration.cache.domain.WeightageConfigurationC
 import com.nextuple.weightage.configuration.cache.domain.WeightageConfigurationCacheValue;
 import com.nextuple.weightage.configuration.spring.cache.feign.WeightageConfigurationFeignImpl;
 import java.util.Map;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WeightageConfigurationFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         WeightageConfigurationCacheKey,
         WeightageConfigurationCacheValue,
         FetchWeightageRequest,
         BaseResponse<Map<String, Float>>> {
-  @Autowired WeightageConfigurationFeignImpl weightageConfigurationFeign;
+  private final WeightageConfigurationFeignImpl weightageConfigurationFeign;
 
-  @Autowired
-  GenericMapper<
+  private final GenericMapper<
           WeightageConfigurationCacheKey,
           WeightageConfigurationCacheValue,
           FetchWeightageRequest,

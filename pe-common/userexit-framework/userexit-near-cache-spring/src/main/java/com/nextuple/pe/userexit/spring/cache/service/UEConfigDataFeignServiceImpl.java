@@ -15,19 +15,18 @@ import com.nextuple.pe.userexit.cache.domain.UEConfigDataCacheValue;
 import com.nextuple.pe.userexit.spring.cache.feign.UEConfigDataFeignImpl;
 import com.nextuple.pe.userexit.spring.cache.mapper.UEConfigDataMapper;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UEConfigDataFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         UEConfigDataCacheKey, UEConfigDataCacheValue, String, BaseResponse<UserExitConfigDataDto>> {
 
-  @Autowired UEConfigDataFeignImpl ueConfigDataFeign;
-  @Autowired UEConfigDataMapper ueConfigDataMapper;
+  private final UEConfigDataFeignImpl ueConfigDataFeign;
+  private final UEConfigDataMapper ueConfigDataMapper;
 
   @Override
   public UEConfigDataCacheValue get(UEConfigDataCacheKey key) {

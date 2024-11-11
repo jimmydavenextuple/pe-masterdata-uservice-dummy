@@ -16,13 +16,12 @@ import com.nextuple.node.carrier.calendar.cache.domain.NodeCarrierCalendarCacheK
 import com.nextuple.node.carrier.calendar.cache.domain.NodeCarrierCalendarCacheValue;
 import java.util.List;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NodeCarrierCalendarFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         NodeCarrierCalendarCacheKey,
@@ -30,10 +29,9 @@ public class NodeCarrierCalendarFeignClientServiceImpl
         String,
         BaseResponse<List<CalendarDaysStatusInfo>>> {
 
-  @Autowired CalendarCommonFeignImpl calendarCommonFeign;
+  private final CalendarCommonFeignImpl calendarCommonFeign;
 
-  @Autowired
-  GenericMapper<
+  private final GenericMapper<
           NodeCarrierCalendarCacheKey,
           NodeCarrierCalendarCacheValue,
           String,

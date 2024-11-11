@@ -17,23 +17,22 @@ import com.nextuple.transit.cache.domain.TransitCacheValue;
 import com.nextuple.transit.domain.outbound.TransitResponse;
 import com.nextuple.transit.spring.cache.feign.TransitDataFeignImpl;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 // Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TransitDataFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         TransitCacheKey, TransitCacheValue, String, BaseResponse<List<TransitResponse>>> {
 
-  @Autowired TransitDataFeignImpl transitFeign;
+  private final TransitDataFeignImpl transitFeign;
 
   private static Logger logger = LoggerFactory.getLogger(TransitDataFeignClientServiceImpl.class);
 
-  @Autowired
-  GenericMapper<TransitCacheKey, TransitCacheValue, String, BaseResponse<List<TransitResponse>>>
+  private final GenericMapper<
+          TransitCacheKey, TransitCacheValue, String, BaseResponse<List<TransitResponse>>>
       transitMapper;
 
   @Override
