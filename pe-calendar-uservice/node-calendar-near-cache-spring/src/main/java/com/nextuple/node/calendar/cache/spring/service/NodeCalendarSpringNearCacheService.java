@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(cacheNames = NodeCalendarSpringNearCacheService.NODE_CALENDAR_CACHE_NAME)
-// Added this
 @RequiredArgsConstructor
 public class NodeCalendarSpringNearCacheService
     extends AbstractGenericSpringLocalCacheServiceImpl<NodeCalendarCacheKey, NodeCalendarCacheValue>

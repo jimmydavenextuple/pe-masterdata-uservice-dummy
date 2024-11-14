@@ -44,7 +44,6 @@ class AttributeValuesPersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         attributeValuesPersistenceService, "repository", attributeValuesRepository);
     ReflectionTestUtils.setField(

@@ -45,7 +45,6 @@ class PromiseSourcingRulePersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         promiseSourcingRulePersistenceService, "repository", promiseSourcingRuleRepository);
     ReflectionTestUtils.setField(

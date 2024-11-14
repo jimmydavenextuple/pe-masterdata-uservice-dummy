@@ -55,7 +55,6 @@ class CarrierServicePersistenceServiceImplTest {
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         carrierServicePersistenceService, "repository", carrierServiceRepository);
     ReflectionTestUtils.setField(

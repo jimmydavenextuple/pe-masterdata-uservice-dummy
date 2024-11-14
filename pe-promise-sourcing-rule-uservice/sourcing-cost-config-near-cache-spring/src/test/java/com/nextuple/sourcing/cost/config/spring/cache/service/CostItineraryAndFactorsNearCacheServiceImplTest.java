@@ -54,7 +54,6 @@ class CostItineraryAndFactorsNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         costItineraryAndFactorsNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         costItineraryAndFactorsNearCacheService, "feignCacheService", feignCacheService);
   }

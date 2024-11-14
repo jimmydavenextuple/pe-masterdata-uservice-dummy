@@ -47,7 +47,6 @@ class GroupDefinitionPersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         groupDefinitionPersistenceService, "repository", groupDefinitionRepository);
     ReflectionTestUtils.setField(

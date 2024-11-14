@@ -41,7 +41,6 @@ class SourcingAttributePersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         sourcingAttributePersistenceService, "repository", sourcingAttributeRepository);
     ReflectionTestUtils.setField(

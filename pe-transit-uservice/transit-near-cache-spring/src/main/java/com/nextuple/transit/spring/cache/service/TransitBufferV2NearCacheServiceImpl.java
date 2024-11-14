@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(cacheNames = "transit_buffer_v2")
-// Added this
 @RequiredArgsConstructor
 public class TransitBufferV2NearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<

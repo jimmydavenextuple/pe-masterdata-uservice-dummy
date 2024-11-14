@@ -53,7 +53,6 @@ class CostAttributeMappingNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         costAttributeMappingNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         costAttributeMappingNearCacheService, "feignCacheService", feignCacheService);
   }

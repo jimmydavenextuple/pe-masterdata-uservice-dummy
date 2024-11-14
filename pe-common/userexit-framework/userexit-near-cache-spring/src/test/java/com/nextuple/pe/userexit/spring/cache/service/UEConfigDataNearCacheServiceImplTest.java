@@ -48,7 +48,6 @@ class UEConfigDataNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         ueConfigDataNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         ueConfigDataNearCacheService, "feignCacheService", feignCacheService);
   }

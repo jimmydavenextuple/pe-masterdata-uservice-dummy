@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 @Service
 @CacheConfig(
     cacheNames = NodeServiceOptionBufferNearCacheServiceImpl.NODE_SERVICE_OPTION_BUFFER_CACHE_NAME)
-// Added this
 @RequiredArgsConstructor
 public class NodeServiceOptionBufferNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<

@@ -49,7 +49,6 @@ class SourcingAttributesDefinitionPersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         sourcingAttributesDefinitionPersistenceService,
         "repository",

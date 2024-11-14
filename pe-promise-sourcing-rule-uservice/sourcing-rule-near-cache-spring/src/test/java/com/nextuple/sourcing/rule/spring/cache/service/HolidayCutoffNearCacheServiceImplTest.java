@@ -53,7 +53,6 @@ class HolidayCutoffNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         holidayCutoffNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         holidayCutoffNearCacheService, "feignCacheService", feignCacheService);
   }

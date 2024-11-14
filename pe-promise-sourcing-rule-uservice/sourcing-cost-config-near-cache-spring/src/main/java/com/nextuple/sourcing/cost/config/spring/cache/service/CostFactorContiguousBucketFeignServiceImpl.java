@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
 @RequiredArgsConstructor
 public class CostFactorContiguousBucketFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<

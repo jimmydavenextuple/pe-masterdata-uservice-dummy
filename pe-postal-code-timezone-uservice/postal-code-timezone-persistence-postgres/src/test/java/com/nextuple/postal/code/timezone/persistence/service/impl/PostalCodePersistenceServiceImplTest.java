@@ -65,7 +65,6 @@ class PostalCodePersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(postalCodePersistenceService, "repository", postalCodeRepository);
     ReflectionTestUtils.setField(postalCodePersistenceService, "mapper", postalCodeEntityMapper);
   }

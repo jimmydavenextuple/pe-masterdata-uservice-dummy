@@ -51,7 +51,6 @@ public class NodeCarriersNearCacheServiceImplTest {
   void setup() {
     ReflectionTestUtils.setField(
         nodeCarriersNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         nodeCarriersNearCacheService, "feignCacheService", feignCacheService);
   }

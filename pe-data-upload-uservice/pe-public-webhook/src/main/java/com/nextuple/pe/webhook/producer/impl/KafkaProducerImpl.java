@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-// Added this
 @RequiredArgsConstructor
 public class KafkaProducerImpl implements KafkaProducer {
   @Qualifier("ItemSerializerProducer")

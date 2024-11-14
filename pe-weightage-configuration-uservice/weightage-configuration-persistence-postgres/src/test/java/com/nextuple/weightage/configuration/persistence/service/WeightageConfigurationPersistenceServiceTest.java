@@ -47,7 +47,6 @@ class WeightageConfigurationPersistenceServiceTest {
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         weightageConfigurationPersistenceService, "repository", weightageConfigurationRepository);
     ReflectionTestUtils.setField(

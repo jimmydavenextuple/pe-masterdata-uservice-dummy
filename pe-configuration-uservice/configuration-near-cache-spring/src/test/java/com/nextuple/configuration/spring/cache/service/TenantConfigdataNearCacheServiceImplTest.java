@@ -50,7 +50,6 @@ class TenantConfigdataNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         tenantConfigdataNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         tenantConfigdataNearCacheService, "feignCacheService", feignCacheService);
   }

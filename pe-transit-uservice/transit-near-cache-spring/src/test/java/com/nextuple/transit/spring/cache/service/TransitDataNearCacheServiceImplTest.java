@@ -48,7 +48,6 @@ class TransitDataNearCacheServiceImplTest {
   void setup() {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(transitDataNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         transitDataNearCacheService, "feignCacheService", feignCacheService);
   }

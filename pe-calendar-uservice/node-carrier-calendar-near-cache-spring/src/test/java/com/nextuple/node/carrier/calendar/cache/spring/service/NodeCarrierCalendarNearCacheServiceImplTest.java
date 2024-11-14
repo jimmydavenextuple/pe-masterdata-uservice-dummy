@@ -48,7 +48,6 @@ class NodeCarrierCalendarNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         nodeCarrierCalendarSpringNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         nodeCarrierCalendarSpringNearCacheService, "feignCacheService", feignCacheService);
   }

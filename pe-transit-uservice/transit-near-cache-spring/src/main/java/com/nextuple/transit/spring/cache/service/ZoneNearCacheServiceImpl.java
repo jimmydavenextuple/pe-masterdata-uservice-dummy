@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(cacheNames = ZONE_CACHE_NAME)
-// Added this
 @RequiredArgsConstructor
 public class ZoneNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<ZoneCacheKey, ZoneCacheValue>

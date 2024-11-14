@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(cacheNames = TransferScheduleNearCacheServiceImpl.TRANSFER_SCHEDULE)
-// Added this
 @RequiredArgsConstructor
 public class TransferScheduleNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<

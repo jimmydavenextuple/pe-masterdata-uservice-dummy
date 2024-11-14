@@ -50,7 +50,6 @@ class TransferSchedulePersistenceServiceImplTest {
   @BeforeEach
   public void setup() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         transferSchedulePersistenceService, "repository", transferScheduleRepository);
     ReflectionTestUtils.setField(

@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(cacheNames = NodeCarrierSpringNearCacheServiceImpl.NODE_CARRIER_CACHE_NAME)
-// Added this
 @RequiredArgsConstructor
 public class NodeCarrierSpringNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<NodeCarrierCacheKey, NodeCarrierCacheValue>

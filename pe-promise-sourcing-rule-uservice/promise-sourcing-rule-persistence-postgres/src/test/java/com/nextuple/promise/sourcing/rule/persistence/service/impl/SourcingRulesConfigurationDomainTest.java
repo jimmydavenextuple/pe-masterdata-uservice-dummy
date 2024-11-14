@@ -49,7 +49,6 @@ class SourcingRulesConfigurationDomainTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         sourcingRulesConfigurationPersistenceService,
         "repository",

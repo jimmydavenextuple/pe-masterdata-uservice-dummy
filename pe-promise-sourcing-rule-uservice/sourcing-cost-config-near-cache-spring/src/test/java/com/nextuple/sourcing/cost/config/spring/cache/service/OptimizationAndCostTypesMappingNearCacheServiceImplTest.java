@@ -55,7 +55,6 @@ class OptimizationAndCostTypesMappingNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         rulesConfigurationNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         rulesConfigurationNearCacheService, "feignCacheService", feignCacheService);
   }

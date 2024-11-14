@@ -42,7 +42,6 @@ class TransitBufferReqJobRefPersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         transitBufferReqJobRefPersistenceService, "repository", transitBufferReqJobRefRepository);
     ReflectionTestUtils.setField(

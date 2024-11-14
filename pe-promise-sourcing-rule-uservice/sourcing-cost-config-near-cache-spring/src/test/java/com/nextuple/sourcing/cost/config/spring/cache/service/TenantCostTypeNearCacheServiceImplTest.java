@@ -52,7 +52,6 @@ class TenantCostTypeNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         tenantCostTypeNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         tenantCostTypeNearCacheService, "feignCacheService", feignCacheService);
   }

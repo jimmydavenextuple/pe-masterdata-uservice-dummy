@@ -55,7 +55,6 @@ class PostalCodeTimezoneNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         postalCodeTimezoneNearCacheServiceImpl, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         postalCodeTimezoneNearCacheServiceImpl, "feignCacheService", feignCacheService);
   }

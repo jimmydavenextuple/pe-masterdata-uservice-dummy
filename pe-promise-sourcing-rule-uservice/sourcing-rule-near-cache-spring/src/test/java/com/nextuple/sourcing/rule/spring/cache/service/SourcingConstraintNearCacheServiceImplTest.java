@@ -55,7 +55,6 @@ class SourcingConstraintNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         sourcingConstraintNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         sourcingConstraintNearCacheService, "feignCacheService", feignCacheService);
   }

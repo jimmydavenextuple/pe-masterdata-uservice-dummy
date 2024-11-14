@@ -49,7 +49,6 @@ class CarrierSpringNearCacheServiceImplTest {
   void setup() {
     ReflectionTestUtils.setField(
         carrierSpringNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         carrierSpringNearCacheService, "feignCacheService", feignCacheService);
   }

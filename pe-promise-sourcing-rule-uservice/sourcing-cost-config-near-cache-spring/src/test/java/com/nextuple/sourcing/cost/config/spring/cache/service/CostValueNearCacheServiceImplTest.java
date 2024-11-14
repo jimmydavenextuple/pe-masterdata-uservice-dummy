@@ -49,7 +49,6 @@ class CostValueNearCacheServiceImplTest {
   void setup() {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(costValueNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(costValueNearCacheService, "feignCacheService", feignCacheService);
   }
 

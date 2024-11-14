@@ -54,7 +54,6 @@ class CostFactorDiscreteBucketNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         costFactorDiscreteBucketNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         costFactorDiscreteBucketNearCacheService, "feignCacheService", feignCacheService);
   }

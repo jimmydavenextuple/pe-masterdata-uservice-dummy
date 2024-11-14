@@ -56,7 +56,6 @@ class OptimizationStrategyNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         optimizationStrategyNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         optimizationStrategyNearCacheService, "feignCacheService", feignCacheService);
   }
