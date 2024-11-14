@@ -1,0 +1,2 @@
+action,nodeId,orgId,serviceOptions,processingTime (in hrs)
+UPDATE,123,ORG,SDND,1

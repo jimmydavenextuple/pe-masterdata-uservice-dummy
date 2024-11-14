@@ -1,0 +1,11 @@
+Notes: Filled in values will be in USD,
+Org Id,NEXTUPLE
+Cost Type,SHIPPING_COST
+Carrier service Id,UPS-GROUND
+Surge,NON-HOLIDAY
+Dynamic - incremental per pound cost bucket ( Distances: 40-50),FALSE
+Distances/Shipping Zones,Zone1,Zone2,Zone3
+10-20,1.0,2.0,3.0
+20-30,2.0,4.0,5.0
+30-40,3.0,4,4
+40-50,4.0,2.1,3.3

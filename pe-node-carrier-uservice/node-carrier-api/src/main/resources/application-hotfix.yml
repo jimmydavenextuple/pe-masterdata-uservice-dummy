@@ -1,0 +1,42 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://promise-engine-postgres-dev.co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe_hotfix
+    username: \${POSTGRES_USER}
+    password: \${POSTGRES_PWD}
+  kafka:
+    bootstrap-servers: "b-3.promisemksdevelopment.kmb9h1.c25.kafka.us-east-1.amazonaws.com:9096,b-2.promisemksdevelopment.kmb9h1.c25.kafka.us-east-1.amazonaws.com:9096,b-1.promisemksdevelopment.kmb9h1.c25.kafka.us-east-1.amazonaws.com:9096"
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: SCRAM-SHA-512
+      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"\${KAFKA_USER}\" password=\"\${KAFKA_PWD}\";"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.HOTFIX.MASTER_DATA_UPDATE_EVENTS
+      properties:
+        acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
+
+logging:
+  level:
+    com.nextuple: DEBUG
+
+master-data:
+  node-carrier:
+    topic-name: INTERNAL.HOTFIX.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-hotfix
+  processing-lead-time:
+    topic-name: INTERNAL.HOTFIX.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-hotfix
+  node-service-option-buffer:
+    topic-name: INTERNAL.HOTFIX.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-hotfix

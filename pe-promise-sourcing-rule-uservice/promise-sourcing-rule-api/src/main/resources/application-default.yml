@@ -1,0 +1,21 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  sql.init.platform: postgres
+
+logging:
+  level:
+    com.nextuple: INFO
+entity-listener:
+  kafka:
+    enabled: false
+pe:
+  ui:
+    allowed-origin-url: "*"

@@ -1,0 +1,4 @@
+action,orgId,carrierId,carrierName,carrierServiceId,serviceName,serviceOptions
+CREATE,NEXTUPLE,GoFor,GoFor,GoFor-SDND,GoFor,SDND
+UPDATE,NEXTUPLE,GoFor,GoFor,GoFor-SDND,GoFor,SDND
+DELETE,NEXTUPLE,A_SDND,ALL,ALL-SDND,All SDND Carrier Services,SDND

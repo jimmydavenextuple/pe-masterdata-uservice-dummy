@@ -1,0 +1,101 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 2048KB
+      max-request-size: 3072KB
+  application:
+    name: "data-upload-service"
+    version: 1.0
+    title: "Promising Engine Service"
+    description: "Promising Engine Service"
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8080
+  tomcat:
+    max-connections: 500
+    threads:
+      min-spare: 50
+      max: 200
+logging:
+  level:
+    org.springframework: WARN
+    root: WARN
+    com.nextuple: INFO
+pagination:
+  pageNo: 1
+  pageSize: 15
+page-properties:
+  pageNo: 1
+  pageSize: 15
+  sortBy: created_date
+  sortOrder: ASC
+holidaycutoff-page-properties:
+  sortBy: ruleName
+#aws:
+#  s3:
+#    signed-url-expiry-minutes: 30
+node-carrier-service-page-properties:
+  sortBy: nodeId
+  sortOrder: ASC
+transit-time-buffer-page-properties:
+  sortBy: carrierServiceId
+  sortOrder: DESC
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+    loggers:
+      enabled: true
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+        persistence: true
+        cache: true
+#pe:
+#  ui:
+#    allowed-origin-url: \${PE_UI_URL}
+
+scheduled-processor:
+  timeRangeInHours: 24
+  fixed-rate:
+    minutes: 1
+download-page-size:
+  node-carrier-service-options: 200
+  node: 200
+  custom-region: 200
+edd-computation:
+  lines: 30
+  orders: 10
+csv-utility-api:
+  csv-download:
+    records-per-page: 200
+    max-no-of-pages: 5
+    max-no-of-failed-transit-entries: 1000
+    max-no-of-carrier-services-for-download: 100
+feign:
+  okhttp:
+    enabled: true
+auth:
+  filterEnabled: false
+entity-listener:
+  kafka:
+    enabled: true
+platform:
+  groupIdPrefix: pe-retry
+
+fpm-page-properties:
+  pageNo: 1
+  pageSize: 15
+  sortBy: processing_started_at
+  sortOrder: ASC

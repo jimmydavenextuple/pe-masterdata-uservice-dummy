@@ -1,0 +1,4 @@
+orgId,serviceOptions,cartId,sessionId,pageName,shipToAddress_zipCode,shipToAddress_region,shipToAddress_state,shipToAddress_country,shipToAddress_timezone,lines_requiredQty,lines_lineId,lines_serviceOption,lines_item_itemId,lines_item_productClass,lines_item_unitOfMeasure,lines_shipToAddress_zipCode,lines_shipToAddress_region,lines_shipToAddress_state,lines_shipToAddress_country,lines_shipToAddress_timezone
+NEXTUPLE,EXPRESS,1286,Session1,CART,RRR 1B5,RRR,BC,US,America/Toronto,5,1,EXPRESS,item1,Household Appliances,in,RRR 1B5,RRR,BC,US,America/Toronto
+NEXTUPLE,STANDARD,2345,Session2,CART,RRR 1B5,RRR,BC,US,America/Toronto,10,1,STANDARD,item2,Household Appliances,pcs,RRR 1B5,RRR,BC,US,America/Toronto
+NEXTUPLE,SDND,3456,Session3,CART,AAA 1AB,AAA,FL,US,UTC,12,1,SDND,item3,Household Appliances,ton,AAA 1AB,AAA,FL,US,UTC

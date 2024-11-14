@@ -1,0 +1,40 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-calendar-uservice:calendar-api-domain"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
+    implementation 'com.opencsv:opencsv:5.9'
+    implementation 'commons-io:commons-io:2.13.0'
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
+    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
+}
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+tasks.named('test') {
+    dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
+
+    mustRunAfter ':pe-calendar-uservice:calendar-api-domain:jar'
+    mustRunAfter ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
+    mustRunAfter ':pe-configuration-uservice:configuration-api-domain:jar'
+}

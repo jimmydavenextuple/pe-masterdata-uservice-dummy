@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: "user-exit-data"
+    version: ${version}
+    title: "UserExitApplication"
+    description: "User Exit data service"
+
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8080
+  tomcat:
+    max-connections: 500
+    threads:
+      min-spare: 50
+      max: 200
+
+logging:
+  level:
+    org.springframework: WARN
+    root: WARN
+    com.nextuple: INFO
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+    loggers:
+      enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+        persistence: true
+        cache: true
+  prometheus.metrics.export.enabled: true
+auth:
+  filterEnabled: false
+

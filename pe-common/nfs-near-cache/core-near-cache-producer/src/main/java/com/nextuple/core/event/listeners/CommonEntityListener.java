@@ -1,0 +1,65 @@
+package com.nextuple.core.event.listeners;
+
+import com.nextuple.core.event.LocalCacheUpdateMessage;
+import com.nextuple.core.exception.LocalCacheUpdateEventException;
+import com.nextuple.core.mapper.NearCacheEntityNameMapper;
+import com.nextuple.core.producer.EntityEventProducer;
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostRemove;
+import jakarta.persistence.PostUpdate;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+@Slf4j
+public class CommonEntityListener {
+
+  @Autowired EntityEventProducer entityEventProducer;
+
+  @Value("${entity-listener.kafka.enabled}")
+  private boolean kafkaEnabledFlag;
+
+  @PostPersist
+  @PostUpdate
+  @PostRemove
+  public void afterUpdating(Object entity)
+      throws IllegalAccessException, LocalCacheUpdateEventException {
+    log.debug("Calling afterUpdating method on updating the record!");
+
+    Map<String, Object> message = new HashMap<>();
+
+    // Getting primary key fields and values
+    List<Field> allFields = getAllFields(entity.getClass());
+    for (Field field : allFields) {
+      field.setAccessible(true); // NOSONAR
+      message.put(field.getName(), field.get(entity));
+    }
+    // Entity Name Mapping
+    List<String> entityNames =
+        NearCacheEntityNameMapper.getEntityMapping().get(entity.getClass().getSimpleName());
+    // Publishing to kafka
+    for (String entityName : entityNames) {
+      var localCacheUpdateMessage = new LocalCacheUpdateMessage();
+      localCacheUpdateMessage.setMessage(message);
+      localCacheUpdateMessage.setEntityName(entityName);
+      log.debug("Publishing LocalUpdateCacheEvent to Kafka with {}", localCacheUpdateMessage);
+      if (kafkaEnabledFlag) {
+        entityEventProducer.publishEntityEvent(localCacheUpdateMessage);
+      }
+    }
+  }
+
+  private List<Field> getAllFields(Class<?> aClass) {
+    List<Field> fieldsList = Arrays.stream(aClass.getDeclaredFields()).collect(Collectors.toList());
+    if (aClass.getSuperclass() != null) {
+      fieldsList.addAll(getAllFields(aClass.getSuperclass()));
+    }
+    return fieldsList;
+  }
+}

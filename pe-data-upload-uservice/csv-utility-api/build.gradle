@@ -1,0 +1,55 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    implementation 'com.opencsv:opencsv:5.9'
+    implementation(project(":pe-data-upload-uservice:csv-utility-common-util"))
+    implementation(project(":pe-transit-uservice:transit-api-domain"))
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
+    implementation(project(":pe-data-upload-uservice:data-upload-common-util"))
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
+    implementation("com.nextuple.pe:core-common-util:1.6.0-${build_target}")
+    implementation(project(":pe-carrier-uservice:carrier-api-domain"))
+    implementation(project(":pe-calendar-uservice:calendar-api-domain"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
+    implementation(project(":pe-node-uservice:node-api-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
+    implementation 'commons-io:commons-io:2.13.0'
+
+    implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
+    implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")
+    implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
+
+}
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+tasks.named('test') {
+    dependsOn ':pe-data-upload-uservice:csv-utility-common-util:jar'
+    dependsOn ':pe-data-upload-uservice:job-framework-common-util:jar'
+    dependsOn ':pe-data-upload-uservice:data-upload-common-util:jar'
+    dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
+    dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
+    dependsOn ':pe-transit-uservice:transit-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
+}

@@ -1,0 +1,3 @@
+nodeId,orgId,nodeType,street,city,province,status,serviceOptions,processingLeadTime
+100958,BAY,STORE,1963 Boul. Lionel-Bertrand,Boisbriand,QC,ACTIVE,EXPRESS,10.0
+100958,BAY,FC,1963 Boul. Lionel-Bertrand,Boisbriand,QC,ACTIVE,EXPRESS,8.0

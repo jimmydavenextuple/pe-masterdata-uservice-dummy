@@ -1,0 +1,3 @@
+action,orgId,sourceGeozone,destinationGeozone,serviceOption,selectionCriteria
+UPDATE,BAY,F1A,M1R,SDND,E
+DELETE,BAY,ALL,ALL,STANDARD,L
