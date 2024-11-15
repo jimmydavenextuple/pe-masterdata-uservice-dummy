@@ -46,3 +46,8 @@ tasks.named('test') {
 tasks.named('bootJar') {
     mustRunAfter(':pe-configuration-uservice:configuration-api-domain:jar')
 }
+
+tasks.named('generateMetadataFileForMavenJavaPublication') {
+    dependsOn tasks.jar
+    inputs.files tasks.jar.outputs
+}

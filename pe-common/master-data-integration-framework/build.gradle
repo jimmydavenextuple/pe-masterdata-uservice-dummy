@@ -40,3 +40,8 @@ tasks.test {
     dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
     dependsOn ':pe-data-upload-uservice:job-framework-common-util:jar'
 }
+
+tasks.named('generateMetadataFileForMavenJavaPublication') {
+    dependsOn tasks.jar
+    inputs.files tasks.jar.outputs
+}

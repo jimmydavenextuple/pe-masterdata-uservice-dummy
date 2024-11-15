@@ -38,3 +38,8 @@ tasks.named('test') {
     mustRunAfter ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
     mustRunAfter ':pe-configuration-uservice:configuration-api-domain:jar'
 }
+
+tasks.named('generateMetadataFileForMavenJavaPublication') {
+    dependsOn tasks.jar
+    inputs.files tasks.jar.outputs
+}

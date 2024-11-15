@@ -44,3 +44,8 @@ tasks.named('test') {
 test {
     useJUnitPlatform()
 }
+
+tasks.named('generateMetadataFileForMavenJavaPublication') {
+    dependsOn tasks.jar
+    inputs.files tasks.jar.outputs
+}

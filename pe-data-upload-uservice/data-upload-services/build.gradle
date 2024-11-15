@@ -83,3 +83,8 @@ tasks.named('test') {
     dependsOn ':pe-transit-uservice:transit-persistence-domain:jar'
     dependsOn ':pe-transit-uservice:transit-api-domain:jar'
 }
+
+tasks.named('generateMetadataFileForMavenJavaPublication') {
+    dependsOn tasks.jar
+    inputs.files tasks.jar.outputs
+}

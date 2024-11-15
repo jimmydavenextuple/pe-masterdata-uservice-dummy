@@ -50,3 +50,7 @@ tasks.named('test') {
     dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
 }
 
+tasks.named('generateMetadataFileForMavenJavaPublication') {
+    dependsOn tasks.jar
+    inputs.files tasks.jar.outputs
+}

@@ -22,3 +22,8 @@ tasks.withType(Test).configureEach {
 tasks.named('test') {
     dependsOn ':pe-common:common-util:jar'
 }
+
+tasks.named('generateMetadataFileForMavenJavaPublication') {
+    dependsOn tasks.jar
+    inputs.files tasks.jar.outputs
+}

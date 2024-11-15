@@ -24,3 +24,8 @@ tasks.named('test') {
     dependsOn ':pe-common:common-util:jar'
     dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
 }
+
+tasks.named('generateMetadataFileForMavenJavaPublication') {
+    dependsOn tasks.jar
+    inputs.files tasks.jar.outputs
+}
