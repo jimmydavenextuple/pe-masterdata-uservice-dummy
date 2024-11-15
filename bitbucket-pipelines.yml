@@ -327,7 +327,6 @@ definitions:
 pipelines:
   pull-requests:
     '**':
-      - step: *Clear-Cache
       - step: *pr-build
   tags:
     '*-SNAPSHOT':
@@ -349,7 +348,6 @@ pipelines:
           #     trigger: manual
           #     deployment: perf
     '*-SANDBOX':
-      - step: *Clear-Cache
       - step: *build-release
       - step:
           !!merge <<: *deploy
@@ -365,14 +363,12 @@ pipelines:
           deployment: prod
   branches:
     vapt:
-      - step: *Clear-Cache
       - step: *build
       - step:
           !!merge <<: *deploy
           name: Deploy vapt
           deployment: vapt
     development:
-      - step: *Clear-Cache
       - step: *build
       - parallel:
           - step:
