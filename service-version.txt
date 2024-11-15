@@ -1,1 +1,2 @@
-1.6.8-SNAPSHOT
+1.6.9-SNAPSHOT
+versionCatalogs: extension 'versionCatalogs'
