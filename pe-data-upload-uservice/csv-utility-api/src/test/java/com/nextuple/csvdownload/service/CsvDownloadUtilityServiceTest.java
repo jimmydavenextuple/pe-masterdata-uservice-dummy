@@ -42,6 +42,7 @@ import com.nextuple.csvdownload.service.v1.impl.CalendarProcessingRequestImpl;
 import com.nextuple.csvdownload.service.v1.impl.NeipProcessingRequestImpl;
 import com.nextuple.csvdownload.service.v1.impl.TransitTimeProcessingRequestImpl;
 import com.nextuple.csvdownload.service.v1.impl.ZoneProcessingRequestImpl;
+import com.nextuple.dataupload.common.config.TenantDatabaseConfig;
 import com.nextuple.dataupload.common.feign.DataUploadFeign;
 import com.nextuple.dataupload.common.outbound.NodeAndServiceOptionResponse;
 import com.nextuple.dataupload.common.outbound.NodeCarrierServiceAndServiceOptionResponse;
@@ -51,7 +52,6 @@ import com.nextuple.jobs.framework.common.domain.enums.ApiStatusEnum;
 import com.nextuple.jobs.framework.common.domain.enums.JobTypeEnum;
 import com.nextuple.jobs.framework.common.domain.pojo.JobDto;
 import com.nextuple.jobs.framework.common.domain.pojo.RecordStatusDto;
-import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.nextuple.node.domain.dto.NodeDto;
 import com.nextuple.plt.client.FPMServiceClient;
 import com.nextuple.plt.exception.JobException;
@@ -128,6 +128,7 @@ class CsvDownloadUtilityServiceTest {
   @Mock private ObjectMapper objectMapper;
   @Mock private Environment env;
   @Mock private PostalCodeFeign postalCodeFeign;
+  @Mock private TenantDatabaseConfig tenantDatabaseConfig;
 
   @BeforeEach
   public void init() {
@@ -751,18 +752,16 @@ class CsvDownloadUtilityServiceTest {
   }
 
   @Test
-  void downloadNodesByOrgIdTest() throws IOException {
+  void downloadNodesByOrgIdTest() throws IOException, CommonServiceException {
     NodeDto node1 = testUtil.getNodeDto(TestUtil.NODE_ID);
     node1.setStartWorkingTime("08:00");
     node1.setLastWorkingTime("16:00");
     List<NodeDto> nodeDtoList = List.of(node1, testUtil.getNodeDto(TestUtil.NODE_ID_2));
-    List<NodeCarrierResponse> nodeCarrierResponses = testUtil.getNodeCarrierResponseList();
     List<NodeCalendarResponse> nodeCalendarResponses = testUtil.getNodeCalendarResponseList();
 
     when(nodeResponseService.getNodeList(any(), any(), any())).thenReturn(nodeDtoList);
     when(calenderResponseService.getNodeCalendar(any(), any())).thenReturn(nodeCalendarResponses);
-    when(nodeCarrierResponseService.getNodeCarrierResponse(any(), any()))
-        .thenReturn(nodeCarrierResponses);
+    when(tenantDatabaseConfig.fetchServiceOptions(any())).thenReturn("EXPRESS,SDND");
 
     File file = csvDownloadUtilityService.downloadNodesByOrgId(TestUtil.ORG_ID, null, null);
 
@@ -772,24 +771,44 @@ class CsvDownloadUtilityServiceTest {
         lines.stream().anyMatch(line -> line.contains("08:00"));
     assertTrue(containsExpectedStartWorkingTime);
     verify(nodeResponseService, times(1)).getNodeList(any(), any(), any());
-    verify(nodeCarrierResponseService, times(2)).getNodeCarrierResponse(any(), any());
     verify(calenderResponseService, times(2)).getNodeCalendar(any(), any());
   }
 
   @Test
+  @DisplayName("Download nodes with service options eligibility details.")
+  void downloadNodesWithServiceOptionEligibilitiesTest()
+      throws IOException, CommonServiceException {
+    NodeDto node1 = testUtil.getNodeDto(TestUtil.NODE_ID);
+    List<NodeDto> nodeDtoList = List.of(node1, testUtil.getNodeDto(TestUtil.NODE_ID_2));
+    List<NodeCalendarResponse> nodeCalendarResponses = testUtil.getNodeCalendarResponseList();
+    when(nodeResponseService.getNodeList(any(), any(), any())).thenReturn(nodeDtoList);
+    when(calenderResponseService.getNodeCalendar(any(), any())).thenReturn(nodeCalendarResponses);
+    when(tenantDatabaseConfig.fetchServiceOptions(any())).thenReturn("EXPRESS,SDND");
+    File file = csvDownloadUtilityService.downloadNodesByOrgId(TestUtil.ORG_ID, null, null);
+    assertNotNull(file);
+    List<String> lines = FileUtils.readLines(file, StandardCharsets.UTF_8);
+    boolean containsExpressEligible =
+        lines.stream().anyMatch(line -> line.contains("expressEligible"));
+    boolean containsSdndEligible = lines.stream().anyMatch(line -> line.contains("sdndEligible"));
+    assertTrue(containsExpressEligible);
+    assertTrue(containsSdndEligible);
+    verify(nodeResponseService, times(1)).getNodeList(any(), any(), any());
+    verify(calenderResponseService, times(2)).getNodeCalendar(any(), any());
+    verify(tenantDatabaseConfig, times(1)).fetchServiceOptions(any());
+  }
+
+  @Test
   @DisplayName("Download nodes by nodeIds and nodeType and orgId")
-  void downloadNodesByOrgIdAndNodeIdAndNodeTypeTest() throws IOException {
+  void downloadNodesByOrgIdAndNodeIdAndNodeTypeTest() throws IOException, CommonServiceException {
     NodeDto node1 = testUtil.getNodeDto(TestUtil.NODE_ID);
     node1.setStartWorkingTime("08:00");
     node1.setLastWorkingTime("16:00");
     List<NodeDto> nodeDtoList = List.of(node1, testUtil.getNodeDto(TestUtil.NODE_ID_2));
-    List<NodeCarrierResponse> nodeCarrierResponses = testUtil.getNodeCarrierResponseList();
     List<NodeCalendarResponse> nodeCalendarResponses = testUtil.getNodeCalendarResponseList();
 
     when(nodeResponseService.getNodeList(any(), any(), any())).thenReturn(nodeDtoList);
     when(calenderResponseService.getNodeCalendar(any(), any())).thenReturn(nodeCalendarResponses);
-    when(nodeCarrierResponseService.getNodeCarrierResponse(any(), any()))
-        .thenReturn(nodeCarrierResponses);
+    when(tenantDatabaseConfig.fetchServiceOptions(any())).thenReturn("EXPRESS,SDND");
 
     File file =
         csvDownloadUtilityService.downloadNodesByOrgId(
@@ -801,7 +820,6 @@ class CsvDownloadUtilityServiceTest {
         lines.stream().anyMatch(line -> line.contains("08:00"));
     assertTrue(containsExpectedStartWorkingTime);
     verify(nodeResponseService, times(1)).getNodeList(any(), any(), any());
-    verify(nodeCarrierResponseService, times(2)).getNodeCarrierResponse(any(), any());
     verify(calenderResponseService, times(2)).getNodeCalendar(any(), any());
   }
 
@@ -817,15 +835,14 @@ class CsvDownloadUtilityServiceTest {
   }
 
   @Test
-  void downloadNodesByOrgIdEmptyValuesTest() throws IOException {
+  void downloadNodesByOrgIdEmptyValuesTest() throws IOException, CommonServiceException {
     NodeDto node1 = testUtil.getNodeDto(TestUtil.NODE_ID);
     node1.setStartWorkingTime("08:00");
     node1.setLastWorkingTime("12:00");
     List<NodeDto> nodeDtoList = List.of(node1, testUtil.getNodeDto(TestUtil.NODE_ID_2));
     when(nodeResponseService.getNodeList(any(), any(), any())).thenReturn(nodeDtoList);
     when(calenderResponseService.getNodeCalendar(any(), any())).thenReturn(new ArrayList<>());
-    when(nodeCarrierResponseService.getNodeCarrierResponse(any(), any()))
-        .thenReturn(new ArrayList<>());
+    when(tenantDatabaseConfig.fetchServiceOptions(any())).thenReturn("EXPRESS,SDND");
 
     File file = csvDownloadUtilityService.downloadNodesByOrgId(TestUtil.ORG_ID, null, null);
 
@@ -835,7 +852,6 @@ class CsvDownloadUtilityServiceTest {
         lines.stream().anyMatch(line -> line.contains("12:00"));
     assertTrue(containsExpectedLastWorkingTime);
     verify(nodeResponseService, times(1)).getNodeList(any(), any(), any());
-    verify(nodeCarrierResponseService, times(2)).getNodeCarrierResponse(any(), any());
     verify(calenderResponseService, times(2)).getNodeCalendar(any(), any());
   }
 
