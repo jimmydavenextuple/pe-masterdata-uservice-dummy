@@ -205,6 +205,9 @@ subprojects {
         }
     }
     artifactoryPublish.skip = false
+    tasks.withType(GenerateModuleMetadata).configureEach {
+        dependsOn tasks.named('jar')
+    }
 
     artifactory {
         contextUrl = "${artifactory_contextUrl}"
