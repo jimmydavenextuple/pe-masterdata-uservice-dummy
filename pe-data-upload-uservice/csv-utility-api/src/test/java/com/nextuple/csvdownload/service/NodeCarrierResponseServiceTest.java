@@ -22,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Description;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,5 +47,35 @@ class NodeCarrierResponseServiceTest {
     assertEquals(TestUtil.ORG_ID, response.get(0).getOrgId());
     assertEquals(TestUtil.NODE_ID, response.get(0).getNodeId());
     verify(nodeCarrierFeign, times(1)).getNodeCarrierListWithLastPickUpTimeDetails(any(), any());
+  }
+
+  @Test
+  @Description("Test get Node carrier by orgId, NodeId and Carrier Service ID- Happy Path")
+  void getNodeCarrierResponseByOrgIdNodeIdAndCarrierServiceId() {
+    ReflectionTestUtils.setField(nodeCarrierResponseService, "nodeCarrierFeign", nodeCarrierFeign);
+    when(nodeCarrierFeign.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any()))
+        .thenReturn(testUtil.getBaseResponseOfNodeCarrier());
+    List<NodeCarrierResponse> response =
+        nodeCarrierResponseService.getNodeCarrierResponseByOrgIdNodeIdAndCarrierServiceId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID, TestUtil.CARRIER_SERVICE_ID);
+    assertEquals(2, response.size());
+    assertEquals(TestUtil.ORG_ID, response.get(0).getOrgId());
+    assertEquals(TestUtil.NODE_ID, response.get(0).getNodeId());
+    verify(nodeCarrierFeign, times(1))
+        .getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any());
+  }
+
+  @Test
+  @Description("Test get Node carrier by orgId, NodeId and Carrier Service ID- Null Scenario")
+  void getNodeCarrierResponseByOrgIdNodeIdAndCarrierServiceIdException() {
+    ReflectionTestUtils.setField(nodeCarrierResponseService, "nodeCarrierFeign", nodeCarrierFeign);
+    when(nodeCarrierFeign.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any()))
+        .thenReturn(null);
+    List<NodeCarrierResponse> response =
+        nodeCarrierResponseService.getNodeCarrierResponseByOrgIdNodeIdAndCarrierServiceId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID, TestUtil.CARRIER_SERVICE_ID);
+    assertEquals(0, response.size());
+    verify(nodeCarrierFeign, times(1))
+        .getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any());
   }
 }

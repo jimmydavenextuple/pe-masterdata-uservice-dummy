@@ -371,6 +371,28 @@ public class CsvDownloadUtilityController {
     }
   }
 
+  @GetMapping(value = "/org/{orgId}/download/node-carrier-pickup-calendar")
+  public void downloadNodesCarrierServicePickupCalendarDataCSV(
+      @NotBlank(message = "orgId can't be empty")
+          @PathVariable
+          @Parameter(description = "Unique identifier for organization ID.")
+          String orgId,
+      HttpServletResponse httpServletResponse)
+      throws IOException, CommonServiceException, CarrierServiceException {
+    log.debug("Inside download nodes data as csv");
+    final var file = csvDownloadUtilityService.downloadNodesCarrierPickupCalendarByOrgId(orgId);
+    try (var inputStream = new FileInputStream(file)) {
+      httpServletResponse.setStatus(HttpStatus.OK.value());
+      httpServletResponse.setHeader(
+          HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(file.getName()));
+      httpServletResponse.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+      IOUtils.copy(inputStream, httpServletResponse.getOutputStream());
+      httpServletResponse.flushBuffer();
+    } finally {
+      Files.delete(file.toPath());
+    }
+  }
+
   @GetMapping(value = "/download/transitBuffer/{transitBufferConfigRequestId}")
   @DownloadTransitBufferDoc
   public ResponseEntity<BaseResponse<PreSignedUrlResponse>> downloadTransitBuffer(

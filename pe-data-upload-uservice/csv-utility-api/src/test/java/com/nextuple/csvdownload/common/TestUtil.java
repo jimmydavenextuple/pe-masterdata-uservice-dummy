@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
 import com.nextuple.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.nextuple.calendar.domain.outbound.NodeCalendarResponse;
+import com.nextuple.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.base.PagePayload.Pagination;
@@ -1529,6 +1530,17 @@ public class TestUtil {
 
   public List<NodeCarrierResponse> getNodeCarrierResponseList() {
     return List.of(getNodeCarrierResponse(NODE_ID), getNodeCarrierResponse(NODE_ID_2));
+  }
+
+  public List<NodeCarrierServiceCalendarResponse> getNodeCarrierServiceCalendarResponse() {
+    return List.of(
+        NodeCarrierServiceCalendarResponse.builder()
+            .orgId(ORG_ID)
+            .nodeId(NODE_ID)
+            .calendarId(CALENDAR_ID)
+            .carrierServiceId(CARRIER_SERVICE_ID)
+            .effectiveDate(EFFECTIVE_DATE)
+            .build());
   }
 
   private NodeCarrierResponse getNodeCarrierResponse(String nodeId) {

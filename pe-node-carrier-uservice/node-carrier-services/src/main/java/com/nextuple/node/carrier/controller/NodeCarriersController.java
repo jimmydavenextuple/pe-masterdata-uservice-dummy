@@ -317,4 +317,37 @@ public class NodeCarriersController {
             .payload(nodeCarriersResponseList)
             .build());
   }
+
+  @GetMapping("/org/{orgId}/nodeId/{nodeId}/carrier-service/{carrierServiceId}")
+  public ResponseEntity<BaseResponse<List<NodeCarriersResponse>>>
+      getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+          @NotBlank(message = "orgId can't be empty")
+              @Parameter(
+                  description = NodeCarrierConstants.ORG_ID,
+                  example = NodeCarrierConstants.ORG_ID_EXAMPLE)
+              @PathVariable
+              String orgId,
+          @NotBlank(message = "orgId can't be empty")
+              @Parameter(
+                  description = NodeCarrierConstants.NODE_ID,
+                  example = NodeCarrierConstants.NODE_ID_EXAMPLE)
+              @PathVariable
+              String nodeId,
+          @NotBlank(message = "carrierServiceId can't be empty")
+              @Parameter(
+                  description = NodeCarrierConstants.CARRIER_SERVICE_ID,
+                  example = NodeCarrierConstants.CARRIER_SERVICE_ID_EXAMPLE)
+              @PathVariable
+              String carrierServiceId)
+          throws CommonServiceException {
+    logger.debug("Processing get all node carriers for a given orgId and carrierServiceId");
+    var nodeCarriersResponseList =
+        nodeCarriersService.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+            orgId, nodeId, carrierServiceId);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carriers list fetched successfully")
+            .payload(nodeCarriersResponseList)
+            .build());
+  }
 }

@@ -10,10 +10,12 @@ package com.nextuple.csvdownload.service;
 import com.nextuple.calendar.domain.feign.CalendarFeign;
 import com.nextuple.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.nextuple.calendar.domain.outbound.NodeCalendarResponse;
+import com.nextuple.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.csvdownload.exception.CarrierServiceException;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,18 @@ public class CalenderResponseService {
       logger.error("Carrier Service Calender does not exist for given orgId");
       throw new CarrierServiceException(
           "Carrier Service Calender does not exist for given orgId", orgId);
+    }
+  }
+
+  public List<NodeCarrierServiceCalendarResponse> getNodeCarrierServiceCalender(String orgId)
+      throws CarrierServiceException {
+    logger.debug("Processing get Carrier service by orgId");
+    BaseResponse<List<NodeCarrierServiceCalendarResponse>> response =
+        calendarFeign.getAllNodeCarrierServiceCalendar(orgId);
+    if (response != null && !CollectionUtils.isEmpty(response.getPayload())) {
+      return response.getPayload();
+    } else {
+      return Collections.emptyList();
     }
   }
 

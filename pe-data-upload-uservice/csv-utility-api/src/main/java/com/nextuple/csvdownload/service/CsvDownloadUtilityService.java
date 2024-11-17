@@ -9,13 +9,16 @@ package com.nextuple.csvdownload.service;
 
 import static com.nextuple.csvdownload.common.constants.CSVCommonConstants.*;
 import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.FAILURE;
+import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.LAST_PICKUP_TIME;
 import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.PE;
+import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.PICKUP_CALENDAR_ID;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.nextuple.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.nextuple.calendar.domain.outbound.NodeCalendarResponse;
+import com.nextuple.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.context.Logger;
@@ -1069,6 +1072,27 @@ public class CsvDownloadUtilityService {
     return tempFile.toFile();
   }
 
+  public File downloadNodesCarrierPickupCalendarByOrgId(String orgId)
+      throws IOException, CommonServiceException, CarrierServiceException {
+    List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarList =
+        calenderResponseService.getNodeCarrierServiceCalender(orgId);
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(setFilePermissions());
+    Path tempFile =
+        Files.createTempFile(
+            "download-nodes-carrier-pickup-calendar" + new Date().getTime(), ".csv", attr);
+    try (var writer = new CSVWriter(new FileWriter(tempFile.toFile(), true))) {
+      List<String> header =
+          new ArrayList<>(
+              Arrays.asList(
+                  ORG_ID, NODE_ID, CARRIER_SERVICE_ID, LAST_PICKUP_TIME, PICKUP_CALENDAR_ID));
+      writeToCSV(header.toArray(new String[0]), writer);
+      writeNodeCarrierPickupCalendar(writer, nodeCarrierServiceCalendarList);
+      writer.flush();
+    }
+    return tempFile.toFile();
+  }
+
   private void writerNodesDataToFile(CSVWriter writer, List<NodeDto> nodeDtoList) {
     for (NodeDto node : nodeDtoList) {
       List<NodeCalendarResponse> nodeCalendarResponses =
@@ -1111,6 +1135,26 @@ public class CsvDownloadUtilityService {
               writeToCSV(csvData.toArray(new String[0]), writer);
             });
       }
+    }
+  }
+
+  private void writeNodeCarrierPickupCalendar(
+      CSVWriter writer, List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarList) {
+    for (NodeCarrierServiceCalendarResponse nodeCarrierServiceCalendarResponse :
+        nodeCarrierServiceCalendarList) {
+      List<NodeCarrierResponse> nodeCarrierResponses =
+          nodeCarrierResponseService.getNodeCarrierResponseByOrgIdNodeIdAndCarrierServiceId(
+              nodeCarrierServiceCalendarResponse.getOrgId(),
+              nodeCarrierServiceCalendarResponse.getNodeId(),
+              nodeCarrierServiceCalendarResponse.getCarrierServiceId());
+      List<String> csvData = new ArrayList<>();
+      csvData.add(nodeCarrierServiceCalendarResponse.getOrgId());
+      csvData.add(nodeCarrierServiceCalendarResponse.getNodeId());
+      csvData.add(nodeCarrierServiceCalendarResponse.getCarrierServiceId());
+      csvData.add(nodeCarrierServiceCalendarResponse.getCalendarId());
+      csvData.add(
+          !nodeCarrierResponses.isEmpty() ? nodeCarrierResponses.get(0).getLastPickupTime() : "NA");
+      writeToCSV(csvData.toArray(new String[0]), writer);
     }
   }
 

@@ -130,4 +130,23 @@ public class NodeCarrierServiceCalendarController {
             .payload(response)
             .build());
   }
+
+  @GetMapping("org/{orgId}")
+  public ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>>
+      getAllNodeCarrierServiceCalendarsByOrgId(
+          @NotBlank(message = "orgId can't be empty")
+              @PathVariable
+              @Parameter(
+                  description = "Unique identifier of the organization",
+                  example = "NEXTUPLE")
+              String orgId)
+          throws CalendarDomainException {
+    logger.debug("Processing get Node Carrier Calendar by orgId");
+    var response = nodeCarrierServiceCalendarService.processGetAllNodeCarrierServiceCalendar(orgId);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier Calendar Cache Keys fetched successfully")
+            .payload(response)
+            .build());
+  }
 }

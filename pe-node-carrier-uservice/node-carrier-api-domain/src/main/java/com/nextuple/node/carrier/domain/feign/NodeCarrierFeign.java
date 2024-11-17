@@ -117,4 +117,10 @@ public interface NodeCarrierFeign {
   @GetMapping("/node/carrier/{orgId}/{carrierServiceId}/node-carriers")
   BaseResponse<List<NodeCarrierResponse>> getAllNodeCarriersByOrgIdCarrierServiceId(
       @NotBlank @PathVariable String orgId, @NotBlank @PathVariable String carrierServiceId);
+
+  @GetMapping("/node/carrier/{orgId}/nodeId/{nodeId}/{carrierServiceId}/node-carriers")
+  BaseResponse<List<NodeCarrierResponse>> getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+      @NotBlank @PathVariable String orgId,
+      @NotBlank @PathVariable String nodeId,
+      @NotBlank @PathVariable String carrierServiceId);
 }

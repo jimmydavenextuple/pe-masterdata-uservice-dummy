@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -134,5 +135,21 @@ class NodeCarrierServiceCalendarControllerTest {
         nodeCarrierCalendarCacheKeyDtoList.size(),
         Objects.requireNonNull(responseEntity.getBody()).getPayload().size());
     verify(nodeCarrierServiceCalendarService, times(1)).getAllNodeCarrierCalendarCacheKeys(any());
+  }
+
+  @Test
+  @Description("Test Get all node carriers service Calendars")
+  void getAllNodeCarrierServiceCalendarsTest() throws CalendarDomainException {
+    when(nodeCarrierServiceCalendarService.processGetAllNodeCarrierServiceCalendar(any()))
+        .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarResponse()));
+    ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>> resp =
+        nodeCarrierServiceCalendarController.getAllNodeCarrierServiceCalendarsByOrgId(
+            TestUtil.ORG_ID);
+    Assertions.assertEquals(HttpStatus.OK, resp.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID,
+        Objects.requireNonNull(resp.getBody()).getPayload().get(0).getCalendarId());
+    verify(nodeCarrierServiceCalendarService, times(1))
+        .processGetAllNodeCarrierServiceCalendar(any());
   }
 }
