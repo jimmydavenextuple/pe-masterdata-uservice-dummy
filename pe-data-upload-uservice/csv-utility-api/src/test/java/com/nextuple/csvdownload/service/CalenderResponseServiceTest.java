@@ -91,7 +91,7 @@ class CalenderResponseServiceTest {
 
   @Test
   @Description("Get node carrier Service calendar for orgId - Happy Path")
-  void getNodeCarrierServiceCalender() throws CarrierServiceException {
+  void getNodeCarrierServiceCalender() {
     when(calendarFeign.getAllNodeCarrierServiceCalendar(any()))
         .thenReturn(
             BaseResponse.builder()
@@ -107,8 +107,19 @@ class CalenderResponseServiceTest {
 
   @Test
   @Description("Get node carrier Service calendar for orgId - Null Scenario")
-  void getNodeCarrierServiceCalenderException() throws CarrierServiceException {
+  void getNodeCarrierServiceCalenderException() {
     when(calendarFeign.getAllNodeCarrierServiceCalendar(any())).thenReturn(null);
+    List<NodeCarrierServiceCalendarResponse> responses =
+        calenderResponseService.getNodeCarrierServiceCalender(TestUtil.ORG_ID);
+    assertEquals(0, responses.size());
+    verify(calendarFeign, times(1)).getAllNodeCarrierServiceCalendar(any());
+  }
+
+  @Test
+  @Description("Get node carrier Service calendar for orgId - Empty Scenario")
+  void getNodeCarrierServiceCalenderEmptyException() {
+    when(calendarFeign.getAllNodeCarrierServiceCalendar(any()))
+        .thenReturn(BaseResponse.builder().payload(List.of()).build());
     List<NodeCarrierServiceCalendarResponse> responses =
         calenderResponseService.getNodeCarrierServiceCalender(TestUtil.ORG_ID);
     assertEquals(0, responses.size());

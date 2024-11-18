@@ -44,8 +44,7 @@ public class CalenderResponseService {
     }
   }
 
-  public List<NodeCarrierServiceCalendarResponse> getNodeCarrierServiceCalender(String orgId)
-      throws CarrierServiceException {
+  public List<NodeCarrierServiceCalendarResponse> getNodeCarrierServiceCalender(String orgId) {
     logger.debug("Processing get Carrier service by orgId");
     BaseResponse<List<NodeCarrierServiceCalendarResponse>> response =
         calendarFeign.getAllNodeCarrierServiceCalendar(orgId);

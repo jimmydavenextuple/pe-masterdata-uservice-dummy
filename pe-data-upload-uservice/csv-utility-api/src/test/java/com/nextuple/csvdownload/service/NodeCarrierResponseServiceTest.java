@@ -13,6 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.common.response.BaseResponse;
 import com.nextuple.csvdownload.common.TestUtil;
 import com.nextuple.node.carrier.domain.feign.impl.NodeCarrierV2Feign;
 import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
@@ -71,6 +72,20 @@ class NodeCarrierResponseServiceTest {
     ReflectionTestUtils.setField(nodeCarrierResponseService, "nodeCarrierFeign", nodeCarrierFeign);
     when(nodeCarrierFeign.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any()))
         .thenReturn(null);
+    List<NodeCarrierResponse> response =
+        nodeCarrierResponseService.getNodeCarrierResponseByOrgIdNodeIdAndCarrierServiceId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID, TestUtil.CARRIER_SERVICE_ID);
+    assertEquals(0, response.size());
+    verify(nodeCarrierFeign, times(1))
+        .getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any());
+  }
+
+  @Test
+  @Description("Test get Node carrier by orgId, NodeId and Carrier Service ID- Empty Scenario")
+  void getNodeCarrierResponseByOrgIdNodeIdAndCarrierServiceIdEmptyException() {
+    ReflectionTestUtils.setField(nodeCarrierResponseService, "nodeCarrierFeign", nodeCarrierFeign);
+    when(nodeCarrierFeign.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any()))
+        .thenReturn(BaseResponse.builder().payload(List.of()).build());
     List<NodeCarrierResponse> response =
         nodeCarrierResponseService.getNodeCarrierResponseByOrgIdNodeIdAndCarrierServiceId(
             TestUtil.ORG_ID, TestUtil.NODE_ID, TestUtil.CARRIER_SERVICE_ID);
