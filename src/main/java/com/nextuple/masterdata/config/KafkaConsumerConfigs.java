@@ -15,6 +15,7 @@ import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.SaslConfigs;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -25,7 +26,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
@@ -80,8 +80,8 @@ public class KafkaConsumerConfigs {
     return this.kafkaProperties.buildConsumerProperties();
   }
 
-  @Bean
-  public ConsumerFactory<String, Object> itemConsumerFactory() {
+  @NotNull
+  private HashMap<String, Object> getItemConsumerProps() {
     HashMap<String, Object> prop = new HashMap<>(itemDeserializerProperties());
     Map<String, Object> properties = (Map<String, Object>) prop.get("properties");
     prop.put(
@@ -89,24 +89,18 @@ public class KafkaConsumerConfigs {
         properties.get("spring-deserializer-value-delegate-class"));
     prop.put(JsonDeserializer.TRUSTED_PACKAGES, properties.get("spring-json-trusted-packages"));
     prop.put(JsonDeserializer.TYPE_MAPPINGS, properties.get("spring-json-type-mapping"));
-    return new DefaultKafkaConsumerFactory<>(prop);
-  }
-
-  @Bean
-  @Primary
-  public ConsumerFactory<Object, Object> jsonConsumerFactory() {
-    HashMap<String, Object> prop = new HashMap<>(jsonDeserializerProperties());
-    return new DefaultKafkaConsumerFactory<>(prop);
+    return prop;
   }
 
   @Primary
   @Bean(name = "JsonDeserializerConsumer")
   public ConcurrentKafkaListenerContainerFactory<Object, Object> jsonKafkaContainerListenerFactory(
-      ConsumerFactory<Object, Object> jsonconsumerFactory,
+      ConsumerFactory<Object, Object> consumerFactory,
       KafkaOperations<Object, Object> kafkaOperations) {
     ConcurrentKafkaListenerContainerFactory<Object, Object> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
-    factory.setConsumerFactory(jsonConsumerFactory());
+    consumerFactory.updateConfigs(jsonDeserializerProperties());
+    factory.setConsumerFactory(consumerFactory);
     return factory;
   }
 
@@ -118,7 +112,8 @@ public class KafkaConsumerConfigs {
 
     ConcurrentKafkaListenerContainerFactory<String, Object> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
-    factory.setConsumerFactory(itemConsumerFactory());
+    consumerFactory.updateConfigs(getItemConsumerProps());
+    factory.setConsumerFactory(consumerFactory);
     factory.setCommonErrorHandler(kafkaErrorHandler(kafkaOperations));
     return factory;
   }
@@ -129,7 +124,8 @@ public class KafkaConsumerConfigs {
       KafkaOperations<Object, Object> kafkaOperations) {
     ConcurrentKafkaListenerContainerFactory<Object, Object> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
-    factory.setConsumerFactory(stringConsumerFactory());
+    consumerFactory.updateConfigs(getStringConsumerProps());
+    factory.setConsumerFactory(consumerFactory);
     factory.setCommonErrorHandler(errorHandler(kafkaOperations));
     return factory;
   }
@@ -142,8 +138,8 @@ public class KafkaConsumerConfigs {
         new FixedBackOff(0L, maxRetryCount));
   }
 
-  @Bean
-  public ConsumerFactory<Object, Object> stringConsumerFactory() {
+  @NotNull
+  private HashMap<String, Object> getStringConsumerProps() {
     HashMap<String, Object> prop = new HashMap<>();
     prop.put(
         ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaStringProperties.getKeyDeserializer());
@@ -166,7 +162,7 @@ public class KafkaConsumerConfigs {
     prop.put(JsonDeserializer.TRUSTED_PACKAGES, kafkaStringProperties.getTrustedPackages());
     prop.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, kafkaStringProperties.getEnableAutoCommit());
     prop.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaStringProperties.getAutoOffsetReset());
-    return new DefaultKafkaConsumerFactory<>(prop);
+    return prop;
   }
 
   @Bean
