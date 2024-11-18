@@ -1072,8 +1072,7 @@ public class CsvDownloadUtilityService {
     return tempFile.toFile();
   }
 
-  public File downloadNodesCarrierPickupCalendarByOrgId(String orgId)
-      throws IOException {
+  public File downloadNodesCarrierPickupCalendarByOrgId(String orgId) throws IOException {
     List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarList =
         calenderResponseService.getNodeCarrierServiceCalender(orgId);
     FileAttribute<Set<PosixFilePermission>> attr =
