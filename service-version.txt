@@ -1,2 +1,1 @@
-1.6.10-SNAPSHOT
-versionCatalogs: extension 'versionCatalogs'
+1.6.12-SNAPSHOT

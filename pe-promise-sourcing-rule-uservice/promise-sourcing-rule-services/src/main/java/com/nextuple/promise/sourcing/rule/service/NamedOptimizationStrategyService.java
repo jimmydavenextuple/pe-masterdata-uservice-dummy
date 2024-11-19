@@ -654,6 +654,7 @@ public class NamedOptimizationStrategyService {
             String.valueOf(groupDefinitionResponse.getSourcingAttributesDefinitionId()))
         .optimizationRuleName(namedOptimizationStrategyResponse.getOptimizationStrategyName())
         .requiredAttributes(attributeDetailsUIResponseList)
+        .groupId(namedOptimizationStrategyResponse.getGroupId())
         .strategy(namedOptimizationStrategyResponse.getOptimizationStrategyDetails())
         .constraints(allConstraintUIDtoList)
         .build();
