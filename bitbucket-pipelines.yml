@@ -256,7 +256,7 @@ definitions:
               echo "Skipping Git steps as the current branch is not development."
             fi
         artifacts:
-          - build/**
+          - build/**/[!*-api-*].jar
           - service-version.txt
     - step: &build-qa
         name: Build QA
