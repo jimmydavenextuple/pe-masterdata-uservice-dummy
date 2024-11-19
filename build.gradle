@@ -688,3 +688,4 @@ task preReleaseVersion(group: 'versioning', description: 'Make the version a pre
         saveVersion(newVersionMap)
     }
 }
+
