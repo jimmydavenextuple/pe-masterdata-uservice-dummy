@@ -152,7 +152,6 @@ public class TenantConfigdataService {
   void validateConfigValueFormat(TenantConfigdataRequest tenantConfigdataRequest)
       throws CommonServiceException {
     if (SELECTED_ATTR_CONFIG_KEY.equals(tenantConfigdataRequest.getConfigKey())
-        && !tenantConfigdataRequest.getConfigValue().isEmpty()
         && tenantConfigdataRequest.getConfigValue().contains(",")) {
       logger.error(
           String.format(CONFIG_VAL_FORMAT_ERROR_MSG, tenantConfigdataRequest.getConfigKey()));
