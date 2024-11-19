@@ -255,8 +255,9 @@ definitions:
             else
               echo "Skipping Git steps as the current branch is not development."
             fi
+          - find build -type f -name "*.jar" ! -name "*-api-*" -exec cp {} /tmp/artifacts/ \;
         artifacts:
-          - build/**
+          - /tmp/artifacts/*.jar
           - service-version.txt
     - step: &build-qa
         name: Build QA
