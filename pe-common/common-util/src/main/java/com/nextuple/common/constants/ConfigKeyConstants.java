@@ -1,5 +1,6 @@
 package com.nextuple.common.constants;
 
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -56,4 +57,7 @@ public class ConfigKeyConstants {
   public static final String RECOMMENDATION_IMPL_CLASS_NAME_CONFIG_KEY =
       "recommendation-engine-impl-class-name";
   public static final String TRANSFER_HORIZON_DAYS_CONFIG_KEY = "transfer-schedule-horizon-days";
+
+  public static final List<String> CONFIG_KEYS_MULTIPLE_VALUES_NOT_ALLOWED =
+      List.of(SELECTED_ATTRIBUTE_FOR_TARGET_MARGINS_CONFIG_KEY);
 }
