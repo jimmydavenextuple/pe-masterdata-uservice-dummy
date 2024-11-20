@@ -25,7 +25,9 @@ import com.nextuple.configuration.persistence.domain.TenantConfigdataDomainDto;
 import com.nextuple.configuration.persistence.service.ConfigMetadataPersistenceService;
 import com.nextuple.configuration.persistence.service.TenantConfigdataPersistenceService;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -223,5 +225,21 @@ class TenantConfigdataServiceTest {
     assertEquals("Tenant configuration data not found", ex.getMessage());
     verify(tenantConfigdataPersistenceService, times(1))
         .fetchTenantConfigdataByOrgIdAndConfigKey(anyString(), anyString());
+  }
+
+  @Test
+  @DisplayName("Test to check the ConfigValue format")
+  void validateConfigValueFormatTest() throws CommonServiceException {
+    TenantConfigdataRequest tenantConfigdataRequest =
+        TenantConfigdataRequest.builder()
+            .configKey("target-gross-profit-margins-selected-attribute")
+            .configValue("item,itemCategory")
+            .build();
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () -> tenantConfigdataService.validateConfigValueFormat(tenantConfigdataRequest));
+    tenantConfigdataRequest.setConfigKey("service-option");
+    Assertions.assertDoesNotThrow(
+        () -> tenantConfigdataService.validateConfigValueFormat(tenantConfigdataRequest));
   }
 }
