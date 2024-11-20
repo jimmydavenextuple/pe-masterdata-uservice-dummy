@@ -255,9 +255,11 @@ definitions:
             else
               echo "Skipping Git steps as the current branch is not development."
             fi
+          - mkdir -p /tmp/artifacts/libs && find build/libs -type f -name "*.jar" ! -name "*plain*.jar" -exec cp {} /tmp/artifacts/libs/ \;
+          - tree /tmp/artifacts && ls /tmp/artifacts
         artifacts:
-          - build/**
-          - service-version.txt
+    - /tmp/artifacts/libs/*.jar
+    - - service-version.txt
     - step: &build-qa
         name: Build QA
         caches:
