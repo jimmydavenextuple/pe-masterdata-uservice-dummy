@@ -1,0 +1,71 @@
+spring:
+  application:
+    name: "pe-node-carrier-service"
+    version: ${version}
+    title: "Node Carrier Service"
+    description: "Promising engine node carrier service"
+    properties:
+      group: promising-and-sourcing
+      customerFacing: false
+  main:
+    allow-bean-definition-overriding: true
+
+  kafka:
+    consumer:
+      enable-auto-commit: true
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+        max.poll.records: 10
+
+server:
+  port: 8080
+  tomcat:
+    max-connections: 500
+    threads:
+      min-spare: 50
+      max: 200
+
+logging:
+  level:
+    org.springframework: WARN
+    root: WARN
+    com.nextuple: INFO
+entity-listener:
+  kafka:
+    enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+    loggers:
+      enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+        persistence: true
+        cache: true
+  prometheus.metrics.export.enabled: true
+#pe:
+#  ui:
+#    allowed-origin-url: \${PE_UI_URL}
+feign:
+  okhttp:
+    enabled: true
+auth:
+  filterEnabled: false

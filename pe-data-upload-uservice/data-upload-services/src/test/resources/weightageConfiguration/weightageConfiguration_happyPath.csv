@@ -1,0 +1,3 @@
+action,orgId,type,key,weightage
+UPDATE,org,PRIORITY,P1,1F
+DELETE,org,PRIORITY,P1,1F

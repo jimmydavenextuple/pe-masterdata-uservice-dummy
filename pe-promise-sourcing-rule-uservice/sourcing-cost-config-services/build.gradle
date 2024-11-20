@@ -1,0 +1,53 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+jar{
+    enabled = true
+}
+
+bootJar {
+    enabled = false
+}
+
+
+dependencies {
+    implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-persistence-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-persistence-postgres"))
+
+    implementation(project(":pe-common:common-domain"))
+    implementation(project(":pe-common:common-postgres"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-producer"))
+    implementation(project(":pe-common:common-postgres"))
+    implementation(project(":pe-common:common-util"))
+
+    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
+
+
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
+    implementation 'com.scireum:parsii:4.0'
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
+    implementation 'io.swagger.core.v3:swagger-models:2.2.0'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.named('test') {
+    dependsOn ':pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-persistence-postgres:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-persistence-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
+    dependsOn ':pe-common:common-postgres:jar'
+    dependsOn ':pe-common:common-domain:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache-producer:jar'
+    dependsOn ':pe-common:common-util:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
+}

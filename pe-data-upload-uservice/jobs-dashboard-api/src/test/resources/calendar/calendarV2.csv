@@ -1,0 +1,2 @@
+action,calendarId,orgId,description,isMondayWorking,isTuesdayWorking,isWednesdayWorking,isThursdayWorking,isFridayWorking,isSaturdayWorking,isSundayWorking,exceptionDays
+CREATE,my-calendar,BAY,GoFor Sameday Calendar,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,

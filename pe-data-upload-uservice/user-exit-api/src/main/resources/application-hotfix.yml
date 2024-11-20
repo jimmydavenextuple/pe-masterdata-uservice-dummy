@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_hotfix
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
+  sql.init.platform: postgres
+logging:
+  level:
+    com.nextuple: INFO

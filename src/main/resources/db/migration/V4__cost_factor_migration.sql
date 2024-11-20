@@ -1,0 +1,1 @@
+UPDATE cost_factor SET is_rate_card_look_up_required = true where is_rate_card_look_up_required is null;

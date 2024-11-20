@@ -1,0 +1,2 @@
+action,nodeId,orgId,street,city,state,zipCode,country,latitude,longitude,timezone,shipToHome,bopisEligible,nodeType,nodeLabourTier,isActive,startWorkingTime,lastWorkingTime
+CREATE,N,B,Calgary Downtown,Calgary,AB,T2P 1B5,CA,52.1977,-113.8721,America/Edmonton,TRUE,TRUE,MFC,tier1,TRUE,08:00,16:00

@@ -1,0 +1,42 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://promise-engine-postgres-cluster-stage.cluster-co9l0bkmgaei.us-east-1.rds.amazonaws.com/pe
+    username: \${POSTGRES_USER}
+    password: \${POSTGRES_PWD}
+  kafka:
+    bootstrap-servers: "b-2.promisemksstage.hwe2x6.c18.kafka.us-east-1.amazonaws.com:9096,b-1.promisemksstage.hwe2x6.c18.kafka.us-east-1.amazonaws.com:9096,b-3.promisemksstage.hwe2x6.c18.kafka.us-east-1.amazonaws.com:9096"
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: SCRAM-SHA-512
+      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"\${KAFKA_USER}\" password=\"\${KAFKA_PWD}\";"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.STAGE.MASTER_DATA_UPDATE_EVENTS
+      properties:
+        acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
+
+logging:
+  level:
+    com.nextuple: DEBUG
+
+master-data:
+  node-carrier:
+    topic-name: INTERNAL.STAGE.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-stage
+  processing-lead-time:
+    topic-name: INTERNAL.STAGE.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-stage
+  node-service-option-buffer:
+    topic-name: INTERNAL.STAGE.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-stage

@@ -1,0 +1,2 @@
+action,nodeId,orgId,street,city,state,zipCode,country,latitude,longitude,timezone,shipToHome,sdndEligible,bopisEligible,expressEligible,nodeType,isActive,nextdayEligible,startWorkingTime,lastWorkingTime
+CREATE,node,org,street,city0,state0,zipCode0,country0,latitude0,longitude0,timezone0,true,true,false,true,nodeType0,true,true,,16:00

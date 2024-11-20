@@ -1,0 +1,36 @@
+{
+  "orgId": "NEXTUPLE_GR",
+  "serviceOption": "EXPRESS",
+  "totalLines": 1,
+  "totalCost": 10.0,
+  "shipments": [
+    {
+      "items": [
+        {
+          "itemId": "OPT-ITEM-4",
+          "uom": "qty",
+          "height": 10.0,
+          "width": 10.0,
+          "length": 10.0,
+          "dimensionUom": "m",
+          "weight": 15.0,
+          "weightUom": "g",
+          "processingTime": 12,
+          "handlingType": "MANUAL",
+          "requestedQuantity": 8.0,
+          "fulfilledQuantity": 5.0,
+          "atp": 0.10
+        }
+      ],
+      "node": {
+        "nodeId": "nodeId1",
+        "nodeType": "nodeType2",
+        "zipCode": "nodeZipCode2",
+        "nodeLabourTier": "nodeLabourTier1"
+      },
+      "zone": "zone1",
+      "carrierServiceId": "carrierServiceId1",
+      "cost": 10.0
+    }
+  ]
+}

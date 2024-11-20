@@ -1,27 +1,25 @@
-server:
-  port: 8082
 spring:
   application:
-    dependencies:
-      item: "http://localhost:8082/"
-      node-carrier: "http://localhost:8082/"
-      carrier: "http://localhost:8082/"
-      transit: "http://localhost:8082/"
-      data-upload: "http://localhost:8082/"
-      node: "http://localhost:8082/"
-      promise-sourcing-rule: "http://localhost:8082/"
-      calendar: "http://localhost:8082/"
-      postal-code-timezone: "http://localhost:8082/"
-      weightage-configuration: "http://localhost:8082/"
-      userexit: "http://localhost:8082/"
-      configuration: "http://localhost:8082/"
+      dependencies:
+        item: "http://localhost:8080/"
+        node-carrier: "http://localhost:8080/"
+        carrier: "http://localhost:8080/"
+        transit: "http://localhost:8080/"
+        data-upload: "http://localhost:8080/"
+        node: "http://localhost:8080/"
+        promise-sourcing-rule: "http://localhost:8080/"
+        calendar: "http://localhost:8080/"
+        postal-code-timezone: "http://localhost:8080/"
+        weightage-configuration: "http://localhost:8080/"
+        userexit: "http://localhost:8080/"
+        configuration: "http://localhost:8080/"
   jpa:
     database: POSTGRESQL
     show-sql: true
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://postgres:5432/postgres
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
     hikari:
@@ -30,7 +28,7 @@ spring:
   flyway:
     enabled: false
   kafka:
-    bootstrap-servers: "kafka:9092"
+    bootstrap-servers: "localhost:9092"
     properties:
       security.protocol: PLAINTEXT
       sasl.mechanism: NA

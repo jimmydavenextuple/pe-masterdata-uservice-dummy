@@ -1,0 +1,20 @@
+jar{
+    enabled=true
+}
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation(project(":pe-common:common-domain"))
+    implementation(project(":pe-common:common-util"))
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.4.2'
+    implementation(project(":pe-transit-uservice:transit-api-domain"))
+}
+
+tasks.named('test') {
+    dependsOn ':pe-transit-uservice:transit-persistence-domain:jar'
+    dependsOn ':pe-common:common-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
+}

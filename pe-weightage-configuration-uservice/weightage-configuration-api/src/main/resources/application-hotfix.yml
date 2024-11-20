@@ -1,0 +1,33 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_hotfix
+    username: \${POSTGRES_USER}
+    password: \${POSTGRES_PWD}
+  kafka:
+    bootstrap-servers: kbrk-nonprod.nextuple.net:9092
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.HOTFIX.MASTER_DATA_UPDATE_EVENTS
+      properties:
+        acks: all
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
+  sql.init.platform: postgres
+
+logging:
+  level:
+    com.nextuple: DEBUG
+auth:
+  issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_FAqWuc7OP

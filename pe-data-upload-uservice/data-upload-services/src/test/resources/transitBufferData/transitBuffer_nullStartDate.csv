@@ -1,0 +1,9 @@
+orgId,BAY,
+Carrier Service:,PURO-PPOST,
+startTime,,
+endTime,2022-08-23T09:38:57Z,
+Destination FSA / Source FSA ->,B1P,B3A
+B2E,0.1,0.3
+E6A,0.3,0
+E6B,2,-5
+E6H,0.3,7

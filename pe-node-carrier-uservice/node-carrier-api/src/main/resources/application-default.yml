@@ -1,0 +1,32 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  sql.init.platform: postgres
+
+logging:
+  level:
+    com.nextuple: INFO
+entity-listener:
+  kafka:
+    enabled: false
+pe:
+  ui:
+    allowed-origin-url: "*"
+
+master-data:
+  node-carrier:
+    topic-name: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-dev
+  processing-lead-time:
+    topic-name: INTERNAL.DEV.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-dev
+  node-service-option-buffer:
+    topic-name: INTERNAL.DEV.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-dev

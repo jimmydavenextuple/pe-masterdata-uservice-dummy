@@ -1,0 +1,2 @@
+action,orgId,sourceGeozone,destinationGeozone,serviceOption,selectionCriteria
+DELETE,BAY,ALL,ALL,STANDARD,L

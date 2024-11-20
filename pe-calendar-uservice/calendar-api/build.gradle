@@ -1,0 +1,41 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+bootJar {
+    enabled(true)
+    mainClass.set("com.nextuple.pe.masterdata.calendar.MasterDataCalendarApplication")
+}
+configurations {
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
+}
+dependencies {
+    implementation(project(":pe-calendar-uservice:calendar-services"))
+    implementation(project(":pe-calendar-uservice:calendar-api-domain"))
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-common:common-postgres"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-producer"))
+
+    implementation(project(":pe-node-uservice:node-api-domain"))
+
+    implementation(project(":pe-carrier-uservice:carrier-api-domain"))
+
+
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
+}
+
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+tasks.named('bootJar') {
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
+    dependsOn(':pe-common:common-domain:jar')
+    dependsOn ':pe-calendar-uservice:calendar-persistence-postgres:jar'
+}
