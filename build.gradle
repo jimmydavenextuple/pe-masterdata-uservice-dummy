@@ -209,6 +209,10 @@ subprojects {
         dependsOn tasks.named('jar')
     }
 
+    tasks.named('bootJar') {
+        dependsOn tasks.withType(Jar).matching { it.name != 'bootJar' }
+    }
+
     artifactory {
         contextUrl = "${artifactory_contextUrl}"
         publish {
@@ -362,17 +366,7 @@ dependencies {
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
     implementation(project(":pe-data-upload-uservice:data-upload-services"))
 
-    implementation(project(":pe-calendar-uservice:calendar-api"))
-    implementation(project(":pe-carrier-uservice:carrier-api"))
-    implementation(project(":pe-configuration-uservice:configuration-api"))
-    implementation(project(":pe-data-upload-uservice:data-upload-api"))
     implementation(project(":pe-item-uservice:item-services"))
-    implementation(project(":pe-node-carrier-uservice:node-carrier-api"))
-    implementation(project(":pe-node-uservice:node-api"))
-    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api"))
-    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api"))
-    implementation(project(":pe-transit-uservice:transit-api"))
-    implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api"))
 
 
 
@@ -519,6 +513,9 @@ task fixPom {
 }
 generatePomFileForMavenJavaPublication.finalizedBy fixPom
 
+tasks.named('bootJar') {
+    dependsOn tasks.withType(Jar).matching { it.name != 'bootJar' }
+}
 
 //auto-version increment tasks:
 import org.yaml.snakeyaml.DumperOptions

@@ -200,6 +200,7 @@ definitions:
     cve: ~/.cve
   steps:
     - step: &build
+        size: 4x
         name: Build Snapshot
         caches:
           - gradle
