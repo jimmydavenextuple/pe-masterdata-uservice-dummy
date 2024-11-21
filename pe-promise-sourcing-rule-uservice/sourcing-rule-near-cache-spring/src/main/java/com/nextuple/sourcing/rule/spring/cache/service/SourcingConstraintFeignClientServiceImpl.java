@@ -14,13 +14,11 @@ import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingConstraint
 import com.nextuple.sourcing.rule.cache.domain.SourcingConstraintCacheKey;
 import com.nextuple.sourcing.rule.cache.domain.SourcingConstraintCacheValue;
 import com.nextuple.sourcing.rule.spring.cache.feign.SourcingConstraintFeignImpl;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SourcingConstraintFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         SourcingConstraintCacheKey,
@@ -28,10 +26,9 @@ public class SourcingConstraintFeignClientServiceImpl
         String,
         BaseResponse<SourcingConstraintsResponse>> {
 
-  @Autowired SourcingConstraintFeignImpl sourcingConstraintFeign;
+  private final SourcingConstraintFeignImpl sourcingConstraintFeign;
 
-  @Autowired
-  GenericMapper<
+  private final GenericMapper<
           SourcingConstraintCacheKey,
           SourcingConstraintCacheValue,
           String,

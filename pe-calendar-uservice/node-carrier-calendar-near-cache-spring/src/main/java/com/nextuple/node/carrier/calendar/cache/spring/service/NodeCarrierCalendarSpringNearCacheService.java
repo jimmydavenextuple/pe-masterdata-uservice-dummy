@@ -14,18 +14,16 @@ import com.nextuple.node.carrier.calendar.cache.domain.NodeCarrierCalendarCacheK
 import com.nextuple.node.carrier.calendar.cache.domain.NodeCarrierCalendarCacheValue;
 import com.nextuple.node.carrier.calendar.cache.service.NodeCarrierCalendarNearCacheService;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(
     cacheNames = NodeCarrierCalendarSpringNearCacheService.NODE_CARRIER_CALENDAR_CACHE_NAME)
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NodeCarrierCalendarSpringNearCacheService
     extends AbstractGenericSpringLocalCacheServiceImpl<
         NodeCarrierCalendarCacheKey, NodeCarrierCalendarCacheValue>
@@ -35,7 +33,7 @@ public class NodeCarrierCalendarSpringNearCacheService
       LoggerFactory.getLogger(NodeCarrierCalendarSpringNearCacheService.class);
   public static final String NODE_CARRIER_CALENDAR_CACHE_NAME = "node_carrier_calendar";
 
-  @Autowired NearCacheRegistry nearCacheRegistry;
+  private final NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override

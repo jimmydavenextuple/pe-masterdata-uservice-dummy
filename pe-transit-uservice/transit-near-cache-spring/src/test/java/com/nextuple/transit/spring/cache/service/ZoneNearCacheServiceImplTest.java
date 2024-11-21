@@ -48,7 +48,6 @@ class ZoneNearCacheServiceImplTest {
   void setup() {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(zoneNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(zoneNearCacheService, "feignCacheService", feignCacheService);
   }
 

@@ -48,7 +48,6 @@ class TransitBufferV2PersistenceServiceImplTest {
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         transitBufferV2PersistenceService, "repository", transitBufferV2Repository);
     ReflectionTestUtils.setField(

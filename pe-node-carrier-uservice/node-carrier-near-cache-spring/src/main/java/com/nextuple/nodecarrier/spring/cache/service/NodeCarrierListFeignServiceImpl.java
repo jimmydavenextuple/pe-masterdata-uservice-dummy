@@ -15,13 +15,11 @@ import com.nextuple.nodecarrier.cache.domain.NodeCarrierListCacheValue;
 import com.nextuple.nodecarrier.spring.cache.feign.NodeCarrierListFeignImpl;
 import com.nextuple.nodecarrier.spring.cache.mapper.NodeCarrierListMapper;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NodeCarrierListFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         NodeCarrierListCacheKey,
@@ -29,9 +27,9 @@ public class NodeCarrierListFeignServiceImpl
         String,
         BaseResponse<List<NodeCarrierResponse>>> {
 
-  @Autowired NodeCarrierListFeignImpl nodeCarrierFeign;
+  private final NodeCarrierListFeignImpl nodeCarrierFeign;
 
-  @Autowired NodeCarrierListMapper nodeCarrierMapper;
+  private final NodeCarrierListMapper nodeCarrierMapper;
 
   @Override
   public NodeCarrierListCacheValue get(NodeCarrierListCacheKey key) {

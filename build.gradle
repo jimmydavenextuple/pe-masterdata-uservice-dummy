@@ -75,7 +75,6 @@ subprojects {
     apply plugin: 'io.spring.dependency-management'
     apply plugin: "org.springframework.boot"
     apply plugin: 'jacoco'
-    apply plugin: 'org.owasp.dependencycheck'
     apply plugin: "com.github.spotbugs"
     apply plugin: "com.diffplug.spotless"
     apply plugin: "org.sonatype.gradle.plugins.scan"
@@ -144,7 +143,7 @@ subprojects {
         implementation "org.mapstruct:mapstruct:${mapstructVersion}"
         implementation "org.apache.commons:commons-csv:${commonsCsvVersion}"
         api "io.micrometer:micrometer-registry-prometheus:1.10.7"
-        implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.13.0'
+        implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.17.0'
 
         // Dependency version override to resolve high CVE coming transitively for tomcat-embed-core
         implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.25'
@@ -153,7 +152,7 @@ subprojects {
 
         runtimeOnly 'org.postgresql:postgresql:42.7.2'
 
-        implementation "org.springframework.kafka:spring-kafka:3.2.1"
+        implementation "org.springframework.kafka:spring-kafka:3.2.4"
         implementation 'org.yaml:snakeyaml:2.2'
         implementation 'org.xerial.snappy:snappy-java:1.1.10.5'
         implementation 'commons-fileupload:commons-fileupload:1.5'
@@ -193,17 +192,6 @@ subprojects {
         onlyAnalyze = ['com.nextuple.*']
         showStackTraces = false
     }
-    dependencyCheck {
-        format = 'ALL'
-        suppressionFile = 'suppressions.xml'
-        autoUpdate = true
-        cveValidForHours = 24
-        if (System.getenv("CI") == 'true') {
-            data {
-                directory = "/root/.cve"
-            }
-        }
-    }
     spotless {
         java {
             importOrder()
@@ -217,6 +205,13 @@ subprojects {
         }
     }
     artifactoryPublish.skip = false
+    tasks.withType(GenerateModuleMetadata).configureEach {
+        dependsOn tasks.named('jar')
+    }
+
+    tasks.named('bootJar') {
+        dependsOn tasks.withType(Jar).matching { it.name != 'bootJar' }
+    }
 
     artifactory {
         contextUrl = "${artifactory_contextUrl}"
@@ -277,6 +272,10 @@ subprojects {
     generatePomFileForMavenJavaPublication.finalizedBy fixPom
 }
 
+allprojects {
+    version = loadVersion().version.getVersion();
+}
+
 apply from: "$rootProject.projectDir/dependencies.gradle"
 
 
@@ -293,7 +292,7 @@ apply plugin: "com.diffplug.spotless"
 apply plugin: "org.sonatype.gradle.plugins.scan"
 
 group = 'com.nextuple.pe'
-version = "1.4.0-${build_target}"
+//version = "1.4.0-${build_target}"
 
 sourceCompatibility = "${sourceJdkVersion}"
 targetCompatibility = "${targetJdkVersion}"
@@ -355,41 +354,83 @@ dependencies {
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     implementation "org.apache.commons:commons-csv:${commonsCsvVersion}"
     api "io.micrometer:micrometer-registry-prometheus:1.10.7"
-    implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.13.0'
+    implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.17.0'
+    implementation 'org.jetbrains:annotations:16.0.2'
 
     // Dependency version override to resolve high CVE coming transitively for tomcat-embed-core
     implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.25'
     // Dependency version override to resolve low CVE for spring web
     implementation 'org.springframework:spring-web:6.0.23'
 
+    // Adding submodule-level dependencies as not API modules to avoid generating a fat jar with large size
+    implementation(project(":pe-common:common-domain"))
+    implementation(project(":pe-common:common-postgres"))
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-common:master-data-integration-framework"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-consumer"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-producer"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
+    implementation(project(":pe-common:userexit-framework"))
+    implementation(project(":pe-common:userexit-framework:userexit-core"))
+    implementation(project(":pe-common:userexit-framework:userexit-domain"))
+    implementation(project(":pe-common:userexit-framework:userexit-near-cache"))
+    implementation(project(":pe-common:userexit-framework:userexit-near-cache-spring"))
 
+
+    implementation(project(":pe-calendar-uservice:calendar-services"))
+    implementation(project(":pe-calendar-uservice:calendar-api-domain"))
+
+    implementation(project(":pe-carrier-uservice:carrier-api-domain"))
+    implementation(project(":pe-carrier-uservice:carrier-services"))
+
+    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
+    implementation(project(":pe-configuration-uservice:configuration-services"))
+
+    implementation(project(":pe-data-upload-uservice:csv-utility-api"))
+    implementation(project(":pe-data-upload-uservice:csv-utility-common-util"))
+    implementation(project(":pe-data-upload-uservice:pe-public-webhook"))
+    implementation(project(":pe-data-upload-uservice:user-exit-api"))
+    implementation(project(":pe-data-upload-uservice:jobs-consumer"))
+    implementation(project(":pe-data-upload-uservice:data-upload-common-util"))
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
     implementation(project(":pe-data-upload-uservice:data-upload-services"))
 
-    implementation(project(":pe-calendar-uservice:calendar-api"))
-    implementation(project(":pe-carrier-uservice:carrier-api"))
-    implementation(project(":pe-configuration-uservice:configuration-api"))
-    implementation(project(":pe-data-upload-uservice:data-upload-api"))
     implementation(project(":pe-item-uservice:item-services"))
-    implementation(project(":pe-node-carrier-uservice:node-carrier-api"))
-    implementation(project(":pe-node-uservice:node-api"))
-    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api"))
-    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api"))
-    implementation(project(":pe-transit-uservice:transit-api"))
-    implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api"))
+    implementation(project(":pe-item-uservice:item-api-domain"))
+    implementation(project(":pe-item-uservice:item-persistence-domain"))
+    implementation(project(":pe-item-uservice:item-persistence-postgres"))
 
+    implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-services"))
 
+    implementation(project(":pe-node-uservice:node-api-domain"))
+    implementation(project(":pe-node-uservice:node-services"))
 
-    implementation(project(":pe-data-upload-uservice:pe-public-webhook"))
+    implementation(project(":pe-postal-code-timezone-uservice::postal-code-timezone-services"))
+    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
 
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-services"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-services"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-rule-near-cache"))
 
-    implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
-    implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
+    implementation(project(":pe-transit-uservice:transit-services"))
+    implementation(project(":pe-transit-uservice:transit-api-domain"))
 
+    implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-services"))
+    implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api-domain"))
+
+    implementation(project(":pe-node-uservice:node-consumer"))
+    implementation(project(":pe-carrier-uservice:carrier-consumer"))
+    implementation(project(":pe-calendar-uservice:calendar-consumer"))
+    implementation(project(":pe-transit-uservice:transit-consumer"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-consumer"))
 
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
 
-    implementation "org.springframework.kafka:spring-kafka:3.2.1"
+    implementation "org.springframework.kafka:spring-kafka:3.2.4"
     implementation 'org.yaml:snakeyaml:2.2'
     implementation 'org.xerial.snappy:snappy-java:1.1.10.5'
     implementation 'commons-fileupload:commons-fileupload:1.5'
@@ -489,7 +530,7 @@ publishing {
 }
 jar {
     enabled = false
-    archiveClassifier = ''
+    archiveClassifier=''
 }
 processResources {
     filesMatching("**/application*.yml") {
@@ -523,6 +564,9 @@ task fixPom {
 }
 generatePomFileForMavenJavaPublication.finalizedBy fixPom
 
+tasks.named('bootJar') {
+    dependsOn tasks.withType(Jar).matching { it.name != 'bootJar' }
+}
 
 //auto-version increment tasks:
 import org.yaml.snakeyaml.DumperOptions

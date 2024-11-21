@@ -44,7 +44,6 @@ class TransitBufferConfigRequestPersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         transitBufferConfigRequestService, "repository", transitBufferConfigRequestRepository);
     ReflectionTestUtils.setField(

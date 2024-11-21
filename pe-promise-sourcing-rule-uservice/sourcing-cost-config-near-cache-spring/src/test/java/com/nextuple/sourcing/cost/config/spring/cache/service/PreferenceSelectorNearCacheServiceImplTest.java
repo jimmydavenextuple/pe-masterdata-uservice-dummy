@@ -52,7 +52,6 @@ class PreferenceSelectorNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         preferenceSelectorNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         preferenceSelectorNearCacheService, "feignCacheService", feignCacheService);
   }

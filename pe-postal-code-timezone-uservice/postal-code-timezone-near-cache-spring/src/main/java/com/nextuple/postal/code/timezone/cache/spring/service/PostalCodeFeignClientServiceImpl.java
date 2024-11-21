@@ -14,20 +14,18 @@ import com.nextuple.postal.code.timezone.cache.domain.PostalCodeCacheKey;
 import com.nextuple.postal.code.timezone.cache.domain.PostalCodeCacheValue;
 import com.nextuple.postal.code.timezone.cache.spring.feign.PostalCodeFeignImpl;
 import com.nextuple.postal.code.timezone.cache.spring.mapper.PostalCodeMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PostalCodeFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         PostalCodeCacheKey, PostalCodeCacheValue, String, BaseResponse<PostalCodeResponse>> {
 
-  @Autowired PostalCodeFeignImpl postalCodeFeign;
+  private final PostalCodeFeignImpl postalCodeFeign;
 
-  @Autowired PostalCodeMapper postalCodeMapper;
+  private final PostalCodeMapper postalCodeMapper;
 
   @Override
   public PostalCodeCacheValue get(PostalCodeCacheKey key) {

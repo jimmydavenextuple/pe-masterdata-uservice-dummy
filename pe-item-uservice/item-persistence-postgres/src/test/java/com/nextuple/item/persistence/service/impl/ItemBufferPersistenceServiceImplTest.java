@@ -60,7 +60,6 @@ class ItemBufferPersistenceServiceImplTest {
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(itemBufferPersistenceService, "repository", itemBufferRepository);
     ReflectionTestUtils.setField(itemBufferPersistenceService, "mapper", itemBufferEntityMapper);
   }

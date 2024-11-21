@@ -47,7 +47,6 @@ class ZonePersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(zonePersistenceService, "repository", zoneRepository);
     ReflectionTestUtils.setField(zonePersistenceService, "mapper", zoneEntityMapper);
   }

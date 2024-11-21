@@ -13,19 +13,17 @@ import com.nextuple.sourcing.rule.cache.domain.HolidayCutoffKey;
 import com.nextuple.sourcing.rule.cache.domain.HolidayCutoffValue;
 import com.nextuple.sourcing.rule.spring.cache.feign.HolidayCutoffFeignImpl;
 import com.nextuple.sourcing.rule.spring.cache.mapper.HolidayCutoffMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class HolidayCutoffFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         HolidayCutoffKey, HolidayCutoffValue, String, BaseResponse<HolidayCutoffRulesResponse>> {
-  @Autowired HolidayCutoffFeignImpl holidayCutoffFeign;
+  private final HolidayCutoffFeignImpl holidayCutoffFeign;
 
-  @Autowired HolidayCutoffMapper holidayCutoffMapper;
+  private final HolidayCutoffMapper holidayCutoffMapper;
 
   @Override
   public HolidayCutoffValue get(HolidayCutoffKey key) {

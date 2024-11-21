@@ -54,7 +54,6 @@ class SelectorAndCostItineraryNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         selectorAndCostItineraryNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         selectorAndCostItineraryNearCacheService, "feignCacheService", feignCacheService);
   }

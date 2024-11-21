@@ -14,13 +14,11 @@ import com.nextuple.nodecarrier.cache.domain.NodeCarrierSelectionCacheValue;
 import com.nextuple.nodecarrier.spring.cache.feign.NodeCarrierSelectionFeignImpl;
 import com.nextuple.nodecarrier.spring.cache.mapper.NodeCarrierSelectionMapper;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NodeCarrierSelectionFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         NodeCarrierSelectionCacheKey,
@@ -28,9 +26,9 @@ public class NodeCarrierSelectionFeignClientServiceImpl
         String,
         BaseResponse<List<NodeCarrierSelectionResponse>>> {
 
-  @Autowired NodeCarrierSelectionFeignImpl nodeCarrierSelectionFeign;
+  private final NodeCarrierSelectionFeignImpl nodeCarrierSelectionFeign;
 
-  @Autowired NodeCarrierSelectionMapper nodeCarrierSelectionMapper;
+  private final NodeCarrierSelectionMapper nodeCarrierSelectionMapper;
 
   @Override
   public NodeCarrierSelectionCacheValue get(NodeCarrierSelectionCacheKey key) {

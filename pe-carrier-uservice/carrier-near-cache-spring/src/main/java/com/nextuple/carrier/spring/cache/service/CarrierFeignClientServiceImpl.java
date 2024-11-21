@@ -14,21 +14,19 @@ import com.nextuple.carrier.spring.cache.feign.CarrierFeignImpl;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
 import com.nextuple.core.spring.service.AbstractGenericFeignClientServiceImpl;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CarrierFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         CarrierCacheKey, CarrierCacheValue, String, BaseResponse<CarrierServiceResponse>> {
 
-  @Autowired CarrierFeignImpl carrierFeign;
+  private final CarrierFeignImpl carrierFeign;
 
-  @Autowired
-  GenericMapper<CarrierCacheKey, CarrierCacheValue, String, BaseResponse<CarrierServiceResponse>>
+  private final GenericMapper<
+          CarrierCacheKey, CarrierCacheValue, String, BaseResponse<CarrierServiceResponse>>
       carrierMapper;
 
   @Override

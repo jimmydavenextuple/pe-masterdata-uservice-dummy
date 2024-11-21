@@ -19,21 +19,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CostFactorDiscreteBucketFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         CostFactorDiscreteBucketCacheKey,
         CostFactorDiscreteBucketCacheValue,
         String,
         BaseResponse<List<CostFactorDiscreteBucketDto>>> {
-  @Autowired CostFactorDiscreteBucketFeignImpl costFactorDiscreteBucketFeign;
-  @Autowired CostFactorDiscreteBucketMapper costFactorDiscreteBucketMapper;
+  private final CostFactorDiscreteBucketFeignImpl costFactorDiscreteBucketFeign;
+  private final CostFactorDiscreteBucketMapper costFactorDiscreteBucketMapper;
 
   @Override
   public CostFactorDiscreteBucketCacheValue get(CostFactorDiscreteBucketCacheKey key) {

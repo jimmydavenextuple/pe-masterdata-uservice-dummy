@@ -52,7 +52,6 @@ class CustomRegionPersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         customRegionPersistenceService, "repository", customRegionRepository);
     ReflectionTestUtils.setField(

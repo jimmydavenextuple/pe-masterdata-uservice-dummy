@@ -14,13 +14,11 @@ import com.nextuple.sourcing.cost.config.cache.domain.CostAttributeMappingCacheV
 import com.nextuple.sourcing.cost.config.outbound.CostAttributeMappingResponse;
 import com.nextuple.sourcing.cost.config.spring.cache.feign.CostAttributeMappingFeignImpl;
 import com.nextuple.sourcing.cost.config.spring.cache.mapper.CostAttributeMappingMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CostAttributeMappingFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         CostAttributeMappingCacheKey,
@@ -28,9 +26,9 @@ public class CostAttributeMappingFeignServiceImpl
         String,
         BaseResponse<CostAttributeMappingResponse>> {
 
-  @Autowired CostAttributeMappingFeignImpl costAttributeMappingFeign;
+  private final CostAttributeMappingFeignImpl costAttributeMappingFeign;
 
-  @Autowired CostAttributeMappingMapper costAttributeMappingMapper;
+  private final CostAttributeMappingMapper costAttributeMappingMapper;
 
   @Override
   public CostAttributeMappingCacheValue get(CostAttributeMappingCacheKey key) {

@@ -14,23 +14,20 @@ import com.nextuple.configuration.outbound.TenantConfigdataResponse;
 import com.nextuple.configuration.spring.cache.feign.TenantConfigdataFeignImpl;
 import com.nextuple.core.cache.mapper.GenericMapper;
 import com.nextuple.core.spring.service.AbstractGenericFeignClientServiceImpl;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TenantConfigdataFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         TenantConfigdataCacheKey,
         TenantConfigdataCacheValue,
         String,
         BaseResponse<TenantConfigdataResponse>> {
-  @Autowired TenantConfigdataFeignImpl tenantConfigdataFeign;
+  private final TenantConfigdataFeignImpl tenantConfigdataFeign;
 
-  @Autowired
-  GenericMapper<
+  private final GenericMapper<
           TenantConfigdataCacheKey,
           TenantConfigdataCacheValue,
           String,

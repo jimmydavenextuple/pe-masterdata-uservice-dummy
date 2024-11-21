@@ -84,6 +84,22 @@ server:
         max:
           memory: 2Gi
           cpu: 1
+    orielly:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      java-opts: "-Xms1024m -Xmx1024m"
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 2Gi
+          cpu: 1
+        max:
+          memory: 2Gi
+          cpu: 1
     qa:
       ingress: yes
       middleman: yes
@@ -184,6 +200,7 @@ definitions:
     cve: ~/.cve
   steps:
     - step: &build
+        size: 4x
         name: Build Snapshot
         caches:
           - gradle
@@ -191,54 +208,17 @@ definitions:
         script:
           - microdnf install git
           - microdnf install findutils
-          - |
-            # Auto-version Update
-            BASE_BRANCH="development"
-            SKIP_COMMIT=$(git log -1 --pretty=format:%s)
-
-            if [[ "$SKIP_COMMIT" =~ \[ci\ skip\]\ version\ updated ]]; then
-              echo "Rerunning the pipeline"
-            else
-              # Compare the latest commit with the base branch
-              CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-              if [[ "$CURRENT_BRANCH" == "$BASE_BRANCH" ]]; then
-                CHANGED_FILES=$(git diff --name-only HEAD $BASE_BRANCH)
-                echo "Changed files: $CHANGED_FILES"
-                if echo "$CHANGED_FILES" | grep -q "version.yml"; then
-                  echo "version.yml file has been modified, skipping version update."
-                else
-                  # Run Gradle tasks to update the patch version and set pre-release
-                  bash ./gradlew conditionalPatchVersionUpdate preReleaseVersion
-
-                  # Fetch updated version from version.yml
-                  VERSION_FILE="version.yml"
-                  MAJOR_VERSION=$(grep "major:" $VERSION_FILE | awk '{print $2}')
-                  MINOR_VERSION=$(grep "minor:" $VERSION_FILE | awk '{print $2}')
-                  PATCH_VERSION=$(grep "patch:" $VERSION_FILE | awk '{print $2}')
-                  bash ./gradlew initializeAllowedVersion
-                  # Display updated version
-                  echo "Updated version: major $MAJOR_VERSION, minor $MINOR_VERSION, patch $PATCH_VERSION"         
-                fi
-              else
-                echo "Skipping version update as the current branch is not development."
-              fi
-            fi
+          - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
+          - chmod +x ./deployment-scripts/Auto-version-update/push_version_change.sh
+          - chmod +x ./deployment-scripts/Auto-version-update/version_update.sh
+          - ./deployment-scripts/Auto-version-update/version_update.sh
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
           - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build artifactoryPublish
           - export SPACE=" "
-          - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
-          - |
-            # Conditionally run Git steps for the development branch
-            if [[ "$CURRENT_BRANCH" == "$BASE_BRANCH" ]]; then
-              git add $VERSION_FILE service-version.txt
-              git commit --no-verify --allow-empty -m "[ci skip] version updated"
-              git remote set-url origin https://${APP_USER}:${APP_SECRET}@bitbucket.org/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}
-              git push
-            else
-              echo "Skipping Git steps as the current branch is not development."
-            fi
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" | head -n 1 > service-version.txt
+          - ./deployment-scripts/Auto-version-update/push_version_change.sh
         artifacts:
           - build/**
           - service-version.txt
@@ -311,7 +291,6 @@ definitions:
 pipelines:
   pull-requests:
     '**':
-      - step: *Clear-Cache
       - step: *pr-build
   tags:
     '*-SNAPSHOT':
@@ -333,7 +312,6 @@ pipelines:
           #     trigger: manual
           #     deployment: perf
     '*-SANDBOX':
-      - step: *Clear-Cache
       - step: *build-release
       - step:
           !!merge <<: *deploy
@@ -349,20 +327,24 @@ pipelines:
           deployment: prod
   branches:
     vapt:
-      - step: *Clear-Cache
       - step: *build
       - step:
           !!merge <<: *deploy
           name: Deploy vapt
           deployment: vapt
     development:
-      - step: *Clear-Cache
-      - step: *build     
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Dev
-          deployment: dev
-      - parallel:              
+      - step: *build
+      - parallel:
+          - step:
+              !!merge <<: *deploy
+              trigger: manual
+              name: Deploy Dev
+              deployment: dev
+          - step:
+              !!merge <<: *deploy
+              trigger: manual
+              name: Deploy Orielly
+              deployment: orielly
           - step:
               !!merge <<: *deploy
               name: Deploy QA

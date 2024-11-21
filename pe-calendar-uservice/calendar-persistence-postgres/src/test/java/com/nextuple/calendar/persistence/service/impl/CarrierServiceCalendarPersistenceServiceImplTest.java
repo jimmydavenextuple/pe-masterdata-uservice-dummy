@@ -40,7 +40,6 @@ class CarrierServiceCalendarPersistenceServiceImplTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         carrierServiceCalendarDomain, "repository", carrierServiceCalendarRepository);
     ReflectionTestUtils.setField(

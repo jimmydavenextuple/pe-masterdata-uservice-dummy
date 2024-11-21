@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import com.nextuple.item.TestUtil;
 import com.nextuple.masterdata.config.KafkaConsumerConfigs;
+import java.util.HashMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -74,7 +76,10 @@ class KafkaConsumerConfigsTest {
   @Test
   void jsonContainerFactoryTest() {
     when(kafkaProperties.buildConsumerProperties()).thenReturn(testUtil.getJsonProps());
-    assertDoesNotThrow(() -> consumerConfigs.jsonKafkaContainerListenerFactory(null, null));
+    assertDoesNotThrow(
+        () ->
+            consumerConfigs.jsonKafkaContainerListenerFactory(
+                new DefaultKafkaConsumerFactory<>(new HashMap<>()), null));
   }
 
   //    @Test

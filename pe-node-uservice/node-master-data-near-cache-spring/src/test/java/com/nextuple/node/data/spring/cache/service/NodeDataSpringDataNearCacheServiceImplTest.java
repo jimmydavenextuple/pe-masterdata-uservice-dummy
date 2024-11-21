@@ -55,7 +55,6 @@ class NodeDataSpringDataNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         nodeDataSpringDataNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         nodeDataSpringDataNearCacheService, "feignCacheService", feignCacheService);
   }

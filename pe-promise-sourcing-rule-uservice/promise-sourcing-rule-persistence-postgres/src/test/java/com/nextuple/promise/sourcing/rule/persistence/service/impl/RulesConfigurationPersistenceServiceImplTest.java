@@ -52,7 +52,6 @@ class RulesConfigurationPersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         rulesConfigurationPersistenceService, "repository", rulesConfigurationRepository);
     ReflectionTestUtils.setField(

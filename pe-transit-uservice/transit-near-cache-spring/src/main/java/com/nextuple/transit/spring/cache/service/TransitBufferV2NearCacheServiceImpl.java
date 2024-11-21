@@ -14,17 +14,15 @@ import com.nextuple.transit.cache.domain.TransitBufferV2CacheKey;
 import com.nextuple.transit.cache.domain.TransitBufferV2CacheValue;
 import com.nextuple.transit.cache.service.TransitBufferV2NearCacheService;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(cacheNames = "transit_buffer_v2")
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TransitBufferV2NearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<
         TransitBufferV2CacheKey, TransitBufferV2CacheValue>
@@ -32,7 +30,7 @@ public class TransitBufferV2NearCacheServiceImpl
   private static final Logger logger =
       LoggerFactory.getLogger(TransitBufferV2NearCacheServiceImpl.class);
   public static final String TRANSIT_BUFFER_V2_CACHE_NAME = "transit_buffer_v2";
-  @Autowired NearCacheRegistry nearCacheRegistry;
+  private final NearCacheRegistry nearCacheRegistry;
 
   @Override
   public String getCacheName() {

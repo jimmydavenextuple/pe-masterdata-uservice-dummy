@@ -58,7 +58,6 @@ class WeightageConfigurationSpringNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         weightageConfigurationSpringNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         weightageConfigurationSpringNearCacheService, "feignCacheService", feignCacheService);
   }

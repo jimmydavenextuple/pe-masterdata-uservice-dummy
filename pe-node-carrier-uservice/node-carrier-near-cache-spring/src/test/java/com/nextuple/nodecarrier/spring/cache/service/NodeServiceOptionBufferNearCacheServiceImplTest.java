@@ -54,7 +54,6 @@ class NodeServiceOptionBufferNearCacheServiceImplTest {
   void setup() {
     ReflectionTestUtils.setField(
         nodeServiceOptionBufferNearCacheServiceImpl, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         nodeServiceOptionBufferNearCacheServiceImpl, "feignCacheService", feignCacheService);
   }

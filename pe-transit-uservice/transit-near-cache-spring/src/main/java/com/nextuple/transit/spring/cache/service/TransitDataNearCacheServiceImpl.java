@@ -16,17 +16,15 @@ import com.nextuple.transit.cache.domain.TransitCacheKey;
 import com.nextuple.transit.cache.domain.TransitCacheValue;
 import com.nextuple.transit.cache.service.TransitDataNearCacheService;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(cacheNames = TRANSIT_CACHE_NAME)
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TransitDataNearCacheServiceImpl
     extends AbstractGenericSpringLocalCacheServiceImpl<TransitCacheKey, TransitCacheValue>
     implements TransitDataNearCacheService {
@@ -36,7 +34,7 @@ public class TransitDataNearCacheServiceImpl
 
   public static final String TRANSIT_CACHE_NAME = "transit";
 
-  @Autowired NearCacheRegistry nearCacheRegistry;
+  private final NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override

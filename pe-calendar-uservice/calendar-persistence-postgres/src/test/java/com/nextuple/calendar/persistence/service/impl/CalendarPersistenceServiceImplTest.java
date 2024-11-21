@@ -44,7 +44,6 @@ class CalendarPersistenceServiceImplTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(calendarPersistenceServiceImpl, "repository", calendarRepository);
     ReflectionTestUtils.setField(calendarPersistenceServiceImpl, "mapper", calendarEntityMapper);
   }

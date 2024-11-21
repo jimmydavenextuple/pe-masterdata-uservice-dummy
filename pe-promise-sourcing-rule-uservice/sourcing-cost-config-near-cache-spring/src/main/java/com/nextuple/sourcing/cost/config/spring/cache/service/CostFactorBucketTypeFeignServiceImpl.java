@@ -14,21 +14,19 @@ import com.nextuple.sourcing.cost.config.cache.domain.CostFactorBucketTypeCacheV
 import com.nextuple.sourcing.cost.config.dto.CostFactorBucketTypeDto;
 import com.nextuple.sourcing.cost.config.spring.cache.feign.CostFactorBucketTypeFeignImpl;
 import com.nextuple.sourcing.cost.config.spring.cache.mapper.CostFactorBucketTypeMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CostFactorBucketTypeFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         CostFactorBucketTypeCacheKey,
         CostFactorBucketTypeCacheValue,
         String,
         BaseResponse<CostFactorBucketTypeDto>> {
-  @Autowired CostFactorBucketTypeFeignImpl costFactorBucketTypeFeign;
-  @Autowired CostFactorBucketTypeMapper costFactorBucketTypeMapper;
+  private final CostFactorBucketTypeFeignImpl costFactorBucketTypeFeign;
+  private final CostFactorBucketTypeMapper costFactorBucketTypeMapper;
 
   @Override
   public CostFactorBucketTypeCacheValue get(CostFactorBucketTypeCacheKey key) {

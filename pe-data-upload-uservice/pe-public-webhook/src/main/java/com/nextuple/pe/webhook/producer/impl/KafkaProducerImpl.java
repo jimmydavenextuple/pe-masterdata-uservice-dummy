@@ -1,21 +1,18 @@
 package com.nextuple.pe.webhook.producer.impl;
 
 import com.nextuple.pe.webhook.producer.KafkaProducer;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class KafkaProducerImpl implements KafkaProducer {
   @Qualifier("ItemSerializerProducer")
-  @Autowired
-  public KafkaTemplate<String, Object> messageFeed;
+  public final KafkaTemplate<String, Object> messageFeed;
 
   @Override
   public void publishFeedToKafka(Object message, String key, String topic) {

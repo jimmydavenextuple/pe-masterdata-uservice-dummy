@@ -15,10 +15,9 @@ import com.nextuple.node.calendar.cache.domain.NodeCalendarCacheValue;
 import com.nextuple.node.calendar.cache.service.NodeCalendarNearCacheService;
 import jakarta.annotation.PostConstruct;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
@@ -26,8 +25,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @CacheConfig(cacheNames = NodeCalendarSpringNearCacheService.NODE_CALENDAR_CACHE_NAME)
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NodeCalendarSpringNearCacheService
     extends AbstractGenericSpringLocalCacheServiceImpl<NodeCalendarCacheKey, NodeCalendarCacheValue>
     implements NodeCalendarNearCacheService {
@@ -36,7 +34,7 @@ public class NodeCalendarSpringNearCacheService
       LoggerFactory.getLogger(NodeCalendarSpringNearCacheService.class);
   public static final String NODE_CALENDAR_CACHE_NAME = "node_calendar";
 
-  @Autowired NearCacheRegistry nearCacheRegistry;
+  private final NearCacheRegistry nearCacheRegistry;
 
   @PostConstruct
   @Override

@@ -45,7 +45,6 @@ class PostalCodeTimezonePersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         postalCodeTimezonePersistenceService, "repository", postalCodeTimezoneRepository);
     ReflectionTestUtils.setField(

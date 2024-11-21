@@ -52,7 +52,6 @@ class ItemPersistenceServiceImplTest {
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(itemPersistenceService, "repository", itemRepository);
     ReflectionTestUtils.setField(itemPersistenceService, "mapper", itemEntityMapper);
   }

@@ -47,7 +47,6 @@ class TransitPersistenceServiceImplTest {
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(transitPersistenceService, "repository", transitRepository);
     ReflectionTestUtils.setField(transitPersistenceService, "mapper", transitEntityMapper);
   }

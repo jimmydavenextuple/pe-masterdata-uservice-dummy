@@ -16,20 +16,18 @@ import com.nextuple.sourcing.cost.config.spring.cache.feign.CostFactorContiguous
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeMap;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CostFactorContiguousBucketFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         CostFactorContiguousBucketCacheKey,
         CostFactorContiguousBucketCacheValue,
         String,
         BaseResponse<List<CostFactorContiguousBucketDto>>> {
-  @Autowired CostFactorContiguousBucketFeignImpl costFactorContiguousBucketFeign;
+  private final CostFactorContiguousBucketFeignImpl costFactorContiguousBucketFeign;
 
   @Override
   public CostFactorContiguousBucketCacheValue get(CostFactorContiguousBucketCacheKey key) {

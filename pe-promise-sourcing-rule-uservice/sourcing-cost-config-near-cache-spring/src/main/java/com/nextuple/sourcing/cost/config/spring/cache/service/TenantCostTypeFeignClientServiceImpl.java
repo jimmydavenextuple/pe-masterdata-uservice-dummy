@@ -15,13 +15,11 @@ import com.nextuple.sourcing.cost.config.outbound.TenantCostTypeResponse;
 import com.nextuple.sourcing.cost.config.spring.cache.feign.TenantCostTypeFeignImpl;
 import com.nextuple.sourcing.cost.config.spring.cache.mapper.TenantCostTypeMapper;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TenantCostTypeFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         TenantCostTypeCacheKey,
@@ -29,9 +27,9 @@ public class TenantCostTypeFeignClientServiceImpl
         String,
         BaseResponse<List<TenantCostTypeResponse>>> {
 
-  @Autowired TenantCostTypeFeignImpl tenantCostTypeFeign;
+  private final TenantCostTypeFeignImpl tenantCostTypeFeign;
 
-  @Autowired TenantCostTypeMapper tenantCostTypeMapper;
+  private final TenantCostTypeMapper tenantCostTypeMapper;
 
   @Override
   public TenantCostTypeCacheValue get(TenantCostTypeCacheKey key) {

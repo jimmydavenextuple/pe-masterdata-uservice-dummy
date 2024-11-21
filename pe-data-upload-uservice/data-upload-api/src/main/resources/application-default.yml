@@ -47,7 +47,7 @@ pe-public-webhook:
   item-feed:
     topic: ITEM_MASTER_INTEGRATION
   pe-response:
-    topics: INTERNAL.DEV.CART_EDD
+    topic: INTERNAL.DEV.CART_EDD
     group-id: pe-response-consumer-async-local
   webhook:
     -

@@ -47,7 +47,6 @@ class NodePriorityPersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         nodePriorityPersistenceService, "repository", nodePriorityRepository);
     ReflectionTestUtils.setField(

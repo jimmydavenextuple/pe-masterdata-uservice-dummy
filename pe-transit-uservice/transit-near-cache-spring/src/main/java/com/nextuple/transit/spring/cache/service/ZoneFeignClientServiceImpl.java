@@ -16,21 +16,20 @@ import com.nextuple.transit.domain.outbound.ZoneResponse;
 import com.nextuple.transit.spring.cache.feign.ZoneFeignImpl;
 import java.util.List;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ZoneFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         ZoneCacheKey, ZoneCacheValue, String, BaseResponse<List<ZoneResponse>>> {
 
-  @Autowired ZoneFeignImpl zoneFeign;
+  private final ZoneFeignImpl zoneFeign;
 
-  @Autowired
-  GenericMapper<ZoneCacheKey, ZoneCacheValue, String, BaseResponse<List<ZoneResponse>>> zoneMapper;
+  private final GenericMapper<
+          ZoneCacheKey, ZoneCacheValue, String, BaseResponse<List<ZoneResponse>>>
+      zoneMapper;
 
   @Override
   public ZoneCacheValue get(ZoneCacheKey key) {

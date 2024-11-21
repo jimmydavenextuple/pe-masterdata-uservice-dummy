@@ -16,23 +16,20 @@ import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.spring.cache.feign.TransferScheduleFeignImpl;
 import java.util.List;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TransferScheduleFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         TransferScheduleCacheKey,
         TransferScheduleCacheValue,
         String,
         BaseResponse<List<TransferScheduleResponse>>> {
-  @Autowired TransferScheduleFeignImpl transferScheduleFeign;
+  private final TransferScheduleFeignImpl transferScheduleFeign;
 
-  @Autowired
-  GenericMapper<
+  private final GenericMapper<
           TransferScheduleCacheKey,
           TransferScheduleCacheValue,
           String,

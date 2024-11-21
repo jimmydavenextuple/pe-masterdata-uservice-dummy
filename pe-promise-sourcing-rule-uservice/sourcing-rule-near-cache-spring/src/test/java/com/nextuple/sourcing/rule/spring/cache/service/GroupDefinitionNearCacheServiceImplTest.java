@@ -56,7 +56,6 @@ class GroupDefinitionNearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         groupDefinitionNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         groupDefinitionNearCacheService, "feignCacheService", feignCacheService);
   }

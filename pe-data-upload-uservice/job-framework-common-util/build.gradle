@@ -20,7 +20,7 @@ dependencies {
         exclude group: 'software.amazon.ion', module: 'ion-java'
     }
     implementation 'com.azure:azure-storage-blob:12.26.0'
-    implementation "com.azure:azure-identity:1.7.2"
+    implementation "com.azure:azure-identity:1.13.3"
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
     implementation 'commons-io:commons-io:2.13.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'

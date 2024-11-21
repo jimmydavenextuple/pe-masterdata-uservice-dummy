@@ -47,7 +47,6 @@ class SourcingConstraintPersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         sourcingConstraintPersistenceService, "repository", sourcingConstraintRepository);
     ReflectionTestUtils.setField(

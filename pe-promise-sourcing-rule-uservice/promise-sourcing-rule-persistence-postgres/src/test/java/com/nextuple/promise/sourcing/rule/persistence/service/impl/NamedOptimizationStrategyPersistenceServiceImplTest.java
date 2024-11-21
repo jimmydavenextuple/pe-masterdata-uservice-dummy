@@ -49,7 +49,6 @@ class NamedOptimizationStrategyPersistenceServiceImplTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         namedOptimizationStrategyPersistenceService,
         "repository",

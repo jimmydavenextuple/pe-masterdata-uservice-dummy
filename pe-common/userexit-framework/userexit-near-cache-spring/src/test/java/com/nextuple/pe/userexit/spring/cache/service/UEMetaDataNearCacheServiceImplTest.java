@@ -47,7 +47,6 @@ class UEMetaDataNearCacheServiceImplTest {
   void setup() {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(ueMetaDataNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         ueMetaDataNearCacheService, "feignCacheService", feignCacheService);
   }

@@ -40,7 +40,6 @@ class NodeCalendarPersistenceServiceImplTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    // Added this
     ReflectionTestUtils.setField(
         nodeCalendarPersistenceServiceImpl, "repository", nodeCalendarRepository);
     ReflectionTestUtils.setField(

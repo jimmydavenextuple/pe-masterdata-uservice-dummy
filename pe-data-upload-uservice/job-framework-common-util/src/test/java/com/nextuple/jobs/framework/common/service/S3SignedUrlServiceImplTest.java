@@ -18,8 +18,8 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.response.PreSignedUrlResponse;
 import com.nextuple.jobs.framework.common.clients.FileMetaDataClient;
+import com.nextuple.jobs.framework.common.config.StorageConfigProperties;
 import com.nextuple.jobs.framework.common.domain.outbound.FileMetaDataResponse;
-import com.nextuple.jobs.framework.common.domain.pojo.StorageConfigProperties;
 import com.nextuple.jobs.framework.common.service.impl.aws.S3SignedUrlServiceImpl;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,8 +48,8 @@ class S3SignedUrlServiceImplTest {
   public void init() {
     MockitoAnnotations.initMocks(this);
     ReflectionTestUtils.setField(storageConfig, "signedUrlExpiryMinutes", 30);
-    ReflectionTestUtils.setField(storageConfig, "containerName", "dataupload");
-    ReflectionTestUtils.setField(storageConfig, "storageType", "S3");
+    ReflectionTestUtils.setField(storageConfig, "bucketName", "dataupload");
+    ReflectionTestUtils.setField(storageConfig, "type", "S3");
   }
 
   @Test

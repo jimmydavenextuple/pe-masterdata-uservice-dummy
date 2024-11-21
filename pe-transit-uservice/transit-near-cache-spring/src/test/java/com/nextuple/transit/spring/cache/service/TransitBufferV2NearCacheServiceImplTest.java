@@ -51,7 +51,6 @@ public class TransitBufferV2NearCacheServiceImplTest {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(
         transitBufferV2NearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         transitBufferV2NearCacheService, "feignCacheService", feignCacheService);
   }

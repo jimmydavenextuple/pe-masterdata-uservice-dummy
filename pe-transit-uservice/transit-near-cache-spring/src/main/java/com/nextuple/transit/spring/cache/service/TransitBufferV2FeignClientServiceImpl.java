@@ -16,23 +16,20 @@ import com.nextuple.transit.domain.outbound.TransitBufferDetailsResponse;
 import com.nextuple.transit.spring.cache.feign.TransitBufferV2FeignImpl;
 import java.util.List;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TransitBufferV2FeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         TransitBufferV2CacheKey,
         TransitBufferV2CacheValue,
         String,
         BaseResponse<List<TransitBufferDetailsResponse>>> {
-  @Autowired TransitBufferV2FeignImpl transitBufferV2Feign;
+  private final TransitBufferV2FeignImpl transitBufferV2Feign;
 
-  @Autowired
-  GenericMapper<
+  private final GenericMapper<
           TransitBufferV2CacheKey,
           TransitBufferV2CacheValue,
           String,

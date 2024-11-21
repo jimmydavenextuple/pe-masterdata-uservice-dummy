@@ -13,23 +13,20 @@ import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributeR
 import com.nextuple.sourcing.rule.cache.domain.SourcingAttributeByIdKey;
 import com.nextuple.sourcing.rule.cache.domain.SourcingAttributeByIdValue;
 import com.nextuple.sourcing.rule.spring.cache.feign.SourcingAttributeFeignImpl;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SourcingAttributeFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         SourcingAttributeByIdKey,
         SourcingAttributeByIdValue,
         String,
         BaseResponse<SourcingAttributeResponse>> {
-  @Autowired SourcingAttributeFeignImpl sourcingAttributeFeign;
+  private final SourcingAttributeFeignImpl sourcingAttributeFeign;
 
-  @Autowired
-  GenericMapper<
+  private final GenericMapper<
           SourcingAttributeByIdKey,
           SourcingAttributeByIdValue,
           String,

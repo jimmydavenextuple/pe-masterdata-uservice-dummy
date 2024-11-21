@@ -14,13 +14,11 @@ import com.nextuple.sourcing.cost.config.cache.domain.CostAttributeDetailsCacheV
 import com.nextuple.sourcing.cost.config.dto.CostAttributeDto;
 import com.nextuple.sourcing.cost.config.spring.cache.feign.CostAttributeDetailsFeignImpl;
 import com.nextuple.sourcing.cost.config.spring.cache.mapper.CostAttributeDetailsMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CostAttributeDetailsFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         CostAttributeDetailsCacheKey,
@@ -28,9 +26,9 @@ public class CostAttributeDetailsFeignServiceImpl
         String,
         BaseResponse<CostAttributeDto>> {
 
-  @Autowired CostAttributeDetailsFeignImpl costAttributeDetailsFeign;
+  private final CostAttributeDetailsFeignImpl costAttributeDetailsFeign;
 
-  @Autowired CostAttributeDetailsMapper costAttributeDetailsMapper;
+  private final CostAttributeDetailsMapper costAttributeDetailsMapper;
 
   @Override
   public CostAttributeDetailsCacheValue get(CostAttributeDetailsCacheKey key) {

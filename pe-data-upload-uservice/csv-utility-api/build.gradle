@@ -20,9 +20,9 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.9.0'
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
-    implementation("com.nextuple.pe:core-common-util:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:core-common-util:1.6.0-${build_target}")
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
@@ -37,4 +37,19 @@ dependencies {
 }
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
+}
+
+tasks.named('test') {
+    dependsOn ':pe-data-upload-uservice:csv-utility-common-util:jar'
+    dependsOn ':pe-data-upload-uservice:job-framework-common-util:jar'
+    dependsOn ':pe-data-upload-uservice:data-upload-common-util:jar'
+    dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
+    dependsOn ':pe-calendar-uservice:calendar-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
+    dependsOn ':pe-common:common-util:jar'
+    dependsOn ':pe-transit-uservice:transit-api-domain:jar'
+    dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
+    dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
+    dependsOn ':pe-node-uservice:node-api-domain:jar'
 }

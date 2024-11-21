@@ -14,13 +14,11 @@ import com.nextuple.sourcing.rule.cache.domain.OptimizationStrategyCacheKey;
 import com.nextuple.sourcing.rule.cache.domain.OptimizationStrategyCacheValue;
 import com.nextuple.sourcing.rule.spring.cache.feign.OptimizationStrategyFeignImpl;
 import com.nextuple.sourcing.rule.spring.cache.mapper.OptimizationStrategyMapper;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OptimizationStrategyFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         OptimizationStrategyCacheKey,
@@ -28,9 +26,9 @@ public class OptimizationStrategyFeignClientServiceImpl
         String,
         BaseResponse<DetailedOptimizationStrategyResponse>> {
 
-  @Autowired OptimizationStrategyFeignImpl optimizationStrategyFeign;
+  private final OptimizationStrategyFeignImpl optimizationStrategyFeign;
 
-  @Autowired OptimizationStrategyMapper optimizationStrategyMapper;
+  private final OptimizationStrategyMapper optimizationStrategyMapper;
 
   @Override
   public OptimizationStrategyCacheValue get(OptimizationStrategyCacheKey key) {

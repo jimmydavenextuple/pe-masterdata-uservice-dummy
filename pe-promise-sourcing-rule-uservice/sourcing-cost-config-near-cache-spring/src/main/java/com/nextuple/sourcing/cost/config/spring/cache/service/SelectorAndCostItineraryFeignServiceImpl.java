@@ -15,13 +15,11 @@ import com.nextuple.sourcing.cost.config.outbound.SelectorAndCostItineraryMappin
 import com.nextuple.sourcing.cost.config.spring.cache.feign.SelectorAndCostItineraryFeignImpl;
 import com.nextuple.sourcing.cost.config.spring.cache.mapper.SelectorAndCostItineraryMapper;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SelectorAndCostItineraryFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         SelectorAndCostItineraryCacheKey,
@@ -29,9 +27,9 @@ public class SelectorAndCostItineraryFeignServiceImpl
         String,
         BaseResponse<List<SelectorAndCostItineraryMappingResponse>>> {
 
-  @Autowired SelectorAndCostItineraryFeignImpl selectorAndCostItineraryFeign;
+  private final SelectorAndCostItineraryFeignImpl selectorAndCostItineraryFeign;
 
-  @Autowired SelectorAndCostItineraryMapper selectorAndCostItineraryMapper;
+  private final SelectorAndCostItineraryMapper selectorAndCostItineraryMapper;
 
   @Override
   public SelectorAndCostItineraryCacheValue get(SelectorAndCostItineraryCacheKey key) {

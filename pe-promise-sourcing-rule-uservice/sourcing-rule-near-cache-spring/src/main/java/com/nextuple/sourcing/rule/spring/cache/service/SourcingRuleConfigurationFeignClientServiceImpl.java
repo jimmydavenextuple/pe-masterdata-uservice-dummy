@@ -13,23 +13,20 @@ import com.nextuple.promise.sourcing.rule.api.domain.outbound.FetchSourcingRules
 import com.nextuple.sourcing.rule.cache.domain.SourcingRuleConfigurationFetchRulesKey;
 import com.nextuple.sourcing.rule.cache.domain.SourcingRuleConfigurationFetchRulesValue;
 import com.nextuple.sourcing.rule.spring.cache.feign.SourcingRuleConfigurationFeignImpl;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-// Added this
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SourcingRuleConfigurationFeignClientServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
         SourcingRuleConfigurationFetchRulesKey,
         SourcingRuleConfigurationFetchRulesValue,
         String,
         BaseResponse<FetchSourcingRulesResponse>> {
-  @Autowired SourcingRuleConfigurationFeignImpl souringRuleConfigurationFeign;
+  private final SourcingRuleConfigurationFeignImpl souringRuleConfigurationFeign;
 
-  @Autowired
-  GenericMapper<
+  private final GenericMapper<
           SourcingRuleConfigurationFetchRulesKey,
           SourcingRuleConfigurationFetchRulesValue,
           String,

@@ -49,7 +49,6 @@ class TransferScheduleNearCacheServiceImplTest {
   void setup() {
     ReflectionTestUtils.setField(
         transferScheduleNearCacheService, "cacheManager", caffeineCacheManager);
-    // Added this
     ReflectionTestUtils.setField(
         transferScheduleNearCacheService, "feignCacheService", feignCacheService);
   }
