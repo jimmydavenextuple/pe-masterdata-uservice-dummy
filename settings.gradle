@@ -87,7 +87,6 @@ include 'pe-promise-sourcing-rule-uservice:sourcing-cost-config-near-cache-sprin
 include 'pe-promise-sourcing-rule-uservice:sourcing-cost-config-services'
 include 'pe-promise-sourcing-rule-uservice:sourcing-rule-near-cache'
 include 'pe-promise-sourcing-rule-uservice:sourcing-rule-near-cache-spring'
-include 'pe-promise-sourcing-rule-uservice'
 
 include 'pe-data-upload-uservice:csv-utility-api'
 include 'pe-data-upload-uservice:csv-utility-common-util'

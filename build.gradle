@@ -362,20 +362,71 @@ dependencies {
     // Dependency version override to resolve low CVE for spring web
     implementation 'org.springframework:spring-web:6.0.23'
 
+    // Adding submodule-level dependencies as not API modules to avoid generating a fat jar with large size
+    implementation(project(":pe-common:common-domain"))
+    implementation(project(":pe-common:common-postgres"))
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-common:master-data-integration-framework"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-consumer"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-producer"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
+    implementation(project(":pe-common:userexit-framework"))
+    implementation(project(":pe-common:userexit-framework:userexit-core"))
+    implementation(project(":pe-common:userexit-framework:userexit-domain"))
+    implementation(project(":pe-common:userexit-framework:userexit-near-cache"))
+    implementation(project(":pe-common:userexit-framework:userexit-near-cache-spring"))
 
+
+    implementation(project(":pe-calendar-uservice:calendar-services"))
+    implementation(project(":pe-calendar-uservice:calendar-api-domain"))
+
+    implementation(project(":pe-carrier-uservice:carrier-api-domain"))
+    implementation(project(":pe-carrier-uservice:carrier-services"))
+
+    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
+    implementation(project(":pe-configuration-uservice:configuration-services"))
+
+    implementation(project(":pe-data-upload-uservice:csv-utility-api"))
+    implementation(project(":pe-data-upload-uservice:csv-utility-common-util"))
+    implementation(project(":pe-data-upload-uservice:pe-public-webhook"))
+    implementation(project(":pe-data-upload-uservice:user-exit-api"))
+    implementation(project(":pe-data-upload-uservice:jobs-consumer"))
+    implementation(project(":pe-data-upload-uservice:data-upload-common-util"))
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
     implementation(project(":pe-data-upload-uservice:data-upload-services"))
 
     implementation(project(":pe-item-uservice:item-services"))
+    implementation(project(":pe-item-uservice:item-api-domain"))
+    implementation(project(":pe-item-uservice:item-persistence-domain"))
+    implementation(project(":pe-item-uservice:item-persistence-postgres"))
 
+    implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-services"))
 
+    implementation(project(":pe-node-uservice:node-api-domain"))
+    implementation(project(":pe-node-uservice:node-services"))
 
-    implementation(project(":pe-data-upload-uservice:pe-public-webhook"))
+    implementation(project(":pe-postal-code-timezone-uservice::postal-code-timezone-services"))
+    implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
 
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-services"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-services"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-rule-near-cache"))
 
-    implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
-    implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
+    implementation(project(":pe-transit-uservice:transit-services"))
+    implementation(project(":pe-transit-uservice:transit-api-domain"))
 
+    implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-services"))
+    implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api-domain"))
+
+    implementation(project(":pe-node-uservice:node-consumer"))
+    implementation(project(":pe-carrier-uservice:carrier-consumer"))
+    implementation(project(":pe-calendar-uservice:calendar-consumer"))
+    implementation(project(":pe-transit-uservice:transit-consumer"))
+    implementation(project(":pe-node-carrier-uservice:node-carrier-consumer"))
 
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
 
