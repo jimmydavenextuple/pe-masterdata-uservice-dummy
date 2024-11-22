@@ -45,6 +45,8 @@ public class CustomRegionPersistenceServiceImpl
   private static final Logger logger =
       LoggerFactory.getLogger(CustomRegionPersistenceServiceImpl.class);
 
+  private static final String ERROR_MESSAGE  = "Error while fetching custom region list";
+
   @Override
   public CustomRegionDomainDto saveCustomRegion(CustomRegionDomainDto customRegion) {
     return save(customRegion);
@@ -82,11 +84,11 @@ public class CustomRegionPersistenceServiceImpl
       }
       return getRepository().findCustomRegionByOrgId(orgId, pageable).map(getMapper()::toDomain);
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Error while fetching custom region list");
+      logger.error(String.valueOf(e), ERROR_MESSAGE);
       throw new PromiseEngineException(
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Error while fetching custom region list");
+          ERROR_MESSAGE);
     }
   }
 
@@ -100,11 +102,11 @@ public class CustomRegionPersistenceServiceImpl
           .map(getMapper()::toDomain)
           .toList();
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Error while fetching custom region list");
+      logger.error(String.valueOf(e), ERROR_MESSAGE);
       throw new PromiseEngineException(
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Error while fetching custom region list");
+          ERROR_MESSAGE);
     }
   }
 
@@ -115,16 +117,16 @@ public class CustomRegionPersistenceServiceImpl
     try {
       return Optional.of(
           getRepository()
-              .findByIdInOrCustomRegionNameInAndOrgId(customRegionIds, customRegionNames, orgId)
+              .fetchCustomRegionByIdAndNameAndOrgId(customRegionIds, customRegionNames, orgId)
               .stream()
               .map(getMapper()::toDomain)
               .toList());
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Error while fetching custom region list");
+      logger.error(String.valueOf(e), ERROR_MESSAGE);
       throw new PromiseEngineException(
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Error while fetching custom region list");
+          ERROR_MESSAGE);
     }
   }
 
@@ -136,11 +138,11 @@ public class CustomRegionPersistenceServiceImpl
           .map(getMapper()::toDomain)
           .toList();
     } catch (Exception e) {
-      logger.error(String.valueOf(e), "Error while fetching custom region list");
+      logger.error(String.valueOf(e), ERROR_MESSAGE);
       throw new PromiseEngineException(
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Error while fetching custom region list");
+          ERROR_MESSAGE);
     }
   }
 }

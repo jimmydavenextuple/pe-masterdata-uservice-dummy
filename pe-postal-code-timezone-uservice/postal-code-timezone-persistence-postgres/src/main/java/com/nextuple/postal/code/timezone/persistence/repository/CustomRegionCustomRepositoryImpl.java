@@ -38,4 +38,28 @@ public class CustomRegionCustomRepositoryImpl implements CustomRegionCustomRepos
     query.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
     return entityManager.createQuery(query).getResultList();
   }
+
+  @Override
+  public List<CustomRegionEntity> fetchCustomRegionByIdAndNameAndOrgId(
+      List<String> customRegionIds, List<String> customRegionNames, String orgId) {
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CustomRegionEntity> query = cb.createQuery(CustomRegionEntity.class);
+    Root<CustomRegionEntity> root = query.from(CustomRegionEntity.class);
+    List<Predicate> idAndNameCombinedPredicates = new ArrayList<>();
+    for (String customRegionId : customRegionIds) {
+      for (String customRegionName : customRegionNames) {
+        idAndNameCombinedPredicates.add(
+            cb.and(
+                cb.like(
+                    cb.lower(root.get("customRegionName")),
+                    "%" + customRegionName.toLowerCase() + "%"),
+                cb.equal(root.get("id"), customRegionId)));
+      }
+    }
+    List<Predicate> predicates = new ArrayList<>();
+    predicates.add(cb.or(idAndNameCombinedPredicates.toArray(new Predicate[0])));
+    predicates.add(cb.equal(root.get("orgId"), orgId));
+    query.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+    return entityManager.createQuery(query).getResultList();
+  }
 }
