@@ -218,6 +218,57 @@ class SourcingRulesConfigurationDomainTest {
   }
 
   @Test
+  void getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRuleTest()
+      throws PromiseEngineException {
+    SourcingRulesConfigurationEntity sourcingRulesConfigurationEntity =
+        testUtil.getSourcingRulesEntity();
+    SourcingRulesConfigurationDomainDto sourcingRulesConfigurationDomainDto =
+        testUtil.getSourcingRulesConfigurationDomainDto();
+    when(sourcingRulesConfigurationRepository
+            .findBySourcingAttributesDefinitionIdAndSourcingRuleAndOrgId(
+                anyLong(), anyString(), anyString()))
+        .thenReturn(Optional.of(sourcingRulesConfigurationEntity));
+    when(sourcingRulesConfigurationEntityMapper.toDomain(
+            any(SourcingRulesConfigurationEntity.class)))
+        .thenReturn(sourcingRulesConfigurationDomainDto);
+    Optional<SourcingRulesConfigurationDomainDto> saved_result =
+        sourcingRulesConfigurationPersistenceService
+            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
+                TestUtil.ORG_ID,
+                TestUtil.SOURCING_ATTRIBUTES_DEFINITION_ID,
+                TestUtil.SOURCING_RULE);
+    assertEquals(sourcingRulesConfigurationDomainDto, saved_result.get());
+    verify(sourcingRulesConfigurationRepository, times(1))
+        .findBySourcingAttributesDefinitionIdAndSourcingRuleAndOrgId(
+            anyLong(), anyString(), anyString());
+  }
+
+  @Test
+  void
+      getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRuleExceptionTest() {
+
+    when(sourcingRulesConfigurationRepository
+            .findBySourcingAttributesDefinitionIdAndSourcingRuleAndOrgId(
+                anyLong(), anyString(), anyString()))
+        .thenThrow(new RuntimeException("error"));
+
+    Exception ex =
+        assertThrows(
+            PromiseEngineException.class,
+            () -> {
+              sourcingRulesConfigurationPersistenceService
+                  .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
+                      TestUtil.ORG_ID,
+                      TestUtil.SOURCING_ATTRIBUTES_DEFINITION_ID,
+                      TestUtil.SOURCING_RULE);
+            });
+
+    assertEquals(
+        "Unable to find sourcing rule by orgId and sourcing attributes definition id and sourcing rule",
+        ex.getMessage());
+  }
+
+  @Test
   void getSourcingRulesByOrgIdAndSourcingRuleNameTest() throws PromiseEngineException {
     SourcingRulesConfigurationEntity sourcingRulesConfigurationEntity =
         testUtil.getSourcingRulesEntity();

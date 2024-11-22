@@ -378,7 +378,8 @@ class RulesConfigurationServiceTest {
     when(rulesConfigurationPersistenceService.findByOrgIdAndAttributeDefinitionIdAndRuleStartsWith(
             anyString(), anyLong(), anyString()))
         .thenReturn(List.of(ruleFromDB));
-    when(ruleConfig.filterAllMatchingRulesByScoring(anyList(), anyString(), anyString(), anyInt()))
+    when(ruleConfig.filterAllMatchingRulesByScoring(
+            anyList(), anyString(), anyString(), anyInt(), any()))
         .thenReturn(List.of(ruleFromDB));
 
     RulesConfigurationResponse response =
@@ -393,7 +394,7 @@ class RulesConfigurationServiceTest {
     verify(rulesConfigurationPersistenceService, times(1))
         .findByOrgIdAndAttributeDefinitionIdAndRuleStartsWith(anyString(), anyLong(), anyString());
     verify(ruleConfig, times(1))
-        .filterAllMatchingRulesByScoring(anyList(), anyString(), anyString(), anyInt());
+        .filterAllMatchingRulesByScoring(anyList(), anyString(), anyString(), anyInt(), any());
   }
 
   @Test
@@ -421,7 +422,8 @@ class RulesConfigurationServiceTest {
     when(rulesConfigurationPersistenceService.findByOrgIdAndAttributeDefinitionIdAndRuleStartsWith(
             anyString(), anyLong(), anyString()))
         .thenReturn(List.of(ruleFromDB1, ruleFromDB2));
-    when(ruleConfig.filterAllMatchingRulesByScoring(anyList(), anyString(), anyString(), anyInt()))
+    when(ruleConfig.filterAllMatchingRulesByScoring(
+            anyList(), anyString(), anyString(), anyInt(), any()))
         .thenReturn(List.of(ruleFromDB1));
 
     RulesConfigurationResponse response =
@@ -437,7 +439,7 @@ class RulesConfigurationServiceTest {
     verify(rulesConfigurationPersistenceService, times(1))
         .findByOrgIdAndAttributeDefinitionIdAndRuleStartsWith(anyString(), anyLong(), anyString());
     verify(ruleConfig, times(1))
-        .filterAllMatchingRulesByScoring(anyList(), anyString(), anyString(), anyInt());
+        .filterAllMatchingRulesByScoring(anyList(), anyString(), anyString(), anyInt(), any());
   }
 
   @Test
@@ -537,7 +539,8 @@ class RulesConfigurationServiceTest {
     when(rulesConfigurationPersistenceService.findByOrgIdAndAttributeDefinitionIdAndRuleStartsWith(
             anyString(), anyLong(), anyString()))
         .thenReturn(List.of(ruleFromDB1, ruleFromDB2));
-    when(ruleConfig.filterAllMatchingRulesByScoring(anyList(), anyString(), anyString(), anyInt()))
+    when(ruleConfig.filterAllMatchingRulesByScoring(
+            anyList(), anyString(), anyString(), anyInt(), any()))
         .thenReturn(List.of());
 
     Exception ex =
@@ -553,7 +556,7 @@ class RulesConfigurationServiceTest {
     verify(rulesConfigurationPersistenceService, times(1))
         .findByOrgIdAndAttributeDefinitionIdAndRuleStartsWith(anyString(), anyLong(), anyString());
     verify(ruleConfig, times(1))
-        .filterAllMatchingRulesByScoring(anyList(), anyString(), anyString(), anyInt());
+        .filterAllMatchingRulesByScoring(anyList(), anyString(), anyString(), anyInt(), any());
   }
 
   @Test

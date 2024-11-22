@@ -36,6 +36,11 @@ public interface SourcingRulesConfigurationPersistenceService
           String orgId, Long sourcingAttributesDefinitionId, String sourcingRule)
           throws PromiseEngineException;
 
+  Optional<SourcingRulesConfigurationDomainDto>
+      getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
+          String orgId, Long sourcingAttributesDefinitionId, String sourcingRule)
+          throws PromiseEngineException;
+
   SourcingRulesConfigurationDomainDto getSourcingRulesByOrgIdAndSourcingRuleName(
       String orgId, String sourcingRuleName) throws PromiseEngineException;
 

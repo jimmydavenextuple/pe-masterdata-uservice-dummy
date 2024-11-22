@@ -26,6 +26,7 @@ import com.nextuple.promise.sourcing.rule.api.domain.outbound.RulesConfiguration
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.RuleConfigurationParam;
 import com.nextuple.promise.sourcing.rule.api.domain.services.RulesRetrievalService;
 import com.nextuple.promise.sourcing.rule.domain.mapper.RulesConfigurationMapper;
+import com.nextuple.promise.sourcing.rule.domain.mapper.SourcingAttributesDefinitionMapper;
 import com.nextuple.promise.sourcing.rule.persistence.domain.RulesConfigurationDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingAttributesDefinitionDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.service.RulesConfigurationPersistenceService;
@@ -58,6 +59,8 @@ public class RulesConfigurationService {
 
   private static final RulesConfigurationMapper INSTANCE =
       Mappers.getMapper(RulesConfigurationMapper.class);
+  private static final SourcingAttributesDefinitionMapper ATTRIBUTES_DEFINITION_MAPPER =
+      Mappers.getMapper(SourcingAttributesDefinitionMapper.class);
 
   private static final String ATTRIBUTES_DEFINITION_ID = "attributeDefinitionId";
   private static final String RULE = "rule";
@@ -194,6 +197,9 @@ public class RulesConfigurationService {
     var attributeDefinition =
         fetchAttributeDefinition(
             request.getOrgId(), request.getAttributeDefinitionId(), request.getScope());
+    var attributeDefinitionResponse =
+        ATTRIBUTES_DEFINITION_MAPPER.toSourcingRuleAttributesDefinitionResponse(
+            attributeDefinition);
     var optionalAttrFromDefinitionSize =
         StringUtils.hasLength(attributeDefinition.getOptAttributes())
             ? attributeDefinition.getOptAttributes().split(SPLIT_REGEX).length
@@ -216,7 +222,11 @@ public class RulesConfigurationService {
     if (bestRules.isEmpty()) {
       bestRules =
           rulesRetrievalService.filterAllMatchingRulesByScoring(
-              rulesList, requiredAttrVal, optionalAttrVal, optionalAttrFromDefinitionSize);
+              rulesList,
+              requiredAttrVal,
+              optionalAttrVal,
+              optionalAttrFromDefinitionSize,
+              attributeDefinitionResponse);
     }
     validateNoRulesFound(request, bestRules, generatedRule);
 

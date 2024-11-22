@@ -10,6 +10,7 @@ package com.nextuple.promise.sourcing.rule.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -21,21 +22,28 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.promise.sourcing.rule.TestUtil;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionStatus;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchGroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.GroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionListResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.persistence.domain.GroupDefinitionDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.NamedOptimizationStrategyDomainDto;
+import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingAttributesDefinitionDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.service.GroupDefinitionPersistenceService;
 import com.nextuple.promise.sourcing.rule.persistence.service.NamedOptimizationStrategyPersistenceService;
 import com.nextuple.promise.sourcing.rule.persistence.service.SourcingAttributesDefinitionPersistenceService;
+import com.nextuple.promise.sourcing.rule.service.impl.GroupDefinitionRuleImpl;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 
 class GroupDefinitionServiceTest {
   @InjectMocks private GroupDefinitionService groupDefinitionService;
@@ -43,6 +51,8 @@ class GroupDefinitionServiceTest {
   @Mock private GroupDefinitionPersistenceService groupDefinitionDomain;
   @Mock private SourcingAttributesDefinitionPersistenceService sourcingAttributesDefinitionDomain;
   @Mock private NamedOptimizationStrategyPersistenceService namedOptimizationStrategyDomain;
+
+  @Mock private GroupDefinitionRuleImpl ruleRetrievalService;
   @InjectMocks private TestUtil testUtil;
 
   @BeforeEach
@@ -158,7 +168,7 @@ class GroupDefinitionServiceTest {
                   testUtil.getGroupDefinitionRequest());
             });
     assertEquals(
-        "Invalid sourcing attributes definition for OPTIMIZATION scope/ Sourcing  attributes definition exists but not in ACTIVE status",
+        "Invalid sourcing rule attributes definition for OPTIMIZATION scope/ Sourcing rule attributes definition exists but not in ACTIVE status with given sourcingAttributesDefinitionId : 1",
         ex.getMessage());
 
     verify(groupDefinitionDomain, times(1))
@@ -191,7 +201,7 @@ class GroupDefinitionServiceTest {
                   testUtil.getGroupDefinitionRequest());
             });
     assertEquals(
-        "Invalid sourcing attributes definition for OPTIMIZATION scope/ Sourcing  attributes definition exists but not in ACTIVE status",
+        "Invalid sourcing rule attributes definition for OPTIMIZATION scope/ Sourcing rule attributes definition exists but not in ACTIVE status with given sourcingAttributesDefinitionId : 1",
         ex.getMessage());
 
     verify(groupDefinitionDomain, times(1))
@@ -455,5 +465,155 @@ class GroupDefinitionServiceTest {
 
     verify(groupDefinitionDomain, times(1))
         .fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString());
+  }
+
+  @Test
+  @DisplayName("attribute definition not found")
+  void processGetGroupDefinitionByScoringDefinitionNotFound() throws PromiseEngineException {
+    when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
+            any(), any()))
+        .thenReturn(Optional.empty());
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () ->
+            groupDefinitionService.processGetGroupDefinitionByScoring(
+                testUtil.getFetchGroupDefinitionRequest()));
+    verify(sourcingAttributesDefinitionDomain, times(1))
+        .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(any(), any());
+  }
+
+  @Test
+  @DisplayName("exact match only required attributes")
+  void processGetGroupDefinitionByScoringExactMatch()
+      throws PromiseEngineException, CommonServiceException {
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionDomainDto =
+        testUtil.getSourcingRuleAttributesDefinitionDomainDto("101, 102", null);
+    when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
+            any(), any()))
+        .thenReturn(Optional.of(sourcingAttributesDefinitionDomainDto));
+    when(groupDefinitionDomain
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+                any(), any(), any()))
+        .thenReturn(testUtil.getListOfGroupDefinitionRules());
+    GroupDefinitionResponse response =
+        groupDefinitionService.processGetGroupDefinitionByScoring(
+            testUtil.getFetchGroupDefinitionRequest("STANDARD:KITCHEN", null));
+    Assertions.assertEquals("STANDARD:KITCHEN", response.getReqAttributesValue());
+    Assertions.assertNull(response.getOptionalAttributesValue());
+    verify(sourcingAttributesDefinitionDomain, times(1))
+        .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(any(), any());
+    verify(groupDefinitionDomain, times(1))
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+            any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("exact match req and optional attr")
+  void processGetGroupDefinitionByScoringExactMatchReqAndOptAttr()
+      throws PromiseEngineException, CommonServiceException {
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionDomainDto =
+        testUtil.getSourcingRuleAttributesDefinitionDomainDto("101, 102", "103,104");
+    when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
+            any(), any()))
+        .thenReturn(Optional.of(sourcingAttributesDefinitionDomainDto));
+    when(groupDefinitionDomain
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+                any(), any(), any()))
+        .thenReturn(testUtil.getListOfGroupDefinitionRules());
+    GroupDefinitionResponse response =
+        groupDefinitionService.processGetGroupDefinitionByScoring(
+            testUtil.getFetchGroupDefinitionRequest("STANDARD:KITCHEN", "SHIP:CART"));
+    Assertions.assertEquals("STANDARD:KITCHEN", response.getReqAttributesValue());
+    Assertions.assertEquals("SHIP:CART", response.getOptionalAttributesValue());
+    verify(sourcingAttributesDefinitionDomain, times(1))
+        .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(any(), any());
+    verify(groupDefinitionDomain, times(1))
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+            any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("required attribute missing case")
+  void processGetGroupDefinitionByScoringReqMissing() throws PromiseEngineException {
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionDomainDto =
+        testUtil.getSourcingRuleAttributesDefinitionDomainDto("101, 102", null);
+    when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
+            any(), any()))
+        .thenReturn(Optional.of(sourcingAttributesDefinitionDomainDto));
+    when(groupDefinitionDomain
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+                any(), any(), any()))
+        .thenReturn(testUtil.getListOfGroupDefinitionRules());
+    CommonServiceException ce =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                groupDefinitionService.processGetGroupDefinitionByScoring(
+                    testUtil.getFetchGroupDefinitionRequest("STANDARD:", null)));
+
+    Assertions.assertNotNull(ce);
+    Assertions.assertEquals(HttpStatus.BAD_REQUEST, ce.getHttpStatus());
+    verify(groupDefinitionDomain, times(0))
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+            any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Case with 1 mismatching optional attribute")
+  void processGetGroupDefinitionByScoring1MisMatchOptional()
+      throws PromiseEngineException, CommonServiceException {
+
+    FetchGroupDefinitionRequest request =
+        testUtil.getFetchGroupDefinitionRequest("STANDARD:KITCHEN", ":CART");
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionDomainDto =
+        testUtil.getSourcingRuleAttributesDefinitionDomainDto("101, 102", "103,104");
+    when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
+            any(), any()))
+        .thenReturn(Optional.of(sourcingAttributesDefinitionDomainDto));
+    when(groupDefinitionDomain
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+                any(), any(), any()))
+        .thenReturn(testUtil.getListOfGroupDefinitionRules());
+    when(ruleRetrievalService.filterAllMatchingRulesByScoring(any(), any(), any(), anyInt(), any()))
+        .thenReturn(List.of(testUtil.getListOfGroupDefinitionRules().get(2)));
+    GroupDefinitionResponse response =
+        groupDefinitionService.processGetGroupDefinitionByScoring(request);
+    Assertions.assertEquals("STANDARD:KITCHEN", response.getReqAttributesValue());
+    Assertions.assertEquals(":CART", response.getOptionalAttributesValue());
+    verify(sourcingAttributesDefinitionDomain, times(1))
+        .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(any(), any());
+    verify(groupDefinitionDomain, times(1))
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+            any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("No Rule found")
+  void processGetGroupDefinitionByScoringBothOptionalMissing() throws PromiseEngineException {
+    FetchGroupDefinitionRequest request =
+        testUtil.getFetchGroupDefinitionRequest("STANDARD:KITCHEN", ":CART");
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionDomainDto =
+        testUtil.getSourcingRuleAttributesDefinitionDomainDto("101, 102", "103,104");
+    when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
+            any(), any()))
+        .thenReturn(Optional.of(sourcingAttributesDefinitionDomainDto));
+    List<GroupDefinitionDomainDto> definitionDomainDtos = testUtil.getListOfGroupDefinitionRules();
+    definitionDomainDtos.remove(2);
+    when(groupDefinitionDomain
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+                any(), any(), any()))
+        .thenReturn(definitionDomainDtos);
+    when(ruleRetrievalService.filterAllMatchingRulesByScoring(any(), any(), any(), anyInt(), any()))
+        .thenReturn(Collections.emptyList());
+    CommonServiceException response =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> groupDefinitionService.processGetGroupDefinitionByScoring(request));
+    Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getHttpStatus());
+    verify(sourcingAttributesDefinitionDomain, times(1))
+        .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(any(), any());
+    verify(groupDefinitionDomain, times(1))
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+            any(), any(), any());
   }
 }
