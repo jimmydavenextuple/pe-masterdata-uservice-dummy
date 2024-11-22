@@ -45,7 +45,7 @@ public class CustomRegionPersistenceServiceImpl
   private static final Logger logger =
       LoggerFactory.getLogger(CustomRegionPersistenceServiceImpl.class);
 
-  private static final String ERROR_MESSAGE  = "Error while fetching custom region list";
+  private static final String ERROR_MESSAGE = "Error while fetching custom region list";
 
   @Override
   public CustomRegionDomainDto saveCustomRegion(CustomRegionDomainDto customRegion) {
@@ -86,9 +86,7 @@ public class CustomRegionPersistenceServiceImpl
     } catch (Exception e) {
       logger.error(String.valueOf(e), ERROR_MESSAGE);
       throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_FIND_FAILED,
-          ERROR_MESSAGE);
+          ApplicationLayer.DAO_LAYER, ExceptionCodeMapping.DAO_FIND_FAILED, ERROR_MESSAGE);
     }
   }
 
@@ -104,9 +102,7 @@ public class CustomRegionPersistenceServiceImpl
     } catch (Exception e) {
       logger.error(String.valueOf(e), ERROR_MESSAGE);
       throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_FIND_FAILED,
-          ERROR_MESSAGE);
+          ApplicationLayer.DAO_LAYER, ExceptionCodeMapping.DAO_FIND_FAILED, ERROR_MESSAGE);
     }
   }
 
@@ -124,9 +120,7 @@ public class CustomRegionPersistenceServiceImpl
     } catch (Exception e) {
       logger.error(String.valueOf(e), ERROR_MESSAGE);
       throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_FIND_FAILED,
-          ERROR_MESSAGE);
+          ApplicationLayer.DAO_LAYER, ExceptionCodeMapping.DAO_FIND_FAILED, ERROR_MESSAGE);
     }
   }
 
@@ -140,9 +134,7 @@ public class CustomRegionPersistenceServiceImpl
     } catch (Exception e) {
       logger.error(String.valueOf(e), ERROR_MESSAGE);
       throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_FIND_FAILED,
-          ERROR_MESSAGE);
+          ApplicationLayer.DAO_LAYER, ExceptionCodeMapping.DAO_FIND_FAILED, ERROR_MESSAGE);
     }
   }
 }
