@@ -7,6 +7,7 @@
 
 package com.nextuple.promise.sourcing.rule.api.domain.services;
 
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,13 +19,15 @@ import java.util.stream.Collectors;
 public abstract class RulesRetrievalService<T> {
   public static final String COLON_DELIMITER = ":";
 
-  public abstract String getRule(T ruleInfo);
+  public abstract String getRule(
+      T ruleInfo, SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse);
 
   public List<T> filterAllMatchingRulesByScoring(
       List<T> rulesList,
       String requiredAttrVal,
       String optionalAttrVal,
-      int optionalAttrFromDefinitionSize) {
+      int optionalAttrFromDefinitionSize,
+      SourcingAttributesDefinitionResponse sourcingAttributeDefinitionResponse) {
     String[] orderRequiredAttrValues = requiredAttrVal.split(COLON_DELIMITER);
     String[] orderOptionalAttrValues =
         Objects.nonNull(optionalAttrVal)
@@ -38,7 +41,9 @@ public abstract class RulesRetrievalService<T> {
                     Function.identity(),
                     info ->
                         calculateScore(
-                            Arrays.stream(getRule(info).split(COLON_DELIMITER, -1))
+                            Arrays.stream(
+                                    getRule(info, sourcingAttributeDefinitionResponse)
+                                        .split(COLON_DELIMITER, -1))
                                 .skip(orderRequiredAttrValues.length)
                                 .collect(Collectors.joining(COLON_DELIMITER)),
                             orderOptionalAttrValues)));
@@ -51,7 +56,11 @@ public abstract class RulesRetrievalService<T> {
             .orElse(Double.MIN_VALUE);
 
     return maxScore == 0.0
-        ? fetchRulesMatchingReqAttr(requiredAttrVal, optionalAttrFromDefinitionSize, rulesList)
+        ? fetchRulesMatchingReqAttr(
+            requiredAttrVal,
+            optionalAttrFromDefinitionSize,
+            rulesList,
+            sourcingAttributeDefinitionResponse)
         : fetchRulesByMaxScore(ruleScoreMap, maxScore);
   }
 
@@ -86,11 +95,18 @@ public abstract class RulesRetrievalService<T> {
     return hasCommonAttributeValue;
   }
 
-  private List<T> fetchRulesMatchingReqAttr(
-      String requiredAttrVal, int optionalAttrFromDefinitionSize, List<T> rulesList) {
+  public List<T> fetchRulesMatchingReqAttr(
+      String requiredAttrVal,
+      int optionalAttrFromDefinitionSize,
+      List<T> rulesList,
+      SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse) {
     String requiredAttrValueRule =
         String.join("", requiredAttrVal, COLON_DELIMITER.repeat(optionalAttrFromDefinitionSize));
-    return rulesList.stream().filter(info -> requiredAttrValueRule.equals(getRule(info))).toList();
+    return rulesList.stream()
+        .filter(
+            info ->
+                requiredAttrValueRule.equals(getRule(info, sourcingAttributesDefinitionResponse)))
+        .toList();
   }
 
   private List<T> fetchRulesByMaxScore(Map<T, Double> ruleScoreMap, double maxScore) {

@@ -27,6 +27,7 @@ public class NearCacheConstants {
   public static final String SOURCING_RULE_CONFIGURATION_ENTITY_NAME = "SourcingRuleConfiguration";
   public static final String SOURCING_ATTRIBUTE_ENTITY_NAME = "SourcingAttribute";
   public static final String GROUP_DEFINITION_ENTITY_NAME = "GroupDefinition";
+  public static final String GROUP_DEFINITION_RULE_ENTITY_NAME = "GroupDefinitionRule";
   public static final String NODE_CARRIER_SELECTION_ENTITY_NAME = "NodeCarrierSelection";
   public static final String SOURCING_RULE_DETAILS_ENTITY_NAME = "SourcingRuleDetails";
   public static final String UE_META_DATA_ENTITY_NAME = "UserExitMetaData";
