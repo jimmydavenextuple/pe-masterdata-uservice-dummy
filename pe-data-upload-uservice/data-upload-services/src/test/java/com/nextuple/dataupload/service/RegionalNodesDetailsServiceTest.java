@@ -65,6 +65,8 @@ class RegionalNodesDetailsServiceTest {
     when(calendarFeign.getCalendar(any(), any())).thenReturn(testUtil.getBaseResponseOfCalendar());
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseNodeServiceOptions());
+    when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeCarrierServiceOptionCalendarResponse());
 
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
@@ -97,6 +99,8 @@ class RegionalNodesDetailsServiceTest {
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseNodeServiceOptions());
+    when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeCarrierServiceOptionCalendarResponse());
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
 
@@ -130,6 +134,8 @@ class RegionalNodesDetailsServiceTest {
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseNodeServiceOptions());
+    when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeCarrierServiceOptionCalendarResponse());
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
 
@@ -167,6 +173,8 @@ class RegionalNodesDetailsServiceTest {
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseNodeServiceOptions());
+    when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeCarrierServiceOptionCalendarResponse());
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
 
@@ -204,6 +212,8 @@ class RegionalNodesDetailsServiceTest {
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseNodeServiceOptions());
+    when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeCarrierServiceOptionCalendarResponse());
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
 

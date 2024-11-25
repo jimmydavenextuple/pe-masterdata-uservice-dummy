@@ -74,8 +74,6 @@ public class RegionalNodesDetailsService {
     List<NodeDto> nodeResponseList = nodeResponse.getData();
     for (NodeDto nodeServiceResponse : nodeResponseList) {
       List<NodeCalendarResponse> nodeCalendarResponseList = new ArrayList<>();
-      List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarResponseList =
-          new ArrayList<>();
       try {
         nodeCalendarResponseList =
             calendarFeign
@@ -94,8 +92,6 @@ public class RegionalNodesDetailsService {
           nodeCarrierFeign
               .getNodeCarrierList(nodeServiceResponse.getNodeId(), nodeServiceResponse.getOrgId())
               .getPayload();
-      getNodeCarrierServiceCalendarList(
-          nodeCarrierResponses, nodeCarrierServiceCalendarResponseList);
 
       CalendarResponse calendarDetails = null;
       if (!nodeCalendarResponseList.isEmpty()) {
@@ -116,34 +112,11 @@ public class RegionalNodesDetailsService {
               nodeCalendarResponseList,
               nodeCarrierResponses,
               nodeServiceOptionsResponse,
-              calendarDetails,
-              nodeCarrierServiceCalendarResponseList));
+              calendarDetails));
     }
     nodeListDtoPagePayload.setPagination(nodeResponse.getPagination());
     nodeListDtoPagePayload.setData(responseList);
     return nodeListDtoPagePayload;
-  }
-
-  private void getNodeCarrierServiceCalendarList(
-      List<NodeCarrierResponse> nodeCarrierResponses,
-      List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarResponseList) {
-    for (NodeCarrierResponse nodeCarrierResponse : nodeCarrierResponses) {
-      try {
-        List<NodeCarrierServiceCalendarResponse> response =
-            calendarFeign
-                .getNodeCarrierServiceCalendar(
-                    nodeCarrierResponse.getOrgId(),
-                    nodeCarrierResponse.getNodeId(),
-                    nodeCarrierResponse.getCarrierServiceId(),
-                    nodeCarrierResponse.getServiceOption())
-                .getPayload();
-        nodeCarrierServiceCalendarResponseList.addAll(response);
-      } catch (RuntimeException e) {
-        log.error(
-            "Empty Node Carrier Service Calendar Response List for carrierServiceId: {}",
-            nodeCarrierResponse.getCarrierServiceId());
-      }
-    }
   }
 
   private NodeListDto setNodeListDto(
@@ -151,8 +124,7 @@ public class RegionalNodesDetailsService {
       List<NodeCalendarResponse> nodeCalendarResponseList,
       List<NodeCarrierResponse> nodeCarrierResponse,
       List<NodeCarrierResponse> nodeServiceOptionsResponse,
-      CalendarResponse calendarDetails,
-      List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarResponseList) {
+      CalendarResponse calendarDetails) {
     NodeListDto nodeListDto;
     nodeListDto = INSTANCE.toNodeListDto(nodeResponse);
     if (!nodeCalendarResponseList.isEmpty() && ObjectUtils.isNotEmpty(calendarDetails)) {
@@ -164,14 +136,12 @@ public class RegionalNodesDetailsService {
         getProcessingTimeDetails(nodeServiceOptionsResponse, validServiceOptions));
     nodeListDto.setServiceOptions(List.of(validServiceOptions));
     nodeListDto.setCarrierServices(getCarrierServiceIds(nodeCarrierResponse));
-    nodeListDto.setPickupTime(
-        getPickupTimeDetails(nodeCarrierResponse, nodeCarrierServiceCalendarResponseList));
+    nodeListDto.setPickupTime(getPickupTimeDetails(nodeCarrierResponse));
     return nodeListDto;
   }
 
   private List<PickupTimeDto> getPickupTimeDetails(
-      List<NodeCarrierResponse> nodeCarrierResponseList,
-      List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarResponseList) {
+      List<NodeCarrierResponse> nodeCarrierResponseList) {
 
     List<PickupTimeDto> pickupTimeDtoList = new ArrayList<>();
     for (NodeCarrierResponse nodeCarrierResponse : nodeCarrierResponseList) {
@@ -179,16 +149,19 @@ public class RegionalNodesDetailsService {
       pickupTimeDto.setNodeId(nodeCarrierResponse.getNodeId());
       pickupTimeDto.setCarrierServiceId(nodeCarrierResponse.getCarrierServiceId());
       pickupTimeDto.setPickupTime(nodeCarrierResponse.getLastPickupTime());
-      nodeCarrierServiceCalendarResponseList.stream()
-          .filter(
-              serviceCalendar ->
-                  serviceCalendar
-                      .getCarrierServiceId()
-                      .equals(nodeCarrierResponse.getCarrierServiceId()))
-          .findFirst()
-          .ifPresent(
-              serviceCalendar ->
-                  pickupTimeDto.setPickupCalendarId(serviceCalendar.getCalendarId()));
+      pickupTimeDto.setPickupCalendarId(
+          calendarFeign
+              .getNodeCarrierServiceCalendar(
+                  nodeCarrierResponse.getOrgId(),
+                  nodeCarrierResponse.getNodeId(),
+                  nodeCarrierResponse.getCarrierServiceId(),
+                  nodeCarrierResponse.getServiceOption())
+              .getPayload()
+              .stream()
+              .findFirst()
+              .map(NodeCarrierServiceCalendarResponse::getCalendarId)
+              .orElse("N/A"));
+
       pickupTimeDtoList.add(pickupTimeDto);
     }
     return pickupTimeDtoList;
