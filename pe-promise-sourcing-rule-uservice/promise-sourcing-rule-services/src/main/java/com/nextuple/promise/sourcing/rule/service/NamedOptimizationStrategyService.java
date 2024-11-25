@@ -8,7 +8,7 @@
 package com.nextuple.promise.sourcing.rule.service;
 
 import static com.nextuple.promise.sourcing.rule.service.SourcingRulesConfigurationService.COLON_SPLIT_REGEX;
-import static com.nextuple.promise.sourcing.rule.service.SourcingRulesConfigurationService.SPLIT_REGEX;
+import static com.nextuple.promise.sourcing.rule.utils.FetchRulesUtil.SPLIT_REGEX;
 
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
@@ -201,7 +201,7 @@ public class NamedOptimizationStrategyService {
   private void validateOptimizationStrategyDetails(String optimizationStrategyDetails)
       throws CommonServiceException {
 
-    String[] optimizationStrategyDetailsList = optimizationStrategyDetails.split("\\s*,\\s*");
+    String[] optimizationStrategyDetailsList = optimizationStrategyDetails.split(SPLIT_REGEX);
     for (String optimizationStrategyDetail : optimizationStrategyDetailsList) {
       if (!ALLOWED_OPTIMIZATION_STRATEGY_DETAILS.contains(optimizationStrategyDetail)) {
         logger.error("Invalid named optimization strategy detail:{}", optimizationStrategyDetail);
@@ -594,11 +594,24 @@ public class NamedOptimizationStrategyService {
         sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
             groupDefinitionResponse.getSourcingAttributesDefinitionId(), orgId);
 
-    String[] attributeIds =
-        sourcingAttributesDefinitionResponse.getReqAttributes().split("\\s*,\\s*");
-    String[] attributeValues = groupDefinitionResponse.getReqAttributesValue().split("\\s*:\\s*");
+    String[] requiredAttributeIds =
+        sourcingAttributesDefinitionResponse.getReqAttributes().split(SPLIT_REGEX);
+    String[] requiredAttributeValues =
+        groupDefinitionResponse.getReqAttributesValue().split(COLON_SPLIT_REGEX);
 
-    if (attributeIds.length != attributeValues.length) {
+    String[] optionalAttributeIds =
+        StringUtils.hasLength(sourcingAttributesDefinitionResponse.getOptAttributes())
+            ? sourcingAttributesDefinitionResponse.getOptAttributes().split(SPLIT_REGEX)
+            : new String[0];
+    String[] optionalAttributeValues = new String[optionalAttributeIds.length];
+    String optionalAttributeValuesInRule = groupDefinitionResponse.getOptionalAttributesValue();
+    if (optionalAttributeIds.length > 0 && StringUtils.hasLength(optionalAttributeValuesInRule)) {
+      String[] existingOptionalValues = optionalAttributeValuesInRule.split(COLON_SPLIT_REGEX);
+      System.arraycopy(
+          existingOptionalValues, 0, optionalAttributeValues, 0, existingOptionalValues.length);
+    }
+
+    if (requiredAttributeIds.length != requiredAttributeValues.length) {
       logger.error("Error in getting optimization rule due to inconsistent attribute values.");
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(
@@ -618,9 +631,45 @@ public class NamedOptimizationStrategyService {
           errorMap);
     }
 
-    List<AttributeDetailsUIResponse> attributeDetailsUIResponseList = new ArrayList<>();
     List<AllConstraintUIDto> allConstraintUIDtoList = new ArrayList<>();
+    List<AttributeDetailsUIResponse> requiredAttributeDetailsUIResponseList =
+        getAttributeDetailsUIResponse(
+            orgId,
+            requiredAttributeIds,
+            requiredAttributeValues,
+            namedOptimizationStrategyResponse,
+            allConstraintUIDtoList);
 
+    List<AttributeDetailsUIResponse> optionalAttributeDetailsUIResponseList =
+        getAttributeDetailsUIResponse(
+            orgId,
+            optionalAttributeIds,
+            optionalAttributeValues,
+            namedOptimizationStrategyResponse,
+            allConstraintUIDtoList);
+
+    return OptimizationRuleUIResponse.builder()
+        .optimizationRuleId(namedOptimizationStrategyResponse.getId())
+        .orgId(orgId)
+        .sourcingAttributesDefinitionId(
+            String.valueOf(groupDefinitionResponse.getSourcingAttributesDefinitionId()))
+        .optimizationRuleName(namedOptimizationStrategyResponse.getOptimizationStrategyName())
+        .requiredAttributes(requiredAttributeDetailsUIResponseList)
+        .optionalAttributes(optionalAttributeDetailsUIResponseList)
+        .groupId(namedOptimizationStrategyResponse.getGroupId())
+        .strategy(namedOptimizationStrategyResponse.getOptimizationStrategyDetails())
+        .constraints(allConstraintUIDtoList)
+        .build();
+  }
+
+  private List<AttributeDetailsUIResponse> getAttributeDetailsUIResponse(
+      String orgId,
+      String[] attributeIds,
+      String[] attributeValues,
+      NamedOptimizationStrategyResponse namedOptimizationStrategyResponse,
+      List<AllConstraintUIDto> allConstraintUIDtoList)
+      throws PromiseEngineException, CommonServiceException {
+    List<AttributeDetailsUIResponse> attributeDetailsUIResponseList = new ArrayList<>();
     for (int i = 0; i < attributeIds.length; i++) {
       SourcingAttributeResponse sourcingAttributeResponse =
           sourcingAttributeService.getSourcingAttributeByIdAndOrgId(
@@ -646,18 +695,7 @@ public class NamedOptimizationStrategyService {
               sourcingAttributeResponse.getAttributeName(),
               attributeValues[i]));
     }
-
-    return OptimizationRuleUIResponse.builder()
-        .optimizationRuleId(namedOptimizationStrategyResponse.getId())
-        .orgId(orgId)
-        .sourcingAttributesDefinitionId(
-            String.valueOf(groupDefinitionResponse.getSourcingAttributesDefinitionId()))
-        .optimizationRuleName(namedOptimizationStrategyResponse.getOptimizationStrategyName())
-        .requiredAttributes(attributeDetailsUIResponseList)
-        .groupId(namedOptimizationStrategyResponse.getGroupId())
-        .strategy(namedOptimizationStrategyResponse.getOptimizationStrategyDetails())
-        .constraints(allConstraintUIDtoList)
-        .build();
+    return attributeDetailsUIResponseList;
   }
 
   public List<AllConstraintUIDto> getAllUIConstraints() {

@@ -15,6 +15,7 @@ import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationMod
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionStatus;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingConstraintEnum;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchGroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchRuleConfigurationRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchSourcingRulesRequest;
@@ -23,6 +24,7 @@ import com.nextuple.promise.sourcing.rule.api.domain.outbound.DetailedOptimizati
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.FetchPromiseSourcingRuleResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.FetchSourcingRulesResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionListResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.HolidayCutoffRulesResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.NodePriorityResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.RulesConfigurationResponse;
@@ -40,6 +42,8 @@ import com.nextuple.promise.sourcing.rule.api.domain.pojo.SourcingConstraintInfo
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.SourcingRulesInfo;
 import com.nextuple.sourcing.rule.cache.domain.GroupDefinitionCacheKey;
 import com.nextuple.sourcing.rule.cache.domain.GroupDefinitionCacheValue;
+import com.nextuple.sourcing.rule.cache.domain.GroupDefinitionRuleCacheKey;
+import com.nextuple.sourcing.rule.cache.domain.GroupDefinitionRuleCacheValue;
 import com.nextuple.sourcing.rule.cache.domain.HolidayCutoffKey;
 import com.nextuple.sourcing.rule.cache.domain.HolidayCutoffValue;
 import com.nextuple.sourcing.rule.cache.domain.NodeGroupCacheKey;
@@ -568,6 +572,41 @@ public class TestUtil {
   public BaseResponse<List<NodePriorityResponse>> getBaseResponseListOfNodePriorityResponse() {
     return BaseResponse.builder()
         .payload(getNodeGroupCacheValue().getNodePriorityResponseList())
+        .build();
+  }
+
+  public GroupDefinitionRuleCacheKey getGroupDefinitionRuleCacheKey() {
+    return GroupDefinitionRuleCacheKey.builder()
+        .fetchGroupDefinitionRequest(
+            FetchGroupDefinitionRequest.builder()
+                .orgId(ORG_ID)
+                .sourcingAttributeDefinitionId(1L)
+                .attributeValuesInfo(
+                    SourcingAttributeValuesInfo.builder()
+                        .requiredAttributesValue("R1:R2")
+                        .optionalAttributesValue("O1:O2")
+                        .build())
+                .build())
+        .build();
+  }
+
+  public GroupDefinitionRuleCacheValue getGroupDefinitionRuleCacheValue() {
+    return GroupDefinitionRuleCacheValue.builder()
+        .groupDefinitionResponse(
+            GroupDefinitionResponse.builder()
+                .id(1L)
+                .sourcingAttributesDefinitionId(1L)
+                .groupName("Grp1")
+                .orgId(ORG_ID)
+                .reqAttributesValue("R1:R2")
+                .optionalAttributesValue("O1:O2")
+                .build())
+        .build();
+  }
+
+  public BaseResponse<GroupDefinitionResponse> getBaseResponseOfGroupDefinitionResponse() {
+    return BaseResponse.builder()
+        .payload(getGroupDefinitionRuleCacheValue().getGroupDefinitionResponse())
         .build();
   }
 }

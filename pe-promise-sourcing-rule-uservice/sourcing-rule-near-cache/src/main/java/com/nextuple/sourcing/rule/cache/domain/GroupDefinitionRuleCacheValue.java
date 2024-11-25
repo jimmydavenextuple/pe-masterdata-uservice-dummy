@@ -5,21 +5,22 @@
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
  */
 
-package com.nextuple.promise.sourcing.rule.service.impl;
+package com.nextuple.sourcing.rule.cache.domain;
 
-import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
-import com.nextuple.promise.sourcing.rule.api.domain.services.RulesRetrievalService;
-import com.nextuple.promise.sourcing.rule.persistence.domain.RulesConfigurationDomainDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import com.nextuple.core.cache.domain.CacheValue;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionResponse;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
-@Component
-@RequiredArgsConstructor
-public class RuleConfigImpl extends RulesRetrievalService<RulesConfigurationDomainDto> {
+@Data
+@Builder
+@AllArgsConstructor
+public class GroupDefinitionRuleCacheValue implements CacheValue {
+  private GroupDefinitionResponse groupDefinitionResponse;
+
   @Override
-  public String getRule(
-      RulesConfigurationDomainDto ruleInfo,
-      SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse) {
-    return ruleInfo.getRule();
+  public boolean isUndefined() {
+    return false;
   }
 }
