@@ -14,9 +14,11 @@ import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionStatus;
+import com.nextuple.promise.sourcing.rule.api.domain.pojo.SourcingAttributeValuesInfo;
 import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingAttributesDefinitionDomainDto;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -52,7 +54,9 @@ public class PromiseSourcingRuleUtil {
   private static final String DEFAULT_SORT_ORDER = "ASC";
   private static final int DEFAULT_PAGE_SIZE = 20;
   private static final String SOURCING_ATTRIBUTES_DEFINITION_ID = "sourcingAttributesDefinitionId";
-  private static final String REQ_ATTRIBUTES_VALUE = "reqAttributesValue";
+  private static final String REQ_ATTRIBUTES_VALUE = "requiredAttributesValue";
+  private static final String OPT_ATTRIBUTES_VALUE = "optionalAttributesValue";
+  private static final String ORG_ID = "orgId";
   private static final String COLON_DELIMITER = ":";
 
   public static void validateNameFormat(String name) throws CommonServiceException {
@@ -136,28 +140,16 @@ public class PromiseSourcingRuleUtil {
       String message)
       throws CommonServiceException {
 
-    if (existingSourcingAttributesDefinitionDto.isEmpty()
-        || !(existingSourcingAttributesDefinitionDto
-                .get()
-                .getStatus()
-                .equals(SourcingAttributesDefinitionStatus.ACTIVE)
-            && existingSourcingAttributesDefinitionDto
-                .get()
-                .getScope()
-                .equals(SourcingAttributesDefinitionScopeEnum.OPTIMIZATION))) {
-      logger.error(
-          "Invalid sourcing rule attributes definition for OPTIMIZATION scope/ Sourcing rule attributes definition exists but not in ACTIVE status with given sourcingAttributesDefinitionId : {}",
-          sourcingAttributesDefinitionId);
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          SOURCING_ATTRIBUTES_DEFINITION_ID,
-          FieldError.builder().rejectedValue(sourcingAttributesDefinitionId).build());
-      throw new CommonServiceException(
-          "Invalid sourcing attributes definition for OPTIMIZATION scope/ Sourcing  attributes definition exists but not in ACTIVE status",
-          HttpStatus.BAD_REQUEST,
-          0x1771,
-          errorMap);
-    }
+    String errorMessage =
+        String.format(
+            "Invalid sourcing rule attributes definition for OPTIMIZATION scope/ Sourcing rule attributes definition exists but not in ACTIVE status with given sourcingAttributesDefinitionId : %s",
+            sourcingAttributesDefinitionId);
+    handleInvalidSourcingAttributeDefinition(
+        sourcingAttributesDefinitionId,
+        SourcingAttributesDefinitionScopeEnum.OPTIMIZATION,
+        existingSourcingAttributesDefinitionDto,
+        0x1771,
+        errorMessage);
     String[] requiredAttributeReferencesList =
         existingSourcingAttributesDefinitionDto.get().getReqAttributes().split("\\s*,\\s*");
     String[] requiredAttributeValuesList = reqAttributesValue.split("\\s*:\\s*");
@@ -196,6 +188,37 @@ public class PromiseSourcingRuleUtil {
         "Can't add the optimization rule as length of attributes is more than optional and required attributes combined",
         "attributesValue",
         0x1774);
+  }
+
+  public static void handleInvalidSourcingAttributeDefinition(
+      Long sourcingAttributesDefinitionId,
+      SourcingAttributesDefinitionScopeEnum scope,
+      Optional<SourcingAttributesDefinitionDomainDto> existingSourcingAttributesDefinitionDto,
+      Integer errorCode,
+      String errorMessage)
+      throws CommonServiceException {
+    if (existingSourcingAttributesDefinitionDto.isEmpty()
+        || !(isDefinitionActive(existingSourcingAttributesDefinitionDto.get())
+            && hasCorrectScope(scope, existingSourcingAttributesDefinitionDto.get()))) {
+      logger.error(errorMessage);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          SOURCING_ATTRIBUTES_DEFINITION_ID,
+          FieldError.builder().rejectedValue(sourcingAttributesDefinitionId).build());
+      throw new CommonServiceException(errorMessage, HttpStatus.BAD_REQUEST, errorCode, errorMap);
+    }
+  }
+
+  private static boolean hasCorrectScope(
+      SourcingAttributesDefinitionScopeEnum scope,
+      SourcingAttributesDefinitionDomainDto existingSourcingAttributesDefinitionDto) {
+    return scope.equals(existingSourcingAttributesDefinitionDto.getScope());
+  }
+
+  private static boolean isDefinitionActive(
+      SourcingAttributesDefinitionDomainDto existingSourcingAttributesDefinitionDto) {
+    return SourcingAttributesDefinitionStatus.ACTIVE.equals(
+        existingSourcingAttributesDefinitionDto.getStatus());
   }
 
   public static void checkForRequiredAttributesLength(
@@ -237,5 +260,33 @@ public class PromiseSourcingRuleUtil {
     return StringUtils.hasLength(optionalAttributeValues)
         ? requiredAttributeValues.concat(COLON_DELIMITER).concat(optionalAttributeValues)
         : requiredAttributeValues;
+  }
+
+  public static void validateNoRulesFound(
+      String orgId,
+      Long attributeDefinitionId,
+      SourcingAttributeValuesInfo sourcingAttributeValuesInfo,
+      List<?> bestRules,
+      String errorMessage)
+      throws CommonServiceException {
+    if (bestRules.isEmpty()) {
+      throw new CommonServiceException(
+          errorMessage,
+          HttpStatus.NOT_FOUND,
+          0x1776,
+          Map.of(
+              SOURCING_ATTRIBUTES_DEFINITION_ID,
+              FieldError.builder().rejectedValue(attributeDefinitionId).build(),
+              REQ_ATTRIBUTES_VALUE,
+              FieldError.builder()
+                  .rejectedValue(sourcingAttributeValuesInfo.getRequiredAttributesValue())
+                  .build(),
+              OPT_ATTRIBUTES_VALUE,
+              FieldError.builder()
+                  .rejectedValue(sourcingAttributeValuesInfo.getOptionalAttributesValue())
+                  .build(),
+              ORG_ID,
+              FieldError.builder().rejectedValue(orgId).build()));
+    }
   }
 }

@@ -12,11 +12,13 @@ import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchGroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.GroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionListResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.controller.docs.AddGroupDefinitionDoc;
 import com.nextuple.promise.sourcing.rule.controller.docs.DeleteGroupDefinitionDoc;
+import com.nextuple.promise.sourcing.rule.controller.docs.FetchGroupDefinitionByScoring;
 import com.nextuple.promise.sourcing.rule.controller.docs.GetGroupDefinitionDoc;
 import com.nextuple.promise.sourcing.rule.controller.docs.GetGroupDefinitionListDoc;
 import com.nextuple.promise.sourcing.rule.controller.docs.UpdateGroupDefinitionDoc;
@@ -71,6 +73,23 @@ public class GroupDefinitionController {
       logger.error("Failed to process add group definition request", e);
       throw e;
     }
+  }
+
+  @FetchGroupDefinitionByScoring
+  @PostMapping(
+      value = "/fetch-rule",
+      produces = MediaType.APPLICATION_JSON_VALUE,
+      consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<BaseResponse<GroupDefinitionResponse>> fetchGroupDefinitionByScoring(
+      @Valid @RequestBody FetchGroupDefinitionRequest request)
+      throws PromiseEngineException, CommonServiceException {
+    logger.debug(
+        "Processing fetch rule configuration with rulesConfigurationsRequest : {}", request);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Group Definition fetched successfully")
+            .payload(groupDefinitionService.processGetGroupDefinitionByScoring(request))
+            .build());
   }
 
   @GetGroupDefinitionDoc

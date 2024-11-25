@@ -34,6 +34,7 @@ import com.nextuple.promise.sourcing.rule.api.domain.pojo.NodePriorityInfo;
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.SourcingRuleDetails;
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.SourcingRulesInfo;
 import com.nextuple.promise.sourcing.rule.api.domain.projection.SourcingRuleByNodeGroupCountProjection;
+import com.nextuple.promise.sourcing.rule.api.domain.services.RulesRetrievalService;
 import com.nextuple.promise.sourcing.rule.domain.mapper.NodeGroupMapper;
 import com.nextuple.promise.sourcing.rule.domain.mapper.NodePriorityMapper;
 import com.nextuple.promise.sourcing.rule.domain.mapper.SourcingAttributeMapper;
@@ -42,6 +43,7 @@ import com.nextuple.promise.sourcing.rule.domain.mapper.SourcingRuleDetailsMappe
 import com.nextuple.promise.sourcing.rule.domain.mapper.SourcingRulesConfigurationMapper;
 import com.nextuple.promise.sourcing.rule.persistence.domain.*;
 import com.nextuple.promise.sourcing.rule.persistence.service.*;
+import com.nextuple.promise.sourcing.rule.service.impl.RuleRetrievalFactory;
 import com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleUtil;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
@@ -96,6 +98,8 @@ public class SourcingRulesConfigurationService {
 
   private static final SourcingRuleDetailsMapper INSTANCE_SOURCING_RULE_DETAILS =
       Mappers.getMapper(SourcingRuleDetailsMapper.class);
+  private static final SourcingAttributesDefinitionMapper ATTRIBUTES_DEFINITION_MAPPER =
+      Mappers.getMapper(SourcingAttributesDefinitionMapper.class);
 
   private final SourcingAttributesDefinitionService sourcingAttrDefService;
   private final SourcingRulesConfigurationPersistenceService rulesConfigPersistenceService;
@@ -105,6 +109,7 @@ public class SourcingRulesConfigurationService {
   private final SourcingAttributePersistenceService sourcingAttributePersistenceService;
   private final SourcingRuleDetailsPersistenceService sourcingRuleDetailsPersistenceService;
   private final AttributeValuesPersistenceService attributeValuesPersistenceService;
+  private final RuleRetrievalFactory ruleRetrievalFactory;
 
   public SourcingRuleDetails processConfigureSourcingRule(
       RulesConfigurationRequest rulesConfigurationRequest)
@@ -113,13 +118,13 @@ public class SourcingRulesConfigurationService {
         rulesConfigurationRequest.getSourcingRule());
     validateNodeGroups(
         rulesConfigurationRequest.getNodeGroups(), rulesConfigurationRequest.getOrgId());
-    List<SourcingRulesConfigurationDomainDto> rulesConfigurationDomainDto =
+    Optional<SourcingRulesConfigurationDomainDto> rulesConfigurationDomainDtoOptional =
         rulesConfigPersistenceService
-            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
                 rulesConfigurationRequest.getOrgId(),
                 rulesConfigurationRequest.getSourcingAttributesDefinitionId(),
                 rulesConfigurationRequest.getSourcingRule());
-    if (rulesConfigurationDomainDto.isEmpty()) {
+    if (rulesConfigurationDomainDtoOptional.isEmpty()) {
       validateSourcingRuleName(
           rulesConfigurationRequest.getOrgId(),
           rulesConfigurationRequest.getSourcingAttributesDefinitionId(),
@@ -146,7 +151,7 @@ public class SourcingRulesConfigurationService {
       return sourcingRuleDetails;
     }
     SourcingRulesConfigurationDomainDto sourcingRulesConfigurationEntity =
-        rulesConfigurationDomainDto.get(0);
+        rulesConfigurationDomainDtoOptional.get();
     validateSourcingRuleRequestByRuleName(
         rulesConfigurationRequest.getSourcingRuleName(),
         rulesConfigurationRequest.getSourcingRule(),
@@ -261,12 +266,17 @@ public class SourcingRulesConfigurationService {
     }
   }
 
-  private void validateSourcingAttributesDefinitionIdForFetchSourcingRules(
-      String sourcingRule,
-      Long sourcingAttributesDefinitionId,
-      String requiredAttributesInRule,
-      String orgId)
-      throws CommonServiceException, PromiseEngineException {
+  private SourcingAttributesDefinitionDomainDto
+      validateSourcingAttributesDefinitionIdForFetchSourcingRules(
+          FetchSourcingRulesRequest fetchSourcingRulesRequest)
+          throws CommonServiceException, PromiseEngineException {
+    String sourcingRule = getSourcingRuleValue(fetchSourcingRulesRequest);
+    Long sourcingAttributesDefinitionId =
+        fetchSourcingRulesRequest.getSourcingAttributesDefinitionId();
+    String requiredAttributesInRule =
+        fetchSourcingRulesRequest.getSourcingAttributeValuesInfo().getRequiredAttributesValue();
+    validateBlankValues(requiredAttributesInRule);
+    String orgId = fetchSourcingRulesRequest.getOrgId();
     SourcingAttributesDefinitionDomainDto existingSourcingAttributesDefinitionEntity =
         validateSourcingAttributesDefinitionId(sourcingRule, sourcingAttributesDefinitionId, orgId);
     String[] requiredAttributeValuesList = requiredAttributesInRule.split(COLON_SPLIT_REGEX);
@@ -283,48 +293,38 @@ public class SourcingRulesConfigurationService {
           0x1771,
           errorMap);
     }
+    return existingSourcingAttributesDefinitionEntity;
+  }
+
+  private SourcingAttributesDefinitionDomainDto fetchAttributeDefinition(
+      String orgId, Long definitionId, SourcingAttributesDefinitionScopeEnum scope)
+      throws PromiseEngineException, CommonServiceException {
+    Optional<SourcingAttributesDefinitionDomainDto> existingAttributesDefinition =
+        sourAttrDefPersistenceService.getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
+            definitionId, orgId);
+    String errorMessage =
+        "Invalid attributes definition for given scope: %s / Sourcing attributes definition exists but not in ACTIVE status with given sourcingAttributesDefinitionId : %s"
+            .formatted(scope, definitionId);
+    PromiseSourcingRuleUtil.handleInvalidSourcingAttributeDefinition(
+        definitionId, scope, existingAttributesDefinition, 0x1771, errorMessage);
+
+    return existingAttributesDefinition.get();
   }
 
   private SourcingAttributesDefinitionDomainDto validateSourcingAttributesDefinitionId(
       String sourcingRule, Long sourcingAttributesDefinitionId, String orgId)
       throws PromiseEngineException, CommonServiceException {
-    Optional<SourcingAttributesDefinitionDomainDto> existingSourcingAttributesDefinitionEntity =
-        sourAttrDefPersistenceService.getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
-            sourcingAttributesDefinitionId, orgId);
-    validateBlankValues(sourcingRule);
-    if (existingSourcingAttributesDefinitionEntity.isEmpty()
-        || !(existingSourcingAttributesDefinitionEntity
-                .get()
-                .getStatus()
-                .equals(SourcingAttributesDefinitionStatus.ACTIVE)
-            && existingSourcingAttributesDefinitionEntity
-                .get()
-                .getScope()
-                .equals(SourcingAttributesDefinitionScopeEnum.SOURCING_RULE))) {
-      logger.error(
-          "Invalid sourcing rule attributes definition for SOURCING_RULE scope/ Sourcing rule attributes definition exists but not in ACTIVE status with given sourcingAttributesDefinitionId : {}",
-          sourcingAttributesDefinitionId);
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          SOURCING_ATTRIBUTES_DEFINITION_ID,
-          FieldError.builder().rejectedValue(sourcingAttributesDefinitionId).build());
-      throw new CommonServiceException(
-          "Invalid sourcing attributes definition for SOURCING_RULE scope/ Sourcing  attributes definition exists but not in ACTIVE status",
-          HttpStatus.BAD_REQUEST,
-          0x1771,
-          errorMap);
-    }
+    SourcingAttributesDefinitionDomainDto existingSourcingAttributesDefinitionDto =
+        fetchAttributeDefinition(
+            orgId,
+            sourcingAttributesDefinitionId,
+            SourcingAttributesDefinitionScopeEnum.SOURCING_RULE);
     String[] requiredAttributeReferencesList =
-        existingSourcingAttributesDefinitionEntity.get().getReqAttributes().split(SPLIT_REGEX);
+        existingSourcingAttributesDefinitionDto.getReqAttributes().split(SPLIT_REGEX);
     int optionalAttributesLength = 0;
-    if (StringUtils.hasLength(
-        existingSourcingAttributesDefinitionEntity.get().getOptAttributes())) {
+    if (StringUtils.hasLength(existingSourcingAttributesDefinitionDto.getOptAttributes())) {
       optionalAttributesLength =
-          existingSourcingAttributesDefinitionEntity
-              .get()
-              .getOptAttributes()
-              .split(SPLIT_REGEX)
-              .length;
+          existingSourcingAttributesDefinitionDto.getOptAttributes().split(SPLIT_REGEX).length;
     }
     String[] attributeValuesList = sourcingRule.split(COLON_SPLIT_REGEX);
     PromiseSourcingRuleUtil.checkForRequiredAttributesLength(
@@ -342,7 +342,7 @@ public class SourcingRulesConfigurationService {
         "Can't add the sourcing rule as length of attributes is more than optional and required attributes combined",
         SOURCING_RULE,
         0x1771);
-    return existingSourcingAttributesDefinitionEntity.get();
+    return existingSourcingAttributesDefinitionDto;
   }
 
   private void validateBlankValues(String sourcingRule) throws CommonServiceException {
@@ -350,11 +350,11 @@ public class SourcingRulesConfigurationService {
     String[] attributes = sourcingRule.split(COLON_SPLIT_REGEX);
     boolean blankCheck = Arrays.stream(attributes).anyMatch(value -> !StringUtils.hasLength(value));
     if (blankCheck || colonCount >= attributes.length) {
-      logger.error("Can't add the sourcing rule as sourcing rule contains blank values");
+      logger.error("Can't fetch the sourcing rule as sourcing rule contains blank values");
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(SOURCING_RULE, FieldError.builder().rejectedValue(sourcingRule).build());
       throw new CommonServiceException(
-          "Can't add the sourcing rule as sourcing rule contains blank values",
+          "Can't fetch the sourcing rule as sourcing rule contains blank values",
           HttpStatus.BAD_REQUEST,
           0x1771,
           errorMap);
@@ -754,68 +754,60 @@ public class SourcingRulesConfigurationService {
 
   public FetchSourcingRulesResponse processGetSourcingRules(
       FetchSourcingRulesRequest fetchSourcingRulesRequest)
-      throws PromiseEngineException, CommonServiceException {
-    PromiseSourcingRuleUtil.validateAttributeValuesFormat(
-        fetchSourcingRulesRequest.getSourcingAttributeValuesInfo().getRequiredAttributesValue());
-    String sourcingRule = getSourcingRuleValue(fetchSourcingRulesRequest);
-    validateSourcingAttributesDefinitionIdForFetchSourcingRules(
-        sourcingRule,
-        fetchSourcingRulesRequest.getSourcingAttributesDefinitionId(),
-        fetchSourcingRulesRequest.getSourcingAttributeValuesInfo().getRequiredAttributesValue(),
-        fetchSourcingRulesRequest.getOrgId());
+      throws CommonServiceException, PromiseEngineException {
+    String requiredAttributesValue =
+        fetchSourcingRulesRequest.getSourcingAttributeValuesInfo().getRequiredAttributesValue();
+    String optionalAttributesValue =
+        fetchSourcingRulesRequest.getSourcingAttributeValuesInfo().getOptionalAttributesValue();
+    PromiseSourcingRuleUtil.validateAttributeValuesFormat(requiredAttributesValue);
+    if (StringUtils.hasLength(optionalAttributesValue))
+      PromiseSourcingRuleUtil.validateAttributeValuesFormat(optionalAttributesValue);
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinition =
+        validateSourcingAttributesDefinitionIdForFetchSourcingRules(fetchSourcingRulesRequest);
+    String generatedRule =
+        PromiseSourcingRuleUtil.getRuleFromRequiredAndOptionalAttributeValues(
+            requiredAttributesValue, optionalAttributesValue);
     List<SourcingRulesConfigurationDomainDto> sourcingRulesConfigurationEntityList =
         rulesConfigPersistenceService
             .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
                 fetchSourcingRulesRequest.getOrgId(),
                 fetchSourcingRulesRequest.getSourcingAttributesDefinitionId(),
-                fetchSourcingRulesRequest
-                    .getSourcingAttributeValuesInfo()
-                    .getRequiredAttributesValue());
+                requiredAttributesValue);
     if (sourcingRulesConfigurationEntityList.isEmpty()) {
       return getDefaultSourcingRules(fetchSourcingRulesRequest);
     }
-    Map<String, List<SourcingRulesConfigurationDomainDto>> sourcingRulesMap =
+    var optionalAttributeSizeFromDefinition =
+        StringUtils.hasLength(sourcingAttributesDefinition.getOptAttributes())
+            ? sourcingAttributesDefinition.getOptAttributes().split(SPLIT_REGEX).length
+            : 0;
+
+    List<SourcingRulesConfigurationDomainDto> bestRules;
+    bestRules =
         sourcingRulesConfigurationEntityList.stream()
-            .collect(Collectors.groupingBy(SourcingRulesConfigurationDomainDto::getSourcingRule));
-
-    String requiredAttributesValue =
-        fetchSourcingRulesRequest.getSourcingAttributeValuesInfo().getRequiredAttributesValue();
-
-    String optionalAttributesValue =
-        StringUtils.hasLength(
-                fetchSourcingRulesRequest
-                    .getSourcingAttributeValuesInfo()
-                    .getOptionalAttributesValue())
-            ? fetchSourcingRulesRequest
-                .getSourcingAttributeValuesInfo()
-                .getOptionalAttributesValue()
-            : "";
-
-    validateSameRequiredAndOptionalAttributesValue(
-        fetchSourcingRulesRequest, requiredAttributesValue, optionalAttributesValue);
-
-    if (StringUtils.hasLength(optionalAttributesValue)) {
-      PromiseSourcingRuleUtil.validateAttributeValuesFormat(optionalAttributesValue);
-      String[] optionalAttributeValuesList = optionalAttributesValue.split(COLON_SPLIT_REGEX);
-      FetchSourcingRulesResponse fetchSourcingRulesResponse =
-          processOptionalAttributeValues(
-              requiredAttributesValue, optionalAttributeValuesList, sourcingRulesMap);
-      if (Objects.nonNull(fetchSourcingRulesResponse.getSourcingRulesInfo()))
-        return fetchSourcingRulesResponse;
+            .filter(rule -> generatedRule.equals(rule.getSourcingRule()))
+            .toList();
+    if (bestRules.isEmpty()) {
+      var attributeDefinitionResponse =
+          ATTRIBUTES_DEFINITION_MAPPER.toSourcingRuleAttributesDefinitionResponse(
+              sourcingAttributesDefinition);
+      RulesRetrievalService rulesRetrievalService =
+          ruleRetrievalFactory.getRuleRetrievalService(new SourcingRulesConfigurationDomainDto());
+      bestRules =
+          rulesRetrievalService.filterAllMatchingRulesByScoring(
+              sourcingRulesConfigurationEntityList,
+              requiredAttributesValue,
+              optionalAttributesValue,
+              optionalAttributeSizeFromDefinition,
+              attributeDefinitionResponse);
     }
-    if (!sourcingRulesMap.containsKey(
-        fetchSourcingRulesRequest.getSourcingAttributeValuesInfo().getRequiredAttributesValue())) {
-      return getDefaultSourcingRules(fetchSourcingRulesRequest);
-    }
+    PromiseSourcingRuleUtil.validateNoRulesFound(
+        fetchSourcingRulesRequest.getOrgId(),
+        fetchSourcingRulesRequest.getSourcingAttributesDefinitionId(),
+        fetchSourcingRulesRequest.getSourcingAttributeValuesInfo(),
+        bestRules,
+        "Sourcing Rules not found for %s rule.".formatted(generatedRule));
     return FetchSourcingRulesResponse.builder()
-        .sourcingRulesInfo(
-            getSourcingRulesInfo(
-                sourcingRulesMap
-                    .get(
-                        fetchSourcingRulesRequest
-                            .getSourcingAttributeValuesInfo()
-                            .getRequiredAttributesValue())
-                    .get(0)))
+        .sourcingRulesInfo(getSourcingRulesInfo(bestRules.getFirst()))
         .build();
   }
 
@@ -828,32 +820,6 @@ public class SourcingRulesConfigurationService {
                 .getSourcingAttributeValuesInfo()
                 .getOptionalAttributesValue()
         : fetchSourcingRulesRequest.getSourcingAttributeValuesInfo().getRequiredAttributesValue();
-  }
-
-  private void validateSameRequiredAndOptionalAttributesValue(
-      FetchSourcingRulesRequest fetchSourcingRulesRequest,
-      String requiredAttributesValue,
-      String optionalAttributesValue)
-      throws CommonServiceException {
-
-    if (StringUtils.hasLength(optionalAttributesValue)
-        && requiredAttributesValue.equals(optionalAttributesValue)) {
-      logger.error("requiredAttributesValue and optionalAttributesValue cannot be the same");
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          SOURCING_ATTRIBUTES_DEFINITION_ID,
-          FieldError.builder()
-              .rejectedValue(fetchSourcingRulesRequest.getSourcingAttributesDefinitionId())
-              .build());
-      errorMap.put(
-          ORG_ID, FieldError.builder().rejectedValue(fetchSourcingRulesRequest.getOrgId()).build());
-
-      throw new CommonServiceException(
-          "requiredAttributesValue and optionalAttributesValue cannot be the same",
-          HttpStatus.BAD_REQUEST,
-          0X1771,
-          errorMap);
-    }
   }
 
   private FetchSourcingRulesResponse getDefaultSourcingRules(
@@ -884,46 +850,6 @@ public class SourcingRulesConfigurationService {
     return FetchSourcingRulesResponse.builder()
         .sourcingRulesInfo(getSourcingRulesInfo(sourcingRulesConfigurationEntityList.get(0)))
         .build();
-  }
-
-  private FetchSourcingRulesResponse processOptionalAttributeValues(
-      String requiredAttributesValue,
-      String[] optionalAttributeValuesList,
-      Map<String, List<SourcingRulesConfigurationDomainDto>> sourcingRulesMap)
-      throws PromiseEngineException, CommonServiceException {
-    int noOfOptionalAttributesToSelect = optionalAttributeValuesList.length;
-
-    while (noOfOptionalAttributesToSelect > 0) {
-      Set<String> optionalValuesCombinations = new HashSet<>();
-      findCombinations(
-          optionalAttributeValuesList,
-          0,
-          noOfOptionalAttributesToSelect,
-          optionalValuesCombinations,
-          new ArrayList<>());
-      List<String> matchingRules = new ArrayList<>();
-      for (String optionalValues : optionalValuesCombinations) {
-        StringBuilder attributeValues = new StringBuilder(requiredAttributesValue);
-        attributeValues.append(":").append(optionalValues);
-        if (sourcingRulesMap.containsKey(String.valueOf(attributeValues))) {
-          matchingRules.add(String.valueOf(attributeValues));
-        }
-      }
-      if (matchingRules.size() == 1)
-        return FetchSourcingRulesResponse.builder()
-            .sourcingRulesInfo(
-                getSourcingRulesInfo(sourcingRulesMap.get(matchingRules.get(0)).get(0)))
-            .build();
-      if (matchingRules.size() > 1)
-        return FetchSourcingRulesResponse.builder()
-            .message("Conflicting rules found but still giving response")
-            .sourcingRulesInfo(
-                getSourcingRulesInfo(sourcingRulesMap.get(matchingRules.get(0)).get(0)))
-            .build();
-
-      noOfOptionalAttributesToSelect--;
-    }
-    return FetchSourcingRulesResponse.builder().build();
   }
 
   private List<SourcingRulesInfo> getSourcingRulesInfo(
@@ -1004,37 +930,6 @@ public class SourcingRulesConfigurationService {
     Optional<NodeGroupDomainDto> nodeGroupEntity =
         nodeGroupPersistenceService.fetchNodeGroupById(nodeGroupId);
     return nodeGroupEntity.map(NodeGroupDomainDto::getNodeGroupName).orElse(null);
-  }
-
-  private void findCombinations(
-      String[] optionalAttributeValuesList,
-      int index,
-      int noOfOptionalAttributesToSelect,
-      Set<String> optionalValuesCombinations,
-      List<String> tempList) {
-    if (noOfOptionalAttributesToSelect == 0) {
-      StringBuilder attrValue = new StringBuilder();
-      int indexZero = 0;
-      while (indexZero < tempList.size()) {
-        if (indexZero == tempList.size() - 1) attrValue.append(tempList.get(indexZero));
-        if (indexZero != tempList.size() - 1) attrValue.append(tempList.get(indexZero)).append(":");
-        indexZero++;
-      }
-      optionalValuesCombinations.add(String.valueOf(attrValue));
-      return;
-    }
-
-    for (int start = index; start < optionalAttributeValuesList.length; start++) {
-      tempList.add(optionalAttributeValuesList[start]);
-      findCombinations(
-          optionalAttributeValuesList,
-          start + 1,
-          noOfOptionalAttributesToSelect - 1,
-          optionalValuesCombinations,
-          tempList);
-      if (!tempList.get(tempList.size() - 1).isEmpty())
-        tempList.remove(tempList.get(tempList.size() - 1));
-    }
   }
 
   public SourcingRuleDetails processDeleteSourcingRuleDetails(String orgId, Long sourcingRuleId)

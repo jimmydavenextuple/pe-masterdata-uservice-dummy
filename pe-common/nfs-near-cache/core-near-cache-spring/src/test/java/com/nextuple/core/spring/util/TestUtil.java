@@ -54,6 +54,7 @@ public class TestUtil {
     cacheMap.put("optimization_and_cost_types_mapping", CACHE_PROPERTY_VALUE);
     cacheMap.put("transfer_schedules", CACHE_PROPERTY_VALUE);
     cacheMap.put("node_group", CACHE_PROPERTY_VALUE);
+    cacheMap.put("group_definition_rule", CACHE_PROPERTY_VALUE);
     return cacheMap;
   }
 }

@@ -7,6 +7,7 @@
 
 package com.nextuple.promise.sourcing.rule.service;
 
+import static com.nextuple.promise.sourcing.rule.utils.FetchRulesUtil.SPLIT_REGEX;
 import static com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleUtil.validateSourcingAttributesDefinitionId;
 
 import com.nextuple.common.context.Logger;
@@ -14,17 +15,22 @@ import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchGroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.GroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionListResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.GroupDefinitionInfo;
 import com.nextuple.promise.sourcing.rule.domain.mapper.GroupDefinitionMapper;
+import com.nextuple.promise.sourcing.rule.domain.mapper.SourcingAttributesDefinitionMapper;
 import com.nextuple.promise.sourcing.rule.persistence.domain.GroupDefinitionDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.NamedOptimizationStrategyDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingAttributesDefinitionDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.service.GroupDefinitionPersistenceService;
 import com.nextuple.promise.sourcing.rule.persistence.service.NamedOptimizationStrategyPersistenceService;
 import com.nextuple.promise.sourcing.rule.persistence.service.SourcingAttributesDefinitionPersistenceService;
+import com.nextuple.promise.sourcing.rule.service.impl.GroupDefinitionRuleImpl;
+import com.nextuple.promise.sourcing.rule.utils.FetchRulesUtil;
 import com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,12 +63,15 @@ public class GroupDefinitionService {
 
   private static final GroupDefinitionMapper INSTANCE =
       Mappers.getMapper(GroupDefinitionMapper.class);
+  private static final SourcingAttributesDefinitionMapper ATTRIBUTES_DEFINITION_MAPPER =
+      Mappers.getMapper(SourcingAttributesDefinitionMapper.class);
   private final GroupDefinitionPersistenceService groupDefinitionPersistenceService;
   private final SourcingAttributesDefinitionPersistenceService
       sourcingAttributesDefinitionPersistenceService;
 
   private final NamedOptimizationStrategyPersistenceService
       namedOptimizationStrategyPersistenceService;
+  private final GroupDefinitionRuleImpl rulesRetrievalService;
 
   public GroupDefinitionResponse processAddGroupDefinition(
       GroupDefinitionRequest groupDefinitionRequest)
@@ -188,6 +197,82 @@ public class GroupDefinitionService {
         .sourcingAttributesDefinitionId(sourcingAttributesDefinitionId)
         .groupDefinitionInfoList(groupDefinitionInfoList)
         .build();
+  }
+
+  private SourcingAttributesDefinitionDomainDto fetchAttributeDefinition(
+      String orgId, Long definitionId, SourcingAttributesDefinitionScopeEnum scope)
+      throws PromiseEngineException, CommonServiceException {
+    Optional<SourcingAttributesDefinitionDomainDto> existingAttributesDefinition =
+        sourcingAttributesDefinitionPersistenceService
+            .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(definitionId, orgId);
+    String errorMessage =
+        "Invalid attributes definition for given scope: %s / Sourcing attributes definition exists but not in ACTIVE status with given sourcingAttributesDefinitionId : %s"
+            .formatted(scope, definitionId);
+    PromiseSourcingRuleUtil.handleInvalidSourcingAttributeDefinition(
+        definitionId, scope, existingAttributesDefinition, 0x1B59, errorMessage);
+
+    return existingAttributesDefinition.get();
+  }
+
+  public GroupDefinitionResponse processGetGroupDefinitionByScoring(
+      FetchGroupDefinitionRequest request) throws PromiseEngineException, CommonServiceException {
+    var requiredAttrVal = request.getAttributeValuesInfo().getRequiredAttributesValue();
+    var optionalAttrVal = request.getAttributeValuesInfo().getOptionalAttributesValue();
+    var attributeDefinition =
+        fetchAttributeDefinition(
+            request.getOrgId(),
+            request.getSourcingAttributeDefinitionId(),
+            SourcingAttributesDefinitionScopeEnum.OPTIMIZATION);
+    var attributeDefinitionResponse =
+        ATTRIBUTES_DEFINITION_MAPPER.toSourcingRuleAttributesDefinitionResponse(
+            attributeDefinition);
+    var optionalAttrFromDefinitionSize =
+        StringUtils.hasLength(attributeDefinition.getOptAttributes())
+            ? attributeDefinition.getOptAttributes().split(SPLIT_REGEX).length
+            : 0;
+    var generatedRule =
+        PromiseSourcingRuleUtil.getRuleFromRequiredAndOptionalAttributeValues(
+            request.getAttributeValuesInfo().getRequiredAttributesValue(),
+            request.getAttributeValuesInfo().getOptionalAttributesValue());
+
+    FetchRulesUtil.validateAttributesDefinitionIdForScope(
+        attributeDefinition.getReqAttributes(),
+        attributeDefinition.getOptAttributes(),
+        generatedRule);
+    List<GroupDefinitionDomainDto> definitionDomainDtos =
+        groupDefinitionPersistenceService
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+                request.getOrgId(),
+                request.getSourcingAttributeDefinitionId(),
+                request.getAttributeValuesInfo().getRequiredAttributesValue());
+
+    List<GroupDefinitionDomainDto> bestRules;
+    bestRules =
+        definitionDomainDtos.stream()
+            .filter(
+                rule -> {
+                  String savedRule =
+                      PromiseSourcingRuleUtil.getRuleFromRequiredAndOptionalAttributeValues(
+                          rule.getReqAttributesValue(), rule.getOptionalAttributesValue());
+                  return generatedRule.equals(savedRule);
+                })
+            .toList();
+    if (bestRules.isEmpty()) {
+      bestRules =
+          rulesRetrievalService.filterAllMatchingRulesByScoring(
+              definitionDomainDtos,
+              requiredAttrVal,
+              optionalAttrVal,
+              optionalAttrFromDefinitionSize,
+              attributeDefinitionResponse);
+    }
+    PromiseSourcingRuleUtil.validateNoRulesFound(
+        request.getOrgId(),
+        request.getSourcingAttributeDefinitionId(),
+        request.getAttributeValuesInfo(),
+        bestRules,
+        "Group definition not found for %s rule.".formatted(generatedRule));
+    return INSTANCE.toGroupDefinitionResponse(bestRules.getFirst());
   }
 
   public GroupDefinitionResponse processUpdateGroupDefinition(
