@@ -47,4 +47,7 @@ public class OptimizationRuleUIResponse implements Serializable {
 
   @Schema(description = "List of the constraints.")
   private List<AllConstraintUIDto> constraints;
+
+  @Schema(description = "Reference to the group.")
+  private String groupId;
 }
