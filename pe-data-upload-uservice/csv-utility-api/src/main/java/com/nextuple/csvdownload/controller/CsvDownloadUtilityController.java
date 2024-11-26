@@ -21,6 +21,7 @@ import com.nextuple.csvdownload.controller.docs.DownloadLogsDoc;
 import com.nextuple.csvdownload.controller.docs.DownloadMarketRegionDataDoc;
 import com.nextuple.csvdownload.controller.docs.DownloadNodeAndServiceOptionsDoc;
 import com.nextuple.csvdownload.controller.docs.DownloadNodeCarrierServiceAndServiceOptionDoc;
+import com.nextuple.csvdownload.controller.docs.DownloadNodeCarrierServicePickupCalendar;
 import com.nextuple.csvdownload.controller.docs.DownloadNodeDataCSVDoc;
 import com.nextuple.csvdownload.controller.docs.DownloadProcessingTimeBufferDoc;
 import com.nextuple.csvdownload.controller.docs.DownloadTransitBufferDoc;
@@ -372,6 +373,7 @@ public class CsvDownloadUtilityController {
   }
 
   @GetMapping(value = "/org/{orgId}/download/node-carrier-pickup-calendar")
+  @DownloadNodeCarrierServicePickupCalendar
   public void downloadNodesCarrierServicePickupCalendarDataCSV(
       @NotBlank(message = "orgId can't be empty")
           @PathVariable
@@ -379,7 +381,7 @@ public class CsvDownloadUtilityController {
           String orgId,
       HttpServletResponse httpServletResponse)
       throws IOException, CommonServiceException, CarrierServiceException {
-    log.debug("Inside download nodes data as csv");
+    log.debug("Inside download nodes carrier pickup calendar data as csv");
     final var file = csvDownloadUtilityService.downloadNodesCarrierPickupCalendarByOrgId(orgId);
     try (var inputStream = new FileInputStream(file)) {
       httpServletResponse.setStatus(HttpStatus.OK.value());

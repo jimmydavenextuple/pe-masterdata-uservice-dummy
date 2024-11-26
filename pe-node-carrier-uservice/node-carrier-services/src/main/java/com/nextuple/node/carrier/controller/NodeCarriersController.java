@@ -13,6 +13,7 @@ import com.nextuple.node.carrier.controller.docs.CreateNodeCarriersDoc;
 import com.nextuple.node.carrier.controller.docs.DeleteNodeCarriersDoc;
 import com.nextuple.node.carrier.controller.docs.GetNodeCarriersDoc;
 import com.nextuple.node.carrier.controller.docs.GetNodeCarriersListByOrgIdAndNodeIdAndServiceOptionDoc;
+import com.nextuple.node.carrier.controller.docs.GetNodeCarriersListByOrgIdNodeIdCarrierServiceIdDoc;
 import com.nextuple.node.carrier.controller.docs.GetNodeCarriersListDoc;
 import com.nextuple.node.carrier.controller.docs.GetUniqueNodeCarriersServiceListDoc;
 import com.nextuple.node.carrier.controller.docs.UpdateNodeCarriersDoc;
@@ -319,6 +320,7 @@ public class NodeCarriersController {
   }
 
   @GetMapping("/org/{orgId}/nodeId/{nodeId}/carrier-service/{carrierServiceId}")
+  @GetNodeCarriersListByOrgIdNodeIdCarrierServiceIdDoc
   public ResponseEntity<BaseResponse<List<NodeCarriersResponse>>>
       getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
           @NotBlank(message = "orgId can't be empty")

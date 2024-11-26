@@ -1147,13 +1147,17 @@ public class CsvDownloadUtilityService {
               nodeCarrierServiceCalendarResponse.getNodeId(),
               nodeCarrierServiceCalendarResponse.getCarrierServiceId());
       List<String> csvData = new ArrayList<>();
-      csvData.add(nodeCarrierServiceCalendarResponse.getOrgId());
-      csvData.add(nodeCarrierServiceCalendarResponse.getNodeId());
-      csvData.add(nodeCarrierServiceCalendarResponse.getCarrierServiceId());
-      csvData.add(nodeCarrierServiceCalendarResponse.getCalendarId());
-      csvData.add(
-          !nodeCarrierResponses.isEmpty() ? nodeCarrierResponses.get(0).getLastPickupTime() : "NA");
-      writeToCSV(csvData.toArray(new String[0]), writer);
+      for (NodeCarrierResponse nodeCarrierResponse : nodeCarrierResponses) {
+        csvData.add(nodeCarrierServiceCalendarResponse.getOrgId());
+        csvData.add(nodeCarrierServiceCalendarResponse.getNodeId());
+        csvData.add(nodeCarrierServiceCalendarResponse.getCarrierServiceId());
+        csvData.add(nodeCarrierServiceCalendarResponse.getCalendarId());
+        csvData.add(
+            Objects.nonNull(nodeCarrierResponse.getLastPickupTime())
+                ? nodeCarrierResponse.getLastPickupTime()
+                : "N/A");
+        writeToCSV(csvData.toArray(new String[0]), writer);
+      }
     }
   }
 

@@ -15,6 +15,7 @@ import com.nextuple.calendar.persistence.exception.DateException;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.pe.masterdata.calendar.controller.docs.GetNodeCarrierCalendarCacheKeysDoc;
+import com.nextuple.pe.masterdata.calendar.controller.docs.GetNodeCarrierServiceCalendarDoc;
 import com.nextuple.pe.masterdata.calendar.controller.docs.HandleCreateNodeCarrierServiceCalendarDoc;
 import com.nextuple.pe.masterdata.calendar.controller.docs.HandleGetNodeCarrierServiceCalendarDoc;
 import com.nextuple.pe.masterdata.calendar.service.NodeCarrierServiceCalendarService;
@@ -132,6 +133,7 @@ public class NodeCarrierServiceCalendarController {
   }
 
   @GetMapping("org/{orgId}")
+  @GetNodeCarrierServiceCalendarDoc
   public ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>>
       getAllNodeCarrierServiceCalendarsByOrgId(
           @NotBlank(message = "orgId can't be empty")
