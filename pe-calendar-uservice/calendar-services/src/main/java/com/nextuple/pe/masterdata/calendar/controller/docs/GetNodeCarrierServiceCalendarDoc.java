@@ -34,13 +34,16 @@ import java.lang.annotation.Target;
                   name =
                       "A 500 error code indicates that there was some error on the server while processing the request.",
                   value =
-                      "{\n"
-                          + "    \"success\": false,\n"
-                          + "    \"timestamp\": \"1670589273234\",\n"
-                          + "    \"payload\": {\n"
-                          + "        \"type\": \"ERROR\",\n"
-                          + "        \"code\": 2\n"
-                          + "    }\n"
-                          + "}")
+                      """
+                                  {
+                                    "success": false,
+                                    "requestId": "75d5537d-60a6-4a2c-999f-07e68d8a36d4",
+                                    "timestamp": 1698040474473,
+                                    "payload": {
+                                      "type": "ERROR",
+                                      "code": 2
+                                    }
+                                  }
+                                  """)
             }))
 public @interface GetNodeCarrierServiceCalendarDoc {}

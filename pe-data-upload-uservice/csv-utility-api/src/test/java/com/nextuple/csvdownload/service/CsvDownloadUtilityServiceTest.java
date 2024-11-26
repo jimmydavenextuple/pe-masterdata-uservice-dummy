@@ -521,6 +521,9 @@ class CsvDownloadUtilityServiceTest {
     ReflectionTestUtils.setField(csvDownloadUtilityService, "noOfRecordsPerPage", 200);
     when(calenderResponseService.getNodeCarrierServiceCalender(any()))
         .thenReturn(testUtil.getNodeCarrierServiceCalendarResponse());
+    when(nodeCarrierResponseService.getNodeCarrierResponseByOrgIdNodeIdAndCarrierServiceId(
+            any(), any(), any()))
+        .thenReturn(testUtil.getNodeCarrierResponseList());
     File file =
         csvDownloadUtilityService.downloadNodesCarrierPickupCalendarByOrgId(TestUtil.ORG_ID);
     verify(calenderResponseService, times(1)).getNodeCarrierServiceCalender(any());
