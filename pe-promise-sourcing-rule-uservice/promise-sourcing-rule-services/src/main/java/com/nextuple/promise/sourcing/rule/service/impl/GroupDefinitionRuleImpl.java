@@ -9,17 +9,30 @@ package com.nextuple.promise.sourcing.rule.service.impl;
 
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.services.RulesRetrievalService;
-import com.nextuple.promise.sourcing.rule.persistence.domain.RulesConfigurationDomainDto;
+import com.nextuple.promise.sourcing.rule.persistence.domain.GroupDefinitionDomainDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 @RequiredArgsConstructor
-public class RuleConfigImpl extends RulesRetrievalService<RulesConfigurationDomainDto> {
+public class GroupDefinitionRuleImpl extends RulesRetrievalService<GroupDefinitionDomainDto> {
   @Override
   public String getRule(
-      RulesConfigurationDomainDto ruleInfo,
+      GroupDefinitionDomainDto ruleInfo,
       SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse) {
-    return ruleInfo.getRule();
+    String rule = ruleInfo.getReqAttributesValue();
+    if (StringUtils.hasLength(ruleInfo.getOptionalAttributesValue()))
+      rule = rule.concat(":").concat(ruleInfo.getOptionalAttributesValue());
+    else if (StringUtils.hasLength(sourcingAttributesDefinitionResponse.getOptAttributes())
+        && sourcingAttributesDefinitionResponse.getOptAttributes().split(",").length > 0)
+      rule =
+          String.join(
+              "",
+              rule,
+              ":"
+                  .repeat(
+                      sourcingAttributesDefinitionResponse.getOptAttributes().split(",").length));
+    return rule;
   }
 }

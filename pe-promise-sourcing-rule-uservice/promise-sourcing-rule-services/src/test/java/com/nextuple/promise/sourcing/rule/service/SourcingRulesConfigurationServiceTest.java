@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -26,6 +27,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.promise.sourcing.rule.TestUtil;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionStatus;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchSourcingRulesRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.RulesConfigurationRequest;
@@ -40,6 +42,8 @@ import com.nextuple.promise.sourcing.rule.api.domain.pojo.SourcingAttributeValue
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.SourcingRuleDetails;
 import com.nextuple.promise.sourcing.rule.persistence.domain.*;
 import com.nextuple.promise.sourcing.rule.persistence.service.*;
+import com.nextuple.promise.sourcing.rule.service.impl.RuleRetrievalFactory;
+import com.nextuple.promise.sourcing.rule.service.impl.SourcingRuleConfigurationImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -67,6 +71,8 @@ class SourcingRulesConfigurationServiceTest {
   @Mock private SourcingAttributesDefinitionService sourcingAttributesDefinitionService;
   @Mock private SourcingRuleDetailsPersistenceService sourcingRuleDetailsPersistenceService;
   @Mock private AttributeValuesPersistenceService attributeValuesPersistenceService;
+  @Mock private SourcingRuleConfigurationImpl ruleRetrievalService;
+  @Mock private RuleRetrievalFactory ruleRetrievalFactory;
   @InjectMocks private TestUtil testUtil;
 
   @BeforeEach
@@ -79,9 +85,9 @@ class SourcingRulesConfigurationServiceTest {
     RulesConfigurationRequest rulesConfigurationRequest = testUtil.getRulesConfigurationRequest();
 
     when(sourcingRulesConfigurationPersistenceService
-            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
                 anyString(), anyLong(), anyString()))
-        .thenReturn(new ArrayList<>());
+        .thenReturn(Optional.empty());
     when(sourcingAttributesDefinitionPersistenceService
             .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(
@@ -111,7 +117,7 @@ class SourcingRulesConfigurationServiceTest {
         sourcingRuleDetails.getSourcingAttributesDefinitionId());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
-        .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+        .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
             anyString(), anyLong(), anyString());
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
@@ -126,9 +132,9 @@ class SourcingRulesConfigurationServiceTest {
     RulesConfigurationRequest rulesConfigurationRequest = testUtil.getRulesConfigurationRequest();
 
     when(sourcingRulesConfigurationPersistenceService
-            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
                 anyString(), anyLong(), anyString()))
-        .thenReturn(List.of(testUtil.getSourcingRulesEntity()));
+        .thenReturn(Optional.of(testUtil.getSourcingRulesEntity()));
     when(nodeGroupPersistenceService.fetchNodeGroupById(anyLong()))
         .thenReturn(Optional.of(testUtil.getNodeGroupEntity()));
     when(nodePriorityPersistenceService.fetchNodePriorityListByOrgIdAndNodeGroupId(
@@ -146,7 +152,7 @@ class SourcingRulesConfigurationServiceTest {
         sourcingRuleDetails.getSourcingRuleName());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
-        .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+        .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
             anyString(), anyLong(), anyString());
     verify(nodePriorityPersistenceService, times(1))
         .fetchNodePriorityListByOrgIdAndNodeGroupId(anyString(), anyLong());
@@ -191,9 +197,10 @@ class SourcingRulesConfigurationServiceTest {
             () ->
                 sourcingRulesConfigurationService.processConfigureSourcingRule(
                     rulesConfigurationRequest));
-    assertEquals(
-        "Invalid sourcing attributes definition for SOURCING_RULE scope/ Sourcing  attributes definition exists but not in ACTIVE status",
-        ex.getMessage());
+    Assertions.assertTrue(
+        ex.getMessage()
+            .startsWith(
+                "Invalid attributes definition for given scope: SOURCING_RULE / Sourcing attributes definition exists but not in ACTIVE status"));
 
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
@@ -220,9 +227,10 @@ class SourcingRulesConfigurationServiceTest {
             () ->
                 sourcingRulesConfigurationService.processConfigureSourcingRule(
                     rulesConfigurationRequest));
-    assertEquals(
-        "Invalid sourcing attributes definition for SOURCING_RULE scope/ Sourcing  attributes definition exists but not in ACTIVE status",
-        ex.getMessage());
+    assertTrue(
+        ex.getMessage()
+            .startsWith(
+                "Invalid attributes definition for given scope: SOURCING_RULE / Sourcing attributes definition exists but not in ACTIVE status"));
 
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
@@ -319,11 +327,21 @@ class SourcingRulesConfigurationServiceTest {
             anyString(), anyLong()))
         .thenReturn(List.of(testUtil.getNodePriorityEntity()));
     when(sourcingRulesConfigurationPersistenceService
-            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
                 anyString(), anyLong(), anyString()))
-        .thenReturn(List.of(testUtil.getSourcingRulesEntity()));
+        .thenReturn(Optional.of(testUtil.getSourcingRulesEntity()));
+    when(sourcingRulesConfigurationPersistenceService.saveSourcingRule(any()))
+        .thenReturn(testUtil.getSourcingRulesEntity());
     when(sourcingRuleDetailsPersistenceService.fetchBySourcingRuleId(anyString(), anyLong()))
         .thenReturn(List.of(testUtil.getSourcingRuleDetailsEntity()));
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionDomainDto =
+        testUtil.getSourcingRuleAttributesDefinitionDomainDto("R1:R2", "O1:O2");
+    sourcingAttributesDefinitionDomainDto.setScope(
+        SourcingAttributesDefinitionScopeEnum.SOURCING_RULE);
+    sourcingAttributesDefinitionDomainDto.setStatus(SourcingAttributesDefinitionStatus.ACTIVE);
+    when(sourcingAttributesDefinitionPersistenceService
+            .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(any(), any()))
+        .thenReturn(Optional.of(sourcingAttributesDefinitionDomainDto));
     Exception ex =
         assertThrows(
             CommonServiceException.class,
@@ -392,105 +410,8 @@ class SourcingRulesConfigurationServiceTest {
                 sourcingRulesConfigurationService.processConfigureSourcingRule(
                     rulesConfigurationRequest));
     assertEquals(
-        "Can't add the sourcing rule as sourcing rule contains blank values", ex.getMessage());
-    verify(sourcingAttributesDefinitionPersistenceService, times(1))
-        .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
-  }
-
-  @Test
-  void processConfigureSourcingRuleExceptionTest10() throws PromiseEngineException {
-    RulesConfigurationRequest rulesConfigurationRequest = testUtil.getRulesConfigurationRequest();
-    rulesConfigurationRequest.setSourcingRule(":2:3");
-
-    when(sourcingRulesConfigurationPersistenceService.getSourcingRuleByOrgIdAndSourcingRule(
-            anyString(), anyString()))
-        .thenReturn(Optional.empty());
-    when(sourcingAttributesDefinitionPersistenceService
-            .getSourcingRuleAttributesDefinitionEntityById(anyLong()))
-        .thenReturn(
-            Optional.ofNullable(
-                testUtil.getSourcingRuleAttributesDefinitionEntity(
-                    SourcingAttributesDefinitionStatus.ACTIVE)));
-    when(nodeGroupPersistenceService.fetchNodeGroupById(anyLong()))
-        .thenReturn(Optional.of(testUtil.getNodeGroupEntity()));
-    when(nodePriorityPersistenceService.fetchNodePriorityListByOrgIdAndNodeGroupId(
-            anyString(), anyLong()))
-        .thenReturn(List.of(testUtil.getNodePriorityEntity()));
-
-    Exception ex =
-        assertThrows(
-            CommonServiceException.class,
-            () ->
-                sourcingRulesConfigurationService.processConfigureSourcingRule(
-                    rulesConfigurationRequest));
-    assertEquals(
-        "Can't add the sourcing rule as sourcing rule contains blank values", ex.getMessage());
-
-    verify(sourcingAttributesDefinitionPersistenceService, times(1))
-        .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
-  }
-
-  @Test
-  void processConfigureSourcingRuleExceptionTest11() throws PromiseEngineException {
-    RulesConfigurationRequest rulesConfigurationRequest = testUtil.getRulesConfigurationRequest();
-    rulesConfigurationRequest.setSourcingRule("2::3");
-
-    when(sourcingRulesConfigurationPersistenceService.getSourcingRuleByOrgIdAndSourcingRule(
-            anyString(), anyString()))
-        .thenReturn(Optional.empty());
-    when(sourcingAttributesDefinitionPersistenceService
-            .getSourcingRuleAttributesDefinitionEntityById(anyLong()))
-        .thenReturn(
-            Optional.ofNullable(
-                testUtil.getSourcingRuleAttributesDefinitionEntity(
-                    SourcingAttributesDefinitionStatus.ACTIVE)));
-    when(nodeGroupPersistenceService.fetchNodeGroupById(anyLong()))
-        .thenReturn(Optional.of(testUtil.getNodeGroupEntity()));
-    when(nodePriorityPersistenceService.fetchNodePriorityListByOrgIdAndNodeGroupId(
-            anyString(), anyLong()))
-        .thenReturn(List.of(testUtil.getNodePriorityEntity()));
-
-    Exception ex =
-        assertThrows(
-            CommonServiceException.class,
-            () ->
-                sourcingRulesConfigurationService.processConfigureSourcingRule(
-                    rulesConfigurationRequest));
-    assertEquals(
-        "Can't add the sourcing rule as sourcing rule contains blank values", ex.getMessage());
-    verify(sourcingAttributesDefinitionPersistenceService, times(1))
-        .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
-  }
-
-  @Test
-  void processConfigureSourcingRuleExceptionTest12() throws PromiseEngineException {
-    RulesConfigurationRequest rulesConfigurationRequest = testUtil.getRulesConfigurationRequest();
-    rulesConfigurationRequest.setSourcingRule("2:3:");
-
-    when(sourcingRulesConfigurationPersistenceService.getSourcingRuleByOrgIdAndSourcingRule(
-            anyString(), anyString()))
-        .thenReturn(Optional.empty());
-    when(sourcingAttributesDefinitionPersistenceService
-            .getSourcingRuleAttributesDefinitionEntityById(anyLong()))
-        .thenReturn(
-            Optional.ofNullable(
-                testUtil.getSourcingRuleAttributesDefinitionEntity(
-                    SourcingAttributesDefinitionStatus.ACTIVE)));
-    when(nodeGroupPersistenceService.fetchNodeGroupById(anyLong()))
-        .thenReturn(Optional.of(testUtil.getNodeGroupEntity()));
-    when(nodePriorityPersistenceService.fetchNodePriorityListByOrgIdAndNodeGroupId(
-            anyString(), anyLong()))
-        .thenReturn(List.of(testUtil.getNodePriorityEntity()));
-
-    Exception ex =
-        assertThrows(
-            CommonServiceException.class,
-            () ->
-                sourcingRulesConfigurationService.processConfigureSourcingRule(
-                    rulesConfigurationRequest));
-    assertEquals(
-        "Can't add the sourcing rule as sourcing rule contains blank values", ex.getMessage());
-
+        "Can't add the sourcing rule as length of attributes is more than optional and required attributes combined",
+        ex.getMessage());
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
   }
@@ -569,9 +490,9 @@ class SourcingRulesConfigurationServiceTest {
             anyString(), anyLong()))
         .thenReturn(List.of(nodePriorityEntity));
     when(sourcingRulesConfigurationPersistenceService
-            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
                 anyString(), anyLong(), anyString()))
-        .thenReturn(List.of(testUtil.getSourcingRulesEntity()));
+        .thenReturn(Optional.of(testUtil.getSourcingRulesEntity()));
 
     Exception ex =
         assertThrows(
@@ -586,7 +507,7 @@ class SourcingRulesConfigurationServiceTest {
     assertEquals(errorMessage, ex.getMessage());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
-        .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+        .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
             anyString(), anyLong(), anyString());
   }
 
@@ -647,9 +568,9 @@ class SourcingRulesConfigurationServiceTest {
         .thenReturn(List.of(existingMockResponse3, existingMockResponse4))
         .thenReturn(List.of(testUtil.getNodePriorityEntity()));
     when(sourcingRulesConfigurationPersistenceService
-            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
                 anyString(), anyLong(), anyString()))
-        .thenReturn(List.of(testUtil.getSourcingRulesEntity()));
+        .thenReturn(Optional.of(testUtil.getSourcingRulesEntity()));
     when(sourcingRulesConfigurationPersistenceService.getSourcingRuleByOrgIdAndSourcingRule(
             any(), any()))
         .thenReturn(Optional.of(List.of(testUtil.getSourcingRulesEntity())));
@@ -676,7 +597,7 @@ class SourcingRulesConfigurationServiceTest {
         sourcingRuleDetails.getSourcingAttributesDefinitionId());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
-        .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+        .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
             anyString(), anyLong(), anyString());
     verify(nodePriorityPersistenceService, times(1))
         .fetchNodePriorityListByOrgIdAndNodeGroupId(anyString(), anyLong());
@@ -823,7 +744,7 @@ class SourcingRulesConfigurationServiceTest {
         .thenReturn(Optional.of(sourcingAttributesDefinitionEntity));
     when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
         .thenReturn(Optional.of(testUtil.getSourcingAttributeEntity()));
-
+    when(ruleRetrievalFactory.getRuleRetrievalService(any())).thenReturn(ruleRetrievalService);
     FetchSourcingRulesResponse fetchSourcingRulesResponse =
         sourcingRulesConfigurationService.processGetSourcingRules(fetchSourcingRulesRequest);
     assertEquals(1, fetchSourcingRulesResponse.getSourcingRulesInfo().size());
@@ -884,12 +805,14 @@ class SourcingRulesConfigurationServiceTest {
         .thenReturn(Optional.of(sourcingAttributesDefinitionEntity));
     when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
         .thenReturn(Optional.of(testUtil.getSourcingAttributeEntity()));
-
+    when(ruleRetrievalService.filterAllMatchingRulesByScoring(any(), any(), any(), anyInt(), any()))
+        .thenReturn(sourcingRulesConfigurationEntityList);
+    when(ruleRetrievalFactory.getRuleRetrievalService(any())).thenReturn(ruleRetrievalService);
     FetchSourcingRulesResponse fetchSourcingRulesResponse =
         sourcingRulesConfigurationService.processGetSourcingRules(fetchSourcingRulesRequest);
     assertEquals(1, fetchSourcingRulesResponse.getSourcingRulesInfo().size());
     assertEquals(
-        "V1:V2:V3", fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getSourcingRule());
+        "V1:V2", fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getSourcingRule());
     assertEquals(
         "sourcingRule1",
         fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getSourcingRuleName());
@@ -946,15 +869,14 @@ class SourcingRulesConfigurationServiceTest {
         .thenReturn(Optional.of(sourcingAttributesDefinitionEntity));
     when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
         .thenReturn(Optional.of(testUtil.getSourcingAttributeEntity()));
-
+    when(ruleRetrievalService.filterAllMatchingRulesByScoring(any(), any(), any(), anyInt(), any()))
+        .thenReturn(sourcingRulesConfigurationEntityList);
+    when(ruleRetrievalFactory.getRuleRetrievalService(any())).thenReturn(ruleRetrievalService);
     FetchSourcingRulesResponse fetchSourcingRulesResponse =
         sourcingRulesConfigurationService.processGetSourcingRules(fetchSourcingRulesRequest);
     assertEquals(1, fetchSourcingRulesResponse.getSourcingRulesInfo().size());
     assertEquals(
-        "V1:V2:V3", fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getSourcingRule());
-    assertEquals(
-        "Conflicting rules found but still giving response",
-        fetchSourcingRulesResponse.getMessage());
+        "V1:V2:V4", fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getSourcingRule());
     assertEquals(
         "sourcingRule1",
         fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getSourcingRuleName());
@@ -1098,51 +1020,6 @@ class SourcingRulesConfigurationServiceTest {
     assertEquals("Default sourcing rules not configured", ex.getMessage());
 
     verify(sourcingRulesConfigurationPersistenceService, times(2))
-        .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
-            anyString(), anyLong(), anyString());
-    verify(sourcingAttributesDefinitionPersistenceService, times(1))
-        .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
-  }
-
-  @Test
-  void processFetchSourcingRulesExceptionTest2() throws PromiseEngineException {
-    SourcingAttributeValuesInfo sourcingAttributeValuesInfo = new SourcingAttributeValuesInfo();
-    sourcingAttributeValuesInfo.setRequiredAttributesValue(TestUtil.SOURCING_RULE);
-    sourcingAttributeValuesInfo.setOptionalAttributesValue(TestUtil.SOURCING_RULE);
-
-    FetchSourcingRulesRequest fetchSourcingRulesRequest =
-        testUtil.fetchSourcingRulesRequest(sourcingAttributeValuesInfo);
-
-    List<SourcingRulesConfigurationDomainDto> sourcingRulesConfigurationEntityList =
-        new ArrayList<>();
-    SourcingRulesConfigurationDomainDto sourcingRulesConfigurationEntity1 =
-        testUtil.getSourcingRulesEntity();
-    sourcingRulesConfigurationEntity1.setSourcingRule("V1:V2:V4");
-    sourcingRulesConfigurationEntityList.add(sourcingRulesConfigurationEntity1);
-    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionEntity =
-        testUtil.getSourcingRuleAttributesDefinitionEntity(
-            SourcingAttributesDefinitionStatus.ACTIVE);
-    sourcingAttributesDefinitionEntity.setOptAttributes("3,4");
-
-    when(sourcingAttributesDefinitionPersistenceService
-            .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString()))
-        .thenReturn(Optional.of(sourcingAttributesDefinitionEntity));
-    when(sourcingRulesConfigurationPersistenceService
-            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
-                anyString(), anyLong(), anyString()))
-        .thenReturn(sourcingRulesConfigurationEntityList);
-
-    Exception ex =
-        assertThrows(
-            Exception.class,
-            () -> {
-              sourcingRulesConfigurationService.processGetSourcingRules(fetchSourcingRulesRequest);
-            });
-
-    assertEquals(
-        "requiredAttributesValue and optionalAttributesValue cannot be the same", ex.getMessage());
-
-    verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
             anyString(), anyLong(), anyString());
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
@@ -1968,9 +1845,9 @@ class SourcingRulesConfigurationServiceTest {
     when(sourcingRuleDetailsPersistenceService.saveSourcingNodes(any()))
         .thenReturn(testUtil.getSourcingRuleDetailsEntity());
     when(sourcingRulesConfigurationPersistenceService
-            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
                 anyString(), anyLong(), anyString()))
-        .thenReturn(List.of(testUtil.getSourcingRulesEntity()));
+        .thenReturn(Optional.of(testUtil.getSourcingRulesEntity()));
     AllSourcingRulesResponse createRequest = testUtil.getCreateSourcingRuleRequest();
     AllSourcingRulesResponse response =
         sourcingRulesConfigurationService.createSourcingRule(TestUtil.ORG_ID, createRequest);
@@ -2101,9 +1978,9 @@ class SourcingRulesConfigurationServiceTest {
     when(sourcingRuleDetailsPersistenceService.saveSourcingNodes(any()))
         .thenReturn(testUtil.getSourcingRuleDetailsEntity());
     when(sourcingRulesConfigurationPersistenceService
-            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
                 anyString(), anyLong(), anyString()))
-        .thenReturn(List.of(testUtil.getSourcingRulesEntity()));
+        .thenReturn(Optional.of(testUtil.getSourcingRulesEntity()));
     AllSourcingRulesResponse createRequest = testUtil.getCreateSourcingRuleRequest();
     createRequest.getOptionalAttributes().get(0).setAttributeValue(null);
     AllSourcingRulesResponse response =
@@ -2154,9 +2031,9 @@ class SourcingRulesConfigurationServiceTest {
     when(sourcingRuleDetailsPersistenceService.saveSourcingNodes(any()))
         .thenReturn(testUtil.getSourcingRuleDetailsEntity());
     when(sourcingRulesConfigurationPersistenceService
-            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
                 anyString(), anyLong(), anyString()))
-        .thenReturn(List.of(testUtil.getSourcingRulesEntity()));
+        .thenReturn(Optional.of(testUtil.getSourcingRulesEntity()));
     AllSourcingRulesResponse createRequest = testUtil.getCreateSourcingRuleRequest();
     createRequest.setOptionalAttributes(new ArrayList<>());
     AllSourcingRulesResponse response =
@@ -2201,9 +2078,9 @@ class SourcingRulesConfigurationServiceTest {
     when(sourcingRuleDetailsPersistenceService.saveSourcingNodes(any()))
         .thenReturn(testUtil.getSourcingRuleDetailsEntity());
     when(sourcingRulesConfigurationPersistenceService
-            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
                 anyString(), anyLong(), anyString()))
-        .thenReturn(List.of(testUtil.getSourcingRulesEntity()));
+        .thenReturn(Optional.of(testUtil.getSourcingRulesEntity()));
 
     AllSourcingRulesResponse createRequest = testUtil.getCreateSourcingRuleRequest();
     createRequest.getOptionalAttributes().get(0).setAttributeValue(null);
