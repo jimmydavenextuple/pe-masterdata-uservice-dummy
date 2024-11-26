@@ -8,6 +8,7 @@
 package com.nextuple.masterdata.config;
 
 import com.nextuple.dataupload.configuration.KafkaStringProperties;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.SaslConfigs;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -26,7 +27,9 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaOperations;
+import org.springframework.kafka.core.MicrometerConsumerListener;
 import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
@@ -67,6 +70,8 @@ public class KafkaConsumerConfigs {
 
   private final KafkaStringProperties kafkaStringProperties;
 
+  @Autowired private final MeterRegistry meterRegistry;
+
   @Primary
   @Bean("jsonDeserializerProperties")
   @ConfigurationProperties(prefix = "spring.kafka.consumer")
@@ -80,8 +85,8 @@ public class KafkaConsumerConfigs {
     return this.kafkaProperties.buildConsumerProperties();
   }
 
-  @NotNull
-  private HashMap<String, Object> getItemConsumerProps() {
+  @Bean
+  public ConsumerFactory<String, Object> itemConsumerFactory() {
     HashMap<String, Object> prop = new HashMap<>(itemDeserializerProperties());
     Map<String, Object> properties = (Map<String, Object>) prop.get("properties");
     prop.put(
@@ -89,18 +94,30 @@ public class KafkaConsumerConfigs {
         properties.get("spring-deserializer-value-delegate-class"));
     prop.put(JsonDeserializer.TRUSTED_PACKAGES, properties.get("spring-json-trusted-packages"));
     prop.put(JsonDeserializer.TYPE_MAPPINGS, properties.get("spring-json-type-mapping"));
-    return prop;
+    DefaultKafkaConsumerFactory<String, Object> itemConsumerFactory =
+        new DefaultKafkaConsumerFactory<>(prop);
+    itemConsumerFactory.addListener(new MicrometerConsumerListener<>(meterRegistry));
+    return itemConsumerFactory;
+  }
+
+  @Bean
+  @Primary
+  public ConsumerFactory<Object, Object> jsonConsumerFactory() {
+    HashMap<String, Object> prop = new HashMap<>(jsonDeserializerProperties());
+    DefaultKafkaConsumerFactory<Object, Object> jsonConsumerFactory =
+        new DefaultKafkaConsumerFactory<>(prop);
+    jsonConsumerFactory.addListener(new MicrometerConsumerListener<>(meterRegistry));
+    return jsonConsumerFactory;
   }
 
   @Primary
   @Bean(name = "JsonDeserializerConsumer")
   public ConcurrentKafkaListenerContainerFactory<Object, Object> jsonKafkaContainerListenerFactory(
-      ConsumerFactory<Object, Object> consumerFactory,
+      ConsumerFactory<Object, Object> jsonconsumerFactory,
       KafkaOperations<Object, Object> kafkaOperations) {
     ConcurrentKafkaListenerContainerFactory<Object, Object> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
-    consumerFactory.updateConfigs(jsonDeserializerProperties());
-    factory.setConsumerFactory(consumerFactory);
+    factory.setConsumerFactory(jsonConsumerFactory());
     return factory;
   }
 
@@ -112,8 +129,7 @@ public class KafkaConsumerConfigs {
 
     ConcurrentKafkaListenerContainerFactory<String, Object> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
-    consumerFactory.updateConfigs(getItemConsumerProps());
-    factory.setConsumerFactory(consumerFactory);
+    factory.setConsumerFactory(itemConsumerFactory());
     factory.setCommonErrorHandler(kafkaErrorHandler(kafkaOperations));
     return factory;
   }
@@ -124,8 +140,7 @@ public class KafkaConsumerConfigs {
       KafkaOperations<Object, Object> kafkaOperations) {
     ConcurrentKafkaListenerContainerFactory<Object, Object> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
-    consumerFactory.updateConfigs(getStringConsumerProps());
-    factory.setConsumerFactory(consumerFactory);
+    factory.setConsumerFactory(stringConsumerFactory());
     factory.setCommonErrorHandler(errorHandler(kafkaOperations));
     return factory;
   }
@@ -138,8 +153,8 @@ public class KafkaConsumerConfigs {
         new FixedBackOff(0L, maxRetryCount));
   }
 
-  @NotNull
-  private HashMap<String, Object> getStringConsumerProps() {
+  @Bean
+  public ConsumerFactory<Object, Object> stringConsumerFactory() {
     HashMap<String, Object> prop = new HashMap<>();
     prop.put(
         ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaStringProperties.getKeyDeserializer());
@@ -162,7 +177,10 @@ public class KafkaConsumerConfigs {
     prop.put(JsonDeserializer.TRUSTED_PACKAGES, kafkaStringProperties.getTrustedPackages());
     prop.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, kafkaStringProperties.getEnableAutoCommit());
     prop.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaStringProperties.getAutoOffsetReset());
-    return prop;
+    DefaultKafkaConsumerFactory<Object, Object> stringConsumerFactory =
+        new DefaultKafkaConsumerFactory<>(prop);
+    stringConsumerFactory.addListener(new MicrometerConsumerListener<>(meterRegistry));
+    return stringConsumerFactory;
   }
 
   @Bean
