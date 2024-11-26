@@ -1553,6 +1553,16 @@ public class TestUtil {
         .build();
   }
 
+  public NodeCarrierResponse getNodeCarrierResponse2() {
+    return NodeCarrierResponse.builder()
+        .nodeId(NODE_ID)
+        .orgId(ORG_ID)
+        .carrierServiceId(CARRIER_SERVICE_ID)
+        .serviceOption(SERVICE_OPTION)
+        .lastPickupTime(null)
+        .build();
+  }
+
   public BaseResponse<List<NodeCalendarResponse>> getNodeCalendarBaseResponse() {
     return BaseResponse.builder()
         .message("Node Calendars fetched successfully")

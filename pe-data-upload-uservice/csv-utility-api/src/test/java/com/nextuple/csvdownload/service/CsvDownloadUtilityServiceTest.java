@@ -533,6 +533,24 @@ class CsvDownloadUtilityServiceTest {
   }
 
   @Test
+  @Description("Test Download Nodes carrier pickup calendar when pickup time is null")
+  void downloadNodesCarrierPickupCalendarByOrgIdWhenPickUpTimeIsNull()
+      throws IOException, CarrierServiceException, CommonServiceException {
+    ReflectionTestUtils.setField(csvDownloadUtilityService, "noOfRecordsPerPage", 200);
+    when(calenderResponseService.getNodeCarrierServiceCalender(any()))
+        .thenReturn(testUtil.getNodeCarrierServiceCalendarResponse());
+    when(nodeCarrierResponseService.getNodeCarrierResponseByOrgIdNodeIdAndCarrierServiceId(
+            any(), any(), any()))
+        .thenReturn(List.of(testUtil.getNodeCarrierResponse2()));
+    File file =
+        csvDownloadUtilityService.downloadNodesCarrierPickupCalendarByOrgId(TestUtil.ORG_ID);
+    verify(calenderResponseService, times(1)).getNodeCarrierServiceCalender(any());
+    assertNotNull(file);
+    assertNotNull(file.getName());
+    assertTrue(file.getName().startsWith("download-nodes-carrier-pickup-calendar"));
+  }
+
+  @Test
   void downloadNodeCarrierServiceAndServiceOptionsDataCSVEmptyPagePayloadData() throws IOException {
     ReflectionTestUtils.setField(csvDownloadUtilityService, "noOfRecordsPerPage", 200);
     when(dataUploadFeign.getListOfNodeCarrierServiceAndServiceOptionDetails(
