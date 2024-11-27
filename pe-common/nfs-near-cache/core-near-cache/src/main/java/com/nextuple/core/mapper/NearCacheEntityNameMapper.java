@@ -12,6 +12,7 @@ import static com.nextuple.core.constants.NearCacheConstants.COST_FACTOR_ENTITY_
 import static com.nextuple.core.constants.NearCacheConstants.COST_ITINERARY_AND_FACTORS_ENTITY_NAME;
 import static com.nextuple.core.constants.NearCacheConstants.COST_VALUE_ENTITY_NAME;
 import static com.nextuple.core.constants.NearCacheConstants.GROUP_DEFINITION_ENTITY_NAME;
+import static com.nextuple.core.constants.NearCacheConstants.GROUP_DEFINITION_RULE_ENTITY_NAME;
 import static com.nextuple.core.constants.NearCacheConstants.HOLIDAY_CUTOFF_ENTITY_NAME;
 import static com.nextuple.core.constants.NearCacheConstants.NODE_CALENDAR_ENTITY_NAME;
 import static com.nextuple.core.constants.NearCacheConstants.NODE_CARRIERS_ENTITY_NAME;
@@ -83,7 +84,9 @@ public class NearCacheEntityNameMapper {
           List.of(SOURCING_ATTRIBUTES_DEFINITION_ENTITY_NAME));
       registry.put("SourcingRuleDetailsEntity", List.of(SOURCING_RULE_DETAILS_ENTITY_NAME));
       registry.put("SourcingAttributeEntity", List.of(SOURCING_ATTRIBUTE_ENTITY_NAME));
-      registry.put("GroupDefinitionEntity", List.of(GROUP_DEFINITION_ENTITY_NAME));
+      registry.put(
+          "GroupDefinitionEntity",
+          List.of(GROUP_DEFINITION_ENTITY_NAME, GROUP_DEFINITION_RULE_ENTITY_NAME));
       registry.put("NodeCarrierSelectionEntity", List.of(NODE_CARRIER_SELECTION_ENTITY_NAME));
       registry.put(
           "NodePriorityEntity", List.of(SOURCING_RULE_DETAILS_ENTITY_NAME, NODE_GROUP_ENTITY_NAME));

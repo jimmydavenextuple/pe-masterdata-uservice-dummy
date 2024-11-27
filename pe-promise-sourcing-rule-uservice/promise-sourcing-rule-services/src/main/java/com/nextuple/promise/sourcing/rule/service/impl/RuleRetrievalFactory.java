@@ -7,19 +7,22 @@
 
 package com.nextuple.promise.sourcing.rule.service.impl;
 
-import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.services.RulesRetrievalService;
-import com.nextuple.promise.sourcing.rule.persistence.domain.RulesConfigurationDomainDto;
+import com.nextuple.promise.sourcing.rule.persistence.domain.GroupDefinitionDomainDto;
+import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingRulesConfigurationDomainDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RuleConfigImpl extends RulesRetrievalService<RulesConfigurationDomainDto> {
-  @Override
-  public String getRule(
-      RulesConfigurationDomainDto ruleInfo,
-      SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse) {
-    return ruleInfo.getRule();
+public class RuleRetrievalFactory {
+  private final SourcingRuleConfigurationImpl sourcingRuleRetrieval;
+  private final RuleConfigImpl ruleRetrieval;
+  private final GroupDefinitionRuleImpl groupDefinitionRuleRetrieval;
+
+  public RulesRetrievalService getRuleRetrievalService(Object obj) {
+    if (obj instanceof SourcingRulesConfigurationDomainDto) return sourcingRuleRetrieval;
+    if (obj instanceof GroupDefinitionDomainDto) return groupDefinitionRuleRetrieval;
+    return ruleRetrieval;
   }
 }

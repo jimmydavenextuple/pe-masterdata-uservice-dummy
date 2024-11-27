@@ -653,6 +653,7 @@ class NamedOptimizationStrategyServiceTest {
     SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
         testUtil.getSourcingRuleAttributesDefinitionResponse(
             SourcingAttributesDefinitionStatus.ACTIVE);
+    sourcingAttributesDefinitionResponse.setOptAttributes("3,4");
 
     SourcingAttributeResponse sourcingAttributeResponse = testUtil.getSourcingAttributeResponse();
 
@@ -685,14 +686,19 @@ class NamedOptimizationStrategyServiceTest {
             .getReqAttributesValue()
             .contains(
                 optimizationRuleUIResponse.getRequiredAttributes().get(0).getAttributeValue()));
+    assertTrue(
+        groupDefinitionResponse
+            .getOptionalAttributesValue()
+            .contains(
+                optimizationRuleUIResponse.getOptionalAttributes().get(0).getAttributeValue()));
 
     verify(groupDefinitionService, times(1))
         .processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString());
     verify(sourcingAttributesDefinitionService, times(1))
         .processGetSourcingAttributesDefinitionByIdandOrgId(anyLong(), anyString());
-    verify(sourcingAttributeService, times(2))
+    verify(sourcingAttributeService, times(4))
         .getSourcingAttributeByIdAndOrgId(anyLong(), anyString());
-    verify(sourcingConstraintPersistenceService, times(2))
+    verify(sourcingConstraintPersistenceService, times(4))
         .fetchByOrgIdAndGroupId(anyString(), anyString());
   }
 
