@@ -585,6 +585,17 @@ public class NamedOptimizationStrategyService {
   public OptimizationRuleUIResponse getOptimizationRuleByOrgIdAndNamedOptimizationStrategyResponse(
       String orgId, NamedOptimizationStrategyResponse namedOptimizationStrategyResponse)
       throws PromiseEngineException, CommonServiceException {
+    // For a default optimization strategy, don't fetch group definition and sourcing rule
+    // definition
+    if (DEFAULT_GROUP_ID.equals(namedOptimizationStrategyResponse.getGroupId())) {
+      return OptimizationRuleUIResponse.builder()
+          .optimizationRuleId(namedOptimizationStrategyResponse.getId())
+          .orgId(namedOptimizationStrategyResponse.getOrgId())
+          .optimizationRuleName(namedOptimizationStrategyResponse.getOptimizationStrategyName())
+          .strategy(namedOptimizationStrategyResponse.getOptimizationStrategyDetails())
+          .groupId(namedOptimizationStrategyResponse.getGroupId())
+          .build();
+    }
 
     GroupDefinitionResponse groupDefinitionResponse =
         groupDefinitionService.processGetGroupDefinitionByIdAndOrgId(
@@ -745,6 +756,8 @@ public class NamedOptimizationStrategyService {
               .collect(Collectors.toList()));
     }
 
+    // Also fetch default optimization strategy
+    groupIds.add(DEFAULT_GROUP_ID);
     Page<NamedOptimizationStrategyResponse> namedOptimizationStrategyResponses =
         processGetOptimizationStrategyByOrgIdAndGroupIds(orgId, groupIds, pageable);
 

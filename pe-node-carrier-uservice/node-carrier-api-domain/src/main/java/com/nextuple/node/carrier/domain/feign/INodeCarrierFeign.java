@@ -56,4 +56,7 @@ public interface INodeCarrierFeign {
 
   BaseResponse<List<NodeCarrierResponse>> getAllNodeCarriersByOrgIdCarrierServiceId(
       String orgId, String carrierServiceId);
+
+  BaseResponse<List<NodeCarrierResponse>> getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+      String orgId, String nodeId, String carrierServiceId);
 }
