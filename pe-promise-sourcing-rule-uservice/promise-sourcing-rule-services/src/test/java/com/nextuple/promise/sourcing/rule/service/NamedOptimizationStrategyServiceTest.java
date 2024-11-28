@@ -751,10 +751,18 @@ class NamedOptimizationStrategyServiceTest {
 
     List<NamedOptimizationStrategyDomainDto> namedOptimizationStrategyEntityList =
         List.of(testUtil.getNamedOptimizationStrategyEntity());
+    List<NamedOptimizationStrategyDomainDto> defaultNamedOptimizationStrategyDto =
+        List.of(testUtil.getDefaultNamedOptimizationStrategyEntity());
 
     Page<NamedOptimizationStrategyDomainDto> namedOptimizationStrategyEntityPage =
         new PageImpl<>(
             namedOptimizationStrategyEntityList,
+            pageable,
+            namedOptimizationStrategyEntityList.size());
+
+    Page<NamedOptimizationStrategyDomainDto> namedOptimizationStrategyEntityPage2 =
+        new PageImpl<>(
+            defaultNamedOptimizationStrategyDto,
             pageable,
             namedOptimizationStrategyEntityList.size());
 
@@ -773,7 +781,8 @@ class NamedOptimizationStrategyServiceTest {
 
     when(namedOptimizationStrategyPersistenceService.fetchOptimizationStrategyByOrgIdAndGroupId(
             anyString(), anyString(), any()))
-        .thenReturn(namedOptimizationStrategyEntityPage);
+        .thenReturn(namedOptimizationStrategyEntityPage)
+        .thenReturn(namedOptimizationStrategyEntityPage2);
 
     GroupDefinitionResponse groupDefinitionResponse = testUtil.getGroupDefinitionResponse();
 
@@ -806,13 +815,13 @@ class NamedOptimizationStrategyServiceTest {
         namedOptimizationStrategyService.getAllOptimizationRulesByOrgId(
             TestUtil.ORG_ID, pageParams);
     assertNotNull(responsePageResponse);
-    assertEquals(1, responsePageResponse.getData().size());
+    assertEquals(2, responsePageResponse.getData().size());
     verify(sourcingAttributesDefinitionDomain, times(1))
         .fetchSourcingRuleAttributesDefinitionListByOrgIdAndStatusAndScope(
             anyString(), any(), any());
     verify(groupDefinitionPersistenceService, times(1))
         .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionId(anyString(), anyLong());
-    verify(namedOptimizationStrategyPersistenceService, times(1))
+    verify(namedOptimizationStrategyPersistenceService, times(2))
         .fetchOptimizationStrategyByOrgIdAndGroupId(anyString(), anyString(), any());
 
     verify(groupDefinitionService, times(1))
@@ -823,6 +832,78 @@ class NamedOptimizationStrategyServiceTest {
         .getSourcingAttributeByIdAndOrgId(anyLong(), anyString());
     verify(sourcingConstraintPersistenceService, times(2))
         .fetchByOrgIdAndGroupId(anyString(), anyString());
+  }
+
+  @DisplayName("Testing the functionality to fetch the default rule of an orgId.")
+  @Test
+  void getAllOptimizationRulesAndDefaultRuleByOrgIdHappyPathTest()
+      throws PromiseEngineException, CommonServiceException {
+    Pageable pageable = PageRequest.of(1, 1, Sort.by(TestUtil.SORT_BY).descending());
+    List<NamedOptimizationStrategyDomainDto> namedOptimizationStrategyEntityList =
+        List.of(testUtil.getDefaultNamedOptimizationStrategyEntity());
+    Page<NamedOptimizationStrategyDomainDto> namedOptimizationStrategyEntityPage =
+        new PageImpl<>(
+            namedOptimizationStrategyEntityList,
+            pageable,
+            namedOptimizationStrategyEntityList.size());
+
+    when(sourcingAttributesDefinitionDomain
+            .fetchSourcingRuleAttributesDefinitionListByOrgIdAndStatusAndScope(
+                anyString(), any(), any()))
+        .thenReturn(
+            List.of(
+                testUtil.getSourcingRuleAttributesDefinitionEntityForOptimization(
+                    SourcingAttributesDefinitionStatus.ACTIVE)));
+
+    when(groupDefinitionPersistenceService
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionId(
+                anyString(), anyLong()))
+        .thenReturn(List.of());
+
+    when(namedOptimizationStrategyPersistenceService.fetchOptimizationStrategyByOrgIdAndGroupId(
+            anyString(), anyString(), any()))
+        .thenReturn(namedOptimizationStrategyEntityPage);
+
+    GroupDefinitionResponse groupDefinitionResponse = testUtil.getGroupDefinitionResponse();
+
+    SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
+        testUtil.getSourcingRuleAttributesDefinitionResponse(
+            SourcingAttributesDefinitionStatus.ACTIVE);
+
+    SourcingAttributeResponse sourcingAttributeResponse = testUtil.getSourcingAttributeResponse();
+
+    when(groupDefinitionService.processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString()))
+        .thenReturn(groupDefinitionResponse);
+
+    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
+            anyLong(), anyString()))
+        .thenReturn(sourcingAttributesDefinitionResponse);
+
+    when(sourcingAttributeService.getSourcingAttributeByIdAndOrgId(anyLong(), anyString()))
+        .thenReturn(sourcingAttributeResponse);
+    when(sourcingConstraintPersistenceService.fetchByOrgIdAndGroupId(anyString(), anyString()))
+        .thenReturn(List.of(testUtil.getSourcingConstraintEntity()));
+
+    PageParams pageParams =
+        testUtil.getPageParams(
+            Optional.of(1),
+            Optional.of(1),
+            Optional.of(TestUtil.SORT_BY),
+            Optional.of(TestUtil.DEFAULT_SORT_ORDER));
+
+    PageResponse<OptimizationRuleUIResponse> responsePageResponse =
+        namedOptimizationStrategyService.getAllOptimizationRulesByOrgId(
+            TestUtil.ORG_ID, pageParams);
+    assertNotNull(responsePageResponse);
+    assertEquals(1, responsePageResponse.getData().size());
+    assertEquals("DEFAULT", responsePageResponse.getData().get(0).getGroupId());
+    verify(sourcingAttributesDefinitionDomain, times(1))
+        .fetchSourcingRuleAttributesDefinitionListByOrgIdAndStatusAndScope(
+            anyString(), any(), any());
+    verify(groupDefinitionPersistenceService, times(1))
+        .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionId(anyString(), anyLong());
+    verify(namedOptimizationStrategyPersistenceService, times(1))
+        .fetchOptimizationStrategyByOrgIdAndGroupId(anyString(), anyString(), any());
   }
 
   @Test
