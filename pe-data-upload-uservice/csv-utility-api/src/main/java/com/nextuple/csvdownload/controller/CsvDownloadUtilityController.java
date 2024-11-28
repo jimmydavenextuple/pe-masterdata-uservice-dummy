@@ -21,6 +21,7 @@ import com.nextuple.csvdownload.controller.docs.DownloadLogsDoc;
 import com.nextuple.csvdownload.controller.docs.DownloadMarketRegionDataDoc;
 import com.nextuple.csvdownload.controller.docs.DownloadNodeAndServiceOptionsDoc;
 import com.nextuple.csvdownload.controller.docs.DownloadNodeCarrierServiceAndServiceOptionDoc;
+import com.nextuple.csvdownload.controller.docs.DownloadNodeCarrierServicePickupCalendar;
 import com.nextuple.csvdownload.controller.docs.DownloadNodeDataCSVDoc;
 import com.nextuple.csvdownload.controller.docs.DownloadProcessingTimeBufferDoc;
 import com.nextuple.csvdownload.controller.docs.DownloadTransitBufferDoc;
@@ -360,6 +361,29 @@ public class CsvDownloadUtilityController {
     final var file = csvDownloadUtilityService.downloadNodesByOrgId(orgId, nodeIds, nodeType);
     try (var inputStream = new FileInputStream(file)) {
 
+      httpServletResponse.setStatus(HttpStatus.OK.value());
+      httpServletResponse.setHeader(
+          HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(file.getName()));
+      httpServletResponse.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+      IOUtils.copy(inputStream, httpServletResponse.getOutputStream());
+      httpServletResponse.flushBuffer();
+    } finally {
+      Files.delete(file.toPath());
+    }
+  }
+
+  @GetMapping(value = "/org/{orgId}/download/node-carrier-pickup-calendar")
+  @DownloadNodeCarrierServicePickupCalendar
+  public void downloadNodesCarrierServicePickupCalendarDataCSV(
+      @NotBlank(message = "orgId can't be empty")
+          @PathVariable
+          @Parameter(description = "Unique identifier for organization ID.")
+          String orgId,
+      HttpServletResponse httpServletResponse)
+      throws IOException, CommonServiceException, CarrierServiceException {
+    log.debug("Inside download nodes carrier pickup calendar data as csv");
+    final var file = csvDownloadUtilityService.downloadNodesCarrierPickupCalendarByOrgId(orgId);
+    try (var inputStream = new FileInputStream(file)) {
       httpServletResponse.setStatus(HttpStatus.OK.value());
       httpServletResponse.setHeader(
           HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(file.getName()));

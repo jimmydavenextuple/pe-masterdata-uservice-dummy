@@ -12,10 +12,12 @@ import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.node.carrier.domain.feign.INodeCarrierFeign;
 import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -32,5 +34,18 @@ public class NodeCarrierResponseService {
         nodeCarrierFeign.getNodeCarrierListWithLastPickUpTimeDetails(nodeId, orgId);
 
     return nodeCarrierResponse.getPayload();
+  }
+
+  public List<NodeCarrierResponse> getNodeCarrierResponseByOrgIdNodeIdAndCarrierServiceId(
+      String orgId, String nodeId, String carrierServiceId) {
+    logger.debug("Processing get node carriers by nodeId and orgId");
+    BaseResponse<List<NodeCarrierResponse>> nodeCarrierResponse =
+        nodeCarrierFeign.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+            orgId, nodeId, carrierServiceId);
+    if (nodeCarrierResponse != null && !CollectionUtils.isEmpty(nodeCarrierResponse.getPayload())) {
+      return nodeCarrierResponse.getPayload();
+    } else {
+      return Collections.emptyList();
+    }
   }
 }
