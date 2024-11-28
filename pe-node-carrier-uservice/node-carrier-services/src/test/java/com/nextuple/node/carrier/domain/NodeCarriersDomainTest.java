@@ -31,6 +31,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Description;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -335,5 +336,41 @@ class NodeCarriersDomainTest {
         "Error while fetching node carrier details for orgId and carrierServiceId",
         ex.getMessage());
     verify(nodeCarriersRepository, times(1)).findByOrgIdAndCarrierServiceId(any(), any());
+  }
+
+  @Test
+  @Description("Fetch Node Carriers by orgId, nodeId and carrierServiceId - Happy Path")
+  void getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceIdTest() throws CommonServiceException {
+    List<NodeCarriersEntity> nodeCarriersEntityList = testUtil.getNodeCarriersEntityList();
+    when(nodeCarriersRepository.findByOrgIdAndNodeIdAndCarrierServiceId(any(), any(), any()))
+        .thenReturn(nodeCarriersEntityList);
+    List<NodeCarriersEntity> responseNodeCarrierList =
+        nodeCarriersDomain.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID, TestUtil.CARRIER_SERVICE_ID);
+    assertEquals(nodeCarriersEntityList.size(), responseNodeCarrierList.size());
+    assertEquals(TestUtil.NODE_ID, responseNodeCarrierList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, responseNodeCarrierList.get(0).getOrgId());
+    assertEquals(TestUtil.CARRIER_SERVICE_ID, responseNodeCarrierList.get(0).getCarrierServiceId());
+    assertEquals(nodeCarriersEntityList, responseNodeCarrierList);
+    verify(nodeCarriersRepository, times(1))
+        .findByOrgIdAndNodeIdAndCarrierServiceId(any(), any(), any());
+  }
+
+  @Test
+  @Description("Fetch Node Carriers by orgId, nodeId and carrierServiceId - Exception Scenario")
+  void getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceIdException() {
+    when(nodeCarriersRepository.findByOrgIdAndNodeIdAndCarrierServiceId(any(), any(), any()))
+        .thenThrow(new RuntimeException("Error while fetching node carrier details"));
+    Exception ex =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                nodeCarriersDomain.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+                    TestUtil.ORG_ID, TestUtil.NODE_ID, TestUtil.CARRIER_SERVICE_ID));
+    assertEquals(
+        "Error while fetching node carrier details for orgId, nodeId and carrierServiceId",
+        ex.getMessage());
+    verify(nodeCarriersRepository, times(1))
+        .findByOrgIdAndNodeIdAndCarrierServiceId(any(), any(), any());
   }
 }

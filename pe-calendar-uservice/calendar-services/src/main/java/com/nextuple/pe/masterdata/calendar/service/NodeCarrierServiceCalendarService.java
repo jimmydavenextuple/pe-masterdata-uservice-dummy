@@ -217,4 +217,11 @@ public class NodeCarrierServiceCalendarService {
     return INSTANCE.convertToNodeCarrierCalendarCacheKeyDtoList(
         nodeCarrierServiceCalendarDomainDtos);
   }
+
+  public List<NodeCarrierServiceCalendarResponse> processGetAllNodeCarrierServiceCalendar(
+      String orgId) throws CalendarDomainException {
+    return INSTANCE.convertToNodeCarrierServiceCalendarResponseList(
+        nodeCarrierServiceCalendarPersistenceService.getAllNodeCarrierServiceCalendarsByOrgId(
+            orgId));
+  }
 }

@@ -97,6 +97,7 @@ public class DataUploadUtilityConstants {
   public static final String SERVICE_OPTION = "serviceOption";
   public static final String PROCESSING_TIME_IN_HRS = "processingTime (in hrs)";
   public static final String LAST_PICKUP_TIME = "lastPickupTime";
+  public static final String PICKUP_CALENDAR_ID = "pickupCalendarId";
   public static final String FILE_URI = "fileUri";
   public static final String CSV_FILE = "csvFile";
   public static final String CSV_HEADERS = "csvHeaders";
