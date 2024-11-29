@@ -647,9 +647,8 @@ public class SourcingRulesConfigurationService {
         attributeValue = "";
       } else {
         attributeValue = sourcingRuleValues[reqAttributes.length + optAttr];
-        optAttr++;
       }
-
+      optAttr++;
       AttributeInfo info =
           AttributeInfo.builder()
               .attributeId(optAttribute)
@@ -1008,36 +1007,15 @@ public class SourcingRulesConfigurationService {
     Long attributeDefinitionId = createRequest.getSourcingAttributesDefinitionId();
     SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
         checkActiveAttributeDefinition(orgId, createRequest, attributeDefinitionId);
-    String sourcingRule = "";
-    List<String> requiredAttributes =
-        new ArrayList<>(
-            Arrays.asList(sourcingAttributesDefinitionResponse.getReqAttributes().split(",")));
-    List<String> optionalAttributes = new ArrayList<>();
-    if (Objects.nonNull(sourcingAttributesDefinitionResponse.getOptAttributes())) {
-      optionalAttributes =
-          new ArrayList<>(
-              Arrays.asList(sourcingAttributesDefinitionResponse.getOptAttributes().split(",")));
-    }
     List<AttributeInfo> requiredAttributeInfo = createRequest.getRequiredAttributes();
     List<AttributeInfo> optionalAttributeInfo = createRequest.getOptionalAttributes();
-
     StringBuilder builder = new StringBuilder();
-    validateAttributesAndBuildRule(
-        orgId,
-        attributeDefinitionId,
-        requiredAttributes,
+    validateAttributesAndBuildRuleString(
+        sourcingAttributesDefinitionResponse,
         requiredAttributeInfo,
-        builder,
-        "Attribute passed is not a required attribute");
-    validateAttributesAndBuildRule(
-        orgId,
-        attributeDefinitionId,
-        optionalAttributes,
         optionalAttributeInfo,
-        builder,
-        "Attribute passed is not an optional attribute");
-
-    sourcingRule = builder.toString();
+        builder);
+    String sourcingRule = builder.toString();
 
     for (NodeGroupInfo nodeGroupInfo : createRequest.getNodes()) {
       RulesConfigurationRequest request =
@@ -1062,6 +1040,38 @@ public class SourcingRulesConfigurationService {
     return createRequest;
   }
 
+  private static void validateAttributesAndBuildRuleString(
+      SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse,
+      List<AttributeInfo> requiredAttributeInfo,
+      List<AttributeInfo> optionalAttributeInfo,
+      StringBuilder builder) {
+    List<String> requiredAttributes =
+        new ArrayList<>(
+            Arrays.asList(sourcingAttributesDefinitionResponse.getReqAttributes().split(",")));
+    buildRuleStringWithAttributeInfos(requiredAttributes, requiredAttributeInfo, builder);
+    List<String> optionalAttributes;
+    if (Objects.nonNull(sourcingAttributesDefinitionResponse.getOptAttributes())) {
+      optionalAttributes =
+          new ArrayList<>(
+              Arrays.asList(sourcingAttributesDefinitionResponse.getOptAttributes().split(",")));
+      buildRuleStringWithAttributeInfos(optionalAttributes, optionalAttributeInfo, builder);
+    }
+  }
+
+  private static void buildRuleStringWithAttributeInfos(
+      List<String> attributeList, List<AttributeInfo> attributeInfoList, StringBuilder builder) {
+    for (String attribute : attributeList) {
+      Optional<AttributeInfo> attributeInfo =
+          attributeInfoList.stream().filter(x -> attribute.equals(x.getAttributeId())).findFirst();
+      if (!builder.toString().isEmpty()) builder.append(":");
+
+      if (attributeInfo.isPresent()
+          && StringUtils.hasLength(attributeInfo.get().getAttributeValue())) {
+        builder.append(attributeInfo.get().getAttributeValue());
+      }
+    }
+  }
+
   private static void validateBlankNode(AllSourcingRulesResponse createRequest)
       throws CommonServiceException {
     if (CollectionUtils.isEmpty(createRequest.getNodes())) {
@@ -1069,49 +1079,6 @@ public class SourcingRulesConfigurationService {
       errorMap.put("Nodes", FieldError.builder().rejectedValue(createRequest.getNodes()).build());
       throw new CommonServiceException(
           "No node/node group have been added", HttpStatus.BAD_REQUEST, 0X1771, errorMap);
-    }
-  }
-
-  private static void validateAttributesAndBuildRule(
-      String orgId,
-      Long sourcingAttributeDefinitionId,
-      List<String> requiredAttributes,
-      List<AttributeInfo> requiredAttributeInfo,
-      StringBuilder builder,
-      String message)
-      throws CommonServiceException {
-    for (AttributeInfo info : requiredAttributeInfo) {
-      validateAttributeAndBuildRuleString(
-          orgId, sourcingAttributeDefinitionId, requiredAttributes, builder, info, message);
-    }
-  }
-
-  private static void validateAttributeAndBuildRuleString(
-      String orgId,
-      Long sourcingAttributeDefinitionId,
-      List<String> attributesInActiveDefinition,
-      StringBuilder builder,
-      AttributeInfo info,
-      String message)
-      throws CommonServiceException {
-    if (!attributesInActiveDefinition.contains(info.getAttributeId())) {
-      logger.error(message);
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
-      errorMap.put(
-          SOURCING_ATTRIBUTES_DEFINITION_ID,
-          FieldError.builder().rejectedValue(sourcingAttributeDefinitionId).build());
-      errorMap.put(
-          "attributeId", FieldError.builder().rejectedValue(info.getAttributeId()).build());
-      throw new CommonServiceException(message, HttpStatus.BAD_REQUEST, 0X1771, errorMap);
-    } else {
-      String attributeValue = info.getAttributeValue();
-      if (StringUtils.hasLength(attributeValue)) {
-        if (builder.toString().length() > 0) {
-          builder.append(":");
-        }
-        builder.append(attributeValue);
-      }
     }
   }
 
@@ -1142,19 +1109,19 @@ public class SourcingRulesConfigurationService {
       String orgId, UpdateSourcingRuleRequest sourcingRuleEditRequest)
       throws PromiseEngineException, CommonServiceException {
     // Fetch all sourcing rule entity by sourcing rule, node group and orgid.
-    var rulesConfiguration =
+    var exisitngRulesConfiguration =
         rulesConfigPersistenceService.getSourcingRuleByIdAndOrgId(
             sourcingRuleEditRequest.getSourcingRuleId(), orgId);
-    if (rulesConfiguration.isEmpty()) {
+    if (exisitngRulesConfiguration.isEmpty()) {
       throw new PromiseEngineException(
           ApplicationLayer.SERVICE_LAYER,
           ExceptionCodeMapping.DAO_FIND_FAILED,
           "Unable to find sourcing rule.");
     }
-    var existingSourcingRule = rulesConfiguration.get().getSourcingRule();
+    var existingSourcingRule = exisitngRulesConfiguration.get().getSourcingRule();
     if (!sourcingRuleEditRequest
         .getSourcingRuleName()
-        .equals(rulesConfiguration.get().getSourcingRuleName()))
+        .equals(exisitngRulesConfiguration.get().getSourcingRuleName()))
       validateSourcingRuleName(
           orgId,
           sourcingRuleEditRequest.getSourcingAttributesDefinitionId(),
@@ -1169,8 +1136,10 @@ public class SourcingRulesConfigurationService {
               nodeGroupInfo.setNodeGroupId(nodeGroupId);
               nodeGroupInfoList.add(nodeGroupInfo);
             });
-    SourcingRulesConfigurationDomainDto sourcingRuleConfigDto = rulesConfiguration.get();
-    sourcingRuleConfigDto.setSourcingRuleName(sourcingRuleEditRequest.getSourcingRuleName());
+    SourcingRulesConfigurationDomainDto existingSourcingRuleConfigDto =
+        exisitngRulesConfiguration.get();
+    existingSourcingRuleConfigDto.setSourcingRuleName(
+        sourcingRuleEditRequest.getSourcingRuleName());
     var sourcingAttributesDefinitionOption =
         sourAttrDefPersistenceService.getSourcingRuleAttributesDefinitionEntityById(
             sourcingRuleEditRequest.getSourcingAttributesDefinitionId());
@@ -1178,40 +1147,21 @@ public class SourcingRulesConfigurationService {
         sourcingAttributesDefinitionOption.orElse(new SourcingAttributesDefinitionDomainDto());
     List<AttributeInfo> requiredAttributeInfo = sourcingRuleEditRequest.getRequiredAttributes();
     List<AttributeInfo> optionalAttributeInfo = sourcingRuleEditRequest.getOptionalAttributes();
-    List<String> reqAttributeIds =
-        requiredAttributeInfo.stream()
-            .map(AttributeInfo::getAttributeId)
-            .collect(Collectors.toList());
-    List<String> optionalAttributeIds = new ArrayList<>();
-    if (Objects.nonNull(optionalAttributeInfo) && !optionalAttributeInfo.isEmpty())
-      optionalAttributeIds =
-          optionalAttributeInfo.stream()
-              .map(AttributeInfo::getAttributeId)
-              .collect(Collectors.toList());
     StringBuilder builder = new StringBuilder();
-    validateAttributesAndBuildRule(
-        orgId,
-        sourcingAttrDefDto.getId(),
-        reqAttributeIds,
+    validateAttributesAndBuildRuleString(
+        INSTANCE_ATTRIBUTE_MAPPER.toSourcingRuleAttributesDefinitionResponse(sourcingAttrDefDto),
         requiredAttributeInfo,
-        builder,
-        "Attribute passed is not a required attribute");
-    if (!optionalAttributeIds.isEmpty())
-      validateAttributesAndBuildRule(
-          orgId,
-          sourcingAttrDefDto.getId(),
-          optionalAttributeIds,
-          optionalAttributeInfo,
-          builder,
-          "Attribute passed is not an optional attribute");
-    sourcingRuleConfigDto.setSourcingRule(builder.toString());
-    var sourcingRule = sourcingRuleConfigDto.getSourcingRule();
+        optionalAttributeInfo,
+        builder);
+    existingSourcingRuleConfigDto.setSourcingRule(builder.toString());
+    var sourcingRule = existingSourcingRuleConfigDto.getSourcingRule();
     if (!sourcingRule.equalsIgnoreCase(existingSourcingRule))
       checkForExistingSourcingRule(orgId, sourcingRuleEditRequest, sourcingRule);
 
-    rulesConfigPersistenceService.saveSourcingRule(sourcingRuleConfigDto);
+    rulesConfigPersistenceService.saveSourcingRule(existingSourcingRuleConfigDto);
     var savedSourcingRule =
-        manageCRUDOperationOnSourcingRule(orgId, sourcingRuleConfigDto, sourcingRuleEditRequest);
+        manageCRUDOperationOnSourcingRule(
+            orgId, existingSourcingRuleConfigDto, sourcingRuleEditRequest);
     // Get nodes detail.
     var nodeGroupDetailsResponse = new ArrayList<UpdateNodeGroupDetailsResponse>();
     for (SourcingRuleDetailsDomainDto sourcingRuleDetailsEntity : savedSourcingRule) {
@@ -1222,7 +1172,7 @@ public class SourcingRulesConfigurationService {
       }
     }
     return prepareResponse(
-        orgId, sourcingRuleEditRequest, nodeGroupDetailsResponse, sourcingRuleConfigDto);
+        orgId, sourcingRuleEditRequest, nodeGroupDetailsResponse, existingSourcingRuleConfigDto);
   }
 
   private void checkForExistingSourcingRule(

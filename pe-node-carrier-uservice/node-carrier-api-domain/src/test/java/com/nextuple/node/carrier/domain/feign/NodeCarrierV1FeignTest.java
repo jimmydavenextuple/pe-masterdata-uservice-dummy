@@ -270,4 +270,46 @@ class NodeCarrierV1FeignTest {
         actualResponse.getMessage());
     verify(nodeCarrierFeign, times(1)).getAllNodeCarriersByOrgIdCarrierServiceId(any(), any());
   }
+
+  @Test
+  @DisplayName("Successful Execution - Get NodeCarrier List by OrgId NodeId and Carrier Service ID")
+  void getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId() {
+    BaseResponse<List<NodeCarrierResponse>> expectedResponse =
+        testUtil.getBaseResponseOfNodeCarrierResponseList();
+    when(nodeCarrierFeign.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any()))
+        .thenReturn(expectedResponse);
+    BaseResponse<List<NodeCarrierResponse>> actualResponse =
+        nodeCarrierV1Feign.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID, TestUtil.CARRIER_SERVICE_ID);
+    assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
+    assertEquals(
+        expectedResponse.getPayload().getFirst().getCarrierServiceId(),
+        actualResponse.getPayload().getFirst().getCarrierServiceId());
+    assertEquals(
+        expectedResponse.getPayload().getFirst().getNodeId(),
+        actualResponse.getPayload().getFirst().getNodeId());
+    verify(nodeCarrierFeign, times(1))
+        .getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Failure Execution - Get NodeCarrier List by OrgId NodeId and Carrier Service ID")
+  void getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceIdException() {
+    when(nodeCarrierFeign.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any()))
+        .thenThrow(
+            new RuntimeException(
+                "Error while fetching node carrier details for orgId, nodeId and carrierServiceId"));
+    RuntimeException actualResponse =
+        Assertions.assertThrows(
+            RuntimeException.class,
+            () -> {
+              nodeCarrierV1Feign.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+                  TestUtil.ORG_ID, TestUtil.NODE_ID, TestUtil.CARRIER_SERVICE_ID);
+            });
+    assertEquals(
+        "Error while fetching node carrier details for orgId, nodeId and carrierServiceId",
+        actualResponse.getMessage());
+    verify(nodeCarrierFeign, times(1))
+        .getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any());
+  }
 }

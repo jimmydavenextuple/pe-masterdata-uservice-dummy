@@ -1793,6 +1793,74 @@ class SourcingRulesConfigurationServiceTest {
   }
 
   @Test
+  @DisplayName("Get Sourcing rules with missing optional values")
+  void processGetSourcingRuleDetailsByOrgIdAndSourcingRuleWithMissingOptionalTest()
+      throws PromiseEngineException, CommonServiceException {
+    String rule1 = "Test rule 1";
+    SourcingRulesConfigurationDomainDto sourcingRulesConfigurationEntity =
+        testUtil.getSourcingRulesEntity();
+    sourcingRulesConfigurationEntity.setSourcingRuleName(rule1);
+    sourcingRulesConfigurationEntity.setSourcingRule("V1:V2::O2");
+
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionEntity =
+        testUtil.getSourcingRuleAttributesDefinitionEntity(
+            SourcingAttributesDefinitionStatus.ACTIVE);
+    sourcingAttributesDefinitionEntity.setOptAttributes("3,4");
+
+    SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
+        testUtil.getSourcingRuleAttributesDefinitionResponse(
+            SourcingAttributesDefinitionStatus.ACTIVE);
+    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionInActiveStatus(
+            anyString(), any()))
+        .thenReturn(sourcingAttributesDefinitionResponse);
+
+    when(sourcingRulesConfigurationPersistenceService.getSourcingRuleByIdAndOrgId(
+            anyLong(), anyString()))
+        .thenReturn(Optional.of(sourcingRulesConfigurationEntity));
+    when(sourcingRuleDetailsPersistenceService.fetchBySourcingRuleId(anyString(), anyLong()))
+        .thenReturn(testUtil.getSourcingRuleDetailsEntityList());
+
+    when(nodeGroupPersistenceService.fetchNodeGroupById(anyLong()))
+        .thenReturn(Optional.of(testUtil.getNodeGroupEntity()));
+
+    when(nodePriorityPersistenceService.fetchNodePriorityListByOrgIdAndNodeGroupId(
+            anyString(), anyLong()))
+        .thenReturn(List.of(testUtil.getNodePriorityEntity()));
+
+    when(sourcingAttributesDefinitionPersistenceService
+            .getSourcingRuleAttributesDefinitionEntityById(anyLong()))
+        .thenReturn(Optional.of(sourcingAttributesDefinitionEntity));
+
+    when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
+        .thenReturn(Optional.of(testUtil.getSourcingAttributeEntity()));
+    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionInActiveStatus(
+            anyString(), any()))
+        .thenReturn(sourcingAttributesDefinitionResponse);
+
+    AttributeValuesDomainDto attributeValuesEntity1 =
+        testUtil.getAttributeValuesEntity1(1L, 3L, "O1");
+    AttributeValuesDomainDto attributeValuesEntity2 =
+        testUtil.getAttributeValuesEntity1(2L, 4L, "O2");
+    when(attributeValuesPersistenceService.getAllAttributeValues(any()))
+        .thenReturn(List.of(attributeValuesEntity1, attributeValuesEntity2));
+
+    AllSourcingRulesResponse response =
+        sourcingRulesConfigurationService.processGetSourcingRuleDetailsByOrgIdAndSourcingRule(
+            TestUtil.ORG_ID, TestUtil.SOURCING_RULE_ID);
+
+    assertNotNull(response);
+    assertEquals(rule1, response.getSourcingRuleName());
+    assertEquals(2, response.getRequiredAttributes().size());
+    assertEquals(2, response.getOptionalAttributes().size());
+    assertEquals("V1", response.getRequiredAttributes().getFirst().getAttributeValue());
+    assertEquals("V2", response.getRequiredAttributes().getLast().getAttributeValue());
+    assertEquals("", response.getOptionalAttributes().getFirst().getAttributeValue());
+    assertEquals("O2", response.getOptionalAttributes().getLast().getAttributeValue());
+    assertEquals(1, response.getNodes().get(0).getSequence());
+    assertEquals(2, response.getNodes().size());
+  }
+
+  @Test
   @DisplayName("When sourcing rule not found with orgId and sourcingRuleId")
   void processGetSourcingRuleDetailsByOrgIdAndSourcingRuleTest1() throws PromiseEngineException {
     when(sourcingRulesConfigurationPersistenceService.getSourcingRuleByIdAndOrgId(
@@ -1861,6 +1929,57 @@ class SourcingRulesConfigurationServiceTest {
   }
 
   @Test
+  @DisplayName("Happy path for createSourcingRule with missing optional attribute")
+  void createSourcingRuleWithEmptyOptionalAttributesTest()
+      throws PromiseEngineException, CommonServiceException {
+    SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
+        testUtil.getSourcingRuleAttributesDefinitionResponse(
+            SourcingAttributesDefinitionStatus.ACTIVE);
+    sourcingAttributesDefinitionResponse.setOptAttributes("3");
+    NodeGroupDomainDto entity = new NodeGroupDomainDto();
+    entity.setId(2L);
+    entity.setOrgId("ABC");
+    entity.setNodeGroupName("Group2");
+
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionEntity =
+        testUtil.getSourcingRuleAttributesDefinitionEntity(
+            SourcingAttributesDefinitionStatus.ACTIVE);
+    sourcingAttributesDefinitionEntity.setOptAttributes("3");
+    when(nodeGroupPersistenceService.fetchNodeGroupById(any())).thenReturn(Optional.of(entity));
+    when(nodePriorityPersistenceService.fetchNodePriorityListByOrgIdAndNodeGroupId(any(), eq(0L)))
+        .thenReturn(testUtil.getNodePriorityEntityList());
+    List<NodePriorityDomainDto> nodePriorityEntityList = testUtil.getNodePriorityEntityList();
+    nodePriorityEntityList.get(0).setNodeId("Node-2");
+    when(nodePriorityPersistenceService.fetchNodePriorityListByOrgIdAndNodeGroupId(any(), eq(1L)))
+        .thenReturn(nodePriorityEntityList);
+
+    when(sourcingAttributesDefinitionPersistenceService
+            .getSourcingRuleAttributesDefinitionEntityById(any()))
+        .thenReturn(Optional.of(sourcingAttributesDefinitionEntity));
+    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
+            anyLong(), anyString()))
+        .thenReturn(sourcingAttributesDefinitionResponse);
+    when(sourcingRulesConfigurationPersistenceService.saveSourcingRule(any()))
+        .thenReturn(new SourcingRulesConfigurationDomainDto());
+    when(sourcingRuleDetailsPersistenceService.saveSourcingNodes(any()))
+        .thenReturn(testUtil.getSourcingRuleDetailsEntity());
+    when(sourcingRulesConfigurationPersistenceService
+            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
+                anyString(), anyLong(), anyString()))
+        .thenReturn(Optional.of(testUtil.getSourcingRulesEntity()));
+    AllSourcingRulesResponse createRequest = testUtil.getCreateSourcingRuleRequest();
+    AllSourcingRulesResponse response =
+        sourcingRulesConfigurationService.createSourcingRule(TestUtil.ORG_ID, createRequest);
+    Assertions.assertNotNull(response);
+
+    verify(nodeGroupPersistenceService, times(2)).fetchNodeGroupById(anyLong());
+    verify(nodePriorityPersistenceService, times(2))
+        .fetchNodePriorityListByOrgIdAndNodeGroupId(any(), any());
+    verify(sourcingAttributesDefinitionService, times(1))
+        .processGetSourcingAttributesDefinitionByIdandOrgId(anyLong(), anyString());
+  }
+
+  @Test
   @DisplayName("createSourcingRule: Sourcing attribute definition INACTIVE")
   void createSourcingRuleTest2() throws PromiseEngineException, CommonServiceException {
     when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
@@ -1876,47 +1995,6 @@ class SourcingRulesConfigurationServiceTest {
               sourcingRulesConfigurationService.createSourcingRule(TestUtil.ORG_ID, createRequest);
             });
     Assertions.assertEquals("Sourcing attribute definition is not active", e.getMessage());
-  }
-
-  @Test
-  @DisplayName("createSourcingRule: Required attribute invalid")
-  void createSourcingRuleTest3() throws PromiseEngineException, CommonServiceException {
-    SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
-        testUtil.getSourcingRuleAttributesDefinitionResponse(
-            SourcingAttributesDefinitionStatus.ACTIVE);
-    sourcingAttributesDefinitionResponse.setReqAttributes("4,5");
-    sourcingAttributesDefinitionResponse.setOptAttributes("1,2");
-    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
-            anyLong(), anyString()))
-        .thenReturn(sourcingAttributesDefinitionResponse);
-    AllSourcingRulesResponse createRequest = testUtil.getCreateSourcingRuleRequest();
-    CommonServiceException e =
-        Assertions.assertThrows(
-            CommonServiceException.class,
-            () -> {
-              sourcingRulesConfigurationService.createSourcingRule(TestUtil.ORG_ID, createRequest);
-            });
-    Assertions.assertEquals("Attribute passed is not a required attribute", e.getMessage());
-  }
-
-  @Test
-  @DisplayName("createSourcingRule: Optional attribute invalid")
-  void createSourcingRuleTest4() throws PromiseEngineException, CommonServiceException {
-    SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
-        testUtil.getSourcingRuleAttributesDefinitionResponse(
-            SourcingAttributesDefinitionStatus.ACTIVE);
-    sourcingAttributesDefinitionResponse.setOptAttributes("4,5");
-    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
-            anyLong(), anyString()))
-        .thenReturn(sourcingAttributesDefinitionResponse);
-    AllSourcingRulesResponse createRequest = testUtil.getCreateSourcingRuleRequest();
-    CommonServiceException e =
-        Assertions.assertThrows(
-            CommonServiceException.class,
-            () -> {
-              sourcingRulesConfigurationService.createSourcingRule(TestUtil.ORG_ID, createRequest);
-            });
-    Assertions.assertEquals("Attribute passed is not an optional attribute", e.getMessage());
   }
 
   @Test
@@ -1986,7 +2064,7 @@ class SourcingRulesConfigurationServiceTest {
     AllSourcingRulesResponse response =
         sourcingRulesConfigurationService.createSourcingRule(TestUtil.ORG_ID, createRequest);
     Assertions.assertNotNull(response);
-    Assertions.assertEquals("SDND:T2P", response.getSourcingRule());
+    Assertions.assertEquals("SDND:T2P:", response.getSourcingRule());
 
     verify(nodeGroupPersistenceService, times(2)).fetchNodeGroupById(anyLong());
     verify(nodePriorityPersistenceService, times(2))
