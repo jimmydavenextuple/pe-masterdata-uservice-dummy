@@ -12,7 +12,7 @@ public class ItemConstants {
   private ItemConstants() {} // NOSONAR
 
   public static final String ADD_ITEM_DESC =
-      "Adds new items to the retail system's inventory to ensure that the inventory is up-to-date and accurate. This API adds items by passing the item ID, organization ID, and UOM attributes in the path parameters for the required item.";
+      "Adds new items or updates item if it exists in the retail system's inventory to ensure that the inventory is up-to-date and accurate. This API adds items by passing the item ID, organization ID, and UOM attributes in the path parameters for the required item.";
   public static final String UPDATE_ITEM_DESC =
       "Updates details such as prices, descriptions, images, and service option eligibility for a specific item in the enterprise's catalog.";
   public static final String DELETE_ITEM_DESC =

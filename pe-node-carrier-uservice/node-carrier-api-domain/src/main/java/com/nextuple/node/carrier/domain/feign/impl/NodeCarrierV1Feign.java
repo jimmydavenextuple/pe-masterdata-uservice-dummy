@@ -124,4 +124,11 @@ public class NodeCarrierV1Feign implements INodeCarrierFeign {
       String orgId, String carrierServiceId) {
     return nodeCarrierFeign.getAllNodeCarriersByOrgIdCarrierServiceId(orgId, carrierServiceId);
   }
+
+  @Override
+  public BaseResponse<List<NodeCarrierResponse>> getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+      String orgId, String nodeId, String carrierServiceId) {
+    return nodeCarrierFeign.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+        orgId, nodeId, carrierServiceId);
+  }
 }

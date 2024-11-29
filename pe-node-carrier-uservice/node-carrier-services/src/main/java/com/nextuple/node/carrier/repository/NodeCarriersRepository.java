@@ -29,4 +29,7 @@ public interface NodeCarriersRepository extends JpaRepository<NodeCarriersEntity
   Page<NodeCarriersEntity> findAll(Pageable pageable);
 
   List<NodeCarriersEntity> findByOrgIdAndCarrierServiceId(String orgId, String carrierServiceId);
+
+  List<NodeCarriersEntity> findByOrgIdAndNodeIdAndCarrierServiceId(
+      String orgId, String nodeId, String carrierServiceId);
 }

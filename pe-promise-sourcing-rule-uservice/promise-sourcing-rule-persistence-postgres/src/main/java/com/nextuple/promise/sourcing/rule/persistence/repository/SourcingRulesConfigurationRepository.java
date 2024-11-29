@@ -33,6 +33,10 @@ public interface SourcingRulesConfigurationRepository
       findByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRuleStartsWith(
           String orgId, Long sourcingAttributesDefinitionId, String sourcingRule);
 
+  Optional<SourcingRulesConfigurationEntity>
+      findBySourcingAttributesDefinitionIdAndSourcingRuleAndOrgId(
+          Long sourcingAttributesDefinitionId, String sourcingRule, String orgId);
+
   SourcingRulesConfigurationEntity findByOrgIdAndSourcingRuleName(
       String orgId, String sourcingRuleName);
 

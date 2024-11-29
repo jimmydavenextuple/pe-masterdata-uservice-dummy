@@ -82,4 +82,9 @@ public class NodeCarrierRequest implements Serializable {
       description = NodeCarrierConstants.BUFFER_HOURS,
       example = NodeCarrierConstants.DOUBLE_EXAMPLE)
   private Double bufferHours;
+
+  @Schema(
+      description = NodeCarrierConstants.PICKUP_CALENDAR_ID,
+      example = NodeCarrierConstants.PICKUP_CALENDAR_ID_EXAMPLE)
+  private String pickupCalendarId;
 }

@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.annotation.Description;
 
 class NodeCarrierServiceCalendarServiceTest {
 
@@ -295,5 +296,27 @@ class NodeCarrierServiceCalendarServiceTest {
         response.get(0).getCarrierServiceId());
     verify(nodeCarrierServiceCalendarPersistenceService, times(1))
         .getAllNodeCarrierServiceCalendars(any());
+  }
+
+  @Test
+  @Description("Test get all node carrier service calendars for OrgId")
+  void processGetAllNodeCarrierServiceCalendar() throws CalendarDomainException {
+    when(nodeCarrierServiceCalendarPersistenceService.getAllNodeCarrierServiceCalendarsByOrgId(
+            any()))
+        .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarDomainDto()));
+    List<NodeCarrierServiceCalendarResponse> resp =
+        nodeCarrierServiceCalendarService.processGetAllNodeCarrierServiceCalendar(TestUtil.ORG_ID);
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.get(0).getCalendarId()));
+    Assertions.assertEquals(TestUtil.ORG_ID, Objects.requireNonNull(resp.get(0).getOrgId()));
+    Assertions.assertEquals(
+        TestUtil.CARRIER_SERVICE_ID, Objects.requireNonNull(resp.get(0).getCarrierServiceId()));
+    Assertions.assertEquals(TestUtil.NODE_ID, Objects.requireNonNull(resp.get(0).getNodeId()));
+    Assertions.assertEquals(
+        TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.get(0).getEffectiveDate()));
+    Assertions.assertEquals(
+        TestUtil.DESCRIPTION, Objects.requireNonNull(resp.get(0).getDescription()));
+    verify(nodeCarrierServiceCalendarPersistenceService, times(1))
+        .getAllNodeCarrierServiceCalendarsByOrgId(any());
   }
 }

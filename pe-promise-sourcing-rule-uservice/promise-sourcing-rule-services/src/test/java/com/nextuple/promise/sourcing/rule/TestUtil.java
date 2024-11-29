@@ -37,6 +37,7 @@ import com.nextuple.promise.sourcing.rule.api.domain.inbound.CreateNodeGroupRequ
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.CreatePromiseSourcingRuleRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.CreateSourcingAttributeRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.DeleteNodeGroupsRequest;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchGroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchPromiseSourcingRuleRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchRuleConfigurationRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchSourcingRulesRequest;
@@ -1031,6 +1032,17 @@ public class TestUtil {
     return namedOptimizationStrategyEntity;
   }
 
+  public NamedOptimizationStrategyDomainDto getDefaultNamedOptimizationStrategyEntity() {
+    NamedOptimizationStrategyDomainDto namedOptimizationStrategyEntity =
+        new NamedOptimizationStrategyDomainDto();
+    namedOptimizationStrategyEntity.setId(OPTIMIZATION_STRATEGY_ID);
+    namedOptimizationStrategyEntity.setOrgId(ORG_ID);
+    namedOptimizationStrategyEntity.setGroupId(DEFAULT_GROUP_ID);
+    namedOptimizationStrategyEntity.setOptimizationStrategyName(OPTIMIZATION_STRATEGY_NAME);
+    namedOptimizationStrategyEntity.setOptimizationStrategyDetails(OPTIMIZATION_STRATEGY_DETAILS);
+    return namedOptimizationStrategyEntity;
+  }
+
   public NamedOptimizationStrategyRequest getNamedOptimizationStrategyRequest() {
     return NamedOptimizationStrategyRequest.builder()
         .orgId(ORG_ID)
@@ -1953,5 +1965,121 @@ public class TestUtil {
     }
 
     return holidayCutoffEntityList;
+  }
+
+  public FetchGroupDefinitionRequest getFetchGroupDefinitionRequest() {
+    return getFetchGroupDefinitionRequest(REQUIRED_ATTRIBUTES_VALUE, OPTIONAL_ATTRIBUTES_VALUE);
+  }
+
+  public FetchGroupDefinitionRequest getFetchGroupDefinitionRequest(
+      String requiredAttr, String optionalAttr) {
+    return FetchGroupDefinitionRequest.builder()
+        .orgId(ORG_ID)
+        .sourcingAttributeDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
+        .attributeValuesInfo(
+            SourcingAttributeValuesInfo.builder()
+                .requiredAttributesValue(requiredAttr)
+                .optionalAttributesValue(optionalAttr)
+                .build())
+        .build();
+  }
+
+  public SourcingAttributesDefinitionDomainDto getSourcingRuleAttributesDefinitionDomainDto(
+      String reqAttr, String optionalAttr) {
+    return SourcingAttributesDefinitionDomainDto.builder()
+        .id(ID)
+        .reqAttributes(reqAttr)
+        .optAttributes(optionalAttr)
+        .scope(SourcingAttributesDefinitionScopeEnum.OPTIMIZATION)
+        .status(SourcingAttributesDefinitionStatus.ACTIVE)
+        .name("ID1")
+        .build();
+  }
+
+  public List<GroupDefinitionDomainDto> getListOfGroupDefinitionRules() {
+    List<GroupDefinitionDomainDto> groupDefinitionDomainDtos = new ArrayList<>();
+    String reqAttr = "STANDARD:KITCHEN";
+    groupDefinitionDomainDtos.add(getGroupDefinitionRule(reqAttr, null));
+    groupDefinitionDomainDtos.add(getGroupDefinitionRule(reqAttr, "SHIP:"));
+    groupDefinitionDomainDtos.add(getGroupDefinitionRule(reqAttr, ":CART"));
+    groupDefinitionDomainDtos.add(getGroupDefinitionRule(reqAttr, "SHIP:CART"));
+    return groupDefinitionDomainDtos;
+  }
+
+  private GroupDefinitionDomainDto getGroupDefinitionRule(String reqAttr, String optionalAttr) {
+    return GroupDefinitionDomainDto.builder()
+        .reqAttributesValue(reqAttr)
+        .optionalAttributesValue(optionalAttr)
+        .build();
+  }
+
+  public List<SourcingRulesConfigurationDomainDto> getSourcingRulesList() {
+    List<SourcingRulesConfigurationDomainDto> sourcingRulesConfigurationDomainDtoList =
+        new ArrayList<>();
+    SourcingRulesConfigurationDomainDto rule1 =
+        SourcingRulesConfigurationDomainDto.builder()
+            .id(1L)
+            .orgId(ORG_ID)
+            .sourcingRuleName("Rule1")
+            .sourcingRule("STANDARD:KITCHEN::")
+            .sourcingAttributesDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
+            .build();
+    SourcingRulesConfigurationDomainDto rule2 =
+        SourcingRulesConfigurationDomainDto.builder()
+            .id(2L)
+            .orgId(ORG_ID)
+            .sourcingRuleName("Rule2")
+            .sourcingRule("STANDARD:KITCHEN:XYZ:")
+            .sourcingAttributesDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
+            .build();
+    SourcingRulesConfigurationDomainDto rule3 =
+        SourcingRulesConfigurationDomainDto.builder()
+            .id(3L)
+            .orgId(ORG_ID)
+            .sourcingRuleName("Rule3")
+            .sourcingRule("STANDARD:KITCHEN:ABC:")
+            .sourcingAttributesDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
+            .build();
+    SourcingRulesConfigurationDomainDto rule4 =
+        SourcingRulesConfigurationDomainDto.builder()
+            .id(4L)
+            .orgId(ORG_ID)
+            .sourcingRuleName("Rule4")
+            .sourcingRule("STANDARD:KITCHEN::SHIP")
+            .sourcingAttributesDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
+            .build();
+    SourcingRulesConfigurationDomainDto rule5 =
+        SourcingRulesConfigurationDomainDto.builder()
+            .id(5L)
+            .orgId(ORG_ID)
+            .sourcingRuleName("Rule5")
+            .sourcingRule("STANDARD:KITCHEN:XYZ:SHIP")
+            .sourcingAttributesDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
+            .build();
+    SourcingRulesConfigurationDomainDto rule6 =
+        SourcingRulesConfigurationDomainDto.builder()
+            .id(6L)
+            .orgId(ORG_ID)
+            .sourcingRuleName("Rule6")
+            .sourcingRule("STANDARD:KITCHEN:ABC:SHIP")
+            .sourcingAttributesDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
+            .build();
+    SourcingRulesConfigurationDomainDto rule7 =
+        SourcingRulesConfigurationDomainDto.builder()
+            .id(7L)
+            .orgId(ORG_ID)
+            .sourcingRuleName("Rule7")
+            .sourcingRule("STANDARD:KITCHEN:XYZ:PICK")
+            .sourcingAttributesDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
+            .build();
+
+    sourcingRulesConfigurationDomainDtoList.add(rule1);
+    sourcingRulesConfigurationDomainDtoList.add(rule2);
+    sourcingRulesConfigurationDomainDtoList.add(rule3);
+    sourcingRulesConfigurationDomainDtoList.add(rule4);
+    sourcingRulesConfigurationDomainDtoList.add(rule5);
+    sourcingRulesConfigurationDomainDtoList.add(rule6);
+    sourcingRulesConfigurationDomainDtoList.add(rule7);
+    return sourcingRulesConfigurationDomainDtoList;
   }
 }

@@ -7,6 +7,7 @@
 
 package com.nextuple.promise.sourcing.rule.service.impl;
 
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.services.RulesRetrievalService;
 import com.nextuple.promise.sourcing.rule.persistence.domain.RulesConfigurationDomainDto;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RuleConfigImpl extends RulesRetrievalService<RulesConfigurationDomainDto> {
   @Override
-  public String getRule(RulesConfigurationDomainDto ruleInfo) {
+  public String getRule(
+      RulesConfigurationDomainDto ruleInfo,
+      SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse) {
     return ruleInfo.getRule();
   }
 }

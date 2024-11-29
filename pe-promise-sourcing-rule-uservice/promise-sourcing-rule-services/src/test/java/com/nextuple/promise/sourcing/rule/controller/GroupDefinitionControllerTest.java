@@ -25,6 +25,7 @@ import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionLis
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.service.GroupDefinitionService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -108,6 +109,41 @@ class GroupDefinitionControllerTest {
 
     verify(groupDefinitionService, times(1))
         .processGetGroupDefinitionByIdAndOrgId(anyLong(), anyString());
+  }
+
+  @Test
+  @DisplayName("Get group definition by scoring test")
+  void fetchGroupDefinitionByScoringTest() throws PromiseEngineException, CommonServiceException {
+    GroupDefinitionResponse groupDefinitionResponse = testUtil.getGroupDefinitionResponse();
+    when(groupDefinitionService.processGetGroupDefinitionByScoring(any()))
+        .thenReturn(groupDefinitionResponse);
+
+    ResponseEntity<BaseResponse<GroupDefinitionResponse>> responseEntity =
+        groupDefinitionController.fetchGroupDefinitionByScoring(
+            testUtil.getFetchGroupDefinitionRequest());
+
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    assertEquals(groupDefinitionResponse.getId(), responseEntity.getBody().getPayload().getId());
+
+    verify(groupDefinitionService, times(1)).processGetGroupDefinitionByScoring(any());
+  }
+
+  @Test
+  @DisplayName("Get group definition by scoring exception test")
+  void fetchGroupDefinitionByScoringExceptionTest()
+      throws PromiseEngineException, CommonServiceException {
+    when(groupDefinitionService.processGetGroupDefinitionByScoring(any()))
+        .thenThrow(new RuntimeException("Error in fetching group definition"));
+
+    Exception ex =
+        assertThrows(
+            Exception.class,
+            () ->
+                groupDefinitionController.fetchGroupDefinitionByScoring(
+                    testUtil.getFetchGroupDefinitionRequest()));
+    assertEquals("Error in fetching group definition", ex.getMessage());
+
+    verify(groupDefinitionService, times(1)).processGetGroupDefinitionByScoring(any());
   }
 
   @Test

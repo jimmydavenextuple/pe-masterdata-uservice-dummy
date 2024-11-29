@@ -121,6 +121,27 @@ public class SourcingRulesConfigurationPersistenceServiceImpl
   }
 
   @Override
+  public Optional<SourcingRulesConfigurationDomainDto>
+      getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
+          String orgId, Long sourcingAttributesDefinitionId, String sourcingRule)
+          throws PromiseEngineException {
+    try {
+      return getRepository()
+          .findBySourcingAttributesDefinitionIdAndSourcingRuleAndOrgId(
+              sourcingAttributesDefinitionId, sourcingRule, orgId)
+          .map(getMapper()::toDomain);
+    } catch (Exception e) {
+      logger.error(
+          "Unable to find sourcing rule by orgId and sourcing attributes definition id and sourcing rule",
+          e);
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          "Unable to find sourcing rule by orgId and sourcing attributes definition id and sourcing rule");
+    }
+  }
+
+  @Override
   public SourcingRulesConfigurationDomainDto getSourcingRulesByOrgIdAndSourcingRuleName(
       String orgId, String sourcingRuleName) throws PromiseEngineException {
     try {

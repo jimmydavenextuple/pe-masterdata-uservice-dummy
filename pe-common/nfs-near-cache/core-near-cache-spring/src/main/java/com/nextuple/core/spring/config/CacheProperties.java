@@ -62,6 +62,7 @@ public class CacheProperties {
     defaultMap.put("optimization_and_cost_types_mapping", CACHE_PROPERTY_VALUE);
     defaultMap.put("transfer_schedules", CACHE_PROPERTY_VALUE);
     defaultMap.put("node_group", CACHE_PROPERTY_VALUE);
+    defaultMap.put("group_definition_rule", CACHE_PROPERTY_VALUE);
     return defaultMap;
   }
 }

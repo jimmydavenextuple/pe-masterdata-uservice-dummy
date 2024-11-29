@@ -8,6 +8,7 @@
 package com.nextuple.promise.sourcing.rule.api.domain.feign;
 
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchGroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.GroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionListResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionResponse;
@@ -42,6 +43,10 @@ public interface GroupDefinitionFeign {
       getGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionId(
           @NotBlank @PathVariable String orgId,
           @NotNull @PathVariable Long sourcingAttributesDefinitionId);
+
+  @PostMapping("/group-definition/fetch-rule")
+  BaseResponse<GroupDefinitionResponse> fetchGroupDefinitionByScoring(
+      @Valid @RequestBody FetchGroupDefinitionRequest request);
 
   @PutMapping("/group-definition")
   BaseResponse<GroupDefinitionResponse> updateGroupDefinition(
