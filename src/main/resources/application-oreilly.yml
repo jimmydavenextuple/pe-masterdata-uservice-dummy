@@ -5,7 +5,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_orielly
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_oreilly
     username: \${COMMON-PE-POSTGRES-USER}
     password: \${COMMON-PE-POSTGRES-PASSWORD}
   flyway:
@@ -47,8 +47,8 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         item_master:
-          name: INTERNAL.ORIELLY.PROMISE_ITEMS
-          group-id: item-master-orielly-\${random.value}
+          name: INTERNAL.OREILLY.PROMISE_ITEMS
+          group-id: item-master-oreilly-\${random.value}
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
@@ -56,7 +56,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       topics:
-        master_data_update_event: INTERNAL.ORIELLY.MASTER_DATA_UPDATE_EVENTS
+        master_data_update_event: INTERNAL.OREILLY.MASTER_DATA_UPDATE_EVENTS
       properties:
         acks: 1
         retries: 5
@@ -73,8 +73,8 @@ spring:
         max.poll.records: 10
       topics:
         master_data_update_event:
-          name: INTERNAL.ORIELLY.MASTER_DATA_UPDATE_EVENTS
-          group-id: master-data-update-orielly
+          name: INTERNAL.OREILLY.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-oreilly
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -90,12 +90,12 @@ logging:
     com.nextuple: INFO
 pe-public-webhook:
   iv-feed:
-    topic: INTERNAL.ORIELLY_ATP
+    topic: INTERNAL.OREILLY_ATP
   item-feed:
-    topic: INTERNAL.ORIELLY.PROMISE_ITEMS
+    topic: INTERNAL.OREILLY.PROMISE_ITEMS
   pe-response:
-    topic: INTERNAL.ORIELLY.CART_EDD
-    group-id: pe-response-consumer-orielly-async
+    topic: INTERNAL.OREILLY.CART_EDD
+    group-id: pe-response-consumer-oreilly-async
   webhook:
     - tenantId: NEXTUPLE_GR
       moduleName: PROMISING
@@ -127,56 +127,56 @@ dataupload:
 
 jobs-framework:
   feed-metrics-consumer:
-    topic-name: INTERNAL.ORIELLY.PE_JOB_FPM_METRICS, INTERNAL.ORIELLY.PE_JOB_RECORD_FPM_METRICS, INTERNAL.ORIELLY.PE_NEIP_FPM_METRICS
-    group-id: pe-fpm-metrics-orielly
+    topic-name: INTERNAL.OREILLY.PE_JOB_FPM_METRICS, INTERNAL.OREILLY.PE_JOB_RECORD_FPM_METRICS, INTERNAL.OREILLY.PE_NEIP_FPM_METRICS
+    group-id: pe-fpm-metrics-oreilly
   job-completion-consumer:
-    topic-name: INTERNAL.ORIELLY.PE.JOB_COMPLETION
-    group-id: jobs-completion-consumer-async-orielly
+    topic-name: INTERNAL.OREILLY.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-oreilly
   kafka-publish:
-    topic-name: INTERNAL.ORIELLY.PE.JOB_TASK
+    topic-name: INTERNAL.OREILLY.PE.JOB_TASK
   result-publish:
-    topic-name: INTERNAL.ORIELLY.PE.JOB_RESULT
+    topic-name: INTERNAL.OREILLY.PE.JOB_RESULT
   result-consumer:
-    topic-name: INTERNAL.ORIELLY.PE.JOB_RESULT
+    topic-name: INTERNAL.OREILLY.PE.JOB_RESULT
     group-id: jobs-result-consumer-async
   record-consumer:
-    topic-name: INTERNAL.ORIELLY.PE.JOB_TASK
+    topic-name: INTERNAL.OREILLY.PE.JOB_TASK
     group-id: jobs-task-consumer-async
 
 master-data:
   node:
-    topic-name: INTERNAL.ORIELLY.PE.NODE_INTEGRATION
-    group-id: node-master-orielly
+    topic-name: INTERNAL.OREILLY.PE.NODE_INTEGRATION
+    group-id: node-master-oreilly
   node-carrier:
-    topic-name: INTERNAL.ORIELLY.PE.NODE_CARRIER_INTEGRATION
-    group-id: node-carrier-master-orielly
+    topic-name: INTERNAL.OREILLY.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-oreilly
   carrier:
-    topic-name: INTERNAL.ORIELLY.PE.CARRIER_INTEGRATION
-    group-id: carrier-master-orielly
+    topic-name: INTERNAL.OREILLY.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-oreilly
   processing-lead-time:
-    topic-name: INTERNAL.ORIELLY.PE.PROCESSING_LEAD_TIME_INTEGRATION
-    group-id: processing-lead-time-master-orielly
+    topic-name: INTERNAL.OREILLY.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-oreilly
   calendar:
-    topic-name: INTERNAL.ORIELLY.PE.CALENDAR_INTEGRATION
-    group-id: calendar-master-orielly
+    topic-name: INTERNAL.OREILLY.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-oreilly
   node-calendar:
-    topic-name: INTERNAL.ORIELLY.PE.NODE_CALENDAR_INTEGRATION
-    group-id: node-calendar-master-orielly
+    topic-name: INTERNAL.OREILLY.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-oreilly
   carrier-service-calendar:
-    topic-name: INTERNAL.ORIELLY.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
-    group-id: carrier-service-calendar-master-orielly
+    topic-name: INTERNAL.OREILLY.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-oreilly
   pickup-calendar:
-    topic-name: INTERNAL.ORIELLY.PE.PICKUP_CALENDAR_INTEGRATION
-    group-id: pickup-calendar-master-orielly
+    topic-name: INTERNAL.OREILLY.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-oreilly
   node-service-option-buffer:
-    topic-name: INTERNAL.ORIELLY.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
-    group-id: node-service-option-buffer-master-orielly
+    topic-name: INTERNAL.OREILLY.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-oreilly
   transit:
-    topic-name: INTERNAL.ORIELLY.PE.TRANSIT_INTEGRATION
-    group-id: transit-master-orielly
+    topic-name: INTERNAL.OREILLY.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-oreilly
   transit-buffer:
-    topic-name: INTERNAL.ORIELLY.PE.TRANSIT_BUFFER_INTEGRATION
-    group-id: transit-buffer-master-orielly
+    topic-name: INTERNAL.OREILLY.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-oreilly
 
 next-cache:
   caches:
@@ -185,7 +185,7 @@ next-cache:
       ttlSeconds: 14400
       maxLimit: 50
   refresh-cache:
-    topic: INTERNAL.ORIELLY.PE.REFRESH_CACHE_INV
+    topic: INTERNAL.OREILLY.PE.REFRESH_CACHE_INV
   cacheManager: caffeine
 platform:
   tasks:
@@ -197,5 +197,5 @@ platform:
     enabled: false
 kafka:
   input:
-    taskTopics: INTERNAL.ORIELLY.PE.RETRY_TOPIC_INV
+    taskTopics: INTERNAL.OREILLY.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry

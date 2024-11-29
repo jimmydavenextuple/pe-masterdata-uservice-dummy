@@ -84,7 +84,7 @@ server:
         max:
           memory: 2Gi
           cpu: 1
-    orielly:
+    oreilly:
       ingress: yes
       middleman: yes
       prometheus: yes
@@ -382,8 +382,8 @@ pipelines:
           - step:
               !!merge <<: *deploy
               trigger: manual
-              name: Deploy Orielly
-              deployment: orielly
+              name: Deploy Oreilly
+              deployment: oreilly
           - step:
               !!merge <<: *deploy
               name: Deploy QA
