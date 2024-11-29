@@ -55,6 +55,7 @@ public class NodeCarrierConstants {
   public static final String BUFFER_START_DATE = "Buffer start date in UTC format.";
   public static final String BUFFER_END_DATE = "Buffer end date in UTC format.";
   public static final String BUFFER_HOURS = "Buffer hours of the node-carrier in hours.";
+  public static final String PICKUP_CALENDAR_ID = "Pickup calendar ID of the node-carrier.";
   public static final String PICKUP_TIME = "Last pickup time of the node-carrier.";
   public static final String SRC_GEOZONE = "Geozone of the source.";
   public static final String DEST_GEOZONE = "Geozone of the destination.";
@@ -65,6 +66,7 @@ public class NodeCarrierConstants {
   public static final String SERVICE_OPTION_EXAMPLE = "EXPRESS";
   public static final String PROCESSING_TIME_EXAMPLE = "2";
   public static final String DOUBLE_EXAMPLE = "2.0";
+  public static final String PICKUP_CALENDAR_ID_EXAMPLE = "Calendar1";
   public static final String DATE_EXAMPLE = "2023-01-01T00:00:00Z";
   public static final String PICKUP_TIME_EX = "19:00";
   public static final String GEOZONE_EXAMPLE = "ON";

@@ -176,4 +176,13 @@ public class NodeCarriersServiceImpl implements NodeCarriersService {
         nodeCarriersDomain.getAllNodeCarriersByOrgIdCarrierServiceId(orgId, carrierServiceId);
     return INSTANCE.toNodeCarriersResponseList(nodeCarriersEntityList);
   }
+
+  @Override
+  public List<NodeCarriersResponse> getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+      String orgId, String nodeId, String carrierServiceId) throws CommonServiceException {
+    List<NodeCarriersEntity> nodeCarriersEntityList =
+        nodeCarriersDomain.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+            orgId, nodeId, carrierServiceId);
+    return INSTANCE.toNodeCarriersResponseList(nodeCarriersEntityList);
+  }
 }

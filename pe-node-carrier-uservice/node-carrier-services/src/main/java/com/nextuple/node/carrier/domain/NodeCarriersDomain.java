@@ -176,4 +176,26 @@ public class NodeCarriersDomain {
           errorMap);
     }
   }
+
+  public List<NodeCarriersEntity> getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+      String orgId, String nodeId, String carrierServiceId) throws CommonServiceException {
+    try {
+      return nodeCarriersRepository.findByOrgIdAndNodeIdAndCarrierServiceId(
+          orgId, nodeId, carrierServiceId);
+    } catch (Exception e) {
+      logger.error(
+          String.valueOf(e),
+          "Error while fetching node carrier details for orgId, nodeId and carrierServiceId");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(NODE_ID, FieldError.builder().rejectedValue(nodeId).build());
+      errorMap.put(
+          CARRIER_SERVICE_ID, FieldError.builder().rejectedValue(carrierServiceId).build());
+      throw new CommonServiceException(
+          "Error while fetching node carrier details for orgId, nodeId and carrierServiceId",
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          0x1793,
+          errorMap);
+    }
+  }
 }

@@ -15,6 +15,7 @@ import com.nextuple.calendar.persistence.exception.DateException;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.pe.masterdata.calendar.controller.docs.GetNodeCarrierCalendarCacheKeysDoc;
+import com.nextuple.pe.masterdata.calendar.controller.docs.GetNodeCarrierServiceCalendarDoc;
 import com.nextuple.pe.masterdata.calendar.controller.docs.HandleCreateNodeCarrierServiceCalendarDoc;
 import com.nextuple.pe.masterdata.calendar.controller.docs.HandleGetNodeCarrierServiceCalendarDoc;
 import com.nextuple.pe.masterdata.calendar.service.NodeCarrierServiceCalendarService;
@@ -124,6 +125,26 @@ public class NodeCarrierServiceCalendarController {
 
     var response = nodeCarrierServiceCalendarService.getAllNodeCarrierCalendarCacheKeys(limit);
 
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier Calendar Cache Keys fetched successfully")
+            .payload(response)
+            .build());
+  }
+
+  @GetMapping("org/{orgId}")
+  @GetNodeCarrierServiceCalendarDoc
+  public ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>>
+      getAllNodeCarrierServiceCalendarsByOrgId(
+          @NotBlank(message = "orgId can't be empty")
+              @PathVariable
+              @Parameter(
+                  description = "Unique identifier of the organization",
+                  example = "NEXTUPLE")
+              String orgId)
+          throws CalendarDomainException {
+    logger.debug("Processing get Node Carrier Calendar by orgId");
+    var response = nodeCarrierServiceCalendarService.processGetAllNodeCarrierServiceCalendar(orgId);
     return ResponseEntity.ok(
         BaseResponse.builder()
             .message("Node Carrier Calendar Cache Keys fetched successfully")
