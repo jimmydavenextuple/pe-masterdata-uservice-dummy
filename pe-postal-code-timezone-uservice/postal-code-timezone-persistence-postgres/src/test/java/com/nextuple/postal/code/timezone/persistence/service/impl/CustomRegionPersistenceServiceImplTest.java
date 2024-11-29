@@ -7,7 +7,9 @@
 
 package com.nextuple.postal.code.timezone.persistence.service.impl;
 
+import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.CUSTOM_REGION_NAME;
 import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.ID;
+import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.ID_2;
 import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.ORG_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -208,4 +210,114 @@ class CustomRegionPersistenceServiceImplTest {
     verify(customRegionRepository, times(1))
         .findCustomRegionByOrgId(anyString(), any(Pageable.class));
   }
+
+  @Test
+  @DisplayName("Happy path : Fetch custom regions by Ids and orgId")
+  void fetchCustomRegionsByIdsAndOrgIdTest1() throws PromiseEngineException {
+    List<CustomRegionEntity> customRegionEntityList = testUtil.getCustomRegionEntityList();
+
+    when(customRegionRepository.findByIdInAndOrgId(any(), anyString()))
+            .thenReturn(customRegionEntityList);
+
+    List<CustomRegionDomainDto> response =
+            customRegionPersistenceService.fetchCustomRegionsByIdsAndOrgId(List.of(ID,ID_2),ORG_ID);
+    assertEquals(2,response.size());
+    verify(customRegionRepository, times(1))
+            .findByIdInAndOrgId(any(), anyString());
+  }
+
+  @Test
+  @DisplayName("Exception : Fetch custom regions by Ids and orgId")
+  void fetchCustomRegionsByIdsAndOrgIdException(){
+    when(customRegionRepository.findByIdInAndOrgId(any(), anyString()))
+            .thenThrow(new RuntimeException("Error while fetching custom region list"));
+
+    Exception exception =
+            assertThrows(
+                    PromiseEngineException.class,
+                    () ->
+                            customRegionPersistenceService.fetchCustomRegionsByIdsAndOrgId(List.of(ID,ID_2),ORG_ID));
+    Assertions.assertEquals("Error while fetching custom region list", exception.getMessage());
+    verify(customRegionRepository, times(1))
+            .findByIdInAndOrgId(any(), anyString());
+  }
+
+  @Test
+  @DisplayName("Happy path : Fetch custom regions by Ids and orgId and names")
+  void fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgIdHappyPath() throws PromiseEngineException {
+    List<CustomRegionEntity> customRegionEntityList = testUtil.getCustomRegionEntityList();
+
+    when(customRegionRepository.fetchCustomRegionByIdAndNameAndOrgId(any(), any(),any()))
+            .thenReturn(customRegionEntityList);
+
+    Optional<List<CustomRegionDomainDto>> response =
+            customRegionPersistenceService.fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(List.of(ID,ID_2),List.of(CUSTOM_REGION_NAME,"NAME2"),ORG_ID);
+    assertEquals(2,response.get().size());
+    verify(customRegionRepository, times(1))
+            .fetchCustomRegionByIdAndNameAndOrgId(any(), any(),any());
+  }
+
+  @Test
+  @DisplayName("Exception : Fetch custom regions by Ids and orgId and names")
+  void fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgIdException() {
+    when(customRegionRepository.fetchCustomRegionByIdAndNameAndOrgId(any(), any(),any()))
+            .thenThrow(new RuntimeException("Error while fetching custom region list"));
+
+    Exception exception =
+            assertThrows(
+                    PromiseEngineException.class,
+                    () ->
+                            customRegionPersistenceService.fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(List.of(ID,ID_2),List.of(CUSTOM_REGION_NAME,"NAME2"),ORG_ID));
+    Assertions.assertEquals("Error while fetching custom region list", exception.getMessage());
+    verify(customRegionRepository, times(1))
+            .fetchCustomRegionByIdAndNameAndOrgId(any(), any(),any());
+  }
+
+  @Test
+  @DisplayName("Happy path : Fetch custom regions by orgId and names")
+  void fetchCustomRegionByNamesAndOrgIdHappyPath() throws PromiseEngineException {
+    List<CustomRegionEntity> customRegionEntityList = testUtil.getCustomRegionEntityList();
+
+    when(customRegionRepository.fetchCustomRegionsByCustomRegionNamesAndOrgId(any(), any()))
+            .thenReturn(customRegionEntityList);
+
+    List<CustomRegionDomainDto> response =
+            customRegionPersistenceService.fetchCustomRegionByNamesAndOrgId(List.of(CUSTOM_REGION_NAME,"NAME2"),ORG_ID);
+    assertEquals(2,response.size());
+    verify(customRegionRepository, times(1))
+            .fetchCustomRegionsByCustomRegionNamesAndOrgId(any(), any());
+  }
+
+  @Test
+  @DisplayName("Happy path : Fetch custom regions by orgId and name")
+  void fetchRegionByOrgIdAndCustomRegionNameTest() {
+    CustomRegionEntity customRegionEntity = testUtil.getCustomRegionEntity();
+    CustomRegionDomainDto customRegionDomainDto  = testUtil.getCustomRegionDomainDto();
+    when(customRegionRepository.findByOrgIdAndCustomRegionName(any(), any()))
+            .thenReturn(Optional.of(customRegionEntity));
+    when(customRegionEntityMapper.toDomain(customRegionEntity)).thenReturn(customRegionDomainDto);
+
+    Optional<CustomRegionDomainDto> response =
+            customRegionPersistenceService.fetchRegionByOrgIdAndCustomRegionName(ORG_ID,CUSTOM_REGION_NAME);
+    assertEquals(CUSTOM_REGION_NAME,response.get().getCustomRegionName());
+    verify(customRegionRepository, times(1))
+            .findByOrgIdAndCustomRegionName(any(), any());
+  }
+
+  @Test
+  @DisplayName("Exception : Fetch custom regions by orgId and names")
+  void fetchCustomRegionByNamesAndOrgIdException() {
+    when(customRegionRepository.fetchCustomRegionsByCustomRegionNamesAndOrgId(any(), any()))
+            .thenThrow(new RuntimeException("Error while fetching custom region list"));
+
+    Exception exception =
+            assertThrows(
+                    PromiseEngineException.class,
+                    () ->
+                            customRegionPersistenceService.fetchCustomRegionByNamesAndOrgId(List.of(CUSTOM_REGION_NAME,"NAME2"),ORG_ID));
+    Assertions.assertEquals("Error while fetching custom region list", exception.getMessage());
+    verify(customRegionRepository, times(1))
+            .fetchCustomRegionsByCustomRegionNamesAndOrgId(any(), any());
+  }
+
 }
