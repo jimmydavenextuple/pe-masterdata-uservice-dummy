@@ -370,7 +370,7 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy vapt
           deployment: vapt
-    development:
+    oreilly:
       - step: *Clear-Cache
       - step: *build
       - parallel:
