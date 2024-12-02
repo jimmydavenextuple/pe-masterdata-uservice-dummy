@@ -154,17 +154,19 @@ public class RegionalNodesDetailsService {
             .collect(Collectors.toSet());
 
     for (String nodeId : uniqueNodeIds) {
-      List<NodeCarrierServiceCalendarResponse> calendarResponses =
-          calendarFeign
-              .getNodeCarrierServiceCalendarForOrgIdAndNodeId(
-                  nodeCarrierResponseList.stream()
-                      .filter(response -> response.getNodeId().equals(nodeId))
-                      .findFirst()
-                      .get()
-                      .getOrgId(),
-                  nodeId)
-              .getPayload();
-      nodeCalendarMap.put(nodeId, calendarResponses);
+      List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarResponses =
+          nodeCarrierResponseList.stream()
+              .filter(response -> response.getNodeId().equals(nodeId))
+              .findFirst()
+              .map(
+                  matchingResponse ->
+                      calendarFeign
+                          .getNodeCarrierServiceCalendarForOrgIdAndNodeId(
+                              matchingResponse.getOrgId(), nodeId)
+                          .getPayload())
+              .orElse(Collections.emptyList());
+
+      nodeCalendarMap.put(nodeId, nodeCarrierServiceCalendarResponses);
     }
 
     List<PickupTimeDto> pickupTimeDtoList = new ArrayList<>();
@@ -174,10 +176,8 @@ public class RegionalNodesDetailsService {
       pickupTimeDto.setCarrierServiceId(nodeCarrierResponse.getCarrierServiceId());
       pickupTimeDto.setPickupTime(nodeCarrierResponse.getLastPickupTime());
 
-      List<NodeCarrierServiceCalendarResponse> calendarResponses =
-          nodeCalendarMap.getOrDefault(nodeCarrierResponse.getNodeId(), Collections.emptyList());
       pickupTimeDto.setPickupCalendarId(
-          calendarResponses.stream()
+          nodeCalendarMap.get(nodeCarrierResponse.getNodeId()).stream()
               .filter(
                   calendar ->
                       calendar
