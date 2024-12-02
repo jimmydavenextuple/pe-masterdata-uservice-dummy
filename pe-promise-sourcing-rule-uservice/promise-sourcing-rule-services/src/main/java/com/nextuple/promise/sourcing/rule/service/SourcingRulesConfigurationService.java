@@ -647,9 +647,8 @@ public class SourcingRulesConfigurationService {
         attributeValue = "";
       } else {
         attributeValue = sourcingRuleValues[reqAttributes.length + optAttr];
-        optAttr++;
       }
-
+      optAttr++;
       AttributeInfo info =
           AttributeInfo.builder()
               .attributeId(optAttribute)
