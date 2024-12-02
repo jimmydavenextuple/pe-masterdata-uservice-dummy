@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -134,5 +135,44 @@ class NodeCarrierServiceCalendarControllerTest {
         nodeCarrierCalendarCacheKeyDtoList.size(),
         Objects.requireNonNull(responseEntity.getBody()).getPayload().size());
     verify(nodeCarrierServiceCalendarService, times(1)).getAllNodeCarrierCalendarCacheKeys(any());
+  }
+
+  @Test
+  @Description("Handle get node carrier service calendars for org and nodeId - Happy Path")
+  void handleGetNodeCarrierServiceCalendarForNodeIdTest() throws CalendarDomainException {
+    when(nodeCarrierServiceCalendarService.processGetNodeCarrierServiceCalendarByNodeId(
+            any(), any()))
+        .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarResponse()));
+
+    ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>> resp =
+        nodeCarrierServiceCalendarController.handleGetNodeCarrierServiceCalendarForNodeId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID);
+
+    Assertions.assertEquals(HttpStatus.OK, resp.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID,
+        Objects.requireNonNull(resp.getBody()).getPayload().get(0).getCalendarId());
+    verify(nodeCarrierServiceCalendarService, times(1))
+        .processGetNodeCarrierServiceCalendarByNodeId(any(), any());
+  }
+
+  @Test
+  @Description("Handle get node carrier service calendars for org and nodeId - Exception Scenario")
+  void handleGetNodeCarrierServiceCalendarForNodeIdTestException() throws CalendarDomainException {
+
+    when(nodeCarrierServiceCalendarService.processGetNodeCarrierServiceCalendarByNodeId(
+            any(), any()))
+        .thenThrow(new NullPointerException("error"));
+
+    Exception ex =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                nodeCarrierServiceCalendarController.handleGetNodeCarrierServiceCalendarForNodeId(
+                    TestUtil.ORG_ID, TestUtil.NODE_ID));
+
+    Assertions.assertEquals("error", ex.getMessage());
+    verify(nodeCarrierServiceCalendarService, times(1))
+        .processGetNodeCarrierServiceCalendarByNodeId(any(), any());
   }
 }

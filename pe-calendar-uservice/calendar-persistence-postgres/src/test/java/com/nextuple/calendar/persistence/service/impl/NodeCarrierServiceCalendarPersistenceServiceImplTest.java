@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.annotation.Description;
 import org.springframework.test.util.ReflectionTestUtils;
 
 class NodeCarrierServiceCalendarPersistenceServiceImplTest {
@@ -237,5 +238,47 @@ class NodeCarrierServiceCalendarPersistenceServiceImplTest {
     Assertions.assertEquals("Unable to fetch all node carrier service calendars", ex.getMessage());
     verify(nodeCarrierServiceCalendarRepository, times(1))
         .findAllNodeCarrierServiceCalendars(any());
+  }
+
+  @Test
+  @Description("Get node carrier service calendars for orgId and nodeId -Happy Path Scenario")
+  void getAllNodeCarrierServiceCalendarsByOrgAndNodeIdTest() throws CalendarDomainException {
+    List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntities =
+        testUtil.getNodeCarrierServiceCalendarEntityList();
+
+    when(nodeCarrierServiceCalendarRepository.findNodeCarrierServiceCalendarByOrgIdAndNodeId(
+            any(), any()))
+        .thenReturn(nodeCarrierServiceCalendarEntities);
+    when(nodeCarrierServiceCalendarEntityMapper.toDomain(anyList()))
+        .thenReturn(testUtil.getNodeCarrierServiceCalendarDomainDtoList());
+
+    List<NodeCarrierServiceCalendarDomainDto> response =
+        nodeCarrierServiceCalendarPersistenceService.getNodeCarrierServiceCalendar(
+            TestUtil.ORG_ID, TestUtil.NODE_ID);
+
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(
+        nodeCarrierServiceCalendarEntities.get(0).getCalendarId(), response.get(0).getCalendarId());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .findNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any());
+  }
+
+  @Test
+  @Description("Get node carrier service calendars for orgId and nodeId -Exception Scenario")
+  void getAllNodeCarrierServiceCalendarsByOrgAndNodeIdExceptionTest() {
+    when(nodeCarrierServiceCalendarRepository.findNodeCarrierServiceCalendarByOrgIdAndNodeId(
+            any(), any()))
+        .thenThrow(new RuntimeException("Unable to fetch node carrier service calendars"));
+
+    CalendarDomainException ex =
+        Assertions.assertThrows(
+            CalendarDomainException.class,
+            () ->
+                nodeCarrierServiceCalendarPersistenceService.getNodeCarrierServiceCalendar(
+                    TestUtil.ORG_ID, TestUtil.NODE_ID));
+
+    Assertions.assertEquals("Unable to fetch node carrier service calendars", ex.getMessage());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .findNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any());
   }
 }

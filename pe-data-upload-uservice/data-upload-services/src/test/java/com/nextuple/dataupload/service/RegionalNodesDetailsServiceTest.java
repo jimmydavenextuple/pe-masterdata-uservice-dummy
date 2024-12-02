@@ -65,7 +65,7 @@ class RegionalNodesDetailsServiceTest {
     when(calendarFeign.getCalendar(any(), any())).thenReturn(testUtil.getBaseResponseOfCalendar());
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseNodeServiceOptions());
-    when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
+    when(calendarFeign.getNodeCarrierServiceCalendarForOrgIdAndNodeId(any(), any()))
         .thenReturn(testUtil.getNodeCarrierServiceOptionCalendarResponse());
 
     PageParams pageParams =
@@ -99,7 +99,7 @@ class RegionalNodesDetailsServiceTest {
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseNodeServiceOptions());
-    when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
+    when(calendarFeign.getNodeCarrierServiceCalendarForOrgIdAndNodeId(any(), any()))
         .thenReturn(testUtil.getNodeCarrierServiceOptionCalendarResponse());
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
@@ -134,7 +134,7 @@ class RegionalNodesDetailsServiceTest {
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseNodeServiceOptions());
-    when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
+    when(calendarFeign.getNodeCarrierServiceCalendarForOrgIdAndNodeId(any(), any()))
         .thenReturn(testUtil.getNodeCarrierServiceOptionCalendarResponse());
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
@@ -173,7 +173,7 @@ class RegionalNodesDetailsServiceTest {
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseNodeServiceOptions());
-    when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
+    when(calendarFeign.getNodeCarrierServiceCalendarForOrgIdAndNodeId(any(), any()))
         .thenReturn(testUtil.getNodeCarrierServiceOptionCalendarResponse());
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
@@ -212,7 +212,7 @@ class RegionalNodesDetailsServiceTest {
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseNodeServiceOptions());
-    when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
+    when(calendarFeign.getNodeCarrierServiceCalendarForOrgIdAndNodeId(any(), any()))
         .thenReturn(testUtil.getNodeCarrierServiceOptionCalendarResponse());
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
@@ -250,7 +250,7 @@ class RegionalNodesDetailsServiceTest {
     when(calendarFeign.getCalendar(any(), any())).thenReturn(testUtil.getBaseResponseOfCalendar());
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseNodeServiceOptions());
-    when(calendarFeign.getNodeCarrierServiceCalendar(any(), any(), any(), any()))
+    when(calendarFeign.getNodeCarrierServiceCalendarForOrgIdAndNodeId(any(), any()))
         .thenReturn(testUtil.getNodeCarrierServiceOptionCalendarResponse());
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
@@ -268,6 +268,6 @@ class RegionalNodesDetailsServiceTest {
     assertEquals(
         TestUtil.LAST_PICK_UP_TIME,
         response.getData().getFirst().getPickupTime().getFirst().getPickupTime());
-    verify(calendarFeign, times(4)).getNodeCarrierServiceCalendar(any(), any(), any(), any());
+    verify(calendarFeign, times(2)).getNodeCarrierServiceCalendarForOrgIdAndNodeId(any(), any());
   }
 }
