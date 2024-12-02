@@ -128,8 +128,9 @@ public class NodeCarrierServiceCalendarController {
           BaseResponse.builder()
               .message("Node Carrier Service calendar details fetched successfully!")
               .payload(
-                  nodeCarrierServiceCalendarService.processGetNodeCarrierServiceCalendarByNodeId(
-                      orgId, nodeId))
+                  nodeCarrierServiceCalendarService
+                      .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(
+                          orgId, nodeId))
               .build());
     } catch (Exception e) {
       logger.error("Error in handleGetNodeCarrierServiceCalendar()");

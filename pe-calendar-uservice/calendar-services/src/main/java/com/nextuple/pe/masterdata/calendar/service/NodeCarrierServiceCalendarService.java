@@ -154,14 +154,16 @@ public class NodeCarrierServiceCalendarService {
         getAndFilterNodeCarrierServiceCalendar(orgId, nodeId, carrierServiceId, serviceOption));
   }
 
-  public List<NodeCarrierServiceCalendarResponse> processGetNodeCarrierServiceCalendarByNodeId(
-      String orgId, String nodeId) throws CalendarDomainException {
+  public List<NodeCarrierServiceCalendarResponse>
+      processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(
+          String orgId, String nodeId) throws CalendarDomainException {
     return INSTANCE.convertToNodeCarrierServiceCalendarResponseList(
-        getNodeCarrierServiceCalendarForOrgAndNodeId(orgId, nodeId));
+        findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(orgId, nodeId));
   }
 
-  private List<NodeCarrierServiceCalendarDomainDto> getNodeCarrierServiceCalendarForOrgAndNodeId(
-      String orgId, String nodeId) throws CalendarDomainException {
+  private List<NodeCarrierServiceCalendarDomainDto>
+      findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(
+          String orgId, String nodeId) throws CalendarDomainException {
     try {
       return nodeCarrierServiceCalendarPersistenceService.getNodeCarrierServiceCalendar(
           orgId, nodeId);

@@ -96,7 +96,10 @@ public class NodeCarrierServiceCalendarPersistenceServiceImpl
       String orgId, String nodeId) throws CalendarDomainException {
     try {
       return getMapper()
-          .toDomain(getRepository().findNodeCarrierServiceCalendarByOrgIdAndNodeId(orgId, nodeId));
+          .toDomain(
+              getRepository()
+                  .findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(
+                      orgId, nodeId));
     } catch (Exception e) {
       throw new CalendarDomainException(
           "Unable to fetch node carrier service calendars", e, null, orgId, nodeId, null);

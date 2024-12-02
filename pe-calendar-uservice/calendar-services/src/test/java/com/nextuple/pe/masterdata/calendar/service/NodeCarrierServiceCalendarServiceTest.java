@@ -305,8 +305,9 @@ class NodeCarrierServiceCalendarServiceTest {
         .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarDomainDto()));
 
     List<NodeCarrierServiceCalendarResponse> resp =
-        nodeCarrierServiceCalendarService.processGetNodeCarrierServiceCalendarByNodeId(
-            TestUtil.ORG_ID, TestUtil.NODE_ID);
+        nodeCarrierServiceCalendarService
+            .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(
+                TestUtil.ORG_ID, TestUtil.NODE_ID);
 
     Assertions.assertEquals(
         TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.get(0).getCalendarId()));

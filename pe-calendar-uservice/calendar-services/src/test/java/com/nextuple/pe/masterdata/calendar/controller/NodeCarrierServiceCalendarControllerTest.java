@@ -140,8 +140,8 @@ class NodeCarrierServiceCalendarControllerTest {
   @Test
   @Description("Handle get node carrier service calendars for org and nodeId - Happy Path")
   void handleGetNodeCarrierServiceCalendarForNodeIdTest() throws CalendarDomainException {
-    when(nodeCarrierServiceCalendarService.processGetNodeCarrierServiceCalendarByNodeId(
-            any(), any()))
+    when(nodeCarrierServiceCalendarService
+            .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(any(), any()))
         .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarResponse()));
 
     ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>> resp =
@@ -153,15 +153,15 @@ class NodeCarrierServiceCalendarControllerTest {
         TestUtil.CALENDAR_ID,
         Objects.requireNonNull(resp.getBody()).getPayload().get(0).getCalendarId());
     verify(nodeCarrierServiceCalendarService, times(1))
-        .processGetNodeCarrierServiceCalendarByNodeId(any(), any());
+        .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(any(), any());
   }
 
   @Test
   @Description("Handle get node carrier service calendars for org and nodeId - Exception Scenario")
   void handleGetNodeCarrierServiceCalendarForNodeIdTestException() throws CalendarDomainException {
 
-    when(nodeCarrierServiceCalendarService.processGetNodeCarrierServiceCalendarByNodeId(
-            any(), any()))
+    when(nodeCarrierServiceCalendarService
+            .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(any(), any()))
         .thenThrow(new NullPointerException("error"));
 
     Exception ex =
@@ -173,7 +173,7 @@ class NodeCarrierServiceCalendarControllerTest {
 
     Assertions.assertEquals("error", ex.getMessage());
     verify(nodeCarrierServiceCalendarService, times(1))
-        .processGetNodeCarrierServiceCalendarByNodeId(any(), any());
+        .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(any(), any());
   }
 
   @Test

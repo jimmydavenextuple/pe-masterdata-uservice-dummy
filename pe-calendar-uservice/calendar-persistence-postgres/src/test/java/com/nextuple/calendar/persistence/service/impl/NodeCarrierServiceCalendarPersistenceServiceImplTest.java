@@ -246,8 +246,8 @@ class NodeCarrierServiceCalendarPersistenceServiceImplTest {
     List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntities =
         testUtil.getNodeCarrierServiceCalendarEntityList();
 
-    when(nodeCarrierServiceCalendarRepository.findNodeCarrierServiceCalendarByOrgIdAndNodeId(
-            any(), any()))
+    when(nodeCarrierServiceCalendarRepository
+            .findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(any(), any()))
         .thenReturn(nodeCarrierServiceCalendarEntities);
     when(nodeCarrierServiceCalendarEntityMapper.toDomain(anyList()))
         .thenReturn(testUtil.getNodeCarrierServiceCalendarDomainDtoList());
@@ -260,14 +260,14 @@ class NodeCarrierServiceCalendarPersistenceServiceImplTest {
     Assertions.assertEquals(
         nodeCarrierServiceCalendarEntities.get(0).getCalendarId(), response.get(0).getCalendarId());
     verify(nodeCarrierServiceCalendarRepository, times(1))
-        .findNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any());
+        .findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(any(), any());
   }
 
   @Test
   @Description("Get node carrier service calendars for orgId and nodeId -Exception Scenario")
   void getAllNodeCarrierServiceCalendarsByOrgAndNodeIdExceptionTest() {
-    when(nodeCarrierServiceCalendarRepository.findNodeCarrierServiceCalendarByOrgIdAndNodeId(
-            any(), any()))
+    when(nodeCarrierServiceCalendarRepository
+            .findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(any(), any()))
         .thenThrow(new RuntimeException("Unable to fetch node carrier service calendars"));
 
     CalendarDomainException ex =
@@ -279,7 +279,7 @@ class NodeCarrierServiceCalendarPersistenceServiceImplTest {
 
     Assertions.assertEquals("Unable to fetch node carrier service calendars", ex.getMessage());
     verify(nodeCarrierServiceCalendarRepository, times(1))
-        .findNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any());
+        .findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(any(), any());
   }
 
   @Test
