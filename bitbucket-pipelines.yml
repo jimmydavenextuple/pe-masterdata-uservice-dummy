@@ -373,22 +373,12 @@ pipelines:
     oreilly:
       - step: *Clear-Cache
       - step: *build
-      - parallel:
-          - step:
-              !!merge <<: *deploy
-              trigger: manual
-              name: Deploy Dev
-              deployment: dev
-          - step:
-              !!merge <<: *deploy
-              trigger: manual
-              name: Deploy Oreilly
-              deployment: oreilly
-          - step:
-              !!merge <<: *deploy
-              name: Deploy QA
-              trigger: manual
-              deployment: qa
+      - step:
+          !!merge <<: *deploy
+          trigger: manual
+          name: Deploy Oreilly
+          deployment: oreilly
+
           # - step:
           #     !!merge <<: *deploy
           #     name: Deploy PERF
