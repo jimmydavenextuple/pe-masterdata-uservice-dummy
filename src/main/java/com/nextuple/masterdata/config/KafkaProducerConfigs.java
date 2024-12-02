@@ -2,11 +2,12 @@ package com.nextuple.masterdata.config;
 
 import com.nextuple.core.event.LocalCacheUpdateEvent;
 import com.nextuple.jobs.framework.common.domain.pojo.RecordDto;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -14,7 +15,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.MicrometerProducerListener;
 import org.springframework.kafka.core.ProducerFactory;
 
 @Configuration
@@ -25,6 +28,7 @@ public class KafkaProducerConfigs {
   private static final String KEYSERIALIZER = "key.serializer";
   private static final String INTERCEPTORCLASSES = "interceptor.classes";
   private static final String VALUESERIALIZER = "value.serializer";
+  @Autowired private final MeterRegistry meterRegistry;
 
   @Value(value = "${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
@@ -41,13 +45,17 @@ public class KafkaProducerConfigs {
     return this.kafkaProperties.buildProducerProperties();
   }
 
-  @NotNull
-  private HashMap<String, Object> getItemProducerProps() {
+  @Bean
+  public ProducerFactory<String, Object> kafkaItemProducerFactory() {
     HashMap<String, Object> prop = new HashMap<>(itemSerializerProperties());
     prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, prop.get(KEYSERIALIZER));
     prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get(VALUESERIALIZER));
     prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    return prop;
+
+    DefaultKafkaProducerFactory<String, Object> kafkaItemProducerFactory =
+        new DefaultKafkaProducerFactory<>(prop);
+    kafkaItemProducerFactory.addListener(new MicrometerProducerListener<>(meterRegistry));
+    return kafkaItemProducerFactory;
   }
 
   private Map<String, Object> getStringObjectMap() {
@@ -63,38 +71,46 @@ public class KafkaProducerConfigs {
   }
 
   @Bean(name = "CacheUpdateProducer")
-  public KafkaTemplate<String, LocalCacheUpdateEvent> cacheUpdateKafkaTemplate(
-      ProducerFactory<String, LocalCacheUpdateEvent> producerFactory) {
-    producerFactory.updateConfigs(getStringObjectMap());
-    return new KafkaTemplate<>(producerFactory);
+  public KafkaTemplate<String, LocalCacheUpdateEvent> cacheUpdateKafkaTemplate() {
+    Map<String, Object> prop = getStringObjectMap();
+    DefaultKafkaProducerFactory<String, LocalCacheUpdateEvent> cacheUpdateKafkaProducer =
+        new DefaultKafkaProducerFactory<>(prop);
+    cacheUpdateKafkaProducer.addListener(new MicrometerProducerListener<>(meterRegistry));
+    return new KafkaTemplate<>(cacheUpdateKafkaProducer);
   }
 
   @Bean(name = "JsonSerializerProducer")
-  public KafkaTemplate<String, RecordDto> jobServiceKafkaTemplate(
-      ProducerFactory<String, RecordDto> producerFactory) {
-    producerFactory.updateConfigs(getStringObjectMap());
-    return new KafkaTemplate<>(producerFactory);
+  public KafkaTemplate<String, RecordDto> jobServiceKafkaTemplate() {
+    Map<String, Object> prop = getStringObjectMap();
+    DefaultKafkaProducerFactory<String, RecordDto> jsonSerializerProducer =
+        new DefaultKafkaProducerFactory<>(prop);
+    jsonSerializerProducer.addListener(new MicrometerProducerListener<>(meterRegistry));
+    return new KafkaTemplate<>(jsonSerializerProducer);
   }
 
   @Bean(name = "JsonSerializerProducerObj")
-  public KafkaTemplate<Object, Object> jobEventKafkaTemplate(
-      ProducerFactory<Object, Object> producerFactory) {
-    producerFactory.updateConfigs(getStringObjectMap());
-    return new KafkaTemplate<>(producerFactory);
+  public KafkaTemplate<Object, Object> jobEventKafkaTemplate() {
+    Map<String, Object> prop = getStringObjectMap();
+    DefaultKafkaProducerFactory<Object, Object> jsonSerializerProducer =
+        new DefaultKafkaProducerFactory<>(prop);
+    jsonSerializerProducer.addListener(new MicrometerProducerListener<>(meterRegistry));
+    return new KafkaTemplate<>(jsonSerializerProducer);
   }
 
   @Bean(name = "ItemSerializerProducer")
-  public KafkaTemplate<String, Object> itemKafkaTemplate(
-      ProducerFactory<String, Object> producerFactory) {
-    producerFactory.updateConfigs(getItemProducerProps());
-    return new KafkaTemplate<>(producerFactory);
+  public KafkaTemplate<String, Object> itemKafkaTemplate() {
+    ProducerFactory<String, Object> itemSerializerProducer = kafkaItemProducerFactory();
+    itemSerializerProducer.addListener(new MicrometerProducerListener<>(meterRegistry));
+    return new KafkaTemplate<>(itemSerializerProducer);
   }
 
   @Bean
   @Primary
-  public KafkaTemplate<String, String> platformTaskKafkaTemplate(
-      ProducerFactory<String, String> producerFactory) {
-    producerFactory.updateConfigs(getStringObjectMap());
-    return new KafkaTemplate<>(producerFactory);
+  public KafkaTemplate<String, String> platformTaskKafkaTemplate() {
+    Map<String, Object> prop = getStringObjectMap();
+    DefaultKafkaProducerFactory<String, String> platformTaskKafkaProducer =
+        new DefaultKafkaProducerFactory<>(prop);
+    platformTaskKafkaProducer.addListener(new MicrometerProducerListener<>(meterRegistry));
+    return new KafkaTemplate<>(platformTaskKafkaProducer);
   }
 }
