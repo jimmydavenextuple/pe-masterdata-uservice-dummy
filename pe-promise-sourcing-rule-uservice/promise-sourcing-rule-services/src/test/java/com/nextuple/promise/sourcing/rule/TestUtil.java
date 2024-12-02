@@ -1032,6 +1032,17 @@ public class TestUtil {
     return namedOptimizationStrategyEntity;
   }
 
+  public NamedOptimizationStrategyDomainDto getDefaultNamedOptimizationStrategyEntity() {
+    NamedOptimizationStrategyDomainDto namedOptimizationStrategyEntity =
+        new NamedOptimizationStrategyDomainDto();
+    namedOptimizationStrategyEntity.setId(OPTIMIZATION_STRATEGY_ID);
+    namedOptimizationStrategyEntity.setOrgId(ORG_ID);
+    namedOptimizationStrategyEntity.setGroupId(DEFAULT_GROUP_ID);
+    namedOptimizationStrategyEntity.setOptimizationStrategyName(OPTIMIZATION_STRATEGY_NAME);
+    namedOptimizationStrategyEntity.setOptimizationStrategyDetails(OPTIMIZATION_STRATEGY_DETAILS);
+    return namedOptimizationStrategyEntity;
+  }
+
   public NamedOptimizationStrategyRequest getNamedOptimizationStrategyRequest() {
     return NamedOptimizationStrategyRequest.builder()
         .orgId(ORG_ID)

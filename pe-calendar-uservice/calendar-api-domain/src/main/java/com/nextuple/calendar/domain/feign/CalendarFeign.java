@@ -101,4 +101,8 @@ public interface CalendarFeign {
   @GetMapping("/node-calendar/{orgId}/{nodeId}")
   BaseResponse<List<NodeCalendarResponse>> handleGetNodeCalendar(
       @PathVariable String orgId, @PathVariable String nodeId);
+
+  @GetMapping("/node-carrier-service-calendar/org/{orgId}")
+  BaseResponse<List<NodeCarrierServiceCalendarResponse>> getAllNodeCarrierServiceCalendar(
+      @PathVariable String orgId);
 }

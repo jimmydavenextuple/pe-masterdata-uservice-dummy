@@ -183,4 +183,16 @@ public class NodeCarrierV2Feign implements INodeCarrierFeign {
         .payload(MAPPER.toNodeCarrierResponseListFromCarriers(baseResponse.getPayload()))
         .build();
   }
+
+  @Override
+  public BaseResponse<List<NodeCarrierResponse>> getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+      String orgId, String nodeId, String carrierServiceId) {
+    BaseResponse<List<NodeCarriersResponse>> baseResponse =
+        nodeCarriersFeign.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+            orgId, nodeId, carrierServiceId);
+    return BaseResponse.builder()
+        .message(baseResponse.getMessage())
+        .payload(MAPPER.toNodeCarrierResponseListFromCarriers(baseResponse.getPayload()))
+        .build();
+  }
 }

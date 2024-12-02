@@ -43,6 +43,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
 
 class NodeCarriersServiceImplTest {
@@ -349,5 +350,22 @@ class NodeCarriersServiceImplTest {
     assertEquals(TestUtil.CARRIER_SERVICE_ID, nodeCarrierResponseList.get(0).getCarrierServiceId());
 
     verify(nodeCarriersDomain, times(1)).getAllNodeCarriersByOrgIdCarrierServiceId(any(), any());
+  }
+
+  @Test
+  @Description("Get all node carriers by OrgId, NodeId and carrierServiceId test")
+  void getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceIdTest() throws CommonServiceException {
+    List<NodeCarriersEntity> nodeCarriersEntities = testUtil.getNodeCarriersEntityList();
+    when(nodeCarriersDomain.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any()))
+        .thenReturn(nodeCarriersEntities);
+    List<NodeCarriersResponse> nodeCarrierResponseList =
+        nodeCarriersService.getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID, TestUtil.CARRIER_SERVICE_ID);
+    assertEquals(2, nodeCarrierResponseList.size());
+    assertEquals(TestUtil.NODE_ID, nodeCarrierResponseList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, nodeCarrierResponseList.get(0).getOrgId());
+    assertEquals(TestUtil.CARRIER_SERVICE_ID, nodeCarrierResponseList.get(0).getCarrierServiceId());
+    verify(nodeCarriersDomain, times(1))
+        .getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any());
   }
 }

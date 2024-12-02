@@ -115,6 +115,17 @@ public class NodeCarrierServiceCalendarPersistenceServiceImpl
   }
 
   @Override
+  public List<NodeCarrierServiceCalendarDomainDto> getAllNodeCarrierServiceCalendarsByOrgId(
+      String orgId) throws CalendarDomainException {
+    try {
+      return getMapper().toDomain(getRepository().findAllNodeCarrierServiceCalendarsByOrgId(orgId));
+    } catch (Exception e) {
+      throw new CalendarDomainException(
+          "Unable to fetch all node carrier service calendars", e, null, null, null, null);
+    }
+  }
+
+  @Override
   public Optional<NodeCarrierServiceCalendarDomainDto>
       findByCalendarIdAndOrgIdAndNodeIdAndCarrierServiceIdAndEffectiveDate(
           String calendarId,

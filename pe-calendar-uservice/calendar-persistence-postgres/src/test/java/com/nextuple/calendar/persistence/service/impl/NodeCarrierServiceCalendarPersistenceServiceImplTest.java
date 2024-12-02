@@ -281,4 +281,39 @@ class NodeCarrierServiceCalendarPersistenceServiceImplTest {
     verify(nodeCarrierServiceCalendarRepository, times(1))
         .findNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any());
   }
+
+  @Test
+  @Description("Get all Node Carrier Service Calendars by OrgId - Happy Path")
+  void getAllNodeCarrierServiceCalendarsByOrgId() throws CalendarDomainException {
+    List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntities =
+        testUtil.getNodeCarrierServiceCalendarEntityList();
+    when(nodeCarrierServiceCalendarRepository.findAllNodeCarrierServiceCalendarsByOrgId(any()))
+        .thenReturn(nodeCarrierServiceCalendarEntities);
+    when(nodeCarrierServiceCalendarEntityMapper.toDomain(anyList()))
+        .thenReturn(testUtil.getNodeCarrierServiceCalendarDomainDtoList());
+    List<NodeCarrierServiceCalendarDomainDto> response =
+        nodeCarrierServiceCalendarPersistenceService.getAllNodeCarrierServiceCalendarsByOrgId(
+            TestUtil.ORG_ID);
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(
+        nodeCarrierServiceCalendarEntities.get(0).getCalendarId(), response.get(0).getCalendarId());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .findAllNodeCarrierServiceCalendarsByOrgId(any());
+  }
+
+  @Test
+  @Description("Get all Node Carrier Service Calendars by OrgId - Exception Scenario")
+  void getAllNodeCarrierServiceCalendarsByOrgIdException() {
+    when(nodeCarrierServiceCalendarRepository.findAllNodeCarrierServiceCalendarsByOrgId(any()))
+        .thenThrow(new RuntimeException("Unable to fetch all node carrier service calendars"));
+    CalendarDomainException ex =
+        Assertions.assertThrows(
+            CalendarDomainException.class,
+            () ->
+                nodeCarrierServiceCalendarPersistenceService
+                    .getAllNodeCarrierServiceCalendarsByOrgId(TestUtil.ORG_ID));
+    Assertions.assertEquals("Unable to fetch all node carrier service calendars", ex.getMessage());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .findAllNodeCarrierServiceCalendarsByOrgId(any());
+  }
 }

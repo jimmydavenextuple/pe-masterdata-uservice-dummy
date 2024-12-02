@@ -175,4 +175,20 @@ class NodeCarrierServiceCalendarControllerTest {
     verify(nodeCarrierServiceCalendarService, times(1))
         .processGetNodeCarrierServiceCalendarByNodeId(any(), any());
   }
+
+  @Test
+  @Description("Test Get all node carriers service Calendars")
+  void getAllNodeCarrierServiceCalendarsTest() throws CalendarDomainException {
+    when(nodeCarrierServiceCalendarService.processGetAllNodeCarrierServiceCalendar(any()))
+        .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarResponse()));
+    ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>> resp =
+        nodeCarrierServiceCalendarController.getAllNodeCarrierServiceCalendarsByOrgId(
+            TestUtil.ORG_ID);
+    Assertions.assertEquals(HttpStatus.OK, resp.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID,
+        Objects.requireNonNull(resp.getBody()).getPayload().get(0).getCalendarId());
+    verify(nodeCarrierServiceCalendarService, times(1))
+        .processGetAllNodeCarrierServiceCalendar(any());
+  }
 }

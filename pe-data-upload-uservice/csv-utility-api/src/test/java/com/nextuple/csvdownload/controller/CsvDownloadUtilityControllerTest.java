@@ -52,6 +52,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -494,6 +495,24 @@ class CsvDownloadUtilityControllerTest {
 
     Assertions.assertEquals(servletOutputStream, response.getOutputStream());
     verify(csvDownloadUtilityService, times(1)).downloadCostDefinitionForOrgId(any(), any());
+  }
+
+  @Test
+  @Description("Download Nodes Carrier Service Pickup Calendar Data")
+  void downloadNodesCarrierServicePickupCalendarDataCSV()
+      throws IOException, CommonServiceException, CarrierServiceException {
+    File file = File.createTempFile("some-prefix", "some-ext");
+    file.deleteOnExit();
+    when(csvDownloadUtilityService.downloadNodesCarrierPickupCalendarByOrgId(any()))
+        .thenReturn(file);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    doNothing().when(response).setStatus(HttpStatus.OK.value());
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+    Assertions.assertDoesNotThrow(
+        () ->
+            csvDownloadUtilityController.downloadNodesCarrierServicePickupCalendarDataCSV(
+                TestUtil.ORG_ID, response));
   }
 
   @Test

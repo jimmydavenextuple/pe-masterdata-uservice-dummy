@@ -50,4 +50,7 @@ public interface NodeCarriersService {
 
   List<NodeCarriersResponse> getAllNodeCarriersByOrgIdCarrierServiceId(
       String orgId, String carrierServiceId) throws CommonServiceException;
+
+  List<NodeCarriersResponse> getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(
+      String orgId, String nodeId, String carrierServiceId) throws CommonServiceException;
 }
