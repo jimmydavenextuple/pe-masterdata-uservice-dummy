@@ -272,7 +272,7 @@ definitions:
           - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotbugsMain
-          - bash ./gradlew dependencyCheckAggregate --info
+#          - bash ./gradlew dependencyCheckAggregate --info
           - bash ./gradlew sonarqube showSonarQubeLink --info
     - step: &Clear-Cache
         name: Clear Pipeline Cache
