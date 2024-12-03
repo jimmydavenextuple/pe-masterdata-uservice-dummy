@@ -161,7 +161,23 @@ server:
           cpu: 256m
         max:
           memory: 1024Mi
-          cpu: 256m 
+          cpu: 256m
+    devpe:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      java-opts: "-Xms1024m -Xmx1024m"
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 1Gi
+          cpu: 256m
+        max:
+          memory: 1Gi
+          cpu: 256m
     sperf:
       ingress: yes
       middleman: yes
@@ -389,6 +405,12 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
+    PSE-3161-rbac-changes:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy devpe
+          deployment: devpe
     master2:
       - step: *Clear-Cache
       - step: *build
