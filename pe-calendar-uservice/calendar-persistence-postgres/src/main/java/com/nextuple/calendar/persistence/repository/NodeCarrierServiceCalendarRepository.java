@@ -51,4 +51,18 @@ public interface NodeCarrierServiceCalendarRepository
   List<NodeCarrierServiceCalendarEntity> findAllNodeCarrierServiceCalendars(Integer limit);
 
   List<NodeCarrierServiceCalendarEntity> findAllNodeCarrierServiceCalendarsByOrgId(String orgId);
+
+  @Query(
+      value =
+          """
+        SELECT DISTINCT ON (carrier_service_id) *
+        FROM node_carrier_service_calendars
+        WHERE org_id = ?1
+        AND node_id = ?2
+        ORDER BY carrier_service_id, effective_date DESC, created_date DESC
+        """,
+      nativeQuery = true)
+  List<NodeCarrierServiceCalendarEntity>
+      findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(
+          String orgId, String nodeId);
 }

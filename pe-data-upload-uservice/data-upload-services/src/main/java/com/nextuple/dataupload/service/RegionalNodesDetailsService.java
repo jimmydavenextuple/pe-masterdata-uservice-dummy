@@ -15,6 +15,7 @@ import static com.nextuple.dataupload.util.CommonDashboardUtil.fetchNodeProcessi
 import com.nextuple.calendar.domain.feign.CalendarFeign;
 import com.nextuple.calendar.domain.outbound.CalendarResponse;
 import com.nextuple.calendar.domain.outbound.NodeCalendarResponse;
+import com.nextuple.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
@@ -29,8 +30,12 @@ import com.nextuple.node.domain.dto.NodeDto;
 import com.nextuple.node.domain.feign.NodeFeign;
 import com.nextuple.postgres.config.ReaderDS;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -82,7 +87,7 @@ public class RegionalNodesDetailsService {
       } catch (RuntimeException e) {
         log.error("Empty Node Calendar Response List");
       }
-      List<NodeCarrierResponse> nodeCarrierResponse =
+      List<NodeCarrierResponse> nodeCarrierResponses =
           nodeCarrierFeign
               .getNodeCarrierListWithLastPickUpTimeDetails(
                   nodeServiceResponse.getNodeId(), nodeServiceResponse.getOrgId())
@@ -109,7 +114,7 @@ public class RegionalNodesDetailsService {
           setNodeListDto(
               nodeServiceResponse,
               nodeCalendarResponseList,
-              nodeCarrierResponse,
+              nodeCarrierResponses,
               nodeServiceOptionsResponse,
               calendarDetails));
     }
@@ -141,6 +146,28 @@ public class RegionalNodesDetailsService {
 
   private List<PickupTimeDto> getPickupTimeDetails(
       List<NodeCarrierResponse> nodeCarrierResponseList) {
+    Map<String, List<NodeCarrierServiceCalendarResponse>> nodeCalendarMap = new HashMap<>();
+
+    Set<String> uniqueNodeIds =
+        nodeCarrierResponseList.stream()
+            .map(NodeCarrierResponse::getNodeId)
+            .collect(Collectors.toSet());
+
+    for (String nodeId : uniqueNodeIds) {
+      List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarResponses =
+          nodeCarrierResponseList.stream()
+              .filter(response -> response.getNodeId().equals(nodeId))
+              .findFirst()
+              .map(
+                  matchingResponse ->
+                      calendarFeign
+                          .getNodeCarrierServiceCalendarForOrgIdAndNodeId(
+                              matchingResponse.getOrgId(), nodeId)
+                          .getPayload())
+              .orElse(Collections.emptyList());
+
+      nodeCalendarMap.put(nodeId, nodeCarrierServiceCalendarResponses);
+    }
 
     List<PickupTimeDto> pickupTimeDtoList = new ArrayList<>();
     for (NodeCarrierResponse nodeCarrierResponse : nodeCarrierResponseList) {
@@ -148,6 +175,18 @@ public class RegionalNodesDetailsService {
       pickupTimeDto.setNodeId(nodeCarrierResponse.getNodeId());
       pickupTimeDto.setCarrierServiceId(nodeCarrierResponse.getCarrierServiceId());
       pickupTimeDto.setPickupTime(nodeCarrierResponse.getLastPickupTime());
+
+      pickupTimeDto.setPickupCalendarId(
+          nodeCalendarMap.get(nodeCarrierResponse.getNodeId()).stream()
+              .filter(
+                  calendar ->
+                      calendar
+                          .getCarrierServiceId()
+                          .equals(nodeCarrierResponse.getCarrierServiceId()))
+              .findFirst()
+              .map(NodeCarrierServiceCalendarResponse::getCalendarId)
+              .orElse("N/A"));
+
       pickupTimeDtoList.add(pickupTimeDto);
     }
     return pickupTimeDtoList;
