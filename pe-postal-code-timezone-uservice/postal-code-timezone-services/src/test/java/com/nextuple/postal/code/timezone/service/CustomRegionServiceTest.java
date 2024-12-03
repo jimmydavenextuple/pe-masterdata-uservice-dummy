@@ -676,4 +676,28 @@ class CustomRegionServiceTest {
               orgId, country, null, null, pageParams);
         });
   }
+
+  @Test
+  @DisplayName(
+      "Exception when user tries to associate zipCodePrefix already associated to existing custom region to new custom region")
+  void exceptionAsscociationOfCustomRegionZipCodePrefix() throws PromiseEngineException {
+    CustomRegionRequest customRegionRequest = testUtil.getCreateCustomRegionRequest();
+    List<PostalCodeDomainDto> customRegionDomainDtos =
+        List.of(
+            PostalCodeDomainDto.builder()
+                .zipCodePrefix(customRegionRequest.getCodes().getFirst())
+                .customRegion("REGIONS")
+                .build());
+    when(postalCodePersistenceService.fetchPostalCodeList(
+            customRegionRequest.getOrgId(), customRegionRequest.getCodes().getFirst()))
+        .thenReturn(customRegionDomainDtos);
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> {
+              customRegionService.createCustomRegion(customRegionRequest);
+            });
+    assertEquals("Custom Region already exists for the given code", exception.getMessage());
+    verify(postalCodePersistenceService, times(1)).fetchPostalCodeList(any(), any());
+  }
 }

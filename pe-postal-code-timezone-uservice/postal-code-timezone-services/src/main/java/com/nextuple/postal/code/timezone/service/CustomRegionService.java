@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -116,20 +117,10 @@ public class CustomRegionService {
 
   private void addCustomRegionToZipCodeDetails(
       List<String> codes, Map<String, List<PostalCodeDomainDto>> postalCodeEntityMap, String id)
-      throws CommonServiceException, PromiseEngineException {
+      throws PromiseEngineException {
     for (String code : codes) {
       List<PostalCodeDomainDto> postalCodeEntityList = postalCodeEntityMap.get(code);
       for (PostalCodeDomainDto postalCodeEntity : postalCodeEntityList) {
-        if (!ObjectUtils.isEmpty(postalCodeEntity.getCustomRegion())) {
-          logger.error(CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE);
-          Map<String, FieldError> errorMap = new HashMap<>();
-          errorMap.put("CODE", FieldError.builder().rejectedValue(code).build());
-          throw new CommonServiceException(
-              CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE,
-              HttpStatus.BAD_REQUEST,
-              ErrorCodesEnum.CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE.getErrorCode(),
-              errorMap);
-        }
         postalCodeEntity.setCustomRegion(id);
         postalCodePersistenceService.savePostalCode(postalCodeEntity);
       }
@@ -274,10 +265,20 @@ public class CustomRegionService {
       String orgId,
       Map<String, List<PostalCodeDomainDto>> postalCodeEntityMap,
       List<String> unavailableCodes)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     for (String postalCodePrefix : codes) {
       List<PostalCodeDomainDto> postalCodeEntityListByPrefix =
           postalCodePersistenceService.fetchPostalCodeList(orgId, postalCodePrefix);
+      if (Objects.nonNull(postalCodeEntityListByPrefix.getFirst().getCustomRegion())) {
+        logger.error(CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE);
+        Map<String, FieldError> errorMap = new HashMap<>();
+        errorMap.put("CODE", FieldError.builder().rejectedValue(postalCodePrefix).build());
+        throw new CommonServiceException(
+            CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE,
+            HttpStatus.BAD_REQUEST,
+            ErrorCodesEnum.CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE.getErrorCode(),
+            errorMap);
+      }
       if (!postalCodeEntityListByPrefix.isEmpty()) {
         postalCodeEntityMap.put(postalCodePrefix, postalCodeEntityListByPrefix);
       } else {
