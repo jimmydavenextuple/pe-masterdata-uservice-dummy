@@ -1494,6 +1494,7 @@ public class TestUtil {
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .isActive(true)
+        .serviceOptionEligibilities(Map.of("expressEligible", true, "sdndEligible", true))
         .build();
   }
 
