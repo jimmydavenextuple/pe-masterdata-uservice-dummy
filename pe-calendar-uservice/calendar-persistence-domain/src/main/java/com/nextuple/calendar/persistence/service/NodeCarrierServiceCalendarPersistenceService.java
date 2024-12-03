@@ -28,6 +28,9 @@ public interface NodeCarrierServiceCalendarPersistenceService
       String orgId, String nodeId, String carrierServiceId, String carrierServiceOption)
       throws CalendarDomainException;
 
+  List<NodeCarrierServiceCalendarDomainDto> getNodeCarrierServiceCalendar(
+      String orgId, String nodeId) throws CalendarDomainException;
+
   List<NodeCarrierServiceCalendarDomainDto> getAllNodeCarrierServiceCalendars(Integer limit)
       throws CalendarDomainException;
 

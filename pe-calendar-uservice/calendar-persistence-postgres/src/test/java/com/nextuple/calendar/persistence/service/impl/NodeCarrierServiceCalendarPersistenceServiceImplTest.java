@@ -241,6 +241,48 @@ class NodeCarrierServiceCalendarPersistenceServiceImplTest {
   }
 
   @Test
+  @Description("Get node carrier service calendars for orgId and nodeId -Happy Path Scenario")
+  void getAllNodeCarrierServiceCalendarsByOrgAndNodeIdTest() throws CalendarDomainException {
+    List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntities =
+        testUtil.getNodeCarrierServiceCalendarEntityList();
+
+    when(nodeCarrierServiceCalendarRepository
+            .findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(any(), any()))
+        .thenReturn(nodeCarrierServiceCalendarEntities);
+    when(nodeCarrierServiceCalendarEntityMapper.toDomain(anyList()))
+        .thenReturn(testUtil.getNodeCarrierServiceCalendarDomainDtoList());
+
+    List<NodeCarrierServiceCalendarDomainDto> response =
+        nodeCarrierServiceCalendarPersistenceService.getNodeCarrierServiceCalendar(
+            TestUtil.ORG_ID, TestUtil.NODE_ID);
+
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(
+        nodeCarrierServiceCalendarEntities.get(0).getCalendarId(), response.get(0).getCalendarId());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(any(), any());
+  }
+
+  @Test
+  @Description("Get node carrier service calendars for orgId and nodeId -Exception Scenario")
+  void getAllNodeCarrierServiceCalendarsByOrgAndNodeIdExceptionTest() {
+    when(nodeCarrierServiceCalendarRepository
+            .findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(any(), any()))
+        .thenThrow(new RuntimeException("Unable to fetch node carrier service calendars"));
+
+    CalendarDomainException ex =
+        Assertions.assertThrows(
+            CalendarDomainException.class,
+            () ->
+                nodeCarrierServiceCalendarPersistenceService.getNodeCarrierServiceCalendar(
+                    TestUtil.ORG_ID, TestUtil.NODE_ID));
+
+    Assertions.assertEquals("Unable to fetch node carrier service calendars", ex.getMessage());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(any(), any());
+  }
+
+  @Test
   @Description("Get all Node Carrier Service Calendars by OrgId - Happy Path")
   void getAllNodeCarrierServiceCalendarsByOrgId() throws CalendarDomainException {
     List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntities =

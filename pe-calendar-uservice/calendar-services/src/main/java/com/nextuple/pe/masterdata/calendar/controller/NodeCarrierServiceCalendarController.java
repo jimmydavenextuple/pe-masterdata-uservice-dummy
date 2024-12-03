@@ -18,6 +18,7 @@ import com.nextuple.pe.masterdata.calendar.controller.docs.GetNodeCarrierCalenda
 import com.nextuple.pe.masterdata.calendar.controller.docs.GetNodeCarrierServiceCalendarDoc;
 import com.nextuple.pe.masterdata.calendar.controller.docs.HandleCreateNodeCarrierServiceCalendarDoc;
 import com.nextuple.pe.masterdata.calendar.controller.docs.HandleGetNodeCarrierServiceCalendarDoc;
+import com.nextuple.pe.masterdata.calendar.controller.docs.HandleNodeCarrierServiceCalendarForOrgAndNodeId;
 import com.nextuple.pe.masterdata.calendar.service.NodeCarrierServiceCalendarService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -100,6 +101,36 @@ public class NodeCarrierServiceCalendarController {
               .payload(
                   nodeCarrierServiceCalendarService.processGetNodeCarrierServiceCalendar(
                       orgId, nodeId, carrierServiceId, serviceOption))
+              .build());
+    } catch (Exception e) {
+      logger.error("Error in handleGetNodeCarrierServiceCalendar()");
+      throw e;
+    }
+  }
+
+  @GetMapping("/{orgId}/{nodeId}")
+  @HandleNodeCarrierServiceCalendarForOrgAndNodeId
+  public ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>>
+      handleGetNodeCarrierServiceCalendarForNodeId(
+          @NotBlank(message = "orgId can't be empty")
+              @PathVariable
+              @Parameter(
+                  description = "Unique identifier of the organization",
+                  example = "NEXTUPLE")
+              String orgId,
+          @NotBlank(message = "nodeId can't be empty")
+              @PathVariable
+              @Parameter(description = "Unique identifier of the node", example = "NODE01")
+              String nodeId)
+          throws CalendarDomainException {
+    try {
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Node Carrier Service calendar details fetched successfully!")
+              .payload(
+                  nodeCarrierServiceCalendarService
+                      .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(
+                          orgId, nodeId))
               .build());
     } catch (Exception e) {
       logger.error("Error in handleGetNodeCarrierServiceCalendar()");
