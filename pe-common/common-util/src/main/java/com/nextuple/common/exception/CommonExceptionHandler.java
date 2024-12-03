@@ -25,6 +25,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Component
 @ControllerAdvice
@@ -172,5 +173,14 @@ public class CommonExceptionHandler {
   public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException e) {
     return ResponseEntity.status(e.getStatusCode())
         .body(ErrorResponse.builder(ErrorType.ERROR, 0x000005).message(e.getMessage()).build());
+  }
+
+  @ExceptionHandler(NoHandlerFoundException.class)
+  public ResponseEntity<ErrorResponse> handleNotFound(NoHandlerFoundException ex) {
+    return ResponseEntity.status(ex.getStatusCode())
+        .body(
+            ErrorResponse.builder(ErrorType.ERROR, 0x000006)
+                .message("The requested resource was not found for " + ex.getRequestURL())
+                .build());
   }
 }
