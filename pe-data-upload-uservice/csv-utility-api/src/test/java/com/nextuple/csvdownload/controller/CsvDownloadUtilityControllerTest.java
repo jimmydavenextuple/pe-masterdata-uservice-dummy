@@ -386,7 +386,7 @@ class CsvDownloadUtilityControllerTest {
   }
 
   @Test
-  void downloadNodesDataCSVTest() throws IOException {
+  void downloadNodesDataCSVTest() throws IOException, CommonServiceException {
     File file = File.createTempFile("some-prefix", "some-ext");
     file.deleteOnExit();
     when(csvDownloadUtilityService.downloadNodesByOrgId(any(), any(), any())).thenReturn(file);

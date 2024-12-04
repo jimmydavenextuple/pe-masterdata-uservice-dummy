@@ -138,6 +138,45 @@ class NodeCarrierServiceCalendarControllerTest {
   }
 
   @Test
+  @Description("Handle get node carrier service calendars for org and nodeId - Happy Path")
+  void handleGetNodeCarrierServiceCalendarForNodeIdTest() throws CalendarDomainException {
+    when(nodeCarrierServiceCalendarService
+            .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(any(), any()))
+        .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarResponse()));
+
+    ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>> resp =
+        nodeCarrierServiceCalendarController.handleGetNodeCarrierServiceCalendarForNodeId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID);
+
+    Assertions.assertEquals(HttpStatus.OK, resp.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID,
+        Objects.requireNonNull(resp.getBody()).getPayload().get(0).getCalendarId());
+    verify(nodeCarrierServiceCalendarService, times(1))
+        .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(any(), any());
+  }
+
+  @Test
+  @Description("Handle get node carrier service calendars for org and nodeId - Exception Scenario")
+  void handleGetNodeCarrierServiceCalendarForNodeIdTestException() throws CalendarDomainException {
+
+    when(nodeCarrierServiceCalendarService
+            .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(any(), any()))
+        .thenThrow(new NullPointerException("error"));
+
+    Exception ex =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                nodeCarrierServiceCalendarController.handleGetNodeCarrierServiceCalendarForNodeId(
+                    TestUtil.ORG_ID, TestUtil.NODE_ID));
+
+    Assertions.assertEquals("error", ex.getMessage());
+    verify(nodeCarrierServiceCalendarService, times(1))
+        .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(any(), any());
+  }
+
+  @Test
   @Description("Test Get all node carriers service Calendars")
   void getAllNodeCarrierServiceCalendarsTest() throws CalendarDomainException {
     when(nodeCarrierServiceCalendarService.processGetAllNodeCarrierServiceCalendar(any()))
