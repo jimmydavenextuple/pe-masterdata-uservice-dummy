@@ -22,9 +22,9 @@ dependencies {
     implementation(project(":pe-common:common-domain"))
     implementation(project(":pe-common:master-data-integration-framework"))
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
-    implementation(project(":pe-transit-uservice:transit-api-domain"))
     implementation(project(":pe-transit-uservice:transit-services"))
     implementation(project(":pe-transit-uservice:transit-persistence-domain"))
+    implementation(project(":transit-api-domain"))
     implementation(project(":pe-transit-uservice:transit-persistence-postgres"))
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }
@@ -37,7 +37,6 @@ tasks.named('test') {
     dependsOn ':pe-carrier-uservice:carrier-api-domain:jar'
     dependsOn ':pe-postal-code-timezone-uservice:postal-code-timezone-api-domain:jar'
     dependsOn ':pe-node-uservice:node-api-domain:jar'
-    dependsOn ':pe-transit-uservice:transit-api-domain:jar'
     dependsOn ':pe-transit-uservice:transit-consumer:jar'
     dependsOn ':pe-transit-uservice:transit-persistence-postgres:jar'
     dependsOn ':pe-transit-uservice:transit-persistence-domain:jar'

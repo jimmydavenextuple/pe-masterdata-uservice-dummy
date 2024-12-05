@@ -426,7 +426,6 @@ dependencies {
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-rule-near-cache"))
 
     implementation(project(":pe-transit-uservice:transit-services"))
-    implementation(project(":pe-transit-uservice:transit-api-domain"))
 
     implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-services"))
     implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api-domain"))

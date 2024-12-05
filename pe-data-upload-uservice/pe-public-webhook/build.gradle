@@ -23,7 +23,6 @@ dependencies {
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-consumer"))
     implementation(project(":pe-transit-uservice:transit-consumer"))
-    implementation(project(":pe-transit-uservice:transit-api-domain"))
     implementation(project(":pe-transit-uservice:transit-services"))
     implementation(project(":pe-node-carrier-uservice:node-carrier-consumer"))
     api "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0"

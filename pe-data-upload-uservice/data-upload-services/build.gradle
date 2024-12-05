@@ -21,9 +21,9 @@ dependencies {
     implementation(project(":pe-node-uservice:node-api-domain"))
     implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
+    implementation(project":transit-api-domain")
     implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
-    implementation(project(":pe-transit-uservice:transit-api-domain"))
     implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
@@ -48,7 +48,7 @@ test {
 }
 
 tasks.named('bootJar') {
-    dependsOn ':pe-transit-uservice:transit-api-domain:jar'
+    dependsOn ':transit-api-domain:jar'
     dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
 }
 
@@ -81,5 +81,5 @@ tasks.named('test') {
     dependsOn ':pe-node-uservice:node-persistence-domain:jar'
     dependsOn ':pe-node-carrier-uservice:node-carrier-services:jar'
     dependsOn ':pe-transit-uservice:transit-persistence-domain:jar'
-    dependsOn ':pe-transit-uservice:transit-api-domain:jar'
+    dependsOn ':transit-api-domain:jar'
 }

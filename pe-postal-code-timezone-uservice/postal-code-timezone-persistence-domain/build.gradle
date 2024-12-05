@@ -16,10 +16,6 @@ dependencies {
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
 }
 
-tasks.named('test') {
-    dependsOn ':pe-transit-uservice:transit-api-domain:jar'
-}
-
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }

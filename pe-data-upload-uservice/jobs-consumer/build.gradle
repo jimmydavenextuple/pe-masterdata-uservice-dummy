@@ -24,7 +24,7 @@ dependencies {
     implementation(project(":pe-data-upload-uservice:csv-utility-common-util"))
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
     implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
-    implementation(project(":pe-transit-uservice:transit-api-domain"))
+    implementation(project(":transit-api-domain"))
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
     implementation(project(":pe-node-uservice:node-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))

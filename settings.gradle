@@ -25,7 +25,7 @@ include 'pe-item-uservice:item-services'
 include 'pe-item-uservice:item-persistence-domain'
 include 'pe-item-uservice:item-persistence-postgres'
 
-include 'pe-transit-uservice:transit-api-domain'
+include(':transit-api-domain')
 include 'pe-transit-uservice:transit-consumer'
 include 'pe-transit-uservice:transit-near-cache'
 include 'pe-transit-uservice:transit-near-cache-spring'

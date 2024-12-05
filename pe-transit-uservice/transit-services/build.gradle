@@ -12,9 +12,9 @@ bootJar {
 
 
 dependencies {
-    implementation(project(":pe-transit-uservice:transit-api-domain"))
     implementation(project(":pe-transit-uservice:transit-persistence-domain"))
     implementation(project(":pe-transit-uservice:transit-persistence-postgres"))
+    implementation(project(":transit-api-domain"))
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"

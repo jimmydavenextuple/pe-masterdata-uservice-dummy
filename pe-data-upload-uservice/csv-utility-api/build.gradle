@@ -13,7 +13,6 @@ jar {
 dependencies {
     implementation 'com.opencsv:opencsv:5.9'
     implementation(project(":pe-data-upload-uservice:csv-utility-common-util"))
-    implementation(project(":pe-transit-uservice:transit-api-domain"))
     implementation(project(":pe-common:common-util"))
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
     implementation(project(":pe-data-upload-uservice:data-upload-common-util"))
@@ -25,6 +24,7 @@ dependencies {
     implementation("com.nextuple.pe:core-common-util:1.6.0-${build_target}")
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
+    implementation(project(":transit-api-domain"))
     implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
     implementation(project(":pe-node-uservice:node-api-domain"))
     implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
@@ -48,7 +48,7 @@ tasks.named('test') {
     dependsOn ':pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain:jar'
     dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
     dependsOn ':pe-common:common-util:jar'
-    dependsOn ':pe-transit-uservice:transit-api-domain:jar'
+    dependsOn ':transit-api-domain:jar'
     dependsOn ':pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain:jar'
     dependsOn ':pe-node-carrier-uservice:node-carrier-api-domain:jar'
     dependsOn ':pe-node-uservice:node-api-domain:jar'

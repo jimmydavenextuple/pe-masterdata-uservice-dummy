@@ -29,7 +29,6 @@ dependencies {
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
-    implementation(project(":pe-transit-uservice:transit-api-domain"))
     implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
 
