@@ -143,7 +143,7 @@ class CustomRegionServiceTest {
         () -> {
           customRegionService.createCustomRegion(createCustomRegionRequest);
         });
-    verify(customRegionPersistenceService, times(1))
+    verify(customRegionPersistenceService, times(0))
         .fetchRegionByOrgIdAndId(anyString(), anyString());
   }
 

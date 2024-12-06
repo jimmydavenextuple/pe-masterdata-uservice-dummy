@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -76,17 +77,17 @@ public class CustomRegionService {
 
     logger.debug("--inside createCustomRegion service--");
     String orgId = baseRequest.getOrgId();
+    String customRegionId = baseRequest.getId();
     List<String> codes = baseRequest.getCodes();
     Map<String, List<PostalCodeDomainDto>> postalCodeEntityMap = validateCodes(codes, orgId);
     validateBlankCodes(codes);
-    String customRegionId = baseRequest.getId();
+    addCustomRegionToZipCodeDetails(codes, postalCodeEntityMap, customRegionId);
     Optional<CustomRegionDomainDto> existingCustomRegionDtoOptional =
         customRegionPersistenceService.fetchRegionByOrgIdAndId(orgId, customRegionId);
     CustomRegionDomainDto customRegionDomainDto =
         existingCustomRegionDtoOptional.isPresent()
             ? updateExistingCustomRegion(baseRequest, existingCustomRegionDtoOptional.get())
             : createNewCustomRegion(baseRequest);
-    addCustomRegionToZipCodeDetails(codes, postalCodeEntityMap, customRegionDomainDto.getId());
     return INSTANCE.toCustomRegionResponse(
         customRegionPersistenceService.saveCustomRegion(customRegionDomainDto));
   }
@@ -116,11 +117,11 @@ public class CustomRegionService {
 
   private void addCustomRegionToZipCodeDetails(
       List<String> codes, Map<String, List<PostalCodeDomainDto>> postalCodeEntityMap, String id)
-      throws CommonServiceException, PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
     for (String code : codes) {
       List<PostalCodeDomainDto> postalCodeEntityList = postalCodeEntityMap.get(code);
       for (PostalCodeDomainDto postalCodeEntity : postalCodeEntityList) {
-        if (!ObjectUtils.isEmpty(postalCodeEntity.getCustomRegion())) {
+        if (Objects.nonNull(postalCodeEntity.getCustomRegion())) {
           logger.error(CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE);
           Map<String, FieldError> errorMap = new HashMap<>();
           errorMap.put("CODE", FieldError.builder().rejectedValue(code).build());
@@ -278,6 +279,7 @@ public class CustomRegionService {
     for (String postalCodePrefix : codes) {
       List<PostalCodeDomainDto> postalCodeEntityListByPrefix =
           postalCodePersistenceService.fetchPostalCodeList(orgId, postalCodePrefix);
+
       if (!postalCodeEntityListByPrefix.isEmpty()) {
         postalCodeEntityMap.put(postalCodePrefix, postalCodeEntityListByPrefix);
       } else {
