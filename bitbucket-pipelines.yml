@@ -163,7 +163,7 @@ server:
           memory: 1024Mi
           cpu: 256m
     devpe:
-      ingress: yes
+      ingress: no
       middleman: yes
       prometheus: yes
       storage: yes
