@@ -183,4 +183,11 @@ public class CommonExceptionHandler {
                 .message("The requested resource was not found for " + ex.getRequestURL())
                 .build());
   }
+
+  @ExceptionHandler(HardExecutionFailureException.class)
+  public ResponseEntity<ErrorResponse> handleHardExecutionFailureException(
+      HardExecutionFailureException e) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(ErrorResponse.builder(ErrorType.ERROR, 0x000006).message(e.getMessage()).build());
+  }
 }

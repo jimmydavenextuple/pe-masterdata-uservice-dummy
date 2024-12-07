@@ -5,6 +5,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.userexit.domain.UserExitData;
 import com.nextuple.common.userexit.domain.dto.UserExitConfigDataDto;
@@ -53,7 +54,8 @@ class ApiUEImplTest {
 
   @Test
   @DisplayName("Invoke API UE - Mock")
-  void invokeMockTest() throws URISyntaxException, IOException, InterruptedException {
+  void invokeMockTest()
+      throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     UserExitData userExitData = testUtil.getUserExitData();
     userExitData.getUserExitMetaData().setType(UserExitTypeEnum.API);
     userExitData.getUserExitConfigData().setUeImplType(UEImplTypeEnum.CLASS_BASED);
@@ -69,7 +71,8 @@ class ApiUEImplTest {
 
   @Test
   @DisplayName("Invoke API UE with pre and post")
-  void invokePreAndPostTest() throws URISyntaxException, IOException, InterruptedException {
+  void invokePreAndPostTest()
+      throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     UserExitData userExitData = testUtil.getUserExitData();
     userExitData.getUserExitMetaData().setType(UserExitTypeEnum.API);
     userExitData.getUserExitMetaData().setPreUEName("preUE");
@@ -90,7 +93,8 @@ class ApiUEImplTest {
 
   @Test
   @DisplayName("Invoke API UE with post UE only")
-  void invokePostUETest() throws URISyntaxException, IOException, InterruptedException {
+  void invokePostUETest()
+      throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     UserExitData userExitData = testUtil.getUserExitData();
     userExitData.getUserExitMetaData().setType(UserExitTypeEnum.API);
     userExitData.getUserExitMetaData().setPostUEName("postUE");
@@ -109,7 +113,8 @@ class ApiUEImplTest {
 
   @Test
   @DisplayName("Invoke API UE without pre and post")
-  void invokeWithoutPreAndPostTest() throws URISyntaxException, IOException, InterruptedException {
+  void invokeWithoutPreAndPostTest()
+      throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     UserExitData userExitData = testUtil.getUserExitData();
     userExitData.getUserExitMetaData().setType(UserExitTypeEnum.API);
     userExitData.getUserExitMetaData().setPreUEName(null);

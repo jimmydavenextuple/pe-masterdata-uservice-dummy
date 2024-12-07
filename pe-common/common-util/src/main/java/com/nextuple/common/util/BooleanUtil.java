@@ -1,7 +1,11 @@
 package com.nextuple.common.util;
 
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.exception.HardExecutionFailureException;
+import com.nextuple.common.exception.ServiceUnavailableException;
 import com.nextuple.common.response.error.FieldError;
+import feign.FeignException;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -30,5 +34,17 @@ public class BooleanUtil {
       throw new CommonServiceException(
           field + ": " + INVALID_BOOLEAN_MESSAGE, HttpStatus.BAD_REQUEST, 0x1972, errorMap);
     }
+  }
+
+  public static boolean isFeignConnectionException(FeignException e) {
+    return e.getCause() instanceof SocketException;
+  }
+
+  public static boolean isServiceUnavailableException(Exception e) {
+    return e.getCause() instanceof ServiceUnavailableException;
+  }
+
+  public static boolean isHardExecutionFailureException(Exception e) {
+    return e.getCause() instanceof HardExecutionFailureException;
   }
 }
