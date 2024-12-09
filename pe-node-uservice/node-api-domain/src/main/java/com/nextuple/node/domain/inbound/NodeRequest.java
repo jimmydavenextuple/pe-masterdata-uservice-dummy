@@ -11,6 +11,7 @@ import com.nextuple.node.domain.NodeConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,10 @@ public class NodeRequest implements Serializable {
   @Schema(description = NodeConstants.NODE_ID, example = NodeConstants.NODE_ID_EXAMPLE)
   @NotBlank(message = "nodeId can't be blank")
   @Length(max = 50)
+  @Pattern(
+      regexp = "^[A-Za-z0-9-_]*$",
+      message =
+          "Invalid input provided for nodeId. Special characters that are allowed are - and _")
   private String nodeId;
 
   @Schema(description = NodeConstants.ORG_ID, example = NodeConstants.ORG_ID_EXAMPLE)
