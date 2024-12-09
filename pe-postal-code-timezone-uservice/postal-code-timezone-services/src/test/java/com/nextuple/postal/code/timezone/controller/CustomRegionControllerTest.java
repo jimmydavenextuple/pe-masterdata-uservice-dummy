@@ -325,4 +325,21 @@ class CustomRegionControllerTest {
     verify(customRegionService, times(1))
         .getCustomRegionByCountryRegionIdAndName(any(), any(), any(), any(), any());
   }
+
+  @Test
+  @DisplayName("Happy Path : Delete zip_code_prefixes from given custom region")
+  void deleteCustomRegionByRequest() throws PromiseEngineException, CommonServiceException {
+    CustomRegionResponse customRegionResponse = testUtil.getCustomRegionResponse();
+    customRegionResponse.setCodes(List.of("T2P"));
+    CustomRegionRequest customRegionRequest = testUtil.getCreateCustomRegionRequest4();
+    customRegionRequest.setCodes(List.of("T2P"));
+    when(customRegionService.deleteCustomRegionGeozones(anyString(), anyString(), any()))
+        .thenReturn(customRegionResponse);
+    ResponseEntity<BaseResponse<CustomRegionResponse>> responseEntity =
+        customRegionController.deleteCustomRegionByRequest(customRegionRequest);
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), STATUS_CODE);
+    assertEquals(customRegionResponse, responseEntity.getBody().getPayload());
+    verify(customRegionService, times(1))
+        .deleteCustomRegionGeozones(anyString(), anyString(), any());
+  }
 }
