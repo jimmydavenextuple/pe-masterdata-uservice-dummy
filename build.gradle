@@ -115,16 +115,15 @@ subprojects {
     }
 
     bootJar {
-        enabled = true
-        mainClass.set("com.nextuple.masterdata.PeMasterDataUserviceApplication")
+        enabled = false
     }
 
-    configurations {
-        [apiElements, runtimeElements].each {
-            it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
-            it.outgoing.artifact(bootJar)
-        }
-    }
+//    configurations {
+//        [apiElements, runtimeElements].each {
+//            it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+//            it.outgoing.artifact(bootJar)
+//        }
+//    }
 
 
     dependencies {
@@ -240,20 +239,11 @@ subprojects {
         publications {
             mavenJava(MavenPublication) {
                 from components.java
-                artifact tasks.jar
-                pom {
-                    packaging = 'jar' // Explicitly set packaging to 'jar'
-                }
-                versionMapping {
-                    allVariants {
-                        fromResolutionResult()
-                    }
-                }
             }
         }
     }
     jar {
-        enabled = false
+        enabled = true
         archiveClassifier = ''
     }
     processResources {
@@ -534,16 +524,6 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifact tasks.jar
-            pom {
-                packaging = 'jar' // Explicitly set packaging to 'jar'
-            }
-            versionMapping {
-                allVariants {
-                    fromResolutionResult()
-                }
-            }
-
         }
     }
 }
