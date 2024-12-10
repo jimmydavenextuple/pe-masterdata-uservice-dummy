@@ -14,6 +14,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.userexit.domain.UserExitData;
 import com.nextuple.common.userexit.domain.enums.UEImplTypeEnum;
 import com.nextuple.common.util.TestUtil;
@@ -47,7 +48,8 @@ class RegularUEImplTest {
 
   @Test
   @DisplayName("Invoke UE - Call URL")
-  void invokeRegularUETest() throws URISyntaxException, IOException, InterruptedException {
+  void invokeRegularUETest()
+      throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     UserExitData userExitData = testUtil.getUserExitData();
     when(httpUtil.makePOSTCall(any(), any(), any(), any())).thenReturn("Modified Output");
     String response = regularUE.invoke("InputData", null, userExitData, null, null);
@@ -58,7 +60,8 @@ class RegularUEImplTest {
 
   @Test
   @DisplayName("Invoke UE - Mock Call")
-  void invokeMockTest() throws URISyntaxException, IOException, InterruptedException {
+  void invokeMockTest()
+      throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     UserExitData userExitData = testUtil.getUserExitData();
     userExitData.getUserExitConfigData().setUeImplType(UEImplTypeEnum.CLASS_BASED);
     String response = regularUE.invoke("Input", null, userExitData, null, null);
