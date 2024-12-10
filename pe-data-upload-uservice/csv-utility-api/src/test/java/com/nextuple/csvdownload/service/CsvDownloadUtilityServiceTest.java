@@ -932,6 +932,29 @@ class CsvDownloadUtilityServiceTest {
   }
 
   @Test
+  @DisplayName(
+      "happy Path : Download Custom regions by orgId, country, regionName and regionId along with page change")
+  void downloadCustomRegionsDetailsTest1() throws IOException {
+    BaseResponse<PagePayload<CustomRegionInfo>> mockResponse =
+        BaseResponse.builder().payload(testUtil.getCustomRegionInfoPagePayloadMultiple()).build();
+    when(postalCodeFeign.getCustomRegionInfo(
+            any(), any(), any(), any(), any(), any(), any(), any()))
+        .thenReturn(mockResponse);
+
+    File file =
+        csvDownloadUtilityService.downloadCustomRegionDetails(
+            TestUtil.ORG_ID, TestUtil.COUNTRY, TestUtil.REGION_ID, TestUtil.REGION_NAME);
+    assertNotNull(file);
+    List<String> lines = FileUtils.readLines(file, StandardCharsets.UTF_8);
+    boolean containsRegionId1 = lines.stream().anyMatch(line -> line.contains("CRID1"));
+    boolean containsRegionId2 = lines.stream().anyMatch(line -> line.contains("CRID2"));
+    assertTrue(containsRegionId1);
+    assertTrue(containsRegionId2);
+    verify(postalCodeFeign, times(2))
+        .getCustomRegionInfo(any(), any(), any(), any(), any(), any(), any(), any());
+  }
+
+  @Test
   void downloadCustomRegionForOrgIdAndRegionIdTest() throws CustomRegionServiceException {
     when(postalCodeTimeZoneResponseService.getCustomRegionsByOrgIdAndRegionId(
             anyString(), anyString()))

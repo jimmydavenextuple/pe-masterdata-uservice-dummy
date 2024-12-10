@@ -1422,29 +1422,19 @@ public class CsvDownloadUtilityService {
         responses = customRegionInfoPagePayload.getData();
         totalPages = customRegionInfoPagePayload.getPagination().getTotalPages();
         currentPageNo = customRegionInfoPagePayload.getPagination().getCurrentPage();
-      }
-      writeCustomRegionDetailsOntoFile(writer, responses);
-      writer.flush();
-      if (totalPages > 0) {
-        while (currentPageNo < totalPages) {
+        writeCustomRegionDetailsOntoFile(writer, responses);
+        currentPageNo++;
+        while (currentPageNo <= totalPages) {
           PagePayload<CustomRegionInfo> customRegionInfoNextPages =
               postalCodeFeign
                   .getCustomRegionInfo(
-                      orgId,
-                      country,
-                      regionIds,
-                      regionNames,
-                      currentPageNo + 1,
-                      noOfRecordsPerPage,
-                      null,
-                      null)
+                      orgId, country, regionIds, regionNames, currentPageNo, null, null, null)
                   .getPayload();
           if (Objects.nonNull(customRegionInfoNextPages)
               && Objects.nonNull(customRegionInfoNextPages.getData())) {
             responses = customRegionInfoNextPages.getData();
-            totalPages = customRegionInfoNextPages.getPagination().getTotalPages();
-            currentPageNo = customRegionInfoNextPages.getPagination().getCurrentPage();
             writeCustomRegionDetailsOntoFile(writer, responses);
+            currentPageNo++;
           }
         }
       }
