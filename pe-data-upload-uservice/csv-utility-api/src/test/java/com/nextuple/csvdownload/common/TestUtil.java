@@ -2216,4 +2216,22 @@ public class TestUtil {
     PagePayload pagePayload = new PagePayload<>(getTwoCustomRegionInfoList(), pagination, null);
     return pagePayload;
   }
+
+  public PagePayload<CustomRegionInfo> getCustomRegionInfoPagePayloadMultiple() {
+    Pagination pagination = new Pagination();
+    pagination.setCurrentPage(1);
+    pagination.setTotalPages(2);
+    pagination.setSortBy("customRegionId");
+    pagination.setNext("");
+    pagination.setPrevious("");
+    List<CustomRegionInfo> multiple = new ArrayList<>(getTwoCustomRegionInfoList());
+    multiple.addAll(getTwoCustomRegionInfoList());
+    multiple.addAll(getTwoCustomRegionInfoList());
+    multiple.addAll(getTwoCustomRegionInfoList());
+    multiple.addAll(getTwoCustomRegionInfoList());
+    multiple.addAll(getTwoCustomRegionInfoList());
+    multiple.addAll(getTwoCustomRegionInfoList());
+    PagePayload pagePayload = new PagePayload<>(multiple, pagination, null);
+    return pagePayload;
+  }
 }
