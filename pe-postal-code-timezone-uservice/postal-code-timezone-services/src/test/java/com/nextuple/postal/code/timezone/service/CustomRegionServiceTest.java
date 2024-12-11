@@ -237,21 +237,22 @@ class CustomRegionServiceTest {
   @Test
   @DisplayName("")
   void createCustomRegionExceptionMultipleCountryZipPrefix() throws PromiseEngineException {
-    CustomRegionRequest createCustomRegionRequest =
-            testUtil.getCreateCustomRegionRequest();
-    when(postalCodePersistenceService.fetchPostalCodeList(createCustomRegionRequest.getOrgId(), "T2P"))
-            .thenReturn(testUtil.getPostalCodeEntityListCountry("CA"));
-    when(postalCodePersistenceService.fetchPostalCodeList(createCustomRegionRequest.getOrgId(), "T3P"))
-            .thenReturn(testUtil.getPostalCodeEntityListCountry("US"));
+    CustomRegionRequest createCustomRegionRequest = testUtil.getCreateCustomRegionRequest();
+    when(postalCodePersistenceService.fetchPostalCodeList(
+            createCustomRegionRequest.getOrgId(), "T2P"))
+        .thenReturn(testUtil.getPostalCodeEntityListCountry("CA"));
+    when(postalCodePersistenceService.fetchPostalCodeList(
+            createCustomRegionRequest.getOrgId(), "T3P"))
+        .thenReturn(testUtil.getPostalCodeEntityListCountry("US"));
 
     Exception ex =
-            assertThrows(
-                    CommonServiceException.class,
-                    () -> {
-                      customRegionService.createCustomRegion(createCustomRegionRequest);
-                    });
+        assertThrows(
+            CommonServiceException.class,
+            () -> {
+              customRegionService.createCustomRegion(createCustomRegionRequest);
+            });
     assertEquals("Zip code prefix associated with multiple countries", ex.getMessage());
-    verify(postalCodePersistenceService, times(2)).fetchPostalCodeList(any(),any());
+    verify(postalCodePersistenceService, times(2)).fetchPostalCodeList(any(), any());
     verify(customRegionPersistenceService, times(0)).saveCustomRegion(any());
   }
 

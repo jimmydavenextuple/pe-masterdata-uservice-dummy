@@ -31,7 +31,6 @@ import com.nextuple.postal.code.timezone.persistence.service.PostalCodePersisten
 import com.nextuple.postgres.config.ReaderDS;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,7 +59,8 @@ public class CustomRegionService {
   private static final String CUSTOM_REGION_NOT_FOUND = "Custom Region not found";
   private static final String ZIP_CODE_ASSOCIATION_NOT_FOUND =
       "No Zip Code association found for the given codes";
-  public static final String ZIP_PREFIX_MULTIPLE_COUNTRIES = "Zip code prefix associated with multiple countries";
+  public static final String ZIP_PREFIX_MULTIPLE_COUNTRIES =
+      "Zip code prefix associated with multiple countries";
   private static final String ZIP_PREFIX_NOT_FOUND_CUSTOM_REGION =
       "Zip code prefixes are not part of custom region";
   private static final String ZIP_CODE_NOT_FOUND = "Zip Codes cannot be blank";
@@ -291,32 +291,33 @@ public class CustomRegionService {
       String orgId,
       Map<String, List<PostalCodeDomainDto>> postalCodeEntityMap,
       List<String> unavailableCodes)
-          throws PromiseEngineException, CommonServiceException {
+      throws PromiseEngineException, CommonServiceException {
     Set<String> countrySet = new HashSet<>();
     for (String postalCodePrefix : codes) {
       List<PostalCodeDomainDto> postalCodeEntityListByPrefix =
           postalCodePersistenceService.fetchPostalCodeList(orgId, postalCodePrefix);
-      validateSameCountryPrefix(postalCodeEntityListByPrefix,countrySet);
+      validateSameCountryPrefix(postalCodeEntityListByPrefix, countrySet);
       if (!postalCodeEntityListByPrefix.isEmpty()) {
         postalCodeEntityMap.put(postalCodePrefix, postalCodeEntityListByPrefix);
       } else {
         unavailableCodes.add(postalCodePrefix);
       }
     }
-    if(countrySet.size()>1){
+    if (countrySet.size() > 1) {
       logger.error(ZIP_PREFIX_MULTIPLE_COUNTRIES);
       Map<String, FieldError> errorMap = new HashMap<>();
       errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
       errorMap.put(COUNTRY, FieldError.builder().rejectedValue(countrySet.toArray()).build());
       throw new CommonServiceException(
-              ZIP_PREFIX_MULTIPLE_COUNTRIES,
-              HttpStatus.BAD_REQUEST,
-              ErrorCodesEnum.ZIP_PREFIX_FROM_MULTIPLE_COUNTRY_FOR_CUSTOM_REGION.getErrorCode(),
-              errorMap);
+          ZIP_PREFIX_MULTIPLE_COUNTRIES,
+          HttpStatus.BAD_REQUEST,
+          ErrorCodesEnum.ZIP_PREFIX_FROM_MULTIPLE_COUNTRY_FOR_CUSTOM_REGION.getErrorCode(),
+          errorMap);
     }
   }
 
-  private void validateSameCountryPrefix(List<PostalCodeDomainDto> postalCodeEntityListByPrefix,Set<String> countrySet) {
+  private void validateSameCountryPrefix(
+      List<PostalCodeDomainDto> postalCodeEntityListByPrefix, Set<String> countrySet) {
     postalCodeEntityListByPrefix.forEach(postalCode -> countrySet.add(postalCode.getCountry()));
   }
 
