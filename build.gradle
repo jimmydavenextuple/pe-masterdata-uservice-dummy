@@ -12,7 +12,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.32.0"
-        classpath "org.owasp:dependency-check-gradle:8.2.0"
+        classpath "org.owasp:dependency-check-gradle:10.0.2"
         classpath "org.sonatype.gradle.plugins:scan-gradle-plugin:2.5.5"
     }
 }
@@ -62,7 +62,7 @@ apply plugin: "com.diffplug.spotless"
 apply plugin: "org.sonatype.gradle.plugins.scan"
 
 group = 'com.nextuple.pe'
-version = "1.3.2-${build_target}"
+version = "1.3.2-VAPT-${build_target}"
 
 sourceCompatibility = "${sourceJdkVersion}"
 targetCompatibility = "${targetJdkVersion}"
@@ -138,7 +138,7 @@ dependencies {
     implementation("com.nextuple.pe:node-carrier-services:1.3.0-${build_target}")
     implementation("com.nextuple.pe:item-services:1.3.2-${build_target}")
     implementation("com.nextuple.pe:calendar-services:1.3.2-${build_target}")
-    implementation("com.nextuple.pe:node-services:1.3.2-${build_target}")
+    implementation("com.nextuple.pe:node-services:1.3.2-VAPT-${build_target}")
     implementation("com.nextuple.pe:carrier-services:1.3.0-${build_target}")
     implementation("com.nextuple.pe:pe-public-webhook:1.3.2-${build_target}")
     implementation("com.nextuple.pe:configuration-services:1.3.1-${build_target}")
@@ -202,10 +202,11 @@ dependencyCheck {
     format = 'ALL'
     suppressionFile = 'suppressions.xml'
     autoUpdate = true
-    cveValidForHours = 24
+//    cveValidForHours = 24
     if (System.getenv("CI") == 'true') {
         data {
             directory = "/root/.cve"
+            connectionString = 'jdbc:h2:tcp://172.179.16.49:9092/odc'
         }
     }
 }
