@@ -12,7 +12,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.32.0"
-        classpath "org.owasp:dependency-check-gradle:8.2.0"
+        classpath "org.owasp:dependency-check-gradle:10.0.2"
         classpath "org.sonatype.gradle.plugins:scan-gradle-plugin:2.5.5"
     }
 }
@@ -202,10 +202,11 @@ dependencyCheck {
     format = 'ALL'
     suppressionFile = 'suppressions.xml'
     autoUpdate = true
-    cveValidForHours = 24
+//    cveValidForHours = 24
     if (System.getenv("CI") == 'true') {
         data {
             directory = "/root/.cve"
+            connectionString = 'jdbc:h2:tcp://172.179.16.49:9092/odc'
         }
     }
 }
