@@ -212,7 +212,7 @@ definitions:
           - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build artifactoryPublish
           - export SPACE=" "
-          - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g"| grep -v Catalog > service-version.txt
         artifacts:
           - build/**
           - service-version.txt
