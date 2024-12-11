@@ -33,7 +33,7 @@ public interface CustomRegionPersistenceService
       List<String> customRegionNames, String orgId) throws PromiseEngineException;
 
   Optional<List<CustomRegionDomainDto>> fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
-      List<String> customRegionIds, List<String> customRegionNames, String orgId)
+      List<String> customRegionIds, List<String> customRegionNames, String country, String orgId)
       throws PromiseEngineException;
 
   List<CustomRegionDomainDto> fetchCustomRegionsByIdsAndOrgId(

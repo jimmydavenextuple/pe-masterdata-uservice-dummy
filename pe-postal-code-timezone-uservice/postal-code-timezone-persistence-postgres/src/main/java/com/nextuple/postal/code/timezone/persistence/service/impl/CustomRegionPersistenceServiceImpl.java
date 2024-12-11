@@ -108,12 +108,13 @@ public class CustomRegionPersistenceServiceImpl
 
   @Override
   public Optional<List<CustomRegionDomainDto>> fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
-      List<String> customRegionIds, List<String> customRegionNames, String orgId)
+      List<String> customRegionIds, List<String> customRegionNames, String country, String orgId)
       throws PromiseEngineException {
     try {
       return Optional.of(
           getRepository()
-              .fetchCustomRegionByIdAndNameAndOrgId(customRegionIds, customRegionNames, orgId)
+              .fetchCustomRegionByIdAndNameAndCountryAndOrgId(
+                  customRegionIds, customRegionNames, country, orgId)
               .stream()
               .map(getMapper()::toDomain)
               .toList());

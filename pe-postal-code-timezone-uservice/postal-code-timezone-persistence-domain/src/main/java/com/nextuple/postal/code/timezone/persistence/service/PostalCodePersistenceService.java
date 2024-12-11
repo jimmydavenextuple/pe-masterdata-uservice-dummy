@@ -42,7 +42,7 @@ public interface PostalCodePersistenceService
   List<PostalCodeDomainDto> getPostalCodeForOrgId(String orgId) throws PromiseEngineException;
 
   Page<CustomRegionProjection> fetchCustomRegionInfoByOrgIdAndRegionId(
-      String orgId, List<String> customRegionIdList, PageParams pageParams)
+      String orgId, String country, List<String> customRegionIdList, PageParams pageParams)
       throws PromiseEngineException;
 
   Page<CustomRegionProjection> getCustomRegionInfoByOrgIdAndCountry(

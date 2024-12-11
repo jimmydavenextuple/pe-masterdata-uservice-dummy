@@ -577,7 +577,8 @@ class CustomRegionServiceTest {
       throws CommonServiceException, PromiseEngineException {
     PageParams pageParams =
         new PageParams(Optional.empty(), Optional.empty(), Optional.empty(), Optional.of("ASC"));
-    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any()))
+    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+            any(), any(), any(), any()))
         .thenReturn(testUtil.getCustomRegionProjectionPage());
     when(customRegionPersistenceService.fetchCustomRegionsByIdsAndOrgId(any(), any()))
         .thenReturn(testUtil.getCustomRegionEntityList2());
@@ -587,7 +588,7 @@ class CustomRegionServiceTest {
     assertEquals(ID, customRegionInfoPage.getContent().getFirst().getCustomRegionId());
     verify(customRegionPersistenceService, times(1)).fetchCustomRegionsByIdsAndOrgId(any(), any());
     verify(postalCodePersistenceService, times(1))
-        .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any());
+        .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any(), any());
   }
 
   @Test
@@ -597,7 +598,8 @@ class CustomRegionServiceTest {
       throws CommonServiceException, PromiseEngineException {
     PageParams pageParams =
         new PageParams(Optional.empty(), Optional.empty(), Optional.empty(), Optional.of("ASC"));
-    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any()))
+    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+            any(), any(), any(), any()))
         .thenReturn(testUtil.getCustomRegionProjectionPage());
     when(customRegionPersistenceService.fetchCustomRegionByNamesAndOrgId(any(), any()))
         .thenReturn(testUtil.getCustomRegionEntityList2());
@@ -610,7 +612,7 @@ class CustomRegionServiceTest {
     verify(customRegionPersistenceService, times(1)).fetchCustomRegionByNamesAndOrgId(any(), any());
     verify(customRegionPersistenceService, times(1)).fetchCustomRegionsByIdsAndOrgId(any(), any());
     verify(postalCodePersistenceService, times(1))
-        .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any());
+        .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any(), any());
   }
 
   @Test
@@ -620,10 +622,11 @@ class CustomRegionServiceTest {
       throws CommonServiceException, PromiseEngineException {
     PageParams pageParams =
         new PageParams(Optional.empty(), Optional.empty(), Optional.empty(), Optional.of("ASC"));
-    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any()))
+    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+            any(), any(), any(), any()))
         .thenReturn(testUtil.getCustomRegionProjectionPage());
     when(customRegionPersistenceService.fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
-            any(), any(), any()))
+            any(), any(), any(), any()))
         .thenReturn(Optional.ofNullable(testUtil.getCustomRegionEntityList2()));
     when(customRegionPersistenceService.fetchCustomRegionsByIdsAndOrgId(any(), any()))
         .thenReturn(testUtil.getCustomRegionEntityList2());
@@ -632,10 +635,10 @@ class CustomRegionServiceTest {
             ORG_ID, COUNTRY, "CRID1,CRID2", CUSTOM_REGION_NAME, pageParams);
     assertEquals(ID, customRegionInfoPage.getContent().getFirst().getCustomRegionId());
     verify(customRegionPersistenceService, times(1))
-        .fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(any(), any(), any());
+        .fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(any(), any(), any(), any());
     verify(customRegionPersistenceService, times(1)).fetchCustomRegionsByIdsAndOrgId(any(), any());
     verify(postalCodePersistenceService, times(1))
-        .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any());
+        .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any(), any());
   }
 
   @Test
@@ -644,10 +647,11 @@ class CustomRegionServiceTest {
       throws CommonServiceException, PromiseEngineException {
     PageParams pageParams =
         new PageParams(Optional.empty(), Optional.empty(), Optional.empty(), Optional.of("ASC"));
-    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any()))
+    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+            any(), any(), any(), any()))
         .thenReturn(Page.empty());
     when(customRegionPersistenceService.fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
-            any(), any(), any()))
+            any(), any(), any(), any()))
         .thenReturn(Optional.empty());
     when(customRegionPersistenceService.fetchCustomRegionsByIdsAndOrgId(any(), any()))
         .thenReturn(testUtil.getCustomRegionEntityList2());
@@ -656,10 +660,10 @@ class CustomRegionServiceTest {
             ORG_ID, COUNTRY, "CRID1,CRID2", CUSTOM_REGION_NAME, pageParams);
     assertEquals(Page.empty(), customRegionInfoPage);
     verify(customRegionPersistenceService, times(1))
-        .fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(any(), any(), any());
+        .fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(any(), any(), any(), any());
     verify(customRegionPersistenceService, times(1)).fetchCustomRegionsByIdsAndOrgId(any(), any());
     verify(postalCodePersistenceService, times(0))
-        .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any());
+        .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any(), any());
   }
 
   @Test

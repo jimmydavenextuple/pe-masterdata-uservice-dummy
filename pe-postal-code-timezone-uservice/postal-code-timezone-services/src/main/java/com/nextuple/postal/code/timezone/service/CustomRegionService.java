@@ -373,12 +373,13 @@ public class CustomRegionService {
       List<String> customRegionNamesList =
           !ObjectUtils.isEmpty(customRegionNames) ? List.of(customRegionNames.split(",")) : null;
       if (ObjectUtils.isEmpty(customRegionIdsList) && !ObjectUtils.isEmpty(customRegionNamesList)) {
-        customRegionList = fetchInfoByRegionNames(orgId, customRegionNamesList, pageParams);
+        customRegionList =
+            fetchInfoByRegionNames(orgId, country, customRegionNamesList, pageParams);
       } else if (!ObjectUtils.isEmpty(customRegionIdsList)
           && ObjectUtils.isEmpty(customRegionNamesList)) {
         customRegionList =
             postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
-                orgId, customRegionIdsList, pageParams);
+                orgId, country, customRegionIdsList, pageParams);
       } else if (ObjectUtils.isEmpty(customRegionNamesList)
           && ObjectUtils.isEmpty(customRegionIdsList)) {
         customRegionList =
@@ -387,7 +388,7 @@ public class CustomRegionService {
       } else {
         customRegionList =
             fetchInfoByRegionIdsAndNamesAndOrgId(
-                orgId, customRegionIdsList, customRegionNamesList, pageParams);
+                orgId, country, customRegionIdsList, customRegionNamesList, pageParams);
       }
       return getCustomRegionInfos(customRegionList, orgId);
     } else {
@@ -429,7 +430,7 @@ public class CustomRegionService {
   }
 
   private Page<CustomRegionProjection> fetchInfoByRegionNames(
-      String orgId, List<String> customRegionNames, PageParams pageParams)
+      String orgId, String country, List<String> customRegionNames, PageParams pageParams)
       throws PromiseEngineException {
     List<CustomRegionDomainDto> regionDomainList =
         customRegionPersistenceService.fetchCustomRegionByNamesAndOrgId(customRegionNames, orgId);
@@ -438,25 +439,26 @@ public class CustomRegionService {
       List<String> regionIdList =
           regionDomainList.stream().map(CustomRegionDomainDto::getId).toList();
       return postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
-          orgId, regionIdList, pageParams);
+          orgId, country, regionIdList, pageParams);
     }
     return Page.empty();
   }
 
   private Page<CustomRegionProjection> fetchInfoByRegionIdsAndNamesAndOrgId(
       String orgId,
+      String country,
       List<String> customRegionIds,
       List<String> customRegionNames,
       PageParams pageParams)
       throws PromiseEngineException {
     Optional<List<CustomRegionDomainDto>> customRegions =
         customRegionPersistenceService.fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
-            customRegionIds, customRegionNames, orgId);
+            customRegionIds, customRegionNames, country, orgId);
     if (customRegions.isPresent()) {
       List<String> updatedRegionIdList =
           customRegions.get().stream().map(CustomRegionDomainDto::getId).toList();
       return postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
-          orgId, updatedRegionIdList, pageParams);
+          orgId, country, updatedRegionIdList, pageParams);
     }
     return Page.empty();
   }
