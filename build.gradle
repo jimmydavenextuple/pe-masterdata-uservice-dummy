@@ -146,6 +146,9 @@ dependencies {
     implementation("com.nextuple.pe:node-consumer:1.3.2-${build_target}")
     implementation("com.nextuple.pe:carrier-consumer:1.3.0-${build_target}")
 
+    //included for vapt testing
+    implementation("com.nextuple.pe:node-api-domain:1.3.2-VAPT-${build_target}")
+
     implementation("com.nextuple.pe:core-near-cache:1.3.2-${build_target}")
     implementation("com.nextuple.pe:core-near-cache-spring:1.3.2-${build_target}")
 
