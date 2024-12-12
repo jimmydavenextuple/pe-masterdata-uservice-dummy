@@ -235,7 +235,7 @@ class CustomRegionServiceTest {
   }
 
   @Test
-  @DisplayName("")
+  @DisplayName("Create custom region with zip prefixes from multiple countries.")
   void createCustomRegionExceptionMultipleCountryZipPrefix() throws PromiseEngineException {
     CustomRegionRequest createCustomRegionRequest = testUtil.getCreateCustomRegionRequest();
     when(postalCodePersistenceService.fetchPostalCodeList(

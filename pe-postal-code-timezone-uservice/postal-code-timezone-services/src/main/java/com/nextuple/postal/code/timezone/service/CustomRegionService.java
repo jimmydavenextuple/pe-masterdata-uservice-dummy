@@ -296,7 +296,7 @@ public class CustomRegionService {
     for (String postalCodePrefix : codes) {
       List<PostalCodeDomainDto> postalCodeEntityListByPrefix =
           postalCodePersistenceService.fetchPostalCodeList(orgId, postalCodePrefix);
-      validateSameCountryPrefix(postalCodeEntityListByPrefix, countrySet);
+      addCountriesFromPostalCodes(postalCodeEntityListByPrefix, countrySet);
       if (!postalCodeEntityListByPrefix.isEmpty()) {
         postalCodeEntityMap.put(postalCodePrefix, postalCodeEntityListByPrefix);
       } else {
@@ -316,7 +316,7 @@ public class CustomRegionService {
     }
   }
 
-  private void validateSameCountryPrefix(
+  private void addCountriesFromPostalCodes(
       List<PostalCodeDomainDto> postalCodeEntityListByPrefix, Set<String> countrySet) {
     postalCodeEntityListByPrefix.forEach(postalCode -> countrySet.add(postalCode.getCountry()));
   }
