@@ -72,6 +72,7 @@ class UserExitControllerTest {
     ResponseEntity<BaseResponse<UserExitConfigDataDto>> response =
         controller.fetchConfigData("Nextuple", "PE", "sourcing", "getSourcingRules");
     Assertions.assertNotNull(response);
+    Assertions.assertEquals(true, response.getBody().getPayload().getPropagateError());
     Assertions.assertEquals(200, response.getStatusCodeValue());
     verify(userExitDataService, times(1)).fetchConfigData(any(), any(), any(), any());
   }
