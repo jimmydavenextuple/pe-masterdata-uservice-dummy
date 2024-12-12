@@ -622,4 +622,8 @@ public class TestUtil {
         .orgId(orgId)
         .build();
   }
+
+  public List<PostalCodeDomainDto> getPostalCodeEntityListCountry(String country) {
+    return List.of(PostalCodeDomainDto.builder().country(country).build());
+  }
 }
