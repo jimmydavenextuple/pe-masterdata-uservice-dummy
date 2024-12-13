@@ -70,7 +70,8 @@ server:
           cpu: 256m
     dev:
       ingress: yes
-      middleman: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
       prometheus: yes
       storage: yes
       java-opts: "-Xms1024m -Xmx1024m"
@@ -102,7 +103,8 @@ server:
           cpu: 1
     qa:
       ingress: yes
-      middleman: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
       prometheus: yes
       storage: yes
       java-opts: "-Xms1024m -Xmx1024m"
@@ -163,8 +165,9 @@ server:
           memory: 1024Mi
           cpu: 256m
     devpe:
-      ingress: no
-      middleman: yes
+      ingress: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
       prometheus: yes
       storage: yes
       java-opts: "-Xms1024m -Xmx1024m"
