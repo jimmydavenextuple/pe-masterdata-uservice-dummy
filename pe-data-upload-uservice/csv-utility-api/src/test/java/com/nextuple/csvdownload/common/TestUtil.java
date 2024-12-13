@@ -1494,6 +1494,7 @@ public class TestUtil {
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .isActive(true)
+        .serviceOptionEligibilities(Map.of("expressEligible", true, "sdndEligible", true))
         .build();
   }
 
@@ -2213,6 +2214,24 @@ public class TestUtil {
     pagination.setNext("");
     pagination.setPrevious("");
     PagePayload pagePayload = new PagePayload<>(getTwoCustomRegionInfoList(), pagination, null);
+    return pagePayload;
+  }
+
+  public PagePayload<CustomRegionInfo> getCustomRegionInfoPagePayloadMultiple() {
+    Pagination pagination = new Pagination();
+    pagination.setCurrentPage(1);
+    pagination.setTotalPages(2);
+    pagination.setSortBy("customRegionId");
+    pagination.setNext("");
+    pagination.setPrevious("");
+    List<CustomRegionInfo> multiple = new ArrayList<>(getTwoCustomRegionInfoList());
+    multiple.addAll(getTwoCustomRegionInfoList());
+    multiple.addAll(getTwoCustomRegionInfoList());
+    multiple.addAll(getTwoCustomRegionInfoList());
+    multiple.addAll(getTwoCustomRegionInfoList());
+    multiple.addAll(getTwoCustomRegionInfoList());
+    multiple.addAll(getTwoCustomRegionInfoList());
+    PagePayload pagePayload = new PagePayload<>(multiple, pagination, null);
     return pagePayload;
   }
 }

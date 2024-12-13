@@ -136,7 +136,8 @@ public class ProcessingTimeBufferService {
     if (nodeServiceResponse.getBufferHours() != null
         && nodeServiceResponse.getBufferStartDate() != null
         && nodeServiceResponse.getBufferEndDate() != null) {
-      if (currentDate.compareTo(nodeServiceResponse.getBufferEndDate()) <= 0) return ACTIVE;
+      if (currentDate.compareTo(nodeServiceResponse.getBufferStartDate()) >= 0
+          && currentDate.compareTo(nodeServiceResponse.getBufferEndDate()) <= 0) return ACTIVE;
       else return INACTIVE;
     }
     return null;

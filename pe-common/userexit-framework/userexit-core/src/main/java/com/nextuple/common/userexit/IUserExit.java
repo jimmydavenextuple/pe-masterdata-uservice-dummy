@@ -10,6 +10,7 @@
 package com.nextuple.common.userexit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.userexit.domain.UserExitData;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -30,5 +31,6 @@ public interface IUserExit<T, G> {
           NoSuchMethodException,
           InvocationTargetException,
           InstantiationException,
-          IllegalAccessException;
+          IllegalAccessException,
+          CommonServiceException;
 }

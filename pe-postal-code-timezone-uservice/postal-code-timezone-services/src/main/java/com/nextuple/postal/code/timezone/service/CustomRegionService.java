@@ -33,9 +33,12 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +59,8 @@ public class CustomRegionService {
   private static final String CUSTOM_REGION_NOT_FOUND = "Custom Region not found";
   private static final String ZIP_CODE_ASSOCIATION_NOT_FOUND =
       "No Zip Code association found for the given codes";
+  public static final String ZIP_PREFIX_MULTIPLE_COUNTRIES =
+      "Zip code prefix associated with multiple countries";
   private static final String ZIP_PREFIX_NOT_FOUND_CUSTOM_REGION =
       "Zip code prefixes are not part of custom region";
   private static final String ZIP_CODE_NOT_FOUND = "Zip Codes cannot be blank";
@@ -63,6 +68,7 @@ public class CustomRegionService {
       "Custom Region already exists for the given code";
   private static final String ID = "id";
   private static final String ORG_ID = "org_id";
+  public static final String COUNTRY = "country";
   private static final String CODES = "codes";
   private static final String UNAVAILABLE_CODES = "unavailable_codes";
   public static final String REGION_ID = "region_id";
@@ -76,19 +82,39 @@ public class CustomRegionService {
 
     logger.debug("--inside createCustomRegion service--");
     String orgId = baseRequest.getOrgId();
+    String customRegionId = baseRequest.getId();
     List<String> codes = baseRequest.getCodes();
     Map<String, List<PostalCodeDomainDto>> postalCodeEntityMap = validateCodes(codes, orgId);
     validateBlankCodes(codes);
-    String customRegionId = baseRequest.getId();
+    addCustomRegionToZipCodeDetails(codes, postalCodeEntityMap, customRegionId);
     Optional<CustomRegionDomainDto> existingCustomRegionDtoOptional =
         customRegionPersistenceService.fetchRegionByOrgIdAndId(orgId, customRegionId);
     CustomRegionDomainDto customRegionDomainDto =
         existingCustomRegionDtoOptional.isPresent()
             ? updateExistingCustomRegion(baseRequest, existingCustomRegionDtoOptional.get())
             : createNewCustomRegion(baseRequest);
-    addCustomRegionToZipCodeDetails(codes, postalCodeEntityMap, customRegionDomainDto.getId());
     return INSTANCE.toCustomRegionResponse(
         customRegionPersistenceService.saveCustomRegion(customRegionDomainDto));
+  }
+
+  private void validateCodesAlreadyHasCustomRegions(
+      List<String> codes, Map<String, List<PostalCodeDomainDto>> postalCodeEntityMap)
+      throws CommonServiceException {
+    for (String code : codes) {
+      List<PostalCodeDomainDto> postalCodeEntityList = postalCodeEntityMap.get(code);
+      for (PostalCodeDomainDto postalCodeDomainDto : postalCodeEntityList) {
+        if (Objects.nonNull(postalCodeDomainDto.getCustomRegion())) {
+          logger.error(CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE);
+          Map<String, FieldError> errorMap = new HashMap<>();
+          errorMap.put("CODE", FieldError.builder().rejectedValue(code).build());
+          throw new CommonServiceException(
+              CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE,
+              HttpStatus.BAD_REQUEST,
+              ErrorCodesEnum.CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE.getErrorCode(),
+              errorMap);
+        }
+      }
+    }
   }
 
   private CustomRegionDomainDto updateExistingCustomRegion(
@@ -116,20 +142,11 @@ public class CustomRegionService {
 
   private void addCustomRegionToZipCodeDetails(
       List<String> codes, Map<String, List<PostalCodeDomainDto>> postalCodeEntityMap, String id)
-      throws CommonServiceException, PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
+    validateCodesAlreadyHasCustomRegions(codes, postalCodeEntityMap);
     for (String code : codes) {
       List<PostalCodeDomainDto> postalCodeEntityList = postalCodeEntityMap.get(code);
       for (PostalCodeDomainDto postalCodeEntity : postalCodeEntityList) {
-        if (!ObjectUtils.isEmpty(postalCodeEntity.getCustomRegion())) {
-          logger.error(CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE);
-          Map<String, FieldError> errorMap = new HashMap<>();
-          errorMap.put("CODE", FieldError.builder().rejectedValue(code).build());
-          throw new CommonServiceException(
-              CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE,
-              HttpStatus.BAD_REQUEST,
-              ErrorCodesEnum.CUSTOM_REGION_ALREADY_EXISTS_FOR_GIVEN_CODE.getErrorCode(),
-              errorMap);
-        }
         postalCodeEntity.setCustomRegion(id);
         postalCodePersistenceService.savePostalCode(postalCodeEntity);
       }
@@ -274,16 +291,34 @@ public class CustomRegionService {
       String orgId,
       Map<String, List<PostalCodeDomainDto>> postalCodeEntityMap,
       List<String> unavailableCodes)
-      throws PromiseEngineException {
+      throws PromiseEngineException, CommonServiceException {
+    Set<String> countrySet = new HashSet<>();
     for (String postalCodePrefix : codes) {
       List<PostalCodeDomainDto> postalCodeEntityListByPrefix =
           postalCodePersistenceService.fetchPostalCodeList(orgId, postalCodePrefix);
+      addCountriesFromPostalCodes(postalCodeEntityListByPrefix, countrySet);
       if (!postalCodeEntityListByPrefix.isEmpty()) {
         postalCodeEntityMap.put(postalCodePrefix, postalCodeEntityListByPrefix);
       } else {
         unavailableCodes.add(postalCodePrefix);
       }
     }
+    if (countrySet.size() > 1) {
+      logger.error(ZIP_PREFIX_MULTIPLE_COUNTRIES);
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put(COUNTRY, FieldError.builder().rejectedValue(countrySet.toArray()).build());
+      throw new CommonServiceException(
+          ZIP_PREFIX_MULTIPLE_COUNTRIES,
+          HttpStatus.BAD_REQUEST,
+          ErrorCodesEnum.ZIP_PREFIX_FROM_MULTIPLE_COUNTRY_FOR_CUSTOM_REGION.getErrorCode(),
+          errorMap);
+    }
+  }
+
+  private void addCountriesFromPostalCodes(
+      List<PostalCodeDomainDto> postalCodeEntityListByPrefix, Set<String> countrySet) {
+    postalCodeEntityListByPrefix.forEach(postalCode -> countrySet.add(postalCode.getCountry()));
   }
 
   private CustomRegionDomainDto validateCustomRegionRequestExist(String orgId, String id)

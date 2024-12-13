@@ -173,6 +173,25 @@ public class CustomRegionController {
             .build());
   }
 
+  @DeleteMapping
+  @DeleteCustomRegionGeozones
+  public ResponseEntity<BaseResponse<CustomRegionResponse>> deleteCustomRegionByRequest(
+      @RequestBody CustomRegionRequest customRegionRequest)
+      throws PromiseEngineException, CommonServiceException {
+    logger.debug(
+        "Processing delete custom region request based on CustomRegionRequest {}",
+        customRegionRequest);
+    DeleteCustomRegionGeozonesRequest deleteRequest =
+        DeleteCustomRegionGeozonesRequest.builder().codes(customRegionRequest.getCodes()).build();
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Custom region geozones deleted successfully.")
+            .payload(
+                customRegionService.deleteCustomRegionGeozones(
+                    customRegionRequest.getOrgId(), customRegionRequest.getId(), deleteRequest))
+            .build());
+  }
+
   @GetCustomRegionListDoc
   @GetMapping("/list/orgId/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<CustomRegionDto>>> getCustomRegionList(

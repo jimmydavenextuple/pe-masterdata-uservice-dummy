@@ -26,8 +26,5 @@ public interface CustomRegionRepository
 
   Page<CustomRegionEntity> findCustomRegionByOrgId(String orgId, Pageable pageable);
 
-  List<CustomRegionEntity> findByIdInOrCustomRegionNameInAndOrgId(
-      List<String> customRegionIds, List<String> customRegionNames, String orgId);
-
   List<CustomRegionEntity> findByIdInAndOrgId(List<String> customRegionIds, String orgId);
 }

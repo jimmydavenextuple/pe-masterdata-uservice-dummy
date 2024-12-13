@@ -143,7 +143,7 @@ class CustomRegionServiceTest {
         () -> {
           customRegionService.createCustomRegion(createCustomRegionRequest);
         });
-    verify(customRegionPersistenceService, times(1))
+    verify(customRegionPersistenceService, times(0))
         .fetchRegionByOrgIdAndId(anyString(), anyString());
   }
 
@@ -232,6 +232,28 @@ class CustomRegionServiceTest {
     assertEquals("Zip Codes cannot be blank", ex.getMessage());
     verify(customRegionPersistenceService, times(0))
         .fetchRegionByOrgIdAndId(anyString(), anyString());
+  }
+
+  @Test
+  @DisplayName("Create custom region with zip prefixes from multiple countries.")
+  void createCustomRegionExceptionMultipleCountryZipPrefix() throws PromiseEngineException {
+    CustomRegionRequest createCustomRegionRequest = testUtil.getCreateCustomRegionRequest();
+    when(postalCodePersistenceService.fetchPostalCodeList(
+            createCustomRegionRequest.getOrgId(), "T2P"))
+        .thenReturn(testUtil.getPostalCodeEntityListCountry("CA"));
+    when(postalCodePersistenceService.fetchPostalCodeList(
+            createCustomRegionRequest.getOrgId(), "T3P"))
+        .thenReturn(testUtil.getPostalCodeEntityListCountry("US"));
+
+    Exception ex =
+        assertThrows(
+            CommonServiceException.class,
+            () -> {
+              customRegionService.createCustomRegion(createCustomRegionRequest);
+            });
+    assertEquals("Zip code prefix associated with multiple countries", ex.getMessage());
+    verify(postalCodePersistenceService, times(2)).fetchPostalCodeList(any(), any());
+    verify(customRegionPersistenceService, times(0)).saveCustomRegion(any());
   }
 
   @Test

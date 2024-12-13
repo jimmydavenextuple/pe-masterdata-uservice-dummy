@@ -45,4 +45,8 @@ public class CommonConstants {
   public static final String HEADER_EVENT_DATE = "eventDate";
   public static final String TRANSIT_BUFFER_CONFIG_REQUEST_ID = "transitBufferConfigRequestId";
   public static final String CONFIG_KEY = "configKey";
+  public static final String SERVER_UNAVAILABLE_ERROR_MESSAGE =
+      "Unable to complete the request as a required service is currently down.";
+  public static final String HARD_EXECUTION_ERROR_MESSAGE =
+      "Unable to process the request due to internal server error.";
 }

@@ -1,9 +1,19 @@
 package com.nextuple.common.util;
 
+import static com.nextuple.common.constants.CommonConstants.SERVER_UNAVAILABLE_ERROR_MESSAGE;
+import static com.nextuple.common.util.BooleanUtil.isFeignConnectionException;
+
+import com.nextuple.common.context.Logger;
+import com.nextuple.common.context.LoggerFactory;
+import com.nextuple.common.exception.ServiceUnavailableException;
+import feign.FeignException;
 import java.util.Optional;
 import org.springframework.util.ObjectUtils;
 
 public class CommonUtil {
+
+  private static Logger logger = LoggerFactory.getLogger(CommonUtil.class);
+
   private CommonUtil() {
     // Everyone should be using static methods only
   }
@@ -56,5 +66,13 @@ public class CommonUtil {
       }
     }
     return Optional.empty();
+  }
+
+  public static void handleFeignConnectionException(FeignException e) throws FeignException {
+    if (isFeignConnectionException(e)) {
+      logger.error(SERVER_UNAVAILABLE_ERROR_MESSAGE, e);
+      throw new ServiceUnavailableException();
+    }
+    throw e;
   }
 }

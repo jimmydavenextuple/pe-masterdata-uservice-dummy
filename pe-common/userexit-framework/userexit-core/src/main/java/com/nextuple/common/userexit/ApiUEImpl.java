@@ -10,6 +10,7 @@
 package com.nextuple.common.userexit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.userexit.domain.UserExitData;
 import com.nextuple.common.userexit.domain.dto.UserExitConfigDataDto;
 import com.nextuple.common.userexit.domain.dto.UserExitMetaDataDto;
@@ -57,7 +58,7 @@ public class ApiUEImpl<T, G> implements IUserExit<T, G> {
       UserExitData userExitData,
       TypeReference<T> inputClazz,
       TypeReference<G> outputClazz)
-      throws URISyntaxException, IOException, InterruptedException {
+      throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     UserExitMetaDataDto userExitMetaData = userExitData.getUserExitMetaData();
     UserExitConfigDataDto userExitConfigData = userExitData.getUserExitConfigData();
 
@@ -109,7 +110,7 @@ public class ApiUEImpl<T, G> implements IUserExit<T, G> {
       G inputData,
       Map<String, Object> customAttributeMap,
       TypeReference<G> clazz)
-      throws URISyntaxException, IOException, InterruptedException {
+      throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     UserExitMetaDataDto userExitMetaData = userExitData.getUserExitMetaData();
     UserExitData userExitDataForPostUE =
         fetchConfigData(userExitData, userExitMetaData.getPostUEName());
@@ -125,7 +126,7 @@ public class ApiUEImpl<T, G> implements IUserExit<T, G> {
       T inputData,
       Map<String, Object> customAttributeMap,
       TypeReference<T> clazz)
-      throws URISyntaxException, IOException, InterruptedException {
+      throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     UserExitMetaDataDto userExitMetaData = userExitData.getUserExitMetaData();
     UserExitData userExitDataForPreUE =
         fetchConfigData(userExitData, userExitMetaData.getPreUEName());

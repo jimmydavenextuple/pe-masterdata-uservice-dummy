@@ -1,9 +1,15 @@
 package com.nextuple.common.util;
 
+import static com.nextuple.common.constants.CommonConstants.SERVER_UNAVAILABLE_ERROR_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import com.nextuple.common.TestUtil;
+import com.nextuple.common.exception.ServiceUnavailableException;
+import feign.FeignException;
+import java.net.SocketException;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -82,5 +88,26 @@ class CommonUtilTest {
     Optional<String> expected = Optional.of("prod");
     Optional<String> actual = CommonUtil.parseEnvironmentName("xyz-dev.nextuple.com");
     assertNotEquals(expected, actual, "DNS Name");
+  }
+
+  @Test
+  @DisplayName("Handle Feign Connection Exception with valid exception")
+  void handleFeignConnectionExceptionTest() {
+    FeignException ex =
+        (FeignException) TestUtil.getConnectionRefusedFeignException(new SocketException());
+    ServiceUnavailableException e =
+        Assertions.assertThrows(
+            ServiceUnavailableException.class, () -> CommonUtil.handleFeignConnectionException(ex));
+    Assertions.assertEquals(SERVER_UNAVAILABLE_ERROR_MESSAGE, e.getMessage());
+  }
+
+  @Test
+  @DisplayName("Handle Feign Connection Exception with invalid exception")
+  void handleFeignConnectionExceptionTestInvalid() {
+    FeignException ex =
+        (FeignException)
+            TestUtil.getConnectionRefusedFeignException(new ServiceUnavailableException());
+    Assertions.assertThrows(
+        FeignException.class, () -> CommonUtil.handleFeignConnectionException(ex));
   }
 }

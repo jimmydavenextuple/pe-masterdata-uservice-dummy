@@ -10,6 +10,7 @@
 package com.nextuple.common.userexit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.userexit.domain.UserExitData;
 import com.nextuple.common.userexit.domain.enums.UEImplTypeEnum;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -40,7 +41,7 @@ public class RegularUEImpl<T, G> implements IUserExit<T, G> {
       UserExitData userExitData,
       TypeReference<T> inputClazz,
       TypeReference<G> outputClazz)
-      throws URISyntaxException, IOException, InterruptedException {
+      throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     var timer =
         Timer.builder("userexit." + userExitData.getUserExitMetaData().getName())
             .tag("orgId", userExitData.getUserExitConfigData().getOrgId())

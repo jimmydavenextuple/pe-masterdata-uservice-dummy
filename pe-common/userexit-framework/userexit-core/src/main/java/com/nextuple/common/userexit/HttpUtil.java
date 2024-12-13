@@ -1,8 +1,10 @@
 package com.nextuple.common.userexit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.userexit.domain.UserExitData;
 import com.nextuple.common.userexit.domain.dto.UserExitConfigDataDto;
@@ -25,6 +27,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -45,7 +48,7 @@ public class HttpUtil<T, G> {
       T inputData,
       Map<String, Object> customAttributeMap,
       TypeReference<G> classType)
-      throws URISyntaxException, IOException, InterruptedException {
+      throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     var timer =
         Timer.builder("userexit." + userExitData.getUserExitMetaData().getName() + ".postCall")
             .tag("orgId", userExitData.getUserExitConfigData().getOrgId())
@@ -69,9 +72,31 @@ public class HttpUtil<T, G> {
             .build();
     HttpClient client = userExitUtil.getHttpClient();
     HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+    if (response.statusCode() >= 400) {
+      throw new CommonServiceException(
+          parseErrorMessages(userExitData.getUserExitMetaData().getName(), response.body()),
+          HttpStatus.resolve(response.statusCode()),
+          0,
+          Map.of());
+    }
     BaseResponse<G> baseResponse =
         (BaseResponse<G>) objectMapper.readValue(response.body(), classType);
     timer.record(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS);
     return baseResponse.getPayload();
+  }
+
+  private String parseErrorMessages(String userExitName, String errorBody) throws IOException {
+    try {
+      JsonNode messageJson = objectMapper.readTree(errorBody).get("message");
+      if (messageJson != null && !messageJson.isNull()) {
+        return String.format(
+            "Unable to process request as %s failed with error: %s",
+            userExitName, messageJson.asText());
+      } else {
+        return String.format("Unable to process request as %s failed", userExitName);
+      }
+    } catch (Exception e) {
+      return String.format("Unable to process request as %s failed", userExitName);
+    }
   }
 }

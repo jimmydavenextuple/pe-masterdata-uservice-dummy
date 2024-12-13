@@ -134,8 +134,8 @@ public class TestUtil {
   public static final String NODE_TYPE = "MFC";
   public static final String SORT_BY = "customRegionId";
   public static final String SORT_ORDER_DESC = "DESC";
-  private static final String NODE_ID_2 = "Node_Id_02";
-  private static final String CARRIER_SERVICE_ID_2 = "";
+  public static final String NODE_ID_2 = "Node_Id_02";
+  public static final String CARRIER_SERVICE_ID_2 = "Carrier_Service_Id_02";
   public static final String SERVICE_OPTION_2 = "SDND";
   private static final String SERVICE_OPTION_STD = "STANDARD";
   private static final String SERVICE_OPTION_EXP = "EXPRESS";
@@ -683,7 +683,7 @@ public class TestUtil {
     return NodeCarrierResponse.builder()
         .nodeId(NODE_ID)
         .orgId(ORG_ID)
-        .carrierServiceId("")
+        .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption(serviceOption)
         .processingTime(PROCESSING_TIME)
         .lastPickupTime(LAST_PICK_UP_TIME)
@@ -1483,6 +1483,28 @@ public class TestUtil {
                         .orgId(ORG_ID)
                         .serviceOption(SERVICE_OPTION_STD)
                         .processingTime(PROCESSING_TIME)
+                        .build()))
+            .build();
+    return build;
+  }
+
+  public BaseResponse<List<NodeCarrierServiceCalendarResponse>>
+      getNodeCarrierServiceOptionCalendarResponse() {
+    BaseResponse build =
+        BaseResponse.builder()
+            .payload(
+                List.of(
+                    NodeCarrierServiceCalendarResponse.builder()
+                        .nodeId(NODE_ID)
+                        .orgId(ORG_ID)
+                        .carrierServiceId(CARRIER_SERVICE_ID)
+                        .calendarId(CALENDAR_ID)
+                        .build(),
+                    NodeCarrierServiceCalendarResponse.builder()
+                        .nodeId(NODE_ID_2)
+                        .orgId(ORG_ID)
+                        .carrierServiceId(CARRIER_SERVICE_ID_2)
+                        .calendarId(CALENDAR_ID_2)
                         .build()))
             .build();
     return build;

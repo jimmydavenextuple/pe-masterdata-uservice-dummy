@@ -6,10 +6,14 @@ import com.nextuple.common.context.CurrentThreadContext;
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.exception.HardExecutionFailureException;
+import com.nextuple.common.exception.ServiceUnavailableException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.common.userexit.domain.UserExitData;
 import com.nextuple.common.userexit.domain.dto.UserExitConfigDataDto;
 import com.nextuple.common.userexit.domain.dto.UserExitMetaDataDto;
+import com.nextuple.common.userexit.domain.enums.ExecutionFailureEnum;
+import com.nextuple.common.userexit.domain.enums.UEImplTypeEnum;
 import com.nextuple.common.userexit.domain.feign.UEDataFeign;
 import com.nextuple.pe.userexit.cache.domain.UEConfigDataCacheKey;
 import com.nextuple.pe.userexit.cache.domain.UEMetaDataCacheKey;
@@ -17,6 +21,7 @@ import com.nextuple.pe.userexit.cache.service.UEConfigDataNearCacheService;
 import com.nextuple.pe.userexit.cache.service.UEMetaDataNearCacheService;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -168,7 +173,19 @@ public class ExitPointJvmInvokerImpl<T, G> implements ExitPointInvoker<T, G> {
       customAttributeMap.put(entry.getKey(), obj);
     }
     IUserExit<T, G> userExit = userExitFactory.getUE(userExitMetaData.getType());
-    return userExit.invoke(inputData, customAttributeMap, userExitData, inputClazz, outputClazz);
+    try {
+      return userExit.invoke(inputData, customAttributeMap, userExitData, inputClazz, outputClazz);
+    } catch (SocketException e) {
+      if (ExecutionFailureEnum.HARD.equals(userExitMetaData.getExecutionFailureType())
+          && UEImplTypeEnum.REST.equals(userExitConfigData.getUeImplType()))
+        throw new ServiceUnavailableException();
+      throw e;
+    } catch (CommonServiceException e) {
+      if (ExecutionFailureEnum.HARD.equals(userExitMetaData.getExecutionFailureType())
+          && UEImplTypeEnum.REST.equals(userExitConfigData.getUeImplType()))
+        throw new HardExecutionFailureException(e.getMessage());
+      throw new IOException(e.getMessage());
+    }
   }
 
   private static Map<String, String> getAttributeJsonPathMap(

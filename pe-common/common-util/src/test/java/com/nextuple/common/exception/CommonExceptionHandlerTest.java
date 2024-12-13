@@ -178,4 +178,16 @@ class CommonExceptionHandlerTest {
       this.testField = testField;
     }
   }
+
+  @Test
+  void handleHardExecutionFailureExceptionTest() {
+    HardExecutionFailureException e =
+        new HardExecutionFailureException(new RuntimeException("msg"));
+
+    ResponseEntity<ErrorResponse> responseEntity =
+        commonExceptionHandler.handleHardExecutionFailureException(e);
+
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    assertEquals(ErrorType.ERROR, responseEntity.getBody().getPayload().getType());
+  }
 }
