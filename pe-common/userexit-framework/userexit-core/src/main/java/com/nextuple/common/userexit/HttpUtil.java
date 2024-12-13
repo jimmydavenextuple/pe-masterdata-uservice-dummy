@@ -1,16 +1,20 @@
 package com.nextuple.common.userexit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.userexit.domain.UserExitData;
+import com.nextuple.common.userexit.domain.dto.ErrorWrapper;
 import com.nextuple.common.userexit.domain.dto.UserExitConfigDataDto;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -43,7 +47,7 @@ public class HttpUtil<T, G> {
 
   @Autowired MeterRegistry meterRegistry;
 
-  public G makePOSTCall(
+  public ErrorWrapper<G> makePOSTCall(
       UserExitData userExitData,
       T inputData,
       Map<String, Object> customAttributeMap,
@@ -79,10 +83,34 @@ public class HttpUtil<T, G> {
           0,
           Map.of());
     }
-    BaseResponse<G> baseResponse =
-        (BaseResponse<G>) objectMapper.readValue(response.body(), classType);
+    BaseResponse<ErrorWrapper<G>> wrapperBaseResponse;
+    if (Boolean.TRUE.equals(configData.getPropagateError())) {
+      JavaType genericType = null;
+      if (classType.getType() instanceof ParameterizedType parameterizedType) {
+        parameterizedType = (ParameterizedType) classType.getType();
+        Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
+        genericType = objectMapper.getTypeFactory().constructType(actualTypeArgument);
+      } else {
+        genericType = objectMapper.getTypeFactory().constructType(classType.getType());
+      }
+      JavaType errorWrapperType =
+          objectMapper.getTypeFactory().constructParametricType(ErrorWrapper.class, genericType);
+      JavaType baseResponseType =
+          objectMapper
+              .getTypeFactory()
+              .constructParametricType(BaseResponse.class, errorWrapperType);
+      wrapperBaseResponse = objectMapper.readValue(response.body(), baseResponseType);
+    } else {
+      BaseResponse<G> baseResponse =
+          (BaseResponse<G>) objectMapper.readValue(response.body(), classType);
+      wrapperBaseResponse =
+          BaseResponse.builder()
+              .payload(ErrorWrapper.builder().data(baseResponse.getPayload()).build())
+              .build();
+    }
+
     timer.record(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS);
-    return baseResponse.getPayload();
+    return wrapperBaseResponse.getPayload();
   }
 
   private String parseErrorMessages(String userExitName, String errorBody) throws IOException {

@@ -12,6 +12,7 @@ package com.nextuple.common.userexit;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.userexit.domain.UserExitData;
+import com.nextuple.common.userexit.domain.dto.ErrorWrapper;
 import com.nextuple.common.userexit.domain.enums.UEImplTypeEnum;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
@@ -35,7 +36,7 @@ public class RegularUEImpl<T, G> implements IUserExit<T, G> {
   @Autowired HttpUtil<T, G> httpUtil;
   @Autowired MeterRegistry meterRegistry;
 
-  public G invoke(
+  public ErrorWrapper<G> invoke(
       T inputData,
       Map<String, Object> customAttributeMap,
       UserExitData userExitData,
@@ -51,9 +52,10 @@ public class RegularUEImpl<T, G> implements IUserExit<T, G> {
     long startTime = System.currentTimeMillis();
 
     if (UEImplTypeEnum.CLASS_BASED.equals(userExitData.getUserExitConfigData().getUeImplType())) {
-      return (G) inputData;
+      return (ErrorWrapper<G>) ErrorWrapper.builder().data(inputData).build();
     }
-    G g = httpUtil.makePOSTCall(userExitData, inputData, customAttributeMap, outputClazz);
+    ErrorWrapper<G> g =
+        httpUtil.makePOSTCall(userExitData, inputData, customAttributeMap, outputClazz);
     timer.record(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS);
     return g;
   }

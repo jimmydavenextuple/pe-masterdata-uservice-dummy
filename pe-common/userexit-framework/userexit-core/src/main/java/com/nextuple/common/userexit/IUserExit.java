@@ -12,13 +12,14 @@ package com.nextuple.common.userexit;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.userexit.domain.UserExitData;
+import com.nextuple.common.userexit.domain.dto.ErrorWrapper;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.Map;
 
 public interface IUserExit<T, G> {
-  G invoke(
+  ErrorWrapper<G> invoke(
       T inputData,
       Map<String, Object> customAttributeMap,
       UserExitData userExitData,

@@ -57,4 +57,9 @@ public class ConfigDataResponse implements Serializable {
       example =
           "serviceOption:$.serviceOption,orgId:$.orgId,uom:$.orderLines[0].item.unitOfMeasure,lineId:$.orderLines[0].lineId,sessionId:$.sessionId,pageName:$.pageName")
   private String attributeJsonPath;
+
+  @Schema(
+      description = "Whether the error in user exit response should be bubbled up",
+      example = "true/false")
+  private Boolean propagateError;
 }
