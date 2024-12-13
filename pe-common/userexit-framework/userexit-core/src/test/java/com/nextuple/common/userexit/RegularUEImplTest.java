@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.userexit.domain.UserExitData;
+import com.nextuple.common.userexit.domain.dto.ErrorWrapper;
 import com.nextuple.common.userexit.domain.enums.UEImplTypeEnum;
 import com.nextuple.common.util.TestUtil;
 import io.micrometer.core.instrument.MockClock;
@@ -51,10 +52,11 @@ class RegularUEImplTest {
   void invokeRegularUETest()
       throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     UserExitData userExitData = testUtil.getUserExitData();
-    when(httpUtil.makePOSTCall(any(), any(), any(), any())).thenReturn("Modified Output");
-    String response = regularUE.invoke("InputData", null, userExitData, null, null);
+    when(httpUtil.makePOSTCall(any(), any(), any(), any()))
+        .thenReturn(ErrorWrapper.<String>builder().data("Modified Output").build());
+    ErrorWrapper<String> response = regularUE.invoke("InputData", null, userExitData, null, null);
     Assertions.assertNotNull(response);
-    Assertions.assertEquals("Modified Output", response);
+    Assertions.assertEquals("Modified Output", response.getData());
     verify(httpUtil, times(1)).makePOSTCall(any(), any(), any(), any());
   }
 
@@ -64,9 +66,9 @@ class RegularUEImplTest {
       throws URISyntaxException, IOException, InterruptedException, CommonServiceException {
     UserExitData userExitData = testUtil.getUserExitData();
     userExitData.getUserExitConfigData().setUeImplType(UEImplTypeEnum.CLASS_BASED);
-    String response = regularUE.invoke("Input", null, userExitData, null, null);
+    ErrorWrapper<String> response = regularUE.invoke("Input", null, userExitData, null, null);
     Assertions.assertNotNull(response);
-    Assertions.assertEquals("Input", response);
+    Assertions.assertEquals("Input", response.getData());
 
     verify(httpUtil, times(0)).makePOSTCall(any(), any(), any(), any());
   }

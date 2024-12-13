@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.userexit.domain.UserExitData;
+import com.nextuple.common.userexit.domain.dto.ErrorWrapper;
 import com.nextuple.common.userexit.domain.dto.UserExitConfigDataDto;
 import com.nextuple.common.userexit.domain.enums.UEImplTypeEnum;
 import com.nextuple.common.userexit.domain.enums.UserExitTypeEnum;
@@ -63,9 +64,9 @@ class ApiUEImplTest {
     String beanName = "exampleMock";
     when(applicationContext.getBean(beanName, IClassBasedExit.class)).thenReturn(clasBasedExit);
     when(clasBasedExit.fetchResponse(any(), any())).thenReturn(1);
-    Integer response = apiUE.invoke("Input", null, userExitData, null, null);
+    ErrorWrapper<Integer> response = apiUE.invoke("Input", null, userExitData, null, null);
     Assertions.assertNotNull(response);
-    Assertions.assertEquals(1, response);
+    Assertions.assertEquals(1, response.getData());
     verify(ueDataFeign, times(0)).fetchConfigData(any(), any(), any(), any());
   }
 
@@ -79,13 +80,16 @@ class ApiUEImplTest {
     userExitData.getUserExitMetaData().setPostUEName("postUE");
 
     BaseResponse<UserExitConfigDataDto> userExitConfigData = testUtil.getUEConfigDataBaseResponse();
-    when(httpUtilForPreUE.makePOSTCall(any(), any(), any(), any())).thenReturn("InputModified");
-    when(httpUtilForPostUE.makePOSTCall(any(), any(), any(), any())).thenReturn(2);
-    when(httpUtil.makePOSTCall(any(), any(), any(), any())).thenReturn(1);
+    when(httpUtilForPreUE.makePOSTCall(any(), any(), any(), any()))
+        .thenReturn(ErrorWrapper.<String>builder().data("InputModified").build());
+    when(httpUtilForPostUE.makePOSTCall(any(), any(), any(), any()))
+        .thenReturn(ErrorWrapper.<Integer>builder().data(2).build());
+    when(httpUtil.makePOSTCall(any(), any(), any(), any()))
+        .thenReturn(ErrorWrapper.<Integer>builder().data(1).build());
     when(ueConfigDataNearCacheService.get(any())).thenReturn(testUtil.getUEConfigDataCacheValue());
-    Integer response = apiUE.invoke("Input", null, userExitData, null, null);
+    ErrorWrapper<Integer> response = apiUE.invoke("Input", null, userExitData, null, null);
     Assertions.assertNotNull(response);
-    Assertions.assertEquals(2, response);
+    Assertions.assertEquals(2, response.getData());
     verify(httpUtilForPreUE, times(1)).makePOSTCall(any(), any(), any(), any());
     verify(httpUtilForPostUE, times(1)).makePOSTCall(any(), any(), any(), any());
     verify(httpUtil, times(1)).makePOSTCall(any(), any(), any(), any());
@@ -100,12 +104,14 @@ class ApiUEImplTest {
     userExitData.getUserExitMetaData().setPostUEName("postUE");
 
     BaseResponse<UserExitConfigDataDto> userExitConfigData = testUtil.getUEConfigDataBaseResponse();
-    when(httpUtilForPostUE.makePOSTCall(any(), any(), any(), any())).thenReturn(2);
-    when(httpUtil.makePOSTCall(any(), any(), any(), any())).thenReturn(1);
+    when(httpUtilForPostUE.makePOSTCall(any(), any(), any(), any()))
+        .thenReturn(ErrorWrapper.<Integer>builder().data(2).build());
+    when(httpUtil.makePOSTCall(any(), any(), any(), any()))
+        .thenReturn(ErrorWrapper.<Integer>builder().data(1).build());
     when(ueConfigDataNearCacheService.get(any())).thenReturn(testUtil.getUEConfigDataCacheValue());
-    Integer response = apiUE.invoke("Input", null, userExitData, null, null);
+    ErrorWrapper<Integer> response = apiUE.invoke("Input", null, userExitData, null, null);
     Assertions.assertNotNull(response);
-    Assertions.assertEquals(2, response);
+    Assertions.assertEquals(2, response.getData());
     verify(httpUtilForPreUE, times(0)).makePOSTCall(any(), any(), any(), any());
     verify(httpUtilForPostUE, times(1)).makePOSTCall(any(), any(), any(), any());
     verify(httpUtil, times(1)).makePOSTCall(any(), any(), any(), any());
@@ -121,12 +127,13 @@ class ApiUEImplTest {
     userExitData.getUserExitMetaData().setPostUEName(null);
 
     BaseResponse<UserExitConfigDataDto> userExitConfigData = testUtil.getUEConfigDataBaseResponse();
-    when(httpUtil.makePOSTCall(any(), any(), any(), any())).thenReturn(1);
+    when(httpUtil.makePOSTCall(any(), any(), any(), any()))
+        .thenReturn(ErrorWrapper.<Integer>builder().data(1).build());
     when(ueConfigDataNearCacheService.get(any())).thenReturn(testUtil.getUEConfigDataCacheValue());
 
-    Integer response = apiUE.invoke("Input", null, userExitData, null, null);
+    ErrorWrapper<Integer> response = apiUE.invoke("Input", null, userExitData, null, null);
     Assertions.assertNotNull(response);
-    Assertions.assertEquals(1, response);
+    Assertions.assertEquals(1, response.getData());
     verify(httpUtilForPreUE, times(0)).makePOSTCall(any(), any(), any(), any());
     verify(httpUtilForPostUE, times(0)).makePOSTCall(any(), any(), any(), any());
     verify(httpUtil, times(1)).makePOSTCall(any(), any(), any(), any());

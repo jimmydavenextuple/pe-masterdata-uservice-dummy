@@ -53,6 +53,7 @@ public class TestUtil {
     configData.setAppName("PE");
     configData.setServiceName("Sourcing");
     configData.setUeImplType(UEImplTypeEnum.REST);
+    configData.setPropagateError(true);
     return configData;
   }
 
@@ -120,6 +121,7 @@ public class TestUtil {
         .url(url)
         .ueImplType(ueImplTypeEnum)
         .attributeJsonPath(attributeJsonPath)
+        .propagateError(true)
         .build();
   }
 
@@ -150,6 +152,7 @@ public class TestUtil {
     configDataDto.setAppName("PE");
     configDataDto.setServiceName("Sourcing");
     configDataDto.setUeImplType(UEImplTypeEnum.REST);
+    configDataDto.setPropagateError(true);
     return configDataDto;
   }
 }
