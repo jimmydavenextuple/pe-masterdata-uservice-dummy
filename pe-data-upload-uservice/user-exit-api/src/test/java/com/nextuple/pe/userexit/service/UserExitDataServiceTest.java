@@ -83,6 +83,7 @@ class UserExitDataServiceTest {
     Assertions.assertNotNull(response);
     Assertions.assertEquals("PE", response.getAppName());
     Assertions.assertEquals("GetSourcing", response.getUserExitName());
+    Assertions.assertEquals(true, response.getPropagateError());
     verify(userExitDomain, times(1))
         .findUEConfigDataByNameAppNameOrgIdAndServiceName(any(), any(), any(), any());
   }
@@ -128,6 +129,7 @@ class UserExitDataServiceTest {
     ConfigDataResponse configDataResponse =
         userExitDataService.addConfigData(createConfigDataRequest);
     assertEquals(testUtil.getUserExitConfigData().getId(), configDataResponse.getId());
+    Assertions.assertEquals(true, configDataResponse.getPropagateError());
 
     verify(userExitDomain, times(1)).addUEConfigData(any(UserExitConfigData.class));
   }
@@ -191,6 +193,7 @@ class UserExitDataServiceTest {
     assertEquals(configDataResponse.getUserExitName(), response.getUserExitName());
     assertEquals(configDataResponse.getAppName(), response.getAppName());
     assertEquals(configDataResponse.getServiceName(), response.getServiceName());
+    assertEquals(true, response.getPropagateError());
 
     verify(userExitDomain, times(1))
         .findUEConfigDataByNameAppNameOrgIdAndServiceName(

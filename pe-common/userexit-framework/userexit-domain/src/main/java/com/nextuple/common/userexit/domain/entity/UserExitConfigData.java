@@ -58,4 +58,7 @@ public class UserExitConfigData extends CommonBaseEntity {
 
   @Column(name = "attribute_json_path")
   private String attributeJsonPath;
+
+  @Column(name = "propagate_error")
+  private Boolean propagateError;
 }

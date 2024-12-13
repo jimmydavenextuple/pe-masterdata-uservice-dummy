@@ -12,6 +12,7 @@ package com.nextuple.common.userexit;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.userexit.domain.UserExitData;
+import com.nextuple.common.userexit.domain.dto.ErrorWrapper;
 import com.nextuple.common.userexit.domain.dto.UserExitConfigDataDto;
 import com.nextuple.common.userexit.domain.dto.UserExitMetaDataDto;
 import com.nextuple.common.userexit.domain.enums.UEImplTypeEnum;
@@ -52,7 +53,7 @@ public class ApiUEImpl<T, G> implements IUserExit<T, G> {
   @Autowired ApplicationContext applicationContext;
 
   @Override
-  public G invoke(
+  public ErrorWrapper<G> invoke(
       T inputData,
       Map<String, Object> customAttributeMap,
       UserExitData userExitData,
@@ -76,10 +77,11 @@ public class ApiUEImpl<T, G> implements IUserExit<T, G> {
       inputData = handlePreUE(userExitData, inputData, customAttributeMap, inputClazz);
     }
 
-    G response = httpUtil.makePOSTCall(userExitData, inputData, customAttributeMap, outputClazz);
+    ErrorWrapper<G> response =
+        httpUtil.makePOSTCall(userExitData, inputData, customAttributeMap, outputClazz);
 
     if (Objects.nonNull(userExitMetaData.getPostUEName())) {
-      response = handlePostUE(userExitData, response, customAttributeMap, outputClazz);
+      response = handlePostUE(userExitData, response.getData(), customAttributeMap, outputClazz);
     }
     timer.record(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS);
     return response;
@@ -105,7 +107,7 @@ public class ApiUEImpl<T, G> implements IUserExit<T, G> {
     return userExitDataForUE;
   }
 
-  private G handlePostUE(
+  private ErrorWrapper<G> handlePostUE(
       UserExitData userExitData,
       G inputData,
       Map<String, Object> customAttributeMap,
@@ -131,13 +133,14 @@ public class ApiUEImpl<T, G> implements IUserExit<T, G> {
     UserExitData userExitDataForPreUE =
         fetchConfigData(userExitData, userExitMetaData.getPreUEName());
     if (userExitDataForPreUE.getUserExitConfigData() != null) {
-      return httpUtilForPreUE.makePOSTCall(
-          userExitDataForPreUE, inputData, customAttributeMap, clazz);
+      return httpUtilForPreUE
+          .makePOSTCall(userExitDataForPreUE, inputData, customAttributeMap, clazz)
+          .getData();
     }
     return null;
   }
 
-  private G getClassBasedResponse(
+  private ErrorWrapper<G> getClassBasedResponse(
       T inputData,
       Map<String, Object> customAttributeMap,
       UserExitConfigDataDto userExitConfigData) {
@@ -158,6 +161,6 @@ public class ApiUEImpl<T, G> implements IUserExit<T, G> {
         applicationContext.getBean(beanName, IClassBasedExit.class);
     G g = classBasedExit.fetchResponse(inputData, customAttributeMap);
     timer.record(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS);
-    return g;
+    return ErrorWrapper.<G>builder().data(g).build();
   }
 }

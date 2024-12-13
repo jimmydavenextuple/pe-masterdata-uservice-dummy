@@ -1,38 +1,21 @@
 spring:
-  application:
-      dependencies:
-        item: "http://localhost:8080/"
-        node-carrier: "http://localhost:8080/"
-        carrier: "http://localhost:8080/"
-        transit: "http://localhost:8080/"
-        data-upload: "http://localhost:8080/"
-        node: "http://localhost:8080/"
-        promise-sourcing-rule: "http://localhost:8080/"
-        calendar: "http://localhost:8080/"
-        postal-code-timezone: "http://localhost:8080/"
-        weightage-configuration: "http://localhost:8080/"
-        userexit: "http://localhost:8080/"
-        configuration: "http://localhost:8080/"
   jpa:
     database: POSTGRESQL
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
-    hikari:
-      maximumPoolSize: 100
-      minimumIdle: 10
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_devpe
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
   flyway:
     enabled: false
   kafka:
-    bootstrap-servers: "localhost:9092"
+    bootstrap-servers: "kbrk-nonprod.nextuple.net:9092"
     properties:
-      security.protocol: PLAINTEXT
-      sasl.mechanism: NA
-      sasl.jaas.config: NA
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
     consumer-retry-count: 1
     # NOTE: Below commented code is for the Avro consumer.
     # If we need to consume an avro record, please uncomment Avro properties and comment out the JSON Consumer and Producer.
@@ -64,17 +47,21 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         item_master:
-          name: ITEM_MASTER_INTEGRATION
-          group-id: item-master-local
+          name: INTERNAL.DEVPE.PROMISE_ITEMS
+          group-id: item-master-devpe-\${random.value}
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.DEVPE.MASTER_DATA_UPDATE_EVENTS
       properties:
-        spring.json.trusted.packages: "*"
         acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -83,7 +70,10 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
-        max.poll.records: 10
+      topics:
+        master_data_update_event:
+          name: INTERNAL.DEVPE.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-devpe
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -97,39 +87,14 @@ spring:
 logging:
   level:
     com.nextuple: INFO
-entity-listener:
-  kafka:
-    enabled: false
-pe:
-  ui:
-    allowed-origin-url: "*"
-
-jobs-framework:
-  feed-metrics-consumer:
-    topic-name: INTERNAL.DEV.PE_JOB_FPM_METRICS_LOCAL, INTERNAL.DEV.PE_JOB_RECORD_FPM_METRICS_LOCAL, INTERNAL.DEV.PE_NEIP_FPM_METRICS_LOCAL
-    group-id: pe-fpm-metrics-local
-  job-completion-consumer:
-    topic-name: job-completion-local
-    group-id: jobs-completion-consumer-async-dev
-  kafka-publish:
-    topic-name: jobs-task-local
-  result-publish:
-    topic-name: jobs-result-local
-  result-consumer:
-    topic-name: jobs-result-local
-    group-id: jobs-result-consumer-async-local
-  record-consumer:
-    topic-name: jobs-task-local
-    group-id: jobs-task-consumer-async-local
-
 pe-public-webhook:
   iv-feed:
-    topic: INTERNAL.DEV_ATP
+    topic: INTERNAL.QA_ATP
   item-feed:
-    topic: ITEM_MASTER_INTEGRATION
+    topic: INTERNAL.DEVPE.PROMISE_ITEMS
   pe-response:
-    topic: INTERNAL.DEV.CART_EDD
-    group-id: pe-response-consumer-async-local
+    topic: INTERNAL.DEVPE.CART_EDD
+    group-id: pe-response-consumer-devpe-async
   webhook:
     - tenantId: NEXTUPLE_GR
       moduleName: PROMISING
@@ -159,40 +124,59 @@ dataupload:
   type: BLOB
   signed-url-expiry-minutes: 30
 
+jobs-framework:
+  feed-metrics-consumer:
+    topic-name: INTERNAL.DEVPE.PE_JOB_FPM_METRICS, INTERNAL.DEVPE.PE_JOB_RECORD_FPM_METRICS, INTERNAL.DEVPE.PE_NEIP_FPM_METRICS
+    group-id: pe-fpm-metrics-devpe
+  job-completion-consumer:
+    topic-name: INTERNAL.DEVPE.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-devpe
+  kafka-publish:
+    topic-name: INTERNAL.DEVPE.PE.JOB_TASK
+  result-publish:
+    topic-name: INTERNAL.DEVPE.PE.JOB_RESULT
+  result-consumer:
+    topic-name: INTERNAL.DEVPE.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async
+  record-consumer:
+    topic-name: INTERNAL.DEVPE.PE.JOB_TASK
+    group-id: jobs-task-consumer-async
+
 master-data:
   node:
-    topic-name: INTERNAL.DEV.PE.NODE_INTEGRATION
-    group-id: node-master-dev
+    topic-name: INTERNAL.DEVPE.PE.NODE_INTEGRATION
+    group-id: node-master-devpe
   node-carrier:
-    topic-name: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
-    group-id: node-carrier-master-dev
+    topic-name: INTERNAL.DEVPE.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-devpe
   carrier:
-    topic-name: INTERNAL.DEV.PE.CARRIER_INTEGRATION
-    group-id: carrier-master-dev
+    topic-name: INTERNAL.DEVPE.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-devpe
   processing-lead-time:
-    topic-name: INTERNAL.DEV.PE.PROCESSING_LEAD_TIME_INTEGRATION
-    group-id: processing-lead-time-master-dev
+    topic-name: INTERNAL.DEVPE.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-devpe
   calendar:
-    topic-name: INTERNAL.DEV.PE.CALENDAR_INTEGRATION
-    group-id: calendar-master-dev
+    topic-name: INTERNAL.DEVPE.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-devpe
   node-calendar:
-    topic-name: INTERNAL.DEV.PE.NODE_CALENDAR_INTEGRATION
-    group-id: node-calendar-master-dev
+    topic-name: INTERNAL.DEVPE.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-devpe
   carrier-service-calendar:
-    topic-name: INTERNAL.DEV.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
-    group-id: carrier-service-calendar-master-dev
+    topic-name: INTERNAL.DEVPE.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-devpe
   pickup-calendar:
-    topic-name: INTERNAL.DEV.PE.PICKUP_CALENDAR_INTEGRATION
-    group-id: pickup-calendar-master-dev
+    topic-name: INTERNAL.DEVPE.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-devpe
   node-service-option-buffer:
-    topic-name: INTERNAL.DEV.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
-    group-id: node-service-option-buffer-master-dev
+    topic-name: INTERNAL.DEVPE.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-devpe
   transit:
-    topic-name: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
-    group-id: transit-master-dev
+    topic-name: INTERNAL.DEVPE.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-devpe
   transit-buffer:
-    topic-name: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
-    group-id: transit-buffer-master-dev
+    topic-name: INTERNAL.DEVPE.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-devpe
+
 next-cache:
   caches:
     -
@@ -200,11 +184,11 @@ next-cache:
       ttlSeconds: 14400
       maxLimit: 50
   refresh-cache:
-    topic: INTERNAL.DEV.PE.REFRESH_CACHE_INV
+    topic: INTERNAL.DEVPE.PE.REFRESH_CACHE_INV
   cacheManager: caffeine
 platform:
   tasks:
-    enabled: false
+    enabled: true
   tasks-scheduler:
     enabled: true
     milliseconds: 5000
@@ -212,7 +196,7 @@ platform:
     enabled: false
 kafka:
   input:
-    taskTopics: INTERNAL.DEV.PE.RETRY_TOPIC_INV
+    taskTopics: INTERNAL.DEVPE.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry
 keycloak:
   auth-server-url: "https://keycloak-nonprod.nextuple.com"
