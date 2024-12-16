@@ -44,6 +44,7 @@ import com.nextuple.promise.sourcing.rule.domain.mapper.SourcingRulesConfigurati
 import com.nextuple.promise.sourcing.rule.persistence.domain.*;
 import com.nextuple.promise.sourcing.rule.persistence.service.*;
 import com.nextuple.promise.sourcing.rule.service.impl.RuleRetrievalFactory;
+import com.nextuple.promise.sourcing.rule.utils.FetchRulesUtil;
 import com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleUtil;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
@@ -110,6 +111,7 @@ public class SourcingRulesConfigurationService {
   private final SourcingRuleDetailsPersistenceService sourcingRuleDetailsPersistenceService;
   private final AttributeValuesPersistenceService attributeValuesPersistenceService;
   private final RuleRetrievalFactory ruleRetrievalFactory;
+  private final FetchRulesUtil fetchRulesUtil;
 
   public SourcingRuleDetails processConfigureSourcingRule(
       RulesConfigurationRequest rulesConfigurationRequest)
@@ -482,7 +484,7 @@ public class SourcingRulesConfigurationService {
         sourcingAttrDefService.processGetSourcingAttributesDefinitionInActiveStatus(
             orgId, SourcingAttributesDefinitionScopeEnum.SOURCING_RULE);
 
-    for (Map.Entry<String, List<SourcingRuleDetails>> sourcingRule :
+    for (Map.Entry<String, List<SourcingRuleDetails>> sourcingRuleListEntry :
         sourcingRuleDetailsMap.entrySet()) {
       // For each sourcing rule create a allSourcingRulesResponse
       AllSourcingRulesResponse allSourcingRulesResponse = new AllSourcingRulesResponse();
@@ -492,9 +494,9 @@ public class SourcingRulesConfigurationService {
       List<AttributeInfo> optAttributeList = new LinkedList<>();
 
       allSourcingRulesResponse.setOrgId(orgId);
-      allSourcingRulesResponse.setSourcingRule(sourcingRule.getKey());
+      allSourcingRulesResponse.setSourcingRule(sourcingRuleListEntry.getKey());
       allSourcingRulesResponse.setSourcingRuleId(
-          sourcingRule.getValue().get(0).getSourcingRuleId());
+          sourcingRuleListEntry.getValue().get(0).getSourcingRuleId());
       // For each sourcing rule , created unique sets for nodeGroups, reqAttributes and
       // optAttributes
 
@@ -503,15 +505,22 @@ public class SourcingRulesConfigurationService {
       Set<String> uniqueOptAttributes = new HashSet<>();
 
       boolean isInActiveAttributeDefinition = false;
-      for (SourcingRuleDetails sourcingRuleDetails : sourcingRule.getValue()) {
+      getAttributeDetails(
+          orgId,
+          sourcingRuleListEntry.getValue().getFirst(),
+          reqAttributeList,
+          optAttributeList,
+          uniqueReqAttributes,
+          uniqueOptAttributes);
+      for (SourcingRuleDetails sourcingRuleDetailsList : sourcingRuleListEntry.getValue()) {
         if (!sourcingAttributesDefinitionResponse
             .getId()
-            .equals(sourcingRuleDetails.getSourcingAttributesDefinitionId())) {
+            .equals(sourcingRuleDetailsList.getSourcingAttributesDefinitionId())) {
           if (isOnlyActiveRules) {
             isInActiveAttributeDefinition = true;
           }
           allSourcingRulesResponse.setSourcingAttributesDefinitionId(
-              sourcingRuleDetails.getSourcingAttributesDefinitionId());
+              sourcingRuleDetailsList.getSourcingAttributesDefinitionId());
           allSourcingRulesResponse.setNodes(new ArrayList<>());
           allSourcingRulesResponse.setRequiredAttributes(new ArrayList<>());
           allSourcingRulesResponse.setOptionalAttributes(new ArrayList<>());
@@ -519,17 +528,9 @@ public class SourcingRulesConfigurationService {
         }
 
         allSourcingRulesResponse.setSourcingAttributesDefinitionId(
-            sourcingRuleDetails.getSourcingAttributesDefinitionId());
-        allSourcingRulesResponse.setSourcingRuleName(sourcingRuleDetails.getSourcingRuleName());
-        getNodeGroupInfos(orgId, sourcingRuleDetails, nodeGroupInfos, uniqueNodeGroupIds);
-        getAttributeDetails(
-            orgId,
-            sourcingRuleDetails,
-            reqAttributeList,
-            optAttributeList,
-            uniqueReqAttributes,
-            uniqueOptAttributes);
-
+            sourcingRuleDetailsList.getSourcingAttributesDefinitionId());
+        allSourcingRulesResponse.setSourcingRuleName(sourcingRuleDetailsList.getSourcingRuleName());
+        getNodeGroupInfos(orgId, sourcingRuleDetailsList, nodeGroupInfos, uniqueNodeGroupIds);
         allSourcingRulesResponse.setNodes(nodeGroupInfos);
         allSourcingRulesResponse.setRequiredAttributes(reqAttributeList);
         allSourcingRulesResponse.setOptionalAttributes(optAttributeList);
@@ -581,13 +582,13 @@ public class SourcingRulesConfigurationService {
 
       String[] reqAttributes =
           sourcingRuleAttributesDefinitionResponse.getReqAttributes().split(SPLIT_REGEX);
-      getRequiredAttributeDetails(
+      fetchRulesUtil.getRequiredAttributeDetails(
           orgId, reqAttributeList, uniqueReqAttributes, sourcingRuleValues, reqAttributes);
 
-      if (!Objects.isNull(sourcingRuleAttributesDefinitionResponse.getOptAttributes())) {
+      if (StringUtils.hasLength(sourcingRuleAttributesDefinitionResponse.getOptAttributes())) {
         String[] optAttributes =
             sourcingRuleAttributesDefinitionResponse.getOptAttributes().split(SPLIT_REGEX);
-        getOptionalAttributeDetails(
+        fetchRulesUtil.getOptionalAttributeDetails(
             orgId,
             optAttributeList,
             uniqueOptAttributes,
@@ -595,117 +596,6 @@ public class SourcingRulesConfigurationService {
             reqAttributes,
             optAttributes);
       }
-    }
-  }
-
-  private void getOptionalAttributeDetails(
-      String orgId,
-      List<AttributeInfo> optAttributeList,
-      Set<String> uniqueOptAttributes,
-      String[] sourcingRuleValues,
-      String[] reqAttributes,
-      String[] optAttributes)
-      throws PromiseEngineException, CommonServiceException {
-    int optAttr = 0;
-
-    List<AttributeValuesDomainDto> attributeValuesList =
-        attributeValuesPersistenceService.getAllAttributeValues(
-            Arrays.stream(optAttributes)
-                .filter(x -> !x.equals(""))
-                .map(Long::valueOf)
-                .collect(Collectors.toList()));
-
-    Map<Long, List<String>> attributeValuesMap =
-        attributeValuesList.stream()
-            .collect(
-                Collectors.groupingBy(
-                    AttributeValuesDomainDto::getNameId,
-                    Collectors.mapping(AttributeValuesDomainDto::getValue, Collectors.toList())));
-
-    for (String optAttribute : optAttributes) {
-      if (uniqueOptAttributes.contains(optAttribute) || optAttribute.equals("")) continue;
-      uniqueOptAttributes.add(optAttribute);
-      Optional<SourcingAttributeDomainDto> sourcingAttributeEntity =
-          sourcingAttributePersistenceService.getSourcingAttributeById(
-              Long.parseLong(optAttribute));
-      if (sourcingAttributeEntity.isEmpty()) {
-        logger.error("No mapping for the optional attribute found in sourcing attribute");
-        Map<String, FieldError> errorMap = new HashMap<>();
-        errorMap.put(ID, FieldError.builder().rejectedValue(orgId).build());
-        throw new CommonServiceException(
-            "No mapping for the optional attribute found in sourcing attribute",
-            HttpStatus.NOT_FOUND,
-            0x1771,
-            errorMap);
-      }
-
-      String attributeValue;
-      if (sourcingRuleValues.length == reqAttributes.length
-          || optAttr >= sourcingRuleValues.length - reqAttributes.length
-          || checkForAttributeValue(
-              attributeValuesMap, sourcingRuleValues, reqAttributes, optAttribute, optAttr)) {
-        attributeValue = "";
-      } else {
-        attributeValue = sourcingRuleValues[reqAttributes.length + optAttr];
-      }
-      optAttr++;
-      AttributeInfo info =
-          AttributeInfo.builder()
-              .attributeId(optAttribute)
-              .attributeValue(attributeValue)
-              .attributeName(sourcingAttributeEntity.get().getAttributeName())
-              .build();
-
-      optAttributeList.add(info);
-    }
-  }
-
-  private boolean checkForAttributeValue(
-      Map<Long, List<String>> attributeValuesMap,
-      String[] sourcingRuleValues,
-      String[] reqAttributes,
-      String optAttribute,
-      int optAttr) {
-    return Objects.isNull(attributeValuesMap.get(Long.valueOf(optAttribute)))
-        || !attributeValuesMap
-            .get(Long.valueOf(optAttribute))
-            .contains(sourcingRuleValues[reqAttributes.length + optAttr]);
-  }
-
-  private void getRequiredAttributeDetails(
-      String orgId,
-      List<AttributeInfo> reqAttributeList,
-      Set<String> uniqueReqAttributes,
-      String[] sourcingRuleValues,
-      String[] reqAttributes)
-      throws PromiseEngineException, CommonServiceException {
-    for (int attrKey = 0;
-        attrKey < reqAttributes.length && attrKey < sourcingRuleValues.length;
-        attrKey++) {
-      if (uniqueReqAttributes.contains(reqAttributes[attrKey])) continue;
-      uniqueReqAttributes.add(reqAttributes[attrKey]);
-      // Get sourcingAttribute values for each reqAttribute
-      Optional<SourcingAttributeDomainDto> sourcingAttributeEntity =
-          sourcingAttributePersistenceService.getSourcingAttributeById(
-              Long.parseLong(reqAttributes[attrKey]));
-      if (sourcingAttributeEntity.isEmpty()) {
-        logger.error("No mapping for the required attribute found in sourcing attribute");
-        Map<String, FieldError> errorMap = new HashMap<>();
-        errorMap.put(ID, FieldError.builder().rejectedValue(orgId).build());
-        throw new CommonServiceException(
-            "No mapping for the required attribute found in sourcing attribute",
-            HttpStatus.NOT_FOUND,
-            0x1771,
-            errorMap);
-      }
-      AttributeInfo info =
-          AttributeInfo.builder()
-              .attributeId(reqAttributes[attrKey])
-              .attributeValue(sourcingRuleValues[attrKey])
-              .attributeName(sourcingAttributeEntity.get().getAttributeName())
-              .build();
-
-      reqAttributeList.add(info);
     }
   }
 
