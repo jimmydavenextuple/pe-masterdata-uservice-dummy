@@ -89,7 +89,7 @@ logging:
     com.nextuple: INFO
 pe-public-webhook:
   iv-feed:
-    topic: INTERNAL.QA_ATP
+    topic: INTERNAL.DEVPE_ATP
   item-feed:
     topic: INTERNAL.DEVPE.PROMISE_ITEMS
   pe-response:
