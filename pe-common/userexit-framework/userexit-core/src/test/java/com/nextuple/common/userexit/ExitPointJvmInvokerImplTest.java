@@ -12,6 +12,7 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.HardExecutionFailureException;
 import com.nextuple.common.exception.ServiceUnavailableException;
 import com.nextuple.common.userexit.domain.UserExitData;
+import com.nextuple.common.userexit.domain.dto.ErrorWrapper;
 import com.nextuple.common.userexit.domain.dto.UserExitConfigDataDto;
 import com.nextuple.common.userexit.domain.dto.UserExitMetaDataDto;
 import com.nextuple.common.userexit.domain.enums.ExecutionFailureEnum;
@@ -97,11 +98,12 @@ class ExitPointJvmInvokerImplTest {
     userExitConfigData.setAttributeJsonPath("itemId:$.orderLine.itemId");
     when(documentContext.read("$.orderLine.itemId")).thenReturn("Item1");
     when(userExitFactory.getUE(any())).thenReturn(regularUE);
-    when(regularUE.invoke(any(), any(), any(), any(), any())).thenReturn("UserExitResult");
-    String result =
+    when(regularUE.invoke(any(), any(), any(), any(), any()))
+        .thenReturn(ErrorWrapper.<String>builder().data("UserExitResult").build());
+    ErrorWrapper<String> result =
         exitPointJvmInvoker.invoke(userExitData, "nextuple", documentContext, null, null);
     Assertions.assertNotNull(result);
-    Assertions.assertEquals("UserExitResult", result);
+    Assertions.assertEquals("UserExitResult", result.getData());
     verify(userExitFactory, times(1)).getUE(any());
     verify(regularUE, times(1)).invoke(any(), any(), any(), any(), any());
   }
@@ -124,11 +126,12 @@ class ExitPointJvmInvokerImplTest {
     userExitConfigData.setAttributeJsonPath("itemId:$.orderLine.itemId");
     when(documentContext.read("$.orderLine.itemId")).thenReturn("Item1");
     when(userExitFactory.getUE(any())).thenReturn(apiUE);
-    when(apiUE.invoke(any(), any(), any(), any(), any())).thenReturn("UserExitResult");
-    String result =
+    when(apiUE.invoke(any(), any(), any(), any(), any()))
+        .thenReturn(ErrorWrapper.<String>builder().data("UserExitResult").build());
+    ErrorWrapper<String> result =
         exitPointJvmInvoker.invoke(userExitData, "nextuple", documentContext, null, null);
     Assertions.assertNotNull(result);
-    Assertions.assertEquals("UserExitResult", result);
+    Assertions.assertEquals("UserExitResult", result.getData());
     verify(userExitFactory, times(1)).getUE(any());
     verify(apiUE, times(1)).invoke(any(), any(), any(), any(), any());
   }

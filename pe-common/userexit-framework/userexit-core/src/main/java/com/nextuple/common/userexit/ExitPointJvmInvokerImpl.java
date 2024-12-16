@@ -10,6 +10,7 @@ import com.nextuple.common.exception.HardExecutionFailureException;
 import com.nextuple.common.exception.ServiceUnavailableException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.common.userexit.domain.UserExitData;
+import com.nextuple.common.userexit.domain.dto.ErrorWrapper;
 import com.nextuple.common.userexit.domain.dto.UserExitConfigDataDto;
 import com.nextuple.common.userexit.domain.dto.UserExitMetaDataDto;
 import com.nextuple.common.userexit.domain.enums.ExecutionFailureEnum;
@@ -148,7 +149,7 @@ public class ExitPointJvmInvokerImpl<T, G> implements ExitPointInvoker<T, G> {
   }
 
   @Override
-  public G invoke(
+  public ErrorWrapper<G> invoke(
       UserExitData userExitData,
       T inputData,
       DocumentContext documentContext,
