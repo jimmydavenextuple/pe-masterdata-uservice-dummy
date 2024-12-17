@@ -20,7 +20,7 @@ public class FeignClientInterceptor implements RequestInterceptor {
     if (!requestTemplate.headers().containsKey(CommonConstants.AUTHORIZATION_HEADER)) {
       requestTemplate.header(
           CommonConstants.AUTHORIZATION_HEADER,
-          CurrentThreadContext.getLogContext().getRequestHeaders().get("authorization"));
+          CurrentThreadContext.getLogContext().getAuthorizationHeader());
     }
 
     // Attach Tenant ID
