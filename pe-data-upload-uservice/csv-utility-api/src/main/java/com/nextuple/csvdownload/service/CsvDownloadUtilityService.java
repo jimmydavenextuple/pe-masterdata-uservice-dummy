@@ -1139,11 +1139,11 @@ public class CsvDownloadUtilityService {
         csvData.add(nodeCarrierServiceCalendarResponse.getOrgId());
         csvData.add(nodeCarrierServiceCalendarResponse.getNodeId());
         csvData.add(nodeCarrierServiceCalendarResponse.getCarrierServiceId());
-        csvData.add(nodeCarrierServiceCalendarResponse.getCalendarId());
         csvData.add(
             Objects.nonNull(nodeCarrierResponse.getLastPickupTime())
                 ? nodeCarrierResponse.getLastPickupTime()
                 : "N/A");
+        csvData.add(nodeCarrierServiceCalendarResponse.getCalendarId());
         writeToCSV(csvData.toArray(new String[0]), writer);
       }
     }
