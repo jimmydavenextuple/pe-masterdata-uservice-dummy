@@ -46,8 +46,9 @@ class FeignClientInterceptorTest {
     String correlationId = "correlationId";
     String username = "username";
     String apiKey = "apiKey";
+    String authorization = "authorization";
 
-    CurrentThreadContext.getLogContext().setRequestHeader("authorization", "token");
+    CurrentThreadContext.getLogContext().setAuthorizationHeader(authorization);
     CurrentThreadContext.getLogContext().setTenantId(tenantId);
     CurrentThreadContext.getLogContext().setCorrelationId(correlationId);
     CurrentThreadContext.getLogContext().setUsername(username);
@@ -69,7 +70,8 @@ class FeignClientInterceptorTest {
     assertTrue(
         requestTemplate.headers().get(CommonConstants.HEADER_API_KEY).contains(apiKey), "Api Key");
     assertTrue(
-        requestTemplate.headers().get(CommonConstants.AUTHORIZATION_HEADER).contains("token"));
+        requestTemplate.headers().get(CommonConstants.AUTHORIZATION_HEADER).contains(authorization),
+        "authorization");
   }
 
   @Test
