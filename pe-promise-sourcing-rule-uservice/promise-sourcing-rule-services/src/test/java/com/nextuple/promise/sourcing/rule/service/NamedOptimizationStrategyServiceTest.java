@@ -9,12 +9,14 @@ package com.nextuple.promise.sourcing.rule.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -39,12 +41,14 @@ import com.nextuple.promise.sourcing.rule.api.domain.outbound.OptimizationRuleUI
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.PageResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributeResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.pojo.AttributeInfo;
 import com.nextuple.promise.sourcing.rule.domain.mapper.NamedOptimizationStrategyMapper;
 import com.nextuple.promise.sourcing.rule.persistence.domain.GroupDefinitionDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.NamedOptimizationStrategyDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingAttributesDefinitionDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingConstraintDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.service.*;
+import com.nextuple.promise.sourcing.rule.utils.FetchRulesUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -57,6 +61,7 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -71,6 +76,7 @@ class NamedOptimizationStrategyServiceTest {
   @Mock private SourcingConstraintPersistenceService sourcingConstraintPersistenceService;
 
   @Mock private GroupDefinitionService groupDefinitionService;
+  @Mock private FetchRulesUtil fetchRulesUtil;
 
   @Mock
   private NamedOptimizationStrategyPersistenceService namedOptimizationStrategyPersistenceService;
@@ -308,13 +314,51 @@ class NamedOptimizationStrategyServiceTest {
             anyString(), eq("DEFAULT")))
         .thenReturn(List.of(namedOptimizationStrategyEntity));
 
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("r1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("r2")
+                          .build());
+                  return null;
+                })
+        .doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("3")
+                          .attributeName("O1")
+                          .attributeValue("o1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("4")
+                          .attributeName("O2")
+                          .attributeValue("o2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
     DetailedOptimizationStrategyResponse detailedOptimizationStrategyResponse =
         namedOptimizationStrategyService.processGetOptimizationStrategyByOrgIdAndGroupId(
             TestUtil.ORG_ID, TestUtil.GROUP_ID);
     assertEquals(
         namedOptimizationStrategyEntity.getId(), detailedOptimizationStrategyResponse.getId());
     assertEquals(TestUtil.DEFAULT_GROUP_ID, detailedOptimizationStrategyResponse.getGroupName());
-    assertEquals(0, detailedOptimizationStrategyResponse.getRequiredAttributes().size());
+    assertNull(detailedOptimizationStrategyResponse.getRequiredAttributes());
 
     verify(namedOptimizationStrategyPersistenceService, times(2))
         .fetchOptimizationStrategyByOrgIdAndGroupId(anyString(), anyString());
