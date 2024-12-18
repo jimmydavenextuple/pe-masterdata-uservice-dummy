@@ -940,7 +940,7 @@ public class SourcingRulesConfigurationService {
             Arrays.asList(sourcingAttributesDefinitionResponse.getReqAttributes().split(",")));
     buildRuleStringWithAttributeInfos(requiredAttributes, requiredAttributeInfo, builder);
     List<String> optionalAttributes;
-    if (Objects.nonNull(sourcingAttributesDefinitionResponse.getOptAttributes())) {
+    if (StringUtils.hasLength(sourcingAttributesDefinitionResponse.getOptAttributes())) {
       optionalAttributes =
           new ArrayList<>(
               Arrays.asList(sourcingAttributesDefinitionResponse.getOptAttributes().split(",")));
