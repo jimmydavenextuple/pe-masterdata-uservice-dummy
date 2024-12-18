@@ -130,10 +130,7 @@ public class FetchRulesUtil {
 
     List<AttributeValuesDomainDto> attributeValuesList =
         attributeValuesPersistenceService.getAllAttributeValues(
-            Arrays.stream(optAttributes)
-                .filter(x -> !x.equals(""))
-                .map(Long::valueOf)
-                .collect(Collectors.toList()));
+            Arrays.stream(optAttributes).filter(x -> !x.equals("")).map(Long::valueOf).toList());
 
     Map<Long, List<String>> attributeValuesMap =
         attributeValuesList.stream()
