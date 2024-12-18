@@ -12,14 +12,39 @@ import static com.nextuple.promise.sourcing.rule.utils.FetchRulesUtil.TOTAL_ATTR
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.exception.PromiseEngineException;
+import com.nextuple.promise.sourcing.rule.TestUtil;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionStatus;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.pojo.AttributeInfo;
+import com.nextuple.promise.sourcing.rule.persistence.domain.AttributeValuesDomainDto;
+import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingAttributesDefinitionDomainDto;
+import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingRulesConfigurationDomainDto;
+import com.nextuple.promise.sourcing.rule.persistence.service.AttributeValuesPersistenceService;
+import com.nextuple.promise.sourcing.rule.persistence.service.SourcingAttributePersistenceService;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 class FetchRulesUtilTest {
+
+  @Mock AttributeValuesPersistenceService attributeValuesPersistenceService;
+  @Mock SourcingAttributePersistenceService sourcingAttributePersistenceService;
+  @InjectMocks TestUtil testUtil;
+  @InjectMocks FetchRulesUtil fetchRulesUtil;
 
   @BeforeEach
   void setUp() {
@@ -74,5 +99,110 @@ class FetchRulesUtilTest {
                     reqAttrFromDefinition, optionalAttrFromDefinition, generatedRule));
 
     assertEquals(TOTAL_ATTRIBUTES_LENGTH_ERROR_MESSAGE, ex.getMessage());
+  }
+
+  @Test
+  @DisplayName("No mapping for the required attribute found in sourcing attribute")
+  void processGetAllSourcingRuleDetailsByOrgIdTest4()
+      throws PromiseEngineException, CommonServiceException {
+    String rule1 = "Test rule 1";
+    String rule2 = "Test rule 2";
+    List<SourcingRulesConfigurationDomainDto> sourcingRulesConfigurationEntityList =
+        new ArrayList<>();
+    SourcingRulesConfigurationDomainDto sourcingRulesConfigurationEntity =
+        testUtil.getSourcingRulesEntity();
+    SourcingRulesConfigurationDomainDto sourcingRulesConfigurationEntity1 =
+        testUtil.getSourcingRulesEntity();
+    sourcingRulesConfigurationEntity1.setSourcingRule("V1:V2:V3");
+    sourcingRulesConfigurationEntity.setSourcingRuleName(rule1);
+    sourcingRulesConfigurationEntity1.setSourcingRuleName(rule2);
+    sourcingRulesConfigurationEntityList.add(sourcingRulesConfigurationEntity);
+    sourcingRulesConfigurationEntityList.add(sourcingRulesConfigurationEntity1);
+
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionEntity =
+        testUtil.getSourcingRuleAttributesDefinitionEntity(
+            SourcingAttributesDefinitionStatus.ACTIVE);
+    sourcingAttributesDefinitionEntity.setOptAttributes("3,4");
+    when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
+        .thenReturn(Optional.empty());
+    SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
+        testUtil.getSourcingRuleAttributesDefinitionResponse(
+            SourcingAttributesDefinitionStatus.ACTIVE);
+    List<AttributeInfo> requiredAttrList = new ArrayList<>();
+    Set<String> uniqueReqAttributes = new HashSet<>();
+    String[] sourcingRuleValues = new String[] {"R1:R2:O1"};
+    String[] reqAttributes = new String[] {"1", "2"};
+    Exception ex =
+        assertThrows(
+            CommonServiceException.class,
+            () ->
+                fetchRulesUtil.getRequiredAttributeDetails(
+                    TestUtil.ORG_ID,
+                    requiredAttrList,
+                    uniqueReqAttributes,
+                    sourcingRuleValues,
+                    reqAttributes));
+    assertEquals(
+        "No mapping for the required attribute found in sourcing attribute", ex.getMessage());
+  }
+
+  @Test
+  @DisplayName("No mapping for the optional attribute found in sourcing attribute")
+  void processGetAllSourcingRuleDetailsByOrgIdTest5()
+      throws PromiseEngineException, CommonServiceException {
+    String rule1 = "Test rule 1";
+    String rule2 = "Test rule 2";
+    List<SourcingRulesConfigurationDomainDto> sourcingRulesConfigurationEntityList =
+        new ArrayList<>();
+    SourcingRulesConfigurationDomainDto sourcingRulesConfigurationEntity =
+        testUtil.getSourcingRulesEntity();
+    SourcingRulesConfigurationDomainDto sourcingRulesConfigurationEntity1 =
+        testUtil.getSourcingRulesEntity();
+    sourcingRulesConfigurationEntity1.setSourcingRule("V1:V2:V3");
+    sourcingRulesConfigurationEntity.setSourcingRuleName(rule1);
+    sourcingRulesConfigurationEntity1.setSourcingRuleName(rule2);
+    sourcingRulesConfigurationEntityList.add(sourcingRulesConfigurationEntity);
+    sourcingRulesConfigurationEntityList.add(sourcingRulesConfigurationEntity1);
+
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionEntity =
+        testUtil.getSourcingRuleAttributesDefinitionEntity(
+            SourcingAttributesDefinitionStatus.ACTIVE);
+    sourcingAttributesDefinitionEntity.setOptAttributes("3,4");
+
+    when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
+        .thenReturn(Optional.of(testUtil.getSourcingAttributeEntity()));
+
+    when(sourcingAttributePersistenceService.getSourcingAttributeById(Long.parseLong("3")))
+        .thenReturn(Optional.empty());
+    SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
+        testUtil.getSourcingRuleAttributesDefinitionResponse(
+            SourcingAttributesDefinitionStatus.ACTIVE);
+
+    AttributeValuesDomainDto attributeValuesEntity1 =
+        testUtil.getAttributeValuesEntity1(1L, 3L, "O1");
+    AttributeValuesDomainDto attributeValuesEntity2 =
+        testUtil.getAttributeValuesEntity1(2L, 4L, "O2");
+    when(attributeValuesPersistenceService.getAllAttributeValues(any()))
+        .thenReturn(List.of(attributeValuesEntity1, attributeValuesEntity2));
+
+    List<AttributeInfo> optAttrList = new ArrayList<>();
+    Set<String> uniqueOptAttributes = new HashSet<>();
+    String[] sourcingRuleValues = new String[] {"R1:R2:O1:O2"};
+    String[] reqAttributes = new String[] {"1", "2"};
+    String[] optAttributes = new String[] {"3", "4"};
+    Exception ex =
+        assertThrows(
+            CommonServiceException.class,
+            () -> {
+              fetchRulesUtil.getOptionalAttributeDetails(
+                  TestUtil.ORG_ID,
+                  optAttrList,
+                  uniqueOptAttributes,
+                  sourcingRuleValues,
+                  reqAttributes,
+                  optAttributes);
+            });
+    assertEquals(
+        "No mapping for the optional attribute found in sourcing attribute", ex.getMessage());
   }
 }
