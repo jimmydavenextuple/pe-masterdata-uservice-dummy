@@ -239,6 +239,14 @@ definitions:
         artifacts:
           - build/**
           - service-version.txt
+    - step: &publish-release
+        name: Build and publish release
+        caches:
+          - gradle
+          - sonar
+        script:
+          - microdnf install findutils
+          - bash ./gradlew -Pbuild_target=RELEASE clean build artifactoryPublish
     - step: &build-release
         name: Build Release
         script:
@@ -314,7 +322,7 @@ pipelines:
           deployment: sandbox
     '*-RELEASE':
       - step: *Clear-Cache
-      - step: *build-release
+      - step: *publish-release
       - step:
           !!merge <<: *deploy
           name: Deploy Prod
