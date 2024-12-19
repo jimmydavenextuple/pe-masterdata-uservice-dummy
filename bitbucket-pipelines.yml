@@ -170,6 +170,7 @@ server:
       middleman: no
       prometheus: yes
       storage: yes
+      dockerbuild: yes
       java-opts: "-Xms1024m -Xmx1024m"
       keyvault: yes
       scale:
