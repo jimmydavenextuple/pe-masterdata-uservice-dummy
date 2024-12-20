@@ -23,6 +23,7 @@ import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDef
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.AttributeInfo;
 import com.nextuple.promise.sourcing.rule.persistence.domain.AttributeValuesDomainDto;
+import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingAttributeDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingAttributesDefinitionDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingRulesConfigurationDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.service.AttributeValuesPersistenceService;
@@ -32,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -204,5 +206,60 @@ class FetchRulesUtilTest {
             });
     assertEquals(
         "No mapping for the optional attribute found in sourcing attribute", ex.getMessage());
+  }
+
+  @Test
+  @DisplayName("Happy Path for getOptionalAttributeDetails")
+  void getOptionalAttributeDetailsTest1() throws PromiseEngineException, CommonServiceException {
+    Set<String> uniqueOptAttributes = new HashSet<>();
+    uniqueOptAttributes.add("1");
+    uniqueOptAttributes.add("2");
+    uniqueOptAttributes.add("3");
+    String[] sourcingRuleValues = new String[] {"V1.1", "V2.1", "V3.1", "V4.1", "", "V6.2"};
+    String[] reqAttributes = new String[] {"1", "2", "3"};
+    String[] optAttributes = new String[] {"4", "5", "6"};
+
+    when(attributeValuesPersistenceService.getAllAttributeValues(any()))
+        .thenReturn(
+            List.of(
+                testUtil.getAttributeValuesEntity1(1L, 4L, "V4.1"),
+                testUtil.getAttributeValuesEntity1(2L, 4L, "V4.2"),
+                testUtil.getAttributeValuesEntity1(3L, 5L, "V5.1"),
+                testUtil.getAttributeValuesEntity1(4L, 5L, "V5.2"),
+                testUtil.getAttributeValuesEntity1(5L, 6L, "V6.1"),
+                testUtil.getAttributeValuesEntity1(6L, 6L, "V6.2")));
+
+    SourcingAttributeDomainDto sourcingAttributeEntity4 =
+        new SourcingAttributeDomainDto(4L, TestUtil.ORG_ID, "Attribute 4", "jsonPath", false, null);
+    SourcingAttributeDomainDto sourcingAttributeEntity5 =
+        new SourcingAttributeDomainDto(5L, TestUtil.ORG_ID, "Attribute 5", "jsonPath", false, null);
+    SourcingAttributeDomainDto sourcingAttributeEntity6 =
+        new SourcingAttributeDomainDto(6L, TestUtil.ORG_ID, "Attribute 6", "jsonPath", false, null);
+
+    when(sourcingAttributePersistenceService.getSourcingAttributeById(Long.parseLong("4")))
+        .thenReturn(Optional.of(sourcingAttributeEntity4));
+    when(sourcingAttributePersistenceService.getSourcingAttributeById(Long.parseLong("5")))
+        .thenReturn(Optional.of(sourcingAttributeEntity5));
+    when(sourcingAttributePersistenceService.getSourcingAttributeById(Long.parseLong("6")))
+        .thenReturn(Optional.of(sourcingAttributeEntity6));
+
+    List<AttributeInfo> optAttrList = new ArrayList<>();
+    fetchRulesUtil.getOptionalAttributeDetails(
+        TestUtil.ORG_ID,
+        optAttrList,
+        uniqueOptAttributes,
+        sourcingRuleValues,
+        reqAttributes,
+        optAttributes);
+    Assertions.assertEquals(3, optAttrList.size());
+    Assertions.assertEquals("4", optAttrList.get(0).getAttributeId());
+    Assertions.assertEquals("V4.1", optAttrList.get(0).getAttributeValue());
+    Assertions.assertEquals("Attribute 4", optAttrList.get(0).getAttributeName());
+    Assertions.assertEquals("5", optAttrList.get(1).getAttributeId());
+    Assertions.assertEquals("", optAttrList.get(1).getAttributeValue());
+    Assertions.assertEquals("Attribute 5", optAttrList.get(1).getAttributeName());
+    Assertions.assertEquals("6", optAttrList.get(2).getAttributeId());
+    Assertions.assertEquals("V6.2", optAttrList.get(2).getAttributeValue());
+    Assertions.assertEquals("Attribute 6", optAttrList.get(2).getAttributeName());
   }
 }
