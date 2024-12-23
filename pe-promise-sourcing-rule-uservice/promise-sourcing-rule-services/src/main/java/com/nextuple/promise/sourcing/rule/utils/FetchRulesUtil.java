@@ -14,18 +14,14 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.AttributeInfo;
-import com.nextuple.promise.sourcing.rule.persistence.domain.AttributeValuesDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.SourcingAttributeDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.service.AttributeValuesPersistenceService;
 import com.nextuple.promise.sourcing.rule.persistence.service.SourcingAttributePersistenceService;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -128,17 +124,6 @@ public class FetchRulesUtil {
       throws PromiseEngineException, CommonServiceException {
     int optAttr = 0;
 
-    List<AttributeValuesDomainDto> attributeValuesList =
-        attributeValuesPersistenceService.getAllAttributeValues(
-            Arrays.stream(optAttributes).filter(x -> !x.equals("")).map(Long::valueOf).toList());
-
-    Map<Long, List<String>> attributeValuesMap =
-        attributeValuesList.stream()
-            .collect(
-                Collectors.groupingBy(
-                    AttributeValuesDomainDto::getNameId,
-                    Collectors.mapping(AttributeValuesDomainDto::getValue, Collectors.toList())));
-
     for (String optAttribute : optAttributes) {
       if (uniqueOptAttributes.contains(optAttribute) || optAttribute.equals("")) continue;
       uniqueOptAttributes.add(optAttribute);
@@ -152,9 +137,7 @@ public class FetchRulesUtil {
 
       String attributeValue;
       if (sourcingRuleValues.length == reqAttributes.length
-          || optAttr >= sourcingRuleValues.length - reqAttributes.length
-          || checkForAttributeValue(
-              attributeValuesMap, sourcingRuleValues, reqAttributes, optAttribute, optAttr)) {
+          || optAttr >= sourcingRuleValues.length - reqAttributes.length) {
         attributeValue = "";
       } else {
         attributeValue = sourcingRuleValues[reqAttributes.length + optAttr];
@@ -170,17 +153,5 @@ public class FetchRulesUtil {
 
       optAttributeList.add(info);
     }
-  }
-
-  private boolean checkForAttributeValue(
-      Map<Long, List<String>> attributeValuesMap,
-      String[] sourcingRuleValues,
-      String[] reqAttributes,
-      String optAttribute,
-      int optAttr) {
-    return Objects.isNull(attributeValuesMap.get(Long.valueOf(optAttribute)))
-        || !attributeValuesMap
-            .get(Long.valueOf(optAttribute))
-            .contains(sourcingRuleValues[reqAttributes.length + optAttr]);
   }
 }

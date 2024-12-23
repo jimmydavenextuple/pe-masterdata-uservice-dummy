@@ -226,8 +226,7 @@ class FetchRulesUtilTest {
                 testUtil.getAttributeValuesEntity1(2L, 4L, "V4.2"),
                 testUtil.getAttributeValuesEntity1(3L, 5L, "V5.1"),
                 testUtil.getAttributeValuesEntity1(4L, 5L, "V5.2"),
-                testUtil.getAttributeValuesEntity1(5L, 6L, "V6.1"),
-                testUtil.getAttributeValuesEntity1(6L, 6L, "V6.2")));
+                testUtil.getAttributeValuesEntity1(5L, 6L, "V6.1")));
 
     SourcingAttributeDomainDto sourcingAttributeEntity4 =
         new SourcingAttributeDomainDto(4L, TestUtil.ORG_ID, "Attribute 4", "jsonPath", false, null);
