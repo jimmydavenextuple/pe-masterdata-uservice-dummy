@@ -62,7 +62,7 @@ class CustomRegionPersistenceServiceImplTest {
 
   @Test
   @DisplayName("Save Custom Region: Happy Path")
-  void saveCustomRegionTest() throws PromiseEngineException {
+  void saveCustomRegionTest() {
     CustomRegionEntity customRegionEntity = testUtil.getCustomRegionEntity();
     CustomRegionDomainDto customRegionDomainDto = testUtil.getCustomRegionDomainDto();
     when(customRegionEntityMapper.toEntity(customRegionDomainDto)).thenReturn(customRegionEntity);
@@ -93,15 +93,15 @@ class CustomRegionPersistenceServiceImplTest {
 
   @Test
   @DisplayName("Get Custom Region: Happy Path")
-  void getCustomRegionTimezoneTest() throws PromiseEngineException {
+  void getCustomRegionTimezoneTest() {
     CustomRegionEntity customRegionEntity = testUtil.getCustomRegionEntity();
     CustomRegionDomainDto customRegionDomainDto = testUtil.getCustomRegionDomainDto();
     when(customRegionEntityMapper.toDomain(customRegionEntity)).thenReturn(customRegionDomainDto);
     when(customRegionRepository.findById(any())).thenReturn(Optional.of(customRegionEntity));
 
-    Optional<CustomRegionDomainDto> received_entityResponse =
+    Optional<CustomRegionDomainDto> receivedEntityResponse =
         customRegionPersistenceService.fetchRegionByOrgIdAndId(ORG_ID, ID);
-    assertEquals(customRegionDomainDto, received_entityResponse.get());
+    assertEquals(customRegionDomainDto, receivedEntityResponse.get());
     verify(customRegionRepository, times(1)).findById(any());
   }
 
@@ -120,7 +120,7 @@ class CustomRegionPersistenceServiceImplTest {
 
   @Test
   @DisplayName("Delete Custom Region: Happy Path")
-  void deleteCustomRegionTest() throws PromiseEngineException {
+  void deleteCustomRegionTest() {
     CustomRegionEntity customRegionEntity = testUtil.getCustomRegionEntity();
     CustomRegionDomainDto customRegionDomainDto = testUtil.getCustomRegionDomainDto();
     when(customRegionEntityMapper.toEntity(customRegionDomainDto)).thenReturn(customRegionEntity);

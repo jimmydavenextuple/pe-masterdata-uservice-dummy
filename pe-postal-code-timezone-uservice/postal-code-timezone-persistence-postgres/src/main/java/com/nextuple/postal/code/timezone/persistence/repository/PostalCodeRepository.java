@@ -56,10 +56,11 @@ public interface PostalCodeRepository extends CommonJpaRepository<PostalCodeEnti
           "SELECT COUNT(DISTINCT v.city) AS citiesCount, v.org_id AS orgId, COUNT(DISTINCT v.state) AS statesCount, "
               + "COUNT(DISTINCT v.zip_code_prefix) AS zipCodePrefixesCount, CAST(MAX(v.last_modified_date) AS DATE)"
               + " AS uploadDate, v.custom_region AS customRegionId FROM postal_code v WHERE v.custom_region in :customRegions "
-              + "AND v.org_id = :orgId GROUP BY v.custom_region,v.org_id ",
+              + "AND v.country = :country AND v.org_id = :orgId GROUP BY v.custom_region,v.org_id ",
       nativeQuery = true)
-  Page<CustomRegionProjection> findByCustomRegionInAndOrgId(
+  Page<CustomRegionProjection> findByCustomRegionInAndCountryAndOrgId(
       @Param("customRegions") List<String> customRegionId,
+      @Param("country") String country,
       @Param("orgId") String orgId,
       Pageable pageable);
 
