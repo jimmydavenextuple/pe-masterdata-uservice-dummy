@@ -475,7 +475,7 @@ public class CustomRegionService {
       throws PromiseEngineException {
     Optional<List<CustomRegionDomainDto>> customRegions =
         customRegionPersistenceService.fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
-            customRegionIds, customRegionNames, country, orgId);
+            customRegionIds, customRegionNames, orgId);
     if (customRegions.isPresent()) {
       List<String> updatedRegionIdList =
           customRegions.get().stream().map(CustomRegionDomainDto::getId).toList();

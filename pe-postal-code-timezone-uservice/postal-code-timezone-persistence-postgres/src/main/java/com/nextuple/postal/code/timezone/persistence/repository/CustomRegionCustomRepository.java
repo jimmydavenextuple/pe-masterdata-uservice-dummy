@@ -15,5 +15,5 @@ public interface CustomRegionCustomRepository {
       List<String> customRegionNames, String orgId);
 
   List<CustomRegionEntity> fetchCustomRegionByIdAndNameAndCountryAndOrgId(
-      List<String> customRegionIds, List<String> customRegionNames, String country, String orgId);
+      List<String> customRegionIds, List<String> customRegionNames, String orgId);
 }

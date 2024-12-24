@@ -41,7 +41,7 @@ public class CustomRegionCustomRepositoryImpl implements CustomRegionCustomRepos
 
   @Override
   public List<CustomRegionEntity> fetchCustomRegionByIdAndNameAndCountryAndOrgId(
-      List<String> customRegionIds, List<String> customRegionNames, String country, String orgId) {
+      List<String> customRegionIds, List<String> customRegionNames, String orgId) {
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<CustomRegionEntity> query = cb.createQuery(CustomRegionEntity.class);
     Root<CustomRegionEntity> root = query.from(CustomRegionEntity.class);
@@ -59,7 +59,6 @@ public class CustomRegionCustomRepositoryImpl implements CustomRegionCustomRepos
     List<Predicate> predicates = new ArrayList<>();
     predicates.add(cb.or(idAndNameCombinedPredicates.toArray(new Predicate[0])));
     predicates.add(cb.equal(root.get("orgId"), orgId));
-    predicates.add(cb.equal(root.get("country"), country));
     query.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
     return entityManager.createQuery(query).getResultList();
   }

@@ -648,7 +648,7 @@ class CustomRegionServiceTest {
             any(), any(), any(), any()))
         .thenReturn(testUtil.getCustomRegionProjectionPage());
     when(customRegionPersistenceService.fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
-            any(), any(), any(), any()))
+            any(), any(), any()))
         .thenReturn(Optional.ofNullable(testUtil.getCustomRegionEntityList2()));
     when(customRegionPersistenceService.fetchCustomRegionsByIdsAndOrgId(any(), any()))
         .thenReturn(testUtil.getCustomRegionEntityList2());
@@ -657,7 +657,7 @@ class CustomRegionServiceTest {
             ORG_ID, COUNTRY, "CRID1,CRID2", CUSTOM_REGION_NAME, pageParams);
     assertEquals(ID, customRegionInfoPage.getContent().getFirst().getCustomRegionId());
     verify(customRegionPersistenceService, times(1))
-        .fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(any(), any(), any(), any());
+        .fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(any(), any(), any());
     verify(customRegionPersistenceService, times(1)).fetchCustomRegionsByIdsAndOrgId(any(), any());
     verify(postalCodePersistenceService, times(1))
         .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any(), any());
@@ -673,7 +673,7 @@ class CustomRegionServiceTest {
             any(), any(), any(), any()))
         .thenReturn(Page.empty());
     when(customRegionPersistenceService.fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
-            any(), any(), any(), any()))
+            any(), any(), any()))
         .thenReturn(Optional.empty());
     when(customRegionPersistenceService.fetchCustomRegionsByIdsAndOrgId(any(), any()))
         .thenReturn(testUtil.getCustomRegionEntityList2());
@@ -682,7 +682,7 @@ class CustomRegionServiceTest {
             ORG_ID, COUNTRY, "CRID1,CRID2", CUSTOM_REGION_NAME, pageParams);
     assertEquals(Page.empty(), customRegionInfoPage);
     verify(customRegionPersistenceService, times(1))
-        .fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(any(), any(), any(), any());
+        .fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(any(), any(), any());
     verify(customRegionPersistenceService, times(1)).fetchCustomRegionsByIdsAndOrgId(any(), any());
     verify(postalCodePersistenceService, times(0))
         .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any(), any());

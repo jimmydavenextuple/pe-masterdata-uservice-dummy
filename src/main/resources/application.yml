@@ -209,8 +209,3 @@ kafka-topic-flags:
   input:
     taskTopics:
       enabled: false
-keycloak:
-  realm: "NOMS"
-  application-client: "applicationclient-pe_masterdata_uservice"
-  enforcement-mode: "ENFORCING"
-  http-method-as-scope: true

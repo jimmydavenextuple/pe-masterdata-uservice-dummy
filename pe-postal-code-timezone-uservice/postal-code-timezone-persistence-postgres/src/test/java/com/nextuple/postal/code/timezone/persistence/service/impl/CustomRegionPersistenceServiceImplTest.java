@@ -7,7 +7,6 @@
 
 package com.nextuple.postal.code.timezone.persistence.service.impl;
 
-import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.COUNTRY;
 import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.CUSTOM_REGION_NAME;
 import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.ID;
 import static com.nextuple.postal.code.timezone.persistence.service.impl.TestUtil.ID_2;
@@ -248,23 +247,21 @@ class CustomRegionPersistenceServiceImplTest {
       throws PromiseEngineException {
     List<CustomRegionEntity> customRegionEntityList = testUtil.getCustomRegionEntityList();
 
-    when(customRegionRepository.fetchCustomRegionByIdAndNameAndCountryAndOrgId(
-            any(), any(), any(), any()))
+    when(customRegionRepository.fetchCustomRegionByIdAndNameAndCountryAndOrgId(any(), any(), any()))
         .thenReturn(customRegionEntityList);
 
     Optional<List<CustomRegionDomainDto>> response =
         customRegionPersistenceService.fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
-            List.of(ID, ID_2), List.of(CUSTOM_REGION_NAME, "NAME2"), COUNTRY, ORG_ID);
+            List.of(ID, ID_2), List.of(CUSTOM_REGION_NAME, "NAME2"), ORG_ID);
     assertEquals(2, response.get().size());
     verify(customRegionRepository, times(1))
-        .fetchCustomRegionByIdAndNameAndCountryAndOrgId(any(), any(), any(), any());
+        .fetchCustomRegionByIdAndNameAndCountryAndOrgId(any(), any(), any());
   }
 
   @Test
   @DisplayName("Exception : Fetch custom regions by Ids and orgId and names")
   void fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgIdException() {
-    when(customRegionRepository.fetchCustomRegionByIdAndNameAndCountryAndOrgId(
-            any(), any(), any(), any()))
+    when(customRegionRepository.fetchCustomRegionByIdAndNameAndCountryAndOrgId(any(), any(), any()))
         .thenThrow(new RuntimeException("Error while fetching custom region list"));
 
     Exception exception =
@@ -272,10 +269,10 @@ class CustomRegionPersistenceServiceImplTest {
             PromiseEngineException.class,
             () ->
                 customRegionPersistenceService.fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
-                    List.of(ID, ID_2), List.of(CUSTOM_REGION_NAME, "NAME2"), COUNTRY, ORG_ID));
+                    List.of(ID, ID_2), List.of(CUSTOM_REGION_NAME, "NAME2"), ORG_ID));
     Assertions.assertEquals("Error while fetching custom region list", exception.getMessage());
     verify(customRegionRepository, times(1))
-        .fetchCustomRegionByIdAndNameAndCountryAndOrgId(any(), any(), any(), any());
+        .fetchCustomRegionByIdAndNameAndCountryAndOrgId(any(), any(), any());
   }
 
   @Test
