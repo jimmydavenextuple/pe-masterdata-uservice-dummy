@@ -41,7 +41,7 @@ public interface PostalCodePersistenceService
 
   List<PostalCodeDomainDto> getPostalCodeForOrgId(String orgId) throws PromiseEngineException;
 
-  Page<CustomRegionProjection> fetchCustomRegionInfoByOrgIdAndRegionId(
+  Page<CustomRegionProjection> fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(
       String orgId, String country, List<String> customRegionIdList, PageParams pageParams)
       throws PromiseEngineException;
 

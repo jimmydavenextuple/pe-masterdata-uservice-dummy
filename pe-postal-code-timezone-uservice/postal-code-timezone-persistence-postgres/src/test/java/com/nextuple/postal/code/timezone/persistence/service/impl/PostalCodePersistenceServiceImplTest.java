@@ -327,41 +327,43 @@ class PostalCodePersistenceServiceImplTest {
   @Test
   @DisplayName("fetch custom region by orgId and regionId")
   void fetchCustomRegionInfoByOrgIdAndRegionId() throws PromiseEngineException {
-    when(postalCodeRepository.findByCustomRegionInAndOrgId(any(), any(), any(), any()))
+    when(postalCodeRepository.findByCustomRegionInAndCountryAndOrgId(any(), any(), any(), any()))
         .thenReturn(testUtil.getCustomRegionProjectionPage());
     PageParams pageParams =
         new PageParams(
             Optional.of(1), Optional.of(10), Optional.of("customRegion"), Optional.of("ASC"));
     Page<CustomRegionProjection> customRegionProjectionPage =
-        postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+        postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(
             ORG_ID, COUNTRY, List.of(ID), pageParams);
     assertEquals(2, customRegionProjectionPage.getContent().getFirst().getZipCodePrefixesCount());
     assertEquals(2, customRegionProjectionPage.getContent().getLast().getZipCodePrefixesCount());
-    verify(postalCodeRepository, times(1)).findByCustomRegionInAndOrgId(any(), any(), any(), any());
+    verify(postalCodeRepository, times(1))
+        .findByCustomRegionInAndCountryAndOrgId(any(), any(), any(), any());
   }
 
   @Test
   @DisplayName("fetch custom region by orgId and regionId sort order being DESC")
   void fetchCustomRegionInfoByOrgIdAndRegionIdSortOrderDesc() throws PromiseEngineException {
-    when(postalCodeRepository.findByCustomRegionInAndOrgId(any(), any(), any(), any()))
+    when(postalCodeRepository.findByCustomRegionInAndCountryAndOrgId(any(), any(), any(), any()))
         .thenReturn(testUtil.getCustomRegionProjectionPage());
     PageParams pageParams =
         new PageParams(
             Optional.of(1), Optional.of(10), Optional.of("customRegion"), Optional.of("DESC"));
     Page<CustomRegionProjection> customRegionProjectionPage =
-        postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+        postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(
             ORG_ID, COUNTRY, List.of(ID), pageParams);
     assertEquals(2, customRegionProjectionPage.getContent().getFirst().getZipCodePrefixesCount());
     assertEquals(2, customRegionProjectionPage.getContent().getLast().getZipCodePrefixesCount());
     assertEquals(ID, customRegionProjectionPage.getContent().getFirst().getCustomRegionId());
     assertEquals(ID_2, customRegionProjectionPage.getContent().getLast().getCustomRegionId());
-    verify(postalCodeRepository, times(1)).findByCustomRegionInAndOrgId(any(), any(), any(), any());
+    verify(postalCodeRepository, times(1))
+        .findByCustomRegionInAndCountryAndOrgId(any(), any(), any(), any());
   }
 
   @Test
   @DisplayName("Exception while fetching custom region projections given region id and orgId")
   void fetchCustomRegionInfoByOrgIdAndRegionIdException() {
-    when(postalCodeRepository.findByCustomRegionInAndOrgId(any(), any(), any(), any()))
+    when(postalCodeRepository.findByCustomRegionInAndCountryAndOrgId(any(), any(), any(), any()))
         .thenThrow(RuntimeException.class);
     PageParams pageParams =
         new PageParams(
@@ -370,11 +372,12 @@ class PostalCodePersistenceServiceImplTest {
         assertThrows(
             PromiseEngineException.class,
             () -> {
-              postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+              postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(
                   ORG_ID, COUNTRY, List.of(ID), pageParams);
             });
 
     assertEquals("Error while fetching custom region details", ex.getMessage());
-    verify(postalCodeRepository, times(1)).findByCustomRegionInAndOrgId(any(), any(), any(), any());
+    verify(postalCodeRepository, times(1))
+        .findByCustomRegionInAndCountryAndOrgId(any(), any(), any(), any());
   }
 }

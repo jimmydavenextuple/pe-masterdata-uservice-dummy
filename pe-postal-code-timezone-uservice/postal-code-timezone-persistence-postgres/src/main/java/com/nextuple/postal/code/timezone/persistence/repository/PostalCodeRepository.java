@@ -58,7 +58,7 @@ public interface PostalCodeRepository extends CommonJpaRepository<PostalCodeEnti
               + " AS uploadDate, v.custom_region AS customRegionId FROM postal_code v WHERE v.custom_region in :customRegions "
               + "AND v.country = :country AND v.org_id = :orgId GROUP BY v.custom_region,v.org_id ",
       nativeQuery = true)
-  Page<CustomRegionProjection> findByCustomRegionInAndOrgId(
+  Page<CustomRegionProjection> findByCustomRegionInAndCountryAndOrgId(
       @Param("customRegions") List<String> customRegionId,
       @Param("country") String country,
       @Param("orgId") String orgId,

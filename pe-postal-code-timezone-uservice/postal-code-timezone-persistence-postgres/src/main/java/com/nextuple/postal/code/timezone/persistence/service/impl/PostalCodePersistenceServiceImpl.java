@@ -171,13 +171,13 @@ public class PostalCodePersistenceServiceImpl
   }
 
   @Override
-  public Page<CustomRegionProjection> fetchCustomRegionInfoByOrgIdAndRegionId(
+  public Page<CustomRegionProjection> fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(
       String orgId, String country, List<String> customRegionIdList, PageParams pageParams)
       throws PromiseEngineException {
     try {
       Pageable pageable = getPageable(pageParams);
       return getRepository()
-          .findByCustomRegionInAndOrgId(customRegionIdList, country, orgId, pageable);
+          .findByCustomRegionInAndCountryAndOrgId(customRegionIdList, country, orgId, pageable);
     } catch (Exception e) {
       logger.error(
           String.valueOf(e),

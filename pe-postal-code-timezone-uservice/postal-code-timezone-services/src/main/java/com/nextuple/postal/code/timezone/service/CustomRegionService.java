@@ -400,7 +400,7 @@ public class CustomRegionService {
       } else if (!ObjectUtils.isEmpty(customRegionIdsList)
           && ObjectUtils.isEmpty(customRegionNamesList)) {
         customRegionList =
-            postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+            postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(
                 orgId, country, customRegionIdsList, pageParams);
       } else if (ObjectUtils.isEmpty(customRegionNamesList)
           && ObjectUtils.isEmpty(customRegionIdsList)) {
@@ -460,7 +460,7 @@ public class CustomRegionService {
     if (!ObjectUtils.isEmpty(regionDomainList)) {
       List<String> regionIdList =
           regionDomainList.stream().map(CustomRegionDomainDto::getId).toList();
-      return postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+      return postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(
           orgId, country, regionIdList, pageParams);
     }
     return Page.empty();
@@ -479,7 +479,7 @@ public class CustomRegionService {
     if (customRegions.isPresent()) {
       List<String> updatedRegionIdList =
           customRegions.get().stream().map(CustomRegionDomainDto::getId).toList();
-      return postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(
+      return postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(
           orgId, country, updatedRegionIdList, pageParams);
     }
     return Page.empty();
