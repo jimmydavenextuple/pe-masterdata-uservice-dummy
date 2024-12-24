@@ -113,7 +113,7 @@ public class CustomRegionPersistenceServiceImpl
     try {
       return Optional.of(
           getRepository()
-              .fetchCustomRegionByIdAndNameAndCountryAndOrgId(
+              .fetchCustomRegionByIdAndNameAndOrgId(
                   customRegionIds, customRegionNames, orgId)
               .stream()
               .map(getMapper()::toDomain)

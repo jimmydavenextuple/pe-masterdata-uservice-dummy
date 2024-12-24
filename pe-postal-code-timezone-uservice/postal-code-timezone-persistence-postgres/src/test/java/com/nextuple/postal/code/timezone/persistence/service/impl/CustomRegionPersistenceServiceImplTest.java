@@ -247,7 +247,7 @@ class CustomRegionPersistenceServiceImplTest {
       throws PromiseEngineException {
     List<CustomRegionEntity> customRegionEntityList = testUtil.getCustomRegionEntityList();
 
-    when(customRegionRepository.fetchCustomRegionByIdAndNameAndCountryAndOrgId(any(), any(), any()))
+    when(customRegionRepository.fetchCustomRegionByIdAndNameAndOrgId(any(), any(), any()))
         .thenReturn(customRegionEntityList);
 
     Optional<List<CustomRegionDomainDto>> response =
@@ -255,13 +255,13 @@ class CustomRegionPersistenceServiceImplTest {
             List.of(ID, ID_2), List.of(CUSTOM_REGION_NAME, "NAME2"), ORG_ID);
     assertEquals(2, response.get().size());
     verify(customRegionRepository, times(1))
-        .fetchCustomRegionByIdAndNameAndCountryAndOrgId(any(), any(), any());
+        .fetchCustomRegionByIdAndNameAndOrgId(any(), any(), any());
   }
 
   @Test
   @DisplayName("Exception : Fetch custom regions by Ids and orgId and names")
   void fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgIdException() {
-    when(customRegionRepository.fetchCustomRegionByIdAndNameAndCountryAndOrgId(any(), any(), any()))
+    when(customRegionRepository.fetchCustomRegionByIdAndNameAndOrgId(any(), any(), any()))
         .thenThrow(new RuntimeException("Error while fetching custom region list"));
 
     Exception exception =
@@ -272,7 +272,7 @@ class CustomRegionPersistenceServiceImplTest {
                     List.of(ID, ID_2), List.of(CUSTOM_REGION_NAME, "NAME2"), ORG_ID));
     Assertions.assertEquals("Error while fetching custom region list", exception.getMessage());
     verify(customRegionRepository, times(1))
-        .fetchCustomRegionByIdAndNameAndCountryAndOrgId(any(), any(), any());
+        .fetchCustomRegionByIdAndNameAndOrgId(any(), any(), any());
   }
 
   @Test

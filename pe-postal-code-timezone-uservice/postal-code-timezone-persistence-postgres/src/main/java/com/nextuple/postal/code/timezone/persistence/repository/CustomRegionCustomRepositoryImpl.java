@@ -40,7 +40,7 @@ public class CustomRegionCustomRepositoryImpl implements CustomRegionCustomRepos
   }
 
   @Override
-  public List<CustomRegionEntity> fetchCustomRegionByIdAndNameAndCountryAndOrgId(
+  public List<CustomRegionEntity> fetchCustomRegionByIdAndNameAndOrgId(
       List<String> customRegionIds, List<String> customRegionNames, String orgId) {
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<CustomRegionEntity> query = cb.createQuery(CustomRegionEntity.class);
