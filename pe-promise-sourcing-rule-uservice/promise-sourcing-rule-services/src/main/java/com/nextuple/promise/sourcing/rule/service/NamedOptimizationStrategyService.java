@@ -50,6 +50,7 @@ import com.nextuple.promise.sourcing.rule.persistence.service.NamedOptimizationS
 import com.nextuple.promise.sourcing.rule.persistence.service.SourcingAttributePersistenceService;
 import com.nextuple.promise.sourcing.rule.persistence.service.SourcingAttributesDefinitionPersistenceService;
 import com.nextuple.promise.sourcing.rule.persistence.service.SourcingConstraintPersistenceService;
+import com.nextuple.promise.sourcing.rule.utils.FetchRulesUtil;
 import com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,6 +132,7 @@ public class NamedOptimizationStrategyService {
 
   private final SourcingAttributesDefinitionService sourcingAttributesDefinitionService;
   private final SourcingAttributeService sourcingAttributeService;
+  private final FetchRulesUtil fetchRulesUtil;
 
   @Value("${base-api-url}")
   private String baseApiUrl;
@@ -270,15 +272,20 @@ public class NamedOptimizationStrategyService {
     // set group name and required attribute details
     detailedOptimizationStrategyResponse.setGroupName(
         fetchGroupName(orgId, namedOptimizationStrategy.getGroupId()));
-    detailedOptimizationStrategyResponse.setRequiredAttributes(
-        fetchRequiredAttributeDetails(orgId, namedOptimizationStrategy.getGroupId()));
+
+    fetchRequiredAttributeDetails(
+        orgId, namedOptimizationStrategy.getGroupId(), detailedOptimizationStrategyResponse);
 
     return detailedOptimizationStrategyResponse;
   }
 
-  private List<AttributeInfo> fetchRequiredAttributeDetails(String orgId, String groupId)
+  private void fetchRequiredAttributeDetails(
+      String orgId,
+      String groupId,
+      DetailedOptimizationStrategyResponse detailedOptimizationStrategyResponse)
       throws PromiseEngineException, CommonServiceException {
-    List<AttributeInfo> attributeInfoList = new ArrayList<>();
+    List<AttributeInfo> requiredAttributeInfoList = new ArrayList<>();
+    List<AttributeInfo> optionalAttributeInfoList = new ArrayList<>();
 
     if (!groupId.equalsIgnoreCase(DEFAULT_GROUP_ID)) {
       Optional<GroupDefinitionDomainDto> groupDefinition =
@@ -294,51 +301,30 @@ public class NamedOptimizationStrategyService {
 
           String[] reqAttributes =
               sourcingAttributesDefinition.get().getReqAttributes().split(SPLIT_REGEX);
-          String[] optimisationRuleValues =
+          String[] optimisationRuleRequiredValues =
               groupDefinition.get().getReqAttributesValue().split(COLON_SPLIT_REGEX);
-
-          getRequiredAttributes(orgId, attributeInfoList, optimisationRuleValues, reqAttributes);
+          fetchRulesUtil.getRequiredAttributeDetails(
+              orgId,
+              requiredAttributeInfoList,
+              new HashSet<>(),
+              optimisationRuleRequiredValues,
+              reqAttributes);
+          detailedOptimizationStrategyResponse.setRequiredAttributes(requiredAttributeInfoList);
+          if (StringUtils.hasLength(sourcingAttributesDefinition.get().getOptAttributes())) {
+            String[] optionalAttributes =
+                sourcingAttributesDefinition.get().getOptAttributes().split(SPLIT_REGEX);
+            String[] optimisationRuleOptionalValues =
+                groupDefinition.get().getOptionalAttributesValue().split(COLON_SPLIT_REGEX);
+            fetchRulesUtil.getRequiredAttributeDetails(
+                orgId,
+                optionalAttributeInfoList,
+                new HashSet<>(),
+                optimisationRuleOptionalValues,
+                optionalAttributes);
+            detailedOptimizationStrategyResponse.setOptionalAttributes(optionalAttributeInfoList);
+          }
         }
       }
-    }
-
-    return attributeInfoList;
-  }
-
-  private void getRequiredAttributes(
-      String orgId,
-      List<AttributeInfo> reqAttributeList,
-      String[] optimisationRuleValues,
-      String[] reqAttributes)
-      throws PromiseEngineException, CommonServiceException {
-    Set<String> uniqueReqAttributes = new HashSet<>();
-    for (int attrKey = 0;
-        attrKey < reqAttributes.length && attrKey < optimisationRuleValues.length;
-        attrKey++) {
-      if (uniqueReqAttributes.contains(reqAttributes[attrKey])) continue;
-      uniqueReqAttributes.add(reqAttributes[attrKey]);
-      // Get sourcingAttribute values for each reqAttribute
-      Optional<SourcingAttributeDomainDto> sourcingAttributeDomainDto =
-          sourcingAttributePersistenceService.getSourcingAttributeById(
-              Long.parseLong(reqAttributes[attrKey]));
-      if (sourcingAttributeDomainDto.isEmpty()) {
-        logger.error("No mapping for the required attribute found in sourcing attribute");
-        Map<String, FieldError> errorMap = new HashMap<>();
-        errorMap.put(ID, FieldError.builder().rejectedValue(orgId).build());
-        throw new CommonServiceException(
-            "No mapping for the required attribute found in sourcing attribute",
-            HttpStatus.NOT_FOUND,
-            0x1771,
-            errorMap);
-      }
-      AttributeInfo info =
-          AttributeInfo.builder()
-              .attributeId(reqAttributes[attrKey])
-              .attributeValue(optimisationRuleValues[attrKey])
-              .attributeName(sourcingAttributeDomainDto.get().getAttributeName())
-              .build();
-
-      reqAttributeList.add(info);
     }
   }
 

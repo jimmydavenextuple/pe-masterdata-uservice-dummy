@@ -11,6 +11,7 @@ import static com.nextuple.promise.sourcing.rule.TestUtil.SOURCING_RULE_NAME;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,6 +20,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -44,6 +46,7 @@ import com.nextuple.promise.sourcing.rule.persistence.domain.*;
 import com.nextuple.promise.sourcing.rule.persistence.service.*;
 import com.nextuple.promise.sourcing.rule.service.impl.RuleRetrievalFactory;
 import com.nextuple.promise.sourcing.rule.service.impl.SourcingRuleConfigurationImpl;
+import com.nextuple.promise.sourcing.rule.utils.FetchRulesUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +57,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
 
 class SourcingRulesConfigurationServiceTest {
   @InjectMocks private SourcingRulesConfigurationService sourcingRulesConfigurationService;
@@ -73,6 +77,7 @@ class SourcingRulesConfigurationServiceTest {
   @Mock private AttributeValuesPersistenceService attributeValuesPersistenceService;
   @Mock private SourcingRuleConfigurationImpl ruleRetrievalService;
   @Mock private RuleRetrievalFactory ruleRetrievalFactory;
+  @Mock FetchRulesUtil fetchRulesUtil;
   @InjectMocks private TestUtil testUtil;
 
   @BeforeEach
@@ -745,6 +750,46 @@ class SourcingRulesConfigurationServiceTest {
     when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
         .thenReturn(Optional.of(testUtil.getSourcingAttributeEntity()));
     when(ruleRetrievalFactory.getRuleRetrievalService(any())).thenReturn(ruleRetrievalService);
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("r1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("r2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("3")
+                          .attributeName("O1")
+                          .attributeValue("o1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("4")
+                          .attributeName("O2")
+                          .attributeValue("o2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getOptionalAttributeDetails(any(), any(List.class), any(), any(), any(), any());
     FetchSourcingRulesResponse fetchSourcingRulesResponse =
         sourcingRulesConfigurationService.processGetSourcingRules(fetchSourcingRulesRequest);
     assertEquals(1, fetchSourcingRulesResponse.getSourcingRulesInfo().size());
@@ -808,6 +853,48 @@ class SourcingRulesConfigurationServiceTest {
     when(ruleRetrievalService.filterAllMatchingRulesByScoring(any(), any(), any(), anyInt(), any()))
         .thenReturn(sourcingRulesConfigurationEntityList);
     when(ruleRetrievalFactory.getRuleRetrievalService(any())).thenReturn(ruleRetrievalService);
+
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("r1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("r2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("3")
+                          .attributeName("O1")
+                          .attributeValue("o1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("4")
+                          .attributeName("O2")
+                          .attributeValue("o2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getOptionalAttributeDetails(any(), any(List.class), any(), any(), any(), any());
+
     FetchSourcingRulesResponse fetchSourcingRulesResponse =
         sourcingRulesConfigurationService.processGetSourcingRules(fetchSourcingRulesRequest);
     assertEquals(1, fetchSourcingRulesResponse.getSourcingRulesInfo().size());
@@ -872,6 +959,48 @@ class SourcingRulesConfigurationServiceTest {
     when(ruleRetrievalService.filterAllMatchingRulesByScoring(any(), any(), any(), anyInt(), any()))
         .thenReturn(sourcingRulesConfigurationEntityList);
     when(ruleRetrievalFactory.getRuleRetrievalService(any())).thenReturn(ruleRetrievalService);
+
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("r1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("r2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("3")
+                          .attributeName("O1")
+                          .attributeValue("o1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("4")
+                          .attributeName("O2")
+                          .attributeValue("o2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getOptionalAttributeDetails(any(), any(List.class), any(), any(), any(), any());
+
     FetchSourcingRulesResponse fetchSourcingRulesResponse =
         sourcingRulesConfigurationService.processGetSourcingRules(fetchSourcingRulesRequest);
     assertEquals(1, fetchSourcingRulesResponse.getSourcingRulesInfo().size());
@@ -921,6 +1050,47 @@ class SourcingRulesConfigurationServiceTest {
         .thenReturn(Optional.of(sourcingAttributesDefinitionEntity));
     when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
         .thenReturn(Optional.of(testUtil.getSourcingAttributeEntity()));
+
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("r1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("r2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("3")
+                          .attributeName("O1")
+                          .attributeValue("o1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("4")
+                          .attributeName("O2")
+                          .attributeValue("o2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getOptionalAttributeDetails(any(), any(List.class), any(), any(), any(), any());
 
     FetchSourcingRulesResponse fetchSourcingRulesResponse =
         sourcingRulesConfigurationService.processGetSourcingRules(fetchSourcingRulesRequest);
@@ -1126,6 +1296,47 @@ class SourcingRulesConfigurationServiceTest {
         .thenReturn(
             List.of(attributeValuesEntity1, attributeValuesEntity2, attributeValuesEntity3));
 
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("r1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("r2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("3")
+                          .attributeName("O1")
+                          .attributeValue("o1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("4")
+                          .attributeName("O2")
+                          .attributeValue("o2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getOptionalAttributeDetails(any(), any(List.class), any(), any(), any(), any());
+
     List<AllSourcingRulesResponse> response =
         sourcingRulesConfigurationService.processGetAllSourcingRuleDetailsByOrgId(TestUtil.ORG_ID);
     assertNotNull(response);
@@ -1169,6 +1380,47 @@ class SourcingRulesConfigurationServiceTest {
     when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionInActiveStatus(
             anyString(), any()))
         .thenReturn(sourcingAttributesDefinitionResponse);
+
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("r1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("r2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("3")
+                          .attributeName("O1")
+                          .attributeValue("o1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("4")
+                          .attributeName("O2")
+                          .attributeValue("o2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getOptionalAttributeDetails(any(), any(List.class), any(), any(), any(), any());
 
     List<AllSourcingRulesResponse> response =
         sourcingRulesConfigurationService.processGetAllSourcingRuleDetailsByOrgId(TestUtil.ORG_ID);
@@ -1270,6 +1522,46 @@ class SourcingRulesConfigurationServiceTest {
     when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionInActiveStatus(
             anyString(), any()))
         .thenReturn(sourcingAttributesDefinitionResponse);
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("r1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("r2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("3")
+                          .attributeName("O1")
+                          .attributeValue("o1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("4")
+                          .attributeName("O2")
+                          .attributeValue("o2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getOptionalAttributeDetails(any(), any(List.class), any(), any(), any(), any());
 
     List<AllSourcingRulesResponse> response =
         sourcingRulesConfigurationService.processGetAllSourcingRuleDetailsByOrgId(TestUtil.ORG_ID);
@@ -1326,6 +1618,46 @@ class SourcingRulesConfigurationServiceTest {
     when(attributeValuesPersistenceService.getAllAttributeValues(any()))
         .thenReturn(
             List.of(attributeValuesEntity1, attributeValuesEntity2, attributeValuesEntity3));
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("r1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("r2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("3")
+                          .attributeName("O1")
+                          .attributeValue("")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("4")
+                          .attributeName("O2")
+                          .attributeValue("o2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getOptionalAttributeDetails(any(), any(List.class), any(), any(), any(), any());
 
     List<AllSourcingRulesResponse> response =
         sourcingRulesConfigurationService.processGetAllSourcingRuleDetailsByOrgId(TestUtil.ORG_ID);
@@ -1380,6 +1712,41 @@ class SourcingRulesConfigurationServiceTest {
 
     when(attributeValuesPersistenceService.getAllAttributeValues(any()))
         .thenReturn(List.of(attributeValuesEntity2, attributeValuesEntity3));
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("r1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("r2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(AttributeInfo.builder().attributeId("3").attributeName("O1").build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("4")
+                          .attributeName("O2")
+                          .attributeValue("o2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getOptionalAttributeDetails(any(), any(List.class), any(), any(), any(), any());
 
     List<AllSourcingRulesResponse> response =
         sourcingRulesConfigurationService.processGetAllSourcingRuleDetailsByOrgId(TestUtil.ORG_ID);
@@ -1388,7 +1755,7 @@ class SourcingRulesConfigurationServiceTest {
     assertEquals(2, response.get(0).getRequiredAttributes().size());
     assertEquals(2, response.get(0).getOptionalAttributes().size());
     assertEquals(1, response.get(0).getNodes().size());
-    assertEquals("", response.get(0).getOptionalAttributes().get(0).getAttributeValue());
+    assertNull(response.get(0).getOptionalAttributes().get(0).getAttributeValue());
   }
 
   @Test
@@ -1437,7 +1804,46 @@ class SourcingRulesConfigurationServiceTest {
     when(attributeValuesPersistenceService.getAllAttributeValues(any()))
         .thenReturn(
             List.of(attributeValuesEntity1, attributeValuesEntity2, attributeValuesEntity3));
-
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("r1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("r2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("3")
+                          .attributeName("O1")
+                          .attributeValue("")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("4")
+                          .attributeName("O2")
+                          .attributeValue("")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getOptionalAttributeDetails(any(), any(List.class), any(), any(), any(), any());
     List<AllSourcingRulesResponse> response =
         sourcingRulesConfigurationService.processGetAllSourcingRuleDetailsByOrgId(TestUtil.ORG_ID);
     assertNotNull(response);
@@ -1552,126 +1958,6 @@ class SourcingRulesConfigurationServiceTest {
   }
 
   @Test
-  @DisplayName("No mapping for the required attribute found in sourcing attribute")
-  void processGetAllSourcingRuleDetailsByOrgIdTest4()
-      throws PromiseEngineException, CommonServiceException {
-    String rule1 = "Test rule 1";
-    String rule2 = "Test rule 2";
-    List<SourcingRulesConfigurationDomainDto> sourcingRulesConfigurationEntityList =
-        new ArrayList<>();
-    SourcingRulesConfigurationDomainDto sourcingRulesConfigurationEntity =
-        testUtil.getSourcingRulesEntity();
-    SourcingRulesConfigurationDomainDto sourcingRulesConfigurationEntity1 =
-        testUtil.getSourcingRulesEntity();
-    sourcingRulesConfigurationEntity1.setSourcingRule("V1:V2:V3");
-    sourcingRulesConfigurationEntity.setSourcingRuleName(rule1);
-    sourcingRulesConfigurationEntity1.setSourcingRuleName(rule2);
-    sourcingRulesConfigurationEntityList.add(sourcingRulesConfigurationEntity);
-    sourcingRulesConfigurationEntityList.add(sourcingRulesConfigurationEntity1);
-
-    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionEntity =
-        testUtil.getSourcingRuleAttributesDefinitionEntity(
-            SourcingAttributesDefinitionStatus.ACTIVE);
-    sourcingAttributesDefinitionEntity.setOptAttributes("3,4");
-
-    when(sourcingRuleDetailsPersistenceService.getAllSourcingRuleByOrgId(anyString()))
-        .thenReturn(List.of(testUtil.getSourcingRuleDetailsEntity()));
-    when(sourcingRulesConfigurationPersistenceService.getSourcingRuleById(anyLong()))
-        .thenReturn(Optional.of(sourcingRulesConfigurationEntity));
-    when(nodeGroupPersistenceService.fetchNodeGroupById(anyLong()))
-        .thenReturn(Optional.of(testUtil.getNodeGroupEntity()));
-    when(nodePriorityPersistenceService.fetchNodePriorityListByOrgIdAndNodeGroupId(
-            anyString(), anyLong()))
-        .thenReturn(List.of(testUtil.getNodePriorityEntity()));
-    when(sourcingAttributesDefinitionPersistenceService
-            .getSourcingRuleAttributesDefinitionEntityById(anyLong()))
-        .thenReturn(Optional.of(sourcingAttributesDefinitionEntity));
-    when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
-        .thenReturn(Optional.empty());
-    SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
-        testUtil.getSourcingRuleAttributesDefinitionResponse(
-            SourcingAttributesDefinitionStatus.ACTIVE);
-    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionInActiveStatus(
-            anyString(), any()))
-        .thenReturn(sourcingAttributesDefinitionResponse);
-    Exception ex =
-        assertThrows(
-            CommonServiceException.class,
-            () -> {
-              sourcingRulesConfigurationService.processGetAllSourcingRuleDetailsByOrgId(
-                  TestUtil.ORG_ID);
-            });
-    assertEquals(
-        "No mapping for the required attribute found in sourcing attribute", ex.getMessage());
-  }
-
-  @Test
-  @DisplayName("No mapping for the optional attribute found in sourcing attribute")
-  void processGetAllSourcingRuleDetailsByOrgIdTest5()
-      throws PromiseEngineException, CommonServiceException {
-    String rule1 = "Test rule 1";
-    String rule2 = "Test rule 2";
-    List<SourcingRulesConfigurationDomainDto> sourcingRulesConfigurationEntityList =
-        new ArrayList<>();
-    SourcingRulesConfigurationDomainDto sourcingRulesConfigurationEntity =
-        testUtil.getSourcingRulesEntity();
-    SourcingRulesConfigurationDomainDto sourcingRulesConfigurationEntity1 =
-        testUtil.getSourcingRulesEntity();
-    sourcingRulesConfigurationEntity1.setSourcingRule("V1:V2:V3");
-    sourcingRulesConfigurationEntity.setSourcingRuleName(rule1);
-    sourcingRulesConfigurationEntity1.setSourcingRuleName(rule2);
-    sourcingRulesConfigurationEntityList.add(sourcingRulesConfigurationEntity);
-    sourcingRulesConfigurationEntityList.add(sourcingRulesConfigurationEntity1);
-
-    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionEntity =
-        testUtil.getSourcingRuleAttributesDefinitionEntity(
-            SourcingAttributesDefinitionStatus.ACTIVE);
-    sourcingAttributesDefinitionEntity.setOptAttributes("3,4");
-
-    when(sourcingRuleDetailsPersistenceService.getAllSourcingRuleByOrgId(anyString()))
-        .thenReturn(List.of(testUtil.getSourcingRuleDetailsEntity()));
-    when(sourcingRulesConfigurationPersistenceService.getSourcingRuleById(anyLong()))
-        .thenReturn(Optional.of(sourcingRulesConfigurationEntity1));
-    when(nodeGroupPersistenceService.fetchNodeGroupById(anyLong()))
-        .thenReturn(Optional.of(testUtil.getNodeGroupEntity()));
-    when(nodePriorityPersistenceService.fetchNodePriorityListByOrgIdAndNodeGroupId(
-            anyString(), anyLong()))
-        .thenReturn(List.of(testUtil.getNodePriorityEntity()));
-    when(sourcingAttributesDefinitionPersistenceService
-            .getSourcingRuleAttributesDefinitionEntityById(anyLong()))
-        .thenReturn(Optional.of(sourcingAttributesDefinitionEntity));
-
-    when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
-        .thenReturn(Optional.of(testUtil.getSourcingAttributeEntity()));
-
-    when(sourcingAttributePersistenceService.getSourcingAttributeById(Long.parseLong("3")))
-        .thenReturn(Optional.empty());
-    SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
-        testUtil.getSourcingRuleAttributesDefinitionResponse(
-            SourcingAttributesDefinitionStatus.ACTIVE);
-    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionInActiveStatus(
-            anyString(), any()))
-        .thenReturn(sourcingAttributesDefinitionResponse);
-
-    AttributeValuesDomainDto attributeValuesEntity1 =
-        testUtil.getAttributeValuesEntity1(1L, 3L, "O1");
-    AttributeValuesDomainDto attributeValuesEntity2 =
-        testUtil.getAttributeValuesEntity1(2L, 4L, "O2");
-    when(attributeValuesPersistenceService.getAllAttributeValues(any()))
-        .thenReturn(List.of(attributeValuesEntity1, attributeValuesEntity2));
-
-    Exception ex =
-        assertThrows(
-            CommonServiceException.class,
-            () -> {
-              sourcingRulesConfigurationService.processGetAllSourcingRuleDetailsByOrgId(
-                  TestUtil.ORG_ID);
-            });
-    assertEquals(
-        "No mapping for the optional attribute found in sourcing attribute", ex.getMessage());
-  }
-
-  @Test
   @DisplayName("Happy path for processDeleteMultipleSourcingRuleDetails")
   void processDeleteMultipleSourcingRuleDetailsTest()
       throws PromiseEngineException, CommonServiceException {
@@ -1779,7 +2065,46 @@ class SourcingRulesConfigurationServiceTest {
         testUtil.getAttributeValuesEntity1(2L, 4L, "O2");
     when(attributeValuesPersistenceService.getAllAttributeValues(any()))
         .thenReturn(List.of(attributeValuesEntity1, attributeValuesEntity2));
-
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("r1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("r2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("3")
+                          .attributeName("O1")
+                          .attributeValue("o1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("4")
+                          .attributeName("O2")
+                          .attributeValue("o2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getOptionalAttributeDetails(any(), any(List.class), any(), any(), any(), any());
     AllSourcingRulesResponse response =
         sourcingRulesConfigurationService.processGetSourcingRuleDetailsByOrgIdAndSourcingRule(
             TestUtil.ORG_ID, TestUtil.SOURCING_RULE_ID);
@@ -1833,9 +2158,6 @@ class SourcingRulesConfigurationServiceTest {
 
     when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
         .thenReturn(Optional.of(testUtil.getSourcingAttributeEntity()));
-    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionInActiveStatus(
-            anyString(), any()))
-        .thenReturn(sourcingAttributesDefinitionResponse);
 
     AttributeValuesDomainDto attributeValuesEntity1 =
         testUtil.getAttributeValuesEntity1(1L, 3L, "O1");
@@ -1843,7 +2165,29 @@ class SourcingRulesConfigurationServiceTest {
         testUtil.getAttributeValuesEntity1(2L, 4L, "O2");
     when(attributeValuesPersistenceService.getAllAttributeValues(any()))
         .thenReturn(List.of(attributeValuesEntity1, attributeValuesEntity2));
-
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  List<AttributeInfo> arg = invocation.getArgument(1);
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("1")
+                          .attributeName("R1")
+                          .attributeValue("V1")
+                          .build());
+                  arg.add(
+                      AttributeInfo.builder()
+                          .attributeId("2")
+                          .attributeName("R2")
+                          .attributeValue("V2")
+                          .build());
+                  return null;
+                })
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(any(), any(List.class), any(), any(), any());
+    doAnswer((Answer<Void>) invocation -> null)
+        .when(fetchRulesUtil)
+        .getOptionalAttributeDetails(any(), any(List.class), any(), any(), any(), any());
     AllSourcingRulesResponse response =
         sourcingRulesConfigurationService.processGetSourcingRuleDetailsByOrgIdAndSourcingRule(
             TestUtil.ORG_ID, TestUtil.SOURCING_RULE_ID);
@@ -1851,11 +2195,10 @@ class SourcingRulesConfigurationServiceTest {
     assertNotNull(response);
     assertEquals(rule1, response.getSourcingRuleName());
     assertEquals(2, response.getRequiredAttributes().size());
-    assertEquals(2, response.getOptionalAttributes().size());
+    assertEquals(0, response.getOptionalAttributes().size());
     assertEquals("V1", response.getRequiredAttributes().getFirst().getAttributeValue());
     assertEquals("V2", response.getRequiredAttributes().getLast().getAttributeValue());
-    assertEquals("", response.getOptionalAttributes().getFirst().getAttributeValue());
-    assertEquals("O2", response.getOptionalAttributes().getLast().getAttributeValue());
+    assertEquals(0, response.getOptionalAttributes().size());
     assertEquals(1, response.getNodes().get(0).getSequence());
     assertEquals(2, response.getNodes().size());
   }

@@ -7,6 +7,8 @@
 
 package com.nextuple.promise.sourcing.rule.api.domain.outbound;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.AttributeInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
@@ -26,4 +28,8 @@ public class DetailedOptimizationStrategyResponse extends NamedOptimizationStrat
 
   @Schema(description = "List of required sourcing attributes with their details.")
   private List<AttributeInfo> requiredAttributes;
+
+  @Schema(description = "List of optional sourcing attributes with their details.")
+  @JsonInclude(Include.NON_NULL)
+  private List<AttributeInfo> optionalAttributes;
 }
