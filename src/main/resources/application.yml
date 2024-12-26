@@ -215,3 +215,4 @@ keycloak:
   application-client: "applicationclient-pe_masterdata_uservice"
   enforcement-mode: "ENFORCING"
   http-method-as-scope: true
+api-key: \${COMMON-PE-API-KEY}
