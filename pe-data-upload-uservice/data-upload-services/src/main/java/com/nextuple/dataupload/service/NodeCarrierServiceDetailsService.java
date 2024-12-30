@@ -8,6 +8,7 @@
 package com.nextuple.dataupload.service;
 
 import com.nextuple.calendar.domain.feign.CalendarFeign;
+import com.nextuple.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.nextuple.common.base.PagePayload;
 import com.nextuple.dataupload.domain.dto.NodeCarrierServiceResponse;
 import com.nextuple.dataupload.domain.mapper.NodeCarrierServiceCalendarMapper;
@@ -15,12 +16,9 @@ import com.nextuple.dataupload.domain.pojo.PickUpCalendar;
 import com.nextuple.node.carrier.domain.feign.INodeCarrierFeign;
 import com.nextuple.node.domain.dto.NodeDto;
 import com.nextuple.node.domain.feign.NodeFeign;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -29,7 +27,7 @@ import org.springframework.util.ObjectUtils;
 public class NodeCarrierServiceDetailsService {
 
   private final NodeFeign nodeFeign;
-  @Autowired INodeCarrierFeign nodeCarrierFeign;
+  private final INodeCarrierFeign nodeCarrierFeign;
   private final CalendarFeign calendarFeign;
 
   private final NodeCarrierServiceCalendarMapper mapper =
@@ -42,9 +40,7 @@ public class NodeCarrierServiceDetailsService {
         nodeFeign.getNodeList(orgId, pageNo, pageSize, sortBy, sortOrder).getPayload();
 
     List<NodeCarrierServiceResponse> nodeCarrierServiceResponses =
-        nodeResponse.getData().stream()
-            .map(this::createNodeCarrierServiceResponse)
-            .collect(Collectors.toList());
+        nodeResponse.getData().stream().map(this::createNodeCarrierServiceResponse).toList();
 
     PagePayload<NodeCarrierServiceResponse> nodeCarrierServiceResponsePagePayload =
         new PagePayload<>();
@@ -66,10 +62,17 @@ public class NodeCarrierServiceDetailsService {
             carrierServiceId ->
                 pickUpCalendarList.addAll(
                     mapper.convertToPickUpCalendarList(
-                        calendarFeign
-                            .getNodeCarrierServiceCalendar(
-                                nodeDto.getOrgId(), nodeDto.getNodeId(), carrierServiceId, null)
-                            .getPayload())));
+                        Collections.singletonList(
+                            calendarFeign
+                                .getNodeCarrierServiceCalendar(
+                                    nodeDto.getOrgId(), nodeDto.getNodeId(), carrierServiceId, null)
+                                .getPayload()
+                                .stream()
+                                .max(
+                                    Comparator.comparing(
+                                        NodeCarrierServiceCalendarResponse::getEffectiveDate))
+                                .orElse(null)))));
+    pickUpCalendarList.removeIf(Objects::isNull);
 
     return getNodeCarrierServiceResponse(nodeDto, distinctCarrierServiceIds, pickUpCalendarList);
   }
