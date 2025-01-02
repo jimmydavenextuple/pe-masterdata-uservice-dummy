@@ -91,7 +91,7 @@ public class CorrelationFilter implements Filter {
       throw e;
     } finally {
       // Clear context
-      CurrentThreadContext.cleanLogContext();
+      //      CurrentThreadContext.cleanLogContext();
       MDC.clear();
     }
   }

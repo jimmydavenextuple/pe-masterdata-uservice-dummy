@@ -22,15 +22,6 @@ public class FeignClientInterceptor implements RequestInterceptor {
 
     log.debug("------ Inside FeignClientInterceptor ------");
 
-    try {
-      String url = requestTemplate.feignTarget().url();
-      if (url.contains("localhost:8080")) {
-        requestTemplate.header("x-api-key", apiKey);
-      }
-    } catch (Exception e) {
-      log.info("Error while fetching host or api key");
-    }
-
     // Attach Authorization header
     if (!requestTemplate.headers().containsKey(CommonConstants.AUTHORIZATION_HEADER)
         && Objects.nonNull(CurrentThreadContext.getLogContext().getRequestHeaders())) {
