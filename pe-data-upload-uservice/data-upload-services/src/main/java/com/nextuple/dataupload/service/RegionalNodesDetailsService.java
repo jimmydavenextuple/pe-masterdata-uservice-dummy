@@ -31,6 +31,7 @@ import com.nextuple.node.domain.feign.NodeFeign;
 import com.nextuple.postgres.config.ReaderDS;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -50,7 +50,7 @@ public class RegionalNodesDetailsService {
 
   private final CalendarFeign calendarFeign;
   private final NodeFeign nodeFeign;
-  @Autowired INodeCarrierFeign nodeCarrierFeign;
+  private final INodeCarrierFeign nodeCarrierFeign;
 
   private final PageProperties pageProperties;
 
@@ -183,7 +183,7 @@ public class RegionalNodesDetailsService {
                       calendar
                           .getCarrierServiceId()
                           .equals(nodeCarrierResponse.getCarrierServiceId()))
-              .findFirst()
+              .max(Comparator.comparing(NodeCarrierServiceCalendarResponse::getEffectiveDate))
               .map(NodeCarrierServiceCalendarResponse::getCalendarId)
               .orElse("N/A"));
 
