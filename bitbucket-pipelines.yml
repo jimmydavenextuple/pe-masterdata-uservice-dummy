@@ -351,6 +351,12 @@ pipelines:
               name: Deploy QA
               trigger: manual
               deployment: qa
+          - step:
+              !!merge <<: *deploy
+              name: Deploy Integration
+              trigger: manual
+              deployment: integration
+
           # - step:
           #     !!merge <<: *deploy
           #     name: Deploy PERF
