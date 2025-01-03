@@ -736,3 +736,4 @@ task preReleaseVersion(group: 'versioning', description: 'Make the version a pre
         saveVersion(newVersionMap)
     }
 }
+apply from: "${rootProject.projectDir}/azure.gradle"

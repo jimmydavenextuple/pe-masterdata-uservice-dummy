@@ -47,8 +47,8 @@ public class RulesConfigurationRequest implements Serializable {
   @NotBlank(message = "nodeGroups can't be empty")
   @Schema(
       description =
-          "Comma separated string that will contain the references of the sourcing node groups for a given rule",
-      example = "1,2")
+          "Unique identifier for the reference of the sourcing node group for a given rule",
+      example = "1")
   private String nodeGroups;
 
   @NotNull(message = "sourcingAttributesDefinitionId can't be null")

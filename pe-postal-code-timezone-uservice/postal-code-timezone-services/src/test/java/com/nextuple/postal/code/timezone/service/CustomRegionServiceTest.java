@@ -599,7 +599,8 @@ class CustomRegionServiceTest {
       throws CommonServiceException, PromiseEngineException {
     PageParams pageParams =
         new PageParams(Optional.empty(), Optional.empty(), Optional.empty(), Optional.of("ASC"));
-    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any()))
+    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(
+            any(), any(), any(), any()))
         .thenReturn(testUtil.getCustomRegionProjectionPage());
     when(customRegionPersistenceService.fetchCustomRegionsByIdsAndOrgId(any(), any()))
         .thenReturn(testUtil.getCustomRegionEntityList2());
@@ -609,7 +610,7 @@ class CustomRegionServiceTest {
     assertEquals(ID, customRegionInfoPage.getContent().getFirst().getCustomRegionId());
     verify(customRegionPersistenceService, times(1)).fetchCustomRegionsByIdsAndOrgId(any(), any());
     verify(postalCodePersistenceService, times(1))
-        .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any());
+        .fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(any(), any(), any(), any());
   }
 
   @Test
@@ -619,7 +620,8 @@ class CustomRegionServiceTest {
       throws CommonServiceException, PromiseEngineException {
     PageParams pageParams =
         new PageParams(Optional.empty(), Optional.empty(), Optional.empty(), Optional.of("ASC"));
-    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any()))
+    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(
+            any(), any(), any(), any()))
         .thenReturn(testUtil.getCustomRegionProjectionPage());
     when(customRegionPersistenceService.fetchCustomRegionByNamesAndOrgId(any(), any()))
         .thenReturn(testUtil.getCustomRegionEntityList2());
@@ -632,7 +634,7 @@ class CustomRegionServiceTest {
     verify(customRegionPersistenceService, times(1)).fetchCustomRegionByNamesAndOrgId(any(), any());
     verify(customRegionPersistenceService, times(1)).fetchCustomRegionsByIdsAndOrgId(any(), any());
     verify(postalCodePersistenceService, times(1))
-        .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any());
+        .fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(any(), any(), any(), any());
   }
 
   @Test
@@ -642,7 +644,8 @@ class CustomRegionServiceTest {
       throws CommonServiceException, PromiseEngineException {
     PageParams pageParams =
         new PageParams(Optional.empty(), Optional.empty(), Optional.empty(), Optional.of("ASC"));
-    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any()))
+    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(
+            any(), any(), any(), any()))
         .thenReturn(testUtil.getCustomRegionProjectionPage());
     when(customRegionPersistenceService.fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
             any(), any(), any()))
@@ -657,7 +660,7 @@ class CustomRegionServiceTest {
         .fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(any(), any(), any());
     verify(customRegionPersistenceService, times(1)).fetchCustomRegionsByIdsAndOrgId(any(), any());
     verify(postalCodePersistenceService, times(1))
-        .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any());
+        .fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(any(), any(), any(), any());
   }
 
   @Test
@@ -666,7 +669,8 @@ class CustomRegionServiceTest {
       throws CommonServiceException, PromiseEngineException {
     PageParams pageParams =
         new PageParams(Optional.empty(), Optional.empty(), Optional.empty(), Optional.of("ASC"));
-    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any()))
+    when(postalCodePersistenceService.fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(
+            any(), any(), any(), any()))
         .thenReturn(Page.empty());
     when(customRegionPersistenceService.fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(
             any(), any(), any()))
@@ -681,7 +685,7 @@ class CustomRegionServiceTest {
         .fetchCustomRegionsByCustomRegionIdsAndNamesAndOrgId(any(), any(), any());
     verify(customRegionPersistenceService, times(1)).fetchCustomRegionsByIdsAndOrgId(any(), any());
     verify(postalCodePersistenceService, times(0))
-        .fetchCustomRegionInfoByOrgIdAndRegionId(any(), any(), any());
+        .fetchCustomRegionInfoByOrgIdAndCountryAndRegionId(any(), any(), any(), any());
   }
 
   @Test

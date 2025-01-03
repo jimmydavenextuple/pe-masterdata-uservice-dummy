@@ -237,6 +237,7 @@ definitions:
           - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build artifactoryPublish
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -PazureStorageConnectionString=$AZURE_CONNECTION_STRING copyJar uploadCommitJarToAzure
           - export SPACE=" "
           - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" | head -n 1 > service-version.txt
           - ./deployment-scripts/Auto-version-update/push_version_change.sh
@@ -371,6 +372,12 @@ pipelines:
               name: Deploy QA
               trigger: manual
               deployment: qa
+          - step:
+              !!merge <<: *deploy
+              name: Deploy Integration
+              trigger: manual
+              deployment: integration
+
           # - step:
           #     !!merge <<: *deploy
           #     name: Deploy PERF
@@ -410,12 +417,6 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
-    PSE-3161-rbac-changes:
-      - step: *build
-      - step:
-          !!merge <<: *deploy
-          name: Deploy devpe
-          deployment: devpe
     master2:
       - step: *Clear-Cache
       - step: *build
