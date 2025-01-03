@@ -30,6 +30,7 @@ public class CommonDashboardUtil {
                 .map(entry -> entry.getKey().replaceAll("(?i)eligible", "").toUpperCase())
                 .toList()
             : Collections.emptyList();
+    // Preserving service options internally by referring to the tenant config
     return Arrays.stream(serviceOptions)
         .filter(serviceOption -> nodeServiceOptions.contains(serviceOption.toUpperCase()))
         .toArray(String[]::new);
