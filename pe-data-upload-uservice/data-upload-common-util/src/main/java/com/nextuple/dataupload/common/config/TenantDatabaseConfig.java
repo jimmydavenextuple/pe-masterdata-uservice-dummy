@@ -41,6 +41,12 @@ public class TenantDatabaseConfig {
     return gson;
   }
 
+  public String[] getCurrentTenantServiceOptionsUnmodified() throws CommonServiceException {
+    String tenantId = CurrentThreadContext.getLogContext().getTenantId();
+    String serviceOptions = fetchServiceOptions(tenantId);
+    return Arrays.stream(serviceOptions.split(",")).toArray(String[]::new);
+  }
+
   public String[] getCurrentTenantServiceOptions() throws CommonServiceException {
     String tenantId = CurrentThreadContext.getLogContext().getTenantId();
     String serviceOptions = fetchServiceOptions(tenantId);

@@ -12,6 +12,7 @@ import static com.nextuple.common.constants.CommonConstants.NODE_DEFAULT_SORT_BY
 import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.DATA_UPLOAD_PAGINATION_URL_CONSTANT_UI;
 
 import com.nextuple.common.base.PagePayload;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
 import com.nextuple.common.response.BaseResponse;
@@ -49,7 +50,8 @@ public class NodeServiceOptionController {
           @Parameter(description = "Unique identifier for organization ID.")
           @NotBlank(message = "orgId can't be empty")
           String orgId,
-      PageParams pageParams) {
+      PageParams pageParams)
+      throws CommonServiceException {
 
     PagePayload<NodeServiceOptionDto> nodeServiceOptionDto =
         nodeServiceOptionService.getNodeServiceOption(
