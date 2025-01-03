@@ -24,7 +24,7 @@ public class FeignClientInterceptor implements RequestInterceptor {
 
     try {
       String url = requestTemplate.feignTarget().url();
-      if (url.contains("localhost:8080")) {
+      if (url.contains("localhost")) {
         requestTemplate.header("x-api-key", apiKey);
       }
     } catch (Exception e) {
