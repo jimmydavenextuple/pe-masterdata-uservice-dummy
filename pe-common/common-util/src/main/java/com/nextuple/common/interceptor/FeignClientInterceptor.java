@@ -5,19 +5,35 @@ import com.nextuple.common.context.CurrentThreadContext;
 import com.nextuple.common.context.LogContext;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
 public class FeignClientInterceptor implements RequestInterceptor {
+
+  @Value("${api-key}")
+  private String apiKey;
+
   @Override
   public void apply(RequestTemplate requestTemplate) {
 
     log.debug("------ Inside FeignClientInterceptor ------");
 
+    try {
+      String url = requestTemplate.feignTarget().url();
+      if (url.contains("localhost")) {
+        requestTemplate.header("x-api-key", apiKey);
+      }
+    } catch (Exception e) {
+      log.info("Error while fetching host or api key");
+    }
+
     // Attach Authorization header
-    if (!requestTemplate.headers().containsKey(CommonConstants.AUTHORIZATION_HEADER)) {
+    if (!requestTemplate.headers().containsKey(CommonConstants.AUTHORIZATION_HEADER)
+        && Objects.nonNull(CurrentThreadContext.getLogContext().getRequestHeaders())) {
       requestTemplate.header(
           CommonConstants.AUTHORIZATION_HEADER,
           CurrentThreadContext.getLogContext().getAuthorizationHeader());

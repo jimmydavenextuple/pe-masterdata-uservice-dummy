@@ -70,9 +70,11 @@ server:
           cpu: 256m
     dev:
       ingress: yes
-      middleman: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
       prometheus: yes
       storage: yes
+      dockerbuild: yes
       java-opts: "-Xms1024m -Xmx1024m"
       keyvault: yes
       scale:
@@ -102,7 +104,8 @@ server:
           cpu: 1
     qa:
       ingress: yes
-      middleman: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
       prometheus: yes
       storage: yes
       java-opts: "-Xms1024m -Xmx1024m"
@@ -161,7 +164,25 @@ server:
           cpu: 256m
         max:
           memory: 1024Mi
-          cpu: 256m 
+          cpu: 256m
+    devpe:
+      ingress: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
+      prometheus: yes
+      storage: yes
+      dockerbuild: yes
+      java-opts: "-Xms1024m -Xmx1024m"
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 2Gi
+          cpu: 1
+        max:
+          memory: 2Gi
+          cpu: 1
     sperf:
       ingress: yes
       middleman: yes
