@@ -229,10 +229,15 @@ class HttpUtilTest {
     when(userExitUtil.getHttpClient()).thenReturn(httpClientMock);
     when(httpClientMock.send(any(), any())).thenReturn(httpResponse);
     TypeReference inputTypeReference = new TypeReference<String>() {};
+    JsonNode jsonNodeMessage = mock(JsonNode.class);
+    when(jsonNodeMessage.asText()).thenReturn("Failure Response with message");
+    when(jsonNodeMessage.isNull()).thenReturn(true);
+    JsonNode jsonNodeError = mock(JsonNode.class);
+    when(jsonNodeError.asText()).thenReturn("Failure Response with error");
+    when(jsonNodeError.isNull()).thenReturn(false);
     JsonNode jsonNode = mock(JsonNode.class);
-    when(jsonNode.asText()).thenReturn("Failure Response with error");
-    when(jsonNode.isNull()).thenReturn(false);
-    when(jsonNode.get(anyString())).thenReturn(jsonNode);
+    when(jsonNode.get("message")).thenReturn(jsonNodeMessage);
+    when(jsonNode.get("error")).thenReturn(jsonNodeError);
     when(objectMapper.readTree(anyString())).thenReturn(jsonNode);
     CommonServiceException exception =
         Assertions.assertThrows(
