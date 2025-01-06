@@ -1,6 +1,6 @@
 version:
   major: 1
   minor: 6
-  patch: 53
+  patch: 54
   release: false
-allowed_version: 1006053
+allowed_version: 1006054
