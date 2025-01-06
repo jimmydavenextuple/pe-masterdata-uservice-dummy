@@ -17,8 +17,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.calendar.domain.feign.CalendarFeign;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
+import com.nextuple.node.carrier.domain.feign.NodeCarriersFeign;
 import com.nextuple.node.persistence.domain.NodeDomainDto;
 import com.nextuple.node.persistence.entity.NodeEntity;
 import com.nextuple.node.persistence.exception.NodeDomainException;
@@ -45,6 +47,8 @@ class NodePersistenceServiceImplTest {
   @Mock private NodeRepository nodeRepository;
   @Mock private NodeEntityMapper nodeEntityMapper;
   @Mock private PageProperties pageProperties;
+  @Mock private NodeCarriersFeign nodeCarriersFeign;
+  @Mock private CalendarFeign calendarFeign;
   @InjectMocks private NodePersistenceServiceImpl nodePersistenceService;
   @InjectMocks private TestUtil testUtil;
 
@@ -107,6 +111,8 @@ class NodePersistenceServiceImplTest {
   void nodeDeletionTest() throws NodeDomainException {
     when(nodeEntityMapper.toEntity(any(NodeDomainDto.class))).thenReturn(testUtil.getNodeEntity());
     when(nodeEntityMapper.toDomain(any(NodeEntity.class))).thenReturn(testUtil.getNodeDomainDto());
+    when(nodeCarriersFeign.deleteNodeCarrierByNodeId(any(), any())).thenReturn(null);
+    when(calendarFeign.deleteNodeCarrierServiceCalendarForNodeId(any(), any())).thenReturn(null);
     doNothing().when(nodeRepository).delete(any());
     nodePersistenceService.deleteNode(testUtil.getNodeDomainDto());
     verify(nodeRepository, times(1)).delete(any());

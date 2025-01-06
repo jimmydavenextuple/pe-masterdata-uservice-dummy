@@ -16,6 +16,7 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.node.carrier.domain.entity.NodeCarriersEntity;
 import com.nextuple.node.carrier.repository.NodeCarriersRepository;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +71,17 @@ public class NodeCarriersDomain {
     }
   }
 
+  public List<NodeCarriersEntity> deleteAllNodeCarrierEntityByOrgIdAndNodeId(
+      String orgId, String nodeId) throws CommonServiceException {
+    try {
+      return nodeCarriersRepository.deleteAllByOrgIdAndNodeId(orgId, nodeId);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to delete node carrier");
+      throw new CommonServiceException(
+          "Error while deleting the node carrier", HttpStatus.INTERNAL_SERVER_ERROR, 0x1787, null);
+    }
+  }
+
   public Optional<NodeCarriersEntity> filterAndGetNodeCarrierDetails(
       String orgId, String nodeId, String carrierServiceId, String serviceOption)
       throws CommonServiceException {
@@ -114,6 +126,16 @@ public class NodeCarriersDomain {
       logger.error(String.valueOf(e), "Unable to find node carrier details");
       throw new CommonServiceException(
           "Error while finding the node carrier", HttpStatus.INTERNAL_SERVER_ERROR, 0x1787, null);
+    }
+  }
+
+  public List<NodeCarriersEntity> findNodeCarriersMandatoryByOrgIdAndNodeId(
+      String orgId, String nodeId) {
+    try {
+      return nodeCarriersRepository.findByOrgIdAndNodeId(orgId, nodeId);
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to find node carrier details");
+      return Collections.emptyList();
     }
   }
 

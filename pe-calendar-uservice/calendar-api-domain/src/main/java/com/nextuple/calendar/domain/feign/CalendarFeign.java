@@ -24,6 +24,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -105,4 +106,8 @@ public interface CalendarFeign {
   @GetMapping("/node-carrier-service-calendar/org/{orgId}")
   BaseResponse<List<NodeCarrierServiceCalendarResponse>> getAllNodeCarrierServiceCalendar(
       @PathVariable String orgId);
+
+  @DeleteMapping("/node-carrier-service-calendar/{orgId}/{nodeId}")
+  BaseResponse<List<NodeCarrierServiceCalendarResponse>> deleteNodeCarrierServiceCalendarForNodeId(
+      @PathVariable String orgId, @PathVariable String nodeId);
 }

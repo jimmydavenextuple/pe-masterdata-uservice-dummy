@@ -31,6 +31,12 @@ public interface NodeCarrierServiceCalendarPersistenceService
   List<NodeCarrierServiceCalendarDomainDto> getNodeCarrierServiceCalendar(
       String orgId, String nodeId) throws CalendarDomainException;
 
+  List<NodeCarrierServiceCalendarDomainDto> getAllNodeCarrierServiceCalendarByOrgIdAndNodeId(
+      String orgId, String nodeId) throws CalendarDomainException;
+
+  List<NodeCarrierServiceCalendarDomainDto> deleteAllNodeCarrierServiceCalendarByOrgIdAndNodeId(
+      String orgId, String nodeId) throws CalendarDomainException;
+
   List<NodeCarrierServiceCalendarDomainDto> getAllNodeCarrierServiceCalendars(Integer limit)
       throws CalendarDomainException;
 

@@ -191,4 +191,41 @@ class NodeCarrierServiceCalendarControllerTest {
     verify(nodeCarrierServiceCalendarService, times(1))
         .processGetAllNodeCarrierServiceCalendar(any());
   }
+
+  @Test
+  @Description("Test Delete node carriers service Calendars for NodeId - Happy Path")
+  void deleteNodeCarrierServiceCalendarForNodeIdTest() throws CalendarDomainException {
+    when(nodeCarrierServiceCalendarService.processDeleteNodeCarrierServiceCalendarByNodeId(
+            any(), any()))
+        .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarResponse()));
+    ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>> resp =
+        nodeCarrierServiceCalendarController.deleteNodeCarrierServiceCalendarForNodeId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID);
+    Assertions.assertEquals(HttpStatus.OK, resp.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID,
+        Objects.requireNonNull(resp.getBody()).getPayload().get(0).getCalendarId());
+    verify(nodeCarrierServiceCalendarService, times(1))
+        .processDeleteNodeCarrierServiceCalendarByNodeId(any(), any());
+  }
+
+  @Test
+  @Description("Test Delete node carriers service Calendars for NodeId - Exception Scenario")
+  void deleteNodeCarrierServiceCalendarForNodeIdTestException() throws CalendarDomainException {
+
+    when(nodeCarrierServiceCalendarService.processDeleteNodeCarrierServiceCalendarByNodeId(
+            any(), any()))
+        .thenThrow(new NullPointerException("error"));
+
+    Exception ex =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                nodeCarrierServiceCalendarController.deleteNodeCarrierServiceCalendarForNodeId(
+                    TestUtil.ORG_ID, TestUtil.NODE_ID));
+
+    Assertions.assertEquals("error", ex.getMessage());
+    verify(nodeCarrierServiceCalendarService, times(1))
+        .processDeleteNodeCarrierServiceCalendarByNodeId(any(), any());
+  }
 }

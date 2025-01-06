@@ -344,4 +344,52 @@ class NodeCarrierServiceCalendarServiceTest {
     verify(nodeCarrierServiceCalendarPersistenceService, times(1))
         .getAllNodeCarrierServiceCalendarsByOrgId(any());
   }
+
+  @Test
+  @Description("Test Delete Node Carrier Service Calendar by NodeId - Happy Path")
+  void processDeleteNodeCarrierServiceCalendarByNodeIdTest() throws CalendarDomainException {
+    when(nodeCarrierServiceCalendarPersistenceService
+            .getAllNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any()))
+        .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarDomainDto()));
+    when(nodeCarrierServiceCalendarPersistenceService
+            .deleteAllNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any()))
+        .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarDomainDto()));
+    List<NodeCarrierServiceCalendarResponse> resp =
+        nodeCarrierServiceCalendarService.processDeleteNodeCarrierServiceCalendarByNodeId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID);
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.get(0).getCalendarId()));
+    Assertions.assertEquals(TestUtil.ORG_ID, Objects.requireNonNull(resp.get(0).getOrgId()));
+    Assertions.assertEquals(
+        TestUtil.CARRIER_SERVICE_ID, Objects.requireNonNull(resp.get(0).getCarrierServiceId()));
+    Assertions.assertEquals(TestUtil.NODE_ID, Objects.requireNonNull(resp.get(0).getNodeId()));
+    Assertions.assertEquals(
+        TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.get(0).getEffectiveDate()));
+    Assertions.assertEquals(
+        TestUtil.DESCRIPTION, Objects.requireNonNull(resp.get(0).getDescription()));
+    verify(nodeCarrierServiceCalendarPersistenceService, times(1))
+        .getAllNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any());
+    verify(nodeCarrierServiceCalendarPersistenceService, times(1))
+        .deleteAllNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any());
+  }
+
+  @Test
+  @Description("Test Delete Node Carrier Service Calendar by NodeId - Empty Scenario")
+  void processDeleteNodeCarrierServiceCalendarByNodeIdTestException()
+      throws CalendarDomainException {
+    when(nodeCarrierServiceCalendarPersistenceService
+            .getAllNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any()))
+        .thenReturn(List.of());
+    when(nodeCarrierServiceCalendarPersistenceService
+            .deleteAllNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any()))
+        .thenReturn(List.of(testUtil.getNodeCarrierServiceCalendarDomainDto()));
+    List<NodeCarrierServiceCalendarResponse> resp =
+        nodeCarrierServiceCalendarService.processDeleteNodeCarrierServiceCalendarByNodeId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID);
+    Assertions.assertEquals(0, resp.size());
+    verify(nodeCarrierServiceCalendarPersistenceService, times(1))
+        .getAllNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any());
+    verify(nodeCarrierServiceCalendarPersistenceService, times(0))
+        .deleteAllNodeCarrierServiceCalendarByOrgIdAndNodeId(any(), any());
+  }
 }

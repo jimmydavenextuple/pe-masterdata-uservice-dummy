@@ -22,6 +22,7 @@ import com.nextuple.pe.masterdata.calendar.util.CalendarValidation;
 import com.nextuple.pe.masterdata.calendar.util.DateValidation;
 import com.nextuple.postgres.config.ReaderDS;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -159,6 +160,29 @@ public class NodeCarrierServiceCalendarService {
           String orgId, String nodeId) throws CalendarDomainException {
     return INSTANCE.convertToNodeCarrierServiceCalendarResponseList(
         findNodeCarrierServiceCalendarByOrgIdAndNodeIdForDistCarrierServiceId(orgId, nodeId));
+  }
+
+  public List<NodeCarrierServiceCalendarResponse> processDeleteNodeCarrierServiceCalendarByNodeId(
+      String orgId, String nodeId) throws CalendarDomainException {
+    List<NodeCarrierServiceCalendarDomainDto> nodeCarrierServiceCalendars =
+        nodeCarrierServiceCalendarPersistenceService
+            .getAllNodeCarrierServiceCalendarByOrgIdAndNodeId(orgId, nodeId);
+    if (nodeCarrierServiceCalendars.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return INSTANCE.convertToNodeCarrierServiceCalendarResponseList(
+        deleteAllNodeCarrierServiceCalendarByNodeId(orgId, nodeId));
+  }
+
+  private List<NodeCarrierServiceCalendarDomainDto> deleteAllNodeCarrierServiceCalendarByNodeId(
+      String orgId, String nodeId) throws CalendarDomainException {
+    try {
+      return nodeCarrierServiceCalendarPersistenceService
+          .deleteAllNodeCarrierServiceCalendarByOrgIdAndNodeId(orgId, nodeId);
+    } catch (Exception e) {
+      logger.error("Error in deleteAllNodeCarrierServiceCalendarByOrgIdAndNodeId");
+      throw e;
+    }
   }
 
   private List<NodeCarrierServiceCalendarDomainDto>

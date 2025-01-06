@@ -322,4 +322,24 @@ class NodeCarriersControllerTest {
     verify(nodeCarriersService, times(1))
         .getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any());
   }
+
+  @Test
+  @Description("Delete Node Carrier by NodeId - Happy Path")
+  void deleteNodeCarrierByNodeIdTest() throws CommonServiceException {
+    List<NodeCarriersResponse> nodeCarriersResponseList = testUtil.getNodeCarriersList();
+    when(nodeCarriersService.deleteNodeCarrierByNodeId(any(), any()))
+        .thenReturn(nodeCarriersResponseList);
+    ResponseEntity<BaseResponse<List<NodeCarriersResponse>>> response =
+        nodeCarriersController.deleteNodeCarrierByNodeId(TestUtil.ORG_ID, TestUtil.NODE_ID);
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.NODE_ID,
+        Objects.requireNonNull(response.getBody()).getPayload().get(0).getNodeId());
+    Assertions.assertEquals(
+        TestUtil.ORG_ID, Objects.requireNonNull(response.getBody()).getPayload().get(0).getOrgId());
+    Assertions.assertEquals(
+        TestUtil.CARRIER_SERVICE_ID,
+        Objects.requireNonNull(response.getBody()).getPayload().get(0).getCarrierServiceId());
+    verify(nodeCarriersService, times(1)).deleteNodeCarrierByNodeId(any(), any());
+  }
 }
