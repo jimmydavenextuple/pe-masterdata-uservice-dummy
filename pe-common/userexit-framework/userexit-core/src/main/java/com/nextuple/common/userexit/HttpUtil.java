@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.nextuple.common.context.Logger;
+import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.userexit.domain.UserExitData;
@@ -46,6 +48,7 @@ public class HttpUtil<T, G> {
   int readTimeout;
 
   @Autowired MeterRegistry meterRegistry;
+  private static final Logger logger = LoggerFactory.getLogger(HttpUtil.class);
 
   public ErrorWrapper<G> makePOSTCall(
       UserExitData userExitData,
@@ -77,6 +80,10 @@ public class HttpUtil<T, G> {
     HttpClient client = userExitUtil.getHttpClient();
     HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
     if (response.statusCode() >= 400) {
+      logger.error(
+          "Error occurred while making user exit: {} with response: {}",
+          userExitData.getUserExitMetaData().getName(),
+          response);
       throw new CommonServiceException(
           parseErrorMessages(userExitData.getUserExitMetaData().getName(), response.body()),
           HttpStatus.resolve(response.statusCode()),
@@ -115,11 +122,17 @@ public class HttpUtil<T, G> {
 
   private String parseErrorMessages(String userExitName, String errorBody) throws IOException {
     try {
-      JsonNode messageJson = objectMapper.readTree(errorBody).get("message");
+      JsonNode errorBodyJson = objectMapper.readTree(errorBody);
+      JsonNode messageJson = errorBodyJson.get("message");
+      JsonNode errorJson = errorBodyJson.get("error");
       if (messageJson != null && !messageJson.isNull()) {
         return String.format(
             "Unable to process request as %s failed with error: %s",
             userExitName, messageJson.asText());
+      } else if (errorJson != null && !errorJson.isNull()) {
+        return String.format(
+            "Unable to process request as %s failed with error: %s",
+            userExitName, errorJson.asText());
       } else {
         return String.format("Unable to process request as %s failed", userExitName);
       }

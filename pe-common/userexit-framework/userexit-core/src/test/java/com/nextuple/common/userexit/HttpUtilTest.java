@@ -185,7 +185,7 @@ class HttpUtilTest {
   }
 
   @Test
-  @DisplayName("Make Post call - failure due to 400 HTTP status code")
+  @DisplayName("Make Post call - failure due to 400 HTTP status code with message field")
   void makePostCallFailureTest() throws IOException, InterruptedException {
     UserExitData userExitData = testUtil.getUserExitData();
     HttpClient httpClientMock = mock(HttpClient.class);
@@ -214,6 +214,32 @@ class HttpUtilTest {
             () -> httpUtil.makePOSTCall(userExitData, "Input String", null, inputTypeReference));
     Assertions.assertEquals(
         "Unable to process request as ExampleExit failed with error: Failure Response",
+        exception.getMessage());
+    verify(userExitUtil, times(1)).getHttpClient();
+  }
+
+  @Test
+  @DisplayName("Make Post call - failure due to 400 HTTP status code with error field")
+  void makePostCallFailureTestWithError() throws IOException, InterruptedException {
+    UserExitData userExitData = testUtil.getUserExitData();
+    HttpClient httpClientMock = mock(HttpClient.class);
+    HttpResponse<Object> httpResponse = mock(HttpResponse.class);
+    when(httpResponse.body()).thenReturn("{\"error\":\"Failure Response with error\"}");
+    when(httpResponse.statusCode()).thenReturn(400);
+    when(userExitUtil.getHttpClient()).thenReturn(httpClientMock);
+    when(httpClientMock.send(any(), any())).thenReturn(httpResponse);
+    TypeReference inputTypeReference = new TypeReference<String>() {};
+    JsonNode jsonNode = mock(JsonNode.class);
+    when(jsonNode.asText()).thenReturn("Failure Response with error");
+    when(jsonNode.isNull()).thenReturn(false);
+    when(jsonNode.get(anyString())).thenReturn(jsonNode);
+    when(objectMapper.readTree(anyString())).thenReturn(jsonNode);
+    CommonServiceException exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> httpUtil.makePOSTCall(userExitData, "Input String", null, inputTypeReference));
+    Assertions.assertEquals(
+        "Unable to process request as ExampleExit failed with error: Failure Response with error",
         exception.getMessage());
     verify(userExitUtil, times(1)).getHttpClient();
   }
