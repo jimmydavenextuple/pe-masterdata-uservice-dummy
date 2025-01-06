@@ -10,6 +10,7 @@ package com.nextuple.dataupload.controller;
 import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.DATA_UPLOAD_PAGINATION_URL_CONSTANT_UI;
 
 import com.nextuple.common.base.PagePayload;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
 import com.nextuple.common.response.BaseResponse;
@@ -54,7 +55,8 @@ public class ProcessingTimeBufferController {
               @Parameter(description = "Unique identifier of organization")
               @PathVariable
               String orgId,
-          PageParams pageParams) {
+          PageParams pageParams)
+          throws CommonServiceException {
     PagePayload<ProcessingTimeBufferResponse> processingTimeBufferDtoPagePayload =
         processingTimeBufferService.getProcessingTimeBuffers(orgId, null, pageParams);
 
@@ -101,7 +103,8 @@ public class ProcessingTimeBufferController {
                   description =
                       "Comma separated string that contains references of the nodes to be searched for.")
               String nodeIds,
-          PageParams pageParams) {
+          PageParams pageParams)
+          throws CommonServiceException {
     PagePayload<ProcessingTimeBufferResponse> processingTimeBufferDtoPagePayload =
         processingTimeBufferService.getProcessingTimeBuffers(orgId, nodeIds, pageParams);
 

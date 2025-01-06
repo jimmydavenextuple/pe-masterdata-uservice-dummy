@@ -10,6 +10,7 @@ package com.nextuple.dataupload.controller;
 import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.DATA_UPLOAD_PAGINATION_URL_CONSTANT_UI;
 
 import com.nextuple.common.base.PagePayload;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
 import com.nextuple.common.response.BaseResponse;
@@ -58,7 +59,8 @@ public class RegionalNodesDetailsController {
           String nodeIds,
       @RequestParam(required = false) @Parameter(description = "Identifier for type of node.")
           String nodeType,
-      PageParams pageParams) {
+      PageParams pageParams)
+      throws CommonServiceException {
     PagePayload<NodeListDto> nodeListDto =
         regionalNodesDetailsService.getNodesList(orgId, nodeIds, nodeType, pageParams);
 

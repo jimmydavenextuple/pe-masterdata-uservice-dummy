@@ -10,6 +10,7 @@ package com.nextuple.dataupload.util;
 import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.nextuple.node.domain.dto.NodeDto;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,13 +22,18 @@ import org.springframework.util.ObjectUtils;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommonDashboardUtil {
-  public static String[] fetchEligibleNodeServiceOption(NodeDto node) {
-    return !ObjectUtils.isEmpty(node.getServiceOptionEligibilities())
-        ? node.getServiceOptionEligibilities().entrySet().stream()
-            .filter(entry -> Boolean.TRUE.equals(entry.getValue()))
-            .map(entry -> entry.getKey().replaceAll("(?i)eligible", "").toUpperCase())
-            .toArray(String[]::new)
-        : new String[0];
+  public static String[] fetchEligibleNodeServiceOption(NodeDto node, String[] serviceOptions) {
+    List<String> nodeServiceOptions =
+        !ObjectUtils.isEmpty(node.getServiceOptionEligibilities())
+            ? node.getServiceOptionEligibilities().entrySet().stream()
+                .filter(entry -> Boolean.TRUE.equals(entry.getValue()))
+                .map(entry -> entry.getKey().replaceAll("(?i)eligible", "").toUpperCase())
+                .toList()
+            : Collections.emptyList();
+    // Preserving service options internally by referring to the tenant config
+    return Arrays.stream(serviceOptions)
+        .filter(serviceOption -> nodeServiceOptions.contains(serviceOption.toUpperCase()))
+        .toArray(String[]::new);
   }
 
   public static Map<String, Double> fetchNodeProcessingTimeForEligibleServiceOptions(
@@ -40,9 +46,8 @@ public class CommonDashboardUtil {
     nodeCarrierResponse.forEach(
         nodeCarrier -> {
           if (nodeCarrier.getProcessingTime() != null
-              && (processingTime.containsKey(nodeCarrier.getServiceOption().toUpperCase()))) {
-            processingTime.put(
-                nodeCarrier.getServiceOption().toUpperCase(), nodeCarrier.getProcessingTime());
+              && (processingTime.containsKey(nodeCarrier.getServiceOption()))) {
+            processingTime.put(nodeCarrier.getServiceOption(), nodeCarrier.getProcessingTime());
           }
         });
     return processingTime;

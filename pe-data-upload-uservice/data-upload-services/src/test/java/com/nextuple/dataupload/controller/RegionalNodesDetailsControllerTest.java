@@ -15,6 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.common.base.PagePayload;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageProperties;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.dataupload.domain.dto.NodeListDto;
@@ -43,7 +44,7 @@ class RegionalNodesDetailsControllerTest {
 
   @Test
   @DisplayName("Get node list without nodeIds and nodeType")
-  void getNodesListTest() {
+  void getNodesListTest() throws CommonServiceException {
     when(regionalNodesDetailsService.getNodesList(any(), any(), any(), any()))
         .thenReturn(testUtil.getNodeListPagePayload(2));
 
@@ -68,7 +69,7 @@ class RegionalNodesDetailsControllerTest {
 
   @Test
   @DisplayName("Get node list with default sorting order and sort by")
-  void getNodesListDefaultsTest() {
+  void getNodesListDefaultsTest() throws CommonServiceException {
     when(pageProperties.getPageNo()).thenReturn(1);
     when(pageProperties.getPageSize()).thenReturn(15);
     when(regionalNodesDetailsService.getNodesList(any(), any(), any(), any()))
