@@ -21,6 +21,7 @@ import com.nextuple.node.carrier.service.NodeCarriersService;
 import com.nextuple.node.carrier.service.ValidationService;
 import com.nextuple.postgres.config.ReaderDS;
 import jakarta.transaction.Transactional;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +108,19 @@ public class NodeCarriersServiceImpl implements NodeCarriersService {
         nodeCarriersEntity.get().getCarrierServiceId(),
         nodeCarriersEntity.get().getServiceOption());
     return nodeCarrierResponse;
+  }
+
+  @Transactional
+  public List<NodeCarriersResponse> deleteNodeCarrierByNodeId(String orgId, String nodeId)
+      throws CommonServiceException {
+
+    List<NodeCarriersEntity> nodeCarriersEntity =
+        nodeCarriersDomain.findNodeCarriersMandatoryByOrgIdAndNodeId(orgId, nodeId);
+    if (nodeCarriersEntity.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return INSTANCE.toNodeCarriersResponseList(
+        nodeCarriersDomain.deleteAllNodeCarrierEntityByOrgIdAndNodeId(orgId, nodeId));
   }
 
   public List<NodeCarriersResponse> getNodeCarriersList(

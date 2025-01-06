@@ -14,6 +14,7 @@ import com.nextuple.calendar.persistence.exception.CalendarDomainException;
 import com.nextuple.calendar.persistence.exception.DateException;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.pe.masterdata.calendar.controller.docs.DeleteNodeCarrierServiceCalendarForNodeIdDoc;
 import com.nextuple.pe.masterdata.calendar.controller.docs.GetNodeCarrierCalendarCacheKeysDoc;
 import com.nextuple.pe.masterdata.calendar.controller.docs.GetNodeCarrierServiceCalendarDoc;
 import com.nextuple.pe.masterdata.calendar.controller.docs.HandleCreateNodeCarrierServiceCalendarDoc;
@@ -131,6 +132,35 @@ public class NodeCarrierServiceCalendarController {
                   nodeCarrierServiceCalendarService
                       .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(
                           orgId, nodeId))
+              .build());
+    } catch (Exception e) {
+      logger.error("Error in handleGetNodeCarrierServiceCalendar()");
+      throw e;
+    }
+  }
+
+  @DeleteMapping("/{orgId}/{nodeId}")
+  @DeleteNodeCarrierServiceCalendarForNodeIdDoc
+  public ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>>
+      deleteNodeCarrierServiceCalendarForNodeId(
+          @NotBlank(message = "orgId can't be empty")
+              @PathVariable
+              @Parameter(
+                  description = "Unique identifier of the organization",
+                  example = "NEXTUPLE")
+              String orgId,
+          @NotBlank(message = "nodeId can't be empty")
+              @PathVariable
+              @Parameter(description = "Unique identifier of the node", example = "NODE01")
+              String nodeId)
+          throws CalendarDomainException {
+    try {
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Node Carrier Service calendar details deleted successfully!")
+              .payload(
+                  nodeCarrierServiceCalendarService.processDeleteNodeCarrierServiceCalendarByNodeId(
+                      orgId, nodeId))
               .build());
     } catch (Exception e) {
       logger.error("Error in handleGetNodeCarrierServiceCalendar()");
