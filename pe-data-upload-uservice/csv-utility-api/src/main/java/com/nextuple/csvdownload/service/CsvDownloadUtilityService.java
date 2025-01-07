@@ -8,6 +8,7 @@
 package com.nextuple.csvdownload.service;
 
 import static com.nextuple.csvdownload.common.constants.CSVCommonConstants.*;
+import static com.nextuple.csvdownload.util.NodeCalendarUtil.getActiveCalendarForNodeIdAndCarrier;
 import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.FAILURE;
 import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.LAST_PICKUP_TIME;
 import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.PE;
@@ -1081,6 +1082,17 @@ public class CsvDownloadUtilityService {
   public File downloadNodesCarrierPickupCalendarByOrgId(String orgId) throws IOException {
     List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarList =
         calenderResponseService.getNodeCarrierServiceCalender(orgId);
+    Map<String, NodeCarrierServiceCalendarResponse> uniqueCalendarMap =
+        nodeCarrierServiceCalendarList.stream()
+            .collect(
+                Collectors.groupingBy(
+                    x -> x.getNodeId() + "-" + x.getCarrierServiceId(),
+                    Collectors.collectingAndThen(
+                        Collectors.toList(),
+                        calendars ->
+                            getActiveCalendarForNodeIdAndCarrier(calendars).orElse(null))));
+    List<NodeCarrierServiceCalendarResponse> filteredList =
+        uniqueCalendarMap.values().stream().filter(Objects::nonNull).toList();
     FileAttribute<Set<PosixFilePermission>> attr =
         PosixFilePermissions.asFileAttribute(setFilePermissions());
     Path tempFile =
@@ -1092,7 +1104,7 @@ public class CsvDownloadUtilityService {
               Arrays.asList(
                   ORG_ID, NODE_ID, CARRIER_SERVICE_ID, LAST_PICKUP_TIME, PICKUP_CALENDAR_ID));
       writeToCSV(header.toArray(new String[0]), writer);
-      writeNodeCarrierPickupCalendar(writer, nodeCarrierServiceCalendarList);
+      writeNodeCarrierPickupCalendar(writer, filteredList);
       writer.flush();
     }
     return tempFile.toFile();
