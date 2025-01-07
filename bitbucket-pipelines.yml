@@ -86,6 +86,23 @@ server:
         max:
           memory: 2Gi
           cpu: 1
+    performance:
+      ingress: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
+      prometheus: yes
+      storage: yes
+      java-opts: "-Xms1024m -Xmx1024m"
+      keyvault: yes
+      scale:
+        replicas: 7
+      resources:
+        min:
+          memory: 4Gi
+          cpu: 3
+        max:
+          memory: 4Gi
+          cpu: 3
     orielly:
       ingress: yes
       middleman: yes
@@ -417,6 +434,12 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
+    perf_deployment:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Performance
+          deployment: performance
     master2:
       - step: *Clear-Cache
       - step: *build
