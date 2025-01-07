@@ -17,6 +17,9 @@ public class FeignClientInterceptor implements RequestInterceptor {
   @Value("${api-key}")
   private String apiKey;
 
+  @Value("${trusted-sites}")
+  private String trustedSites;
+
   @Override
   public void apply(RequestTemplate requestTemplate) {
 
@@ -24,7 +27,7 @@ public class FeignClientInterceptor implements RequestInterceptor {
 
     try {
       String url = requestTemplate.feignTarget().url();
-      if (url.contains("localhost")) {
+      if (url.contains("localhost") || url.contains(trustedSites)) {
         requestTemplate.header("x-api-key", apiKey);
       }
     } catch (Exception e) {

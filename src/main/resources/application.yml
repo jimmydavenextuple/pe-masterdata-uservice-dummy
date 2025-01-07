@@ -216,3 +216,4 @@ keycloak:
   enforcement-mode: "ENFORCING"
   http-method-as-scope: true
 api-key: \${COMMON-PE-API-KEY}
+trusted-sites: "pe-masterdata-uservice,nextuple.com"
