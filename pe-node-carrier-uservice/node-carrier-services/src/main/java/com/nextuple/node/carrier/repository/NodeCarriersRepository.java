@@ -21,6 +21,8 @@ public interface NodeCarriersRepository extends JpaRepository<NodeCarriersEntity
   Optional<NodeCarriersEntity> deleteByOrgIdAndNodeIdAndCarrierServiceIdAndServiceOption(
       String orgId, String nodeId, String carrierServiceId, String serviceOption);
 
+  List<NodeCarriersEntity> deleteAllByOrgIdAndNodeId(String orgId, String nodeId);
+
   List<NodeCarriersEntity> findByOrgIdAndNodeId(String orgId, String nodeId);
 
   List<NodeCarriersEntity> findByOrgIdAndNodeIdAndServiceOption(

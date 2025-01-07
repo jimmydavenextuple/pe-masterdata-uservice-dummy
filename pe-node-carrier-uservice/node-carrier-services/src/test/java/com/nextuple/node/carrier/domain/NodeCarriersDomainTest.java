@@ -373,4 +373,53 @@ class NodeCarriersDomainTest {
     verify(nodeCarriersRepository, times(1))
         .findByOrgIdAndNodeIdAndCarrierServiceId(any(), any(), any());
   }
+
+  @Test
+  @Description("Fetch Node Carriers by orgId, nodeId - Happy Path")
+  void findNodeCarriersMandatoryByOrgIdAndNodeIdTest() throws CommonServiceException {
+    List<NodeCarriersEntity> nodeCarriersEntityList = testUtil.getNodeCarriersEntityList();
+    when(nodeCarriersRepository.findByOrgIdAndNodeId(any(), any()))
+        .thenReturn(nodeCarriersEntityList);
+    List<NodeCarriersEntity> responseNodeCarrierList =
+        nodeCarriersDomain.findNodeCarriersMandatoryByOrgIdAndNodeId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID);
+    assertEquals(nodeCarriersEntityList.size(), responseNodeCarrierList.size());
+    assertEquals(TestUtil.NODE_ID, responseNodeCarrierList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, responseNodeCarrierList.get(0).getOrgId());
+    assertEquals(TestUtil.CARRIER_SERVICE_ID, responseNodeCarrierList.get(0).getCarrierServiceId());
+    assertEquals(nodeCarriersEntityList, responseNodeCarrierList);
+    verify(nodeCarriersRepository, times(1)).findByOrgIdAndNodeId(any(), any());
+  }
+
+  @Test
+  @Description("Delete Node Carriers by orgId, nodeId - Happy Path")
+  void deleteAllNodeCarrierEntityByOrgIdAndNodeId() throws CommonServiceException {
+    List<NodeCarriersEntity> nodeCarriersEntityList = testUtil.getNodeCarriersEntityList();
+    when(nodeCarriersRepository.deleteAllByOrgIdAndNodeId(any(), any()))
+        .thenReturn(nodeCarriersEntityList);
+    List<NodeCarriersEntity> responseNodeCarrierList =
+        nodeCarriersDomain.deleteAllNodeCarrierEntityByOrgIdAndNodeId(
+            TestUtil.ORG_ID, TestUtil.NODE_ID);
+    assertEquals(nodeCarriersEntityList.size(), responseNodeCarrierList.size());
+    assertEquals(TestUtil.NODE_ID, responseNodeCarrierList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, responseNodeCarrierList.get(0).getOrgId());
+    assertEquals(TestUtil.CARRIER_SERVICE_ID, responseNodeCarrierList.get(0).getCarrierServiceId());
+    assertEquals(nodeCarriersEntityList, responseNodeCarrierList);
+    verify(nodeCarriersRepository, times(1)).deleteAllByOrgIdAndNodeId(any(), any());
+  }
+
+  @Test
+  @Description("Delete Node Carriers by orgId, nodeId - Exception Scenario")
+  void deleteAllNodeCarrierEntityByOrgIdAndNodeIdExceptionScenario() {
+    when(nodeCarriersRepository.deleteAllByOrgIdAndNodeId(any(), any()))
+        .thenThrow(new RuntimeException("Error while deleting the node carrier"));
+    Exception ex =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                nodeCarriersDomain.deleteAllNodeCarrierEntityByOrgIdAndNodeId(
+                    TestUtil.ORG_ID, TestUtil.NODE_ID));
+    assertEquals("Error while deleting the node carrier", ex.getMessage());
+    verify(nodeCarriersRepository, times(1)).deleteAllByOrgIdAndNodeId(any(), any());
+  }
 }

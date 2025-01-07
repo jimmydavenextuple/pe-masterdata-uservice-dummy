@@ -18,8 +18,10 @@ import com.nextuple.calendar.domain.outbound.CalendarResponse;
 import com.nextuple.calendar.domain.outbound.NodeCalendarResponse;
 import com.nextuple.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.nextuple.common.base.PagePayload;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
+import com.nextuple.dataupload.common.config.TenantDatabaseConfig;
 import com.nextuple.dataupload.domain.dto.NodeListDto;
 import com.nextuple.dataupload.domain.dto.NodeWorkingCalendarDto;
 import com.nextuple.dataupload.domain.dto.PickupTimeDto;
@@ -50,12 +52,14 @@ public class RegionalNodesDetailsService {
   private final INodeCarrierFeign nodeCarrierFeign;
 
   private final PageProperties pageProperties;
+  private final TenantDatabaseConfig tenantDatabaseConfig;
 
   public static final NodeMapper INSTANCE = Mappers.getMapper(NodeMapper.class);
 
   @ReaderDS
   public PagePayload<NodeListDto> getNodesList(
-      String orgId, String nodeIds, String nodeType, PageParams pageParams) {
+      String orgId, String nodeIds, String nodeType, PageParams pageParams)
+      throws CommonServiceException {
     PagePayload<NodeListDto> nodeListDtoPagePayload = new PagePayload<>();
     List<NodeListDto> responseList = new ArrayList<>();
     Integer pageNo = pageParams.getPageNo().orElse(pageProperties.getPageNo());
@@ -125,14 +129,16 @@ public class RegionalNodesDetailsService {
       List<NodeCalendarResponse> nodeCalendarResponseList,
       List<NodeCarrierResponse> nodeCarrierResponse,
       List<NodeCarrierResponse> nodeServiceOptionsResponse,
-      CalendarResponse calendarDetails) {
+      CalendarResponse calendarDetails)
+      throws CommonServiceException {
     NodeListDto nodeListDto;
     nodeListDto = INSTANCE.toNodeListDto(nodeResponse);
     if (!nodeCalendarResponseList.isEmpty() && ObjectUtils.isNotEmpty(calendarDetails)) {
       nodeListDto.setNodeWorkingCalendar(
           setNodeCalendar(nodeCalendarResponseList, calendarDetails));
     }
-    String[] validServiceOptions = fetchEligibleNodeServiceOption(nodeResponse);
+    String[] serviceOptions = tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified();
+    String[] validServiceOptions = fetchEligibleNodeServiceOption(nodeResponse, serviceOptions);
     nodeListDto.setProcessingTimeDetails(
         getProcessingTimeDetails(nodeServiceOptionsResponse, validServiceOptions));
     nodeListDto.setServiceOptions(List.of(validServiceOptions));

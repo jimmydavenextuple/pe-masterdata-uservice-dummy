@@ -316,4 +316,76 @@ class NodeCarrierServiceCalendarPersistenceServiceImplTest {
     verify(nodeCarrierServiceCalendarRepository, times(1))
         .findAllNodeCarrierServiceCalendarsByOrgId(any());
   }
+
+  @Test
+  @Description("Get all Node Carrier Service Calendars by OrgId and NodeId- Happy Path")
+  void getAllNodeCarrierServiceCalendarByOrgIdAndNodeIdTest() throws CalendarDomainException {
+    List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntities =
+        testUtil.getNodeCarrierServiceCalendarEntityList();
+    when(nodeCarrierServiceCalendarRepository.findAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(
+            any(), any()))
+        .thenReturn(nodeCarrierServiceCalendarEntities);
+    when(nodeCarrierServiceCalendarEntityMapper.toDomain(anyList()))
+        .thenReturn(testUtil.getNodeCarrierServiceCalendarDomainDtoList());
+    List<NodeCarrierServiceCalendarDomainDto> response =
+        nodeCarrierServiceCalendarPersistenceService
+            .getAllNodeCarrierServiceCalendarByOrgIdAndNodeId(TestUtil.ORG_ID, TestUtil.NODE_ID);
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(
+        nodeCarrierServiceCalendarEntities.get(0).getCalendarId(), response.get(0).getCalendarId());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .findAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(any(), any());
+  }
+
+  @Test
+  @Description("Get all Node Carrier Service Calendars by OrgId - Exception Scenario")
+  void getAllNodeCarrierServiceCalendarByOrgIdAndNodeIdTestException() {
+    when(nodeCarrierServiceCalendarRepository.findAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(
+            any(), any()))
+        .thenReturn(List.of());
+    List<NodeCarrierServiceCalendarDomainDto> response =
+        nodeCarrierServiceCalendarPersistenceService
+            .getAllNodeCarrierServiceCalendarByOrgIdAndNodeId(TestUtil.ORG_ID, TestUtil.NODE_ID);
+    Assertions.assertEquals(0, response.size());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .findAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(any(), any());
+  }
+
+  @Test
+  @Description("Delete all Node Carrier Service Calendars by OrgId and NodeId- Happy Path")
+  void deleteAllNodeCarrierServiceCalendarByOrgIdAndNodeIdTest() throws CalendarDomainException {
+    List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntities =
+        testUtil.getNodeCarrierServiceCalendarEntityList();
+    when(nodeCarrierServiceCalendarRepository.deleteAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(
+            any(), any()))
+        .thenReturn(nodeCarrierServiceCalendarEntities);
+    when(nodeCarrierServiceCalendarEntityMapper.toDomain(anyList()))
+        .thenReturn(testUtil.getNodeCarrierServiceCalendarDomainDtoList());
+    List<NodeCarrierServiceCalendarDomainDto> response =
+        nodeCarrierServiceCalendarPersistenceService
+            .deleteAllNodeCarrierServiceCalendarByOrgIdAndNodeId(TestUtil.ORG_ID, TestUtil.NODE_ID);
+    Assertions.assertEquals(2, response.size());
+    Assertions.assertEquals(
+        nodeCarrierServiceCalendarEntities.get(0).getCalendarId(), response.get(0).getCalendarId());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .deleteAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(any(), any());
+  }
+
+  @Test
+  @Description("Delete all Node Carrier Service Calendars by OrgId and NodeId- Exception Scenario")
+  void deleteAllNodeCarrierServiceCalendarByOrgIdAndNodeIdTestException() {
+    when(nodeCarrierServiceCalendarRepository.deleteAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(
+            any(), any()))
+        .thenThrow(new RuntimeException("Unable to fetch delete node carrier service calendars"));
+    CalendarDomainException ex =
+        Assertions.assertThrows(
+            CalendarDomainException.class,
+            () ->
+                nodeCarrierServiceCalendarPersistenceService
+                    .deleteAllNodeCarrierServiceCalendarByOrgIdAndNodeId(
+                        TestUtil.ORG_ID, TestUtil.NODE_ID));
+    Assertions.assertEquals("Unable to delete node carrier service calendars", ex.getMessage());
+    verify(nodeCarrierServiceCalendarRepository, times(1))
+        .deleteAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(any(), any());
+  }
 }

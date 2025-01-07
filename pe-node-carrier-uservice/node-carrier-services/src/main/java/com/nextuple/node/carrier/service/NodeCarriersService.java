@@ -36,6 +36,9 @@ public interface NodeCarriersService {
       String orgId, String nodeId, String carrierServiceId, String serviceOption)
       throws CommonServiceException;
 
+  List<NodeCarriersResponse> deleteNodeCarrierByNodeId(String orgId, String nodeId)
+      throws CommonServiceException;
+
   List<NodeCarriersResponse> getNodeCarriersListByOrgIdAndNodeId(String orgId, String nodeId)
       throws CommonServiceException;
 

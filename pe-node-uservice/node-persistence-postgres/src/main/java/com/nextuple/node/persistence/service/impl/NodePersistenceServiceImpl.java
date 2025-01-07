@@ -9,10 +9,12 @@ package com.nextuple.node.persistence.service.impl;
 import static com.nextuple.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 import static com.nextuple.common.constants.CommonConstants.NODE_DEFAULT_SORT_BY;
 
+import com.nextuple.calendar.domain.feign.CalendarFeign;
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
+import com.nextuple.node.carrier.domain.feign.NodeCarriersFeign;
 import com.nextuple.node.persistence.domain.NodeDomainDto;
 import com.nextuple.node.persistence.domain.key.NodeDomainKey;
 import com.nextuple.node.persistence.entity.NodeEntity;
@@ -43,6 +45,9 @@ public class NodePersistenceServiceImpl
 
   private final PageProperties pageProperties;
 
+  private final NodeCarriersFeign nodeCarriersFeign;
+  private final CalendarFeign calendarFeign;
+
   @Override
   public NodeDomainDto saveNodeDetails(NodeDomainDto nodeDomainDto) throws NodeDomainException {
     try {
@@ -69,6 +74,10 @@ public class NodePersistenceServiceImpl
   public void deleteNode(NodeDomainDto nodeDomainDto) throws NodeDomainException {
     try {
       delete(nodeDomainDto);
+      nodeCarriersFeign.deleteNodeCarrierByNodeId(
+          nodeDomainDto.getOrgId(), nodeDomainDto.getNodeId());
+      calendarFeign.deleteNodeCarrierServiceCalendarForNodeId(
+          nodeDomainDto.getOrgId(), nodeDomainDto.getNodeId());
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to delete node");
       throw new NodeDomainException(

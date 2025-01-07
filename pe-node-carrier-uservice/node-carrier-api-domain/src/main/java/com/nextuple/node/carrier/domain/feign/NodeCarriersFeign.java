@@ -83,4 +83,8 @@ public interface NodeCarriersFeign {
       @NotBlank @PathVariable String orgId,
       @NotBlank @PathVariable String nodeId,
       @NotBlank @PathVariable String carrierServiceId);
+
+  @DeleteMapping("/v2/node/carrier/{orgId}/{nodeId}")
+  BaseResponse<List<NodeCarriersResponse>> deleteNodeCarrierByNodeId(
+      @NotBlank @PathVariable String orgId, @NotBlank @PathVariable String nodeId);
 }
