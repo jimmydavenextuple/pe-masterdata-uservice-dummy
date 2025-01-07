@@ -7,10 +7,27 @@ import com.nextuple.common.constants.CommonConstants;
 import com.nextuple.common.context.CurrentThreadContext;
 import com.nextuple.common.context.LogContext;
 import feign.RequestTemplate;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
+@ExtendWith(MockitoExtension.class)
 class FeignClientInterceptorTest {
+
+  @InjectMocks private FeignClientInterceptor feignClientInterceptor;
+
+  @BeforeEach
+  public void init() {
+    MockitoAnnotations.openMocks(this);
+    ReflectionTestUtils.setField(feignClientInterceptor, "trustedSites", "string1,string2,string3");
+  }
 
   @DisplayName(
       "Should set `tenantId`, `correlationId`, `username`, `apiKey` as null using constructor")
@@ -22,7 +39,6 @@ class FeignClientInterceptorTest {
     CurrentThreadContext.getLogContext().setApiKey(null);
     CurrentThreadContext.getLogContext().setAuthorizationHeader(null);
 
-    FeignClientInterceptor feignClientInterceptor = new FeignClientInterceptor();
     RequestTemplate requestTemplate = new RequestTemplate();
     feignClientInterceptor.apply(requestTemplate);
 
@@ -47,14 +63,13 @@ class FeignClientInterceptorTest {
     String username = "username";
     String apiKey = "apiKey";
     String authorization = "authorization";
-
+    Map<String, String> headers = new HashMap<>();
     CurrentThreadContext.getLogContext().setAuthorizationHeader(authorization);
     CurrentThreadContext.getLogContext().setTenantId(tenantId);
     CurrentThreadContext.getLogContext().setCorrelationId(correlationId);
     CurrentThreadContext.getLogContext().setUsername(username);
     CurrentThreadContext.getLogContext().setApiKey(apiKey);
-
-    FeignClientInterceptor feignClientInterceptor = new FeignClientInterceptor();
+    CurrentThreadContext.getLogContext().setRequestHeaders(headers);
     RequestTemplate requestTemplate = new RequestTemplate();
 
     feignClientInterceptor.apply(requestTemplate);
@@ -76,8 +91,6 @@ class FeignClientInterceptorTest {
 
   @Test
   void applyTest2() {
-
-    FeignClientInterceptor feignClientInterceptor = new FeignClientInterceptor();
     RequestTemplate requestTemplate = new RequestTemplate();
     requestTemplate.header(LogContext.CORRELATION_ID, "CorrelationId");
     requestTemplate.header(CommonConstants.HEADER_USER, "Username");
