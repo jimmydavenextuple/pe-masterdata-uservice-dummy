@@ -9,6 +9,7 @@ package com.nextuple.dataupload.service;
 
 import static com.nextuple.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 import static com.nextuple.common.constants.CommonConstants.NODE_DEFAULT_SORT_BY;
+import static com.nextuple.csvdownload.util.NodeCalendarUtil.getActiveCalendarForNodeIdAndCarrier;
 import static com.nextuple.dataupload.util.CommonDashboardUtil.fetchEligibleNodeServiceOption;
 import static com.nextuple.dataupload.util.CommonDashboardUtil.fetchNodeProcessingTimeForEligibleServiceOptions;
 
@@ -33,7 +34,6 @@ import com.nextuple.node.domain.feign.NodeFeign;
 import com.nextuple.postgres.config.ReaderDS;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -183,13 +183,14 @@ public class RegionalNodesDetailsService {
       pickupTimeDto.setPickupTime(nodeCarrierResponse.getLastPickupTime());
 
       pickupTimeDto.setPickupCalendarId(
-          nodeCalendarMap.get(nodeCarrierResponse.getNodeId()).stream()
-              .filter(
-                  calendar ->
-                      calendar
-                          .getCarrierServiceId()
-                          .equals(nodeCarrierResponse.getCarrierServiceId()))
-              .max(Comparator.comparing(NodeCarrierServiceCalendarResponse::getEffectiveDate))
+          getActiveCalendarForNodeIdAndCarrier(
+                  nodeCalendarMap.get(nodeCarrierResponse.getNodeId()).stream()
+                      .filter(
+                          calendar ->
+                              calendar
+                                  .getCarrierServiceId()
+                                  .equals(nodeCarrierResponse.getCarrierServiceId()))
+                      .toList())
               .map(NodeCarrierServiceCalendarResponse::getCalendarId)
               .orElse("N/A"));
 
