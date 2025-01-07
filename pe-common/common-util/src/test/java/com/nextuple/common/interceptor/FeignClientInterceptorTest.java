@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.nextuple.common.constants.CommonConstants;
 import com.nextuple.common.context.CurrentThreadContext;
 import com.nextuple.common.context.LogContext;
+import feign.Request;
 import feign.RequestTemplate;
+import feign.Target;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +28,7 @@ class FeignClientInterceptorTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
+    ReflectionTestUtils.setField(feignClientInterceptor, "apiKey", "test123");
     ReflectionTestUtils.setField(feignClientInterceptor, "trustedSites", "string1,string2,string3");
   }
 
@@ -87,6 +90,63 @@ class FeignClientInterceptorTest {
     assertTrue(
         requestTemplate.headers().get(CommonConstants.AUTHORIZATION_HEADER).contains(authorization),
         "authorization");
+    assertFalse(requestTemplate.headers().get("x-api-key").isEmpty());
+  }
+
+  @DisplayName(
+      "Should set the tenantId, correlationId, username, apiKey from function arguments and feignClientInterceptor should have the same values when request template irl contains localhost")
+  @Test
+  void applyTest4() {
+    String tenantId = "tenantId";
+    String correlationId = "correlationId";
+    String username = "username";
+    String apiKey = "apiKey";
+    String authorization = "authorization";
+    Map<String, String> headers = new HashMap<>();
+    CurrentThreadContext.getLogContext().setAuthorizationHeader(authorization);
+    CurrentThreadContext.getLogContext().setTenantId(tenantId);
+    CurrentThreadContext.getLogContext().setCorrelationId(correlationId);
+    CurrentThreadContext.getLogContext().setUsername(username);
+    CurrentThreadContext.getLogContext().setApiKey(apiKey);
+    CurrentThreadContext.getLogContext().setRequestHeaders(headers);
+    RequestTemplate requestTemplate = new RequestTemplate();
+    Target<String> target =
+        new Target<String>() {
+          @Override
+          public Class<String> type() {
+            return null;
+          }
+
+          @Override
+          public String name() {
+            return "";
+          }
+
+          @Override
+          public String url() {
+            return "localhost";
+          }
+
+          @Override
+          public Request apply(RequestTemplate requestTemplate) {
+            return null;
+          }
+        };
+    requestTemplate.feignTarget(target);
+    feignClientInterceptor.apply(requestTemplate);
+
+    assertTrue(
+        requestTemplate.headers().get(CommonConstants.HEADER_TENANT_ID).contains(tenantId),
+        "Tenant Id");
+    assertTrue(
+        requestTemplate.headers().get(LogContext.CORRELATION_ID).contains(correlationId),
+        "Correlation Id");
+    assertTrue(
+        requestTemplate.headers().get(CommonConstants.HEADER_USER).contains(username), "Username");
+    assertTrue(
+        requestTemplate.headers().get(CommonConstants.AUTHORIZATION_HEADER).contains(authorization),
+        "authorization");
+    assertFalse(requestTemplate.headers().get("x-api-key").isEmpty());
   }
 
   @Test
