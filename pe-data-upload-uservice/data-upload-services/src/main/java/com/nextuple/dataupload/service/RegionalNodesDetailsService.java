@@ -9,6 +9,7 @@ package com.nextuple.dataupload.service;
 
 import static com.nextuple.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 import static com.nextuple.common.constants.CommonConstants.NODE_DEFAULT_SORT_BY;
+import static com.nextuple.csvdownload.util.NodeCalendarUtil.getActiveCalendarForNodeIdAndCarrier;
 import static com.nextuple.dataupload.util.CommonDashboardUtil.fetchEligibleNodeServiceOption;
 import static com.nextuple.dataupload.util.CommonDashboardUtil.fetchNodeProcessingTimeForEligibleServiceOptions;
 
@@ -30,13 +31,9 @@ import com.nextuple.node.domain.dto.NodeDto;
 import com.nextuple.node.domain.feign.NodeFeign;
 import com.nextuple.postgres.config.ReaderDS;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -140,34 +137,16 @@ public class RegionalNodesDetailsService {
         getProcessingTimeDetails(nodeServiceOptionsResponse, validServiceOptions));
     nodeListDto.setServiceOptions(List.of(validServiceOptions));
     nodeListDto.setCarrierServices(getCarrierServiceIds(nodeCarrierResponse));
-    nodeListDto.setPickupTime(getPickupTimeDetails(nodeCarrierResponse));
+    nodeListDto.setPickupTime(getPickupTimeDetails(nodeResponse, nodeCarrierResponse));
     return nodeListDto;
   }
 
   private List<PickupTimeDto> getPickupTimeDetails(
-      List<NodeCarrierResponse> nodeCarrierResponseList) {
-    Map<String, List<NodeCarrierServiceCalendarResponse>> nodeCalendarMap = new HashMap<>();
+      NodeDto nodeResponse, List<NodeCarrierResponse> nodeCarrierResponseList) {
 
-    Set<String> uniqueNodeIds =
-        nodeCarrierResponseList.stream()
-            .map(NodeCarrierResponse::getNodeId)
-            .collect(Collectors.toSet());
-
-    for (String nodeId : uniqueNodeIds) {
-      List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarResponses =
-          nodeCarrierResponseList.stream()
-              .filter(response -> response.getNodeId().equals(nodeId))
-              .findFirst()
-              .map(
-                  matchingResponse ->
-                      calendarFeign
-                          .getNodeCarrierServiceCalendarForOrgIdAndNodeId(
-                              matchingResponse.getOrgId(), nodeId)
-                          .getPayload())
-              .orElse(Collections.emptyList());
-
-      nodeCalendarMap.put(nodeId, nodeCarrierServiceCalendarResponses);
-    }
+    var nodeCarrierServiceCalendarResponses =
+        calendarFeign.getNodeCarrierServiceCalendarForOrgIdAndNodeId(
+            nodeResponse.getOrgId(), nodeResponse.getNodeId());
 
     List<PickupTimeDto> pickupTimeDtoList = new ArrayList<>();
     for (NodeCarrierResponse nodeCarrierResponse : nodeCarrierResponseList) {
@@ -176,16 +155,22 @@ public class RegionalNodesDetailsService {
       pickupTimeDto.setCarrierServiceId(nodeCarrierResponse.getCarrierServiceId());
       pickupTimeDto.setPickupTime(nodeCarrierResponse.getLastPickupTime());
 
-      pickupTimeDto.setPickupCalendarId(
-          nodeCalendarMap.get(nodeCarrierResponse.getNodeId()).stream()
-              .filter(
-                  calendar ->
-                      calendar
-                          .getCarrierServiceId()
-                          .equals(nodeCarrierResponse.getCarrierServiceId()))
-              .max(Comparator.comparing(NodeCarrierServiceCalendarResponse::getEffectiveDate))
-              .map(NodeCarrierServiceCalendarResponse::getCalendarId)
-              .orElse("N/A"));
+      NodeCarrierServiceCalendarResponse filteredNodeCarrierResponse =
+          getActiveCalendarForNodeIdAndCarrier(
+                  nodeCarrierServiceCalendarResponses.getPayload().stream()
+                      .filter(
+                          calendar ->
+                              calendar
+                                  .getCarrierServiceId()
+                                  .equals(nodeCarrierResponse.getCarrierServiceId()))
+                      .toList())
+              .orElse(null);
+
+      if (!Objects.isNull(filteredNodeCarrierResponse)) {
+        pickupTimeDto.setPickupCalendarId(filteredNodeCarrierResponse.getCalendarId());
+      } else {
+        pickupTimeDto.setPickupCalendarId("N/A");
+      }
 
       pickupTimeDtoList.add(pickupTimeDto);
     }
