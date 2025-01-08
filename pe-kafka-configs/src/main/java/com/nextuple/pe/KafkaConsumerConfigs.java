@@ -8,8 +8,13 @@
 package com.nextuple.pe;
 
 import com.nextuple.dataupload.configuration.KafkaStringProperties;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.CommonClientConfigs;
@@ -36,6 +41,7 @@ import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.backoff.FixedBackOff;
 
 @Configuration
@@ -71,6 +77,7 @@ public class KafkaConsumerConfigs {
   private String interceptorClasses;
 
   private final KafkaProperties kafkaProperties;
+  private final KafkaErrorHandlerProperties kafkaErrorHandlerProperties;
 
   private final KafkaStringProperties kafkaStringProperties;
   private final MeterRegistry meterRegistry;
@@ -174,7 +181,23 @@ public class KafkaConsumerConfigs {
                             deliveryAttempt,
                             consumerRecord,
                             ex.getMessage()));
+    List<Class<? extends Exception>> nonRetryableExceptionClasses = new ArrayList<>();
+    if(!CollectionUtils.isEmpty(kafkaErrorHandlerProperties.getNonRetryableExceptions())){
+      nonRetryableExceptionClasses = kafkaErrorHandlerProperties.getNonRetryableExceptions()
+              .stream()
+              .map(this::getExceptionClass)
+              .collect(Collectors.toList());
+    }
+    nonRetryableExceptionClasses.forEach(errorHandler::addNotRetryableExceptions);
     return errorHandler;
+  }
+
+  private Class<? extends Exception> getExceptionClass(String className) {
+    try {
+      return (Class<? extends Exception>) Class.forName(className);
+    } catch (ClassNotFoundException e) {
+      throw new IllegalArgumentException("Invalid exception class name: " + className, e);
+    }
   }
 
   @Bean
