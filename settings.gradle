@@ -5,3 +5,5 @@ pluginManagement {
 }
 
 rootProject.name = 'pe-master-data'
+include 'pe-kafka-configs'
+
