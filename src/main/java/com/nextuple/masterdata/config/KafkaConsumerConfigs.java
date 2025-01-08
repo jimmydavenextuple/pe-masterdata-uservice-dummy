@@ -63,6 +63,9 @@ public class KafkaConsumerConfigs {
   @Value(value = "${spring.kafka.consumer-item.properties.interceptor.classes}")
   private String interceptorClasses;
 
+  @Value("${master-data.item.dlt-topic}")
+  private String itemDltTopic;
+
   private final KafkaProperties kafkaProperties;
 
   private final KafkaStringProperties kafkaStringProperties;
@@ -134,7 +137,11 @@ public class KafkaConsumerConfigs {
   public CommonErrorHandler kafkaErrorHandler(KafkaOperations<String, Object> kafkaOperations) {
     return new DefaultErrorHandler(
         new DeadLetterPublishingRecoverer(
-            kafkaOperations, (cr, e) -> new TopicPartition(cr.topic() + ".err", cr.partition())),
+            kafkaOperations,
+            (cr, e) -> {
+              String resolvedTopicName = itemDltTopic != null ? itemDltTopic : cr.topic() + ".DLT";
+              return new TopicPartition(resolvedTopicName, cr.partition());
+            }),
         new FixedBackOff(0L, maxRetryCount));
   }
 
