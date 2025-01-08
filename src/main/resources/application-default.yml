@@ -109,7 +109,7 @@ jobs-framework:
     topic-name: INTERNAL.DEV.PE_JOB_FPM_METRICS_LOCAL, INTERNAL.DEV.PE_JOB_RECORD_FPM_METRICS_LOCAL, INTERNAL.DEV.PE_NEIP_FPM_METRICS_LOCAL
     group-id: pe-fpm-metrics-local
   job-completion-consumer:
-    topic-names: job-completion-local
+    topic-name: job-completion-local
     group-id: jobs-completion-consumer-async-dev
   kafka-publish:
     topic-name: jobs-task-local
@@ -161,7 +161,7 @@ dataupload:
 
 master-data:
   node:
-    topic-name: INTERNAL.DEV.PE.NODE_INTEGRATION
+    topic-names: INTERNAL.DEV.PE.NODE_INTEGRATION
     group-id: node-master-dev
     dlt-topic: INTERNAL.DEV.PE.NODE_INTEGRATION.DLT
   node-carrier:
