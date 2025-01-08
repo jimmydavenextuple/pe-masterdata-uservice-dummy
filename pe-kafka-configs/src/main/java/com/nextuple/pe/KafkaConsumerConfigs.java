@@ -5,16 +5,19 @@
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
  */
 
-package com.nextuple.masterdata.config;
+package com.nextuple.pe;
 
 import com.nextuple.dataupload.configuration.KafkaStringProperties;
 import java.util.HashMap;
 import java.util.Map;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.SaslConfigs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -27,6 +30,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaOperations;
+import org.springframework.kafka.core.MicrometerConsumerListener;
 import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
@@ -54,6 +58,9 @@ public class KafkaConsumerConfigs {
   @Value(value = "${spring.kafka.consumer-retry-count}")
   private long maxRetryCount;
 
+  @Value(value = "${spring.kafka.consumer-retry-interval:0L}")
+  private long retryInterval;
+
   @Value(value = "${spring.kafka.consumer-item.enable-auto-commit}")
   private Boolean enableAutoCommit;
 
@@ -66,6 +73,9 @@ public class KafkaConsumerConfigs {
   private final KafkaProperties kafkaProperties;
 
   private final KafkaStringProperties kafkaStringProperties;
+  private final MeterRegistry meterRegistry;
+  private static final Logger logger = LoggerFactory.getLogger(KafkaConsumerConfigs.class);
+
 
   @Primary
   @Bean("jsonDeserializerProperties")
@@ -89,14 +99,24 @@ public class KafkaConsumerConfigs {
         properties.get("spring-deserializer-value-delegate-class"));
     prop.put(JsonDeserializer.TRUSTED_PACKAGES, properties.get("spring-json-trusted-packages"));
     prop.put(JsonDeserializer.TYPE_MAPPINGS, properties.get("spring-json-type-mapping"));
-    return new DefaultKafkaConsumerFactory<>(prop);
+    Object valueDefaultType = properties.get("spring-json-value-default-type");
+    if (valueDefaultType != null) {
+      prop.put(JsonDeserializer.VALUE_DEFAULT_TYPE, valueDefaultType);
+    }
+    DefaultKafkaConsumerFactory<String, Object> itemConsumerFactory =
+            new DefaultKafkaConsumerFactory<>(prop);
+    itemConsumerFactory.addListener(new MicrometerConsumerListener<>(meterRegistry));
+    return itemConsumerFactory;
   }
 
   @Bean
   @Primary
   public ConsumerFactory<Object, Object> jsonConsumerFactory() {
     HashMap<String, Object> prop = new HashMap<>(jsonDeserializerProperties());
-    return new DefaultKafkaConsumerFactory<>(prop);
+    DefaultKafkaConsumerFactory<Object, Object> jsonConsumerFactory =
+            new DefaultKafkaConsumerFactory<>(prop);
+    jsonConsumerFactory.addListener(new MicrometerConsumerListener<>(meterRegistry));
+    return jsonConsumerFactory;
   }
 
   @Primary
@@ -119,7 +139,9 @@ public class KafkaConsumerConfigs {
     ConcurrentKafkaListenerContainerFactory<String, Object> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(itemConsumerFactory());
-    factory.setCommonErrorHandler(kafkaErrorHandler(kafkaOperations));
+    HashMap<String, Object> prop = new HashMap<>(itemDeserializerProperties());
+    String dltTopicName = (String) getNestedProperty(prop, "topics.item_master.dlt_name");
+    factory.setCommonErrorHandler(kafkaErrorHandler(kafkaOperations, dltTopicName));
     return factory;
   }
 
@@ -135,11 +157,24 @@ public class KafkaConsumerConfigs {
   }
 
   @Bean
-  public CommonErrorHandler kafkaErrorHandler(KafkaOperations<String, Object> kafkaOperations) {
-    return new DefaultErrorHandler(
-        new DeadLetterPublishingRecoverer(
-            kafkaOperations, (cr, e) -> new TopicPartition(cr.topic() + ".err", cr.partition())),
-        new FixedBackOff(0L, maxRetryCount));
+  public CommonErrorHandler kafkaErrorHandler(KafkaOperations<String, Object> kafkaOperations, String dltTopic) {
+    FixedBackOff fixedBackOff = new FixedBackOff(retryInterval, maxRetryCount);
+    DeadLetterPublishingRecoverer recoverer =
+            new DeadLetterPublishingRecoverer(
+                    kafkaOperations,
+                    (cr, e) -> {
+                      String resolvedTopicName = dltTopic != null ? dltTopic : cr.topic() + ".dlt";
+                      return new TopicPartition(resolvedTopicName, cr.partition());
+                    });
+    DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, fixedBackOff);
+    errorHandler.setRetryListeners(
+            (consumerRecord, ex, deliveryAttempt) ->
+                    logger.error(
+                            "Retry attempt {} for record {} failed due to the message: {}",
+                            deliveryAttempt,
+                            consumerRecord,
+                            ex.getMessage()));
+    return errorHandler;
   }
 
   @Bean
@@ -166,11 +201,41 @@ public class KafkaConsumerConfigs {
     prop.put(JsonDeserializer.TRUSTED_PACKAGES, kafkaStringProperties.getTrustedPackages());
     prop.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, kafkaStringProperties.getEnableAutoCommit());
     prop.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaStringProperties.getAutoOffsetReset());
-    return new DefaultKafkaConsumerFactory<>(prop);
+    DefaultKafkaConsumerFactory<Object, Object> stringConsumerFactory =
+            new DefaultKafkaConsumerFactory<>(prop);
+    stringConsumerFactory.addListener(new MicrometerConsumerListener<>(meterRegistry));
+    return stringConsumerFactory;
   }
 
   @Bean
   public CommonErrorHandler errorHandler(KafkaOperations<Object, Object> kafkaOperations) {
-    return new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaOperations));
+    return new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaOperations,
+            (cr, e) -> new TopicPartition(cr.topic() + ".dlt", cr.partition())));
+  }
+
+  /**
+   * Gets a nested property from a map using a dot-separated path.
+   *
+   * @param map The map to search.
+   * @param path The dot-separated path to traverse through the nested maps.
+   * @return The final value associated with the path, or null if any key is not found.
+   */
+  private Object getNestedProperty(Map<String, Object> map, String path) {
+    // Split the path into keys
+    String[] keys = path.split("\\.");
+
+    // Traverse the map using the keys
+    Object current = map;
+    for (String key : keys) {
+      if (current instanceof Map) {
+        current = ((Map<?, ?>) current).get(key);
+        // If the key is not found, current will be null and the loop will end
+      } else {
+        return null; // Return null if current is not a Map
+      }
+    }
+
+    // Return the final value which could be any type or null
+    return current;
   }
 }

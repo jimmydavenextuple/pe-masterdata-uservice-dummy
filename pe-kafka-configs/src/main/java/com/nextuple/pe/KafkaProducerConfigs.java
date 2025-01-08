@@ -1,9 +1,11 @@
-package com.nextuple.masterdata.config;
+package com.nextuple.pe;
 
 import com.nextuple.core.event.LocalCacheUpdateEvent;
 import com.nextuple.jobs.framework.common.domain.pojo.RecordDto;
 import java.util.HashMap;
 import java.util.Map;
+
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.MicrometerProducerListener;
 import org.springframework.kafka.core.ProducerFactory;
 
 @Configuration
@@ -25,6 +28,8 @@ public class KafkaProducerConfigs {
   private static final String KEYSERIALIZER = "key.serializer";
   private static final String INTERCEPTORCLASSES = "interceptor.classes";
   private static final String VALUESERIALIZER = "value.serializer";
+
+  private final MeterRegistry meterRegistry;
 
   @Value(value = "${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
@@ -48,7 +53,10 @@ public class KafkaProducerConfigs {
     prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, prop.get(VALUESERIALIZER));
     prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 
-    return new DefaultKafkaProducerFactory<>(prop);
+    DefaultKafkaProducerFactory<String, Object> itemProducerFactory =
+            new DefaultKafkaProducerFactory<>(prop);
+    itemProducerFactory.addListener(new MicrometerProducerListener<>(meterRegistry));
+    return itemProducerFactory;
   }
 
   private Map<String, Object> getStringObjectMap() {
@@ -66,19 +74,28 @@ public class KafkaProducerConfigs {
   @Bean(name = "CacheUpdateProducer")
   public KafkaTemplate<String, LocalCacheUpdateEvent> cacheUpdateKafkaTemplate() {
     Map<String, Object> prop = getStringObjectMap();
-    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
+    DefaultKafkaProducerFactory<String, LocalCacheUpdateEvent> cacheUpdateProducerFactory =
+            new DefaultKafkaProducerFactory<>(prop);
+    cacheUpdateProducerFactory.addListener(new MicrometerProducerListener<>(meterRegistry));
+    return new KafkaTemplate<>(cacheUpdateProducerFactory);
   }
 
   @Bean(name = "JsonSerializerProducer")
   public KafkaTemplate<String, RecordDto> jobServiceKafkaTemplate() {
     Map<String, Object> prop = getStringObjectMap();
-    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
+    DefaultKafkaProducerFactory<String, RecordDto> jobServiceProducerFactory =
+            new DefaultKafkaProducerFactory<>(prop);
+    jobServiceProducerFactory.addListener(new MicrometerProducerListener<>(meterRegistry));
+    return new KafkaTemplate<>(jobServiceProducerFactory);
   }
 
   @Bean(name = "JsonSerializerProducerObj")
   public KafkaTemplate<Object, Object> jobEventKafkaTemplate() {
     Map<String, Object> prop = getStringObjectMap();
-    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
+    DefaultKafkaProducerFactory<Object, Object> jobEventProducerFactory =
+            new DefaultKafkaProducerFactory<>(prop);
+    jobEventProducerFactory.addListener(new MicrometerProducerListener<>(meterRegistry));
+    return new KafkaTemplate<>(jobEventProducerFactory);
   }
 
   @Bean(name = "ItemSerializerProducer")
@@ -90,6 +107,9 @@ public class KafkaProducerConfigs {
   @Primary
   public KafkaTemplate<String, String> platformTaskKafkaTemplate() {
     Map<String, Object> prop = getStringObjectMap();
-    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(prop));
+    DefaultKafkaProducerFactory<String, String> platformTaskProducerFactory =
+            new DefaultKafkaProducerFactory<>(prop);
+    platformTaskProducerFactory.addListener(new MicrometerProducerListener<>(meterRegistry));
+    return new KafkaTemplate<>(platformTaskProducerFactory);
   }
 }
