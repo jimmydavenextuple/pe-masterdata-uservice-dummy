@@ -84,7 +84,7 @@ jobs-framework:
     topic-name: INTERNAL.PERF.JOBS.RESULT
     group-id: jobs-result-consumer-async-perf
   record-consumer:
-    topic-name: INTERNAL.PERF.JOBS.TASK
+    topic-names: INTERNAL.PERF.JOBS.TASK
     group-id: jobs-task-consumer-async-perf
 auth-token:
   url: https://promise-engine-domain-performance.auth.us-east-1.amazoncognito.com

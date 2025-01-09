@@ -107,7 +107,7 @@ pe-public-webhook:
   item-feed:
     topic: INTERNAL.PROD.PE.PROMISE_ITEMS
   pe-response:
-    topic: INTERNAL.PROD.PE.CART_EDD
+    topics: INTERNAL.PROD.PE.CART_EDD
     group-id: pe-response-consumer-async
 dataupload:
   base-path: "https://pesignetprod.blob.core.windows.net"
@@ -132,5 +132,5 @@ jobs-framework:
     topic-name: INTERNAL.PROD.PE.JOB_RESULT
     group-id: jobs-result-consumer-async
   record-consumer:
-    topic-name: INTERNAL.PROD.PE.JOB_TASK
+    topic-names: INTERNAL.PROD.PE.JOB_TASK
     group-id: jobs-task-consumer-async

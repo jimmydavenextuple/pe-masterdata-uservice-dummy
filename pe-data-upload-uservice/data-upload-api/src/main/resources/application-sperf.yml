@@ -51,7 +51,7 @@ pe-public-webhook:
   item-feed:
     topic: INTERNAL.SPERF.PROMISE_ITEMS
   pe-response:
-    topic: INTERNAL.SPERF.CART_EDD
+    topics: INTERNAL.SPERF.CART_EDD
     group-id: pe-response-consumer-async
   webhook:
     - tenantId: NEXTUPLE_GR
@@ -93,5 +93,5 @@ jobs-framework:
     topic-name: INTERNAL.SPERF.PE.JOB_RESULT
     group-id: jobs-result-consumer-async
   record-consumer:
-    topic-name: INTERNAL.SPERF.PE.JOB_TASK
+    topic-names: INTERNAL.SPERF.PE.JOB_TASK
     group-id: jobs-task-consumer-async

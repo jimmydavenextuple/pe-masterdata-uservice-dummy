@@ -50,8 +50,8 @@ jobs-framework:
     group-id: jobs-completion-consumer-async-sdev
 master-data:
   transit:
-    topic-name: INTERNAL.SDEV.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.SDEV.PE.TRANSIT_INTEGRATION
     group-id: transit-master-sdev
   transit-buffer:
-    topic-name: INTERNAL.SDEV.PE.TRANSIT_BUFFER_INTEGRATION
+    topic-names: INTERNAL.SDEV.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-sdev

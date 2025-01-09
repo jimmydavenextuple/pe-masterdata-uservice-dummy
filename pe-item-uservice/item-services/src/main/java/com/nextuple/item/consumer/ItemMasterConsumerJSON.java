@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-    topics = "${spring.kafka.consumer-item.topics.item_master.name}",
+    topics = "#{'${spring.kafka.consumer-item.topics.item_master.names}'.split(',')}",
     groupId = "${spring.kafka.consumer-item.topics.item_master.group-id}",
     autoStartup = "#{'${spring.kafka.consumer-item.type}' == 'json'}",
     containerFactory = "ItemDeserializerConsumer")

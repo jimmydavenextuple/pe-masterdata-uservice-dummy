@@ -14,6 +14,7 @@ import com.nextuple.node.consumer.dto.NodeFeedDto;
 import com.nextuple.node.consumer.impl.NodeBatchServiceImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.converter.KafkaMessageHeaders;
@@ -21,13 +22,15 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-    topics = "${master-data.node.topic-name}",
+    topics = "#{'${master-data.node.topic-names}'.split(',')}",
     groupId = "${master-data.node.group-id}",
     batch = "true",
-    autoStartup = "${kafka-topic-flags.master-data.node.enabled:false}")
+    autoStartup = "${kafka-topic-flags.master-data.node.enabled:false}",
+    containerFactory = "nodeDeserializerConsumer")
 public class NodeFeedConsumer extends MasterDataFeedConsumer<NodeFeedDto> {
 
   private final NodeBatchServiceImpl nodeBatchService;
@@ -37,7 +40,12 @@ public class NodeFeedConsumer extends MasterDataFeedConsumer<NodeFeedDto> {
   @KafkaHandler
   public void consumeNodeFeed(
       @Payload List<BatchRequest<NodeFeedDto>> nodeFeed, @Headers KafkaMessageHeaders headers) {
-    consumeMasterDataFeed(nodeFeed);
+    try {
+      consumeMasterDataFeed(nodeFeed);
+    } catch (Exception e) {
+      log.error("Exception occurred while consuming node feed : {}", nodeFeed);
+      throw e;
+    }
   }
 
   @Override
