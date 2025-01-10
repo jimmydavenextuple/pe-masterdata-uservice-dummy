@@ -15,8 +15,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class FeignClientInterceptor implements RequestInterceptor {
 
-  @Value("${api-key}")
-  private String apiKey;
+  @Value("${plt-api-key}")
+  private String pltApiKey;
+
+  @Value("${x-api-key}")
+  private String xApiKey;
 
   @Value("${trusted-sites}")
   private String trustedSites;
@@ -29,8 +32,11 @@ public class FeignClientInterceptor implements RequestInterceptor {
     try {
       String url = requestTemplate.feignTarget().url();
       boolean isTrustedSite = Arrays.stream(trustedSitesSubstrings).anyMatch(url::contains);
-      if (url.contains("localhost") || isTrustedSite) {
-        requestTemplate.header("x-api-key", apiKey);
+      if (url.contains("localhost")) {
+        requestTemplate.header("plt-api-key", pltApiKey);
+      }
+      if (isTrustedSite) {
+        requestTemplate.header("x-api-key", xApiKey);
       }
     } catch (Exception e) {
       log.info("Error while fetching host or api key");
