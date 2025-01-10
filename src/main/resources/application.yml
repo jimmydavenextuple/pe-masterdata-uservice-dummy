@@ -217,4 +217,4 @@ keycloak:
   http-method-as-scope: true
 plt-api-key: \${COMMON-PE-API-KEY}
 x-api-key: \${COMMON-PE-API-KEY}
-trusted-sites: "pe-masterdata-uservice,nextuple.com"
+trusted-sites: "pe-masterdata-uservice,nextuple.com,pe-core-sourcing-uservice"
