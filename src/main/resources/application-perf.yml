@@ -176,6 +176,8 @@ master-data:
   transit-buffer:
     topic-names: INTERNAL.PERF.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-perf
+  item:
+    dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
 next-cache:
   caches:
