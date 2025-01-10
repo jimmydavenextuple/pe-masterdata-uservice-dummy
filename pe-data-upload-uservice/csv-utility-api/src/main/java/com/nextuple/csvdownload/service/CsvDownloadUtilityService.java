@@ -1102,7 +1102,12 @@ public class CsvDownloadUtilityService {
       List<String> header =
           new ArrayList<>(
               Arrays.asList(
-                  ORG_ID, NODE_ID, CARRIER_SERVICE_ID, LAST_PICKUP_TIME, PICKUP_CALENDAR_ID));
+                  ORG_ID,
+                  NODE_ID,
+                  CARRIER_SERVICE_ID,
+                  LAST_PICKUP_TIME,
+                  SERVICE_OPTION,
+                  PICKUP_CALENDAR_ID));
       writeToCSV(header.toArray(new String[0]), writer);
       writeNodeCarrierPickupCalendar(writer, filteredList);
       writer.flush();
@@ -1146,8 +1151,8 @@ public class CsvDownloadUtilityService {
               nodeCarrierServiceCalendarResponse.getOrgId(),
               nodeCarrierServiceCalendarResponse.getNodeId(),
               nodeCarrierServiceCalendarResponse.getCarrierServiceId());
-      List<String> csvData = new ArrayList<>();
       for (NodeCarrierResponse nodeCarrierResponse : nodeCarrierResponses) {
+        List<String> csvData = new ArrayList<>();
         csvData.add(nodeCarrierServiceCalendarResponse.getOrgId());
         csvData.add(nodeCarrierServiceCalendarResponse.getNodeId());
         csvData.add(nodeCarrierServiceCalendarResponse.getCarrierServiceId());
@@ -1155,6 +1160,7 @@ public class CsvDownloadUtilityService {
             Objects.nonNull(nodeCarrierResponse.getLastPickupTime())
                 ? nodeCarrierResponse.getLastPickupTime()
                 : "N/A");
+        csvData.add(nodeCarrierResponse.getServiceOption());
         csvData.add(nodeCarrierServiceCalendarResponse.getCalendarId());
         writeToCSV(csvData.toArray(new String[0]), writer);
       }
