@@ -24,13 +24,13 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 @EnableKafka
 public class NodeCarrierConsumerConfig {
 
-  @Value("${master-data.node-carrier.dlt-topic}")
+  @Value("${master-data.node-carrier.dlt-topic:null}")
   private String nodeCarrierDltTopic;
 
-  @Value("${master-data.processing-lead-time.dlt-topic}")
+  @Value("${master-data.processing-lead-time.dlt-topic:null}")
   private String processingLeadTimeDltTopic;
 
-  @Value("${master-data.node-service-option-buffer.dlt-topic}")
+  @Value("${master-data.node-service-option-buffer.dlt-topic:null}")
   private String nodeServiceOptionBufferDltTopic;
 
   @Bean(name = "nodeCarrierDeserializerConsumer")

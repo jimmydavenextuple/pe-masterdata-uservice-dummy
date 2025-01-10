@@ -16,7 +16,7 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 @EnableKafka
 public class NodeConsumerConfig {
 
-  @Value("${master-data.node.dlt-topic}")
+  @Value("${master-data.node.dlt-topic:null}")
   private String nodeDltTopic;
 
   @Bean(name = "nodeDeserializerConsumer")
