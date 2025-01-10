@@ -68,7 +68,7 @@ jobs-framework:
     topic-name: INTERNAL.HOTFIX.JOBS.RESULT
     group-id: jobs-result-consumer-async-hotfix
   record-consumer:
-    topic-name: INTERNAL.HOTFIX.JOBS.TASK
+    topic-names: INTERNAL.HOTFIX.JOBS.TASK
     group-id: jobs-task-consumer-async-hotfix
 auth-token:
   url: https://promise-engine-domain-development.auth.us-east-1.amazoncognito.com

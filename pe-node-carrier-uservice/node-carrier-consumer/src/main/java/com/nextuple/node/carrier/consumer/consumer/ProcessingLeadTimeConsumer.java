@@ -14,6 +14,7 @@ import com.nextuple.node.carrier.consumer.dto.ProcessingLeadTimeFeedDto;
 import com.nextuple.node.carrier.consumer.impl.ProcessingLeadTimeBatchServiceImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.converter.KafkaMessageHeaders;
@@ -21,13 +22,15 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-    topics = "${master-data.processing-lead-time.topic-name}",
+    topics = "#{'${master-data.processing-lead-time.topic-names}'.split(',')}",
     groupId = "${master-data.processing-lead-time.group-id}",
     batch = "true",
-    autoStartup = "${kafka-topic-flags.master-data.processing-lead-time.enabled:false}")
+    autoStartup = "${kafka-topic-flags.master-data.processing-lead-time.enabled:false}",
+    containerFactory = "processingLeadTimeDeserializerConsumer")
 public class ProcessingLeadTimeConsumer extends MasterDataFeedConsumer<ProcessingLeadTimeFeedDto> {
 
   final ProcessingLeadTimeBatchServiceImpl processingLeadTimeBatchService;
@@ -38,7 +41,14 @@ public class ProcessingLeadTimeConsumer extends MasterDataFeedConsumer<Processin
   public void consumeMasterDataFeed(
       @Payload List<BatchRequest<ProcessingLeadTimeFeedDto>> processingLeadTimeFeed,
       @Headers KafkaMessageHeaders headers) {
-    consumeMasterDataFeed(processingLeadTimeFeed);
+    try {
+      consumeMasterDataFeed(processingLeadTimeFeed);
+    } catch (Exception e) {
+      log.error(
+          "Exception occurred while consuming processing lead time feed : {}",
+          processingLeadTimeFeed);
+      throw e;
+    }
   }
 
   @Override

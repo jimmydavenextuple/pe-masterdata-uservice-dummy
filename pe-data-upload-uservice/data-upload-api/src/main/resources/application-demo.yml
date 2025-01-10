@@ -70,5 +70,5 @@ jobs-framework:
     topic-name: INTERNAL.DEMO.PE.JOB_RESULT
     group-id: jobs-result-consumer-async-demo
   record-consumer:
-    topic-name: INTERNAL.DEMO.PE.JOB_TASK
+    topic-names: INTERNAL.DEMO.PE.JOB_TASK
     group-id: jobs-task-consumer-async-demo

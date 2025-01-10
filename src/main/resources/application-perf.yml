@@ -47,7 +47,7 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         item_master:
-          name: INTERNAL.PERF.PROMISE_ITEMS
+          names: INTERNAL.PERF.PROMISE_ITEMS
           group-id: item-master-perf-\${random.value}
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -93,7 +93,7 @@ pe-public-webhook:
   item-feed:
     topic: INTERNAL.PERF.PROMISE_ITEMS
   pe-response:
-    topic: INTERNAL.PERF.CART_EDD
+    topics: INTERNAL.PERF.CART_EDD
     group-id: pe-response-consumer-perf-async
   webhook:
     - tenantId: NEXTUPLE_GR
@@ -139,43 +139,45 @@ jobs-framework:
     topic-name: INTERNAL.PERF.PE.JOB_RESULT
     group-id: jobs-result-consumer-async
   record-consumer:
-    topic-name: INTERNAL.PERF.PE.JOB_TASK
+    topic-names: INTERNAL.PERF.PE.JOB_TASK
     group-id: jobs-task-consumer-async
 
 master-data:
   node:
-    topic-name: INTERNAL.PERF.PE.NODE_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.NODE_INTEGRATION
     group-id: node-master-perf
   node-carrier:
-    topic-name: INTERNAL.PERF.PE.NODE_CARRIER_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-perf
   carrier:
-    topic-name: INTERNAL.PERF.PE.CARRIER_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.CARRIER_INTEGRATION
     group-id: carrier-master-perf
   processing-lead-time:
-    topic-name: INTERNAL.PERF.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.PROCESSING_LEAD_TIME_INTEGRATION
     group-id: processing-lead-time-master-perf
   calendar:
-    topic-name: INTERNAL.PERF.PE.CALENDAR_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.CALENDAR_INTEGRATION
     group-id: calendar-master-perf
   node-calendar:
-    topic-name: INTERNAL.PERF.PE.NODE_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.NODE_CALENDAR_INTEGRATION
     group-id: node-calendar-master-perf
   carrier-service-calendar:
-    topic-name: INTERNAL.PERF.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
     group-id: carrier-service-calendar-master-perf
   pickup-calendar:
-    topic-name: INTERNAL.PERF.PE.PICKUP_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.PICKUP_CALENDAR_INTEGRATION
     group-id: pickup-calendar-master-perf
   node-service-option-buffer:
-    topic-name: INTERNAL.PERF.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
     group-id: node-service-option-buffer-master-perf
   transit:
-    topic-name: INTERNAL.PERF.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.TRANSIT_INTEGRATION
     group-id: transit-master-perf
   transit-buffer:
-    topic-name: INTERNAL.PERF.PE.TRANSIT_BUFFER_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-perf
+  item:
+    dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
 next-cache:
   caches:

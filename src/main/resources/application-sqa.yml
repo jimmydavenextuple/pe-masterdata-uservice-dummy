@@ -93,7 +93,7 @@ pe-public-webhook:
   item-feed:
     topic: INTERNAL.SQA.PROMISE_ITEMS
   pe-response:
-    topic: INTERNAL.SQA.CART_EDD
+    topics: INTERNAL.SQA.CART_EDD
     group-id: pe-response-consumer-async-sqa
   webhook:
     - tenantId: NEXTUPLE_GR
@@ -139,5 +139,5 @@ jobs-framework:
     topic-name: INTERNAL.SQA.PE.JOB_RESULT
     group-id: jobs-result-consumer-async-sqa
   record-consumer:
-    topic-name: INTERNAL.SQA.PE.JOB_TASK
+    topic-names: INTERNAL.SQA.PE.JOB_TASK
     group-id: jobs-task-consumer-async-sqa

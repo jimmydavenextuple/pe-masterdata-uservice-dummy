@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @KafkaListener(
-    topics = "${pe-public-webhook.pe-response.topic}",
+    topics = "#{'${pe-public-webhook.pe-response.topics}'.split(',')}",
     groupId = "${pe-public-webhook.pe-response.group-id}",
     batch = "false",
     containerFactory = "StringDeserializerConsumer",

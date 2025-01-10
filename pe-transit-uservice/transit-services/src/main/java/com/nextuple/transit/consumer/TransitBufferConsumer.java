@@ -20,7 +20,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @KafkaListener(
-    topics = "${jobs-framework.job-completion-consumer.topic-name}",
+    topics = "#{'${jobs-framework.job-completion-consumer.topic-name}'.split(',')}",
     groupId = "${jobs-framework.job-completion-consumer.group-id}")
 @Component
 @RequiredArgsConstructor

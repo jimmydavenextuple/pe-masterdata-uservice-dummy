@@ -14,6 +14,7 @@ import com.nextuple.master.data.integration.consumer.MasterDataFeedConsumer;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.converter.KafkaMessageHeaders;
@@ -21,13 +22,15 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-    topics = "${master-data.carrier.topic-name}",
+    topics = "#{'${master-data.carrier.topic-names}'.split(',')}",
     groupId = "${master-data.carrier.group-id}",
     batch = "true",
-    autoStartup = "${kafka-topic-flags.master-data.carrier.enabled:false}")
+    autoStartup = "${kafka-topic-flags.master-data.carrier.enabled:false}",
+    containerFactory = "carrierDeserializerConsumer")
 public class CarrierFeedConsumer extends MasterDataFeedConsumer<CarrierFeedDto> {
   private final CarrierBatchServiceImpl carrierBatchService;
   private final TypeReference<List<BatchRequest<CarrierFeedDto>>> carrierTypeReference =
@@ -37,7 +40,12 @@ public class CarrierFeedConsumer extends MasterDataFeedConsumer<CarrierFeedDto> 
   public void consumeCarrierFeed(
       @Payload List<BatchRequest<CarrierFeedDto>> carrierFeed,
       @Headers KafkaMessageHeaders headers) {
-    consumeMasterDataFeed(carrierFeed);
+    try {
+      consumeMasterDataFeed(carrierFeed);
+    } catch (Exception e) {
+      log.error("Exception occurred while consuming carrier feed : {}", carrierFeed);
+      throw e;
+    }
   }
 
   @Override

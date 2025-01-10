@@ -43,14 +43,14 @@ logging:
 
 master-data:
   calendar:
-    topic-name: INTERNAL.QA.PE.CALENDAR_INTEGRATION
+    topic-names: INTERNAL.QA.PE.CALENDAR_INTEGRATION
     group-id: calendar-master-qa
   node-calendar:
-    topic-name: INTERNAL.QA.PE.NODE_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.QA.PE.NODE_CALENDAR_INTEGRATION
     group-id: node-calendar-master-qa
   carrier-service-calendar:
-    topic-name: INTERNAL.QA.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.QA.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
     group-id: carrier-service-calendar-master-qa
   pickup-calendar:
-    topic-name: INTERNAL.QA.PE.PICKUP_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.QA.PE.PICKUP_CALENDAR_INTEGRATION
     group-id: pickup-calendar-master-qa
