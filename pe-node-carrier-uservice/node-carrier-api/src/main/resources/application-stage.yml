@@ -32,11 +32,11 @@ logging:
 
 master-data:
   node-carrier:
-    topic-name: INTERNAL.STAGE.PE.NODE_CARRIER_INTEGRATION
+    topic-names: INTERNAL.STAGE.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-stage
   processing-lead-time:
-    topic-name: INTERNAL.STAGE.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    topic-names: INTERNAL.STAGE.PE.PROCESSING_LEAD_TIME_INTEGRATION
     group-id: processing-lead-time-master-stage
   node-service-option-buffer:
-    topic-name: INTERNAL.STAGE.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    topic-names: INTERNAL.STAGE.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
     group-id: node-service-option-buffer-master-stage

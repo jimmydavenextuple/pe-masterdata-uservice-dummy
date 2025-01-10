@@ -93,5 +93,5 @@ jobs-framework:
     topic-name: INTERNAL.SIMEXEC.PE.JOB_RESULT
     group-id: jobs-result-consumer-async
   record-consumer:
-    topic-name: INTERNAL.SIMEXEC.PE.JOB_TASK
+    topic-names: INTERNAL.SIMEXEC.PE.JOB_TASK
     group-id: jobs-task-consumer-async

@@ -31,5 +31,5 @@ logging:
     com.nextuple: INFO
 master-data:
   node:
-    topic-name: INTERNAL.QA.PE.NODE_INTEGRATION
+    topic-names: INTERNAL.QA.PE.NODE_INTEGRATION
     group-id: node-master-qa

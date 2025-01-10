@@ -94,7 +94,7 @@ pe-public-webhook:
   item-feed:
     topic: INTERNAL.SDEV.PROMISE_ITEMS
   pe-response:
-    topic: INTERNAL.SDEV.CART_EDD
+    topics: INTERNAL.SDEV.CART_EDD
     group-id: pe-response-consumer-async-sdev
   webhook:
     - tenantId: NEXTUPLE_GR
@@ -140,5 +140,5 @@ jobs-framework:
     topic-name: INTERNAL.SDEV.PE.JOB_RESULT
     group-id: jobs-result-consumer-async-sdev
   record-consumer:
-    topic-name: INTERNAL.SDEV.PE.JOB_TASK
+    topic-names: INTERNAL.SDEV.PE.JOB_TASK
     group-id: jobs-task-consumer-async-sdev

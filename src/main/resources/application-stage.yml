@@ -94,7 +94,7 @@ jobs-framework:
     topic-name: INTERNAL.STAGE.JOBS.RESULT
     group-id: jobs-result-consumer-async-stage
   record-consumer:
-    topic-name: INTERNAL.STAGE.JOBS.TASK
+    topic-names: INTERNAL.STAGE.JOBS.TASK
     group-id: jobs-task-consumer-async-stage
 auth-token:
   url: https://promise-engine-domain-stage.auth.us-east-1.amazoncognito.com

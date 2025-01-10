@@ -78,7 +78,7 @@ pe-public-webhook:
   item-feed:
     topic: INTERNAL.INTEGRATION.PROMISE_ITEMS
   pe-response:
-    topic: INTERNAL.INTEGRATION.CART_EDD
+    topics: INTERNAL.INTEGRATION.CART_EDD
     group-id: pe-response-consumer-integration-async
   webhook:
     - tenantId: NEXTUPLE_GR
@@ -125,42 +125,42 @@ jobs-framework:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_RESULT
     group-id: jobs-result-consumer-async-integration
   record-consumer:
-    topic-name: INTERNAL.INTEGRATION.PE.JOB_TASK
+    topic-names: INTERNAL.INTEGRATION.PE.JOB_TASK
     group-id: jobs-task-consumer-async-integration
 
 master-data:
   node:
-    topic-name: INTERNAL.INTEGRATION.PE.NODE_INTEGRATION
+    topic-names: INTERNAL.INTEGRATION.PE.NODE_INTEGRATION
     group-id: node-master-integration
   node-carrier:
-    topic-name: INTERNAL.INTEGRATION.PE.NODE_CARRIER_INTEGRATION
+    topic-names: INTERNAL.INTEGRATION.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-integration
   carrier:
-    topic-name: INTERNAL.INTEGRATION.PE.CARRIER_INTEGRATION
+    topic-names: INTERNAL.INTEGRATION.PE.CARRIER_INTEGRATION
     group-id: carrier-master-integration
   processing-lead-time:
-    topic-name: INTERNAL.INTEGRATION.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    topic-names: INTERNAL.INTEGRATION.PE.PROCESSING_LEAD_TIME_INTEGRATION
     group-id: processing-lead-time-master-integration
   calendar:
-    topic-name: INTERNAL.INTEGRATION.PE.CALENDAR_INTEGRATION
+    topic-names: INTERNAL.INTEGRATION.PE.CALENDAR_INTEGRATION
     group-id: calendar-master-integration
   node-calendar:
-    topic-name: INTERNAL.INTEGRATION.PE.NODE_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.INTEGRATION.PE.NODE_CALENDAR_INTEGRATION
     group-id: node-calendar-master-integration
   carrier-service-calendar:
-    topic-name: INTERNAL.INTEGRATION.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.INTEGRATION.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
     group-id: carrier-service-calendar-master-integration
   pickup-calendar:
-    topic-name: INTERNAL.INTEGRATION.PE.PICKUP_CALENDAR_INTEGRATION
+    topic-names: INTERNAL.INTEGRATION.PE.PICKUP_CALENDAR_INTEGRATION
     group-id: pickup-calendar-master-integration
   node-service-option-buffer:
-    topic-name: INTERNAL.INTEGRATION.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    topic-names: INTERNAL.INTEGRATION.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
     group-id: node-service-option-buffer-master-integration
   transit:
-    topic-name: INTERNAL.INTEGRATION.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.INTEGRATION.PE.TRANSIT_INTEGRATION
     group-id: transit-master-integration
   transit-buffer:
-    topic-name: INTERNAL.INTEGRATION.PE.TRANSIT_BUFFER_INTEGRATION
+    topic-names: INTERNAL.INTEGRATION.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-integration
 
 next-cache:

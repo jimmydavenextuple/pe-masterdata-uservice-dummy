@@ -24,7 +24,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @KafkaListener(
-    topics = "${jobs-framework.record-consumer.topic-name}",
+    topics = "#{'${jobs-framework.record-consumer.topic-names}'.split(',')}",
     groupId = "${jobs-framework.record-consumer.group-id}",
     autoStartup = "${kafka-topic-flags.jobs-framework.record-consumer.enabled:true}")
 @Component

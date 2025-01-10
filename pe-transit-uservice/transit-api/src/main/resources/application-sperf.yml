@@ -50,8 +50,8 @@ jobs-framework:
     group-id: jobs-completion-consumer-async-sperf
 master-data:
   transit:
-    topic-name: INTERNAL.SPERF.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.SPERF.PE.TRANSIT_INTEGRATION
     group-id: transit-master-sperf
   transit-buffer:
-    topic-name: INTERNAL.SPERF.PE.TRANSIT_BUFFER_INTEGRATION
+    topic-names: INTERNAL.SPERF.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-sperf

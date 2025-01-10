@@ -50,8 +50,8 @@ jobs-framework:
     group-id: jobs-completion-consumer-async-demo
 master-data:
   transit:
-    topic-name: INTERNAL.DEMO.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.DEMO.PE.TRANSIT_INTEGRATION
     group-id: transit-master-demo
   transit-buffer:
-    topic-name: INTERNAL.DEMO.PE.TRANSIT_BUFFER_INTEGRATION
+    topic-names: INTERNAL.DEMO.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-demo
