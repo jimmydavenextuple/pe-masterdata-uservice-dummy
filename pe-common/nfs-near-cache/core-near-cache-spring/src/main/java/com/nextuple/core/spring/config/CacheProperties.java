@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "nearcache")
 public class CacheProperties {
 
-  public static final String CACHE_PROPERTY_VALUE = "50,24,false,sync";
+  public static final String CACHE_PROPERTY_VALUE = "100,24,false,sync";
 
   private Map<String, String> cachemap;
 
