@@ -95,7 +95,7 @@ server:
       java-opts: "-Xms1024m -Xmx1024m"
       keyvault: yes
       scale:
-        replicas: 7
+        replicas: 1
       resources:
         min:
           memory: 4Gi
