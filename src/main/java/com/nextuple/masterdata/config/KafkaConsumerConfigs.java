@@ -66,7 +66,7 @@ public class KafkaConsumerConfigs {
   @Value(value = "${spring.kafka.consumer-item.properties.interceptor.classes}")
   private String interceptorClasses;
 
-  @Value("${master-data.item.dlt-topic:null}")
+  @Value("${master-data.item.dlt-topic:#{null}}")
   private String itemDltTopic;
 
   private final KafkaProperties kafkaProperties;
