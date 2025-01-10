@@ -28,7 +28,8 @@ class FeignClientInterceptorTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    ReflectionTestUtils.setField(feignClientInterceptor, "apiKey", "test123");
+    ReflectionTestUtils.setField(feignClientInterceptor, "pltApiKey", "plt-api-key");
+    ReflectionTestUtils.setField(feignClientInterceptor, "xApiKey", "x-api-key");
     ReflectionTestUtils.setField(feignClientInterceptor, "trustedSites", "string1,string2,string3");
   }
 
