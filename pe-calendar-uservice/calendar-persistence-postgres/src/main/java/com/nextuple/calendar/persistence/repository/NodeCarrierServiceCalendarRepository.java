@@ -52,6 +52,12 @@ public interface NodeCarrierServiceCalendarRepository
 
   List<NodeCarrierServiceCalendarEntity> findAllNodeCarrierServiceCalendarsByOrgId(String orgId);
 
+  List<NodeCarrierServiceCalendarEntity> findAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(
+      String orgId, String nodeId);
+
+  List<NodeCarrierServiceCalendarEntity> deleteAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(
+      String orgId, String nodeId);
+
   @Query(
       value =
           """

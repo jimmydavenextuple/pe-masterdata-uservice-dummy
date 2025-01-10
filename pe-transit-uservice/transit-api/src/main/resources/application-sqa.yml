@@ -50,8 +50,8 @@ jobs-framework:
     group-id: jobs-completion-consumer-async-sqa
 master-data:
   transit:
-    topic-name: INTERNAL.SQA.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.SQA.PE.TRANSIT_INTEGRATION
     group-id: transit-master-sqa
   transit-buffer:
-    topic-name: INTERNAL.SQA.PE.TRANSIT_BUFFER_INTEGRATION
+    topic-names: INTERNAL.SQA.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-sqa

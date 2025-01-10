@@ -14,8 +14,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.common.base.PagePayload;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
+import com.nextuple.dataupload.common.config.TenantDatabaseConfig;
 import com.nextuple.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.nextuple.dataupload.util.TestUtil;
 import com.nextuple.node.carrier.domain.feign.impl.NodeCarrierV2Feign;
@@ -42,6 +44,7 @@ class ProcessingTimeBufferServiceTest {
   @InjectMocks private TestUtil testUtil;
 
   @Mock private PageProperties pageProperties;
+  @Mock private TenantDatabaseConfig tenantDatabaseConfig;
 
   @BeforeEach
   void setup() {
@@ -50,11 +53,13 @@ class ProcessingTimeBufferServiceTest {
 
   @Test
   @DisplayName("Get processing time buffers: Happy Path")
-  void getProcessingTimeBuffersTest() {
+  void getProcessingTimeBuffersTest() throws CommonServiceException {
     when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getNodeListPaginationBaseResponse());
     when(nodeCarrierFeign.getBuffersByOrgIdAndNodeIdAndServiceOption(any(), any(), any()))
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
+    when(tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified())
+        .thenReturn(TestUtil.extendedTenantServiceOptionExpected.toArray(new String[0]));
 
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
@@ -78,11 +83,13 @@ class ProcessingTimeBufferServiceTest {
 
   @Test
   @DisplayName("Get processing time buffers: Happy Path - Inactive Status")
-  void getProcessingTimeBuffersStatusInactiveTest() {
+  void getProcessingTimeBuffersStatusInactiveTest() throws CommonServiceException {
     when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getNodeListPaginationBaseResponse());
     when(nodeCarrierFeign.getBuffersByOrgIdAndNodeIdAndServiceOption(any(), any(), any()))
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
+    when(tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified())
+        .thenReturn(TestUtil.extendedTenantServiceOptionExpected.toArray(new String[0]));
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
 
@@ -106,11 +113,13 @@ class ProcessingTimeBufferServiceTest {
 
   @Test
   @DisplayName("Get processing time buffers: Buffers with null values")
-  void getProcessingTimeBuffersNullValuesTest() {
+  void getProcessingTimeBuffersNullValuesTest() throws CommonServiceException {
     when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getNodeListPaginationBaseResponse());
     when(nodeCarrierFeign.getBuffersByOrgIdAndNodeIdAndServiceOption(any(), any(), any()))
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListEmptyResponse());
+    when(tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified())
+        .thenReturn(TestUtil.extendedTenantServiceOptionExpected.toArray(new String[0]));
 
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
@@ -132,11 +141,13 @@ class ProcessingTimeBufferServiceTest {
 
   @Test
   @DisplayName("Get processing time buffers: Buffers with partial null values")
-  void getProcessingTimeBuffersPartialNullValuesTest() {
+  void getProcessingTimeBuffersPartialNullValuesTest() throws CommonServiceException {
     when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getNodeListPaginationBaseResponse());
     when(nodeCarrierFeign.getBuffersByOrgIdAndNodeIdAndServiceOption(any(), any(), any()))
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponseWithPartialNullValues());
+    when(tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified())
+        .thenReturn(TestUtil.extendedTenantServiceOptionExpected.toArray(new String[0]));
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));
 
@@ -157,11 +168,13 @@ class ProcessingTimeBufferServiceTest {
 
   @Test
   @DisplayName("Get processing time buffers given the node Ids")
-  void getProcessingTimeBuffersNodeIdsTest() {
+  void getProcessingTimeBuffersNodeIdsTest() throws CommonServiceException {
     when(nodeFeign.getNodeListV2(any(), any(), any(), any(), any(), any(), any()))
         .thenReturn(testUtil.getNodeListPaginationBaseResponse());
     when(nodeCarrierFeign.getBuffersByOrgIdAndNodeIdAndServiceOption(any(), any(), any()))
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
+    when(tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified())
+        .thenReturn(TestUtil.extendedTenantServiceOptionExpected.toArray(new String[0]));
 
     PageParams pageParams =
         new PageParams(Optional.of(1), Optional.of(1), Optional.of("nodeId"), Optional.of("ASC"));

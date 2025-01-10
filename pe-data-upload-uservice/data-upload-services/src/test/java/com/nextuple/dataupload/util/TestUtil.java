@@ -1674,4 +1674,18 @@ public class TestUtil {
     pagePayload.setPagination(pagination);
     return BaseResponse.builder().payload(pagePayload).build();
   }
+
+  public static final List<String> extendedTenantServiceOptionExpected =
+      List.of(
+          "SDND",
+          "sdndEligible",
+          "express",
+          "canada-post-regular-parcel-peoples",
+          "FREE-EXPRESS-DELIVERY-LOYALTY",
+          "ups-expedited-peoples",
+          "ups-express-saver-peoples",
+          "ups-ground-pagoda",
+          "ups-next-day-air-jared",
+          "upsNextDayAirJared",
+          "STANDARD");
 }

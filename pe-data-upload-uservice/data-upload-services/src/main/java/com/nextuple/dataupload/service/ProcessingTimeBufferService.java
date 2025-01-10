@@ -12,8 +12,10 @@ import static com.nextuple.common.constants.CommonConstants.NODE_DEFAULT_SORT_BY
 import static com.nextuple.dataupload.util.CommonDashboardUtil.fetchEligibleNodeServiceOption;
 
 import com.nextuple.common.base.PagePayload;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
+import com.nextuple.dataupload.common.config.TenantDatabaseConfig;
 import com.nextuple.dataupload.common.outbound.ProcessingTimeBufferResponse;
 import com.nextuple.dataupload.common.pojo.ProcessingTimeBuffer;
 import com.nextuple.node.carrier.domain.feign.INodeCarrierFeign;
@@ -40,9 +42,10 @@ public class ProcessingTimeBufferService {
   private final NodeFeign nodeFeign;
   private final PageProperties pageProperties;
   private final INodeCarrierFeign nodeCarrierFeign;
+  private final TenantDatabaseConfig tenantDatabaseConfig;
 
   public PagePayload<ProcessingTimeBufferResponse> getProcessingTimeBuffers(
-      String orgId, String nodeIds, PageParams pageParams) {
+      String orgId, String nodeIds, PageParams pageParams) throws CommonServiceException {
     Integer pageNo = pageParams.getPageNo().orElse(pageProperties.getPageNo());
     Integer pageSize = pageParams.getPageSize().orElse(pageProperties.getPageSize());
     String sortBy = pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY);
@@ -59,10 +62,12 @@ public class ProcessingTimeBufferService {
                 .getPayload();
 
     List<NodeDto> nodeDtoList = nodeDtoPagePayload.getData();
+    String[] serviceOptions = tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified();
 
     nodeDtoList.forEach(
         nodeDto -> {
-          List<String> validServiceOptions = Arrays.asList(fetchEligibleNodeServiceOption(nodeDto));
+          List<String> validServiceOptions =
+              Arrays.asList(fetchEligibleNodeServiceOption(nodeDto, serviceOptions));
 
           responseList.add(setProcessingTimeBuffers(nodeDto, validServiceOptions));
         });

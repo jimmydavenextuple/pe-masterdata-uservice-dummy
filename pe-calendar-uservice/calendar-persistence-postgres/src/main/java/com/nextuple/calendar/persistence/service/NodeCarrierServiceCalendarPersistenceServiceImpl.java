@@ -15,6 +15,8 @@ import com.nextuple.calendar.persistence.exception.CalendarDomainException;
 import com.nextuple.calendar.persistence.mapper.NodeCarrierServiceCalendarEntityMapper;
 import com.nextuple.calendar.persistence.repository.NodeCarrierServiceCalendarRepository;
 import com.nextuple.postgres.service.CommonPersistenceService;
+import jakarta.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -103,6 +105,34 @@ public class NodeCarrierServiceCalendarPersistenceServiceImpl
     } catch (Exception e) {
       throw new CalendarDomainException(
           "Unable to fetch node carrier service calendars", e, null, orgId, nodeId, null);
+    }
+  }
+
+  @Override
+  public List<NodeCarrierServiceCalendarDomainDto> getAllNodeCarrierServiceCalendarByOrgIdAndNodeId(
+      String orgId, String nodeId) {
+    try {
+      return getMapper()
+          .toDomain(
+              getRepository().findAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(orgId, nodeId));
+    } catch (Exception e) {
+      log.debug("Unable to fetch node carrier service calendars");
+      return Collections.emptyList();
+    }
+  }
+
+  @Override
+  @Transactional
+  public List<NodeCarrierServiceCalendarDomainDto>
+      deleteAllNodeCarrierServiceCalendarByOrgIdAndNodeId(String orgId, String nodeId)
+          throws CalendarDomainException {
+    try {
+      return getMapper()
+          .toDomain(
+              getRepository().deleteAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(orgId, nodeId));
+    } catch (Exception e) {
+      throw new CalendarDomainException(
+          "Unable to delete node carrier service calendars", e, null, orgId, nodeId, null);
     }
   }
 

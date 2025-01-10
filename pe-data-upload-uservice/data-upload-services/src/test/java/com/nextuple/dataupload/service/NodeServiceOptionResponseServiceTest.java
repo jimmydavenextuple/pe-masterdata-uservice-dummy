@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.dataupload.common.config.TenantDatabaseConfig;
 import com.nextuple.dataupload.domain.dto.NodeServiceOptionDto;
 import com.nextuple.dataupload.util.TestUtil;
 import com.nextuple.node.carrier.domain.feign.impl.NodeCarrierV2Feign;
@@ -44,6 +45,7 @@ class NodeServiceOptionResponseServiceTest {
   @Mock private NodeFeign nodeFeign;
 
   @Mock private NodeCarrierV2Feign nodeCarrierFeign;
+  @Mock private TenantDatabaseConfig tenantDatabaseConfig;
 
   @BeforeEach
   void setup() {
@@ -56,8 +58,12 @@ class NodeServiceOptionResponseServiceTest {
         .thenReturn(testUtil.getNodeListPaginationBaseResponse());
     when(nodeCarrierFeign.getNodeCarrierListWithLastPickUpTimeDetails(any(), any()))
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierResponseList());
-    when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
-        .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
+    BaseResponse<List<NodeCarrierResponse>> nodeCarrierResponse =
+        testUtil.getBaseResponseOfNodeCarrierListResponse();
+    nodeCarrierResponse.getPayload().get(1).setServiceOption("SDND");
+    when(nodeCarrierFeign.getNodeCarrierList(any(), any())).thenReturn(nodeCarrierResponse);
+    when(tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified())
+        .thenReturn(TestUtil.extendedTenantServiceOptionExpected.toArray(new String[0]));
 
     PagePayload<NodeServiceOptionDto> response =
         nodeServiceOptionService.getNodeServiceOption(TestUtil.ORG_ID, 1, 1, "nodeId", "ASC");
@@ -92,6 +98,8 @@ class NodeServiceOptionResponseServiceTest {
         .thenReturn(testUtil.getNodeListPaginationBaseResponse());
 
     when(nodeCarrierFeign.getNodeCarrierList(any(), any())).thenReturn(nodeCarrierListResponse);
+    when(tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified())
+        .thenReturn(TestUtil.extendedTenantServiceOptionExpected.toArray(new String[0]));
 
     PagePayload<NodeServiceOptionDto> response =
         nodeServiceOptionService.getNodeServiceOption(TestUtil.ORG_ID, 1, 1, "nodeId", "ASC");
@@ -128,6 +136,8 @@ class NodeServiceOptionResponseServiceTest {
     when(nodeCarrierFeign.getNodeCarrierListWithLastPickUpTimeDetails(any(), any()))
         .thenReturn(nodeCarrierListResponse1);
     when(nodeCarrierFeign.getNodeCarrierList(any(), any())).thenReturn(nodeCarrierListResponse2);
+    when(tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified())
+        .thenReturn(TestUtil.extendedTenantServiceOptionExpected.toArray(new String[0]));
 
     PagePayload<NodeServiceOptionDto> response =
         nodeServiceOptionService.getNodeServiceOption(TestUtil.ORG_ID, 1, 1, "nodeId", "ASC");
@@ -141,7 +151,128 @@ class NodeServiceOptionResponseServiceTest {
     assertEquals(2, response.getData().get((0)).getServiceOptions().size());
     assertEquals(2, response.getData().get(0).getProcessingTime().size());
     assertEquals(0.0, response.getData().get(0).getProcessingTime().get("SDND"));
-    assertEquals(0.0, response.getData().get(0).getProcessingTime().get("EXPRESS"));
+    assertEquals(0.0, response.getData().get(0).getProcessingTime().get("express"));
+    verify(nodeFeign, times(1)).getNodeList(any(), any(), any(), any(), any());
+    verify(nodeCarrierFeign, times(2)).getNodeCarrierList(any(), any());
+  }
+
+  @Test
+  @DisplayName(
+      "When no service options are provided from tenant config, but node has service options assigned")
+  void getNodeServiceOptionsNoServiceOptionsInTenantConfig() throws CommonServiceException {
+    when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeListPaginationBaseResponse());
+    BaseResponse<List<NodeCarrierResponse>> nodeCarrierListResponse2 =
+        testUtil.getBaseResponseOfNodeCarrierListResponse();
+    nodeCarrierListResponse2.getPayload().get(0).setServiceOption("express");
+    nodeCarrierListResponse2.getPayload().get(1).setServiceOption("upsNextDayAirJared");
+    BaseResponse<PagePayload<NodeDto>> nodeListResponse =
+        testUtil.getNodeListPaginationBaseResponse();
+    nodeListResponse
+        .getPayload()
+        .getData()
+        .getFirst()
+        .setServiceOptionEligibilities(Map.of("express", true, "upsNextDayAirJared", true));
+    when(nodeFeign.getNodeList(any(), any(), any(), any(), any())).thenReturn(nodeListResponse);
+    when(nodeCarrierFeign.getNodeCarrierListWithLastPickUpTimeDetails(any(), any()))
+        .thenReturn(testUtil.getBaseResponseOfNodeCarrierResponseList());
+    when(nodeCarrierFeign.getNodeCarrierList(any(), any())).thenReturn(nodeCarrierListResponse2);
+    when(tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified())
+        .thenReturn(List.of().toArray(new String[0]));
+    PagePayload<NodeServiceOptionDto> response =
+        nodeServiceOptionService.getNodeServiceOption(TestUtil.ORG_ID, 1, 1, "nodeId", "ASC");
+    assertEquals(2, response.getPagination().getTotalPages());
+    assertEquals(1, response.getPagination().getCurrentPage());
+    assertEquals(2, response.getPagination().getTotalRecords());
+    assertNotNull(response.getPagination().getNext());
+    assertNull(response.getPagination().getPrevious());
+    assertFalse(response.getData().get((0)).getIsActive());
+    assertEquals(0, response.getData().get((0)).getServiceOptions().size());
+    assertEquals(0, response.getData().get(0).getProcessingTime().size());
+    verify(nodeFeign, times(1)).getNodeList(any(), any(), any(), any(), any());
+    verify(nodeCarrierFeign, times(2)).getNodeCarrierList(any(), any());
+  }
+
+  @Test
+  @DisplayName("When the service option provided in node are in camel case or in lower case")
+  void getNodeServiceOptionInCamelCaseOrLowerCaseTestWithNodeCarrierResponse()
+      throws CommonServiceException {
+    when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeListPaginationBaseResponse());
+    BaseResponse<List<NodeCarrierResponse>> nodeCarrierListResponse1 =
+        testUtil.getBaseResponseOfNodeCarrierResponseList();
+    nodeCarrierListResponse1.setPayload(Collections.emptyList());
+    BaseResponse<List<NodeCarrierResponse>> nodeCarrierListResponse2 =
+        testUtil.getBaseResponseOfNodeCarrierListResponse();
+    nodeCarrierListResponse2.getPayload().get(0).setServiceOption("express");
+    nodeCarrierListResponse2.getPayload().get(1).setServiceOption("upsNextDayAirJared");
+    BaseResponse<PagePayload<NodeDto>> nodeListResponse =
+        testUtil.getNodeListPaginationBaseResponse();
+    nodeListResponse
+        .getPayload()
+        .getData()
+        .getFirst()
+        .setServiceOptionEligibilities(Map.of("express", true, "upsNextDayAirJared", true));
+    when(nodeFeign.getNodeList(any(), any(), any(), any(), any())).thenReturn(nodeListResponse);
+    when(nodeCarrierFeign.getNodeCarrierListWithLastPickUpTimeDetails(any(), any()))
+        .thenReturn(nodeCarrierListResponse1);
+    when(nodeCarrierFeign.getNodeCarrierList(any(), any())).thenReturn(nodeCarrierListResponse2);
+    when(tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified())
+        .thenReturn(TestUtil.extendedTenantServiceOptionExpected.toArray(new String[0]));
+    PagePayload<NodeServiceOptionDto> response =
+        nodeServiceOptionService.getNodeServiceOption(TestUtil.ORG_ID, 1, 1, "nodeId", "ASC");
+    assertEquals(2, response.getPagination().getTotalPages());
+    assertEquals(1, response.getPagination().getCurrentPage());
+    assertEquals(2, response.getPagination().getTotalRecords());
+    assertNotNull(response.getPagination().getNext());
+    assertNull(response.getPagination().getPrevious());
+    assertTrue(response.getData().get((0)).getIsActive());
+    assertEquals(2, response.getData().get((0)).getServiceOptions().size());
+    assertEquals(2, response.getData().get(0).getProcessingTime().size());
+    assertEquals(10.0, response.getData().get(0).getProcessingTime().get("upsNextDayAirJared"));
+    assertEquals(10.0, response.getData().get(0).getProcessingTime().get("express"));
+    verify(nodeFeign, times(1)).getNodeList(any(), any(), any(), any(), any());
+    verify(nodeCarrierFeign, times(2)).getNodeCarrierList(any(), any());
+  }
+
+  @Test
+  @DisplayName("When the service option provided in node are in random case or upper case")
+  void getNodeServiceOptionInRandomCaseOrUpperCaseTestWithNodeCarrierResponse()
+      throws CommonServiceException {
+    when(nodeFeign.getNodeList(any(), any(), any(), any(), any()))
+        .thenReturn(testUtil.getNodeListPaginationBaseResponse());
+    BaseResponse<List<NodeCarrierResponse>> nodeCarrierListResponse1 =
+        testUtil.getBaseResponseOfNodeCarrierResponseList();
+    nodeCarrierListResponse1.setPayload(Collections.emptyList());
+    BaseResponse<List<NodeCarrierResponse>> nodeCarrierListResponse2 =
+        testUtil.getBaseResponseOfNodeCarrierListResponse();
+    nodeCarrierListResponse2.getPayload().get(0).setServiceOption("express");
+    nodeCarrierListResponse2.getPayload().get(1).setServiceOption("upsNextDayAirJared");
+    BaseResponse<PagePayload<NodeDto>> nodeListResponse =
+        testUtil.getNodeListPaginationBaseResponse();
+    nodeListResponse
+        .getPayload()
+        .getData()
+        .getFirst()
+        .setServiceOptionEligibilities(Map.of("EXPRESS", true, "UpsNeXtDayAiRJared", true));
+    when(nodeFeign.getNodeList(any(), any(), any(), any(), any())).thenReturn(nodeListResponse);
+    when(nodeCarrierFeign.getNodeCarrierListWithLastPickUpTimeDetails(any(), any()))
+        .thenReturn(nodeCarrierListResponse1);
+    when(nodeCarrierFeign.getNodeCarrierList(any(), any())).thenReturn(nodeCarrierListResponse2);
+    when(tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified())
+        .thenReturn(TestUtil.extendedTenantServiceOptionExpected.toArray(new String[0]));
+    PagePayload<NodeServiceOptionDto> response =
+        nodeServiceOptionService.getNodeServiceOption(TestUtil.ORG_ID, 1, 1, "nodeId", "ASC");
+    assertEquals(2, response.getPagination().getTotalPages());
+    assertEquals(1, response.getPagination().getCurrentPage());
+    assertEquals(2, response.getPagination().getTotalRecords());
+    assertNotNull(response.getPagination().getNext());
+    assertNull(response.getPagination().getPrevious());
+    assertTrue(response.getData().get((0)).getIsActive());
+    assertEquals(2, response.getData().get((0)).getServiceOptions().size());
+    assertEquals(2, response.getData().get(0).getProcessingTime().size());
+    assertEquals(10.0, response.getData().get(0).getProcessingTime().get("upsNextDayAirJared"));
+    assertEquals(10.0, response.getData().get(0).getProcessingTime().get("express"));
 
     verify(nodeFeign, times(1)).getNodeList(any(), any(), any(), any(), any());
     verify(nodeCarrierFeign, times(2)).getNodeCarrierList(any(), any());
@@ -149,7 +280,7 @@ class NodeServiceOptionResponseServiceTest {
 
   @Test
   @DisplayName("When there are no service option eligibilities for the nodes")
-  void getNodeServiceOptionTestWithNoServiceOptionEligibilities() {
+  void getNodeServiceOptionTestWithNoServiceOptionEligibilities() throws CommonServiceException {
     BaseResponse<PagePayload<NodeDto>> nodeResponse = testUtil.getNodeListPaginationBaseResponse();
     nodeResponse.getPayload().getData().stream()
         .forEach(nodeDto -> nodeDto.setServiceOptionEligibilities(Map.of()));
@@ -158,6 +289,8 @@ class NodeServiceOptionResponseServiceTest {
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierResponseList());
     when(nodeCarrierFeign.getNodeCarrierList(any(), any()))
         .thenReturn(testUtil.getBaseResponseOfNodeCarrierListResponse());
+    when(tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified())
+        .thenReturn(TestUtil.extendedTenantServiceOptionExpected.toArray(new String[0]));
 
     PagePayload<NodeServiceOptionDto> response =
         nodeServiceOptionService.getNodeServiceOption(TestUtil.ORG_ID, 1, 1, "nodeId", "ASC");

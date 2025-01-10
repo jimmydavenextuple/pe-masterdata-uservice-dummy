@@ -68,8 +68,8 @@ taskexecutor:
     queue.capacity: 0
 master-data:
   transit:
-    topic-name: INTERNAL.PERF.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.TRANSIT_INTEGRATION
     group-id: transit-master-perf
   transit-buffer:
-    topic-name: INTERNAL.PERF.PE.TRANSIT_BUFFER_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-perf

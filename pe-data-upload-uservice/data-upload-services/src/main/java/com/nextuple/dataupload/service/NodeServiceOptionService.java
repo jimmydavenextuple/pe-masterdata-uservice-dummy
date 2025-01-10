@@ -11,6 +11,8 @@ import static com.nextuple.dataupload.util.CommonDashboardUtil.fetchEligibleNode
 import static com.nextuple.dataupload.util.CommonDashboardUtil.fetchNodeProcessingTimeForEligibleServiceOptions;
 
 import com.nextuple.common.base.PagePayload;
+import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.dataupload.common.config.TenantDatabaseConfig;
 import com.nextuple.dataupload.domain.dto.NodeServiceOptionDto;
 import com.nextuple.node.carrier.domain.feign.INodeCarrierFeign;
 import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
@@ -34,10 +36,12 @@ import org.springframework.stereotype.Service;
 public class NodeServiceOptionService {
   private final NodeFeign nodeFeign;
   @Autowired INodeCarrierFeign nodeCarrierFeign;
+  private final TenantDatabaseConfig tenantDatabaseConfig;
 
   @ReaderDS
   public PagePayload<NodeServiceOptionDto> getNodeServiceOption(
-      String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder) {
+      String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
+      throws CommonServiceException {
     PagePayload<NodeServiceOptionDto> nodeServiceOptionDtoPagePayload = new PagePayload<>();
 
     PagePayload<NodeDto> nodeResponse =
@@ -56,7 +60,7 @@ public class NodeServiceOptionService {
     return nodeServiceOptionDtoPagePayload;
   }
 
-  private NodeServiceOptionDto getNodeServiceOptionDto(NodeDto node) {
+  private NodeServiceOptionDto getNodeServiceOptionDto(NodeDto node) throws CommonServiceException {
     List<NodeCarrierResponse> nodeCarrierResponseWithCarrierServiceId =
         nodeCarrierFeign
             .getNodeCarrierListWithLastPickUpTimeDetails(node.getNodeId(), node.getOrgId())
@@ -72,7 +76,8 @@ public class NodeServiceOptionService {
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
 
-    String[] validServiceOptions = fetchEligibleNodeServiceOption(node);
+    String[] serviceOptions = tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified();
+    String[] validServiceOptions = fetchEligibleNodeServiceOption(node, serviceOptions);
 
     return setNodeServiceOptionDto(node, combinedList, validServiceOptions);
   }

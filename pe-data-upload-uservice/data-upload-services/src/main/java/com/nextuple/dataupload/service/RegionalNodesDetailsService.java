@@ -9,6 +9,7 @@ package com.nextuple.dataupload.service;
 
 import static com.nextuple.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 import static com.nextuple.common.constants.CommonConstants.NODE_DEFAULT_SORT_BY;
+import static com.nextuple.csvdownload.util.NodeCalendarUtil.getActiveCalendarForNodeIdAndCarrier;
 import static com.nextuple.dataupload.util.CommonDashboardUtil.fetchEligibleNodeServiceOption;
 import static com.nextuple.dataupload.util.CommonDashboardUtil.fetchNodeProcessingTimeForEligibleServiceOptions;
 
@@ -17,8 +18,10 @@ import com.nextuple.calendar.domain.outbound.CalendarResponse;
 import com.nextuple.calendar.domain.outbound.NodeCalendarResponse;
 import com.nextuple.calendar.domain.outbound.NodeCarrierServiceCalendarResponse;
 import com.nextuple.common.base.PagePayload;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
+import com.nextuple.dataupload.common.config.TenantDatabaseConfig;
 import com.nextuple.dataupload.domain.dto.NodeListDto;
 import com.nextuple.dataupload.domain.dto.NodeWorkingCalendarDto;
 import com.nextuple.dataupload.domain.dto.PickupTimeDto;
@@ -31,7 +34,6 @@ import com.nextuple.node.domain.feign.NodeFeign;
 import com.nextuple.postgres.config.ReaderDS;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,12 +55,14 @@ public class RegionalNodesDetailsService {
   private final INodeCarrierFeign nodeCarrierFeign;
 
   private final PageProperties pageProperties;
+  private final TenantDatabaseConfig tenantDatabaseConfig;
 
   public static final NodeMapper INSTANCE = Mappers.getMapper(NodeMapper.class);
 
   @ReaderDS
   public PagePayload<NodeListDto> getNodesList(
-      String orgId, String nodeIds, String nodeType, PageParams pageParams) {
+      String orgId, String nodeIds, String nodeType, PageParams pageParams)
+      throws CommonServiceException {
     PagePayload<NodeListDto> nodeListDtoPagePayload = new PagePayload<>();
     List<NodeListDto> responseList = new ArrayList<>();
     Integer pageNo = pageParams.getPageNo().orElse(pageProperties.getPageNo());
@@ -128,14 +132,16 @@ public class RegionalNodesDetailsService {
       List<NodeCalendarResponse> nodeCalendarResponseList,
       List<NodeCarrierResponse> nodeCarrierResponse,
       List<NodeCarrierResponse> nodeServiceOptionsResponse,
-      CalendarResponse calendarDetails) {
+      CalendarResponse calendarDetails)
+      throws CommonServiceException {
     NodeListDto nodeListDto;
     nodeListDto = INSTANCE.toNodeListDto(nodeResponse);
     if (!nodeCalendarResponseList.isEmpty() && ObjectUtils.isNotEmpty(calendarDetails)) {
       nodeListDto.setNodeWorkingCalendar(
           setNodeCalendar(nodeCalendarResponseList, calendarDetails));
     }
-    String[] validServiceOptions = fetchEligibleNodeServiceOption(nodeResponse);
+    String[] serviceOptions = tenantDatabaseConfig.getCurrentTenantServiceOptionsUnmodified();
+    String[] validServiceOptions = fetchEligibleNodeServiceOption(nodeResponse, serviceOptions);
     nodeListDto.setProcessingTimeDetails(
         getProcessingTimeDetails(nodeServiceOptionsResponse, validServiceOptions));
     nodeListDto.setServiceOptions(List.of(validServiceOptions));
@@ -177,13 +183,14 @@ public class RegionalNodesDetailsService {
       pickupTimeDto.setPickupTime(nodeCarrierResponse.getLastPickupTime());
 
       pickupTimeDto.setPickupCalendarId(
-          nodeCalendarMap.get(nodeCarrierResponse.getNodeId()).stream()
-              .filter(
-                  calendar ->
-                      calendar
-                          .getCarrierServiceId()
-                          .equals(nodeCarrierResponse.getCarrierServiceId()))
-              .max(Comparator.comparing(NodeCarrierServiceCalendarResponse::getEffectiveDate))
+          getActiveCalendarForNodeIdAndCarrier(
+                  nodeCalendarMap.get(nodeCarrierResponse.getNodeId()).stream()
+                      .filter(
+                          calendar ->
+                              calendar
+                                  .getCarrierServiceId()
+                                  .equals(nodeCarrierResponse.getCarrierServiceId()))
+                      .toList())
               .map(NodeCarrierServiceCalendarResponse::getCalendarId)
               .orElse("N/A"));
 

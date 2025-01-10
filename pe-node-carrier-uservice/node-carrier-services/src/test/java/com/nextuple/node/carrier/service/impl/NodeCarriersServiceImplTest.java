@@ -368,4 +368,36 @@ class NodeCarriersServiceImplTest {
     verify(nodeCarriersDomain, times(1))
         .getAllNodeCarriersByOrgIdNodeIdAndCarrierServiceId(any(), any(), any());
   }
+
+  @Test
+  @Description("Delete Node Carrier by NodeId - Happy Path")
+  void deleteNodeCarrierByNodeIdTest() throws CommonServiceException {
+    List<NodeCarriersEntity> nodeCarriersEntities = testUtil.getNodeCarriersEntityList();
+    when(nodeCarriersDomain.findNodeCarriersMandatoryByOrgIdAndNodeId(any(), any()))
+        .thenReturn(nodeCarriersEntities);
+    when(nodeCarriersDomain.deleteAllNodeCarrierEntityByOrgIdAndNodeId(any(), any()))
+        .thenReturn(nodeCarriersEntities);
+    List<NodeCarriersResponse> nodeCarrierResponseList =
+        nodeCarriersService.deleteNodeCarrierByNodeId(TestUtil.ORG_ID, TestUtil.NODE_ID);
+    assertEquals(2, nodeCarrierResponseList.size());
+    assertEquals(TestUtil.NODE_ID, nodeCarrierResponseList.get(0).getNodeId());
+    assertEquals(TestUtil.ORG_ID, nodeCarrierResponseList.get(0).getOrgId());
+    assertEquals(TestUtil.CARRIER_SERVICE_ID, nodeCarrierResponseList.get(0).getCarrierServiceId());
+    verify(nodeCarriersDomain, times(1)).findNodeCarriersMandatoryByOrgIdAndNodeId(any(), any());
+    verify(nodeCarriersDomain, times(1)).deleteAllNodeCarrierEntityByOrgIdAndNodeId(any(), any());
+  }
+
+  @Test
+  @Description("Delete Node Carrier by NodeId - Empty Scenario")
+  void deleteNodeCarrierByNodeIdTestException() throws CommonServiceException {
+    when(nodeCarriersDomain.findNodeCarriersMandatoryByOrgIdAndNodeId(any(), any()))
+        .thenReturn(List.of());
+    when(nodeCarriersDomain.deleteAllNodeCarrierEntityByOrgIdAndNodeId(any(), any()))
+        .thenReturn(testUtil.getNodeCarriersEntityList());
+    List<NodeCarriersResponse> nodeCarrierResponseList =
+        nodeCarriersService.deleteNodeCarrierByNodeId(TestUtil.ORG_ID, TestUtil.NODE_ID);
+    assertEquals(0, nodeCarrierResponseList.size());
+    verify(nodeCarriersDomain, times(1)).findNodeCarriersMandatoryByOrgIdAndNodeId(any(), any());
+    verify(nodeCarriersDomain, times(0)).deleteAllNodeCarrierEntityByOrgIdAndNodeId(any(), any());
+  }
 }

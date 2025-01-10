@@ -10,6 +10,7 @@ package com.nextuple.node.carrier.controller;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.node.carrier.controller.docs.CreateNodeCarriersDoc;
+import com.nextuple.node.carrier.controller.docs.DeleteNodeCarrierByNodeIdDoc;
 import com.nextuple.node.carrier.controller.docs.DeleteNodeCarriersDoc;
 import com.nextuple.node.carrier.controller.docs.GetNodeCarriersDoc;
 import com.nextuple.node.carrier.controller.docs.GetNodeCarriersListByOrgIdAndNodeIdAndServiceOptionDoc;
@@ -194,6 +195,30 @@ public class NodeCarriersController {
             .payload(
                 nodeCarriersService.deleteNodeCarrier(
                     orgId, nodeId, carrierServiceId, serviceOption))
+            .build());
+  }
+
+  @DeleteNodeCarrierByNodeIdDoc
+  @DeleteMapping("/{orgId}/{nodeId}")
+  public ResponseEntity<BaseResponse<List<NodeCarriersResponse>>> deleteNodeCarrierByNodeId(
+      @NotBlank(message = "orgId can't be empty")
+          @Parameter(
+              description = NodeCarrierConstants.ORG_ID,
+              example = NodeCarrierConstants.ORG_ID_EXAMPLE)
+          @PathVariable
+          String orgId,
+      @NotBlank(message = "nodeId can't be empty")
+          @Parameter(
+              description = NodeCarrierConstants.NODE_ID,
+              example = NodeCarrierConstants.NODE_ID_EXAMPLE)
+          @PathVariable
+          String nodeId)
+      throws CommonServiceException {
+    logger.debug("Deleting node carrier by orgId {} and nodeId {} request", orgId, nodeId);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node Carrier deleted successfully")
+            .payload(nodeCarriersService.deleteNodeCarrierByNodeId(orgId, nodeId))
             .build());
   }
 

@@ -14,6 +14,7 @@ import com.nextuple.master.data.integration.consumer.MasterDataFeedConsumer;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.converter.KafkaMessageHeaders;
@@ -21,13 +22,15 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-    topics = "${master-data.pickup-calendar.topic-name}",
+    topics = "#{'${master-data.pickup-calendar.topic-names}'.split(',')}",
     groupId = "${master-data.pickup-calendar.group-id}",
     batch = "true",
-    autoStartup = "${kafka-topic-flags.master-data.pickup-calendar.enabled:false}")
+    autoStartup = "${kafka-topic-flags.master-data.pickup-calendar.enabled:false}",
+    containerFactory = "pickupCalendarDeserializerConsumer")
 public class PickupCalendarConsumer extends MasterDataFeedConsumer<PickupCalendarFeedDto> {
 
   private final PickupCalendarBatchServiceImpl pickupCalendarBatchService;
@@ -38,7 +41,12 @@ public class PickupCalendarConsumer extends MasterDataFeedConsumer<PickupCalenda
   public void consumePickupCalendarFeed(
       @Payload List<BatchRequest<PickupCalendarFeedDto>> pickupCalendarFeed,
       @Headers KafkaMessageHeaders headers) {
-    consumeMasterDataFeed(pickupCalendarFeed);
+    try {
+      consumeMasterDataFeed(pickupCalendarFeed);
+    } catch (Exception e) {
+      log.error("Exception occurred while consuming pickup calendar feed : {}", pickupCalendarFeed);
+      throw e;
+    }
   }
 
   @Override

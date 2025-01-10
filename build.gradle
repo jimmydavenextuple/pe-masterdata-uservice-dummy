@@ -157,6 +157,7 @@ subprojects {
         implementation 'commons-fileupload:commons-fileupload:1.5'
         implementation 'com.amazonaws:aws-java-sdk-s3:1.12.748'
         implementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.13.4'
+        implementation 'commons-io:commons-io:2.16.1'
 
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testImplementation "org.hamcrest:hamcrest-junit:${hamcrestJunitVersion}"
