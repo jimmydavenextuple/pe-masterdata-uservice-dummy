@@ -215,5 +215,6 @@ keycloak:
   application-client: "applicationclient-pe_masterdata_uservice"
   enforcement-mode: "ENFORCING"
   http-method-as-scope: true
-api-key: \${COMMON-PE-API-KEY}
+plt-api-key: \${COMMON-PE-API-KEY}
+x-api-key: \${COMMON-PE-API-KEY}
 trusted-sites: "pe-masterdata-uservice,nextuple.com"
