@@ -23,7 +23,7 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 @Configuration
 @EnableKafka
 public class CarrierConsumerConfig {
-  @Value("${master-data.carrier.dlt-topic}")
+  @Value("${master-data.carrier.dlt-topic:#{null}}")
   private String carrierDltTopic;
 
   @Bean(name = "carrierDeserializerConsumer")

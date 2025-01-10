@@ -24,10 +24,10 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 @EnableKafka
 public class TransitConsumerConfig {
 
-  @Value("${master-data.transit.dlt-topic}")
+  @Value("${master-data.transit.dlt-topic:#{null}}")
   private String transitFeedDltTopic;
 
-  @Value("${master-data.transit-buffer.dlt-topic}")
+  @Value("${master-data.transit-buffer.dlt-topic:#{null}}")
   private String transitBufferFeedDltTopic;
 
   @Bean(name = "transitFeedDeserializerConsumer")

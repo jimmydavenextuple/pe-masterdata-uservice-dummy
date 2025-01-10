@@ -24,16 +24,16 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 @EnableKafka
 public class CalendarConsumerConfig {
 
-  @Value("${master-data.calendar.dlt-topic}")
+  @Value("${master-data.calendar.dlt-topic:#{null}}")
   private String calendarDltTopic;
 
-  @Value("${master-data.carrier-service-calendar.dlt-topic}")
+  @Value("${master-data.carrier-service-calendar.dlt-topic:#{null}}")
   private String carrierServiceCalendarDltTopic;
 
-  @Value("${master-data.calendar.dlt-topic}")
+  @Value("${master-data.calendar.dlt-topic:#{null}}")
   private String nodeCalendarDltTopic;
 
-  @Value("${master-data.pickup-calendar.dlt-topic}")
+  @Value("${master-data.pickup-calendar.dlt-topic:#{null}}")
   private String pickupCalendarDltTopic;
 
   @Bean(name = "carrierServiceCalendarDeserializerConsumer")
