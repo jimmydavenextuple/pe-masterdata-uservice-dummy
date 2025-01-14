@@ -1102,7 +1102,12 @@ public class CsvDownloadUtilityService {
       List<String> header =
           new ArrayList<>(
               Arrays.asList(
-                  ORG_ID, NODE_ID, CARRIER_SERVICE_ID, LAST_PICKUP_TIME, SERVICE_OPTION, PICKUP_CALENDAR_ID));
+                  ORG_ID,
+                  NODE_ID,
+                  CARRIER_SERVICE_ID,
+                  LAST_PICKUP_TIME,
+                  SERVICE_OPTION,
+                  PICKUP_CALENDAR_ID));
       writeToCSV(header.toArray(new String[0]), writer);
       writeNodeCarrierPickupCalendar(writer, filteredList);
       writer.flush();
