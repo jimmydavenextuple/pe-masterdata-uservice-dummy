@@ -181,7 +181,7 @@ public class RegionalNodesDetailsService {
       pickupTimeDto.setNodeId(nodeCarrierResponse.getNodeId());
       pickupTimeDto.setCarrierServiceId(nodeCarrierResponse.getCarrierServiceId());
       pickupTimeDto.setPickupTime(nodeCarrierResponse.getLastPickupTime());
-
+      pickupTimeDto.setServiceOption(nodeCarrierResponse.getServiceOption());
       pickupTimeDto.setPickupCalendarId(
           getActiveCalendarForNodeIdAndCarrier(
                   nodeCalendarMap.get(nodeCarrierResponse.getNodeId()).stream()
