@@ -29,8 +29,11 @@ public class FeignClientInterceptor implements RequestInterceptor {
 
     log.debug("------ Inside FeignClientInterceptor ------");
     String[] trustedSitesSubstrings = trustedSites.split(",");
+    log.debug("Trusted sites : {}", trustedSites);
+    log.debug("Request template before modification : {}", requestTemplate);
     try {
       String url = requestTemplate.feignTarget().url();
+      log.debug("Feign url : {}", url);
       boolean isTrustedSite = Arrays.stream(trustedSitesSubstrings).anyMatch(url::contains);
       if (url.contains("localhost")) {
         requestTemplate.header("plt-api-key", pltApiKey);
@@ -85,5 +88,6 @@ public class FeignClientInterceptor implements RequestInterceptor {
       requestTemplate.header(
           CommonConstants.HEADER_API_KEY, CurrentThreadContext.getLogContext().getApiKey());
     }
+    log.debug("Request template in feign interceptor after modifications : {}", requestTemplate);
   }
 }
