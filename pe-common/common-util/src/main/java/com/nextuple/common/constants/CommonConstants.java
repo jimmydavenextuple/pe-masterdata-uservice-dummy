@@ -38,6 +38,7 @@ public class CommonConstants {
   public static final String AUTH_EXPIRY_TIMESTAMP_HEADER = "AuthExpiryTimestamp";
   public static final String HEADER_TENANT_ID = "X-Tenant-Id";
   public static final String HEADER_API_KEY = "X-API-Key";
+  public static final String HEADER_PLATFORM_API_KEY = "plt-api-key";
   public static final String HEADER_ROLE = "X-User-Role";
   public static final String HEADER_USER_LOCALE = "X-User-Locale";
   public static final String HEADER_EVENT_NAME = "eventName";
