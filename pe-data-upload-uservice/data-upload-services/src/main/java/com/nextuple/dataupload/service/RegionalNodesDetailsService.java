@@ -33,12 +33,8 @@ import com.nextuple.node.domain.dto.NodeDto;
 import com.nextuple.node.domain.feign.NodeFeign;
 import com.nextuple.postgres.config.ReaderDS;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -146,34 +142,18 @@ public class RegionalNodesDetailsService {
         getProcessingTimeDetails(nodeServiceOptionsResponse, validServiceOptions));
     nodeListDto.setServiceOptions(List.of(validServiceOptions));
     nodeListDto.setCarrierServices(getCarrierServiceIds(nodeCarrierResponse));
-    nodeListDto.setPickupTime(getPickupTimeDetails(nodeCarrierResponse));
+    nodeListDto.setPickupTime(getPickupTimeDetails(nodeResponse, nodeCarrierResponse));
     return nodeListDto;
   }
 
   private List<PickupTimeDto> getPickupTimeDetails(
-      List<NodeCarrierResponse> nodeCarrierResponseList) {
-    Map<String, List<NodeCarrierServiceCalendarResponse>> nodeCalendarMap = new HashMap<>();
+      NodeDto nodeResponse, List<NodeCarrierResponse> nodeCarrierResponseList) {
 
-    Set<String> uniqueNodeIds =
-        nodeCarrierResponseList.stream()
-            .map(NodeCarrierResponse::getNodeId)
-            .collect(Collectors.toSet());
-
-    for (String nodeId : uniqueNodeIds) {
-      List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarResponses =
-          nodeCarrierResponseList.stream()
-              .filter(response -> response.getNodeId().equals(nodeId))
-              .findFirst()
-              .map(
-                  matchingResponse ->
-                      calendarFeign
-                          .getNodeCarrierServiceCalendarForOrgIdAndNodeId(
-                              matchingResponse.getOrgId(), nodeId)
-                          .getPayload())
-              .orElse(Collections.emptyList());
-
-      nodeCalendarMap.put(nodeId, nodeCarrierServiceCalendarResponses);
-    }
+    List<NodeCarrierServiceCalendarResponse> nodeCarrierServiceCalendarResponses =
+        calendarFeign
+            .getNodeCarrierServiceCalendarForOrgIdAndNodeId(
+                nodeResponse.getOrgId(), nodeResponse.getNodeId())
+            .getPayload();
 
     List<PickupTimeDto> pickupTimeDtoList = new ArrayList<>();
     for (NodeCarrierResponse nodeCarrierResponse : nodeCarrierResponseList) {
@@ -184,7 +164,7 @@ public class RegionalNodesDetailsService {
       pickupTimeDto.setServiceOption(nodeCarrierResponse.getServiceOption());
       pickupTimeDto.setPickupCalendarId(
           getActiveCalendarForNodeIdAndCarrier(
-                  nodeCalendarMap.get(nodeCarrierResponse.getNodeId()).stream()
+                  nodeCarrierServiceCalendarResponses.stream()
                       .filter(
                           calendar ->
                               calendar

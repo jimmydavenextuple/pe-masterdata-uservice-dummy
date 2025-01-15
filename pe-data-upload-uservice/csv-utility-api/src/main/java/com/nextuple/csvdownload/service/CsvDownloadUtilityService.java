@@ -1151,8 +1151,8 @@ public class CsvDownloadUtilityService {
               nodeCarrierServiceCalendarResponse.getOrgId(),
               nodeCarrierServiceCalendarResponse.getNodeId(),
               nodeCarrierServiceCalendarResponse.getCarrierServiceId());
-      List<String> csvData = new ArrayList<>();
       for (NodeCarrierResponse nodeCarrierResponse : nodeCarrierResponses) {
+        List<String> csvData = new ArrayList<>();
         csvData.add(nodeCarrierServiceCalendarResponse.getOrgId());
         csvData.add(nodeCarrierServiceCalendarResponse.getNodeId());
         csvData.add(nodeCarrierServiceCalendarResponse.getCarrierServiceId());
