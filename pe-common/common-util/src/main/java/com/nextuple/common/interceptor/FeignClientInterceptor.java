@@ -5,7 +5,6 @@ import com.nextuple.common.context.CurrentThreadContext;
 import com.nextuple.common.context.LogContext;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import java.util.Arrays;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,31 +14,16 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class FeignClientInterceptor implements RequestInterceptor {
 
-  @Value("${plt-api-key}")
-  private String pltApiKey;
-
-  @Value("${x-api-key}")
-  private String xApiKey;
-
-  @Value("${trusted-sites}")
-  private String trustedSites;
+  @Value("${api-key}")
+  private String apiKey;
 
   @Override
   public void apply(RequestTemplate requestTemplate) {
 
     log.debug("------ Inside FeignClientInterceptor ------");
-    String[] trustedSitesSubstrings = trustedSites.split(",");
-    try {
-      String url = requestTemplate.feignTarget().url();
-      boolean isTrustedSite = Arrays.stream(trustedSitesSubstrings).anyMatch(url::contains);
-      if (url.contains("localhost")) {
-        requestTemplate.header("plt-api-key", pltApiKey);
-      }
-      if (isTrustedSite) {
-        requestTemplate.header("x-api-key", xApiKey);
-      }
-    } catch (Exception e) {
-      log.info("Error while fetching host or api key");
+
+    if (!requestTemplate.headers().containsKey(CommonConstants.HEADER_PLATFORM_API_KEY)) {
+      requestTemplate.header(CommonConstants.HEADER_PLATFORM_API_KEY, apiKey);
     }
 
     // Attach Authorization header
