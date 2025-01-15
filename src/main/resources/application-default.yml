@@ -19,9 +19,9 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://170.7.0.16/pe
-    username: pe_users_pgadmin
-    password: E7E56EAB-9B03-4C95-8E71-FA871251A7D4
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: password
     hikari:
       maximumPoolSize: 100
       minimumIdle: 10
@@ -97,8 +97,6 @@ spring:
 logging:
   level:
     com.nextuple: INFO
-    org.apache.kafka: OFF
-    org.hibernate.orm: OFF
 entity-listener:
   kafka:
     enabled: false
@@ -229,12 +227,3 @@ kafka:
   input:
     taskTopics: INTERNAL.DEV.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry
-azure.keyvault:
-  client-id: e558951a-8c66-4a66-a75f-f71254e23397
-  client-key: vXs8Q~TDX7DlnTJUjSRalM12tGbZixcn0qS3WcFO
-  enabled: true
-  tenant-id: a504dc87-820c-4014-a6f7-9bd271ec731f
-  uri: https://nextuple-dev.vault.azure.net/
-  secret-keys: "COMMON-MONGODB-CREDENTIAL,COMMON-KAFKA-CONFIG,COMMON-PE-API-KEY,KEYCLOAK-PRODUCT-CONFIG"
-keycloak:
-  auth-server-url: "https://keycloak-nonprod.nextuple.com"
