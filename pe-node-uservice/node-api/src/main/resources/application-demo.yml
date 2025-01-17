@@ -30,3 +30,7 @@ spring:
 logging:
   level:
     com.nextuple: INFO
+master-data:
+  node:
+    topic-names: INTERNAL.DEMO.PE.NODE_INTEGRATION
+    group-id: node-master-demo

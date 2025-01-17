@@ -50,7 +50,30 @@ pe-public-webhook:
     topic: INTERNAL.DEMO_ATP
   item-feed:
     topic: INTERNAL.DEMO.PROMISE_ITEMS
-
+  pe-response:
+    topics: INTERNAL.DEMO.CART_EDD
+    group-id: pe-response-consumer-async
+  webhook:
+    - tenantId: NEXTUPLE_GR
+      moduleName: PROMISING
+      webhookName: PROMISING_INTERMEDIATE_EVENT
+      webhookDetail:
+        endpoint: "https://dc5647e2-a0d6-436b-bfba-6097594abe60.mock.pstmn.io"
+        method: POST
+        headers:
+          contentType: "application/json"
+          x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
+          #          Dummy API Key
+    - tenantId: XYZINC
+      moduleName: PROMISING
+      webhookName: PROMISING_INTERMEDIATE_EVENT
+      webhookDetail:
+        endpoint: "https://dc5647e2-a0d6-436b-bfba-6097594abe60.mock.pstmn.io"
+        method: POST
+        headers:
+          contentType: "application/json"
+          x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
+          #          Dummy API Key
 dataupload:
   base-path: "https://pedataupload.blob.core.windows.net"
   maxsize-in-kilobytes: 10240
@@ -72,3 +95,60 @@ jobs-framework:
   record-consumer:
     topic-names: INTERNAL.DEMO.PE.JOB_TASK
     group-id: jobs-task-consumer-async-demo
+
+master-data:
+  node:
+    topic-names: INTERNAL.DEMO.PE.NODE_INTEGRATION
+    group-id: node-master-demo
+  node-carrier:
+    topic-names: INTERNAL.DEMO.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-demo
+  carrier:
+    topic-names: INTERNAL.DEMO.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-demo
+  processing-lead-time:
+    topic-names: INTERNAL.DEMO.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-demo
+  calendar:
+    topic-names: INTERNAL.DEMO.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-demo
+  node-calendar:
+    topic-names: INTERNAL.DEMO.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-demo
+  carrier-service-calendar:
+    topic-names: INTERNAL.DEMO.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-demo
+  pickup-calendar:
+    topic-names: INTERNAL.DEMO.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-demo
+  node-service-option-buffer:
+    topic-names: INTERNAL.DEMO.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-demo
+  transit:
+    topic-names: INTERNAL.DEMO.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-demo
+  transit-buffer:
+    topic-names: INTERNAL.DEMO.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-demo
+
+next-cache:
+  caches:
+    -
+      cacheName: task-info
+      ttlSeconds: 14400
+      maxLimit: 50
+  refresh-cache:
+    topic: INTERNAL.DEMO.PE.REFRESH_CACHE_INV
+  cacheManager: caffeine
+platform:
+  tasks:
+    enabled: true
+  tasks-scheduler:
+    enabled: true
+    milliseconds: 5000
+  authFilter:
+    enabled: false
+kafka:
+  input:
+    taskTopics: INTERNAL.DEMO.PE.RETRY_TOPIC_INV
+    taskGroupId: pe-retry

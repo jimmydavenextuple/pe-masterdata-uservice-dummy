@@ -28,8 +28,8 @@ spring:
     #      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
     #      topics:
     #        item_master:
-    #          name: INTERNAL.DEV.PROMISE_ITEMS
-    #          group-id: item-master-dev
+    #          name: INTERNAL.DEMO.PROMISE_ITEMS
+    #          group-id: item-master-DEMO
     #    producer:
     #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
     #      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
@@ -130,7 +130,7 @@ jobs-framework:
     group-id: pe-fpm-metrics-demo
   job-completion-consumer:
     topic-name: INTERNAL.DEMO.PE.JOB_COMPLETION
-    group-id: jobs-completion-consumer-async-dev
+    group-id: jobs-completion-consumer-async-DEMO
   kafka-publish:
     topic-name: INTERNAL.DEMO.PE.JOB_TASK
   result-publish:
@@ -139,43 +139,43 @@ jobs-framework:
     topic-name: INTERNAL.DEMO.PE.JOB_RESULT
     group-id: jobs-result-consumer-async-demo
   record-consumer:
-    topic-names: INTERNAL.DEV.PE.JOB_TASK
+    topic-names: INTERNAL.DEMO.PE.JOB_TASK
     group-id: jobs-task-consumer-async
 
 master-data:
   node:
-    topic-names: INTERNAL.DEV.PE.NODE_INTEGRATION
-    group-id: node-master-dev
+    topic-names: INTERNAL.DEMO.PE.NODE_INTEGRATION
+    group-id: node-master-DEMO
   node-carrier:
-    topic-names: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
-    group-id: node-carrier-master-dev
+    topic-names: INTERNAL.DEMO.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-DEMO
   carrier:
-    topic-names: INTERNAL.DEV.PE.CARRIER_INTEGRATION
-    group-id: carrier-master-dev
+    topic-names: INTERNAL.DEMO.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-DEMO
   processing-lead-time:
-    topic-names: INTERNAL.DEV.PE.PROCESSING_LEAD_TIME_INTEGRATION
-    group-id: processing-lead-time-master-dev
+    topic-names: INTERNAL.DEMO.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-DEMO
   calendar:
-    topic-names: INTERNAL.DEV.PE.CALENDAR_INTEGRATION
-    group-id: calendar-master-dev
+    topic-names: INTERNAL.DEMO.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-DEMO
   node-calendar:
-    topic-names: INTERNAL.DEV.PE.NODE_CALENDAR_INTEGRATION
-    group-id: node-calendar-master-dev
+    topic-names: INTERNAL.DEMO.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-DEMO
   carrier-service-calendar:
-    topic-names: INTERNAL.DEV.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
-    group-id: carrier-service-calendar-master-dev
+    topic-names: INTERNAL.DEMO.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-DEMO
   pickup-calendar:
-    topic-names: INTERNAL.DEV.PE.PICKUP_CALENDAR_INTEGRATION
-    group-id: pickup-calendar-master-dev
+    topic-names: INTERNAL.DEMO.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-DEMO
   node-service-option-buffer:
-    topic-names: INTERNAL.DEV.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
-    group-id: node-service-option-buffer-master-dev
+    topic-names: INTERNAL.DEMO.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-DEMO
   transit:
-    topic-names: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
-    group-id: transit-master-dev
+    topic-names: INTERNAL.DEMO.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-DEMO
   transit-buffer:
-    topic-names: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
-    group-id: transit-buffer-master-dev
+    topic-names: INTERNAL.DEMO.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-DEMO
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
@@ -186,7 +186,7 @@ next-cache:
       ttlSeconds: 14400
       maxLimit: 50
   refresh-cache:
-    topic: INTERNAL.DEV.PE.REFRESH_CACHE_INV
+    topic: INTERNAL.DEMO.PE.REFRESH_CACHE_INV
   cacheManager: caffeine
 platform:
   tasks:
@@ -198,7 +198,7 @@ platform:
     enabled: false
 kafka:
   input:
-    taskTopics: INTERNAL.DEV.PE.RETRY_TOPIC_INV
+    taskTopics: INTERNAL.DEMO.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry
 keycloak:
   auth-server-url: "https://keycloak-nonprod.nextuple.com"
