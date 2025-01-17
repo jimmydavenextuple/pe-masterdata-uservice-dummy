@@ -199,9 +199,10 @@ server:
         max:
           memory: 3Gi
           cpu: 3
-    demo:
+    demo-rbac:
       ingress: yes
-      middleman: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
       prometheus: yes
       keyvault: yes
       storage: yes
@@ -377,7 +378,12 @@ pipelines:
               name: Deploy Integration
               trigger: manual
               deployment: integration
-
+    demo:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Demo
+          deployment: demo
           # - step:
           #     !!merge <<: *deploy
           #     name: Deploy PERF

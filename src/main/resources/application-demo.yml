@@ -141,3 +141,5 @@ jobs-framework:
   record-consumer:
     topic-names: INTERNAL.DEMO.PE.JOB_TASK
     group-id: jobs-task-consumer-async-demo
+keycloak:
+  auth-server-url: "https://keycloak-nonprod.nextuple.com"
