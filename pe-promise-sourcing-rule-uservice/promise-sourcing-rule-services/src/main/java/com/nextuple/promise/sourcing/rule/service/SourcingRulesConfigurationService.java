@@ -690,7 +690,7 @@ public class SourcingRulesConfigurationService {
               attributeDefinitionResponse);
     }
     if (bestRules.isEmpty()) {
-      getDefaultSourcingRules(fetchSourcingRulesRequest);
+      return getDefaultSourcingRules(fetchSourcingRulesRequest);
     }
     return FetchSourcingRulesResponse.builder()
         .sourcingRulesInfo(getSourcingRulesInfo(bestRules.getFirst()))
