@@ -25,8 +25,32 @@ spring:
         retry.backoff.ms: 1000
         spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
+    consumer:
+      enable-auto-commit: true
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+        max.poll.records: 10
   sql.init.platform: postgres
 
 logging:
   level:
     com.nextuple: INFO
+
+master-data:
+  calendar:
+    topic-names: INTERNAL.DEMO.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-DEMO
+  node-calendar:
+    topic-names: INTERNAL.DEMO.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-DEMO
+  carrier-service-calendar:
+    topic-names: INTERNAL.DEMO.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-DEMO
+  pickup-calendar:
+    topic-names: INTERNAL.DEMO.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-DEMO
