@@ -957,7 +957,7 @@ class SourcingRulesConfigurationServiceTest {
     when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
         .thenReturn(Optional.of(testUtil.getSourcingAttributeEntity()));
     when(ruleRetrievalService.filterAllMatchingRulesByScoring(any(), any(), any(), anyInt(), any()))
-        .thenReturn(sourcingRulesConfigurationEntityList);
+        .thenReturn(List.of());
     when(ruleRetrievalFactory.getRuleRetrievalService(any())).thenReturn(ruleRetrievalService);
 
     doAnswer(
@@ -1014,7 +1014,7 @@ class SourcingRulesConfigurationServiceTest {
     assertEquals(
         2, fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getOptionalAttributes().size());
 
-    verify(sourcingRulesConfigurationPersistenceService, times(1))
+    verify(sourcingRulesConfigurationPersistenceService, times(2))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
             anyString(), anyLong(), anyString());
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
