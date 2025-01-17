@@ -60,6 +60,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang3.math.NumberUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
@@ -67,6 +68,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SourcingRulesConfigurationService {
@@ -86,6 +88,8 @@ public class SourcingRulesConfigurationService {
   private static final String SOURCING_RULE_EXCEPTION_MESSAGE = "Sourcing rule not found";
   private static final String SOURCING_RULES_NOT_FOUND_EXCEPTION_MESSAGE =
       "No matching sourcing rules found";
+  private static final String REQ_ATTRIBUTES_VALUE = "requiredAttributesValue";
+  private static final String OPT_ATTRIBUTES_VALUE = "optionalAttributesValue";
   private static final SourcingRulesConfigurationMapper INSTANCE =
       Mappers.getMapper(SourcingRulesConfigurationMapper.class);
   private static final NodeGroupMapper INSTANCE_NODE_GROUP =
@@ -689,15 +693,51 @@ public class SourcingRulesConfigurationService {
               optionalAttributeSizeFromDefinition,
               attributeDefinitionResponse);
     }
-    PromiseSourcingRuleUtil.validateNoRulesFound(
-        fetchSourcingRulesRequest.getOrgId(),
-        fetchSourcingRulesRequest.getSourcingAttributesDefinitionId(),
-        fetchSourcingRulesRequest.getSourcingAttributeValuesInfo(),
-        bestRules,
-        "Sourcing Rules not found for %s rule.".formatted(generatedRule));
+    if (bestRules.isEmpty()) {
+      List<SourcingRulesConfigurationDomainDto> defaultRuleList =
+          getDefaultRule(fetchSourcingRulesRequest);
+      if (defaultRuleList.isEmpty()) {
+        handleNoDefaultRule(
+            fetchSourcingRulesRequest,
+            "Sourcing Rules not found for %s rule.".formatted(generatedRule));
+      }
+      return FetchSourcingRulesResponse.builder()
+          .sourcingRulesInfo(getSourcingRulesInfo(defaultRuleList.get(0)))
+          .build();
+    }
     return FetchSourcingRulesResponse.builder()
         .sourcingRulesInfo(getSourcingRulesInfo(bestRules.getFirst()))
         .build();
+  }
+
+  private void handleNoDefaultRule(
+      FetchSourcingRulesRequest fetchSourcingRulesRequest, String errorMessage)
+      throws CommonServiceException {
+    throw new CommonServiceException(
+        errorMessage,
+        HttpStatus.NOT_FOUND,
+        0x1776,
+        Map.of(
+            SOURCING_ATTRIBUTES_DEFINITION_ID,
+            FieldError.builder()
+                .rejectedValue(fetchSourcingRulesRequest.getSourcingAttributesDefinitionId())
+                .build(),
+            REQ_ATTRIBUTES_VALUE,
+            FieldError.builder()
+                .rejectedValue(
+                    fetchSourcingRulesRequest
+                        .getSourcingAttributeValuesInfo()
+                        .getRequiredAttributesValue())
+                .build(),
+            OPT_ATTRIBUTES_VALUE,
+            FieldError.builder()
+                .rejectedValue(
+                    fetchSourcingRulesRequest
+                        .getSourcingAttributeValuesInfo()
+                        .getOptionalAttributesValue())
+                .build(),
+            ORG_ID,
+            FieldError.builder().rejectedValue(fetchSourcingRulesRequest.getOrgId()).build()));
   }
 
   private String getSourcingRuleValue(FetchSourcingRulesRequest fetchSourcingRulesRequest) {
@@ -716,11 +756,7 @@ public class SourcingRulesConfigurationService {
       throws PromiseEngineException, CommonServiceException {
 
     List<SourcingRulesConfigurationDomainDto> sourcingRulesConfigurationEntityList =
-        rulesConfigPersistenceService
-            .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
-                fetchSourcingRulesRequest.getOrgId(),
-                fetchSourcingRulesRequest.getSourcingAttributesDefinitionId(),
-                DEFAULT_SOURCING_RULE);
+        getDefaultRule(fetchSourcingRulesRequest);
 
     if (sourcingRulesConfigurationEntityList.isEmpty()) {
       logger.error("Default sourcing rules not configured");
@@ -739,6 +775,15 @@ public class SourcingRulesConfigurationService {
     return FetchSourcingRulesResponse.builder()
         .sourcingRulesInfo(getSourcingRulesInfo(sourcingRulesConfigurationEntityList.get(0)))
         .build();
+  }
+
+  private List<SourcingRulesConfigurationDomainDto> getDefaultRule(
+      FetchSourcingRulesRequest fetchSourcingRulesRequest) throws PromiseEngineException {
+    return rulesConfigPersistenceService
+        .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
+            fetchSourcingRulesRequest.getOrgId(),
+            fetchSourcingRulesRequest.getSourcingAttributesDefinitionId(),
+            DEFAULT_SOURCING_RULE);
   }
 
   private List<SourcingRulesInfo> getSourcingRulesInfo(
