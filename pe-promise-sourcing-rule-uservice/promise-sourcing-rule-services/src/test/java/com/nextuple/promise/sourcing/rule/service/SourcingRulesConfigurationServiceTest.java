@@ -54,6 +54,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -917,6 +918,7 @@ class SourcingRulesConfigurationServiceTest {
 
   @Test
   void processFetchSourcingRulesTest3() throws PromiseEngineException, CommonServiceException {
+    ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
     SourcingAttributeValuesInfo sourcingAttributeValuesInfo = new SourcingAttributeValuesInfo();
     sourcingAttributeValuesInfo.setRequiredAttributesValue(TestUtil.SOURCING_RULE);
     sourcingAttributeValuesInfo.setOptionalAttributesValue("V3:V4");
@@ -1016,7 +1018,9 @@ class SourcingRulesConfigurationServiceTest {
 
     verify(sourcingRulesConfigurationPersistenceService, times(2))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
-            anyString(), anyLong(), anyString());
+            anyString(), anyLong(), argumentCaptor.capture());
+    List<String> capturedArguments = argumentCaptor.getAllValues();
+    assertEquals("DEFAULT", capturedArguments.get(1));
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
   }
