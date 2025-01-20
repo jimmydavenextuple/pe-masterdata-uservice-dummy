@@ -75,7 +75,7 @@ server:
       prometheus: yes
       storage: yes
       dockerbuild: yes
-      java-opts: "-Xms1024m -Xmx1024m"
+      java-opts: "-Xms2048m -Xmx2048m"
       keyvault: yes
       scale:
         replicas: 1
@@ -108,7 +108,7 @@ server:
       middleman: no
       prometheus: yes
       storage: yes
-      java-opts: "-Xms1024m -Xmx1024m"
+      java-opts: "-Xms2048m -Xmx2048m"
       keyvault: yes
       scale:
         replicas: 1
