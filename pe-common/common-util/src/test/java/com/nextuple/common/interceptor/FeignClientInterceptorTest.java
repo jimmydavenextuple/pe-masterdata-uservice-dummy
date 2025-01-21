@@ -11,16 +11,27 @@ import feign.RequestTemplate;
 import feign.Target;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class FeignClientInterceptorTest {
 
   @InjectMocks private FeignClientInterceptor feignClientInterceptor;
+
+  @BeforeEach
+  public void init() {
+    MockitoAnnotations.openMocks(this);
+    ReflectionTestUtils.setField(feignClientInterceptor, "apiKey", "x-api-key");
+    ReflectionTestUtils.setField(feignClientInterceptor, "trustedSites", "string1,string2,string3");
+  }
 
   @DisplayName(
       "Should set `tenantId`, `correlationId`, `username`, `apiKey` as null using constructor")
@@ -136,7 +147,7 @@ class FeignClientInterceptorTest {
     assertTrue(
         requestTemplate.headers().get(CommonConstants.AUTHORIZATION_HEADER).contains(authorization),
         "authorization");
-    assertFalse(requestTemplate.headers().get("x-api-key").isEmpty());
+    assertTrue(Objects.nonNull(requestTemplate.headers().get("plt-api-key")));
   }
 
   @DisplayName(
