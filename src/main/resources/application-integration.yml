@@ -5,7 +5,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_integration
     username: \${COMMON-PE-POSTGRES-USER}
     password: \${COMMON-PE-POSTGRES-PASSWORD}
   flyway:
@@ -17,22 +17,6 @@ spring:
       sasl.mechanism: SCRAM-SHA-256
       sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
     consumer-retry-count: 1
-    # NOTE: Below commented code is for the Avro consumer.
-    # If we need to consume an avro record, please uncomment Avro properties and comment out the JSON Consumer and Producer.
-    #
-    #    consumer:
-    #      type: avro
-    #      enable-auto-commit: true
-    #      auto-offset-reset: latest
-    #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    #      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
-    #      topics:
-    #        item_master:
-    #          name: INTERNAL.INTEGRATION.PROMISE_ITEMS
-    #          group-id: item-master-integration
-    #    producer:
-    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-    #      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
     consumer-item:
       type: json
       enable-auto-commit: true
@@ -116,12 +100,13 @@ pe-public-webhook:
         headers:
           contentType: "application/json"
           x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
-          #          Dummy API Keydataupload:
+          #          Dummy API Key
+
 dataupload:
   base-path: "https://pedataupload.blob.core.windows.net"
   maxsize-in-kilobytes: 10240
   max-rows: 1000
-  bucket-name: "dataupload"
+  bucket-name: "integrationdataupload"
   type: BLOB
   signed-url-expiry-minutes: 30
 
@@ -138,10 +123,10 @@ jobs-framework:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_RESULT
   result-consumer:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_RESULT
-    group-id: jobs-result-consumer-async
+    group-id: jobs-result-consumer-async-integration
   record-consumer:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_TASK
-    group-id: jobs-task-consumer-async
+    group-id: jobs-task-consumer-async-integration
 
 master-data:
   node:
