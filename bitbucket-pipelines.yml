@@ -100,6 +100,23 @@ server:
         max:
           memory: 2Gi
           cpu: 1
+    integration:
+      ingress: yes
+      middleman: yes
+      prometheus: yes
+      storage: yes
+      java-opts: "-Xms1024m -Xmx1024m"
+      keyvault: yes
+      dockerbuild: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 2Gi
+          cpu: 1
+        max:
+          memory: 2Gi
+          cpu: 1
     sandbox:
       ingress: yes
       middleman: yes
