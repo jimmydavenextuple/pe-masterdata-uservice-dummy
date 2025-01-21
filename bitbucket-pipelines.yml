@@ -75,17 +75,17 @@ server:
       prometheus: yes
       storage: yes
       dockerbuild: yes
-      java-opts: "-Xms1024m -Xmx1024m"
+      java-opts: "-Xms2048m -Xmx2048m"
       heapvolume: yes
       keyvault: yes
       scale:
         replicas: 1
       resources:
         min:
-          memory: 2Gi
+          memory: 4Gi
           cpu: 1
         max:
-          memory: 2Gi
+          memory: 4Gi
           cpu: 1
     orielly:
       ingress: yes
@@ -109,17 +109,17 @@ server:
       middleman: no
       prometheus: yes
       storage: yes
-      java-opts: "-Xms1024m -Xmx1024m"
+      java-opts: "-Xms2048m -Xmx2048m"
       heapvolume: yes
       keyvault: yes
       scale:
         replicas: 1
       resources:
         min:
-          memory: 2Gi
+          memory: 4Gi
           cpu: 1
         max:
-          memory: 2Gi
+          memory: 4Gi
           cpu: 1
     sandbox:
       ingress: yes
