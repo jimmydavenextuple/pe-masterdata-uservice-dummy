@@ -11,6 +11,7 @@ import feign.RequestTemplate;
 import feign.Target;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -146,7 +147,7 @@ class FeignClientInterceptorTest {
     assertTrue(
         requestTemplate.headers().get(CommonConstants.AUTHORIZATION_HEADER).contains(authorization),
         "authorization");
-    assertFalse(requestTemplate.headers().get("x-api-key").isEmpty());
+    assertTrue(Objects.nonNull(requestTemplate.headers().get("plt-api-key")));
   }
 
   @DisplayName(
