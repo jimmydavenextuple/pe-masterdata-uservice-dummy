@@ -361,6 +361,12 @@ pipelines:
           name: Deploy DevPE
           trigger: manual
           deployment: devpe
+    integration:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Integration
+          deployment: integration
     master:
       - step: *Clear-Cache
       - step: *build
