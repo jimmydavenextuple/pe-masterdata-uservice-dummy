@@ -287,7 +287,8 @@ class NodeCarrierServiceCalendarPersistenceServiceImplTest {
   void getAllNodeCarrierServiceCalendarsByOrgId() throws CalendarDomainException {
     List<NodeCarrierServiceCalendarEntity> nodeCarrierServiceCalendarEntities =
         testUtil.getNodeCarrierServiceCalendarEntityList();
-    when(nodeCarrierServiceCalendarRepository.findAllNodeCarrierServiceCalendarsByOrgId(any()))
+    when(nodeCarrierServiceCalendarRepository
+            .findAllNodeCarrierServiceCalendarsByOrgIdOrderByCreatedDateDesc(any()))
         .thenReturn(nodeCarrierServiceCalendarEntities);
     when(nodeCarrierServiceCalendarEntityMapper.toDomain(anyList()))
         .thenReturn(testUtil.getNodeCarrierServiceCalendarDomainDtoList());
@@ -298,13 +299,14 @@ class NodeCarrierServiceCalendarPersistenceServiceImplTest {
     Assertions.assertEquals(
         nodeCarrierServiceCalendarEntities.get(0).getCalendarId(), response.get(0).getCalendarId());
     verify(nodeCarrierServiceCalendarRepository, times(1))
-        .findAllNodeCarrierServiceCalendarsByOrgId(any());
+        .findAllNodeCarrierServiceCalendarsByOrgIdOrderByCreatedDateDesc(any());
   }
 
   @Test
   @Description("Get all Node Carrier Service Calendars by OrgId - Exception Scenario")
   void getAllNodeCarrierServiceCalendarsByOrgIdException() {
-    when(nodeCarrierServiceCalendarRepository.findAllNodeCarrierServiceCalendarsByOrgId(any()))
+    when(nodeCarrierServiceCalendarRepository
+            .findAllNodeCarrierServiceCalendarsByOrgIdOrderByCreatedDateDesc(any()))
         .thenThrow(new RuntimeException("Unable to fetch all node carrier service calendars"));
     CalendarDomainException ex =
         Assertions.assertThrows(
@@ -314,7 +316,7 @@ class NodeCarrierServiceCalendarPersistenceServiceImplTest {
                     .getAllNodeCarrierServiceCalendarsByOrgId(TestUtil.ORG_ID));
     Assertions.assertEquals("Unable to fetch all node carrier service calendars", ex.getMessage());
     verify(nodeCarrierServiceCalendarRepository, times(1))
-        .findAllNodeCarrierServiceCalendarsByOrgId(any());
+        .findAllNodeCarrierServiceCalendarsByOrgIdOrderByCreatedDateDesc(any());
   }
 
   @Test
