@@ -107,7 +107,6 @@ server:
       storage: yes
       java-opts: "-Xms1024m -Xmx1024m"
       keyvault: yes
-      dockerbuild: yes
       scale:
         replicas: 1
       resources:
@@ -228,6 +227,7 @@ definitions:
           - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build artifactoryPublish
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -PazureStorageConnectionString=$AZURE_CONNECTION_STRING copyJar uploadCommitJarToAzure
           - export SPACE=" "
           - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
         artifacts:

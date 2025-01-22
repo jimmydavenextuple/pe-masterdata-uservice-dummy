@@ -281,3 +281,4 @@ task fixPom {
     }
 }
 generatePomFileForMavenJavaPublication.finalizedBy fixPom
+apply from: 'azure.gradle'
