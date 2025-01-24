@@ -152,6 +152,8 @@ dependencies {
 
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
     implementation("com.nextuple.pe:common-util:1.4.0-${build_target}")
+    implementation("com.nextuple.pe:pe-kafka-configs:1.4.1-${build_target}")
+
     implementation("com.nextuple.pe:common-postgres:1.4.0-${build_target}")
     implementation("com.nextuple.pe:master-data-integration-framework:1.4.0-${build_target}")
 
