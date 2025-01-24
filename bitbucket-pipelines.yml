@@ -182,6 +182,7 @@ server:
       ingress: yes
       middleman: yes
       prometheus: yes
+      dockerbuild: yes
       storage: yes
       java-opts: "-Xms1024m -Xmx1024m"
       keyvault: yes
