@@ -283,4 +283,4 @@ task fixPom {
     }
 }
 generatePomFileForMavenJavaPublication.finalizedBy fixPom
-apply from: "${rootProject.projectDir}/azure.gradle"
+apply from: 'azure.gradle'
