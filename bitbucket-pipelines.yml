@@ -185,6 +185,7 @@ server:
       storage: yes
       java-opts: "-Xms1024m -Xmx1024m"
       keyvault: yes
+      dockerbuild: yes
       scale:
         replicas: 1
       resources:
