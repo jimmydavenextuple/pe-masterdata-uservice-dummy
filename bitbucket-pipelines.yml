@@ -103,6 +103,7 @@ server:
     integration:
       ingress: yes
       middleman: yes
+      dockerbuild: yes
       prometheus: yes
       storage: yes
       java-opts: "-Xms1024m -Xmx1024m"
