@@ -29,6 +29,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for calendar data APIs.
+ *
+ * <p>This controller provides APIs to fetch calendar data for organizations, with support for
+ * pagination and sorting of the calendar entries.
+ *
+ * <p>The controller is tagged with "Calender Data APIs" for easy categorization in API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/ui/calendar")
 @RequiredArgsConstructor
@@ -41,6 +50,19 @@ public class CalendarDataController {
 
   private final CalendarDataService calendarDataService;
 
+  /**
+   * Retrieves a paginated list of calendar data for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch calendar data for a specific organization, with
+   * support for pagination and sorting. It returns a paginated response containing calendar
+   * entries.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param pageParams The pagination parameters, such as page number, page size, sorting criteria,
+   *     and sort order.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a paginated list of
+   *     calendar data.
+   */
   @GetMapping("/{orgId}")
   @GetCalenderDataDoc
   public ResponseEntity<BaseResponse<PagePayload<CalendarDto>>> getCalendarList(

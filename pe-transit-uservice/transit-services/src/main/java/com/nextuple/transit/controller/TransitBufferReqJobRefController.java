@@ -31,6 +31,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Transit Buffer Request Job References. This includes creating and
+ * retrieving transit buffer request job references.
+ *
+ * <p>The Transit Buffer Request Job Reference Controller provides API endpoints for creating a new
+ * transit buffer request job reference and retrieving transit buffer request job references by
+ * external reference ID.
+ *
+ * <p>The controller is tagged with "Transit Buffer Request APIs" for easy categorization in API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/transit/transit-buffer-req-jobs-reference")
 @RequiredArgsConstructor
@@ -42,6 +53,22 @@ public class TransitBufferReqJobRefController {
 
   private final TransitBufferReqJobRefService transitBufferReqJobRefService;
 
+  /**
+   * Creates a new Transit Buffer Request Job Reference.
+   *
+   * <p>This method processes a POST request to create a new transit buffer request job reference.
+   * It consumes a JSON payload in the request body, performs the necessary business logic using the
+   * {@link TransitBufferReqJobRefService}, and returns a response containing the result of the
+   * creation process.
+   *
+   * @param transitBufferReqJobRefRequest The request payload containing the details needed for
+   *     creating the transit buffer request job reference.
+   * @return A {@link ResponseEntity} containing the {@link BaseResponse} with the payload of the
+   *     created transit buffer request job reference and a success message.
+   * @throws TransitBufferReqJobRefDomainException If an error occurs while creating the transit
+   *     buffer request job reference, a custom exception is thrown with details about the error and
+   *     relevant identifiers.
+   */
   @TransitBufferReqJobRefRequestDoc
   @PostMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -68,6 +95,21 @@ public class TransitBufferReqJobRefController {
     }
   }
 
+  /**
+   * Retrieves a Transit Buffer Request Job Reference for a given external reference ID.
+   *
+   * <p>This method processes a GET request to retrieve the transit buffer request job reference
+   * associated with the provided external reference ID. It returns a list of matching job
+   * references in the response payload.
+   *
+   * @param extReferenceId The unique identifier for the external reference or job. Example:
+   *     "ref-123"
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a list of {@link
+   *     TransitBufferReqJobRefResponse} objects and a success message.
+   * @throws TransitBufferReqJobRefDomainException If an error occurs while retrieving the transit
+   *     buffer request job reference, a custom exception is thrown with details about the error and
+   *     the relevant external reference ID.
+   */
   @FindTransitBufferReqJobRefByExtRefIdDoc
   @GetMapping(path = "/{extReferenceId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<List<TransitBufferReqJobRefResponse>>>

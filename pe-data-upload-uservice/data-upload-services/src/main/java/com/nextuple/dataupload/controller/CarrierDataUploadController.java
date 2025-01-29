@@ -20,6 +20,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Controller for carrier data upload APIs.
+ *
+ * <p>This controller provides APIs to upload carrier data from a specified file URI and process it
+ * for storage or further use.
+ *
+ * <p>The controller is tagged for handling carrier data upload functionality.
+ */
 @Controller
 @RequestMapping("/upload")
 @Slf4j
@@ -27,6 +35,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class CarrierDataUploadController {
   private final CarrierDataUploadService carrierDataUploadService;
 
+  /**
+   * Uploads the carrier data from the specified file URI.
+   *
+   * <p>This method processes a POST request to upload carrier data by fetching the file located at
+   * the specified file URI and processing it.
+   *
+   * @param fileUri The URI of the file containing the carrier data to be uploaded.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message if
+   *     the upload is successful.
+   * @throws IOException If there is an error during file reading or processing.
+   * @throws CommonServiceException If there is a general error during the service process.
+   */
   @PostMapping("/carrier")
   public ResponseEntity<BaseResponse<String>> uploadCarrierData(
       @NotBlank(message = "fileUri can't be empty") @RequestParam String fileUri)

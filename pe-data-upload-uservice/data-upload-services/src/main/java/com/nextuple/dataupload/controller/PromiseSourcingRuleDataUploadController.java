@@ -21,6 +21,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Controller for Promise Sourcing Rule Data Upload.
+ *
+ * <p>This controller provides an API to upload Promise Sourcing Rule data for processing and
+ * storing in the system. It fetches data from a specified file URI and processes it for inclusion
+ * in the system.
+ *
+ * <p>The controller is tagged with "Promise Sourcing Rule APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @Controller
 @RequestMapping("/upload")
@@ -29,6 +39,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PromiseSourcingRuleDataUploadController {
   private final PromiseSourcingRuleDataUploadService promiseSourcingRuleDataUploadService;
 
+  /**
+   * Uploads the Promise Sourcing Rule data from the specified file URI.
+   *
+   * <p>This method processes a POST request to upload Promise Sourcing Rule data by fetching the
+   * file located at the specified file URI and processing it.
+   *
+   * @param fileUri The URI of the file containing the Promise Sourcing Rule data to be uploaded.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message if
+   *     the upload is successful.
+   * @throws IOException If there is an error during file reading or processing.
+   * @throws CommonServiceException If there is a general error during the service process.
+   */
   @PostMapping("/promise-sourcing-rule")
   public ResponseEntity<BaseResponse<String>> uploadPromiseSourcingRuleData(
       @NotBlank(message = "fileUri can't be empty") @RequestParam String fileUri)

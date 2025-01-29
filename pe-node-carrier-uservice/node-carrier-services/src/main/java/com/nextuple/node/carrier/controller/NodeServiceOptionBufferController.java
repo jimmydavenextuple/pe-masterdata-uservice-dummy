@@ -9,13 +9,7 @@ package com.nextuple.node.carrier.controller;
 
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.node.carrier.controller.docs.CreateNodeServiceOptionBufferDoc;
-import com.nextuple.node.carrier.controller.docs.DeleteNodeServiceOptionBufferByIdDoc;
-import com.nextuple.node.carrier.controller.docs.DeleteNodeServiceOptionBufferDoc;
-import com.nextuple.node.carrier.controller.docs.FetchApplicableNodeServiceOptionBuffersDoc;
-import com.nextuple.node.carrier.controller.docs.FetchNodeServiceOptionBufferDoc;
-import com.nextuple.node.carrier.controller.docs.GetBuffersByOrgIdAndNodeIdAndServiceOptionDoc;
-import com.nextuple.node.carrier.controller.docs.UpdateNodeServiceOptionBufferDoc;
+import com.nextuple.node.carrier.controller.docs.*;
 import com.nextuple.node.carrier.domain.constants.NodeCarrierConstants;
 import com.nextuple.node.carrier.domain.inbound.NodeServiceOptionBufferDeleteRequest;
 import com.nextuple.node.carrier.domain.inbound.NodeServiceOptionBufferRequest;
@@ -35,16 +29,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing Node Service Option Buffers.
+ *
+ * <p>This controller provides APIs for creating, fetching, updating, and retrieving applicable Node
+ * Service Option Buffers based on various parameters. It includes endpoints for creating a new
+ * buffer, fetching details of a specific buffer, fetching applicable buffers, and updating an
+ * existing buffer. This is the version 2 of the Node Service Option Buffer API.
+ *
+ * <p>All API endpoints are tagged with "Node Service Option Buffer APIs" for easy categorization in
+ * API documentation.
+ *
+ * <p>Each API endpoint is documented with details about its purpose, request parameters, response
+ * structure, and any exceptions that may be thrown.
+ */
 @Validated
 @RestController
 @Tag(name = "Node Service Option Buffer APIs")
@@ -54,6 +54,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class NodeServiceOptionBufferController {
   private final NodeServiceOptionBufferService nodeServiceOptionBufferService;
 
+  /**
+   * Creates a new Node Service Option Buffer based on the provided request data.
+   *
+   * <p>This endpoint processes the creation of a Node Service Option Buffer, which holds specific
+   * configuration data related to service options for nodes.
+   *
+   * @param nodeServiceOptionBufferRequest the request body containing the details of the Node
+   *     Service Option Buffer to be created. It must be a valid object.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the response details of
+   *     the created Node Service Option Buffer.
+   * @throws CommonServiceException if an error occurs while processing the creation request.
+   */
   @PostMapping
   @CreateNodeServiceOptionBufferDoc
   public ResponseEntity<BaseResponse<NodeServiceOptionBufferResponse>>
@@ -72,6 +84,19 @@ public class NodeServiceOptionBufferController {
             .build());
   }
 
+  /**
+   * Fetches the Node Service Option Buffer for the specified organization and ID.
+   *
+   * <p>This endpoint retrieves a Node Service Option Buffer based on the provided organization ID
+   * and buffer ID.
+   *
+   * @param orgId the organization ID for which the Node Service Option Buffer is fetched. It must
+   *     be a non-blank string.
+   * @param id the ID of the Node Service Option Buffer to fetch. It must be a non-null value.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     fetched Node Service Option Buffer.
+   * @throws CommonServiceException if an error occurs while processing the fetch request.
+   */
   @GetMapping("/{orgId}/{id}")
   @FetchNodeServiceOptionBufferDoc
   public ResponseEntity<BaseResponse<NodeServiceOptionBufferResponse>> fetchNodeServiceOptionBuffer(
@@ -96,6 +121,27 @@ public class NodeServiceOptionBufferController {
             .build());
   }
 
+  /**
+   * Fetches the applicable Node Service Option Buffers for the specified organization, node,
+   * service option, request date, and horizon days.
+   *
+   * <p>This endpoint retrieves the Node Service Option Buffers that are applicable based on the
+   * provided parameters, considering the request date and horizon days.
+   *
+   * @param orgId the organization ID for which the Node Service Option Buffers are fetched. It must
+   *     be a non-blank string.
+   * @param nodeId the node ID for which the Node Service Option Buffers are fetched. It must be a
+   *     non-blank string.
+   * @param serviceOption the service option to filter the Node Service Option Buffers. It must be a
+   *     non-blank string.
+   * @param requestDate the request date for getting the applicable buffers, in UTC time. It must
+   *     not be null.
+   * @param horizonDays the number of days after the request date to fetch buffers. It must not be
+   *     null and must be non-negative.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with a list of applicable
+   *     {@link NodeServiceOptionBufferResponse} objects.
+   * @throws CommonServiceException if an error occurs while processing the fetch request.
+   */
   @GetMapping("/{orgId}/{nodeId}/{serviceOption}")
   @FetchApplicableNodeServiceOptionBuffersDoc
   public ResponseEntity<BaseResponse<List<NodeServiceOptionBufferResponse>>>
@@ -148,6 +194,22 @@ public class NodeServiceOptionBufferController {
             .build());
   }
 
+  /**
+   * Updates the Node Service Option Buffer for the specified organization and ID with the provided
+   * update request.
+   *
+   * <p>This endpoint allows for updating the Node Service Option Buffer based on the given
+   * organization ID, node service option buffer ID, and the update request details.
+   *
+   * @param orgId the organization ID for which the Node Service Option Buffer is updated. It must
+   *     be a non-blank string.
+   * @param id the ID of the Node Service Option Buffer to update. It must be a non-null long value.
+   * @param updateRequest the request body containing the details to update the Node Service Option
+   *     Buffer. It must be valid.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the updated {@link
+   *     NodeServiceOptionBufferResponse} object.
+   * @throws CommonServiceException if an error occurs while processing the update request.
+   */
   @PutMapping("/{orgId}/{id}")
   @UpdateNodeServiceOptionBufferDoc
   public ResponseEntity<BaseResponse<NodeServiceOptionBufferResponse>>
@@ -177,6 +239,18 @@ public class NodeServiceOptionBufferController {
             .build());
   }
 
+  /**
+   * Deletes the Node Service Option Buffer based on the provided delete request.
+   *
+   * <p>This endpoint allows for deleting a specific Node Service Option Buffer using the details
+   * provided in the delete request.
+   *
+   * @param nodeServiceOptionBufferDeleteRequest the request body containing the details to delete
+   *     the Node Service Option Buffer. It must be valid.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the result of the
+   *     deletion operation and the {@link NodeServiceOptionBufferResponse} of the deleted buffer.
+   * @throws CommonServiceException if an error occurs while processing the delete request.
+   */
   @DeleteMapping
   @DeleteNodeServiceOptionBufferDoc
   public ResponseEntity<BaseResponse<NodeServiceOptionBufferResponse>>
@@ -196,6 +270,20 @@ public class NodeServiceOptionBufferController {
             .build());
   }
 
+  /**
+   * Deletes the Node Service Option Buffer by the given orgId and id.
+   *
+   * <p>This endpoint allows for deleting a specific Node Service Option Buffer by providing the
+   * orgId and id of the buffer to be deleted. If the buffer with the given id exists, it will be
+   * removed.
+   *
+   * @param orgId the ID of the organization to which the Node Service Option Buffer belongs. It
+   *     cannot be blank.
+   * @param id the ID of the Node Service Option Buffer to be deleted. It cannot be null.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the result of the
+   *     deletion operation and the {@link NodeServiceOptionBufferResponse} of the deleted buffer.
+   * @throws CommonServiceException if an error occurs while processing the delete request.
+   */
   @DeleteMapping("/{orgId}/{id}")
   @DeleteNodeServiceOptionBufferByIdDoc
   public ResponseEntity<BaseResponse<NodeServiceOptionBufferResponse>>
@@ -223,6 +311,21 @@ public class NodeServiceOptionBufferController {
             .build());
   }
 
+  /**
+   * Retrieves a list of Node Service Option Buffers based on the given orgId, nodeId, and
+   * serviceOption.
+   *
+   * <p>This endpoint fetches the Node Service Option Buffers associated with the specified
+   * organization ID (orgId), node ID (nodeId), and service option. The buffers will be returned in
+   * a list.
+   *
+   * @param orgId the ID of the organization. It cannot be blank.
+   * @param nodeId the ID of the node. It cannot be blank.
+   * @param serviceOption the service option. It cannot be blank.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with a list of {@link
+   *     NodeServiceOptionBufferResponse} objects.
+   * @throws CommonServiceException if an error occurs while fetching the buffers.
+   */
   @GetBuffersByOrgIdAndNodeIdAndServiceOptionDoc
   @GetMapping("/list/{orgId}/{nodeId}")
   public ResponseEntity<BaseResponse<List<NodeServiceOptionBufferResponse>>>

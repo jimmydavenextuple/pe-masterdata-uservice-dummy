@@ -13,11 +13,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.util.PaginationUtil;
-import com.nextuple.jobs.consumers.controller.docs.CreateJobDoc;
-import com.nextuple.jobs.consumers.controller.docs.GetJobDoc;
-import com.nextuple.jobs.consumers.controller.docs.GetJobRecordsByFilterDoc;
-import com.nextuple.jobs.consumers.controller.docs.GetJobRecordsByFilterV1Doc;
-import com.nextuple.jobs.consumers.controller.docs.UpdateJobDoc;
+import com.nextuple.jobs.consumers.controller.docs.*;
 import com.nextuple.jobs.consumers.exception.JobDomainException;
 import com.nextuple.jobs.consumers.exception.JobException;
 import com.nextuple.jobs.consumers.service.JobConsumerService;
@@ -41,14 +37,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing job-related operations.
+ *
+ * <p>This controller provides APIs to handle various job operations, including job creation,
+ * updating, retrieval, and record filtering. The operations are performed based on the specified
+ * organization and job IDs, with support for pagination and filtering options.
+ *
+ * <p>Tagged under "Job Consumer APIs" for documentation categorization, this controller facilitates
+ * seamless integration and interaction with job data and configurations.
+ */
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -60,11 +60,16 @@ public class JobsConsumerController {
   private final DefaultPageProperties defaultPageProperties;
 
   /**
-   * @param orgId
-   * @param jobId
-   * @param status
-   * @return
-   * @throws JobException
+   * Retrieves job records based on the provided filters.
+   *
+   * <p>This method retrieves the job records for a given job ID within the specified organization
+   * ID. The records are filtered by job status if provided.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobId The unique identifier for the job.
+   * @param status (Optional) The status of the job (e.g., "COMPLETED").
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a list of job records.
+   * @throws JobException If there is an error retrieving the job records.
    */
   @GetMapping(
       path = "/org/{orgId}/jobs/{jobId}/results",
@@ -100,9 +105,14 @@ public class JobsConsumerController {
   }
 
   /**
-   * @param jobDto
-   * @return
-   * @throws JobException
+   * Creates a new job.
+   *
+   * <p>This method processes a POST request to create a new job using the provided job details.
+   *
+   * @param jobDto The details of the job to be created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created job
+   *     details.
+   * @throws JobException If there is an error while creating the job.
    */
   @PostMapping(
       value = "/jobs",
@@ -119,10 +129,15 @@ public class JobsConsumerController {
   }
 
   /**
-   * @param orgId
-   * @param jobId
-   * @return
-   * @throws JobException
+   * Retrieves the details of a specific job.
+   *
+   * <p>This method retrieves the job information for a given job ID within the specified
+   * organization ID.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobId The unique identifier for the job.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the job details.
+   * @throws JobException If there is an error retrieving the job details.
    */
   @GetMapping(path = "/org/{orgId}/jobs/{jobId}")
   @GetJobDoc
@@ -151,9 +166,14 @@ public class JobsConsumerController {
   }
 
   /**
-   * @param jobResponse
-   * @return
-   * @throws JobDomainException
+   * Updates an existing job.
+   *
+   * <p>This method processes a PUT request to update a job with the given job details.
+   *
+   * @param jobResponse The updated details of the job to be saved.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated job
+   *     details.
+   * @throws JobDomainException If there is an error while updating the job.
    */
   @PutMapping(path = "/jobs/update")
   @UpdateJobDoc
@@ -169,10 +189,16 @@ public class JobsConsumerController {
   }
 
   /**
-   * @param orgId
-   * @param jobFilters
-   * @return
-   * @throws JobException
+   * Retrieves a list of jobs filtered by the specified parameters.
+   *
+   * <p>This method retrieves a list of jobs based on various filtering options like job type, days,
+   * etc. It supports pagination and sorting of the job list.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobFilters The filters to apply for the job list (e.g., job type, sorting options).
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a paginated list of
+   *     jobs.
+   * @throws JobException If there is an error retrieving the job list.
    */
   @GetMapping(value = "/org/{orgId}/jobs", produces = MediaType.APPLICATION_JSON_VALUE)
   @GetJobRecordsByFilterDoc
@@ -249,6 +275,21 @@ public class JobsConsumerController {
                 .build());
   }
 
+  /**
+   * Retrieves job records based on the specified filters and pagination options.
+   *
+   * <p>This method retrieves the job records for a given job ID and organization ID, with
+   * additional filtering options such as job status and pagination.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobId The unique identifier for the job.
+   * @param status (Optional) The status of the job (e.g., "COMPLETED").
+   * @param pageNo (Optional) The page number for pagination.
+   * @param pageSize (Optional) The page size for pagination.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a paginated list of job
+   *     records.
+   * @throws JobException If there is an error retrieving the job records.
+   */
   @GetMapping(
       path = "/v1/org/{orgId}/jobs/{jobId}/results",
       produces = MediaType.APPLICATION_JSON_VALUE)

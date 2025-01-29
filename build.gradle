@@ -78,6 +78,7 @@ subprojects {
     apply plugin: "com.github.spotbugs"
     apply plugin: "com.diffplug.spotless"
     apply plugin: "org.sonatype.gradle.plugins.scan"
+    apply plugin: 'java'
 
     group = 'com.nextuple.pe'
 
@@ -491,7 +492,38 @@ spotless {
         removeUnusedImports()
         googleJavaFormat()
     }
+    tasks.named('javadoc') {
+        enabled = false
+    }
 }
+
+task unifiedJavadoc(type: Javadoc) {
+    group = "documentation"
+    description = "Generates unified Javadocs for all modules."
+
+    // Collect all sources from subprojects
+    source subprojects.collect { it.sourceSets.main.allJava }
+
+    // Add all classpaths from subprojects
+    classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
+
+    // Output directory for the unified Javadocs
+    destinationDir = file("$buildDir/docs/javadoc")
+
+    options {
+        encoding = 'UTF-8'
+        charSet = 'UTF-8'
+        author = true
+        version = true
+        links 'https://docs.oracle.com/javase/8/docs/api/' // Link to external documentation
+        memberLevel = JavadocMemberLevel.PRIVATE
+    }
+
+    include '**/controller/**'
+    include '**/domain/**'
+//    exclude '**/controller/docs/**'
+}
+
 task showSonarQubeLink {
     doLast {
         print("Checkout SonarQube report at ${getProperty("systemProp.sonar.host.url")}/dashboard?id=${getProperty("systemProp.sonar.projectKey")}\n")

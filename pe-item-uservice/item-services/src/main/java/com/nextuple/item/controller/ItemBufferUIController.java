@@ -23,12 +23,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing Item Buffer UI operations.
+ *
+ * <p>This controller provides APIs to fetch item buffers and their associated items for a given
+ * organization. It supports retrieving item buffers by organization ID, item ID, and unit of
+ * measure (UOM), as well as fetching paginated lists of items with their configured buffers.
+ *
+ * <p>The controller is tagged with "Item Buffer Dashboard APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @Tag(name = "Item Buffer Dashboard APIs")
@@ -38,6 +44,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class ItemBufferUIController {
   private final ItemBufferService itemBufferService;
 
+  /**
+   * Fetches a list of Item Buffers based on the provided organization ID, item ID, and unit of
+   * measure (UOM).
+   *
+   * <p>This endpoint retrieves a list of Item Buffers filtered by the orgId, itemId, and uom
+   * parameters.
+   *
+   * @param orgId the organization ID associated with the Item Buffers.
+   * @param itemId the ID of the item for which the buffers are being fetched.
+   * @param uom the unit of measure for the item buffers.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with a list of {@link
+   *     ItemBufferResponse}.
+   * @throws CommonServiceException if an error occurs while fetching the Item Buffers.
+   */
   @GetMapping("/{orgId}/{itemId}/{uom}")
   public ResponseEntity<BaseResponse<List<ItemBufferResponse>>>
       getItemBuffersByOrgIdAndItemIdAndUom(
@@ -64,6 +84,20 @@ public class ItemBufferUIController {
             .build());
   }
 
+  /**
+   * Fetches a paginated list of items with their configured buffers for the specified organization
+   * ID.
+   *
+   * <p>This endpoint returns a list of items along with their associated buffers. The results are
+   * paginated based on the specified page number and page size.
+   *
+   * @param orgId the organization ID for which the items are being fetched.
+   * @param pageNo the page number for pagination (defaults to 1 if not provided).
+   * @param pageSize the number of items per page (defaults to 10 if not provided).
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with a {@link
+   *     PageResponseForItemBuffer} payload.
+   * @throws CommonServiceException if an error occurs while fetching the items or buffers.
+   */
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PageResponseForItemBuffer>> getItemsListWithConfiguredBuffers(
       @NotBlank(message = "orgId can't be empty")
@@ -84,6 +118,23 @@ public class ItemBufferUIController {
             .build());
   }
 
+  /**
+   * Fetches a paginated list of items with their configured buffers for the specified organization
+   * ID and item IDs.
+   *
+   * <p>This endpoint allows fetching items by their IDs within an organization, and the results are
+   * paginated based on the specified page number and page size. If no item IDs are provided, it
+   * fetches all items for the organization.
+   *
+   * @param orgId the organization ID for which the items are being fetched.
+   * @param itemIds a comma-separated string containing the item IDs to filter the items by
+   *     (optional).
+   * @param pageNo the page number for pagination (defaults to 1 if not provided).
+   * @param pageSize the number of items per page (defaults to 10 if not provided).
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with a {@link
+   *     PageResponseForItemBuffer} payload.
+   * @throws CommonServiceException if an error occurs while fetching the items or buffers.
+   */
   @GetMapping("/v1/{orgId}")
   public ResponseEntity<BaseResponse<PageResponseForItemBuffer>>
       getItemsListWithConfiguredBuffersV1(

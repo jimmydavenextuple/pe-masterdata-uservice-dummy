@@ -9,11 +9,7 @@ package com.nextuple.sourcing.cost.config.controller;
 
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.sourcing.cost.config.controller.docs.CreateCostFactorContiguousBucketDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.DeleteCostFactorContiguousBucketDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostFactorContiguousBucketCacheKeyDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostFactorContiguousBucketDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.UpdateCostFactorContiguousBucketDoc;
+import com.nextuple.sourcing.cost.config.controller.docs.*;
 import com.nextuple.sourcing.cost.config.dto.CostFactorContiguousBucketCacheKeyDto;
 import com.nextuple.sourcing.cost.config.dto.CostFactorContiguousBucketDto;
 import com.nextuple.sourcing.cost.config.inbound.CostFactorContiguousBucketRequest;
@@ -32,16 +28,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing cost factor contiguous buckets.
+ *
+ * <p>This controller provides APIs to create, retrieve, update, and delete cost factor contiguous
+ * buckets for a given organization and cost factor. It also allows fetching cache keys associated
+ * with cost factor contiguous buckets. Each method processes requests related to the cost factor
+ * bucket type and interacts with the service layer to perform the required operations.
+ *
+ * <p>The controller is tagged with "Cost factor contiguous buckets APIs" for easy categorization in
+ * API documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/cost-config/cost-factor-contiguous-buckets")
@@ -54,6 +53,19 @@ public class CostFactorContiguousBucketController {
   private final CostFactorContiguousBucketService costFactorContiguousBucketService;
   private final CostFactorContiguousBucketServiceImpl costFactorContiguousBucketServiceImpl;
 
+  /**
+   * Creates a new cost factor contiguous bucket.
+   *
+   * <p>This method processes a POST request to create a contiguous bucket for a given cost factor
+   * within an organization.
+   *
+   * @param orgId The unique identifier of the organization. Must not be empty.
+   * @param costFactorContiguousBucketRequest The request body containing the details of the
+   *     contiguous bucket to be created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created contiguous
+   *     bucket details.
+   * @throws CommonServiceException If an error occurs during the creation of the contiguous bucket.
+   */
   @CreateCostFactorContiguousBucketDoc
   @PostMapping("/{orgId}")
   public ResponseEntity<BaseResponse<CostFactorContiguousBucketDto>>
@@ -78,6 +90,20 @@ public class CostFactorContiguousBucketController {
                 .build());
   }
 
+  /**
+   * Retrieves cost factor contiguous bucket details.
+   *
+   * <p>This method processes a GET request to fetch the contiguous buckets for a given cost factor
+   * within an organization.
+   *
+   * @param orgId The unique identifier of the organization. Must not be blank.
+   * @param costFactor The cost factor for which the contiguous buckets are to be fetched. Must not
+   *     be blank.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a list of contiguous
+   *     bucket details.
+   * @throws CommonServiceException If an error occurs while retrieving the contiguous bucket
+   *     details.
+   */
   @GetCostFactorContiguousBucketDoc
   @GetMapping("/{orgId}/{costFactor}")
   public ResponseEntity<BaseResponse<List<CostFactorContiguousBucketDto>>>
@@ -101,6 +127,19 @@ public class CostFactorContiguousBucketController {
                 .build());
   }
 
+  /**
+   * Updates a cost factor contiguous bucket.
+   *
+   * <p>This method processes a PUT request to update a contiguous bucket for a given cost factor
+   * and organization.
+   *
+   * @param orgId The unique identifier of the organization. Must not be empty.
+   * @param id The unique identifier of the bucket record. Must not be empty.
+   * @param request The request body containing the updated details of the contiguous bucket.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated contiguous
+   *     bucket details.
+   * @throws CommonServiceException If an error occurs during the update of the contiguous bucket.
+   */
   @UpdateCostFactorContiguousBucketDoc
   @PutMapping(value = "{orgId}/{id}")
   public ResponseEntity<BaseResponse<CostFactorContiguousBucketDto>> updateCostFactorBucket(
@@ -128,6 +167,18 @@ public class CostFactorContiguousBucketController {
                 .build());
   }
 
+  /**
+   * Deletes a cost factor contiguous bucket.
+   *
+   * <p>This method processes a DELETE request to remove a contiguous bucket for a given cost factor
+   * within an organization.
+   *
+   * @param orgId The unique identifier of the organization. Must not be empty.
+   * @param id The unique identifier of the bucket record. Must not be empty.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted contiguous bucket.
+   * @throws CommonServiceException If an error occurs during the deletion of the contiguous bucket.
+   */
   @DeleteCostFactorContiguousBucketDoc
   @DeleteMapping(value = "{orgId}/{id}")
   public ResponseEntity<BaseResponse<CostFactorContiguousBucketDto>> deleteCostFactorBucket(
@@ -151,6 +202,15 @@ public class CostFactorContiguousBucketController {
                 .build());
   }
 
+  /**
+   * Retrieves cache keys for cost factor contiguous buckets.
+   *
+   * <p>This method processes a GET request to fetch a list of cache keys associated with contiguous
+   * buckets.
+   *
+   * @param limit The maximum number of cache keys to retrieve. Defaults to 100.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of cache keys.
+   */
   @GetCostFactorContiguousBucketCacheKeyDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<CostFactorContiguousBucketCacheKeyDto>>>

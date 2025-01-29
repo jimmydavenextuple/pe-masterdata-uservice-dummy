@@ -9,11 +9,7 @@ package com.nextuple.node.carrier.controller;
 
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.node.carrier.controller.docs.CreateNodeServiceOptionDoc;
-import com.nextuple.node.carrier.controller.docs.DeleteNodeServiceOptionDoc;
-import com.nextuple.node.carrier.controller.docs.GetNodeServiceOptionDoc;
-import com.nextuple.node.carrier.controller.docs.GetNodeServiceOptionsListDoc;
-import com.nextuple.node.carrier.controller.docs.UpdateNodeServiceOptionDoc;
+import com.nextuple.node.carrier.controller.docs.*;
 import com.nextuple.node.carrier.domain.constants.NodeCarrierConstants;
 import com.nextuple.node.carrier.domain.inbound.NodeServiceOptionRequest;
 import com.nextuple.node.carrier.domain.inbound.NodeServiceOptionUpdateRequest;
@@ -30,15 +26,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller that manages the Node Service Option APIs.
+ *
+ * <p>This controller provides endpoints for creating, updating, retrieving, and deleting Node
+ * Service Options. The Node Service Option can be managed via the following actions: - Create a new
+ * Node Service Option - Update an existing Node Service Option - Retrieve an existing Node Service
+ * Option - Delete a Node Service Option
+ *
+ * <p>All API endpoints are tagged with "Node Service Option APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @Tag(name = "Node Service Option APIs")
@@ -49,6 +49,21 @@ public class NodeServiceOptionsController {
   private final NodeServiceOptionsService nodeServiceOptionsService;
   private static final Logger logger = LoggerFactory.getLogger(NodeServiceOptionsController.class);
 
+  /**
+   * Creates a new Node Service Option based on the provided request.
+   *
+   * <p>This endpoint handles the creation of a Node Service Option. It accepts a request body
+   * containing the details of the Node Service Option to be created, processes the request, and
+   * returns the newly created Node Service Option in the response.
+   *
+   * @param nodeServiceOptionRequest the request body containing the details of the Node Service
+   *     Option to be created. It must be a valid object, as annotated by {@link Valid}.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the newly created
+   *     {@link NodeServiceOptionResponse}.
+   * @throws CommonServiceException if an error occurs while processing the request.
+   * @throws InvalidDataException if the provided data is invalid or doesn't meet the required
+   *     criteria.
+   */
   @CreateNodeServiceOptionDoc
   @PostMapping
   public ResponseEntity<BaseResponse<NodeServiceOptionResponse>> createNodeServiceOption(
@@ -62,6 +77,25 @@ public class NodeServiceOptionsController {
             .build());
   }
 
+  /**
+   * Updates an existing Node Service Option based on the provided request.
+   *
+   * <p>This endpoint handles the update of an existing Node Service Option. It accepts a request
+   * body containing the updated details of the Node Service Option, identifies the Node Service
+   * Option by the provided orgId, nodeId, and serviceOption, and returns the updated Node Service
+   * Option in the response.
+   *
+   * @param orgId the ID of the organization to which the Node Service Option belongs.
+   * @param nodeId the ID of the node to which the Node Service Option is associated.
+   * @param serviceOption the service option to be updated.
+   * @param nodeServiceOptionUpdateRequest the request body containing the updated details of the
+   *     Node Service Option. It must be a valid object, as annotated by {@link Valid}.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the updated {@link
+   *     NodeServiceOptionResponse}.
+   * @throws CommonServiceException if an error occurs while processing the request.
+   * @throws InvalidDataException if the provided data is invalid or doesn't meet the required
+   *     criteria.
+   */
   @UpdateNodeServiceOptionDoc
   @PutMapping("/{orgId}/{nodeId}/{serviceOption}")
   public ResponseEntity<BaseResponse<NodeServiceOptionResponse>> updateNodeServiceOption(
@@ -99,6 +133,19 @@ public class NodeServiceOptionsController {
             .build());
   }
 
+  /**
+   * Retrieves the Node Service Option based on the provided orgId, nodeId, and serviceOption.
+   *
+   * <p>This endpoint fetches the details of a Node Service Option by the specified orgId, nodeId,
+   * and serviceOption.
+   *
+   * @param orgId the ID of the organization to which the Node Service Option belongs.
+   * @param nodeId the ID of the node to which the Node Service Option is associated.
+   * @param serviceOption the service option to be fetched.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the fetched {@link
+   *     NodeServiceOptionResponse}.
+   * @throws CommonServiceException if an error occurs while processing the request.
+   */
   @GetNodeServiceOptionDoc
   @GetMapping("/{orgId}/{nodeId}/{serviceOption}")
   public ResponseEntity<BaseResponse<NodeServiceOptionResponse>> getNodeServiceOption(
@@ -133,6 +180,20 @@ public class NodeServiceOptionsController {
             .build());
   }
 
+  /**
+   * Deletes the Node Service Option based on the provided orgId, nodeId, and serviceOption.
+   *
+   * <p>This endpoint deletes a Node Service Option associated with the specified orgId, nodeId, and
+   * serviceOption.
+   *
+   * @param orgId the ID of the organization from which the Node Service Option will be deleted.
+   * @param nodeId the ID of the node from which the Node Service Option will be deleted.
+   * @param serviceOption the service option to be deleted.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the deleted {@link
+   *     NodeServiceOptionResponse}.
+   * @throws CommonServiceException if an error occurs while processing the request.
+   * @throws InvalidDataException if the provided data is invalid for deletion.
+   */
   @DeleteNodeServiceOptionDoc
   @DeleteMapping("/{orgId}/{nodeId}/{serviceOption}")
   public ResponseEntity<BaseResponse<NodeServiceOptionResponse>> deleteNodeServiceOption(
@@ -168,6 +229,18 @@ public class NodeServiceOptionsController {
             .build());
   }
 
+  /**
+   * Fetches the list of Node Service Options based on the provided orgId and nodeId.
+   *
+   * <p>This endpoint retrieves a list of Node Service Options associated with the specified orgId
+   * and nodeId.
+   *
+   * @param orgId the ID of the organization to fetch Node Service Options for.
+   * @param nodeId the ID of the node to fetch Node Service Options for.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with a list of {@link
+   *     NodeServiceOptionResponse} objects.
+   * @throws CommonServiceException if an error occurs while processing the request.
+   */
   @GetNodeServiceOptionsListDoc
   @GetMapping("/{orgId}/{nodeId}")
   public ResponseEntity<BaseResponse<List<NodeServiceOptionResponse>>> getNodeServiceOptionsList(

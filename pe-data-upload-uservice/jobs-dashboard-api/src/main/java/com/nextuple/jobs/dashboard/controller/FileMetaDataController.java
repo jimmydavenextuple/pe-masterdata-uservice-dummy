@@ -27,6 +27,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing file metadata operations.
+ *
+ * <p>This controller provides APIs to create, retrieve, update, and delete file metadata entries.
+ * It serves as the backend interface for handling file metadata associated with uploaded files.
+ *
+ * <p>Tagged under "File Metadata APIs" for documentation categorization, this controller ensures
+ * seamless file metadata management with robust exception handling and validation.
+ */
 @RestController
 @RequestMapping("/file-metadata")
 @RequiredArgsConstructor
@@ -37,6 +46,18 @@ public class FileMetaDataController {
 
   private final FileMetaDataService fileMetadataService;
 
+  /**
+   * Creates a new file metadata entry.
+   *
+   * <p>This method handles the creation of a new file metadata entry by accepting a {@link
+   * FileMetaDataCreationRequest} containing the metadata details. It returns the created file
+   * metadata response if successful.
+   *
+   * @param fileMetadataCreationRequest The request body containing the metadata details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the file metadata
+   *     response.
+   * @throws FileMetaDataException If there is an error while creating the file metadata.
+   */
   @PostMapping
   @CreateFileMetadata
   public ResponseEntity<BaseResponse<FileMetaDataResponse>> createFileMetadata(
@@ -58,6 +79,17 @@ public class FileMetaDataController {
     }
   }
 
+  /**
+   * Retrieves the file metadata by its unique identifier.
+   *
+   * <p>This method fetches the file metadata associated with the provided identifier. It returns
+   * the metadata details if the file is found.
+   *
+   * @param id The unique identifier for the file metadata.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the file metadata
+   *     response.
+   * @throws FileMetaDataException If there is an error while fetching the file metadata.
+   */
   @GetMapping("/{id}")
   @FindFileMetadataDoc
   public ResponseEntity<BaseResponse<FileMetaDataResponse>> findFileMetadataById(
@@ -78,6 +110,18 @@ public class FileMetaDataController {
     }
   }
 
+  /**
+   * Updates the file metadata for the specified identifier.
+   *
+   * <p>This method allows updating the existing file metadata based on the given identifier and the
+   * updated metadata details provided in the request body.
+   *
+   * @param id The unique identifier for the file metadata to be updated.
+   * @param newfilemetadata The request body containing the updated metadata details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated file
+   *     metadata response.
+   * @throws FileMetaDataException If there is an error while updating the file metadata.
+   */
   @PutMapping("/{id}")
   @UpdateFileMetadataDoc
   public ResponseEntity<BaseResponse<FileMetaDataResponse>> updateFileMetadataById(
@@ -99,6 +143,17 @@ public class FileMetaDataController {
     }
   }
 
+  /**
+   * Deletes the file metadata by its unique identifier.
+   *
+   * <p>This method removes the file metadata associated with the provided identifier. It returns a
+   * response confirming the deletion.
+   *
+   * @param id The unique identifier for the file metadata to be deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the deleted file
+   *     metadata response.
+   * @throws FileMetaDataException If there is an error while deleting the file metadata.
+   */
   @DeleteMapping("/{id}")
   @DeleteFileMetedataDoc
   public ResponseEntity<BaseResponse<FileMetaDataResponse>> deleteFileMetadataById(

@@ -12,13 +12,11 @@ import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchGroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.GroupDefinitionRequest;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionListResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GroupDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.controller.docs.AddGroupDefinitionDoc;
 import com.nextuple.promise.sourcing.rule.controller.docs.DeleteGroupDefinitionDoc;
-import com.nextuple.promise.sourcing.rule.controller.docs.FetchGroupDefinitionByScoring;
 import com.nextuple.promise.sourcing.rule.controller.docs.GetGroupDefinitionDoc;
 import com.nextuple.promise.sourcing.rule.controller.docs.GetGroupDefinitionListDoc;
 import com.nextuple.promise.sourcing.rule.controller.docs.UpdateGroupDefinitionDoc;
@@ -42,6 +40,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing group definitions.
+ *
+ * <p>This controller provides APIs for adding, retrieving, updating, and deleting group definitions
+ * associated with specific organizations. These operations allow users to manage group definitions
+ * in their organization, which are linked to sourcing attributes.
+ *
+ * <p>The controller is tagged with "Group Definition APIs" for easy categorization in the API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/group-definition")
@@ -53,6 +61,19 @@ public class GroupDefinitionController {
 
   private final GroupDefinitionService groupDefinitionService;
 
+  /**
+   * Adds a new group definition.
+   *
+   * <p>This method processes a POST request to create a new group definition based on the details
+   * provided in the request body.
+   *
+   * @param groupDefinitionRequest The request body containing details for the new group definition.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created group
+   *     definition details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @AddGroupDefinitionDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -75,23 +96,20 @@ public class GroupDefinitionController {
     }
   }
 
-  @FetchGroupDefinitionByScoring
-  @PostMapping(
-      value = "/fetch-rule",
-      produces = MediaType.APPLICATION_JSON_VALUE,
-      consumes = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<BaseResponse<GroupDefinitionResponse>> fetchGroupDefinitionByScoring(
-      @Valid @RequestBody FetchGroupDefinitionRequest request)
-      throws PromiseEngineException, CommonServiceException {
-    logger.debug(
-        "Processing fetch rule configuration with rulesConfigurationsRequest : {}", request);
-    return ResponseEntity.ok(
-        BaseResponse.builder()
-            .message("Group Definition fetched successfully")
-            .payload(groupDefinitionService.processGetGroupDefinitionByScoring(request))
-            .build());
-  }
-
+  /**
+   * Retrieves a group definition by its unique identifier and organization ID.
+   *
+   * <p>This method processes a GET request to fetch the details of a group definition identified by
+   * its ID and associated organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the group definition.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched group
+   *     definition details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @GetGroupDefinitionDoc
   @GetMapping(value = "/orgId/{orgId}/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<GroupDefinitionResponse>> getGroupDefinitionByOrgIdAndId(
@@ -120,6 +138,21 @@ public class GroupDefinitionController {
     }
   }
 
+  /**
+   * Retrieves a list of group definitions for a specific organization and sourcing attributes
+   * definition ID.
+   *
+   * <p>This method processes a GET request to fetch all group definitions associated with the given
+   * organization ID and sourcing attributes definition ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param sourcingAttributesDefinitionId The reference to the sourcing attributes definition.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of group
+   *     definitions.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @GetGroupDefinitionListDoc
   @GetMapping(
       value = "list/orgId/{orgId}/sourcingAttributesDefinitionId/{sourcingAttributesDefinitionId}",
@@ -155,6 +188,20 @@ public class GroupDefinitionController {
     }
   }
 
+  /**
+   * Updates an existing group definition.
+   *
+   * <p>This method processes a PUT request to update the details of an existing group definition
+   * based on the provided request body.
+   *
+   * @param groupDefinitionRequest The request body containing updated details for the group
+   *     definition.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated group
+   *     definition details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @UpdateGroupDefinitionDoc
   @PutMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -177,6 +224,20 @@ public class GroupDefinitionController {
     }
   }
 
+  /**
+   * Deletes a group definition by its unique identifier and organization ID.
+   *
+   * <p>This method processes a DELETE request to remove a group definition identified by its ID and
+   * associated organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the group definition to be deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the deleted group
+   *     definition details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @DeleteGroupDefinitionDoc
   @DeleteMapping(value = "/orgId/{orgId}/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<GroupDefinitionResponse>> deleteGroupDefinition(
@@ -195,7 +256,7 @@ public class GroupDefinitionController {
       var groupDefinitionResponse = groupDefinitionService.processDeleteGroupDefinition(id, orgId);
       return ResponseEntity.ok(
           BaseResponse.builder()
-              .message("Group definition successfully deleted")
+              .message("Node group successfully deleted")
               .payload(groupDefinitionResponse)
               .build());
     } catch (Exception e) {

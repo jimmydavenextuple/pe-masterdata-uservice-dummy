@@ -27,6 +27,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for EDD computation utility APIs.
+ *
+ * <p>This controller provides APIs to process and compute Estimated Delivery Date (EDD) data based
+ * on the provided input request. The computed data is returned as a downloadable file.
+ *
+ * <p>The controller is tagged with "EDD Computation Utility APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @Slf4j
@@ -36,6 +45,19 @@ public class EddComputationUtilityController {
 
   private final EddComputationService eddComputationService;
 
+  /**
+   * Processes and downloads the EDD computation data for the specified upload request.
+   *
+   * <p>This method processes a POST request to compute the EDD (Estimated Delivery Date) based on
+   * the provided upload request containing the necessary data. The computed data is then returned
+   * as a downloadable file.
+   *
+   * @param uploadRequest The request payload containing the data required for EDD computation.
+   * @param response The HTTP response used to send the computed EDD data as a downloadable file.
+   * @throws IOException If there is an error while reading or writing the file.
+   * @throws CommonServiceException If there is an error during the service processing.
+   * @throws CsvException If there is an error with CSV processing during the computation.
+   */
   @PostMapping("/edd-computation")
   @EddComputationDoc
   public void eddComputationData(

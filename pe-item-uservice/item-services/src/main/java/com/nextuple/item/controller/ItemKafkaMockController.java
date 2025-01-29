@@ -23,6 +23,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for handling Kafka message production related to item master events.
+ *
+ * <p>This controller provides an API to produce Kafka messages to a specified topic. The message
+ * payload contains an item master event, which is sent to the topic provided in the URL path. The
+ * controller ensures that the message is successfully sent to Kafka or throws an exception if an
+ * error occurs.
+ *
+ * <p>The controller is tagged with "Kafka Mock APIs" for easy categorization in API documentation.
+ *
+ * <p>Note: This controller is designed for mock Kafka interactions in a development or testing
+ * environment, simulating the production of item-related events to Kafka topics.
+ */
 @RestController
 @Tag(name = "Kafka Mock APIs")
 @RequiredArgsConstructor
@@ -33,6 +46,19 @@ public class ItemKafkaMockController {
   @Qualifier("ItemSerializerProducer")
   private final KafkaTemplate<String, Object> kafkaTemplate;
 
+  /**
+   * Produces a Kafka message to the specified topic with the provided item master event data.
+   *
+   * <p>This endpoint processes a request to send an item master event message to a Kafka topic. The
+   * provided event data is sent to the topic specified in the URL path. If the message is
+   * successfully sent to Kafka, a success response is returned. If an error occurs, an exception is
+   * thrown.
+   *
+   * @param topicName the name of the Kafka topic to which the message will be sent.
+   * @param itemMasterEvent the item master event data to be sent as the Kafka message payload.
+   * @return a {@link ResponseEntity} containing a success message if the message is produced
+   *     successfully.
+   */
   @ProduceKafkaMessageDoc
   @PostMapping("producer/{topicName}/messages")
   public ResponseEntity<String> produceKafkaMessage(

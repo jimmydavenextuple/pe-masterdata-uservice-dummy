@@ -22,13 +22,17 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for holiday cutoff UI APIs.
+ *
+ * <p>This controller provides APIs to fetch holiday cutoff details for organizations, with support
+ * for pagination and processing of UI-related data for holiday cutoffs.
+ *
+ * <p>The controller is tagged with "Holiday cutoff UI APIs" for easy categorization in API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/holiday-cutoff/v1/ui")
 @RequiredArgsConstructor
@@ -38,6 +42,22 @@ public class HolidayCutoffDashboardController {
   private final Logger logger = LoggerFactory.getLogger(HolidayCutoffDashboardController.class);
   private final HolidayCutoffDetailsService holidayCutoffDetailsService;
 
+  /**
+   * Retrieves the holiday cutoff details for the specified organization.
+   *
+   * <p>This method processes a POST request to fetch holiday cutoff details for a specific
+   * organization. It supports pagination and allows the user to pass a request body containing
+   * holiday cutoff UI-related data.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param pageParams The pagination parameters, such as page number, page size, sorting criteria,
+   *     and sort order.
+   * @param isPaginated A flag to determine if the response should be paginated (default is true).
+   * @param holidayCutoffUIRequest The request body containing holiday cutoff details for UI
+   *     processing.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the holiday cutoff
+   *     details.
+   */
   @PostMapping("/orgId/{orgId}")
   @HolidayCutoffDashboardDoc
   public ResponseEntity<BaseResponse<PageResponseForHolidayCutoff>> getHolidayCutoffDetails(

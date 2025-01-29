@@ -8,12 +8,7 @@ package com.nextuple.sourcing.cost.config.controller;
 
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.sourcing.cost.config.controller.docs.CreateTenantCostTypeDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.DeleteTenantCostTypeDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetTenantCostTypeByOrgIdDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetTenantCostTypeCacheKeysDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetTenantCostTypeDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.UpdateTenantCostTypeDoc;
+import com.nextuple.sourcing.cost.config.controller.docs.*;
 import com.nextuple.sourcing.cost.config.dto.TenantCostTypeCacheKeyDto;
 import com.nextuple.sourcing.cost.config.inbound.TenantCostTypeRequest;
 import com.nextuple.sourcing.cost.config.inbound.TenantCostTypeUpdateRequest;
@@ -30,16 +25,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing tenant cost types for a specific organization.
+ *
+ * <p>This controller provides various endpoints for creating, retrieving, updating, and deleting
+ * tenant cost types. It also includes functionality for retrieving cache keys associated with these
+ * tenant cost types.
+ *
+ * <p>The controller is tagged with "Tenant Cost Type APIs" for easy categorization in API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/cost-config/type")
 @RequiredArgsConstructor
@@ -50,6 +47,19 @@ public class TenantCostTypeController {
 
   private final TenantCostTypeService tenantCostTypeService;
 
+  /**
+   * Creates a new tenant cost type for the specified organization.
+   *
+   * <p>This method processes a POST request to create a new tenant cost type based on the provided
+   * organization identifier and tenant cost type request.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param tenantCostTypeRequest The request payload containing the details for creating the tenant
+   *     cost type.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created tenant cost
+   *     type data.
+   * @throws CommonServiceException If there is an error during the creation process.
+   */
   @CreateTenantCostTypeDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -72,6 +82,18 @@ public class TenantCostTypeController {
                 .build());
   }
 
+  /**
+   * Retrieves a tenant cost type by organization ID and cost type ID.
+   *
+   * <p>This method processes a GET request to fetch a specific tenant cost type based on the
+   * provided organization ID and cost type ID.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param id The unique identifier of the tenant cost type.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched tenant cost
+   *     type data.
+   * @throws CommonServiceException If there is an error during the fetch process.
+   */
   @GetTenantCostTypeDoc
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{orgId}/{id}")
   public ResponseEntity<BaseResponse<TenantCostTypeResponse>> getTenantCostType(
@@ -93,6 +115,17 @@ public class TenantCostTypeController {
             .build());
   }
 
+  /**
+   * Retrieves all tenant cost types for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch all tenant cost types for the provided
+   * organization ID.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of tenant cost
+   *     types.
+   * @throws CommonServiceException If there is an error during the fetch process.
+   */
   @GetTenantCostTypeByOrgIdDoc
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{orgId}")
   public ResponseEntity<BaseResponse<List<TenantCostTypeResponse>>> getTenantCostTypeByOrgId(
@@ -110,6 +143,20 @@ public class TenantCostTypeController {
             .build());
   }
 
+  /**
+   * Updates an existing tenant cost type for the specified organization and cost type ID.
+   *
+   * <p>This method processes a PUT request to update an existing tenant cost type based on the
+   * provided organization ID, cost type ID, and the request payload containing the updated details.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param id The unique identifier of the tenant cost type.
+   * @param tenantCostTypeUpdateRequest The request payload containing the updated tenant cost type
+   *     details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated tenant cost
+   *     type data.
+   * @throws CommonServiceException If there is an error during the update process.
+   */
   @UpdateTenantCostTypeDoc
   @PutMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -136,6 +183,17 @@ public class TenantCostTypeController {
             .build());
   }
 
+  /**
+   * Deletes a tenant cost type for the specified organization and cost type ID.
+   *
+   * <p>This method processes a DELETE request to remove a specific tenant cost type based on the
+   * provided organization ID and cost type ID.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param id The unique identifier of the tenant cost type.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} confirming the deletion.
+   * @throws CommonServiceException If there is an error during the deletion process.
+   */
   @DeleteTenantCostTypeDoc
   @DeleteMapping(value = "/{orgId}/{id}")
   public ResponseEntity<BaseResponse<TenantCostTypeResponse>> deleteTenantCostType(
@@ -158,6 +216,16 @@ public class TenantCostTypeController {
             .build());
   }
 
+  /**
+   * Retrieves all tenant cost type cache keys with an optional limit.
+   *
+   * <p>This method processes a GET request to fetch all cache keys related to tenant cost types,
+   * with an optional parameter for limiting the number of rows returned.
+   *
+   * @param limit The maximum number of rows to be returned from the database (default is 100).
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of tenant cost
+   *     type cache keys.
+   */
   @GetTenantCostTypeCacheKeysDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<TenantCostTypeCacheKeyDto>>> getTenantCostTypeCacheKeys(

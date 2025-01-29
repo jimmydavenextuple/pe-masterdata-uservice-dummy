@@ -40,6 +40,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing sourcing rules configurations.
+ *
+ * <p>This controller provides APIs for configuring, retrieving, deleting, and fetching sourcing
+ * rules related to an organization. Sourcing rules determine the process of selecting resources or
+ * options based on defined constraints within the sourcing environment.
+ *
+ * <p>The controller is tagged with "Sourcing Rules Configuration APIs" for easy categorization in
+ * the API documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/sourcing-rules-configuration")
@@ -52,6 +62,19 @@ public class SourcingRulesConfigurationController {
 
   private final SourcingRulesConfigurationService sourcingRulesConfigurationService;
 
+  /**
+   * Configures a new sourcing rule with the specified details.
+   *
+   * <p>This method processes a POST request to add or configure sourcing rules based on the
+   * provided request body.
+   *
+   * @param rulesConfigurationRequest The request body containing details for the sourcing rule
+   *     configuration.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with details of the newly
+   *     configured sourcing rule.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service error occurs while processing the request.
+   */
   @ConfigureSourcingRuleDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -74,6 +97,20 @@ public class SourcingRulesConfigurationController {
     }
   }
 
+  /**
+   * Retrieves the details of a sourcing rule by its unique ID and organization ID.
+   *
+   * <p>This method processes a GET request to fetch sourcing rule details using the specified ID
+   * and organization ID.
+   *
+   * @param id The unique identifier for the sourcing rules configuration. Must not be null and must
+   *     be greater than 0.
+   * @param orgId The unique identifier of the organization. Must not be blank.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     sourcing rule.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service error occurs while processing the request.
+   */
   @GetSourcingRuleDoc
   @GetMapping(value = "/orgId/{orgId}/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<SourcingRuleDetails>> getSourcingRuleDetailsByIdandOrgId(
@@ -104,6 +141,19 @@ public class SourcingRulesConfigurationController {
     }
   }
 
+  /**
+   * Deletes an existing sourcing rule by its ID and organization ID.
+   *
+   * <p>This method processes a DELETE request to remove the specified sourcing rule.
+   *
+   * @param orgId The unique identifier of the organization. Must not be blank.
+   * @param sourcingRuleId The unique identifier of the sourcing rule to be deleted. Must not be
+   *     null.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with details of the deleted
+   *     sourcing rule.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service error occurs while processing the request.
+   */
   @DeleteSourcingRuleDoc
   @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<SourcingRuleDetails>> deleteSourcingRule(
@@ -128,6 +178,19 @@ public class SourcingRulesConfigurationController {
     }
   }
 
+  /**
+   * Fetches sourcing rules for a given request.
+   *
+   * <p>This method processes a POST request to retrieve sourcing rules for the specified order and
+   * request details.
+   *
+   * @param fetchSourcingRulesRequest The request body containing details for fetching sourcing
+   *     rules.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched sourcing
+   *     rules.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service error occurs while processing the request.
+   */
   @FetchSourcingRulesDoc
   @PostMapping(
       value = "/fetch-rules",

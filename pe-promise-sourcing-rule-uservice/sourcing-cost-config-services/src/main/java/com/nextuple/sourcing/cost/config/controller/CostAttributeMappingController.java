@@ -9,11 +9,7 @@ package com.nextuple.sourcing.cost.config.controller;
 
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.sourcing.cost.config.controller.docs.CreateCostAttributeMappingDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostAttributeMappingByOrgIdAndCanonicalName;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostAttributeMappingByOrgIdAndCostAttributeMappingId;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostAttributeMappingCacheKeysDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.UpdateCostAttributeMapping;
+import com.nextuple.sourcing.cost.config.controller.docs.*;
 import com.nextuple.sourcing.cost.config.dto.CostAttributeMappingCacheKeyDto;
 import com.nextuple.sourcing.cost.config.inbound.CostAttributeMappingRequest;
 import com.nextuple.sourcing.cost.config.outbound.CostAttributeMappingResponse;
@@ -31,15 +27,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing cost attribute mappings in the user interface.
+ *
+ * <p>This controller provides APIs for creating, retrieving, updating, and deleting cost attribute
+ * mappings. Cost attribute mappings are used to link cost attributes to specific organizations,
+ * providing the flexibility to manage cost configurations effectively.
+ *
+ * <p>The controller is tagged with "Cost Attribute Mapping APIs" for easy categorization in the API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/cost-attribute-mapping")
@@ -53,6 +52,19 @@ public class CostAttributeMappingController {
 
   private final CostAttributeMappingService costAttributeMappingService;
 
+  /**
+   * Creates a new cost attribute mapping.
+   *
+   * <p>This method processes a POST request to create a cost attribute mapping for a specific
+   * organization.
+   *
+   * @param orgId The unique identifier of the organization. Must not be blank.
+   * @param costAttributeMappingRequest The request body containing the details of the cost
+   *     attribute mapping to be created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created cost
+   *     attribute mapping details.
+   * @throws CommonServiceException If an error occurs during cost attribute mapping creation.
+   */
   @CreateCostAttributeMappingDoc
   @PostMapping(value = "/{orgId}")
   public ResponseEntity<BaseResponse<CostAttributeMappingResponse>> createCostAttributeMapping(
@@ -75,6 +87,20 @@ public class CostAttributeMappingController {
                 .build());
   }
 
+  /**
+   * Retrieves cost attribute mapping details by organization ID and mapping ID.
+   *
+   * <p>This method processes a GET request to fetch the details of a cost attribute mapping using
+   * its unique organization ID and mapping ID.
+   *
+   * @param orgId The unique identifier of the organization. Must not be blank.
+   * @param costAttributeMappingId The unique identifier of the cost attribute mapping. Must not be
+   *     null.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the cost attribute
+   *     mapping details.
+   * @throws CommonServiceException If an error occurs while fetching the cost attribute mapping
+   *     details.
+   */
   @GetCostAttributeMappingByOrgIdAndCostAttributeMappingId
   @GetMapping(value = "/{orgId}/{costAttributeMappingId}")
   public ResponseEntity<BaseResponse<CostAttributeMappingResponse>>
@@ -103,6 +129,21 @@ public class CostAttributeMappingController {
             .build());
   }
 
+  /**
+   * Updates an existing cost attribute mapping.
+   *
+   * <p>This method processes a PUT request to update a cost attribute mapping with the specified ID
+   * and update details for a specific organization.
+   *
+   * @param orgId The unique identifier of the organization. Must not be blank.
+   * @param costAttributeMappingId The unique identifier of the cost attribute mapping to be
+   *     updated. Must not be null.
+   * @param costAttributeMappingRequest The request body containing the updated details for the cost
+   *     attribute mapping.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated cost
+   *     attribute mapping details.
+   * @throws CommonServiceException If an error occurs during the update process.
+   */
   @UpdateCostAttributeMapping
   @PutMapping(value = "/{orgId}/{costAttributeMappingId}")
   public ResponseEntity<BaseResponse<CostAttributeMappingResponse>> updateCostAttributeMapping(
@@ -129,6 +170,20 @@ public class CostAttributeMappingController {
             .build());
   }
 
+  /**
+   * Retrieves cost attribute mapping details by organization ID and canonical name.
+   *
+   * <p>This method processes a GET request to fetch the details of a cost attribute mapping using
+   * its unique organization ID and canonical name.
+   *
+   * @param orgId The unique identifier of the organization. Must not be blank.
+   * @param canonicalName The canonical name of the cost attribute defined by the tenant. Must not
+   *     be blank.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the cost attribute
+   *     mapping details.
+   * @throws CommonServiceException If an error occurs while fetching the cost attribute mapping
+   *     details.
+   */
   @GetCostAttributeMappingByOrgIdAndCanonicalName
   @GetMapping(value = "/{orgId}/canonical-name/{canonicalName}")
   public ResponseEntity<BaseResponse<CostAttributeMappingResponse>>
@@ -158,6 +213,15 @@ public class CostAttributeMappingController {
             .build());
   }
 
+  /**
+   * Retrieves all cache keys for cost attribute mappings.
+   *
+   * <p>This method processes a GET request to fetch a list of cache keys associated with cost
+   * attribute mappings.
+   *
+   * @param limit The maximum number of cache keys to retrieve. Defaults to 100.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of cache keys.
+   */
   @GetCostAttributeMappingCacheKeysDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<CostAttributeMappingCacheKeyDto>>>

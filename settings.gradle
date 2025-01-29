@@ -124,4 +124,5 @@ include 'pe-common:userexit-framework:userexit-core'
 include 'pe-common:userexit-framework:userexit-domain'
 include 'pe-common:userexit-framework:userexit-near-cache'
 include 'pe-common:userexit-framework:userexit-near-cache-spring'
-
+include 'pe-common:tenant-configs'
+include 'pe-common:decision-trail'

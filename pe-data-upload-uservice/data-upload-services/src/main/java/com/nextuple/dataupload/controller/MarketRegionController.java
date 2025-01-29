@@ -24,6 +24,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for market regions APIs.
+ *
+ * <p>This controller provides APIs to fetch market regions for organizations based on the specified
+ * organization ID.
+ *
+ * <p>The controller is tagged with "Market Regions APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/ui/regions-nodes")
@@ -33,6 +42,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class MarketRegionController {
   private final MarketRegionService marketRegionService;
 
+  /**
+   * Retrieves a list of market regions for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch market regions based on the provided
+   * organization ID. It returns a list of market region details associated with the organization.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of market
+   *     regions.
+   */
   @GetMapping("/market-regions/orgId/{orgId}")
   @GetMarketRegionsDoc
   public ResponseEntity<BaseResponse<List<MarketRegionInfo>>> getMarketRegions(

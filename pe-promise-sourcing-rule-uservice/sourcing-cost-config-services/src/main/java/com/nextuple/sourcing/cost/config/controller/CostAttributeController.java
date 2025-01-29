@@ -9,12 +9,7 @@ package com.nextuple.sourcing.cost.config.controller;
 
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.sourcing.cost.config.controller.docs.CreateCostAttributeDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostAttributeByAttributeNameDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostAttributeByCostAttributeIdDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostAttributeCacheKeyDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostAttributesListDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.UpdateCostAttributeDoc;
+import com.nextuple.sourcing.cost.config.controller.docs.*;
 import com.nextuple.sourcing.cost.config.dto.CostAttributeDetailsCacheKeyDto;
 import com.nextuple.sourcing.cost.config.dto.CostAttributeDto;
 import com.nextuple.sourcing.cost.config.inbound.CostAttributeRequest;
@@ -33,16 +28,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing cost attribute details in the user interface.
+ *
+ * <p>This controller provides APIs for creating, retrieving, updating, deleting, and fetching
+ * various details of cost attributes. Cost attributes are used to define the characteristics of
+ * cost configurations within the sourcing process.
+ *
+ * <p>The controller is tagged with "Cost Attribute Details APIs" for easy categorization in the API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/cost-attribute")
@@ -55,6 +52,17 @@ public class CostAttributeController {
 
   private final CostAttributeService costAttributeService;
 
+  /**
+   * Creates a new cost attribute.
+   *
+   * <p>This method processes a POST request to create a cost attribute with the provided details.
+   *
+   * @param costAttributeRequest The request body containing the details of the cost attribute to be
+   *     created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created cost
+   *     attribute details.
+   * @throws CommonServiceException If an error occurs during cost attribute creation.
+   */
   @CreateCostAttributeDoc
   @PostMapping
   public ResponseEntity<BaseResponse<CostAttributeDto>> createCostAttribute(
@@ -69,6 +77,17 @@ public class CostAttributeController {
                 .build());
   }
 
+  /**
+   * Retrieves cost attribute details by ID.
+   *
+   * <p>This method processes a GET request to fetch the details of a cost attribute using its
+   * unique identifier.
+   *
+   * @param costAttributeId The unique identifier of the cost attribute. Must not be null.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the cost attribute
+   *     details.
+   * @throws CommonServiceException If an error occurs while fetching the cost attribute details.
+   */
   @GetCostAttributeByCostAttributeIdDoc
   @GetMapping(value = "/{costAttributeId}")
   public ResponseEntity<BaseResponse<CostAttributeDto>> getCostAttributeDetailsById(
@@ -86,6 +105,20 @@ public class CostAttributeController {
             .build());
   }
 
+  /**
+   * Updates an existing cost attribute.
+   *
+   * <p>This method processes a PUT request to update a cost attribute with the specified ID and
+   * update details.
+   *
+   * @param costAttributeId The unique identifier of the cost attribute to be updated. Must not be
+   *     null.
+   * @param costAttributeUpdateRequest The request body containing the update details for the cost
+   *     attribute.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated cost
+   *     attribute details.
+   * @throws CommonServiceException If an error occurs during the update process.
+   */
   @UpdateCostAttributeDoc
   @PutMapping(value = "/{costAttributeId}")
   public ResponseEntity<BaseResponse<CostAttributeDto>> updateCostAttribute(
@@ -105,6 +138,17 @@ public class CostAttributeController {
             .build());
   }
 
+  /**
+   * Retrieves cost attribute details by attribute name.
+   *
+   * <p>This method processes a GET request to fetch the details of a cost attribute using its
+   * attribute name.
+   *
+   * @param attributeName The name of the cost attribute. Must not be blank.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the cost attribute
+   *     details.
+   * @throws CommonServiceException If an error occurs while fetching the cost attribute details.
+   */
   @GetCostAttributeByAttributeNameDoc
   @GetMapping(value = "/attribute-name/{attributeName}")
   public ResponseEntity<BaseResponse<CostAttributeDto>> getCostAttributeDetailsByAttributeName(
@@ -123,6 +167,14 @@ public class CostAttributeController {
             .build());
   }
 
+  /**
+   * Retrieves the list of all cost attributes.
+   *
+   * <p>This method processes a GET request to fetch the details of all cost attributes.
+   *
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of cost
+   *     attributes.
+   */
   @GetCostAttributesListDoc
   @GetMapping(value = "/list")
   public ResponseEntity<BaseResponse<List<CostAttributeDto>>> getCostAttributeDetailsList() {
@@ -136,9 +188,14 @@ public class CostAttributeController {
   }
 
   /**
-   * Delete all cost attributes.
+   * Deletes all cost attributes.
    *
-   * @deprecated Not for public use. This API is just used for automation test cases.
+   * <p>This method processes a DELETE request to remove all cost attributes. This API is intended
+   * for internal automation testing purposes only.
+   *
+   * @deprecated Not for public use.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of deleted
+   *     cost attributes.
    */
   @Deprecated(forRemoval = false)
   @DeleteMapping(value = "/delete-all")
@@ -152,6 +209,15 @@ public class CostAttributeController {
             .build());
   }
 
+  /**
+   * Retrieves all cache keys for cost attribute details.
+   *
+   * <p>This method processes a GET request to fetch a list of cache keys associated with cost
+   * attributes.
+   *
+   * @param limit The maximum number of cache keys to retrieve. Defaults to 100.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of cache keys.
+   */
   @GetCostAttributeCacheKeyDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<CostAttributeDetailsCacheKeyDto>>>

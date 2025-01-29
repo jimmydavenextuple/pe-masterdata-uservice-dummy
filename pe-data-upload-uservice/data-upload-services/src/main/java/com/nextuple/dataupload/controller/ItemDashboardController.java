@@ -21,12 +21,17 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for item details UI APIs.
+ *
+ * <p>This controller provides APIs to fetch paginated item details for organizations based on
+ * specified item IDs and pagination parameters.
+ *
+ * <p>The controller is tagged with "Item Details UI APIs" for easy categorization in API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/ui/item")
 @RequiredArgsConstructor
@@ -36,6 +41,20 @@ public class ItemDashboardController {
 
   private final ItemDetailsService itemDetailsService;
 
+  /**
+   * Retrieves a paginated list of item details for the specified organization and items.
+   *
+   * <p>This method processes a GET request to fetch a paginated list of item details based on the
+   * provided organization ID and item IDs. Pagination support is included through the `pageParams`
+   * parameter.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param itemIds The comma-separated string of item IDs for which the details are being fetched.
+   * @param pageParams The pagination parameters, such as page number, page size, sorting criteria,
+   *     and sort order.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the paginated list of
+   *     item details.
+   */
   @GetItemListDoc
   @GetMapping("/{orgId}/itemList")
   public ResponseEntity<BaseResponse<PagePayload<ItemListResponse>>> getItemDetails(

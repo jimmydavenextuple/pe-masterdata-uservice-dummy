@@ -21,6 +21,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Controller for uploading weightage configuration data.
+ *
+ * <p>This controller provides an API to handle the upload of weightage configuration data. The data
+ * is fetched from a specified file URI and processed for further operations.
+ *
+ * <p>Tagged under "Weightage Configuration APIs" for documentation categorization, the controller
+ * ensures clear error handling for file processing and service operations.
+ */
 @Validated
 @Controller
 @RequestMapping("/upload")
@@ -29,6 +38,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class WeightageConfigurationDataUploadController {
   private final WeightageConfigurationDataUploadService weightageConfigurationDataUploadService;
 
+  /**
+   * Uploads weightage configuration data.
+   *
+   * <p>This method processes a POST request to upload weightage configuration data from a file URI
+   * provided as a request parameter.
+   *
+   * @param fileUri The URI of the weightage configuration data file to be uploaded.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message.
+   * @throws IOException If an error occurs while processing the file.
+   * @throws CommonServiceException If an error occurs during the service operation.
+   */
   @PostMapping("/weightage")
   public ResponseEntity<BaseResponse<String>> uploadWeightageConfigurationData(
       @NotBlank(message = "fileUri can't be empty") @RequestParam String fileUri)

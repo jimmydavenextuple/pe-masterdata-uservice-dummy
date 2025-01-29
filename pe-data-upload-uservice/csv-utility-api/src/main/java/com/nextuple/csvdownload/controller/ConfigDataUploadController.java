@@ -28,6 +28,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for uploading configuration data for a specified module.
+ *
+ * <p>This controller provides an API to upload configuration data for a specific module. It
+ * processes a POST request containing the module name and configuration data, and returns the
+ * result of the upload process. The controller handles errors related to job submission, file
+ * handling, and CSV parsing.
+ *
+ * <p>The controller is tagged with "Config Data Upload APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -38,6 +49,21 @@ public class ConfigDataUploadController {
 
   private static final Logger logger = LoggerFactory.getLogger(ConfigDataUploadController.class);
 
+  /**
+   * Uploads the configuration data for a specified module.
+   *
+   * <p>This method processes a POST request to upload configuration data based on the provided
+   * module name and the generic upload request payload.
+   *
+   * @param moduleName The name of the module for which the config data is being uploaded.
+   * @param uploadRequest The request payload containing the configuration data to be uploaded.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the result of the
+   *     upload process.
+   * @throws CommonServiceException If there is a general service exception during the process.
+   * @throws JobSubmissionException If there is an error during job submission.
+   * @throws IOException If there is an error during file handling.
+   * @throws CsvException If there is an error during CSV file parsing.
+   */
   @PostMapping("/v1/{moduleName}/process-request")
   @UploadConfigDataDoc
   public ResponseEntity<BaseResponse<GenericUploadResponse>> uploadConfigData(

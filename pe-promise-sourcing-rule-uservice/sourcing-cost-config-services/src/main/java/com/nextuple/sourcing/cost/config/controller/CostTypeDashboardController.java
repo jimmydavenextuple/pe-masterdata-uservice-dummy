@@ -26,13 +26,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing Cost Type Dashboard within an organization.
+ *
+ * <p>This controller provides APIs to retrieve cost types, update rate card status, and validate
+ * cost types for a specific organization. It allows fetching and managing cost type information for
+ * organizational configurations.
+ *
+ * <p>The controller is tagged with "Cost Type Dashboard APIs" for easy categorization in API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/cost-config/ui")
 @RequiredArgsConstructor
@@ -41,6 +46,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class CostTypeDashboardController {
   private final CostTypeDashboardService costTypeDashboardService;
 
+  /**
+   * Retrieves a list of Cost Types for a specific organization.
+   *
+   * <p>This method processes a GET request to fetch details of cost types associated with a given
+   * organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of cost types.
+   * @throws CommonServiceException If there is an error during the retrieval of cost types.
+   */
   @CostTypeDashboardDoc
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/cost-types/{orgId}")
   public ResponseEntity<BaseResponse<CostTypeResponse>> getCostTypes(
@@ -61,6 +76,19 @@ public class CostTypeDashboardController {
                 .build());
   }
 
+  /**
+   * Updates the rate card status for a specific organization.
+   *
+   * <p>This method processes a PUT request to update the rate card status for the given
+   * organization.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param updateRateCardStatusRequest The request payload containing the rate card status details
+   *     to be updated.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated rate card
+   *     status.
+   * @throws CommonServiceException If there is an error during the update process.
+   */
   @UpdateRateCardStatusDoc
   @PutMapping(value = "/cost-definition/rate-card-status/{orgId}")
   public ResponseEntity<BaseResponse<UpdateRateCardStatusResponse>> updateRateCardStatus(
@@ -82,6 +110,17 @@ public class CostTypeDashboardController {
             .build());
   }
 
+  /**
+   * Retrieves details for Cost Type validation for a specific organization and cost type.
+   *
+   * <p>This method processes a GET request to fetch details of a specific cost type for validation.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param costType The cost type to fetch details for validation.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the cost type
+   *     validation details.
+   * @throws CommonServiceException If there is an error during the retrieval of validation details.
+   */
   @CostTypeValidationDoc
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/cost-types/{orgId}/{costType}")
   public ResponseEntity<BaseResponse<CostTypeValidationResponse>> getCostTypesForValidation(

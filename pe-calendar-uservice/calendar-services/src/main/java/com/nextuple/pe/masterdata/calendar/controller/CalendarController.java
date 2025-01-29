@@ -40,8 +40,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Calendar configurations and status.
+ *
+ * <p>This class provides endpoints for creating, retrieving, and managing calendar configurations,
+ * as well as for fetching the status of upcoming calendar days based on various parameters. It
+ * supports pagination and allows retrieving specific calendar details using organization and
+ * calendar IDs.
+ *
+ * <p>The controller is tagged with "Calendar APIs" for easy categorization in API documentation.
+ */
 @Validated
 @RestController
 @Tag(name = "Calendar APIs")
@@ -55,6 +71,20 @@ public class CalendarController {
 
   private final PageProperties pageProperties;
 
+  /**
+   * Creates a new calendar based on the provided calendar request.
+   *
+   * <p>This method processes a POST request to create a new calendar. The {@link CalendarRequest}
+   * contains the necessary data to create the calendar, and the response includes the {@link
+   * CalendarResponse} after the calendar has been successfully created.
+   *
+   * @param calendarRequest The request object containing the details for the new calendar.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the {@link
+   *     CalendarResponse} object representing the created calendar.
+   * @throws CalendarDomainException If there is an error related to the calendar creation domain.
+   * @throws DateException If there is an error related to date validation or formatting.
+   * @throws CommonServiceException If there is a generic error during the process.
+   */
   @HandleCreateCalendarDoc
   @PostMapping
   public ResponseEntity<BaseResponse<CalendarResponse>> handleCreateCalendar(
@@ -75,6 +105,20 @@ public class CalendarController {
     }
   }
 
+  /**
+   * Retrieves the details of a specific calendar by its organization ID and calendar ID.
+   *
+   * <p>This method processes a GET request to fetch the details of a calendar. It takes the
+   * organization ID and the calendar ID as path variables and returns the details of the calendar
+   * in the response payload.
+   *
+   * @param orgId The unique identifier of the organization. Cannot be blank.
+   * @param calendarId The unique identifier of the calendar. Cannot be blank.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a {@link
+   *     CalendarResponse} object representing the fetched calendar details.
+   * @throws CalendarDomainException If there is an error related to the calendar domain.
+   * @throws CommonServiceException If there is a generic error during the process.
+   */
   @HandleGetCalendarDoc
   @GetMapping("/{orgId}/{calendarId}")
   public ResponseEntity<BaseResponse<CalendarResponse>> handleGetCalendar(
@@ -99,6 +143,31 @@ public class CalendarController {
     }
   }
 
+  /**
+   * Retrieves the calendar status for upcoming days based on various parameters such as
+   * organization ID, node ID, carrier service ID, shipping stage, and more.
+   *
+   * <p>This method processes a GET request to fetch the status of the calendar for upcoming days.
+   * It takes the organization ID as a path variable and several optional request parameters such as
+   * node ID, carrier service ID, service option, shipping stage, and the number of days in the
+   * future for which the status is required.
+   *
+   * @param orgId The unique identifier of the organization. Cannot be blank.
+   * @param nodeId The unique identifier of the node. Optional.
+   * @param carrierServiceId The unique identifier of the carrier service. Optional.
+   * @param serviceOption The service option of the carrier. Optional.
+   * @param numberOfDaysInFuture The number of days in the future for which the status is required.
+   *     Optional.
+   * @param shippingStage The shipping stage of the carrier service. It can be PICKUP, TRANSIT,
+   *     DELIVERY, RECEIVING, or ALL. Optional.
+   * @param fromDate The date from which to get the status of upcoming days of the calendar. Hidden
+   *     in the documentation, optional.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a list of {@link
+   *     CalendarDaysStatusInfo} objects representing the status of the calendar for upcoming days.
+   * @throws CalendarDomainException If there is an error related to the calendar domain.
+   * @throws CommonServiceException If there is a generic error during the process.
+   * @throws CalenderServiceException If there is an error in the calendar service layer.
+   */
   @GetMapping("/status/{orgId}")
   @HandleGetUpcomingDaysCalendarStatusDoc
   public ResponseEntity<BaseResponse<List<CalendarDaysStatusInfo>>>
@@ -159,6 +228,23 @@ public class CalendarController {
     }
   }
 
+  /**
+   * Retrieves a paginated list of calendars for a specific organization.
+   *
+   * <p>This method processes a GET request to fetch a paginated list of calendars for a given
+   * organization. It accepts the organization ID as a path variable and pagination parameters (page
+   * number, page size, sorting criteria) as request parameters. The response contains a paginated
+   * list of calendars with the appropriate page details.
+   *
+   * @param orgId The unique identifier of the organization. Cannot be blank.
+   * @param pageParams The pagination parameters including page number, page size, sort order, and
+   *     sort by field. If not provided, default values are used.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a {@link PagePayload}
+   *     of {@link CalendarResponse} representing the list of calendars for the specified
+   *     organization.
+   * @throws CalendarDomainException If there is an error related to the calendar domain.
+   * @throws CommonServiceException If there is a generic error during the process.
+   */
   @GetCalendarListWithPaginationDoc
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<CalendarResponse>>> getCalendarListWithPagination(

@@ -22,13 +22,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for handling batch processing operations.
+ *
+ * <p>This controller provides APIs to process batch records for various modules. It requires tenant
+ * identification and ensures proper validation of incoming batch requests.
+ *
+ * <p>Tagged under "Batch API" for documentation categorization, this controller streamlines batch
+ * processing with robust exception handling and logging.
+ */
 @RequestMapping("/batch-request")
 @RestController
 @Tag(name = "Batch API")
@@ -40,6 +44,19 @@ public class BatchController {
   private static final String TENANT_MISSING_MESSAGE = "Tenant ID not passed";
   private final BatchProcessingService batchProcessingService;
 
+  /**
+   * Processes a batch of records for a specified module.
+   *
+   * <p>This method accepts a list of batch records and processes them using the specified module's
+   * business logic. It requires a tenant ID to identify the organization and a module name to
+   * determine which module the request pertains to.
+   *
+   * @param orgId The unique identifier for the organization (tenant).
+   * @param moduleName The name of the module where the batch records need to be processed.
+   * @param batchFeed The list of batch records to be processed, validated using `@Valid`.
+   * @return A response containing the result of the batch processing.
+   * @throws CommonServiceException If any error occurs during batch processing.
+   */
   @PostMapping("/{moduleName}")
   public ResponseEntity<BaseResponse<BatchResponse>> batchApi(
       @NotBlank(message = TENANT_MISSING_MESSAGE) @RequestHeader(value = TENANT) String orgId,

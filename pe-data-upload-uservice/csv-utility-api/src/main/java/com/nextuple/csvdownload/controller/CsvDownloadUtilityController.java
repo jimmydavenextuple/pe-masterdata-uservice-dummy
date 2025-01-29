@@ -12,38 +12,21 @@ import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.response.PreSignedUrlResponse;
 import com.nextuple.csvdownload.common.pojo.DownloadNodeCarrierServiceAndServiceOptionPojo;
 import com.nextuple.csvdownload.common.pojo.TemplateTypes;
-import com.nextuple.csvdownload.controller.docs.DownloadCostDefinitionDoc;
-import com.nextuple.csvdownload.controller.docs.DownloadCsvTemplateDoc;
-import com.nextuple.csvdownload.controller.docs.DownloadCsvTemplateFileDoc;
-import com.nextuple.csvdownload.controller.docs.DownloadCustomRegionsByOrgIdAndRegionId;
-import com.nextuple.csvdownload.controller.docs.DownloadCustomRegionsCSVDoc;
-import com.nextuple.csvdownload.controller.docs.DownloadLogsDoc;
-import com.nextuple.csvdownload.controller.docs.DownloadMarketRegionDataDoc;
-import com.nextuple.csvdownload.controller.docs.DownloadNodeAndServiceOptionsDoc;
-import com.nextuple.csvdownload.controller.docs.DownloadNodeCarrierServiceAndServiceOptionDoc;
-import com.nextuple.csvdownload.controller.docs.DownloadNodeCarrierServicePickupCalendar;
-import com.nextuple.csvdownload.controller.docs.DownloadNodeDataCSVDoc;
-import com.nextuple.csvdownload.controller.docs.DownloadProcessingTimeBufferDoc;
-import com.nextuple.csvdownload.controller.docs.DownloadTransitBufferDoc;
-import com.nextuple.csvdownload.controller.docs.DownloadTransitTimeDataDoc;
-import com.nextuple.csvdownload.exception.CarrierServiceException;
-import com.nextuple.csvdownload.exception.CsvDownloadUtilityServiceException;
-import com.nextuple.csvdownload.exception.CustomRegionServiceException;
-import com.nextuple.csvdownload.exception.InvalidTemplateTypeException;
-import com.nextuple.csvdownload.exception.PostalCodeTimezoneServiceException;
-import com.nextuple.csvdownload.exception.TransitServiceException;
+import com.nextuple.csvdownload.controller.docs.*;
+import com.nextuple.csvdownload.exception.*;
 import com.nextuple.csvdownload.service.CsvDownloadUtilityService;
 import com.nextuple.csvdownload.service.DownloadTemplateService;
 import com.nextuple.csvdownload.util.CsvUtil;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.HolidayCutoffUIRequest;
 import com.nextuple.sourcing.cost.config.inbound.CostDefinitionRequest;
-import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,13 +41,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for CSV download utility APIs.
+ *
+ * <p>This controller provides APIs to download various types of CSV data, such as templates,
+ * transit times, market regions, carrier services, nodes, and cost definitions.
+ *
+ * <p>The controller is tagged with "Csv Download Utility APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @Slf4j
@@ -75,6 +62,17 @@ public class CsvDownloadUtilityController {
   private final CsvDownloadUtilityService csvDownloadUtilityService;
   private final DownloadTemplateService downloadTemplateService;
 
+  /**
+   * Downloads the CSV template for the specified template type.
+   *
+   * <p>This method processes a GET request to provide a CSV template based on the specified
+   * template type. If the template type is invalid, an exception is thrown.
+   *
+   * @param templateType The type of the CSV template (e.g., "edd-computation").
+   * @param request The HTTP request.
+   * @param response The HTTP response.
+   * @throws InvalidTemplateTypeException If the provided template type is invalid.
+   */
   @GetMapping(value = "/{templateType}/download", produces = "text/csv")
   @DownloadCsvTemplateDoc
   public void downloadCSVTemplate(
@@ -103,6 +101,20 @@ public class CsvDownloadUtilityController {
     }
   }
 
+  /**
+   * Downloads the CSV template for the specified template type and organization.
+   *
+   * <p>This method processes a GET request to provide a CSV template for a given template type and
+   * organization, retrieving the template from a file.
+   *
+   * @param templateType The type of the CSV template (e.g., "edd-computation").
+   * @param orgId The unique identifier for the organization.
+   * @param request The HTTP request.
+   * @param response The HTTP response.
+   * @throws InvalidTemplateTypeException If the provided template type is invalid.
+   * @throws IOException If an error occurs during file handling.
+   * @throws CommonServiceException If an error occurs while processing the request.
+   */
   @GetMapping(value = "/v1/{orgId}/{templateType}/download", produces = "text/csv")
   @DownloadCsvTemplateFileDoc
   public void downloadCSVTemplateFromFile(
@@ -131,6 +143,25 @@ public class CsvDownloadUtilityController {
     }
   }
 
+  /**
+   * Downloads the transit times data for the specified organization, carrier service, and regions.
+   *
+   * <p>This method processes a GET request to download transit times data as a CSV for a specific
+   * organization, carrier service, source region, and destination region.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param carrierServiceId The unique identifier for the carrier service.
+   * @param sourceRegion The unique identifier for the source region.
+   * @param destinationRegion The unique identifier for the destination region.
+   * @param request The HTTP request.
+   * @param response The HTTP response.
+   * @throws TransitServiceException If there is an error during the transit service process.
+   * @throws PostalCodeTimezoneServiceException If there is an error during the timezone service
+   *     process.
+   * @throws IOException If there is an error while writing the response.
+   * @throws CsvDownloadUtilityServiceException If there is an error during the CSV download
+   *     process.
+   */
   @GetMapping(value = "/org/{orgId}/download/carrier-services/{carrierServiceId}/transit-time")
   @DownloadTransitTimeDataDoc
   public void downloadTransitTimesDataCSV(
@@ -166,6 +197,20 @@ public class CsvDownloadUtilityController {
     response.flushBuffer();
   }
 
+  /**
+   * Downloads the market region data for the specified organization and country.
+   *
+   * <p>This method processes a GET request to download market region data as a CSV for a specific
+   * organization and country.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param country The unique identifier for the country.
+   * @param request The HTTP request.
+   * @param response The HTTP response.
+   * @throws PostalCodeTimezoneServiceException If there is an error during the timezone service
+   *     process.
+   * @throws IOException If there is an error while writing the response.
+   */
   @GetMapping(value = "/org/{orgId}/download/market-regions")
   @DownloadMarketRegionDataDoc
   public void downloadMarketRegionDataCSV(
@@ -183,6 +228,17 @@ public class CsvDownloadUtilityController {
     response.flushBuffer();
   }
 
+  /**
+   * Downloads the processing time buffer data for the specified organization and optional node IDs.
+   *
+   * <p>This method processes a GET request to download processing time buffer data as a CSV for a
+   * specific organization, with an optional parameter for node IDs.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param nodeIds Optional comma-separated string containing node IDs to be searched for.
+   * @param response The HTTP response.
+   * @throws IOException If there is an error while writing the response.
+   */
   @GetMapping(value = "/org/{orgId}/download/processing-time-buffers")
   @DownloadProcessingTimeBufferDoc
   public void downloadProcessingTimeBufferDataCSV(
@@ -210,6 +266,19 @@ public class CsvDownloadUtilityController {
     }
   }
 
+  /**
+   * Downloads the carrier service data for the specified organization.
+   *
+   * <p>This method processes a GET request to download carrier service data as a CSV for a specific
+   * organization.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param request The HTTP request.
+   * @param response The HTTP response.
+   * @throws IOException If there is an error while writing the response.
+   * @throws CarrierServiceException If there is an error while processing the carrier service
+   *     request.
+   */
   @GetMapping(value = "/org/{orgId}/download/carrier-services")
   public void downloadCarrierServiceCSV(
       @PathVariable @Parameter(description = "Unique identifier for organization ID.") String orgId,
@@ -231,6 +300,20 @@ public class CsvDownloadUtilityController {
     }
   }
 
+  /**
+   * Downloads the logs for the specified job in CSV format, with optional filters for job status.
+   *
+   * <p>This method processes a GET request to download logs as a CSV for a specific job and
+   * organization, with an optional filter for job status.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobId The unique identifier for the job.
+   * @param status Optional parameter specifying the status of the job.
+   * @param request The HTTP request.
+   * @param response The HTTP response.
+   * @throws IOException If there is an error while writing the response.
+   * @throws CommonServiceException If there is an error while processing the request.
+   */
   @GetMapping(path = "/org/{orgId}/jobs/{jobId}/download")
   @DownloadLogsDoc
   public void downloadLogsByFilters(
@@ -255,6 +338,21 @@ public class CsvDownloadUtilityController {
     response.flushBuffer();
   }
 
+  /**
+   * Downloads the logs for the specified job in CSV format (version 1), with optional filters for
+   * job status.
+   *
+   * <p>This method processes a GET request to download logs as a CSV for a specific job and
+   * organization, with an optional filter for job status (version 1 of the download).
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobId The unique identifier for the job.
+   * @param status Optional parameter specifying the status of the job.
+   * @param request The HTTP request.
+   * @param httpServletResponse The HTTP response.
+   * @throws IOException If there is an error while writing the response.
+   * @throws CommonServiceException If there is an error while processing the request.
+   */
   @GetMapping(path = "/v1/org/{orgId}/jobs/{jobId}/download")
   @DownloadLogsDoc
   public ResponseEntity<BaseResponse<PreSignedUrlResponse>> downloadLogsByFiltersV1(
@@ -281,6 +379,20 @@ public class CsvDownloadUtilityController {
                 .build());
   }
 
+  /**
+   * Downloads the logs for the specified job in CSV format (version 2), with optional filters for
+   * job status and origin.
+   *
+   * <p>This method processes a GET request to download logs as a CSV for a specific job and
+   * organization, with an optional filter for job status and record origin (version 2 of the
+   * download).
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobId The unique identifier for the job.
+   * @param status Optional parameter specifying the status of the job.
+   * @param origin The origin of the record.
+   * @throws CommonServiceException If there is an error while processing the request.
+   */
   @GetMapping(path = "/v2/org/{orgId}/jobs/{jobId}/download")
   @DownloadLogsDoc
   public ResponseEntity<BaseResponse<PreSignedUrlResponse>> downloadLogsByFiltersV2(
@@ -308,6 +420,18 @@ public class CsvDownloadUtilityController {
                 .build());
   }
 
+  /**
+   * Downloads the node carrier service and service options data as a CSV for the specified
+   * organization.
+   *
+   * <p>This method processes a GET request to download node carrier service and service options
+   * data as CSV for a specific organization.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param request The HTTP request.
+   * @param response The HTTP response.
+   * @throws IOException If there is an error while writing the response.
+   */
   @GetMapping(value = "/org/{orgId}/download/node-carrier-service-option")
   @DownloadNodeCarrierServiceAndServiceOptionDoc
   public void downloadNodeCarrierServiceAndServiceOptionsDataCSV(
@@ -325,6 +449,16 @@ public class CsvDownloadUtilityController {
     response.flushBuffer();
   }
 
+  /**
+   * Downloads the node and service options data as a CSV for the specified organization.
+   *
+   * <p>This method processes a GET request to download node and service options data as CSV for a
+   * specific organization.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param response The HTTP response.
+   * @throws IOException If there is an error while writing the response.
+   */
   @GetMapping(value = "/org/{orgId}/download/node-service-option")
   @DownloadNodeAndServiceOptionsDoc
   public void downloadNodeAndServiceOptionsDataCSV(
@@ -341,6 +475,18 @@ public class CsvDownloadUtilityController {
     response.flushBuffer();
   }
 
+  /**
+   * Downloads the nodes data for the specified organization and optional node IDs and node types.
+   *
+   * <p>This method processes a GET request to download nodes data as a CSV for a specific
+   * organization, with optional parameters for node IDs and node types.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param nodeIds Optional comma-separated string containing node IDs.
+   * @param nodeType Optional identifier for the type of node.
+   * @param httpServletResponse The HTTP response.
+   * @throws IOException If there is an error while writing the response.
+   */
   @GetMapping(value = "/org/{orgId}/download/nodes")
   @DownloadNodeDataCSVDoc
   public void downloadNodesDataCSV(
@@ -356,10 +502,17 @@ public class CsvDownloadUtilityController {
       @RequestParam(required = false) @Parameter(description = "Identifier for type of node.")
           String nodeType,
       HttpServletResponse httpServletResponse)
-      throws IOException, CommonServiceException {
+          throws IOException, CommonServiceException {
     log.debug("Inside download nodes data as csv");
-    final var file = csvDownloadUtilityService.downloadNodesByOrgId(orgId, nodeIds, nodeType);
-    try (var inputStream = new FileInputStream(file)) {
+      final File file;
+      try {
+          file = csvDownloadUtilityService.downloadNodesByOrgId(orgId, nodeIds, nodeType);
+      } catch (IOException e) {
+          throw new RuntimeException(e);
+      } catch (CommonServiceException e) {
+          throw new RuntimeException(e);
+      }
+      try (var inputStream = new FileInputStream(file)) {
 
       httpServletResponse.setStatus(HttpStatus.OK.value());
       httpServletResponse.setHeader(
@@ -372,29 +525,17 @@ public class CsvDownloadUtilityController {
     }
   }
 
-  @GetMapping(value = "/org/{orgId}/download/node-carrier-pickup-calendar")
-  @DownloadNodeCarrierServicePickupCalendar
-  public void downloadNodesCarrierServicePickupCalendarDataCSV(
-      @NotBlank(message = "orgId can't be empty")
-          @PathVariable
-          @Parameter(description = "Unique identifier for organization ID.")
-          String orgId,
-      HttpServletResponse httpServletResponse)
-      throws IOException, CommonServiceException, CarrierServiceException {
-    log.debug("Inside download nodes carrier pickup calendar data as csv");
-    final var file = csvDownloadUtilityService.downloadNodesCarrierPickupCalendarByOrgId(orgId);
-    try (var inputStream = new FileInputStream(file)) {
-      httpServletResponse.setStatus(HttpStatus.OK.value());
-      httpServletResponse.setHeader(
-          HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(file.getName()));
-      httpServletResponse.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
-      IOUtils.copy(inputStream, httpServletResponse.getOutputStream());
-      httpServletResponse.flushBuffer();
-    } finally {
-      Files.delete(file.toPath());
-    }
-  }
-
+  /**
+   * Downloads the transit buffer data for the specified transit buffer request ID.
+   *
+   * <p>This method processes a GET request to download transit buffer data as a CSV for a specific
+   * transit buffer request.
+   *
+   * @param transitBufferConfigRequestId The unique identifier for the transit buffer request.
+   * @param createdBy The name of the user who created the request.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the pre-signed URL for
+   *     downloading the buffer.
+   */
   @GetMapping(value = "/download/transitBuffer/{transitBufferConfigRequestId}")
   @DownloadTransitBufferDoc
   public ResponseEntity<BaseResponse<PreSignedUrlResponse>> downloadTransitBuffer(
@@ -417,6 +558,16 @@ public class CsvDownloadUtilityController {
             .build());
   }
 
+  /**
+   * Downloads the custom regions data for the specified organization.
+   *
+   * <p>This method processes a GET request to download custom regions data as a CSV for a specific
+   * organization.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param httpServletResponse The HTTP response.
+   * @throws IOException If there is an error while writing the response.
+   */
   @GetMapping(value = "/org/{orgId}/download/custom-regions")
   @DownloadCustomRegionsCSVDoc
   public void downloadCustomRegionsByOrgIdDataCSV(
@@ -438,34 +589,18 @@ public class CsvDownloadUtilityController {
     }
   }
 
-  @GetMapping(value = "/org/{orgId}/country/{country}/download/custom-regions")
-  @DownloadCustomRegionsCSVDoc
-  public void downloadCustomRegionsByOrgIdAndCountryDataCSV(
-      @PathVariable @Parameter(description = "Unique identifier for organization ID.") String orgId,
-      @PathVariable @Parameter(description = "Identifier for Country.") String country,
-      @RequestParam(required = false)
-          @Parameter(description = "Comma Separated values for custom region ID(s)")
-          String regionIds,
-      @RequestParam(required = false)
-          @Parameter(description = "Comma Separated values for custom region name(s)")
-          String regionNames,
-      HttpServletResponse httpServletResponse)
-      throws IOException {
-    final var file =
-        csvDownloadUtilityService.downloadCustomRegionDetails(
-            orgId, country, regionIds, regionNames);
-    try (var inputStream = new FileInputStream(file)) {
-      httpServletResponse.setStatus(HttpStatus.OK.value());
-      httpServletResponse.setHeader(
-          HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(file.getName()));
-      httpServletResponse.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
-      IOUtils.copy(inputStream, httpServletResponse.getOutputStream());
-      httpServletResponse.flushBuffer();
-    } finally {
-      Files.delete(file.toPath());
-    }
-  }
-
+  /**
+   * Downloads the custom regions data for the specified organization and region.
+   *
+   * <p>This method processes a GET request to download custom regions data as a CSV for a specific
+   * organization and region.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param regionId The unique identifier for the region.
+   * @param response The HTTP response.
+   * @throws IOException If there is an error while writing the response.
+   * @throws CustomRegionServiceException If there is an error with the custom region service.
+   */
   @GetMapping(value = "/org/{orgId}/download/custom-region/regionId/{regionId}")
   @DownloadCustomRegionsByOrgIdAndRegionId
   public void downloadCustomRegionsByOrgIdAndRegionIdDataCSV(
@@ -480,6 +615,18 @@ public class CsvDownloadUtilityController {
     response.flushBuffer();
   }
 
+  /**
+   * Downloads the cost definition data for the specified organization.
+   *
+   * <p>This method processes a POST request to download the cost definition data as a CSV for a
+   * specific organization.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param request The request payload containing the cost definition details.
+   * @param response The HTTP response.
+   * @throws IOException If there is an error while writing the response.
+   * @throws CommonServiceException If there is an error while processing the request.
+   */
   @DownloadCostDefinitionDoc
   @PostMapping(value = "/cost-config/ui/cost-definition/download/{orgId}")
   public void downloadCostDefinition(
@@ -498,6 +645,17 @@ public class CsvDownloadUtilityController {
     response.flushBuffer();
   }
 
+  /**
+   * Downloads the holiday cutoff rules for the specified organization.
+   *
+   * <p>This method processes a POST request to download holiday cutoff rules as a CSV for a
+   * specific organization.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param holidayCutoffUIRequest The request payload containing holiday cutoff rules details.
+   * @param response The HTTP response.
+   * @throws IOException If there is an error while writing the response.
+   */
   @PostMapping(value = "/holiday-cutoff/v1/ui/orgId/{orgId}/download")
   public void downloadHCORules(
       @NotBlank(message = "OrgId can't be empty") @PathVariable String orgId,
@@ -514,25 +672,5 @@ public class CsvDownloadUtilityController {
         csvDownloadUtilityService.downloadHolidayCutoffRulesForOrgId(orgId, holidayCutoffUIRequest);
     IOUtils.copy(inputStream, response.getOutputStream());
     response.flushBuffer();
-  }
-
-  @PostMapping(value = "/transfer-schedule/ui/orgId/{orgId}/download")
-  public void downloadTransferSchedules(
-      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
-      @Valid @RequestBody FetchTransferScheduleRequest request,
-      HttpServletResponse httpServletResponse)
-      throws IOException {
-    log.debug("Inside download transfer schedules for orgId {}", orgId);
-    final var file = csvDownloadUtilityService.downloadTransferSchedulesData(orgId, request);
-    try (var inputStream = new FileInputStream(file)) {
-      httpServletResponse.setStatus(HttpStatus.OK.value());
-      httpServletResponse.setHeader(
-          HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(file.getName()));
-      httpServletResponse.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
-      IOUtils.copy(inputStream, httpServletResponse.getOutputStream());
-      httpServletResponse.flushBuffer();
-    } finally {
-      Files.delete(file.toPath());
-    }
   }
 }

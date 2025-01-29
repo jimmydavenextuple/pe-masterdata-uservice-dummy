@@ -9,13 +9,7 @@ package com.nextuple.sourcing.cost.config.controller;
 
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.sourcing.cost.config.controller.docs.CreateCostValueDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.DeleteCostValueDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.DeleteCostValueForCostFactorCombinationKeyDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostValueCacheKeyDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostValueDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostValueForCostFactorCombinationKeyDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.UpdateCostValueDoc;
+import com.nextuple.sourcing.cost.config.controller.docs.*;
 import com.nextuple.sourcing.cost.config.dto.CostValueCacheKeyDto;
 import com.nextuple.sourcing.cost.config.inbound.CreateCostValueRequest;
 import com.nextuple.sourcing.cost.config.inbound.UpdateCostValueRequest;
@@ -33,16 +27,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing Cost Value configurations within an organization.
+ *
+ * <p>This controller provides APIs to create, retrieve, update, and delete cost values associated
+ * with a specific organization. It also includes methods to fetch cost values based on cost factor
+ * combination keys and cost itineraries, as well as retrieving cache keys related to cost values.
+ *
+ * <p>The controller is tagged with "Cost Value APIs" for easy categorization in API documentation.
+ */
 @RestController
 @RequestMapping("/cost-config/cost-value")
 @RequiredArgsConstructor
@@ -51,6 +46,16 @@ public class CostValueController {
   private static final Logger logger = LoggerFactory.getLogger(CostValueController.class);
   private final CostValueService costValueService;
 
+  /**
+   * Creates a new Cost Value.
+   *
+   * <p>This method processes a POST request to create a cost value for a specific organization.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param costValueRequest The request payload containing the cost value details to be created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created cost value.
+   * @throws CommonServiceException If there is an error during the creation process.
+   */
   @CreateCostValueDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -73,6 +78,17 @@ public class CostValueController {
                 .build());
   }
 
+  /**
+   * Retrieves a Cost Value by its ID for a specific organization.
+   *
+   * <p>This method processes a GET request to fetch details of a cost value associated with the
+   * provided ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the cost value to be fetched.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched cost value.
+   * @throws CommonServiceException If there is an error during the retrieval process.
+   */
   @GetCostValueDoc
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{orgId}/{id}")
   public ResponseEntity<BaseResponse<CostValueResponse>> getCostValue(
@@ -94,6 +110,18 @@ public class CostValueController {
             .build());
   }
 
+  /**
+   * Retrieves a Cost Value based on a cost factor combination key and cost itinerary.
+   *
+   * <p>This method processes a GET request to fetch the cost value using a combination of cost
+   * itinerary and cost factor combination key.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param costItinerary The cost itinerary associated with the cost value.
+   * @param costFactorCombinationKey The cost factor combination key to fetch the cost value.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched cost value.
+   * @throws CommonServiceException If there is an error during the retrieval process.
+   */
   @GetCostValueForCostFactorCombinationKeyDoc
   @GetMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -126,6 +154,17 @@ public class CostValueController {
             .build());
   }
 
+  /**
+   * Updates an existing Cost Value.
+   *
+   * <p>This method processes a PUT request to update the cost value for a specific organization.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the cost value to be updated.
+   * @param costValueRequest The request payload containing the updated cost value details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated cost value.
+   * @throws CommonServiceException If there is an error during the update process.
+   */
   @UpdateCostValueDoc
   @PutMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -151,6 +190,18 @@ public class CostValueController {
             .build());
   }
 
+  /**
+   * Deletes a Cost Value by its ID for a specific organization.
+   *
+   * <p>This method processes a DELETE request to remove a cost value associated with the provided
+   * ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the cost value to be deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the deleted cost value
+   *     details.
+   * @throws CommonServiceException If there is an error during the deletion process.
+   */
   @DeleteCostValueDoc
   @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{orgId}/{id}")
   public ResponseEntity<BaseResponse<CostValueResponse>> deleteCostValue(
@@ -172,6 +223,19 @@ public class CostValueController {
             .build());
   }
 
+  /**
+   * Deletes a Cost Value based on a cost factor combination key and cost itinerary.
+   *
+   * <p>This method processes a DELETE request to remove the cost value associated with the given
+   * cost itinerary and cost factor combination key.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param costItinerary The cost itinerary associated with the cost value.
+   * @param costFactorCombinationKey The cost factor combination key associated with the cost value.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the deleted cost value
+   *     details.
+   * @throws CommonServiceException If there is an error during the deletion process.
+   */
   @DeleteCostValueForCostFactorCombinationKeyDoc
   @DeleteMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -205,6 +269,15 @@ public class CostValueController {
             .build());
   }
 
+  /**
+   * Retrieves cache keys for all cost values.
+   *
+   * <p>This method processes a GET request to fetch a list of cache keys associated with cost
+   * values.
+   *
+   * @param limit The maximum number of cache keys to retrieve. Defaults to 100.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of cache keys.
+   */
   @GetCostValueCacheKeyDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<CostValueCacheKeyDto>>> getCostValueCacheKeys(

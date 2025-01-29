@@ -20,13 +20,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing master data ingestion operations.
+ *
+ * <p>This controller provides APIs to process and publish master data feeds for various modules. It
+ * ensures proper validation of incoming requests and handles exceptions with appropriate logging
+ * and response mechanisms.
+ *
+ * <p>Tagged under "INge API" for documentation categorization, this controller facilitates seamless
+ * data ingestion with a focus on modularity and organizational context.
+ */
 @RequestMapping("/ingest-data")
 @RestController
 @Tag(name = "INge API")
@@ -38,6 +43,20 @@ public class MasterDataIngestionController {
   private static final String TENANT_MISSING_MESSAGE = "Tenant ID not passed";
   private final MasterDataIngestionService masterDataIngestionService;
 
+  /**
+   * Publishes the master data feed for the specified module.
+   *
+   * <p>This method processes and publishes the master data ingestion request for a given module. It
+   * validates the input data, interacts with the service layer, and provides a response indicating
+   * the success of the operation.
+   *
+   * @param orgId The unique identifier for the organization, passed in the request header.
+   * @param moduleName The name of the module for which the master data is being ingested.
+   * @param masterDataIngestionRequest The feed request containing the master data to be ingested.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message
+   *     indicating the successful publication of the master data feed.
+   * @throws CommonServiceException If there is any error during the ingestion process.
+   */
   @PostMapping("/{moduleName}")
   public ResponseEntity<BaseResponse<String>> publishMasterData(
       @NotBlank(message = TENANT_MISSING_MESSAGE) @RequestHeader(value = TENANT) String orgId,

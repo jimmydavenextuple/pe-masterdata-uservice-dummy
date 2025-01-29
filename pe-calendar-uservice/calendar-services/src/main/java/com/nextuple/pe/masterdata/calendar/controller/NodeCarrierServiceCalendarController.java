@@ -14,12 +14,9 @@ import com.nextuple.calendar.persistence.exception.CalendarDomainException;
 import com.nextuple.calendar.persistence.exception.DateException;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.pe.masterdata.calendar.controller.docs.DeleteNodeCarrierServiceCalendarForNodeIdDoc;
 import com.nextuple.pe.masterdata.calendar.controller.docs.GetNodeCarrierCalendarCacheKeysDoc;
-import com.nextuple.pe.masterdata.calendar.controller.docs.GetNodeCarrierServiceCalendarDoc;
 import com.nextuple.pe.masterdata.calendar.controller.docs.HandleCreateNodeCarrierServiceCalendarDoc;
 import com.nextuple.pe.masterdata.calendar.controller.docs.HandleGetNodeCarrierServiceCalendarDoc;
-import com.nextuple.pe.masterdata.calendar.controller.docs.HandleNodeCarrierServiceCalendarForOrgAndNodeId;
 import com.nextuple.pe.masterdata.calendar.service.NodeCarrierServiceCalendarService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,8 +30,24 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for handling Node Carrier Service Calendar related APIs.
+ *
+ * <p>This class contains endpoints for creating and retrieving Node Carrier Service Calendar
+ * details, including cache keys and service calendar information based on organization and node
+ * identifiers.
+ *
+ * <p>The controller is tagged with "Node Carrier Service Calendar APIs" for easy categorization in
+ * API documentation.
+ */
 @RestController
 @Tag(name = "Node Carrier Service Calendar APIs")
 @RequestMapping("/node-carrier-service-calendar")
@@ -45,6 +58,23 @@ public class NodeCarrierServiceCalendarController {
       LoggerFactory.getLogger(NodeCarrierServiceCalendarController.class);
   private final NodeCarrierServiceCalendarService nodeCarrierServiceCalendarService;
 
+  /**
+   * Creates a new Node Carrier Service Calendar.
+   *
+   * <p>This method processes a POST request to create a new Node Carrier Service Calendar using the
+   * provided request data. It passes the request to the service layer for processing and returns a
+   * response containing the created Node Carrier Service Calendar details.
+   *
+   * @param nodeCarrierServiceCalendarRequest The request body containing the details of the Node
+   *     Carrier Service Calendar to be created. Must be a valid object.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the response data of
+   *     type {@link NodeCarrierServiceCalendarResponse}, indicating successful creation.
+   * @throws CalendarDomainException If there is an error related to the calendar domain.
+   * @throws CommonServiceException If there is a common service-related exception during
+   *     processing.
+   * @throws DateException If there is an invalid date format or date-related error during
+   *     processing.
+   */
   @HandleCreateNodeCarrierServiceCalendarDoc
   @PostMapping
   public ResponseEntity<BaseResponse<NodeCarrierServiceCalendarResponse>>
@@ -72,6 +102,22 @@ public class NodeCarrierServiceCalendarController {
     }
   }
 
+  /**
+   * Fetches Node Carrier Service Calendar details.
+   *
+   * <p>This method processes a GET request to fetch Node Carrier Service Calendar details for the
+   * specified organization, node, and carrier service. It accepts an optional service option
+   * parameter and returns the corresponding calendar details.
+   *
+   * @param orgId The unique identifier of the organization. Cannot be null or empty.
+   * @param nodeId The unique identifier of the node. Cannot be null or empty.
+   * @param carrierServiceId The unique identifier of the carrier service. Cannot be null or empty.
+   * @param serviceOption An optional parameter specifying the service option of the carrier. Can be
+   *     null.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a list of {@link
+   *     NodeCarrierServiceCalendarResponse} representing the fetched calendar details.
+   * @throws CalendarDomainException If there is an error related to the calendar domain.
+   */
   @HandleGetNodeCarrierServiceCalendarDoc
   @GetMapping("/{orgId}/{nodeId}/{carrierServiceId}")
   public ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>>
@@ -109,65 +155,18 @@ public class NodeCarrierServiceCalendarController {
     }
   }
 
-  @GetMapping("/{orgId}/{nodeId}")
-  @HandleNodeCarrierServiceCalendarForOrgAndNodeId
-  public ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>>
-      handleGetNodeCarrierServiceCalendarForNodeId(
-          @NotBlank(message = "orgId can't be empty")
-              @PathVariable
-              @Parameter(
-                  description = "Unique identifier of the organization",
-                  example = "NEXTUPLE")
-              String orgId,
-          @NotBlank(message = "nodeId can't be empty")
-              @PathVariable
-              @Parameter(description = "Unique identifier of the node", example = "NODE01")
-              String nodeId)
-          throws CalendarDomainException {
-    try {
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Node Carrier Service calendar details fetched successfully!")
-              .payload(
-                  nodeCarrierServiceCalendarService
-                      .processGetNodeCarrierServiceCalendarByNodeIdForDistCarrierServiceId(
-                          orgId, nodeId))
-              .build());
-    } catch (Exception e) {
-      logger.error("Error in handleGetNodeCarrierServiceCalendar()");
-      throw e;
-    }
-  }
-
-  @DeleteMapping("/{orgId}/{nodeId}")
-  @DeleteNodeCarrierServiceCalendarForNodeIdDoc
-  public ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>>
-      deleteNodeCarrierServiceCalendarForNodeId(
-          @NotBlank(message = "orgId can't be empty")
-              @PathVariable
-              @Parameter(
-                  description = "Unique identifier of the organization",
-                  example = "NEXTUPLE")
-              String orgId,
-          @NotBlank(message = "nodeId can't be empty")
-              @PathVariable
-              @Parameter(description = "Unique identifier of the node", example = "NODE01")
-              String nodeId)
-          throws CalendarDomainException {
-    try {
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Node Carrier Service calendar details deleted successfully!")
-              .payload(
-                  nodeCarrierServiceCalendarService.processDeleteNodeCarrierServiceCalendarByNodeId(
-                      orgId, nodeId))
-              .build());
-    } catch (Exception e) {
-      logger.error("Error in handleGetNodeCarrierServiceCalendar()");
-      throw e;
-    }
-  }
-
+  /**
+   * Retrieves the list of Node Carrier Service Calendar cache keys.
+   *
+   * <p>This method processes a GET request to retrieve the list of all node carrier service
+   * calendar cache keys. A limit can be specified to control the number of cache keys retrieved.
+   *
+   * @param limit The maximum number of cache keys to retrieve. This parameter is optional and
+   *     defaults to a reasonable limit if not provided.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a list of {@link
+   *     NodeCarrierCalendarCacheKeyDto} representing the fetched cache keys.
+   * @throws CalendarDomainException If there is an error related to the calendar domain.
+   */
   @Operation(
       summary = "Get Node Carrier Service Calendar Cache Keys",
       description = "Retrieves the list of the node carrier service calendar cache keys.")
@@ -186,26 +185,6 @@ public class NodeCarrierServiceCalendarController {
 
     var response = nodeCarrierServiceCalendarService.getAllNodeCarrierCalendarCacheKeys(limit);
 
-    return ResponseEntity.ok(
-        BaseResponse.builder()
-            .message("Node Carrier Calendar Cache Keys fetched successfully")
-            .payload(response)
-            .build());
-  }
-
-  @GetMapping("org/{orgId}")
-  @GetNodeCarrierServiceCalendarDoc
-  public ResponseEntity<BaseResponse<List<NodeCarrierServiceCalendarResponse>>>
-      getAllNodeCarrierServiceCalendarsByOrgId(
-          @NotBlank(message = "orgId can't be empty")
-              @PathVariable
-              @Parameter(
-                  description = "Unique identifier of the organization",
-                  example = "NEXTUPLE")
-              String orgId)
-          throws CalendarDomainException {
-    logger.debug("Processing get Node Carrier Calendar by orgId");
-    var response = nodeCarrierServiceCalendarService.processGetAllNodeCarrierServiceCalendar(orgId);
     return ResponseEntity.ok(
         BaseResponse.builder()
             .message("Node Carrier Calendar Cache Keys fetched successfully")

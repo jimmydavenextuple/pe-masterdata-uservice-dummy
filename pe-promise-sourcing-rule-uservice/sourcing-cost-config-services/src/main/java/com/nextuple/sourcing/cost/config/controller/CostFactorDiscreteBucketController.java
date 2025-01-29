@@ -9,11 +9,7 @@ package com.nextuple.sourcing.cost.config.controller;
 
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.sourcing.cost.config.controller.docs.CreateCostFactorDiscreteBucketDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.DeleteCostFactorDiscreteBucketDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostFactorDiscreteBucketCacheKeyDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.GetCostFactorDiscreteBucketDoc;
-import com.nextuple.sourcing.cost.config.controller.docs.UpdateCostFactorDiscreteBucketDoc;
+import com.nextuple.sourcing.cost.config.controller.docs.*;
 import com.nextuple.sourcing.cost.config.dto.CostFactorDiscreteBucketCacheKeyDto;
 import com.nextuple.sourcing.cost.config.dto.CostFactorDiscreteBucketDto;
 import com.nextuple.sourcing.cost.config.inbound.CostFactorDiscreteBucketRequest;
@@ -32,16 +28,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing cost factor discrete buckets within an organization.
+ *
+ * <p>This controller provides APIs for creating, updating, retrieving, and deleting discrete
+ * buckets based on the organization ID and cost factor identifiers. Additionally, it allows
+ * fetching cache keys associated with cost factor discrete buckets.
+ *
+ * <p>The controller is tagged with "Cost factor discrete buckets APIs" for easy categorization in
+ * API documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/cost-config/cost-factor-discrete-buckets")
@@ -55,6 +53,18 @@ public class CostFactorDiscreteBucketController {
   private final CostFactorDiscreteBucketService costFactorDiscreteBucketService;
   private final CostFactorDiscreteBucketServiceImpl costFactorDiscreteBucketServiceImpl;
 
+  /**
+   * Creates a new discrete bucket for a specific cost factor in the given organization.
+   *
+   * <p>This method processes a POST request to create a cost factor discrete bucket.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param costFactorDiscreteBucketRequest The request body containing details for the discrete
+   *     bucket.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created bucket
+   *     details.
+   * @throws CommonServiceException If an error occurs during the creation process.
+   */
   @CreateCostFactorDiscreteBucketDoc
   @PostMapping("/{orgId}")
   public ResponseEntity<BaseResponse<CostFactorDiscreteBucketDto>> createCostFactorDiscreteBucket(
@@ -78,6 +88,18 @@ public class CostFactorDiscreteBucketController {
                 .build());
   }
 
+  /**
+   * Retrieves a list of discrete buckets for a specified cost factor in an organization.
+   *
+   * <p>This method processes a GET request to fetch the discrete buckets for the provided
+   * organization ID and cost factor.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param costFactor The cost factor associated with the discrete buckets.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of discrete
+   *     buckets.
+   * @throws CommonServiceException If the buckets cannot be retrieved.
+   */
   @GetCostFactorDiscreteBucketDoc
   @GetMapping("/{orgId}/{costFactor}")
   public ResponseEntity<BaseResponse<List<CostFactorDiscreteBucketDto>>>
@@ -101,6 +123,18 @@ public class CostFactorDiscreteBucketController {
                 .build());
   }
 
+  /**
+   * Updates an existing discrete bucket for a cost factor in the specified organization.
+   *
+   * <p>This method processes a PUT request to update the discrete bucket details.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param id The unique identifier of the bucket record.
+   * @param request The request body containing the updated bucket details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated bucket
+   *     details.
+   * @throws CommonServiceException If an error occurs during the update process.
+   */
   @UpdateCostFactorDiscreteBucketDoc
   @PutMapping(value = "{orgId}/{id}")
   public ResponseEntity<BaseResponse<CostFactorDiscreteBucketDto>> updateCostFactorBucket(
@@ -128,6 +162,18 @@ public class CostFactorDiscreteBucketController {
                 .build());
   }
 
+  /**
+   * Deletes a specific discrete bucket for a cost factor in the given organization.
+   *
+   * <p>This method processes a DELETE request to remove the discrete bucket identified by the
+   * organization ID and bucket ID.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param id The unique identifier of the bucket record.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted bucket.
+   * @throws CommonServiceException If the bucket cannot be deleted.
+   */
   @DeleteCostFactorDiscreteBucketDoc
   @DeleteMapping(value = "{orgId}/{id}")
   public ResponseEntity<BaseResponse<CostFactorDiscreteBucketDto>> deleteCostFactorBucket(
@@ -151,6 +197,15 @@ public class CostFactorDiscreteBucketController {
                 .build());
   }
 
+  /**
+   * Retrieves cache keys for cost factor discrete buckets.
+   *
+   * <p>This method processes a GET request to fetch a list of cache keys associated with discrete
+   * buckets.
+   *
+   * @param limit The maximum number of cache keys to retrieve. Defaults to 100.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of cache keys.
+   */
   @GetCostFactorDiscreteBucketCacheKeyDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<CostFactorDiscreteBucketCacheKeyDto>>>

@@ -25,12 +25,18 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for Processing Time Buffer APIs.
+ *
+ * <p>This controller provides APIs to interact with the processing time buffer configurations for
+ * specific organizations and nodes. It includes methods to retrieve paginated lists of processing
+ * time buffer details with support for filtering by organization and node IDs.
+ *
+ * <p>The controller is tagged with "Processing Time Buffer APIs" for easy categorization in API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/ui/processing-time-buffer")
 @Slf4j
@@ -47,6 +53,21 @@ public class ProcessingTimeBufferController {
 
   private final ProcessingTimeBufferService processingTimeBufferService;
 
+  /**
+   * Retrieves a paginated list of processing time buffer details for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch a paginated list of processing time buffer
+   * details based on the provided organization ID. Pagination and sorting are supported through the
+   * `pageParams` parameter.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param pageParams The pagination parameters, including page number, page size, sorting
+   *     criteria, and sort order.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a paginated list of
+   *     processing time buffer details.
+   * @throws CommonServiceException If there is an error while fetching processing time buffer
+   *     details.
+   */
   @GetMapping("/orgId/{orgId}")
   @GetProcessingTimeBufferDoc
   public ResponseEntity<BaseResponse<PagePayload<ProcessingTimeBufferResponse>>>
@@ -90,6 +111,23 @@ public class ProcessingTimeBufferController {
             .build());
   }
 
+  /**
+   * Retrieves a paginated list of processing time buffer details for the specified organization and
+   * nodes.
+   *
+   * <p>This method processes a GET request to fetch a paginated list of processing time buffer
+   * details based on the provided organization ID and optional node IDs. Pagination and sorting are
+   * supported through the `pageParams` parameter.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param nodeIds A comma-separated list of node IDs to filter the results (optional).
+   * @param pageParams The pagination parameters, including page number, page size, sorting
+   *     criteria, and sort order.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a paginated list of
+   *     processing time buffer details.
+   * @throws CommonServiceException If there is an error while fetching processing time buffer
+   *     details.
+   */
   @GetMapping("/v1/orgId/{orgId}")
   @GetProcessingTimeBufferDocV1
   public ResponseEntity<BaseResponse<PagePayload<ProcessingTimeBufferResponse>>>
