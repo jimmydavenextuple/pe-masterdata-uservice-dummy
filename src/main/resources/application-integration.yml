@@ -5,17 +5,18 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://postgres:5432/pe_intgeration
-    username: nextuple_user
-    password: nextuple@123
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe_integration
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
   flyway:
     enabled: false
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: "kbrk-nonprod.nextuple.net:9092"
     properties:
       security.protocol: SASL_PLAINTEXT
       sasl.mechanism: SCRAM-SHA-256
-      sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"kafka\" password=\"kafka\";"
+      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
+    consumer-retry-count: 1
     consumer-item:
       type: json
       enable-auto-commit: true
@@ -53,6 +54,11 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+        max.poll.records: 10
+      topics:
+        master_data_update_event:
+          name: INTERNAL.INTEGRATION.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-integration
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -62,6 +68,7 @@ spring:
       enable-auto-commit: true
       auto-offset-reset: latest
   sql.init.platform: postgres
+
 logging:
   level:
     com.nextuple: INFO
@@ -70,19 +77,110 @@ pe-public-webhook:
     topic: INTERNAL.INTEGRATION_ATP
   item-feed:
     topic: INTERNAL.INTEGRATION.PROMISE_ITEMS
+  pe-response:
+    topic: INTERNAL.INTEGRATION.CART_EDD
+    group-id: pe-response-consumer-integration-async
+  webhook:
+    - tenantId: NEXTUPLE_GR
+      moduleName: PROMISING
+      webhookName: PROMISING_INTERMEDIATE_EVENT
+      webhookDetail:
+        endpoint: "https://dc5647e2-a0d6-436b-bfba-6097594abe60.mock.pstmn.io"
+        method: POST
+        headers:
+          contentType: "application/json"
+          x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
+          #          Dummy API Key
+    - tenantId: XYZINC
+      moduleName: PROMISING
+      webhookName: PROMISING_INTERMEDIATE_EVENT
+      webhookDetail:
+        endpoint: "https://dc5647e2-a0d6-436b-bfba-6097594abe60.mock.pstmn.io"
+        method: POST
+        headers:
+          contentType: "application/json"
+          x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
+          #          Dummy API Key
+
+dataupload:
+  base-path: "https://pedataupload.blob.core.windows.net"
+  maxsize-in-kilobytes: 10240
+  max-rows: 1000
+  bucket-name: "integrationdataupload"
+  type: BLOB
+  signed-url-expiry-minutes: 30
+
 jobs-framework:
   feed-metrics-consumer:
     topic-name: INTERNAL.INTEGRATION.PE_JOB_FPM_METRICS, INTERNAL.INTEGRATION.PE_JOB_RECORD_FPM_METRICS, INTERNAL.INTEGRATION.PE_NEIP_FPM_METRICS
     group-id: pe-fpm-metrics-integration
   job-completion-consumer:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-integration
   kafka-publish:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_TASK
   result-publish:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_RESULT
   result-consumer:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_RESULT
-    group-id: jobs-result-consumer-async
+    group-id: jobs-result-consumer-async-integration
   record-consumer:
     topic-name: INTERNAL.INTEGRATION.PE.JOB_TASK
-    group-id: jobs-task-consumer-async
+    group-id: jobs-task-consumer-async-integration
+
+master-data:
+  node:
+    topic-name: INTERNAL.INTEGRATION.PE.NODE_INTEGRATION
+    group-id: node-master-integration
+  node-carrier:
+    topic-name: INTERNAL.INTEGRATION.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-integration
+  carrier:
+    topic-name: INTERNAL.INTEGRATION.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-integration
+  processing-lead-time:
+    topic-name: INTERNAL.INTEGRATION.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-integration
+  calendar:
+    topic-name: INTERNAL.INTEGRATION.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-integration
+  node-calendar:
+    topic-name: INTERNAL.INTEGRATION.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-integration
+  carrier-service-calendar:
+    topic-name: INTERNAL.INTEGRATION.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-integration
+  pickup-calendar:
+    topic-name: INTERNAL.INTEGRATION.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-integration
+  node-service-option-buffer:
+    topic-name: INTERNAL.INTEGRATION.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-integration
+  transit:
+    topic-name: INTERNAL.INTEGRATION.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-integration
+  transit-buffer:
+    topic-name: INTERNAL.INTEGRATION.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-integration
+
+next-cache:
+  caches:
+    -
+      cacheName: task-info
+      ttlSeconds: 14400
+      maxLimit: 50
+  refresh-cache:
+    topic: INTERNAL.INTEGRATION.PE.REFRESH_CACHE_INV
+  cacheManager: caffeine
+platform:
+  tasks:
+    enabled: true
+  tasks-scheduler:
+    enabled: true
+    milliseconds: 5000
+  authFilter:
+    enabled: false
+kafka:
+  input:
+    taskTopics: INTERNAL.INTEGRATION.PE.RETRY_TOPIC_INV
+    taskGroupId: pe-retry
