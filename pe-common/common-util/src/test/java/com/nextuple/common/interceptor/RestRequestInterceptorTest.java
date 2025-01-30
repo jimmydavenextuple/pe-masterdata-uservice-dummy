@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.servlet.HandlerMapping;
 
 class RestRequestInterceptorTest {
@@ -53,6 +54,19 @@ class RestRequestInterceptorTest {
     request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, map);
     boolean result = interceptor.preHandle(request, response, handler);
     Assertions.assertTrue(result);
+  }
+
+  @Test
+  void preHandleTestWithoutQueryParamNullMap() throws Exception {
+    handler = new Object();
+    request = new MockHttpServletRequest();
+    CurrentThreadContext.getLogContext().setTenantId("NEXTUPLE");
+    Map<String, String> map = new HashMap<>();
+    map.put("orgId", "NEXTUPLE");
+    request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, null);
+    ReflectionTestUtils.setField(interceptor, "tenantCheckEnabled", true);
+    assertThrows(
+        CommonServiceException.class, () -> interceptor.preHandle(request, response, handler));
   }
 
   @Test
