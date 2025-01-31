@@ -1,19 +1,16 @@
 package com.nextuple.pe;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.dataupload.configuration.KafkaStringProperties;
+import com.nextuple.pe.kafka.utils.KafkaUtils;
 import com.nextuple.pe.utils.TestUtil;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +28,8 @@ class KafkaConsumerConfigsTest {
   @Mock KafkaErrorHandlerProperties kafkaErrorHandlerProperties;
   @Mock KafkaStringProperties kafkaStringProperties;
   @Mock MeterRegistry meterRegistry;
+  @Mock KafkaUtils kafkaUtils;
+
   @Mock KafkaOperations<Object, Object> kafkaOperations;
 
   @BeforeEach
@@ -80,17 +79,6 @@ class KafkaConsumerConfigsTest {
   }
 
   @Test
-  void jsonContainerFactoryJSONInvalidClassTest() {
-    KafkaOperations<String, Object> objectKafkaOperations = mock(KafkaOperations.class);
-    when(kafkaProperties.buildConsumerProperties()).thenReturn(testUtil.getJsonProps());
-    when(kafkaErrorHandlerProperties.getNonRetryableExceptions())
-        .thenReturn(List.of("jakarta.validation.ConstraintViolationExceptionx"));
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> consumerConfigs.kafkaListenerContainerFactoryJSON(objectKafkaOperations, null));
-  }
-
-  @Test
   void jsonContainerFactoryJSONWithNonNullDefaultTypeTest() {
     KafkaOperations<String, Object> objectKafkaOperations = mock(KafkaOperations.class);
     Map<String, Object> jsonProps = testUtil.getJsonProps();
@@ -101,14 +89,6 @@ class KafkaConsumerConfigsTest {
         .thenReturn(Collections.emptyList());
     assertDoesNotThrow(
         () -> consumerConfigs.kafkaListenerContainerFactoryJSON(objectKafkaOperations, null));
-  }
-
-  @Test
-  void kafkaErrorHandlerRetryTest() {
-    ConsumerRecord<String, Object> record =
-        new ConsumerRecord<>("testTopic", 0, 0L, "key", "value");
-    Exception exception = new RuntimeException("Test exception");
-    Assertions.assertDoesNotThrow(() -> consumerConfigs.retryListener(record, exception, 1));
   }
 
   @Test
@@ -132,27 +112,5 @@ class KafkaConsumerConfigsTest {
     when(kafkaProperties.buildConsumerProperties()).thenReturn(testUtil.getJsonProps());
     assertDoesNotThrow(
         () -> consumerConfigs.kafkaContainerListenerFactory(null, objectKafkaOperations));
-  }
-
-  @Test
-  void dltTopicResolverTest() {
-    ConsumerRecord<String, Object> record =
-        new ConsumerRecord<>("testTopic", 0, 0L, "key", "value");
-    Exception exception = new RuntimeException("Test exception");
-    BiFunction<ConsumerRecord<?, ?>, Exception, TopicPartition> biFunction =
-        KafkaConsumerConfigs.getConsumerRecordExceptionTopicPartitionBiFunction("test");
-    TopicPartition topicPartition = biFunction.apply(record, exception);
-    Assertions.assertEquals("test", topicPartition.topic());
-  }
-
-  @Test
-  void dltTopicResolverDLTNotSpecifiedTest() {
-    ConsumerRecord<String, Object> record =
-        new ConsumerRecord<>("testTopic", 0, 0L, "key", "value");
-    Exception exception = new RuntimeException("Test exception");
-    BiFunction<ConsumerRecord<?, ?>, Exception, TopicPartition> biFunction =
-        KafkaConsumerConfigs.getConsumerRecordExceptionTopicPartitionBiFunction(null);
-    TopicPartition topicPartition = biFunction.apply(record, exception);
-    Assertions.assertEquals("testTopic.dlt", topicPartition.topic());
   }
 }

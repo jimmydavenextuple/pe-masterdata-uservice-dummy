@@ -8,22 +8,15 @@
 package com.nextuple.pe;
 
 import com.nextuple.dataupload.configuration.KafkaStringProperties;
+import com.nextuple.pe.kafka.utils.KafkaUtils;
 import io.micrometer.core.instrument.MeterRegistry;
-import jakarta.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.SaslConfigs;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -42,8 +35,6 @@ import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.backoff.FixedBackOff;
 
 @Configuration
 @EnableKafka
@@ -78,11 +69,10 @@ public class KafkaConsumerConfigs {
   private String interceptorClasses;
 
   private final KafkaProperties kafkaProperties;
-  private final KafkaErrorHandlerProperties kafkaErrorHandlerProperties;
+  private final KafkaUtils kafkaUtils;
 
   private final KafkaStringProperties kafkaStringProperties;
   private final MeterRegistry meterRegistry;
-  private static final Logger logger = LoggerFactory.getLogger(KafkaConsumerConfigs.class);
 
   @Primary
   @Bean("jsonDeserializerProperties")
@@ -147,53 +137,8 @@ public class KafkaConsumerConfigs {
     factory.setConsumerFactory(itemConsumerFactory());
     HashMap<String, Object> prop = new HashMap<>(itemDeserializerProperties());
     String dltTopicName = (String) getNestedProperty(prop, "topics.item_master.dlt_name");
-    factory.setCommonErrorHandler(kafkaErrorHandler(kafkaOperations, dltTopicName));
+    factory.setCommonErrorHandler(kafkaUtils.kafkaErrorHandler(kafkaOperations, dltTopicName));
     return factory;
-  }
-
-  public CommonErrorHandler kafkaErrorHandler(
-      KafkaOperations<String, Object> kafkaOperations, String dltTopic) {
-    FixedBackOff fixedBackOff = new FixedBackOff(retryInterval, maxRetryCount);
-    DeadLetterPublishingRecoverer recoverer =
-        new DeadLetterPublishingRecoverer(
-            kafkaOperations, getConsumerRecordExceptionTopicPartitionBiFunction(dltTopic));
-    DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, fixedBackOff);
-    errorHandler.setRetryListeners(this::retryListener);
-    List<Class<? extends Exception>> nonRetryableExceptionClasses = new ArrayList<>();
-    if (!CollectionUtils.isEmpty(kafkaErrorHandlerProperties.getNonRetryableExceptions())) {
-      nonRetryableExceptionClasses =
-          kafkaErrorHandlerProperties.getNonRetryableExceptions().stream()
-              .map(this::getExceptionClass)
-              .collect(Collectors.toList());
-    }
-    nonRetryableExceptionClasses.forEach(errorHandler::addNotRetryableExceptions);
-    return errorHandler;
-  }
-
-  @NotNull
-  public static BiFunction<ConsumerRecord<?, ?>, Exception, TopicPartition>
-      getConsumerRecordExceptionTopicPartitionBiFunction(String dltTopic) {
-    return (cr, e) -> {
-      String resolvedTopicName = dltTopic != null ? dltTopic : cr.topic() + ".dlt";
-      return new TopicPartition(resolvedTopicName, cr.partition());
-    };
-  }
-
-  public void retryListener(
-      ConsumerRecord<?, ?> consumerRecord, Exception ex, int deliveryAttempt) {
-    logger.error(
-        "Retry attempt {} for record {} failed due to the message: {}",
-        deliveryAttempt,
-        consumerRecord,
-        ex.getMessage());
-  }
-
-  private Class<? extends Exception> getExceptionClass(String className) {
-    try {
-      return (Class<? extends Exception>) Class.forName(className);
-    } catch (ClassNotFoundException e) {
-      throw new IllegalArgumentException("Invalid exception class name: " + className, e);
-    }
   }
 
   @Bean(name = "StringDeserializerConsumer")
