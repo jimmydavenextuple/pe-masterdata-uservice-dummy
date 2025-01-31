@@ -26,10 +26,10 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-    topics = "#{'${spring.kafka.consumer-item.topics.item_master.names}'.split(',')}",
+    topics = "#{'${spring.kafka.consumer-item.topics.item_master.name}'.split('\\s*,\\s*')}",
     groupId = "${spring.kafka.consumer-item.topics.item_master.group-id}",
     autoStartup = "#{'${spring.kafka.consumer-item.type}' == 'json'}",
-    containerFactory = "ItemDeserializerConsumer")
+    containerFactory = "${item.feed.consumer-factory:ItemDeserializerConsumer}")
 public class ItemMasterConsumerJSON {
 
   private static final Logger logger = LoggerFactory.getLogger(ItemMasterConsumerJSON.class);
