@@ -125,3 +125,7 @@ include 'pe-common:userexit-framework:userexit-domain'
 include 'pe-common:userexit-framework:userexit-near-cache'
 include 'pe-common:userexit-framework:userexit-near-cache-spring'
 
+include 'pe-decision-trail'
+include 'pe-kafka-configs'
+include 'pe-tenant-configs'
+

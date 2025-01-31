@@ -1,0 +1,534 @@
+package com.nextuple.pe.configs.impl;
+
+import static com.nextuple.common.constants.ConfigKeyConstants.PROCESSING_TIME_ML_OVERRIDE_CLASS_CONFIG_KEY;
+import static com.nextuple.pe.util.TestUtil.ORG_ID;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.nextuple.common.context.CurrentThreadContext;
+import com.nextuple.pe.configs.DefaultCarrierPriorityConfig;
+import com.nextuple.pe.configs.EventConfig;
+import com.nextuple.pe.configs.LogSuppressionServiceOptionsConfig;
+import com.nextuple.pe.configs.PublishEddOnPageConfig;
+import com.nextuple.pe.configs.ServiceOptionConfig;
+import com.nextuple.pe.configs.ServiceOptionIVTypeMappingConfig;
+import com.nextuple.pe.configs.SourcingConfig;
+import com.nextuple.pe.util.TestUtil;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
+
+class ITenantYmlConfigImplTest {
+  private final String defaultServiceOptions = "SDND,STANDARD";
+  private final String defaultServiceOptionInventoryTypeMapping = "SDND:PICK,EXPRESS:SHIP";
+  private final String defaultPublishEddResponseOnPage = "checkout";
+  private final String defaultValueOfCarrierPriority = "0";
+  private final String defaultLogSuppressionServiceOptions = "SDND,NEXTDAY";
+  private final String invalidOrgId = "xyz";
+  @InjectMocks ITenantYmlConfigImpl iTenantYmlConfigImpl;
+
+  @InjectMocks private TestUtil testUtil;
+  @Mock ServiceOptionConfig serviceOptionConfig;
+  @Mock ServiceOptionIVTypeMappingConfig serviceOptionIVTypeMappingConfig;
+  @Mock PublishEddOnPageConfig publishEddOnPageConfig;
+  @Mock DefaultCarrierPriorityConfig defaultCarrierPriorityConfig;
+  @Mock LogSuppressionServiceOptionsConfig logSuppressionServiceOptionsConfig;
+  @Mock SourcingConfig sourcingConfig;
+  @Mock EventConfig eventConfig;
+
+  @BeforeEach
+  void init() {
+    MockitoAnnotations.openMocks(this);
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl, "defaultServiceOptions", defaultServiceOptions);
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl,
+        "defaultServiceOptionInventoryTypeMapping",
+        defaultServiceOptionInventoryTypeMapping);
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl, "defaultPublishEddResponseOnPage", defaultPublishEddResponseOnPage);
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl, "defaultValueOfCarrierPriority", defaultValueOfCarrierPriority);
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl,
+        "defaultLogSuppressionServiceOptions",
+        defaultLogSuppressionServiceOptions);
+    CurrentThreadContext.getLogContext().setTenantId(ORG_ID);
+  }
+
+  @Test
+  void getOrgIdTest() {
+    String orgId = iTenantYmlConfigImpl.getOrgId();
+    assertEquals(ORG_ID, orgId);
+  }
+
+  @DisplayName("Returns service options for the org, when we have data for orgId in yml")
+  @Test
+  void getServiceOptionsTest1() {
+    String serviceOption = "SDND";
+    when(serviceOptionConfig.getOptionsMap())
+        .thenReturn(Map.of(ORG_ID, serviceOption, "DEFAULT", defaultServiceOptions));
+
+    String serviceOptionsResponse = iTenantYmlConfigImpl.getServiceOptions();
+    assertEquals(serviceOption, serviceOptionsResponse);
+  }
+
+  @DisplayName("Returns default service options, when we don't have data for orgId in yml")
+  @Test
+  void getServiceOptionsTest2() {
+    String serviceOption = "SDND";
+    CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
+    when(serviceOptionConfig.getOptionsMap())
+        .thenReturn(Map.of(ORG_ID, serviceOption, "DEFAULT", defaultServiceOptions));
+
+    String serviceOptionsResponse = iTenantYmlConfigImpl.getServiceOptions();
+    assertEquals(defaultServiceOptions, serviceOptionsResponse);
+  }
+
+  @DisplayName("Returns service options list")
+  @Test
+  void getServiceOptionsListTest() {
+    String serviceOption = "SDND";
+    when(serviceOptionConfig.getOptionsMap())
+        .thenReturn(Map.of(ORG_ID, serviceOption, "DEFAULT", defaultServiceOptions));
+
+    Set<String> serviceOptionListResponse = iTenantYmlConfigImpl.getServiceOptionsList();
+    assertEquals(Set.of(serviceOption), serviceOptionListResponse);
+  }
+
+  @DisplayName(
+      "Returns service options to inventory type mapping for the org, when we have data for orgId in yml")
+  @Test
+  void getServiceOptionInventoryTypeMappingTest1() {
+    String serviceOptionInventoryTypeMapping = "SDND:PICK";
+    when(serviceOptionIVTypeMappingConfig.getMapping())
+        .thenReturn(
+            Map.of(
+                ORG_ID,
+                serviceOptionInventoryTypeMapping,
+                "DEFAULT",
+                defaultServiceOptionInventoryTypeMapping));
+
+    String serviceOptionInventoryTypeMappingResponse =
+        iTenantYmlConfigImpl.getServiceOptionInventoryTypeMapping();
+    assertEquals(serviceOptionInventoryTypeMapping, serviceOptionInventoryTypeMappingResponse);
+  }
+
+  @DisplayName(
+      "Returns default service options to inventory type mapping, when we don't have data for orgId in yml")
+  @Test
+  void getServiceOptionInventoryTypeMappingTest2() {
+    String serviceOptionInventoryTypeMapping = "SDND:PICK";
+    CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
+    when(serviceOptionIVTypeMappingConfig.getMapping())
+        .thenReturn(
+            Map.of(
+                ORG_ID,
+                serviceOptionInventoryTypeMapping,
+                "DEFAULT",
+                defaultServiceOptionInventoryTypeMapping));
+
+    String serviceOptionInventoryTypeMappingResponse =
+        iTenantYmlConfigImpl.getServiceOptionInventoryTypeMapping();
+    assertEquals(
+        defaultServiceOptionInventoryTypeMapping, serviceOptionInventoryTypeMappingResponse);
+  }
+
+  @DisplayName(
+      "Returns info of publishing edd on specific page for the org, when we have data for orgId in yml")
+  @Test
+  void getPublishEddResponseOnPageTest1() {
+    String publishEddResponseOnPage = "checkout";
+    when(publishEddOnPageConfig.getEddResponseOnPage())
+        .thenReturn(
+            Map.of(ORG_ID, publishEddResponseOnPage, "DEFAULT", defaultPublishEddResponseOnPage));
+
+    String publishEddResponseOnPageResponse = iTenantYmlConfigImpl.getPublishEddResponseOnPage();
+    assertEquals(publishEddResponseOnPage, publishEddResponseOnPageResponse);
+  }
+
+  @DisplayName(
+      "Returns default info of publishing edd on specific page, when we don't have data for orgId in yml")
+  @Test
+  void getPublishEddResponseOnPageTest2() {
+    String publishEddResponseOnPage = "checkout";
+    CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
+    when(publishEddOnPageConfig.getEddResponseOnPage())
+        .thenReturn(
+            Map.of(ORG_ID, publishEddResponseOnPage, "DEFAULT", defaultPublishEddResponseOnPage));
+
+    String publishEddResponseOnPageResponse = iTenantYmlConfigImpl.getPublishEddResponseOnPage();
+    assertEquals(defaultPublishEddResponseOnPage, publishEddResponseOnPageResponse);
+  }
+
+  @DisplayName("Returns list of publishing edd on specific page")
+  @Test
+  void getPublishEddResponseOnPageListTest() {
+    String publishEddResponseOnPage = "checkout";
+    when(publishEddOnPageConfig.getEddResponseOnPage())
+        .thenReturn(
+            Map.of(ORG_ID, publishEddResponseOnPage, "DEFAULT", defaultPublishEddResponseOnPage));
+
+    Set<String> publishEddResponseOnPageListResponse =
+        iTenantYmlConfigImpl.getPublishEddResponseOnPageList();
+    assertEquals(Set.of(publishEddResponseOnPage), publishEddResponseOnPageListResponse);
+  }
+
+  @DisplayName(
+      "Returns info of default carrier property for the org, when we have data for orgId in yml")
+  @Test
+  void getDefaultCarrierPriorityTest1() {
+    String carrierPriority = "1";
+    when(defaultCarrierPriorityConfig.getValue())
+        .thenReturn(Map.of(ORG_ID, carrierPriority, "DEFAULT", defaultValueOfCarrierPriority));
+
+    String carrierPriorityResponse = iTenantYmlConfigImpl.getDefaultCarrierPriority();
+    assertEquals(carrierPriority, carrierPriorityResponse);
+  }
+
+  @DisplayName(
+      "Returns default info of default carrier property, when we don't have data for orgId in yml")
+  @Test
+  void getDefaultCarrierPriorityTest2() {
+    String carrierPriority = "1";
+    CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
+    when(defaultCarrierPriorityConfig.getValue())
+        .thenReturn(Map.of(ORG_ID, carrierPriority, "DEFAULT", defaultValueOfCarrierPriority));
+
+    String carrierPriorityResponse = iTenantYmlConfigImpl.getDefaultCarrierPriority();
+    assertEquals(defaultValueOfCarrierPriority, carrierPriorityResponse);
+  }
+
+  @DisplayName(
+      "Returns info of log suppression of service option for the org, when we have data for orgId in yml")
+  @Test
+  void getLogSuppressionServiceOptionsTest1() {
+    String logSuppressionServiceOptions = "SDND";
+    when(logSuppressionServiceOptionsConfig.getServiceOptions())
+        .thenReturn(
+            Map.of(
+                ORG_ID,
+                logSuppressionServiceOptions,
+                "DEFAULT",
+                defaultLogSuppressionServiceOptions));
+
+    String logSuppressionServiceOptionsResponse =
+        iTenantYmlConfigImpl.getLogSuppressionServiceOptions();
+    assertEquals(logSuppressionServiceOptions, logSuppressionServiceOptionsResponse);
+  }
+
+  @DisplayName(
+      "Returns default info of log suppression of service option, when we don't have data for orgId in yml")
+  @Test
+  void getLogSuppressionServiceOptionsTest2() {
+    String logSuppressionServiceOptions = "SDND";
+    CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
+    when(logSuppressionServiceOptionsConfig.getServiceOptions())
+        .thenReturn(
+            Map.of(
+                ORG_ID,
+                logSuppressionServiceOptions,
+                "DEFAULT",
+                defaultLogSuppressionServiceOptions));
+
+    String logSuppressionServiceOptionsResponse =
+        iTenantYmlConfigImpl.getLogSuppressionServiceOptions();
+    assertEquals(defaultLogSuppressionServiceOptions, logSuppressionServiceOptionsResponse);
+  }
+
+  @DisplayName("Returns list of log suppression of service option")
+  @Test
+  void getLogSuppressionServiceOptionsListTest() {
+    String logSuppressionServiceOptions = "SDND";
+    when(logSuppressionServiceOptionsConfig.getServiceOptions())
+        .thenReturn(
+            Map.of(
+                ORG_ID,
+                logSuppressionServiceOptions,
+                "DEFAULT",
+                defaultLogSuppressionServiceOptions));
+
+    Set<String> logSuppressionServiceOptionsListResponse =
+        iTenantYmlConfigImpl.getLogSuppressionServiceOptionsList();
+    assertEquals(Set.of(logSuppressionServiceOptions), logSuppressionServiceOptionsListResponse);
+  }
+
+  @DisplayName(
+      "Returns number of solutions in the sourcing response for the org, when we have data for orgId in yml")
+  @Test
+  void getNumberOfSolutionsTest1() {
+    Map<String, Object> valueForOrg = testUtil.getSourcingConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
+    Map<String, Map<String, Object>> sourcingConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+
+    Integer numberOfSolutionsResponse = iTenantYmlConfigImpl.getNumberOfSolutions();
+    assertEquals(valueForOrg.get("no-of-solution"), numberOfSolutionsResponse);
+  }
+
+  @DisplayName(
+      "Returns default number of solutions in the sourcing response, when we don't have data for orgId in yml")
+  @Test
+  void getNumberOfSolutionsTest2() {
+    CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
+    Map<String, Object> valueForOrg = testUtil.getSourcingConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
+    Map<String, Map<String, Object>> sourcingConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+
+    Integer numberOfSolutionsResponse = iTenantYmlConfigImpl.getNumberOfSolutions();
+    assertEquals(defaultValue.get("no-of-solution"), numberOfSolutionsResponse);
+  }
+
+  @DisplayName(
+      "Returns number of nodes in the sourcing response for the org, when we have data for orgId in yml")
+  @Test
+  void getNumberOfNodesTest1() {
+    Map<String, Object> valueForOrg = testUtil.getSourcingConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
+    Map<String, Map<String, Object>> sourcingConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+
+    Integer numberOfNodesResponse = iTenantYmlConfigImpl.getNumberOfNodes();
+    assertEquals(valueForOrg.get("no-of-nodes"), numberOfNodesResponse);
+  }
+
+  @DisplayName(
+      "Returns default number of nodes in the sourcing response, when we don't have data for orgId in yml")
+  @Test
+  void getNumberOfNodesTest2() {
+    CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
+    Map<String, Object> valueForOrg = testUtil.getSourcingConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
+    Map<String, Map<String, Object>> sourcingConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+
+    Integer numberOfNodesResponse = iTenantYmlConfigImpl.getNumberOfNodes();
+    assertEquals(defaultValue.get("no-of-nodes"), numberOfNodesResponse);
+  }
+
+  @DisplayName(
+      "Returns list of allowed pages for publishing events for the org, when we have data for orgId in yml")
+  @Test
+  void getAllowedPagesListForPublishingEventTest1() {
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String allowedPages = (String) valueForOrg.get("allowedPages");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+
+    Set<String> allowedPagesList = iTenantYmlConfigImpl.getAllowedPagesListForPublishingEvent();
+    assertEquals(new HashSet<>(Arrays.asList(allowedPages.split(","))), allowedPagesList);
+  }
+
+  @DisplayName(
+      "Returns default list of allowed pages for publishing events, when we don't have data for orgId in yml")
+  @Test
+  void getAllowedPagesListForPublishingEventTest2() {
+    CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String allowedPages = (String) defaultValue.get("allowedPages");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+
+    Set<String> allowedPagesList = iTenantYmlConfigImpl.getAllowedPagesListForPublishingEvent();
+    assertEquals(new HashSet<>(Arrays.asList(allowedPages.split(","))), allowedPagesList);
+  }
+
+  @DisplayName(
+      "Returns map of publish enabled events for the org, when we have data for orgId in yml")
+  @Test
+  void getPublishEnabledMapTest1() {
+    Gson gson = new Gson();
+    Type type = new TypeToken<Map<String, String>>() {}.getType();
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String publishEnabled = (String) valueForOrg.get("publishEnabled");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+
+    Map<String, Boolean> publishEnabledMap = iTenantYmlConfigImpl.getPublishEnabledMap();
+    assertEquals(gson.fromJson(publishEnabled, type), publishEnabledMap);
+  }
+
+  @DisplayName(
+      "Returns default map of publish enabled events, when we don't have data for orgId in yml")
+  @Test
+  void getPublishEnabledMapTest2() {
+    CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
+    Gson gson = new Gson();
+    Type type = new TypeToken<Map<String, String>>() {}.getType();
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String publishEnabled = (String) defaultValue.get("publishEnabled");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+
+    Map<String, Boolean> publishEnabledMap = iTenantYmlConfigImpl.getPublishEnabledMap();
+    assertEquals(gson.fromJson(publishEnabled, type), publishEnabledMap);
+  }
+
+  @DisplayName("Returns map of log levels for the org, when we have data for orgId in yml")
+  @Test
+  void getLogLevelMapTest1() {
+    Gson gson = new Gson();
+    Type type = new TypeToken<Map<String, String>>() {}.getType();
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String logLevel = (String) valueForOrg.get("logLevel");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+
+    Map<String, String> logLevelMap = iTenantYmlConfigImpl.getLogLevelMap();
+    assertEquals(gson.fromJson(logLevel, type), logLevelMap);
+  }
+
+  @DisplayName("Returns default map of log levels, when we don't have data for orgId in yml")
+  @Test
+  void getLogLevelMapTest2() {
+    CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
+    Gson gson = new Gson();
+    Type type = new TypeToken<Map<String, String>>() {}.getType();
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String logLevel = (String) defaultValue.get("logLevel");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+
+    Map<String, String> logLevelMap = iTenantYmlConfigImpl.getLogLevelMap();
+    assertEquals(gson.fromJson(logLevel, type), logLevelMap);
+  }
+
+  @DisplayName(
+      "Returns map of events which have listen console log enabled for the org, when we have data for orgId in yml")
+  @Test
+  void getConsoleLogListenEnabledMapTest1() {
+    Gson gson = new Gson();
+    Type type = new TypeToken<Map<String, String>>() {}.getType();
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String consoleLogListenEnabled = (String) valueForOrg.get("consoleLogListenEnabled");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+
+    Map<String, Boolean> consoleLogListenEnabledMap =
+        iTenantYmlConfigImpl.getConsoleLogListenEnabledMap();
+    assertEquals(gson.fromJson(consoleLogListenEnabled, type), consoleLogListenEnabledMap);
+  }
+
+  @DisplayName(
+      "Returns default map of events which have listen console log enabled, when we don't have data for orgId in yml")
+  @Test
+  void getConsoleLogListenEnabledMapTest2() {
+    CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
+    Gson gson = new Gson();
+    Type type = new TypeToken<Map<String, String>>() {}.getType();
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String consoleLogListenEnabled = (String) defaultValue.get("consoleLogListenEnabled");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+
+    Map<String, Boolean> consoleLogListenEnabledMap =
+        iTenantYmlConfigImpl.getConsoleLogListenEnabledMap();
+    assertEquals(gson.fromJson(consoleLogListenEnabled, type), consoleLogListenEnabledMap);
+  }
+
+  @DisplayName(
+      "Returns sort by field for publishing events for the org, when we have data for orgId in yml")
+  @Test
+  void getSortByForPublishingEventTest1() {
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String sortByOrgValue = (String) valueForOrg.get("sortBy");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+
+    String sortBy = iTenantYmlConfigImpl.getSortBy();
+    assertEquals(sortByOrgValue, sortBy);
+  }
+
+  @DisplayName(
+      "Returns default sort by field for publishing events, when we don't have data for orgId in yml")
+  @Test
+  void getSortByForPublishingEventTest2() {
+    CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String sortByDefaultValue = (String) defaultValue.get("sortBy");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+
+    String sortBy = iTenantYmlConfigImpl.getSortBy();
+    assertEquals(sortByDefaultValue, sortBy);
+  }
+
+  @DisplayName("Returns processing time computation for the org, when we have default data in yml")
+  @Test
+  void getProcessingTimeComputationTest() {
+    Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
+    Map<String, Map<String, Object>> sourcingConfigMap = Map.of("DEFAULT", defaultValue);
+    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+
+    String processingTimeComputation = iTenantYmlConfigImpl.getProcessingTimeComputation();
+    assertEquals(defaultValue.get("processing-time-computation"), processingTimeComputation);
+
+    verify(sourcingConfig, times(2)).getSourcing();
+  }
+
+  @DisplayName("Fetch node working hours from yml property")
+  @Test
+  void getNodeWorkingHoursTest() {
+    Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
+    Map<String, Map<String, Object>> sourcingConfigMap = Map.of("DEFAULT", defaultValue);
+    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+
+    String nodeWorkingHours = iTenantYmlConfigImpl.getNodeWorkingHours();
+    assertEquals(defaultValue.get("node-working-hours"), nodeWorkingHours);
+
+    verify(sourcingConfig, times(2)).getSourcing();
+  }
+
+  @DisplayName("Fetch processing time ml override class from yml property")
+  @Test
+  void getProcessingTimeMLOverrideClassTest() {
+    Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
+    Map<String, Map<String, Object>> sourcingConfigMap = Map.of("DEFAULT", defaultValue);
+    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+
+    String processingTimeMLOverrideClass = iTenantYmlConfigImpl.getProcessingTimeMLOverrideClass();
+    assertEquals(
+        defaultValue.get(PROCESSING_TIME_ML_OVERRIDE_CLASS_CONFIG_KEY),
+        processingTimeMLOverrideClass);
+
+    verify(sourcingConfig, times(2)).getSourcing();
+  }
+}
