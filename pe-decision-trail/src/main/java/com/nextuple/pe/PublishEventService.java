@@ -139,7 +139,11 @@ public class PublishEventService {
     event.setEventTimestamp(formatter.format(new Date()));
     event.setEventTimeStampNanos();
     event.setServiceOption(MDC.get(SERVICE_OPTION));
-    event.setEventName(event.getClass().getSimpleName());
+    String eventNameMDC =
+        Objects.nonNull(MDC.get("eventName"))
+            ? MDC.get("eventName")
+            : event.getClass().getSimpleName();
+    event.setEventName(eventNameMDC);
     event.setEventType(MDC.get(EVENT_TYPE));
     event.setGeneratedId(
         MDC.get(ORG_ID)
