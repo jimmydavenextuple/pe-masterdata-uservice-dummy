@@ -1,14 +1,10 @@
 package com.nextuple.pe.configs.impl;
 
-import static com.nextuple.common.constants.ConfigKeyConstants.PROCESSING_TIME_ML_OVERRIDE_CLASS_CONFIG_KEY;
-import static com.nextuple.pe.util.TestUtil.ORG_ID;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.nextuple.common.constants.ConfigKeyConstants;
 import com.nextuple.common.context.CurrentThreadContext;
 import com.nextuple.pe.configs.DefaultCarrierPriorityConfig;
 import com.nextuple.pe.configs.EventConfig;
@@ -23,11 +19,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -66,24 +64,24 @@ class ITenantYmlConfigImplTest {
         iTenantYmlConfigImpl,
         "defaultLogSuppressionServiceOptions",
         defaultLogSuppressionServiceOptions);
-    CurrentThreadContext.getLogContext().setTenantId(ORG_ID);
+    CurrentThreadContext.getLogContext().setTenantId(TestUtil.ORG_ID);
   }
 
   @Test
   void getOrgIdTest() {
     String orgId = iTenantYmlConfigImpl.getOrgId();
-    assertEquals(ORG_ID, orgId);
+    Assertions.assertEquals(TestUtil.ORG_ID, orgId);
   }
 
   @DisplayName("Returns service options for the org, when we have data for orgId in yml")
   @Test
   void getServiceOptionsTest1() {
     String serviceOption = "SDND";
-    when(serviceOptionConfig.getOptionsMap())
-        .thenReturn(Map.of(ORG_ID, serviceOption, "DEFAULT", defaultServiceOptions));
+    Mockito.when(serviceOptionConfig.getOptionsMap())
+        .thenReturn(Map.of(TestUtil.ORG_ID, serviceOption, "DEFAULT", defaultServiceOptions));
 
     String serviceOptionsResponse = iTenantYmlConfigImpl.getServiceOptions();
-    assertEquals(serviceOption, serviceOptionsResponse);
+    Assertions.assertEquals(serviceOption, serviceOptionsResponse);
   }
 
   @DisplayName("Returns default service options, when we don't have data for orgId in yml")
@@ -91,22 +89,22 @@ class ITenantYmlConfigImplTest {
   void getServiceOptionsTest2() {
     String serviceOption = "SDND";
     CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
-    when(serviceOptionConfig.getOptionsMap())
-        .thenReturn(Map.of(ORG_ID, serviceOption, "DEFAULT", defaultServiceOptions));
+    Mockito.when(serviceOptionConfig.getOptionsMap())
+        .thenReturn(Map.of(TestUtil.ORG_ID, serviceOption, "DEFAULT", defaultServiceOptions));
 
     String serviceOptionsResponse = iTenantYmlConfigImpl.getServiceOptions();
-    assertEquals(defaultServiceOptions, serviceOptionsResponse);
+    Assertions.assertEquals(defaultServiceOptions, serviceOptionsResponse);
   }
 
   @DisplayName("Returns service options list")
   @Test
   void getServiceOptionsListTest() {
     String serviceOption = "SDND";
-    when(serviceOptionConfig.getOptionsMap())
-        .thenReturn(Map.of(ORG_ID, serviceOption, "DEFAULT", defaultServiceOptions));
+    Mockito.when(serviceOptionConfig.getOptionsMap())
+        .thenReturn(Map.of(TestUtil.ORG_ID, serviceOption, "DEFAULT", defaultServiceOptions));
 
     Set<String> serviceOptionListResponse = iTenantYmlConfigImpl.getServiceOptionsList();
-    assertEquals(Set.of(serviceOption), serviceOptionListResponse);
+    Assertions.assertEquals(Set.of(serviceOption), serviceOptionListResponse);
   }
 
   @DisplayName(
@@ -114,17 +112,18 @@ class ITenantYmlConfigImplTest {
   @Test
   void getServiceOptionInventoryTypeMappingTest1() {
     String serviceOptionInventoryTypeMapping = "SDND:PICK";
-    when(serviceOptionIVTypeMappingConfig.getMapping())
+    Mockito.when(serviceOptionIVTypeMappingConfig.getMapping())
         .thenReturn(
             Map.of(
-                ORG_ID,
+                TestUtil.ORG_ID,
                 serviceOptionInventoryTypeMapping,
                 "DEFAULT",
                 defaultServiceOptionInventoryTypeMapping));
 
     String serviceOptionInventoryTypeMappingResponse =
         iTenantYmlConfigImpl.getServiceOptionInventoryTypeMapping();
-    assertEquals(serviceOptionInventoryTypeMapping, serviceOptionInventoryTypeMappingResponse);
+    Assertions.assertEquals(
+        serviceOptionInventoryTypeMapping, serviceOptionInventoryTypeMappingResponse);
   }
 
   @DisplayName(
@@ -133,17 +132,17 @@ class ITenantYmlConfigImplTest {
   void getServiceOptionInventoryTypeMappingTest2() {
     String serviceOptionInventoryTypeMapping = "SDND:PICK";
     CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
-    when(serviceOptionIVTypeMappingConfig.getMapping())
+    Mockito.when(serviceOptionIVTypeMappingConfig.getMapping())
         .thenReturn(
             Map.of(
-                ORG_ID,
+                TestUtil.ORG_ID,
                 serviceOptionInventoryTypeMapping,
                 "DEFAULT",
                 defaultServiceOptionInventoryTypeMapping));
 
     String serviceOptionInventoryTypeMappingResponse =
         iTenantYmlConfigImpl.getServiceOptionInventoryTypeMapping();
-    assertEquals(
+    Assertions.assertEquals(
         defaultServiceOptionInventoryTypeMapping, serviceOptionInventoryTypeMappingResponse);
   }
 
@@ -152,12 +151,16 @@ class ITenantYmlConfigImplTest {
   @Test
   void getPublishEddResponseOnPageTest1() {
     String publishEddResponseOnPage = "checkout";
-    when(publishEddOnPageConfig.getEddResponseOnPage())
+    Mockito.when(publishEddOnPageConfig.getEddResponseOnPage())
         .thenReturn(
-            Map.of(ORG_ID, publishEddResponseOnPage, "DEFAULT", defaultPublishEddResponseOnPage));
+            Map.of(
+                TestUtil.ORG_ID,
+                publishEddResponseOnPage,
+                "DEFAULT",
+                defaultPublishEddResponseOnPage));
 
     String publishEddResponseOnPageResponse = iTenantYmlConfigImpl.getPublishEddResponseOnPage();
-    assertEquals(publishEddResponseOnPage, publishEddResponseOnPageResponse);
+    Assertions.assertEquals(publishEddResponseOnPage, publishEddResponseOnPageResponse);
   }
 
   @DisplayName(
@@ -166,25 +169,33 @@ class ITenantYmlConfigImplTest {
   void getPublishEddResponseOnPageTest2() {
     String publishEddResponseOnPage = "checkout";
     CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
-    when(publishEddOnPageConfig.getEddResponseOnPage())
+    Mockito.when(publishEddOnPageConfig.getEddResponseOnPage())
         .thenReturn(
-            Map.of(ORG_ID, publishEddResponseOnPage, "DEFAULT", defaultPublishEddResponseOnPage));
+            Map.of(
+                TestUtil.ORG_ID,
+                publishEddResponseOnPage,
+                "DEFAULT",
+                defaultPublishEddResponseOnPage));
 
     String publishEddResponseOnPageResponse = iTenantYmlConfigImpl.getPublishEddResponseOnPage();
-    assertEquals(defaultPublishEddResponseOnPage, publishEddResponseOnPageResponse);
+    Assertions.assertEquals(defaultPublishEddResponseOnPage, publishEddResponseOnPageResponse);
   }
 
   @DisplayName("Returns list of publishing edd on specific page")
   @Test
   void getPublishEddResponseOnPageListTest() {
     String publishEddResponseOnPage = "checkout";
-    when(publishEddOnPageConfig.getEddResponseOnPage())
+    Mockito.when(publishEddOnPageConfig.getEddResponseOnPage())
         .thenReturn(
-            Map.of(ORG_ID, publishEddResponseOnPage, "DEFAULT", defaultPublishEddResponseOnPage));
+            Map.of(
+                TestUtil.ORG_ID,
+                publishEddResponseOnPage,
+                "DEFAULT",
+                defaultPublishEddResponseOnPage));
 
     Set<String> publishEddResponseOnPageListResponse =
         iTenantYmlConfigImpl.getPublishEddResponseOnPageList();
-    assertEquals(Set.of(publishEddResponseOnPage), publishEddResponseOnPageListResponse);
+    Assertions.assertEquals(Set.of(publishEddResponseOnPage), publishEddResponseOnPageListResponse);
   }
 
   @DisplayName(
@@ -192,11 +203,12 @@ class ITenantYmlConfigImplTest {
   @Test
   void getDefaultCarrierPriorityTest1() {
     String carrierPriority = "1";
-    when(defaultCarrierPriorityConfig.getValue())
-        .thenReturn(Map.of(ORG_ID, carrierPriority, "DEFAULT", defaultValueOfCarrierPriority));
+    Mockito.when(defaultCarrierPriorityConfig.getValue())
+        .thenReturn(
+            Map.of(TestUtil.ORG_ID, carrierPriority, "DEFAULT", defaultValueOfCarrierPriority));
 
     String carrierPriorityResponse = iTenantYmlConfigImpl.getDefaultCarrierPriority();
-    assertEquals(carrierPriority, carrierPriorityResponse);
+    Assertions.assertEquals(carrierPriority, carrierPriorityResponse);
   }
 
   @DisplayName(
@@ -205,11 +217,12 @@ class ITenantYmlConfigImplTest {
   void getDefaultCarrierPriorityTest2() {
     String carrierPriority = "1";
     CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
-    when(defaultCarrierPriorityConfig.getValue())
-        .thenReturn(Map.of(ORG_ID, carrierPriority, "DEFAULT", defaultValueOfCarrierPriority));
+    Mockito.when(defaultCarrierPriorityConfig.getValue())
+        .thenReturn(
+            Map.of(TestUtil.ORG_ID, carrierPriority, "DEFAULT", defaultValueOfCarrierPriority));
 
     String carrierPriorityResponse = iTenantYmlConfigImpl.getDefaultCarrierPriority();
-    assertEquals(defaultValueOfCarrierPriority, carrierPriorityResponse);
+    Assertions.assertEquals(defaultValueOfCarrierPriority, carrierPriorityResponse);
   }
 
   @DisplayName(
@@ -217,17 +230,17 @@ class ITenantYmlConfigImplTest {
   @Test
   void getLogSuppressionServiceOptionsTest1() {
     String logSuppressionServiceOptions = "SDND";
-    when(logSuppressionServiceOptionsConfig.getServiceOptions())
+    Mockito.when(logSuppressionServiceOptionsConfig.getServiceOptions())
         .thenReturn(
             Map.of(
-                ORG_ID,
+                TestUtil.ORG_ID,
                 logSuppressionServiceOptions,
                 "DEFAULT",
                 defaultLogSuppressionServiceOptions));
 
     String logSuppressionServiceOptionsResponse =
         iTenantYmlConfigImpl.getLogSuppressionServiceOptions();
-    assertEquals(logSuppressionServiceOptions, logSuppressionServiceOptionsResponse);
+    Assertions.assertEquals(logSuppressionServiceOptions, logSuppressionServiceOptionsResponse);
   }
 
   @DisplayName(
@@ -236,34 +249,36 @@ class ITenantYmlConfigImplTest {
   void getLogSuppressionServiceOptionsTest2() {
     String logSuppressionServiceOptions = "SDND";
     CurrentThreadContext.getLogContext().setTenantId(invalidOrgId);
-    when(logSuppressionServiceOptionsConfig.getServiceOptions())
+    Mockito.when(logSuppressionServiceOptionsConfig.getServiceOptions())
         .thenReturn(
             Map.of(
-                ORG_ID,
+                TestUtil.ORG_ID,
                 logSuppressionServiceOptions,
                 "DEFAULT",
                 defaultLogSuppressionServiceOptions));
 
     String logSuppressionServiceOptionsResponse =
         iTenantYmlConfigImpl.getLogSuppressionServiceOptions();
-    assertEquals(defaultLogSuppressionServiceOptions, logSuppressionServiceOptionsResponse);
+    Assertions.assertEquals(
+        defaultLogSuppressionServiceOptions, logSuppressionServiceOptionsResponse);
   }
 
   @DisplayName("Returns list of log suppression of service option")
   @Test
   void getLogSuppressionServiceOptionsListTest() {
     String logSuppressionServiceOptions = "SDND";
-    when(logSuppressionServiceOptionsConfig.getServiceOptions())
+    Mockito.when(logSuppressionServiceOptionsConfig.getServiceOptions())
         .thenReturn(
             Map.of(
-                ORG_ID,
+                TestUtil.ORG_ID,
                 logSuppressionServiceOptions,
                 "DEFAULT",
                 defaultLogSuppressionServiceOptions));
 
     Set<String> logSuppressionServiceOptionsListResponse =
         iTenantYmlConfigImpl.getLogSuppressionServiceOptionsList();
-    assertEquals(Set.of(logSuppressionServiceOptions), logSuppressionServiceOptionsListResponse);
+    Assertions.assertEquals(
+        Set.of(logSuppressionServiceOptions), logSuppressionServiceOptionsListResponse);
   }
 
   @DisplayName(
@@ -273,11 +288,11 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> valueForOrg = testUtil.getSourcingConfigValueForOrg();
     Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
     Map<String, Map<String, Object>> sourcingConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
 
     Integer numberOfSolutionsResponse = iTenantYmlConfigImpl.getNumberOfSolutions();
-    assertEquals(valueForOrg.get("no-of-solution"), numberOfSolutionsResponse);
+    Assertions.assertEquals(valueForOrg.get("no-of-solution"), numberOfSolutionsResponse);
   }
 
   @DisplayName(
@@ -288,11 +303,11 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> valueForOrg = testUtil.getSourcingConfigValueForOrg();
     Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
     Map<String, Map<String, Object>> sourcingConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
 
     Integer numberOfSolutionsResponse = iTenantYmlConfigImpl.getNumberOfSolutions();
-    assertEquals(defaultValue.get("no-of-solution"), numberOfSolutionsResponse);
+    Assertions.assertEquals(defaultValue.get("no-of-solution"), numberOfSolutionsResponse);
   }
 
   @DisplayName(
@@ -302,11 +317,11 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> valueForOrg = testUtil.getSourcingConfigValueForOrg();
     Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
     Map<String, Map<String, Object>> sourcingConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
 
     Integer numberOfNodesResponse = iTenantYmlConfigImpl.getNumberOfNodes();
-    assertEquals(valueForOrg.get("no-of-nodes"), numberOfNodesResponse);
+    Assertions.assertEquals(valueForOrg.get("no-of-nodes"), numberOfNodesResponse);
   }
 
   @DisplayName(
@@ -317,11 +332,11 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> valueForOrg = testUtil.getSourcingConfigValueForOrg();
     Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
     Map<String, Map<String, Object>> sourcingConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
 
     Integer numberOfNodesResponse = iTenantYmlConfigImpl.getNumberOfNodes();
-    assertEquals(defaultValue.get("no-of-nodes"), numberOfNodesResponse);
+    Assertions.assertEquals(defaultValue.get("no-of-nodes"), numberOfNodesResponse);
   }
 
   @DisplayName(
@@ -332,11 +347,12 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
     String allowedPages = (String) valueForOrg.get("allowedPages");
     Map<String, Map<String, Object>> eventConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
 
     Set<String> allowedPagesList = iTenantYmlConfigImpl.getAllowedPagesListForPublishingEvent();
-    assertEquals(new HashSet<>(Arrays.asList(allowedPages.split(","))), allowedPagesList);
+    Assertions.assertEquals(
+        new HashSet<>(Arrays.asList(allowedPages.split(","))), allowedPagesList);
   }
 
   @DisplayName(
@@ -348,11 +364,12 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
     String allowedPages = (String) defaultValue.get("allowedPages");
     Map<String, Map<String, Object>> eventConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
 
     Set<String> allowedPagesList = iTenantYmlConfigImpl.getAllowedPagesListForPublishingEvent();
-    assertEquals(new HashSet<>(Arrays.asList(allowedPages.split(","))), allowedPagesList);
+    Assertions.assertEquals(
+        new HashSet<>(Arrays.asList(allowedPages.split(","))), allowedPagesList);
   }
 
   @DisplayName(
@@ -365,11 +382,11 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
     String publishEnabled = (String) valueForOrg.get("publishEnabled");
     Map<String, Map<String, Object>> eventConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
 
     Map<String, Boolean> publishEnabledMap = iTenantYmlConfigImpl.getPublishEnabledMap();
-    assertEquals(gson.fromJson(publishEnabled, type), publishEnabledMap);
+    Assertions.assertEquals(gson.fromJson(publishEnabled, type), publishEnabledMap);
   }
 
   @DisplayName(
@@ -383,11 +400,11 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
     String publishEnabled = (String) defaultValue.get("publishEnabled");
     Map<String, Map<String, Object>> eventConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
 
     Map<String, Boolean> publishEnabledMap = iTenantYmlConfigImpl.getPublishEnabledMap();
-    assertEquals(gson.fromJson(publishEnabled, type), publishEnabledMap);
+    Assertions.assertEquals(gson.fromJson(publishEnabled, type), publishEnabledMap);
   }
 
   @DisplayName("Returns map of log levels for the org, when we have data for orgId in yml")
@@ -399,11 +416,11 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
     String logLevel = (String) valueForOrg.get("logLevel");
     Map<String, Map<String, Object>> eventConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
 
     Map<String, String> logLevelMap = iTenantYmlConfigImpl.getLogLevelMap();
-    assertEquals(gson.fromJson(logLevel, type), logLevelMap);
+    Assertions.assertEquals(gson.fromJson(logLevel, type), logLevelMap);
   }
 
   @DisplayName("Returns default map of log levels, when we don't have data for orgId in yml")
@@ -416,11 +433,11 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
     String logLevel = (String) defaultValue.get("logLevel");
     Map<String, Map<String, Object>> eventConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
 
     Map<String, String> logLevelMap = iTenantYmlConfigImpl.getLogLevelMap();
-    assertEquals(gson.fromJson(logLevel, type), logLevelMap);
+    Assertions.assertEquals(gson.fromJson(logLevel, type), logLevelMap);
   }
 
   @DisplayName(
@@ -433,12 +450,13 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
     String consoleLogListenEnabled = (String) valueForOrg.get("consoleLogListenEnabled");
     Map<String, Map<String, Object>> eventConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
 
     Map<String, Boolean> consoleLogListenEnabledMap =
         iTenantYmlConfigImpl.getConsoleLogListenEnabledMap();
-    assertEquals(gson.fromJson(consoleLogListenEnabled, type), consoleLogListenEnabledMap);
+    Assertions.assertEquals(
+        gson.fromJson(consoleLogListenEnabled, type), consoleLogListenEnabledMap);
   }
 
   @DisplayName(
@@ -452,12 +470,13 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
     String consoleLogListenEnabled = (String) defaultValue.get("consoleLogListenEnabled");
     Map<String, Map<String, Object>> eventConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
 
     Map<String, Boolean> consoleLogListenEnabledMap =
         iTenantYmlConfigImpl.getConsoleLogListenEnabledMap();
-    assertEquals(gson.fromJson(consoleLogListenEnabled, type), consoleLogListenEnabledMap);
+    Assertions.assertEquals(
+        gson.fromJson(consoleLogListenEnabled, type), consoleLogListenEnabledMap);
   }
 
   @DisplayName(
@@ -468,11 +487,11 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
     String sortByOrgValue = (String) valueForOrg.get("sortBy");
     Map<String, Map<String, Object>> eventConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
 
     String sortBy = iTenantYmlConfigImpl.getSortBy();
-    assertEquals(sortByOrgValue, sortBy);
+    Assertions.assertEquals(sortByOrgValue, sortBy);
   }
 
   @DisplayName(
@@ -484,11 +503,11 @@ class ITenantYmlConfigImplTest {
     Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
     String sortByDefaultValue = (String) defaultValue.get("sortBy");
     Map<String, Map<String, Object>> eventConfigMap =
-        Map.of(ORG_ID, valueForOrg, "DEFAULT", defaultValue);
-    when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
 
     String sortBy = iTenantYmlConfigImpl.getSortBy();
-    assertEquals(sortByDefaultValue, sortBy);
+    Assertions.assertEquals(sortByDefaultValue, sortBy);
   }
 
   @DisplayName("Returns processing time computation for the org, when we have default data in yml")
@@ -496,12 +515,13 @@ class ITenantYmlConfigImplTest {
   void getProcessingTimeComputationTest() {
     Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
     Map<String, Map<String, Object>> sourcingConfigMap = Map.of("DEFAULT", defaultValue);
-    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+    Mockito.when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
 
     String processingTimeComputation = iTenantYmlConfigImpl.getProcessingTimeComputation();
-    assertEquals(defaultValue.get("processing-time-computation"), processingTimeComputation);
+    Assertions.assertEquals(
+        defaultValue.get("processing-time-computation"), processingTimeComputation);
 
-    verify(sourcingConfig, times(2)).getSourcing();
+    Mockito.verify(sourcingConfig, Mockito.times(2)).getSourcing();
   }
 
   @DisplayName("Fetch node working hours from yml property")
@@ -509,12 +529,12 @@ class ITenantYmlConfigImplTest {
   void getNodeWorkingHoursTest() {
     Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
     Map<String, Map<String, Object>> sourcingConfigMap = Map.of("DEFAULT", defaultValue);
-    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+    Mockito.when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
 
     String nodeWorkingHours = iTenantYmlConfigImpl.getNodeWorkingHours();
-    assertEquals(defaultValue.get("node-working-hours"), nodeWorkingHours);
+    Assertions.assertEquals(defaultValue.get("node-working-hours"), nodeWorkingHours);
 
-    verify(sourcingConfig, times(2)).getSourcing();
+    Mockito.verify(sourcingConfig, Mockito.times(2)).getSourcing();
   }
 
   @DisplayName("Fetch processing time ml override class from yml property")
@@ -522,13 +542,13 @@ class ITenantYmlConfigImplTest {
   void getProcessingTimeMLOverrideClassTest() {
     Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
     Map<String, Map<String, Object>> sourcingConfigMap = Map.of("DEFAULT", defaultValue);
-    when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+    Mockito.when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
 
     String processingTimeMLOverrideClass = iTenantYmlConfigImpl.getProcessingTimeMLOverrideClass();
-    assertEquals(
-        defaultValue.get(PROCESSING_TIME_ML_OVERRIDE_CLASS_CONFIG_KEY),
+    Assertions.assertEquals(
+        defaultValue.get(ConfigKeyConstants.PROCESSING_TIME_ML_OVERRIDE_CLASS_CONFIG_KEY),
         processingTimeMLOverrideClass);
 
-    verify(sourcingConfig, times(2)).getSourcing();
+    Mockito.verify(sourcingConfig, Mockito.times(2)).getSourcing();
   }
 }

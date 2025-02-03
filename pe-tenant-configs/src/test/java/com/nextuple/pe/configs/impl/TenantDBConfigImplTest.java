@@ -1,6 +1,5 @@
 package com.nextuple.pe.configs.impl;
 
-import static com.nextuple.pe.util.TestUtil.ORG_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -34,7 +33,7 @@ class TenantDBConfigImplTest {
   @BeforeEach
   void init() {
     MockitoAnnotations.openMocks(this);
-    CurrentThreadContext.getLogContext().setTenantId(ORG_ID);
+    CurrentThreadContext.getLogContext().setTenantId(TestUtil.ORG_ID);
     ReflectionTestUtils.setField(
         tenantDBConfigImpl,
         "defaultProcessingTimeComputation",
@@ -52,7 +51,7 @@ class TenantDBConfigImplTest {
   @Test
   void getOrgIdTest() {
     String orgId = tenantDBConfigImpl.getOrgId();
-    assertEquals(ORG_ID, orgId);
+    Assertions.assertEquals(TestUtil.ORG_ID, orgId);
   }
 
   @Test
@@ -62,7 +61,7 @@ class TenantDBConfigImplTest {
 
     String response = tenantDBConfigImpl.getServiceOptions();
     assertNotNull(response);
-    assertEquals(cacheValue.getConfigValue(), response);
+    Assertions.assertEquals(cacheValue.getConfigValue(), response);
   }
 
   @Test
@@ -103,7 +102,7 @@ class TenantDBConfigImplTest {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
     String response = tenantDBConfigImpl.getServiceOptionInventoryTypeMapping();
     assertNotNull(response);
-    assertEquals(cacheValue.getConfigValue(), response);
+    Assertions.assertEquals(cacheValue.getConfigValue(), response);
   }
 
   @Test
@@ -125,7 +124,7 @@ class TenantDBConfigImplTest {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
     String response = tenantDBConfigImpl.getPublishEddResponseOnPage();
     assertNotNull(response);
-    assertEquals(cacheValue.getConfigValue(), response);
+    Assertions.assertEquals(cacheValue.getConfigValue(), response);
   }
 
   @Test
@@ -168,7 +167,7 @@ class TenantDBConfigImplTest {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
     String response = tenantDBConfigImpl.getDefaultCarrierPriority();
     assertNotNull(response);
-    assertEquals(cacheValue.getConfigValue(), response);
+    Assertions.assertEquals(cacheValue.getConfigValue(), response);
   }
 
   @Test
@@ -189,7 +188,7 @@ class TenantDBConfigImplTest {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
     String response = tenantDBConfigImpl.getLogSuppressionServiceOptions();
     assertNotNull(response);
-    assertEquals(cacheValue.getConfigValue(), response);
+    Assertions.assertEquals(cacheValue.getConfigValue(), response);
   }
 
   @Test
@@ -381,7 +380,7 @@ class TenantDBConfigImplTest {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
     String response = tenantDBConfigImpl.getSortBy();
     assertNotNull(response);
-    assertEquals(cacheValue.getConfigValue(), response);
+    Assertions.assertEquals(cacheValue.getConfigValue(), response);
   }
 
   @Test
@@ -415,7 +414,7 @@ class TenantDBConfigImplTest {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
     String response = tenantDBConfigImpl.getProcessingTimeComputation();
     assertNotNull(response);
-    assertEquals(TestUtil.DEFAULT_PROCESSING_TIME_COMPUTATION, response);
+    Assertions.assertEquals(TestUtil.DEFAULT_PROCESSING_TIME_COMPUTATION, response);
 
     verify(tenantConfigdataNearCacheService, times(1)).get(any());
   }
@@ -438,7 +437,7 @@ class TenantDBConfigImplTest {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
     String response = tenantDBConfigImpl.getNodeWorkingHours();
     assertNotNull(response);
-    assertEquals(TestUtil.DEFAULT_NODE_WORKING_HOURS, response);
+    Assertions.assertEquals(TestUtil.DEFAULT_NODE_WORKING_HOURS, response);
 
     verify(tenantConfigdataNearCacheService, times(1)).get(any());
   }

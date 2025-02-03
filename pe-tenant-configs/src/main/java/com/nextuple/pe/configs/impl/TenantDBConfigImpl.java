@@ -119,7 +119,7 @@ public class TenantDBConfigImpl implements ITenantConfig {
 
   @Override
   public Set<String> getServiceOptionsList() {
-    return new HashSet<>(Arrays.asList(getServiceOptions().split("\\s*,\\s*")));
+    return new HashSet<>(Arrays.asList(getServiceOptions().split("\\s*,+\\s*")));
   }
 
   @Override
