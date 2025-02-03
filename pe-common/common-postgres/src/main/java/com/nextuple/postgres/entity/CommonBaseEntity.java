@@ -6,6 +6,8 @@
  */
 package com.nextuple.postgres.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
@@ -13,6 +15,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 
@@ -23,6 +26,9 @@ import org.springframework.data.annotation.LastModifiedBy;
 @MappedSuperclass
 @SuperBuilder
 public abstract class CommonBaseEntity extends BaseEntity {
+  @Type(JsonBinaryType.class)
+  @Column(name = "dynamic_attributes", columnDefinition = "jsonb")
+  private JsonNode dynamicAttributes;
 
   @CreatedBy
   @Column(name = "created_by", updatable = false)
