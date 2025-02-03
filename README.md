@@ -75,6 +75,17 @@ The **Promising Engine Master Data Service** is a unified microservice that cons
 
 ---
 
+### Disabling the kafka logs [Optional]
+
+- Update `application-default.yml`:
+   ```yml
+   logging:
+    level:
+      org.apache.kafka: OFF
+   ```
+
+---
+
 ### Connecting to Postgres Locally
 
 - Update `application-default.yml` to use localhost address of postgres:
@@ -108,6 +119,6 @@ The **Promising Engine Master Data Service** is a unified microservice that cons
 ---
 
 ### Running the Application
-- Open **IntelliJ** and run `MasterDataNodeApplication.java`
+- Open **IntelliJ** and run `PeMasterDataUserviceApplication.java`
 
 ---
