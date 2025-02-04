@@ -29,10 +29,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @SuperBuilder
 public class BaseEntity implements Entity {
-  @Type(JsonBinaryType.class)
-  @Column(name = "dynamic_attributes", columnDefinition = "jsonb")
-  private JsonNode dynamicAttributes;
-
   @CreatedDate
   @Column(name = "created_date", updatable = false)
   @Builder.Default
