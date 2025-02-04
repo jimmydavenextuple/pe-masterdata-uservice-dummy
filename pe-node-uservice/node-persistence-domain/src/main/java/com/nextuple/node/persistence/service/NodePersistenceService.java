@@ -6,6 +6,7 @@
  */
 package com.nextuple.node.persistence.service;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.service.DomainPersistenceService;
 import com.nextuple.node.persistence.domain.NodeDomainDto;
@@ -48,4 +49,7 @@ public interface NodePersistenceService
       throws NodeDomainException;
 
   List<String> getAllUniqueNodeTypesByOrgId(String orgId);
+
+  List<NodeDomainDto> findAllNodesFromCustomAttrAndOrgID(
+      String customAttr, String customAttrValue, String orgId) throws CommonServiceException;
 }

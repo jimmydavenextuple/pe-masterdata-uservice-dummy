@@ -7,21 +7,22 @@
 
 package com.nextuple.node.domain.inbound;
 
+import com.nextuple.common.pojo.ExtensibleAttributes;
 import com.nextuple.node.domain.NodeConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class NodeUpdationRequest implements Serializable {
+@SuperBuilder
+public class NodeUpdationRequest extends ExtensibleAttributes implements Serializable {
 
   @Schema(description = NodeConstants.STREET, example = NodeConstants.STREET_EXAMPLE)
   @Length(max = 50)

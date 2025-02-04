@@ -8,6 +8,11 @@ jar {
 bootJar {
     enabled = false
 }
+
+dependencies {
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
+}
+
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }

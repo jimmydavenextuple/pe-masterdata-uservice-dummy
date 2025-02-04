@@ -8,16 +8,17 @@
 package com.nextuple.node.data.cache.domain;
 
 import com.nextuple.common.annotation.AttributePath;
+import com.nextuple.common.pojo.ExtensibleAttributes;
 import com.nextuple.core.cache.domain.CacheValue;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
-public class NodeDataCacheValue implements CacheValue {
+public class NodeDataCacheValue extends ExtensibleAttributes implements CacheValue {
   @AttributePath(path = "/nodeId")
   private String nodeId;
 

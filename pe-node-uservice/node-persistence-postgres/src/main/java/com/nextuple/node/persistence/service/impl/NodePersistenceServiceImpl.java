@@ -8,12 +8,15 @@ package com.nextuple.node.persistence.service.impl;
 
 import static com.nextuple.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 import static com.nextuple.common.constants.CommonConstants.NODE_DEFAULT_SORT_BY;
+import static com.nextuple.common.constants.CommonConstants.ORG_ID;
 
 import com.nextuple.calendar.domain.feign.CalendarFeign;
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
+import com.nextuple.common.response.error.FieldError;
 import com.nextuple.node.carrier.domain.feign.NodeCarriersFeign;
 import com.nextuple.node.persistence.domain.NodeDomainDto;
 import com.nextuple.node.persistence.domain.key.NodeDomainKey;
@@ -24,7 +27,9 @@ import com.nextuple.node.persistence.mapper.NodeEntityMapper;
 import com.nextuple.node.persistence.repository.NodeRepository;
 import com.nextuple.node.persistence.service.NodePersistenceService;
 import com.nextuple.postgres.service.CommonPersistenceService;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +37,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -202,6 +208,25 @@ public class NodePersistenceServiceImpl
   @Override
   public List<String> getAllUniqueNodeTypesByOrgId(String orgId) {
     return getRepository().findDistinctNodeTypesByOrgId(orgId);
+  }
+
+  @Override
+  public List<NodeDomainDto> findAllNodesFromCustomAttrAndOrgID(
+      String customAttr, String customAttrValue, String orgId) throws CommonServiceException {
+    try {
+      return getMapper()
+          .toDomain(
+              getRepository()
+                  .findAllNodesFromCustomAttrAndOrgID(customAttr, customAttrValue, orgId));
+    } catch (Exception e) {
+      logger.error(String.valueOf(e), "Unable to find nodes");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
+      errorMap.put("customAttr", FieldError.builder().rejectedValue(customAttr).build());
+      errorMap.put("customAttrValue", FieldError.builder().rejectedValue(customAttrValue).build());
+      throw new CommonServiceException(
+          "Error while finding nodes", HttpStatus.NOT_FOUND, 0x1771, errorMap);
+    }
   }
 
   public Page<NodeDomainDto> getNodeByOrgIdV1(String orgId, PageParams pageParams)

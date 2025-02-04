@@ -366,4 +366,18 @@ public class NodeController {
             .payload(nodeService.getAllNodeTypesByOrgId(orgId))
             .build());
   }
+
+  @GetMapping("/{customAttr}/{customAttrValue}/{orgId}")
+  public ResponseEntity<BaseResponse<List<NodeResponse>>> getAllNodesFromCustomAttrAndOrgID(
+      @NotBlank(message = "customAttr can't be empty") @PathVariable String customAttr,
+      @NotBlank(message = "customAttrValue can't be empty") @PathVariable String customAttrValue,
+      @NotBlank(message = "orgId can't be empty") @PathVariable String orgId)
+      throws CommonServiceException {
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Nodes according to custom attribute fetched successfully")
+            .payload(
+                nodeService.getAllNodesFromCustomAttrAndOrgID(customAttr, customAttrValue, orgId))
+            .build());
+  }
 }

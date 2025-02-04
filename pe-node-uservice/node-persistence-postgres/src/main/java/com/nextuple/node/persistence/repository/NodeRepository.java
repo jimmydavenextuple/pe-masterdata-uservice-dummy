@@ -34,4 +34,10 @@ public interface NodeRepository extends CommonJpaRepository<NodeEntity, NodeKey>
 
   Page<NodeEntity> findByNodeIdInAndOrgId(
       List<String> nodeIdsList, String orgId, Pageable pageable);
+
+  @Query(
+      value = "SELECT * FROM node WHERE dynamic_attributes ->> ?1 = ?2 AND org_id = ?3",
+      nativeQuery = true)
+  List<NodeEntity> findAllNodesFromCustomAttrAndOrgID(
+      String customAttr, String customAttrValue, String orgId);
 }
