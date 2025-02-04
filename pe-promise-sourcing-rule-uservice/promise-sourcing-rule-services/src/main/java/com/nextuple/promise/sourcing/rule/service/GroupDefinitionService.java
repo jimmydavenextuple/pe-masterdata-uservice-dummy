@@ -234,6 +234,9 @@ public class GroupDefinitionService {
         PromiseSourcingRuleUtil.getRuleFromRequiredAndOptionalAttributeValues(
             request.getAttributeValuesInfo().getRequiredAttributesValue(),
             request.getAttributeValuesInfo().getOptionalAttributesValue());
+    var generatedRuleWithOutOptional =
+        PromiseSourcingRuleUtil.getRuleFromRequiredAndOptionalAttributeValues(
+            request.getAttributeValuesInfo().getRequiredAttributesValue(), null);
 
     FetchRulesUtil.validateAttributesDefinitionIdForScope(
         attributeDefinition.getReqAttributes(),
@@ -247,16 +250,11 @@ public class GroupDefinitionService {
                 request.getAttributeValuesInfo().getRequiredAttributesValue());
 
     List<GroupDefinitionDomainDto> bestRules;
-    bestRules =
-        definitionDomainDtos.stream()
-            .filter(
-                rule -> {
-                  String savedRule =
-                      PromiseSourcingRuleUtil.getRuleFromRequiredAndOptionalAttributeValues(
-                          rule.getReqAttributesValue(), rule.getOptionalAttributesValue());
-                  return generatedRule.equals(savedRule);
-                })
-            .toList();
+    bestRules = getBestRuleMatches(definitionDomainDtos, generatedRule);
+
+    if (bestRules.isEmpty()) {
+      bestRules = getBestRuleMatches(definitionDomainDtos, generatedRuleWithOutOptional);
+    }
     if (bestRules.isEmpty()) {
       bestRules =
           rulesRetrievalService.filterAllMatchingRulesByScoring(
@@ -273,6 +271,22 @@ public class GroupDefinitionService {
         bestRules,
         "Group definition not found for %s rule.".formatted(generatedRule));
     return INSTANCE.toGroupDefinitionResponse(bestRules.getFirst());
+  }
+
+  private List<GroupDefinitionDomainDto> getBestRuleMatches(
+      List<GroupDefinitionDomainDto> definitionDomainDtos, String generatedRule) {
+    List<GroupDefinitionDomainDto> bestRules;
+    bestRules =
+        definitionDomainDtos.stream()
+            .filter(
+                rule -> {
+                  String savedRule =
+                      PromiseSourcingRuleUtil.getRuleFromRequiredAndOptionalAttributeValues(
+                          rule.getReqAttributesValue(), rule.getOptionalAttributesValue());
+                  return generatedRule.equals(savedRule);
+                })
+            .toList();
+    return bestRules;
   }
 
   public GroupDefinitionResponse processUpdateGroupDefinition(

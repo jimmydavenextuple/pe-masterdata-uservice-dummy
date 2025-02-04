@@ -8,6 +8,7 @@
 package com.nextuple.promise.sourcing.rule.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -591,7 +592,7 @@ class GroupDefinitionServiceTest {
   @DisplayName("No Rule found")
   void processGetGroupDefinitionByScoringBothOptionalMissing() throws PromiseEngineException {
     FetchGroupDefinitionRequest request =
-        testUtil.getFetchGroupDefinitionRequest("STANDARD:KITCHEN", ":CART");
+        testUtil.getFetchGroupDefinitionRequest("STANDARDS:KITCHEN", ":CART");
     SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionDomainDto =
         testUtil.getSourcingRuleAttributesDefinitionDomainDto("101, 102", "103,104");
     when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
@@ -615,5 +616,33 @@ class GroupDefinitionServiceTest {
     verify(groupDefinitionDomain, times(1))
         .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
             any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Case with both optional attributes mismatched")
+  void processGetGroupDefinitionByScoringBothOptionalAttributesMisMatch()
+      throws PromiseEngineException, CommonServiceException {
+    FetchGroupDefinitionRequest request =
+        testUtil.getFetchGroupDefinitionRequest("STANDARD:KITCHEN", "abc:xyz");
+    SourcingAttributesDefinitionDomainDto sourcingAttributesDefinitionDomainDto =
+        testUtil.getSourcingRuleAttributesDefinitionDomainDto("101, 102", "103,104");
+    when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(
+            any(), any()))
+        .thenReturn(Optional.of(sourcingAttributesDefinitionDomainDto));
+    List<GroupDefinitionDomainDto> definitionDomainDtos = testUtil.getListOfGroupDefinitionRules();
+    GroupDefinitionDomainDto g2 = new GroupDefinitionDomainDto();
+    g2.setReqAttributesValue("STANDARD:KITCHEN");
+    g2.setOptionalAttributesValue(null);
+    definitionDomainDtos.add(g2);
+    when(groupDefinitionDomain
+            .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValue(
+                any(), any(), any()))
+        .thenReturn(definitionDomainDtos);
+    when(ruleRetrievalService.filterAllMatchingRulesByScoring(any(), any(), any(), anyInt(), any()))
+        .thenReturn(Collections.emptyList());
+    GroupDefinitionResponse resp =
+        groupDefinitionService.processGetGroupDefinitionByScoring(request);
+    assertEquals("STANDARD:KITCHEN", resp.getReqAttributesValue());
+    assertNull(resp.getOptionalAttributesValue());
   }
 }
