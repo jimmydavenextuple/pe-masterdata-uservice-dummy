@@ -218,5 +218,12 @@ keycloak:
   client-id: "applicationclient-pe_masterdata_uservice"
   credentials:
     secret: \${MASTER-DATA-KEYCLOAK-CLIENT-ID}
+azure.keyvault:
+  client-id: e558951a-8c66-4a66-a75f-f71254e23397
+  client-key: vXs8Q~TDX7DlnTJUjSRalM12tGbZixcn0qS3WcFO
+  enabled: true
+  tenant-id: a504dc87-820c-4014-a6f7-9bd271ec731f
+  uri: https://nextuple-dev.vault.azure.net/
+  secret-keys: "COMMON-KAFKA-CONFIG, COMMON-PE-POSTGRES-USER, COMMON-PE-POSTGRES-PASSWORD, KEYCLOAK-PRODUCT-CONFIG, COMMON-PE-API-KEY"
 api-key: \${COMMON-PE-API-KEY}
 trusted-sites: "nextuple.com"

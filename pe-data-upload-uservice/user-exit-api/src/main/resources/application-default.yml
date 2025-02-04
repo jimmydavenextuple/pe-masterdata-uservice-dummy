@@ -17,8 +17,8 @@ pe:
     allowed-origin-url: "*"
 azure.keyvault:
   client-id: e558951a-8c66-4a66-a75f-f71254e23397
-  client-key: ~887Q~K4T-_v8MzIBUddGC53c6RtqtbUfYqIo
+  client-key: vXs8Q~TDX7DlnTJUjSRalM12tGbZixcn0qS3WcFO
   enabled: true
   tenant-id: a504dc87-820c-4014-a6f7-9bd271ec731f
   uri: https://nextuple-dev.vault.azure.net/
-  secret-keys: "COMMON-KAFKA-CONFIG,COMMON-PE-POSTGRES-USER,COMMON-PE-POSTGRES-PASSWORD"
+  secret-keys: "COMMON-KAFKA-CONFIG, COMMON-PE-POSTGRES-USER, COMMON-PE-POSTGRES-PASSWORD, COMMON-PE-API-KEY"
