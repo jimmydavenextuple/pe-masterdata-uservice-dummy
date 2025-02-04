@@ -225,7 +225,7 @@ public class NodePersistenceServiceImpl
       errorMap.put("customAttr", FieldError.builder().rejectedValue(customAttr).build());
       errorMap.put("customAttrValue", FieldError.builder().rejectedValue(customAttrValue).build());
       throw new CommonServiceException(
-          "Error while finding nodes", HttpStatus.NOT_FOUND, 0x1771, errorMap);
+          "Error while finding nodes", HttpStatus.INTERNAL_SERVER_ERROR, 0x1771, errorMap);
     }
   }
 

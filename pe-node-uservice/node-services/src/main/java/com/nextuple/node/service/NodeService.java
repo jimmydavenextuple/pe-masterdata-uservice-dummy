@@ -314,15 +314,6 @@ public class NodeService {
         nodePersistenceService.findAllNodesFromCustomAttrAndOrgID(
             customAttr, customAttrValue, orgId);
 
-    if (nodeDetails.isEmpty()) {
-      logger.error(NODE_EXCEPTION_MESSAGE + "with custom attribute");
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
-      errorMap.put("customAttr", FieldError.builder().rejectedValue(customAttr).build());
-      errorMap.put("customAttrValue", FieldError.builder().rejectedValue(customAttrValue).build());
-      throw new CommonServiceException(
-          NODE_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
-    }
     return nodeDetails.stream().map(INSTANCE::toNodeResponse).toList();
   }
 }
