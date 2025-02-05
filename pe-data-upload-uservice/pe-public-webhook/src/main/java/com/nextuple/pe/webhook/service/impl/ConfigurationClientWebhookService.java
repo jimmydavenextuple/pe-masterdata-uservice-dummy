@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @Slf4j
+@ConditionalOnProperty(prefix = "pe-public-webhook", name = "enabled", havingValue = "true")
 public class ConfigurationClientWebhookService implements ClientWebhookService {
   @Autowired private WebhookDetailsService webhookDetailsService;
 
