@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
     groupId = "${pe-public-webhook.pe-response.group-id}",
     batch = "false",
     containerFactory = "StringDeserializerConsumer",
-    autoStartup = "#{${pe-public-webhook.enabled:false}}")
+    autoStartup = "${kafka-topic-flags.pe-public-webhook.pe-response.enabled:true}")
 @ConditionalOnProperty(prefix = "pe-public-webhook", name = "enabled", havingValue = "true")
 public class KafkaConsumerImpl implements KafkaConsumer {
   private static final String TENANT_ID = "tenantId";
