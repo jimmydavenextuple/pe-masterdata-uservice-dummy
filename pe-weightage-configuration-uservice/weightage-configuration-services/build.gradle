@@ -20,7 +20,7 @@ dependencies {
     implementation(project(":pe-common:common-postgres"))
     implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-persistence-domain"))
     implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-persistence-postgres"))
-    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:postgresql:42.7.2'
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"

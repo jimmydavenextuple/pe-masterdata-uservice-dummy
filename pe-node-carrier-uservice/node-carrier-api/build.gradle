@@ -19,7 +19,7 @@ dependencies {
     implementation(project(":pe-node-carrier-uservice:node-carrier-services"))
     implementation(project(":pe-node-uservice:node-api-domain"))
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
-    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:postgresql:42.7.2'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
     implementation(project(":pe-common:common-util"))
