@@ -38,4 +38,6 @@ public class UserExitConfigDataDto implements Serializable {
   private String attributeJsonPath;
 
   private Boolean propagateError;
+
+  private Integer retries;
 }

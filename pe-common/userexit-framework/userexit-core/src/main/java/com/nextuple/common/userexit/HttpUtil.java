@@ -25,10 +25,12 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -38,6 +40,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Slf4j
 public class HttpUtil<T, G> {
   @Autowired UserExitUtil userExitUtil;
   @Autowired ObjectMapper objectMapper;
@@ -74,8 +77,8 @@ public class HttpUtil<T, G> {
             .header("Accept", "*/*")
             .timeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
             .build();
-    HttpClient client = userExitUtil.getHttpClient();
-    HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+    HttpResponse<String> response = httpCallWithRetry(request, userExitData);
+
     if (response.statusCode() >= 400) {
       throw new CommonServiceException(
           parseErrorMessages(userExitData.getUserExitMetaData().getName(), response.body()),
@@ -111,6 +114,29 @@ public class HttpUtil<T, G> {
 
     timer.record(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS);
     return wrapperBaseResponse.getPayload();
+  }
+
+  // add circuit breaker from resilience4j here as per the story, missing sa of now
+  private HttpResponse<String> httpCallWithRetry(HttpRequest request, UserExitData userExitData)
+      throws IOException, InterruptedException {
+    HttpClient client = userExitUtil.getHttpClient();
+    int retries = Optional.ofNullable(userExitData.getUserExitConfigData().getRetries()).orElse(0);
+    if (retries > 0) {
+      int attempt = 0;
+      HttpResponse<String> response = null;
+      while (attempt < retries) {
+        response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        // Retry only for specific status codes (e.g., 5xx)
+        if (response.statusCode() >= 500) {
+          attempt++;
+          log.info("Attempt {} failed with status code: {}", attempt, response.statusCode());
+        } else {
+          return response; // Return if successful
+        }
+      }
+    }
+    return client.send(request, BodyHandlers.ofString());
   }
 
   private String parseErrorMessages(String userExitName, String errorBody) throws IOException {

@@ -61,4 +61,7 @@ public class UserExitConfigData extends CommonBaseEntity {
 
   @Column(name = "propagate_error")
   private Boolean propagateError;
+
+  @Column(name = "retries")
+  private Integer retries;
 }
