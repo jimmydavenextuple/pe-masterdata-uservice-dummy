@@ -7,20 +7,17 @@
 package com.nextuple.common.pojo;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Type;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExtensibleAttributes {
-  @Type(JsonBinaryType.class)
   @Schema(description = "Dynamic attributes for the entity", example = "{\"dynamicAtrr1\":true}")
   private JsonNode dynamicAttributes;
 }
