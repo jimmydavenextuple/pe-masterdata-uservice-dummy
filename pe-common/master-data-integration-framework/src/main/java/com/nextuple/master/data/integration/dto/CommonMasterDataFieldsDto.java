@@ -7,6 +7,7 @@
 
 package com.nextuple.master.data.integration.dto;
 
+import com.nextuple.common.pojo.ExtensibleAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class CommonMasterDataFieldsDto {
+public class CommonMasterDataFieldsDto extends ExtensibleAttributes {
 
   @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE_GR")
   private String orgId;
