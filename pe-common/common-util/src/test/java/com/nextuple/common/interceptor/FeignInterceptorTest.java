@@ -20,9 +20,9 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class FeignClientInterceptorTest {
+class FeignInterceptorTest {
 
-  @InjectMocks private FeignClientInterceptor feignClientInterceptor;
+  @InjectMocks private FeignInterceptor feignClientInterceptor;
 
   @BeforeEach
   public void init() {
