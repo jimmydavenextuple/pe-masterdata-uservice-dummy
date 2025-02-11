@@ -792,7 +792,7 @@ class NamedOptimizationStrategyServiceTest {
     groupDef.setOptionalAttributesValue("V3:V4");
     when(groupDefinitionPersistenceService.fetchGroupDefinitionByIdAndOrgId(
             Long.valueOf(TestUtil.GROUP_ID), TestUtil.ORG_ID))
-        .thenReturn(Optional.of(testUtil.getGroupDefinitionEntity()));
+        .thenReturn(Optional.of(groupDef));
 
     when(namedOptimizationStrategyPersistenceService.fetchOptimizationStrategyByOrgIdAndGroupId(
             anyString(), anyString()))
