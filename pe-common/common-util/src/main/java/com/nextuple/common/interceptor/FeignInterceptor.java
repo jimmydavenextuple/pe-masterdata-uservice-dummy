@@ -7,18 +7,11 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class FeignClientInterceptor implements RequestInterceptor {
-
-  @Value("${api-key}")
-  private String apiKey;
-
-  @Value("${trusted-sites}")
-  private String trustedSites;
+public class FeignInterceptor implements RequestInterceptor {
 
   @Override
   public void apply(RequestTemplate requestTemplate) {
