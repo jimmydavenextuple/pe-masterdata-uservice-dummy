@@ -384,6 +384,12 @@ pipelines:
           #     name: Deploy PERF
           #     trigger: manual
           #     deployment: perf
+    demo-deploy:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Demo
+          deployment: demo
     master:
       - step: *Clear-Cache
       - step: *build
