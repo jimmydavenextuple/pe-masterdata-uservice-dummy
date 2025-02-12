@@ -47,7 +47,7 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         item_master:
-          name: INTERNAL.DEMO.PROMISE_ITEMS
+          names: INTERNAL.DEMO.PROMISE_ITEMS
           group-id: item-master-demo-\${random.value}
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
