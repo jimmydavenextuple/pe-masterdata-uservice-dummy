@@ -28,7 +28,7 @@ spring:
     #      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
     #      topics:
     #        item_master:
-    #          name: INTERNAL.DEV.PROMISE_ITEMS
+    #          name: INTERNAL.DEMO.PROMISE_ITEMS
     #          group-id: item-master-dev
     #    producer:
     #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -141,3 +141,64 @@ jobs-framework:
   record-consumer:
     topic-names: INTERNAL.DEMO.PE.JOB_TASK
     group-id: jobs-task-consumer-async-demo
+
+master-data:
+  node:
+    topic-names: INTERNAL.DEMO.PE.NODE_INTEGRATION
+    group-id: node-master-dev
+  node-carrier:
+    topic-names: INTERNAL.DEMO.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-dev
+  carrier:
+    topic-names: INTERNAL.DEMO.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-dev
+  processing-lead-time:
+    topic-names: INTERNAL.DEMO.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-dev
+  calendar:
+    topic-names: INTERNAL.DEMO.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-dev
+  node-calendar:
+    topic-names: INTERNAL.DEMO.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-dev
+  carrier-service-calendar:
+    topic-names: INTERNAL.DEMO.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-dev
+  pickup-calendar:
+    topic-names: INTERNAL.DEMO.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-dev
+  node-service-option-buffer:
+    topic-names: INTERNAL.DEMO.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-dev
+  transit:
+    topic-names: INTERNAL.DEMO.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-dev
+  transit-buffer:
+    topic-names: INTERNAL.DEMO.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-dev
+  item:
+    dlt-topic: ITEM_MASTER_INTEGRATION.DLT
+
+next-cache:
+  caches:
+    -
+      cacheName: task-info
+      ttlSeconds: 14400
+      maxLimit: 50
+  refresh-cache:
+    topic: INTERNAL.DEMO.PE.REFRESH_CACHE_INV
+  cacheManager: caffeine
+platform:
+  tasks:
+    enabled: true
+  tasks-scheduler:
+    enabled: true
+    milliseconds: 5000
+  authFilter:
+    enabled: false
+kafka:
+  input:
+    taskTopics: INTERNAL.DEMO.PE.RETRY_TOPIC_INV
+    taskGroupId: pe-retry
+keycloak:
+  auth-server-url: "https://keycloak-nonprod.nextuple.com"
