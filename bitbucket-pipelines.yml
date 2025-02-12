@@ -202,7 +202,8 @@ server:
           cpu: 3
     demo:
       ingress: yes
-      middleman: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
       prometheus: yes
       keyvault: yes
       storage: yes
