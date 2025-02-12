@@ -375,10 +375,9 @@ pipelines:
               deployment: qa
           - step:
               !!merge <<: *deploy
-              name: Deploy Integration
+              name: Deploy Demo
               trigger: manual
-              deployment: integration
-
+              deployment: demo
           # - step:
           #     !!merge <<: *deploy
           #     name: Deploy PERF
@@ -402,7 +401,7 @@ pipelines:
               !!merge <<: *deploy
               name: Deploy SQA
               trigger: manual
-              deployment: sqa          
+              deployment: sqa
           - step:
               !!merge <<: *deploy
               name: Deploy SDEV
@@ -412,12 +411,18 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy Sandbox
           trigger: manual
-          deployment: sandbox              
+          deployment: sandbox
       - step:
           !!merge <<: *deploy
           name: Deploy Prod
           trigger: manual
           deployment: prod
+    PSE-3161-rbac-changes:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy devpe
+          deployment: devpe
     master2:
       - step: *Clear-Cache
       - step: *build
