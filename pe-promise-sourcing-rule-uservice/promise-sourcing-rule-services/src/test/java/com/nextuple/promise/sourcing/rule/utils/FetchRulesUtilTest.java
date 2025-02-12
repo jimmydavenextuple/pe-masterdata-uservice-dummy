@@ -209,6 +209,20 @@ class FetchRulesUtilTest {
   }
 
   @Test
+  @DisplayName("No optional attribute is provided in group definition")
+  void processGetAllSourcingRuleDetailsByOrgIdTest6()
+      throws PromiseEngineException, CommonServiceException {
+    List<AttributeInfo> reqAttributesList = new ArrayList<>();
+    fetchRulesUtil.getRequiredAttributeDetails(
+        TestUtil.ORG_ID,
+        reqAttributesList,
+        new HashSet<>(),
+        new String[0],
+        new String[] {"70261", "70262"});
+    Assertions.assertEquals(0, reqAttributesList.size());
+  }
+
+  @Test
   @DisplayName("Happy Path for getOptionalAttributeDetails")
   void getOptionalAttributeDetailsTest1() throws PromiseEngineException, CommonServiceException {
     Set<String> uniqueOptAttributes = new HashSet<>();
