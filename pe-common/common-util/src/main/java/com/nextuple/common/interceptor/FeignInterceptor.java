@@ -5,39 +5,19 @@ import com.nextuple.common.context.CurrentThreadContext;
 import com.nextuple.common.context.LogContext;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import java.util.Arrays;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class FeignClientInterceptor implements RequestInterceptor {
-
-  @Value("${api-key}")
-  private String apiKey;
-
-  @Value("${trusted-sites}")
-  private String trustedSites;
+public class FeignInterceptor implements RequestInterceptor {
 
   @Override
   public void apply(RequestTemplate requestTemplate) {
 
     log.debug("------ Inside FeignClientInterceptor ------");
 
-    String[] trustedSitesSubstrings = trustedSites.split(",");
-    try {
-      String url = requestTemplate.feignTarget().url();
-      boolean isTrustedSite = Arrays.stream(trustedSitesSubstrings).anyMatch(url::contains);
-      if (isTrustedSite) {
-        requestTemplate.header("x-api-key", apiKey);
-      } else {
-        requestTemplate.header(CommonConstants.HEADER_PLATFORM_API_KEY, apiKey);
-      }
-    } catch (Exception e) {
-      log.error("Exception occurred while appending api key : {}", e.getMessage());
-    }
     // Attach Authorization header
     if (!requestTemplate.headers().containsKey(CommonConstants.AUTHORIZATION_HEADER)
         && Objects.nonNull(CurrentThreadContext.getLogContext().getRequestHeaders())) {

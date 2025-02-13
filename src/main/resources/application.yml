@@ -210,13 +210,3 @@ kafka-topic-flags:
   input:
     taskTopics:
       enabled: false
-keycloak:
-  realm: "NOMS"
-  application-client: "applicationclient-pe_masterdata_uservice"
-  enforcement-mode: "ENFORCING"
-  http-method-as-scope: true
-  client-id: "applicationclient-pe_masterdata_uservice"
-  credentials:
-    secret: \${MASTER-DATA-KEYCLOAK-CLIENT-ID}
-api-key: \${COMMON-PE-API-KEY}
-trusted-sites: "nextuple.com"
