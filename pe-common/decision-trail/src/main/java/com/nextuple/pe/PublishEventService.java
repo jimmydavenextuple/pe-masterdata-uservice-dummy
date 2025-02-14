@@ -176,4 +176,16 @@ public class PublishEventService {
             .build();
     setCommonFieldsAndPublishEvent(genericExceptionEvent);
   }
+
+  public void publishGenericExceptionEventWithLineId(
+      Integer errorCode, String errorMessage, String lineId) {
+    var genericExceptionEvent =
+        ExceptionEvent.builder()
+            .description(ORDER_ERROR_DESCRIPTION)
+            .errorCode(errorCode)
+            .errorMessage(errorMessage)
+            .lineId(lineId)
+            .build();
+    setCommonFieldsAndPublishEvent(genericExceptionEvent);
+  }
 }

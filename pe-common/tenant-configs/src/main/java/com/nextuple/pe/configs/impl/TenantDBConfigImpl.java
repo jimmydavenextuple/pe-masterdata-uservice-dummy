@@ -9,24 +9,7 @@ package com.nextuple.pe.configs.impl;
 
 import static com.nextuple.common.constants.CommonConstants.CONFIG_KEY;
 import static com.nextuple.common.constants.CommonConstants.ORG_ID;
-import static com.nextuple.common.constants.ConfigKeyConstants.BUFFER_HORIZON_DAYS;
-import static com.nextuple.common.constants.ConfigKeyConstants.DEFAULT_CARRIER_PRIORITY_VALUE_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.EVENT_ALLOWED_PAGES_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.EVENT_CONSOLE_LOG_LISTEN_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.EVENT_LOG_LEVEL_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.EVENT_PUBLISH_ENABLED_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.EVENT_SORT_BY_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.ITEM_BUFFER_ENABLED_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.LOG_SUPPRESSION_SERVICE_OPTIONS_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.NODE_WORKING_HOURS_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.PROCESSING_TIME_COMPUTATION_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.PROCESSING_TIME_ML_MAPPER_CLASS_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.PROCESSING_TIME_ML_OVERRIDE_CLASS_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.PUBLISH_EDD_RESPONSE_ON_PAGE_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.SERVICE_OPTIONS_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.SERVICE_OPTIONS_INVENTORY_TYPE_MAPPING_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.SOURCING_NO_OF_NODES_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.SOURCING_NO_OF_SOLUTION_CONFIG_KEY;
+import static com.nextuple.common.constants.ConfigKeyConstants.*;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -76,6 +59,21 @@ public class TenantDBConfigImpl implements ITenantConfig {
   @Value("${sourcing.DEFAULT.promising-intermediate-event-enabled:true}")
   public String defaultPromisingIntermediateEventEnabled;
 
+  @Value("${sourcing.DEFAULT.capacity-enabled:false}")
+  public String defaultCapacityFlag;
+
+  @Value("${sourcing.DEFAULT.ship-charge-capping-logic-enabled:false}")
+  public String defaultShipChargeCappingLogicFlag;
+
+  @Value("${sourcing.DEFAULT.transfer-horizon-days:1}")
+  public String defaultTransferScheduleHorizonDays;
+
+  @Value("${sourcing.DEFAULT.transfers-enabled:false}")
+  public String defaultTransfersEnabled;
+
+  @Value("${sourcing.DEFAULT.recommendation-enabled:false}")
+  public String defaultRecommendationEngineFlag;
+
   public static final Gson gson = new Gson();
 
   public static Gson getGsonObject() {
@@ -85,6 +83,12 @@ public class TenantDBConfigImpl implements ITenantConfig {
   @Override
   public Integer getNoOfLineSolutionsRequired() {
     return Integer.parseInt(getTenantConfigdataCacheValue("line-solutions-required"));
+  }
+
+  @Override
+  public Boolean getRecommendationEngineEnabledFlag() {
+    return Boolean.valueOf(
+        getTenantConfiguration(RECOMMENDATION_ENABLED_CONFIG_KEY, defaultRecommendationEngineFlag));
   }
 
   @Override
@@ -128,6 +132,22 @@ public class TenantDBConfigImpl implements ITenantConfig {
   }
 
   @Override
+  public Integer getCapacityHorizon() {
+    return Integer.valueOf(getTenantConfigdataCacheValue(CAPACITY_HORIZON));
+  }
+
+  @Override
+  public Boolean getTransfersEnabled() {
+    return Boolean.valueOf(getTenantConfiguration(TRANSFERS_ENABLED, defaultTransfersEnabled));
+  }
+
+  public Integer getNumberOfSolutions(Boolean isCapacityEnabled) {
+    return Boolean.TRUE.equals(isCapacityEnabled)
+        ? CAPACITY_SOLUTION_COUNT
+        : Integer.valueOf(getTenantConfigdataCacheValue(SOURCING_NO_OF_SOLUTION_CONFIG_KEY));
+  }
+
+  @Override
   public String getPublishEddResponseOnPage() {
     return getTenantConfigdataCacheValue(PUBLISH_EDD_RESPONSE_ON_PAGE_CONFIG_KEY);
   }
@@ -140,6 +160,66 @@ public class TenantDBConfigImpl implements ITenantConfig {
   @Override
   public String getDefaultCarrierPriority() {
     return getTenantConfigdataCacheValue(DEFAULT_CARRIER_PRIORITY_VALUE_CONFIG_KEY);
+  }
+
+  @Override
+  public Boolean getShipChargeCappingLogicEnabledFlag() {
+    return Boolean.valueOf(
+        getTenantConfiguration(
+            CAPPING_LOGIC_ENABLED_CONFIG_KEY, defaultShipChargeCappingLogicFlag));
+  }
+
+  @Override
+  public String getShipChargeCappingConstants() {
+    return getTenantConfigurationWithoutThrowingException(SHIP_CHARGE_CAPPING_CONSTANTS_CONFIG_KEY);
+  }
+
+  @Override
+  public String getShipChargeConstantsAndCostTypesMapping() {
+    return getTenantConfigurationWithoutThrowingException(
+        CAPPING_AND_COST_TYPES_MAPPING_CONFIG_KEY);
+  }
+
+  @Override
+  public String getAttributeForTargetProfitMargins() {
+    return getTenantConfigurationWithoutThrowingException(
+        SELECTED_ATTRIBUTE_FOR_TARGET_MARGINS_CONFIG_KEY);
+  }
+
+  @Override
+  public String getServiceOptionHierarchy() {
+    return getTenantConfigurationWithoutThrowingException(SERVICE_OPTION_HIERARCHY_CONFIG_KEY);
+  }
+
+  @Override
+  public String getRecommendationEngineImplClass() {
+    return getTenantConfigdataCacheValue(RECOMMENDATION_IMPL_CLASS_NAME_CONFIG_KEY);
+  }
+
+  @Override
+  public Integer getTransferScheduleHorizonDays() {
+    return Integer.valueOf(
+        getTenantConfiguration(
+            TRANSFER_HORIZON_DAYS_CONFIG_KEY, defaultTransferScheduleHorizonDays));
+  }
+
+  @Override
+  public String getTargetProfitMargins(String attributeName) {
+    return getTenantConfigurationWithoutThrowingException(
+        TARGET_GROSS_PROFIT_MARGINS_CONFIG_KEY + attributeName);
+  }
+
+  private String getTenantConfigurationWithoutThrowingException(String configKey) {
+    String orgId = getOrgId();
+    var cacheKey = TenantConfigdataCacheKey.builder().orgId(orgId).configKey(configKey).build();
+    var cacheValue = tenantConfigdataNearCacheService.get(cacheKey);
+
+    if (Objects.isNull(cacheValue) || Objects.isNull(cacheValue.getConfigValue())) {
+      logger.debug(
+          "Tenant Configuration not found for given orgId: {} and configKey: {}", orgId, configKey);
+      return null;
+    }
+    return cacheValue.getConfigValue();
   }
 
   @Override
@@ -212,6 +292,11 @@ public class TenantDBConfigImpl implements ITenantConfig {
   public Boolean getIsCutoffApplied() {
     return Boolean.parseBoolean(
         getTenantConfiguration("is-ml-processing-time-cutoff-applied", "true"));
+  }
+
+  @Override
+  public Boolean getCapacityEnabledFlag() {
+    return Boolean.valueOf(getTenantConfiguration(CAPACITY_ENABLED_FLAG, defaultCapacityFlag));
   }
 
   @Override

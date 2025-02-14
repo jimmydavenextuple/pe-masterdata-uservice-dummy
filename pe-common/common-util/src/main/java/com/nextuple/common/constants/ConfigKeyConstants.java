@@ -60,4 +60,6 @@ public class ConfigKeyConstants {
 
   public static final List<String> CONFIG_KEYS_MULTIPLE_VALUES_NOT_ALLOWED =
       List.of(SELECTED_ATTRIBUTE_FOR_TARGET_MARGINS_CONFIG_KEY);
+
+  public static final Integer CAPACITY_SOLUTION_COUNT = 1;
 }

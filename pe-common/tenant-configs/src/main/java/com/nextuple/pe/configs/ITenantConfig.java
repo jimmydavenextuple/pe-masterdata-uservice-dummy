@@ -27,7 +27,29 @@ public interface ITenantConfig {
 
   Set<String> getLogSuppressionServiceOptionsList();
 
-  Integer getNumberOfSolutions();
+  Integer getNumberOfSolutions(Boolean isCapacityEnabled);
+
+  Boolean getShipChargeCappingLogicEnabledFlag();
+
+  String getShipChargeCappingConstants();
+
+  String getShipChargeConstantsAndCostTypesMapping();
+
+  String getAttributeForTargetProfitMargins();
+
+  String getTargetProfitMargins(String attributeName);
+
+  String getServiceOptionHierarchy();
+
+  String getRecommendationEngineImplClass();
+
+  Integer getTransferScheduleHorizonDays();
+
+  Integer getCapacityHorizon();
+
+  Boolean getTransfersEnabled();
+
+  Boolean getRecommendationEngineEnabledFlag();
 
   Integer getNumberOfNodes();
 
@@ -66,4 +88,6 @@ public interface ITenantConfig {
   Boolean getItemBufferEnabled();
 
   Boolean getPromisingIntermediateEventsEnabled();
+
+  Boolean getCapacityEnabledFlag();
 }

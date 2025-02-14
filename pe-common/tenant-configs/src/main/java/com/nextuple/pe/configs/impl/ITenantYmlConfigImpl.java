@@ -7,22 +7,12 @@
 
 package com.nextuple.pe.configs.impl;
 
-import static com.nextuple.common.constants.ConfigKeyConstants.ITEM_BUFFER_ENABLED_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.PROCESSING_TIME_ML_MAPPER_CLASS_CONFIG_KEY;
-import static com.nextuple.common.constants.ConfigKeyConstants.PROCESSING_TIME_ML_OVERRIDE_CLASS_CONFIG_KEY;
+import static com.nextuple.common.constants.ConfigKeyConstants.*;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nextuple.common.context.CurrentThreadContext;
-import com.nextuple.pe.configs.CostConfig;
-import com.nextuple.pe.configs.DefaultCarrierPriorityConfig;
-import com.nextuple.pe.configs.EventConfig;
-import com.nextuple.pe.configs.ITenantConfig;
-import com.nextuple.pe.configs.LogSuppressionServiceOptionsConfig;
-import com.nextuple.pe.configs.PublishEddOnPageConfig;
-import com.nextuple.pe.configs.ServiceOptionConfig;
-import com.nextuple.pe.configs.ServiceOptionIVTypeMappingConfig;
-import com.nextuple.pe.configs.SourcingConfig;
+import com.nextuple.pe.configs.*;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,6 +40,7 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Autowired SourcingConfig sourcingConfig;
   @Autowired EventConfig eventConfig;
   @Autowired CostConfig costConfig;
+  @Autowired CapacityConfig capacityConfig;
 
   @Value("${promise.service.options.DEFAULT}")
   public String defaultServiceOptions;
@@ -135,6 +126,18 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
         .getOrDefault(getOrgId(), defaultMaxSolutions);
   }
 
+  @Override
+  public Boolean getCapacityEnabledFlag() {
+    return (Boolean) getCapacityConfigMap().get(CAPACITY_ENABLED_FLAG);
+  }
+
+  private Map<String, Object> getCapacityConfigMap() {
+    return (Map<String, Object>)
+        capacityConfig
+            .getCapacity()
+            .getOrDefault(getOrgId(), capacityConfig.getCapacity().get(DEFAULT));
+  }
+
   public static Gson getGsonObject() {
     return gson;
   }
@@ -195,6 +198,67 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
     return eventConfig.getEvent().get(DEFAULT);
   }
 
+  @Override
+  public Boolean getShipChargeCappingLogicEnabledFlag() {
+    return (Boolean) getSourcingConfigValue(CAPPING_LOGIC_ENABLED_CONFIG_KEY);
+  }
+
+  @Override
+  public String getShipChargeConstantsAndCostTypesMapping() {
+    // No default value can be configured for this property
+    return null;
+  }
+
+  @Override
+  public String getShipChargeCappingConstants() {
+    // No default value can be configured for this property
+    return null;
+  }
+
+  @Override
+  public String getAttributeForTargetProfitMargins() {
+    // No default value can be configured for this property
+    return null;
+  }
+
+  @Override
+  public String getTargetProfitMargins(String attributeName) {
+    // No default value can be configured for this property
+    return null;
+  }
+
+  @Override
+  public String getRecommendationEngineImplClass() {
+    // No default value can be configured for this property
+    return null;
+  }
+
+  @Override
+  public Boolean getTransfersEnabled() {
+    return (Boolean) getSourcingConfigValue(TRANSFERS_ENABLED);
+  }
+
+  @Override
+  public Boolean getRecommendationEngineEnabledFlag() {
+    return (Boolean) getSourcingConfigValue(RECOMMENDATION_ENABLED_CONFIG_KEY);
+  }
+
+  @Override
+  public Integer getCapacityHorizon() {
+    return (Integer) getCapacityConfigMap().get(CAPACITY_HORIZON);
+  }
+
+  @Override
+  public Integer getTransferScheduleHorizonDays() {
+    return (Integer) getSourcingConfigValue(TRANSFER_HORIZON_DAYS_CONFIG_KEY);
+  }
+
+  @Override
+  public String getServiceOptionHierarchy() {
+    // No default value can be configured for this property
+    return null;
+  }
+
   public Set<String> getAllowedPagesListForPublishingEvent() {
     String allowedPages =
         (String)
@@ -245,6 +309,12 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
       consoleLogListenEnabledMap = getGsonObject().fromJson(consoleLogListenEnabledString, type);
     }
     return consoleLogListenEnabledMap;
+  }
+
+  public Integer getNumberOfSolutions(Boolean isCapacityEnabled) {
+    return Boolean.TRUE.equals(isCapacityEnabled)
+        ? CAPACITY_SOLUTION_COUNT
+        : (Integer) getSourcingConfigValue("no-of-solution");
   }
 
   public String getSortBy() {
