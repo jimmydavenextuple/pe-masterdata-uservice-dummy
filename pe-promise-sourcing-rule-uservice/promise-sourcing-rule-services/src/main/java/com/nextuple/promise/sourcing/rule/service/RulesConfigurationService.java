@@ -338,4 +338,12 @@ public class RulesConfigurationService {
     rulesConfigurationPersistenceService.deleteRuleConfiguration(rulesConfigurationDomainDto.get());
     return INSTANCE.toRulesConfigurationResponse(rulesConfigurationDomainDto.get());
   }
+
+  public Optional<RulesConfigurationResponse> fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
+          RuleConfigurationParam ruleConfigurationParam) throws PromiseEngineException {
+    Optional<RulesConfigurationDomainDto> rulesConfigurationDomainDtoOptional = rulesConfigurationPersistenceService.findByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
+                    ruleConfigurationParam);
+      return rulesConfigurationDomainDtoOptional.map(INSTANCE::toRulesConfigurationResponse);
+
+  }
 }

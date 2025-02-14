@@ -62,4 +62,10 @@ public class TransferScheduleEntity extends CommonBaseEntity {
 
   @Column(name = "end_time")
   private Date endTime;
+
+  @Column(name = "rule")
+  private String rule;
+
+  @Column(name = "rule_name")
+  private String ruleName;
 }

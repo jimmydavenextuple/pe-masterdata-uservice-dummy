@@ -10,7 +10,10 @@ package com.nextuple.transit.service.impl;
 import static com.nextuple.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 import static com.nextuple.common.constants.CommonConstants.DESC_SORT_ORDER;
 import static com.nextuple.common.constants.CommonConstants.ORG_ID;
+import static com.nextuple.promise.sourcing.rule.controller.SourcingAttributesDefinitionUIController.logger;
 
+import com.nextuple.common.enums.ApplicationLayer;
+import com.nextuple.common.enums.ExceptionCodeMapping;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.pojo.PageParams;
@@ -18,6 +21,11 @@ import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.node.domain.feign.NodeFeign;
 import com.nextuple.node.domain.outbound.NodeResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.RulesConfigurationResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.pojo.RuleConfigurationParam;
+import com.nextuple.promise.sourcing.rule.service.RulesConfigurationService;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
@@ -33,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
 import org.mapstruct.factory.Mappers;
@@ -51,6 +61,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
   private static final Logger logger = LoggerFactory.getLogger(TransferScheduleServiceImpl.class);
 
   private final TransferSchedulePersistenceService transferSchedulePersistenceService;
+  private final RulesConfigurationService ruleConfigurationService;
   private final NodeFeign nodeFeign;
   private static final TransferScheduleMapper INSTANCE =
       Mappers.getMapper(TransferScheduleMapper.class);
@@ -65,9 +76,45 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     validateStartAndEndTime(request.getOrgId(), request.getStartTime(), request.getEndTime());
     validateNodeId(request.getOrgId(), request.getSourceNodeId(), SOURCE_NODE_ID);
     validateNodeId(request.getOrgId(), request.getDropoffNodeId(), DROPOFF_NODE_ID);
+    validateRuleDetails(request.getOrgId(), request.getRule(), request.getRuleName());
     var transferScheduleDomainDto = INSTANCE.convertToTransferScheduleEntity(request);
     var entity = transferSchedulePersistenceService.saveTransferSchedule(transferScheduleDomainDto);
     return INSTANCE.convertToTransferScheduleResponse(entity);
+  }
+
+  private void validateRuleDetails(String orgId, String rule, String ruleName) throws CommonServiceException{
+      if(!(Objects.isNull(rule) || rule.isEmpty()
+              || Objects.isNull(ruleName) || ruleName.isEmpty())){
+        RuleConfigurationParam ruleConfigurationParam = RuleConfigurationParam.builder()
+                .orgId(orgId)
+                .rule(rule)
+                .ruleName(ruleName)
+                .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
+                .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE).build();
+        try{
+          Optional<RulesConfigurationResponse> rulesConfigurationResponseOptional = ruleConfigurationService.fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(ruleConfigurationParam);
+          if(rulesConfigurationResponseOptional.isEmpty()){
+            throw new PromiseEngineException(ApplicationLayer.SERVICE_LAYER, ExceptionCodeMapping.SERVICE_FIND_FAILED, "Transfer schedule rule not found with rule:" + rule + " and ruleName:" + ruleName);
+          }
+        }catch(PromiseEngineException e){
+          logger.error("Transfer schedule rule not found with rule:" + rule + " and ruleName:" + ruleName);
+          throw new CommonServiceException(
+                  "Transfer schedule cannot be created with invalid rule or ruleName",
+                  HttpStatus.BAD_REQUEST,
+                  0x2775,
+                  Collections.singletonMap("rule", FieldError.builder().rejectedValue(rule).build()));
+        }
+    }
+
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put("rule", FieldError.builder().rejectedValue(rule).build());
+      errorMap.put("ruleName", FieldError.builder().rejectedValue(ruleName).build());
+      throw new CommonServiceException(
+          "Transfer schedule cannot be created with invalid rule or ruleName",
+          HttpStatus.BAD_REQUEST,
+          0x2774,
+          errorMap);
+    }
   }
 
   private void validateStartAndEndTime(
