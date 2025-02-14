@@ -1,11 +1,15 @@
 package com.nextuple.pe.configs.impl;
 
+import static com.nextuple.common.constants.ConfigKeyConstants.TRANSFERS_ENABLED;
+import static com.nextuple.common.constants.ConfigKeyConstants.TRANSFER_HORIZON_DAYS_CONFIG_KEY;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nextuple.common.constants.ConfigKeyConstants;
 import com.nextuple.common.context.CurrentThreadContext;
+import com.nextuple.pe.configs.CapacityConfig;
 import com.nextuple.pe.configs.DefaultCarrierPriorityConfig;
 import com.nextuple.pe.configs.EventConfig;
 import com.nextuple.pe.configs.LogSuppressionServiceOptionsConfig;
@@ -30,6 +34,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
 class ITenantYmlConfigImplTest {
+  public static final String DEFAULT = "DEFAULT";
   private final String defaultServiceOptions = "SDND,STANDARD";
   private final String defaultServiceOptionInventoryTypeMapping = "SDND:PICK,EXPRESS:SHIP";
   private final String defaultPublishEddResponseOnPage = "checkout";
@@ -46,6 +51,7 @@ class ITenantYmlConfigImplTest {
   @Mock LogSuppressionServiceOptionsConfig logSuppressionServiceOptionsConfig;
   @Mock SourcingConfig sourcingConfig;
   @Mock EventConfig eventConfig;
+  @Mock CapacityConfig capacityConfig;
 
   @BeforeEach
   void init() {
@@ -550,5 +556,62 @@ class ITenantYmlConfigImplTest {
         processingTimeMLOverrideClass);
 
     Mockito.verify(sourcingConfig, Mockito.times(2)).getSourcing();
+  }
+
+  @Test
+  @DisplayName("Get capacity enabled flag")
+  void getCapacityEnabledFlag() {
+    when(capacityConfig.getCapacity())
+        .thenReturn(Map.of("NEXTUPLE_GR", Map.of("capacity-enabled", false)));
+    CurrentThreadContext.getLogContext().setTenantId("NEXTUPLE_GR");
+    assertEquals(false, iTenantYmlConfigImpl.getCapacityEnabledFlag());
+  }
+
+  @Test
+  @DisplayName("Get capacity horizon")
+  void getCapacityHoriozn() {
+    when(capacityConfig.getCapacity()).thenReturn(Map.of("DEFAULT", Map.of("capacity-horizon", 7)));
+    CurrentThreadContext.getLogContext().setTenantId("NEXTUPLE_GR");
+    assertEquals(7, iTenantYmlConfigImpl.getCapacityHorizon());
+  }
+
+  @Test
+  @DisplayName("Get transfer enabled for NEXTUPLE_GR and DEFAULT")
+  void getTransfersEnabled() {
+    when(sourcingConfig.getSourcing())
+        .thenReturn(
+            Map.of(
+                TestUtil.ORG_ID,
+                Map.of(TRANSFERS_ENABLED, true),
+                DEFAULT,
+                Map.of(TRANSFERS_ENABLED, false)));
+    CurrentThreadContext.getLogContext().setTenantId(TestUtil.ORG_ID);
+    assertTrue(iTenantYmlConfigImpl.getTransfersEnabled());
+    CurrentThreadContext.getLogContext().setTenantId("SIGNET");
+    assertFalse(iTenantYmlConfigImpl.getTransfersEnabled());
+  }
+
+  @Test
+  @DisplayName("Get Number of solutions with capacity enabled flag as true")
+  void getNumberOfSolutionsWithCapacityFlagEnabledTest() {
+    Integer response = iTenantYmlConfigImpl.getNumberOfSolutions(Boolean.TRUE);
+    assertNotNull(response);
+    assertEquals(1, response);
+  }
+
+  @Test
+  @DisplayName("Get transfer horizon days for NEXTUPLE_GR and DEFAULT")
+  void getTransfersHorizonDays() {
+    when(sourcingConfig.getSourcing())
+        .thenReturn(
+            Map.of(
+                TestUtil.ORG_ID,
+                Map.of(TRANSFER_HORIZON_DAYS_CONFIG_KEY, 3),
+                DEFAULT,
+                Map.of(TRANSFER_HORIZON_DAYS_CONFIG_KEY, 2)));
+    CurrentThreadContext.getLogContext().setTenantId(TestUtil.ORG_ID);
+    assertEquals(3, iTenantYmlConfigImpl.getTransferScheduleHorizonDays());
+    CurrentThreadContext.getLogContext().setTenantId("SIGNET");
+    assertEquals(2, iTenantYmlConfigImpl.getTransferScheduleHorizonDays());
   }
 }

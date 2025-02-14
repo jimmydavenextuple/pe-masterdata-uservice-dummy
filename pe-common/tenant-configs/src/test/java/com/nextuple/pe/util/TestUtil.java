@@ -14,6 +14,8 @@ import java.util.Map;
 
 public class TestUtil {
   public static final String GEO_ZONE = "KOA";
+  public static final String DEFAULT_CAPACITY_ENABLED_FLAG = "false";
+  public static final String DEFAULT_TRANSFER_ENABLED = "false";
   private static final String CM_UOM = "CM";
   public static final String LBS_UOM = "LBS";
   private static final String IS_HAZMAT = "isHazmat";
@@ -179,6 +181,43 @@ public class TestUtil {
     return TenantConfigdataCacheValue.builder()
         .configKey("processing-time-ml-override-class")
         .configValue("com.nextuple.promise.sourcing.impl.DefaultMLOverridingImpl")
+        .build();
+  }
+
+  public TenantConfigdataCacheValue getTenantConfigCacheValueForShipChargeCappingLogic() {
+    return TenantConfigdataCacheValue.builder()
+        .configKey("ship-charge-capping-logic-enabled")
+        .configValue("true")
+        .build();
+  }
+
+  public TenantConfigdataCacheValue getTenantConfigCacheValueForShipChargeCappingConstants() {
+    return TenantConfigdataCacheValue.builder()
+        .configKey("ship-charge-capping-constants")
+        .configValue("10,20")
+        .build();
+  }
+
+  public TenantConfigdataCacheValue
+      getTenantConfigCacheValueForSelectedAttributeForTargetProfitMargins() {
+    return TenantConfigdataCacheValue.builder()
+        .configKey("target-gross-profit-margins-selected-attribute")
+        .configValue("itemCategory")
+        .build();
+  }
+
+  public TenantConfigdataCacheValue getTenantConfigCacheValueForServiceOptionHierarchy() {
+    return TenantConfigdataCacheValue.builder()
+        .configKey("service-option-hierarchy-for-recommendation")
+        .configValue("STANDARD,EXPRESS")
+        .build();
+  }
+
+  public TenantConfigdataCacheValue getTenantConfigCacheValueForTargetProfitMargins(
+      String attributeName) {
+    return TenantConfigdataCacheValue.builder()
+        .configKey("target-gross-profit-margins-" + attributeName)
+        .configValue("KITCHEN:20,ELECTRONICS:30")
         .build();
   }
 }
