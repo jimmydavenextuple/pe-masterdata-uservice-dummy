@@ -463,8 +463,6 @@ dependencies {
     implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
     implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")
     implementation("com.nextuple.plt:plt-postgress-dao:1.0.8-${build_target}")
-    implementation "com.nextuple.platform:auth-injector:1.0.43-${build_target}"
-    implementation "com.nextuple.platform:auth-validator:1.0.43-${build_target}"
     api 'io.github.openfeign:feign-okhttp:12.1'
 }
 

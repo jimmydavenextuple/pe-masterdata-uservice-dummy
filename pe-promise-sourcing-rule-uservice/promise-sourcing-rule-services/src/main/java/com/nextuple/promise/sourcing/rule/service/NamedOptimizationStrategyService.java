@@ -313,8 +313,9 @@ public class NamedOptimizationStrategyService {
           if (StringUtils.hasLength(sourcingAttributesDefinition.get().getOptAttributes())) {
             String[] optionalAttributes =
                 sourcingAttributesDefinition.get().getOptAttributes().split(SPLIT_REGEX);
+            String optionalAttr = groupDefinition.get().getOptionalAttributesValue();
             String[] optimisationRuleOptionalValues =
-                groupDefinition.get().getOptionalAttributesValue().split(COLON_SPLIT_REGEX);
+                optionalAttr != null ? optionalAttr.split(COLON_SPLIT_REGEX) : new String[0];
             fetchRulesUtil.getRequiredAttributeDetails(
                 orgId,
                 optionalAttributeInfoList,

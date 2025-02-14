@@ -27,17 +27,6 @@ spring:
     properties:
       hibernate:
         generate_statistics: true
-  security:
-    oauth2:
-      client:
-        registration:
-          client1:
-            client-id: applicationclient-pe_masterdata_uservice
-            client-secret: \${MASTER-DATA-KEYCLOAK-CLIENT-ID}
-            authorization-grant-type: client_credentials
-        provider:
-          keycloak:
-            token-uri: https://keycloak-nonprod.nextuple.com/realms/NOMS/protocol/openid-connect/token
 server:
   port: 8080
   max-http-request-header-size: 20971520
@@ -155,12 +144,6 @@ csv-utility-api:
 #  listenerContainerFactory: ItemDeserializerConsumer
 platform:
   groupIdPrefix: pe-retry
-  auth-injector:
-    token-strategy: generate
-    filter:
-      enabled: true
-    client-uri-mappings:
-      keycloak: /*
 holiday-cutoff:
   days: 0.0
   days-type: BUSINESS_DAYS
