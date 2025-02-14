@@ -14,7 +14,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation(project(":pe-common:common-domain"))
     implementation(project(":pe-common:common-util"))
-    implementation(project(":pe-tenant-configs"))
+    implementation(project(":pe-common:tenant-configs"))
     implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
     implementation(project(":pe-common:nfs-near-cache:core-near-cache-consumer"))
     implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
