@@ -600,6 +600,19 @@ class ITenantYmlConfigImplTest {
   }
 
   @Test
+  @DisplayName("Get Number of solutions with capacity enabled flag as false")
+  void getNumberOfSolutionsWithCapacityFlagDisabledTest() {
+    Map<String, Object> valueForOrg = testUtil.getSourcingConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultSourcingConfigValue();
+    Map<String, Map<String, Object>> sourcingConfigMap =
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(sourcingConfig.getSourcing()).thenReturn(sourcingConfigMap);
+    Integer response = iTenantYmlConfigImpl.getNumberOfSolutions(Boolean.FALSE);
+    assertNotNull(response);
+    assertEquals(3, response);
+  }
+
+  @Test
   @DisplayName("Get transfer horizon days for NEXTUPLE_GR and DEFAULT")
   void getTransfersHorizonDays() {
     when(sourcingConfig.getSourcing())
@@ -613,5 +626,75 @@ class ITenantYmlConfigImplTest {
     assertEquals(3, iTenantYmlConfigImpl.getTransferScheduleHorizonDays());
     CurrentThreadContext.getLogContext().setTenantId("SIGNET");
     assertEquals(2, iTenantYmlConfigImpl.getTransferScheduleHorizonDays());
+  }
+
+  @Test
+  @DisplayName("Get Ship Charge Capping Logic Enabled Flag")
+  void getShipChargeCappingLogicEnabledFlagTest() {
+    when(sourcingConfig.getSourcing())
+        .thenReturn(
+            Map.of(
+                TestUtil.ORG_ID,
+                Map.of("ship-charge-capping-logic-enabled", true),
+                DEFAULT,
+                Map.of("ship-charge-capping-logic-enabled", false)));
+    Boolean resp = iTenantYmlConfigImpl.getShipChargeCappingLogicEnabledFlag();
+    assertTrue(resp);
+  }
+
+  @Test
+  @DisplayName("Get Ship Charge Constants and Cost Types Mapping")
+  void getShipChargeConstantsAndCostTypesMappingTest() {
+    String resp = iTenantYmlConfigImpl.getShipChargeConstantsAndCostTypesMapping();
+    assertNull(resp);
+  }
+
+  @Test
+  @DisplayName("Get Ship Charge Capping Constants")
+  void getShipChargeCappingConstantsTest() {
+    String resp = iTenantYmlConfigImpl.getShipChargeCappingConstants();
+    assertNull(resp);
+  }
+
+  @Test
+  @DisplayName("Get Attribute For Target Profit Margins")
+  void getAttributeForTargetProfitMarginsTest() {
+    String resp = iTenantYmlConfigImpl.getAttributeForTargetProfitMargins();
+    assertNull(resp);
+  }
+
+  @Test
+  @DisplayName("Get Target Profit Margins")
+  void getTargetProfitMarginsTest() {
+    String resp = iTenantYmlConfigImpl.getTargetProfitMargins("test");
+    assertNull(resp);
+  }
+
+  @Test
+  @DisplayName("Get Recommendation Engine Impl Class Test")
+  void getRecommendationEngineImplClassTest() {
+    String resp = iTenantYmlConfigImpl.getRecommendationEngineImplClass();
+    assertNull(resp);
+  }
+
+  @Test
+  @DisplayName("Get Service Option Hierarchy Test")
+  void getServiceOptionHierarchyTest() {
+    String resp = iTenantYmlConfigImpl.getServiceOptionHierarchy();
+    assertNull(resp);
+  }
+
+  @Test
+  @DisplayName("Get Recommendation Engine Enabled Flag")
+  void getRecommendationEngineEnabledFlagTest() {
+    when(sourcingConfig.getSourcing())
+        .thenReturn(
+            Map.of(
+                TestUtil.ORG_ID,
+                Map.of("recommendation-enabled", true),
+                DEFAULT,
+                Map.of("recommendation-enabled", false)));
+    Boolean resp = iTenantYmlConfigImpl.getRecommendationEngineEnabledFlag();
+    assertTrue(resp);
   }
 }

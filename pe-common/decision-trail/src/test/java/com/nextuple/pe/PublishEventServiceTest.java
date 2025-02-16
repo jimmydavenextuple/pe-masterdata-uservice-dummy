@@ -77,4 +77,10 @@ class PublishEventServiceTest {
     publishEventService.publishGenericExceptionEvent(123, "Error occurred");
     verify(applicationEventPublisher, times(1)).publishEvent(any(ExceptionEvent.class));
   }
+
+  @Test
+  void publishGenericExceptionEventWithLineIdTest() {
+    publishEventService.publishGenericExceptionEventWithLineId(123, "Error occurred", "lineId");
+    verify(applicationEventPublisher, times(1)).publishEvent(any(ExceptionEvent.class));
+  }
 }

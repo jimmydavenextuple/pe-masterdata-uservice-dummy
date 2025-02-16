@@ -619,6 +619,16 @@ class TenantDBConfigImplTest {
   }
 
   @Test
+  @DisplayName("Get Number of solutions with capacity enabled flag as false")
+  void getNumberOfSolutionsWithCapacityFlagDisabledTest() {
+    TenantConfigdataCacheValue cacheValue = testUtil.getTenantConfigCacheValueForNoOfSolution();
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+    Integer response = tenantDBConfigImpl.getNumberOfSolutions(Boolean.FALSE);
+    assertNotNull(response);
+    assertEquals(3, response);
+  }
+
+  @Test
   @DisplayName("Fetch ship charge capping logic flag from tenant configuration db")
   void getShipChargeCappingLogicEnabledFlagTest() {
     var cacheValue = testUtil.getTenantConfigCacheValueForShipChargeCappingLogic();
@@ -650,6 +660,16 @@ class TenantDBConfigImplTest {
     String response = tenantDBConfigImpl.getShipChargeCappingConstants();
     assertNotNull(response);
     assertEquals(cacheValue.getConfigValue(), response);
+  }
+
+  @Test
+  @DisplayName("Fetch ship charge capping constants from tenant configuration db with null value")
+  void getShipChargeCappingConstantsNullTest() {
+    var cacheValue = testUtil.getTenantConfigCacheValueForShipChargeCappingConstants();
+    cacheValue.setConfigValue(null);
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+    String response = tenantDBConfigImpl.getShipChargeCappingConstants();
+    assertNull(response);
   }
 
   @Test
@@ -738,5 +758,29 @@ class TenantDBConfigImplTest {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
     String response = tenantDBConfigImpl.getTargetProfitMargins("itemCategory");
     assertNull(response);
+  }
+
+  @Test
+  @DisplayName("Get Recommendation Engine Enabled Flag")
+  void getRecommendationEngineEnabledFlagTest() {
+    when(tenantConfigdataNearCacheService.get(any()))
+        .thenReturn(
+            TenantConfigdataCacheValue.builder()
+                .configKey("recommendation-engine-enabled")
+                .configValue("true")
+                .build());
+    assertTrue(tenantDBConfigImpl.getRecommendationEngineEnabledFlag());
+  }
+
+  @Test
+  @DisplayName("Get Line Threshold Test")
+  void getLineThresholdTest() {
+    when(tenantConfigdataNearCacheService.get(any()))
+        .thenReturn(
+            TenantConfigdataCacheValue.builder()
+                .configKey("line-threshold")
+                .configValue("10")
+                .build());
+    assertEquals(10, tenantDBConfigImpl.getLineThreshold());
   }
 }
