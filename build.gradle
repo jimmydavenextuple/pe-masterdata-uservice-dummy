@@ -458,6 +458,9 @@ dependencies {
     implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
     implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")
     implementation("com.nextuple.plt:plt-postgress-dao:1.0.8-${build_target}")
+    implementation "com.nextuple.platform:auth-validator:1.0.45-PE-1-${build_target}"
+    implementation "com.nextuple.platform:auth-injector:1.0.45-PE-1-${build_target}"
+    implementation "com.nextuple.platform:plt-common:1.0.45-PE-1-${build_target}"
 }
 
 jacocoTestReport {

@@ -1,4 +1,15 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          my-client:
+            client-id: applicationclient-pe-masterdata-uservice
+            client-secret: \${MASTER-DATA-KEYCLOAK-CLIENT-ID}
+            authorization-grant-type: client_credentials
+        provider:
+          my-client:
+            token-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev/protocol/openid-connect/token
   application:
     dependencies:
       item: "http://localhost:8080/"
@@ -19,9 +30,9 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: password
+    url: jdbc:postgresql://170.7.0.16/pe
+    username: pe_users_pgadmin
+    password: E7E56EAB-9B03-4C95-8E71-FA871251A7D4
     hikari:
       maximumPoolSize: 100
       minimumIdle: 10
@@ -96,7 +107,8 @@ spring:
 
 logging:
   level:
-    com.nextuple: INFO
+    com.nextuple: DEBUG
+    org.apache.kafka: OFF
 entity-listener:
   kafka:
     enabled: false
@@ -223,6 +235,22 @@ platform:
     milliseconds: 5000
   authFilter:
     enabled: false
+  auth-injector:
+    token-strategy: generate
+    filter:
+      enabled: true
+    client-uri-mappings:
+      my-client: /**
+  auth-validator:
+    application-name: pe-masterdata
+    header:
+      tenant-id: x-tenant-id
+    issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev
+    authz-config:
+      config-path: "https://internal-dev.nextuple.com/services/authz-config/api/configurations/groups/application-group/scope-id/pe-masterdata"
+      refresh-interval-mins: 30
+      role:
+        json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles
 kafka:
   input:
     taskTopics: INTERNAL.DEV.PE.RETRY_TOPIC_INV
