@@ -235,6 +235,7 @@ platform:
     milliseconds: 5000
   authFilter:
     enabled: false
+neo-platform:
   auth-injector:
     token-strategy: generate
     filter:

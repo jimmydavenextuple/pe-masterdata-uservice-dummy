@@ -206,6 +206,7 @@ platform:
   tasks-scheduler:
     enabled: true
     milliseconds: 5000
+neo-platform:
   authFilter:
     enabled: false
   auth-injector:
