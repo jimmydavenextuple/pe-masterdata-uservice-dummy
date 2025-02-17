@@ -151,7 +151,7 @@ subprojects {
 
         runtimeOnly 'org.postgresql:postgresql:42.7.2'
 
-        implementation "org.springframework.kafka:spring-kafka:3.2.1"
+        implementation "org.springframework.kafka:spring-kafka:3.2.4"
         implementation 'org.yaml:snakeyaml:2.2'
         implementation 'org.xerial.snappy:snappy-java:1.1.10.5'
         implementation 'commons-fileupload:commons-fileupload:1.5'
@@ -344,7 +344,7 @@ dependencies {
     implementation libs.logstash
     api "org.springframework.boot:spring-boot-starter-web"
     api "org.springframework.boot:spring-boot-starter-actuator"
-    api "org.springframework.cloud:spring-cloud-starter-openfeign"
+    api "org.springframework.cloud:spring-cloud-starter-openfeign:4.1.2"
     implementation("io.github.openfeign:feign-hc5:10.12")
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
