@@ -180,7 +180,8 @@ server:
           cpu: 2
     devpe:
       ingress: yes
-      middleman: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
       prometheus: yes
       storage: yes
       java-opts: "-Xms1024m -Xmx1024m"
@@ -352,6 +353,12 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy DevPE
           trigger: manual
+          deployment: devpe
+    1.3.3-NAG:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy DevPE
           deployment: devpe
     master:
       - step: *Clear-Cache
