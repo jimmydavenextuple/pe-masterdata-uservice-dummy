@@ -377,11 +377,6 @@ dependencies {
     implementation(project(":pe-common:userexit-framework:userexit-domain"))
     implementation(project(":pe-common:userexit-framework:userexit-near-cache"))
     implementation(project(":pe-common:userexit-framework:userexit-near-cache-spring"))
-    implementation(project(":pe-common:pe-kafka-configs"))
-    implementation(project(":pe-common:tenant-configs"))
-    implementation(project(":pe-common:decision-trail"))
-
-
 
     implementation(project(":pe-calendar-uservice:calendar-services"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
