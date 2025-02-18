@@ -207,15 +207,15 @@ platform:
   tasks-scheduler:
     enabled: true
     milliseconds: 5000
-neo-platform:
   authFilter:
     enabled: false
+neo-platform:
   auth-injector:
     token-strategy: generate
     filter:
       enabled: true
     client-uri-mappings:
-      keycloak: /**
+      my-client: /**
   auth-validator:
     application-name: pe-masterdata
     header:
