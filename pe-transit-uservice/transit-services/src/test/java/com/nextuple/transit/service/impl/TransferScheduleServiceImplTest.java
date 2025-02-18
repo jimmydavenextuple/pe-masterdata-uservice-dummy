@@ -7,6 +7,8 @@
 
 package com.nextuple.transit.service.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -20,11 +22,15 @@ import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.node.domain.feign.NodeFeign;
+import com.nextuple.promise.sourcing.rule.service.RulesConfigurationService;
 import com.nextuple.transit.TestUtil;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
+import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.service.TransferSchedulePersistenceService;
 import java.util.List;
+import java.util.Optional;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +48,7 @@ class TransferScheduleServiceImplTest {
 
   @Mock NodeFeign nodeFeign;
   @Mock TransferSchedulePersistenceService transferSchedulePersistenceService;
+  @Mock RulesConfigurationService ruleConfigurationService;
   @Mock PageParams pageParams;
 
   @BeforeEach
@@ -60,9 +67,50 @@ class TransferScheduleServiceImplTest {
     TransferScheduleResponse response =
         transferScheduleService.createTransferSchedule(
             testUtil.getTransferScheduleCreationRequest());
-    Assertions.assertEquals("Node1", response.getSourceNodeId());
+    assertEquals("Node1", response.getSourceNodeId());
     verify(nodeFeign, times(2)).getNodeDetails(any(), any());
     verify(transferSchedulePersistenceService, times(1)).saveTransferSchedule(any());
+  }
+
+  @Test
+  @DisplayName("create transfer schedules with rules")
+  void createTransferScheduleWithRulesTest() throws PromiseEngineException, CommonServiceException {
+    when(nodeFeign.getNodeDetails(any(), any()))
+        .thenReturn(
+            BaseResponse.builder().payload(testUtil.getNodeDetail("Node1")).success(true).build());
+    when(transferSchedulePersistenceService.saveTransferSchedule(any()))
+        .thenReturn(testUtil.getTransferScheduleEntity());
+    when(ruleConfigurationService.fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(any()))
+        .thenReturn(Optional.of(testUtil.getRuleConfiguration()));
+    TransferScheduleCreationRequest request = testUtil.getTransferScheduleCreationRequest();
+    request.setRule("DC:KITCHEN");
+    request.setRuleName("KitchenRule");
+    TransferScheduleResponse response = transferScheduleService.createTransferSchedule(request);
+    assertEquals("Node1", response.getSourceNodeId());
+    verify(nodeFeign, times(2)).getNodeDetails(any(), any());
+    verify(transferSchedulePersistenceService, times(1)).saveTransferSchedule(any());
+  }
+
+  @Test
+  @DisplayName("create transfer schedules invalid rule")
+  void createTransferScheduleInvalidRuleTest() throws PromiseEngineException {
+    when(nodeFeign.getNodeDetails(any(), any()))
+        .thenReturn(
+            BaseResponse.builder().payload(testUtil.getNodeDetail("Node1")).success(true).build());
+    when(ruleConfigurationService.fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(any()))
+        .thenReturn(Optional.empty());
+    when(transferSchedulePersistenceService.saveTransferSchedule(any()))
+        .thenReturn(testUtil.getTransferScheduleEntity());
+    TransferScheduleCreationRequest request = testUtil.getTransferScheduleCreationRequest();
+    request.setRule("DC:KITCHEN");
+    request.setRuleName("KitchenRule");
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () -> transferScheduleService.createTransferSchedule(request));
+    verify(nodeFeign, times(2)).getNodeDetails(any(), any());
+    verify(ruleConfigurationService, times(1))
+        .fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(any());
+    verify(transferSchedulePersistenceService, times(0)).saveTransferSchedule(any());
   }
 
   @Test
@@ -127,7 +175,7 @@ class TransferScheduleServiceImplTest {
         .thenReturn(List.of(testUtil.getTransferScheduleEntity()));
     List<TransferScheduleResponse> response =
         transferScheduleService.fetchTransferSchedules(TestUtil.ORG_ID, TestUtil.DROPOFF_NODE);
-    Assertions.assertEquals("Node1", response.get(0).getSourceNodeId());
+    assertEquals("Node1", response.get(0).getSourceNodeId());
     verify(transferSchedulePersistenceService, times(1))
         .fetchUpcomingTransferSchedules(any(), any());
   }
@@ -139,7 +187,7 @@ class TransferScheduleServiceImplTest {
         .thenReturn(testUtil.getTransferScheduleEntity());
     TransferScheduleResponse response =
         transferScheduleService.deleteTransferSchedule(testUtil.getTransferScheduleRequest());
-    Assertions.assertEquals("Node1", response.getSourceNodeId());
+    assertEquals("Node1", response.getSourceNodeId());
     verify(transferSchedulePersistenceService, times(1))
         .deleteTransferSchedule(any(), any(), any(), any());
   }
@@ -164,7 +212,7 @@ class TransferScheduleServiceImplTest {
         transferScheduleService.fetchTransferScheduleList(
             TestUtil.ORG_ID, true, pageParams, fetchTransferScheduleRequest);
 
-    Assertions.assertEquals(1, response.getTotalElements());
+    assertEquals(1, response.getTotalElements());
     verify(transferSchedulePersistenceService, times(1))
         .fetchTransferSchedulesList(any(), any(), any());
   }
@@ -188,7 +236,7 @@ class TransferScheduleServiceImplTest {
         transferScheduleService.fetchTransferScheduleList(
             TestUtil.ORG_ID, false, pageParams, fetchTransferScheduleRequest);
 
-    Assertions.assertEquals(1, response.getTotalElements());
+    assertEquals(1, response.getTotalElements());
     verify(transferSchedulePersistenceService, times(1))
         .fetchTransferSchedulesList(any(), any(), any());
   }
@@ -248,5 +296,74 @@ class TransferScheduleServiceImplTest {
           transferScheduleService.fetchTransferScheduleList(
               TestUtil.ORG_ID, true, pageParams, fetchTransferScheduleRequest);
         });
+  }
+
+  @Test
+  @DisplayName("Fetch schedules in range with both start time and end time")
+  void testFetchTransferSchedulesInRange() {
+    // Arrange
+    TransferScheduleRangeRequest request = new TransferScheduleRangeRequest();
+    request.setStartTime(DateTime.now());
+    request.setEndTime(DateTime.now().plusDays(5));
+    request.setHorizonDays(2);
+    request.setPastDays(1);
+
+    List<TransferScheduleResponse> expectedResponse =
+        List.of(testUtil.getTransferScheduleResponse());
+
+    when(transferSchedulePersistenceService.fetchTransferSchedulesInRange(any()))
+        .thenReturn(List.of(testUtil.getTransferScheduleEntity()));
+
+    // Act
+    List<TransferScheduleResponse> actualResponse =
+        transferScheduleService.fetchTransferSchedulesInRange(request);
+
+    // Assert
+    assertNotNull(actualResponse);
+    assertEquals(
+        expectedResponse.get(0).getSourceNodeId(), actualResponse.get(0).getSourceNodeId());
+    assertEquals(
+        expectedResponse.get(0).getDropoffNodeId(), actualResponse.get(0).getDropoffNodeId());
+
+    verify(transferSchedulePersistenceService, times(1))
+        .fetchTransferSchedulesInRange(any(TransferScheduleDomainRequest.class));
+
+    request.setHorizonDays(null);
+    actualResponse = transferScheduleService.fetchTransferSchedulesInRange(request);
+    assertNotNull(actualResponse);
+    assertEquals(
+        expectedResponse.get(0).getSourceNodeId(), actualResponse.get(0).getSourceNodeId());
+    assertEquals(
+        expectedResponse.get(0).getDropoffNodeId(), actualResponse.get(0).getDropoffNodeId());
+  }
+
+  @Test
+  @DisplayName("Fetch schedules in range without both start time and end time")
+  void testFetchTransferSchedulesInRangeWithoutRange() {
+    // Arrange
+    TransferScheduleRangeRequest request = new TransferScheduleRangeRequest();
+    request.setRule("DC:'KITCHEN");
+    request.setRuleName("Rule1");
+    request.setDropoffNodeId("Node1");
+
+    List<TransferScheduleResponse> expectedResponse =
+        List.of(testUtil.getTransferScheduleResponse());
+
+    when(transferSchedulePersistenceService.fetchTransferSchedulesInRange(any()))
+        .thenReturn(List.of(testUtil.getTransferScheduleEntity()));
+
+    // Act
+    List<TransferScheduleResponse> actualResponse =
+        transferScheduleService.fetchTransferSchedulesInRange(request);
+
+    // Assert
+    assertNotNull(actualResponse);
+    assertEquals(
+        expectedResponse.get(0).getSourceNodeId(), actualResponse.get(0).getSourceNodeId());
+    assertEquals(
+        expectedResponse.get(0).getDropoffNodeId(), actualResponse.get(0).getDropoffNodeId());
+
+    verify(transferSchedulePersistenceService, times(1))
+        .fetchTransferSchedulesInRange(any(TransferScheduleDomainRequest.class));
   }
 }
