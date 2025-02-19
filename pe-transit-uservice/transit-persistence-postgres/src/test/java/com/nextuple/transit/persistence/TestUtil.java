@@ -344,8 +344,8 @@ public class TestUtil {
         .dropoffNodeId(DESTINATION_NODE)
         .rule("DC:KITCHEN")
         .ruleName("Rule1")
-        .startTimeLowerBound(DateTime.now().toString())
-        .endTimeLowerBound(DateTime.now().toString())
+        .startTimeLowerBound(new Date())
+        .endTimeLowerBound(new Date())
         .build();
   }
 }

@@ -9,11 +9,13 @@ package com.nextuple.transit.spring.cache.feign;
 
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.service.GenericFeignService;
+import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
     name = "pe-transit-uservice",
@@ -26,4 +28,8 @@ public interface TransferScheduleFeignImpl
   @GetMapping("/transfer-schedule/orgId/{orgId}/dropoffNodeId/{dropoffNodeId}")
   BaseResponse<List<TransferScheduleResponse>> fetchTransferSchedules(
       @PathVariable String orgId, @PathVariable String dropoffNodeId);
+
+  @GetMapping("/transfer-schedule/time-range")
+  BaseResponse<List<TransferScheduleResponse>> fetchTransferSchedulesInRange(
+      @RequestBody TransferScheduleRangeRequest transferScheduleRangeRequest);
 }

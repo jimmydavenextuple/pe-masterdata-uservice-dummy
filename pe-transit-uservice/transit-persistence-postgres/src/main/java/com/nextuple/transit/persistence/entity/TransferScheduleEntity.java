@@ -17,7 +17,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,10 +35,7 @@ import lombok.experimental.SuperBuilder;
     indexes =
         @Index(
             name = "org_source_dropoff_index",
-            columnList = "org_id,source_node_id,dropoff_node_id"),
-    uniqueConstraints =
-        @UniqueConstraint(
-            columnNames = {"org_id", "source_node_id", "dropoff_node_id", "start_time"}))
+            columnList = "org_id,source_node_id,dropoff_node_id"))
 @EntityListeners(CommonEntityListener.class)
 public class TransferScheduleEntity extends CommonBaseEntity {
 

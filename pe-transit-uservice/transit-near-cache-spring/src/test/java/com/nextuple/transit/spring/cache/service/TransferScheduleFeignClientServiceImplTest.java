@@ -48,7 +48,7 @@ class TransferScheduleFeignClientServiceImplTest {
     TransferScheduleCacheValue cacheValue = testUtil.getTransferScheduleCacheValue();
 
     when(mapper.responseToCacheValue(any())).thenReturn(cacheValue);
-    when(transferScheduleFeign.fetchTransferSchedules(any(), any()))
+    when(transferScheduleFeign.fetchTransferSchedulesInRange(any()))
         .thenReturn(testUtil.getListBaseResponseOfTransferScheduleResponse());
 
     assertEquals(cacheValue, transferScheduleFeignClientService.get(cacheKey));
