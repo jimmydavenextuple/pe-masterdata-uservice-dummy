@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-@ConditionalOnProperty(value = "dataupload.type", havingValue = "S3")
+@ConditionalOnProperty(value = "auth.type", havingValue = "AWSCognito")
 public class AuthServiceAWS implements AuthService {
 
   private final AuthTokenService authTokenService;

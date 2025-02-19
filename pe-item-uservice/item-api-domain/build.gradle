@@ -9,7 +9,7 @@ bootJar {
     enabled = false
 }
 dependencies {
-    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:postgresql:42.7.2'
     implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
     implementation(project(":pe-common:common-util"))
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'

@@ -11,7 +11,7 @@ bootJar {
 }
 dependencies {
     implementation 'com.opencsv:opencsv:5.9'
-    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:postgresql:42.7.2'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     runtimeOnly 'org.apache.commons:commons-csv'

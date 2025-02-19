@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.converter.KafkaMessageHeaders;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
     batch = "false",
     containerFactory = "StringDeserializerConsumer",
     autoStartup = "${kafka-topic-flags.pe-public-webhook.pe-response.enabled:true}")
+@ConditionalOnProperty(prefix = "pe-public-webhook", name = "enabled", havingValue = "true")
 public class KafkaConsumerImpl implements KafkaConsumer {
   private static final String TENANT_ID = "tenantId";
   @Autowired private ClientWebhookService clientWebhookService;

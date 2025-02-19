@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+jar {
+    enabled = true
+}
+bootJar {
+    enabled = false
+}
+dependencies {
+    implementation(project(":pe-data-upload-uservice:data-upload-services"))
+    implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}

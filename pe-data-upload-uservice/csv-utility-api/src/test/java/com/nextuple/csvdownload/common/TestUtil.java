@@ -13,7 +13,6 @@ import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstant
 import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.LAST_PICKUP_TIME;
 import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.LATITUDE;
 import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.LONGITUDE;
-import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.NODE_TYPE;
 import static com.nextuple.dataupload.common.constants.DataUploadUtilityConstants.SERVICE_NAME;
 import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
@@ -48,12 +47,12 @@ import com.nextuple.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.nextuple.postal.code.timezone.api.domain.outbound.CustomRegionResponse;
 import com.nextuple.postal.code.timezone.api.domain.outbound.PostalCodeResponse;
 import com.nextuple.promise.domain.CoreEngineResponse;
+import com.nextuple.promise.domain.ItemResponse;
 import com.nextuple.promise.domain.OrderLinesSourcing;
 import com.nextuple.promise.domain.OrderSolution;
 import com.nextuple.promise.domain.ShipDestinationDetails;
 import com.nextuple.promise.domain.SourceNodeDetails;
 import com.nextuple.promise.domain.SourcingError;
-import com.nextuple.promise.domain.SourcingItem;
 import com.nextuple.promise.domain.SourcingLineException;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.HolidayCutoffDetailsResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.PageResponseForHolidayCutoff;
@@ -871,7 +870,7 @@ public class TestUtil {
   public CoreEngineResponse getCoreEngineResponse() {
     OrderLinesSourcing orderLinesSourcing =
         OrderLinesSourcing.builder()
-            .item(SourcingItem.builder().unitOfMeasure("in").itemId("Bag").build())
+            .item(ItemResponse.builder().itemId("Bag").unitOfMeasure("in").build())
             .lineId("1")
             .orderedQuantity(10.0)
             .endEstimatedDeliveryDate("2023-07-05T12:30:00")
@@ -891,7 +890,7 @@ public class TestUtil {
     List<OrderLinesSourcing> alternateOrderLinesSourcingList =
         Collections.singletonList(
             OrderLinesSourcing.builder()
-                .item(SourcingItem.builder().unitOfMeasure("in").itemId("Bag").build())
+                .item(ItemResponse.builder().itemId("Bag").unitOfMeasure("in").build())
                 .lineId("1")
                 .orderedQuantity(10.0)
                 .endEstimatedDeliveryDate("2023-07-06T12:30:00")
@@ -916,9 +915,9 @@ public class TestUtil {
         Collections.singletonList(
             SourcingLineException.builder()
                 .item(
-                    SourcingItem.builder()
-                        .unitOfMeasure("in")
+                    ItemResponse.builder()
                         .itemId("Bag")
+                        .unitOfMeasure("in")
                         .productClass("Accessories")
                         .build())
                 .lineId("1")
@@ -956,7 +955,7 @@ public class TestUtil {
   public CoreEngineResponse getCoreEngineResponse2() {
     OrderLinesSourcing orderLinesSourcing =
         OrderLinesSourcing.builder()
-            .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+            .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
             .lineId("1")
             .orderedQuantity(5.0)
             .endEstimatedDeliveryDate("2023-07-06T12:30:00")
@@ -975,7 +974,7 @@ public class TestUtil {
     List<OrderLinesSourcing> alternateOrderLinesSourcingList =
         Collections.singletonList(
             OrderLinesSourcing.builder()
-                .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+                .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
                 .lineId("1")
                 .orderedQuantity(5.0)
                 .endEstimatedDeliveryDate("2023-07-07T12:30:00")
@@ -1032,10 +1031,10 @@ public class TestUtil {
         Collections.singletonList(
             SourcingLineException.builder()
                 .item(
-                    SourcingItem.builder()
-                        .unitOfMeasure("in")
+                    ItemResponse.builder()
                         .itemId("Bag")
-                        .productClass("Accessories")
+                        .unitOfMeasure("in")
+                        .productClass("Accessoried")
                         .build())
                 .lineId("1")
                 .errors(sourcingErrors)
@@ -1080,10 +1079,10 @@ public class TestUtil {
         Collections.singletonList(
             SourcingLineException.builder()
                 .item(
-                    SourcingItem.builder()
-                        .unitOfMeasure("in")
+                    ItemResponse.builder()
                         .itemId("Bag")
-                        .productClass("Accessories")
+                        .unitOfMeasure("in")
+                        .productClass("Accessoried")
                         .build())
                 .lineId("1")
                 .errors(sourcingErrors)
@@ -1092,10 +1091,10 @@ public class TestUtil {
         Collections.singletonList(
             SourcingLineException.builder()
                 .item(
-                    SourcingItem.builder()
-                        .unitOfMeasure("in")
+                    ItemResponse.builder()
                         .itemId("Bag")
-                        .productClass("Accessories")
+                        .unitOfMeasure("in")
+                        .productClass("Accessoried")
                         .build())
                 .lineId("1")
                 .errors(sourcingErrors)
@@ -1127,7 +1126,7 @@ public class TestUtil {
   public CoreEngineResponse getCoreEngineResponse5() {
     OrderLinesSourcing orderLinesSourcing1 =
         OrderLinesSourcing.builder()
-            .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+            .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
             .lineId("1")
             .orderedQuantity(5.0)
             .endEstimatedDeliveryDate("2023-07-06T12:30:00")
@@ -1146,7 +1145,7 @@ public class TestUtil {
     List<OrderLinesSourcing> alternateOrderLinesSourcingList1 =
         Collections.singletonList(
             OrderLinesSourcing.builder()
-                .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+                .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
                 .lineId("1")
                 .orderedQuantity(5.0)
                 .endEstimatedDeliveryDate("2023-07-07T12:30:00")
@@ -1190,7 +1189,7 @@ public class TestUtil {
   public CoreEngineResponse getCoreEngineResponse6() {
     OrderLinesSourcing orderLinesSourcing1 =
         OrderLinesSourcing.builder()
-            .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+            .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
             .lineId("1")
             .orderedQuantity(5.0)
             .endEstimatedDeliveryDate("2023-07-06T12:30:00")
@@ -1204,7 +1203,7 @@ public class TestUtil {
             .build();
     OrderLinesSourcing orderLinesSourcing2 =
         OrderLinesSourcing.builder()
-            .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+            .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
             .lineId("2")
             .orderedQuantity(5.0)
             .endEstimatedDeliveryDate("2023-07-06T12:30:00")
@@ -1225,7 +1224,7 @@ public class TestUtil {
     List<OrderLinesSourcing> alternateOrderLinesSourcingList1 =
         Collections.singletonList(
             OrderLinesSourcing.builder()
-                .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+                .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
                 .lineId("1")
                 .orderedQuantity(5.0)
                 .endEstimatedDeliveryDate("2023-07-07T12:30:00")
@@ -1240,7 +1239,7 @@ public class TestUtil {
     List<OrderLinesSourcing> alternateOrderLinesSourcingList2 =
         Collections.singletonList(
             OrderLinesSourcing.builder()
-                .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+                .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
                 .lineId("2")
                 .orderedQuantity(5.0)
                 .endEstimatedDeliveryDate("2023-07-07T12:30:00")
@@ -1288,7 +1287,7 @@ public class TestUtil {
   public CoreEngineResponse getCoreEngineResponse7() {
     OrderLinesSourcing orderLinesSourcing1 =
         OrderLinesSourcing.builder()
-            .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+            .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
             .lineId("1")
             .orderedQuantity(5.0)
             .endEstimatedDeliveryDate("2023-07-06T12:30:00")
@@ -1302,7 +1301,7 @@ public class TestUtil {
             .build();
     OrderLinesSourcing orderLinesSourcing2 =
         OrderLinesSourcing.builder()
-            .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+            .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
             .lineId("2")
             .orderedQuantity(5.0)
             .endEstimatedDeliveryDate("2023-07-06T12:30:00")
@@ -1326,7 +1325,7 @@ public class TestUtil {
     List<OrderLinesSourcing> alternateOrderLinesSourcingList1 =
         Collections.singletonList(
             OrderLinesSourcing.builder()
-                .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+                .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
                 .lineId("1")
                 .orderedQuantity(5.0)
                 .endEstimatedDeliveryDate("2023-07-07T12:30:00")
@@ -1341,7 +1340,7 @@ public class TestUtil {
     List<OrderLinesSourcing> alternateOrderLinesSourcingList2 =
         Collections.singletonList(
             OrderLinesSourcing.builder()
-                .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+                .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
                 .lineId("2")
                 .orderedQuantity(5.0)
                 .endEstimatedDeliveryDate("2023-07-07T12:30:00")
@@ -1387,7 +1386,7 @@ public class TestUtil {
   public CoreEngineResponse getCoreEngineResponse8() {
     OrderLinesSourcing orderLinesSourcing =
         OrderLinesSourcing.builder()
-            .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+            .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
             .lineId("1")
             .orderedQuantity(5.0)
             .endEstimatedDeliveryDate("2023-07-06T12:30:00")
@@ -1406,7 +1405,7 @@ public class TestUtil {
     List<OrderLinesSourcing> alternateOrderLinesSourcingList =
         Collections.singletonList(
             OrderLinesSourcing.builder()
-                .item(SourcingItem.builder().unitOfMeasure("each").itemId("phones").build())
+                .item(ItemResponse.builder().itemId("phones").unitOfMeasure("each").build())
                 .lineId("1")
                 .orderedQuantity(5.0)
                 .endEstimatedDeliveryDate("2023-07-07T12:30:00")
