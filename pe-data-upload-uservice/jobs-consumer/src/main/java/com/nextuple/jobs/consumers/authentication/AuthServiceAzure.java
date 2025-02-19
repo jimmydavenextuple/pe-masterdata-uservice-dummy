@@ -9,19 +9,15 @@ package com.nextuple.jobs.consumers.authentication;
 
 import com.nextuple.jobs.framework.common.domain.pojo.RecordDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.kafka.support.converter.KafkaMessageHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-@ConditionalOnProperty(value = "dataupload.type", havingValue = "BLOB")
+@Conditional({CustomAuthCondition.class})
 public class AuthServiceAzure implements AuthService {
-
-  @Value("${jobs-framework.kafka-publish.topic-name}")
-  String dashboardProducerName;
 
   @Override
   public void checkAuthExpiry(KafkaMessageHeaders kafkaMessageHeaders) {

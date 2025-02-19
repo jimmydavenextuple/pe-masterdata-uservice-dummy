@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
     topics = "#{'${spring.kafka.consumer-item.topics.item_master.names}'.split(',')}",
     groupId = "${spring.kafka.consumer-item.topics.item_master.group-id}",
     autoStartup = "#{'${spring.kafka.consumer-item.type}' == 'json'}",
-    containerFactory = "ItemDeserializerConsumer")
+    containerFactory = "${item.feed.consumer-factory:ItemDeserializerConsumer}")
 public class ItemMasterConsumerJSON {
 
   private static final Logger logger = LoggerFactory.getLogger(ItemMasterConsumerJSON.class);

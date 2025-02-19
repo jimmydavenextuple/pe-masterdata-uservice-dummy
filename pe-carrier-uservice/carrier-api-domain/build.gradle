@@ -10,7 +10,7 @@ bootJar {
 }
 
 dependencies {
-    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:postgresql:42.7.2'
     implementation(project(":pe-common:common-util"))
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }

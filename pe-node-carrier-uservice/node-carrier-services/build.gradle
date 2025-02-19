@@ -12,7 +12,7 @@ bootJar {
 
 
 dependencies {
-    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:postgresql:42.7.2'
     implementation(project(":pe-configuration-uservice:configuration-api-domain"))
 
     implementation(project(":pe-node-uservice:node-api-domain"))

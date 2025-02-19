@@ -1,4 +1,5 @@
 plugins {
+    id 'java'
     id 'io.spring.dependency-management' version '1.1.4'
 }
 
@@ -17,12 +18,12 @@ dependencies {
     implementation(project(":pe-common:common-util"))
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
     implementation(project(":pe-data-upload-uservice:data-upload-common-util"))
-    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:postgresql:42.7.2'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
-    implementation("com.nextuple.pe:core-common-util:1.6.0-${build_target}")
+    implementation("com.nextuple.pe:core-common-util:1.6.53-${build_target}")
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))

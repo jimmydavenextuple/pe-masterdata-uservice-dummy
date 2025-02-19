@@ -27,6 +27,13 @@ dependencies {
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
+javadoc {
+    title = 'User Exit Services'
+    include(
+            'com/nextuple/common/userexit/ExitPointInvoker.java',
+            'com/nextuple/common/userexit/ExitPointJvmInvokerImpl.java',
+            'com/nextuple/common/userexit/IClassBasedExit.java')
+}
 
 tasks.named('test') {
     dependsOn ':pe-common:nfs-near-cache:core-near-cache-producer:jar'
