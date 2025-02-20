@@ -59,6 +59,8 @@ public class ConfigKeyConstants {
   public static final String TRANSFER_HORIZON_DAYS_CONFIG_KEY = "transfer-schedule-horizon-days";
   public static final String TRANSFER_SCHEDULE_WITH_CAPACITY_CONFIG_KEY =
       "transfer-schedule-with-capacity-enabled";
+  public static final String LOCKER_FACILITY_CONFIG_KEY = "locker-facility-enabled";
+  public static final String LOCKER_RESERVATION_PERIOD_CONFIG_KEY = "locker-reservation-period";
 
   public static final List<String> CONFIG_KEYS_MULTIPLE_VALUES_NOT_ALLOWED =
       List.of(SELECTED_ATTRIBUTE_FOR_TARGET_MARGINS_CONFIG_KEY);
