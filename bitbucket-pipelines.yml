@@ -183,6 +183,7 @@ server:
       sidecar-keycloak-plugin: yes
       middleman: no
       prometheus: yes
+      dockerbuild: yes
       storage: yes
       java-opts: "-Xms1024m -Xmx1024m"
       keyvault: yes
