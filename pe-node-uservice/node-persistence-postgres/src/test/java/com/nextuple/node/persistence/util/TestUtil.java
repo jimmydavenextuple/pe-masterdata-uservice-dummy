@@ -7,6 +7,7 @@
 
 package com.nextuple.node.persistence.util;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.node.persistence.domain.NodeDomainDto;
 import com.nextuple.node.persistence.entity.NodeEntity;
@@ -44,6 +45,8 @@ public class TestUtil {
         .city(CITY)
         .nodeType(NODE_TYPE)
         .nodeLabourTier(NODE_LABOUR_TIER)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .state(STATE)
         .build();
   }
@@ -56,6 +59,8 @@ public class TestUtil {
         .city(CITY)
         .nodeType(NODE_TYPE)
         .nodeLabourTier(NODE_LABOUR_TIER)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .state(STATE)
         .build();
   }
@@ -69,6 +74,8 @@ public class TestUtil {
         .nodeType(NODE_TYPE)
         .nodeLabourTier(NODE_LABOUR_TIER)
         .state(STATE)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -80,6 +87,8 @@ public class TestUtil {
         .city(CITY)
         .nodeType(NODE_TYPE)
         .nodeLabourTier(NODE_LABOUR_TIER)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .state(STATE)
         .build();
   }
