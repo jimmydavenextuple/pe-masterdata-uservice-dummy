@@ -12,11 +12,11 @@ import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.core.cache.domain.CacheValue;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 public class NodeDataCacheValue extends AdditionalAttributes implements CacheValue {
   @AttributePath(path = "/nodeId")
