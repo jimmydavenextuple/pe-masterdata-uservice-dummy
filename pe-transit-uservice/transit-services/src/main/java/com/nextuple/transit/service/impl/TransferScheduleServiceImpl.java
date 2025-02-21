@@ -215,10 +215,6 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
       DateTime startTimeDateTime = request.getStartTime().plusDays(horizonDays);
       startTimeBound = startTimeDateTime.withZone(DateTimeZone.UTC).toDate();
       startTimeLowerBound = request.getStartTime().withZone(DateTimeZone.UTC).toDate();
-      //      DateTime startTimeDateTime = request.getStartTime().plusDays(horizonDays);
-      //      startTimeBound =
-      // LocalDateTime.ofInstant(Instant.ofEpochMilli(startTimeDateTime.getMillis()),
-      // ZoneId.of(startTimeDateTime.getZone().getID()));
     }
     // end time bound is the minimum allowed end time for the transfer schedule
     Date endTimeBound = null;
@@ -228,10 +224,6 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
       DateTime endTimeDateTime = request.getEndTime().minusDays(pastDays);
       endTimeBound = endTimeDateTime.withZone(DateTimeZone.UTC).toDate();
       endTimeUpperBound = request.getEndTime().withZone(DateTimeZone.UTC).toDate();
-      //      DateTime endTimeDateTime = request.getEndTime().minusDays(pastDays);
-      //      endTimeBound =
-      // LocalDateTime.ofInstant(Instant.ofEpochMilli(endTimeDateTime.getMillis()),
-      // ZoneId.of(endTimeDateTime.getZone().getID()));
     }
     TransferScheduleDomainRequest domainRequest =
         TransferScheduleDomainRequest.builder()
