@@ -15,6 +15,7 @@ import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
@@ -29,7 +30,7 @@ public interface TransferScheduleFeignImpl
   BaseResponse<List<TransferScheduleResponse>> fetchTransferSchedules(
       @PathVariable String orgId, @PathVariable String dropoffNodeId);
 
-  @GetMapping("/transfer-schedule/time-range")
+  @PostMapping("/transfer-schedule/time-range")
   BaseResponse<List<TransferScheduleResponse>> fetchTransferSchedulesInRange(
       @RequestBody TransferScheduleRangeRequest transferScheduleRangeRequest);
 }

@@ -47,6 +47,7 @@ public class TransferScheduleFeignClientServiceImpl
       TransferScheduleRangeRequest startTimeRequest =
           TransferScheduleRangeRequest.builder()
               .orgId(key.getOrgId())
+              .dropoffNodeId(key.getDropoffNode())
               .rule(key.getRule())
               .ruleName(key.getRuleName())
               .startTime(startTime)
@@ -58,6 +59,7 @@ public class TransferScheduleFeignClientServiceImpl
       TransferScheduleRangeRequest endTimeRequest =
           TransferScheduleRangeRequest.builder()
               .orgId(key.getOrgId())
+              .dropoffNodeId(key.getDropoffNode())
               .rule(key.getRule())
               .ruleName(key.getRuleName())
               .endTime(endTime)
