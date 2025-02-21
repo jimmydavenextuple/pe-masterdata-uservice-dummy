@@ -11,16 +11,23 @@ import feign.RequestTemplate;
 import feign.Target;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class FeignClientInterceptorTest {
+class FeignInterceptorTest {
 
-  @InjectMocks private FeignClientInterceptor feignClientInterceptor;
+  @InjectMocks private FeignInterceptor feignClientInterceptor;
+
+  @BeforeEach
+  public void init() {
+    MockitoAnnotations.openMocks(this);
+  }
 
   @DisplayName(
       "Should set `tenantId`, `correlationId`, `username`, `apiKey` as null using constructor")
@@ -136,7 +143,6 @@ class FeignClientInterceptorTest {
     assertTrue(
         requestTemplate.headers().get(CommonConstants.AUTHORIZATION_HEADER).contains(authorization),
         "authorization");
-    assertFalse(requestTemplate.headers().get("x-api-key").isEmpty());
   }
 
   @DisplayName(

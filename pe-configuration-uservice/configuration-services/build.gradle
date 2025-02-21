@@ -24,7 +24,7 @@ dependencies {
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 
 
-    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:postgresql:42.7.2'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
 

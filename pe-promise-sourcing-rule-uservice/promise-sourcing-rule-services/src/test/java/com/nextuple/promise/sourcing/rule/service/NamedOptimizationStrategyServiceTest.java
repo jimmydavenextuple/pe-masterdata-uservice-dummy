@@ -686,6 +686,141 @@ class NamedOptimizationStrategyServiceTest {
   }
 
   @Test
+  @DisplayName(
+      "When optional attribute is part of sourcing attr rule for is not present in group def")
+  void processGetOptimizationStrategyByOrgIdAndGroupIdsNoOptionalAttrTest()
+      throws PromiseEngineException, CommonServiceException {
+
+    NamedOptimizationStrategyDomainDto namedOptimizationStrategyEntity =
+        testUtil.getNamedOptimizationStrategyEntity();
+    List<NamedOptimizationStrategyDomainDto> namedOptimizationStrategyEntityList =
+        List.of(namedOptimizationStrategyEntity);
+
+    NamedOptimizationStrategyDomainDto namedOptimizationStrategyDto =
+        namedOptimizationStrategyEntityList.get(0);
+    GroupDefinitionDomainDto groupDef = testUtil.getGroupDefinitionEntity();
+    groupDef.setOptionalAttributesValue(null);
+    when(groupDefinitionPersistenceService.fetchGroupDefinitionByIdAndOrgId(
+            Long.valueOf(TestUtil.GROUP_ID), TestUtil.ORG_ID))
+        .thenReturn(Optional.of(testUtil.getGroupDefinitionEntity()));
+
+    when(namedOptimizationStrategyPersistenceService.fetchOptimizationStrategyByOrgIdAndGroupId(
+            anyString(), anyString()))
+        .thenReturn(List.of(namedOptimizationStrategyDto));
+
+    doNothing()
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(anyString(), any(), any(), any(), any());
+
+    SourcingAttributesDefinitionDomainDto sourcingAttrDefDto =
+        new SourcingAttributesDefinitionDomainDto();
+    sourcingAttrDefDto.setName("Test");
+    sourcingAttrDefDto.setReqAttributes("123:456");
+    sourcingAttrDefDto.setOptAttributes("789:012");
+    sourcingAttrDefDto.setOrgId(TestUtil.ORG_ID);
+    sourcingAttrDefDto.setModule("Test");
+
+    when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityById(
+            Long.valueOf(1L)))
+        .thenReturn(Optional.of(sourcingAttrDefDto));
+
+    DetailedOptimizationStrategyResponse response =
+        namedOptimizationStrategyService.processGetOptimizationStrategyByOrgIdAndGroupId(
+            TestUtil.ORG_ID, TestUtil.GROUP_ID);
+    Assertions.assertNotNull(response);
+  }
+
+  @Test
+  @DisplayName("Sourcing attr def not found")
+  void processGetOptimizationStrategyByOrgIdAndGroupIdsNoSourcingAttrTest()
+      throws PromiseEngineException, CommonServiceException {
+
+    NamedOptimizationStrategyDomainDto namedOptimizationStrategyEntity =
+        testUtil.getNamedOptimizationStrategyEntity();
+    List<NamedOptimizationStrategyDomainDto> namedOptimizationStrategyEntityList =
+        List.of(namedOptimizationStrategyEntity);
+
+    NamedOptimizationStrategyDomainDto namedOptimizationStrategyDto =
+        namedOptimizationStrategyEntityList.get(0);
+    GroupDefinitionDomainDto groupDef = testUtil.getGroupDefinitionEntity();
+    groupDef.setOptionalAttributesValue(null);
+    when(groupDefinitionPersistenceService.fetchGroupDefinitionByIdAndOrgId(
+            Long.valueOf(TestUtil.GROUP_ID), TestUtil.ORG_ID))
+        .thenReturn(Optional.of(testUtil.getGroupDefinitionEntity()));
+
+    when(namedOptimizationStrategyPersistenceService.fetchOptimizationStrategyByOrgIdAndGroupId(
+            anyString(), anyString()))
+        .thenReturn(List.of(namedOptimizationStrategyDto));
+
+    doNothing()
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(anyString(), any(), any(), any(), any());
+
+    SourcingAttributesDefinitionDomainDto sourcingAttrDefDto =
+        new SourcingAttributesDefinitionDomainDto();
+    sourcingAttrDefDto.setName("Test");
+    sourcingAttrDefDto.setReqAttributes("123:456");
+    sourcingAttrDefDto.setOptAttributes("789:012");
+    sourcingAttrDefDto.setOrgId(TestUtil.ORG_ID);
+    sourcingAttrDefDto.setModule("Test");
+
+    when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityById(
+            Long.valueOf(1L)))
+        .thenReturn(Optional.empty());
+
+    DetailedOptimizationStrategyResponse response =
+        namedOptimizationStrategyService.processGetOptimizationStrategyByOrgIdAndGroupId(
+            TestUtil.ORG_ID, TestUtil.GROUP_ID);
+    Assertions.assertNotNull(response);
+    Assertions.assertNull(response.getOptionalAttributes());
+    Assertions.assertNull(response.getRequiredAttributes());
+  }
+
+  @Test
+  @DisplayName("When optional attribute is part of sourcing attr rule for is present in group def")
+  void processGetOptimizationStrategyByOrgIdAndGroupIdsTest()
+      throws PromiseEngineException, CommonServiceException {
+
+    NamedOptimizationStrategyDomainDto namedOptimizationStrategyEntity =
+        testUtil.getNamedOptimizationStrategyEntity();
+    List<NamedOptimizationStrategyDomainDto> namedOptimizationStrategyEntityList =
+        List.of(namedOptimizationStrategyEntity);
+
+    NamedOptimizationStrategyDomainDto namedOptimizationStrategyDto =
+        namedOptimizationStrategyEntityList.get(0);
+    GroupDefinitionDomainDto groupDef = testUtil.getGroupDefinitionEntity();
+    groupDef.setOptionalAttributesValue("V3:V4");
+    when(groupDefinitionPersistenceService.fetchGroupDefinitionByIdAndOrgId(
+            Long.valueOf(TestUtil.GROUP_ID), TestUtil.ORG_ID))
+        .thenReturn(Optional.of(groupDef));
+
+    when(namedOptimizationStrategyPersistenceService.fetchOptimizationStrategyByOrgIdAndGroupId(
+            anyString(), anyString()))
+        .thenReturn(List.of(namedOptimizationStrategyDto));
+
+    doNothing()
+        .when(fetchRulesUtil)
+        .getRequiredAttributeDetails(anyString(), any(), any(), any(), any());
+
+    SourcingAttributesDefinitionDomainDto sourcingAttrDefDto =
+        new SourcingAttributesDefinitionDomainDto();
+    sourcingAttrDefDto.setName("Test");
+    sourcingAttrDefDto.setReqAttributes("123:456");
+    sourcingAttrDefDto.setOptAttributes("789:012");
+    sourcingAttrDefDto.setOrgId(TestUtil.ORG_ID);
+    sourcingAttrDefDto.setModule("Test");
+
+    when(sourcingAttributesDefinitionDomain.getSourcingRuleAttributesDefinitionEntityById(
+            Long.valueOf(1L)))
+        .thenReturn(Optional.of(sourcingAttrDefDto));
+
+    DetailedOptimizationStrategyResponse response =
+        namedOptimizationStrategyService.processGetOptimizationStrategyByOrgIdAndGroupId(
+            TestUtil.ORG_ID, TestUtil.GROUP_ID);
+    Assertions.assertNotNull(response);
+  }
+
+  @Test
   void getOptimizationRuleByOrgIdAndNamedOptimizationStrategyResponsesHappyPath()
       throws PromiseEngineException, CommonServiceException {
 

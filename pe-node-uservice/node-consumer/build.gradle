@@ -14,7 +14,7 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
-    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:postgresql:42.7.2'
     implementation(project(":pe-common:common-util"))
     implementation(project(":pe-common:common-postgres"))
     implementation(project(":pe-common:master-data-integration-framework"))

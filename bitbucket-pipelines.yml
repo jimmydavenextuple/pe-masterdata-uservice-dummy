@@ -74,8 +74,8 @@ server:
       middleman: no
       prometheus: yes
       storage: yes
-      dockerbuild: yes
-      java-opts: "-Xms1024m -Xmx1024m"
+      java-opts: "-Xms1024m -Xmx1024m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/mnt/heapdumps"
+      heapvolume: yes
       keyvault: yes
       scale:
         replicas: 1
@@ -125,7 +125,8 @@ server:
       middleman: no
       prometheus: yes
       storage: yes
-      java-opts: "-Xms1024m -Xmx1024m"
+      java-opts: "-Xms1024m -Xmx1024m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/mnt/heapdumps"
+      heapvolume: yes
       keyvault: yes
       scale:
         replicas: 1

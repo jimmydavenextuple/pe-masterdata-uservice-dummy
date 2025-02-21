@@ -18,7 +18,7 @@ dependencies {
     implementation(project(":pe-data-upload-uservice:data-upload-services"))
 
     implementation 'com.opencsv:opencsv:5.9'
-    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:postgresql:42.7.2'
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
     runtimeOnly 'org.apache.commons:commons-csv'

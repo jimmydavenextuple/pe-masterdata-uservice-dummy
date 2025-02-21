@@ -54,6 +54,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -917,6 +918,7 @@ class SourcingRulesConfigurationServiceTest {
 
   @Test
   void processFetchSourcingRulesTest3() throws PromiseEngineException, CommonServiceException {
+    ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
     SourcingAttributeValuesInfo sourcingAttributeValuesInfo = new SourcingAttributeValuesInfo();
     sourcingAttributeValuesInfo.setRequiredAttributesValue(TestUtil.SOURCING_RULE);
     sourcingAttributeValuesInfo.setOptionalAttributesValue("V3:V4");
@@ -957,7 +959,7 @@ class SourcingRulesConfigurationServiceTest {
     when(sourcingAttributePersistenceService.getSourcingAttributeById(anyLong()))
         .thenReturn(Optional.of(testUtil.getSourcingAttributeEntity()));
     when(ruleRetrievalService.filterAllMatchingRulesByScoring(any(), any(), any(), anyInt(), any()))
-        .thenReturn(sourcingRulesConfigurationEntityList);
+        .thenReturn(List.of());
     when(ruleRetrievalFactory.getRuleRetrievalService(any())).thenReturn(ruleRetrievalService);
 
     doAnswer(
@@ -1014,9 +1016,11 @@ class SourcingRulesConfigurationServiceTest {
     assertEquals(
         2, fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getOptionalAttributes().size());
 
-    verify(sourcingRulesConfigurationPersistenceService, times(1))
+    verify(sourcingRulesConfigurationPersistenceService, times(2))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
-            anyString(), anyLong(), anyString());
+            anyString(), anyLong(), argumentCaptor.capture());
+    List<String> capturedArguments = argumentCaptor.getAllValues();
+    assertEquals("DEFAULT", capturedArguments.get(1));
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
   }

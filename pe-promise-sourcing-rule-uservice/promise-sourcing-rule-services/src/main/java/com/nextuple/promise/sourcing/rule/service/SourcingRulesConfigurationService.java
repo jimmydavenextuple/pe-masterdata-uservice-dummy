@@ -689,12 +689,9 @@ public class SourcingRulesConfigurationService {
               optionalAttributeSizeFromDefinition,
               attributeDefinitionResponse);
     }
-    PromiseSourcingRuleUtil.validateNoRulesFound(
-        fetchSourcingRulesRequest.getOrgId(),
-        fetchSourcingRulesRequest.getSourcingAttributesDefinitionId(),
-        fetchSourcingRulesRequest.getSourcingAttributeValuesInfo(),
-        bestRules,
-        "Sourcing Rules not found for %s rule.".formatted(generatedRule));
+    if (bestRules.isEmpty()) {
+      return getDefaultSourcingRules(fetchSourcingRulesRequest);
+    }
     return FetchSourcingRulesResponse.builder()
         .sourcingRulesInfo(getSourcingRulesInfo(bestRules.getFirst()))
         .build();

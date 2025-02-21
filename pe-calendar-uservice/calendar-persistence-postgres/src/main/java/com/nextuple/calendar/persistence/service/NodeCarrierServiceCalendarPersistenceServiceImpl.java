@@ -151,7 +151,10 @@ public class NodeCarrierServiceCalendarPersistenceServiceImpl
   public List<NodeCarrierServiceCalendarDomainDto> getAllNodeCarrierServiceCalendarsByOrgId(
       String orgId) throws CalendarDomainException {
     try {
-      return getMapper().toDomain(getRepository().findAllNodeCarrierServiceCalendarsByOrgId(orgId));
+      return getMapper()
+          .toDomain(
+              getRepository()
+                  .findAllNodeCarrierServiceCalendarsByOrgIdOrderByCreatedDateDesc(orgId));
     } catch (Exception e) {
       throw new CalendarDomainException(
           "Unable to fetch all node carrier service calendars", e, null, null, null, null);

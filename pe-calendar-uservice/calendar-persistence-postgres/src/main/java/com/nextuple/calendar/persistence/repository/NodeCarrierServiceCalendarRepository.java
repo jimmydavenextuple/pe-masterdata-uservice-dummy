@@ -50,7 +50,8 @@ public interface NodeCarrierServiceCalendarRepository
   @Query(value = "SELECT * FROM node_carrier_service_calendars LIMIT ?1", nativeQuery = true)
   List<NodeCarrierServiceCalendarEntity> findAllNodeCarrierServiceCalendars(Integer limit);
 
-  List<NodeCarrierServiceCalendarEntity> findAllNodeCarrierServiceCalendarsByOrgId(String orgId);
+  List<NodeCarrierServiceCalendarEntity>
+      findAllNodeCarrierServiceCalendarsByOrgIdOrderByCreatedDateDesc(String orgId);
 
   List<NodeCarrierServiceCalendarEntity> findAllNodeCarrierServiceCalendarsByOrgIdAndNodeId(
       String orgId, String nodeId);

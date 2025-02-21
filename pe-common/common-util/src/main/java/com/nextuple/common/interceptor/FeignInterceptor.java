@@ -7,24 +7,16 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class FeignClientInterceptor implements RequestInterceptor {
-
-  @Value("${api-key}")
-  private String apiKey;
+public class FeignInterceptor implements RequestInterceptor {
 
   @Override
   public void apply(RequestTemplate requestTemplate) {
 
     log.debug("------ Inside FeignClientInterceptor ------");
-
-    if (!requestTemplate.headers().containsKey(CommonConstants.HEADER_PLATFORM_API_KEY)) {
-      requestTemplate.header(CommonConstants.HEADER_PLATFORM_API_KEY, apiKey);
-    }
 
     // Attach Authorization header
     if (!requestTemplate.headers().containsKey(CommonConstants.AUTHORIZATION_HEADER)

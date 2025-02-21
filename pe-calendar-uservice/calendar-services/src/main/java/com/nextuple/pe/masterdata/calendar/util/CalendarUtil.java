@@ -18,9 +18,12 @@ import com.nextuple.calendar.persistence.domain.NodeCarrierServiceCalendarDomain
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
@@ -46,12 +49,17 @@ public class CalendarUtil {
       String startDate, String endDate, List<NodeCalendarDomainDto> nodeCalendarDomainDtoList) {
     return nodeCalendarDomainDtoList.stream()
         .filter(
-            x ->
-                x.getEffectiveDate().compareTo(startDate) > 0
-                    && x.getEffectiveDate().compareTo(endDate) <= 0)
+            dto ->
+                dto.getEffectiveDate().compareTo(startDate) > 0
+                    && dto.getEffectiveDate().compareTo(endDate) <= 0)
         .collect(
             Collectors.toMap(
-                NodeCalendarDomainDto::getEffectiveDate, NodeCalendarDomainDto::getCalendarId));
+                NodeCalendarDomainDto::getEffectiveDate,
+                Function.identity(),
+                BinaryOperator.maxBy(Comparator.comparing(NodeCalendarDomainDto::getCreatedDate))))
+        .entrySet()
+        .stream()
+        .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getCalendarId()));
   }
 
   public static Map<String, String> getNextCarrierCalendarIds(
