@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class FileMetaDataServiceTest {
 
@@ -33,7 +32,7 @@ class FileMetaDataServiceTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    MockMvcBuilders.standaloneSetup(fileMetadataService).build();
+    //    MockMvcBuilders.standaloneSetup(fileMetadataService).build();
   }
 
   @Test

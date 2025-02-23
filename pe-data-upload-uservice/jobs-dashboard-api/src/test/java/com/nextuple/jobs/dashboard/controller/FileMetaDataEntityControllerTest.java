@@ -28,7 +28,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class FileMetaDataControllerTest {
 
@@ -45,7 +44,7 @@ class FileMetaDataControllerTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    MockMvcBuilders.standaloneSetup(fileMetadataController).build();
+    //        MockMvcBuilders.standaloneSetup(fileMetadataController).build();
   }
 
   @Test

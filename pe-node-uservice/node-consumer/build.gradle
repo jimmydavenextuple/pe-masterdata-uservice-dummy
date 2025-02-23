@@ -18,7 +18,7 @@ dependencies {
     implementation(project(":pe-common:common-util"))
     implementation(project(":pe-common:common-postgres"))
     implementation(project(":pe-common:master-data-integration-framework"))
-    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.1'
     implementation(project(":pe-node-uservice:node-api-domain"))
     implementation(project(":pe-node-uservice:node-services"))
     implementation(project(":pe-node-uservice:node-persistence-domain"))

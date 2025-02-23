@@ -46,7 +46,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -64,7 +63,7 @@ class JobDashboardControllerTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    MockMvcBuilders.standaloneSetup(jobDashboardController).build();
+    //    MockMvcBuilders.standaloneSetup(jobDashboardController).build();
   }
 
   @Test

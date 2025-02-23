@@ -25,7 +25,7 @@ dependencies {
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
 
 
-    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.1'
 }
 
 sourceCompatibility = JavaVersion.VERSION_21

@@ -40,7 +40,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -57,7 +56,7 @@ class JobControllerTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    MockMvcBuilders.standaloneSetup(jobsConsumerController).build();
+    //    MockMvcBuilders.standaloneSetup(jobsConsumerController).build();
   }
 
   @Test
