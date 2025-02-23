@@ -148,8 +148,9 @@ subprojects {
         // Dependency version override to resolve high CVE coming transitively for tomcat-embed-core
         implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.2'
         // Dependency version override to resolve low CVE for spring web
-        implementation 'org.springframework:spring-web:6.0.23'
+//        implementation 'org.springframework:spring-web:6.0.23'
         implementation 'io.netty:netty-handler:4.1.118.Final'
+        implementation 'net.minidev:json-smart:2.5.2'
 
         runtimeOnly 'org.postgresql:postgresql:42.7.2'
 
@@ -360,8 +361,6 @@ dependencies {
     api "io.micrometer:micrometer-registry-prometheus:1.10.7"
     implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.17.0'
     implementation 'org.jetbrains:annotations:16.0.2'
-//    implementation 'org.springframework.cloud:spring-cloud-starter-parent:2024.0.0'
-
 
     // Dependency version override to resolve high CVE coming transitively for tomcat-embed-core
     implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.2'
