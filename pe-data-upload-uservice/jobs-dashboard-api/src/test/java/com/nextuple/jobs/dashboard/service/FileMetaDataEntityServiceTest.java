@@ -32,7 +32,6 @@ class FileMetaDataServiceTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    //    MockMvcBuilders.standaloneSetup(fileMetadataService).build();
   }
 
   @Test

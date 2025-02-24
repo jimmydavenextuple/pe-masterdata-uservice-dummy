@@ -68,7 +68,6 @@ class JobConsumerServiceTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    //    MockMvcBuilders.standaloneSetup(jobConsumerService).build();
   }
 
   @Nested

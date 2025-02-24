@@ -56,7 +56,6 @@ class JobControllerTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    //    MockMvcBuilders.standaloneSetup(jobsConsumerController).build();
   }
 
   @Test

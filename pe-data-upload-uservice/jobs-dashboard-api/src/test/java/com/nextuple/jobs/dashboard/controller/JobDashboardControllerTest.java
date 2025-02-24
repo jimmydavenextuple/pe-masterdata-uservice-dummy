@@ -63,7 +63,6 @@ class JobDashboardControllerTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    //    MockMvcBuilders.standaloneSetup(jobDashboardController).build();
   }
 
   @Test

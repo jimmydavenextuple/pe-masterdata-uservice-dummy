@@ -44,7 +44,6 @@ class PublishJobEventServiceTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    //    MockMvcBuilders.standaloneSetup(publishJobEventService).build();
     ReflectionTestUtils.setField(publishJobEventService, "resultPublishTopicName", "topicName");
   }
 
