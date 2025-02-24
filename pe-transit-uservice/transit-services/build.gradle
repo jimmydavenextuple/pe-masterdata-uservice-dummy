@@ -28,6 +28,8 @@ dependencies {
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
     implementation(project(":pe-data-upload-uservice:data-upload-common-util"))
     implementation(project(":pe-node-uservice:node-api-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-services"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
 
     implementation "org.springframework.kafka:spring-kafka"
     implementation 'org.apache.commons:commons-csv:1.5'
