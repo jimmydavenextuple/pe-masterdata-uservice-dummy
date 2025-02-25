@@ -7,10 +7,14 @@
 package com.nextuple.item.config;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.item.TestUtil;
 import com.nextuple.masterdata.config.KafkaConsumerConfigs;
+import io.micrometer.core.instrument.MockClock;
+import io.micrometer.core.instrument.simple.SimpleConfig;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.util.HashMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +31,9 @@ class KafkaConsumerConfigsTest {
 
   @InjectMocks KafkaConsumerConfigs consumerConfigs;
   @InjectMocks TestUtil testUtil;
-
+  private static final MockClock clock = new MockClock();
+  private static final SimpleMeterRegistry meterRegistry =
+      new SimpleMeterRegistry(SimpleConfig.DEFAULT, clock);
   @Mock KafkaProperties kafkaProperties;
 
   @Mock KafkaOperations<Object, Object> kafkaOperations;
@@ -35,6 +41,7 @@ class KafkaConsumerConfigsTest {
   @BeforeEach
   void init() {
     MockitoAnnotations.openMocks(this);
+    ReflectionTestUtils.setField(consumerConfigs, "meterRegistry", meterRegistry);
     ReflectionTestUtils.setField(consumerConfigs, "kafkaProperties", kafkaProperties);
     ReflectionTestUtils.setField(consumerConfigs, "listenerConcurrency", 1);
     //        ReflectionTestUtils.setField(consumerConfigs, "retryDuration", 0);
@@ -69,13 +76,13 @@ class KafkaConsumerConfigsTest {
 
   @Test
   void jsonDeserializerPropertiesTest() {
-    when(kafkaProperties.buildConsumerProperties()).thenReturn(testUtil.getJsonProps());
+    when(kafkaProperties.buildConsumerProperties(any())).thenReturn(testUtil.getJsonProps());
     Assertions.assertNotNull(consumerConfigs.jsonDeserializerProperties());
   }
 
   @Test
   void jsonContainerFactoryTest() {
-    when(kafkaProperties.buildConsumerProperties()).thenReturn(testUtil.getJsonProps());
+    when(kafkaProperties.buildConsumerProperties(any())).thenReturn(testUtil.getJsonProps());
     assertDoesNotThrow(
         () ->
             consumerConfigs.jsonKafkaContainerListenerFactory(

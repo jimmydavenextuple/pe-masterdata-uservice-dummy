@@ -78,13 +78,13 @@ public class KafkaConsumerConfigs {
   @Bean("jsonDeserializerProperties")
   @ConfigurationProperties(prefix = "spring.kafka.consumer")
   public Map<String, Object> jsonDeserializerProperties() {
-    return this.kafkaProperties.buildConsumerProperties();
+    return this.kafkaProperties.buildConsumerProperties(null);
   }
 
   @Bean("itemDeserializerProperties")
   @ConfigurationProperties(prefix = "spring.kafka.consumer-item")
   public Map<String, Object> itemDeserializerProperties() {
-    return this.kafkaProperties.buildConsumerProperties();
+    return this.kafkaProperties.buildConsumerProperties(null);
   }
 
   @Bean
