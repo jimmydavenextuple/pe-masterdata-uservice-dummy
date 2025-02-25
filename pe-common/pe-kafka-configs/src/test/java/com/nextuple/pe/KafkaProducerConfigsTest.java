@@ -33,7 +33,7 @@ class KafkaProducerConfigsTest {
         Map.of(
             "key.serializer", "org.apache.kafka.common.serialization.StringSerializer",
             "value.serializer", "org.apache.kafka.common.serialization.JsonSerializer");
-    when(kafkaProperties.buildProducerProperties()).thenReturn(itemSerializerProperties);
+    when(kafkaProperties.buildProducerProperties(null)).thenReturn(itemSerializerProperties);
     KafkaTemplate<String, Object> kafkaTemplate = kafkaProducerConfigs.itemKafkaTemplate();
     assertNotNull(kafkaTemplate);
   }
@@ -47,7 +47,7 @@ class KafkaProducerConfigsTest {
             "acks", "1",
             "interceptor.classes", "interceptor.class");
 
-    when(kafkaProperties.buildProducerProperties()).thenReturn(itemSerializerProperties);
+    when(kafkaProperties.buildProducerProperties(null)).thenReturn(itemSerializerProperties);
     KafkaTemplate<Object, Object> kafkaTemplate = kafkaProducerConfigs.jobEventKafkaTemplate();
     assertNotNull(kafkaTemplate);
   }
@@ -60,7 +60,7 @@ class KafkaProducerConfigsTest {
             "value.serializer", "org.apache.kafka.common.serialization.JsonSerializer",
             "acks", "1",
             "interceptor.classes", "interceptor.class");
-    when(kafkaProperties.buildProducerProperties()).thenReturn(itemSerializerProperties);
+    when(kafkaProperties.buildProducerProperties(null)).thenReturn(itemSerializerProperties);
     KafkaTemplate<String, RecordDto> kafkaTemplate = kafkaProducerConfigs.jobServiceKafkaTemplate();
     assertNotNull(kafkaTemplate);
   }
@@ -73,7 +73,7 @@ class KafkaProducerConfigsTest {
             "value.serializer", "org.apache.kafka.common.serialization.JsonSerializer",
             "acks", "1",
             "interceptor.classes", "interceptor.class");
-    when(kafkaProperties.buildProducerProperties()).thenReturn(itemSerializerProperties);
+    when(kafkaProperties.buildProducerProperties(null)).thenReturn(itemSerializerProperties);
     KafkaTemplate<String, LocalCacheUpdateEvent> kafkaTemplate =
         kafkaProducerConfigs.cacheUpdateKafkaTemplate();
     assertNotNull(kafkaTemplate);

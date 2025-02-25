@@ -67,10 +67,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.concurrent.ListenableFuture;
 
 class JobServiceTest {
 
@@ -101,7 +99,6 @@ class JobServiceTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    MockMvcBuilders.standaloneSetup(jobService).build();
     when(authTokenService.generateAuthToken()).thenReturn(testUtil.getAuthTokenResponse());
     Message<RecordDto> message = MessageBuilder.withPayload(testUtil.getRecordDto()).build();
     when(authService.setAuthHeaders(any())).thenReturn(message);
@@ -733,7 +730,6 @@ class JobServiceTest {
               23456L);
       when(jobDomain.getAndUpdateJobStatusByStatus(any(), any(), any(), any()))
           .thenReturn(jobEntity);
-      ListenableFuture<SendResult<String, Object>> future = mock(ListenableFuture.class);
 
       when(processFileContentsMapperFactory.getProcessFileContentsMapper(any()))
           .thenReturn(processFileContents);

@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":pe-common:common-util"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation 'org.springframework.kafka:spring-kafka'
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     api("org.springframework.cloud:spring-cloud-aws-context:2.2.6.RELEASE") {
         exclude group: 'software.amazon.ion', module: 'ion-java'
@@ -23,8 +23,8 @@ dependencies {
     implementation "com.azure:azure-identity:1.13.3"
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
     implementation 'commons-io:commons-io:2.13.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.3'
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }
 tasks.withType(Test).configureEach {
