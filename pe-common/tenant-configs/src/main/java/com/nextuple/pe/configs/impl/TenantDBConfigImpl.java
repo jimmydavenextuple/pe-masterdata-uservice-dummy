@@ -68,6 +68,9 @@ public class TenantDBConfigImpl implements ITenantConfig {
   @Value("${sourcing.DEFAULT.transfer-horizon-days:1}")
   public String defaultTransferScheduleHorizonDays;
 
+  @Value("${sourcing.DEFAULT.transfer-past-days:1}")
+  public String defaultTransferSchedulePastDays;
+
   @Value("${sourcing.DEFAULT.transfers-enabled:false}")
   public String defaultTransfersEnabled;
 
@@ -201,6 +204,12 @@ public class TenantDBConfigImpl implements ITenantConfig {
     return Integer.valueOf(
         getTenantConfiguration(
             TRANSFER_HORIZON_DAYS_CONFIG_KEY, defaultTransferScheduleHorizonDays));
+  }
+
+  @Override
+  public Integer getTransferSchedulePastDays() {
+    return Integer.valueOf(
+        getTenantConfiguration(TRANSFER_PAST_DAYS_CONFIG_KEY, defaultTransferSchedulePastDays));
   }
 
   @Override
