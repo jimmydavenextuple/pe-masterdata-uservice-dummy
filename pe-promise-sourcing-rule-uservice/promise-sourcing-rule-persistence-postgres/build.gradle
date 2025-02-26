@@ -14,8 +14,8 @@ dependencies {
 
     implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
     implementation(project(":pe-common:common-util"))
-    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.1'
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
     implementation(project(":pe-common:common-domain"))
     implementation(project(":pe-common:common-postgres"))

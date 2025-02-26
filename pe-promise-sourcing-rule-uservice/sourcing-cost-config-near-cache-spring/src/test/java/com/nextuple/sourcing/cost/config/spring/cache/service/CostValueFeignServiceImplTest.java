@@ -69,8 +69,7 @@ class CostValueFeignServiceImplTest {
     Mockito.when(
             costValueFeign.getCostValueForCostFactorCombinationKey(
                 anyString(), anyString(), anyString()))
-        .thenThrow(
-            new RetryableException(400, "Timeout", HttpMethod.GET, null, mock(Request.class)));
+        .thenThrow(new RetryableException(400, "Timeout", HttpMethod.GET, 1L, mock(Request.class)));
     var response = costValueFeignService.get(cacheKey);
 
     assertNotNull(response);
