@@ -18,7 +18,7 @@ dependencies {
     implementation(project(":pe-common:common-util"))
     implementation(project(":pe-common:common-postgres"))
     implementation(project(":pe-common:master-data-integration-framework"))
-    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.1'
     implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
     implementation(project(":pe-node-carrier-uservice:node-carrier-services"))
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'

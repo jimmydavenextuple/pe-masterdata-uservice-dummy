@@ -26,7 +26,6 @@ import org.springframework.data.annotation.LastModifiedBy;
 @MappedSuperclass
 @SuperBuilder
 public abstract class CommonBaseEntity extends BaseEntity {
-
   @CreatedBy
   @Column(name = "created_by", updatable = false)
   private String createdBy;

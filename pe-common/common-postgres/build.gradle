@@ -12,9 +12,8 @@ bootJar {
 dependencies {
     implementation(project(":pe-common:common-domain"))
 
-    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
-
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.1'
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
 }
 tasks.withType(Test).configureEach {
     useJUnitPlatform()

@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":pe-common:common-domain"))
     implementation(project(":pe-common:common-util"))
     implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api-domain"))
-    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.1'
 }
 tasks.withType(Test).configureEach {
     useJUnitPlatform()

@@ -8,21 +8,22 @@
 package com.nextuple.node.domain.outbound;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.node.domain.NodeConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class NodeResponse implements Serializable {
+public class NodeResponse extends AdditionalAttributes implements Serializable {
   @Schema(description = NodeConstants.NODE_ID, example = NodeConstants.NODE_ID_EXAMPLE)
   private String nodeId;
 
