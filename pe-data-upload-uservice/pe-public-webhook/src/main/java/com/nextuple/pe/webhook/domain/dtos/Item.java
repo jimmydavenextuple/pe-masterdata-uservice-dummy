@@ -1,18 +1,22 @@
 package com.nextuple.pe.webhook.domain.dtos;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.joda.time.DateTime;
 
 @Data
-@Builder
 @AllArgsConstructor
-public class Item {
+@NoArgsConstructor
+@SuperBuilder
+public class Item extends AdditionalAttributes implements Serializable {
   @NotBlank(message = "itemId can't be blank")
   private String itemId;
 
