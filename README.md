@@ -103,19 +103,58 @@ The **Promising Engine Master Data Service** is a unified microservice that cons
 ### Adding Azure Key Vault and Keycloak Configuration
 
 - **⚠️ Important:** Get `<client-id>`, `<client-key>`, and `<tenant-id>` from the DevOps / PE team.
-- Update `application-default.yml`:
-   ```yml
-   azure.keyvault:
-       client-id: <client-id>
-       client-key: <client-key>
-       enabled: true
-       tenant-id: <tenant-id>
-       uri: https://nextuple-dev.vault.azure.net/
-       secret-keys: "COMMON-MONGODB-CREDENTIAL,COMMON-KAFKA-CONFIG,COMMON-PE-API-KEY,KEYCLOAK-PRODUCT-CONFIG"
-   keycloak:
-       auth-server-url: "https://keycloak-nonprod.nextuple.com"
-   ```
+  - Update `application-default.yml`:
+     ```yml
+     azure.keyvault:
+         client-id: <client-id>
+         client-key: <client-key>
+         enabled: true
+         tenant-id: <tenant-id>
+         uri: https://nextuple-dev.vault.azure.net/
+         secret-keys: "COMMON-MONGODB-CREDENTIAL,COMMON-KAFKA-CONFIG,MASTER-DATA-KEYCLOAK-CLIENT-ID"
+     ```
+      ```yml
+      spring:
+        security:
+          oauth2:
+            client:
+              registration:
+                my-client:
+                  client-id: applicationclient-pe-masterdata-uservice
+                  client-secret: \${MASTER-DATA-KEYCLOAK-CLIENT-ID}
+                  authorization-grant-type: client_credentials
+                  scope: applicationclient-pe-masterdata-scope
+              provider:
+                my-client:
+                  token-uri: https://keycloak-nonprod.nextuple.com/realms/{realm-name}/protocol/openid-connect/token
+      ```
 
+    >   **NOTE:**  `{realm-name}` can be changed to the respective realm name. For example, in dev, it is `noms-dev`
+  
+      ```yml
+      neo-platform:
+        auth-injector:
+          token-strategy: generate
+          filter:
+            enabled: true
+          client-uri-mappings:
+            my-client: /**
+        auth-validator:
+          application-name: pe-masterdata
+          header:
+            tenant-id: x-tenant-id
+          issuer-uri: https://keycloak-nonprod.nextuple.com/realms/{realm-name}
+          authz-config:
+            config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
+            refresh-interval-mins: 30
+            role:
+              json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles
+    
+      ```
+
+    >   **NOTE:**  `config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"` is the path to the `plt-authz-config-uservice`. This service is used to get the roles and permissions for the application. This can be changed based on the environment. For example, in dev, it is `"https://internal-dev.nextuple.com/services/api/configurations/groups/application-group/scope-id/pe-masterdata"`
+
+    > **NOTE:** `token-strategy: generate` can be changed to `reuse` if running master data in standalone mode and it requires making external API calls..
 ---
 
 ### Running the Application
