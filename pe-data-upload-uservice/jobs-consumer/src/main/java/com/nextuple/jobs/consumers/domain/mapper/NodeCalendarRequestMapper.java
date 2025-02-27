@@ -44,7 +44,7 @@ public interface NodeCalendarRequestMapper {
 
   @AfterMapping
   default void convertExceptionDays(
-          CalendarDataUpload source, @MappingTarget CalendarRequest.CalendarRequestBuilder<?, ?> target)
+      CalendarDataUpload source, @MappingTarget CalendarRequest.CalendarRequestBuilder<?, ?> target)
       throws JsonProcessingException {
     var mapper = new ObjectMapper();
     target.exceptionDays(
