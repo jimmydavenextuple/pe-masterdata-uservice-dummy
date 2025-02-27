@@ -7,6 +7,7 @@
 
 package com.nextuple.configuration;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.configuration.inbound.ConfigMetadataRequest;
 import com.nextuple.configuration.inbound.ConfigMetadataUpdateRequest;
 import com.nextuple.configuration.inbound.TenantConfigdataRequest;
@@ -35,6 +36,8 @@ public class TestUtil {
     configMetadataDomainDto.setConfigKey(CONFIG_KEY);
     configMetadataDomainDto.setAppName(APP_NAME);
     configMetadataDomainDto.setDefaultConfigValue(DEFAULT_CONFIG_VALUE);
+    configMetadataDomainDto.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"));
     return configMetadataDomainDto;
   }
 
@@ -44,6 +47,8 @@ public class TestUtil {
     configMetadataDomainDto.setConfigKey(CONFIG_KEY);
     configMetadataDomainDto.setAppName(APP_NAME);
     configMetadataDomainDto.setDefaultConfigValue(DEFAULT_CONFIG_VALUE_2);
+    configMetadataDomainDto.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"));
     return configMetadataDomainDto;
   }
 
@@ -52,6 +57,8 @@ public class TestUtil {
         .configKey(CONFIG_KEY)
         .appName(APP_NAME)
         .defaultConfigValue(DEFAULT_CONFIG_VALUE)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -61,11 +68,17 @@ public class TestUtil {
         .configKey(CONFIG_KEY)
         .appName(APP_NAME)
         .defaultConfigValue(DEFAULT_CONFIG_VALUE)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
   public ConfigMetadataUpdateRequest getConfigMetadataUpdateRequest() {
-    return ConfigMetadataUpdateRequest.builder().defaultConfigValue(DEFAULT_CONFIG_VALUE_2).build();
+    return ConfigMetadataUpdateRequest.builder()
+        .defaultConfigValue(DEFAULT_CONFIG_VALUE_2)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
+        .build();
   }
 
   public TenantConfigdataDomainDto getTenantConfigdataDomainDto() {
@@ -74,6 +87,8 @@ public class TestUtil {
     tenantConfigdataDomainDto.setOrgId(ORG_ID);
     tenantConfigdataDomainDto.setConfigKey(CONFIG_KEY);
     tenantConfigdataDomainDto.setConfigValue(CONFIG_VALUE);
+    tenantConfigdataDomainDto.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"));
     return tenantConfigdataDomainDto;
   }
 
@@ -83,6 +98,8 @@ public class TestUtil {
     tenantConfigdataDomainDto.setOrgId(ORG_ID);
     tenantConfigdataDomainDto.setConfigKey(CONFIG_KEY);
     tenantConfigdataDomainDto.setConfigValue(CONFIG_VALUE_2);
+    tenantConfigdataDomainDto.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"));
     return tenantConfigdataDomainDto;
   }
 
@@ -91,6 +108,8 @@ public class TestUtil {
         .orgId(ORG_ID)
         .configKey(CONFIG_KEY)
         .configValue(CONFIG_VALUE)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -100,10 +119,16 @@ public class TestUtil {
         .orgId(ORG_ID)
         .configKey(CONFIG_KEY)
         .configValue(CONFIG_VALUE)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
   public TenantConfigdataUpdateRequest getTenantConfigdataUpdateRequest() {
-    return TenantConfigdataUpdateRequest.builder().configValue(CONFIG_VALUE_2).build();
+    return TenantConfigdataUpdateRequest.builder()
+        .configValue(CONFIG_VALUE_2)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
+        .build();
   }
 }

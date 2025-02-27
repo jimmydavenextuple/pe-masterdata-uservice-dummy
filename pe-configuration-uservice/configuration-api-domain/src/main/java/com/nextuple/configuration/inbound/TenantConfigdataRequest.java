@@ -7,19 +7,22 @@
 
 package com.nextuple.configuration.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-public class TenantConfigdataRequest implements Serializable {
+public class TenantConfigdataRequest extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = 7422930074580500512L;
 
