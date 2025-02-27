@@ -349,6 +349,12 @@ pipelines:
           trigger: manual
           deployment: prod
   branches:
+    qa_deployment:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy QA
+          deployment: qa
     vapt:
       - step: *build
       - step:

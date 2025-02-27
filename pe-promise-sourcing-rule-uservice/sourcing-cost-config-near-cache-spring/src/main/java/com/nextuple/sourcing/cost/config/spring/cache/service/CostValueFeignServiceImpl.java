@@ -17,9 +17,11 @@ import com.nextuple.sourcing.cost.config.spring.cache.mapper.CostValueMapper;
 import feign.FeignException.NotFound;
 import feign.RetryableException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CostValueFeignServiceImpl
     extends AbstractGenericFeignClientServiceImpl<
@@ -37,8 +39,10 @@ public class CostValueFeignServiceImpl
               key.getOrgId(), key.getCostItinerary(), key.getCostFactorCombinationKey()));
 
     } catch (NotFound ex) {
+      log.error("Cost value not found for key: {}", key, ex);
       return CostValueCacheValue.builder().build();
     } catch (RetryableException ex) {
+      log.error("RetryableException occurred while fetching cost value for key: {}", key, ex);
       return CostValueCacheValue.builder().masterDataException(ex).build();
     }
   }
