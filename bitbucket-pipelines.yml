@@ -146,6 +146,23 @@ server:
         max:
           memory: 1024Mi
           cpu: 256m 
+    performance:
+      ingress: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
+      prometheus: yes
+      storage: yes
+      java-opts: "-Xms1024m -Xmx1024m"
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 4Gi
+          cpu: 3
+        max:
+          memory: 4Gi
+          cpu: 3
     sperf:
       ingress: yes
       middleman: yes
@@ -361,6 +378,12 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy DevPE
           deployment: devpe
+    perf_deployment:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Performance
+          deployment: performance
     master:
       - step: *Clear-Cache
       - step: *build
