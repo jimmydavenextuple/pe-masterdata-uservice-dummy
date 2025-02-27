@@ -44,10 +44,10 @@ public interface NodeCalendarRequestMapper {
 
   @AfterMapping
   default void convertExceptionDays(
-      CalendarDataUpload source, @MappingTarget CalendarRequest target)
+          CalendarDataUpload source, @MappingTarget CalendarRequest.CalendarRequestBuilder<?, ?> target)
       throws JsonProcessingException {
     var mapper = new ObjectMapper();
-    target.setExceptionDays(
+    target.exceptionDays(
         StringUtils.hasLength(source.getExceptionDays())
             ? mapper.readValue(
                 source.getExceptionDays(), new TypeReference<List<ExceptionDays>>() {})
