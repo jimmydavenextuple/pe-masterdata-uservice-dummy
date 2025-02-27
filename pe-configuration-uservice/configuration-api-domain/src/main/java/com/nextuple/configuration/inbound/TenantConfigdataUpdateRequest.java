@@ -10,6 +10,8 @@ package com.nextuple.configuration.inbound;
 import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +25,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class TenantConfigdataUpdateRequest extends AdditionalAttributes implements Serializable {
+  @Serial
   private static final long serialVersionUID = 8888099156428428830L;
 
   @NotBlank(message = "configValue can't be empty")

@@ -8,6 +8,8 @@ package com.nextuple.configuration.outbound;
 
 import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -18,6 +20,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ConfigMetadataResponse extends AdditionalAttributes implements Serializable {
+  @Serial
   private static final long serialVersionUID = -9189650528221359798L;
 
   @Schema(description = "Unique identifier for configMetadata", example = "1")

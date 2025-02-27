@@ -10,6 +10,8 @@ package com.nextuple.configuration.outbound;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +25,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TenantConfigdataResponse extends AdditionalAttributes implements Serializable {
+  @Serial
   private static final long serialVersionUID = 3195946904038241015L;
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
