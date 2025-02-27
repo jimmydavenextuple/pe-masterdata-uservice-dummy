@@ -10,7 +10,6 @@ package com.nextuple.configuration.inbound;
 import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-
 import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
@@ -26,8 +25,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class TenantConfigdataRequest extends AdditionalAttributes implements Serializable {
 
-  @Serial
-  private static final long serialVersionUID = 7422930074580500512L;
+  @Serial private static final long serialVersionUID = 7422930074580500512L;
 
   @NotBlank(message = "orgId can't be empty")
   @Schema(description = "Unique identification of an organization", example = "NEXTUPLE")
