@@ -224,7 +224,7 @@ neo-platform:
       tenant-id: x-tenant-id
     issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev
     authz-config:
-      config-path: "https://internal-sandbox.nextuple.com/services/authz-config/api/configurations/groups/application-group/scope-id/pe-masterdata"
+      config-path: "http://plt-authz-config-uservice:8080/services/authz-config/api/configurations/groups/application-group/scope-id/pe-masterdata"
       refresh-interval-mins: 30
       role:
         json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles,\$.resource_access.applicationclient-pe-core-uservice.roles,\$.resource_access.applicationclient-pe-iv-cache.roles,\$.resource_access.applicationclient-pe-capacity-uservice.roles,\$.resource_access.applicationclient-pe-neip-uservice.roles
