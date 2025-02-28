@@ -23,7 +23,7 @@ spring:
   flyway:
     enabled: false
   kafka:
-    bootstrap-servers: "kbrk-nonprod.nextuple.net:9092"
+    bootstrap-servers: kbrk-nonprod.nextuple.net:9092
     properties:
       security.protocol: SASL_PLAINTEXT
       sasl.mechanism: SCRAM-SHA-256

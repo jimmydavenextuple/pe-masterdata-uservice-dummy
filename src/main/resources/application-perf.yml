@@ -191,8 +191,6 @@ master-data:
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
-
-
 next-cache:
   caches:
     -
