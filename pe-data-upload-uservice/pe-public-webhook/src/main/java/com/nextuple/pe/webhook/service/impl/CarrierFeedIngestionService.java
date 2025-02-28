@@ -26,7 +26,7 @@ public class CarrierFeedIngestionService
   @Value("${master-data.carrier.topic-names:null}")
   private String carrierFeedTopic;
 
-  @Value("${kafka-topic-flags.master-data.carrier.enabled:true}")
+  @Value("${kafka-topic-flags.master-data.carrier.enabled:false}")
   private boolean isPublishEnabled;
 
   private final KafkaProducer kafkaProducer;
