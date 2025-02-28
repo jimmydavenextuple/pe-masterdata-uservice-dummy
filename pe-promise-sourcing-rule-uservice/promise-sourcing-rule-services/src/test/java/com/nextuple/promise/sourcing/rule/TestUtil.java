@@ -471,6 +471,8 @@ public class TestUtil {
     sourcingAttributeEntity.setIsDerived(IS_DERIVED_TRUE);
     sourcingAttributeEntity.setCustomAttributeKey(CUSTOM_ATTRIBUTE_KEY);
     sourcingAttributeEntity.setJsonPath(JSON_PATH);
+    sourcingAttributeEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
     return sourcingAttributeEntity;
   }
 
@@ -513,6 +515,7 @@ public class TestUtil {
         .isDerived(IS_DERIVED_TRUE)
         .customAttributeKey(CUSTOM_ATTRIBUTE_KEY)
         .jsonPath(EMPTY_JSON_PATH)
+        .customAttributes(JsonNodeFactory.instance.objectNode().put("key1", "value1"))
         .build();
   }
 
@@ -781,6 +784,8 @@ public class TestUtil {
     sourcingRulesConfigurationEntity.setSourcingRuleName(SOURCING_RULE_NAME);
     sourcingRulesConfigurationEntity.setSourcingAttributesDefinitionId(
         SOURCING_ATTRIBUTES_DEFINITION_ID);
+    sourcingRulesConfigurationEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
 
     return sourcingRulesConfigurationEntity;
   }
@@ -916,6 +921,7 @@ public class TestUtil {
         .sourcingConstraint(SOURCING_CONSTRAINT)
         .sourcingConstraintValue(SOURCING_CONSTRAINT_VALUE_1)
         .groupId(GROUP_ID)
+        .customAttributes(JsonNodeFactory.instance.objectNode().put("key1", "value1"))
         .build();
   }
 
@@ -926,6 +932,8 @@ public class TestUtil {
     sourcingConstraintEntity.setGroupId(DEFAULT_GROUP_ID);
     sourcingConstraintEntity.setSourcingConstraint(SOURCING_CONSTRAINT);
     sourcingConstraintEntity.setSourcingConstraintValue(SOURCING_CONSTRAINT_VALUE_1);
+    sourcingConstraintEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
     return sourcingConstraintEntity;
   }
 
@@ -1867,6 +1875,7 @@ public class TestUtil {
     request.setAttributeDefinitionId(1345L);
     request.setModuleName(RulesConfigurationModuleNameEnum.PROCESSING_TIME);
     request.setScope(SourcingAttributesDefinitionScopeEnum.ML_RULE);
+    request.setCustomAttributes(JsonNodeFactory.instance.objectNode().put("key1", "value1"));
     return request;
   }
 
@@ -1889,6 +1898,8 @@ public class TestUtil {
     expectedDomainDto.setAttributeDefinitionId(1345L);
     expectedDomainDto.setModuleName(RulesConfigurationModuleNameEnum.PROCESSING_TIME);
     expectedDomainDto.setScope(SourcingAttributesDefinitionScopeEnum.ML_RULE);
+    expectedDomainDto.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
     return expectedDomainDto;
   }
 
@@ -1900,6 +1911,8 @@ public class TestUtil {
     expectedResponse.setAttributeDefinitionId(1345L);
     expectedResponse.setModuleName(RulesConfigurationModuleNameEnum.PROCESSING_TIME);
     expectedResponse.setScope(SourcingAttributesDefinitionScopeEnum.ML_RULE);
+    expectedResponse.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
     return expectedResponse;
   }
 
