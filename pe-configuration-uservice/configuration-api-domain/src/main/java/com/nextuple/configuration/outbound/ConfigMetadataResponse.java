@@ -9,7 +9,10 @@ package com.nextuple.configuration.outbound;
 import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)

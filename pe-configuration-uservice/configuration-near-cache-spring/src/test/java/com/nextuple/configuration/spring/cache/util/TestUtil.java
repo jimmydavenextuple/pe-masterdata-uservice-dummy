@@ -7,6 +7,7 @@
 
 package com.nextuple.configuration.spring.cache.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.configuration.cache.domain.TenantConfigdataCacheKey;
@@ -14,13 +15,14 @@ import com.nextuple.configuration.cache.domain.TenantConfigdataCacheValue;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
 
 public class TestUtil {
+  public static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public TenantConfigdataCacheKey getTenantConfigdataCacheKey() {
     return TenantConfigdataCacheKey.builder()
         .orgId("org-1")
         .configKey("custom-key")
-        .customAttributes(
-            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -30,8 +32,7 @@ public class TestUtil {
         .orgId("org-1")
         .configKey("custom-key")
         .configValue("SDND,EXPRESS")
-        .customAttributes(
-            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -43,8 +44,7 @@ public class TestUtil {
             .orgId("org-1")
             .configKey("custom-key")
             .configValue("SDND,EXPRESS")
-            .customAttributes(
-                JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
     baseResponse.setPayload(tenantConfigdataResponse);
     return baseResponse;
