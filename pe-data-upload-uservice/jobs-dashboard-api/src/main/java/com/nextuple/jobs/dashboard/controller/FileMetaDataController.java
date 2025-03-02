@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,7 @@ public class FileMetaDataController {
   @GetMapping("/{id}")
   @FindFileMetadataDoc
   public ResponseEntity<BaseResponse<FileMetaDataResponse>> findFileMetadataById(
-      @NotBlank @PathVariable("id") @Parameter(description = "Unique identifier for metadata.")
+      @NotNull @PathVariable("id") @Parameter(description = "Unique identifier for metadata.")
           Long id)
       throws FileMetaDataException {
     try {
