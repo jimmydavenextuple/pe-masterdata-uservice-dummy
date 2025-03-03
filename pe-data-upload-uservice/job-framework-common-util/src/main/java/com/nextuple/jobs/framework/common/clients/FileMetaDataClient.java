@@ -12,7 +12,7 @@ import com.nextuple.common.response.BaseResponse;
 import com.nextuple.jobs.framework.common.domain.outbound.FileMetaDataResponse;
 import com.nextuple.jobs.framework.common.inbound.FileMetaDataCreationRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,10 +30,10 @@ public interface FileMetaDataClient {
       @Valid @RequestBody FileMetaDataCreationRequest fileMetadataCreationRequest);
 
   @GetMapping("/file-metadata/{id}")
-  BaseResponse<FileMetaDataResponse> findFileMetadataById(@NotBlank @PathVariable Long id);
+  BaseResponse<FileMetaDataResponse> findFileMetadataById(@NotNull @PathVariable Long id);
 
   @GetMapping("/file-metadata/{id}")
   BaseResponse<FileMetaDataResponse> findFileMetadataById(
-      @NotBlank @PathVariable Long id,
+      @NotNull @PathVariable Long id,
       @RequestHeader(CommonConstants.HEADER_TENANT_ID) String tenantId);
 }
