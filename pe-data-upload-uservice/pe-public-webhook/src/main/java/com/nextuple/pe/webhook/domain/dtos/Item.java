@@ -3,7 +3,6 @@ package com.nextuple.pe.webhook.domain.dtos;
 import com.nextuple.common.pojo.AdditionalAttributes;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,7 @@ import org.joda.time.DateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class Item extends AdditionalAttributes implements Serializable {
+public class Item extends AdditionalAttributes {
   @NotBlank(message = "itemId can't be blank")
   private String itemId;
 
