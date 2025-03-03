@@ -7,8 +7,9 @@
 
 package com.nextuple.promise.sourcing.rule.domain.entity;
 
-import com.nextuple.common.base.CommonBaseEntity;
+
 import com.nextuple.core.event.listeners.CommonEntityListener;
+import com.nextuple.postgres.entity.CommonBaseEntity;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.HolidayCutoffDaysType;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.HolidayCutoffStatus;
 import com.nextuple.promise.sourcing.rule.domain.primarykeys.HolidayCutoffPK;
@@ -25,12 +26,14 @@ import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @IdClass(HolidayCutoffPK.class)
 @Data
 @NoArgsConstructor
+@SuperBuilder
 @Table(
     name = "holiday_cutoff",
     indexes =
