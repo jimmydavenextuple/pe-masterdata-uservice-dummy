@@ -22,7 +22,6 @@ public class TestUtil {
     return TenantConfigdataCacheKey.builder()
         .orgId("org-1")
         .configKey("custom-key")
-        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
