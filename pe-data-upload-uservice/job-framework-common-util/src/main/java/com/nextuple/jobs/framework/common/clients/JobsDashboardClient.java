@@ -86,7 +86,7 @@ public interface JobsDashboardClient {
       @Valid @RequestBody FileMetaDataCreationRequest fileMetadataCreationRequest);
 
   @GetMapping("/file-metadata/{id}")
-  BaseResponse<FileMetaDataResponse> findFileMetadataById(@PathVariable Long id);
+  BaseResponse<FileMetaDataResponse> findFileMetadataById(@NotNull @PathVariable Long id);
 
   @GetMapping("/v1/org/{orgId}/jobs-dashboard/{jobId}/results")
   BaseResponse<PagePayload<RecordStatusDto>> getJobRecordsByFilters(

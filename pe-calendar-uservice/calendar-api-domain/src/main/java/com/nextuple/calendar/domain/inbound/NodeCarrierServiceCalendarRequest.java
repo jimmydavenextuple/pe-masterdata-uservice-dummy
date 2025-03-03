@@ -7,19 +7,20 @@
 
 package com.nextuple.calendar.domain.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class NodeCarrierServiceCalendarRequest {
+@SuperBuilder
+public class NodeCarrierServiceCalendarRequest extends AdditionalAttributes {
 
   @NotBlank(message = "calendarId can't be blank")
   @Length(max = 40)
