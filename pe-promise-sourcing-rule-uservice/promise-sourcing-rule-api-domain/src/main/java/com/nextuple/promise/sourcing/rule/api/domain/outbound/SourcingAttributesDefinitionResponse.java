@@ -21,7 +21,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SourcingAttributesDefinitionResponse extends AdditionalAttributes implements Serializable {
+public class SourcingAttributesDefinitionResponse extends AdditionalAttributes
+    implements Serializable {
 
   private static final long serialVersionUID = 7466518627729401530L;
 

@@ -18,6 +18,7 @@ import static com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleConsta
 import static com.nextuple.promise.sourcing.rule.utils.PromiseSourcingRuleConstants.STANDARD;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
@@ -127,7 +128,6 @@ import java.util.Map;
 import java.util.Optional;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 public class TestUtil {
   public static final String ORG_ID = "ABC";
@@ -181,7 +181,7 @@ public class TestUtil {
   public static final Integer PAGE_SIZE = 5;
   public static final String SOURCING_RULE_EXCEPTION_MESSAGE = "Sourcing rule not found";
   private static final JsonNode CUSTOM_ATTRIBUTES =
-          JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public static final Long ID = 1L;
   public static final String DEFAULT_GROUP_ID = "DEFAULT";
@@ -699,7 +699,7 @@ public class TestUtil {
         .name(SOURCING_RULE_ATTRIBUTES_DEFINITION_NAME)
         .reqAttributes(REQUIRED_ATTRIBUTES)
         .status(status)
-            .customAttributes(CUSTOM_ATTRIBUTES)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -712,7 +712,7 @@ public class TestUtil {
         .name(SOURCING_RULE_ATTRIBUTES_DEFINITION_NAME)
         .reqAttributes(REQUIRED_ATTRIBUTES)
         .status(status)
-            .customAttributes(CUSTOM_ATTRIBUTES)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -811,7 +811,7 @@ public class TestUtil {
         .nodeGroups(String.valueOf(NODE_GROUP_ID))
         .sequence(SEQUENCE)
         .sourcingAttributesDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
-            .customAttributes(CUSTOM_ATTRIBUTES)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -834,7 +834,7 @@ public class TestUtil {
         .nodeGroups(String.valueOf(NODE_GROUP_ID))
         .sequence(SEQUENCE)
         .sourcingAttributesDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
-            .customAttributes(CUSTOM_ATTRIBUTES)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1705,7 +1705,7 @@ public class TestUtil {
         .deliveryCoolDownDays(DELIVERY_COOL_DOWN_DAYS)
         .preCutoffDaysType(PRE_CUTOFF_DAYS_TYPE)
         .deliveryCoolDownDaysType(DELIVERY_COOL_DOWN_DAYS_TYPE)
-            .customAttributes(CUSTOM_ATTRIBUTES)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1728,7 +1728,7 @@ public class TestUtil {
         .preCutoffDaysType(PRE_CUTOFF_DAYS_TYPE)
         .deliveryCoolDownDays(DELIVERY_COOL_DOWN_DAYS)
         .deliveryCoolDownDaysType(DELIVERY_COOL_DOWN_DAYS_TYPE)
-            .customAttributes(CUSTOM_ATTRIBUTES)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1743,7 +1743,7 @@ public class TestUtil {
         .preCutoffDaysType(PRE_CUTOFF_DAYS_TYPE)
         .deliveryCoolDownDays(DELIVERY_COOL_DOWN_DAYS)
         .deliveryCoolDownDaysType(DELIVERY_COOL_DOWN_DAYS_TYPE)
-            .customAttributes(CUSTOM_ATTRIBUTES)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 

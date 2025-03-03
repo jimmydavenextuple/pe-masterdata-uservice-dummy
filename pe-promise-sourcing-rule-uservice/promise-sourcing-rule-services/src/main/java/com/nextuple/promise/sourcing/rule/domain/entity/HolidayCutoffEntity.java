@@ -7,7 +7,6 @@
 
 package com.nextuple.promise.sourcing.rule.domain.entity;
 
-
 import com.nextuple.core.event.listeners.CommonEntityListener;
 import com.nextuple.postgres.entity.CommonBaseEntity;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.HolidayCutoffDaysType;
