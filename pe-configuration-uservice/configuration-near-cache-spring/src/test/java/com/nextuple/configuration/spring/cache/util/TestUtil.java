@@ -19,10 +19,7 @@ public class TestUtil {
       JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public TenantConfigdataCacheKey getTenantConfigdataCacheKey() {
-    return TenantConfigdataCacheKey.builder()
-        .orgId("org-1")
-        .configKey("custom-key")
-        .build();
+    return TenantConfigdataCacheKey.builder().orgId("org-1").configKey("custom-key").build();
   }
 
   public TenantConfigdataCacheValue getTenantConfigCacheValue() {
