@@ -7,6 +7,8 @@
 
 package com.nextuple.calendar.consumer;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.calendar.consumer.dto.CalendarFeedDto;
 import com.nextuple.calendar.consumer.dto.CarrierServiceCalendarFeedDto;
 import com.nextuple.calendar.consumer.dto.NodeCalendarFeedDto;
@@ -45,6 +47,8 @@ public class TestUtil {
   public static final String CARRIER_SERVICE_ID = "carrier-service";
   public static final String EFFECTIVE_DATE = "effective-date";
   public static final String SHIPPING_STAGE = "Shipping-stage";
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public CalendarFeedDto calendarFeedDto() {
     return CalendarFeedDto.builder()
@@ -59,6 +63,7 @@ public class TestUtil {
         .isSaturdayWorking(IS_SATURDAY_WORKING)
         .isSundayWorking(IS_SUNDAY_WORKING)
         .exceptionDays(EXCEPTION_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -69,6 +74,7 @@ public class TestUtil {
         .calendarId(CALENDAR_ID)
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -80,6 +86,7 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .shippingStage(SHIPPING_STAGE)
         .effectiveDate(EFFECTIVE_DATE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -91,6 +98,7 @@ public class TestUtil {
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
         .carrierServiceId(CARRIER_SERVICE_ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -187,6 +195,7 @@ public class TestUtil {
         .isFridayWorking(IS_FRIDAY_WORKING)
         .isSaturdayWorking(IS_SATURDAY_WORKING)
         .isSundayWorking(IS_SUNDAY_WORKING)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -197,6 +206,7 @@ public class TestUtil {
         .calendarId(CALENDAR_ID)
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -207,6 +217,7 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -218,6 +229,7 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -234,6 +246,7 @@ public class TestUtil {
         .isFridayWorking(IS_FRIDAY_WORKING)
         .isSaturdayWorking(IS_SATURDAY_WORKING)
         .isSundayWorking(IS_SUNDAY_WORKING)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -244,6 +257,7 @@ public class TestUtil {
         .calendarId(CALENDAR_ID)
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -254,6 +268,7 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -265,6 +280,7 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 }

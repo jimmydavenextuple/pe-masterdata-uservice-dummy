@@ -7,6 +7,8 @@
 
 package com.nextuple.calendar.persistence.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.calendar.domain.pojo.ExceptionDays;
 import com.nextuple.calendar.persistence.domain.CalendarDomainDto;
 import com.nextuple.calendar.persistence.domain.CarrierServiceCalendarDomainDto;
@@ -40,6 +42,8 @@ public class TestUtil {
   public static final String SORT_ORDER_DESC = "desc";
   public static final String SORT_ORDER_ASC = "ASC";
   private static final String CARRIER_SERVICE_ID_2 = "Puro-Express";
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public static String addDaysToCurrentDate(int toAddDays) {
     var dt = new DateTime();
@@ -61,6 +65,7 @@ public class TestUtil {
         .isSaturdayWorking(Boolean.TRUE)
         .isSundayWorking(Boolean.TRUE)
         .exceptionDays(Collections.singletonList(getExceptionDays()))
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -77,6 +82,7 @@ public class TestUtil {
         .isSaturdayWorking(Boolean.TRUE)
         .isSundayWorking(Boolean.FALSE)
         .exceptionDays(Collections.singletonList(getExceptionDays()))
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -93,6 +99,7 @@ public class TestUtil {
         .isSaturdayWorking(Boolean.TRUE)
         .isSundayWorking(Boolean.FALSE)
         .exceptionDays(Collections.singletonList(getExceptionDays()))
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -109,6 +116,7 @@ public class TestUtil {
         .isSaturdayWorking(Boolean.TRUE)
         .isSundayWorking(Boolean.FALSE)
         .exceptionDays(Collections.singletonList(getExceptionDays()))
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -126,6 +134,7 @@ public class TestUtil {
         .nodeId(NODE_ID)
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -136,6 +145,7 @@ public class TestUtil {
         .nodeId(NODE_ID)
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -146,6 +156,7 @@ public class TestUtil {
         .nodeId(NODE_ID)
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE_2)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -156,6 +167,7 @@ public class TestUtil {
         .nodeId(NODE_ID)
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE_2)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -167,6 +179,7 @@ public class TestUtil {
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
         .shippingStage(SHIPPING_STAGE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -178,6 +191,7 @@ public class TestUtil {
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
         .shippingStage(SHIPPING_STAGE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -188,6 +202,7 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .nodeId(NODE_ID)
         .build();
   }
@@ -200,6 +215,7 @@ public class TestUtil {
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE)
         .nodeId(NODE_ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -212,6 +228,7 @@ public class TestUtil {
             .description(DESCRIPTION)
             .effectiveDate(EFFECTIVE_DATE)
             .shippingStage(SHIPPING_STAGE)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     CarrierServiceCalendarEntity carrierServiceCalendarEntity2 =
@@ -222,6 +239,7 @@ public class TestUtil {
             .description(DESCRIPTION)
             .effectiveDate(EFFECTIVE_DATE)
             .shippingStage(SHIPPING_STAGE)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     return List.of(carrierServiceCalendarEntity1, carrierServiceCalendarEntity2);
@@ -236,6 +254,7 @@ public class TestUtil {
             .description(DESCRIPTION)
             .effectiveDate(EFFECTIVE_DATE)
             .shippingStage(SHIPPING_STAGE)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     CarrierServiceCalendarDomainDto carrierServiceCalendarDomainDto2 =
@@ -246,6 +265,7 @@ public class TestUtil {
             .description(DESCRIPTION)
             .effectiveDate(EFFECTIVE_DATE)
             .shippingStage(SHIPPING_STAGE)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     return List.of(carrierServiceCalendarDomainDto1, carrierServiceCalendarDomainDto2);
@@ -259,6 +279,7 @@ public class TestUtil {
             .nodeId(NODE_ID)
             .description(DESCRIPTION)
             .effectiveDate(EFFECTIVE_DATE)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     NodeCalendarEntity nodeCalendarEntity2 =
@@ -268,6 +289,7 @@ public class TestUtil {
             .nodeId(NODE_ID)
             .description(DESCRIPTION)
             .effectiveDate(EFFECTIVE_DATE)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     return List.of(nodeCalendarEntity1, nodeCalendarEntity2);
@@ -281,6 +303,7 @@ public class TestUtil {
             .nodeId(NODE_ID)
             .description(DESCRIPTION)
             .effectiveDate(EFFECTIVE_DATE)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     NodeCalendarDomainDto nodeCalendarDomainDto2 =
@@ -290,6 +313,7 @@ public class TestUtil {
             .nodeId(NODE_ID)
             .description(DESCRIPTION)
             .effectiveDate(EFFECTIVE_DATE)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     return List.of(nodeCalendarDomainDto1, nodeCalendarDomainDto2);
@@ -303,6 +327,7 @@ public class TestUtil {
             .carrierServiceId(CARRIER_SERVICE_ID)
             .description(DESCRIPTION)
             .effectiveDate(EFFECTIVE_DATE)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .nodeId(NODE_ID)
             .build();
 
@@ -314,6 +339,7 @@ public class TestUtil {
             .description(DESCRIPTION)
             .effectiveDate(EFFECTIVE_DATE)
             .nodeId(NODE_ID)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     return List.of(nodeCarrierServiceCalendarEntity1, nodeCarrierServiceCalendarEntity2);
@@ -328,6 +354,7 @@ public class TestUtil {
             .description(DESCRIPTION)
             .effectiveDate(EFFECTIVE_DATE)
             .nodeId(NODE_ID)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     NodeCarrierServiceCalendarDomainDto nodeCarrierServiceCalendarDomainDto2 =
@@ -338,6 +365,7 @@ public class TestUtil {
             .description(DESCRIPTION)
             .effectiveDate(EFFECTIVE_DATE)
             .nodeId(NODE_ID)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     return List.of(nodeCarrierServiceCalendarDomainDto1, nodeCarrierServiceCalendarDomainDto2);
@@ -351,6 +379,7 @@ public class TestUtil {
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE_2)
         .shippingStage(SHIPPING_STAGE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -362,6 +391,7 @@ public class TestUtil {
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE_2)
         .shippingStage(SHIPPING_STAGE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -373,6 +403,7 @@ public class TestUtil {
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE_2)
         .nodeId(NODE_ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -384,6 +415,7 @@ public class TestUtil {
         .description(DESCRIPTION)
         .effectiveDate(EFFECTIVE_DATE_2)
         .nodeId(NODE_ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
