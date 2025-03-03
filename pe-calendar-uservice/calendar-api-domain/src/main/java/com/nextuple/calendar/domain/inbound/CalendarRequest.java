@@ -8,6 +8,7 @@
 package com.nextuple.calendar.domain.inbound;
 
 import com.nextuple.calendar.domain.pojo.ExceptionDays;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -16,12 +17,14 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CalendarRequest implements Serializable {
+@SuperBuilder
+public class CalendarRequest extends AdditionalAttributes implements Serializable {
 
   @NotBlank(message = "calendarId can't be blank")
   @Length(max = 40)
