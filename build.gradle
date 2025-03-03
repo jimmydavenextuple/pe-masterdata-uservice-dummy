@@ -457,6 +457,7 @@ dependencies {
 
     implementation 'org.flywaydb:flyway-core:9.16.3'
 
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.1'
 
     implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
     implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")

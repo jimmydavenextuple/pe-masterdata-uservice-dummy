@@ -8,19 +8,20 @@
 package com.nextuple.calendar.domain.outbound;
 
 import com.nextuple.calendar.domain.pojo.ExceptionDays;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CalendarResponse implements Serializable {
+public class CalendarResponse extends AdditionalAttributes implements Serializable {
 
   @Schema(description = "Unique identifier of the calendar.", example = "CALENDAR2023")
   private String calendarId;

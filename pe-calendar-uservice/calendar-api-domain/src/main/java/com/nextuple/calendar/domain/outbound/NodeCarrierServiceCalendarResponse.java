@@ -7,17 +7,18 @@
 
 package com.nextuple.calendar.domain.outbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class NodeCarrierServiceCalendarResponse {
+@SuperBuilder
+public class NodeCarrierServiceCalendarResponse extends AdditionalAttributes {
 
   @Schema(description = "Unique identifier of the calendar.", example = "CALENDAR2023")
   private String calendarId;
