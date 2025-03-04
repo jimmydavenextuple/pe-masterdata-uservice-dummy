@@ -76,7 +76,10 @@ import java.lang.annotation.Target;
                                                             "bufferStartDate": "2024-06-14T01:00:00.000+00:00",
                                                             "bufferEndDate":"2025-06-13T21:59:00.000+00:00"
                                                          },
-                                                         "buyingCost": 20
+                                                         "buyingCost": 20,
+                                                         "customAttributes": {
+                                                            "dynamicAtrr1": true
+                                                         }
                                                      }
                                 }
                                 """)
