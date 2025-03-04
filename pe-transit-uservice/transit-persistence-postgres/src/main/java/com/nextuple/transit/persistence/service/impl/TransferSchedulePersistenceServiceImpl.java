@@ -16,6 +16,7 @@ import com.nextuple.postgres.service.CommonPersistenceService;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
+import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.domain.key.TransferScheduleDomainKey;
 import com.nextuple.transit.persistence.entity.TransferScheduleEntity;
 import com.nextuple.transit.persistence.entity.key.TransferScheduleKey;
@@ -116,5 +117,12 @@ public class TransferSchedulePersistenceServiceImpl
           ExceptionCodeMapping.DAO_FIND_FAILED,
           "Unable to fetch transfer schedule " + e.getMessage());
     }
+  }
+
+  @Override
+  public List<TransferScheduleDomainDto> fetchTransferSchedulesInRange(
+      TransferScheduleDomainRequest request) {
+    List<TransferScheduleEntity> entities = getRepository().findTransferSchedulesInRange(request);
+    return getMapper().toDomain(entities);
   }
 }

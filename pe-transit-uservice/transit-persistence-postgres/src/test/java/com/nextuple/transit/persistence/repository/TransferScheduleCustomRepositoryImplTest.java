@@ -10,12 +10,14 @@ package com.nextuple.transit.persistence.repository;
 import static com.nextuple.transit.persistence.TestUtil.ORG_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.persistence.TestUtil;
+import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.entity.TransferScheduleEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -56,9 +58,9 @@ class TransferScheduleCustomRepositoryImplTest {
     when(criteriaQuery.from(TransferScheduleEntity.class)).thenReturn(root);
     when(entityManager.createQuery(criteriaQuery)).thenReturn(typedQuery);
 
-    when(criteriaBuilder.createQuery(Long.class)).thenReturn(countCriteriaQuery);
-    when(countCriteriaQuery.from(TransferScheduleEntity.class)).thenReturn(root);
-    when(entityManager.createQuery(countCriteriaQuery)).thenReturn(countTypedQuery);
+    lenient().when(criteriaBuilder.createQuery(Long.class)).thenReturn(countCriteriaQuery);
+    lenient().when(countCriteriaQuery.from(TransferScheduleEntity.class)).thenReturn(root);
+    lenient().when(entityManager.createQuery(countCriteriaQuery)).thenReturn(countTypedQuery);
   }
 
   @Test
@@ -114,5 +116,37 @@ class TransferScheduleCustomRepositoryImplTest {
     assertThrows(
         NullPointerException.class,
         () -> repository.findFilteredTransferSchedules(null, request, pageable));
+  }
+
+  @Test
+  @DisplayName("Happy Path - Find transfer schedules in range")
+  void findTransferSchedulesInRange() {
+    TransferScheduleDomainRequest request = testUtil.getTransferScheduleDomainRequest();
+    List<TransferScheduleEntity> results =
+        Arrays.asList(new TransferScheduleEntity(), new TransferScheduleEntity());
+
+    when(typedQuery.getResultList()).thenReturn(results);
+    List<TransferScheduleEntity> actualResult = repository.findTransferSchedulesInRange(request);
+
+    assertEquals(2, actualResult.size());
+    verify(entityManager, times(1)).createQuery(criteriaQuery);
+  }
+
+  @Test
+  @DisplayName("Happy Path - Find transfer schedules in range with empty fields")
+  void findTransferSchedulesInRangeNullTest() {
+    TransferScheduleDomainRequest request = testUtil.getTransferScheduleDomainRequest();
+    request.setStartTimeLowerBound(null);
+    request.setEndTimeLowerBound(null);
+    request.setRule(null);
+    request.setRuleName(null);
+    List<TransferScheduleEntity> results =
+        Arrays.asList(new TransferScheduleEntity(), new TransferScheduleEntity());
+
+    when(typedQuery.getResultList()).thenReturn(results);
+    List<TransferScheduleEntity> actualResult = repository.findTransferSchedulesInRange(request);
+
+    assertEquals(2, actualResult.size());
+    verify(entityManager, times(1)).createQuery(criteriaQuery);
   }
 }

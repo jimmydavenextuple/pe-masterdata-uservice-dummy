@@ -8,6 +8,7 @@
 package com.nextuple.transit.cache.domain;
 
 import com.nextuple.core.cache.domain.CacheKey;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,5 +20,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TransferScheduleCacheKey implements CacheKey {
   private String orgId;
+  private String rule;
+  private String ruleName;
   private String dropoffNode;
+  private Date dateBucket;
 }
