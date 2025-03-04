@@ -21,6 +21,7 @@ import com.nextuple.transit.controller.docs.FetchTransferScheduleListDoc;
 import com.nextuple.transit.controller.docs.GetTransferScheduleDoc;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.service.TransferScheduleService;
@@ -80,6 +81,19 @@ public class TransferScheduleController {
       @PathVariable(name = "dropoffNodeId") String dropoffNodeId) {
     List<TransferScheduleResponse> transferScheduleResponses =
         transferScheduleService.fetchTransferSchedules(orgId, dropoffNodeId);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Transfer Schedules fetched successfully")
+            .payload(transferScheduleResponses)
+            .build());
+  }
+
+  @PostMapping(path = "/time-range", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetTransferScheduleDoc
+  public ResponseEntity<BaseResponse<List<TransferScheduleResponse>>> getTransferSchedulesInRange(
+      @RequestBody TransferScheduleRangeRequest transferScheduleRangeRequest) {
+    List<TransferScheduleResponse> transferScheduleResponses =
+        transferScheduleService.fetchTransferSchedulesInRange(transferScheduleRangeRequest);
     return ResponseEntity.ok(
         BaseResponse.builder()
             .message("Transfer Schedules fetched successfully")

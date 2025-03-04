@@ -19,6 +19,9 @@ import com.nextuple.jobs.framework.common.domain.pojo.JobDetailsDto;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.nextuple.postal.code.timezone.api.domain.outbound.PostalCodeResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.RulesConfigurationResponse;
 import com.nextuple.transit.domain.dto.TransitBufferDetailsDto;
 import com.nextuple.transit.domain.dto.TransitTimeEntriesDto;
 import com.nextuple.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
@@ -814,6 +817,17 @@ public class TestUtil {
         .dropoffNodeId(DROPOFF_NODE)
         .startTime(new Date())
         .endTime(new Date())
+        .build();
+  }
+
+  public RulesConfigurationResponse getRuleConfiguration() {
+    return RulesConfigurationResponse.builder()
+        .orgId(ORG_ID)
+        .rule("DC:KITCHEN")
+        .ruleName("Rule1")
+        .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE)
+        .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
+        .attributeDefinitionId(123L)
         .build();
   }
 }

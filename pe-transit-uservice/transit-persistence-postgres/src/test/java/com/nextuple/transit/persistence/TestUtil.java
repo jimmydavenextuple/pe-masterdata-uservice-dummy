@@ -13,6 +13,7 @@ import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.domain.pojo.ProjectedTransitEntity;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
+import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.domain.TransitBufferConfigRequestDomainDto;
 import com.nextuple.transit.persistence.domain.TransitBufferDomainDto;
 import com.nextuple.transit.persistence.domain.TransitBufferReqJobRefDomainDto;
@@ -333,6 +334,18 @@ public class TestUtil {
         .dropoffNodeId(DESTINATION_NODE)
         .startTime(new Date())
         .endTime(new Date())
+        .build();
+  }
+
+  public TransferScheduleDomainRequest getTransferScheduleDomainRequest() {
+
+    return TransferScheduleDomainRequest.builder()
+        .orgId(ORG_ID)
+        .dropoffNodeId(DESTINATION_NODE)
+        .rule("DC:KITCHEN")
+        .ruleName("Rule1")
+        .startTimeLowerBound(new Date())
+        .endTimeLowerBound(new Date())
         .build();
   }
 }
