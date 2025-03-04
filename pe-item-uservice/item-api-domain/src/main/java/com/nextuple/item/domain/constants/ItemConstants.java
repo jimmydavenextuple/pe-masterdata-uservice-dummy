@@ -106,6 +106,8 @@ public class ItemConstants {
       "{\"bufferHours\":1,\"bufferStartDate\":\"2024-06-14T01:00:00.000+00:00\",\"bufferEndDate\":\"2025-06-13T21:59:00.000+00:00\"}";
   public static final String BUYING_COST = "Per unit buying cost of the item.";
   public static final String BUYING_COST_EXAMPLE = "2";
+  public static final String HOLDING_TIME = "Holding time in hours of the item.";
+  public static final String HOLDING_TIME_EXAMPLE = "2.4";
   public static final String SHORT_DESCRIPTION_EXAMPLE = "Bold fit Skipping Rope";
   public static final String ITEM_SORT_BY = "itemId";
   public static final String GET_ITEM_LIST_PAGINATED_SUCCESS =

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CarrierFeedIngestionService
     implements FeedIngestionService<MasterDataIngestionDto<CarrierFeedDto>> {
-  @Value("${master-data.carrier.topic-name:null}")
+  @Value("${master-data.carrier.topic-names:null}")
   private String carrierFeedTopic;
 
   @Value("${kafka-topic-flags.master-data.carrier.enabled:false}")

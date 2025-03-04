@@ -10,7 +10,7 @@ spring:
             scope: applicationclient-pe-masterdata-scope
         provider:
           my-client:
-            token-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev/protocol/openid-connect/token
+            token-uri: https://keycloak-nonprod.nextuple.com/realms/noms-devpe/protocol/openid-connect/token
   jpa:
     database: POSTGRESQL
     show-sql: false
@@ -40,7 +40,7 @@ spring:
     #      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
     #      topics:
     #        item_master:
-    #          name: INTERNAL.DEV.PROMISE_ITEMS
+    #          name: INTERNAL.DEVPE.PROMISE_ITEMS
     #          group-id: item-master-dev
     #    producer:
     #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -59,8 +59,8 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         item_master:
-          names: INTERNAL.DEV.PROMISE_ITEMS
-          group-id: item-master-dev-\${random.value}
+          names: INTERNAL.DEVPE.PROMISE_ITEMS
+          group-id: item-master-devpe-\${random.value}
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
@@ -68,7 +68,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       topics:
-        master_data_update_event: INTERNAL.DEV.MASTER_DATA_UPDATE_EVENTS
+        master_data_update_event: INTERNAL.DEVPE.MASTER_DATA_UPDATE_EVENTS
       properties:
         acks: 1
         retries: 5
@@ -85,8 +85,8 @@ spring:
         max.poll.records: 10
       topics:
         master_data_update_event:
-          name: INTERNAL.DEV.MASTER_DATA_UPDATE_EVENTS
-          group-id: master-data-update-dev
+          name: INTERNAL.DEVPEPE.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-devpe
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -102,12 +102,12 @@ logging:
     com.nextuple: INFO
 pe-public-webhook:
   iv-feed:
-    topic: INTERNAL.DEV_ATP
+    topic: INTERNAL.DEVPE_ATP
   item-feed:
-    topic: INTERNAL.DEV.PROMISE_ITEMS
+    topic: INTERNAL.DEVPE.PROMISE_ITEMS
   pe-response:
-    topics: INTERNAL.DEV.CART_EDD
-    group-id: pe-response-consumer-dev-async
+    topics: INTERNAL.DEVPE.CART_EDD
+    group-id: pe-response-consumer-devpe-async
   webhook:
     - tenantId: NEXTUPLE_GR
       moduleName: PROMISING
@@ -139,56 +139,56 @@ dataupload:
 
 jobs-framework:
   feed-metrics-consumer:
-    topic-name: INTERNAL.DEV.PE_JOB_FPM_METRICS, INTERNAL.DEV.PE_JOB_RECORD_FPM_METRICS, INTERNAL.DEV.PE_NEIP_FPM_METRICS
-    group-id: pe-fpm-metrics-dev
+    topic-name: INTERNAL.DEVPE.PE_JOB_FPM_METRICS, INTERNAL.DEVPE.PE_JOB_RECORD_FPM_METRICS, INTERNAL.DEVPE.PE_NEIP_FPM_METRICS
+    group-id: pe-fpm-metrics-devpe
   job-completion-consumer:
-    topic-name: INTERNAL.DEV.PE.JOB_COMPLETION
-    group-id: jobs-completion-consumer-async-dev
+    topic-name: INTERNAL.DEVPE.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-devpe
   kafka-publish:
-    topic-name: INTERNAL.DEV.PE.JOB_TASK
+    topic-name: INTERNAL.DEVPE.PE.JOB_TASK
   result-publish:
-    topic-name: INTERNAL.DEV.PE.JOB_RESULT
+    topic-name: INTERNAL.DEVPE.PE.JOB_RESULT
   result-consumer:
-    topic-name: INTERNAL.DEV.PE.JOB_RESULT
+    topic-name: INTERNAL.DEVPE.PE.JOB_RESULT
     group-id: jobs-result-consumer-async
   record-consumer:
-    topic-names: INTERNAL.DEV.PE.JOB_TASK
+    topic-names: INTERNAL.DEVPE.PE.JOB_TASK
     group-id: jobs-task-consumer-async
 
 master-data:
   node:
-    topic-names: INTERNAL.DEV.PE.NODE_INTEGRATION
-    group-id: node-master-dev
+    topic-names: INTERNAL.DEVPE.PE.NODE_INTEGRATION
+    group-id: node-master-devpe
   node-carrier:
-    topic-names: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
-    group-id: node-carrier-master-dev
+    topic-names: INTERNAL.DEVPE.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-devpe
   carrier:
-    topic-names: INTERNAL.DEV.PE.CARRIER_INTEGRATION
-    group-id: carrier-master-dev
+    topic-names: INTERNAL.DEVPE.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-devpe
   processing-lead-time:
-    topic-names: INTERNAL.DEV.PE.PROCESSING_LEAD_TIME_INTEGRATION
-    group-id: processing-lead-time-master-dev
+    topic-names: INTERNAL.DEVPE.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-devpe
   calendar:
-    topic-names: INTERNAL.DEV.PE.CALENDAR_INTEGRATION
-    group-id: calendar-master-dev
+    topic-names: INTERNAL.DEVPE.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-devpe
   node-calendar:
-    topic-names: INTERNAL.DEV.PE.NODE_CALENDAR_INTEGRATION
-    group-id: node-calendar-master-dev
+    topic-names: INTERNAL.DEVPE.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-devpe
   carrier-service-calendar:
-    topic-names: INTERNAL.DEV.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
-    group-id: carrier-service-calendar-master-dev
+    topic-names: INTERNAL.DEVPE.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-devpe
   pickup-calendar:
-    topic-names: INTERNAL.DEV.PE.PICKUP_CALENDAR_INTEGRATION
-    group-id: pickup-calendar-master-dev
+    topic-names: INTERNAL.DEVPE.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-devpe
   node-service-option-buffer:
-    topic-names: INTERNAL.DEV.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
-    group-id: node-service-option-buffer-master-dev
+    topic-names: INTERNAL.DEVPE.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-devpe
   transit:
-    topic-names: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
-    group-id: transit-master-dev
+    topic-names: INTERNAL.DEVPE.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-devpe
   transit-buffer:
-    topic-names: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
-    group-id: transit-buffer-master-dev
+    topic-names: INTERNAL.DEVPE.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-devpe
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
@@ -199,7 +199,7 @@ next-cache:
       ttlSeconds: 14400
       maxLimit: 50
   refresh-cache:
-    topic: INTERNAL.DEV.PE.REFRESH_CACHE_INV
+    topic: INTERNAL.DEVPE.PE.REFRESH_CACHE_INV
   cacheManager: caffeine
 platform:
   tasks:
@@ -220,7 +220,7 @@ neo-platform:
     application-name: pe-masterdata
     header:
       tenant-id: x-tenant-id
-    issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev
+    issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-devpe
     authz-config:
       config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
       refresh-interval-mins: 30
@@ -228,5 +228,5 @@ neo-platform:
         json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles,\$.resource_access.applicationclient-pe-core-uservice.roles,\$.resource_access.applicationclient-pe-iv-cache.roles,\$.resource_access.applicationclient-pe-capacity-uservice.roles,\$.resource_access.applicationclient-pe-neip-uservice.roles
 kafka:
   input:
-    taskTopics: INTERNAL.DEV.PE.RETRY_TOPIC_INV
+    taskTopics: INTERNAL.DEVPE.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry
