@@ -13,6 +13,7 @@ import com.nextuple.common.service.DomainPersistenceService;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
+import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.domain.key.TransferScheduleDomainKey;
 import java.util.Date;
 import java.util.List;
@@ -34,4 +35,7 @@ public interface TransferSchedulePersistenceService
   Page<TransferScheduleResponse> fetchTransferSchedulesList(
       String orgId, FetchTransferScheduleRequest request, Pageable pageable)
       throws PromiseEngineException;
+
+  List<TransferScheduleDomainDto> fetchTransferSchedulesInRange(
+      TransferScheduleDomainRequest request);
 }

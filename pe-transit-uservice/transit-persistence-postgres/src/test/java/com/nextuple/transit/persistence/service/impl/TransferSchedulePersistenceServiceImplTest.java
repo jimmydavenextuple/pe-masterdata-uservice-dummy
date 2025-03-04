@@ -19,6 +19,7 @@ import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.TestUtil;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
+import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.entity.TransferScheduleEntity;
 import com.nextuple.transit.persistence.mapper.TransferScheduleEntityMapper;
 import com.nextuple.transit.persistence.repository.TransferScheduleRepository;
@@ -180,5 +181,21 @@ class TransferSchedulePersistenceServiceImplTest {
             transferSchedulePersistenceService.fetchTransferSchedulesList(
                 TestUtil.ORG_ID, request, pageable));
     verify(transferScheduleRepository, times(1)).findFilteredTransferSchedules(any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Trasfer Schedules fetched in range successfully")
+  void fetchTransferSchedulesInRangeTest() {
+    when(transferScheduleRepository.findTransferSchedulesInRange(any()))
+        .thenReturn(testUtil.getTransferScheduleEntityList());
+    when(transferScheduleEntityMapper.toDomain(anyList()))
+        .thenReturn(List.of(testUtil.getTransferScheduleDomainDto()));
+
+    TransferScheduleDomainRequest request = new TransferScheduleDomainRequest();
+    List<TransferScheduleDomainDto> dtos =
+        transferSchedulePersistenceService.fetchTransferSchedulesInRange(request);
+    Assertions.assertEquals(TestUtil.SOURCE_NODE, dtos.get(0).getSourceNodeId());
+    Assertions.assertEquals(TestUtil.DESTINATION_NODE, dtos.get(0).getDropoffNodeId());
+    verify(transferScheduleRepository, times(1)).findTransferSchedulesInRange(any());
   }
 }
