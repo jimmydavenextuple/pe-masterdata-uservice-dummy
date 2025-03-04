@@ -7,6 +7,8 @@
 
 package com.nextuple.item;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.item.domain.events.ItemMasterEvent;
 import com.nextuple.item.domain.inbound.ItemBufferRequest;
@@ -72,6 +74,9 @@ public class TestUtil {
   public static final Long LEAD_TIME = 1L;
   public static final String SHORT_DESC = "BoldFit Rope";
 
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
+
   public ItemEntity getItemEntity() {
     Map<String, Boolean> serviceOptionEligibilities =
         TestUtil.getServiceOptionEligibitiesMapForTest();
@@ -104,6 +109,7 @@ public class TestUtil {
         .shortDescription("desc")
         .inventoryNodeTypes(inventoryNodeTypes)
         .handlingType(ITEM_HANDLING_TYPE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -139,6 +145,7 @@ public class TestUtil {
         .volume(VOLUME)
         .isWhiteGlove(Boolean.FALSE)
         .handlingType(ITEM_HANDLING_TYPE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -169,6 +176,7 @@ public class TestUtil {
         .volume(VOLUME)
         .inventoryNodeTypes(inventoryNodeTypes)
         .handlingType(ITEM_HANDLING_TYPE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -201,6 +209,7 @@ public class TestUtil {
         .weight(35.5)
         .volume(VOLUME)
         .handlingType(ITEM_HANDLING_TYPE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -224,6 +233,7 @@ public class TestUtil {
         .weight(35.5)
         .volume(VOLUME)
         .handlingType(ITEM_HANDLING_TYPE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -254,6 +264,7 @@ public class TestUtil {
         .weight(WEIGHT)
         .volume(VOLUME)
         .handlingType(ITEM_HANDLING_TYPE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -298,6 +309,7 @@ public class TestUtil {
     // itemCreationRequest.setSdndEligible(Boolean.TRUE);
     // itemCreationRequest.(Boolean.TRUE);
     // itemCreationRequest.setNextdayEligibleForDC(Boolean.TRUE);
+    itemCreationRequest.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return itemCreationRequest;
   }
 
@@ -335,6 +347,7 @@ public class TestUtil {
         .bufferHours(2.0)
         .bufferStartDate(new Date())
         .bufferEndDate(new Date())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -347,6 +360,7 @@ public class TestUtil {
         .bufferHours(2.0)
         .bufferStartDate(new Date())
         .bufferEndDate(new Date(5000))
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -365,6 +379,7 @@ public class TestUtil {
         .bufferHours(2.0)
         .bufferStartDate(bufferStartDate)
         .bufferEndDate(bufferEndDate)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
