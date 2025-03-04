@@ -7,6 +7,8 @@
 
 package com.nextuple.postal.code.timezone;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.postal.code.timezone.api.domain.dto.CustomRegionDto;
 import com.nextuple.postal.code.timezone.api.domain.dto.CustomRegionInfo;
@@ -80,6 +82,9 @@ public class TestUtil {
   private static final PostalCodeMapper POSTAL_CODE_MAPPER =
       Mappers.getMapper(PostalCodeMapper.class);
 
+  public static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
+
   public CreatePostalCodeTimezoneRequest getCreatePostalCodeTimezoneRequest() {
     return CreatePostalCodeTimezoneRequest.builder()
         .orgId(ORG_ID)
@@ -90,6 +95,7 @@ public class TestUtil {
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .timeZone(TIME_ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -104,6 +110,7 @@ public class TestUtil {
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .timeZone(TIME_ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -114,6 +121,7 @@ public class TestUtil {
         .codes(PARTIAL_CODES)
         .customRegionDescription(CUSTOM_REGION_DESC)
         .id(ID_2)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -124,6 +132,7 @@ public class TestUtil {
         .codes(PARTIAL_CODES)
         .customRegionDescription(CUSTOM_REGION_DESC)
         .id(ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -134,6 +143,7 @@ public class TestUtil {
         .codes(PARTIAL_CODES2)
         .customRegionDescription(CUSTOM_REGION_DESC)
         .id(ID_2)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -154,6 +164,7 @@ public class TestUtil {
         .codes(FULL_CODES)
         .customRegionDescription(CUSTOM_REGION_DESC)
         .id(ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -174,6 +185,7 @@ public class TestUtil {
         .codes(FULL_CODES3)
         .customRegionDescription(CUSTOM_REGION_DESC)
         .id(ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -184,6 +196,7 @@ public class TestUtil {
         .codes(EMPTY_CODES)
         .customRegionDescription(CUSTOM_REGION_DESC)
         .id(ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -194,6 +207,7 @@ public class TestUtil {
         .codes(PARTIAL_CODES)
         .customRegionDescription(CUSTOM_REGION_DESC)
         .id(ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -204,6 +218,7 @@ public class TestUtil {
         .codes(List.of("T2P", "T3P", "X2H"))
         .customRegionDescription(CUSTOM_REGION_DESC)
         .id(ID_2)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -229,6 +244,7 @@ public class TestUtil {
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .timeZone(TIME_ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -243,6 +259,7 @@ public class TestUtil {
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .timeZone(TIME_ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -269,6 +286,7 @@ public class TestUtil {
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .timeZone(TIME_ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -422,6 +440,7 @@ public class TestUtil {
         .customRegionName(CUSTOM_REGION_NAME)
         .customRegionDescription(CUSTOM_REGION_DESC)
         .codes(PARTIAL_CODES)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -461,6 +480,7 @@ public class TestUtil {
             .zipCodePrefixesCount(2)
             .orgId(ORG_ID)
             .uploadDate("2024-10-10")
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     CustomRegionInfo customRegionInfo2 =
@@ -474,6 +494,7 @@ public class TestUtil {
             .zipCodePrefixesCount(1)
             .orgId(ORG_ID)
             .uploadDate("2024-10-10")
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
     return List.of(customRegionInfo1, customRegionInfo2);
   }
@@ -608,18 +629,26 @@ public class TestUtil {
 
   public List<CustomRegionDomainDto> getCustomRegionEntityList2() {
     return List.of(
-        getCustomRegionDomainDto(ID, CUSTOM_REGION_NAME, CUSTOM_REGION_DESC, CODES1, ORG_ID),
-        getCustomRegionDomainDto(ID_2, CUSTOM_REGION_NAME, CUSTOM_REGION_DESC, CODES2, ORG_ID));
+        getCustomRegionDomainDto(
+            ID, CUSTOM_REGION_NAME, CUSTOM_REGION_DESC, CODES1, ORG_ID, CUSTOM_ATTRIBUTES),
+        getCustomRegionDomainDto(
+            ID_2, CUSTOM_REGION_NAME, CUSTOM_REGION_DESC, CODES2, ORG_ID, CUSTOM_ATTRIBUTES));
   }
 
   private CustomRegionDomainDto getCustomRegionDomainDto(
-      String id, String name, String description, List<String> codes, String orgId) {
+      String id,
+      String name,
+      String description,
+      List<String> codes,
+      String orgId,
+      JsonNode customAttributes) {
     return CustomRegionDomainDto.builder()
         .customRegionDescription(description)
         .customRegionName(name)
         .id(id)
         .codes(codes)
         .orgId(orgId)
+        .customAttributes(customAttributes)
         .build();
   }
 

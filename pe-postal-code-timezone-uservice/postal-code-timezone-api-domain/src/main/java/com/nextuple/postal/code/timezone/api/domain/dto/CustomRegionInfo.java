@@ -6,18 +6,19 @@
  */
 package com.nextuple.postal.code.timezone.api.domain.dto;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomRegionInfo {
+public class CustomRegionInfo extends AdditionalAttributes {
 
   @Schema(description = "Unique identifier of organization.", example = "NEXTUPLE_GR")
   private String orgId;
