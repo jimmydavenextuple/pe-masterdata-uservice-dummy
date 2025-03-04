@@ -8,6 +8,8 @@
 package com.nextuple.transit.domain.outbound;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.OptBoolean;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
@@ -49,4 +51,12 @@ public class TransferScheduleResponse implements Serializable {
       example = "2024-10-31T01:30:00.000-05:00")
   @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", lenient = OptBoolean.FALSE)
   private Date endTime;
+
+  @Schema(description = "Rule associated with the transfer schedule", example = "DC:KITCHEN")
+  @JsonInclude(Include.NON_NULL)
+  private String rule;
+
+  @Schema(description = "Rule name associated with the transfer schedule", example = "KitchenRule")
+  @JsonInclude(Include.NON_NULL)
+  private String ruleName;
 }

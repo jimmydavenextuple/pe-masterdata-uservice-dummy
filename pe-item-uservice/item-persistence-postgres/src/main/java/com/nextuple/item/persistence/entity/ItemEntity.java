@@ -142,4 +142,7 @@ public class ItemEntity extends CommonBaseEntity {
 
   @Column(name = "buying_cost")
   private Integer buyingCost;
+
+  @Column(name = "holding_time")
+  private Double holdingTime;
 }
