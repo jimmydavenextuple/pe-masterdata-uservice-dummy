@@ -7,20 +7,21 @@
 
 package com.nextuple.item.domain.events;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.joda.time.DateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class ItemMasterEvent implements Serializable {
+@SuperBuilder
+public class ItemMasterEvent extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = 1935122041650251277L;
 
