@@ -7,6 +7,7 @@
 
 package com.nextuple.item.domain.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.item.domain.constants.ItemConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -16,16 +17,16 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.joda.time.DateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class ItemCreationRequest implements Serializable {
+@SuperBuilder
+public class ItemCreationRequest extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = 1905122041950251207L;
 
