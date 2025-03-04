@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":pe-common:common-util"))
     implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
 }
 tasks.withType(Test).configureEach {

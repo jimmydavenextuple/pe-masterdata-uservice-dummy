@@ -18,11 +18,11 @@ dependencies {
     implementation(project(":pe-common:common-util"))
     implementation(project(":pe-common:common-postgres"))
     implementation(project(":pe-common:common-domain"))
-    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.1'
     implementation(project(":pe-common:nfs-near-cache:core-near-cache-producer"))
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
     implementation 'org.jetbrains:annotations:16.0.2'

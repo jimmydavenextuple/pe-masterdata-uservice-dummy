@@ -12,7 +12,7 @@ bootJar {
 dependencies {
     implementation(project(":pe-common:common-domain"))
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
 }
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
