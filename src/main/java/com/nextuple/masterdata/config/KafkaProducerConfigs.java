@@ -36,13 +36,13 @@ public class KafkaProducerConfigs {
   @Bean("jsonSerializerProperties")
   @ConfigurationProperties(prefix = "spring.kafka.producer")
   public Map<String, Object> jsonSerializerProperties() {
-    return this.kafkaProperties.buildProducerProperties();
+    return this.kafkaProperties.buildProducerProperties(null);
   }
 
   @Bean("itemSerializerProperties")
   @ConfigurationProperties(prefix = "spring.kafka.producer-item")
   public Map<String, Object> itemSerializerProperties() {
-    return this.kafkaProperties.buildProducerProperties();
+    return this.kafkaProperties.buildProducerProperties(null);
   }
 
   @Bean

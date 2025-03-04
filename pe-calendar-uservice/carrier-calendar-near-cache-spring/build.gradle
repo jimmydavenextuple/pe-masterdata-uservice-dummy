@@ -11,9 +11,9 @@ jar {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.3'
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.3'
 
     implementation(project(":pe-common:common-util"))
     implementation(project(":pe-common:nfs-near-cache:core-near-cache-consumer"))
@@ -21,7 +21,7 @@ dependencies {
     implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
     implementation(project(":pe-calendar-uservice:carrier-calendar-near-cache"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     api(project(":pe-calendar-uservice:calendar-common-near-cache"))
 
     constraints {

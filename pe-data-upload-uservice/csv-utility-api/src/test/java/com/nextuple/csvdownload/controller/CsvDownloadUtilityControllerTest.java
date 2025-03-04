@@ -261,7 +261,7 @@ class CsvDownloadUtilityControllerTest {
 
     when(response.getOutputStream()).thenReturn(servletOutputStream);
 
-    doNothing().when(servletOutputStream).write(any());
+    doNothing().when(servletOutputStream).write(any(byte[].class));
 
     csvDownloadUtilityController.downloadNodeCarrierServiceAndServiceOptionsDataCSV(
         TestUtil.ORG_ID, request, response);
@@ -291,7 +291,7 @@ class CsvDownloadUtilityControllerTest {
 
     when(response.getOutputStream()).thenReturn(servletOutputStream);
 
-    doNothing().when(servletOutputStream).write(any());
+    doNothing().when(servletOutputStream).write(any(byte[].class));
 
     csvDownloadUtilityController.downloadNodeAndServiceOptionsDataCSV(TestUtil.ORG_ID, response);
     verify(csvDownloadUtilityService, times(1)).downloadNodeAndServiceOptionsDataCSV(anyString());
