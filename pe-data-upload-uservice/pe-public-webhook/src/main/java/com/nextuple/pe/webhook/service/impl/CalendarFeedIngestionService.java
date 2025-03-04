@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CalendarFeedIngestionService
     implements FeedIngestionService<MasterDataIngestionDto<CalendarFeedDto>> {
-  @Value("${master-data.calendar.topic-name:null}")
+  @Value("${master-data.calendar.topic-names:null}")
   private String calendarFeedTopic;
 
   @Value("${kafka-topic-flags.master-data.calendar.enabled:false}")
