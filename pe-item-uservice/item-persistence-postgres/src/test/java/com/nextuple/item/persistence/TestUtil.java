@@ -6,6 +6,8 @@
  */
 package com.nextuple.item.persistence;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.item.persistence.domain.ItemBufferDomainDto;
 import com.nextuple.item.persistence.domain.ItemDomainDto;
 import com.nextuple.item.persistence.entity.ItemBufferEntity;
@@ -50,6 +52,9 @@ public class TestUtil {
   private static final String EXPRESS_ELIGIBLE = "expressEligible";
   public static final String ITEM_HANDLING_TYPE = "Conveyable";
 
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
+
   private static final ItemEntityMapper ITEM_ENTITY_MAPPER =
       Mappers.getMapper(ItemEntityMapper.class);
 
@@ -84,6 +89,7 @@ public class TestUtil {
         .imageUrl("/image")
         .shortDescription("desc")
         .inventoryNodeTypes(inventoryNodeTypes)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .handlingType(ITEM_HANDLING_TYPE)
         .build();
   }
@@ -132,6 +138,7 @@ public class TestUtil {
     itemBufferEntity.setBufferHours(1.0);
     itemBufferEntity.setBufferStartDate(new Date(1000));
     itemBufferEntity.setBufferEndDate(new Date(2000));
+    itemBufferEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return itemBufferEntity;
   }
 
@@ -143,6 +150,7 @@ public class TestUtil {
     itemBufferDomainDto.setBufferHours(1.0);
     itemBufferDomainDto.setBufferStartDate(new Date(1000));
     itemBufferDomainDto.setBufferEndDate(new Date(2000));
+    itemBufferDomainDto.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return itemBufferDomainDto;
   }
 }
