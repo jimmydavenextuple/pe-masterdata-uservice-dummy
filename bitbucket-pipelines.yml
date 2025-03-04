@@ -115,10 +115,10 @@ server:
         replicas: 1
       resources:
         min:
-          memory: 2Gi
+          memory: 3Gi
           cpu: 1
         max:
-          memory: 2Gi
+          memory: 3Gi
           cpu: 1
     sandbox:
       ingress: yes
