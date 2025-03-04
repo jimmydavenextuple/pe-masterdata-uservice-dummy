@@ -137,6 +137,8 @@ public class ItemUpdationRequest implements Serializable {
   @Schema(description = ItemConstants.BUYING_COST, example = ItemConstants.BUYING_COST_EXAMPLE)
   private Integer buyingCost;
 
-  @Schema(description = ItemConstants.HOLDING_TIME, example = ItemConstants.HOLDING_TIME_EXAMPLE)
-  private Double holdingTime;
+  @Schema(
+      description = ItemConstants.VALID_DROPOFF_DURATION,
+      example = ItemConstants.VALID_DROPOFF_DURATION_EXAMPLE)
+  private Double validDropoffDuration;
 }
