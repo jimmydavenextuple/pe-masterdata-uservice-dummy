@@ -32,7 +32,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class PublishJobEventServiceTest {
 
@@ -45,7 +44,6 @@ class PublishJobEventServiceTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    MockMvcBuilders.standaloneSetup(publishJobEventService).build();
     ReflectionTestUtils.setField(publishJobEventService, "resultPublishTopicName", "topicName");
   }
 

@@ -16,7 +16,7 @@ dependencies {
 
 
     implementation(project(":pe-configuration-uservice:configuration-near-cache"))
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
 
     constraints {

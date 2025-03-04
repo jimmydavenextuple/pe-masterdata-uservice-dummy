@@ -14,13 +14,13 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
     implementation(project(":pe-common:common-postgres"))
     implementation(project(":pe-common:userexit-framework:userexit-domain"))
     api "com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.17.0"
     implementation(project(":pe-common:common-util"))
-    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.6.1'
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.1'
     implementation "jakarta.validation:jakarta.validation-api:3.0.2"
     implementation "org.springframework.boot:spring-boot-starter-validation:3.2.4"
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'

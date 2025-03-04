@@ -25,7 +25,7 @@ dependencies {
 
 
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
 
     constraints {
