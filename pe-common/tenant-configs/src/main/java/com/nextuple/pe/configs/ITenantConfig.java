@@ -45,6 +45,8 @@ public interface ITenantConfig {
 
   Integer getTransferScheduleHorizonDays();
 
+  Integer getTransferSchedulePastDays();
+
   Integer getCapacityHorizon();
 
   Boolean getTransfersEnabled();

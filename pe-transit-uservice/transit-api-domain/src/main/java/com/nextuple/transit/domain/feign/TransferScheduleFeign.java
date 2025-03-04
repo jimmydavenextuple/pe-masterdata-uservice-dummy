@@ -11,6 +11,7 @@ import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import jakarta.validation.Valid;
@@ -37,6 +38,10 @@ public interface TransferScheduleFeign {
   BaseResponse<List<TransferScheduleResponse>> getTransferSchedules(
       @PathVariable("orgId") String orgId,
       @PathVariable(name = "dropoffNodeId") String dropoffNodeId);
+
+  @GetMapping("/transfer-schedule/time-range")
+  BaseResponse<List<TransferScheduleResponse>> fetchTransferSchedulesInRange(
+      @RequestBody TransferScheduleRangeRequest transferScheduleRangeRequest);
 
   @DeleteMapping("/transfer-schedule")
   BaseResponse<TransferScheduleResponse> deleteTransferSchedule(

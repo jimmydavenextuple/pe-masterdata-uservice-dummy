@@ -11,6 +11,7 @@ import static com.nextuple.promise.sourcing.rule.utils.FetchRulesUtil.RULE_NOT_F
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -606,5 +607,25 @@ class RulesConfigurationServiceTest {
 
     verify(rulesConfigurationPersistenceService, times(0))
         .deleteRuleConfiguration(any(RulesConfigurationDomainDto.class));
+  }
+
+  @Test
+  void testFetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope() throws PromiseEngineException {
+    when(rulesConfigurationPersistenceService.findByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
+            any()))
+        .thenReturn(Optional.of(testUtil.getRulesConfigurationDomainDto()));
+
+    // Act
+    Optional<RulesConfigurationResponse> actualResponse =
+        rulesConfigurationService.fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
+            new RuleConfigurationParam());
+
+    // Assert
+    assertTrue(actualResponse.isPresent());
+    assertEquals("NEXTUPLE", actualResponse.get().getOrgId());
+    assertEquals("EXPRESS:Store", actualResponse.get().getRule());
+
+    verify(rulesConfigurationPersistenceService, times(1))
+        .findByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(any());
   }
 }
