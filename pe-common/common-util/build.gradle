@@ -19,8 +19,6 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
     implementation 'io.swagger.core.v3:swagger-models:2.2.0'
-    implementation 'io.hypersistence:hypersistence-utils-hibernate-62:3.6.1'
-
     testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
 
