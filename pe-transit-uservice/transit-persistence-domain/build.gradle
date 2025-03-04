@@ -9,7 +9,7 @@ bootJar {
 dependencies {
     implementation(project(":pe-common:common-domain"))
     implementation(project(":pe-common:common-util"))
-    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.4.2'
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.1'
     implementation(project(":pe-transit-uservice:transit-api-domain"))
 }
 

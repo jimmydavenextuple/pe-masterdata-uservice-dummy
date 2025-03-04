@@ -46,7 +46,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.CollectionUtils;
 
 class JobConsumerServiceTest {
@@ -69,7 +68,6 @@ class JobConsumerServiceTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    MockMvcBuilders.standaloneSetup(jobConsumerService).build();
   }
 
   @Nested
