@@ -42,6 +42,7 @@ class ItemEntityTest {
     assertNull(itemEntity.getProcessingTime());
     assertNull(itemEntity.getProduct());
     assertNull(itemEntity.getShortDescription());
+    assertNull(itemEntity.getCustomAttributes());
   }
 
   @Test
