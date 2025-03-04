@@ -745,6 +745,18 @@ class TenantDBConfigImplTest {
   }
 
   @Test
+  @DisplayName("Get transfers past days for tenant")
+  void getTransfersPastDays() {
+    when(tenantConfigdataNearCacheService.get(any()))
+        .thenReturn(
+            TenantConfigdataCacheValue.builder()
+                .configKey("transfer-schedule-past-days")
+                .configValue("10")
+                .build());
+    assertEquals(10, tenantDBConfigImpl.getTransferSchedulePastDays());
+  }
+
+  @Test
   void getTargetProfitMarginsTest() {
     var cacheValue = testUtil.getTenantConfigCacheValueForTargetProfitMargins("itemCategory");
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);

@@ -8,11 +8,15 @@
 package com.nextuple.transit.persistence.repository;
 
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
+import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.entity.TransferScheduleEntity;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface TransferScheduleCustomRepository {
   Page<TransferScheduleEntity> findFilteredTransferSchedules(
       String orgId, FetchTransferScheduleRequest request, Pageable pageable);
+
+  List<TransferScheduleEntity> findTransferSchedulesInRange(TransferScheduleDomainRequest request);
 }
