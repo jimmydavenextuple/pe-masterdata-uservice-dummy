@@ -349,6 +349,13 @@ pipelines:
           trigger: manual
           deployment: prod
   branches:
+    minor-1.8.0:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy to devpe
+#          trigger: manual
+          deployment: devpe
     vapt:
       - step: *build
       - step:
