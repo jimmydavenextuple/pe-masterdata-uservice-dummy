@@ -180,7 +180,7 @@ public class TestUtil {
   public static final Integer PAGE_NO = 1;
   public static final Integer PAGE_SIZE = 5;
   public static final String SOURCING_RULE_EXCEPTION_MESSAGE = "Sourcing rule not found";
-  private static final JsonNode CUSTOM_ATTRIBUTES =
+  public static final JsonNode CUSTOM_ATTRIBUTES =
       JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public static final Long ID = 1L;
@@ -474,6 +474,7 @@ public class TestUtil {
     sourcingAttributeEntity.setIsDerived(IS_DERIVED_TRUE);
     sourcingAttributeEntity.setCustomAttributeKey(CUSTOM_ATTRIBUTE_KEY);
     sourcingAttributeEntity.setJsonPath(JSON_PATH);
+    sourcingAttributeEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return sourcingAttributeEntity;
   }
 
@@ -674,6 +675,7 @@ public class TestUtil {
     sourcingRuleAttributesDefinitionEntity.setStatus(status);
     sourcingRuleAttributesDefinitionEntity.setScope(
         SourcingAttributesDefinitionScopeEnum.SOURCING_RULE);
+    sourcingRuleAttributesDefinitionEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return sourcingRuleAttributesDefinitionEntity;
   }
 
@@ -1778,6 +1780,7 @@ public class TestUtil {
     holidayCutoffEntity.setDeliveryCoolDownDays(DELIVERY_COOL_DOWN_DAYS);
     holidayCutoffEntity.setPreCutoffDaysType(PRE_CUTOFF_DAYS_TYPE);
     holidayCutoffEntity.setDeliveryCoolDownDaysType(DELIVERY_COOL_DOWN_DAYS_TYPE);
+    holidayCutoffEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     return holidayCutoffEntity;
   }
@@ -1824,6 +1827,7 @@ public class TestUtil {
     holidayCutoffEntity.setDeliveryCoolDownDays(DEFAULT_DAYS);
     holidayCutoffEntity.setPreCutoffDaysType(DEFAULT_DAYS_TYPE);
     holidayCutoffEntity.setDeliveryCoolDownDaysType(DEFAULT_DAYS_TYPE);
+    holidayCutoffEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     return holidayCutoffEntity;
   }
@@ -1971,6 +1975,7 @@ public class TestUtil {
       holidayCutoffEntity.setDeliveryCoolDownDays(DELIVERY_COOL_DOWN_DAYS);
       holidayCutoffEntity.setPreCutoffDaysType(PRE_CUTOFF_DAYS_TYPE);
       holidayCutoffEntity.setDeliveryCoolDownDaysType(DELIVERY_COOL_DOWN_DAYS_TYPE);
+      holidayCutoffEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
       holidayCutoffEntityList.add(holidayCutoffEntity);
     }
