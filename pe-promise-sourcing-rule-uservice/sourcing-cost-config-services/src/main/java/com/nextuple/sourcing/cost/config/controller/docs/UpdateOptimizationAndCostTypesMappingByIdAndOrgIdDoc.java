@@ -51,7 +51,10 @@ import java.lang.annotation.Target;
                                                                   "optimizationStrategy": "COST",
                                                                   "costTypes": "BUYING_COST,SHIPPING_COST,NODE_PROCESSING_COST ,SALES_REVENUE,SHIP_REVENUE",
                                                                   "description": "(salesRevenue+shipRevenue)- (shippingCost + nodeProcessingCost + buyingCost)",
-                                                                  "javaClassName": "com.nextuple.promise.sourcing.impl.ProfitCalculationImpl"
+                                                                  "javaClassName": "com.nextuple.promise.sourcing.impl.ProfitCalculationImpl",
+                                                                  "customAttributes": {
+                                                                    "key1": "value1"
+                                                               }
                                                               }
                                                           }
                                                 """)

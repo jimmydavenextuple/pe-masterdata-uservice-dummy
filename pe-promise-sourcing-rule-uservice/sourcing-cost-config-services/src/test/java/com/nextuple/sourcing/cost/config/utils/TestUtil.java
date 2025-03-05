@@ -7,6 +7,8 @@
 
 package com.nextuple.sourcing.cost.config.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.promise.sourcing.rule.persistence.domain.NamedOptimizationStrategyDomainDto;
 import com.nextuple.sourcing.cost.config.domain.entity.CostAttributeDetailsEntity;
 import com.nextuple.sourcing.cost.config.domain.entity.CostAttributeMappingEntity;
@@ -174,6 +176,8 @@ public class TestUtil {
 
   public static final String INVALID_LEVEL_APPLIED_EXCEPTION =
       "Level applied of cost factor is not valid";
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+          JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public List<PreferenceSelectorCacheKeyDto> getPreferenceSelectorCacheKeys() {
     PreferenceSelectorCacheKeyDto preferenceSelectorCacheKeyDto1 =
@@ -1628,6 +1632,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+            .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1640,6 +1645,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY_PROFIT)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+            .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1651,6 +1657,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+            .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1662,6 +1669,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY_PROFIT)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+            .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1671,6 +1679,7 @@ public class TestUtil {
         .costTypes(COST_TYPE_SHIPPING_COST)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+            .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1682,6 +1691,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+            .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 

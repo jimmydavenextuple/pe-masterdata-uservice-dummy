@@ -8,20 +8,21 @@
 package com.nextuple.sourcing.cost.config.outbound;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class OptimizationAndCostTypesMappingResponse implements Serializable {
+public class OptimizationAndCostTypesMappingResponse extends AdditionalAttributes implements Serializable {
   @Serial private static final long serialVersionUID = 7096063655019691567L;
 
   @Schema(description = "Unique identifier for optimization and cost types mapping.", example = "1")
