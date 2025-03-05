@@ -14,6 +14,8 @@ import static com.nextuple.weightage.configuration.utils.WeightageConfigurationC
 import static com.nextuple.weightage.configuration.utils.WeightageConfigurationConstants.TYPE;
 import static com.nextuple.weightage.configuration.utils.WeightageConfigurationConstants.WEIGHTAGE;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.weightage.configuration.api.domain.dto.WeightageCacheKeyDto;
 import com.nextuple.weightage.configuration.api.domain.dto.WeightageConfigurationDto;
 import com.nextuple.weightage.configuration.api.domain.inbound.CreateWeightageConfigurationRequest;
@@ -29,6 +31,8 @@ import org.mapstruct.factory.Mappers;
 public class TestUtil {
   private static final WeightageConfigurationMapper INSTANCE_WEIGHTAGE =
       Mappers.getMapper(WeightageConfigurationMapper.class);
+  private static final JsonNode customAttributes =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public WeightageConfigurationDomainDto getWeightageConfigurationDomainDto() {
     WeightageConfigurationDomainDto weightageConfiguration = new WeightageConfigurationDomainDto();
@@ -36,6 +40,7 @@ public class TestUtil {
     weightageConfiguration.setKey(KEYS.get(0));
     weightageConfiguration.setType(TYPE);
     weightageConfiguration.setWeightage(WEIGHTAGE);
+    weightageConfiguration.setCustomAttributes(customAttributes);
     return weightageConfiguration;
   }
 
@@ -60,6 +65,7 @@ public class TestUtil {
         .type(TYPE)
         .key(KEYS.get(0))
         .weightage(WEIGHTAGE)
+        .customAttributes(customAttributes)
         .build();
   }
 
@@ -68,6 +74,7 @@ public class TestUtil {
         .weightage(WEIGHTAGE)
         .key(KEYS.get(0))
         .type(TYPE)
+        .customAttributes(customAttributes)
         .build();
   }
 
@@ -77,12 +84,14 @@ public class TestUtil {
     weightageConfiguration1.setKey(KEYS.get(0));
     weightageConfiguration1.setType(TYPE);
     weightageConfiguration1.setWeightage(WEIGHTAGE);
+    weightageConfiguration1.setCustomAttributes(customAttributes);
 
     WeightageConfigurationDomainDto weightageConfiguration2 = new WeightageConfigurationDomainDto();
     weightageConfiguration2.setOrgId(ORG_ID);
     weightageConfiguration2.setKey(KEYS.get(0));
     weightageConfiguration2.setType(AVAILABILITY);
     weightageConfiguration2.setWeightage(WEIGHTAGE);
+    weightageConfiguration2.setCustomAttributes(customAttributes);
 
     return List.of(weightageConfiguration1, weightageConfiguration2);
   }

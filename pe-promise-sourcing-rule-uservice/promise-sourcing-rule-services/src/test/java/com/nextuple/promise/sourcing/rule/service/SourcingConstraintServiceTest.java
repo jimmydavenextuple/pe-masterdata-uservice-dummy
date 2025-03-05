@@ -65,7 +65,9 @@ class SourcingConstraintServiceTest {
         sourcingConstraintService.processAddSourcingConstraint(sourcingConstraintRequest);
     assertEquals(
         testUtil.getSourcingRulesEntity().getId(), sourcingConstraintDetailsResponse.getId());
-
+    assertEquals(
+        testUtil.getSourcingRulesEntity().getCustomAttributes(),
+        sourcingConstraintDetailsResponse.getCustomAttributes());
     verify(sourcingConstraintPersistenceService, times(1))
         .fetchByOrgIdAndGroupIdAndConstraint(anyString(), anyString(), any());
     verify(sourcingConstraintPersistenceService, times(1))

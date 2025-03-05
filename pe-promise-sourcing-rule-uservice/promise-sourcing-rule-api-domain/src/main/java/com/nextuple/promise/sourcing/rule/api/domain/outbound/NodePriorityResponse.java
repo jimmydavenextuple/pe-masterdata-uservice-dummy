@@ -8,19 +8,20 @@
 package com.nextuple.promise.sourcing.rule.api.domain.outbound;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class NodePriorityResponse implements Serializable {
+public class NodePriorityResponse extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = 6727800069739427285L;
 
   @Schema(description = "Unique identifier for node priority record")
