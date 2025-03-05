@@ -58,4 +58,5 @@ public class ItemDomainDto extends DomainBaseEntity implements Serializable {
   private String itemBanner;
   private String handlingType;
   private Integer buyingCost;
+  private Double validDropoffDuration;
 }

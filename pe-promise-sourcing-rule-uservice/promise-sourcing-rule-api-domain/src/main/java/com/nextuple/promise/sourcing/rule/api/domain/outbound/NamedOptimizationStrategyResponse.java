@@ -7,6 +7,7 @@
 
 package com.nextuple.promise.sourcing.rule.api.domain.outbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
@@ -15,10 +16,11 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder(toBuilder = true)
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NamedOptimizationStrategyResponse implements Serializable {
+public class NamedOptimizationStrategyResponse extends AdditionalAttributes
+    implements Serializable {
   private static final long serialVersionUID = 9056581058438217966L;
 
   @Schema(description = "Unique identifier for the named optimization strategy.", example = "1")

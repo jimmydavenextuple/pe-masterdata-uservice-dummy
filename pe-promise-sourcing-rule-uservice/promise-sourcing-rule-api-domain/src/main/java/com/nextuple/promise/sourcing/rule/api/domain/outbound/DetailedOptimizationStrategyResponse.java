@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder(toBuilder = true)
+@SuperBuilder
 public class DetailedOptimizationStrategyResponse extends NamedOptimizationStrategyResponse {
 
   @Schema(description = "Name of the group.", example = "Node Group1")

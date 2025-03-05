@@ -2,7 +2,7 @@
   <springProfile name="default">
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
   </springProfile>
-  <springProfile name="dev,stage,perf,prod,qa,hotfix,demo,integration,simmaster,simexec,sandbox,sdev,sqa,sperf,orielly">
+  <springProfile name="dev,stage,perf,prod,qa,hotfix,demo,integration,simmaster,simexec,sandbox,sdev,sqa,sperf,orielly,devpe">
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
       <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>

@@ -112,4 +112,7 @@ public class ItemConstants {
       "A 200 success code indicates that the paginated item list is retrieved successfully.";
   public static final String PAGINATION_NEXT_URL = "next";
   public static final String PAGINATION_PREVIOUS_URL = "previous";
+  public static final String VALID_DROPOFF_DURATION =
+      "Valid dropOff duration in hours for the item.";
+  public static final String VALID_DROPOFF_DURATION_EXAMPLE = "2.4";
 }

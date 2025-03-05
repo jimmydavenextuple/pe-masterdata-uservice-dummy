@@ -8,18 +8,19 @@
 package com.nextuple.promise.sourcing.rule.api.domain.outbound;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class SourcingAttributeResponse implements Serializable {
+public class SourcingAttributeResponse extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = -6839410089923171099L;
 

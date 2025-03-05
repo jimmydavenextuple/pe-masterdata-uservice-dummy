@@ -100,6 +100,7 @@ class HolidayCutoffServiceTest {
     assertEquals(TestUtil.ORG_ID_1, result.getOrgId());
     assertEquals(TestUtil.HOLIDAY_CUTOFF_NAME, result.getHolidayCutoffName());
     assertEquals(TestUtil.HOLIDAY_CUTOFF_RULE, result.getHolidayCutoffRule());
+    assertEquals(TestUtil.CUSTOM_ATTRIBUTES, result.getCustomAttributes());
     verify(holidayCutOffRepository, times(1)).save(any());
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(any(), any());
@@ -341,6 +342,7 @@ class HolidayCutoffServiceTest {
     request.setHolidayCutoffDate(new Date(125, Calendar.NOVEMBER, 25));
     request.setHolidayDeliveryDate(new Date(125, Calendar.NOVEMBER, 29));
     request.setPreCutoffDays(3.0);
+    request.setCustomAttributes(TestUtil.CUSTOM_ATTRIBUTES);
     when(sourcingAttributesDefinitionPersistenceService
             .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(any(), any()))
         .thenReturn(Optional.empty());
@@ -358,6 +360,7 @@ class HolidayCutoffServiceTest {
     assertEquals(TestUtil.DEFAULT_STATUS, result.getStatus());
     assertEquals(TestUtil.DEFAULT_DAYS, result.getPreCutoffDays());
     assertEquals(TestUtil.DEFAULT_DAYS_TYPE, result.getDeliveryCoolDownDaysType());
+    assertEquals(TestUtil.CUSTOM_ATTRIBUTES, result.getCustomAttributes());
     verify(holidayCutOffRepository, times(1)).save(any());
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(any(), any());
@@ -385,6 +388,8 @@ class HolidayCutoffServiceTest {
     assertEquals(1, result.getHolidayCutoffInfo().size());
     assertEquals(
         TestUtil.HOLIDAY_CUTOFF_RULE, result.getHolidayCutoffInfo().get(0).getHolidayCutoffRule());
+    assertEquals(
+        TestUtil.CUSTOM_ATTRIBUTES, result.getHolidayCutoffInfo().get(0).getCustomAttributes());
 
     verify(holidayCutOffRepository, times(0))
         .findByOrgIdAndSourcingAttributesDefinitionIdAndHolidayCutoffRuleIn(
@@ -451,6 +456,8 @@ class HolidayCutoffServiceTest {
     assertEquals(4, result.getHolidayCutoffInfo().size());
     assertEquals(
         "EXPRESS:R1:O1:02", result.getHolidayCutoffInfo().getFirst().getHolidayCutoffRule());
+    assertEquals(
+        TestUtil.CUSTOM_ATTRIBUTES, result.getHolidayCutoffInfo().get(0).getCustomAttributes());
 
     verify(holidayCutOffRepository, times(1))
         .findByOrgIdAndSourcingAttributesDefinitionIdAndHolidayCutoffRuleIn(
@@ -485,6 +492,8 @@ class HolidayCutoffServiceTest {
         holidayCutoffService.processFetchHolidayCutoffRules(request);
     assertEquals(2, result.getHolidayCutoffInfo().size());
     assertEquals("EXPRESS:R1:O1", result.getHolidayCutoffInfo().getFirst().getHolidayCutoffRule());
+    assertEquals(
+        TestUtil.CUSTOM_ATTRIBUTES, result.getHolidayCutoffInfo().get(0).getCustomAttributes());
 
     verify(holidayCutOffRepository, times(1))
         .findByOrgIdAndSourcingAttributesDefinitionIdAndHolidayCutoffRuleIn(
@@ -519,6 +528,8 @@ class HolidayCutoffServiceTest {
         holidayCutoffService.processFetchHolidayCutoffRules(request);
     assertEquals(2, result.getHolidayCutoffInfo().size());
     assertEquals("EXPRESS:R1::02", result.getHolidayCutoffInfo().getFirst().getHolidayCutoffRule());
+    assertEquals(
+        TestUtil.CUSTOM_ATTRIBUTES, result.getHolidayCutoffInfo().get(0).getCustomAttributes());
 
     verify(holidayCutOffRepository, times(1))
         .findByOrgIdAndSourcingAttributesDefinitionIdAndHolidayCutoffRuleIn(
@@ -552,6 +563,8 @@ class HolidayCutoffServiceTest {
         holidayCutoffService.processFetchHolidayCutoffRules(request);
     assertEquals(1, result.getHolidayCutoffInfo().size());
     assertEquals("EXPRESS:R1::", result.getHolidayCutoffInfo().getFirst().getHolidayCutoffRule());
+    assertEquals(
+        TestUtil.CUSTOM_ATTRIBUTES, result.getHolidayCutoffInfo().get(0).getCustomAttributes());
 
     verify(holidayCutOffRepository, times(1))
         .findByOrgIdAndSourcingAttributesDefinitionIdAndHolidayCutoffRuleIn(
@@ -638,6 +651,7 @@ class HolidayCutoffServiceTest {
     assertEquals(TestUtil.HOLIDAY_CUTOFF_NAME, result.getHolidayCutoffName());
     assertEquals(TestUtil.HOLIDAY_CUTOFF_RULE, result.getHolidayCutoffRule());
     assertEquals(testUtil.createHolidayCutoffInfo(), result);
+    assertEquals(TestUtil.CUSTOM_ATTRIBUTES, result.getCustomAttributes());
     verify(holidayCutOffRepository, times(1)).save(any());
   }
 
@@ -740,6 +754,8 @@ class HolidayCutoffServiceTest {
     assertEquals(TestUtil.ORG_ID_1, result.getOrgId());
     assertEquals(TestUtil.HOLIDAY_CUTOFF_NAME, result.getHolidayCutoffName());
     assertEquals(TestUtil.HOLIDAY_CUTOFF_RULE, result.getHolidayCutoffRule());
+    assertEquals(TestUtil.CUSTOM_ATTRIBUTES, result.getCustomAttributes());
+
     verify(holidayCutOffRepository, times(1)).save(any());
   }
 
@@ -757,6 +773,8 @@ class HolidayCutoffServiceTest {
     assertEquals(TestUtil.ORG_ID_1, result.getOrgId());
     assertEquals(TestUtil.HOLIDAY_CUTOFF_NAME, result.getHolidayCutoffName());
     assertEquals(TestUtil.HOLIDAY_CUTOFF_RULE, result.getHolidayCutoffRule());
+    assertEquals(TestUtil.CUSTOM_ATTRIBUTES, result.getCustomAttributes());
+
     verify(holidayCutOffRepository, times(1))
         .findByOrgIdAndHolidayCutoffNameAndHolidayCutoffRule(any(), any(), any());
   }

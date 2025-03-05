@@ -15,5 +15,6 @@ public enum SourcingAttributesDefinitionScopeEnum {
   OPTIMIZATION,
   HOLIDAY_CUTOFF,
   ML_RULE,
-  ML_OVERRIDE_RULE
+  ML_OVERRIDE_RULE,
+  TRANSFER_SCHEDULE_RULE
 }
