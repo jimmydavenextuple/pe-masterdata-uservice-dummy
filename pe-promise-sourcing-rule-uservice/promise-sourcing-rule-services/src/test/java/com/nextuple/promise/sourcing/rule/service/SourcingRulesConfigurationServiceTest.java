@@ -610,8 +610,8 @@ class SourcingRulesConfigurationServiceTest {
         sourcingRuleDetails.getSourcingAttributesDefinitionId());
 
     assertEquals(
-            testUtil.getSourcingRulesEntity().getCustomAttributes(),
-            sourcingRuleDetails.getCustomAttributes());
+        testUtil.getSourcingRulesEntity().getCustomAttributes(),
+        sourcingRuleDetails.getCustomAttributes());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(

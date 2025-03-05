@@ -815,7 +815,8 @@ public class TestUtil {
     sourcingRuleDetailsEntity.setSourcingRuleId(SOURCING_RULE_ID);
     sourcingRuleDetailsEntity.setSequence(SEQUENCE);
     sourcingRuleDetailsEntity.setNodeGroups(NODE_GROUP_ID.toString());
-    sourcingRuleDetailsEntity.setCustomAttributes(JsonNodeFactory.instance.objectNode().put("key1", "value1"));
+    sourcingRuleDetailsEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
 
     return sourcingRuleDetailsEntity;
   }
