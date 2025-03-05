@@ -71,10 +71,10 @@ public class OptimizationAndCostTypesMappingService {
         createOptimizationAndCostTypesMappingRequest.getOptimizationStrategy();
     validateOptimizationOptimizationAndCostTypesMappingInDB(orgId, optimizationStrategy);
     validateOptimizationStrategy(optimizationStrategy);
-    //    validateCostTypes(
-    //        orgId,
-    //        createOptimizationAndCostTypesMappingRequest.getCostTypes(),
-    //        createOptimizationAndCostTypesMappingRequest.getOptimizationStrategy());
+    validateCostTypes(
+        orgId,
+        createOptimizationAndCostTypesMappingRequest.getCostTypes(),
+        createOptimizationAndCostTypesMappingRequest.getOptimizationStrategy());
     var optimizationAndCostTypesMappingEntity =
         INSTANCE.toOptimizationAndCostTypesMappingEntity(
             createOptimizationAndCostTypesMappingRequest);
@@ -236,10 +236,10 @@ public class OptimizationAndCostTypesMappingService {
       throws CommonServiceException {
     var optimizationAndCostTypesMappingEntity =
         getOptimizationAndCostTypesMappingEntityByIdAndOrgId(id, orgId);
-    //    validateCostTypes(
-    //        orgId,
-    //        updateOptimizationAndCostTypesMappingRequest.getCostTypes(),
-    //        optimizationAndCostTypesMappingEntity.getOptimizationStrategy());
+    validateCostTypes(
+        orgId,
+        updateOptimizationAndCostTypesMappingRequest.getCostTypes(),
+        optimizationAndCostTypesMappingEntity.getOptimizationStrategy());
     INSTANCE.updateOptimizationAndCostTypesMappingRequestToEntity(
         updateOptimizationAndCostTypesMappingRequest, optimizationAndCostTypesMappingEntity);
     return INSTANCE.toOptimizationAndCostTypesMappingResponse(
