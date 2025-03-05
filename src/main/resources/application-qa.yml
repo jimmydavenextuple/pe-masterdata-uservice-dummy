@@ -280,3 +280,8 @@ kafka-topic-flags:
       enabled: true
     transit-buffer:
       enabled: true
+  refresh-cache:
+    enabled: true
+  input:
+    taskTopics:
+      enabled: true
