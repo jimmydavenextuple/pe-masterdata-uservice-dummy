@@ -8,6 +8,7 @@
 package com.nextuple.promise.sourcing.rule.api.domain.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.HolidayCutoffDaysType;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.HolidayCutoffStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,15 +16,15 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class HolidayCutoffInfo implements Serializable {
+public class HolidayCutoffInfo extends AdditionalAttributes implements Serializable {
   @Serial private static final long serialVersionUID = -1204895093300884497L;
 
   @Schema(description = "Unique identifier for organisation.", example = "NEXTUPLE")

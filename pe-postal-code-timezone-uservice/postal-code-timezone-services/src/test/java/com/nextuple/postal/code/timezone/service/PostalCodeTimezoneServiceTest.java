@@ -55,6 +55,8 @@ class PostalCodeTimezoneServiceTest {
     PostalCodeTimezoneDto received_dto =
         postalCodeTimezoneService.createPostalCodeTimezone(createPostalCodeTimezoneRequest);
     assertEquals(createPostalCodeTimezoneRequest.getOrgId(), received_dto.getOrgId());
+    assertEquals(
+        createPostalCodeTimezoneRequest.getCustomAttributes(), received_dto.getCustomAttributes());
     verify(postalCodeTimezonePersistenceService, times(1))
         .savePostalCodeTimezone(any(PostalCodeTimezoneDomainDto.class));
   }
@@ -68,6 +70,9 @@ class PostalCodeTimezoneServiceTest {
     PostalCodeTimezoneDto postalCodeTimezoneDto =
         postalCodeTimezoneService.getPostalCodeTimezone(ORG_ID, ZIP_CODE_PREFIX);
     assertEquals(postalCodeTimezoneDto.getOrgId(), postalCodeTimezoneEntity.getOrgId());
+    assertEquals(
+        postalCodeTimezoneDto.getCustomAttributes(),
+        postalCodeTimezoneEntity.getCustomAttributes());
     verify(postalCodeTimezonePersistenceService, times(1))
         .getPostalCodeTimezone(anyString(), anyString());
   }
@@ -105,6 +110,9 @@ class PostalCodeTimezoneServiceTest {
         updatePostalCodeTimezoneRequest.getCountry(), updated_postalCodeTimezoneDto.getCountry());
     assertEquals(
         updatePostalCodeTimezoneRequest.getCity(), updated_postalCodeTimezoneDto.getCity());
+    assertEquals(
+        updatePostalCodeTimezoneRequest.getCustomAttributes(),
+        updated_postalCodeTimezoneDto.getCustomAttributes());
     verify(postalCodeTimezonePersistenceService, times(1))
         .getPostalCodeTimezone(anyString(), anyString());
     verify(postalCodeTimezonePersistenceService, times(1))
@@ -124,6 +132,9 @@ class PostalCodeTimezoneServiceTest {
     PostalCodeTimezoneDto deleted_postalCodeTimezoneDto =
         postalCodeTimezoneService.deletePostalCodeTimezone(ORG_ID, ZIP_CODE_PREFIX);
     assertEquals(postalCodeTimezoneEntity.getOrgId(), deleted_postalCodeTimezoneDto.getOrgId());
+    assertEquals(
+        postalCodeTimezoneEntity.getCustomAttributes(),
+        deleted_postalCodeTimezoneDto.getCustomAttributes());
   }
 
   @Test
