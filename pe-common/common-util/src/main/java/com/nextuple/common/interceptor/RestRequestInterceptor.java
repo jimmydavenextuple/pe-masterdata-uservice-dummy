@@ -43,6 +43,13 @@ public class RestRequestInterceptor implements HandlerInterceptor {
 
     Map<String, String> map =
         (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+    if (Objects.isNull(map)) {
+      throw new CommonServiceException(
+          "URI variable map is null. This might be due to incorrect URL or tenant",
+          HttpStatus.FORBIDDEN,
+          1011,
+          null);
+    }
     if (map.containsKey(ORG_ID)) {
       String pathVariableOrgId = map.get(ORG_ID);
       if (!tenantId.equals(pathVariableOrgId)) {
