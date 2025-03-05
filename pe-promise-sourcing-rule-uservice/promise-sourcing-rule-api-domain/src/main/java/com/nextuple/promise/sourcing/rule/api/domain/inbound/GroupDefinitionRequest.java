@@ -7,20 +7,21 @@
 
 package com.nextuple.promise.sourcing.rule.api.domain.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GroupDefinitionRequest implements Serializable {
+public class GroupDefinitionRequest extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = 2524921949976953544L;
 
   @NotBlank(message = "orgId can't be empty")

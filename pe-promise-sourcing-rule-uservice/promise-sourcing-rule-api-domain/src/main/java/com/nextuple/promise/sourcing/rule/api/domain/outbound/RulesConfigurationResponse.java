@@ -7,20 +7,21 @@
 
 package com.nextuple.promise.sourcing.rule.api.domain.outbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@SuperBuilder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RulesConfigurationResponse implements Serializable {
+public class RulesConfigurationResponse extends AdditionalAttributes implements Serializable {
   public static final long serialVersionUID = -2023059190396777563L;
 
   @Schema(description = "Unique identifier for the organisation.", example = "NEXTUPLE")

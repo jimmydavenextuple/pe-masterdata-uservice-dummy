@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TransitBufferFeedIngestionService
     implements FeedIngestionService<MasterDataIngestionDto<TransitBufferFeedDto>> {
-  @Value("${master-data.transit-buffer.topic-name:null}")
+  @Value("${master-data.transit-buffer.topic-names:null}")
   private String transitBufferFeedTopic;
 
   @Value("${kafka-topic-flags.master-data.transit-buffer.enabled:false}")

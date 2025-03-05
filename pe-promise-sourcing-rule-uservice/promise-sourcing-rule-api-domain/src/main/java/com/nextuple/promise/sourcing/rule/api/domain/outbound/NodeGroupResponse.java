@@ -8,19 +8,20 @@
 package com.nextuple.promise.sourcing.rule.api.domain.outbound;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class NodeGroupResponse implements Serializable {
+public class NodeGroupResponse extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -6839410089923170099L;
 
   @Schema(description = "Unique identifier for node group", example = "NG1")

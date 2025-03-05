@@ -127,4 +127,9 @@ public class ItemResponse extends AdditionalAttributes implements Serializable {
 
   @Schema(description = ItemConstants.BUYING_COST, example = ItemConstants.BUYING_COST_EXAMPLE)
   private Integer buyingCost;
+
+  @Schema(
+      description = ItemConstants.VALID_DROPOFF_DURATION,
+      example = ItemConstants.VALID_DROPOFF_DURATION_EXAMPLE)
+  private Double validDropoffDuration;
 }
