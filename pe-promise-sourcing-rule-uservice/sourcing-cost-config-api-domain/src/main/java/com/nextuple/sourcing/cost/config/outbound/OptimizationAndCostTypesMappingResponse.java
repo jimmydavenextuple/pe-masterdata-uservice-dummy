@@ -22,7 +22,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class OptimizationAndCostTypesMappingResponse extends AdditionalAttributes implements Serializable {
+public class OptimizationAndCostTypesMappingResponse extends AdditionalAttributes
+    implements Serializable {
   @Serial private static final long serialVersionUID = 7096063655019691567L;
 
   @Schema(description = "Unique identifier for optimization and cost types mapping.", example = "1")

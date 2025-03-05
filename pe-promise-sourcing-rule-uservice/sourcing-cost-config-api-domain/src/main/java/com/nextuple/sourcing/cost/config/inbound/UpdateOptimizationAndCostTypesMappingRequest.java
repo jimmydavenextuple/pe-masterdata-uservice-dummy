@@ -21,7 +21,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateOptimizationAndCostTypesMappingRequest extends AdditionalAttributes implements Serializable {
+public class UpdateOptimizationAndCostTypesMappingRequest extends AdditionalAttributes
+    implements Serializable {
   @Serial private static final long serialVersionUID = 4542914393917916247L;
 
   @NotBlank(

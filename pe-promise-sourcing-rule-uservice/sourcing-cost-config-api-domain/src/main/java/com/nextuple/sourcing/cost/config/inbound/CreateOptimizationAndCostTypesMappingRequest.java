@@ -21,7 +21,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateOptimizationAndCostTypesMappingRequest extends AdditionalAttributes implements Serializable {
+public class CreateOptimizationAndCostTypesMappingRequest extends AdditionalAttributes
+    implements Serializable {
   @Serial private static final long serialVersionUID = -3004629087120852960L;
 
   @NotBlank(message = "Unique identifier for organisation can't be empty.")

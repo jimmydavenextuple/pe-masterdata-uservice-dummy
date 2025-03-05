@@ -16,7 +16,7 @@ import org.hibernate.annotations.Type;
 @SuperBuilder
 @MappedSuperclass
 public class CustomAttributeEntity {
-    @Type(JsonBinaryType.class)
-    @Column(name = "custom_attributes", columnDefinition = "jsonb")
-    private JsonNode customAttributes;
+  @Type(JsonBinaryType.class)
+  @Column(name = "custom_attributes", columnDefinition = "jsonb")
+  private JsonNode customAttributes;
 }
