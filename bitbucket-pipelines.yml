@@ -108,17 +108,17 @@ server:
       middleman: no
       prometheus: yes
       storage: yes
-      java-opts: "-Xms1024m -Xmx1024m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/mnt/heapdumps"
+      java-opts: "-Xms2048m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/mnt/heapdumps"
       heapvolume: yes
       keyvault: yes
       scale:
         replicas: 1
       resources:
         min:
-          memory: 2Gi
+          memory: 3Gi
           cpu: 1
         max:
-          memory: 2Gi
+          memory: 3Gi
           cpu: 1
     sandbox:
       ingress: yes
