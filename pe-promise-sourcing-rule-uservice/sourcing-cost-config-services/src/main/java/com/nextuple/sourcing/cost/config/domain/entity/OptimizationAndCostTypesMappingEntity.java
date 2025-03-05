@@ -8,7 +8,7 @@
 package com.nextuple.sourcing.cost.config.domain.entity;
 
 import com.nextuple.core.event.listeners.CommonEntityListener;
-import com.nextuple.postgres.entity.CustomAttributeEntity;
+import com.nextuple.postgres.entity.CommonBaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -32,7 +32,7 @@ import lombok.experimental.SuperBuilder;
     name = "optimization_and_cost_types_mapping",
     indexes =
         @Index(name = "optimization_and_cost_types_mapping_id_orgId", columnList = "id,org_id"))
-public class OptimizationAndCostTypesMappingEntity extends CustomAttributeEntity {
+public class OptimizationAndCostTypesMappingEntity extends CommonBaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
