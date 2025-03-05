@@ -99,8 +99,7 @@ public class HolidayCutoffController {
           @PathVariable("holidayCutoffRule")
           @Parameter(description = "Colon separated values of attributes.", example = "EXPRESS:T2P")
           String holidayCutoffRule,
-      @NotBlank(message = "holidayCutoffUpdateRequest can't be empty") @Valid @RequestBody
-          HolidayCutoffUpdateRequest holidayCutoffUpdateRequest)
+      @Valid @RequestBody HolidayCutoffUpdateRequest holidayCutoffUpdateRequest)
       throws CommonServiceException {
     log.debug(
         "Processing holiday cutoff updation orgid {}, holidayCutoffName {}, holidayCutoffRule {} request {}",
