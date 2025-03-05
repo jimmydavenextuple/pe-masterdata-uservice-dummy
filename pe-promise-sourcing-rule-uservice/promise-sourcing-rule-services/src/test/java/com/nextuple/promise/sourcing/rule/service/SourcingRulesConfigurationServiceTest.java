@@ -640,7 +640,6 @@ class SourcingRulesConfigurationServiceTest {
     assertEquals(
         testUtil.getSourcingRulesEntity().getCustomAttributes(),
         sourcingRuleDetails.getCustomAttributes());
-
     verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRuleByIdAndOrgId(anyLong(), anyString());
     verify(sourcingRuleDetailsPersistenceService, times(1))
