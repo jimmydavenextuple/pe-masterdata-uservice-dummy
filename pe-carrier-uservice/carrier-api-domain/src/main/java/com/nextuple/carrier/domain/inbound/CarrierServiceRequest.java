@@ -7,20 +7,21 @@
 
 package com.nextuple.carrier.domain.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class CarrierServiceRequest implements Serializable {
+@SuperBuilder
+public class CarrierServiceRequest extends AdditionalAttributes implements Serializable {
 
   @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE")
   @NotBlank(message = "orgId can't be blank")

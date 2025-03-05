@@ -7,6 +7,8 @@
 
 package com.nextuple.carrier.spring.cache.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.carrier.cache.domain.CarrierCacheKey;
 import com.nextuple.carrier.cache.domain.CarrierCacheValue;
 import com.nextuple.carrier.cache.domain.CarrierDetails;
@@ -21,6 +23,8 @@ public class TestUtil {
   public static final String CARRIER_NAME = "Carrier-01";
   public static final String SERVICE_NAME = "Service-01";
   public static final String SERVICE_OPTIONS = "Standard";
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   private CarrierDetails getCarrierDetails() {
     return CarrierDetails.builder()
@@ -30,6 +34,7 @@ public class TestUtil {
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
         .serviceOptions(SERVICE_OPTIONS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -46,6 +51,7 @@ public class TestUtil {
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
         .serviceOptions(SERVICE_OPTIONS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 

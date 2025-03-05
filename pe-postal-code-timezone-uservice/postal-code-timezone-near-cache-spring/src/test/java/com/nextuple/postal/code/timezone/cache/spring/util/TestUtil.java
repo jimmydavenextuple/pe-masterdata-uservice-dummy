@@ -7,6 +7,8 @@
 
 package com.nextuple.postal.code.timezone.cache.spring.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.nextuple.postal.code.timezone.api.domain.outbound.CustomRegionResponse;
@@ -20,6 +22,10 @@ import com.nextuple.postal.code.timezone.cache.domain.PostalCodeTimezoneCacheVal
 import java.util.Arrays;
 
 public class TestUtil {
+
+  public static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
+
   public PostalCodeTimezoneDto getPostalCodeTimezoneDto() {
     return PostalCodeTimezoneDto.builder()
         .orgId("ABC")
@@ -30,6 +36,7 @@ public class TestUtil {
         .latitude("LATITUDE")
         .longitude("LONGITUDE")
         .timeZone("TIME_ZONE")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -62,6 +69,7 @@ public class TestUtil {
         .city("CITY")
         .timeZone("TIME_ZONE")
         .customRegion("REG1")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -82,6 +90,7 @@ public class TestUtil {
         .codes(Arrays.asList("123", "456"))
         .customRegionName("name")
         .customRegionDescription("description")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 

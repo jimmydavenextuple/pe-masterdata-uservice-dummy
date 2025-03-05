@@ -7,6 +7,8 @@
 
 package com.nextuple.configuration;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.configuration.inbound.ConfigMetadataRequest;
 import com.nextuple.configuration.inbound.ConfigMetadataUpdateRequest;
 import com.nextuple.configuration.inbound.TenantConfigdataRequest;
@@ -28,6 +30,8 @@ public class TestUtil {
 
   public static final String CONFIG_VALUE = "SDND,EXPRESS,STANDARD";
   public static final String CONFIG_VALUE_2 = "SDND";
+  public static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public ConfigMetadataDomainDto getConfigMetadataDomainDto() {
     ConfigMetadataDomainDto configMetadataDomainDto = new ConfigMetadataDomainDto();
@@ -35,6 +39,7 @@ public class TestUtil {
     configMetadataDomainDto.setConfigKey(CONFIG_KEY);
     configMetadataDomainDto.setAppName(APP_NAME);
     configMetadataDomainDto.setDefaultConfigValue(DEFAULT_CONFIG_VALUE);
+    configMetadataDomainDto.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return configMetadataDomainDto;
   }
 
@@ -44,6 +49,7 @@ public class TestUtil {
     configMetadataDomainDto.setConfigKey(CONFIG_KEY);
     configMetadataDomainDto.setAppName(APP_NAME);
     configMetadataDomainDto.setDefaultConfigValue(DEFAULT_CONFIG_VALUE_2);
+    configMetadataDomainDto.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return configMetadataDomainDto;
   }
 
@@ -52,6 +58,7 @@ public class TestUtil {
         .configKey(CONFIG_KEY)
         .appName(APP_NAME)
         .defaultConfigValue(DEFAULT_CONFIG_VALUE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -61,11 +68,15 @@ public class TestUtil {
         .configKey(CONFIG_KEY)
         .appName(APP_NAME)
         .defaultConfigValue(DEFAULT_CONFIG_VALUE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
   public ConfigMetadataUpdateRequest getConfigMetadataUpdateRequest() {
-    return ConfigMetadataUpdateRequest.builder().defaultConfigValue(DEFAULT_CONFIG_VALUE_2).build();
+    return ConfigMetadataUpdateRequest.builder()
+        .defaultConfigValue(DEFAULT_CONFIG_VALUE_2)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public TenantConfigdataDomainDto getTenantConfigdataDomainDto() {
@@ -74,6 +85,7 @@ public class TestUtil {
     tenantConfigdataDomainDto.setOrgId(ORG_ID);
     tenantConfigdataDomainDto.setConfigKey(CONFIG_KEY);
     tenantConfigdataDomainDto.setConfigValue(CONFIG_VALUE);
+    tenantConfigdataDomainDto.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return tenantConfigdataDomainDto;
   }
 
@@ -83,6 +95,7 @@ public class TestUtil {
     tenantConfigdataDomainDto.setOrgId(ORG_ID);
     tenantConfigdataDomainDto.setConfigKey(CONFIG_KEY);
     tenantConfigdataDomainDto.setConfigValue(CONFIG_VALUE_2);
+    tenantConfigdataDomainDto.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return tenantConfigdataDomainDto;
   }
 
@@ -91,6 +104,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .configKey(CONFIG_KEY)
         .configValue(CONFIG_VALUE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -100,10 +114,14 @@ public class TestUtil {
         .orgId(ORG_ID)
         .configKey(CONFIG_KEY)
         .configValue(CONFIG_VALUE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
   public TenantConfigdataUpdateRequest getTenantConfigdataUpdateRequest() {
-    return TenantConfigdataUpdateRequest.builder().configValue(CONFIG_VALUE_2).build();
+    return TenantConfigdataUpdateRequest.builder()
+        .configValue(CONFIG_VALUE_2)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 }
