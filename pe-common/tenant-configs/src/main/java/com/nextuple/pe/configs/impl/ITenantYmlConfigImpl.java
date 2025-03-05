@@ -254,6 +254,11 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   }
 
   @Override
+  public Integer getTransferSchedulePastDays() {
+    return (Integer) getSourcingConfigValue(TRANSFER_PAST_DAYS_CONFIG_KEY);
+  }
+
+  @Override
   public String getServiceOptionHierarchy() {
     // No default value can be configured for this property
     return null;

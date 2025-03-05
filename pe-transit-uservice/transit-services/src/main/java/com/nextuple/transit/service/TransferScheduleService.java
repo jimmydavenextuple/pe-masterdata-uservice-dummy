@@ -12,6 +12,7 @@ import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import java.util.List;
@@ -32,4 +33,7 @@ public interface TransferScheduleService {
       PageParams pageParams,
       FetchTransferScheduleRequest request)
       throws CommonServiceException, PromiseEngineException;
+
+  List<TransferScheduleResponse> fetchTransferSchedulesInRange(
+      TransferScheduleRangeRequest transferScheduleRangeRequest);
 }

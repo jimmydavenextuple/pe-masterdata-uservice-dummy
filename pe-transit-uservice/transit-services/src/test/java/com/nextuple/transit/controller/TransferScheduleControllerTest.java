@@ -7,6 +7,8 @@
 
 package com.nextuple.transit.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.times;
@@ -21,11 +23,12 @@ import com.nextuple.common.response.BaseResponse;
 import com.nextuple.transit.TestUtil;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.service.TransferScheduleService;
+import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,9 +64,8 @@ class TransferScheduleControllerTest {
         .thenReturn(testUtil.getTransferScheduleResponse());
     ResponseEntity<BaseResponse<TransferScheduleResponse>> response =
         controller.createTransferSchedule(transferScheduleCreationRequest);
-    Assertions.assertEquals(200, response.getStatusCode().value());
-    Assertions.assertEquals(
-        TestUtil.SOURCE_NODE, response.getBody().getPayload().getSourceNodeId());
+    assertEquals(200, response.getStatusCode().value());
+    assertEquals(TestUtil.SOURCE_NODE, response.getBody().getPayload().getSourceNodeId());
     verify(transferScheduleService, times(1)).createTransferSchedule(any());
   }
 
@@ -74,9 +76,8 @@ class TransferScheduleControllerTest {
         .thenReturn(List.of(testUtil.getTransferScheduleResponse()));
     ResponseEntity<BaseResponse<List<TransferScheduleResponse>>> response =
         controller.getTransferSchedules(TestUtil.ORG_ID, TestUtil.DROPOFF_NODE);
-    Assertions.assertEquals(200, response.getStatusCode().value());
-    Assertions.assertEquals(
-        TestUtil.SOURCE_NODE, response.getBody().getPayload().get(0).getSourceNodeId());
+    assertEquals(200, response.getStatusCode().value());
+    assertEquals(TestUtil.SOURCE_NODE, response.getBody().getPayload().get(0).getSourceNodeId());
     verify(transferScheduleService, times(1)).fetchTransferSchedules(any(), any());
   }
 
@@ -88,9 +89,8 @@ class TransferScheduleControllerTest {
         .thenReturn(testUtil.getTransferScheduleResponse());
     ResponseEntity<BaseResponse<TransferScheduleResponse>> response =
         controller.deleteTransferSchedule(transferScheduleCreationRequest);
-    Assertions.assertEquals(200, response.getStatusCode().value());
-    Assertions.assertEquals(
-        TestUtil.SOURCE_NODE, response.getBody().getPayload().getSourceNodeId());
+    assertEquals(200, response.getStatusCode().value());
+    assertEquals(TestUtil.SOURCE_NODE, response.getBody().getPayload().getSourceNodeId());
     verify(transferScheduleService, times(1)).deleteTransferSchedule(any());
   }
 
@@ -109,12 +109,33 @@ class TransferScheduleControllerTest {
         controller.fetchTransferScheduleList(
             TestUtil.ORG_ID, true, 1, 10, "sourceNodeId", "ASC", request);
 
-    Assertions.assertEquals(200, response.getStatusCode().value());
-    Assertions.assertNotNull(response.getBody().getPayload());
-    Assertions.assertEquals(
+    assertEquals(200, response.getStatusCode().value());
+    assertNotNull(response.getBody().getPayload());
+    assertEquals(
         TestUtil.SOURCE_NODE, response.getBody().getPayload().getData().get(0).getSourceNodeId());
 
     verify(transferScheduleService, times(1))
         .fetchTransferScheduleList(any(), anyBoolean(), any(), any());
+  }
+
+  @Test
+  void testGetTransferSchedulesInRange() {
+    // Arrange
+    TransferScheduleRangeRequest request = new TransferScheduleRangeRequest();
+    List<TransferScheduleResponse> mockResponse =
+        Collections.singletonList(new TransferScheduleResponse());
+    when(transferScheduleService.fetchTransferSchedulesInRange(request)).thenReturn(mockResponse);
+
+    // Act
+    ResponseEntity<BaseResponse<List<TransferScheduleResponse>>> response =
+        controller.getTransferSchedulesInRange(request);
+
+    // Assert
+    assertNotNull(response);
+    assertEquals(200, response.getStatusCodeValue());
+    assertEquals("Transfer Schedules fetched successfully", response.getBody().getMessage());
+    assertEquals(mockResponse, response.getBody().getPayload());
+
+    verify(transferScheduleService, times(1)).fetchTransferSchedulesInRange(request);
   }
 }
