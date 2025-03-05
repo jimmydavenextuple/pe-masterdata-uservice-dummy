@@ -85,7 +85,7 @@ spring:
         max.poll.records: 10
       topics:
         master_data_update_event:
-          name: INTERNAL.DEVPEPE.MASTER_DATA_UPDATE_EVENTS
+          name: INTERNAL.DEVPE.PE.MASTER_DATA_UPDATE_EVENTS
           group-id: master-data-update-devpe
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -284,3 +284,6 @@ kafka-topic-flags:
   input:
     taskTopics:
       enabled: true
+entity-listener:
+  kafka:
+    enabled: true
