@@ -517,6 +517,7 @@ public class TestUtil {
         .isDerived(IS_DERIVED_TRUE)
         .customAttributeKey(CUSTOM_ATTRIBUTE_KEY)
         .jsonPath(EMPTY_JSON_PATH)
+        .customAttributes(JsonNodeFactory.instance.objectNode().put("key1", "value1"))
         .build();
   }
 
@@ -556,6 +557,8 @@ public class TestUtil {
     nodeGroupEntity.setOrgId(ORG_ID);
     nodeGroupEntity.setNodeGroupName(NODE_GROUP_NAME);
     nodeGroupEntity.setNodeGroupDescription(NODE_GROUP_NAME);
+    nodeGroupEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
 
     return nodeGroupEntity;
   }
@@ -590,6 +593,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .nodeGroupName(NODE_GROUP_NAME)
         .nodeGroupDescription(NODE_GROUP_DESCRIPTION)
+        .customAttributes(JsonNodeFactory.instance.objectNode().put("key1", "value1"))
         .build();
   }
 
@@ -597,6 +601,8 @@ public class TestUtil {
     return UpdateNodeGroupRequest.builder()
         .nodeGroupName(name)
         .nodeGroupDescription(description)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -606,6 +612,8 @@ public class TestUtil {
         .orgId(ORG_ID)
         .nodeGroupName(name)
         .nodeGroupDescription(description)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -616,6 +624,8 @@ public class TestUtil {
     nodeGroupDetailEntity.setNodeId(NODE_ID);
     nodeGroupDetailEntity.setPriority(NODE_PRIORITY);
     nodeGroupDetailEntity.setNodeGroupId(NODE_GROUP_ID);
+    nodeGroupDetailEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
 
     return nodeGroupDetailEntity;
   }
@@ -647,6 +657,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .priority(NODE_PRIORITY)
         .nodeGroupId(NODE_GROUP_ID)
+        .customAttributes(JsonNodeFactory.instance.objectNode().put("key1", "value1"))
         .build();
   }
 
@@ -661,6 +672,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .priority(priority)
         .nodeGroupId(NODE_GROUP_ID)
+        .customAttributes(JsonNodeFactory.instance.objectNode().put("key1", "value1"))
         .build();
   }
 
@@ -777,6 +789,8 @@ public class TestUtil {
     sourcingRulesConfigurationEntity.setSourcingRuleName(SOURCING_RULE_NAME);
     sourcingRulesConfigurationEntity.setSourcingAttributesDefinitionId(
         SOURCING_ATTRIBUTES_DEFINITION_ID);
+    sourcingRulesConfigurationEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
 
     return sourcingRulesConfigurationEntity;
   }
@@ -801,6 +815,8 @@ public class TestUtil {
     sourcingRuleDetailsEntity.setSourcingRuleId(SOURCING_RULE_ID);
     sourcingRuleDetailsEntity.setSequence(SEQUENCE);
     sourcingRuleDetailsEntity.setNodeGroups(NODE_GROUP_ID.toString());
+    sourcingRuleDetailsEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
 
     return sourcingRuleDetailsEntity;
   }
@@ -914,6 +930,7 @@ public class TestUtil {
         .sourcingConstraint(SOURCING_CONSTRAINT)
         .sourcingConstraintValue(SOURCING_CONSTRAINT_VALUE_1)
         .groupId(GROUP_ID)
+        .customAttributes(JsonNodeFactory.instance.objectNode().put("key1", "value1"))
         .build();
   }
 
@@ -924,6 +941,8 @@ public class TestUtil {
     sourcingConstraintEntity.setGroupId(DEFAULT_GROUP_ID);
     sourcingConstraintEntity.setSourcingConstraint(SOURCING_CONSTRAINT);
     sourcingConstraintEntity.setSourcingConstraintValue(SOURCING_CONSTRAINT_VALUE_1);
+    sourcingConstraintEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
     return sourcingConstraintEntity;
   }
 
@@ -995,6 +1014,8 @@ public class TestUtil {
     groupDefinitionEntity.setReqAttributesValue(REQUIRED_ATTRIBUTES_VALUE);
     groupDefinitionEntity.setGroupName(GROUP_NAME);
     groupDefinitionEntity.setOrgId(ORG_ID);
+    groupDefinitionEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"));
     return groupDefinitionEntity;
   }
 
@@ -1005,6 +1026,8 @@ public class TestUtil {
         .sourcingAttributesDefinitionId(SOURCING_ATTRIBUTES_DEFINITION_ID)
         .reqAttributesValue(REQUIRED_ATTRIBUTES_VALUE)
         .optionalAttributesValue(OPTIONAL_ATTRIBUTES_VALUE)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -1039,6 +1062,8 @@ public class TestUtil {
     namedOptimizationStrategyEntity.setGroupId(GROUP_ID);
     namedOptimizationStrategyEntity.setOptimizationStrategyName(OPTIMIZATION_STRATEGY_NAME);
     namedOptimizationStrategyEntity.setOptimizationStrategyDetails(OPTIMIZATION_STRATEGY_DETAILS);
+    namedOptimizationStrategyEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"));
     return namedOptimizationStrategyEntity;
   }
 
@@ -1059,6 +1084,8 @@ public class TestUtil {
         .groupId(GROUP_ID)
         .optimizationStrategyName(OPTIMIZATION_STRATEGY_NAME)
         .optimizationStrategyDetails(OPTIMIZATION_STRATEGY_DETAILS)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -1198,6 +1225,8 @@ public class TestUtil {
   public NamedOptimizationStrategyUpdationRequest getNamedOptimizationStrategyUpdationRequest() {
     return NamedOptimizationStrategyUpdationRequest.builder()
         .optimizationStrategyName(OPTIMIZATION_STRATEGY_NAME)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -1229,6 +1258,8 @@ public class TestUtil {
     namedOptimizationStrategyEntity.setGroupId(GROUP_ID);
     namedOptimizationStrategyEntity.setOptimizationStrategyName(UPDATED_OPTIMIZATION_STRATEGY_NAME);
     namedOptimizationStrategyEntity.setOptimizationStrategyDetails(OPTIMIZATION_STRATEGY_DETAILS);
+    namedOptimizationStrategyEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"));
     return namedOptimizationStrategyEntity;
   }
 
@@ -1858,6 +1889,7 @@ public class TestUtil {
     request.setAttributeDefinitionId(1345L);
     request.setModuleName(RulesConfigurationModuleNameEnum.PROCESSING_TIME);
     request.setScope(SourcingAttributesDefinitionScopeEnum.ML_RULE);
+    request.setCustomAttributes(JsonNodeFactory.instance.objectNode().put("key1", "value1"));
     return request;
   }
 
@@ -1880,6 +1912,8 @@ public class TestUtil {
     expectedDomainDto.setAttributeDefinitionId(1345L);
     expectedDomainDto.setModuleName(RulesConfigurationModuleNameEnum.PROCESSING_TIME);
     expectedDomainDto.setScope(SourcingAttributesDefinitionScopeEnum.ML_RULE);
+    expectedDomainDto.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
     return expectedDomainDto;
   }
 
@@ -1891,6 +1925,8 @@ public class TestUtil {
     expectedResponse.setAttributeDefinitionId(1345L);
     expectedResponse.setModuleName(RulesConfigurationModuleNameEnum.PROCESSING_TIME);
     expectedResponse.setScope(SourcingAttributesDefinitionScopeEnum.ML_RULE);
+    expectedResponse.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
     return expectedResponse;
   }
 
