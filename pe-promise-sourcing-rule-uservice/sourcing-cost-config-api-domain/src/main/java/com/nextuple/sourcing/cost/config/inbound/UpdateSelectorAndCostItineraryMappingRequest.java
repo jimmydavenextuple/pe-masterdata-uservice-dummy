@@ -19,7 +19,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @NoArgsConstructor
-public class UpdateSelectorAndCostItineraryMappingRequest extends AdditionalAttributes implements Serializable {
+public class UpdateSelectorAndCostItineraryMappingRequest extends AdditionalAttributes
+    implements Serializable {
 
   private static final long serialVersionUID = -3833729651716197647L;
 

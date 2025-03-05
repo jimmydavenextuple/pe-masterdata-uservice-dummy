@@ -10,7 +10,6 @@ import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -19,7 +18,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @NoArgsConstructor
-public class SelectorAndCostItineraryMappingResponse extends AdditionalAttributes implements Serializable {
+public class SelectorAndCostItineraryMappingResponse extends AdditionalAttributes
+    implements Serializable {
 
   private static final long serialVersionUID = -7573422637404423313L;
 

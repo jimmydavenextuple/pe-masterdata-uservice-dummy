@@ -490,8 +490,8 @@ public class SelectorAndCostItineraryMappingService {
         .get()
         .setCostItinerary(updateSelectorAndCostItineraryMappingRequest.getCostItinerary());
     selectorAndCostItineraryMappingEntity
-            .get()
-            .setCustomAttributes(updateSelectorAndCostItineraryMappingRequest.getCustomAttributes());
+        .get()
+        .setCustomAttributes(updateSelectorAndCostItineraryMappingRequest.getCustomAttributes());
     return INSTANCE.toSelectorAndCostItineraryMappingResponse(
         selectorAndCostItineraryMappingRepository.save(
             selectorAndCostItineraryMappingEntity.get()));

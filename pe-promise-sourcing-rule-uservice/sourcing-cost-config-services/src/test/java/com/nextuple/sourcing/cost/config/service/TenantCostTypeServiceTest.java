@@ -17,11 +17,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.sourcing.cost.config.domain.entity.TenantCostTypeEntity;
 import com.nextuple.sourcing.cost.config.domain.repository.SelectorAndCostItineraryMappingRepository;
 import com.nextuple.sourcing.cost.config.domain.repository.TenantCostTypeRepository;
-import com.nextuple.sourcing.cost.config.enums.LabelEnum;
 import com.nextuple.sourcing.cost.config.inbound.TenantCostTypeUpdateRequest;
 import com.nextuple.sourcing.cost.config.outbound.TenantCostTypeResponse;
 import com.nextuple.sourcing.cost.config.utils.TestUtil;
@@ -179,22 +179,16 @@ class TenantCostTypeServiceTest {
   @DisplayName("Test updating a Tenant Cost Type")
   void updateTenantCostType() throws CommonServiceException {
     String updateDisplayName = "Updated display name";
-    TenantCostTypeUpdateRequest request = new TenantCostTypeUpdateRequest(updateDisplayName);
-    TenantCostTypeEntity entity =
-        new TenantCostTypeEntity(
-            TestUtil.ID,
-            TestUtil.ORG_ID,
-            TestUtil.COST_TYPE_SHIPPING_COST,
-            TestUtil.DISPLAY_NAME,
-            LabelEnum.COST);
+    TenantCostTypeUpdateRequest request =
+        TenantCostTypeUpdateRequest.builder()
+            .displayName(updateDisplayName)
+            .customAttributes(JsonNodeFactory.instance.objectNode().put("key1", "value1"))
+            .build();
+    TenantCostTypeEntity entity = testUtil.getTenantCostTypeEntity();
 
-    TenantCostTypeEntity updatedEntity =
-        new TenantCostTypeEntity(
-            TestUtil.ID,
-            TestUtil.ORG_ID,
-            TestUtil.COST_TYPE_SHIPPING_COST,
-            updateDisplayName,
-            LabelEnum.COST);
+    TenantCostTypeEntity updatedEntity = testUtil.getTenantCostTypeEntity();
+    updatedEntity.setDisplayName(updateDisplayName);
+    updatedEntity.setCustomAttributes(JsonNodeFactory.instance.objectNode().put("key1", "value1"));
     when(tenantCostTypeRepository.findByIdAndOrgId(TestUtil.ID, TestUtil.ORG_ID))
         .thenReturn(Optional.of(entity));
     when(tenantCostTypeRepository.save(any())).thenReturn(updatedEntity);
@@ -204,6 +198,7 @@ class TenantCostTypeServiceTest {
     assertEquals(TestUtil.ID, response.getId());
     assertEquals(TestUtil.ORG_ID, response.getOrgId());
     assertEquals(request.getDisplayName(), response.getDisplayName());
+    assertEquals(request.getCustomAttributes(), response.getCustomAttributes());
     verify(selectorAndCostItineraryMappingRepository, times((0)))
         .findByOrgIdAndCostType(any(), any());
   }

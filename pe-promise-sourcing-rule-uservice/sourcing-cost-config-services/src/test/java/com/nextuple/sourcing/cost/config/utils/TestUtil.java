@@ -496,12 +496,16 @@ public class TestUtil {
         .costType(COST_TYPE_SHIPPING_COST)
         .displayName(DISPLAY_NAME)
         .label(LabelEnum.COST)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
   public TenantCostTypeUpdateRequest getTenantCostTypeUpdateRequest() {
 
-    return TenantCostTypeUpdateRequest.builder().displayName(DISPLAY_NAME).build();
+    return TenantCostTypeUpdateRequest.builder()
+        .displayName(DISPLAY_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public TenantCostTypeResponse getTenantCostTypeResponse() {
@@ -512,12 +516,19 @@ public class TestUtil {
         .costType(COST_TYPE_SHIPPING_COST)
         .displayName(DISPLAY_NAME)
         .label(LabelEnum.COST)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
   public TenantCostTypeEntity getTenantCostTypeEntity() {
-    return new TenantCostTypeEntity(
-        ID, ORG_ID, COST_TYPE_SHIPPING_COST, DISPLAY_NAME, LabelEnum.COST);
+    return TenantCostTypeEntity.builder()
+        .id(ID)
+        .orgId(ORG_ID)
+        .costType(COST_TYPE_SHIPPING_COST)
+        .displayName(DISPLAY_NAME)
+        .label(LabelEnum.COST)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public List<TenantCostTypeEntity> getTenantCostTypeEntityList() {
@@ -540,7 +551,7 @@ public class TestUtil {
         .costType(COST_TYPE_SHIPPING_COST)
         .selectorCfValue(SELECTOR_CF_VALUE)
         .selectorCf(SELECTOR_CF)
-            .customAttributes(CUSTOM_ATTRIBUTES)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -549,7 +560,7 @@ public class TestUtil {
 
     return UpdateSelectorAndCostItineraryMappingRequest.builder()
         .costItinerary(COST_ITINERARY_UPSLIKE)
-            .customAttributes(CUSTOM_ATTRIBUTES)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -561,7 +572,7 @@ public class TestUtil {
         .costType(COST_TYPE_SHIPPING_COST)
         .selectorCfValue(null)
         .selectorCf(SELECTOR_CF)
-            .customAttributes(CUSTOM_ATTRIBUTES)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -573,7 +584,7 @@ public class TestUtil {
         .selectorCfValue(SELECTOR_CF_VALUE)
         .costItinerary(COST_ITINERARY_UPSLIKE)
         .costType(COST_TYPE_SHIPPING_COST)
-            .customAttributes(CUSTOM_ATTRIBUTES)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
