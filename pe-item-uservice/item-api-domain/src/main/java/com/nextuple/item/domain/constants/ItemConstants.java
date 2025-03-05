@@ -14,11 +14,11 @@ public class ItemConstants {
   public static final String ADD_ITEM_DESC =
       "Adds new items or updates item if it exists in the retail system's inventory to ensure that the inventory is up-to-date and accurate. This API adds items by passing the item ID, organization ID, and UOM attributes in the path parameters for the required item.";
   public static final String UPDATE_ITEM_DESC =
-      "Updates details such as prices, descriptions, images, and service option eligibility for a specific item in the enterprise's catalog.";
+      "Updates details such as prices, descriptions, images, customAttributes and service option eligibility for a specific item in the enterprise's catalog.";
   public static final String DELETE_ITEM_DESC =
       "Deletes an item when it is no longer required. Items can be deleted for a variety of reasons including deleting items that are no longer in stock or have been discontinued, and items that are part of a promotion or sale once the promotion or sale has ended. This API deletes the item by passing the organization ID, item ID, and UOM attributes in the path parameter for the required item.";
   public static final String GET_ITEM_DESC =
-      "Retrieves the information such as the item's name, description, price, images, and other relevant information about a specific item in a retailer's catalog. This API retrieves the information by passing the organization ID, item ID, and UOM attributes in the path parameters for the required item.";
+      "Retrieves the information such as the item's name, description, price, images, customAttributes and other relevant information about a specific item in a retailer's catalog. This API retrieves the information by passing the organization ID, item ID, and UOM attributes in the path parameters for the required item.";
   public static final String GET_ITEM_LIST_DESC =
       "Retrieves the information such as list of the items in a retailer's catalog. This API retrieves the information by passing the organization ID and list of item IDs in the query parameters for the required item.";
   public static final String ITEM_ID = "Unique identifier of the item.";
@@ -106,12 +106,13 @@ public class ItemConstants {
       "{\"bufferHours\":1,\"bufferStartDate\":\"2024-06-14T01:00:00.000+00:00\",\"bufferEndDate\":\"2025-06-13T21:59:00.000+00:00\"}";
   public static final String BUYING_COST = "Per unit buying cost of the item.";
   public static final String BUYING_COST_EXAMPLE = "2";
-  public static final String HOLDING_TIME = "Holding time in hours of the item.";
-  public static final String HOLDING_TIME_EXAMPLE = "2.4";
   public static final String SHORT_DESCRIPTION_EXAMPLE = "Bold fit Skipping Rope";
   public static final String ITEM_SORT_BY = "itemId";
   public static final String GET_ITEM_LIST_PAGINATED_SUCCESS =
       "A 200 success code indicates that the paginated item list is retrieved successfully.";
   public static final String PAGINATION_NEXT_URL = "next";
   public static final String PAGINATION_PREVIOUS_URL = "previous";
+  public static final String VALID_DROPOFF_DURATION =
+      "Valid dropOff duration in hours for the item.";
+  public static final String VALID_DROPOFF_DURATION_EXAMPLE = "2.4";
 }

@@ -7,19 +7,20 @@
 
 package com.nextuple.promise.sourcing.rule.api.domain.pojo;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SourcingRulesInfo implements Serializable {
+public class SourcingRulesInfo extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = -8347206232847801126L;
 

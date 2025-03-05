@@ -7,21 +7,22 @@
 
 package com.nextuple.weightage.configuration.api.domain.dto;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class WeightageConfigurationDto {
+public class WeightageConfigurationDto extends AdditionalAttributes {
   @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE")
   private String orgId;
 
