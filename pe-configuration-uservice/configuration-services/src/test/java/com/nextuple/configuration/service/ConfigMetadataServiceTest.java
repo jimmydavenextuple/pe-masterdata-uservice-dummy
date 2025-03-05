@@ -7,7 +7,9 @@
 package com.nextuple.configuration.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -19,9 +21,12 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.configuration.TestUtil;
 import com.nextuple.configuration.inbound.ConfigMetadataRequest;
+import com.nextuple.configuration.inbound.ConfigMetadataUpdateRequest;
 import com.nextuple.configuration.outbound.ConfigMetadataResponse;
 import com.nextuple.configuration.persistence.domain.ConfigMetadataDomainDto;
 import com.nextuple.configuration.persistence.service.ConfigMetadataPersistenceService;
+import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -172,5 +177,19 @@ class ConfigMetadataServiceTest {
             });
     assertEquals("Configuration metadata not found for given configKey", ex.getMessage());
     verify(configMetadataPersistenceService, times(1)).fetchConfigMetadataByConfigKey(anyString());
+  }
+
+  @Test
+  void serializableClassTest() {
+    ConfigMetadataUpdateRequest request = new ConfigMetadataUpdateRequest();
+    assertTrue(request instanceof Serializable);
+  }
+
+  @Test
+  void serialVersionUIDTest() throws NoSuchFieldException, IllegalAccessException {
+    Field field = ConfigMetadataUpdateRequest.class.getDeclaredField("serialVersionUID");
+    field.setAccessible(true);
+    assertNotNull(field);
+    assertEquals(-8804756792804347818L, field.getLong(null));
   }
 }

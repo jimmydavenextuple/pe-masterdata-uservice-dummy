@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 @Operation(
     summary = "Create Calendar",
     description =
-        "Creates a working calendar with the calendar ID, organization ID, description, working days and exception days.")
+        "Creates a working calendar with the calendar ID, organization ID, description, working days, customAttributes and exception days.")
 @ApiResponse(
     responseCode = "200",
     description = "A 200 success code indicates that the calendar is created successfully.")
