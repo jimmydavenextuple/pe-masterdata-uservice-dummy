@@ -48,6 +48,8 @@ import static com.nextuple.dataupload.helper.WeightageConfigurationDataUploadCon
 import static com.nextuple.dataupload.helper.WeightageConfigurationDataUploadConstants.WEIGHTAGE_CONFIGURATION_DATA_UPLOAD_SUCCESS;
 import static org.junit.jupiter.api.parallel.Resources.TIME_ZONE;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.calendar.domain.outbound.CalendarResponse;
 import com.nextuple.calendar.domain.outbound.CarrierServiceCalendarResponse;
 import com.nextuple.calendar.domain.outbound.NodeCalendarResponse;
@@ -194,6 +196,8 @@ public class TestUtil {
   public static final String CUSTOM_REGION_DESC = "ABC";
   public static final String CUSTOM_REGION_NAME = "CR1";
   public static final List<String> PARTIAL_CODES = Arrays.asList("T2P", "T3P");
+  private static final JsonNode customAttributes =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   private NodeCarrierResponse getNodeCarrierResponse() {
     return NodeCarrierResponse.builder()
@@ -441,6 +445,7 @@ public class TestUtil {
         .type("PRIORITY")
         .key("P1")
         .weightage(100F)
+        .customAttributes(customAttributes)
         .build();
   }
 

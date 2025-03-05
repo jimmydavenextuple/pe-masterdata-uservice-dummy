@@ -6,15 +6,18 @@
  */
 package com.nextuple.configuration.cache.domain;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.core.cache.domain.CacheValue;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
-public class TenantConfigdataCacheValue implements CacheValue {
+public class TenantConfigdataCacheValue extends AdditionalAttributes implements CacheValue {
 
   private Long id;
   private String orgId;

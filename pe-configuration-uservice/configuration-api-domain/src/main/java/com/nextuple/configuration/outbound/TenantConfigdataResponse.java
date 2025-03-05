@@ -8,18 +8,21 @@
 package com.nextuple.configuration.outbound;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TenantConfigdataResponse implements Serializable {
+public class TenantConfigdataResponse extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = 3195946904038241015L;
 
   @JsonInclude(JsonInclude.Include.NON_NULL)

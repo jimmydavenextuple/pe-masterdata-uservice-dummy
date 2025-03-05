@@ -7,15 +7,16 @@
 
 package com.nextuple.carrier.cache.domain;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
-public class CarrierDetails implements Serializable {
+public class CarrierDetails extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = 4816560413275581767L;
 

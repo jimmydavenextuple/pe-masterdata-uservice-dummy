@@ -82,6 +82,9 @@ class NodePriorityServiceTest {
     NodePriorityResponse nodePriorityResponse =
         nodePriorityService.processAddNodePriorityToNodeGroup(nodePriorityRequest);
     assertEquals(testUtil.getNodeGroupEntity().getId(), nodePriorityResponse.getId());
+    assertEquals(
+        testUtil.getNodeGroupEntity().getCustomAttributes(),
+        nodePriorityResponse.getCustomAttributes());
 
     verify(nodeGroupPersistenceService, times(1))
         .fetchNodeGroupByIdAndOrgId(anyLong(), anyString());
@@ -294,6 +297,9 @@ class NodePriorityServiceTest {
     assertEquals(
         testUtil.getUpdatedNodePriorityResponse(100).getPriority(),
         nodePriorityResponse.getPriority());
+    assertEquals(
+        updatedNodePriorityEntity.getCustomAttributes(),
+        nodePriorityResponse.getCustomAttributes());
 
     verify(nodePriorityPersistenceService, times(1))
         .saveNodePriorityEntity(any(NodePriorityDomainDto.class));
