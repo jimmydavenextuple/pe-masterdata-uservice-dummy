@@ -189,6 +189,7 @@ public class GroupDefinitionService {
       groupDefinitionInfo.setReqAttributesValue(groupDefinitionDomainDto.getReqAttributesValue());
       groupDefinitionInfo.setOptionalAttributesValue(
           groupDefinitionDomainDto.getOptionalAttributesValue());
+      groupDefinitionInfo.setCustomAttributes(groupDefinitionDomainDto.getCustomAttributes());
       groupDefinitionInfoList.add(groupDefinitionInfo);
     }
 
