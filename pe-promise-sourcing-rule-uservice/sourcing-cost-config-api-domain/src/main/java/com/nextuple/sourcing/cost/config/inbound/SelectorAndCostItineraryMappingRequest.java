@@ -6,6 +6,7 @@
  */
 package com.nextuple.sourcing.cost.config.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -13,12 +14,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-public class SelectorAndCostItineraryMappingRequest implements Serializable {
+public class SelectorAndCostItineraryMappingRequest extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = -3833729651716197647L;
 

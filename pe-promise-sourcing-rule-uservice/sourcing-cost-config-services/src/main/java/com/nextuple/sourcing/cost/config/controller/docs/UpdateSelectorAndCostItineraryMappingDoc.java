@@ -48,7 +48,10 @@ import java.lang.annotation.Target;
                                   "selectorCf": "BillWeightUps1",
                                   "selectorCfValue": "M",
                                   "costItinerary": "SHIPPING_COST_NATIONAL_LIKE_T3",
-                                  "costType": "SHIPPING_COST"
+                                  "costType": "SHIPPING_COST",
+                                   "customAttributes": {
+                                        "dynamicAtrr1": true
+                                    }
                               }
                           }""")
             }))

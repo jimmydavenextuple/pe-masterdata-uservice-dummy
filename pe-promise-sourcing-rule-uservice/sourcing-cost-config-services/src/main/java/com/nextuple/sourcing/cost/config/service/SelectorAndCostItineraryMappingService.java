@@ -489,6 +489,9 @@ public class SelectorAndCostItineraryMappingService {
     selectorAndCostItineraryMappingEntity
         .get()
         .setCostItinerary(updateSelectorAndCostItineraryMappingRequest.getCostItinerary());
+    selectorAndCostItineraryMappingEntity
+            .get()
+            .setCustomAttributes(updateSelectorAndCostItineraryMappingRequest.getCustomAttributes());
     return INSTANCE.toSelectorAndCostItineraryMappingResponse(
         selectorAndCostItineraryMappingRepository.save(
             selectorAndCostItineraryMappingEntity.get()));
