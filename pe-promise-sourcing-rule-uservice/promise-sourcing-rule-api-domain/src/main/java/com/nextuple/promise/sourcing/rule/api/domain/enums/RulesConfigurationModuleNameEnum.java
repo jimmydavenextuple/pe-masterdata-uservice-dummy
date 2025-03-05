@@ -8,5 +8,6 @@
 package com.nextuple.promise.sourcing.rule.api.domain.enums;
 
 public enum RulesConfigurationModuleNameEnum {
-  PROCESSING_TIME
+  PROCESSING_TIME,
+  TRANSFER_SCHEDULE
 }

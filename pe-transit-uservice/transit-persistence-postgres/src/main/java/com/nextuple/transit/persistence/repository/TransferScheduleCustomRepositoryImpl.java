@@ -10,6 +10,7 @@ package com.nextuple.transit.persistence.repository;
 import static com.nextuple.common.constants.CommonConstants.ORG_ID;
 
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
+import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.entity.TransferScheduleEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,7 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
   @PersistenceContext private EntityManager entityManager;
 
   private static final String END_TIME = "endTime";
+  private static final String START_TIME = "startTime";
   private static final String DROPOFF_NODE_ID = "dropoffNodeId";
   private static final String SOURCE_NODE_ID = "sourceNodeId";
 
@@ -65,6 +68,41 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
     long total = fetchTotalCount(cb, orgId, request, startDateTime, endDateTime);
 
     return new PageImpl<>(transferSchedules, pageable, total);
+  }
+
+  @Override
+  public List<TransferScheduleEntity> findTransferSchedulesInRange(
+      TransferScheduleDomainRequest request) {
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<TransferScheduleEntity> cq = cb.createQuery(TransferScheduleEntity.class);
+    Root<TransferScheduleEntity> root = cq.from(TransferScheduleEntity.class);
+
+    List<Predicate> predicates = new ArrayList<>();
+    // required predicates
+    predicates.add(cb.equal(root.get(ORG_ID), request.getOrgId()));
+    predicates.add(cb.equal(root.get(DROPOFF_NODE_ID), request.getDropoffNodeId()));
+
+    // optional predicates
+    if (Objects.nonNull(request.getRule()) && Objects.nonNull(request.getRuleName())) {
+      predicates.add(cb.equal(root.get("rule"), request.getRule()));
+      predicates.add(cb.equal(root.get("ruleName"), request.getRuleName()));
+    }
+
+    if (Objects.nonNull(request.getStartTimeLowerBound())) {
+      predicates.add(
+          cb.between(
+              root.get(START_TIME),
+              request.getStartTimeLowerBound(),
+              request.getStartTimeUpperBound()));
+    }
+
+    if (Objects.nonNull(request.getEndTimeLowerBound())) {
+      predicates.add(
+          cb.between(
+              root.get(END_TIME), request.getEndTimeLowerBound(), request.getEndTimeUpperBound()));
+    }
+    cq.where(cb.and(predicates.toArray(new Predicate[0])));
+    return entityManager.createQuery(cq).getResultList();
   }
 
   private List<Predicate> buildPredicates(

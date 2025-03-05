@@ -2,6 +2,7 @@ package com.nextuple.pe.configs.impl;
 
 import static com.nextuple.common.constants.ConfigKeyConstants.TRANSFERS_ENABLED;
 import static com.nextuple.common.constants.ConfigKeyConstants.TRANSFER_HORIZON_DAYS_CONFIG_KEY;
+import static com.nextuple.common.constants.ConfigKeyConstants.TRANSFER_PAST_DAYS_CONFIG_KEY;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -626,6 +627,22 @@ class ITenantYmlConfigImplTest {
     assertEquals(3, iTenantYmlConfigImpl.getTransferScheduleHorizonDays());
     CurrentThreadContext.getLogContext().setTenantId("SIGNET");
     assertEquals(2, iTenantYmlConfigImpl.getTransferScheduleHorizonDays());
+  }
+
+  @Test
+  @DisplayName("Get transfer past days for NEXTUPLE_GR and DEFAULT")
+  void getTransfersPastDays() {
+    when(sourcingConfig.getSourcing())
+        .thenReturn(
+            Map.of(
+                TestUtil.ORG_ID,
+                Map.of(TRANSFER_PAST_DAYS_CONFIG_KEY, 3),
+                DEFAULT,
+                Map.of(TRANSFER_PAST_DAYS_CONFIG_KEY, 2)));
+    CurrentThreadContext.getLogContext().setTenantId(TestUtil.ORG_ID);
+    assertEquals(3, iTenantYmlConfigImpl.getTransferSchedulePastDays());
+    CurrentThreadContext.getLogContext().setTenantId("SIGNET");
+    assertEquals(2, iTenantYmlConfigImpl.getTransferSchedulePastDays());
   }
 
   @Test
