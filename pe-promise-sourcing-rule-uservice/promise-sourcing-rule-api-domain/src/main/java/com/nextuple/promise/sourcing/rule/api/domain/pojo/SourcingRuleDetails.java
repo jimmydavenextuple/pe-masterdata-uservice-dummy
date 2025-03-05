@@ -9,17 +9,20 @@ package com.nextuple.promise.sourcing.rule.api.domain.pojo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(Include.NON_EMPTY)
-public class SourcingRuleDetails implements Serializable {
+public class SourcingRuleDetails extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = -7080108297445570375L;
 

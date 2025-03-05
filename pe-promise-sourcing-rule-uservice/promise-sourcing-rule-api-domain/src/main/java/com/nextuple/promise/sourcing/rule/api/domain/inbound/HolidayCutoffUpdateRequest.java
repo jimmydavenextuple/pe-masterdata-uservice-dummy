@@ -9,6 +9,7 @@ package com.nextuple.promise.sourcing.rule.api.domain.inbound;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.OptBoolean;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.HolidayCutoffDaysType;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.HolidayCutoffStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,16 +19,16 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class HolidayCutoffUpdateRequest implements Serializable {
+public class HolidayCutoffUpdateRequest extends AdditionalAttributes implements Serializable {
   @Serial private static final long serialVersionUID = -3610659332595241996L;
 
   @Schema(description = "Description of the holiday cutoff.", example = "Christmas Holiday Cutoff")
