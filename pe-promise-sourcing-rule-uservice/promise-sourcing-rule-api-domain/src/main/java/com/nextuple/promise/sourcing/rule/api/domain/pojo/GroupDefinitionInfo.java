@@ -7,18 +7,19 @@
 
 package com.nextuple.promise.sourcing.rule.api.domain.pojo;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-public class GroupDefinitionInfo implements Serializable {
+public class GroupDefinitionInfo extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = 5889803183936041423L;
 
   @Schema(description = "Unique identifier for group definition.", example = "1")

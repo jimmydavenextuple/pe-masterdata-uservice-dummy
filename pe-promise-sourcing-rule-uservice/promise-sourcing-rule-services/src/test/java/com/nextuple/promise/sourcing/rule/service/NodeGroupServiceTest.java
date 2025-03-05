@@ -14,6 +14,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.pojo.PageParams;
@@ -72,6 +73,9 @@ class NodeGroupServiceTest {
 
     NodeGroupResponse nodeGroupResponse = nodeGroupService.createNodeGroup(createNodeGroupRequest);
     assertEquals(testUtil.getNodeGroupEntity().getId(), nodeGroupResponse.getId());
+    assertEquals(
+        testUtil.getNodeGroupEntity().getCustomAttributes(),
+        nodeGroupResponse.getCustomAttributes());
     verify(nodeGroupPersistenceService, times(1)).saveNodeGroup(any(NodeGroupDomainDto.class));
   }
 
@@ -157,6 +161,8 @@ class NodeGroupServiceTest {
     NodeGroupDomainDto updatedNodeGroupEntity = testUtil.getNodeGroupEntity();
     updatedNodeGroupEntity.setNodeGroupName(name);
     updatedNodeGroupEntity.setNodeGroupDescription(description);
+    updatedNodeGroupEntity.setCustomAttributes(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"));
 
     when(nodeGroupPersistenceService.fetchNodeGroupByIdAndOrgId(anyLong(), anyString()))
         .thenReturn(Optional.ofNullable(testUtil.getNodeGroupEntity()));
@@ -169,6 +175,7 @@ class NodeGroupServiceTest {
             TestUtil.ORG_ID,
             testUtil.getUpdateNodeGroupRequest(name, description));
     assertEquals(nodeGroupResponse.getId(), response.getId());
+    assertEquals(nodeGroupResponse.getCustomAttributes(), response.getCustomAttributes());
     verify(nodeGroupPersistenceService, times(1))
         .fetchNodeGroupByIdAndOrgId(anyLong(), anyString());
     verify(nodeGroupPersistenceService, times(1)).saveNodeGroup(any(NodeGroupDomainDto.class));

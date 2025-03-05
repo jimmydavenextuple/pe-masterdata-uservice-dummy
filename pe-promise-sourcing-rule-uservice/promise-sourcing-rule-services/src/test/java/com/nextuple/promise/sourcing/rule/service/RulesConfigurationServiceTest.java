@@ -102,6 +102,9 @@ class RulesConfigurationServiceTest {
         actualResponse.getModuleName());
     assertEquals(
         testUtil.getExpectedRulesConfigurationResponse1().getScope(), actualResponse.getScope());
+    assertEquals(
+        testUtil.getExpectedRulesConfigurationResponse1().getCustomAttributes(),
+        actualResponse.getCustomAttributes());
 
     verify(sourcingAttributesDefinitionPersistenceService, times(2))
         .getSourcingRuleAttributesDefinitionEntityByIdAndOrgIdAndScope(any(), any(), any());

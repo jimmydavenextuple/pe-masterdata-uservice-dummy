@@ -8,20 +8,21 @@
 package com.nextuple.postal.code.timezone.api.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class CustomRegionDto implements Serializable {
+public class CustomRegionDto extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = -8375318271491901408L;
 
