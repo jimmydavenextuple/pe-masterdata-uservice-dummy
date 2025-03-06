@@ -7,6 +7,8 @@
 
 package com.nextuple.sourcing.cost.config.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.promise.sourcing.rule.persistence.domain.NamedOptimizationStrategyDomainDto;
 import com.nextuple.sourcing.cost.config.domain.entity.CostAttributeDetailsEntity;
 import com.nextuple.sourcing.cost.config.domain.entity.CostAttributeMappingEntity;
@@ -134,6 +136,8 @@ public class TestUtil {
   public static final String JAVA_CLASS_NAME = "com.org.impl.CostImpl";
   public static final String OPT_STRATEGY = "COST";
   public static final String OPT_STRATEGY_PROFIT = "PROFIT";
+  public static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public static final String COST_ITINERARY_KEY = "costItinerary";
   public static final String COST_TYPE_KEY = "costType";
@@ -320,6 +324,7 @@ public class TestUtil {
     costFactorEntity.setDataType(DataTypeEnum.NUMBER);
     costFactorEntity.setIsBucketed(true);
     costFactorEntity.setIsRateCardLookUpRequired(true);
+    costFactorEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return costFactorEntity;
   }
 
@@ -400,6 +405,7 @@ public class TestUtil {
         .uom(UOM)
         .isBucketed(true)
         .isRateCardLookUpRequired(true)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -577,6 +583,7 @@ public class TestUtil {
         .canonicalName(CANONICAL_NAME)
         .displayName(CANONICAL_ATTRIBUTE_DISPLAY_NAME)
         .attributeName(ATTRIBUTE_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -592,9 +599,14 @@ public class TestUtil {
   }
 
   public CostAttributeMappingEntity getCostAttributeMappingEntity() {
-
-    return new CostAttributeMappingEntity(
-        ID, ORG_ID, CANONICAL_NAME, CANONICAL_ATTRIBUTE_DISPLAY_NAME, ATTRIBUTE_NAME);
+    CostAttributeMappingEntity costAttributeMappingEntity = new CostAttributeMappingEntity();
+    costAttributeMappingEntity.setId(ID);
+    costAttributeMappingEntity.setOrgId(ORG_ID);
+    costAttributeMappingEntity.setCanonicalName(CANONICAL_NAME);
+    costAttributeMappingEntity.setDisplayName(CANONICAL_ATTRIBUTE_DISPLAY_NAME);
+    costAttributeMappingEntity.setAttributeName(ATTRIBUTE_NAME);
+    costAttributeMappingEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
+    return costAttributeMappingEntity;
   }
 
   public List<CostAttributeMappingEntity> getCostAttributeMappingEntityList() {
@@ -609,6 +621,7 @@ public class TestUtil {
     costAttributeDetailsEntity.setDisplayName(ATTRIBUTE_NAME);
     costAttributeDetailsEntity.setIsPublished(Boolean.TRUE);
     costAttributeDetailsEntity.setLookupContext(LookupContextEnum.SOLUTION);
+    costAttributeDetailsEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return costAttributeDetailsEntity;
   }
 
@@ -624,6 +637,7 @@ public class TestUtil {
         .displayName(ATTRIBUTE_NAME)
         .isPublished(Boolean.TRUE)
         .lookupContext(LookupContextEnum.SOLUTION)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -839,6 +853,7 @@ public class TestUtil {
     return CostFactorBucketTypeRequest.builder()
         .bucketType(DISCRETE_BUCKET_TYPE)
         .costFactor(COST_FACTOR)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -852,6 +867,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .costFactor(COST_FACTOR)
         .bucketType(DISCRETE_BUCKET_TYPE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -868,6 +884,7 @@ public class TestUtil {
         .isFromValueInclusive(true)
         .toValue(TO_VALUE)
         .isToValueInclusive(false)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -919,6 +936,7 @@ public class TestUtil {
         .isFromValueInclusive(true)
         .toValue(TO_VALUE)
         .isToValueInclusive(false)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
