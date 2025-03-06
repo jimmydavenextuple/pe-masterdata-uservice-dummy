@@ -7,6 +7,7 @@
 
 package com.nextuple.sourcing.cost.config.domain.entity;
 
+import com.nextuple.postgres.entity.CommonBaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,16 +16,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Builder
+@SuperBuilder
 @Entity
 @Table(
     name = "cost_factor_contiguous_buckets",
@@ -32,7 +33,7 @@ import lombok.NoArgsConstructor;
         @Index(
             name = "cost_factor_contiguous_buckets_orgId_costFactor_notation",
             columnList = "org_Id,cost_factor,notation"))
-public class CostFactorContiguousBucketEntity {
+public class CostFactorContiguousBucketEntity extends CommonBaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
