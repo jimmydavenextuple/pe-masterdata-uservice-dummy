@@ -9,6 +9,7 @@ package com.nextuple.node.carrier.domain.inbound;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.OptBoolean;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.node.carrier.domain.constants.NodeCarrierConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -16,16 +17,16 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class NodeCarrierRequest implements Serializable {
+@SuperBuilder
+public class NodeCarrierRequest extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = -5879215809620272913L;
 

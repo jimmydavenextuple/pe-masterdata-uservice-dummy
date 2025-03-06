@@ -7,6 +7,8 @@
 
 package com.nextuple.node.carrier;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
@@ -73,6 +75,8 @@ public class TestUtil {
   public static final String INVALID_SERVICE_OPTION = "Invalid serviceOption";
   public static final String CONFIG_KEY = "service-options";
   public static final String CONFIG_VALUE = "SDND, EXPRESS, STANDARD";
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public NodeCarrierRequest getNodeCarrierRequest() {
     return NodeCarrierRequest.builder()
@@ -82,6 +86,7 @@ public class TestUtil {
         .serviceOption("SDND")
         .processingTime(2.0)
         .lastPickupTime("5:00")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -92,6 +97,7 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption("SDND")
         .lastPickupTime("5:00")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -102,6 +108,7 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption(SERVICE_OPTION)
         .lastPickupTime("5:00")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -111,6 +118,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .serviceOption(SERVICE_OPTION)
         .processingTime(5.0)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -120,6 +128,7 @@ public class TestUtil {
         .orgId("idid")
         .serviceOption(SERVICE_OPTION)
         .processingTime(5.0)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -131,6 +140,7 @@ public class TestUtil {
         .serviceOption("ABC")
         .processingTime(2.0)
         .lastPickupTime("5:00")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -141,6 +151,7 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption("ABC")
         .lastPickupTime("5:00")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -153,6 +164,7 @@ public class TestUtil {
     nodeCarrierBufferRequest.setServiceOption(SERVICE_OPTION);
     nodeCarrierBufferRequest.setBufferHours(3.0);
     nodeCarrierBufferRequest.setBufferEndDate(bEndDate);
+    nodeCarrierBufferRequest.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return nodeCarrierBufferRequest;
   }
 
@@ -172,6 +184,7 @@ public class TestUtil {
         .state(STATE)
         .shipToHome(SHIP_TO_TIME)
         .timezone(TIME_ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -200,6 +213,7 @@ public class TestUtil {
     nodeCarrierBufferRequest.setServiceOption(SERVICE_OPTION);
     nodeCarrierBufferRequest.setBufferHours(-3.0);
     nodeCarrierBufferRequest.setBufferEndDate(bEndDate);
+    nodeCarrierBufferRequest.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return nodeCarrierBufferRequest;
   }
 
@@ -218,6 +232,7 @@ public class TestUtil {
         .processingTime(2.0)
         .lastPickupTime("5:00")
         .bufferEndDate(bEndDate)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -237,6 +252,7 @@ public class TestUtil {
         .lastPickupTime("5:00")
         .bufferHours(-5.0)
         .bufferEndDate(bEndDate)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -248,6 +264,7 @@ public class TestUtil {
         .serviceOption(SERVICE_OPTION)
         .processingTime(2.0)
         .lastPickupTime("5:00")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -258,6 +275,7 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption(SERVICE_OPTION)
         .lastPickupTime("5:00")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -267,6 +285,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .serviceOption(SERVICE_OPTION)
         .processingTime(2.0)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -279,6 +298,7 @@ public class TestUtil {
         .processingTime(2.0)
         .lastPickupTime("5:00")
         .bufferHours(3.0)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -289,25 +309,40 @@ public class TestUtil {
         .carrierServiceId(CARRIER_SERVICE_ID)
         .serviceOption(SERVICE_OPTION)
         .lastPickupTime("5:00")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
   public NodeCarrierUpdateRequest getNodeCarrierUpdateRequest() {
-    return NodeCarrierUpdateRequest.builder().processingTime(2.0).lastPickupTime("5:00").build();
+    return NodeCarrierUpdateRequest.builder()
+        .processingTime(2.0)
+        .lastPickupTime("5:00")
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public NodeCarriersUpdateRequest getNodeCarriersUpdateRequest() {
-    return NodeCarriersUpdateRequest.builder().lastPickupTime("5:00").build();
+    return NodeCarriersUpdateRequest.builder()
+        .lastPickupTime("5:00")
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public NodeServiceOptionUpdateRequest getNodeServiceOptionUpdateRequest() {
-    return NodeServiceOptionUpdateRequest.builder().processingTime(5.0).build();
+    return NodeServiceOptionUpdateRequest.builder()
+        .processingTime(5.0)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public NodeCarrierUpdateRequest getNodeCarrierUpdateRequest2() {
     Date bEndDate = new Date();
     bEndDate.setTime(1000);
-    return NodeCarrierUpdateRequest.builder().processingTime(2.0).lastPickupTime("5:00").build();
+    return NodeCarrierUpdateRequest.builder()
+        .processingTime(2.0)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .lastPickupTime("5:00")
+        .build();
   }
 
   public NodeCarrierEntity getNodeCarrierEntity() {
@@ -318,6 +353,7 @@ public class TestUtil {
     nodeCarrierEntity.setServiceOption(SERVICE_OPTION);
     nodeCarrierEntity.setProcessingTime(2.0);
     nodeCarrierEntity.setLastPickupTime("5:00");
+    nodeCarrierEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     return nodeCarrierEntity;
   }
@@ -329,6 +365,7 @@ public class TestUtil {
     nodeCarrierEntity.setCarrierServiceId(CARRIER_SERVICE_ID);
     nodeCarrierEntity.setServiceOption(SERVICE_OPTION);
     nodeCarrierEntity.setLastPickupTime("5:00");
+    nodeCarrierEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return nodeCarrierEntity;
   }
 
@@ -339,6 +376,7 @@ public class TestUtil {
     nodeCarrierEntity.setCarrierServiceId(CARRIER_SERVICE_ID);
     nodeCarrierEntity.setServiceOption(SERVICE_OPTION);
     nodeCarrierEntity.setLastPickupTime("10:00");
+    nodeCarrierEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return nodeCarrierEntity;
   }
 
@@ -348,6 +386,7 @@ public class TestUtil {
     nodeServiceOptionEntity.setOrgId(ORG_ID);
     nodeServiceOptionEntity.setServiceOption(SERVICE_OPTION);
     nodeServiceOptionEntity.setProcessingTime(2.0);
+    nodeServiceOptionEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return nodeServiceOptionEntity;
   }
 
@@ -359,6 +398,7 @@ public class TestUtil {
     nodeCarrierEntity1.setServiceOption(SERVICE_OPTION);
     nodeCarrierEntity1.setProcessingTime(2.0);
     nodeCarrierEntity1.setLastPickupTime("5:00");
+    nodeCarrierEntity1.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     NodeCarrierEntity nodeCarrierEntity2 = new NodeCarrierEntity();
     nodeCarrierEntity2.setNodeId(NODE_ID);
@@ -367,6 +407,7 @@ public class TestUtil {
     nodeCarrierEntity2.setServiceOption(SERVICE_OPTION);
     nodeCarrierEntity2.setProcessingTime(10.0);
     nodeCarrierEntity2.setLastPickupTime("11:00");
+    nodeCarrierEntity2.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     return Arrays.asList(nodeCarrierEntity1, nodeCarrierEntity2);
   }
@@ -378,6 +419,7 @@ public class TestUtil {
     nodeCarriersEntity1.setCarrierServiceId(CARRIER_SERVICE_ID);
     nodeCarriersEntity1.setServiceOption(SERVICE_OPTION);
     nodeCarriersEntity1.setLastPickupTime("5:00");
+    nodeCarriersEntity1.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     NodeCarriersEntity nodeCarriersEntity2 = new NodeCarriersEntity();
     nodeCarriersEntity2.setNodeId(NODE_ID);
@@ -385,6 +427,7 @@ public class TestUtil {
     nodeCarriersEntity2.setCarrierServiceId(CARRIER_SERVICE_ID_2);
     nodeCarriersEntity2.setServiceOption(SERVICE_OPTION);
     nodeCarriersEntity2.setLastPickupTime("11:00");
+    nodeCarriersEntity2.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     return Arrays.asList(nodeCarriersEntity1, nodeCarriersEntity2);
   }
@@ -398,6 +441,7 @@ public class TestUtil {
             .serviceOption(SERVICE_OPTION)
             .processingTime(2.0)
             .lastPickupTime("5:00")
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     NodeCarrierResponse nodeCarrierResponse2 =
@@ -408,6 +452,7 @@ public class TestUtil {
             .serviceOption(SERVICE_OPTION)
             .processingTime(10.0)
             .lastPickupTime("11:00")
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     return Arrays.asList(nodeCarrierResponse1, nodeCarrierResponse2);
@@ -421,6 +466,7 @@ public class TestUtil {
     nodeCarrierEntity1.setServiceOption(SERVICE_OPTION);
     nodeCarrierEntity1.setProcessingTime(2.0);
     nodeCarrierEntity1.setLastPickupTime("5:00");
+    nodeCarrierEntity1.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     NodeCarrierEntity nodeCarrierEntity2 = new NodeCarrierEntity();
     nodeCarrierEntity2.setNodeId(NODE_ID);
@@ -429,6 +475,7 @@ public class TestUtil {
     nodeCarrierEntity2.setServiceOption(SERVICE_OPTION_2);
     nodeCarrierEntity2.setProcessingTime(10.0);
     nodeCarrierEntity2.setLastPickupTime("11:00");
+    nodeCarrierEntity2.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     return Arrays.asList(nodeCarrierEntity1, nodeCarrierEntity2);
   }
@@ -442,6 +489,7 @@ public class TestUtil {
             .serviceOption(SERVICE_OPTION)
             .processingTime(2.0)
             .lastPickupTime("5:00")
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     NodeCarrierResponse nodeCarrierResponse2 =
@@ -452,6 +500,7 @@ public class TestUtil {
             .serviceOption(SERVICE_OPTION_2)
             .processingTime(10.0)
             .lastPickupTime("11:00")
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     return Arrays.asList(nodeCarrierResponse1, nodeCarrierResponse2);
@@ -464,6 +513,7 @@ public class TestUtil {
         .priority("1")
         .destinationGeozone(DESTINATION_GEOZONE)
         .sourceGeozone(SOURCE_GEOZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -474,6 +524,7 @@ public class TestUtil {
         .priority("1")
         .destinationGeozone(DESTINATION_GEOZONE)
         .sourceGeozone(SOURCE_GEOZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -484,6 +535,7 @@ public class TestUtil {
     nodeCarrierEntity.setPriority(PRIORITY);
     nodeCarrierEntity.setDestinationGeozone(DESTINATION_GEOZONE);
     nodeCarrierEntity.setSourceGeozone(SOURCE_GEOZONE);
+    nodeCarrierEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return nodeCarrierEntity;
   }
 
@@ -528,6 +580,7 @@ public class TestUtil {
             .serviceOption(SERVICE_OPTION)
             .processingTime(2.0)
             .lastPickupTime("5:00")
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     NodeCarrierResponse nodeCarrierResponse2 =
@@ -538,6 +591,7 @@ public class TestUtil {
             .serviceOption(SERVICE_OPTION_2)
             .processingTime(10.0)
             .lastPickupTime("11:00")
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     return Arrays.asList(nodeCarrierResponse1, nodeCarrierResponse2);
@@ -551,6 +605,7 @@ public class TestUtil {
             .carrierServiceId(CARRIER_SERVICE_ID)
             .serviceOption(SERVICE_OPTION)
             .lastPickupTime("5:00")
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     NodeCarriersResponse nodeCarriersResponse2 =
@@ -560,6 +615,7 @@ public class TestUtil {
             .carrierServiceId(CARRIER_SERVICE_ID_2)
             .serviceOption(SERVICE_OPTION_2)
             .lastPickupTime("11:00")
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     return Arrays.asList(nodeCarriersResponse1, nodeCarriersResponse2);
@@ -573,6 +629,7 @@ public class TestUtil {
     nodeCarrierEntity1.setCarrierServiceId(carrierServiceId);
     nodeCarrierEntity1.setServiceOption(SERVICE_OPTION);
     nodeCarrierEntity1.setLastPickupTime("5:00");
+    nodeCarrierEntity1.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     NodeCarrierEntity nodeCarrierEntity2 = new NodeCarrierEntity();
     nodeCarrierEntity2.setNodeId(NODE_ID);
@@ -580,6 +637,7 @@ public class TestUtil {
     nodeCarrierEntity2.setCarrierServiceId(CARRIER_SERVICE_ID_2);
     nodeCarrierEntity2.setServiceOption(SERVICE_OPTION_2);
     nodeCarrierEntity2.setLastPickupTime("11:00");
+    nodeCarrierEntity2.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     return Arrays.asList(nodeCarrierEntity1, nodeCarrierEntity2);
   }
@@ -591,6 +649,7 @@ public class TestUtil {
     nodeCarriersEntity1.setCarrierServiceId(carrierServiceId);
     nodeCarriersEntity1.setServiceOption(SERVICE_OPTION);
     nodeCarriersEntity1.setLastPickupTime("5:00");
+    nodeCarriersEntity1.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     NodeCarriersEntity nodeCarriersEntity2 = new NodeCarriersEntity();
     nodeCarriersEntity2.setNodeId(NODE_ID);
@@ -598,6 +657,7 @@ public class TestUtil {
     nodeCarriersEntity2.setCarrierServiceId(CARRIER_SERVICE_ID_2);
     nodeCarriersEntity2.setServiceOption(SERVICE_OPTION_2);
     nodeCarriersEntity2.setLastPickupTime("11:00");
+    nodeCarriersEntity2.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     return Arrays.asList(nodeCarriersEntity1, nodeCarriersEntity2);
   }
@@ -617,6 +677,7 @@ public class TestUtil {
         .serviceOption(SERVICE_OPTION)
         .bufferStartDate(new Date())
         .bufferEndDate(new Date())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -628,6 +689,7 @@ public class TestUtil {
         .bufferHours(2D)
         .bufferStartDate(new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000L))
         .bufferEndDate(new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000L))
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -638,6 +700,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .bufferStartDate(new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000L))
         .bufferEndDate(new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000L))
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -646,12 +709,16 @@ public class TestUtil {
         .bufferHours(2D)
         .bufferStartDate(new Date())
         .bufferEndDate(new Date())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
   public NodeServiceOptionBufferUpdateRequest
       getNodeServiceOptionBufferUpdateRequestWithoutDates() {
-    return NodeServiceOptionBufferUpdateRequest.builder().bufferHours(2D).build();
+    return NodeServiceOptionBufferUpdateRequest.builder()
+        .bufferHours(2D)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public List<NodeServiceOptionBufferEntity> getNodeServiceOptionBufferEntities(int no) {
@@ -666,6 +733,7 @@ public class TestUtil {
               .bufferHours(2D)
               .bufferStartDate(new Date(new Date().getTime() + no * 24 * 60 * 60 * 1000L))
               .bufferEndDate(new Date(new Date().getTime() + (no + 1) * 24 * 60 * 60 * 1000L))
+              .customAttributes(CUSTOM_ATTRIBUTES)
               .build());
     }
     return entities;
