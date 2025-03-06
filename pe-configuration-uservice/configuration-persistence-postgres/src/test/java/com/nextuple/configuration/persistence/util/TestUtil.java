@@ -7,6 +7,8 @@
 
 package com.nextuple.configuration.persistence.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.configuration.persistence.domain.ConfigMetadataDomainDto;
 import com.nextuple.configuration.persistence.domain.TenantConfigdataDomainDto;
 import com.nextuple.configuration.persistence.entity.ConfigMetadataEntity;
@@ -15,16 +17,15 @@ import com.nextuple.configuration.persistence.entity.TenantConfigdataEntity;
 public class TestUtil {
 
   public static final String ORG_ID = "ABC";
-  public static final String ORG_ID_2 = "XYZ";
   public static final String CONFIG_KEY = "custom-configkey";
   public static final String DEFAULT_CONFIG_VALUE = "SDND,EXPRESS";
-  public static final String DEFAULT_CONFIG_VALUE_2 = "CustomEvent:false";
   public static final Long CONFIG_METADATA_ID = 1L;
   public static final Long TENANT_CONFIGDATA_ID = 1L;
   public static final String APP_NAME = "PE";
 
   public static final String CONFIG_VALUE = "SDND,EXPRESS,STANDARD";
-  public static final String CONFIG_VALUE_2 = "SDND";
+  public static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public ConfigMetadataDomainDto getConfigMetadataPersistenceDomainDto() {
     ConfigMetadataDomainDto configMetadataDomainDto = new ConfigMetadataDomainDto();
@@ -32,6 +33,7 @@ public class TestUtil {
     configMetadataDomainDto.setConfigKey(CONFIG_KEY);
     configMetadataDomainDto.setAppName(APP_NAME);
     configMetadataDomainDto.setDefaultConfigValue(DEFAULT_CONFIG_VALUE);
+    configMetadataDomainDto.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return configMetadataDomainDto;
   }
 
@@ -41,6 +43,7 @@ public class TestUtil {
     configMetadataEntity.setConfigKey(CONFIG_KEY);
     configMetadataEntity.setAppName(APP_NAME);
     configMetadataEntity.setDefaultConfigValue(DEFAULT_CONFIG_VALUE);
+    configMetadataEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return configMetadataEntity;
   }
 
@@ -50,6 +53,7 @@ public class TestUtil {
     tenantConfigdataDomainDto.setOrgId(ORG_ID);
     tenantConfigdataDomainDto.setConfigKey(CONFIG_KEY);
     tenantConfigdataDomainDto.setConfigValue(CONFIG_VALUE);
+    tenantConfigdataDomainDto.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return tenantConfigdataDomainDto;
   }
 
@@ -59,6 +63,7 @@ public class TestUtil {
     tenantConfigdataEntity.setOrgId(ORG_ID);
     tenantConfigdataEntity.setConfigKey(CONFIG_KEY);
     tenantConfigdataEntity.setConfigValue(CONFIG_VALUE);
+    tenantConfigdataEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return tenantConfigdataEntity;
   }
 }

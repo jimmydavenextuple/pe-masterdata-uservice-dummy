@@ -51,6 +51,10 @@ class SourcingAttributeServiceTest {
     SourcingAttributeResponse sourcingAttributeResponse =
         sourcingAttributeService.createSourcingAttribute(createSourcingAttributeRequest);
     assertEquals(testUtil.getSourcingAttributeEntity().getId(), sourcingAttributeResponse.getId());
+    assertEquals(
+        testUtil.getSourcingAttributeEntity().getCustomAttributes(),
+        sourcingAttributeResponse.getCustomAttributes());
+
     verify(sourcingAttributePersistenceService, times(1))
         .saveSourcingAttribute(any(SourcingAttributeDomainDto.class));
   }

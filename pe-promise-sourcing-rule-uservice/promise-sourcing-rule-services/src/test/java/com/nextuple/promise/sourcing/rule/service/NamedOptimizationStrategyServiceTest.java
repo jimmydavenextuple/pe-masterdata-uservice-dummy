@@ -119,6 +119,9 @@ class NamedOptimizationStrategyServiceTest {
             testUtil.getNamedOptimizationStrategyRequest());
     assertEquals(
         namedOptimizationStrategyEntity.getId(), namedOptimizationStrategyResponse.getId());
+    assertEquals(
+        namedOptimizationStrategyEntity.getCustomAttributes(),
+        namedOptimizationStrategyResponse.getCustomAttributes());
 
     verify(groupDefinitionPersistenceService, times(1))
         .fetchGroupDefinitionByIdAndOrgId(anyLong(), anyString());
@@ -405,6 +408,9 @@ class NamedOptimizationStrategyServiceTest {
             testUtil.getNamedOptimizationStrategyUpdationRequest());
     assertEquals(
         namedOptimizationStrategyEntity.getId(), namedOptimizationStrategyResponse.getId());
+    assertEquals(
+        namedOptimizationStrategyEntity.getCustomAttributes(),
+        namedOptimizationStrategyResponse.getCustomAttributes());
 
     verify(namedOptimizationStrategyPersistenceService, times(1))
         .fetchOptimizationStrategyByOrgIdAndGroupId(anyString(), anyString());

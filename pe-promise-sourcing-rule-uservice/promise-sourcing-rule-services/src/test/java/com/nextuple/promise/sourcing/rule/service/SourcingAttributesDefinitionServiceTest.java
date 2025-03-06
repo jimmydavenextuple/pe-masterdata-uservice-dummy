@@ -89,6 +89,9 @@ class SourcingAttributesDefinitionServiceTest {
     assertEquals(
         testUtil.getSourcingAttributeEntity().getId(),
         sourcingRuleAttributesDefinitionResponse.getId());
+    assertEquals(
+        testUtil.getSourcingAttributeEntity().getCustomAttributes(),
+        sourcingRuleAttributesDefinitionResponse.getCustomAttributes());
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .fetchSourcingRuleAttributesDefinitionListByOrgIdAndStatusAndScope(
             anyString(), any(), any());
@@ -130,6 +133,9 @@ class SourcingAttributesDefinitionServiceTest {
     assertEquals(
         testUtil.getSourcingAttributeEntity().getId(),
         sourcingRuleAttributesDefinitionResponse.getId());
+    assertEquals(
+        testUtil.getSourcingAttributeEntity().getCustomAttributes(),
+        sourcingRuleAttributesDefinitionResponse.getCustomAttributes());
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .fetchSourcingRuleAttributesDefinitionListByOrgIdAndName(anyString(), anyString());
     verify(sourcingAttributePersistenceService, times(1))
@@ -176,6 +182,9 @@ class SourcingAttributesDefinitionServiceTest {
     assertEquals(
         testUtil.getSourcingAttributeEntity().getId(),
         sourcingRuleAttributesDefinitionResponse.getId());
+    assertEquals(
+        testUtil.getSourcingAttributeEntity().getCustomAttributes(),
+        sourcingRuleAttributesDefinitionResponse.getCustomAttributes());
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .fetchSourcingRuleAttributesDefinitionListByOrgIdAndStatusAndScope(
             anyString(), any(), any());
@@ -360,6 +369,9 @@ class SourcingAttributesDefinitionServiceTest {
         sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionByIdandOrgId(
             TestUtil.SOURCING_ATTRIBUTES_DEFINITION_ID, TestUtil.ORG_ID);
     assertEquals(testUtil.getSourcingAttributeEntity().getId(), sourcingAttributeResponse.getId());
+    assertEquals(
+        testUtil.getSourcingAttributeEntity().getCustomAttributes(),
+        sourcingAttributeResponse.getCustomAttributes());
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .getSourcingRuleAttributesDefinitionEntityByIdAndOrgId(anyLong(), anyString());
   }
@@ -402,6 +414,9 @@ class SourcingAttributesDefinitionServiceTest {
             .getSourcingRuleAttributesDefinitionEntity(SourcingAttributesDefinitionStatus.ACTIVE)
             .getId(),
         sourcingAttributeResponse.getId());
+    assertEquals(
+        testUtil.getSourcingAttributeEntity().getCustomAttributes(),
+        sourcingAttributeResponse.getCustomAttributes());
     verify(sourcingAttributesDefinitionPersistenceService, times(1))
         .fetchSourcingRuleAttributesDefinitionListByOrgIdAndStatusAndScope(
             anyString(), any(), any());
