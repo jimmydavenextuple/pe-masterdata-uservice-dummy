@@ -7,8 +7,8 @@
 
 package com.nextuple.node.carrier.domain.entity;
 
-import com.nextuple.common.base.CommonBaseEntity;
 import com.nextuple.core.event.listeners.CommonEntityListener;
+import com.nextuple.postgres.entity.CommonBaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
