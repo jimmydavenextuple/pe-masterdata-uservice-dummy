@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PickupCalendarFeedIngestionService
     implements FeedIngestionService<MasterDataIngestionDto<PickupCalendarFeedDto>> {
-  @Value("${master-data.pickup-calendar.topic-name: null}")
+  @Value("${master-data.pickup-calendar.topic-names: null}")
   private String pickupCalendarFeedTopic;
 
   @Value("${kafka-topic-flags.master-data.pickup-calendar.enabled:false}")
