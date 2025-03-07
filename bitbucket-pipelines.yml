@@ -270,7 +270,7 @@ definitions:
             - bash ./gradlew -Pbuild_target=SNAPSHOT clean build
             - docker login nextuple-docker.jfrog.io --username $DOCKER_ASHLEY_REGISTRY_USERNAME --password $DOCKER_ASHLEY_REGISTRY_PASSWORD
             - export IMAGE_NAME="nextuple-docker.jfrog.io/pe-masterdata-uservice:1.8.0.ashley"
-            - docker build -t $IMAGE_NAME pe-masterdata
+            - docker build -t $IMAGE_NAME .
             - docker push $IMAGE_NAME
     - step: &build-stage
         name: Build Stage
