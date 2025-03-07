@@ -7,9 +7,9 @@
 
 package com.nextuple.common.userexit.domain.entity;
 
-import com.nextuple.common.base.CommonBaseEntity;
 import com.nextuple.common.userexit.domain.enums.UEImplTypeEnum;
 import com.nextuple.core.event.listeners.CommonEntityListener;
+import com.nextuple.postgres.entity.CommonBaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -21,6 +21,7 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @NoArgsConstructor
@@ -32,6 +33,7 @@ import lombok.NoArgsConstructor;
       @UniqueConstraint(columnNames = {"user_exit_name", "app_name", "org_id", "service_name"})
     })
 @EntityListeners(CommonEntityListener.class)
+@SuperBuilder
 public class UserExitConfigData extends CommonBaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
