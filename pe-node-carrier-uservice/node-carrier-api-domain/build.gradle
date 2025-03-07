@@ -14,6 +14,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-common:common-postgres"))
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }
 tasks.withType(Test).configureEach {
