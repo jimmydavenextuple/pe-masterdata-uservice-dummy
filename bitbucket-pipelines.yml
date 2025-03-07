@@ -268,7 +268,7 @@ definitions:
             - microdnf install git
             - microdnf install findutils
             - bash ./gradlew -Pbuild_target=SNAPSHOT clean build
-            - docker login nextuple-docker.jfrog.io --username $DOCKER_ASHLEY_REGISTRY_USERNAME --password $DOCKER_ASHLEY_REGISTRY_PASSWORD
+            - docker login nextuple-docker.jfrog.io --username $DOCKER_REGISTRY_USERNAME --password $DOCKER_REGISTRY_PASSWORD
             - docker build -t pe-masterdata .
             - docker tag pe-masterdata nextuple-docker.jfrog.io/docker-local-ashley/pe-masterdata-ashley.1.8.0 
             - docker push nextuple-docker.jfrog.io/docker-local-ashley/pe-masterdata-ashley.1.8.0
