@@ -84,6 +84,9 @@ class CostFactorServiceTest {
         costFactorService.createCostFactor(ORG_ID, costFactorRequest);
     assertEquals(testUtil.getCostFactorEntity().getId(), costFactorResponse.getId());
     assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costFactorResponse.getCustomAttributes());
+    assertEquals(
         testUtil.getCostFactorEntity().getIsRateCardLookUpRequired(),
         costFactorResponse.getIsRateCardLookUpRequired());
     verify(costFactorRepository, times(1)).save(any(CostFactorEntity.class));
@@ -111,6 +114,9 @@ class CostFactorServiceTest {
     CostFactorDto costFactorResponse =
         costFactorService.createCostFactor(ORG_ID, costFactorRequest);
     assertEquals(testUtil.getCostFactorEntity().getId(), costFactorResponse.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costFactorResponse.getCustomAttributes());
     assertEquals(
         costFactorEntity.getIsRateCardLookUpRequired(),
         costFactorResponse.getIsRateCardLookUpRequired());
@@ -196,6 +202,9 @@ class CostFactorServiceTest {
     CostFactorDto costFactorResponse =
         costFactorService.createCostFactor(ORG_ID, costFactorRequest);
     assertEquals(testUtil.getCostFactorEntity().getId(), costFactorResponse.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costFactorResponse.getCustomAttributes());
     verify(costFactorRepository, times(1)).save(any(CostFactorEntity.class));
     verify(costFactorAuditLogRepository, times(1)).save(any(CostFactorAuditLogEntity.class));
     verify(expressionValidationService, times(1))
@@ -256,6 +265,9 @@ class CostFactorServiceTest {
     CostFactorDto costFactorResponse =
         costFactorService.createCostFactor(ORG_ID, costFactorRequest);
     assertEquals(testUtil.getCostFactorEntity().getId(), costFactorResponse.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costFactorResponse.getCustomAttributes());
     verify(costFactorRepository, times(1)).save(any(CostFactorEntity.class));
     verify(costFactorAuditLogRepository, times(1)).save(any(CostFactorAuditLogEntity.class));
     verify(expressionValidationService, times(1))
@@ -314,6 +326,9 @@ class CostFactorServiceTest {
     CostFactorDto preferenceSelectorResponse =
         costFactorService.findCostFactorByOrgIdAndCostFactorId(ORG_ID, COST_FACTOR_ID);
     assertEquals(testUtil.getCostFactorEntity().getId(), preferenceSelectorResponse.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        preferenceSelectorResponse.getCustomAttributes());
     verify(costFactorRepository, times(1)).findByIdAndOrgId(anyLong(), anyString());
   }
 
@@ -342,6 +357,9 @@ class CostFactorServiceTest {
     CostFactorDto preferenceSelectorResponse =
         costFactorService.findCostFactorByOrgIdAndCostFactor(ORG_ID, COST_FACTOR);
     assertEquals(testUtil.getCostFactorEntity().getId(), preferenceSelectorResponse.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        preferenceSelectorResponse.getCustomAttributes());
     verify(costFactorRepository, times(1)).findByOrgIdAndCostFactor(anyString(), anyString());
   }
 
@@ -378,6 +396,10 @@ class CostFactorServiceTest {
             COST_FACTOR_ID, ORG_ID, testUtil.getCostFactorUpdationRequest());
     assertEquals(
         testUtil.getCostFactorEntity().getCostFactor(), costFactorResponse.getCostFactor());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costFactorResponse.getCustomAttributes());
+
     verify(costFactorRepository, times(1)).findByIdAndOrgId(anyLong(), anyString());
     verify(costFactorRepository, times(1)).save(any(CostFactorEntity.class));
     verify(costFactorAuditLogRepository, times(1)).save(any(CostFactorAuditLogEntity.class));

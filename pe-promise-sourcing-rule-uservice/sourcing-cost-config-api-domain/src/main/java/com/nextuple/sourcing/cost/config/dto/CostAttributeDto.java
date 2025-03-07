@@ -7,19 +7,20 @@
 
 package com.nextuple.sourcing.cost.config.dto;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.sourcing.cost.config.enums.LookupContextEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CostAttributeDto implements Serializable {
+public class CostAttributeDto extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -6420698788831760719L;
 
   @Schema(description = "Unique identifier for cost attribute", example = "1")
