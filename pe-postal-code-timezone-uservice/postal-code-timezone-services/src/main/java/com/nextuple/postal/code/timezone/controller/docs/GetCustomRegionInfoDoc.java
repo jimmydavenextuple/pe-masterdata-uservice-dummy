@@ -62,10 +62,7 @@ import java.lang.annotation.Target;
                                                       "statesCount": 1,
                                                       "citiesCount": 1,
                                                       "zipCodePrefixesCount": 1,
-                                                      "uploadDate": "2024-10-10",
-                                                      "customAttributes": {
-                                                            "dynamicAtrr1": true
-                                                         }
+                                                      "uploadDate": "2024-10-10"
                                                    }
                                                 ],
                                                 "pagination": {
