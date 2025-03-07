@@ -178,6 +178,8 @@ public class TestUtil {
 
   public static final String INVALID_LEVEL_APPLIED_EXCEPTION =
       "Level applied of cost factor is not valid";
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public List<PreferenceSelectorCacheKeyDto> getPreferenceSelectorCacheKeys() {
     PreferenceSelectorCacheKeyDto preferenceSelectorCacheKeyDto1 =
@@ -265,6 +267,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .selectorCf(SELECTOR_CF)
         .costType(COST_TYPE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -274,6 +277,7 @@ public class TestUtil {
     preferenceSelectorEntity.setOrgId(ORG_ID);
     preferenceSelectorEntity.setSelectorCf(SELECTOR_CF);
     preferenceSelectorEntity.setCostType(COST_TYPE);
+    preferenceSelectorEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return preferenceSelectorEntity;
   }
 
@@ -283,6 +287,7 @@ public class TestUtil {
     preferenceSelectorEntity.setOrgId(ORG_ID);
     preferenceSelectorEntity.setSelectorCf(SELECTOR_CF);
     preferenceSelectorEntity.setCostType(COST_TYPE_CAMEL_CASE);
+    preferenceSelectorEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return preferenceSelectorEntity;
   }
 
@@ -292,6 +297,7 @@ public class TestUtil {
     preferenceSelectorEntity.setOrgId(ORG_ID);
     preferenceSelectorEntity.setSelectorCf(INVALID_SELECTOR_CF);
     preferenceSelectorEntity.setCostType(COST_TYPE_CAMEL_CASE);
+    preferenceSelectorEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return preferenceSelectorEntity;
   }
 
@@ -303,11 +309,15 @@ public class TestUtil {
     return CreatePreferenceSelectorRequest.builder()
         .selectorCf(SELECTOR_CF)
         .costType(COST_TYPE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
   public UpdatePreferenceSelectorRequest getUpdatePreferenceSelectorRequest() {
-    return UpdatePreferenceSelectorRequest.builder().selectorCf(SELECTOR_CF).build();
+    return UpdatePreferenceSelectorRequest.builder()
+        .selectorCf(SELECTOR_CF)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public CostFactorEntity getCostFactorEntity() {
@@ -490,12 +500,16 @@ public class TestUtil {
         .costType(COST_TYPE_SHIPPING_COST)
         .displayName(DISPLAY_NAME)
         .label(LabelEnum.COST)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
   public TenantCostTypeUpdateRequest getTenantCostTypeUpdateRequest() {
 
-    return TenantCostTypeUpdateRequest.builder().displayName(DISPLAY_NAME).build();
+    return TenantCostTypeUpdateRequest.builder()
+        .displayName(DISPLAY_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public TenantCostTypeResponse getTenantCostTypeResponse() {
@@ -506,12 +520,19 @@ public class TestUtil {
         .costType(COST_TYPE_SHIPPING_COST)
         .displayName(DISPLAY_NAME)
         .label(LabelEnum.COST)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
   public TenantCostTypeEntity getTenantCostTypeEntity() {
-    return new TenantCostTypeEntity(
-        ID, ORG_ID, COST_TYPE_SHIPPING_COST, DISPLAY_NAME, LabelEnum.COST);
+    return TenantCostTypeEntity.builder()
+        .id(ID)
+        .orgId(ORG_ID)
+        .costType(COST_TYPE_SHIPPING_COST)
+        .displayName(DISPLAY_NAME)
+        .label(LabelEnum.COST)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public List<TenantCostTypeEntity> getTenantCostTypeEntityList() {
@@ -534,6 +555,7 @@ public class TestUtil {
         .costType(COST_TYPE_SHIPPING_COST)
         .selectorCfValue(SELECTOR_CF_VALUE)
         .selectorCf(SELECTOR_CF)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -542,6 +564,7 @@ public class TestUtil {
 
     return UpdateSelectorAndCostItineraryMappingRequest.builder()
         .costItinerary(COST_ITINERARY_UPSLIKE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -553,6 +576,7 @@ public class TestUtil {
         .costType(COST_TYPE_SHIPPING_COST)
         .selectorCfValue(null)
         .selectorCf(SELECTOR_CF)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -564,6 +588,7 @@ public class TestUtil {
         .selectorCfValue(SELECTOR_CF_VALUE)
         .costItinerary(COST_ITINERARY_UPSLIKE)
         .costType(COST_TYPE_SHIPPING_COST)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1646,6 +1671,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1658,6 +1684,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY_PROFIT)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1669,6 +1696,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1680,6 +1708,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY_PROFIT)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1689,6 +1718,7 @@ public class TestUtil {
         .costTypes(COST_TYPE_SHIPPING_COST)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1700,6 +1730,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 

@@ -49,7 +49,10 @@ import java.lang.annotation.Target;
                                                            "selectorCf": "carrierServiceId",
                                                            "selectorCfValue": "UPS-Ground",
                                                            "costItinerary": "SHIPPING_COST_UPS_LIKE_T2",
-                                                           "costType": "SHP_COST_T2"
+                                                           "costType": "SHP_COST_T2",
+                                                           "customAttributes": {
+                                                             "dynamicAtrr1": true
+                                                           }
                                                        }
                                                    }""")
             }))

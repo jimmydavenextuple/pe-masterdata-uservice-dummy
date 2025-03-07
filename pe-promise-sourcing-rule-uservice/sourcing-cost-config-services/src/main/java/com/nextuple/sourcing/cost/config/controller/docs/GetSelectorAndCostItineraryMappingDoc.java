@@ -52,7 +52,10 @@ import java.lang.annotation.Target;
                                                             "selectorCf": "carrierServiceId",
                                                             "selectorCfValue": "USPS-Standard",
                                                             "costItinerary": "SHIPPING_COST_USPS",
-                                                            "costType": "SHIPPING_COST"
+                                                            "costType": "SHIPPING_COST",
+                                                            "customAttributes": {
+                                                              "dynamicAtrr1": true
+                                                            }
                                                         }
                                                     }
                                         """)

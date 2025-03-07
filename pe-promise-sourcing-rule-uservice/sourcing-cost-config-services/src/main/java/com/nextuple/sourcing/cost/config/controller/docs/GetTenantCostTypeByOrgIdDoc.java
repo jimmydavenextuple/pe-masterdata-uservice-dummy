@@ -47,21 +47,24 @@ import java.lang.annotation.*;
                                                     "orgId": "NEXTUPLE_GR",
                                                     "costType": "SHIPPING_COST",
                                                     "displayName": "Shipping cost",
-                                                    "label": "COST"
+                                                    "label": "COST",
+                                                    "additionalAttributes": {"key1": "value1"}
                                                 },
                                                 {
                                                     "id": 27,
                                                     "orgId": "NEXTUPLE_GR",
                                                     "costType": "PROCESSING_COST",
                                                     "displayName": "Processing cost",
-                                                    "label": "COST"
+                                                    "label": "COST",
+                                                    "additionalAttributes": {"key1": "value1"}
                                                 },
                                                 {
                                                     "id": 28,
                                                     "orgId": "NEXTUPLE_GR",
                                                     "costType": "SALES_REVENUE",
                                                     "displayName": "Sales revenue",
-                                                    "label": "REVENUE"
+                                                    "label": "REVENUE",
+                                                    "additionalAttributes": {"key1": "value1"}
                                                 }
                                             ]
                                         }
