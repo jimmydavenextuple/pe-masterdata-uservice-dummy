@@ -147,7 +147,7 @@ public class SelectorAndCostItineraryMappingController {
                   description = "Unique identifier of the organization.",
                   example = "NEXTUPLE_GR")
               String orgId,
-          @NotBlank(
+          @NotNull(
                   message =
                       "Unique identifier for selector and cost itinerary mapping can't be null")
               @PathVariable

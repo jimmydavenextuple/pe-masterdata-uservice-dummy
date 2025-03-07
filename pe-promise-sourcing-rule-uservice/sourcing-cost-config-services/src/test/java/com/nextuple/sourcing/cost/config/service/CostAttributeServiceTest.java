@@ -55,6 +55,9 @@ class CostAttributeServiceTest {
     CostAttributeDto costAttributeDto =
         costAttributeService.createCostAttribute(testUtil.getCostAttributeRequest());
     assertEquals(testUtil.getCostAttributeMappingEntity().getId(), costAttributeDto.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costAttributeDto.getCustomAttributes());
 
     verify(costAttributeRepository, times(1)).save(any(CostAttributeDetailsEntity.class));
   }
@@ -99,6 +102,9 @@ class CostAttributeServiceTest {
 
     CostAttributeDto costAttributeDto = costAttributeService.findCostAttributeDetailsById(ID);
     assertEquals(testUtil.getCostAttributeDetailsEntity().getId(), costAttributeDto.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costAttributeDto.getCustomAttributes());
 
     verify(costAttributeRepository, times(1)).findById(anyLong());
   }
@@ -129,6 +135,9 @@ class CostAttributeServiceTest {
     CostAttributeDto costAttributeDto =
         costAttributeService.updateCostAttribute(ID, testUtil.getCostAttributeUpdateRequest());
     assertEquals(testUtil.getCostAttributeDetailsEntity().getId(), costAttributeDto.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costAttributeDto.getCustomAttributes());
 
     verify(costAttributeRepository, times(1)).findById(anyLong());
     verify(costAttributeRepository, times(1)).save(any(CostAttributeDetailsEntity.class));
@@ -160,6 +169,9 @@ class CostAttributeServiceTest {
     CostAttributeDto costAttributeDto =
         costAttributeService.findCostAttributeDetailsByAttributeName(ATTRIBUTE_NAME);
     assertEquals(testUtil.getCostAttributeDetailsEntity().getId(), costAttributeDto.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costAttributeDto.getCustomAttributes());
 
     verify(costAttributeRepository, times(1)).findByAttributeName(anyString());
   }
@@ -188,7 +200,9 @@ class CostAttributeServiceTest {
     List<CostAttributeDto> costAttributeDtoList =
         costAttributeService.findCostAttributeDetailsList();
     assertEquals(1, costAttributeDtoList.size());
-
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costAttributeDtoList.getFirst().getCustomAttributes());
     verify(costAttributeRepository, times(1)).findByIsPublished(any());
   }
 

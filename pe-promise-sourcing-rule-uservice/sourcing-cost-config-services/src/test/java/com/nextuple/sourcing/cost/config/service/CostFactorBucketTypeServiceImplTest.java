@@ -2,6 +2,7 @@ package com.nextuple.sourcing.cost.config.service;
 
 import static com.nextuple.sourcing.cost.config.utils.TestUtil.COST_FACTOR;
 import static com.nextuple.sourcing.cost.config.utils.TestUtil.ORG_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -66,6 +67,9 @@ class CostFactorBucketTypeServiceImplTest {
         costFactorBucketTypeServiceImpl.createCostFactorBucketType(
             ORG_ID, testUtil.getCostFactorBucketTypeRequest());
     Assertions.assertEquals(ORG_ID, response.getOrgId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        response.getCustomAttributes());
     verify(costFactorRepository, times(1)).findByOrgIdAndCostFactor(any(), any());
     verify(costFactorBucketTypeRepository, times(1)).findByOrgIdAndCostFactor(any(), any());
     verify(bucketValidationService, times(1)).validateCostItineraryStatus(any(), any());
@@ -186,6 +190,8 @@ class CostFactorBucketTypeServiceImplTest {
     CostFactorBucketTypeDto dto =
         costFactorBucketTypeServiceImpl.getCostFactorBucketType(ORG_ID, COST_FACTOR);
     Assertions.assertEquals(ORG_ID, dto.getOrgId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(), dto.getCustomAttributes());
     verify(costFactorBucketTypeRepository, times(1)).findByOrgIdAndCostFactor(any(), any());
   }
 
@@ -220,6 +226,9 @@ class CostFactorBucketTypeServiceImplTest {
         costFactorBucketTypeServiceImpl.updateCostFactorBucketType(
             ORG_ID, COST_FACTOR, testUtil.getUpdateCostFactorBucketTypeRequest());
     Assertions.assertEquals(ORG_ID, response.getOrgId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        response.getCustomAttributes());
     verify(costFactorRepository, times(1)).findByOrgIdAndCostFactor(any(), any());
     verify(costFactorBucketTypeRepository, times(1)).findByOrgIdAndCostFactor(any(), any());
     verify(bucketValidationService, times(1)).validateCostItineraryStatus(any(), any());
@@ -241,6 +250,9 @@ class CostFactorBucketTypeServiceImplTest {
         costFactorBucketTypeServiceImpl.updateCostFactorBucketType(
             ORG_ID, COST_FACTOR, testUtil.getUpdateCostFactorBucketTypeRequest());
     Assertions.assertEquals(ORG_ID, response.getOrgId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        response.getCustomAttributes());
     verify(costFactorRepository, times(1)).findByOrgIdAndCostFactor(any(), any());
     verify(costFactorBucketTypeRepository, times(1)).findByOrgIdAndCostFactor(any(), any());
     verify(bucketValidationService, times(1)).validateCostItineraryStatus(any(), any());

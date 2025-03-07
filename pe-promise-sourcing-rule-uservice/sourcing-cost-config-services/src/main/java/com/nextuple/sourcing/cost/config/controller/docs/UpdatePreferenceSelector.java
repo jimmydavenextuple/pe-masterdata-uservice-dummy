@@ -49,7 +49,10 @@ import java.lang.annotation.Target;
                                                          "id": 119,
                                                          "orgId": "NEXTUPLE_GR",
                                                          "selectorCf": "carrierServiceId",
-                                                         "costType": "SHP_COST"
+                                                         "costType": "SHP_COST",
+                                                         "customAttributes": {
+                                                           "dynamicAtrr1": true
+                                                         }
                                                      }
                                                  }
                                                           """)

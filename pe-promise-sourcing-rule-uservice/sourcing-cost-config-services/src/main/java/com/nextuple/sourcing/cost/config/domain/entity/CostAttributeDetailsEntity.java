@@ -7,8 +7,8 @@
 
 package com.nextuple.sourcing.cost.config.domain.entity;
 
-import com.nextuple.common.base.CommonBaseEntity;
 import com.nextuple.core.event.listeners.CommonEntityListener;
+import com.nextuple.postgres.entity.CommonBaseEntity;
 import com.nextuple.sourcing.cost.config.enums.LookupContextEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,9 +21,11 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @Entity
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(CommonEntityListener.class)

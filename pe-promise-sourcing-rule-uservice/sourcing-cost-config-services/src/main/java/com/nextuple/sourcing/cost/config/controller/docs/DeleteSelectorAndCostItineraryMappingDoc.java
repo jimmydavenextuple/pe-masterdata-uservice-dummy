@@ -52,7 +52,10 @@ import java.lang.annotation.Target;
                                                          "selectorCf": null,
                                                          "selectorCfValue": null,
                                                          "costItinerary": "NODE_COST_ITR_T3",
-                                                         "costType": "NODE_COST_T3"
+                                                         "costType": "NODE_COST_T3",
+                                                            "customAttributes": {
+                                                                "dynamicAtrr1": true
+                                                            }
                                                      }
                                                  }
                                           """)

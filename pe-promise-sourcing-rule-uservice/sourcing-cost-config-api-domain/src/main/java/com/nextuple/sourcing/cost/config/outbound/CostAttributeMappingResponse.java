@@ -7,18 +7,19 @@
 
 package com.nextuple.sourcing.cost.config.outbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CostAttributeMappingResponse implements Serializable {
+public class CostAttributeMappingResponse extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -1046407472399471691L;
 
   @Schema(description = "Unique identifier for cost attribute mapping", example = "1")
