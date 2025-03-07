@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.userexit.domain.dto.UserExitConfigDataDto;
 import com.nextuple.common.userexit.domain.dto.UserExitMetaDataDto;
@@ -54,6 +55,9 @@ class UserExitDataServiceTest {
     Assertions.assertNotNull(response);
     Assertions.assertEquals("PE", response.getAppName());
     Assertions.assertEquals("GetSourcing", response.getName());
+    Assertions.assertEquals(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"),
+        response.getCustomAttributes());
     verify(userExitDomain, times(1)).findUEMetaDataByNameAppNameAndServiceName(any(), any(), any());
   }
 
@@ -84,6 +88,9 @@ class UserExitDataServiceTest {
     Assertions.assertEquals("PE", response.getAppName());
     Assertions.assertEquals("GetSourcing", response.getUserExitName());
     Assertions.assertEquals(true, response.getPropagateError());
+    Assertions.assertEquals(
+        JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"),
+        response.getCustomAttributes());
     verify(userExitDomain, times(1))
         .findUEConfigDataByNameAppNameOrgIdAndServiceName(any(), any(), any(), any());
   }
@@ -116,6 +123,9 @@ class UserExitDataServiceTest {
     MetaDataResponse metaDataResponse = userExitDataService.addMetaData(createMetaDataRequest);
 
     assertEquals(testUtil.getUserExitMetaData().getId(), metaDataResponse.getId());
+    assertEquals(
+        testUtil.getUserExitMetaData().getCustomAttributes(),
+        metaDataResponse.getCustomAttributes());
     verify(userExitDomain, times(1)).addUEMetaData(any(UserExitMetaData.class));
   }
 
@@ -129,6 +139,9 @@ class UserExitDataServiceTest {
     ConfigDataResponse configDataResponse =
         userExitDataService.addConfigData(createConfigDataRequest);
     assertEquals(testUtil.getUserExitConfigData().getId(), configDataResponse.getId());
+    assertEquals(
+        testUtil.getUserExitConfigData().getCustomAttributes(),
+        configDataResponse.getCustomAttributes());
     Assertions.assertEquals(true, configDataResponse.getPropagateError());
 
     verify(userExitDomain, times(1)).addUEConfigData(any(UserExitConfigData.class));
