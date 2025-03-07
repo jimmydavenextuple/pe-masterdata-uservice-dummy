@@ -7,20 +7,22 @@
 
 package com.nextuple.sourcing.cost.config.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateOptimizationAndCostTypesMappingRequest implements Serializable {
+public class CreateOptimizationAndCostTypesMappingRequest extends AdditionalAttributes
+    implements Serializable {
   @Serial private static final long serialVersionUID = -3004629087120852960L;
 
   @NotBlank(message = "Unique identifier for organisation can't be empty.")

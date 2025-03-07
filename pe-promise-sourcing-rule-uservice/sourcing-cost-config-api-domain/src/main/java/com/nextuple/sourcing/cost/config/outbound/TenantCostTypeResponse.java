@@ -6,19 +6,20 @@
  */
 package com.nextuple.sourcing.cost.config.outbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.sourcing.cost.config.enums.LabelEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-public class TenantCostTypeResponse implements Serializable {
+public class TenantCostTypeResponse extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -8245660785034217576L;
 
   @Schema(description = "Unique identifier for tenant cost type.", example = "1")
