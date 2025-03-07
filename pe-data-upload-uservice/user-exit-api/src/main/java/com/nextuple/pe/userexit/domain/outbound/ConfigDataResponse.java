@@ -7,21 +7,22 @@
 package com.nextuple.pe.userexit.domain.outbound;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.common.userexit.domain.enums.UEImplTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class ConfigDataResponse implements Serializable {
+public class ConfigDataResponse extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -1411471420533799037L;
 
   @Schema(description = "Unique id")

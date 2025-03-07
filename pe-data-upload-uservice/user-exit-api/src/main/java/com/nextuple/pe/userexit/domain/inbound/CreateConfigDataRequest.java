@@ -6,19 +6,20 @@
  */
 package com.nextuple.pe.userexit.domain.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.common.userexit.domain.enums.UEImplTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateConfigDataRequest {
+public class CreateConfigDataRequest extends AdditionalAttributes {
   private static final long serialVersionUID = -7059683095437102081L;
 
   @NotBlank(message = "userExitName cannot be blank")
