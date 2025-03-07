@@ -3,6 +3,7 @@ package com.nextuple.sourcing.cost.config.service;
 import static com.nextuple.sourcing.cost.config.utils.TestUtil.COST_FACTOR;
 import static com.nextuple.sourcing.cost.config.utils.TestUtil.ID;
 import static com.nextuple.sourcing.cost.config.utils.TestUtil.ORG_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -73,6 +74,8 @@ class CostFactorContiguousBucketServiceImplTest {
     verify(costFactorBucketTypeRepository, times(1))
         .findByOrgIdAndCostFactor(anyString(), anyString());
     Assertions.assertEquals(ORG_ID, dto.getOrgId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(), dto.getCustomAttributes());
     verify(bucketValidationService, times(1)).validateOrgIdAndCostFactor(any(), any());
     verify(costFactorContiguousBucketRepository, times(1))
         .findByOrgIdAndCostFactorAndNotation(any(), any(), any());
@@ -232,6 +235,9 @@ class CostFactorContiguousBucketServiceImplTest {
         service.getCostFactorContiguousBuckets(ORG_ID, COST_FACTOR);
 
     Assertions.assertEquals(ORG_ID, dto.get(0).getOrgId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        dto.getFirst().getCustomAttributes());
     verify(costFactorContiguousBucketRepository, times(1)).findByOrgIdAndCostFactor(any(), any());
   }
 
@@ -271,6 +277,8 @@ class CostFactorContiguousBucketServiceImplTest {
         service.updateCostFactorContiguousBucket(ID, ORG_ID, request);
 
     Assertions.assertEquals(ORG_ID, dto.getOrgId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(), dto.getCustomAttributes());
     verify(costFactorBucketTypeRepository, times(1))
         .findByOrgIdAndCostFactor(anyString(), anyString());
     verify(costFactorContiguousBucketRepository, times(1)).findByIdAndOrgId(any(), any());
@@ -412,6 +420,8 @@ class CostFactorContiguousBucketServiceImplTest {
 
     CostFactorContiguousBucketDto dto = service.deleteCostFactorContiguousBucket(ID, ORG_ID);
     Assertions.assertEquals(ORG_ID, dto.getOrgId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(), dto.getCustomAttributes());
     verify(costFactorContiguousBucketRepository, times(1)).findByIdAndOrgId(any(), any());
     verify(bucketValidationService, times(1)).validateCostItineraryStatus(any(), any());
     verify(costFactorContiguousBucketRepository, times(1)).delete(any());
@@ -508,6 +518,8 @@ class CostFactorContiguousBucketServiceImplTest {
     verify(costFactorBucketTypeRepository, times(1))
         .findByOrgIdAndCostFactor(anyString(), anyString());
     Assertions.assertEquals(ORG_ID, dto.getOrgId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(), dto.getCustomAttributes());
     Assertions.assertTrue(dto.getIsFromValueInclusive());
     Assertions.assertFalse(dto.getIsToValueInclusive());
     verify(bucketValidationService, times(1)).validateOrgIdAndCostFactor(any(), any());

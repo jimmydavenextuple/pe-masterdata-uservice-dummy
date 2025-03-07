@@ -63,6 +63,9 @@ class CostAttributeMappingServiceTest {
         costAttributeMappingService.createCostAttributeMapping(ORG_ID, costAttributeMappingRequest);
     assertEquals(
         testUtil.getCostAttributeMappingEntity().getId(), costAttributeMappingResponse.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costAttributeMappingResponse.getCustomAttributes());
 
     verify(costAttributeMappingRepository, times(1)).save(any(CostAttributeMappingEntity.class));
     verify(costAttributeRepository, times(1)).findByAttributeName(anyString());
@@ -177,6 +180,9 @@ class CostAttributeMappingServiceTest {
         costAttributeMappingService.findCostAttributeMappingByOrgIdAndId(ORG_ID, ID);
     assertEquals(
         testUtil.getCostAttributeMappingEntity().getId(), costAttributeMappingResponse.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costAttributeMappingResponse.getCustomAttributes());
 
     verify(costAttributeMappingRepository, times(1)).findByIdAndOrgId(anyLong(), anyString());
   }
@@ -218,6 +224,9 @@ class CostAttributeMappingServiceTest {
             ID, ORG_ID, costAttributeMappingRequest);
     assertEquals(
         testUtil.getCostAttributeMappingEntity().getId(), costAttributeMappingResponse.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costAttributeMappingResponse.getCustomAttributes());
 
     verify(costAttributeMappingRepository, times(1)).save(any(CostAttributeMappingEntity.class));
   }
@@ -245,6 +254,9 @@ class CostAttributeMappingServiceTest {
             ID, ORG_ID, costAttributeMappingRequest);
     assertEquals(
         testUtil.getCostAttributeMappingEntity().getId(), costAttributeMappingResponse.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costAttributeMappingResponse.getCustomAttributes());
 
     verify(costAttributeMappingRepository, times(1)).save(any(CostAttributeMappingEntity.class));
     verify(costAttributeRepository, times(1)).findByAttributeName(anyString());
@@ -281,6 +293,9 @@ class CostAttributeMappingServiceTest {
             ORG_ID, CANONICAL_NAME);
     assertEquals(
         testUtil.getCostAttributeMappingEntity().getId(), costAttributeMappingResponse.getId());
+    assertEquals(
+        testUtil.getCostAttributeMappingRequest().getCustomAttributes(),
+        costAttributeMappingResponse.getCustomAttributes());
 
     verify(costAttributeMappingRepository, times(1))
         .findByOrgIdAndCanonicalName(anyString(), anyString());
