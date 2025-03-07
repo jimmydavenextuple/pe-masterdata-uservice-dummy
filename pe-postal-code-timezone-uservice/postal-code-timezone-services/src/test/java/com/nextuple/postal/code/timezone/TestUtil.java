@@ -480,7 +480,6 @@ public class TestUtil {
             .zipCodePrefixesCount(2)
             .orgId(ORG_ID)
             .uploadDate("2024-10-10")
-            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
 
     CustomRegionInfo customRegionInfo2 =
@@ -494,7 +493,6 @@ public class TestUtil {
             .zipCodePrefixesCount(1)
             .orgId(ORG_ID)
             .uploadDate("2024-10-10")
-            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
     return List.of(customRegionInfo1, customRegionInfo2);
   }
