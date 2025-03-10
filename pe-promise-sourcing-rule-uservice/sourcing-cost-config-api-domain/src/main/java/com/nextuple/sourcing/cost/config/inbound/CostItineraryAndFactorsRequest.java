@@ -7,21 +7,22 @@
 
 package com.nextuple.sourcing.cost.config.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.sourcing.cost.config.enums.LevelAppliedEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CostItineraryAndFactorsRequest implements Serializable {
+public class CostItineraryAndFactorsRequest extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = 7877441978919884032L;
 
   @NotBlank(message = "Cost itinerary to determine the cost can't be empty")

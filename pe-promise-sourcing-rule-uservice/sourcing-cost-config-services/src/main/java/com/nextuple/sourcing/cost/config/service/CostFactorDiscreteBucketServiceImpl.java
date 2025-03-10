@@ -80,6 +80,7 @@ public class CostFactorDiscreteBucketServiceImpl implements CostFactorDiscreteBu
             .notation(costFactorDiscreteBucketRequest.getNotation())
             .notationDisplayName(costFactorDiscreteBucketRequest.getNotationDisplayName())
             .valueList(costFactorDiscreteBucketRequest.getValueList())
+            .customAttributes(costFactorDiscreteBucketRequest.getCustomAttributes())
             .build();
     return INSTANCE.convertCostFactorDiscreteBucketEntityToDto(
         costFactorDiscreteBucketRepository.save(entity));
@@ -154,6 +155,7 @@ public class CostFactorDiscreteBucketServiceImpl implements CostFactorDiscreteBu
         INSTANCE.convertCostFactorDiscreteBucketRequestToEntity(costFactorDiscreteBucketRequest);
     costFactorDiscreteBucketEntity.setOrgId(orgId);
     costFactorDiscreteBucketEntity.setId(id);
+
     return INSTANCE.convertCostFactorDiscreteBucketEntityToDto(
         costFactorDiscreteBucketRepository.save(costFactorDiscreteBucketEntity));
   }
