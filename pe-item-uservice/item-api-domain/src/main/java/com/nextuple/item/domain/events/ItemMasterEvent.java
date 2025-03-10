@@ -58,4 +58,5 @@ public class ItemMasterEvent implements Serializable {
   private Map<String, List<String>> inventoryNodeTypes;
   private String handlingType;
   private Integer buyingCost;
+  private Double validDropoffDuration;
 }
