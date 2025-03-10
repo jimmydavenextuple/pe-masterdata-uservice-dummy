@@ -35,8 +35,7 @@ class MasterDataIngestionServiceTest {
   @Mock NodeCarrierFeedHandlingService nodeCarrierFeedHandlingService;
   @Mock NodeServiceOptionFeedHandlingService nodeServiceOptionFeedHandlingService;
   @Mock NodeServiceOptionBufferFeedHandlingService nodeServiceOptionBufferFeedHandlingService;
-  @Mock
-  TransferScheduleFeedHandlingService transferScheduleFeedHandlingService;
+  @Mock TransferScheduleFeedHandlingService transferScheduleFeedHandlingService;
   @InjectMocks MasterDataIngestionService masterDataIngestionService;
   @InjectMocks TestUtil testUtil;
 
@@ -193,11 +192,12 @@ class MasterDataIngestionServiceTest {
   @Test
   void ingestTransferScheduledFeedTest() throws CommonServiceException {
     FeedRequest<MasterDataIngestionDto<?>> batchRequest =
-            testUtil.getNodeCalendarFeedIngestionRequest(ActionEnum.CREATE);
+        testUtil.getNodeCalendarFeedIngestionRequest(ActionEnum.CREATE);
     Mockito.doNothing().when(transferScheduleFeedHandlingService).publishRecords(any(), any());
 
     masterDataIngestionService.processMasterDataIngestionData(
-            "transfer-schedules", batchRequest, TestUtil.ORG_ID);
-    Mockito.verify(transferScheduleFeedHandlingService, Mockito.times(1)).publishRecords(any(), any());
+        "transfer-schedules", batchRequest, TestUtil.ORG_ID);
+    Mockito.verify(transferScheduleFeedHandlingService, Mockito.times(1))
+        .publishRecords(any(), any());
   }
 }

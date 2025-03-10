@@ -9,6 +9,7 @@ package com.nextuple.master.data.integration.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.nextuple.common.context.CurrentThreadContext;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.ConfigException;
@@ -21,6 +22,7 @@ import com.nextuple.master.data.integration.enums.TaskInformation;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.outbound.BatchResponse;
 import feign.FeignException;
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -36,6 +38,11 @@ public abstract class BatchService<T extends CommonMasterDataFieldsDto> { // NOS
 
   private final ObjectMapper objectMapper = new ObjectMapper();
   @Autowired ErrorHandlingService errorHandlingService;
+
+  @PostConstruct
+  public void init() {
+    objectMapper.registerModule(new JodaModule());
+  }
 
   public String handleRetry(BatchRequest<?> batchRequest) {
     try {

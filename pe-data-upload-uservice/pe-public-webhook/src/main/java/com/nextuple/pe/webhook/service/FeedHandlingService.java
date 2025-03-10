@@ -15,7 +15,6 @@ import com.nextuple.master.data.integration.outbound.BatchResponse;
 import com.nextuple.pe.webhook.domain.dtos.MasterDataIngestionDto;
 import com.nextuple.pe.webhook.domain.inbound.FeedRequest;
 import jakarta.annotation.PostConstruct;
-
 import java.util.List;
 
 public abstract class FeedHandlingService<T> { // NOSONAR
@@ -25,6 +24,7 @@ public abstract class FeedHandlingService<T> { // NOSONAR
   public void init() {
     objectMapper.registerModule(new JodaModule());
   }
+
   public BatchResponse processRecords(List<BatchRequest<?>> batchFeed, String orgId) {
     TypeReference<List<BatchRequest<T>>> typeReference = getTypeReference();
     List<BatchRequest<T>> batchRequests = objectMapper.convertValue(batchFeed, typeReference);

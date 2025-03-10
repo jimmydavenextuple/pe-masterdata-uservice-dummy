@@ -21,10 +21,8 @@ import com.nextuple.transit.domain.outbound.TransitBufferV2Response;
 import com.nextuple.transit.domain.outbound.TransitResponse;
 import com.nextuple.transit.persistence.domain.TransitBufferV2DomainDto;
 import com.nextuple.transit.persistence.domain.TransitDomainDto;
-import jakarta.validation.constraints.NotNull;
-import org.joda.time.DateTime;
-
 import java.util.Date;
+import org.joda.time.DateTime;
 
 public class TestUtil {
   public static final String ORG_ID = "NEXTUPLE";
@@ -55,6 +53,16 @@ public class TestUtil {
         .bufferStartDate(BUFFER_START_DATE)
         .bufferEndDate(BUFFER_END_DATE)
         .bufferDays(TRANSIT_BUFFER_DAYS)
+        .build();
+  }
+
+  public TransferScheduleDto createTransferScheduleDto() {
+    return TransferScheduleDto.builder()
+        .orgId(ORG_ID)
+        .sourceNodeId("A1B")
+        .dropoffNodeId("H1R")
+        .startTime(new DateTime())
+        .endTime(new DateTime().plusHours(3))
         .build();
   }
 
@@ -164,33 +172,40 @@ public class TestUtil {
   }
 
   private TransferScheduleDto createTransferFeedDto() {
-    return TransferScheduleDto.builder().orgId(ORG_ID).sourceNodeId("A1B").dropoffNodeId("H1R").startTime(new DateTime()).endTime(new DateTime().plusHours(3)).build();
+    return TransferScheduleDto.builder()
+        .orgId(ORG_ID)
+        .sourceNodeId("A1B")
+        .dropoffNodeId("H1R")
+        .startTime(new DateTime())
+        .endTime(new DateTime().plusHours(3))
+        .build();
   }
 
-  public BaseResponse<TransferScheduleResponse> getBaseResponseOfTransferScheduleFeed(String message) {
+  public BaseResponse<TransferScheduleResponse> getBaseResponseOfTransferScheduleFeed(
+      String message) {
     return BaseResponse.builder()
-            .message(message)
-            .success(true)
-            .payload(getTransferScheduleResponse())
-            .build();
+        .message(message)
+        .success(true)
+        .payload(getTransferScheduleResponse())
+        .build();
   }
 
   private TransferScheduleResponse getTransferScheduleResponse() {
     return TransferScheduleResponse.builder()
-            .orgId(ORG_ID)
-            .sourceNodeId("A1B")
-            .dropoffNodeId("H1R")
-            .startTime(new Date())
-            .endTime(new Date())
-            .build();
+        .orgId(ORG_ID)
+        .sourceNodeId("A1B")
+        .dropoffNodeId("H1R")
+        .startTime(new Date())
+        .endTime(new Date())
+        .build();
   }
 
   public BatchResponse getTransferScheduleBatchResponse(
-          int totalRecords, int successfulRecords, int failedRecords) {
+      int totalRecords, int successfulRecords, int failedRecords) {
     return BatchResponse.builder()
-            .totalRecords(totalRecords)
-            .successfulRecords(successfulRecords)
-            .failedRecords(failedRecords)
-            .build();
+        .totalRecords(totalRecords)
+        .successfulRecords(successfulRecords)
+        .failedRecords(failedRecords)
+        .build();
   }
 }

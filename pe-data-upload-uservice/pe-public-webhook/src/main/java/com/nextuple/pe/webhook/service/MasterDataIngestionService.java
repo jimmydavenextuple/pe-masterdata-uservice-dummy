@@ -80,7 +80,7 @@ public class MasterDataIngestionService {
             masterDataIngestionFeedRequest, orgId);
         break;
       case TRANSFER_SCHEDULES:
-        transferScheduleFeedHandlingService.publishRecords(masterDataIngestionFeedRequest,orgId);
+        transferScheduleFeedHandlingService.publishRecords(masterDataIngestionFeedRequest, orgId);
         break;
       default:
         throw new CommonServiceException(
