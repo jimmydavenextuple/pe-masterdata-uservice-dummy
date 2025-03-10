@@ -371,8 +371,6 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy vapt
           deployment: vapt
-    ashley:
-      - step: *build-ashley
     development:
       - step: *build
       - parallel:

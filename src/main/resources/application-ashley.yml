@@ -1,0 +1,204 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://postgresql.postgres.svc.cluster.local:5432/pe_demo
+    username: \${COMMON-POSTGRES-USER}
+    password: \${COMMON-POSTGRES-PASSWORD}
+  flyway:
+    enabled: false
+  kafka:
+    bootstrap-servers: kafka://kafka-broker-headless.kafka.svc.cluster.local:9092
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
+    consumer-retry-count: 1
+    # NOTE: Below commented code is for the Avro consumer.
+    # If we need to consume an avro record, please uncomment Avro properties and comment out the JSON Consumer and Producer.
+    #
+    #    consumer:
+    #      type: avro
+    #      enable-auto-commit: true
+    #      auto-offset-reset: latest
+    #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    #      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
+    #      topics:
+    #        item_master:
+    #          name: INTERNAL.DEMO.PROMISE_ITEMS
+    #          group-id: item-master-dev
+    #    producer:
+    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    #      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
+    consumer-item:
+      type: json
+      enable-auto-commit: true
+      auto-offset-reset: latest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring-deserializer-key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+        spring-deserializer-value-delegate-class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring-json-trusted-packages: "*"
+        spring-json-type-mapping: com.nextuple.pe.webhook.domain.dtos.Item:com.nextuple.item.domain.events.ItemMasterEvent
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      topics:
+        item_master:
+          names: INTERNAL.DEMO.PROMISE_ITEMS
+          group-id: item-master-demo-\${random.value}
+    producer-item:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.DEMO.MASTER_DATA_UPDATE_EVENTS
+      properties:
+        acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      topics:
+        master_data_update_event:
+          name: INTERNAL.DEMO.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-demo
+    consumer-string:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+      trusted-packages: "*"
+      interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      enable-auto-commit: true
+      auto-offset-reset: latest
+  sql.init.platform: postgres
+
+logging:
+  level:
+    com.nextuple: INFO
+pe-public-webhook:
+  iv-feed:
+    topic: INTERNAL.DEMO_ATP
+  item-feed:
+    topic: INTERNAL.DEMO.PROMISE_ITEMS
+  pe-response:
+    topics: INTERNAL.DEMO.CART_EDD
+    group-id: pe-response-consumer-async
+  webhook:
+    - tenantId: NEXTUPLE_GR
+      moduleName: PROMISING
+      webhookName: PROMISING_INTERMEDIATE_EVENT
+      webhookDetail:
+        endpoint: "https://dc5647e2-a0d6-436b-bfba-6097594abe60.mock.pstmn.io"
+        method: POST
+        headers:
+          contentType: "application/json"
+          x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
+          #          Dummy API Key
+    - tenantId: XYZINC
+      moduleName: PROMISING
+      webhookName: PROMISING_INTERMEDIATE_EVENT
+      webhookDetail:
+        endpoint: "https://dc5647e2-a0d6-436b-bfba-6097594abe60.mock.pstmn.io"
+        method: POST
+        headers:
+          contentType: "application/json"
+          x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
+          #          Dummy API Keydataupload:
+dataupload:
+  base-path: "https://nextupleashleystorageacc.blob.core.windows.net/dataupload"
+  maxsize-in-kilobytes: 10240
+  max-rows: 1000
+  bucket-name: "demodataupload"
+  type: BLOB
+  signed-url-expiry-minutes: 30
+
+jobs-framework:
+  feed-metrics-consumer:
+    topic-name: INTERNAL.DEMO.PE_JOB_FPM_METRICS, INTERNAL.DEMO.PE_JOB_RECORD_FPM_METRICS, INTERNAL.DEMO.PE_NEIP_FPM_METRICS
+    group-id: pe-fpm-metrics-demo
+  job-completion-consumer:
+    topic-name: INTERNAL.DEMO.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-dev
+  kafka-publish:
+    topic-name: INTERNAL.DEMO.PE.JOB_TASK
+  result-publish:
+    topic-name: INTERNAL.DEMO.PE.JOB_RESULT
+  result-consumer:
+    topic-name: INTERNAL.DEMO.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async-demo
+  record-consumer:
+    topic-names: INTERNAL.DEMO.PE.JOB_TASK
+    group-id: jobs-task-consumer-async-demo
+
+master-data:
+  node:
+    topic-names: INTERNAL.DEMO.PE.NODE_INTEGRATION
+    group-id: node-master-dev
+  node-carrier:
+    topic-names: INTERNAL.DEMO.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-dev
+  carrier:
+    topic-names: INTERNAL.DEMO.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-dev
+  processing-lead-time:
+    topic-names: INTERNAL.DEMO.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-dev
+  calendar:
+    topic-names: INTERNAL.DEMO.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-dev
+  node-calendar:
+    topic-names: INTERNAL.DEMO.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-dev
+  carrier-service-calendar:
+    topic-names: INTERNAL.DEMO.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-dev
+  pickup-calendar:
+    topic-names: INTERNAL.DEMO.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-dev
+  node-service-option-buffer:
+    topic-names: INTERNAL.DEMO.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-dev
+  transit:
+    topic-names: INTERNAL.DEMO.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-dev
+  transit-buffer:
+    topic-names: INTERNAL.DEMO.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-dev
+  item:
+    dlt-topic: ITEM_MASTER_INTEGRATION.DLT
+
+next-cache:
+  caches:
+    -
+      cacheName: task-info
+      ttlSeconds: 14400
+      maxLimit: 50
+  refresh-cache:
+    topic: INTERNAL.DEMO.PE.REFRESH_CACHE_INV
+  cacheManager: caffeine
+platform:
+  tasks:
+    enabled: true
+  tasks-scheduler:
+    enabled: true
+    milliseconds: 5000
+  authFilter:
+    enabled: false
+kafka:
+  input:
+    taskTopics: INTERNAL.DEMO.PE.RETRY_TOPIC_INV
+    taskGroupId: pe-retry
+keycloak:
+  auth-server-url: "https://keycloak-nonprod.nextuple.com"
