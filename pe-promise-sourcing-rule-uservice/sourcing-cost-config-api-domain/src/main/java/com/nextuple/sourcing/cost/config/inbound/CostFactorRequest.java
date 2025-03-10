@@ -7,6 +7,7 @@
 
 package com.nextuple.sourcing.cost.config.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.sourcing.cost.config.enums.CostFactorTypeEnum;
 import com.nextuple.sourcing.cost.config.enums.DataTypeEnum;
 import com.nextuple.sourcing.cost.config.enums.ExpressionLibraryEnum;
@@ -16,15 +17,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CostFactorRequest implements Serializable {
+public class CostFactorRequest extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = 9008260063154533111L;
 
   @NotBlank(message = "Cost Factor can't be empty")

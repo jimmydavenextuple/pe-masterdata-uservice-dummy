@@ -121,6 +121,9 @@ class SourcingRulesConfigurationServiceTest {
     assertEquals(
         testUtil.getSourcingRulesEntity().getSourcingAttributesDefinitionId(),
         sourcingRuleDetails.getSourcingAttributesDefinitionId());
+    assertEquals(
+        testUtil.getSourcingRulesEntity().getCustomAttributes(),
+        sourcingRuleDetails.getCustomAttributes());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
@@ -156,6 +159,10 @@ class SourcingRulesConfigurationServiceTest {
     assertEquals(
         testUtil.getSourcingRulesEntity().getSourcingRuleName(),
         sourcingRuleDetails.getSourcingRuleName());
+
+    assertEquals(
+        testUtil.getSourcingRulesEntity().getCustomAttributes(),
+        sourcingRuleDetails.getCustomAttributes());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
@@ -602,6 +609,10 @@ class SourcingRulesConfigurationServiceTest {
         testUtil.getSourcingRulesEntity().getSourcingAttributesDefinitionId(),
         sourcingRuleDetails.getSourcingAttributesDefinitionId());
 
+    assertEquals(
+        testUtil.getSourcingRulesEntity().getCustomAttributes(),
+        sourcingRuleDetails.getCustomAttributes());
+
     verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndExactMatchSourcingRule(
             anyString(), anyLong(), anyString());
@@ -626,7 +637,9 @@ class SourcingRulesConfigurationServiceTest {
             TestUtil.SOURCING_RULE_ID, TestUtil.ORG_ID);
 
     assertEquals(testUtil.getSourcingRulesEntity().getId(), sourcingRuleDetails.getId());
-
+    assertEquals(
+        testUtil.getSourcingRulesEntity().getCustomAttributes(),
+        sourcingRuleDetails.getCustomAttributes());
     verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRuleByIdAndOrgId(anyLong(), anyString());
     verify(sourcingRuleDetailsPersistenceService, times(1))
@@ -803,6 +816,9 @@ class SourcingRulesConfigurationServiceTest {
         2, fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getRequiredAttributes().size());
     assertEquals(
         2, fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getOptionalAttributes().size());
+    assertEquals(
+        testUtil.getSourcingRulesEntity().getCustomAttributes(),
+        fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getCustomAttributes());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
@@ -908,6 +924,10 @@ class SourcingRulesConfigurationServiceTest {
         2, fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getRequiredAttributes().size());
     assertEquals(
         2, fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getOptionalAttributes().size());
+
+    assertEquals(
+        testUtil.getSourcingRulesEntity().getCustomAttributes(),
+        fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getCustomAttributes());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
@@ -1015,6 +1035,9 @@ class SourcingRulesConfigurationServiceTest {
         2, fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getRequiredAttributes().size());
     assertEquals(
         2, fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getOptionalAttributes().size());
+    assertEquals(
+        testUtil.getSourcingRulesEntity().getCustomAttributes(),
+        fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getCustomAttributes());
 
     verify(sourcingRulesConfigurationPersistenceService, times(2))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
@@ -1108,6 +1131,10 @@ class SourcingRulesConfigurationServiceTest {
         2, fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getRequiredAttributes().size());
     assertEquals(
         0, fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getOptionalAttributes().size());
+
+    assertEquals(
+        testUtil.getSourcingRulesEntity().getCustomAttributes(),
+        fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getCustomAttributes());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(

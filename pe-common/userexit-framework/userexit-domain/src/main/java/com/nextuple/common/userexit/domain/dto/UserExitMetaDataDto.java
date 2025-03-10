@@ -7,19 +7,20 @@
 
 package com.nextuple.common.userexit.domain.dto;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.common.userexit.domain.enums.ExecutionFailureEnum;
 import com.nextuple.common.userexit.domain.enums.UserExitTypeEnum;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class UserExitMetaDataDto implements Serializable {
+@SuperBuilder
+public class UserExitMetaDataDto extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -4310967021602953325L;
 
   private Long id;

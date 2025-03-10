@@ -7,6 +7,8 @@
 
 package com.nextuple.postal.code.timezone.persistence.service.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.postal.code.timezone.api.domain.projection.CustomRegionProjection;
 import com.nextuple.postal.code.timezone.api.domain.projection.MarketRegionProjection;
 import com.nextuple.postal.code.timezone.persistence.domain.CustomRegionDomainDto;
@@ -56,6 +58,9 @@ public class TestUtil {
   private static final PostalCodeEntityMapper POSTAL_CODE_ENTITY_MAPPER =
       Mappers.getMapper(PostalCodeEntityMapper.class);
 
+  public static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
+
   public CustomRegionEntity getCustomRegionEntity() {
     return CustomRegionEntity.builder()
         .orgId(ORG_ID)
@@ -63,6 +68,7 @@ public class TestUtil {
         .codes(PARTIAL_CODES)
         .customRegionDescription(CUSTOM_REGION_DESC)
         .id(ID_2)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -77,6 +83,7 @@ public class TestUtil {
         .codes(PARTIAL_CODES)
         .customRegionDescription(CUSTOM_REGION_DESC)
         .id(ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -90,6 +97,7 @@ public class TestUtil {
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .timeZone(TIME_ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -118,6 +126,7 @@ public class TestUtil {
         .latitude(LATITUDE)
         .longitude(LONGITUDE)
         .timeZone(TIME_ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 

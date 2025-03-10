@@ -7,21 +7,22 @@
 
 package com.nextuple.sourcing.cost.config.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.sourcing.cost.config.enums.LookupContextEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CostAttributeRequest implements Serializable {
+public class CostAttributeRequest extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -383086608306156270L;
 
   @NotBlank(message = "Attribute name cannot be blank")

@@ -7,6 +7,8 @@
 
 package com.nextuple.transit.persistence;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
 import com.nextuple.transit.domain.enums.TransitBufferReqJobRefEnum;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
@@ -77,6 +79,8 @@ public class TestUtil {
   public static final String ZONE = "Zone1";
   public static final String SOURCE_NODE = "Node1";
   public static final String DESTINATION_NODE = "Node2";
+  public static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public ZoneDomainDto getZoneDomainDto() {
     return ZoneDomainDto.builder()
@@ -299,6 +303,7 @@ public class TestUtil {
         .dropoffNodeId(DESTINATION_NODE)
         .startTime(new Date())
         .endTime(new Date())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -307,6 +312,7 @@ public class TestUtil {
         .id(1L)
         .sourceNodeId(SOURCE_NODE)
         .dropoffNodeId(DESTINATION_NODE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -346,6 +352,7 @@ public class TestUtil {
         .ruleName("Rule1")
         .startTimeLowerBound(new Date())
         .endTimeLowerBound(new Date())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 }

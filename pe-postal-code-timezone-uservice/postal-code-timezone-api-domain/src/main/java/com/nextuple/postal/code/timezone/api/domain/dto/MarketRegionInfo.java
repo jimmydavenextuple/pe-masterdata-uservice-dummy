@@ -9,12 +9,14 @@ package com.nextuple.postal.code.timezone.api.domain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class MarketRegionInfo {
   @Schema(description = "Country of the zip code.", example = "CN")
   private String country;

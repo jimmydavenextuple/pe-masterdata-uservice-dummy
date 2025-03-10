@@ -7,19 +7,20 @@
 
 package com.nextuple.sourcing.cost.config.dto;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.sourcing.cost.config.enums.BucketTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CostFactorBucketTypeDto implements Serializable {
+public class CostFactorBucketTypeDto extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -4708066421326116618L;
 
   @Schema(description = "Unique identifier of the cost factor bucket type", example = "1")

@@ -64,6 +64,7 @@ class CustomRegionServiceTest {
     CustomRegionResponse customRegionResponse =
         customRegionService.createCustomRegion(createCustomRegionRequest);
     assertEquals(customRegion.getOrgId(), customRegionResponse.getOrgId());
+    assertEquals(customRegion.getCustomAttributes(), customRegionResponse.getCustomAttributes());
     verify(customRegionPersistenceService, times(1))
         .saveCustomRegion(any(CustomRegionDomainDto.class));
   }
@@ -83,6 +84,7 @@ class CustomRegionServiceTest {
     CustomRegionResponse customRegionResponse =
         customRegionService.createCustomRegion(createCustomRegionRequest);
     assertEquals(customRegion.getOrgId(), customRegionResponse.getOrgId());
+    assertEquals(customRegion.getCustomAttributes(), customRegionResponse.getCustomAttributes());
     verify(customRegionPersistenceService, times(1))
         .saveCustomRegion(any(CustomRegionDomainDto.class));
   }
@@ -265,6 +267,7 @@ class CustomRegionServiceTest {
     CustomRegionResponse customRegionResponse =
         customRegionService.fetchRegionByOrgIdAndId(ORG_ID, ID);
     assertEquals(customRegionResponse.getOrgId(), customRegion.getOrgId());
+    assertEquals(customRegion.getCustomAttributes(), customRegionResponse.getCustomAttributes());
     verify(customRegionPersistenceService, times(1))
         .fetchRegionByOrgIdAndId(anyString(), anyString());
   }
@@ -308,6 +311,7 @@ class CustomRegionServiceTest {
     CustomRegionResponse customRegionResponse =
         customRegionService.updateCustomRegion(createCustomRegionRequest);
     assertEquals(customRegion.getOrgId(), customRegionResponse.getOrgId());
+    assertEquals(customRegion.getCustomAttributes(), customRegionResponse.getCustomAttributes());
     verify(customRegionPersistenceService, times(1))
         .saveCustomRegion(any(CustomRegionDomainDto.class));
   }
@@ -330,6 +334,7 @@ class CustomRegionServiceTest {
     CustomRegionResponse customRegionResponse =
         customRegionService.updateCustomRegion(createCustomRegionRequest);
     assertEquals(customRegion.getOrgId(), customRegionResponse.getOrgId());
+    assertEquals(customRegion.getCustomAttributes(), customRegionResponse.getCustomAttributes());
     verify(customRegionPersistenceService, times(1))
         .saveCustomRegion(any(CustomRegionDomainDto.class));
   }
@@ -349,6 +354,7 @@ class CustomRegionServiceTest {
     CustomRegionResponse customRegionResponse =
         customRegionService.updateCustomRegion(createCustomRegionRequest);
     assertEquals(customRegion.getOrgId(), customRegionResponse.getOrgId());
+    assertEquals(customRegion.getCustomAttributes(), customRegionResponse.getCustomAttributes());
     verify(customRegionPersistenceService, times(1))
         .saveCustomRegion(any(CustomRegionDomainDto.class));
   }
@@ -416,6 +422,7 @@ class CustomRegionServiceTest {
         .deleteCustomRegion(any(CustomRegionDomainDto.class));
     CustomRegionResponse customRegionResponse = customRegionService.deleteCustomRegion(ORG_ID, ID);
     assertEquals(customRegion.getOrgId(), customRegionResponse.getOrgId());
+    assertEquals(customRegion.getCustomAttributes(), customRegionResponse.getCustomAttributes());
     verify(customRegionPersistenceService, times(1))
         .deleteCustomRegion(any(CustomRegionDomainDto.class));
   }
@@ -437,6 +444,7 @@ class CustomRegionServiceTest {
     CustomRegionResponse customRegionResponse =
         customRegionService.deleteCustomRegionGeozones(ORG_ID, ID, deleteRequest);
     assertEquals(customRegion.getOrgId(), customRegionResponse.getOrgId());
+    assertEquals(customRegion.getCustomAttributes(), customRegionResponse.getCustomAttributes());
     verify(customRegionPersistenceService, times(0))
         .deleteCustomRegion(any(CustomRegionDomainDto.class));
   }
@@ -458,6 +466,7 @@ class CustomRegionServiceTest {
     CustomRegionResponse customRegionResponse =
         customRegionService.deleteCustomRegionGeozones(ORG_ID, ID, deleteRequest);
     assertEquals(customRegion.getOrgId(), customRegionResponse.getOrgId());
+    assertEquals(customRegion.getCustomAttributes(), customRegionResponse.getCustomAttributes());
     verify(customRegionPersistenceService, times(1))
         .deleteCustomRegion(any(CustomRegionDomainDto.class));
   }

@@ -7,8 +7,8 @@
 
 package com.nextuple.sourcing.cost.config.domain.entity;
 
-import com.nextuple.common.base.CommonBaseEntity;
 import com.nextuple.core.event.listeners.CommonEntityListener;
+import com.nextuple.postgres.entity.CommonBaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -22,6 +22,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
@@ -33,6 +34,7 @@ import lombok.Setter;
 @Table(
     name = "preference_selector",
     indexes = @Index(name = "preference_selector_id_orgId", columnList = "id,org_id"))
+@SuperBuilder
 public class PreferenceSelectorEntity extends CommonBaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

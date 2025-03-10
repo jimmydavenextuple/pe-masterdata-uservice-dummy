@@ -7,8 +7,8 @@
 
 package com.nextuple.node.carrier.domain.entity;
 
-import com.nextuple.common.base.CommonBaseEntity;
 import com.nextuple.core.event.listeners.CommonEntityListener;
+import com.nextuple.postgres.entity.CommonBaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -18,6 +18,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @IdClass(NodeServiceOptionId.class)
@@ -26,6 +27,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Table(name = "node_service_option")
+@SuperBuilder
 public class NodeServiceOptionEntity extends CommonBaseEntity {
 
   @Id

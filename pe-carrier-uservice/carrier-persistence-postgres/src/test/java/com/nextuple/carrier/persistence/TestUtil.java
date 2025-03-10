@@ -7,6 +7,8 @@
 
 package com.nextuple.carrier.persistence;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.carrier.domain.inbound.CarrierServiceRequest;
 import com.nextuple.carrier.persistence.domain.CarrierServiceDomainDto;
 
@@ -21,6 +23,9 @@ public class TestUtil {
   public static final String SERVICE_NAME = "service-name-1";
   public static final String SERVICE_OPTIONS = "service-options-1";
   public static final String SERVICE_OPTIONS_2 = "service-options-2";
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
+
   public static final String SORT_BY = "carrierId";
   public static final String SORT_ORDER_DESC = "desc";
   public static final String SORT_ORDER_ASC = "ASC";
@@ -36,6 +41,7 @@ public class TestUtil {
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
         .serviceOptions(SERVICE_OPTIONS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -47,6 +53,7 @@ public class TestUtil {
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
         .serviceOptions(SERVICE_OPTIONS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 }

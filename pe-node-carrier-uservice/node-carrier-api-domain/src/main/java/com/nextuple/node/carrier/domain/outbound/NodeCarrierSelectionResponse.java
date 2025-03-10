@@ -7,19 +7,20 @@
 
 package com.nextuple.node.carrier.domain.outbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.node.carrier.domain.constants.NodeCarrierConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class NodeCarrierSelectionResponse implements Serializable {
+@SuperBuilder
+public class NodeCarrierSelectionResponse extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = -8403080247082341161L;
 

@@ -6,21 +6,22 @@
  */
 package com.nextuple.pe.userexit.domain.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.common.userexit.domain.enums.ExecutionFailureEnum;
 import com.nextuple.common.userexit.domain.enums.UserExitTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateMetaDataRequest implements Serializable {
+public class CreateMetaDataRequest extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -4008110333374042208L;
 
   @NotBlank(message = "name can't be empty")
