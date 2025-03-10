@@ -7,6 +7,7 @@
 
 package com.nextuple.transit.service.impl;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.exception.CommonServiceException;
@@ -97,19 +98,25 @@ public class TransitBufferV2ServiceImpl implements TransitBufferV2Service {
         orgId, destinationGeozone, requestDate, horizonDays, transitBufferEntities);
     Map<String, List<TransitBufferDetailsDto>> transitBuffersMap =
         getTransitBuffersMap(transitBufferEntities);
-    return transitBuffersMap.entrySet().stream()
-        .map(
-            entry -> {
-              String[] details = entry.getKey().split("\\|");
-              return TransitBufferDetailsResponse.builder()
-                  .orgId(details[0])
-                  .destinationGeozone(details[1])
-                  .sourceGeozone(details[2])
-                  .carrierServiceId(details[3])
-                  .transitBuffers(entry.getValue())
-                  .build();
-            })
-        .toList();
+    return (List<TransitBufferDetailsResponse>)
+        transitBuffersMap.entrySet().stream()
+            .map(
+                entry -> {
+                  String[] details = entry.getKey().split("\\|");
+                  return TransitBufferDetailsResponse.builder()
+                      .orgId(details[0])
+                      .destinationGeozone(details[1])
+                      .sourceGeozone(details[2])
+                      .carrierServiceId(details[3])
+                      .transitBuffers(entry.getValue())
+                      .customAttributes(
+                          JsonNodeFactory.instance
+                              .objectNode()
+                              .put("key1", "value1")
+                              .put("key2", "value2"))
+                      .build();
+                })
+            .toList();
   }
 
   @Transactional

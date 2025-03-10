@@ -19,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder(toBuilder = true)
+@SuperBuilder
 public class TransitBufferV2Response extends TransitBufferResponse implements Serializable {
   private static final long serialVersionUID = -8267268751227302889L;
 
