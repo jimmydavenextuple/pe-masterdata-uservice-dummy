@@ -14,6 +14,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.util.DateUtil;
 import com.nextuple.master.data.integration.dto.ResponseDto;
 import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
@@ -22,7 +23,11 @@ import com.nextuple.master.data.integration.service.ErrorHandlingService;
 import com.nextuple.transit.consumer.TestUtil;
 import com.nextuple.transit.consumer.dto.TransferScheduleDto;
 import com.nextuple.transit.domain.feign.TransferScheduleFeign;
+import com.nextuple.transit.persistence.entity.TransferScheduleEntity;
+import com.nextuple.transit.persistence.repository.TransferScheduleRepository;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,6 +47,7 @@ public class TransferScheduleBatchServiceImplTest {
   @InjectMocks private TestUtil testUtil;
   @Mock private ErrorHandlingService errorHandlingService;
   @Mock private TransferScheduleFeign transferScheduleFeign;
+  @Mock private TransferScheduleRepository transferScheduleRepository;
 
   @BeforeEach
   void init() {
@@ -50,6 +57,9 @@ public class TransferScheduleBatchServiceImplTest {
         transferScheduleBatchService, "errorHandlingService", errorHandlingService);
     ReflectionTestUtils.setField(
         transferScheduleBatchService, "transferScheduleFeign", transferScheduleFeign);
+
+    ReflectionTestUtils.setField(
+        transferScheduleBatchService, "transferScheduleRepository", transferScheduleRepository);
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JodaModule());
     ReflectionTestUtils.setField(transferScheduleBatchService, "objectMapper", objectMapper);
@@ -169,31 +179,31 @@ public class TransferScheduleBatchServiceImplTest {
     verify(transferScheduleFeign, times(1)).createTransferSchedule(any());
   }
 
-  //    @Test
-  //    @DisplayName("When the batch records cannot be processed as they are outdated")
-  //    void processBatchRecordsTestForOutdatedRecords() throws TransitDomainException {
-  //        BatchRequest<TransitFeedDto> batchRequest =
-  // testUtil.getTransitFeedRequest(ActionEnum.UPDATE);
-  //        batchRequest.setReceivedTimestamp(new Date());
-  //        List<BatchRequest<TransitFeedDto>> transitFeedRequests = List.of(batchRequest);
-  //        ResponseDto responseDto =
-  //                testUtil.createResponseDto(
-  //                        1, HttpStatus.BAD_REQUEST.value(), "Can't process the record as it's
-  // outdated");
-  //        List<ResponseDto> responseDtoList = List.of(responseDto);
-  //        BatchResponse batchResponse = testUtil.getTransitBatchResponse(1, 0, 1);
-  //        batchResponse.setResponses(responseDtoList);
-  //        Mockito.doNothing()
-  //                .when(errorHandlingService)
-  //                .handleExceptions(anyInt(), any(), any(), any(), any(), any());
-  //        TransitDomainDto transitDomainDto = testUtil.getTransitDomainDto();
-  //        transitDomainDto.setLastModifiedDate(DateUtil.addDaysToDate(new Date(), 1));
-  //        when(transitPersistenceService.findTransitDetails(
-  //                anyString(), anyString(), anyString(), anyString()))
-  //                .thenReturn(Optional.of(transitDomainDto));
-  //        Assertions.assertEquals(
-  //                batchResponse,
-  // transitBatchService.processRecordsWithRetry(transitFeedRequests));
-  //        verify(transitFeign, times(0)).addTransitData(any());
-  //    }
+  @Test
+  @DisplayName("When the batch records cannot be processed as they are outdated")
+  void processBatchRecordsTestForOutdatedRecords() throws CommonServiceException {
+    BatchRequest<TransferScheduleDto> batchRequest =
+        testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE);
+    batchRequest.setReceivedTimestamp(new Date());
+    List<BatchRequest<TransferScheduleDto>> transferScheduleFeedRequest = List.of(batchRequest);
+    ResponseDto responseDto =
+        testUtil.createResponseDto(
+            1, HttpStatus.BAD_REQUEST.value(), "Can't process the record as it's outdated");
+    List<ResponseDto> responseDtoList = List.of(responseDto);
+    BatchResponse batchResponse = testUtil.getTransferScheduleBatchResponse(1, 0, 1);
+    batchResponse.setResponses(responseDtoList);
+    Mockito.doNothing()
+        .when(errorHandlingService)
+        .handleExceptions(anyInt(), any(), any(), any(), any(), any());
+    Optional<TransferScheduleEntity> transferScheduleEntity =
+        Optional.of(new TransferScheduleEntity());
+    transferScheduleEntity.get().setLastModifiedDate(DateUtil.addDaysToDate(new Date(), 1));
+    when(transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
+            any(), any(), any(), any()))
+        .thenReturn(transferScheduleEntity);
+    Assertions.assertEquals(
+        batchResponse,
+        transferScheduleBatchService.processRecordsWithRetry(transferScheduleFeedRequest));
+    verify(transferScheduleFeign, times(0)).createTransferSchedule(any());
+  }
 }

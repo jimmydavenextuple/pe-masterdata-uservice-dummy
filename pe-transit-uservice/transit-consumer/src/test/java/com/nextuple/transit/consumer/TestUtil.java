@@ -151,6 +151,16 @@ public class TestUtil {
         .build();
   }
 
+  public TransferScheduleDto getTransferScheduleDto() {
+    return TransferScheduleDto.builder()
+        .orgId(ORG_ID)
+        .sourceNodeId("A1B")
+        .dropoffNodeId("H1R")
+        .startTime(new DateTime())
+        .endTime(new DateTime().plusHours(3))
+        .build();
+  }
+
   public TransitBufferV2DomainDto getTransitBufferDomainDto() {
     return TransitBufferV2DomainDto.builder()
         .orgId(ORG_ID)
