@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.joda.time.DateTime;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,8 @@ public class TransferScheduleBatchServiceImpl extends BatchService<TransferSched
     String orgId = transferScheduleDto.getOrgId();
     String sourceNodeId = transferScheduleDto.getSourceNodeId();
     String dropOffNodeId = transferScheduleDto.getDropoffNodeId();
-    Date startTime = transferScheduleDto.getStartTime().toDate();
+    DateTime startDateTime = transferScheduleDto.getStartTime();
+    Date startTime = Objects.nonNull(startDateTime) ? startDateTime.toDate() : null;
 
     if (Objects.nonNull(orgId)
         && Objects.nonNull(sourceNodeId)

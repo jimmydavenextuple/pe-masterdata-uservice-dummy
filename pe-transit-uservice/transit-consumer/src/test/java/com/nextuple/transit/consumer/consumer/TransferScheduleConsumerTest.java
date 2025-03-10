@@ -27,7 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-public class TransferScheduleConsumerTest {
+class TransferScheduleConsumerTest {
 
   @InjectMocks private TransferScheduleConsumer transferScheduleConsumer;
   @Mock private TransferScheduleBatchServiceImpl transferScheduleBatchService;

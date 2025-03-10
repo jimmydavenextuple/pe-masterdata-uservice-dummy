@@ -127,7 +127,7 @@ public class TransferScheduleBatchServiceImplTest {
             .getBaseResponseOfTransferScheduleFeed("Action not supported : UPDATE")
             .getMessage());
     List<ResponseDto> responseDtoList = List.of(responseDto);
-    BatchResponse batchResponse = testUtil.getTransitBatchResponse(1, 0, 1);
+    BatchResponse batchResponse = testUtil.getTransferScheduleBatchResponse(1, 0, 1);
     batchResponse.setResponses(responseDtoList);
     Mockito.doNothing()
         .when(errorHandlingService)
@@ -205,5 +205,37 @@ public class TransferScheduleBatchServiceImplTest {
         batchResponse,
         transferScheduleBatchService.processRecordsWithRetry(transferScheduleFeedRequest));
     verify(transferScheduleFeign, times(0)).createTransferSchedule(any());
+  }
+
+  @Test
+  @DisplayName("When the required fields are not provided for the transfer schedule feed")
+  void processBatchRecordsTestForOutdatedRecordsRequiredFieldsNotProvided() {
+    BatchRequest<TransferScheduleDto> batchRequest =
+        testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE);
+    TransferScheduleDto transferScheduleDto = batchRequest.getPayload();
+    transferScheduleDto.setOrgId(null);
+    batchRequest.setReceivedTimestamp(new Date());
+    transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
+    transferScheduleDto.setOrgId("NEXTUPLE_GR");
+    transferScheduleDto.setSourceNodeId(null);
+    transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
+    transferScheduleDto.setSourceNodeId("Node 1");
+    transferScheduleDto.setDropoffNodeId(null);
+    transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
+    transferScheduleDto.setStartTime(null);
+    transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
+    verify(transferScheduleFeign, times(4)).createTransferSchedule(any());
+  }
+
+  @Test
+  @DisplayName("When the transferEntity is not found for the transfer schedule feed")
+  void processBatchRecordsTestForOutdatedRecordsTransferEntityNotFound() {
+    BatchRequest<TransferScheduleDto> batchRequest =
+        testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE);
+    when(transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
+            any(), any(), any(), any()))
+        .thenReturn(Optional.empty());
+    transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
+    verify(transferScheduleFeign, times(1)).createTransferSchedule(any());
   }
 }

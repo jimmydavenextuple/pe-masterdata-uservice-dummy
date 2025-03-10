@@ -25,7 +25,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class TransferScheduleIngestionServiceTest {
+class TransferScheduleIngestionServiceTest {
   @Mock KafkaProducer kafkaProducer;
   @InjectMocks TransferScheduleIngestionService transferScheduleIngestionService;
   @InjectMocks TestUtil testUtil;
