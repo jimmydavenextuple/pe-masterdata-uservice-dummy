@@ -208,6 +208,27 @@ public class TransferScheduleBatchServiceImplTest {
   }
 
   @Test
+  @DisplayName("When the batch records cannot be processed as they are up to date")
+  void processBatchRecordsTestForUpdatedRecords() throws CommonServiceException {
+    BatchRequest<TransferScheduleDto> batchRequest =
+        testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE);
+    Date modifiedDate = new Date();
+    Date receivedDate = DateUtil.addHoursToDate(modifiedDate, 1);
+    batchRequest.setReceivedTimestamp(receivedDate);
+    Mockito.doNothing()
+        .when(errorHandlingService)
+        .handleExceptions(anyInt(), any(), any(), any(), any(), any());
+    TransferScheduleEntity transferEntityObj = new TransferScheduleEntity();
+    transferEntityObj.setLastModifiedDate(modifiedDate);
+    Optional<TransferScheduleEntity> transferScheduleEntity = Optional.of(transferEntityObj);
+    when(transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
+            any(), any(), any(), any()))
+        .thenReturn(transferScheduleEntity);
+    transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
+    verify(transferScheduleFeign, times(1)).createTransferSchedule(any());
+  }
+
+  @Test
   @DisplayName("When the required fields are not provided for the transfer schedule feed")
   void processBatchRecordsTestForOutdatedRecordsRequiredFieldsNotProvided() {
     BatchRequest<TransferScheduleDto> batchRequest =
@@ -222,6 +243,7 @@ public class TransferScheduleBatchServiceImplTest {
     transferScheduleDto.setSourceNodeId("Node 1");
     transferScheduleDto.setDropoffNodeId(null);
     transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
+    transferScheduleDto.setDropoffNodeId("Node 2");
     transferScheduleDto.setStartTime(null);
     transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
     verify(transferScheduleFeign, times(4)).createTransferSchedule(any());
@@ -232,10 +254,23 @@ public class TransferScheduleBatchServiceImplTest {
   void processBatchRecordsTestForOutdatedRecordsTransferEntityNotFound() {
     BatchRequest<TransferScheduleDto> batchRequest =
         testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE);
+    batchRequest.setReceivedTimestamp(new Date());
     when(transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
             any(), any(), any(), any()))
         .thenReturn(Optional.empty());
     transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
     verify(transferScheduleFeign, times(1)).createTransferSchedule(any());
   }
+
+  //  @Test
+  //  @DisplayName("When the transferEntity is not found for the transfer schedule feed")
+  //  void processBatchRecordsTestForOutdatedRecordsTransferEntityNotFound() {
+  //    BatchRequest<TransferScheduleDto> batchRequest =
+  //            testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE);
+  //    when(transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
+  //            any(), any(), any(), any()))
+  //            .thenReturn(Optional.empty());
+  //    transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
+  //    verify(transferScheduleFeign, times(1)).createTransferSchedule(any());
+  //  }
 }
