@@ -136,9 +136,6 @@ public class TestUtil {
   public static final String JAVA_CLASS_NAME = "com.org.impl.CostImpl";
   public static final String OPT_STRATEGY = "COST";
   public static final String OPT_STRATEGY_PROFIT = "PROFIT";
-  public static final JsonNode CUSTOM_ATTRIBUTES =
-      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
-
   public static final String COST_ITINERARY_KEY = "costItinerary";
   public static final String COST_TYPE_KEY = "costType";
   public static final String SELECTOR_CF_KEY = "selectorCf";
