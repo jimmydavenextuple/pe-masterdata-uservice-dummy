@@ -13,17 +13,7 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.pe.webhook.domain.dtos.MasterDataIngestionDto;
 import com.nextuple.pe.webhook.domain.inbound.FeedRequest;
-import com.nextuple.pe.webhook.service.impl.CalendarFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.CarrierFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.CarrierServiceCalendarFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.NodeCalendarFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.NodeCarrierFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.NodeFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.NodeServiceOptionBufferFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.NodeServiceOptionFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.PickupCalendarFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.TransitBufferFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.TransitFeedHandlingService;
+import com.nextuple.pe.webhook.service.impl.*;
 import com.nextuple.pe.webhook.util.TestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +35,8 @@ class MasterDataIngestionServiceTest {
   @Mock NodeCarrierFeedHandlingService nodeCarrierFeedHandlingService;
   @Mock NodeServiceOptionFeedHandlingService nodeServiceOptionFeedHandlingService;
   @Mock NodeServiceOptionBufferFeedHandlingService nodeServiceOptionBufferFeedHandlingService;
+  @Mock
+  TransferScheduleFeedHandlingService transferScheduleFeedHandlingService;
   @InjectMocks MasterDataIngestionService masterDataIngestionService;
   @InjectMocks TestUtil testUtil;
 
@@ -196,5 +188,16 @@ class MasterDataIngestionServiceTest {
                     "zones", batchRequest, TestUtil.ORG_ID));
     Assertions.assertEquals("Invalid module name : zones", exception.getMessage());
     Mockito.verify(carrierFeedHandlingService, Mockito.times(0)).publishRecords(any(), any());
+  }
+
+  @Test
+  void ingestTransferScheduledFeedTest() throws CommonServiceException {
+    FeedRequest<MasterDataIngestionDto<?>> batchRequest =
+            testUtil.getNodeCalendarFeedIngestionRequest(ActionEnum.CREATE);
+    Mockito.doNothing().when(transferScheduleFeedHandlingService).publishRecords(any(), any());
+
+    masterDataIngestionService.processMasterDataIngestionData(
+            "transfer-schedules", batchRequest, TestUtil.ORG_ID);
+    Mockito.verify(transferScheduleFeedHandlingService, Mockito.times(1)).publishRecords(any(), any());
   }
 }

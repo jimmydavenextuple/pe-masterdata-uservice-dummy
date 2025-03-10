@@ -188,6 +188,9 @@ master-data:
   transit-buffer:
     topic-names: INTERNAL.QA.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-qa
+  transfer-schedule:
+    topic-names: INTERNAL.QA.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-qa
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 

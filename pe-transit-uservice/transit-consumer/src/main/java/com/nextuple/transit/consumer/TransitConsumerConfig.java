@@ -27,6 +27,9 @@ public class TransitConsumerConfig {
   @Value("${master-data.transit.dlt-topic:#{null}}")
   private String transitFeedDltTopic;
 
+  @Value("${master-data.transfer-schedule.dlt-topic:#{null}}")
+  private String transferScheduleDltTopic;
+
   @Value("${master-data.transit-buffer.dlt-topic:#{null}}")
   private String transitBufferFeedDltTopic;
 
@@ -52,6 +55,18 @@ public class TransitConsumerConfig {
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(processingLeadTimeConsumer);
     factory.setCommonErrorHandler(kafkaErrorHandler(kafkaOperations, transitBufferFeedDltTopic));
+    return factory;
+  }
+
+  @Bean(name = "transferScheduleDeserializerConsumer")
+  public ConcurrentKafkaListenerContainerFactory<String, Object> transferScheduleDeserializerConsumer(
+          KafkaOperations<String, Object> kafkaOperations,
+          ConsumerFactory<String, Object> calendarConsumerFactory) {
+
+    ConcurrentKafkaListenerContainerFactory<String, Object> factory =
+            new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(calendarConsumerFactory);
+    factory.setCommonErrorHandler(kafkaErrorHandler(kafkaOperations, transferScheduleDltTopic));
     return factory;
   }
 

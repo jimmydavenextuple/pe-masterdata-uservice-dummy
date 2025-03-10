@@ -36,7 +36,8 @@ public enum ModuleEnum {
   CUSTOM_REGION("custom-region"),
   ZONES("zones"),
   COST_DEFINITION("cost-definition"),
-  NEIP_RECORD("neip");
+  NEIP_RECORD("neip"),
+  TRANSFER_SCHEDULES("transfer-schedules");
 
   private final String moduleValue;
   private static final Map<String, ModuleEnum> moduleEnumMap = new HashMap<>();

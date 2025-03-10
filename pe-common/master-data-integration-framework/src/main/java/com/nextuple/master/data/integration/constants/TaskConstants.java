@@ -22,7 +22,9 @@ public class TaskConstants {
   public static final String CARRIER_SERVICE_CALENDAR = "CARRIER_SERVICE_CALENDAR";
   public static final String TRANSIT = "TRANSIT";
   public static final String TRANSIT_BUFFER = "TRANSIT_BUFFER";
+  public static final String TRANSFER_SCHEDULE = "TRANSFER_SCHEDULE";
   public static final String RETRY_METHOD_NAME = "handleRetry";
+
 
   private TaskConstants() {}
 }

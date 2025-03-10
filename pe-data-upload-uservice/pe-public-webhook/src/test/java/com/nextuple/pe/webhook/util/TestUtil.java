@@ -20,8 +20,11 @@ import com.nextuple.pe.webhook.domain.dtos.MasterDataIngestionDto;
 import com.nextuple.pe.webhook.domain.dtos.WebhookConfigDetails;
 import com.nextuple.pe.webhook.domain.dtos.WebhookDetail;
 import com.nextuple.pe.webhook.domain.inbound.FeedRequest;
+import com.nextuple.transit.consumer.dto.TransferScheduleDto;
 import com.nextuple.transit.consumer.dto.TransitBufferFeedDto;
 import com.nextuple.transit.consumer.dto.TransitFeedDto;
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -258,6 +261,11 @@ public class TestUtil {
         .build();
   }
 
+  public TransferScheduleDto createTransferScheduleDto() {
+    return TransferScheduleDto.builder()
+        .orgId("org-id").dropoffNodeId("drop-off-node-id-1").sourceNodeId("source-node-id-1").startTime(new DateTime()).endTime(new DateTime().plusHours(3)).build();
+  }
+
   public NodeCalendarFeedDto createNodeCalendarFeedDto() {
     return NodeCalendarFeedDto.builder()
         .orgId("org-id")
@@ -447,4 +455,24 @@ public class TestUtil {
     feedRequest.setData(List.of(nodeServiceOptionBufferIngestionRequest));
     return feedRequest;
   }
+
+    public FeedRequest<MasterDataIngestionDto<?>> getTransferScheduleFeedIngestionRequest(ActionEnum action) {
+      FeedRequest<MasterDataIngestionDto<?>> feedRequest = new FeedRequest<>();
+      MasterDataIngestionDto<TransferScheduleDto> transferScheduleIngestionRequest =
+              new MasterDataIngestionDto<>();
+      transferScheduleIngestionRequest.setAction(action);
+      transferScheduleIngestionRequest.setPayload(createTransferScheduleDto());
+      feedRequest.setData(List.of(transferScheduleIngestionRequest));
+      return feedRequest;
+    }
+
+  public BatchRequest<TransferScheduleDto> getTransferScheduleFeedRequest(ActionEnum action) {
+    BatchRequest<TransferScheduleDto> batchRequest = new BatchRequest<>();
+    batchRequest.setAction(action);
+    batchRequest.setRecordNo(1);
+    batchRequest.setPayload(createTransferScheduleDto());
+    return batchRequest;
+  }
+
+
 }
