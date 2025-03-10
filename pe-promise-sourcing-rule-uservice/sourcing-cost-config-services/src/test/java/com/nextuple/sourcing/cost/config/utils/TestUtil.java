@@ -7,6 +7,8 @@
 
 package com.nextuple.sourcing.cost.config.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.promise.sourcing.rule.persistence.domain.NamedOptimizationStrategyDomainDto;
 import com.nextuple.sourcing.cost.config.domain.entity.CostAttributeDetailsEntity;
 import com.nextuple.sourcing.cost.config.domain.entity.CostAttributeMappingEntity;
@@ -174,6 +176,8 @@ public class TestUtil {
 
   public static final String INVALID_LEVEL_APPLIED_EXCEPTION =
       "Level applied of cost factor is not valid";
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public List<PreferenceSelectorCacheKeyDto> getPreferenceSelectorCacheKeys() {
     PreferenceSelectorCacheKeyDto preferenceSelectorCacheKeyDto1 =
@@ -469,6 +473,7 @@ public class TestUtil {
         .costItinerary(COST_ITINERARY)
         .costFactors(COST_FACTOR)
         .levelApplied(LEVEL_APPLIED)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -655,6 +660,7 @@ public class TestUtil {
             .orgId(ORG_ID)
             .costValue(COST_VALUE_WITH_OUT_PREV_SLB)
             .costItinerary(COST_ITINERARY)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .costFactorCombinationKey(COST_FACTOR_COMBINATION_KEY);
     if (Boolean.TRUE.equals(withPrevSlab)) {
       costValueResponseBuilder.costValue(COST_VALUE_WITH_PREV_SLB);
@@ -668,6 +674,7 @@ public class TestUtil {
         CreateCostValueRequest.builder()
             .costValue(COST_VALUE_WITH_OUT_PREV_SLB)
             .costItinerary(COST_ITINERARY)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .costFactorCombinationKey(COST_FACTOR_COMBINATION_KEY);
     if (Boolean.TRUE.equals(withPrevSlab)) {
       createCostValueRequestBuilder.costValue(COST_VALUE_WITH_PREV_SLB);
@@ -679,7 +686,9 @@ public class TestUtil {
   public UpdateCostValueRequest getUpdateCostValueRequest(Boolean withPrevSlab) {
 
     UpdateCostValueRequest.UpdateCostValueRequestBuilder updateCostValueRequestBuilder =
-        UpdateCostValueRequest.builder().costValue(COST_VALUE_WITH_OUT_PREV_SLB);
+        UpdateCostValueRequest.builder()
+            .customAttributes(CUSTOM_ATTRIBUTES)
+            .costValue(COST_VALUE_WITH_OUT_PREV_SLB);
     if (Boolean.TRUE.equals(withPrevSlab)) {
       updateCostValueRequestBuilder.costValue(COST_VALUE_WITH_PREV_SLB);
       updateCostValueRequestBuilder.prevSlabValue(PREV_SLAB_VALUE);
@@ -893,6 +902,7 @@ public class TestUtil {
         .costFactor(COST_FACTOR)
         .notation(NOTATION)
         .notationDisplayName(NOTATION_DISPLAY_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .valueList(VALUE_LIST)
         .build();
   }
@@ -929,6 +939,7 @@ public class TestUtil {
         .costFactor(COST_FACTOR)
         .notation(NOTATION)
         .notationDisplayName(NOTATION_DISPLAY_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .valueList(VALUE_LIST)
         .build();
   }
@@ -1010,6 +1021,7 @@ public class TestUtil {
     costValueEntity.setCostItinerary(COST_ITINERARY);
     costValueEntity.setCostValue(COST_VALUE_WITH_PREV_SLB);
     costValueEntity.setCostFactorCombinationKey(costFactorKey);
+    costValueEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return costValueEntity;
   }
 
@@ -1040,6 +1052,7 @@ public class TestUtil {
             .costFactor(COST_FACTOR)
             .notation(NOTATION)
             .notationDisplayName(NOTATION_DISPLAY_NAME)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .valueList(VALUE_LIST)
             .build());
     costFactorDiscreteBucketEntities.add(
@@ -1050,6 +1063,7 @@ public class TestUtil {
             .notation("S")
             .notationDisplayName(NOTATION_DISPLAY_NAME)
             .valueList(VALUE_LIST)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build());
     costFactorDiscreteBucketEntities.add(
         CostFactorDiscreteBucketEntity.builder()
@@ -1059,6 +1073,7 @@ public class TestUtil {
             .notation("L")
             .notationDisplayName(NOTATION_DISPLAY_NAME)
             .valueList(VALUE_LIST)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build());
     return costFactorDiscreteBucketEntities;
   }
@@ -1095,6 +1110,7 @@ public class TestUtil {
   public CostTypeResponse getCostTypeResponseWithSelector(String costType) {
     return CostTypeResponse.builder()
         .currency("USD")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .costTypeList(
             List.of(
                 CostTypeDtoInfo.builder()
@@ -1143,6 +1159,7 @@ public class TestUtil {
   public CostTypeResponse getCostTypeResponseWithSelectorButNoSelectorCfValue(String costType) {
     return CostTypeResponse.builder()
         .currency("USD")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .costTypeList(
             List.of(
                 CostTypeDtoInfo.builder()
@@ -1191,6 +1208,7 @@ public class TestUtil {
   public CostTypeResponse getCostTypeResponseWithoutSelector(String costType) {
     return CostTypeResponse.builder()
         .currency("USD")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .costTypeList(
             List.of(
                 CostTypeDtoInfo.builder()
@@ -1229,7 +1247,11 @@ public class TestUtil {
   }
 
   public CostTypeResponse getCostTypeResponseNotFound() {
-    return CostTypeResponse.builder().currency("USD").costTypeList(List.of()).build();
+    return CostTypeResponse.builder()
+        .currency("USD")
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .costTypeList(List.of())
+        .build();
   }
 
   public CostTypeValidationResponse getCostTypeValidationResponse() {
@@ -1290,6 +1312,7 @@ public class TestUtil {
         .expressionValue(EXPRESSION_VALUE)
         .sampleRequest(getSampleRequest())
         .sampleSolution(getSampleSolution())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1397,6 +1420,7 @@ public class TestUtil {
     return ExpressionValidationRequest.builder()
         .expression(EXPRESSION_FORMULA)
         .sampleRequest(getSampleRequest())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .sampleSolution(getSampleSolution())
         .build();
   }
@@ -1539,12 +1563,14 @@ public class TestUtil {
             .orgId(ORG_ID)
             .costItinerary(COST_ITINERARY)
             .costFactorCombinationKey(COST_FACTOR_COMBINATION_KEY)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build());
     costValueEntities.add(
         CostValueEntity.builder()
             .orgId(ORG_ID)
             .costItinerary(COST_ITINERARY)
             .costFactorCombinationKey(COST_FACTOR_COMBINATION_KEY)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build());
     return costValueEntities;
   }

@@ -71,6 +71,9 @@ public class CostValueService {
           createCostValueRequest.getPrevSlabValue());
       existingCostValueEntity.get().setCostValue(createCostValueRequest.getCostValue());
       existingCostValueEntity.get().setPrevSlabValue(createCostValueRequest.getPrevSlabValue());
+      existingCostValueEntity
+          .get()
+          .setCustomAttributes(createCostValueRequest.getCustomAttributes());
       return INSTANCE.toCostValueResponse(costValueRepository.save(existingCostValueEntity.get()));
     }
 

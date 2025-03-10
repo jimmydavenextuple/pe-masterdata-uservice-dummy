@@ -8,21 +8,23 @@
 package com.nextuple.sourcing.cost.config.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.sourcing.cost.config.customannotations.AttributePath;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SampleSourcingSolutionForFormulaValidation implements Serializable {
+public class SampleSourcingSolutionForFormulaValidation extends AdditionalAttributes
+    implements Serializable {
 
   private static final long serialVersionUID = 722826846716560147L;
 

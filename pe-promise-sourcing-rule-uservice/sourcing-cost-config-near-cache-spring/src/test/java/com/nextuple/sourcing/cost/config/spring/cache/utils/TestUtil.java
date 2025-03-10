@@ -7,6 +7,8 @@
 
 package com.nextuple.sourcing.cost.config.spring.cache.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.sourcing.cost.config.cache.domain.CostAttributeDetailsCacheKey;
 import com.nextuple.sourcing.cost.config.cache.domain.CostAttributeDetailsCacheValue;
@@ -88,6 +90,8 @@ public class TestUtil {
   public static final String OPT_STRATEGY = "COST";
   public static final String COST_TYPES = "BUYING_COST,SHIPPING_COST";
   public static final String DESCRIPTION = "Description";
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public BaseResponse<PreferenceSelectorDto> getPreferenceSelectorDto() {
     BaseResponse<PreferenceSelectorDto> baseResponse = new BaseResponse<>();
@@ -127,6 +131,7 @@ public class TestUtil {
             .costItinerary(COST_ITINERARY)
             .costFactors(COST_FACTOR)
             .itineraryStatus(ItineraryStatusEnum.CREATED)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .isActive(Boolean.TRUE)
             .build();
     baseResponse.setMessage("Node details fetched successfully");
