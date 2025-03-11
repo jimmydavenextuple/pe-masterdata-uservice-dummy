@@ -96,6 +96,7 @@ public class NodeServiceOptionService {
         .serviceOptions(getDistinctServiceOptions(validServiceOptions))
         .processingTime(
             fetchNodeProcessingTimeForEligibleServiceOptions(combinedList, validServiceOptions))
+        .customAttributes(node.getCustomAttributes())
         .build();
   }
 

@@ -729,6 +729,7 @@ public class TestUtil {
         .nodeType(NODE_TYPE)
         .processingTime(processingTime)
         .isActive(true)
+        .customAttributes(customAttributes)
         .build();
   }
 
