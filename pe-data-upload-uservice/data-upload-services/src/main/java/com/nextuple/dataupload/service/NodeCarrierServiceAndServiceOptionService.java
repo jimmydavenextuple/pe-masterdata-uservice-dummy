@@ -89,6 +89,7 @@ public class NodeCarrierServiceAndServiceOptionService {
         .carrierServices(new ArrayList<>(carrierServiceIdsSet))
         .serviceOptions(new ArrayList<>(serviceOptionsSet))
         .activeCombination(activeCombinations)
+        .customAttributes(nodeDto.getCustomAttributes())
         .build();
   }
 }

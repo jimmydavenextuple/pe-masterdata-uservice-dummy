@@ -1075,6 +1075,7 @@ public class TestUtil {
     response.setCarrierServices(List.of(CARRIER_SERVICE_ID));
     response.setServiceOptions(List.of(SERVICE_OPTION));
     response.setActiveCombination(List.of(getActiveCombination()));
+    response.setCustomAttributes(customAttributes);
 
     return response;
   }

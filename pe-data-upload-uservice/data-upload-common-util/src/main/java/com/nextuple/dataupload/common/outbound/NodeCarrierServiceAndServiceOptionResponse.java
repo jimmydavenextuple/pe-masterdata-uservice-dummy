@@ -7,18 +7,19 @@
 
 package com.nextuple.dataupload.common.outbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.dataupload.common.pojo.ActiveCombination;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class NodeCarrierServiceAndServiceOptionResponse {
+@SuperBuilder
+public class NodeCarrierServiceAndServiceOptionResponse extends AdditionalAttributes {
 
   private String nodeId;
   private String nodeType;

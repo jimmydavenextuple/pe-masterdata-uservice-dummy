@@ -55,7 +55,12 @@ import org.springframework.web.ErrorResponse;
                                                                                "serviceOptions": "EXPRESS,SDND,NEXTDAY",
                                                                                "processingTime": 0.0,
                                                                                "leadTime": null,
-                                                                               "handlingType": null
+                                                                               "handlingType": null,
+                                                                               "customAttributes": {
+                                                                                    "owner": {
+                                                                                        "primary": "CustomAttribute"                                                                                 \s
+                                                                                        }
+                                                                            }
                                                                             }
                                                                          ],
                                                                          "pagination": {
