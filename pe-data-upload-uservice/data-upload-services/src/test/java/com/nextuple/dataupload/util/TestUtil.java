@@ -1146,6 +1146,7 @@ public class TestUtil {
     nodeWorkingCalendarDto.setCalendarId(CALENDAR_ID);
     nodeWorkingCalendarDto.setEffectiveDate(EFFECTIVE_DATE);
     nodeListDto.setNodeWorkingCalendar(nodeWorkingCalendarDto);
+    nodeListDto.setCustomAttributes(customAttributes);
     return nodeListDto;
   }
 

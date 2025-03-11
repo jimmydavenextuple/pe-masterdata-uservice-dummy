@@ -7,19 +7,20 @@
 
 package com.nextuple.dataupload.domain.dto;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.dataupload.domain.pojo.ProcessingTimeDetails;
 import java.io.Serializable;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class NodeListDto implements Serializable {
+@SuperBuilder
+public class NodeListDto extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = -9030089295880579769L;
 
