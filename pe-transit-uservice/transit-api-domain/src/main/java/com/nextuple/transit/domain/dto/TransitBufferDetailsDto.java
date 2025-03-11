@@ -7,19 +7,20 @@
 
 package com.nextuple.transit.domain.dto;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class TransitBufferDetailsDto implements Serializable {
+@SuperBuilder
+public class TransitBufferDetailsDto extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -8267261891227302889L;
 
   @Schema(description = "Buffer days for the transit.", example = "2.1")

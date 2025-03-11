@@ -43,7 +43,10 @@ import java.lang.annotation.Target;
                                                           "sourceGeoZone": "M1T",
                                                           "destinationGeozone": "AIJ",
                                                           "carrierServiceId": "Fedex-Air",
-                                                          "zone": "Zone2"
+                                                          "zone": "Zone2",
+                                                          "customAttributes": {
+                                                            "Key": "value"
+                                                          }
                                                         }
                                                       }
 
