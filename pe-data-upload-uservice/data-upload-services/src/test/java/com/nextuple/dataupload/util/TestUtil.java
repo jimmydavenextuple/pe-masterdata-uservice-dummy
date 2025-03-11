@@ -1367,6 +1367,7 @@ public class TestUtil {
         .shortDescription(SHORT_DESC)
         .serviceOptions(SERVICE_OPTIONS)
         .uom(UOM)
+        .customAttributes(customAttributes)
         .build();
   }
 

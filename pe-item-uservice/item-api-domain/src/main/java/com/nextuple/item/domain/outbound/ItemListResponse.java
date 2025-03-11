@@ -1,17 +1,18 @@
 package com.nextuple.item.domain.outbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.item.domain.constants.ItemConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ItemListResponse {
+@SuperBuilder
+public class ItemListResponse extends AdditionalAttributes {
 
   @Schema(description = ItemConstants.ITEM_ID, example = ItemConstants.ITEM_ID_EXAMPLE)
   private String itemId;
