@@ -71,4 +71,5 @@ public class Item extends AdditionalAttributes {
   private String handlingType;
 
   private Integer buyingCost;
+  private Double validDropoffDuration;
 }

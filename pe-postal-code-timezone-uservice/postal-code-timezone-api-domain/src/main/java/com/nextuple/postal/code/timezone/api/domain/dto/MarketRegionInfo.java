@@ -7,18 +7,17 @@
 
 package com.nextuple.postal.code.timezone.api.domain.dto;
 
-import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
-public class MarketRegionInfo extends AdditionalAttributes {
+@Builder
+public class MarketRegionInfo {
   @Schema(description = "Country of the zip code.", example = "CN")
   private String country;
 

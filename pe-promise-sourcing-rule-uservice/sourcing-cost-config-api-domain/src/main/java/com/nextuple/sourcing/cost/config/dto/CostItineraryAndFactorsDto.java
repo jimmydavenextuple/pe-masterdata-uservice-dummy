@@ -7,20 +7,21 @@
 
 package com.nextuple.sourcing.cost.config.dto;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.sourcing.cost.config.enums.ItineraryStatusEnum;
 import com.nextuple.sourcing.cost.config.enums.LevelAppliedEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CostItineraryAndFactorsDto implements Serializable {
+public class CostItineraryAndFactorsDto extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = 2150856331920947608L;
 
   @Schema(description = "Id of the cost factor", example = "1")

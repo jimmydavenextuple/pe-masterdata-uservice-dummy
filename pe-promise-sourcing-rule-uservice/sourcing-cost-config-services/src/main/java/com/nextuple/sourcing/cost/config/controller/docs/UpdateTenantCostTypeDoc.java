@@ -50,7 +50,8 @@ import java.lang.annotation.Target;
                                                           "orgId": "NEXTUPLE_GR",
                                                           "costType": "NP_COST",
                                                           "displayName": "NP Cost 11",
-                                                          "label": "COST"
+                                                          "label": "COST",
+                                                          "additionalAttributes": {"key1": "value1"}
                                                       }
                                                   }
                                                           """)

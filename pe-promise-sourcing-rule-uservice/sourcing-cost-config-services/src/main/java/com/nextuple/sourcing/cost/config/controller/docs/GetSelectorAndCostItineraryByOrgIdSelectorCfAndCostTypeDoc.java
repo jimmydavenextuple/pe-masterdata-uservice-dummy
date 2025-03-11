@@ -49,7 +49,10 @@ import java.util.List;
                                                     "selectorCf": "carrierServiceId",
                                                     "selectorCfValue": null,
                                                     "costItinerary": "SHIPPING_COST_UPS_LIKE5",
-                                                    "costType": "SHIPPING_COST"
+                                                    "costType": "SHIPPING_COST",
+                                                    "customAttributes": {
+                                                        "dynamicAtrr1": true
+                                                    }
                                                 },
                                                 {
                                                     "id": 2,
@@ -57,7 +60,10 @@ import java.util.List;
                                                     "selectorCf": "carrierServiceId",
                                                     "selectorCfValue": "FEDEX_GROUND",
                                                     "costItinerary": "SHIPPING_COST_FEDEX_GROUND",
-                                                    "costType": "SHIPPING_COST"
+                                                    "costType": "SHIPPING_COST",
+                                                    "customAttributes": {
+                                                        "dynamicAtrr1": true
+                                                    }
                                                 }
                                             ]
                                         }

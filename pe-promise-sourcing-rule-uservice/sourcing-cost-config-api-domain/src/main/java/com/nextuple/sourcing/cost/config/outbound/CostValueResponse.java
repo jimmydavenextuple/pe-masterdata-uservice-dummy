@@ -7,18 +7,19 @@
 
 package com.nextuple.sourcing.cost.config.outbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CostValueResponse implements Serializable {
+public class CostValueResponse extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = -5004205627459887859L;
 

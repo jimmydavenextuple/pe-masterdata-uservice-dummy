@@ -111,6 +111,8 @@ public class TestUtil {
   public static final String ZONE = "Zone1";
   public static final String SOURCE_NODE = "Node1";
   public static final String DROPOFF_NODE = "Node2";
+  public static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public static final JsonNode CUSTOM_ATTRIBUTES =
       JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
@@ -814,6 +816,7 @@ public class TestUtil {
         .dropoffNodeId(DROPOFF_NODE)
         .startTime(new DateTime())
         .endTime(new DateTime())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -822,6 +825,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .sourceNodeId(SOURCE_NODE)
         .dropoffNodeId(DROPOFF_NODE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -831,6 +835,7 @@ public class TestUtil {
         .sourceNodeId(SOURCE_NODE)
         .dropoffNodeId(DROPOFF_NODE)
         .startTime(new DateTime())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -838,6 +843,7 @@ public class TestUtil {
     return FetchTransferScheduleRequest.builder()
         .sourceNodeIds(Collections.singletonList(SOURCE_NODE))
         .dropoffNodeIds(Collections.singletonList(DROPOFF_NODE))
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 

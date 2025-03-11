@@ -8,6 +8,7 @@
 package com.nextuple.sourcing.cost.config.domain.entity;
 
 import com.nextuple.core.event.listeners.CommonEntityListener;
+import com.nextuple.postgres.entity.CommonBaseEntity;
 import com.nextuple.sourcing.cost.config.enums.BucketTypeEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,16 +19,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Builder
+@SuperBuilder
 @Entity
 @EntityListeners(CommonEntityListener.class)
 @Table(
@@ -36,7 +37,7 @@ import lombok.NoArgsConstructor;
         @Index(
             name = "cost_factor_bucket_type_orgId_costFactor",
             columnList = "org_Id,cost_factor"))
-public class CostFactorBucketTypeEntity {
+public class CostFactorBucketTypeEntity extends CommonBaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
