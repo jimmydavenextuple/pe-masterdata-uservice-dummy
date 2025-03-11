@@ -82,9 +82,6 @@ public class TestUtil {
   public static final JsonNode CUSTOM_ATTRIBUTES =
       JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
-  public static final JsonNode CUSTOM_ATTRIBUTES =
-      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
-
   public ZoneDomainDto getZoneDomainDto() {
     return ZoneDomainDto.builder()
         .orgId(ORG_ID)
