@@ -7,18 +7,19 @@
 
 package com.nextuple.dataupload.domain.dto;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.dataupload.domain.pojo.PickUpCalendar;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NodeCarrierServiceResponse {
+public class NodeCarrierServiceResponse extends AdditionalAttributes {
 
   private String nodeId;
   private String nodeType;

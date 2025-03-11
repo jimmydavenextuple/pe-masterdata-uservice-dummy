@@ -1033,6 +1033,7 @@ public class TestUtil {
     nodeCarrierServiceResponse.setZipCode(ZIP_CODE);
     nodeCarrierServiceResponse.setCarrierServices(List.of(CARRIER_SERVICE_ID));
     nodeCarrierServiceResponse.setPickupCalendar(List.of(getPickUpCalendar()));
+    nodeCarrierServiceResponse.setCustomAttributes(customAttributes);
 
     return nodeCarrierServiceResponse;
   }

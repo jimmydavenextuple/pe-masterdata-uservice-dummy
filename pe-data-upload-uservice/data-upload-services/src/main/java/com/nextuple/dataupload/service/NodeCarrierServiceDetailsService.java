@@ -95,6 +95,7 @@ public class NodeCarrierServiceDetailsService {
         .nodeType(nodeDto.getNodeType())
         .carrierServices(distinctCarrierServiceIds)
         .pickupCalendar(pickUpCalendarList)
+        .customAttributes(nodeDto.getCustomAttributes())
         .build();
   }
 }
