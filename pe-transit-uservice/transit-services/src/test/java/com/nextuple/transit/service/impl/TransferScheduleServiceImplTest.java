@@ -345,7 +345,7 @@ class TransferScheduleServiceImplTest {
   @Test
   @DisplayName(
       "Return empty list when rule and rule name is null and there is an active transfer rule definition")
-  public void testFetchTransfersWithNullRuleAndRuleNameAndActiveRuleDefinition()
+  void testFetchTransfersWithNullRuleAndRuleNameAndActiveRuleDefinition()
       throws PromiseEngineException, CommonServiceException {
     // Arrange
     TransferScheduleRangeRequest request = new TransferScheduleRangeRequest();
