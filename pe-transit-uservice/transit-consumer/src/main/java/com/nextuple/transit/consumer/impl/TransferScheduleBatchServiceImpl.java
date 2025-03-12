@@ -34,8 +34,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class TransferScheduleBatchServiceImpl extends BatchService<TransferScheduleDto> {
-  private TransferScheduleFeign transferScheduleFeign;
-  private TransferScheduleRepository transferScheduleRepository;
+  private final TransferScheduleFeign transferScheduleFeign;
+  private final TransferScheduleRepository transferScheduleRepository;
 
   private final TypeReference<BatchRequest<TransferScheduleDto>> transferScheduleTypeReference =
       new TypeReference<>() {};
