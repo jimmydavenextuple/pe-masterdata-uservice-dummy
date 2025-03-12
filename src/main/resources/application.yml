@@ -205,6 +205,8 @@ kafka-topic-flags:
       enabled: false
     transit-buffer:
       enabled: false
+    transfer-schedule:
+      enabled: false
   refresh-cache:
     enabled: false
   input:

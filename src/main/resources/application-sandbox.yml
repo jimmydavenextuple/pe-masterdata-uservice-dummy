@@ -189,6 +189,9 @@ master-data:
   transit-buffer:
     topic-names: INTERNAL.SANDBOX.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-sandbox
+  transfer-schedule:
+    topic-names: INTERNAL.SANDBOX.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-sandbox
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 

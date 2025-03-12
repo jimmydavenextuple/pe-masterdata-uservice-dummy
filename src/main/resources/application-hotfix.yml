@@ -183,6 +183,9 @@ master-data:
   transit-buffer:
     topic-names: INTERNAL.HOTFIX.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-hotfix
+  transfer-schedule:
+    topic-names: INTERNAL.HOTFIX.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-hotfix
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 

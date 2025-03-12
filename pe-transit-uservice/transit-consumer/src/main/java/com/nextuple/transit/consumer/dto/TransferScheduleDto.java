@@ -20,7 +20,7 @@ public class TransferScheduleDto extends CommonMasterDataFieldsDto implements Se
 
   @Serial private static final long serialVersionUID = 7078170315367233060L;
 
-  @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE")
+  @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE_GR")
   private String orgId;
 
   @Schema(description = "Unique identifier of the source node of the transfer.", example = "Node1")

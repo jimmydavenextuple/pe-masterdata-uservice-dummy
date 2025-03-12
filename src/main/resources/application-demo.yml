@@ -187,6 +187,9 @@ master-data:
   transit-buffer:
     topic-names: INTERNAL.DEMO.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-demo
+  transfer-schedule:
+    topic-names: INTERNAL.DEMO.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-demo
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 

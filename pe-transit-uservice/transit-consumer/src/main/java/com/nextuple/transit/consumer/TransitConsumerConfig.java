@@ -62,11 +62,11 @@ public class TransitConsumerConfig {
   public ConcurrentKafkaListenerContainerFactory<String, Object>
       transferScheduleDeserializerConsumer(
           KafkaOperations<String, Object> kafkaOperations,
-          ConsumerFactory<String, Object> calendarConsumerFactory) {
+          ConsumerFactory<String, Object> transferScheduleConsumer) {
 
     ConcurrentKafkaListenerContainerFactory<String, Object> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
-    factory.setConsumerFactory(calendarConsumerFactory);
+    factory.setConsumerFactory(transferScheduleConsumer);
     factory.setCommonErrorHandler(kafkaErrorHandler(kafkaOperations, transferScheduleDltTopic));
     return factory;
   }

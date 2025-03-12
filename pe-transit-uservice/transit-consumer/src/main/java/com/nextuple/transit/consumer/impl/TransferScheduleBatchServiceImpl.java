@@ -82,18 +82,11 @@ public class TransferScheduleBatchServiceImpl extends BatchService<TransferSched
     DateTime startDateTime = transferScheduleDto.getStartTime();
     Date startTime = Objects.nonNull(startDateTime) ? startDateTime.toDate() : null;
 
-    if (Objects.nonNull(orgId)
-        && Objects.nonNull(sourceNodeId)
-        && Objects.nonNull(dropOffNodeId)
-        && Objects.nonNull(startTime)) {
+    if (validateRequiredFieldsProvided(orgId, sourceNodeId, dropOffNodeId, startTime)) {
       Optional<TransferScheduleEntity> transferScheduleEntity =
           transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
               sourceNodeId, dropOffNodeId, startTime, orgId);
-      if (transferScheduleEntity.isPresent()
-          && (transferScheduleEntity
-              .get()
-              .getLastModifiedDate()
-              .after(transferScheduleDtoBatchRequest.getReceivedTimestamp()))) {
+      if (checkForBatchRequestExpired(transferScheduleDtoBatchRequest, transferScheduleEntity)) {
         Map<String, FieldError> errorMap = new HashMap<>();
         errorMap.put(
             "receivedTimestamp",
@@ -109,5 +102,23 @@ public class TransferScheduleBatchServiceImpl extends BatchService<TransferSched
             "Can't process the record as it's outdated", HttpStatus.BAD_REQUEST, 0x1771, errorMap);
       }
     }
+  }
+
+  private static boolean checkForBatchRequestExpired(
+      BatchRequest<TransferScheduleDto> transferScheduleDtoBatchRequest,
+      Optional<TransferScheduleEntity> transferScheduleEntity) {
+    return transferScheduleEntity.isPresent()
+        && (transferScheduleEntity
+            .get()
+            .getLastModifiedDate()
+            .after(transferScheduleDtoBatchRequest.getReceivedTimestamp()));
+  }
+
+  private static boolean validateRequiredFieldsProvided(
+      String orgId, String sourceNodeId, String dropOffNodeId, Date startTime) {
+    return Objects.nonNull(orgId)
+        && Objects.nonNull(sourceNodeId)
+        && Objects.nonNull(dropOffNodeId)
+        && Objects.nonNull(startTime);
   }
 }
