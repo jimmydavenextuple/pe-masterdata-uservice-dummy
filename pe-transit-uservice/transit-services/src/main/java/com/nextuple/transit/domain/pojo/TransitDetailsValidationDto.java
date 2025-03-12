@@ -1,15 +1,16 @@
 package com.nextuple.transit.domain.pojo;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-public class TransitDetailsValidationDto {
+public class TransitDetailsValidationDto extends AdditionalAttributes {
 
   private Float transitDays;
 

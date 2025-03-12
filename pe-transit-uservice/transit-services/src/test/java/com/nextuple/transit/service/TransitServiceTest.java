@@ -113,7 +113,8 @@ class TransitServiceTest {
         testUtil.getTransitResponse(TestUtil.TRANSIT_DAYS).getCarrierServiceId(),
         transitResponse.getCarrierServiceId());
     assertEquals(transitDataCreationRequest.getBufferDays(), transitResponse.getBufferDays());
-
+    assertEquals(
+        transitDataCreationRequest.getCustomAttributes(), transitResponse.getCustomAttributes());
     verify(transitPersistenceService, times(2)).saveTransitDomainDto(any(TransitDomainDto.class));
   }
 
@@ -544,6 +545,8 @@ class TransitServiceTest {
             TestUtil.ORG_ID, TestUtil.DESTINATION_GEOZONE);
     Assertions.assertEquals(
         transitDomainDto.getTransitDays(), transitResponse.get(0).getTransitDays());
+    assertEquals(
+        transitDomainDto.getCustomAttributes(), transitResponse.get(0).getCustomAttributes());
     verify(transitPersistenceService, times(1)).fetchTransitListForDestinationGeoZone(any(), any());
     verify(transitBufferPersistenceService, times(1))
         .findByOrgIdAndDestinationGeozone(any(), any());

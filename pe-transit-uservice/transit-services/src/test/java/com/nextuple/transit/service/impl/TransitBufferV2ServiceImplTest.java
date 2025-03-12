@@ -142,6 +142,7 @@ class TransitBufferV2ServiceImplTest {
     assertEquals(2L, response.getTransitBufferConfigRequestId());
     assertEquals(transitBufferRequest.getBufferStartDate(), response.getBufferStartDate());
     assertEquals(transitBufferRequest.getBufferEndDate(), response.getBufferEndDate());
+    assertEquals(transitBufferRequest.getCustomAttributes(), response.getCustomAttributes());
     verify(transitPersistenceService, times(1)).findTransitDetails(any(), any(), any(), any());
     verify(transitBufferV2PersistenceService, times(1))
         .fetchTransitBufferByOrgIdAndDestinationGeozoneAndSourceGeozoneAndCarrierServiceId(

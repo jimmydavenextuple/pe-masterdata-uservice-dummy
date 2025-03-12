@@ -8,6 +8,7 @@
 package com.nextuple.transit.domain.inbound;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -15,17 +16,17 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class TransitDataCreationRequest implements Serializable {
+@SuperBuilder
+public class TransitDataCreationRequest extends AdditionalAttributes implements Serializable {
 
   @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE")
   @NotBlank(message = "orgId can't be blank")

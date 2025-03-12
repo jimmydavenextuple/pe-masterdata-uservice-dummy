@@ -53,12 +53,18 @@ import java.lang.annotation.Target;
                                                 {
                                                     "bufferDays": 3.0,
                                                     "bufferStartDate": "2024-01-23T00:00:00.000+00:00",
-                                                    "bufferEndDate": "2024-01-24T10:00:00.000+00:00"
+                                                    "bufferEndDate": "2024-01-24T10:00:00.000+00:00",
+                                                    "customAttributes": {
+                                                        "Key": "value"
+                                                    }
                                                 },
                                                 {
                                                     "bufferDays": 3.0,
                                                     "bufferStartDate": "2024-01-17T12:00:01.000+00:00",
-                                                    "bufferEndDate": "2024-01-18T12:00:00.000+00:00"
+                                                    "bufferEndDate": "2024-01-18T12:00:00.000+00:00",
+                                                    "customAttributes": {
+                                                        "Key": "value"
+                                                    }
                                                 }
                                             ]
                                         }

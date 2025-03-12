@@ -120,6 +120,7 @@ public class TestUtil {
         .sourceGeozone(SOURCE_GEOZONE)
         .destinationGeozone(DESTINATION_GEOZONE)
         .transitDays(TRANSIT_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 

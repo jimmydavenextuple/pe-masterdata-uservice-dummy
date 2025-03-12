@@ -89,6 +89,7 @@ public class TestUtil {
         .sourceGeozone(SOURCE_GEOZONE)
         .destinationGeozone(DESTINATION_GEOZONE)
         .zone(ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -99,6 +100,7 @@ public class TestUtil {
         .sourceGeozone(SOURCE_GEOZONE)
         .destinationGeozone(DESTINATION_GEOZONE)
         .zone(ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -253,6 +255,11 @@ public class TestUtil {
       @Override
       public Float getTransitDays() {
         return TRANSIT_DAYS;
+      }
+
+      @Override
+      public JsonNode getCustomAttributes() {
+        return CUSTOM_ATTRIBUTES;
       }
     };
   }
