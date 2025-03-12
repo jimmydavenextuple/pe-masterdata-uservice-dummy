@@ -45,7 +45,6 @@ public class TestUtil {
 
   public static final String SERVICE_OPTION = "serviceOption-1";
   public static final String ZONE = "Zone1";
-
   public static final JsonNode CUSTOM_ATTRIBUTES =
       JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
@@ -167,6 +166,7 @@ public class TestUtil {
         .dropoffNodeId(DROPOFF_NODE)
         .startTime(new DateTime(DateTimeZone.UTC).toDate())
         .endTime(new DateTime(DateTimeZone.UTC).plusHours(3).toDate())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 }

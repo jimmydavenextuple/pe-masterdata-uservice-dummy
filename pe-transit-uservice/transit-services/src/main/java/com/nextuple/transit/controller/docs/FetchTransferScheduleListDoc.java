@@ -53,7 +53,10 @@ import java.lang.annotation.Target;
                                                "sourceNodeId": "NODE4",
                                                "dropoffNodeId": "CAPNode1",
                                                "startTime": "2024-08-30T12:00:00.000Z",
-                                               "endTime": "2024-08-30T15:00:00.000Z"
+                                               "endTime": "2024-08-30T15:00:00.000Z",
+                                                  "customAttributes": {
+                                                    "dynamicAtrr": true
+                                                  }
                                            },
                                            {
                                                "id": 7,
@@ -61,7 +64,10 @@ import java.lang.annotation.Target;
                                                "sourceNodeId": "NODE4",
                                                "dropoffNodeId": "CAPNode1",
                                                "startTime": "2024-08-29T12:00:00.000Z",
-                                               "endTime": "2024-08-29T15:00:00.000Z"
+                                               "endTime": "2024-08-29T15:00:00.000Z",
+                                                    "customAttributes": {
+                                                        "dynamicAtrr": true
+                                                    }
                                            }
                                        ],
                                        "pagination": {

@@ -132,6 +132,7 @@ public class TestUtil {
         .bufferStartDate(BUFFER_START_DATE)
         .bufferEndDate(BUFFER_END_DATE)
         .bufferDays(TRANSIT_BUFFER_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
