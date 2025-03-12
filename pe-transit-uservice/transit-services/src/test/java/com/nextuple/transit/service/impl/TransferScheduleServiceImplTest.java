@@ -22,13 +22,17 @@ import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.node.domain.feign.NodeFeign;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.service.RulesConfigurationService;
+import com.nextuple.promise.sourcing.rule.service.SourcingAttributesDefinitionService;
 import com.nextuple.transit.TestUtil;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.service.TransferSchedulePersistenceService;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.joda.time.DateTime;
@@ -50,6 +54,7 @@ class TransferScheduleServiceImplTest {
   @Mock TransferSchedulePersistenceService transferSchedulePersistenceService;
   @Mock RulesConfigurationService ruleConfigurationService;
   @Mock PageParams pageParams;
+  @Mock SourcingAttributesDefinitionService sourcingAttributesDefinitionService;
 
   @BeforeEach
   void setup() {
@@ -335,6 +340,36 @@ class TransferScheduleServiceImplTest {
         expectedResponse.get(0).getSourceNodeId(), actualResponse.get(0).getSourceNodeId());
     assertEquals(
         expectedResponse.get(0).getDropoffNodeId(), actualResponse.get(0).getDropoffNodeId());
+  }
+
+  @Test
+  @DisplayName(
+      "Return empty list when rule and rule name is null and there is an active transfer rule definition")
+  void testFetchTransfersWithNullRuleAndRuleNameAndActiveRuleDefinition()
+      throws PromiseEngineException, CommonServiceException {
+    // Arrange
+    TransferScheduleRangeRequest request = new TransferScheduleRangeRequest();
+    request.setStartTime(DateTime.now());
+    request.setEndTime(DateTime.now().plusDays(5));
+    request.setHorizonDays(2);
+    request.setPastDays(1);
+    request.setRule(null);
+    request.setRuleName(null);
+
+    SourcingAttributesDefinitionResponse response = new SourcingAttributesDefinitionResponse();
+    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionInActiveStatus(
+            request.getOrgId(), SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE))
+        .thenReturn(response);
+
+    // Act
+    List<TransferScheduleResponse> result =
+        transferScheduleService.fetchTransferSchedulesInRange(request);
+
+    // Assert
+    assertEquals(Collections.emptyList(), result);
+
+    verify(transferSchedulePersistenceService, times(0))
+        .fetchTransferSchedulesInRange(any(TransferScheduleDomainRequest.class));
   }
 
   @Test

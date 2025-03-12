@@ -23,8 +23,10 @@ import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.RulesConfigurationResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.RuleConfigurationParam;
 import com.nextuple.promise.sourcing.rule.service.RulesConfigurationService;
+import com.nextuple.promise.sourcing.rule.service.SourcingAttributesDefinitionService;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
@@ -64,6 +66,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
   private final TransferSchedulePersistenceService transferSchedulePersistenceService;
   private final RulesConfigurationService ruleConfigurationService;
   private final NodeFeign nodeFeign;
+  private final SourcingAttributesDefinitionService sourcingAttributesDefinitionService;
   private static final TransferScheduleMapper INSTANCE =
       Mappers.getMapper(TransferScheduleMapper.class);
 
@@ -207,6 +210,18 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
   @Override
   public List<TransferScheduleResponse> fetchTransferSchedulesInRange(
       TransferScheduleRangeRequest request) {
+    if (Objects.isNull(request.getRule()) || Objects.isNull(request.getRuleName())) {
+      try {
+        SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
+            sourcingAttributesDefinitionService
+                .processGetSourcingAttributesDefinitionInActiveStatus(
+                    request.getOrgId(),
+                    SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
+        if (Objects.nonNull(sourcingAttributesDefinitionResponse)) return Collections.emptyList();
+      } catch (Exception e) {
+        logger.error("Failed to fetch sourcing attributes definition in active status", e);
+      }
+    }
     // start time bound is the maximum allowed start time for the transfer schedule
     Date startTimeBound = null;
     Date startTimeLowerBound = null;
