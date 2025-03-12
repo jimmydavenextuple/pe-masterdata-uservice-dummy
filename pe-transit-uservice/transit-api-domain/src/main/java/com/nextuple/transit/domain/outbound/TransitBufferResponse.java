@@ -7,6 +7,7 @@
 
 package com.nextuple.transit.domain.outbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.Date;
@@ -18,8 +19,8 @@ import lombok.experimental.SuperBuilder;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder(toBuilder = true)
-public class TransitBufferResponse implements Serializable {
+@SuperBuilder
+public class TransitBufferResponse extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -8267269941227302889L;
 
   @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE")

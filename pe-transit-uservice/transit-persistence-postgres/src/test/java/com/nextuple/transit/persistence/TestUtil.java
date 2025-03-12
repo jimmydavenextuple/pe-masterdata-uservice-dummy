@@ -89,6 +89,7 @@ public class TestUtil {
         .sourceGeozone(SOURCE_GEOZONE)
         .destinationGeozone(DESTINATION_GEOZONE)
         .zone(ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -99,6 +100,7 @@ public class TestUtil {
         .sourceGeozone(SOURCE_GEOZONE)
         .destinationGeozone(DESTINATION_GEOZONE)
         .zone(ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -205,6 +207,7 @@ public class TestUtil {
         .bufferDays(BUFFER_DAYS)
         .bufferStartDate(bufferStartDate)
         .bufferEndDate(bufferEndDate)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -215,6 +218,7 @@ public class TestUtil {
         .destinationGeozone(DESTINATION_GEOZONE)
         .carrierServiceId(carrierServiceId)
         .transitDays(TRANSIT_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -244,6 +248,11 @@ public class TestUtil {
       public Float getTransitDays() {
         return TRANSIT_DAYS;
       }
+
+      @Override
+      public JsonNode getCustomAttributes() {
+        return CUSTOM_ATTRIBUTES;
+      }
     };
   }
 
@@ -260,6 +269,7 @@ public class TestUtil {
               .bufferDays(BUFFER_DAYS)
               .bufferStartDate(LocalDate.now().plusDays(no).toDate())
               .bufferEndDate(LocalDate.now().plusDays(no + 2).toDate())
+              .customAttributes(CUSTOM_ATTRIBUTES)
               .build());
     }
     return list;
@@ -278,6 +288,7 @@ public class TestUtil {
               .bufferDays(BUFFER_DAYS)
               .bufferStartDate(LocalDate.now().plusDays(no).toDate())
               .bufferEndDate(LocalDate.now().plusDays(no + 2).toDate())
+              .customAttributes(CUSTOM_ATTRIBUTES)
               .build());
     }
     return list;
@@ -293,6 +304,7 @@ public class TestUtil {
         .bufferDays(BUFFER_DAYS)
         .bufferStartDate(LocalDate.now().plusDays(no).toDate())
         .bufferEndDate(LocalDate.now().plusDays(no + 2).toDate())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 

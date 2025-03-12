@@ -9,22 +9,23 @@ package com.nextuple.transit.domain.inbound;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.OptBoolean;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class TransitBufferRequest implements Serializable {
+@SuperBuilder
+public class TransitBufferRequest extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -8905957802754295589L;
 
   @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE")

@@ -59,7 +59,10 @@ import java.lang.annotation.Target;
                                                  "createdBy": "NEXTUPLE_GR",
                                                  "updatedBy": "NEXTUPLE_GR",
                                                  "createdDate": "2024-01-18T06:49:17.609+00:00",
-                                                 "lastModifiedDate": "2024-01-18T07:03:53.296+00:00"
+                                                 "lastModifiedDate": "2024-01-18T07:03:53.296+00:00",
+                                                 "customAttributes": {
+                                                    "Key": "value"
+                                                 }
                                              }
                                          }
                                 """)
