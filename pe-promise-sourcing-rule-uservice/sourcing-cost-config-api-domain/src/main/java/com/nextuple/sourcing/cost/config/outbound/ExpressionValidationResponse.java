@@ -7,21 +7,20 @@
 
 package com.nextuple.sourcing.cost.config.outbound;
 
-import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.sourcing.cost.config.pojo.SampleSourcingRequestForFormulaValidation;
 import com.nextuple.sourcing.cost.config.pojo.SampleSourcingSolutionForFormulaValidation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExpressionValidationResponse extends AdditionalAttributes implements Serializable {
+public class ExpressionValidationResponse implements Serializable {
   private static final long serialVersionUID = -8577044545186970734L;
 
   @Schema(description = "Calculated value for formula expression", example = "300.0")
