@@ -6,7 +6,6 @@
  */
 package com.nextuple.sourcing.cost.config.outbound;
 
-import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.sourcing.cost.config.dto.costtyypesdto.CostTypeDtoInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
@@ -20,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @NoArgsConstructor
-public class CostTypeResponse extends AdditionalAttributes implements Serializable {
+public class CostTypeResponse implements Serializable {
   private static final long serialVersionUID = -7573439237404423313L;
 
   @Schema(description = "Specifies the currency of the organization.", example = "USD")
