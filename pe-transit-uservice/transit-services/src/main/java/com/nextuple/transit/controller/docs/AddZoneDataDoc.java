@@ -43,7 +43,10 @@ import java.lang.annotation.Target;
                                                             "sourceGeozone": "RRR",
                                                             "destinationGeozone": "J7M",
                                                             "carrierServiceId": "ALL-EXPRESS",
-                                                            "zone": "Zone1"
+                                                            "zone": "Zone1",
+                                                            "customAttributes": {
+                                                              "Key": "value"
+                                                           }
                                                         }
                                                     }""")
             }))

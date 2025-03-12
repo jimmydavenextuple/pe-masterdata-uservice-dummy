@@ -7,6 +7,8 @@
 
 package com.nextuple.transit.spring.cache.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.transit.cache.domain.TransferScheduleCacheKey;
 import com.nextuple.transit.cache.domain.TransferScheduleCacheValue;
@@ -44,6 +46,9 @@ public class TestUtil {
   public static final String SERVICE_OPTION = "serviceOption-1";
   public static final String ZONE = "Zone1";
 
+  public static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
+
   public TransitCacheKey getTransitCacheKey() {
     return TransitCacheKey.builder().orgId(ORG_ID).destinationGeozone(DESTINATION_GEOZONE).build();
   }
@@ -66,6 +71,7 @@ public class TestUtil {
         .bufferDays(3.0)
         .bufferStartDate(bufferStartDate)
         .bufferEndDate(bufferEndDate)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -86,6 +92,7 @@ public class TestUtil {
         .destinationGeozone(DESTINATION_GEOZONE)
         .carrierServiceId(CARRIER_SERVICE_ID)
         .zone(ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -113,6 +120,7 @@ public class TestUtil {
                     .bufferDays(2D)
                     .bufferStartDate(new Date())
                     .bufferEndDate(new Date())
+                    .customAttributes(CUSTOM_ATTRIBUTES)
                     .build()))
         .build();
   }

@@ -344,6 +344,7 @@ public class TransitBufferV2ServiceImpl implements TransitBufferV2Service {
               .bufferDays(transitBufferV2DomainDto.getBufferDays())
               .bufferStartDate(transitBufferV2DomainDto.getBufferStartDate())
               .bufferEndDate(transitBufferV2DomainDto.getBufferEndDate())
+              .customAttributes(transitBufferV2DomainDto.getCustomAttributes())
               .build());
       transitBuffersMap.put(key, transitBufferDetailsDtoList);
     }
