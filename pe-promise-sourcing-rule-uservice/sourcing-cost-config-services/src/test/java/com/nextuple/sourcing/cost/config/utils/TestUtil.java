@@ -1146,7 +1146,6 @@ public class TestUtil {
   public CostTypeResponse getCostTypeResponseWithSelector(String costType) {
     return CostTypeResponse.builder()
         .currency("USD")
-        .customAttributes(CUSTOM_ATTRIBUTES)
         .costTypeList(
             List.of(
                 CostTypeDtoInfo.builder()
@@ -1195,7 +1194,6 @@ public class TestUtil {
   public CostTypeResponse getCostTypeResponseWithSelectorButNoSelectorCfValue(String costType) {
     return CostTypeResponse.builder()
         .currency("USD")
-        .customAttributes(CUSTOM_ATTRIBUTES)
         .costTypeList(
             List.of(
                 CostTypeDtoInfo.builder()
@@ -1244,7 +1242,6 @@ public class TestUtil {
   public CostTypeResponse getCostTypeResponseWithoutSelector(String costType) {
     return CostTypeResponse.builder()
         .currency("USD")
-        .customAttributes(CUSTOM_ATTRIBUTES)
         .costTypeList(
             List.of(
                 CostTypeDtoInfo.builder()
@@ -1283,11 +1280,7 @@ public class TestUtil {
   }
 
   public CostTypeResponse getCostTypeResponseNotFound() {
-    return CostTypeResponse.builder()
-        .currency("USD")
-        .customAttributes(CUSTOM_ATTRIBUTES)
-        .costTypeList(List.of())
-        .build();
+    return CostTypeResponse.builder().currency("USD").costTypeList(List.of()).build();
   }
 
   public CostTypeValidationResponse getCostTypeValidationResponse() {
@@ -1348,7 +1341,6 @@ public class TestUtil {
         .expressionValue(EXPRESSION_VALUE)
         .sampleRequest(getSampleRequest())
         .sampleSolution(getSampleSolution())
-        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1456,7 +1448,6 @@ public class TestUtil {
     return ExpressionValidationRequest.builder()
         .expression(EXPRESSION_FORMULA)
         .sampleRequest(getSampleRequest())
-        .customAttributes(CUSTOM_ATTRIBUTES)
         .sampleSolution(getSampleSolution())
         .build();
   }
