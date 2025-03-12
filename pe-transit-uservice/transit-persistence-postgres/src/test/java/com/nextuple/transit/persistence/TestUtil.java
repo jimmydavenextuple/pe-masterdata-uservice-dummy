@@ -115,6 +115,7 @@ public class TestUtil {
         .endDate(bufferEndDate)
         .status(status)
         .fileMetaDataId(FILE_META_DATA_ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -131,6 +132,7 @@ public class TestUtil {
         .endDate(bufferEndDate)
         .status(status)
         .fileMetaDataId(FILE_META_DATA_ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -144,6 +146,7 @@ public class TestUtil {
         .bufferStartDate(new Date(1000))
         .bufferEndDate(new Date(1000))
         .transitBufferConfigRequestId(TRANS_BUFFER_CONFIG_REQUEST_ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -157,6 +160,7 @@ public class TestUtil {
         .bufferStartDate(new Date(1000))
         .bufferEndDate(new Date(1000))
         .transitBufferConfigRequestId(TRANS_BUFFER_CONFIG_REQUEST_ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -166,6 +170,7 @@ public class TestUtil {
         .transitBufferReqId(TransitBufferReqId)
         .action(TransitBufferReqJobRefEnum.CREATE)
         .extReferenceId(EXTERNAL_REFERENCE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -175,6 +180,7 @@ public class TestUtil {
         .transitBufferReqId(TransitBufferReqId)
         .action(TransitBufferReqJobRefEnum.CREATE)
         .extReferenceId(EXTERNAL_REFERENCE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -190,6 +196,7 @@ public class TestUtil {
         .bufferDays(BUFFER_DAYS)
         .bufferStartDate(bufferStartDate)
         .bufferEndDate(bufferEndDate)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -205,6 +212,7 @@ public class TestUtil {
         .bufferDays(BUFFER_DAYS)
         .bufferStartDate(bufferStartDate)
         .bufferEndDate(bufferEndDate)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -215,6 +223,7 @@ public class TestUtil {
         .destinationGeozone(DESTINATION_GEOZONE)
         .carrierServiceId(carrierServiceId)
         .transitDays(TRANSIT_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -225,6 +234,7 @@ public class TestUtil {
         .destinationGeozone(DESTINATION_GEOZONE)
         .carrierServiceId(carrierServiceId)
         .transitDays(TRANSIT_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -260,6 +270,7 @@ public class TestUtil {
               .bufferDays(BUFFER_DAYS)
               .bufferStartDate(LocalDate.now().plusDays(no).toDate())
               .bufferEndDate(LocalDate.now().plusDays(no + 2).toDate())
+              .customAttributes(CUSTOM_ATTRIBUTES)
               .build());
     }
     return list;
@@ -278,6 +289,7 @@ public class TestUtil {
               .bufferDays(BUFFER_DAYS)
               .bufferStartDate(LocalDate.now().plusDays(no).toDate())
               .bufferEndDate(LocalDate.now().plusDays(no + 2).toDate())
+              .customAttributes(CUSTOM_ATTRIBUTES)
               .build());
     }
     return list;
@@ -293,6 +305,7 @@ public class TestUtil {
         .bufferDays(BUFFER_DAYS)
         .bufferStartDate(LocalDate.now().plusDays(no).toDate())
         .bufferEndDate(LocalDate.now().plusDays(no + 2).toDate())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -340,6 +353,7 @@ public class TestUtil {
         .dropoffNodeId(DESTINATION_NODE)
         .startTime(new Date())
         .endTime(new Date())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 

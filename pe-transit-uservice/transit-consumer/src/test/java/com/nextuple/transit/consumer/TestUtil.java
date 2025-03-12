@@ -7,6 +7,8 @@
 
 package com.nextuple.transit.consumer;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.master.data.integration.dto.ResponseDto;
 import com.nextuple.master.data.integration.enums.ActionEnum;
@@ -30,6 +32,8 @@ public class TestUtil {
   public static final Date BUFFER_START_DATE = new Date();
   public static final Date BUFFER_END_DATE = new Date();
   public static final Double TRANSIT_BUFFER_DAYS = 2.0;
+  public static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public TransitFeedDto createTransitFeedDto() {
     return TransitFeedDto.builder()
@@ -38,6 +42,7 @@ public class TestUtil {
         .sourceGeozone(SOURCE_GEOZONE)
         .destinationGeozone(DESTINATION_GEOZONE)
         .transitDays(TRANSIT_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -50,6 +55,7 @@ public class TestUtil {
         .bufferStartDate(BUFFER_START_DATE)
         .bufferEndDate(BUFFER_END_DATE)
         .bufferDays(TRANSIT_BUFFER_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -125,6 +131,7 @@ public class TestUtil {
         .bufferStartDate(BUFFER_START_DATE)
         .bufferEndDate(BUFFER_END_DATE)
         .bufferDays(TRANSIT_BUFFER_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -135,6 +142,7 @@ public class TestUtil {
         .sourceGeozone(SOURCE_GEOZONE)
         .destinationGeozone(DESTINATION_GEOZONE)
         .transitDays(TRANSIT_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -147,6 +155,7 @@ public class TestUtil {
         .bufferStartDate(BUFFER_START_DATE)
         .bufferEndDate(BUFFER_END_DATE)
         .bufferDays(TRANSIT_BUFFER_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 }
