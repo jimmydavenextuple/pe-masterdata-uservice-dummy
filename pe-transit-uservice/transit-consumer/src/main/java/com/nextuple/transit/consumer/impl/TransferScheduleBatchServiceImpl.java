@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2025., Nextuple, Inc. and/or its affiliates. All rights reserved.
+ *
+ * The software, code and related documentation made available to you by Nextuple, Inc. are provided under a written agreement containing restrictions on use and disclosure and are protected by copyright and other intellectual property laws. As described in and unless expressly permitted in your agreement, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or de-compilation of this software, unless required by law or permitted via contract for interoperability, is strictly prohibited.
+ * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
+ */
 package com.nextuple.transit.consumer.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -81,11 +87,19 @@ public class TransferScheduleBatchServiceImpl extends BatchService<TransferSched
     String dropOffNodeId = transferScheduleDto.getDropoffNodeId();
     DateTime startDateTime = transferScheduleDto.getStartTime();
     Date startTime = Objects.nonNull(startDateTime) ? startDateTime.toDate() : null;
-
+    String rule = transferScheduleDto.getRule();
     if (validateRequiredFieldsProvided(orgId, sourceNodeId, dropOffNodeId, startTime)) {
-      Optional<TransferScheduleEntity> transferScheduleEntity =
-          transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
-              sourceNodeId, dropOffNodeId, startTime, orgId);
+      Optional<TransferScheduleEntity> transferScheduleEntity;
+      if (Objects.nonNull(rule)) {
+        transferScheduleEntity =
+            transferScheduleRepository
+                .findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgIdAndRule(
+                    sourceNodeId, dropOffNodeId, startTime, orgId, rule);
+      } else {
+        transferScheduleEntity =
+            transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
+                sourceNodeId, dropOffNodeId, startTime, orgId);
+      }
       if (checkForBatchRequestExpired(transferScheduleDtoBatchRequest, transferScheduleEntity)) {
         Map<String, FieldError> errorMap = new HashMap<>();
         errorMap.put(

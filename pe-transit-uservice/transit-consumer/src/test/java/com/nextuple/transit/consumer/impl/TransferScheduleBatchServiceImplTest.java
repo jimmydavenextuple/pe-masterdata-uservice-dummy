@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024., Nextuple, Inc. and/or its affiliates. All rights reserved.
+ * Copyright (c) 2025., Nextuple, Inc. and/or its affiliates. All rights reserved.
  *
  * The software, code and related documentation made available to you by Nextuple, Inc. are provided under a written agreement containing restrictions on use and disclosure and are protected by copyright and other intellectual property laws. As described in and unless expressly permitted in your agreement, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or de-compilation of this software, unless required by law or permitted via contract for interoperability, is strictly prohibited.
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
@@ -223,6 +223,28 @@ public class TransferScheduleBatchServiceImplTest {
     Optional<TransferScheduleEntity> transferScheduleEntity = Optional.of(transferEntityObj);
     when(transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
             any(), any(), any(), any()))
+        .thenReturn(transferScheduleEntity);
+    transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
+    verify(transferScheduleFeign, times(1)).createTransferSchedule(any());
+  }
+
+  @Test
+  @DisplayName("When the batch records cannot be processed as they are up to date for rule")
+  void processBatchRecordsTestForUpdatedRecordsForRule() throws CommonServiceException {
+    BatchRequest<TransferScheduleDto> batchRequest =
+        testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE);
+    batchRequest.getPayload().setRule("rule");
+    Date modifiedDate = new Date();
+    Date receivedDate = DateUtil.addHoursToDate(modifiedDate, 1);
+    batchRequest.setReceivedTimestamp(receivedDate);
+    Mockito.doNothing()
+        .when(errorHandlingService)
+        .handleExceptions(anyInt(), any(), any(), any(), any(), any());
+    TransferScheduleEntity transferEntityObj = new TransferScheduleEntity();
+    transferEntityObj.setLastModifiedDate(modifiedDate);
+    Optional<TransferScheduleEntity> transferScheduleEntity = Optional.of(transferEntityObj);
+    when(transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgIdAndRule(
+            any(), any(), any(), any(), any()))
         .thenReturn(transferScheduleEntity);
     transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
     verify(transferScheduleFeign, times(1)).createTransferSchedule(any());
