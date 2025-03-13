@@ -20,6 +20,7 @@ import com.nextuple.pe.webhook.domain.dtos.MasterDataIngestionDto;
 import com.nextuple.pe.webhook.domain.dtos.WebhookConfigDetails;
 import com.nextuple.pe.webhook.domain.dtos.WebhookDetail;
 import com.nextuple.pe.webhook.domain.inbound.FeedRequest;
+import com.nextuple.transit.consumer.dto.TransferScheduleDto;
 import com.nextuple.transit.consumer.dto.TransitBufferFeedDto;
 import com.nextuple.transit.consumer.dto.TransitFeedDto;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.joda.time.DateTime;
 
 public class TestUtil {
   public static final String ORG_ID = "NEXTUPLE_GR";
@@ -37,6 +39,7 @@ public class TestUtil {
   public static final String NODE_TOPIC = "INTERNAL.TEST.PE.NODE_INTEGRATION";
   public static final String CARRIER_TOPIC = "INTERNAL.TEST.PE.CARRIER_INTEGRATION";
   public static final String CALENDAR_TOPIC = "INTERNAL.DEV.PE.CALENDAR_INTEGRATION";
+  public static final String TRANSFER_SCHEDULE_TOPIC = "INTERNAL.DEV.PE.TRANSFER_SCHEDULE";
   public static final String CARRIER_SERVICE_CALENDAR_TOPIC =
       "INTERNAL.DEV.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION";
   public static final String NODE_CALENDAR_TOPIC = "INTERNAL.DEV.PE.NODE_CALENDAR_INTEGRATION";
@@ -258,6 +261,16 @@ public class TestUtil {
         .build();
   }
 
+  public TransferScheduleDto createTransferScheduleDto() {
+    return TransferScheduleDto.builder()
+        .orgId("org-id")
+        .dropoffNodeId("drop-off-node-id-1")
+        .sourceNodeId("source-node-id-1")
+        .startTime(new DateTime())
+        .endTime(new DateTime().plusHours(3))
+        .build();
+  }
+
   public NodeCalendarFeedDto createNodeCalendarFeedDto() {
     return NodeCalendarFeedDto.builder()
         .orgId("org-id")
@@ -446,5 +459,24 @@ public class TestUtil {
     nodeServiceOptionBufferIngestionRequest.setPayload(createNodeServiceOptionBufferFeedDto());
     feedRequest.setData(List.of(nodeServiceOptionBufferIngestionRequest));
     return feedRequest;
+  }
+
+  public FeedRequest<MasterDataIngestionDto<?>> getTransferScheduleFeedIngestionRequest(
+      ActionEnum action) {
+    FeedRequest<MasterDataIngestionDto<?>> feedRequest = new FeedRequest<>();
+    MasterDataIngestionDto<TransferScheduleDto> transferScheduleIngestionRequest =
+        new MasterDataIngestionDto<>();
+    transferScheduleIngestionRequest.setAction(action);
+    transferScheduleIngestionRequest.setPayload(createTransferScheduleDto());
+    feedRequest.setData(List.of(transferScheduleIngestionRequest));
+    return feedRequest;
+  }
+
+  public BatchRequest<TransferScheduleDto> getTransferScheduleFeedRequest(ActionEnum action) {
+    BatchRequest<TransferScheduleDto> batchRequest = new BatchRequest<>();
+    batchRequest.setAction(action);
+    batchRequest.setRecordNo(1);
+    batchRequest.setPayload(createTransferScheduleDto());
+    return batchRequest;
   }
 }

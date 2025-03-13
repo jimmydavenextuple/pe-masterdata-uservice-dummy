@@ -189,6 +189,9 @@ master-data:
   transit-buffer:
     topic-names: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-dev
+  transfer-schedule:
+    topic-names: INTERNAL.DEV.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-dev
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
@@ -278,6 +281,8 @@ kafka-topic-flags:
     transit:
       enabled: true
     transit-buffer:
+      enabled: true
+    transfer-schedule:
       enabled: true
   refresh-cache:
     enabled: true

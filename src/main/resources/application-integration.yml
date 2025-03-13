@@ -162,6 +162,9 @@ master-data:
   transit-buffer:
     topic-names: INTERNAL.INTEGRATION.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-integration
+  transfer-schedule:
+    topic-names: INTERNAL.INTEGRATION.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-integration
 
 next-cache:
   caches:

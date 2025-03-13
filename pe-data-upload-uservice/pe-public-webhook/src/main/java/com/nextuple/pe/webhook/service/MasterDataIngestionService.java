@@ -20,6 +20,7 @@ import com.nextuple.pe.webhook.service.impl.NodeFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.NodeServiceOptionBufferFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.NodeServiceOptionFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.PickupCalendarFeedHandlingService;
+import com.nextuple.pe.webhook.service.impl.TransferScheduleFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransitBufferFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransitFeedHandlingService;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,7 @@ public class MasterDataIngestionService {
   private final NodeServiceOptionFeedHandlingService nodeServiceOptionFeedHandlingService;
   private final NodeServiceOptionBufferFeedHandlingService
       nodeServiceOptionBufferFeedHandlingService;
+  private final TransferScheduleFeedHandlingService transferScheduleFeedHandlingService;
 
   public void processMasterDataIngestionData(
       String moduleName,
@@ -87,6 +89,9 @@ public class MasterDataIngestionService {
       case NODE_SERVICE_OPTION_BUFFER:
         nodeServiceOptionBufferFeedHandlingService.publishRecords(
             masterDataIngestionFeedRequest, orgId);
+        break;
+      case TRANSFER_SCHEDULES:
+        transferScheduleFeedHandlingService.publishRecords(masterDataIngestionFeedRequest, orgId);
         break;
       default:
         throw new CommonServiceException(
