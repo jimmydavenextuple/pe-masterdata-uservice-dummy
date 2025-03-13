@@ -201,4 +201,4 @@ kafka:
     taskTopics: INTERNAL.DEMO.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry
 keycloak:
-  auth-server-url: "https://keycloak-nonprod.nextuple.com"
+  auth-server-url: "keycloak.keycloak.svc.cluster.local"
