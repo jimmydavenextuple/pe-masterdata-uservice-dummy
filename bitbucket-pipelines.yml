@@ -207,6 +207,7 @@ server:
       prometheus: yes
       keyvault: yes
       storage: yes
+      dockerbuild: yes
       java-opts: "-Xms2048m -Xmx2048m"
       scale:
         replicas: 1
@@ -365,6 +366,13 @@ pipelines:
           trigger: manual
           deployment: prod
   branches:
+    ashley:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Demo
+          trigger: manual
+          deployment: demo
     vapt:
       - step: *build
       - step:
