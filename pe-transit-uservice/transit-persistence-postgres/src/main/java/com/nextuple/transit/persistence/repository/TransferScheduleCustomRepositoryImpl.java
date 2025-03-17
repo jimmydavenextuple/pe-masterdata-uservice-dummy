@@ -87,19 +87,36 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
       predicates.add(cb.equal(root.get("rule"), request.getRule()));
       predicates.add(cb.equal(root.get("ruleName"), request.getRuleName()));
     }
-
-    if (Objects.nonNull(request.getStartTimeLowerBound())) {
+    if (request.getExclusive() != null
+        && request.getExclusive()
+        && Objects.nonNull(request.getStartTimeLowerBound())
+        && Objects.nonNull(request.getEndTimeUpperBound())) {
       predicates.add(
-          cb.between(
-              root.get(START_TIME),
-              request.getStartTimeLowerBound(),
-              request.getStartTimeUpperBound()));
-    }
+          cb.or(
+              cb.between(
+                  root.get(START_TIME),
+                  request.getStartTimeLowerBound(),
+                  request.getStartTimeUpperBound()),
+              cb.between(
+                  root.get(END_TIME),
+                  request.getEndTimeLowerBound(),
+                  request.getEndTimeUpperBound())));
+    } else {
+      if (Objects.nonNull(request.getStartTimeLowerBound())) {
+        predicates.add(
+            cb.between(
+                root.get(START_TIME),
+                request.getStartTimeLowerBound(),
+                request.getStartTimeUpperBound()));
+      }
 
-    if (Objects.nonNull(request.getEndTimeLowerBound())) {
-      predicates.add(
-          cb.between(
-              root.get(END_TIME), request.getEndTimeLowerBound(), request.getEndTimeUpperBound()));
+      if (Objects.nonNull(request.getEndTimeLowerBound())) {
+        predicates.add(
+            cb.between(
+                root.get(END_TIME),
+                request.getEndTimeLowerBound(),
+                request.getEndTimeUpperBound()));
+      }
     }
     cq.where(cb.and(predicates.toArray(new Predicate[0])));
     return entityManager.createQuery(cq).getResultList();
