@@ -43,7 +43,7 @@ public class TransferScheduleNearCacheServiceImpl
     nearCacheRegistry.registerNearCacheEntity(
         NearCacheConstants.TRANSFER_SCHEDULE_ENTITY_NAME,
         TransferScheduleCacheKey.class.getName(),
-        "full");
+        "partial");
   }
 
   @Override
