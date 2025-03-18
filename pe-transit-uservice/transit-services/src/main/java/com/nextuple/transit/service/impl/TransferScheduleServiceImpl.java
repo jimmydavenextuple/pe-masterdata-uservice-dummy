@@ -250,6 +250,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
             .startTimeUpperBound(startTimeBound)
             .endTimeLowerBound(endTimeBound)
             .endTimeUpperBound(endTimeUpperBound)
+            .exclusive(request.getExclusive())
             .build();
 
     List<TransferScheduleDomainDto> dtos =
