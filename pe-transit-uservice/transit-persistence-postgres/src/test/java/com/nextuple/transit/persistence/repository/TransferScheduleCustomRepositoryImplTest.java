@@ -26,6 +26,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -122,6 +123,7 @@ class TransferScheduleCustomRepositoryImplTest {
   @DisplayName("Happy Path - Find transfer schedules in range")
   void findTransferSchedulesInRange() {
     TransferScheduleDomainRequest request = testUtil.getTransferScheduleDomainRequest();
+    request.setExclusive(false);
     List<TransferScheduleEntity> results =
         Arrays.asList(new TransferScheduleEntity(), new TransferScheduleEntity());
 
@@ -140,6 +142,56 @@ class TransferScheduleCustomRepositoryImplTest {
     request.setEndTimeLowerBound(null);
     request.setRule(null);
     request.setRuleName(null);
+    List<TransferScheduleEntity> results =
+        Arrays.asList(new TransferScheduleEntity(), new TransferScheduleEntity());
+
+    when(typedQuery.getResultList()).thenReturn(results);
+    List<TransferScheduleEntity> actualResult = repository.findTransferSchedulesInRange(request);
+
+    assertEquals(2, actualResult.size());
+    verify(entityManager, times(1)).createQuery(criteriaQuery);
+  }
+
+  @Test
+  @DisplayName("Happy Path - Find transfer schedules in range with exclusive flag")
+  void findTransferSchedulesInRangeWithExclusiveFlag() {
+    TransferScheduleDomainRequest request = testUtil.getTransferScheduleDomainRequest();
+    request.setExclusive(true);
+    request.setEndTimeUpperBound(new Date());
+    List<TransferScheduleEntity> results =
+        Arrays.asList(new TransferScheduleEntity(), new TransferScheduleEntity());
+
+    when(typedQuery.getResultList()).thenReturn(results);
+    List<TransferScheduleEntity> actualResult = repository.findTransferSchedulesInRange(request);
+
+    assertEquals(2, actualResult.size());
+    verify(entityManager, times(1)).createQuery(criteriaQuery);
+  }
+
+  @Test
+  @DisplayName(
+      "Happy Path - Find transfer schedules in range with exclusive flag and without start time")
+  void findTransferSchedulesInRangeWithExclusiveFlagAndWithoutStartTime() {
+    TransferScheduleDomainRequest request = testUtil.getTransferScheduleDomainRequest();
+    request.setExclusive(true);
+    request.setEndTimeUpperBound(new Date());
+    request.setStartTimeLowerBound(null);
+    List<TransferScheduleEntity> results =
+        Arrays.asList(new TransferScheduleEntity(), new TransferScheduleEntity());
+
+    when(typedQuery.getResultList()).thenReturn(results);
+    List<TransferScheduleEntity> actualResult = repository.findTransferSchedulesInRange(request);
+
+    assertEquals(2, actualResult.size());
+    verify(entityManager, times(1)).createQuery(criteriaQuery);
+  }
+
+  @Test
+  @DisplayName(
+      "Happy Path - Find transfer schedules in range with exclusive flag and without end time")
+  void findTransferSchedulesInRangeWithExclusiveFlagAndWithoutEndTime() {
+    TransferScheduleDomainRequest request = testUtil.getTransferScheduleDomainRequest();
+    request.setExclusive(true);
     List<TransferScheduleEntity> results =
         Arrays.asList(new TransferScheduleEntity(), new TransferScheduleEntity());
 

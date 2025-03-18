@@ -26,4 +26,5 @@ public class TransferScheduleDomainRequest {
   private Date endTimeUpperBound;
   private String rule;
   private String ruleName;
+  private Boolean exclusive;
 }
