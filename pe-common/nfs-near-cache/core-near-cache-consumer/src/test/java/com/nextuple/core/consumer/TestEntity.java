@@ -9,21 +9,20 @@ package com.nextuple.core.consumer;
 
 import com.nextuple.core.cache.domain.CacheKey;
 
-public class TestEntity  implements CacheKey {
-    private String test;
+public class TestEntity implements CacheKey {
+  private String test;
 
-    public TestEntity() {
-    }
+  public TestEntity() {}
 
-    public TestEntity(String test) {
-        this.test = test;
-    }
+  public TestEntity(String test) {
+    this.test = test;
+  }
 
-    public String getTest() {
-        return test;
-    }
+  public String getTest() {
+    return test;
+  }
 
-    public void setTest(String test) {
-        this.test = test;
-    }
+  public void setTest(String test) {
+    this.test = test;
+  }
 }

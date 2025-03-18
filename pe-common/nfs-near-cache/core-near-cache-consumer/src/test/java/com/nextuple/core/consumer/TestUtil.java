@@ -9,33 +9,32 @@ package com.nextuple.core.consumer;
 
 import com.nextuple.core.event.LocalCacheUpdateEvent;
 import com.nextuple.core.event.LocalCacheUpdateMessage;
-
 import java.util.Map;
 
 public class TestUtil {
-    public LocalCacheUpdateEvent getLocalCacheUpdateEvent(
-            Map<String, Object> message, String entityName) {
-        LocalCacheUpdateEvent localCacheUpdateEvent = new LocalCacheUpdateEvent();
-        LocalCacheUpdateMessage localCacheUpdateMessage = new LocalCacheUpdateMessage();
-        localCacheUpdateMessage.setMessage(message);
-        localCacheUpdateMessage.setEntityName(entityName);
-        localCacheUpdateEvent.setLocalCacheUpdateMessage(localCacheUpdateMessage);
+  public LocalCacheUpdateEvent getLocalCacheUpdateEvent(
+      Map<String, Object> message, String entityName) {
+    LocalCacheUpdateEvent localCacheUpdateEvent = new LocalCacheUpdateEvent();
+    LocalCacheUpdateMessage localCacheUpdateMessage = new LocalCacheUpdateMessage();
+    localCacheUpdateMessage.setMessage(message);
+    localCacheUpdateMessage.setEntityName(entityName);
+    localCacheUpdateEvent.setLocalCacheUpdateMessage(localCacheUpdateMessage);
 
-        return localCacheUpdateEvent;
-    }
+    return localCacheUpdateEvent;
+  }
 
-    public LocalCacheUpdateEvent getLocalCacheUpdateEvent(String entityName) {
-        LocalCacheUpdateEvent localCacheUpdateEvent = new LocalCacheUpdateEvent();
-        LocalCacheUpdateMessage localCacheUpdateMessage = new LocalCacheUpdateMessage();
-        Map<String, Object> message = createCacheUpdateMessage(entityName);
-        localCacheUpdateMessage.setMessage(message);
-        localCacheUpdateMessage.setEntityName(entityName);
-        localCacheUpdateEvent.setLocalCacheUpdateMessage(localCacheUpdateMessage);
+  public LocalCacheUpdateEvent getLocalCacheUpdateEvent(String entityName) {
+    LocalCacheUpdateEvent localCacheUpdateEvent = new LocalCacheUpdateEvent();
+    LocalCacheUpdateMessage localCacheUpdateMessage = new LocalCacheUpdateMessage();
+    Map<String, Object> message = createCacheUpdateMessage(entityName);
+    localCacheUpdateMessage.setMessage(message);
+    localCacheUpdateMessage.setEntityName(entityName);
+    localCacheUpdateEvent.setLocalCacheUpdateMessage(localCacheUpdateMessage);
 
-        return localCacheUpdateEvent;
-    }
+    return localCacheUpdateEvent;
+  }
 
-    private Map<String, Object> createCacheUpdateMessage(String entityName) {
-        return Map.of();
-    }
+  private Map<String, Object> createCacheUpdateMessage(String entityName) {
+    return Map.of();
+  }
 }
