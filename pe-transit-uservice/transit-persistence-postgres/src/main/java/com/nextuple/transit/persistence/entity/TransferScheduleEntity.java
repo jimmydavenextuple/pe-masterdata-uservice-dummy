@@ -34,8 +34,8 @@ import lombok.experimental.SuperBuilder;
     name = "transfer_schedules",
     indexes =
         @Index(
-            name = "org_source_dropoff_index",
-            columnList = "org_id,source_node_id,dropoff_node_id"))
+            name = "org_dropoff_rule_start_end_time_index",
+            columnList = "org_id,dropoff_node_id,rule,start_time,end_time"))
 @EntityListeners(CommonEntityListener.class)
 public class TransferScheduleEntity extends CommonBaseEntity {
 
