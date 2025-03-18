@@ -87,6 +87,7 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
       predicates.add(cb.equal(root.get("rule"), request.getRule()));
       predicates.add(cb.equal(root.get("ruleName"), request.getRuleName()));
     }
+
     if (request.getExclusive() != null
         && request.getExclusive()
         && Objects.nonNull(request.getStartTimeLowerBound())
