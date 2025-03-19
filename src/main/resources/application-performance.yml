@@ -189,8 +189,8 @@ master-data:
     topic-names: INTERNAL.PERF.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-perf
   transfer-schedule:
-    topic-names: INTERNAL.PERF.PE.TRANSFER_SCHEDULES
-    group-id: transfer-schedules-master-perf
+    topic-names: INTERNAL.PERFORMANCE.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-performance
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
