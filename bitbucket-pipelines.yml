@@ -435,7 +435,7 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
-    perf_deployment:
+    perf_deployment_1.7:
       - step: *build
       - step:
           !!merge <<: *deploy
