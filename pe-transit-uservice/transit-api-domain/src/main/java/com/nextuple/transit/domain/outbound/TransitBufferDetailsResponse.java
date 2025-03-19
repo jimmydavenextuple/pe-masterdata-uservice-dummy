@@ -7,23 +7,20 @@
 
 package com.nextuple.transit.domain.outbound;
 
-import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.transit.domain.dto.TransitBufferDetailsDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class TransitBufferDetailsResponse extends AdditionalAttributes implements Serializable {
+public class TransitBufferDetailsResponse implements Serializable {
   private static final long serialVersionUID = -8267269941229472889L;
 
   @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE")

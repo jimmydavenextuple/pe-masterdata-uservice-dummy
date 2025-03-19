@@ -7,7 +7,6 @@
 
 package com.nextuple.transit.service.impl;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.exception.CommonServiceException;
@@ -109,11 +108,6 @@ public class TransitBufferV2ServiceImpl implements TransitBufferV2Service {
                       .sourceGeozone(details[2])
                       .carrierServiceId(details[3])
                       .transitBuffers(entry.getValue())
-                      .customAttributes(
-                          JsonNodeFactory.instance
-                              .objectNode()
-                              .put("key1", "value1")
-                              .put("key2", "value2"))
                       .build();
                 })
             .toList();
