@@ -232,3 +232,30 @@ kafka:
   input:
     taskTopics: INTERNAL.PERF.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry
+
+kafka-topic-flags:
+  master-data:
+    node:
+      enabled: false
+    node-carrier:
+      enabled: false
+    carrier:
+      enabled: false
+    processing-lead-time:
+      enabled: false
+    calendar:
+      enabled: false
+    node-calendar:
+      enabled: false
+    carrier-service-calendar:
+      enabled: false
+    pickup-calendar:
+      enabled: false
+    node-service-option-buffer:
+      enabled: false
+    transit:
+      enabled: false
+    transit-buffer:
+      enabled: false
+    transfer-schedule:
+      enabled: true
