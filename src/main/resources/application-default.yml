@@ -216,6 +216,10 @@ master-data:
     topic-names: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-dev
     dlt-topic: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION.DLT
+  transfer-schedule:
+    topic-names: INTERNAL.DEV.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-dev
+    dlt-topic: INTERNAL.DEV.PE.TRANSFER_SCHEDULES.DLT
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 next-cache:
@@ -248,7 +252,7 @@ neo-platform:
       tenant-id: x-tenant-id
     issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev
     authz-config:
-      config-path: "https://internal-dev.nextuple.com/services/authz-config/api/configurations/groups/application-group/scope-id/pe-masterdata"
+      config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
       refresh-interval-mins: 30
       role:
         json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles

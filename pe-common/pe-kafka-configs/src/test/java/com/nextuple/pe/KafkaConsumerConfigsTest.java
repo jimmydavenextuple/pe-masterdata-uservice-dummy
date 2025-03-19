@@ -58,20 +58,20 @@ class KafkaConsumerConfigsTest {
 
   @Test
   void jsonDeserializerPropertiesTest() {
-    when(kafkaProperties.buildConsumerProperties()).thenReturn(testUtil.getJsonProps());
+    when(kafkaProperties.buildConsumerProperties(null)).thenReturn(testUtil.getJsonProps());
     Assertions.assertNotNull(consumerConfigs.jsonDeserializerProperties());
   }
 
   @Test
   void jsonContainerFactoryTest() {
-    when(kafkaProperties.buildConsumerProperties()).thenReturn(testUtil.getJsonProps());
+    when(kafkaProperties.buildConsumerProperties(null)).thenReturn(testUtil.getJsonProps());
     assertDoesNotThrow(() -> consumerConfigs.jsonKafkaContainerListenerFactory(null, null));
   }
 
   @Test
   void jsonContainerFactoryJSONTest() {
     KafkaOperations<String, Object> objectKafkaOperations = mock(KafkaOperations.class);
-    when(kafkaProperties.buildConsumerProperties()).thenReturn(testUtil.getJsonProps());
+    when(kafkaProperties.buildConsumerProperties(null)).thenReturn(testUtil.getJsonProps());
     when(kafkaErrorHandlerProperties.getNonRetryableExceptions())
         .thenReturn(List.of("jakarta.validation.ConstraintViolationException"));
     assertDoesNotThrow(
@@ -84,7 +84,7 @@ class KafkaConsumerConfigsTest {
     Map<String, Object> jsonProps = testUtil.getJsonProps();
     Map<String, Object> properties = (Map<String, Object>) jsonProps.get("properties");
     properties.put("spring-json-value-default-type", "json");
-    when(kafkaProperties.buildConsumerProperties()).thenReturn(jsonProps);
+    when(kafkaProperties.buildConsumerProperties(null)).thenReturn(jsonProps);
     when(kafkaErrorHandlerProperties.getNonRetryableExceptions())
         .thenReturn(Collections.emptyList());
     assertDoesNotThrow(
@@ -109,7 +109,7 @@ class KafkaConsumerConfigsTest {
     when(kafkaProperties.getProperties()).thenReturn(testUtil.getKafkaProperties());
     when(kafkaProperties.getBootstrapServers()).thenReturn(List.of("localhost:9092"));
 
-    when(kafkaProperties.buildConsumerProperties()).thenReturn(testUtil.getJsonProps());
+    when(kafkaProperties.buildConsumerProperties(null)).thenReturn(testUtil.getJsonProps());
     assertDoesNotThrow(
         () -> consumerConfigs.kafkaContainerListenerFactory(null, objectKafkaOperations));
   }

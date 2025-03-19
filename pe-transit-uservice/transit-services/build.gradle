@@ -16,7 +16,7 @@ dependencies {
     implementation(project(":pe-transit-uservice:transit-persistence-domain"))
     implementation(project(":pe-transit-uservice:transit-persistence-postgres"))
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     implementation(project(":pe-common:common-util"))
     implementation(project(":pe-common:common-domain"))
@@ -28,6 +28,8 @@ dependencies {
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
     implementation(project(":pe-data-upload-uservice:data-upload-common-util"))
     implementation(project(":pe-node-uservice:node-api-domain"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-services"))
+    implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
 
     implementation "org.springframework.kafka:spring-kafka"
     implementation 'org.apache.commons:commons-csv:1.5'

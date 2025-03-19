@@ -28,4 +28,6 @@ public class TransferScheduleDomainDto extends DomainBaseEntity implements Seria
   private String dropoffNodeId;
   private Date startTime;
   private Date endTime;
+  private String rule;
+  private String ruleName;
 }

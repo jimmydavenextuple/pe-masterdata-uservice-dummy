@@ -1,4 +1,16 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          my-client:
+            client-id: applicationclient-pe-masterdata-uservice
+            client-secret: \${MASTER-DATA-KEYCLOAK-CLIENT-ID}
+            authorization-grant-type: client_credentials
+            scope: applicationclient-pe-masterdata-scope
+        provider:
+          my-client:
+            token-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev/protocol/openid-connect/token
   jpa:
     database: POSTGRESQL
     show-sql: false
@@ -17,6 +29,7 @@ spring:
       security.protocol: SASL_SSL
       sasl.mechanism: SCRAM-SHA-512
       sasl.jaas.config: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"\${KAFKA_USER}\" password=\"\${KAFKA_PWD}\";"
+    consumer-retry-count: 1
     consumer-item:
       type: json
       enable-auto-commit: true
@@ -39,6 +52,8 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.HOTFIX.MASTER_DATA_UPDATE_EVENTS
       properties:
         acks: 1
         retries: 5
@@ -51,6 +66,11 @@ spring:
       properties:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      topics:
+        master_data_update_event:
+          name: INTERNAL.HOTFIX.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-demo
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -59,6 +79,8 @@ spring:
       interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       enable-auto-commit: true
       auto-offset-reset: latest
+    sql.init.platform: postgres
+
 logging:
   level:
     com.nextuple: DEBUG
@@ -68,6 +90,35 @@ pe-public-webhook:
   item-feed:
     topic: INTERNAL.HOTFIX.PROMISE_ITEMS
 
+  pe-public-webhook:
+    iv-feed:
+      topic: INTERNAL.HOTFIX_ATP
+    item-feed:
+      topic: INTERNAL.HOTFIX.PROMISE_ITEMS
+    pe-response:
+      topics: INTERNAL.HOTFIX.CART_EDD
+      group-id: pe-response-consumer-hotfix-async
+    webhook:
+      - tenantId: NEXTUPLE_GR
+        moduleName: PROMISING
+        webhookName: PROMISING_INTERMEDIATE_EVENT
+        webhookDetail:
+          endpoint: "https://dc5647e2-a0d6-436b-bfba-6097594abe60.mock.pstmn.io"
+          method: POST
+          headers:
+            contentType: "application/json"
+            x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
+            #          Dummy API Key
+      - tenantId: XYZINC
+        moduleName: PROMISING
+        webhookName: PROMISING_INTERMEDIATE_EVENT
+        webhookDetail:
+          endpoint: "https://dc5647e2-a0d6-436b-bfba-6097594abe60.mock.pstmn.io"
+          method: POST
+          headers:
+            contentType: "application/json"
+            x-api-key: "PMAK-649a7ee4b2aa120030dfba82-4fe9121cae4c8059978d6e49f996cbefeb"
+            #          Dummy API Keydataupload:
 dataupload:
   base-path: "https://pedataupload.blob.core.windows.net"
   maxsize-in-kilobytes: 10240
@@ -98,3 +149,83 @@ auth-token:
   password: \${COGNITO_CLIENT_SECRET}
 auth:
   issuer: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_FAqWuc7OP
+master-data:
+  node:
+    topic-names: INTERNAL.HOTFIX.PE.NODE_INTEGRATION
+    group-id: node-master-hotfix
+  node-carrier:
+    topic-names: INTERNAL.HOTFIX.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-hotfix
+  carrier:
+    topic-names: INTERNAL.HOTFIX.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-hotfix
+  processing-lead-time:
+    topic-names: INTERNAL.HOTFIX.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-hotfix
+  calendar:
+    topic-names: INTERNAL.HOTFIX.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-hotfix
+  node-calendar:
+    topic-names: INTERNAL.HOTFIX.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-hotfix
+  carrier-service-calendar:
+    topic-names: INTERNAL.HOTFIX.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-hotfix
+  pickup-calendar:
+    topic-names: INTERNAL.HOTFIX.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-hotfix
+  node-service-option-buffer:
+    topic-names: INTERNAL.HOTFIX.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-hotfix
+  transit:
+    topic-names: INTERNAL.HOTFIX.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-hotfix
+  transit-buffer:
+    topic-names: INTERNAL.HOTFIX.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-hotfix
+  transfer-schedule:
+    topic-names: INTERNAL.HOTFIX.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-hotfix
+  item:
+    dlt-topic: ITEM_MASTER_INTEGRATION.DLT
+
+
+
+next-cache:
+  caches:
+    -
+      cacheName: task-info
+      ttlSeconds: 14400
+      maxLimit: 50
+  refresh-cache:
+    topic: INTERNAL.HOTFIX.PE.REFRESH_CACHE_INV
+  cacheManager: caffeine
+platform:
+  tasks:
+    enabled: true
+  tasks-scheduler:
+    enabled: true
+    milliseconds: 5000
+  authFilter:
+    enabled: false
+neo-platform:
+  auth-injector:
+    token-strategy: generate
+    filter:
+      enabled: true
+    client-uri-mappings:
+      my-client: /**
+  auth-validator:
+    application-name: pe-masterdata
+    header:
+      tenant-id: x-tenant-id
+    issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev
+    authz-config:
+      config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
+      refresh-interval-mins: 30
+      role:
+        json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles,\$.resource_access.applicationclient-pe-core-uservice.roles,\$.resource_access.applicationclient-pe-iv-cache.roles,\$.resource_access.applicationclient-pe-capacity-uservice.roles,\$.resource_access.applicationclient-pe-neip-uservice.roles
+kafka:
+  input:
+    taskTopics: INTERNAL.HOTFIX.PE.RETRY_TOPIC_INV
+    taskGroupId: pe-retry

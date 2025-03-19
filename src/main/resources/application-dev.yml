@@ -189,6 +189,9 @@ master-data:
   transit-buffer:
     topic-names: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-dev
+  transfer-schedule:
+    topic-names: INTERNAL.DEV.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-dev
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
@@ -222,7 +225,7 @@ neo-platform:
       tenant-id: x-tenant-id
     issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev
     authz-config:
-      config-path: "https://internal-dev.nextuple.com/services/authz-config/api/configurations/groups/application-group/scope-id/pe-masterdata"
+      config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
       refresh-interval-mins: 30
       role:
         json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles,\$.resource_access.applicationclient-pe-core-uservice.roles,\$.resource_access.applicationclient-pe-iv-cache.roles,\$.resource_access.applicationclient-pe-capacity-uservice.roles,\$.resource_access.applicationclient-pe-neip-uservice.roles
@@ -230,3 +233,59 @@ kafka:
   input:
     taskTopics: INTERNAL.DEV.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry
+
+kafka-topic-flags:
+  item-master:
+    enabled: true
+  master_data_update_event:
+    enabled: true
+  jobs-framework:
+    feed-metrics-consumer:
+      enabled: true
+    job-completion-consumer:
+      enabled: true
+    kafka-publish:
+      enabled: true
+    result-publish:
+      enabled: true
+    result-consumer:
+      enabled: true
+    record-consumer:
+      enabled: true
+  pe-public-webhook:
+    iv-feed:
+      enabled: true
+    item-feed:
+      enabled: true
+    pe-response:
+      enabled: true
+  master-data:
+    node:
+      enabled: true
+    node-carrier:
+      enabled: true
+    carrier:
+      enabled: true
+    processing-lead-time:
+      enabled: true
+    calendar:
+      enabled: true
+    node-calendar:
+      enabled: true
+    carrier-service-calendar:
+      enabled: true
+    pickup-calendar:
+      enabled: true
+    node-service-option-buffer:
+      enabled: true
+    transit:
+      enabled: true
+    transit-buffer:
+      enabled: true
+    transfer-schedule:
+      enabled: true
+  refresh-cache:
+    enabled: true
+  input:
+    taskTopics:
+      enabled: true

@@ -1,4 +1,16 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          my-client:
+            client-id: applicationclient-pe-masterdata-uservice
+            client-secret: \${MASTER-DATA-KEYCLOAK-CLIENT-ID}
+            authorization-grant-type: client_credentials
+            scope: applicationclient-pe-masterdata-scope
+        provider:
+          my-client:
+            token-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev/protocol/openid-connect/token
   jpa:
     database: POSTGRESQL
     show-sql: false
@@ -176,6 +188,9 @@ master-data:
   transit-buffer:
     topic-names: INTERNAL.PERF.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-perf
+  transfer-schedule:
+    topic-names: INTERNAL.PERF.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-perf
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
@@ -196,6 +211,23 @@ platform:
     milliseconds: 5000
   authFilter:
     enabled: false
+neo-platform:
+  auth-injector:
+    token-strategy: generate
+    filter:
+      enabled: true
+    client-uri-mappings:
+      my-client: /**
+  auth-validator:
+    application-name: pe-masterdata
+    header:
+      tenant-id: x-tenant-id
+    issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev
+    authz-config:
+      config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
+      refresh-interval-mins: 30
+      role:
+        json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles,\$.resource_access.applicationclient-pe-core-uservice.roles,\$.resource_access.applicationclient-pe-iv-cache.roles,\$.resource_access.applicationclient-pe-capacity-uservice.roles,\$.resource_access.applicationclient-pe-neip-uservice.roles
 kafka:
   input:
     taskTopics: INTERNAL.PERF.PE.RETRY_TOPIC_INV

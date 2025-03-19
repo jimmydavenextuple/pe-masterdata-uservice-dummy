@@ -61,4 +61,15 @@ public class TransferScheduleCreationRequest implements Serializable {
   @NotNull(message = "endTime can't be null")
   @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", lenient = OptBoolean.FALSE)
   private DateTime endTime;
+
+  @Schema(
+      description =
+          "Rule containing comma separated values, associated with the transfer schedule.",
+      example = "DC:KITCHEN")
+  private String rule;
+
+  @Schema(
+      description = "Name of the rule assoicated with the transfer schedule.",
+      example = "KitchenItemRule")
+  private String ruleName;
 }

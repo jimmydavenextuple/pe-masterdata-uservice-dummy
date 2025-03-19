@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class NodeServiceOptionBufferFeedIngestionService
     implements FeedIngestionService<MasterDataIngestionDto<NodeServiceOptionBufferFeedDto>> {
-  @Value("${master-data.node-service-option-buffer.topic-name:null}")
+  @Value("${master-data.node-service-option-buffer.topic-names:null}")
   private String nodeServiceOptionBufferFeedTopic;
 
   @Value("${kafka-topic-flags.master-data.node-service-option-buffer.enabled:false}")

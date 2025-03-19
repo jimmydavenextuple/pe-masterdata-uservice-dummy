@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class NodeServiceOptionFeedIngestionService
     implements FeedIngestionService<MasterDataIngestionDto<ProcessingLeadTimeFeedDto>> {
-  @Value("${master-data.processing-lead-time.topic-name:null}")
+  @Value("${master-data.processing-lead-time.topic-names:null}")
   private String nodeServiceOptionFeedTopic;
 
   @Value("${kafka-topic-flags.master-data.processing-lead-time.enabled:false}")

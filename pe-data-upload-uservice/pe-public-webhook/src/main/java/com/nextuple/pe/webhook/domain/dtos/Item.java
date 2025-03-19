@@ -68,4 +68,5 @@ public class Item {
   private String handlingType;
 
   private Integer buyingCost;
+  private Double validDropoffDuration;
 }

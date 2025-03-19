@@ -12,11 +12,12 @@ import com.nextuple.core.cache.mapper.GenericMapper;
 import com.nextuple.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import com.nextuple.transit.cache.domain.TransferScheduleCacheKey;
 import com.nextuple.transit.cache.domain.TransferScheduleCacheValue;
+import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.spring.cache.feign.TransferScheduleFeignImpl;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,9 +40,26 @@ public class TransferScheduleFeignClientServiceImpl
   @Override
   public TransferScheduleCacheValue get(TransferScheduleCacheKey key) {
     try {
+      DateTime startTime = new DateTime(key.getDateBucket());
+      startTime = startTime.withTime(0, 0, 0, 0);
+      DateTime endTime = new DateTime(key.getDateBucket());
+      endTime = endTime.withTime(23, 59, 59, 0);
+      TransferScheduleRangeRequest request =
+          TransferScheduleRangeRequest.builder()
+              .orgId(key.getOrgId())
+              .dropoffNodeId(key.getDropoffNode())
+              .rule(key.getRule())
+              .ruleName(key.getRuleName())
+              .startTime(startTime)
+              .horizonDays(1)
+              .endTime(endTime)
+              .pastDays(1)
+              .exclusive(true)
+              .build();
+
       BaseResponse<List<TransferScheduleResponse>> response =
-          transferScheduleFeign.fetchTransferSchedules(key.getOrgId(), key.getDropoffNode());
-      if (Objects.isNull(response.getPayload()) || response.getPayload().isEmpty()) {
+          transferScheduleFeign.fetchTransferSchedulesInRange(request);
+      if (response.getPayload().isEmpty()) {
         return TransferScheduleCacheValue.builder().build();
       }
       return transferScheduleMapper.responseToCacheValue(response);

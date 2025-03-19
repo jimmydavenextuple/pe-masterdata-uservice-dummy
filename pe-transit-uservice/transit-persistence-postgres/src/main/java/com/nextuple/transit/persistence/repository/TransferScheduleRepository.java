@@ -20,5 +20,8 @@ public interface TransferScheduleRepository
   Optional<TransferScheduleEntity> findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
       String sourceNodeId, String dropoffNodeId, Date startTime, String orgId);
 
+  Optional<TransferScheduleEntity> findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgIdAndRule(
+      String sourceNodeId, String dropoffNodeId, Date startTime, String orgId, String rule);
+
   List<TransferScheduleEntity> findByDropoffNodeIdAndOrgId(String dropoffNodeId, String orgId);
 }
