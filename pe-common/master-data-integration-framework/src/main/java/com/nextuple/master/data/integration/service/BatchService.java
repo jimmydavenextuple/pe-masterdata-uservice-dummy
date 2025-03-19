@@ -25,6 +25,7 @@ import feign.FeignException;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -165,6 +166,7 @@ public abstract class BatchService<T extends CommonMasterDataFieldsDto> { // NOS
     BatchResponse batchResponse = new BatchResponse();
     List<ResponseDto> responseDtoList = new ArrayList<>();
     for (BatchRequest<T> batchRequest : batchRequestList) {
+      batchRequest.setReceivedTimestamp(new Date());
       ResponseDto responseDto = processRecordBasedOnAction(batchRequest, isRetryRequired);
       if (Objects.nonNull(batchRequest.getRecordNo()))
         responseDto.setRecordNo(batchRequest.getRecordNo());
