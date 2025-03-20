@@ -7,10 +7,7 @@ import com.nextuple.core.registry.NearCacheRegistry;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
@@ -18,6 +15,7 @@ import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -34,6 +32,12 @@ public class LocalCacheUpdateService {
   @Autowired NearCacheRegistry nearCacheRegistry;
 
   @Autowired Environment env;
+
+  @Value("${transfer-schedule.horizon-days}")
+  private int horizonDays;
+
+  @Value("${transfer-schedule.past-days}")
+  private int pastDays;
 
   public void handleLocalCacheUpdate(LocalCacheUpdateEvent localCacheUpdateEvent)
       throws IllegalAccessException,
@@ -125,17 +129,24 @@ public class LocalCacheUpdateService {
     }
 
     // set date bucket here
-    DateTime startDateTime = new DateTime(message.get("startTime")).toDateTime(DateTimeZone.UTC);
-    DateTime endDateTime = new DateTime(message.get("endTime")).toDateTime(DateTimeZone.UTC);
+    DateTime startDateTime =
+        new DateTime(message.get("startTime")).toDateTime(DateTimeZone.UTC); // Mar 19
+    DateTime endDateTime =
+        new DateTime(message.get("endTime")).toDateTime(DateTimeZone.UTC); // Mar 24
 
+    Set<Date> dateBucket = new HashSet<>();
+    for (int i = 0; i < horizonDays; i++) {
+      dateBucket.add(startDateTime.minusDays(i).withTime(0, 0, 0, 0).toDate());
+    }
+    for (int i = 0; i < pastDays; i++) {
+      dateBucket.add(endDateTime.plusDays(i).withTime(0, 0, 0, 0).toDate());
+    }
     var field = c.getDeclaredField("dateBucket");
     field.setAccessible(true); // NOSONAR
-    field.set(cacheKey, startDateTime.withTime(0, 0, 0, 0).toDate()); // NOSONAR
-
-    genericNearCacheService.delete(cacheKey); // NOSONAR
-
-    field.set(cacheKey, endDateTime.withTime(0, 0, 0, 0).toDate()); // NOSONAR
-    genericNearCacheService.delete(cacheKey); // NOSONAR
+    for (Date date : dateBucket) {
+      field.set(cacheKey, date); // NOSONAR
+      genericNearCacheService.delete(cacheKey); // NOSONAR
+    }
   }
 
   private static void castToRequiredType(Map<String, Object> message, String param, Field field) {

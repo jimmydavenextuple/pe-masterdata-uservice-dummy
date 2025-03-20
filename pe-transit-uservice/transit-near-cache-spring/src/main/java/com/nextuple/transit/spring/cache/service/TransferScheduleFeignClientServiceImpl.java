@@ -18,6 +18,7 @@ import com.nextuple.transit.spring.cache.feign.TransferScheduleFeignImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +30,12 @@ public class TransferScheduleFeignClientServiceImpl
         String,
         BaseResponse<List<TransferScheduleResponse>>> {
   private final TransferScheduleFeignImpl transferScheduleFeign;
+
+  @Value("${transfer-schedule.horizon-days}")
+  private int horizonDays;
+
+  @Value("${transfer-schedule.past-days}")
+  private int pastDays;
 
   private final GenericMapper<
           TransferScheduleCacheKey,
@@ -51,9 +58,9 @@ public class TransferScheduleFeignClientServiceImpl
               .rule(key.getRule())
               .ruleName(key.getRuleName())
               .startTime(startTime)
-              .horizonDays(1)
+              .horizonDays(horizonDays)
               .endTime(endTime)
-              .pastDays(1)
+              .pastDays(pastDays)
               .exclusive(true)
               .build();
 
