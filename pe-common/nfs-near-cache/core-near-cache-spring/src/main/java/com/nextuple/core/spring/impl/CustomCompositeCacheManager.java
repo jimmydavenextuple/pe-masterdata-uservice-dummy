@@ -14,11 +14,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConditionalOnProperty(value = "nearcache.enabled", havingValue = "true")
 public class CustomCompositeCacheManager implements CacheManager {
   private final Map<String, CacheManagerStrategy> strategies;
   private final CacheProperties cacheProperties;

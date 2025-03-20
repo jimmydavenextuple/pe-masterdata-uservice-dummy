@@ -9,11 +9,13 @@ package com.nextuple.core.spring.impl;
 
 import com.nextuple.core.spring.CacheManagerStrategy;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConditionalOnProperty(value = "nearcache.enabled", havingValue = "true")
 public class CaffeineCacheManagerStrategy implements CacheManagerStrategy {
   private final CaffeineCacheManager caffeineCacheManager;
 
