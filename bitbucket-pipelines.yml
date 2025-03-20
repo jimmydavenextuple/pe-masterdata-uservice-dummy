@@ -228,6 +228,7 @@ definitions:
           - gradle
           - sonar
         script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
           - microdnf install git
           - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
@@ -251,6 +252,7 @@ definitions:
           - gradle
           - sonar
         script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
           - bash ./gradlew -Pbuild_target=QA clean build --refresh-dependencies artifactoryPublish
           - export SPACE=" "
           - bash ./gradlew -Pbuild_target=QA -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
@@ -262,6 +264,7 @@ definitions:
         caches:
           - gradle
         script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
           - bash ./gradlew -Pbuild_target=STAGED clean build artifactoryPublish
           - export SPACE=" "
           - bash ./gradlew -Pbuild_target=STAGED -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
@@ -296,6 +299,7 @@ definitions:
           - sonar
           - cve
         script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
           - microdnf install git
           - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
