@@ -87,11 +87,12 @@ server:
           memory: 2Gi
           cpu: 1
     performance:
-      ingress: yes
+      ingress: no
       sidecar-keycloak-plugin: yes
       middleman: no
       prometheus: yes
       storage: yes
+      java-agents: -javaagent:/mnt/shared-storage/newrelic-agent.jar
       java-opts: "-Xms1024m -Xmx1024m"
       keyvault: yes
       scale:
