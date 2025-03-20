@@ -234,6 +234,13 @@ kafka:
     taskGroupId: pe-retry
 
 kafka-topic-flags:
+  pe-public-webhook:
+    iv-feed:
+      enabled: true
+    item-feed:
+      enabled: true
+    pe-response:
+      enabled: true
   master-data:
     node:
       enabled: false
