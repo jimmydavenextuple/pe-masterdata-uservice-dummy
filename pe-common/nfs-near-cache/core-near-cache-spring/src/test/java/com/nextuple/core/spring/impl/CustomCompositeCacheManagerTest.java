@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.cache.Cache;
 
-public class CustomCompositeCacheManagerTest {
+class CustomCompositeCacheManagerTest {
 
   @Mock private CacheProperties cacheProperties;
 
