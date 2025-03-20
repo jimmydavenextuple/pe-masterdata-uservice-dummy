@@ -14,6 +14,7 @@ public class CacheProperties {
   public static final String CACHE_PROPERTY_VALUE = "100,24,false,sync";
 
   private Map<String, String> cachemap;
+  public Map<String, String> cacheManagerMap;
 
   public Map<String, String> setCacheDefaults() {
     Map<String, String> defaultMap = new HashMap<>();

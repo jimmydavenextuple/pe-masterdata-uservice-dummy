@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2025., Nextuple, Inc. and/or its affiliates. All rights reserved.
+ *
+ * The software, code and related documentation made available to you by Nextuple, Inc. are provided under a written agreement containing restrictions on use and disclosure and are protected by copyright and other intellectual property laws. As described in and unless expressly permitted in your agreement, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or de-compilation of this software, unless required by law or permitted via contract for interoperability, is strictly prohibited.
+ * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
+ */
+
+package com.nextuple.core.spring.impl;
+
+import com.nextuple.core.spring.CacheManagerStrategy;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.stereotype.Component;
+
+@Component
+@ConditionalOnProperty(name = "nearcache.redis-enabled", havingValue = "true")
+public class RedisCacheManagerStrategy implements CacheManagerStrategy {
+  private final CacheManager redisCacheManager;
+
+  public RedisCacheManagerStrategy(@Qualifier("redisCacheManager") CacheManager redisCacheManager) {
+    this.redisCacheManager = redisCacheManager;
+  }
+
+  @Override
+  public Cache getCache(String name) {
+    return redisCacheManager.getCache(name);
+  }
+}
