@@ -309,7 +309,7 @@ definitions:
           - bash ./gradlew sonarqube showSonarQubeLink --info
     - step: &integration-test
         size: 2x
-        name: PR Build
+        name: Integration Test
         caches:
           - gradle
           - sonar
@@ -320,8 +320,6 @@ definitions:
           - build/reports/tests/test/**
         script:
           - export TESTCONTAINERS_RYUK_DISABLED=true
-          - microdnf install git
-          - microdnf install findutils
           - bash ./gradlew :test
     - step: &Clear-Cache
         name: Clear Pipeline Cache

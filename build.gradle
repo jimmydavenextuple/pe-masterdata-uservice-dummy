@@ -61,6 +61,13 @@ repositories {
 }
 
 test {
+    if (project.hasProperty('excludeTests')) {
+        def excludeTests = project.excludeTests.split(',')
+        excludeTests.each { excludeTest ->
+            exclude '**/' + excludeTest
+        }
+    }
+
     useJUnitPlatform()
 }
 
