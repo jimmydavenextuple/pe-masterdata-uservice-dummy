@@ -20,7 +20,7 @@ public interface RulesConfigurationRepository
   List<RulesConfigurationEntity> findByOrgIdAndAttributeDefinitionIdAndRuleStartsWith(
       String orgId, Long attributeDefinitionId, String rule);
 
-  Optional<RulesConfigurationEntity> findByOrgIdAndAttributeDefinitionIdAndRule(
+  List<RulesConfigurationEntity> findByOrgIdAndAttributeDefinitionIdAndRule(
       String orgId, Long attributeDefinitionId, String rule);
 
   Optional<RulesConfigurationEntity> findByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
