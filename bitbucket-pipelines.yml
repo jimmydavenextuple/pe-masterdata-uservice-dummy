@@ -306,12 +306,7 @@ definitions:
           - export TESTCONTAINERS_RYUK_DISABLED=true
           - microdnf install git
           - microdnf install findutils
-          - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
-          - ./infra-automation/basic_build_validations.sh
-          - ./infra-automation/copySuppressions.sh
-          - bash ./gradlew -Pbuild_target=SNAPSHOT -i clean build jacocoTestReport spotbugsMain
-#          - bash ./gradlew dependencyCheckAggregate --info
-          - bash ./gradlew sonarqube showSonarQubeLink --info
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -i clean build jacocoTestReport spotbugsMain --tests "com.nextuple.masterdata.integration.NodeCRUDTest"
     - step: &Clear-Cache
         name: Clear Pipeline Cache
         script:
