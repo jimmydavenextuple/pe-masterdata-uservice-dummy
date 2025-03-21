@@ -6,12 +6,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@DirtiesContext
 @SpringBootTest(
     classes = PeMasterDataUserviceApplication.class,
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
@@ -19,7 +21,7 @@ import org.testcontainers.utility.DockerImageName;
       "spring.datasource.url=jdbc:tc:postgresql:17-alpine:///ips?TC_INITSCRIPT=file:src/test/resources/db_setup.sql",
       "server.port=8080"
     })
-@ActiveProfiles("testcontainer")
+@ActiveProfiles("test")
 public abstract class AbstractIntegrationTest {
   public static KafkaContainer kafka =
       new KafkaContainer(DockerImageName.parse("apache/kafka-native:3.8.0"));

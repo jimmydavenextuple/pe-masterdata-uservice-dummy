@@ -102,10 +102,13 @@ spring:
       enable-auto-commit: true
       auto-offset-reset: latest
   sql.init.platform: postgres
-
+  test:
+    context:
+      failure-threshold: 5
 logging:
   level:
-    com.nextuple: INFO
+    com.nextuple: DEBUG
+    root: INFO
 entity-listener:
   kafka:
     enabled: false

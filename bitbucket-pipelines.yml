@@ -298,6 +298,10 @@ definitions:
           - gradle
           - sonar
           - cve
+        services:
+          - docker
+        artifacts:
+          - build/reports/tests/test/**
         script:
           - export TESTCONTAINERS_RYUK_DISABLED=true
           - microdnf install git
@@ -305,7 +309,7 @@ definitions:
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
           - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
-          - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotbugsMain
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -i clean build jacocoTestReport spotbugsMain
 #          - bash ./gradlew dependencyCheckAggregate --info
           - bash ./gradlew sonarqube showSonarQubeLink --info
     - step: &Clear-Cache

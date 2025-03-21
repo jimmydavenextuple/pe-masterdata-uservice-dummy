@@ -160,7 +160,7 @@ public class IntegrationTestUtils {
     Assertions.assertEquals(
         httpResponse,
         response.getStatusCode().value(),
-        "Error in calling the rest endpoint: " + response.getBody());
+        "Error in calling the " + url + " endpoint: " + url + response.getBody());
     return response.getBody();
   }
 
