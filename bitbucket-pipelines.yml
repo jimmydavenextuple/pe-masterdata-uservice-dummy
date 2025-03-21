@@ -321,7 +321,7 @@ definitions:
         script:
           - microdnf install findutils
           - export TESTCONTAINERS_RYUK_DISABLED=true
-          - bash ./gradlew :test --tests "com.nextuple.masterdata.integration.NodeCRUDTest"
+          - bash ./gradlew :test --tests "com.nextuple.masterdata.integration.NodeIntegrationTest"
     - step: &Clear-Cache
         name: Clear Pipeline Cache
         script:
