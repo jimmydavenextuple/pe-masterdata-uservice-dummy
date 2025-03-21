@@ -7,6 +7,7 @@
 
 package com.nextuple.promise.sourcing.rule.service;
 
+import static com.nextuple.promise.sourcing.rule.TestUtil.CUSTOM_ATTRIBUTES;
 import static com.nextuple.promise.sourcing.rule.TestUtil.SOURCING_RULE_NAME;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -819,6 +820,16 @@ class SourcingRulesConfigurationServiceTest {
     assertEquals(
         testUtil.getSourcingRulesEntity().getCustomAttributes(),
         fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getCustomAttributes());
+    assertEquals(
+        CUSTOM_ATTRIBUTES,
+        fetchSourcingRulesResponse
+            .getSourcingRulesInfo()
+            .getFirst()
+            .getNodeGroupDetailsInfo()
+            .getFirst()
+            .getNodeInfo()
+            .getFirst()
+            .getCustomAttributes());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
@@ -928,6 +939,16 @@ class SourcingRulesConfigurationServiceTest {
     assertEquals(
         testUtil.getSourcingRulesEntity().getCustomAttributes(),
         fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getCustomAttributes());
+    assertEquals(
+        CUSTOM_ATTRIBUTES,
+        fetchSourcingRulesResponse
+            .getSourcingRulesInfo()
+            .getFirst()
+            .getNodeGroupDetailsInfo()
+            .getFirst()
+            .getNodeInfo()
+            .getFirst()
+            .getCustomAttributes());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
@@ -1038,7 +1059,16 @@ class SourcingRulesConfigurationServiceTest {
     assertEquals(
         testUtil.getSourcingRulesEntity().getCustomAttributes(),
         fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getCustomAttributes());
-
+    assertEquals(
+        CUSTOM_ATTRIBUTES,
+        fetchSourcingRulesResponse
+            .getSourcingRulesInfo()
+            .getFirst()
+            .getNodeGroupDetailsInfo()
+            .getFirst()
+            .getNodeInfo()
+            .getFirst()
+            .getCustomAttributes());
     verify(sourcingRulesConfigurationPersistenceService, times(2))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
             anyString(), anyLong(), argumentCaptor.capture());
@@ -1135,6 +1165,16 @@ class SourcingRulesConfigurationServiceTest {
     assertEquals(
         testUtil.getSourcingRulesEntity().getCustomAttributes(),
         fetchSourcingRulesResponse.getSourcingRulesInfo().get(0).getCustomAttributes());
+    assertEquals(
+        CUSTOM_ATTRIBUTES,
+        fetchSourcingRulesResponse
+            .getSourcingRulesInfo()
+            .getFirst()
+            .getNodeGroupDetailsInfo()
+            .getFirst()
+            .getNodeInfo()
+            .getFirst()
+            .getCustomAttributes());
 
     verify(sourcingRulesConfigurationPersistenceService, times(1))
         .getSourcingRulesByOrgIdAndSourcingAttributesDefinitionIdAndSourcingRule(
