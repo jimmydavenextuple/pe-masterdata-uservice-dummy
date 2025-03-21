@@ -86,6 +86,23 @@ server:
         max:
           memory: 2Gi
           cpu: 1
+    integration:
+      ingress: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
+      prometheus: yes
+      storage: yes
+      heapvolume: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 2Gi
+          cpu: 1
+        max:
+          memory: 2Gi
+          cpu: 1
     orielly:
       ingress: yes
       middleman: yes
@@ -378,7 +395,14 @@ pipelines:
               name: Deploy Integration
               trigger: manual
               deployment: integration
-
+    
+    integration:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Integration
+          trigger: manual
+          deployment: integration
           # - step:
           #     !!merge <<: *deploy
           #     name: Deploy PERF
