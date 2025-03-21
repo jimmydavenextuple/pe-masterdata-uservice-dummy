@@ -7,7 +7,9 @@
 
 package com.nextuple.promise.sourcing.rule.service;
 
-import static com.nextuple.promise.sourcing.rule.TestUtil.*;
+import static com.nextuple.promise.sourcing.rule.TestUtil.CUSTOM_ATTRIBUTES;
+import static com.nextuple.promise.sourcing.rule.TestUtil.NODE_GROUP_ID;
+import static com.nextuple.promise.sourcing.rule.TestUtil.NODE_ID;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
