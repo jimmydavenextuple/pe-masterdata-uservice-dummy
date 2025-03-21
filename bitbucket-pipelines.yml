@@ -319,6 +319,7 @@ definitions:
         artifacts:
           - build/reports/tests/test/**
         script:
+          - microdnf install findutils
           - export TESTCONTAINERS_RYUK_DISABLED=true
           - bash ./gradlew :test
     - step: &Clear-Cache
@@ -331,7 +332,7 @@ definitions:
 pipelines:
   pull-requests:
     '**':
-      - step: *pr-build
+#      - step: *pr-build
       - step: *integration-test
   tags:
     '*-SNAPSHOT':
