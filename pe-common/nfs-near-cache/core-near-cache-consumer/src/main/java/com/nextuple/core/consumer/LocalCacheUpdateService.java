@@ -33,10 +33,10 @@ public class LocalCacheUpdateService {
 
   @Autowired Environment env;
 
-  @Value("${transfer-schedule.horizon-days}")
+  @Value("${transfer-schedule.horizon-days:5}")
   private int horizonDays;
 
-  @Value("${transfer-schedule.past-days}")
+  @Value("${transfer-schedule.past-days:5}")
   private int pastDays;
 
   public void handleLocalCacheUpdate(LocalCacheUpdateEvent localCacheUpdateEvent)
