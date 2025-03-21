@@ -215,6 +215,4 @@ kafka-topic-flags:
     taskTopics:
       enabled: false
 
-redis-enabled: true
-
 

@@ -1,4 +1,25 @@
 spring:
+  data:
+    redis:
+      retry-attempt: 3
+      retry-interval: 1500
+      password: \${COMMON-REDIS-PASSWORD}
+      port: 6379
+      jedis:
+        pool:
+          max-active: 10
+      cluster:
+        nodes:
+          - redis-0.redis.svc.cluster.local:6379
+          - redis-1.redis.svc.cluster.local:6379
+          - redis-2.redis.svc.cluster.local:6379
+          - redis-3.redis.svc.cluster.local:6379
+          - redis-4.redis.svc.cluster.local:6379
+          - redis-5.redis.svc.cluster.local:6379
+          - redis-6.redis.svc.cluster.local:6379
+          - redis-7.redis.svc.cluster.local:6379
+          - redis-8.redis.svc.cluster.local:6379
+        max-redirects: 9
   security:
     oauth2:
       client:
@@ -259,3 +280,4 @@ kafka-topic-flags:
       enabled: false
     transfer-schedule:
       enabled: true
+redis-enabled: true
