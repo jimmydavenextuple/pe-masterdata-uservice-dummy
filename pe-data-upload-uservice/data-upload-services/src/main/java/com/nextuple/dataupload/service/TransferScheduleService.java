@@ -10,24 +10,235 @@ package com.nextuple.dataupload.service;
 import static com.nextuple.dataupload.controller.TransferSchedulesController.TRANSFER_SCHEDULE_DEFAULT_SORT_BY;
 
 import com.nextuple.common.base.PagePayload;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.util.PaginationUtil;
+import com.nextuple.dataupload.util.CommonDashboardUtil;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
+import com.nextuple.promise.sourcing.rule.api.domain.feign.SourcingAttributeFeign;
+import com.nextuple.promise.sourcing.rule.api.domain.feign.SourcingAttributesDefinitionFeign;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.GenericDetailsResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.GenericPageResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.GenericPaginationAttribute;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributeResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.pojo.GenericColumnInfoDto;
 import com.nextuple.transit.domain.feign.TransferScheduleFeign;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class TransferScheduleService {
   private final TransferScheduleFeign transferScheduleFeign;
+  private final SourcingAttributesDefinitionFeign sourcingAttributesDefinitionFeign;
+  private final SourcingAttributeFeign sourcingAttributeFeign;
 
   private static final String PAGINATION_URL =
       "transfer-schedule/ui/orgId/%s?pageNo=%d&pageSize=%d";
+
+  public GenericPageResponse getTransferScheduleListV2(
+      String orgId,
+      PageParams pageParams,
+      FetchTransferScheduleRequest request,
+      Boolean isPagination)
+      throws CommonServiceException {
+    CommonDashboardUtil.handleInvalidSortOrder(pageParams.getSortOrder().get());
+    GenericDetailsResponse transferResponse = new GenericDetailsResponse();
+    GenericPaginationAttribute pagination = new GenericPaginationAttribute();
+    List<GenericColumnInfoDto> transferScheduleColumnInfoDtos = new ArrayList<>();
+    GenericPageResponse finalResponse = new GenericPageResponse();
+    BaseResponse<SourcingAttributesDefinitionResponse> sourcingAttributeDefinitionResponse =
+        sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
+            orgId, SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
+    if (sourcingAttributeDefinitionResponse != null
+        && sourcingAttributeDefinitionResponse.getPayload() != null) {
+      SourcingAttributesDefinitionResponse sourcingAttributeDefinitions =
+          sourcingAttributeDefinitionResponse.getPayload();
+      List<SourcingAttributeResponse> requiredAttributeList =
+          getSourcingAttributes(orgId, sourcingAttributeDefinitions, true);
+      List<SourcingAttributeResponse> optionalAttributeList =
+          getSourcingAttributes(orgId, sourcingAttributeDefinitions, false);
+
+      BaseResponse<PagePayload<TransferScheduleResponse>> response =
+          transferScheduleFeign.fetchTransferSchedule(
+              orgId,
+              isPagination,
+              pageParams.getPageNo().get(),
+              pageParams.getPageSize().get(),
+              pageParams.getSortBy().get(),
+              pageParams.getSortOrder().get(),
+              request);
+
+      PagePayload.Pagination paginationConfig = response.getPayload().getPagination();
+      List<TransferScheduleResponse> transferScheduleData = response.getPayload().getData();
+      pagination.setTotalRecords(Long.valueOf(paginationConfig.getTotalRecords()));
+      pagination.setTotalPages(paginationConfig.getTotalPages());
+      pagination.setCurrentPage(pageParams.getPageNo().get());
+      pagination.setSortOrder(pageParams.getSortOrder().get());
+      pagination.setSortBy(pageParams.getSortBy().get());
+
+      List<Map<String, Object>> rows =
+          populateRows(transferScheduleData, requiredAttributeList, optionalAttributeList);
+
+      populateHolidayCutoffColumnInfo(
+          transferScheduleColumnInfoDtos, requiredAttributeList, optionalAttributeList);
+
+      transferResponse.setColumns(transferScheduleColumnInfoDtos);
+      transferResponse.setRows(rows);
+
+      finalResponse.setData(transferResponse);
+      setPaginationIfNotEmpty(finalResponse, pagination, transferScheduleData);
+    }
+    return finalResponse;
+  }
+
+  private List<SourcingAttributeResponse> getSourcingAttributes(
+      String orgId,
+      SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse,
+      boolean required) {
+    String attributesString =
+        required
+            ? sourcingAttributesDefinitionResponse.getReqAttributes()
+            : sourcingAttributesDefinitionResponse.getOptAttributes();
+    List<SourcingAttributeResponse> sourcingAttributeList = new ArrayList<>();
+    if (Objects.nonNull(attributesString)) {
+      String[] attributeIdsFromActiveSourcingAttributesDefinition =
+          attributesString.split("\\s*,\\s*");
+      for (String attributeId : attributeIdsFromActiveSourcingAttributesDefinition) {
+        Long attribute = Long.parseLong(attributeId.trim());
+        BaseResponse<SourcingAttributeResponse> sourcingAttribute =
+            sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, attribute);
+        if (sourcingAttribute != null && sourcingAttribute.getPayload() != null) {
+          sourcingAttributeList.add(sourcingAttribute.getPayload());
+        }
+      }
+    }
+    return sourcingAttributeList;
+  }
+
+  private GenericColumnInfoDto getTransferColumnInfoDto(
+      String columnName, String columnMeta, boolean isSortable) {
+    return GenericColumnInfoDto.builder()
+        .columnName(columnName)
+        .columnMeta(columnMeta)
+        .isSortable(isSortable)
+        .build();
+  }
+
+  private void populateHolidayCutoffColumnInfo(
+      List<GenericColumnInfoDto> transferColumnInfoDtos,
+      List<SourcingAttributeResponse> requiredAttributesList,
+      List<SourcingAttributeResponse> optionalAttributesList) {
+    transferColumnInfoDtos.add(getTransferColumnInfoDto("Rule Name", "ruleName", false));
+    transferColumnInfoDtos.add(getTransferColumnInfoDto("Origin Node", "sourceNodeId", true));
+
+    transferColumnInfoDtos.add(getTransferColumnInfoDto("Destination Node", "dropoffNodeId", true));
+    transferColumnInfoDtos.add(getTransferColumnInfoDto("Pickup", "startTime", false));
+    transferColumnInfoDtos.add(getTransferColumnInfoDto("Dropoff", "endTime", false));
+    addAttributesToTransferSchedule(transferColumnInfoDtos, requiredAttributesList);
+    addAttributesToTransferSchedule(transferColumnInfoDtos, optionalAttributesList);
+  }
+
+  private void addAttributesToTransferSchedule(
+      List<GenericColumnInfoDto> transferScheduleColumnInfoDtos,
+      List<SourcingAttributeResponse> attributesList) {
+    for (SourcingAttributeResponse attribute : attributesList) {
+      if (attribute != null) {
+        transferScheduleColumnInfoDtos.add(
+            getTransferColumnInfoDto(
+                attribute.getAttributeName(), attribute.getAttributeName(), false));
+      }
+    }
+  }
+
+  private void setPaginationIfNotEmpty(
+      GenericPageResponse finalResponse,
+      GenericPaginationAttribute pagination,
+      List<TransferScheduleResponse> transferScheduleResponses) {
+
+    if (CollectionUtils.isEmpty(transferScheduleResponses)) {
+      finalResponse.setPagination(null);
+    } else {
+      finalResponse.setPagination(pagination);
+    }
+  }
+
+  private List<Map<String, Object>> populateRows(
+      List<TransferScheduleResponse> transferScheduleList,
+      List<SourcingAttributeResponse> requiredAttributesList,
+      List<SourcingAttributeResponse> optionalAttributesList) {
+
+    List<Map<String, Object>> rows = new ArrayList<>();
+
+    for (TransferScheduleResponse transferScheduleResponse : transferScheduleList) {
+      String[] ruleAttributes = transferScheduleResponse.getRule().split(":");
+
+      Map<String, Object> rowEntity = new HashMap<>();
+      boolean isRuleProvided =
+          isIsRuleProvided(
+              transferScheduleResponse.getRule(), transferScheduleResponse.getRuleName());
+
+      rowEntity.put("sourceNodeId", transferScheduleResponse.getSourceNodeId());
+      rowEntity.put("dropoffNodeId", transferScheduleResponse.getDropoffNodeId());
+      rowEntity.put("startTime", transferScheduleResponse.getStartTime());
+      rowEntity.put("endTime", transferScheduleResponse.getEndTime());
+      if (isRuleProvided) {
+        populateRuleRelatedColumns(
+            requiredAttributesList,
+            optionalAttributesList,
+            transferScheduleResponse,
+            rowEntity,
+            ruleAttributes);
+      }
+      rows.add(rowEntity);
+    }
+    return rows;
+  }
+
+  private static void populateRuleRelatedColumns(
+      List<SourcingAttributeResponse> requiredAttributesList,
+      List<SourcingAttributeResponse> optionalAttributesList,
+      TransferScheduleResponse transferScheduleResponse,
+      Map<String, Object> rowEntity,
+      String[] ruleAttributes) {
+    rowEntity.put("ruleName", transferScheduleResponse.getRuleName());
+    List<SourcingAttributeResponse> combinationOfRequiredAndOptionalAttributes = new ArrayList<>();
+    combinationOfRequiredAndOptionalAttributes.addAll(requiredAttributesList);
+    combinationOfRequiredAndOptionalAttributes.addAll(optionalAttributesList);
+
+    int attributeIndex = 0;
+    for (SourcingAttributeResponse attribute : combinationOfRequiredAndOptionalAttributes) {
+      if (Objects.nonNull(attribute)) {
+        if (attributeIndex < ruleAttributes.length
+            && !StringUtils.isEmpty(ruleAttributes[attributeIndex])) {
+          rowEntity.put(attribute.getAttributeName(), ruleAttributes[attributeIndex]);
+        } else {
+          rowEntity.put(attribute.getAttributeName(), null);
+        }
+        attributeIndex++;
+      }
+    }
+  }
+
+  private boolean isIsRuleProvided(String rule, String ruleName) {
+    return !(Objects.isNull(rule)
+        || rule.isEmpty()
+        || Objects.isNull(ruleName)
+        || ruleName.isEmpty());
+  }
 
   public PagePayload<TransferScheduleResponse> getTransferScheduleList(
       String orgId, PageParams pageParams, FetchTransferScheduleRequest request) {

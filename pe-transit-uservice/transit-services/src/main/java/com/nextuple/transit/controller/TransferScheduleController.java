@@ -58,80 +58,80 @@ public class TransferScheduleController {
   private final PageProperties pageProperties;
 
   @PostMapping(
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
+          consumes = MediaType.APPLICATION_JSON_VALUE,
+          produces = MediaType.APPLICATION_JSON_VALUE)
   @CreateTransferScheduleDoc
   public ResponseEntity<BaseResponse<TransferScheduleResponse>> createTransferSchedule(
-      @Valid @RequestBody TransferScheduleCreationRequest tranferScheduleRequest)
-      throws CommonServiceException, PromiseEngineException {
+          @Valid @RequestBody TransferScheduleCreationRequest tranferScheduleRequest)
+          throws CommonServiceException, PromiseEngineException {
     var response = transferScheduleService.createTransferSchedule(tranferScheduleRequest);
     return ResponseEntity.ok(
-        BaseResponse.builder()
-            .message("Transfer Schedule created successfully.")
-            .payload(response)
-            .build());
+            BaseResponse.builder()
+                    .message("Transfer Schedule created successfully.")
+                    .payload(response)
+                    .build());
   }
 
   @GetMapping(
-      path = "/orgId/{orgId}/dropoffNodeId/{dropoffNodeId}",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+          path = "/orgId/{orgId}/dropoffNodeId/{dropoffNodeId}",
+          produces = MediaType.APPLICATION_JSON_VALUE)
   @GetTransferScheduleDoc
   public ResponseEntity<BaseResponse<List<TransferScheduleResponse>>> getTransferSchedules(
-      @PathVariable("orgId") String orgId,
-      @PathVariable(name = "dropoffNodeId") String dropoffNodeId) {
+          @PathVariable("orgId") String orgId,
+          @PathVariable(name = "dropoffNodeId") String dropoffNodeId) {
     List<TransferScheduleResponse> transferScheduleResponses =
-        transferScheduleService.fetchTransferSchedules(orgId, dropoffNodeId);
+            transferScheduleService.fetchTransferSchedules(orgId, dropoffNodeId);
     return ResponseEntity.ok(
-        BaseResponse.builder()
-            .message("Transfer Schedules fetched successfully")
-            .payload(transferScheduleResponses)
-            .build());
+            BaseResponse.builder()
+                    .message("Transfer Schedules fetched successfully")
+                    .payload(transferScheduleResponses)
+                    .build());
   }
 
   @PostMapping(path = "/time-range", produces = MediaType.APPLICATION_JSON_VALUE)
   @GetTransferScheduleDoc
   public ResponseEntity<BaseResponse<List<TransferScheduleResponse>>> getTransferSchedulesInRange(
-      @RequestBody TransferScheduleRangeRequest transferScheduleRangeRequest) {
+          @RequestBody TransferScheduleRangeRequest transferScheduleRangeRequest) {
     List<TransferScheduleResponse> transferScheduleResponses =
-        transferScheduleService.fetchTransferSchedulesInRange(transferScheduleRangeRequest);
+            transferScheduleService.fetchTransferSchedulesInRange(transferScheduleRangeRequest);
     return ResponseEntity.ok(
-        BaseResponse.builder()
-            .message("Transfer Schedules fetched successfully")
-            .payload(transferScheduleResponses)
-            .build());
+            BaseResponse.builder()
+                    .message("Transfer Schedules fetched successfully")
+                    .payload(transferScheduleResponses)
+                    .build());
   }
 
   @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   @DeleteTransferScheduleDoc
   public ResponseEntity<BaseResponse<TransferScheduleResponse>> deleteTransferSchedule(
-      @RequestBody @Valid TransferScheduleRequest request)
-      throws PromiseEngineException, CommonServiceException {
+          @RequestBody @Valid TransferScheduleRequest request)
+          throws PromiseEngineException, CommonServiceException {
     TransferScheduleResponse response = transferScheduleService.deleteTransferSchedule(request);
     return ResponseEntity.ok(
-        BaseResponse.builder()
-            .message("Transfer schedule deleted successfully")
-            .payload(response)
-            .build());
+            BaseResponse.builder()
+                    .message("Transfer schedule deleted successfully")
+                    .payload(response)
+                    .build());
   }
 
   @PostMapping(
-      path = "/orgId/{orgId}",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
+          path = "/orgId/{orgId}",
+          consumes = MediaType.APPLICATION_JSON_VALUE,
+          produces = MediaType.APPLICATION_JSON_VALUE)
   @FetchTransferScheduleListDoc
   public ResponseEntity<BaseResponse<PagePayload<TransferScheduleResponse>>>
-      fetchTransferScheduleList(
+  fetchTransferScheduleList(
           @NotBlank(message = "orgId can't be empty")
-              @Parameter(
+          @Parameter(
                   description = "Unique identifier of the organization.",
                   example = "NEXTUPLE")
-              @PathVariable
-              String orgId,
+          @PathVariable
+          String orgId,
           @RequestParam(required = false, defaultValue = "true") Boolean isPaginated,
           @RequestParam(required = false, defaultValue = "1") Integer pageNo,
           @RequestParam(required = false, defaultValue = "10") Integer pageSize,
           @RequestParam(required = false, defaultValue = TRANSFER_SCHEDULE_DEFAULT_SORT_BY)
-              String sortBy,
+          String sortBy,
           @RequestParam(required = false, defaultValue = "ASC") String sortOrder,
           @RequestBody @Valid FetchTransferScheduleRequest request)
           throws CommonServiceException, PromiseEngineException {
@@ -144,20 +144,20 @@ public class TransferScheduleController {
     pageParams.setSortOrder(Optional.of(sortOrder));
 
     Page<TransferScheduleResponse> transferScheduleDtoPage =
-        transferScheduleService.fetchTransferScheduleList(orgId, isPaginated, pageParams, request);
+            transferScheduleService.fetchTransferScheduleList(orgId, isPaginated, pageParams, request);
 
     PagePayload<TransferScheduleResponse> pagePayload =
-        DashboardUtil.setPagePayload(
-            transferScheduleDtoPage,
-            pageParams,
-            orgId,
-            pageProperties,
-            TRANSFER_SCHEDULE_DEFAULT_SORT_BY);
+            DashboardUtil.setPagePayload(
+                    transferScheduleDtoPage,
+                    pageParams,
+                    orgId,
+                    pageProperties,
+                    TRANSFER_SCHEDULE_DEFAULT_SORT_BY);
 
     return ResponseEntity.ok(
-        BaseResponse.builder()
-            .message("Transfer Schedule details fetched successfully")
-            .payload(pagePayload)
-            .build());
+            BaseResponse.builder()
+                    .message("Transfer Schedule details fetched successfully")
+                    .payload(pagePayload)
+                    .build());
   }
 }
