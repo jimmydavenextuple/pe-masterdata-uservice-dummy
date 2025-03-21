@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 public class TransferScheduleCacheServiceImpl {
   @Autowired TransferScheduleRedisRepository transferScheduleRedisRepository;
   @Autowired TransferScheduleFeign transferScheduleFeign;
+  @Autowired TransferScheduleAsyncService transferScheduleAsyncService;
 
   @Value("${transfer-schedule.horizon-days:5}")
   private int horizonDays;
@@ -73,20 +74,7 @@ public class TransferScheduleCacheServiceImpl {
         if (responseList.getPayload().isEmpty()) {
           return List.of();
         }
-        responseList
-            .getPayload()
-            .forEach(
-                response ->
-                    transferScheduleRedisRepository.save(
-                        TransferScheduleCreationRequest.builder()
-                            .orgId(response.getOrgId())
-                            .sourceNodeId(response.getSourceNodeId())
-                            .dropoffNodeId(response.getDropoffNodeId())
-                            .startTime(new DateTime(response.getStartTime()))
-                            .endTime(new DateTime(response.getEndTime()))
-                            .rule(response.getRule())
-                            .ruleName(response.getRuleName())
-                            .build()));
+        transferScheduleAsyncService.saveTransferSchedulesAsync(responseList.getPayload());
         return responseList.getPayload();
       } catch (RuntimeException ex) {
         return List.of();
