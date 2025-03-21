@@ -306,7 +306,7 @@ definitions:
           - export TESTCONTAINERS_RYUK_DISABLED=true
           - microdnf install git
           - microdnf install findutils
-          - bash ./gradlew -Pbuild_target=SNAPSHOT -i clean build jacocoTestReport spotbugsMain --tests "com.nextuple.masterdata.integration.NodeCRUDTest"
+          - bash ./gradlew :test --tests  "com.nextuple.masterdata.integration.NodeCRUDTest"
     - step: &Clear-Cache
         name: Clear Pipeline Cache
         script:
