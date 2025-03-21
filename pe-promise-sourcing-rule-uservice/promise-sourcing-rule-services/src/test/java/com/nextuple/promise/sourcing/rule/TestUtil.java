@@ -647,6 +647,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .nodeGroupId(NODE_GROUP_ID)
         .nodeInfo(List.of(nodePriorityInfo))
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
