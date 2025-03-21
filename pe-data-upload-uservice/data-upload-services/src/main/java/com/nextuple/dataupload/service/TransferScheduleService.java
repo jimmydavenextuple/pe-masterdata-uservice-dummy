@@ -55,7 +55,7 @@ public class TransferScheduleService {
       FetchTransferScheduleRequest request,
       Boolean isPagination)
       throws CommonServiceException {
-    CommonDashboardUtil.handleInvalidSortOrder(pageParams.getSortOrder().get());
+    CommonDashboardUtil.handleInvalidSortOrder(pageParams.getSortOrder().orElse("ASC"));
     GenericDetailsResponse transferResponse = new GenericDetailsResponse();
     GenericPaginationAttribute pagination = new GenericPaginationAttribute();
     List<GenericColumnInfoDto> transferScheduleColumnInfoDtos = new ArrayList<>();
@@ -76,19 +76,19 @@ public class TransferScheduleService {
           transferScheduleFeign.fetchTransferSchedule(
               orgId,
               isPagination,
-              pageParams.getPageNo().get(),
-              pageParams.getPageSize().get(),
-              pageParams.getSortBy().get(),
-              pageParams.getSortOrder().get(),
+              pageParams.getPageNo().orElse(1),
+              pageParams.getPageSize().orElse(10),
+              pageParams.getSortBy().orElse(TRANSFER_SCHEDULE_DEFAULT_SORT_BY),
+              pageParams.getSortOrder().orElse("ASC"),
               request);
 
       PagePayload.Pagination paginationConfig = response.getPayload().getPagination();
       List<TransferScheduleResponse> transferScheduleData = response.getPayload().getData();
       pagination.setTotalRecords(Long.valueOf(paginationConfig.getTotalRecords()));
       pagination.setTotalPages(paginationConfig.getTotalPages());
-      pagination.setCurrentPage(pageParams.getPageNo().get());
-      pagination.setSortOrder(pageParams.getSortOrder().get());
-      pagination.setSortBy(pageParams.getSortBy().get());
+      pagination.setCurrentPage(pageParams.getPageNo().orElse(1));
+      pagination.setSortOrder(pageParams.getSortOrder().orElse(TRANSFER_SCHEDULE_DEFAULT_SORT_BY));
+      pagination.setSortBy(pageParams.getSortBy().orElse("ASC"));
 
       List<Map<String, Object>> rows =
           populateRows(transferScheduleData, requiredAttributeList, optionalAttributeList);
@@ -223,7 +223,7 @@ public class TransferScheduleService {
     for (SourcingAttributeResponse attribute : combinationOfRequiredAndOptionalAttributes) {
       if (Objects.nonNull(attribute)) {
         if (attributeIndex < ruleAttributes.length
-            && !StringUtils.isEmpty(ruleAttributes[attributeIndex])) {
+            && StringUtils.hasLength(ruleAttributes[attributeIndex])) {
           rowEntity.put(attribute.getAttributeName(), ruleAttributes[attributeIndex]);
         } else {
           rowEntity.put(attribute.getAttributeName(), null);
