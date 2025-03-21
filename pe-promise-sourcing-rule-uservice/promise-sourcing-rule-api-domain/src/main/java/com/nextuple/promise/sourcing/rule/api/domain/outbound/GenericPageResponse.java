@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GenericPageResponse {
-    GenericDetailsResponse data;
-    GenericPaginationAttribute pagination;
+  GenericDetailsResponse data;
+  GenericPaginationAttribute pagination;
 }

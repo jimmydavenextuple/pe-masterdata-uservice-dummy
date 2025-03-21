@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GenericPaginationAttribute {
-    Integer currentPage;
-    Integer totalPages;
-    Long totalRecords;
-    String sortOrder;
-    String sortBy;
+  Integer currentPage;
+  Integer totalPages;
+  Long totalRecords;
+  String sortOrder;
+  String sortBy;
 }
