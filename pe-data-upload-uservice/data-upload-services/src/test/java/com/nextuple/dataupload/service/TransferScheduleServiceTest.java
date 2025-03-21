@@ -27,13 +27,11 @@ import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributes
 import com.nextuple.transit.domain.feign.TransferScheduleFeign;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.LocalDate;
 import org.junit.jupiter.api.Assertions;
@@ -56,27 +54,27 @@ class TransferScheduleServiceTest {
   @DisplayName("Get Transfer Schedule List")
   void getTransferScheduleList() {
     var baseResponse =
-            BaseResponse.builder().payload(testUtil.getTransferSchedulePagePayloadResponse()).build();
+        BaseResponse.builder().payload(testUtil.getTransferSchedulePagePayloadResponse()).build();
     var request = FetchTransferScheduleRequest.builder().endDate(new LocalDate()).build();
     when(transferScheduleFeign.fetchTransferSchedule(
             any(), any(), any(), any(), any(), any(), any()))
-            .thenReturn(baseResponse);
+        .thenReturn(baseResponse);
 
     var response =
-            transferScheduleService.getTransferScheduleList(
-                    TestUtil.ORG_ID,
-                    testUtil.getPageParams(
-                            Optional.of(2),
-                            Optional.of(1),
-                            Optional.of(TRANSFER_SCHEDULE_DEFAULT_SORT_BY),
-                            Optional.of("DESC")),
-                    request);
+        transferScheduleService.getTransferScheduleList(
+            TestUtil.ORG_ID,
+            testUtil.getPageParams(
+                Optional.of(2),
+                Optional.of(1),
+                Optional.of(TRANSFER_SCHEDULE_DEFAULT_SORT_BY),
+                Optional.of("DESC")),
+            request);
 
     assertEquals(response.getData().getFirst().getDropoffNodeId(), "Node-1");
     assertEquals(response.getData().getFirst().getSourceNodeId(), "Node-2");
 
     verify(transferScheduleFeign, times(1))
-            .fetchTransferSchedule(any(), any(), any(), any(), any(), any(), any());
+        .fetchTransferSchedule(any(), any(), any(), any(), any(), any(), any());
   }
 
   @Test
@@ -91,7 +89,7 @@ class TransferScheduleServiceTest {
       transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
     } catch (CommonServiceException ce) {
       Assertions.assertEquals(
-              "Invalid sort order, consider giving either ASC or DESC", ce.getMessage());
+          "Invalid sort order, consider giving either ASC or DESC", ce.getMessage());
     }
   }
 
@@ -105,9 +103,9 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             orgId, SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE))
-            .thenReturn(BaseResponse.builder().payload(null).build());
+        .thenReturn(BaseResponse.builder().payload(null).build());
     GenericPageResponse response =
-            transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
     assertNull(response.getData());
     assertNull(response.getPagination());
   }
@@ -126,12 +124,13 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
 
     // Mock SourcingAttributesDefinitionFeign response
-    SourcingAttributesDefinitionResponse sourcingDefResponse = new SourcingAttributesDefinitionResponse();
+    SourcingAttributesDefinitionResponse sourcingDefResponse =
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1,2");
     sourcingDefResponse.setOptAttributes("3,4");
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
 
     // Mock SourcingAttributeFeign responses for required attributes
     SourcingAttributeResponse reqAttr1 = new SourcingAttributeResponse();
@@ -139,9 +138,9 @@ class TransferScheduleServiceTest {
     SourcingAttributeResponse reqAttr2 = new SourcingAttributeResponse();
     reqAttr2.setAttributeName("ReqAttr2");
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(1L)))
-            .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(2L)))
-            .thenReturn(BaseResponse.builder().payload(reqAttr2).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr2).build());
 
     // Mock SourcingAttributeFeign responses for optional attributes
     SourcingAttributeResponse optAttr1 = new SourcingAttributeResponse();
@@ -149,9 +148,9 @@ class TransferScheduleServiceTest {
     SourcingAttributeResponse optAttr2 = new SourcingAttributeResponse();
     optAttr2.setAttributeName("OptAttr2");
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(3L)))
-            .thenReturn(BaseResponse.builder().payload(optAttr1).build());
+        .thenReturn(BaseResponse.builder().payload(optAttr1).build());
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(4L)))
-            .thenReturn(BaseResponse.builder().payload(optAttr2).build());
+        .thenReturn(BaseResponse.builder().payload(optAttr2).build());
 
     // Mock TransferScheduleFeign response
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
@@ -170,11 +169,11 @@ class TransferScheduleServiceTest {
 
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
     // Execute
-    GenericPageResponse response = transferScheduleService.getTransferScheduleListV2(
-            orgId, pageParams, request, isPagination);
+    GenericPageResponse response =
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     // Verify
     assertNotNull(response);
@@ -221,16 +220,17 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
 
     // Mock SourcingAttributesDefinitionFeign response
-    SourcingAttributesDefinitionResponse sourcingDefResponse = new SourcingAttributesDefinitionResponse();
+    SourcingAttributesDefinitionResponse sourcingDefResponse =
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1,2");
     sourcingDefResponse.setOptAttributes("3,4");
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
 
     // Mock SourcingAttributeFeign responses
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(anyString(), anyLong()))
-            .thenReturn(BaseResponse.builder().payload(new SourcingAttributeResponse()).build());
+        .thenReturn(BaseResponse.builder().payload(new SourcingAttributeResponse()).build());
 
     // Mock empty TransferScheduleFeign response
     PagePayload<TransferScheduleResponse> pagePayload = new PagePayload<>();
@@ -243,11 +243,11 @@ class TransferScheduleServiceTest {
 
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
     // Execute
-    GenericPageResponse response = transferScheduleService.getTransferScheduleListV2(
-            orgId, pageParams, request, isPagination);
+    GenericPageResponse response =
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     // Verify
     assertNotNull(response);
@@ -269,18 +269,19 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
 
     // Mock SourcingAttributesDefinitionFeign response
-    SourcingAttributesDefinitionResponse sourcingDefResponse = new SourcingAttributesDefinitionResponse();
+    SourcingAttributesDefinitionResponse sourcingDefResponse =
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1");
     sourcingDefResponse.setOptAttributes(null);
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
 
     // Mock SourcingAttributeFeign responses
     SourcingAttributeResponse reqAttr = new SourcingAttributeResponse();
     reqAttr.setAttributeName("ReqAttr");
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(1L)))
-            .thenReturn(BaseResponse.builder().payload(reqAttr).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr).build());
 
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
     TransferScheduleResponse transferSchedule = getTransferScheduleResponse();
@@ -298,10 +299,10 @@ class TransferScheduleServiceTest {
 
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
-    GenericPageResponse response = transferScheduleService.getTransferScheduleListV2(
-            orgId, pageParams, request, isPagination);
+    GenericPageResponse response =
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
     assertNotNull(response.getData());
@@ -340,17 +341,18 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
 
     // Mock SourcingAttributesDefinitionFeign response
-    SourcingAttributesDefinitionResponse sourcingDefResponse = new SourcingAttributesDefinitionResponse();
+    SourcingAttributesDefinitionResponse sourcingDefResponse =
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1");
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
 
     // Mock SourcingAttributeFeign responses
     SourcingAttributeResponse reqAttr = new SourcingAttributeResponse();
     reqAttr.setAttributeName("ReqAttr");
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(1L)))
-            .thenReturn(BaseResponse.builder().payload(reqAttr).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr).build());
 
     // Mock TransferScheduleFeign response with empty ruleName
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
@@ -369,11 +371,11 @@ class TransferScheduleServiceTest {
 
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
     // Execute
-    GenericPageResponse response = transferScheduleService.getTransferScheduleListV2(
-            orgId, pageParams, request, isPagination);
+    GenericPageResponse response =
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     // Verify
     assertNotNull(response);
@@ -402,12 +404,13 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
 
     // Mock SourcingAttributesDefinitionFeign response
-    SourcingAttributesDefinitionResponse sourcingDefResponse = new SourcingAttributesDefinitionResponse();
+    SourcingAttributesDefinitionResponse sourcingDefResponse =
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1,2");
     sourcingDefResponse.setOptAttributes("3");
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
 
     // Mock SourcingAttributeFeign responses
     SourcingAttributeResponse reqAttr1 = new SourcingAttributeResponse();
@@ -418,17 +421,17 @@ class TransferScheduleServiceTest {
     optAttr1.setAttributeName("OptAttr1");
 
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(1L)))
-            .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(2L)))
-            .thenReturn(BaseResponse.builder().payload(reqAttr2).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr2).build());
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(3L)))
-            .thenReturn(BaseResponse.builder().payload(optAttr1).build());
+        .thenReturn(BaseResponse.builder().payload(optAttr1).build());
 
     // Mock TransferScheduleFeign response with fewer rule attributes
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
     TransferScheduleResponse transferSchedule = prepareTransferScheduleResp();
     transferSchedule.setRuleName("TestRule");
-    transferSchedule.setRule("value1");  // Only one value when three are expected
+    transferSchedule.setRule("value1"); // Only one value when three are expected
     transferScheduleList.add(transferSchedule);
 
     PagePayload<TransferScheduleResponse> pagePayload = new PagePayload<>();
@@ -441,11 +444,11 @@ class TransferScheduleServiceTest {
 
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
     // Execute
-    GenericPageResponse response = transferScheduleService.getTransferScheduleListV2(
-            orgId, pageParams, request, isPagination);
+    GenericPageResponse response =
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     // Verify
     assertNotNull(response);
@@ -477,20 +480,21 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
 
     // Mock SourcingAttributesDefinitionFeign response
-    SourcingAttributesDefinitionResponse sourcingDefResponse = new SourcingAttributesDefinitionResponse();
+    SourcingAttributesDefinitionResponse sourcingDefResponse =
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1,2");
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
 
     // Mock SourcingAttributeFeign responses with one null response
     SourcingAttributeResponse reqAttr1 = new SourcingAttributeResponse();
     reqAttr1.setAttributeName("ReqAttr1");
 
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(1L)))
-            .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(2L)))
-            .thenReturn(BaseResponse.builder().payload(null).build());
+        .thenReturn(BaseResponse.builder().payload(null).build());
 
     // Mock TransferScheduleFeign response
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
@@ -509,11 +513,11 @@ class TransferScheduleServiceTest {
 
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
     // Execute
-    GenericPageResponse response = transferScheduleService.getTransferScheduleListV2(
-            orgId, pageParams, request, isPagination);
+    GenericPageResponse response =
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     // Verify
     assertNotNull(response);
@@ -529,10 +533,10 @@ class TransferScheduleServiceTest {
 
   private FetchTransferScheduleRequest getTransferRequest() {
     return FetchTransferScheduleRequest.builder()
-            .dropoffNodeIds(List.of("DN01"))
-            .sourceNodeIds(List.of("SN01"))
-            .startDate(LocalDate.now().minusDays(1))
-            .endDate(LocalDate.now())
-            .build();
+        .dropoffNodeIds(List.of("DN01"))
+        .sourceNodeIds(List.of("SN01"))
+        .startDate(LocalDate.now().minusDays(1))
+        .endDate(LocalDate.now())
+        .build();
   }
 }
