@@ -308,7 +308,7 @@ definitions:
 #          - bash ./gradlew dependencyCheckAggregate --info
           - bash ./gradlew sonarqube showSonarQubeLink --info
     - step: &integration-test
-        size: 8x
+        size: 4x
         name: Integration Test
         caches:
           - gradle
@@ -321,7 +321,7 @@ definitions:
         script:
           - microdnf install findutils
           - export TESTCONTAINERS_RYUK_DISABLED=true
-          - bash ./gradlew :test --tests "com.nextuple.masterdata.integration.NodeIntegrationTest"
+          - bash ./gradlew :test --tests "com.nextuple.masterdata.integration.*"
     - step: &Clear-Cache
         name: Clear Pipeline Cache
         script:
