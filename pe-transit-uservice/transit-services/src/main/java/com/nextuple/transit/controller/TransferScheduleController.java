@@ -15,6 +15,8 @@ import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.transfer.schedule.cache.dto.TransferScheduleCacheRequest;
+import com.nextuple.transfer.schedule.cache.service.impl.TransferScheduleCacheServiceImpl;
 import com.nextuple.transit.controller.docs.CreateTransferScheduleDoc;
 import com.nextuple.transit.controller.docs.DeleteTransferScheduleDoc;
 import com.nextuple.transit.controller.docs.FetchTransferScheduleListDoc;
@@ -56,6 +58,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TransferScheduleController {
   private final TransferScheduleService transferScheduleService;
   private final PageProperties pageProperties;
+  private final TransferScheduleCacheServiceImpl transferScheduleCacheService;
 
   @PostMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -94,6 +97,20 @@ public class TransferScheduleController {
       @RequestBody TransferScheduleRangeRequest transferScheduleRangeRequest) {
     List<TransferScheduleResponse> transferScheduleResponses =
         transferScheduleService.fetchTransferSchedulesInRange(transferScheduleRangeRequest);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Transfer Schedules fetched successfully")
+            .payload(transferScheduleResponses)
+            .build());
+  }
+
+  @PostMapping(path = "/cache", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetTransferScheduleDoc
+  public ResponseEntity<BaseResponse<List<TransferScheduleResponse>>>
+      getTransferSchedulesInRangeFromCache(
+          @RequestBody TransferScheduleCacheRequest transferScheduleCacheRequest) {
+    List<TransferScheduleResponse> transferScheduleResponses =
+        transferScheduleCacheService.fetchFromRedis(transferScheduleCacheRequest);
     return ResponseEntity.ok(
         BaseResponse.builder()
             .message("Transfer Schedules fetched successfully")

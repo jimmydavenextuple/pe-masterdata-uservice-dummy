@@ -36,6 +36,7 @@ include 'pe-transit-uservice:transit-near-cache-spring'
 include 'pe-transit-uservice:transit-persistence-domain'
 include 'pe-transit-uservice:transit-persistence-postgres'
 include 'pe-transit-uservice:transit-services'
+include 'pe-transit-uservice:transfer-schedule-cache'
 
 include ':pe-weightage-configuration-uservice'
 include 'pe-weightage-configuration-uservice:weightage-configuration-api-domain'

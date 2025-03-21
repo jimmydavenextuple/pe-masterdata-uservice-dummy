@@ -5,20 +5,22 @@
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
  */
 
-package com.nextuple.transfer.schedule.cache.repository;
+package com.nextuple.transfer.schedule.cache.dto;
 
-import com.nextuple.transfer.schedule.cache.dto.TransferScheduleCacheRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
-import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
-import java.util.List;
-import org.joda.time.DateTime;
+import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public interface TransferScheduleRedisRepository {
-  void save(TransferScheduleCreationRequest request);
-
-  void delete(TransferScheduleRequest request);
-
-  List<TransferScheduleResponse> fetch(
-      TransferScheduleCacheRequest request, DateTime startRange, DateTime endRange);
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class TransferScheduleCacheRequest {
+  private String orgId;
+  private String rule;
+  private String ruleName;
+  private String dropoffNode;
+  private Date dateBucket;
 }

@@ -27,6 +27,7 @@ import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributes
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.RuleConfigurationParam;
 import com.nextuple.promise.sourcing.rule.service.RulesConfigurationService;
 import com.nextuple.promise.sourcing.rule.service.SourcingAttributesDefinitionService;
+import com.nextuple.transfer.schedule.cache.service.impl.TransferScheduleCacheServiceImpl;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
@@ -51,6 +52,7 @@ import org.joda.time.DateTimeZone;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -67,12 +69,16 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
   private final RulesConfigurationService ruleConfigurationService;
   private final NodeFeign nodeFeign;
   private final SourcingAttributesDefinitionService sourcingAttributesDefinitionService;
+  private final TransferScheduleCacheServiceImpl transferScheduleCacheService;
   private static final TransferScheduleMapper INSTANCE =
       Mappers.getMapper(TransferScheduleMapper.class);
 
   private static final String SOURCE_NODE_ID = "sourceNodeId";
   private static final String DROPOFF_NODE_ID = "dropoffNodeId";
   private static final String SORT_ORDER = "sortOrder";
+
+  @Value("${redis-enabled:false}")
+  private boolean isRedisEnabled;
 
   @Override
   public TransferScheduleResponse createTransferSchedule(TransferScheduleCreationRequest request)
@@ -83,6 +89,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     validateRuleDetails(request.getOrgId(), request.getRule(), request.getRuleName());
     var transferScheduleDomainDto = INSTANCE.convertToTransferScheduleEntity(request);
     var entity = transferSchedulePersistenceService.saveTransferSchedule(transferScheduleDomainDto);
+    if (isRedisEnabled) transferScheduleCacheService.saveToRedis(request);
     return INSTANCE.convertToTransferScheduleResponse(entity);
   }
 
@@ -182,6 +189,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     TransferScheduleDomainDto domainDto =
         transferSchedulePersistenceService.deleteTransferSchedule(
             request.getOrgId(), request.getSourceNodeId(), request.getDropoffNodeId(), startTime);
+    if (isRedisEnabled) transferScheduleCacheService.deleteFromRedis(request);
     return INSTANCE.convertToTransferScheduleResponse(domainDto);
   }
 

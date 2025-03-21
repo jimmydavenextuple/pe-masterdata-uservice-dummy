@@ -39,7 +39,7 @@ public interface TransferScheduleFeign {
       @PathVariable("orgId") String orgId,
       @PathVariable(name = "dropoffNodeId") String dropoffNodeId);
 
-  @GetMapping("/transfer-schedule/time-range")
+  @PostMapping("/transfer-schedule/time-range")
   BaseResponse<List<TransferScheduleResponse>> fetchTransferSchedulesInRange(
       @RequestBody TransferScheduleRangeRequest transferScheduleRangeRequest);
 
