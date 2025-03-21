@@ -62,7 +62,7 @@ public class ConsoleLogListener {
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
                 .create()
                 .toJson(baseEvent);
-        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy, HH:mm:ss.SSS a");
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy, hh:mm:ss.SSS a");
 
         MDC.put(GENERATED_ID, baseEvent.getGeneratedId());
         MDC.put(
