@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 public class GenericDetailsResponse implements Serializable {
   private static final long serialVersionUID = -6321504908960872244L;
 
-  // todo : make an object Column Info Dto for generic column use
   private List<GenericColumnInfoDto> columns;
   private transient List<Map<String, Object>> rows;
 }

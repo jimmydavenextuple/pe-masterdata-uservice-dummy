@@ -184,7 +184,6 @@ public class TransferScheduleService {
     List<Map<String, Object>> rows = new ArrayList<>();
 
     for (TransferScheduleResponse transferScheduleResponse : transferScheduleList) {
-      String[] ruleAttributes = transferScheduleResponse.getRule().split(":");
 
       Map<String, Object> rowEntity = new HashMap<>();
       boolean isRuleProvided =
@@ -196,6 +195,7 @@ public class TransferScheduleService {
       rowEntity.put("startTime", transferScheduleResponse.getStartTime());
       rowEntity.put("endTime", transferScheduleResponse.getEndTime());
       if (isRuleProvided) {
+        String[] ruleAttributes = transferScheduleResponse.getRule().split(":");
         populateRuleRelatedColumns(
             requiredAttributesList,
             optionalAttributesList,

@@ -1,13 +1,18 @@
 package com.nextuple.dataupload.service;
 
 import static com.nextuple.dataupload.controller.TransferSchedulesController.TRANSFER_SCHEDULE_DEFAULT_SORT_BY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
@@ -15,11 +20,21 @@ import com.nextuple.dataupload.util.TestUtil;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.feign.SourcingAttributeFeign;
 import com.nextuple.promise.sourcing.rule.api.domain.feign.SourcingAttributesDefinitionFeign;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.GenericDetailsResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GenericPageResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributeResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import com.nextuple.transit.domain.feign.TransferScheduleFeign;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
+import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.LocalDate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -41,27 +56,27 @@ class TransferScheduleServiceTest {
   @DisplayName("Get Transfer Schedule List")
   void getTransferScheduleList() {
     var baseResponse =
-        BaseResponse.builder().payload(testUtil.getTransferSchedulePagePayloadResponse()).build();
+            BaseResponse.builder().payload(testUtil.getTransferSchedulePagePayloadResponse()).build();
     var request = FetchTransferScheduleRequest.builder().endDate(new LocalDate()).build();
     when(transferScheduleFeign.fetchTransferSchedule(
             any(), any(), any(), any(), any(), any(), any()))
-        .thenReturn(baseResponse);
+            .thenReturn(baseResponse);
 
     var response =
-        transferScheduleService.getTransferScheduleList(
-            TestUtil.ORG_ID,
-            testUtil.getPageParams(
-                Optional.of(2),
-                Optional.of(1),
-                Optional.of(TRANSFER_SCHEDULE_DEFAULT_SORT_BY),
-                Optional.of("DESC")),
-            request);
+            transferScheduleService.getTransferScheduleList(
+                    TestUtil.ORG_ID,
+                    testUtil.getPageParams(
+                            Optional.of(2),
+                            Optional.of(1),
+                            Optional.of(TRANSFER_SCHEDULE_DEFAULT_SORT_BY),
+                            Optional.of("DESC")),
+                    request);
 
     assertEquals(response.getData().getFirst().getDropoffNodeId(), "Node-1");
     assertEquals(response.getData().getFirst().getSourceNodeId(), "Node-2");
 
     verify(transferScheduleFeign, times(1))
-        .fetchTransferSchedule(any(), any(), any(), any(), any(), any(), any());
+            .fetchTransferSchedule(any(), any(), any(), any(), any(), any(), any());
   }
 
   @Test
@@ -76,7 +91,7 @@ class TransferScheduleServiceTest {
       transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
     } catch (CommonServiceException ce) {
       Assertions.assertEquals(
-          "Invalid sort order, consider giving either ASC or DESC", ce.getMessage());
+              "Invalid sort order, consider giving either ASC or DESC", ce.getMessage());
     }
   }
 
@@ -90,36 +105,434 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             orgId, SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE))
-        .thenReturn(BaseResponse.builder().payload(null).build());
+            .thenReturn(BaseResponse.builder().payload(null).build());
     GenericPageResponse response =
-        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
+            transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
     assertNull(response.getData());
     assertNull(response.getPagination());
   }
 
   @Test
-  @DisplayName("Get Transfer Schedule List for no sourcing definition found")
-  void getTransferScheduleListV2SourcingDefNotFound() throws CommonServiceException {
+  @DisplayName("Get Transfer Schedule List V2 with full data")
+  void getTransferScheduleListV2WithFullData() throws CommonServiceException {
+    // Setup
     String orgId = "TEST";
     PageParams pageParams = new PageParams();
+    pageParams.setSortBy(Optional.of("sourceNodeId"));
     pageParams.setSortOrder(Optional.of("ASC"));
+    pageParams.setPageNo(Optional.of(1));
+    pageParams.setPageSize(Optional.of(10));
     FetchTransferScheduleRequest request = getTransferRequest();
     Boolean isPagination = true;
+
+    // Mock SourcingAttributesDefinitionFeign response
+    SourcingAttributesDefinitionResponse sourcingDefResponse = new SourcingAttributesDefinitionResponse();
+    sourcingDefResponse.setReqAttributes("1,2");
+    sourcingDefResponse.setOptAttributes("3,4");
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
-            orgId, SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE))
-        .thenReturn(BaseResponse.builder().payload(null).build());
-    GenericPageResponse response =
-        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
-    assertNull(response.getData());
+            anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
+            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+
+    // Mock SourcingAttributeFeign responses for required attributes
+    SourcingAttributeResponse reqAttr1 = new SourcingAttributeResponse();
+    reqAttr1.setAttributeName("ReqAttr1");
+    SourcingAttributeResponse reqAttr2 = new SourcingAttributeResponse();
+    reqAttr2.setAttributeName("ReqAttr2");
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(1L)))
+            .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(2L)))
+            .thenReturn(BaseResponse.builder().payload(reqAttr2).build());
+
+    // Mock SourcingAttributeFeign responses for optional attributes
+    SourcingAttributeResponse optAttr1 = new SourcingAttributeResponse();
+    optAttr1.setAttributeName("OptAttr1");
+    SourcingAttributeResponse optAttr2 = new SourcingAttributeResponse();
+    optAttr2.setAttributeName("OptAttr2");
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(3L)))
+            .thenReturn(BaseResponse.builder().payload(optAttr1).build());
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(4L)))
+            .thenReturn(BaseResponse.builder().payload(optAttr2).build());
+
+    // Mock TransferScheduleFeign response
+    List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
+    TransferScheduleResponse transferSchedule = prepareTransferScheduleResp();
+    transferSchedule.setRuleName("TestRule");
+    transferSchedule.setRule("value1:value2:value3:value4");
+    transferScheduleList.add(transferSchedule);
+
+    PagePayload<TransferScheduleResponse> pagePayload = new PagePayload<>();
+    pagePayload.setData(transferScheduleList);
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords(1);
+    pagination.setTotalPages(1);
+    pagination.setCurrentPage(1);
+    pagePayload.setPagination(pagination);
+
+    when(transferScheduleFeign.fetchTransferSchedule(
+            anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
+            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+
+    // Execute
+    GenericPageResponse response = transferScheduleService.getTransferScheduleListV2(
+            orgId, pageParams, request, isPagination);
+
+    // Verify
+    assertNotNull(response);
+    assertNotNull(response.getData());
+    assertNotNull(response.getPagination());
+
+    GenericDetailsResponse detailsResponse = (GenericDetailsResponse) response.getData();
+    assertEquals(9, detailsResponse.getColumns().size());
+
+    List<Map<String, Object>> rows = detailsResponse.getRows();
+    assertEquals(1, rows.size());
+    Map<String, Object> row = rows.get(0);
+    assertEquals("SN01", row.get("sourceNodeId"));
+    assertEquals("DN01", row.get("dropoffNodeId"));
+    assertEquals("TestRule", row.get("ruleName"));
+    assertEquals("value1", row.get("ReqAttr1"));
+    assertEquals("value2", row.get("ReqAttr2"));
+    assertEquals("value3", row.get("OptAttr1"));
+    assertEquals("value4", row.get("OptAttr2"));
+
+    assertEquals(1L, response.getPagination().getTotalRecords());
+  }
+
+  private static @NotNull TransferScheduleResponse prepareTransferScheduleResp() {
+    TransferScheduleResponse transferSchedule = new TransferScheduleResponse();
+    transferSchedule.setSourceNodeId("SN01");
+    transferSchedule.setDropoffNodeId("DN01");
+    transferSchedule.setStartTime(LocalDate.now().minusDays(1).toDate());
+    transferSchedule.setEndTime(LocalDate.now().toDate());
+    return transferSchedule;
+  }
+
+  @Test
+  @DisplayName("Get Transfer Schedule List V2 with empty data")
+  void getTransferScheduleListV2WithEmptyData() throws CommonServiceException {
+    // Setup
+    String orgId = "TEST";
+    PageParams pageParams = new PageParams();
+    pageParams.setSortBy(Optional.of("sourceNodeId"));
+    pageParams.setSortOrder(Optional.of("ASC"));
+    pageParams.setPageNo(Optional.of(1));
+    pageParams.setPageSize(Optional.of(10));
+    FetchTransferScheduleRequest request = getTransferRequest();
+    Boolean isPagination = true;
+
+    // Mock SourcingAttributesDefinitionFeign response
+    SourcingAttributesDefinitionResponse sourcingDefResponse = new SourcingAttributesDefinitionResponse();
+    sourcingDefResponse.setReqAttributes("1,2");
+    sourcingDefResponse.setOptAttributes("3,4");
+    when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
+            anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
+            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+
+    // Mock SourcingAttributeFeign responses
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(anyString(), anyLong()))
+            .thenReturn(BaseResponse.builder().payload(new SourcingAttributeResponse()).build());
+
+    // Mock empty TransferScheduleFeign response
+    PagePayload<TransferScheduleResponse> pagePayload = new PagePayload<>();
+    pagePayload.setData(Collections.emptyList());
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords(0);
+    pagination.setTotalPages(0);
+    pagination.setCurrentPage(1);
+    pagePayload.setPagination(pagination);
+
+    when(transferScheduleFeign.fetchTransferSchedule(
+            anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
+            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+
+    // Execute
+    GenericPageResponse response = transferScheduleService.getTransferScheduleListV2(
+            orgId, pageParams, request, isPagination);
+
+    // Verify
+    assertNotNull(response);
+    assertNotNull(response.getData());
     assertNull(response.getPagination());
+  }
+
+  @Test
+  @DisplayName("Get Transfer Schedule List V2 with null rule")
+  void getTransferScheduleListV2WithNullRule() throws CommonServiceException {
+    // Setup
+    String orgId = "TEST";
+    PageParams pageParams = new PageParams();
+    pageParams.setSortBy(Optional.of("sourceNodeId"));
+    pageParams.setSortOrder(Optional.of("ASC"));
+    pageParams.setPageNo(Optional.of(1));
+    pageParams.setPageSize(Optional.of(10));
+    FetchTransferScheduleRequest request = getTransferRequest();
+    Boolean isPagination = true;
+
+    // Mock SourcingAttributesDefinitionFeign response
+    SourcingAttributesDefinitionResponse sourcingDefResponse = new SourcingAttributesDefinitionResponse();
+    sourcingDefResponse.setReqAttributes("1");
+    sourcingDefResponse.setOptAttributes(null);
+    when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
+            anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
+            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+
+    // Mock SourcingAttributeFeign responses
+    SourcingAttributeResponse reqAttr = new SourcingAttributeResponse();
+    reqAttr.setAttributeName("ReqAttr");
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(1L)))
+            .thenReturn(BaseResponse.builder().payload(reqAttr).build());
+
+    List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
+    TransferScheduleResponse transferSchedule = getTransferScheduleResponse();
+    transferSchedule.setRuleName(null);
+    transferSchedule.setRule(null);
+    transferScheduleList.add(transferSchedule);
+
+    PagePayload<TransferScheduleResponse> pagePayload = new PagePayload<>();
+    pagePayload.setData(transferScheduleList);
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords(1);
+    pagination.setTotalPages(1);
+    pagination.setCurrentPage(1);
+    pagePayload.setPagination(pagination);
+
+    when(transferScheduleFeign.fetchTransferSchedule(
+            anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
+            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+
+    GenericPageResponse response = transferScheduleService.getTransferScheduleListV2(
+            orgId, pageParams, request, isPagination);
+
+    assertNotNull(response);
+    assertNotNull(response.getData());
+    assertNotNull(response.getPagination());
+
+    GenericDetailsResponse detailsResponse = (GenericDetailsResponse) response.getData();
+    List<Map<String, Object>> rows = detailsResponse.getRows();
+    assertEquals(1, rows.size());
+    Map<String, Object> row = rows.get(0);
+    assertEquals("SN01", row.get("sourceNodeId"));
+    assertEquals("DN01", row.get("dropoffNodeId"));
+    assertNull(row.get("ruleName"));
+    assertNull(row.get("ReqAttr"));
+  }
+
+  private static @NotNull TransferScheduleResponse getTransferScheduleResponse() {
+    TransferScheduleResponse transferSchedule = new TransferScheduleResponse();
+    transferSchedule.setSourceNodeId("SN01");
+    transferSchedule.setDropoffNodeId("DN01");
+    transferSchedule.setStartTime(LocalDate.now().minusDays(4).toDate());
+    transferSchedule.setEndTime(LocalDate.now().toDate());
+    return transferSchedule;
+  }
+
+  @Test
+  @DisplayName("Get Transfer Schedule List V2 with empty ruleName")
+  void getTransferScheduleListV2WithEmptyRuleName() throws CommonServiceException {
+    // Setup
+    String orgId = "TEST";
+    PageParams pageParams = new PageParams();
+    pageParams.setSortBy(Optional.of("sourceNodeId"));
+    pageParams.setSortOrder(Optional.of("ASC"));
+    pageParams.setPageNo(Optional.of(1));
+    pageParams.setPageSize(Optional.of(10));
+    FetchTransferScheduleRequest request = getTransferRequest();
+    Boolean isPagination = true;
+
+    // Mock SourcingAttributesDefinitionFeign response
+    SourcingAttributesDefinitionResponse sourcingDefResponse = new SourcingAttributesDefinitionResponse();
+    sourcingDefResponse.setReqAttributes("1");
+    when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
+            anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
+            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+
+    // Mock SourcingAttributeFeign responses
+    SourcingAttributeResponse reqAttr = new SourcingAttributeResponse();
+    reqAttr.setAttributeName("ReqAttr");
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(1L)))
+            .thenReturn(BaseResponse.builder().payload(reqAttr).build());
+
+    // Mock TransferScheduleFeign response with empty ruleName
+    List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
+    TransferScheduleResponse transferSchedule = prepareTransferScheduleResp();
+    transferSchedule.setRuleName("");
+    transferSchedule.setRule("value1");
+    transferScheduleList.add(transferSchedule);
+
+    PagePayload<TransferScheduleResponse> pagePayload = new PagePayload<>();
+    pagePayload.setData(transferScheduleList);
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords(1);
+    pagination.setTotalPages(1);
+    pagination.setCurrentPage(1);
+    pagePayload.setPagination(pagination);
+
+    when(transferScheduleFeign.fetchTransferSchedule(
+            anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
+            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+
+    // Execute
+    GenericPageResponse response = transferScheduleService.getTransferScheduleListV2(
+            orgId, pageParams, request, isPagination);
+
+    // Verify
+    assertNotNull(response);
+    assertNotNull(response.getData());
+
+    GenericDetailsResponse detailsResponse = (GenericDetailsResponse) response.getData();
+    List<Map<String, Object>> rows = detailsResponse.getRows();
+    assertEquals(1, rows.size());
+    Map<String, Object> row = rows.get(0);
+    assertEquals("SN01", row.get("sourceNodeId"));
+    assertEquals("DN01", row.get("dropoffNodeId"));
+    assertNull(row.get("ruleName"));
+  }
+
+  @Test
+  @DisplayName("Get Transfer Schedule List V2 with fewer rule attributes than expected")
+  void getTransferScheduleListV2WithFewerRuleAttributes() throws CommonServiceException {
+    // Setup
+    String orgId = "TEST";
+    PageParams pageParams = new PageParams();
+    pageParams.setSortBy(Optional.of("sourceNodeId"));
+    pageParams.setSortOrder(Optional.of("ASC"));
+    pageParams.setPageNo(Optional.of(1));
+    pageParams.setPageSize(Optional.of(10));
+    FetchTransferScheduleRequest request = getTransferRequest();
+    Boolean isPagination = true;
+
+    // Mock SourcingAttributesDefinitionFeign response
+    SourcingAttributesDefinitionResponse sourcingDefResponse = new SourcingAttributesDefinitionResponse();
+    sourcingDefResponse.setReqAttributes("1,2");
+    sourcingDefResponse.setOptAttributes("3");
+    when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
+            anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
+            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+
+    // Mock SourcingAttributeFeign responses
+    SourcingAttributeResponse reqAttr1 = new SourcingAttributeResponse();
+    reqAttr1.setAttributeName("ReqAttr1");
+    SourcingAttributeResponse reqAttr2 = new SourcingAttributeResponse();
+    reqAttr2.setAttributeName("ReqAttr2");
+    SourcingAttributeResponse optAttr1 = new SourcingAttributeResponse();
+    optAttr1.setAttributeName("OptAttr1");
+
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(1L)))
+            .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(2L)))
+            .thenReturn(BaseResponse.builder().payload(reqAttr2).build());
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(3L)))
+            .thenReturn(BaseResponse.builder().payload(optAttr1).build());
+
+    // Mock TransferScheduleFeign response with fewer rule attributes
+    List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
+    TransferScheduleResponse transferSchedule = prepareTransferScheduleResp();
+    transferSchedule.setRuleName("TestRule");
+    transferSchedule.setRule("value1");  // Only one value when three are expected
+    transferScheduleList.add(transferSchedule);
+
+    PagePayload<TransferScheduleResponse> pagePayload = new PagePayload<>();
+    pagePayload.setData(transferScheduleList);
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords(1);
+    pagination.setTotalPages(1);
+    pagination.setCurrentPage(1);
+    pagePayload.setPagination(pagination);
+
+    when(transferScheduleFeign.fetchTransferSchedule(
+            anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
+            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+
+    // Execute
+    GenericPageResponse response = transferScheduleService.getTransferScheduleListV2(
+            orgId, pageParams, request, isPagination);
+
+    // Verify
+    assertNotNull(response);
+    assertNotNull(response.getData());
+
+    GenericDetailsResponse detailsResponse = (GenericDetailsResponse) response.getData();
+    List<Map<String, Object>> rows = detailsResponse.getRows();
+    assertEquals(1, rows.size());
+    Map<String, Object> row = rows.get(0);
+    assertEquals("SN01", row.get("sourceNodeId"));
+    assertEquals("DN01", row.get("dropoffNodeId"));
+    assertEquals("TestRule", row.get("ruleName"));
+    assertEquals("value1", row.get("ReqAttr1"));
+    assertNull(row.get("ReqAttr2"));
+    assertNull(row.get("OptAttr1"));
+  }
+
+  @Test
+  @DisplayName("Get Transfer Schedule List V2 with null attribute response")
+  void getTransferScheduleListV2WithNullAttributeResponse() throws CommonServiceException {
+    // Setup
+    String orgId = "TEST";
+    PageParams pageParams = new PageParams();
+    pageParams.setSortBy(Optional.of("sourceNodeId"));
+    pageParams.setSortOrder(Optional.of("ASC"));
+    pageParams.setPageNo(Optional.of(1));
+    pageParams.setPageSize(Optional.of(10));
+    FetchTransferScheduleRequest request = getTransferRequest();
+    Boolean isPagination = true;
+
+    // Mock SourcingAttributesDefinitionFeign response
+    SourcingAttributesDefinitionResponse sourcingDefResponse = new SourcingAttributesDefinitionResponse();
+    sourcingDefResponse.setReqAttributes("1,2");
+    when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
+            anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
+            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+
+    // Mock SourcingAttributeFeign responses with one null response
+    SourcingAttributeResponse reqAttr1 = new SourcingAttributeResponse();
+    reqAttr1.setAttributeName("ReqAttr1");
+
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(1L)))
+            .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(2L)))
+            .thenReturn(BaseResponse.builder().payload(null).build());
+
+    // Mock TransferScheduleFeign response
+    List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
+    TransferScheduleResponse transferSchedule = prepareTransferScheduleResp();
+    transferSchedule.setRuleName("TestRule");
+    transferSchedule.setRule("value1:value2");
+    transferScheduleList.add(transferSchedule);
+
+    PagePayload<TransferScheduleResponse> pagePayload = new PagePayload<>();
+    pagePayload.setData(transferScheduleList);
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
+    pagination.setTotalRecords(1);
+    pagination.setTotalPages(1);
+    pagination.setCurrentPage(1);
+    pagePayload.setPagination(pagination);
+
+    when(transferScheduleFeign.fetchTransferSchedule(
+            anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
+            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+
+    // Execute
+    GenericPageResponse response = transferScheduleService.getTransferScheduleListV2(
+            orgId, pageParams, request, isPagination);
+
+    // Verify
+    assertNotNull(response);
+    assertNotNull(response.getData());
+
+    GenericDetailsResponse detailsResponse = (GenericDetailsResponse) response.getData();
+    List<Map<String, Object>> rows = detailsResponse.getRows();
+    assertEquals(1, rows.size());
+    Map<String, Object> row = rows.get(0);
+    assertEquals("TestRule", row.get("ruleName"));
+    assertEquals("value1", row.get("ReqAttr1"));
   }
 
   private FetchTransferScheduleRequest getTransferRequest() {
     return FetchTransferScheduleRequest.builder()
-        .dropoffNodeIds(List.of("DN01"))
-        .sourceNodeIds(List.of("SN01"))
-        .startDate(LocalDate.now().minusDays(1))
-        .endDate(LocalDate.now())
-        .build();
+            .dropoffNodeIds(List.of("DN01"))
+            .sourceNodeIds(List.of("SN01"))
+            .startDate(LocalDate.now().minusDays(1))
+            .endDate(LocalDate.now())
+            .build();
   }
 }
