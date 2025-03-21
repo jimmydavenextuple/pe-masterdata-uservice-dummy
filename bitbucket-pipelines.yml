@@ -308,7 +308,7 @@ definitions:
 #          - bash ./gradlew dependencyCheckAggregate --info
           - bash ./gradlew sonarqube showSonarQubeLink --info
     - step: &integration-test
-        size: 4x
+        size: 6x
         name: Integration Test
         caches:
           - gradle
