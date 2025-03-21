@@ -68,6 +68,13 @@ test {
         }
     }
 
+    if (project.hasProperty('includeTests')) {
+        def includeTests = project.includeTests.split(',')
+        includeTests.each { includeTest ->
+            include '**/' + includeTest
+        }
+    }
+
     useJUnitPlatform()
 }
 

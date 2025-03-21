@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -252,31 +251,12 @@ public class IntegrationTestUtils {
                 + "&password="
                 + password;
 
-        URL url = new URL(keycloakUrl);
-
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        connection.setDoOutput(true);
-
-        try (OutputStream os = connection.getOutputStream()) {
-          byte[] input = data.getBytes("utf-8");
-          os.write(input, 0, input.length);
-        }
-
-        try (BufferedReader in =
-            new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
-          StringBuilder response = new StringBuilder();
-          String inputLine;
-          while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-          }
-
-          System.out.println("accessToken: " + response);
-          JsonNode responseBody = objectMapper.readTree(response.toString());
-          accessToken = responseBody.path("access_token").asText();
-          expiresAt = Instant.now().getEpochSecond() + responseBody.path("expires_in").asLong();
-        }
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/x-www-form-urlencoded");
+        String response = callRest(keycloakUrl, HttpMethod.POST, data, headers, 200);
+        JsonNode responseBody = objectMapper.readTree(response.toString());
+        accessToken = responseBody.path("access_token").asText();
+        expiresAt = Instant.now().getEpochSecond() + responseBody.path("expires_in").asLong();
       }
     } catch (Exception e) {
       System.err.println(e);
