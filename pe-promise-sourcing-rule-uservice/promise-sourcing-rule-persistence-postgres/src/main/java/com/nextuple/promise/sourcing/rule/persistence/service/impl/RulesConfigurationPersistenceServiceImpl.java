@@ -89,9 +89,11 @@ public class RulesConfigurationPersistenceServiceImpl
         attributeDefinitionId,
         rule);
     try {
-      return getRepository()
-          .findByOrgIdAndAttributeDefinitionIdAndRule(orgId, attributeDefinitionId, rule)
-          .map(getMapper()::toDomain);
+      List<RulesConfigurationEntity> rulesConfigurationEntities =
+          getRepository()
+              .findByOrgIdAndAttributeDefinitionIdAndRule(orgId, attributeDefinitionId, rule);
+      if (rulesConfigurationEntities.isEmpty()) return Optional.empty();
+      return Optional.of(rulesConfigurationEntities.getFirst()).map(getMapper()::toDomain);
     } catch (Exception e) {
       log.error(String.valueOf(e), ERROR_WHILE_FINDING_RULES_CONFIGURATION);
       throw new PromiseEngineException(

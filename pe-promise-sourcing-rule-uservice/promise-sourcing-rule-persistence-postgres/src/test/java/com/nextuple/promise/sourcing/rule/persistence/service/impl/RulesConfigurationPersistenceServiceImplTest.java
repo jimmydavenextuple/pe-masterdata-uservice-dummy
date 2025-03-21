@@ -30,7 +30,6 @@ import com.nextuple.promise.sourcing.rule.persistence.entity.RulesConfigurationE
 import com.nextuple.promise.sourcing.rule.persistence.mapper.RulesConfigurationEntityMapper;
 import com.nextuple.promise.sourcing.rule.persistence.repository.RulesConfigurationRepository;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -167,7 +166,7 @@ class RulesConfigurationPersistenceServiceImplTest {
         .thenReturn(rulesConfigurationEntity);
     when(rulesConfigurationRepository.findByOrgIdAndAttributeDefinitionIdAndRule(
             anyString(), anyLong(), anyString()))
-        .thenReturn(Optional.of(rulesConfigurationEntity));
+        .thenReturn(List.of(rulesConfigurationEntity));
     when(rulesConfigurationEntityMapper.toDomain(any(RulesConfigurationEntity.class)))
         .thenReturn(rulesConfigurationDomainDto);
 
