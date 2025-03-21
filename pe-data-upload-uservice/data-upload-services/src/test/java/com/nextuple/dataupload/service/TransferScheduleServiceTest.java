@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -146,7 +145,7 @@ class TransferScheduleServiceTest {
     optAttr2.setAttributeName("OptAttr2");
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 3L))
         .thenReturn(BaseResponse.builder().payload(optAttr1).build());
-    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(4L)))
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 4L))
         .thenReturn(BaseResponse.builder().payload(optAttr2).build());
 
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
@@ -333,7 +332,7 @@ class TransferScheduleServiceTest {
 
     SourcingAttributeResponse reqAttr = new SourcingAttributeResponse();
     reqAttr.setAttributeName("ReqAttr");
-    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(1L)))
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 1L))
         .thenReturn(BaseResponse.builder().payload(reqAttr).build());
 
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
@@ -461,9 +460,9 @@ class TransferScheduleServiceTest {
     SourcingAttributeResponse reqAttr1 = new SourcingAttributeResponse();
     reqAttr1.setAttributeName("ReqAttr1");
 
-    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(1L)))
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 1L))
         .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
-    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(eq(orgId), eq(2L)))
+    when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 2L))
         .thenReturn(BaseResponse.builder().payload(null).build());
 
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
