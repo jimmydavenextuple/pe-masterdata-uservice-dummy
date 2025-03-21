@@ -29,7 +29,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class TransferScheduleRedisRepositoryImpl implements TransferScheduleRedisRepository {
 
-  @Autowired RedissonClient redissonClient;
+  @Autowired(required = false)
+  RedissonClient redissonClient;
 
   @Override
   public void save(TransferScheduleCreationRequest request) {
