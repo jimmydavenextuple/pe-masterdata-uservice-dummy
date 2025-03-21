@@ -116,7 +116,7 @@ public class TransferScheduleService {
     List<SourcingAttributeResponse> sourcingAttributeList = new ArrayList<>();
     if (Objects.nonNull(attributesString)) {
       String[] attributeIdsFromActiveSourcingAttributesDefinition =
-          attributesString.split("\\s*,\\s*");
+          attributesString.split(",");
       for (String attributeId : attributeIdsFromActiveSourcingAttributesDefinition) {
         Long attribute = Long.parseLong(attributeId.trim());
         BaseResponse<SourcingAttributeResponse> sourcingAttribute =
