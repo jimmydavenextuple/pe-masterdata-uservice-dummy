@@ -145,7 +145,6 @@ public class NodePriorityService {
         .nodeGroupId(nodeGroupId)
         .nodeGroupName(nodeGroupDomainDto.getNodeGroupName())
         .nodeInfo(nodePriorityInfoList)
-        .customAttributes(nodeGroupDomainDto.getCustomAttributes())
         .build();
   }
 

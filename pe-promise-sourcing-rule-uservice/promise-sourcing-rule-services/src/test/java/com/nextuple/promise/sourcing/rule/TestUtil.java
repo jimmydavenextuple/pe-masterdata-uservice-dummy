@@ -643,11 +643,11 @@ public class TestUtil {
     NodePriorityInfo nodePriorityInfo = new NodePriorityInfo();
     nodePriorityInfo.setPriority(NODE_PRIORITY);
     nodePriorityInfo.setNodeId(NODE_ID);
+    nodePriorityInfo.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return NodeGroupDetailsResponse.builder()
         .orgId(ORG_ID)
         .nodeGroupId(NODE_GROUP_ID)
         .nodeInfo(List.of(nodePriorityInfo))
-        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1597,7 +1597,11 @@ public class TestUtil {
 
   public List<NodePriorityInfo> getNodePriorityInfoList() {
     NodePriorityInfo nodePriorityInfo =
-        NodePriorityInfo.builder().nodeId(NODE_ID).priority(PRIORITY).build();
+        NodePriorityInfo.builder()
+            .nodeId(NODE_ID)
+            .customAttributes(CUSTOM_ATTRIBUTES)
+            .priority(PRIORITY)
+            .build();
     List<NodePriorityInfo> nodePriorityInfoList = new ArrayList<>();
     nodePriorityInfoList.add(nodePriorityInfo);
 
