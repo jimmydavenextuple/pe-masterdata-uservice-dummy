@@ -298,6 +298,22 @@ definitions:
           - gradle
           - sonar
           - cve
+        script:
+          - microdnf install git
+          - microdnf install findutils
+          - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
+          - ./infra-automation/basic_build_validations.sh
+          - ./infra-automation/copySuppressions.sh
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -PexcludeTests='**/*IntegrationTest*' clean build jacocoTestReport spotbugsMain
+#          - bash ./gradlew dependencyCheckAggregate --info
+          - bash ./gradlew sonarqube showSonarQubeLink --info
+    - step: &integration-test
+        size: 2x
+        name: PR Build
+        caches:
+          - gradle
+          - sonar
+          - cve
         services:
           - docker
         artifacts:
@@ -306,7 +322,7 @@ definitions:
           - export TESTCONTAINERS_RYUK_DISABLED=true
           - microdnf install git
           - microdnf install findutils
-          - bash ./gradlew :test --tests  "com.nextuple.masterdata.integration.NodeCRUDTest"
+          - bash ./gradlew :test
     - step: &Clear-Cache
         name: Clear Pipeline Cache
         script:
@@ -318,6 +334,7 @@ pipelines:
   pull-requests:
     '**':
       - step: *pr-build
+      - step: *integration-test
   tags:
     '*-SNAPSHOT':
       - step: *Clear-Cache

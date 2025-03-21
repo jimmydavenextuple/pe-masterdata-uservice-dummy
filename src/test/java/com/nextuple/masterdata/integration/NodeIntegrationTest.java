@@ -22,7 +22,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.kafka.core.KafkaTemplate;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class NodeCRUDTest extends AbstractIntegrationTest {
+public class NodeIntegrationTest extends AbstractIntegrationTest {
   @Autowired KafkaTemplate<String, String> kafkaTemplate;
   @Autowired NodePersistenceServiceImpl nodePersistenceServiceImpl;
 
