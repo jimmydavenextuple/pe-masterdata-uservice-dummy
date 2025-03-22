@@ -304,12 +304,12 @@ definitions:
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
           - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
-          - bash ./gradlew -Pbuild_target=SNAPSHOT -PexcludeTests='**/*IntegrationTest*' clean build jacocoTestReport spotbugsMain
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -PexcludeTests='**/*ProxyTest*,**/*PerfTest*' clean build jacocoTestReport spotbugsMain
 #          - bash ./gradlew dependencyCheckAggregate --info
           - bash ./gradlew sonarqube showSonarQubeLink --info
-    - step: &integration-test
+    - step: &proxy-test
         size: 4x
-        name: Integration Test
+        name: Proxy Test
         caches:
           - gradle
           - sonar
@@ -321,7 +321,7 @@ definitions:
         script:
           - microdnf install findutils
           - export TESTCONTAINERS_RYUK_DISABLED=true
-          - bash ./gradlew :test --tests "com.nextuple.masterdata.integration.*"
+          - bash ./gradlew :test --tests "com.nextuple.masterdata.proxy.**.*ProxyTest"
     - step: &Clear-Cache
         name: Clear Pipeline Cache
         script:
@@ -333,7 +333,7 @@ pipelines:
   pull-requests:
     '**':
 #      - step: *pr-build
-      - step: *integration-test
+      - step: *proxy-test
   tags:
     '*-SNAPSHOT':
       - step: *Clear-Cache

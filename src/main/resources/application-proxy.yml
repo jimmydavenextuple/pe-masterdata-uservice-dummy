@@ -302,7 +302,7 @@ kafka-topic-flags:
       enabled: true
 test-container:
   keycloak:
-    token-url: "https://keycloak-nonprod.nextuple.com/realms/noms-dev/protocol/openid-connect/token" # \${PE-TEST-CONTAINER-KEYCLOAK-TOKEN-URL} # Replace for local testing
-    tenant-client-id: "tenantclient-nextuple" # \${PE-TEST-CONTAINER-KEYCLOAK-TENANT-CLIENT-ID} # Replace for local testing
+    token-url: "https://keycloak-nonprod.nextuple.com/realms/noms-dev/protocol/openid-connect/token"
+    tenant-client-id: "tenantclient-nextuple"
     username: "pe_admin_v2" # \${PE-TEST-CONTAINER-KEYCLOAK-USERNAME} # Replace for local testing
     password: "pe_admin_v2" # \${PE-TEST-CONTAINER-KEYCLOAK-PASSWORD} # Replace for local testing
