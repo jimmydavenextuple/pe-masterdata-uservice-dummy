@@ -18,24 +18,31 @@ import com.nextuple.transit.spring.cache.feign.TransferScheduleFeignImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class TransferScheduleFeignClientServiceImpl
-    extends AbstractGenericFeignClientServiceImpl<
+        extends AbstractGenericFeignClientServiceImpl<
         TransferScheduleCacheKey,
         TransferScheduleCacheValue,
         String,
         BaseResponse<List<TransferScheduleResponse>>> {
   private final TransferScheduleFeignImpl transferScheduleFeign;
 
+  @Value("${transfer-schedule.horizon-days:5}")
+  private int horizonDays;
+
+  @Value("${transfer-schedule.past-days:5}")
+  private int pastDays;
+
   private final GenericMapper<
           TransferScheduleCacheKey,
           TransferScheduleCacheValue,
           String,
           BaseResponse<List<TransferScheduleResponse>>>
-      transferScheduleMapper;
+          transferScheduleMapper;
 
   @Override
   public TransferScheduleCacheValue get(TransferScheduleCacheKey key) {
@@ -45,20 +52,20 @@ public class TransferScheduleFeignClientServiceImpl
       DateTime endTime = new DateTime(key.getDateBucket());
       endTime = endTime.withTime(23, 59, 59, 0);
       TransferScheduleRangeRequest request =
-          TransferScheduleRangeRequest.builder()
-              .orgId(key.getOrgId())
-              .dropoffNodeId(key.getDropoffNode())
-              .rule(key.getRule())
-              .ruleName(key.getRuleName())
-              .startTime(startTime)
-              .horizonDays(1)
-              .endTime(endTime)
-              .pastDays(1)
-              .exclusive(true)
-              .build();
+              TransferScheduleRangeRequest.builder()
+                      .orgId(key.getOrgId())
+                      .dropoffNodeId(key.getDropoffNode())
+                      .rule(key.getRule())
+                      .ruleName(key.getRuleName())
+                      .startTime(startTime)
+                      .horizonDays(horizonDays)
+                      .endTime(endTime)
+                      .pastDays(pastDays)
+                      .exclusive(true)
+                      .build();
 
       BaseResponse<List<TransferScheduleResponse>> response =
-          transferScheduleFeign.fetchTransferSchedulesInRange(request);
+              transferScheduleFeign.fetchTransferSchedulesInRange(request);
       if (response.getPayload().isEmpty()) {
         return TransferScheduleCacheValue.builder().build();
       }
