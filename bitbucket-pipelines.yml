@@ -92,7 +92,7 @@ server:
       middleman: no
       prometheus: yes
       storage: yes
-      java-agents: -javaagent:/mnt/shared-storage/newrelic-agent.jar
+#      java-agents: -javaagent:/mnt/shared-storage/newrelic-agent.jar
       java-opts: "-Xms1024m -Xmx1024m"
       keyvault: yes
       scale:
