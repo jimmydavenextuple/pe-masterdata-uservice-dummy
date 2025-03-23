@@ -306,7 +306,6 @@ definitions:
           - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT -PexcludeTests='**/*ProxyTest*,**/*PerfTest*' clean build jacocoTestReport spotbugsMain
 #          - bash ./gradlew dependencyCheckAggregate --info
-          - bash ./gradlew sonarqube showSonarQubeLink --info
     - step: &proxy-test
         size: 4x
         name: Proxy Test
@@ -321,7 +320,8 @@ definitions:
         script:
           - microdnf install findutils
           - export TESTCONTAINERS_RYUK_DISABLED=true
-          - bash ./gradlew :test --tests "com.nextuple.masterdata.proxy.**.*ProxyTest"
+          - bash ./gradlew :test --tests "com.nextuple.masterdata.**.*ProxyTest"
+          - bash ./gradlew sonarqube showSonarQubeLink --info
     - step: &Clear-Cache
         name: Clear Pipeline Cache
         script:
