@@ -320,7 +320,7 @@ definitions:
           - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotbugsMain
-#          - bash ./gradlew dependencyCheckAggregate --info
+          #          - bash ./gradlew dependencyCheckAggregate --info
           - bash ./gradlew sonarqube showSonarQubeLink --info
     - step: &Clear-Cache
         name: Clear Pipeline Cache
@@ -420,7 +420,7 @@ pipelines:
               !!merge <<: *deploy
               name: Deploy SQA
               trigger: manual
-              deployment: sqa          
+              deployment: sqa
           - step:
               !!merge <<: *deploy
               name: Deploy SDEV
@@ -430,7 +430,7 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy Sandbox
           trigger: manual
-          deployment: sandbox              
+          deployment: sandbox
       - step:
           !!merge <<: *deploy
           name: Deploy Prod

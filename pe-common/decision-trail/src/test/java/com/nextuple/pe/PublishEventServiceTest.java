@@ -6,8 +6,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.pe.configs.ITenantConfig;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -82,5 +87,22 @@ class PublishEventServiceTest {
   void publishGenericExceptionEventWithLineIdTest() {
     publishEventService.publishGenericExceptionEventWithLineId(123, "Error occurred", "lineId");
     verify(applicationEventPublisher, times(1)).publishEvent(any(ExceptionEvent.class));
+  }
+
+  @Test
+  void checkEventTimestampConversion() {
+    SimpleDateFormat formatter =
+        new SimpleDateFormat("MMM dd, yyyy, hh:mm:ss.SSS a", Locale.ENGLISH);
+    formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+    calendar.set(2025, Calendar.JANUARY, 17, 2, 0, 0);
+    calendar.set(Calendar.MILLISECOND, 0);
+    String twoAmTimeStamp = formatter.format(calendar.getTime());
+    Assertions.assertEquals("JAN 17, 2025, 02:00:00.000 AM", twoAmTimeStamp.toUpperCase());
+
+    calendar.set(Calendar.HOUR_OF_DAY, 17);
+    String fivePmTimeStamp = formatter.format(calendar.getTime());
+    Assertions.assertEquals("JAN 17, 2025, 05:00:00.000 PM", fivePmTimeStamp.toUpperCase());
   }
 }
