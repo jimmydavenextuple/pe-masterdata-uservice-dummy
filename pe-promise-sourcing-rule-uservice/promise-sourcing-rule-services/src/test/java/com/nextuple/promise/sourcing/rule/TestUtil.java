@@ -624,8 +624,7 @@ public class TestUtil {
     nodeGroupDetailEntity.setNodeId(NODE_ID);
     nodeGroupDetailEntity.setPriority(NODE_PRIORITY);
     nodeGroupDetailEntity.setNodeGroupId(NODE_GROUP_ID);
-    nodeGroupDetailEntity.setCustomAttributes(
-        JsonNodeFactory.instance.objectNode().put("key1", "value1"));
+    nodeGroupDetailEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
 
     return nodeGroupDetailEntity;
   }
@@ -644,6 +643,7 @@ public class TestUtil {
     NodePriorityInfo nodePriorityInfo = new NodePriorityInfo();
     nodePriorityInfo.setPriority(NODE_PRIORITY);
     nodePriorityInfo.setNodeId(NODE_ID);
+    nodePriorityInfo.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return NodeGroupDetailsResponse.builder()
         .orgId(ORG_ID)
         .nodeGroupId(NODE_GROUP_ID)
@@ -896,6 +896,7 @@ public class TestUtil {
     NodePriorityInfo nodePriorityInfo = new NodePriorityInfo();
     nodePriorityInfo.setNodeId(NODE_ID);
     nodePriorityInfo.setPriority(PRIORITY);
+    nodePriorityInfo.setCustomAttributes(CUSTOM_ATTRIBUTES);
     NodeGroupDetailsInfo nodeGroupDetailsInfo = new NodeGroupDetailsInfo();
     nodeGroupDetailsInfo.setNodeGroupId(NODE_GROUP_ID);
     nodeGroupDetailsInfo.setNodeInfo(List.of(nodePriorityInfo));
@@ -908,6 +909,7 @@ public class TestUtil {
             .sourcingRuleName(SOURCING_RULE_NAME)
             .requiredAttributes(getRequiredAttributes())
             .optionalAttributes(getOptionalAttributes())
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build();
     return FetchSourcingRulesResponse.builder()
         .sourcingRulesInfo(List.of(sourcingRulesInfo))
@@ -1595,7 +1597,11 @@ public class TestUtil {
 
   public List<NodePriorityInfo> getNodePriorityInfoList() {
     NodePriorityInfo nodePriorityInfo =
-        NodePriorityInfo.builder().nodeId(NODE_ID).priority(PRIORITY).build();
+        NodePriorityInfo.builder()
+            .nodeId(NODE_ID)
+            .customAttributes(CUSTOM_ATTRIBUTES)
+            .priority(PRIORITY)
+            .build();
     List<NodePriorityInfo> nodePriorityInfoList = new ArrayList<>();
     nodePriorityInfoList.add(nodePriorityInfo);
 

@@ -129,6 +129,7 @@ public class NodePriorityService {
         NodePriorityInfo nodePriorityInfo = new NodePriorityInfo();
         nodePriorityInfo.setNodeId(nodePriorityDomainDto.getNodeId());
         nodePriorityInfo.setPriority(nodePriorityDomainDto.getPriority());
+        nodePriorityInfo.setCustomAttributes(nodeGroupDomainDto.getCustomAttributes());
         nodePriorityInfoList.add(nodePriorityInfo);
       }
     } else {
