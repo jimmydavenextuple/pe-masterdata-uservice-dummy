@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
  *
  * <p>Any common config & method for REST proxy tests can be added here.
  */
-public abstract class ProxyTest extends AbstractSpringBootTest {
+public abstract class AbstractProxyTest extends AbstractSpringBootTest {
 
   @BeforeEach
   public void setup() {

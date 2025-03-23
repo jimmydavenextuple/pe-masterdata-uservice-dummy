@@ -419,7 +419,7 @@ public class SpringBootTestUtil {
    * Polls the specified number of messages from the Kafka consumer.
    *
    * <p>This method polls the Kafka consumer for the specified number of messages and deserializes
-   * them into objects of the specified class type. It waits for a maximum duration of {@link
+   * them into objects of the specified class type. It waits for a maximum duration of {@code
    * DEFAULT_TIMEOUT_SECONDS} seconds for the messages to be received.
    *
    * @param <T> the type of the object to which the Kafka messages will be deserialized.
@@ -436,7 +436,7 @@ public class SpringBootTestUtil {
    * Polls the specified number of messages from the Kafka consumer.
    *
    * <p>This method polls the Kafka consumer for the specified number of messages and deserializes
-   * them into objects of the specified class type. It waits for a maximum duration of {@link
+   * them into objects of the specified class type. It waits for a maximum duration of {@code
    * DEFAULT_TIMEOUT_SECONDS} seconds for the messages to be received.
    *
    * @param <T> the type of the object to which the Kafka messages will be deserialized.

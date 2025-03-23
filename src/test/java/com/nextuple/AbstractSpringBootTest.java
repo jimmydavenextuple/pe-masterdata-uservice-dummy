@@ -30,15 +30,11 @@ import org.testcontainers.utility.DockerImageName;
 @ActiveProfiles("proxy")
 public abstract class AbstractSpringBootTest {
 
-  /**
-   * Kafka container
-   */
+  /** Kafka container */
   public static KafkaContainer kafka =
       new KafkaContainer(DockerImageName.parse("apache/kafka-native:3.8.0"));
 
-  /**
-   * Check util possibilities at: {@link SpringBootTestUtil}
-   */
+  /** Check util possibilities at: {@link SpringBootTestUtil} */
   @Autowired public SpringBootTestUtil util;
 
   /**

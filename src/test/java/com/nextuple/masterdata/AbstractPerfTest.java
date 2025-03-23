@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
  *
  * <p>Any common config & method for Performance tests can be added here.
  */
-public abstract class PerfTest extends AbstractSpringBootTest {
+public abstract class AbstractPerfTest extends AbstractSpringBootTest {
 
   @BeforeEach
   public void setup() {

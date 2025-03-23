@@ -2,7 +2,7 @@ package com.nextuple.masterdata.proxy;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
-import com.nextuple.masterdata.ProxyTest;
+import com.nextuple.masterdata.AbstractProxyTest;
 import com.nextuple.node.consumer.dto.NodeFeedDto;
 import com.nextuple.node.domain.inbound.NodeRequest;
 import com.nextuple.node.domain.outbound.NodeResponse;
@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class NodeProxyTest extends ProxyTest {
+class NodeProxyTest extends AbstractProxyTest {
 
   @Autowired NodePersistenceServiceImpl nodePersistenceServiceImpl;
 
