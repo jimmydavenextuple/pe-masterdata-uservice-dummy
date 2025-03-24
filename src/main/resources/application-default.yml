@@ -31,9 +31,9 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/pe_master
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: postgres
+    password: password
     hikari:
       maximumPoolSize: 100
       minimumIdle: 10
@@ -248,10 +248,10 @@ neo-platform:
       tenant-id: x-tenant-id
     issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev
     authz-config:
-      config-path: "https://internal-dev.nextuple.com/services/authz-config/api/configurations/groups/application-group/scope-id/pe-masterdata"
+      config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
       refresh-interval-mins: 30
       role:
-        json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-dunder.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles
+        json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles
 kafka:
   input:
     taskTopics: INTERNAL.DEV.PE.RETRY_TOPIC_INV

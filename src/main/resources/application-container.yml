@@ -5,7 +5,7 @@ spring:
         registration:
           my-client:
             client-id: applicationclient-pe-masterdata-uservice
-            client-secret: QdbFOveZA93JvHbcjqe0aG0m0XCiJ6T6  #  \${MASTER-DATA-KEYCLOAK-CLIENT-ID} # Replace for local testing
+            client-secret: \${MASTER-DATA-KEYCLOAK-CLIENT-ID} # Replace for local testing
             authorization-grant-type: client_credentials
             scope: applicationclient-pe-masterdata-scope
         provider:
@@ -29,7 +29,7 @@ spring:
     database: POSTGRESQL
     show-sql: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
   datasource:
     url: jdbc:postgresql://localhost:5432/pe
     username: postgres
@@ -304,5 +304,14 @@ test-container:
   keycloak:
     token-url: "https://keycloak-nonprod.nextuple.com/realms/noms-dev/protocol/openid-connect/token"
     tenant-client-id: "tenantclient-nextuple"
-    username: "pe_admin_v2" # \${PE-TEST-CONTAINER-KEYCLOAK-USERNAME} # Replace for local testing
-    password: "pe_admin_v2" # \${PE-TEST-CONTAINER-KEYCLOAK-PASSWORD} # Replace for local testing
+    username: \${PE-TEST-CONTAINER-KEYCLOAK-USERNAME} # Replace for local testing
+    password: \${PE-TEST-CONTAINER-KEYCLOAK-PASSWORD} # Replace for local testing
+
+azure.keyvault:
+  client-id: \${AZURE_KEYVAULT_CLIENTID}
+  client-key: \${AZURE_KEYVAULT_CLIENTKEY}
+  enabled: true
+  tenant-id: \${AZURE_KEYVAULT_TENANTID}
+  uri: \${AZURE_KEYVAULT_URI}
+  secret-keys: "KEYCLOAK-TENANT-CONFIG-DEVPE, KEYCLOAK-PRODUCT-CONFIG"
+
