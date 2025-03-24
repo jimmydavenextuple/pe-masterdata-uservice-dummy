@@ -151,30 +151,32 @@ import java.lang.annotation.Target;
                   name =
                       "A 400 error code indicates that the 'startTime' for method parameter type Local is in incorrect format.",
                   value =
-                      "{\n"
-                          + "    \"success\": false,\n"
-                          + "    \"requestId\": \"95f6439f-0351-4ac8-b649-fd843576155c#17\",\n"
-                          + "    \"timestamp\": 1679545687292,\n"
-                          + "    \"message\": \"JSON parse error: Invalid format: \"2025-03-21T\" is malformed at T\",\n"
-                          + "    \"payload\": {\n"
-                          + "        \"type\": \"ERROR\",\n"
-                          + "        \"code\": 2\n"
-                          + "    }\n"
-                          + "}"),
+                      """
+                                  {
+                                      "success": false,
+                                      "requestId": "95f6439f-0351-4ac8-b649-fd843576155c#17",
+                                      "timestamp": 1679545687292,
+                                      "message": "JSON parse error: Invalid format: "2025-03-21T" is malformed at T",
+                                      "payload": {
+                                          "type": "ERROR",
+                                          "code": 2
+                                      }
+                                  }"""),
               @ExampleObject(
                   summary = "'startDate' for method parameter is in incorrect format.",
                   name =
                       "A 400 error code indicates that the 'endTime' for method parameter type Local is in incorrect format.",
                   value =
-                      "{\n"
-                          + "    \"success\": false,\n"
-                          + "    \"requestId\": \"95f6439f-0351-4ac8-b649-fd843576155c#17\",\n"
-                          + "    \"timestamp\": 1679545687292,\n"
-                          + "    \"message\": \"JSON parse error: Invalid format: \"2025-03-21T\" is malformed at T\",\n"
-                          + "    \"payload\": {\n"
-                          + "        \"type\": \"ERROR\",\n"
-                          + "        \"code\": 2\n"
-                          + "    }\n"
-                          + "}")
+                      """
+                                  {
+                                      "success": false,
+                                      "requestId": "95f6439f-0351-4ac8-b649-fd843576155c#17",
+                                      "timestamp": 1679545687292,
+                                      "message": "JSON parse error: Invalid format: "2025-03-21T" is malformed at T",
+                                      "payload": {
+                                          "type": "ERROR",
+                                          "code": 2
+                                      }
+                                  }""")
             }))
 public @interface GetTransferSchedulesListDocV2 {}
