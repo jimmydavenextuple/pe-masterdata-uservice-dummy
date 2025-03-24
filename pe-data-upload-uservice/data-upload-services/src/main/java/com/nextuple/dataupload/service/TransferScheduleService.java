@@ -84,7 +84,7 @@ public class TransferScheduleService {
           getTransferSchedulesBasedOnFilters(orgId, pageParams, request, isPagination);
 
       List<TransferScheduleResponse> transferScheduleResponseList = response.getPayload().getData();
-      preparePaginationParams(pageParams, response, pagination);
+      preparePaginationParams(pageParams, response, pagination, orgId);
 
       List<Map<String, Object>> transferScheduleRows =
           populateRows(transferScheduleResponseList, requiredAttributeList, optionalAttributeList);
@@ -104,13 +104,30 @@ public class TransferScheduleService {
   private void preparePaginationParams(
       PageParams pageParams,
       BaseResponse<PagePayload<TransferScheduleResponse>> response,
-      PagePayload.Pagination pagination) {
+      PagePayload.Pagination pagination,
+      String orgId) {
     PagePayload.Pagination paginationConfig = response.getPayload().getPagination();
     pagination.setTotalRecords(paginationConfig.getTotalRecords());
     pagination.setTotalPages(paginationConfig.getTotalPages());
     pagination.setCurrentPage(pageParams.getPageNo().orElse(1));
     pagination.setSortOrder(pageParams.getSortOrder().orElse(TRANSFER_SCHEDULE_DEFAULT_SORT_BY));
     pagination.setSortBy(pageParams.getSortBy().orElse("ASC"));
+    String nextUri =
+        PaginationUtil.buildUriForPagination(
+            paginationConfig.getCurrentPage(),
+            paginationConfig.getTotalPages(),
+            "next",
+            PAGINATION_URL.formatted(
+                orgId, paginationConfig.getCurrentPage() + 1, pageParams.getPageSize().orElse(10)));
+    String previousUri =
+        PaginationUtil.buildUriForPagination(
+            paginationConfig.getCurrentPage(),
+            paginationConfig.getTotalPages(),
+            "previous",
+            PAGINATION_URL.formatted(
+                orgId, paginationConfig.getCurrentPage() - 1, pageParams.getPageSize().orElse(10)));
+    pagination.setPrevious(previousUri);
+    pagination.setNext(nextUri);
   }
 
   private BaseResponse<PagePayload<TransferScheduleResponse>> getTransferSchedulesBasedOnFilters(
