@@ -9,7 +9,7 @@ This is particularly useful for testing REST APIs and Kafka consumers, as it inv
     It is recommended to install docker v28. [Link for installation](https://docs.docker.com/engine/install/ubuntu/)
 
 ## Local setup
-- **Add Azure Key Vault properties**: Add the following properties to the `application-proxy.yml` file to get the latest files.
+- **Add Azure Key Vault properties**: Add the following properties to the `application-container.yml` file to get the latest files.
     ```properties
     azure.keyvault:
       client-id: <Azure Client ID>
@@ -22,8 +22,8 @@ This is particularly useful for testing REST APIs and Kafka consumers, as it inv
   
 ## File and Folder Conventions
 Please follow the below conventions while creating the test files and folders.
-- **To implement proxy tests for a new use case**:
-  - Create a new test class in the `proxy` folder with the name `<<TestName>>ProxyTest.java` by extending the `AbstractProxyTest` class. (Refer to the `NodeProxyTest.java` file for reference)
+- **To implement container tests for a new use case**:
+  - Create a new test class in the `container` folder with the name `<<TestName>>ContainerTest.java` by extending the `AbstractContainerTest` class. (Refer to the `NodeContainerTest.java` file for reference)
   - Create a new folder in the `input` folder in the resources folder with the name `<<TestName>>` and add the input request file of the test case.
   - Create a new folder in the `expected` folder in the resources folder with the name `<<TestName>>` and add the expected response file of the test case.
 ```dockerignore
@@ -33,10 +33,10 @@ Please follow the below conventions while creating the test files and folders.
     │       └── nextuple
     │           ├── AbstractSpringBootTest.java (Abstract class to initialize the test container)
     │           ├── masterdata
-    │           │   ├── AbstractProxyTest.java (Abstract class to initialize any proxy specific test container & common methods)
+    │           │   ├── AbstractContainerTest.java (Abstract class to initialize any container specific test container & common methods)
     │           │   ├── AbstractPerfTest.java (Abstract class to initialize any perf specific test container & common methods)
-    │           │   ├── proxy (Folder to keep all the proxy test classes)
-    │           │   │   └── NodeProxyTest.java (Test class to test the Node proxy. Can be referred to as a template)
+    │           │   ├── container (Folder to keep all the container test classes)
+    │           │   │   └── NodeContainerTest.java (Test class to test the Node container. Can be referred to as a template)
     │           │   └── utils
     │           │       └── SpringBootTestUtil.java (Templatization of util methods)
     │           └── README.md

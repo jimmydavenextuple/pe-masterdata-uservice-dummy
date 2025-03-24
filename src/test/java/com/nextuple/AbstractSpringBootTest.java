@@ -17,7 +17,7 @@ import org.testcontainers.utility.DockerImageName;
  * <p>It starts the spring boot application on defined port and uses testcontainers to start kafka &
  * postgres containers. It also provides the utility class to interact with the application.
  *
- * <p>Any common config & method for proxy tests can be added here.
+ * <p>Any common config & method for container tests can be added here.
  */
 @DirtiesContext
 @SpringBootTest(
@@ -27,7 +27,7 @@ import org.testcontainers.utility.DockerImageName;
       "spring.datasource.url=jdbc:tc:postgresql:17-alpine:///pe?TC_INITSCRIPT=file:src/test/resources/db_setup.sql",
       "server.port=8080"
     })
-@ActiveProfiles("proxy")
+@ActiveProfiles("container")
 public abstract class AbstractSpringBootTest {
 
   /** Kafka container */

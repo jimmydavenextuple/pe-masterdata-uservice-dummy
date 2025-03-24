@@ -5,11 +5,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
- * Abstract class for REST proxy tests.
+ * Abstract class for REST container tests.
  *
- * <p>Any common config & method for REST proxy tests can be added here.
+ * <p>Any common config & method for REST container tests can be added here.
  */
-public abstract class AbstractProxyTest extends AbstractSpringBootTest {
+public abstract class AbstractContainerTest extends AbstractSpringBootTest {
 
   @BeforeEach
   public void setup() {

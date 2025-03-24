@@ -34,7 +34,7 @@ import org.springframework.util.MultiValueMap;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 /**
- * Utility class to perform proxy tests
+ * Utility class to perform container tests & perf testing.
  *
  * <p>It provides the following functionalities: 1. Parse input from resources 2. Initiate &
  * subscribe to kafka topics 3. Call rest endpoint 4. Poll the assertion 5. Poll messages from kafka
