@@ -93,10 +93,10 @@ server:
       prometheus: yes
       storage: yes
       java-agents: -javaagent:/mnt/shared-storage/newrelic-agent.jar
-      java-opts: "-Xms1024m -Xmx1024m"
+      java-opts: "-Xms3072m -Xmx3072m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/mnt/heapdumps"
       keyvault: yes
       scale:
-        replicas: 1
+        replicas: 3
       resources:
         min:
           memory: 4Gi
