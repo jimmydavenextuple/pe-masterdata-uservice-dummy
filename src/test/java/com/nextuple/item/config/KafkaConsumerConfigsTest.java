@@ -6,7 +6,6 @@
  */
 package com.nextuple.item.config;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -83,7 +82,7 @@ class KafkaConsumerConfigsTest {
   @Test
   void jsonContainerFactoryTest() {
     when(kafkaProperties.buildConsumerProperties(any())).thenReturn(testUtil.getJsonProps());
-    assertDoesNotThrow(
+    Assertions.assertDoesNotThrow(
         () ->
             consumerConfigs.jsonKafkaContainerListenerFactory(
                 new DefaultKafkaConsumerFactory<>(new HashMap<>()), null));
