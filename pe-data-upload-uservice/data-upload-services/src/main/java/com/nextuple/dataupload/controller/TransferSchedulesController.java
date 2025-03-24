@@ -12,6 +12,7 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.dataupload.controller.docs.GetTransferSchedulesListDoc;
+import com.nextuple.dataupload.controller.docs.GetTransferSchedulesListDocV2;
 import com.nextuple.dataupload.service.TransferScheduleService;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.GenericPageResponse;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
@@ -75,7 +76,7 @@ public class TransferSchedulesController {
       path = "v2/orgId/{orgId}",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  @GetTransferSchedulesListDoc
+  @GetTransferSchedulesListDocV2
   public ResponseEntity<BaseResponse<PagePayload<TransferScheduleResponse>>>
       getTransferSchedulesListV2(
           @NotBlank(message = "OrgId can't be empty")
