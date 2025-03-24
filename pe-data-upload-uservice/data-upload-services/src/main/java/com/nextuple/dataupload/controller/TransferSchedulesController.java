@@ -11,10 +11,10 @@ import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.dataupload.common.outbound.GenericPaginatedTableResponse;
 import com.nextuple.dataupload.controller.docs.GetTransferSchedulesListDoc;
 import com.nextuple.dataupload.controller.docs.GetTransferSchedulesListDocV2;
 import com.nextuple.dataupload.service.TransferScheduleService;
-import com.nextuple.promise.sourcing.rule.api.domain.outbound.GenericPageResponse;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -97,7 +97,7 @@ public class TransferSchedulesController {
     pageParams.setSortBy(Optional.of(sortBy));
     pageParams.setSortOrder(Optional.of(sortOrder));
 
-    GenericPageResponse transferScheduleDtoPage =
+    GenericPaginatedTableResponse transferScheduleDtoPage =
         transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPaginated);
 
     return ResponseEntity.ok(

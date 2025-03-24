@@ -23,12 +23,12 @@ import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.dataupload.common.outbound.GenericPaginatedTableResponse;
+import com.nextuple.dataupload.common.outbound.GenericTableDetails;
 import com.nextuple.dataupload.util.TestUtil;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.feign.SourcingAttributeFeign;
 import com.nextuple.promise.sourcing.rule.api.domain.feign.SourcingAttributesDefinitionFeign;
-import com.nextuple.promise.sourcing.rule.api.domain.outbound.GenericDetailsResponse;
-import com.nextuple.promise.sourcing.rule.api.domain.outbound.GenericPageResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributeResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import com.nextuple.transit.domain.feign.TransferScheduleFeign;
@@ -111,7 +111,7 @@ class TransferScheduleServiceTest {
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             orgId, SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE))
         .thenReturn(BaseResponse.builder().payload(null).build());
-    GenericPageResponse response =
+    GenericPaginatedTableResponse response =
         transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
     assertNull(response.getData());
     assertNull(response.getPagination());
@@ -174,14 +174,14 @@ class TransferScheduleServiceTest {
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
         .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
-    GenericPageResponse response =
+    GenericPaginatedTableResponse response =
         transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
     assertNotNull(response.getData());
     assertNotNull(response.getPagination());
 
-    GenericDetailsResponse detailsResponse = (GenericDetailsResponse) response.getData();
+    GenericTableDetails detailsResponse = (GenericTableDetails) response.getData();
     assertEquals(9, detailsResponse.getColumns().size());
 
     List<Map<String, Object>> rows = detailsResponse.getRows();
@@ -195,7 +195,7 @@ class TransferScheduleServiceTest {
     assertEquals("value3", row.get("OptAttr1"));
     assertEquals("value4", row.get("OptAttr2"));
 
-    assertEquals(1L, response.getPagination().getTotalRecords());
+    assertEquals(1, response.getPagination().getTotalRecords());
   }
 
   private static @NotNull TransferScheduleResponse prepareTransferScheduleResp() {
@@ -242,7 +242,7 @@ class TransferScheduleServiceTest {
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
         .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
-    GenericPageResponse response =
+    GenericPaginatedTableResponse response =
         transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
@@ -293,14 +293,14 @@ class TransferScheduleServiceTest {
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
         .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
-    GenericPageResponse response =
+    GenericPaginatedTableResponse response =
         transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
     assertNotNull(response.getData());
     assertNotNull(response.getPagination());
 
-    GenericDetailsResponse detailsResponse = (GenericDetailsResponse) response.getData();
+    GenericTableDetails detailsResponse = (GenericTableDetails) response.getData();
     List<Map<String, Object>> rows = detailsResponse.getRows();
     assertEquals(1, rows.size());
     Map<String, Object> row = rows.get(0);
@@ -361,13 +361,13 @@ class TransferScheduleServiceTest {
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
         .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
-    GenericPageResponse response =
+    GenericPaginatedTableResponse response =
         transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
     assertNotNull(response.getData());
 
-    GenericDetailsResponse detailsResponse = (GenericDetailsResponse) response.getData();
+    GenericTableDetails detailsResponse = (GenericTableDetails) response.getData();
     List<Map<String, Object>> rows = detailsResponse.getRows();
     assertEquals(1, rows.size());
     Map<String, Object> row = rows.get(0);
@@ -428,13 +428,13 @@ class TransferScheduleServiceTest {
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
         .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
-    GenericPageResponse response =
+    GenericPaginatedTableResponse response =
         transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
     assertNotNull(response.getData());
 
-    GenericDetailsResponse detailsResponse = (GenericDetailsResponse) response.getData();
+    GenericTableDetails detailsResponse = (GenericTableDetails) response.getData();
     List<Map<String, Object>> rows = detailsResponse.getRows();
     assertEquals(1, rows.size());
     Map<String, Object> row = rows.get(0);
@@ -491,13 +491,13 @@ class TransferScheduleServiceTest {
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
         .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
-    GenericPageResponse response =
+    GenericPaginatedTableResponse response =
         transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
     assertNotNull(response.getData());
 
-    GenericDetailsResponse detailsResponse = (GenericDetailsResponse) response.getData();
+    GenericTableDetails detailsResponse = (GenericTableDetails) response.getData();
     List<Map<String, Object>> rows = detailsResponse.getRows();
     assertEquals(1, rows.size());
     Map<String, Object> row = rows.get(0);

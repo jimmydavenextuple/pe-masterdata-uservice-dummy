@@ -14,16 +14,15 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.util.PaginationUtil;
+import com.nextuple.dataupload.common.outbound.GenericColumnInfoDto;
+import com.nextuple.dataupload.common.outbound.GenericPaginatedTableResponse;
+import com.nextuple.dataupload.common.outbound.GenericTableDetails;
 import com.nextuple.dataupload.util.CommonDashboardUtil;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.feign.SourcingAttributeFeign;
 import com.nextuple.promise.sourcing.rule.api.domain.feign.SourcingAttributesDefinitionFeign;
-import com.nextuple.promise.sourcing.rule.api.domain.outbound.GenericDetailsResponse;
-import com.nextuple.promise.sourcing.rule.api.domain.outbound.GenericPageResponse;
-import com.nextuple.promise.sourcing.rule.api.domain.outbound.GenericPaginationAttribute;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributeResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
-import com.nextuple.promise.sourcing.rule.api.domain.pojo.GenericColumnInfoDto;
 import com.nextuple.transit.domain.feign.TransferScheduleFeign;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
@@ -59,17 +58,17 @@ public class TransferScheduleService {
   private static final String PAGINATION_URL =
       "transfer-schedule/ui/orgId/%s?pageNo=%d&pageSize=%d";
 
-  public GenericPageResponse getTransferScheduleListV2(
+  public GenericPaginatedTableResponse getTransferScheduleListV2(
       String orgId,
       PageParams pageParams,
       FetchTransferScheduleRequest request,
       Boolean isPagination)
       throws CommonServiceException {
     CommonDashboardUtil.handleInvalidSortOrder(pageParams.getSortOrder().orElse("ASC"));
-    GenericDetailsResponse transferScheduleResponse = new GenericDetailsResponse();
-    GenericPaginationAttribute pagination = new GenericPaginationAttribute();
+    GenericTableDetails transferScheduleResponse = new GenericTableDetails();
+    PagePayload.Pagination pagination = new PagePayload.Pagination();
     List<GenericColumnInfoDto> transferScheduleColumnInfoDtos = new ArrayList<>();
-    GenericPageResponse finalResponse = new GenericPageResponse();
+    GenericPaginatedTableResponse finalResponse = new GenericPaginatedTableResponse();
     BaseResponse<SourcingAttributesDefinitionResponse> sourcingAttributeDefinitionResponse =
         getSourcingAttributesDefinitionInActiveStatus(orgId);
     if (sourcingAttributeDefinitionResponse != null
@@ -102,12 +101,12 @@ public class TransferScheduleService {
     return finalResponse;
   }
 
-  private static void preparePaginationParams(
+  private void preparePaginationParams(
       PageParams pageParams,
       BaseResponse<PagePayload<TransferScheduleResponse>> response,
-      GenericPaginationAttribute pagination) {
+      PagePayload.Pagination pagination) {
     PagePayload.Pagination paginationConfig = response.getPayload().getPagination();
-    pagination.setTotalRecords(Long.valueOf(paginationConfig.getTotalRecords()));
+    pagination.setTotalRecords(paginationConfig.getTotalRecords());
     pagination.setTotalPages(paginationConfig.getTotalPages());
     pagination.setCurrentPage(pageParams.getPageNo().orElse(1));
     pagination.setSortOrder(pageParams.getSortOrder().orElse(TRANSFER_SCHEDULE_DEFAULT_SORT_BY));
@@ -195,8 +194,8 @@ public class TransferScheduleService {
   }
 
   private void setPaginationIfNotEmpty(
-      GenericPageResponse finalResponse,
-      GenericPaginationAttribute pagination,
+      GenericPaginatedTableResponse finalResponse,
+      PagePayload.Pagination pagination,
       List<TransferScheduleResponse> transferScheduleResponses) {
 
     if (CollectionUtils.isEmpty(transferScheduleResponses)) {
