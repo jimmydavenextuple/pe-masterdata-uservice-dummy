@@ -286,4 +286,4 @@ kafka-topic-flags:
       enabled: true
 entity-listener:
   kafka:
-    enabled: true
+    enabled: false
