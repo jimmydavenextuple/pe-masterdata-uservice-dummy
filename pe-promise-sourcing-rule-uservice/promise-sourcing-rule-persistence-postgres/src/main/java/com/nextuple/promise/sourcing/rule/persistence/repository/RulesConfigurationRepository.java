@@ -29,4 +29,10 @@ public interface RulesConfigurationRepository
       String rule,
       RulesConfigurationModuleNameEnum moduleName,
       SourcingAttributesDefinitionScopeEnum scope);
+
+  List<RulesConfigurationEntity> findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+      String orgId,
+      Long attributeDefinitionId,
+      RulesConfigurationModuleNameEnum moduleName,
+      SourcingAttributesDefinitionScopeEnum scope);
 }
