@@ -209,7 +209,8 @@ class NodeContainerTest extends AbstractContainerTest {
   @Order(6)
   @DisplayName("Happy Path: Get Node Details of a Deleted Node")
   void getNodeDetailsWithInvalidInput() throws IOException {
-    util.callRestPayload(
-        "http://localhost:8080/node/nodeId-002/NEXTUPLE_GR", HttpMethod.GET, null, "", 404);
+    String response = util.callRestPayload(
+        "http://localhost:8080/node/nodeId-002/NEXTUPLE_GR", HttpMethod.GET, null, "message", 404);
+    Assertions.assertEquals("\"Node not found with given details\"", response);
   }
 }
