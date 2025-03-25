@@ -192,10 +192,10 @@ public class TransferScheduleService {
 
     transferColumnInfoDtos.add(
         getTransferColumnInfoDto(DESTINATION_NODE_COLUMN, DROPOFF_NODE_ID, true));
-    transferColumnInfoDtos.add(getTransferColumnInfoDto(PICKUP_COLUMN, START_TIME, false));
-    transferColumnInfoDtos.add(getTransferColumnInfoDto(DROPOFF_COLUMN, END_TIME, false));
     addAttributesToTransferSchedule(transferColumnInfoDtos, requiredAttributesList);
     addAttributesToTransferSchedule(transferColumnInfoDtos, optionalAttributesList);
+    transferColumnInfoDtos.add(getTransferColumnInfoDto(PICKUP_COLUMN, START_TIME, false));
+    transferColumnInfoDtos.add(getTransferColumnInfoDto(DROPOFF_COLUMN, END_TIME, false));
   }
 
   private void addAttributesToTransferSchedule(
