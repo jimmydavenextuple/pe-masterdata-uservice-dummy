@@ -11,6 +11,8 @@ import com.nextuple.common.enums.ApplicationLayer;
 import com.nextuple.common.enums.ExceptionCodeMapping;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.postgres.service.CommonPersistenceService;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.RuleConfigurationParam;
 import com.nextuple.promise.sourcing.rule.persistence.domain.RulesConfigurationDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.key.RulesConfigurationDomainKey;
@@ -141,6 +143,27 @@ public class RulesConfigurationPersistenceServiceImpl
           ApplicationLayer.DAO_LAYER,
           ExceptionCodeMapping.DAO_DELETE_FAILED,
           "Error while deleting rules configuration");
+    }
+  }
+
+  @Override
+  public List<RulesConfigurationDomainDto> findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+      String orgId,
+      Long attributeDefinitionId,
+      RulesConfigurationModuleNameEnum moduleName,
+      SourcingAttributesDefinitionScopeEnum scope)
+      throws PromiseEngineException {
+    log.debug("-- inside findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope");
+    try {
+      return getRepository()
+          .findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+              orgId, attributeDefinitionId, moduleName, scope);
+    } catch (Exception e) {
+      log.error(String.valueOf(e), ERROR_WHILE_FINDING_RULES_CONFIGURATION);
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_FIND_FAILED,
+          ERROR_WHILE_FINDING_RULES_CONFIGURATION);
     }
   }
 }

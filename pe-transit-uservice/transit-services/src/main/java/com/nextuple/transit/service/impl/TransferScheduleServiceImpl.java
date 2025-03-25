@@ -18,6 +18,7 @@ import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.response.error.FieldError;
+import com.nextuple.common.util.ObjectUtil;
 import com.nextuple.node.domain.feign.NodeFeign;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
@@ -38,6 +39,7 @@ import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.service.TransferSchedulePersistenceService;
 import com.nextuple.transit.service.TransferScheduleService;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import kotlin.Pair;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -204,7 +207,27 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     } else {
       pageable = PageRequest.of(pageParams.getPageNo().get() - 1, Integer.MAX_VALUE, sort);
     }
+
+    if (!ObjectUtil.isNull(request.getSourcingAttributeId())) {
+      List<RulesConfigurationResponse> ruleConfigs =
+          ruleConfigurationService.fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+              orgId,
+              request.getSourcingAttributeId(),
+              RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE,
+              SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
+      List<Pair<String, String>> ruleInfo = prepareRuleInfo(ruleConfigs);
+      request.setRuleInfo(ruleInfo);
+    }
+
     return transferSchedulePersistenceService.fetchTransferSchedulesList(orgId, request, pageable);
+  }
+
+  private List<Pair<String, String>> prepareRuleInfo(List<RulesConfigurationResponse> ruleConfigs) {
+    List<Pair<String, String>> ruleInfoList = new ArrayList<>();
+    for (RulesConfigurationResponse ruleConfig : ruleConfigs) {
+      ruleInfoList.add(new Pair<>(ruleConfig.getRuleName(), ruleConfig.getRule()));
+    }
+    return ruleInfoList;
   }
 
   @Override

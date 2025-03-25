@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.OptBoolean;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.List;
+import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,4 +43,10 @@ public class FetchTransferScheduleRequest implements Serializable {
   @Schema(description = "End/Drop off date of the transfer", example = "2024-10-31")
   @JsonFormat(pattern = "yyyy-MM-dd", lenient = OptBoolean.FALSE)
   private LocalDate endDate;
+
+  @Schema(description = "Identifier of the active Transfer Schedule rule.", example = "51235")
+  private Long sourcingAttributeId;
+
+  @Schema(description = "Rule Information for the transfer request")
+  private List<Pair<String, String>> ruleInfo;
 }

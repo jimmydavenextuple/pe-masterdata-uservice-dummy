@@ -10,6 +10,7 @@ package com.nextuple.promise.sourcing.rule.persistence.repository;
 import com.nextuple.postgres.repository.CommonJpaRepository;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
+import com.nextuple.promise.sourcing.rule.persistence.domain.RulesConfigurationDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.entity.RulesConfigurationEntity;
 import com.nextuple.promise.sourcing.rule.persistence.entity.key.RulesConfigurationKey;
 import java.util.List;
@@ -27,6 +28,12 @@ public interface RulesConfigurationRepository
       String orgId,
       String ruleName,
       String rule,
+      RulesConfigurationModuleNameEnum moduleName,
+      SourcingAttributesDefinitionScopeEnum scope);
+
+  List<RulesConfigurationDomainDto> findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+      String orgId,
+      Long attributeDefinitionId,
       RulesConfigurationModuleNameEnum moduleName,
       SourcingAttributesDefinitionScopeEnum scope);
 }

@@ -21,6 +21,7 @@ import com.nextuple.dataupload.util.CommonDashboardUtil;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.feign.SourcingAttributeFeign;
 import com.nextuple.promise.sourcing.rule.api.domain.feign.SourcingAttributesDefinitionFeign;
+import com.nextuple.promise.sourcing.rule.api.domain.feign.SourcingRulesConfigurationFeign;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributeResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import com.nextuple.transit.domain.feign.TransferScheduleFeign;
@@ -54,6 +55,7 @@ public class TransferScheduleService {
   private final TransferScheduleFeign transferScheduleFeign;
   private final SourcingAttributesDefinitionFeign sourcingAttributesDefinitionFeign;
   private final SourcingAttributeFeign sourcingAttributeFeign;
+  private final SourcingRulesConfigurationFeign sourcingRulesConfigurationFeign;
 
   private static final String PAGINATION_URL =
       "transfer-schedule/ui/orgId/%s?pageNo=%d&pageSize=%d";
@@ -77,24 +79,20 @@ public class TransferScheduleService {
           sourcingAttributeDefinitionResponse.getPayload();
       List<SourcingAttributeResponse> requiredAttributeList =
           getSourcingAttributes(orgId, sourcingAttributeDefinitions, true);
+
       List<SourcingAttributeResponse> optionalAttributeList =
           getSourcingAttributes(orgId, sourcingAttributeDefinitions, false);
-
+      request.setSourcingAttributeId(sourcingAttributeDefinitions.getId());
       BaseResponse<PagePayload<TransferScheduleResponse>> response =
           getTransferSchedulesBasedOnFilters(orgId, pageParams, request, isPagination);
-
       List<TransferScheduleResponse> transferScheduleResponseList = response.getPayload().getData();
       preparePaginationParams(pageParams, response, pagination, orgId);
-
       List<Map<String, Object>> transferScheduleRows =
           populateRows(transferScheduleResponseList, requiredAttributeList, optionalAttributeList);
-
       populateTransferScheduleColumnInfo(
           transferScheduleColumnInfoDtos, requiredAttributeList, optionalAttributeList);
-
       transferScheduleResponse.setColumns(transferScheduleColumnInfoDtos);
       transferScheduleResponse.setRows(transferScheduleRows);
-
       finalResponse.setData(transferScheduleResponse);
       setPaginationIfNotEmpty(finalResponse, pagination, transferScheduleResponseList);
     }
