@@ -10,6 +10,8 @@ package com.nextuple.transit.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -22,11 +24,14 @@ import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.node.domain.feign.NodeFeign;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.RulesConfigurationResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.service.RulesConfigurationService;
 import com.nextuple.promise.sourcing.rule.service.SourcingAttributesDefinitionService;
 import com.nextuple.transit.TestUtil;
+import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
@@ -45,6 +50,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 class TransferScheduleServiceImplTest {
   @InjectMocks TransferScheduleServiceImpl transferScheduleService;
@@ -400,5 +406,84 @@ class TransferScheduleServiceImplTest {
 
     verify(transferSchedulePersistenceService, times(1))
         .fetchTransferSchedulesInRange(any(TransferScheduleDomainRequest.class));
+  }
+
+  @Test
+  @DisplayName("Fetch Transfer Schedule List with Sourcing Attribute Id")
+  void fetchTransferScheduleListWithSourcingAttributeId()
+      throws CommonServiceException, PromiseEngineException {
+    String orgId = "TEST";
+    Boolean isPaginated = true;
+    PageParams pageParams = new PageParams();
+    pageParams.setPageNo(Optional.of(1));
+    pageParams.setPageSize(Optional.of(10));
+    pageParams.setSortOrder(Optional.of("ASC"));
+    pageParams.setSortBy(Optional.of("sourceNodeId"));
+    FetchTransferScheduleRequest request = new FetchTransferScheduleRequest();
+    request.setSourcingAttributeId(1L);
+
+    RulesConfigurationResponse ruleConfig = new RulesConfigurationResponse();
+    ruleConfig.setRuleName("TestRule");
+    ruleConfig.setRule("TestRuleValue");
+    when(ruleConfigurationService.fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+            anyString(),
+            anyLong(),
+            any(RulesConfigurationModuleNameEnum.class),
+            any(SourcingAttributesDefinitionScopeEnum.class)))
+        .thenReturn(List.of(ruleConfig));
+
+    Page<TransferScheduleResponse> expectedPage = Page.empty();
+    when(transferSchedulePersistenceService.fetchTransferSchedulesList(
+            anyString(), any(FetchTransferScheduleRequest.class), any(Pageable.class)))
+        .thenReturn(expectedPage);
+
+    Page<TransferScheduleResponse> response =
+        transferScheduleService.fetchTransferScheduleList(orgId, isPaginated, pageParams, request);
+
+    assertNotNull(response);
+    assertEquals(expectedPage, response);
+    verify(ruleConfigurationService, times(1))
+        .fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+            anyString(),
+            anyLong(),
+            any(RulesConfigurationModuleNameEnum.class),
+            any(SourcingAttributesDefinitionScopeEnum.class));
+    verify(transferSchedulePersistenceService, times(1))
+        .fetchTransferSchedulesList(
+            anyString(), any(FetchTransferScheduleRequest.class), any(Pageable.class));
+  }
+
+  @Test
+  @DisplayName("Fetch Transfer Schedule List without Sourcing Attribute Id")
+  void fetchTransferScheduleListWithoutSourcingAttributeId()
+      throws CommonServiceException, PromiseEngineException {
+    String orgId = "TEST";
+    Boolean isPaginated = true;
+    PageParams pageParams = new PageParams();
+    pageParams.setPageNo(Optional.of(1));
+    pageParams.setPageSize(Optional.of(10));
+    pageParams.setSortOrder(Optional.of("ASC"));
+    pageParams.setSortBy(Optional.of("sourceNodeId"));
+    FetchTransferScheduleRequest request = new FetchTransferScheduleRequest();
+
+    Page<TransferScheduleResponse> expectedPage = Page.empty();
+    when(transferSchedulePersistenceService.fetchTransferSchedulesList(
+            anyString(), any(FetchTransferScheduleRequest.class), any(Pageable.class)))
+        .thenReturn(expectedPage);
+
+    Page<TransferScheduleResponse> response =
+        transferScheduleService.fetchTransferScheduleList(orgId, isPaginated, pageParams, request);
+
+    assertNotNull(response);
+    assertEquals(expectedPage, response);
+    verify(ruleConfigurationService, times(0))
+        .fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+            anyString(),
+            anyLong(),
+            any(RulesConfigurationModuleNameEnum.class),
+            any(SourcingAttributesDefinitionScopeEnum.class));
+    verify(transferSchedulePersistenceService, times(1))
+        .fetchTransferSchedulesList(
+            anyString(), any(FetchTransferScheduleRequest.class), any(Pageable.class));
   }
 }
