@@ -155,9 +155,11 @@ public class RulesConfigurationPersistenceServiceImpl
       throws PromiseEngineException {
     log.debug("-- inside findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope");
     try {
-      return getRepository()
-          .findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
-              orgId, attributeDefinitionId, moduleName, scope);
+      return getMapper()
+          .toDomain(
+              getRepository()
+                  .findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+                      orgId, attributeDefinitionId, moduleName, scope));
     } catch (Exception e) {
       log.error(String.valueOf(e), ERROR_WHILE_FINDING_RULES_CONFIGURATION);
       throw new PromiseEngineException(
