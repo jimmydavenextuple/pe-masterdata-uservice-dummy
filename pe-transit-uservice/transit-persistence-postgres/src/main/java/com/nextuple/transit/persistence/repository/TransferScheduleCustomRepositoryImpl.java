@@ -151,7 +151,7 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
       predicates.add(cb.between(root.get(END_TIME), startDateTime.toDate(), endDateTime.toDate()));
     }
 
-    if (!CollectionUtils.isEmpty(ruleInfo)) {
+    if (Objects.nonNull(ruleInfo)) {
       List<Predicate> rulePredicates = new ArrayList<>();
 
       Predicate ruleAndRuleNameNull =
