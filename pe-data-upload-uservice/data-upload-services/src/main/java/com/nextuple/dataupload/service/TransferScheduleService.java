@@ -158,7 +158,7 @@ public class TransferScheduleService {
             ? sourcingAttributesDefinitionResponse.getReqAttributes()
             : sourcingAttributesDefinitionResponse.getOptAttributes();
     List<SourcingAttributeResponse> sourcingAttributeList = new ArrayList<>();
-    if (Objects.nonNull(attributesString)) {
+    if (StringUtils.hasLength(attributesString)) {
       String[] attributeIdsFromActiveSourcingAttributesDefinition = attributesString.split(",");
       for (String attributeId : attributeIdsFromActiveSourcingAttributesDefinition) {
         Long attribute = Long.parseLong(attributeId.trim());
