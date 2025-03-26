@@ -44,6 +44,11 @@ public class FetchTransferScheduleRequest implements Serializable {
   @JsonFormat(pattern = "yyyy-MM-dd", lenient = OptBoolean.FALSE)
   private LocalDate endDate;
 
+  @Schema(
+      description = "Identifier for whether or not to consider sourcing attribute Id.",
+      example = "true/false")
+  private Boolean isSourcingAttributeEnabled;
+
   @Schema(description = "Identifier of the active Transfer Schedule rule.", example = "51235")
   private Long sourcingAttributeId;
 

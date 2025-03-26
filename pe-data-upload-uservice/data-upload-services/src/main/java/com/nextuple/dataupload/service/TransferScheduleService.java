@@ -73,29 +73,29 @@ public class TransferScheduleService {
     GenericPaginatedTableResponse finalResponse = new GenericPaginatedTableResponse();
     BaseResponse<SourcingAttributesDefinitionResponse> sourcingAttributeDefinitionResponse =
         getSourcingAttributesDefinitionInActiveStatus(orgId);
+    List<SourcingAttributeResponse> optionalAttributeList = new ArrayList<>();
+    List<SourcingAttributeResponse> requiredAttributeList = new ArrayList<>();
     if (sourcingAttributeDefinitionResponse != null
         && sourcingAttributeDefinitionResponse.getPayload() != null) {
       SourcingAttributesDefinitionResponse sourcingAttributeDefinitions =
           sourcingAttributeDefinitionResponse.getPayload();
-      List<SourcingAttributeResponse> requiredAttributeList =
-          getSourcingAttributes(orgId, sourcingAttributeDefinitions, true);
+      requiredAttributeList = getSourcingAttributes(orgId, sourcingAttributeDefinitions, true);
 
-      List<SourcingAttributeResponse> optionalAttributeList =
-          getSourcingAttributes(orgId, sourcingAttributeDefinitions, false);
+      optionalAttributeList = getSourcingAttributes(orgId, sourcingAttributeDefinitions, false);
       request.setSourcingAttributeId(sourcingAttributeDefinitions.getId());
-      BaseResponse<PagePayload<TransferScheduleResponse>> response =
-          getTransferSchedulesBasedOnFilters(orgId, pageParams, request, isPagination);
-      List<TransferScheduleResponse> transferScheduleResponseList = response.getPayload().getData();
-      preparePaginationParams(pageParams, response, pagination, orgId);
-      List<Map<String, Object>> transferScheduleRows =
-          populateRows(transferScheduleResponseList, requiredAttributeList, optionalAttributeList);
-      populateTransferScheduleColumnInfo(
-          transferScheduleColumnInfoDtos, requiredAttributeList, optionalAttributeList);
-      transferScheduleResponse.setColumns(transferScheduleColumnInfoDtos);
-      transferScheduleResponse.setRows(transferScheduleRows);
-      finalResponse.setData(transferScheduleResponse);
-      setPaginationIfNotEmpty(finalResponse, pagination, transferScheduleResponseList);
     }
+    BaseResponse<PagePayload<TransferScheduleResponse>> response =
+        getTransferSchedulesBasedOnFilters(orgId, pageParams, request, isPagination);
+    List<TransferScheduleResponse> transferScheduleResponseList = response.getPayload().getData();
+    preparePaginationParams(pageParams, response, pagination, orgId);
+    List<Map<String, Object>> transferScheduleRows =
+        populateRows(transferScheduleResponseList, requiredAttributeList, optionalAttributeList);
+    populateTransferScheduleColumnInfo(
+        transferScheduleColumnInfoDtos, requiredAttributeList, optionalAttributeList);
+    transferScheduleResponse.setColumns(transferScheduleColumnInfoDtos);
+    transferScheduleResponse.setRows(transferScheduleRows);
+    finalResponse.setData(transferScheduleResponse);
+    setPaginationIfNotEmpty(finalResponse, pagination, transferScheduleResponseList);
     return finalResponse;
   }
 

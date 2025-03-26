@@ -420,6 +420,7 @@ class TransferScheduleServiceImplTest {
     pageParams.setSortOrder(Optional.of("ASC"));
     pageParams.setSortBy(Optional.of("sourceNodeId"));
     FetchTransferScheduleRequest request = new FetchTransferScheduleRequest();
+    request.setIsSourcingAttributeEnabled(true);
     request.setSourcingAttributeId(1L);
 
     RulesConfigurationResponse ruleConfig = new RulesConfigurationResponse();

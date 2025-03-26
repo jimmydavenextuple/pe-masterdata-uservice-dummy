@@ -208,13 +208,17 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
       pageable = PageRequest.of(pageParams.getPageNo().get() - 1, Integer.MAX_VALUE, sort);
     }
 
-    if (!ObjectUtil.isNull(request.getSourcingAttributeId())) {
+    if (!ObjectUtil.isNull(request.getIsSourcingAttributeEnabled())
+        && request.getIsSourcingAttributeEnabled()) {
       List<RulesConfigurationResponse> ruleConfigs =
-          ruleConfigurationService.fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
-              orgId,
-              request.getSourcingAttributeId(),
-              RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE,
-              SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
+          Objects.isNull(request.getSourcingAttributeId())
+              ? Collections.emptyList()
+              : ruleConfigurationService
+                  .fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+                      orgId,
+                      request.getSourcingAttributeId(),
+                      RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE,
+                      SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
       List<Pair<String, String>> ruleInfo = prepareRuleInfo(ruleConfigs);
       request.setRuleInfo(ruleInfo);
     }
