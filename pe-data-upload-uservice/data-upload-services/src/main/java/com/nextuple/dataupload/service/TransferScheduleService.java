@@ -58,52 +58,56 @@ public class TransferScheduleService {
   private final SourcingRulesConfigurationFeign sourcingRulesConfigurationFeign;
 
   private static final String PAGINATION_URL =
-      "transfer-schedule/ui/orgId/%s?pageNo=%d&pageSize=%d";
+          "transfer-schedule/ui/orgId/%s?pageNo=%d&pageSize=%d";
 
   public GenericPaginatedTableResponse getTransferScheduleListV2(
-      String orgId,
-      PageParams pageParams,
-      FetchTransferScheduleRequest request,
-      Boolean isPagination)
-      throws CommonServiceException {
+          String orgId,
+          PageParams pageParams,
+          FetchTransferScheduleRequest request,
+          Boolean isPagination)
+          throws CommonServiceException {
     CommonDashboardUtil.handleInvalidSortOrder(pageParams.getSortOrder().orElse("ASC"));
     GenericTableDetails transferScheduleResponse = new GenericTableDetails();
     PagePayload.Pagination pagination = new PagePayload.Pagination();
     List<GenericColumnInfoDto> transferScheduleColumnInfoDtos = new ArrayList<>();
     GenericPaginatedTableResponse finalResponse = new GenericPaginatedTableResponse();
     BaseResponse<SourcingAttributesDefinitionResponse> sourcingAttributeDefinitionResponse =
-        getSourcingAttributesDefinitionInActiveStatus(orgId);
+            getSourcingAttributesDefinitionInActiveStatus(orgId);
+    List<SourcingAttributeResponse> optionalAttributeList = new ArrayList<>();
+    List<SourcingAttributeResponse> requiredAttributeList = new ArrayList<>();
+    Long sourcingAttributeId = null;
+    request.setIsSourcingAttributeEnabled(true);
     if (sourcingAttributeDefinitionResponse != null
-        && sourcingAttributeDefinitionResponse.getPayload() != null) {
+            && sourcingAttributeDefinitionResponse.getPayload() != null) {
       SourcingAttributesDefinitionResponse sourcingAttributeDefinitions =
-          sourcingAttributeDefinitionResponse.getPayload();
-      List<SourcingAttributeResponse> requiredAttributeList =
-          getSourcingAttributes(orgId, sourcingAttributeDefinitions, true);
+              sourcingAttributeDefinitionResponse.getPayload();
+      requiredAttributeList = getSourcingAttributes(orgId, sourcingAttributeDefinitions, true);
 
-      List<SourcingAttributeResponse> optionalAttributeList =
-          getSourcingAttributes(orgId, sourcingAttributeDefinitions, false);
-      request.setSourcingAttributeId(sourcingAttributeDefinitions.getId());
-      BaseResponse<PagePayload<TransferScheduleResponse>> response =
-          getTransferSchedulesBasedOnFilters(orgId, pageParams, request, isPagination);
-      List<TransferScheduleResponse> transferScheduleResponseList = response.getPayload().getData();
-      preparePaginationParams(pageParams, response, pagination, orgId);
-      List<Map<String, Object>> transferScheduleRows =
-          populateRows(transferScheduleResponseList, requiredAttributeList, optionalAttributeList);
-      populateTransferScheduleColumnInfo(
-          transferScheduleColumnInfoDtos, requiredAttributeList, optionalAttributeList);
-      transferScheduleResponse.setColumns(transferScheduleColumnInfoDtos);
-      transferScheduleResponse.setRows(transferScheduleRows);
-      finalResponse.setData(transferScheduleResponse);
-      setPaginationIfNotEmpty(finalResponse, pagination, transferScheduleResponseList);
+      optionalAttributeList = getSourcingAttributes(orgId, sourcingAttributeDefinitions, false);
+      sourcingAttributeId = sourcingAttributeDefinitions.getId();
+      request.setSourcingAttributeId(sourcingAttributeId);
     }
+    BaseResponse<PagePayload<TransferScheduleResponse>> response =
+            getTransferSchedulesBasedOnFilters(orgId, pageParams, request, isPagination);
+    List<TransferScheduleResponse> transferScheduleResponseList = response.getPayload().getData();
+    preparePaginationParams(pageParams, response, pagination, orgId);
+    List<Map<String, Object>> transferScheduleRows =
+            populateRows(transferScheduleResponseList, requiredAttributeList, optionalAttributeList);
+    populateTransferScheduleColumnInfo(
+            transferScheduleColumnInfoDtos, requiredAttributeList, optionalAttributeList);
+    transferScheduleResponse.setColumns(transferScheduleColumnInfoDtos);
+    transferScheduleResponse.setRows(transferScheduleRows);
+    finalResponse.setData(transferScheduleResponse);
+    setPaginationIfNotEmpty(
+            finalResponse, pagination, transferScheduleResponseList, sourcingAttributeId);
     return finalResponse;
   }
 
   private void preparePaginationParams(
-      PageParams pageParams,
-      BaseResponse<PagePayload<TransferScheduleResponse>> response,
-      PagePayload.Pagination pagination,
-      String orgId) {
+          PageParams pageParams,
+          BaseResponse<PagePayload<TransferScheduleResponse>> response,
+          PagePayload.Pagination pagination,
+          String orgId) {
     PagePayload.Pagination paginationConfig = response.getPayload().getPagination();
     pagination.setTotalRecords(paginationConfig.getTotalRecords());
     pagination.setTotalPages(paginationConfig.getTotalPages());
@@ -111,59 +115,59 @@ public class TransferScheduleService {
     pagination.setSortOrder(pageParams.getSortOrder().orElse(TRANSFER_SCHEDULE_DEFAULT_SORT_BY));
     pagination.setSortBy(pageParams.getSortBy().orElse("ASC"));
     String nextUri =
-        PaginationUtil.buildUriForPagination(
-            paginationConfig.getCurrentPage(),
-            paginationConfig.getTotalPages(),
-            "next",
-            PAGINATION_URL.formatted(
-                orgId, paginationConfig.getCurrentPage() + 1, pageParams.getPageSize().orElse(10)));
+            PaginationUtil.buildUriForPagination(
+                    paginationConfig.getCurrentPage(),
+                    paginationConfig.getTotalPages(),
+                    "next",
+                    PAGINATION_URL.formatted(
+                            orgId, paginationConfig.getCurrentPage() + 1, pageParams.getPageSize().orElse(10)));
     String previousUri =
-        PaginationUtil.buildUriForPagination(
-            paginationConfig.getCurrentPage(),
-            paginationConfig.getTotalPages(),
-            "previous",
-            PAGINATION_URL.formatted(
-                orgId, paginationConfig.getCurrentPage() - 1, pageParams.getPageSize().orElse(10)));
+            PaginationUtil.buildUriForPagination(
+                    paginationConfig.getCurrentPage(),
+                    paginationConfig.getTotalPages(),
+                    "previous",
+                    PAGINATION_URL.formatted(
+                            orgId, paginationConfig.getCurrentPage() - 1, pageParams.getPageSize().orElse(10)));
     pagination.setPrevious(previousUri);
     pagination.setNext(nextUri);
   }
 
   private BaseResponse<PagePayload<TransferScheduleResponse>> getTransferSchedulesBasedOnFilters(
-      String orgId,
-      PageParams pageParams,
-      FetchTransferScheduleRequest request,
-      Boolean isPagination) {
+          String orgId,
+          PageParams pageParams,
+          FetchTransferScheduleRequest request,
+          Boolean isPagination) {
     return transferScheduleFeign.fetchTransferSchedule(
-        orgId,
-        isPagination,
-        pageParams.getPageNo().orElse(1),
-        pageParams.getPageSize().orElse(10),
-        pageParams.getSortBy().orElse(TRANSFER_SCHEDULE_DEFAULT_SORT_BY),
-        pageParams.getSortOrder().orElse("ASC"),
-        request);
+            orgId,
+            isPagination,
+            pageParams.getPageNo().orElse(1),
+            pageParams.getPageSize().orElse(10),
+            pageParams.getSortBy().orElse(TRANSFER_SCHEDULE_DEFAULT_SORT_BY),
+            pageParams.getSortOrder().orElse("ASC"),
+            request);
   }
 
   private BaseResponse<SourcingAttributesDefinitionResponse>
-      getSourcingAttributesDefinitionInActiveStatus(String orgId) {
+  getSourcingAttributesDefinitionInActiveStatus(String orgId) {
     return sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
-        orgId, SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
+            orgId, SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
   }
 
   private List<SourcingAttributeResponse> getSourcingAttributes(
-      String orgId,
-      SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse,
-      boolean required) {
+          String orgId,
+          SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse,
+          boolean required) {
     String attributesString =
-        required
-            ? sourcingAttributesDefinitionResponse.getReqAttributes()
-            : sourcingAttributesDefinitionResponse.getOptAttributes();
+            required
+                    ? sourcingAttributesDefinitionResponse.getReqAttributes()
+                    : sourcingAttributesDefinitionResponse.getOptAttributes();
     List<SourcingAttributeResponse> sourcingAttributeList = new ArrayList<>();
     if (StringUtils.hasLength(attributesString)) {
       String[] attributeIdsFromActiveSourcingAttributesDefinition = attributesString.split(",");
       for (String attributeId : attributeIdsFromActiveSourcingAttributesDefinition) {
         Long attribute = Long.parseLong(attributeId.trim());
         BaseResponse<SourcingAttributeResponse> sourcingAttribute =
-            sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, attribute);
+                sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, attribute);
         if (sourcingAttribute != null && sourcingAttribute.getPayload() != null) {
           sourcingAttributeList.add(sourcingAttribute.getPayload());
         }
@@ -173,23 +177,23 @@ public class TransferScheduleService {
   }
 
   private GenericColumnInfoDto getTransferColumnInfoDto(
-      String columnName, String columnMeta, boolean isSortable) {
+          String columnName, String columnMeta, boolean isSortable) {
     return GenericColumnInfoDto.builder()
-        .columnName(columnName)
-        .columnMeta(columnMeta)
-        .isSortable(isSortable)
-        .build();
+            .columnName(columnName)
+            .columnMeta(columnMeta)
+            .isSortable(isSortable)
+            .build();
   }
 
   private void populateTransferScheduleColumnInfo(
-      List<GenericColumnInfoDto> transferColumnInfoDtos,
-      List<SourcingAttributeResponse> requiredAttributesList,
-      List<SourcingAttributeResponse> optionalAttributesList) {
+          List<GenericColumnInfoDto> transferColumnInfoDtos,
+          List<SourcingAttributeResponse> requiredAttributesList,
+          List<SourcingAttributeResponse> optionalAttributesList) {
     transferColumnInfoDtos.add(getTransferColumnInfoDto(RULE_NAME_COLUMN, RULE_NAME, false));
     transferColumnInfoDtos.add(getTransferColumnInfoDto(ORIGIN_NODE_COLUMN, SOURCE_NODE_ID, true));
 
     transferColumnInfoDtos.add(
-        getTransferColumnInfoDto(DESTINATION_NODE_COLUMN, DROPOFF_NODE_ID, true));
+            getTransferColumnInfoDto(DESTINATION_NODE_COLUMN, DROPOFF_NODE_ID, true));
     addAttributesToTransferSchedule(transferColumnInfoDtos, requiredAttributesList);
     addAttributesToTransferSchedule(transferColumnInfoDtos, optionalAttributesList);
     transferColumnInfoDtos.add(getTransferColumnInfoDto(PICKUP_COLUMN, START_TIME, false));
@@ -197,23 +201,24 @@ public class TransferScheduleService {
   }
 
   private void addAttributesToTransferSchedule(
-      List<GenericColumnInfoDto> transferScheduleColumnInfoDtos,
-      List<SourcingAttributeResponse> attributesList) {
+          List<GenericColumnInfoDto> transferScheduleColumnInfoDtos,
+          List<SourcingAttributeResponse> attributesList) {
     for (SourcingAttributeResponse attribute : attributesList) {
       if (attribute != null) {
         transferScheduleColumnInfoDtos.add(
-            getTransferColumnInfoDto(
-                attribute.getAttributeName(), attribute.getAttributeName(), false));
+                getTransferColumnInfoDto(
+                        attribute.getAttributeName(), attribute.getAttributeName(), false));
       }
     }
   }
 
   private void setPaginationIfNotEmpty(
-      GenericPaginatedTableResponse finalResponse,
-      PagePayload.Pagination pagination,
-      List<TransferScheduleResponse> transferScheduleResponses) {
+          GenericPaginatedTableResponse finalResponse,
+          PagePayload.Pagination pagination,
+          List<TransferScheduleResponse> transferScheduleResponses,
+          Long sourcingAttributeId) {
 
-    if (CollectionUtils.isEmpty(transferScheduleResponses)) {
+    if (CollectionUtils.isEmpty(transferScheduleResponses) && Objects.isNull(sourcingAttributeId)) {
       finalResponse.setPagination(null);
     } else {
       finalResponse.setPagination(pagination);
@@ -221,9 +226,9 @@ public class TransferScheduleService {
   }
 
   private List<Map<String, Object>> populateRows(
-      List<TransferScheduleResponse> transferScheduleList,
-      List<SourcingAttributeResponse> requiredAttributesList,
-      List<SourcingAttributeResponse> optionalAttributesList) {
+          List<TransferScheduleResponse> transferScheduleList,
+          List<SourcingAttributeResponse> requiredAttributesList,
+          List<SourcingAttributeResponse> optionalAttributesList) {
 
     List<Map<String, Object>> rows = new ArrayList<>();
 
@@ -231,8 +236,8 @@ public class TransferScheduleService {
 
       Map<String, Object> rowEntity = new HashMap<>();
       boolean isRuleProvided =
-          isIsRuleProvided(
-              transferScheduleResponse.getRule(), transferScheduleResponse.getRuleName());
+              isIsRuleProvided(
+                      transferScheduleResponse.getRule(), transferScheduleResponse.getRuleName());
 
       rowEntity.put(SOURCE_NODE_ID, transferScheduleResponse.getSourceNodeId());
       rowEntity.put(DROPOFF_NODE_ID, transferScheduleResponse.getDropoffNodeId());
@@ -241,11 +246,11 @@ public class TransferScheduleService {
       if (isRuleProvided) {
         String[] ruleAttributes = transferScheduleResponse.getRule().split(":");
         populateRuleRelatedColumns(
-            requiredAttributesList,
-            optionalAttributesList,
-            transferScheduleResponse,
-            rowEntity,
-            ruleAttributes);
+                requiredAttributesList,
+                optionalAttributesList,
+                transferScheduleResponse,
+                rowEntity,
+                ruleAttributes);
       }
       rows.add(rowEntity);
     }
@@ -253,11 +258,11 @@ public class TransferScheduleService {
   }
 
   private static void populateRuleRelatedColumns(
-      List<SourcingAttributeResponse> requiredAttributesList,
-      List<SourcingAttributeResponse> optionalAttributesList,
-      TransferScheduleResponse transferScheduleResponse,
-      Map<String, Object> rowEntity,
-      String[] ruleAttributes) {
+          List<SourcingAttributeResponse> requiredAttributesList,
+          List<SourcingAttributeResponse> optionalAttributesList,
+          TransferScheduleResponse transferScheduleResponse,
+          Map<String, Object> rowEntity,
+          String[] ruleAttributes) {
     rowEntity.put(RULE_NAME, transferScheduleResponse.getRuleName());
     List<SourcingAttributeResponse> combinationOfRequiredAndOptionalAttributes = new ArrayList<>();
     combinationOfRequiredAndOptionalAttributes.addAll(requiredAttributesList);
@@ -267,7 +272,7 @@ public class TransferScheduleService {
     for (SourcingAttributeResponse attribute : combinationOfRequiredAndOptionalAttributes) {
       if (Objects.nonNull(attribute)) {
         if (attributeIndex < ruleAttributes.length
-            && StringUtils.hasLength(ruleAttributes[attributeIndex])) {
+                && StringUtils.hasLength(ruleAttributes[attributeIndex])) {
           rowEntity.put(attribute.getAttributeName(), ruleAttributes[attributeIndex]);
         } else {
           rowEntity.put(attribute.getAttributeName(), null);
@@ -279,48 +284,48 @@ public class TransferScheduleService {
 
   private boolean isIsRuleProvided(String rule, String ruleName) {
     return !(Objects.isNull(rule)
-        || rule.isEmpty()
-        || Objects.isNull(ruleName)
-        || ruleName.isEmpty());
+            || rule.isEmpty()
+            || Objects.isNull(ruleName)
+            || ruleName.isEmpty());
   }
 
   public PagePayload<TransferScheduleResponse> getTransferScheduleList(
-      String orgId, PageParams pageParams, FetchTransferScheduleRequest request) {
+          String orgId, PageParams pageParams, FetchTransferScheduleRequest request) {
     Integer pageNo = pageParams.getPageNo().orElse(1);
     Integer pageSize = pageParams.getPageSize().orElse(10);
     String sortBy = pageParams.getSortBy().orElse(TRANSFER_SCHEDULE_DEFAULT_SORT_BY);
     String sortOrder = pageParams.getSortOrder().orElse("ASC");
 
     BaseResponse<PagePayload<TransferScheduleResponse>> response =
-        transferScheduleFeign.fetchTransferSchedule(
-            orgId, true, pageNo, pageSize, sortBy, sortOrder, request);
+            transferScheduleFeign.fetchTransferSchedule(
+                    orgId, true, pageNo, pageSize, sortBy, sortOrder, request);
     updatePaginationUrls(orgId, pageParams, response);
 
     return response.getPayload();
   }
 
   private static void updatePaginationUrls(
-      String orgId,
-      PageParams pageParams,
-      BaseResponse<PagePayload<TransferScheduleResponse>> response) {
+          String orgId,
+          PageParams pageParams,
+          BaseResponse<PagePayload<TransferScheduleResponse>> response) {
     String nextUri =
-        PaginationUtil.buildUriForPagination(
-            response.getPayload().getPagination().getCurrentPage(),
-            response.getPayload().getPagination().getTotalPages(),
-            "next",
-            PAGINATION_URL.formatted(
-                orgId,
-                response.getPayload().getPagination().getCurrentPage() + 1,
-                pageParams.getPageSize().orElse(10)));
+            PaginationUtil.buildUriForPagination(
+                    response.getPayload().getPagination().getCurrentPage(),
+                    response.getPayload().getPagination().getTotalPages(),
+                    "next",
+                    PAGINATION_URL.formatted(
+                            orgId,
+                            response.getPayload().getPagination().getCurrentPage() + 1,
+                            pageParams.getPageSize().orElse(10)));
     String previousUri =
-        PaginationUtil.buildUriForPagination(
-            response.getPayload().getPagination().getCurrentPage(),
-            response.getPayload().getPagination().getTotalPages(),
-            "previous",
-            PAGINATION_URL.formatted(
-                orgId,
-                response.getPayload().getPagination().getCurrentPage() - 1,
-                pageParams.getPageSize().orElse(10)));
+            PaginationUtil.buildUriForPagination(
+                    response.getPayload().getPagination().getCurrentPage(),
+                    response.getPayload().getPagination().getTotalPages(),
+                    "previous",
+                    PAGINATION_URL.formatted(
+                            orgId,
+                            response.getPayload().getPagination().getCurrentPage() - 1,
+                            pageParams.getPageSize().orElse(10)));
 
     response.getPayload().getPagination().setNext(nextUri);
     response.getPayload().getPagination().setPrevious(previousUri);
