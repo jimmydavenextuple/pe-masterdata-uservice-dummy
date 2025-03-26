@@ -75,6 +75,7 @@ public class TransferScheduleService {
         getSourcingAttributesDefinitionInActiveStatus(orgId);
     List<SourcingAttributeResponse> optionalAttributeList = new ArrayList<>();
     List<SourcingAttributeResponse> requiredAttributeList = new ArrayList<>();
+    request.setIsSourcingAttributeEnabled(true);
     if (sourcingAttributeDefinitionResponse != null
         && sourcingAttributeDefinitionResponse.getPayload() != null) {
       SourcingAttributesDefinitionResponse sourcingAttributeDefinitions =

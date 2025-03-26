@@ -17,8 +17,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Operation(
-    summary = "Fetch transfer schedules list",
-    description = "Retrieves transfer schedules list")
+    summary = "Fetch Transfer Schedules List",
+    description = "Retrieves transfer schedules based on ")
 @ApiResponse(
     responseCode = "200",
     description =
