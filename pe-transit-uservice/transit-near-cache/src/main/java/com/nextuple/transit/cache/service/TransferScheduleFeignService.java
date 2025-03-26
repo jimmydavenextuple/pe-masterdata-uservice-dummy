@@ -9,8 +9,8 @@ package com.nextuple.transit.cache.service;
 
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.service.GenericFeignService;
-import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
+import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import java.util.List;
 
 public interface TransferScheduleFeignService
-    extends GenericFeignService<String, BaseResponse<List<TransferScheduleResponse>>> {}
+    extends GenericFeignService<String, BaseResponse<List<TransferScheduleRangeResponse>>> {}

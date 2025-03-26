@@ -23,6 +23,7 @@ import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
+import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.service.TransferScheduleService;
 import com.nextuple.transit.utils.DashboardUtil;
@@ -90,9 +91,9 @@ public class TransferScheduleController {
 
   @PostMapping(path = "/time-range", produces = MediaType.APPLICATION_JSON_VALUE)
   @GetTransferScheduleDoc
-  public ResponseEntity<BaseResponse<List<TransferScheduleResponse>>> getTransferSchedulesInRange(
+  public ResponseEntity<BaseResponse<List<TransferScheduleRangeResponse>>> getTransferSchedulesInRange(
       @RequestBody TransferScheduleRangeRequest transferScheduleRangeRequest) {
-    List<TransferScheduleResponse> transferScheduleResponses =
+    List<TransferScheduleRangeResponse> transferScheduleResponses =
         transferScheduleService.fetchTransferSchedulesInRange(transferScheduleRangeRequest);
     return ResponseEntity.ok(
         BaseResponse.builder()

@@ -11,6 +11,7 @@ import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
 import com.nextuple.transit.cache.domain.TransferScheduleCacheKey;
 import com.nextuple.transit.cache.domain.TransferScheduleCacheValue;
+import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class TransferScheduleMapper
         TransferScheduleCacheKey,
         TransferScheduleCacheValue,
         String,
-        BaseResponse<List<TransferScheduleResponse>>> {
+        BaseResponse<List<TransferScheduleRangeResponse>>> {
   @Override
   public TransferScheduleCacheKey requestToCacheKey(String request) {
     return null;
@@ -34,14 +35,14 @@ public class TransferScheduleMapper
 
   @Override
   public TransferScheduleCacheValue responseToCacheValue(
-      BaseResponse<List<TransferScheduleResponse>> resp) {
+          BaseResponse<List<TransferScheduleRangeResponse>> resp) {
     return TransferScheduleCacheValue.builder()
         .transferScheduleResponseList(resp.getPayload())
         .build();
   }
 
   @Override
-  public BaseResponse<List<TransferScheduleResponse>> cacheValueToResponse(
+  public BaseResponse<List<TransferScheduleRangeResponse>> cacheValueToResponse(
       TransferScheduleCacheValue cacheValue) {
     return null;
   }
