@@ -220,7 +220,7 @@ master-data:
     topic-names: INTERNAL.DEV.PE.TRANSFER_SCHEDULES
     group-id: transfer-schedules-master-dev
     dlt-topic: INTERNAL.DEV.PE.TRANSFER_SCHEDULES.DLT
-    concurrency: 7
+    concurrency: 2
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 next-cache:
