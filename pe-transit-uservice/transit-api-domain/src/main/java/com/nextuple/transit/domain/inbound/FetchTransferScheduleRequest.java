@@ -27,29 +27,30 @@ public class FetchTransferScheduleRequest implements Serializable {
   private static final long serialVersionUID = 7032221653986642216L;
 
   @Schema(
-      description = "List of Unique identifier of the source node of the transfer.",
+      description = "List of unique identifiers for the source nodes involved in the transfer.",
       example = "['Node1']")
   private List<String> sourceNodeIds;
 
   @Schema(
-      description = "List of Unique identifier of the drop off node of the transfer.",
+      description = "List of unique identifiers for the drop off nodes involved in the transfer.",
       example = "['Node2']")
   private List<String> dropoffNodeIds;
 
-  @Schema(description = "Start/Pickup date of the transfer", example = "2024-10-31")
+  @Schema(description = "Start or Pickup date of the transfer.", example = "2024-10-31")
   @JsonFormat(pattern = "yyyy-MM-dd", lenient = OptBoolean.FALSE)
   private LocalDate startDate;
 
-  @Schema(description = "End/Drop off date of the transfer", example = "2024-10-31")
+  @Schema(description = "End or Drop off date of the transfer", example = "2024-10-31")
   @JsonFormat(pattern = "yyyy-MM-dd", lenient = OptBoolean.FALSE)
   private LocalDate endDate;
 
   @Schema(
-      description = "Identifier for whether or not to consider sourcing attribute Id.",
+      description =
+          "Identifier for whether or not to consider filtration via sourcing attribute Id.",
       example = "true/false")
   private Boolean isSourcingAttributeEnabled;
 
-  @Schema(description = "Identifier of the active Transfer Schedule rule.", example = "51235")
+  @Schema(description = "Identifier of the active transfer schedule rule.", example = "51235")
   private Long sourcingAttributeId;
 
   @Schema(description = "Rule Information for the transfer request")
