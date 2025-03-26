@@ -31,7 +31,7 @@ public class CustomCompositeCacheManager implements CacheManager {
       Optional<RedisCacheManagerStrategy> redisCacheStrategy,
       CaffeineCacheManagerStrategy caffeineCacheStrategy,
       CacheProperties cacheProperties,
-      @Value("${nearcache.redis-enabled:false}") boolean isRedisEnabled) {
+      @Value("${redis-enabled:false}") boolean isRedisEnabled) {
     this.strategies = new HashMap<>();
     this.cacheProperties = cacheProperties;
     this.isRedisEnabled = isRedisEnabled;

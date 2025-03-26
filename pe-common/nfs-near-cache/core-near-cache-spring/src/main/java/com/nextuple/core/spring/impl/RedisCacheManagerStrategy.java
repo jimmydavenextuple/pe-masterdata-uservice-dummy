@@ -15,7 +15,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(name = "nearcache.redis-enabled", havingValue = "true")
+@ConditionalOnProperty(name = "redis-enabled", havingValue = "true")
 public class RedisCacheManagerStrategy implements CacheManagerStrategy {
   private final CacheManager redisCacheManager;
 

@@ -68,7 +68,7 @@ public class MultipleCacheManagerConfig implements CachingConfigurer {
     return cacheBuilder;
   }
 
-  @ConditionalOnProperty(name = "nearcache.redis-enabled", havingValue = "true")
+  @ConditionalOnProperty(name = "redis-enabled", havingValue = "true")
   @Bean("redisCacheManager")
   public CacheManager redisCacheManager() {
     Map<String, org.redisson.spring.cache.CacheConfig> cacheConfigMap = new HashMap<>();

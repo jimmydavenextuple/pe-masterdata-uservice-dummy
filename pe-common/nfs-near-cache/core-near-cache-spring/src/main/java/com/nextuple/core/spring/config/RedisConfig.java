@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnProperty(name = "nearcache.redis-enabled", havingValue = "true")
+@ConditionalOnProperty(name = "redis-enabled", havingValue = "true")
 public class RedisConfig {
 
   @Autowired RedisProperties redisProperties;
