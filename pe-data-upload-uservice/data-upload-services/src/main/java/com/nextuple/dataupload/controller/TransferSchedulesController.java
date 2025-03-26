@@ -36,74 +36,85 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(name = "Transfer Schedules Details APIs")
 public class TransferSchedulesController {
-  private final TransferScheduleService transferScheduleService;
-  public static final String TRANSFER_SCHEDULE_DEFAULT_SORT_BY = "sourceNodeId";
+    private final TransferScheduleService transferScheduleService;
+    public static final String TRANSFER_SCHEDULE_DEFAULT_SORT_BY = "sourceNodeId";
 
-  @PostMapping(
-      path = "/orgId/{orgId}",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  @GetTransferSchedulesListDoc
-  public ResponseEntity<BaseResponse<PagePayload<TransferScheduleResponse>>>
-      getTransferSchedulesList(
-          @NotBlank(message = "OrgId can't be empty")
-              @PathVariable
-              @Parameter(description = "Unique identifier for organization ID.")
-              String orgId,
-          @RequestParam(required = false, defaultValue = "1") Integer pageNo,
-          @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-          @RequestParam(required = false, defaultValue = TRANSFER_SCHEDULE_DEFAULT_SORT_BY)
-              String sortBy,
-          @RequestParam(required = false, defaultValue = "ASC") String sortOrder,
-          @RequestBody @Valid FetchTransferScheduleRequest request) {
-    PageParams pageParams = new PageParams();
-    pageParams.setPageNo(Optional.of(pageNo));
-    pageParams.setPageSize(Optional.of(pageSize));
-    pageParams.setSortBy(Optional.of(sortBy));
-    pageParams.setSortOrder(Optional.of(sortOrder));
+    @PostMapping(
+            path = "/orgId/{orgId}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetTransferSchedulesListDoc
+    public ResponseEntity<BaseResponse<PagePayload<TransferScheduleResponse>>>
+    getTransferSchedulesList(
+            @NotBlank(message = "OrgId can't be empty")
+            @PathVariable
+            @Parameter(description = "Unique identifier for organization ID.")
+            String orgId,
+            @RequestParam(required = false, defaultValue = "1") Integer pageNo,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = TRANSFER_SCHEDULE_DEFAULT_SORT_BY)
+            String sortBy,
+            @RequestParam(required = false, defaultValue = "ASC") String sortOrder,
+            @RequestBody @Valid FetchTransferScheduleRequest request) {
+        PageParams pageParams = new PageParams();
+        pageParams.setPageNo(Optional.of(pageNo));
+        pageParams.setPageSize(Optional.of(pageSize));
+        pageParams.setSortBy(Optional.of(sortBy));
+        pageParams.setSortOrder(Optional.of(sortOrder));
 
-    PagePayload<TransferScheduleResponse> transferScheduleDtoPage =
-        transferScheduleService.getTransferScheduleList(orgId, pageParams, request);
+        PagePayload<TransferScheduleResponse> transferScheduleDtoPage =
+                transferScheduleService.getTransferScheduleList(orgId, pageParams, request);
 
-    return ResponseEntity.ok(
-        BaseResponse.builder()
-            .message("Transfer schedules list fetched successfully")
-            .payload(transferScheduleDtoPage)
-            .build());
-  }
+        return ResponseEntity.ok(
+                BaseResponse.builder()
+                        .message("Transfer schedules list fetched successfully")
+                        .payload(transferScheduleDtoPage)
+                        .build());
+    }
 
-  @PostMapping(
-      path = "v2/orgId/{orgId}",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  @GetTransferSchedulesListDocV2
-  public ResponseEntity<BaseResponse<PagePayload<TransferScheduleResponse>>>
-      getTransferSchedulesListV2(
-          @NotBlank(message = "OrgId can't be empty")
-              @PathVariable
-              @Parameter(description = "Unique identifier for organization ID.")
-              String orgId,
-          @RequestParam(required = false, defaultValue = "true") Boolean isPaginated,
-          @RequestParam(required = false, defaultValue = "1") Integer pageNo,
-          @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-          @RequestParam(required = false, defaultValue = TRANSFER_SCHEDULE_DEFAULT_SORT_BY)
-              String sortBy,
-          @RequestParam(required = false, defaultValue = "ASC") String sortOrder,
-          @RequestBody @Valid FetchTransferScheduleRequest request)
-          throws CommonServiceException {
-    PageParams pageParams = new PageParams();
-    pageParams.setPageNo(Optional.of(pageNo));
-    pageParams.setPageSize(Optional.of(pageSize));
-    pageParams.setSortBy(Optional.of(sortBy));
-    pageParams.setSortOrder(Optional.of(sortOrder));
+    @PostMapping(
+            path = "v2/orgId/{orgId}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetTransferSchedulesListDocV2
+    public ResponseEntity<BaseResponse<PagePayload<TransferScheduleResponse>>>
+    getTransferSchedulesListV2(
+            @NotBlank(message = "OrgId can't be empty")
+            @PathVariable
+            @Parameter(description = "Unique identifier for the organization.")
+            String orgId,
+            @RequestParam(required = false, defaultValue = "true")
+            @Parameter(description = "Indicates whether pagination should be applied.")
+            Boolean isPaginated,
+            @RequestParam(required = false, defaultValue = "1")
+            @Parameter(description = "Page number for pagination.")
+            Integer pageNo,
+            @RequestParam(required = false, defaultValue = "10")
+            @Parameter(description = "Number of records per page.")
+            Integer pageSize,
+            @RequestParam(required = false, defaultValue = TRANSFER_SCHEDULE_DEFAULT_SORT_BY)
+            @Parameter(description = "The parameter by which the results should be sorted.")
+            String sortBy,
+            @RequestParam(required = false, defaultValue = "ASC")
+            @Parameter(
+                    description =
+                            "The sorting order of the results—either ascending (ASC) or descending (DESC).")
+            String sortOrder,
+            @RequestBody @Valid FetchTransferScheduleRequest request)
+            throws CommonServiceException {
+        PageParams pageParams = new PageParams();
+        pageParams.setPageNo(Optional.of(pageNo));
+        pageParams.setPageSize(Optional.of(pageSize));
+        pageParams.setSortBy(Optional.of(sortBy));
+        pageParams.setSortOrder(Optional.of(sortOrder));
 
-    GenericPaginatedTableResponse transferScheduleDtoPage =
-        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPaginated);
+        GenericPaginatedTableResponse transferScheduleDtoPage =
+                transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPaginated);
 
-    return ResponseEntity.ok(
-        BaseResponse.builder()
-            .message("Transfer schedules list fetched successfully")
-            .payload(transferScheduleDtoPage)
-            .build());
-  }
+        return ResponseEntity.ok(
+                BaseResponse.builder()
+                        .message("Transfer schedules list fetched successfully")
+                        .payload(transferScheduleDtoPage)
+                        .build());
+    }
 }
