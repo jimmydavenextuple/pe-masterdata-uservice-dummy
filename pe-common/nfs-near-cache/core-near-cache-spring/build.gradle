@@ -12,6 +12,7 @@ bootJar {
 
 dependencies {
     implementation project(":pe-common:nfs-near-cache:core-near-cache")
+    implementation project(":pe-common:common-util")
     implementation group: 'org.springframework.data', name: 'spring-data-redis',version: "3.1.12"
 
     testImplementation group: "org.junit.jupiter", name: "junit-jupiter", version: "5.10.2"

@@ -175,6 +175,7 @@ subprojects {
         //Caffeine
         implementation "org.springframework.boot:spring-boot-starter-cache:3.4.0"
         implementation "com.github.ben-manes.caffeine:caffeine:3.1.8"
+        implementation 'org.redisson:redisson-spring-boot-starter:3.19.3'
 
         implementation 'org.flywaydb:flyway-core:9.16.3'
         api 'io.github.openfeign:feign-okhttp:12.1'
