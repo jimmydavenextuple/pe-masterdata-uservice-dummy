@@ -51,8 +51,8 @@ public class FetchTransferScheduleRequest implements Serializable {
   private List<Pair<String, String>> ruleInfo;
 
   @Schema(
-          description =
-                  "Indicates whether filtration based on the sourcing attribute ID should be applied.",
-          example = "true/false")
+      description =
+          "Indicates whether filtration based on the sourcing attribute ID should be applied.",
+      example = "true/false")
   private Boolean isSourcingAttributeEnabled;
 }

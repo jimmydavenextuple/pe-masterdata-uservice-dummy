@@ -61,27 +61,27 @@ class TransferScheduleServiceTest {
   @DisplayName("Get Transfer Schedule List")
   void getTransferScheduleList() {
     var baseResponse =
-            BaseResponse.builder().payload(testUtil.getTransferSchedulePagePayloadResponse()).build();
+        BaseResponse.builder().payload(testUtil.getTransferSchedulePagePayloadResponse()).build();
     var request = FetchTransferScheduleRequest.builder().endDate(new LocalDate()).build();
     when(transferScheduleFeign.fetchTransferSchedule(
             any(), any(), any(), any(), any(), any(), any()))
-            .thenReturn(baseResponse);
+        .thenReturn(baseResponse);
 
     var response =
-            transferScheduleService.getTransferScheduleList(
-                    TestUtil.ORG_ID,
-                    testUtil.getPageParams(
-                            Optional.of(2),
-                            Optional.of(1),
-                            Optional.of(TRANSFER_SCHEDULE_DEFAULT_SORT_BY),
-                            Optional.of("DESC")),
-                    request);
+        transferScheduleService.getTransferScheduleList(
+            TestUtil.ORG_ID,
+            testUtil.getPageParams(
+                Optional.of(2),
+                Optional.of(1),
+                Optional.of(TRANSFER_SCHEDULE_DEFAULT_SORT_BY),
+                Optional.of("DESC")),
+            request);
 
     assertEquals(response.getData().getFirst().getDropoffNodeId(), "Node-1");
     assertEquals(response.getData().getFirst().getSourceNodeId(), "Node-2");
 
     verify(transferScheduleFeign, times(1))
-            .fetchTransferSchedule(any(), any(), any(), any(), any(), any(), any());
+        .fetchTransferSchedule(any(), any(), any(), any(), any(), any(), any());
   }
 
   @Test
@@ -96,13 +96,13 @@ class TransferScheduleServiceTest {
       transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
     } catch (CommonServiceException ce) {
       Assertions.assertEquals(
-              "Invalid sort order, consider giving either ASC or DESC", ce.getMessage());
+          "Invalid sort order, consider giving either ASC or DESC", ce.getMessage());
     }
   }
 
   @Test
   @DisplayName(
-          "Get Transfer Schedule List for no sourcing definition found and no transfer schedules found")
+      "Get Transfer Schedule List for no sourcing definition found and no transfer schedules found")
   void getTransferScheduleListV2SourcingDefNotFound() throws CommonServiceException {
     String orgId = "TEST";
     PageParams pageParams = new PageParams();
@@ -111,7 +111,7 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             orgId, SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE))
-            .thenReturn(BaseResponse.builder().payload(null).build());
+        .thenReturn(BaseResponse.builder().payload(null).build());
     PagePayload.Pagination pagination = new PagePayload.Pagination();
     pagination.setNext("");
     pagination.setPrevious("");
@@ -125,31 +125,31 @@ class TransferScheduleServiceTest {
     pagePayload.setData(List.of());
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
     GenericPaginatedTableResponse response =
-            transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
     assertNotNull(response.getData());
     assertNull(response.getPagination());
   }
 
   @Test
   @DisplayName(
-          "Get Transfer Schedule List for sourcing definition found and no transfer schedules found")
+      "Get Transfer Schedule List for sourcing definition found and no transfer schedules found")
   void getTransferScheduleListV2SourcingDefFoundNoTransferScheduleFound()
-          throws CommonServiceException {
+      throws CommonServiceException {
     String orgId = "TEST";
     PageParams pageParams = new PageParams();
     pageParams.setSortOrder(Optional.of("ASC"));
     FetchTransferScheduleRequest request = getTransferRequest();
     Boolean isPagination = true;
     SourcingAttributesDefinitionResponse sourcingDefResponse =
-            new SourcingAttributesDefinitionResponse();
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1,2");
     sourcingDefResponse.setOptAttributes("3,4");
     sourcingDefResponse.setId(1L);
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             orgId, SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
     PagePayload.Pagination pagination = new PagePayload.Pagination();
     pagination.setNext("");
     pagination.setPrevious("");
@@ -163,9 +163,9 @@ class TransferScheduleServiceTest {
     pagePayload.setData(List.of());
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
     GenericPaginatedTableResponse response =
-            transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
     assertNotNull(response.getData());
     assertNotNull(response.getPagination());
   }
@@ -184,30 +184,30 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
 
     SourcingAttributesDefinitionResponse sourcingDefResponse =
-            new SourcingAttributesDefinitionResponse();
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1,2");
     sourcingDefResponse.setOptAttributes("3,4");
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
 
     SourcingAttributeResponse reqAttr1 = new SourcingAttributeResponse();
     reqAttr1.setAttributeName("ReqAttr1");
     SourcingAttributeResponse reqAttr2 = new SourcingAttributeResponse();
     reqAttr2.setAttributeName("ReqAttr2");
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 1L))
-            .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 2L))
-            .thenReturn(BaseResponse.builder().payload(reqAttr2).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr2).build());
 
     SourcingAttributeResponse optAttr1 = new SourcingAttributeResponse();
     optAttr1.setAttributeName("OptAttr1");
     SourcingAttributeResponse optAttr2 = new SourcingAttributeResponse();
     optAttr2.setAttributeName("OptAttr2");
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 3L))
-            .thenReturn(BaseResponse.builder().payload(optAttr1).build());
+        .thenReturn(BaseResponse.builder().payload(optAttr1).build());
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 4L))
-            .thenReturn(BaseResponse.builder().payload(optAttr2).build());
+        .thenReturn(BaseResponse.builder().payload(optAttr2).build());
 
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
     TransferScheduleResponse transferSchedule = prepareTransferScheduleResp();
@@ -221,10 +221,10 @@ class TransferScheduleServiceTest {
 
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
     GenericPaginatedTableResponse response =
-            transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
     assertNotNull(response.getData());
@@ -269,15 +269,15 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
 
     SourcingAttributesDefinitionResponse sourcingDefResponse =
-            new SourcingAttributesDefinitionResponse();
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1,2");
     sourcingDefResponse.setOptAttributes("3,4");
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
 
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(anyString(), anyLong()))
-            .thenReturn(BaseResponse.builder().payload(new SourcingAttributeResponse()).build());
+        .thenReturn(BaseResponse.builder().payload(new SourcingAttributeResponse()).build());
 
     PagePayload<TransferScheduleResponse> pagePayload = new PagePayload<>();
     pagePayload.setData(Collections.emptyList());
@@ -285,10 +285,10 @@ class TransferScheduleServiceTest {
 
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
     GenericPaginatedTableResponse response =
-            transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
     assertNotNull(response.getData());
@@ -308,17 +308,17 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
 
     SourcingAttributesDefinitionResponse sourcingDefResponse =
-            new SourcingAttributesDefinitionResponse();
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1");
     sourcingDefResponse.setOptAttributes(null);
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
 
     SourcingAttributeResponse reqAttr = new SourcingAttributeResponse();
     reqAttr.setAttributeName("ReqAttr");
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 1L))
-            .thenReturn(BaseResponse.builder().payload(reqAttr).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr).build());
 
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
     TransferScheduleResponse transferSchedule = getTransferScheduleResponse();
@@ -332,10 +332,10 @@ class TransferScheduleServiceTest {
 
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
     GenericPaginatedTableResponse response =
-            transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
     assertNotNull(response.getData());
@@ -373,16 +373,16 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
 
     SourcingAttributesDefinitionResponse sourcingDefResponse =
-            new SourcingAttributesDefinitionResponse();
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1");
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
 
     SourcingAttributeResponse reqAttr = new SourcingAttributeResponse();
     reqAttr.setAttributeName("ReqAttr");
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 1L))
-            .thenReturn(BaseResponse.builder().payload(reqAttr).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr).build());
 
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
     TransferScheduleResponse transferSchedule = prepareTransferScheduleResp();
@@ -396,10 +396,10 @@ class TransferScheduleServiceTest {
 
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
     GenericPaginatedTableResponse response =
-            transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
     assertNotNull(response.getData());
@@ -414,7 +414,7 @@ class TransferScheduleServiceTest {
   }
 
   private static void setPaginationParams(
-          int totalRecords, PagePayload<TransferScheduleResponse> pagePayload) {
+      int totalRecords, PagePayload<TransferScheduleResponse> pagePayload) {
     PagePayload.Pagination pagination = new PagePayload.Pagination();
     pagination.setTotalRecords(totalRecords);
     pagination.setTotalPages(totalRecords);
@@ -435,12 +435,12 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
 
     SourcingAttributesDefinitionResponse sourcingDefResponse =
-            new SourcingAttributesDefinitionResponse();
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1,2");
     sourcingDefResponse.setOptAttributes("3");
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
 
     SourcingAttributeResponse reqAttr1 = new SourcingAttributeResponse();
     reqAttr1.setAttributeName("ReqAttr1");
@@ -450,11 +450,11 @@ class TransferScheduleServiceTest {
     optAttr1.setAttributeName("OptAttr1");
 
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 1L))
-            .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 2L))
-            .thenReturn(BaseResponse.builder().payload(reqAttr2).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr2).build());
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 3L))
-            .thenReturn(BaseResponse.builder().payload(optAttr1).build());
+        .thenReturn(BaseResponse.builder().payload(optAttr1).build());
 
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
     TransferScheduleResponse transferSchedule = prepareTransferScheduleResp();
@@ -468,10 +468,10 @@ class TransferScheduleServiceTest {
 
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
     GenericPaginatedTableResponse response =
-            transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
     assertNotNull(response.getData());
@@ -501,19 +501,19 @@ class TransferScheduleServiceTest {
     Boolean isPagination = true;
 
     SourcingAttributesDefinitionResponse sourcingDefResponse =
-            new SourcingAttributesDefinitionResponse();
+        new SourcingAttributesDefinitionResponse();
     sourcingDefResponse.setReqAttributes("1,2");
     when(sourcingAttributesDefinitionFeign.getSourcingAttributesDefinitionInActiveStatus(
             anyString(), any(SourcingAttributesDefinitionScopeEnum.class)))
-            .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
+        .thenReturn(BaseResponse.builder().payload(sourcingDefResponse).build());
 
     SourcingAttributeResponse reqAttr1 = new SourcingAttributeResponse();
     reqAttr1.setAttributeName("ReqAttr1");
 
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 1L))
-            .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
+        .thenReturn(BaseResponse.builder().payload(reqAttr1).build());
     when(sourcingAttributeFeign.getSourcingAttributeByOrgIdAndId(orgId, 2L))
-            .thenReturn(BaseResponse.builder().payload(null).build());
+        .thenReturn(BaseResponse.builder().payload(null).build());
 
     List<TransferScheduleResponse> transferScheduleList = new ArrayList<>();
     TransferScheduleResponse transferSchedule = prepareTransferScheduleResp();
@@ -527,10 +527,10 @@ class TransferScheduleServiceTest {
 
     when(transferScheduleFeign.fetchTransferSchedule(
             anyString(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString(), any()))
-            .thenReturn(BaseResponse.builder().payload(pagePayload).build());
+        .thenReturn(BaseResponse.builder().payload(pagePayload).build());
 
     GenericPaginatedTableResponse response =
-            transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
 
     assertNotNull(response);
     assertNotNull(response.getData());
@@ -545,10 +545,10 @@ class TransferScheduleServiceTest {
 
   private FetchTransferScheduleRequest getTransferRequest() {
     return FetchTransferScheduleRequest.builder()
-            .dropoffNodeIds(List.of("DN01"))
-            .sourceNodeIds(List.of("SN01"))
-            .startDate(LocalDate.now().minusDays(1))
-            .endDate(LocalDate.now())
-            .build();
+        .dropoffNodeIds(List.of("DN01"))
+        .sourceNodeIds(List.of("SN01"))
+        .startDate(LocalDate.now().minusDays(1))
+        .endDate(LocalDate.now())
+        .build();
   }
 }

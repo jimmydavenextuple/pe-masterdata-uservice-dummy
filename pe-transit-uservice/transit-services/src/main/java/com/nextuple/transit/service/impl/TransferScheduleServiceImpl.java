@@ -71,7 +71,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
   private final NodeFeign nodeFeign;
   private final SourcingAttributesDefinitionService sourcingAttributesDefinitionService;
   private static final TransferScheduleMapper INSTANCE =
-          Mappers.getMapper(TransferScheduleMapper.class);
+      Mappers.getMapper(TransferScheduleMapper.class);
 
   private static final String SOURCE_NODE_ID = "sourceNodeId";
   private static final String DROPOFF_NODE_ID = "dropoffNodeId";
@@ -79,7 +79,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
 
   @Override
   public TransferScheduleResponse createTransferSchedule(TransferScheduleCreationRequest request)
-          throws CommonServiceException, PromiseEngineException {
+      throws CommonServiceException, PromiseEngineException {
     validateStartAndEndTime(request.getOrgId(), request.getStartTime(), request.getEndTime());
     validateNodeId(request.getOrgId(), request.getSourceNodeId(), SOURCE_NODE_ID);
     validateNodeId(request.getOrgId(), request.getDropoffNodeId(), DROPOFF_NODE_ID);
@@ -90,47 +90,47 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
   }
 
   private void validateRuleDetails(String orgId, String rule, String ruleName)
-          throws CommonServiceException {
+      throws CommonServiceException {
     if (!(Objects.isNull(rule)
-            || rule.isEmpty()
-            || Objects.isNull(ruleName)
-            || ruleName.isEmpty())) {
+        || rule.isEmpty()
+        || Objects.isNull(ruleName)
+        || ruleName.isEmpty())) {
       RuleConfigurationParam ruleConfigurationParam =
-              RuleConfigurationParam.builder()
-                      .orgId(orgId)
-                      .rule(rule)
-                      .ruleName(ruleName)
-                      .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
-                      .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE)
-                      .build();
+          RuleConfigurationParam.builder()
+              .orgId(orgId)
+              .rule(rule)
+              .ruleName(ruleName)
+              .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
+              .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE)
+              .build();
       try {
         Optional<RulesConfigurationResponse> rulesConfigurationResponseOptional =
-                ruleConfigurationService.fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
-                        ruleConfigurationParam);
+            ruleConfigurationService.fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
+                ruleConfigurationParam);
         if (rulesConfigurationResponseOptional.isEmpty()) {
           throw new PromiseEngineException(
-                  ApplicationLayer.SERVICE_LAYER,
-                  ExceptionCodeMapping.SERVICE_FIND_FAILED,
-                  "Transfer schedule rule not found with rule:" + rule + " and ruleName:" + ruleName);
+              ApplicationLayer.SERVICE_LAYER,
+              ExceptionCodeMapping.SERVICE_FIND_FAILED,
+              "Transfer schedule rule not found with rule:" + rule + " and ruleName:" + ruleName);
         }
       } catch (PromiseEngineException e) {
         logger.error(
-                String.format(
-                        "Transfer schedule rule not found with rule: %s and ruleName: %s", rule, ruleName));
+            String.format(
+                "Transfer schedule rule not found with rule: %s and ruleName: %s", rule, ruleName));
         throw new CommonServiceException(
-                "Transfer schedule cannot be created with invalid rule or ruleName",
-                HttpStatus.BAD_REQUEST,
-                0x2775,
-                Collections.singletonMap("rule", FieldError.builder().rejectedValue(rule).build()));
+            "Transfer schedule cannot be created with invalid rule or ruleName",
+            HttpStatus.BAD_REQUEST,
+            0x2775,
+            Collections.singletonMap("rule", FieldError.builder().rejectedValue(rule).build()));
       }
     }
   }
 
   private void validateStartAndEndTime(
-          String orgId,
-          @NotNull(message = "startTime can't be null") DateTime startTime,
-          @NotNull(message = "endTime can't be null") DateTime endTime)
-          throws CommonServiceException {
+      String orgId,
+      @NotNull(message = "startTime can't be null") DateTime startTime,
+      @NotNull(message = "endTime can't be null") DateTime endTime)
+      throws CommonServiceException {
 
     if (startTime.isAfter(endTime)) {
       Map<String, FieldError> errorMap = new HashMap<>();
@@ -138,19 +138,19 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
       errorMap.put("startTime", FieldError.builder().rejectedValue(startTime).build());
       errorMap.put("endTime", FieldError.builder().rejectedValue(endTime).build());
       throw new CommonServiceException(
-              "Transfer schedule cannot be created with start time after end time ",
-              HttpStatus.BAD_REQUEST,
-              0x2773,
-              errorMap);
+          "Transfer schedule cannot be created with start time after end time ",
+          HttpStatus.BAD_REQUEST,
+          0x2773,
+          errorMap);
     }
   }
 
   private void validateNodeId(String orgId, String nodeId, String fieldName)
-          throws CommonServiceException {
+      throws CommonServiceException {
     try {
       BaseResponse<NodeResponse> sourceNodeResponse = nodeFeign.getNodeDetails(nodeId, orgId);
       if (Boolean.FALSE.equals(sourceNodeResponse.isSuccess())
-              || Objects.isNull(sourceNodeResponse.getPayload())) {
+          || Objects.isNull(sourceNodeResponse.getPayload())) {
         throwNodeNotFoundException(orgId, nodeId, fieldName);
       }
     } catch (Exception e) {
@@ -160,41 +160,41 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
   }
 
   private void throwNodeNotFoundException(String orgId, String nodeId, String fieldName)
-          throws CommonServiceException {
+      throws CommonServiceException {
     Map<String, FieldError> errorMap = new HashMap<>();
     errorMap.put(ORG_ID, FieldError.builder().rejectedValue(orgId).build());
     errorMap.put(fieldName, FieldError.builder().rejectedValue(nodeId).build());
     throw new CommonServiceException(
-            "Transfer schedule cannot be created with invalid " + fieldName,
-            HttpStatus.BAD_REQUEST,
-            0x2772,
-            errorMap);
+        "Transfer schedule cannot be created with invalid " + fieldName,
+        HttpStatus.BAD_REQUEST,
+        0x2772,
+        errorMap);
   }
 
   @Override
   public List<TransferScheduleResponse> fetchTransferSchedules(String orgId, String dropoffNodeId) {
     List<TransferScheduleDomainDto> dtos =
-            transferSchedulePersistenceService.fetchUpcomingTransferSchedules(orgId, dropoffNodeId);
+        transferSchedulePersistenceService.fetchUpcomingTransferSchedules(orgId, dropoffNodeId);
     return INSTANCE.convertToTransferScheduleResponseList(dtos);
   }
 
   @Override
   public TransferScheduleResponse deleteTransferSchedule(TransferScheduleRequest request)
-          throws PromiseEngineException, CommonServiceException {
+      throws PromiseEngineException, CommonServiceException {
     Date startTime = request.getStartTime().toDate();
     TransferScheduleDomainDto domainDto =
-            transferSchedulePersistenceService.deleteTransferSchedule(
-                    request.getOrgId(), request.getSourceNodeId(), request.getDropoffNodeId(), startTime);
+        transferSchedulePersistenceService.deleteTransferSchedule(
+            request.getOrgId(), request.getSourceNodeId(), request.getDropoffNodeId(), startTime);
     return INSTANCE.convertToTransferScheduleResponse(domainDto);
   }
 
   @Override
   public Page<TransferScheduleResponse> fetchTransferScheduleList(
-          String orgId,
-          Boolean isPaginated,
-          PageParams pageParams,
-          FetchTransferScheduleRequest request)
-          throws CommonServiceException, PromiseEngineException {
+      String orgId,
+      Boolean isPaginated,
+      PageParams pageParams,
+      FetchTransferScheduleRequest request)
+      throws CommonServiceException, PromiseEngineException {
     String sortBy = pageParams.getSortBy().orElse(SOURCE_NODE_ID);
     String sortOrder = pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER);
     validateSortBy(sortBy);
@@ -203,22 +203,22 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     Pageable pageable;
     if (Boolean.TRUE.equals(isPaginated)) {
       pageable =
-              PageRequest.of(pageParams.getPageNo().get() - 1, pageParams.getPageSize().get(), sort);
+          PageRequest.of(pageParams.getPageNo().get() - 1, pageParams.getPageSize().get(), sort);
     } else {
       pageable = PageRequest.of(pageParams.getPageNo().get() - 1, Integer.MAX_VALUE, sort);
     }
 
     if (!ObjectUtil.isNull(request.getIsSourcingAttributeEnabled())
-            && Boolean.TRUE.equals(request.getIsSourcingAttributeEnabled())) {
+        && Boolean.TRUE.equals(request.getIsSourcingAttributeEnabled())) {
       List<RulesConfigurationResponse> ruleConfigs =
-              Objects.isNull(request.getSourcingAttributeId())
-                      ? Collections.emptyList()
-                      : ruleConfigurationService
-                      .fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
-                              orgId,
-                              request.getSourcingAttributeId(),
-                              RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE,
-                              SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
+          Objects.isNull(request.getSourcingAttributeId())
+              ? Collections.emptyList()
+              : ruleConfigurationService
+                  .fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+                      orgId,
+                      request.getSourcingAttributeId(),
+                      RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE,
+                      SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
       List<Pair<String, String>> ruleInfo = prepareRuleInfo(ruleConfigs);
       request.setRuleInfo(ruleInfo);
     }
@@ -236,14 +236,14 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
 
   @Override
   public List<TransferScheduleResponse> fetchTransferSchedulesInRange(
-          TransferScheduleRangeRequest request) {
+      TransferScheduleRangeRequest request) {
     if (Objects.isNull(request.getRule()) || Objects.isNull(request.getRuleName())) {
       try {
         SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
-                sourcingAttributesDefinitionService
-                        .processGetSourcingAttributesDefinitionInActiveStatus(
-                                request.getOrgId(),
-                                SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
+            sourcingAttributesDefinitionService
+                .processGetSourcingAttributesDefinitionInActiveStatus(
+                    request.getOrgId(),
+                    SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
         if (Objects.nonNull(sourcingAttributesDefinitionResponse)) return Collections.emptyList();
       } catch (Exception e) {
         logger.error("Failed to fetch sourcing attributes definition in active status", e);
@@ -268,43 +268,43 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
       endTimeUpperBound = request.getEndTime().withZone(DateTimeZone.UTC).toDate();
     }
     TransferScheduleDomainRequest domainRequest =
-            TransferScheduleDomainRequest.builder()
-                    .orgId(request.getOrgId())
-                    .rule(request.getRule())
-                    .ruleName(request.getRuleName())
-                    .dropoffNodeId(request.getDropoffNodeId())
-                    .startTimeLowerBound(startTimeLowerBound)
-                    .startTimeUpperBound(startTimeBound)
-                    .endTimeLowerBound(endTimeBound)
-                    .endTimeUpperBound(endTimeUpperBound)
-                    .exclusive(request.getExclusive())
-                    .build();
+        TransferScheduleDomainRequest.builder()
+            .orgId(request.getOrgId())
+            .rule(request.getRule())
+            .ruleName(request.getRuleName())
+            .dropoffNodeId(request.getDropoffNodeId())
+            .startTimeLowerBound(startTimeLowerBound)
+            .startTimeUpperBound(startTimeBound)
+            .endTimeLowerBound(endTimeBound)
+            .endTimeUpperBound(endTimeUpperBound)
+            .exclusive(request.getExclusive())
+            .build();
 
     List<TransferScheduleDomainDto> dtos =
-            transferSchedulePersistenceService.fetchTransferSchedulesInRange(domainRequest);
+        transferSchedulePersistenceService.fetchTransferSchedulesInRange(domainRequest);
     return INSTANCE.convertToTransferScheduleResponseList(dtos);
   }
 
   private static void validateSortBy(String sortBy) throws CommonServiceException {
     if (!sortBy.equals(SOURCE_NODE_ID) && !sortBy.equals(DROPOFF_NODE_ID)) {
       throw new CommonServiceException(
-              "Invalid sortBy field, must be either sourceNodeId or dropoffNodeId",
-              HttpStatus.BAD_REQUEST,
-              0x4772,
-              Collections.singletonMap("sortBy", FieldError.builder().rejectedValue(sortBy).build()));
+          "Invalid sortBy field, must be either sourceNodeId or dropoffNodeId",
+          HttpStatus.BAD_REQUEST,
+          0x4772,
+          Collections.singletonMap("sortBy", FieldError.builder().rejectedValue(sortBy).build()));
     }
   }
 
   private void validateSortOrder(String sortOrder) throws CommonServiceException {
     if (!sortOrder.equalsIgnoreCase(DEFAULT_SORT_ORDER)
-            && !sortOrder.equalsIgnoreCase(DESC_SORT_ORDER)) {
+        && !sortOrder.equalsIgnoreCase(DESC_SORT_ORDER)) {
       logger.error("Invalid sort order: {}", sortOrder);
       throw new CommonServiceException(
-              "Invalid sort order, consider giving either ASC or DESC",
-              HttpStatus.BAD_REQUEST,
-              0x4773,
-              Collections.singletonMap(
-                      SORT_ORDER, FieldError.builder().rejectedValue(sortOrder).build()));
+          "Invalid sort order, consider giving either ASC or DESC",
+          HttpStatus.BAD_REQUEST,
+          0x4773,
+          Collections.singletonMap(
+              SORT_ORDER, FieldError.builder().rejectedValue(sortOrder).build()));
     }
   }
 }
