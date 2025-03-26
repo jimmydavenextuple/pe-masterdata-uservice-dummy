@@ -17,23 +17,23 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Operation(
-        summary = "Fetch Transfer Schedules List With Transfer Rules",
-        description =
-                "Retrieves transfer schedules based on organization ID, configuration type, and transfer schedule parameters.")
+    summary = "Fetch Transfer Schedules List With Transfer Rules",
+    description =
+        "Retrieves transfer schedules based on organization ID, configuration type, and transfer schedule parameters.")
 @ApiResponse(
-        responseCode = "200",
-        description =
-                "A 200 success code indicates that the transfer schedules are fetched successfully.",
-        content =
+    responseCode = "200",
+    description =
+        "A 200 success code indicates that the transfer schedules are fetched successfully.",
+    content =
         @Content(
-                schema = @Schema(implementation = TransferScheduleResponse.class),
-                examples = {
-                        @ExampleObject(
-                                summary = "Transfer schedules fetched successfully",
-                                name =
-                                        "A 200 response code indicates that transfer schedules are fetched successfully.",
-                                value =
-                                        """
+            schema = @Schema(implementation = TransferScheduleResponse.class),
+            examples = {
+              @ExampleObject(
+                  summary = "Transfer schedules fetched successfully",
+                  name =
+                      "A 200 response code indicates that transfer schedules are fetched successfully.",
+                  value =
+                      """
                                                                    {
                                                                              "success": true,
                                                                              "requestId": "85e6ba48-65b4-415f-b889-0f4d9be94ca6",
@@ -115,20 +115,20 @@ import java.lang.annotation.Target;
                                                                              }
                                                                            }
                                                           """)
-                }))
+            }))
 @ApiResponse(
-        responseCode = "400",
-        description = "A 400 error code indicates that there is some issue with the input.",
-        content =
+    responseCode = "400",
+    description = "A 400 error code indicates that there is some issue with the input.",
+    content =
         @Content(
-                schema = @Schema(implementation = com.nimbusds.oauth2.sdk.ErrorResponse.class),
-                examples = {
-                        @ExampleObject(
-                                summary = "'startDate' or 'endDate' for method parameter is in incorrect format.",
-                                name =
-                                        "A 400 error code indicates that the 'startTime' for method parameter type Local is in incorrect format.",
-                                value =
-                                        """
+            schema = @Schema(implementation = com.nimbusds.oauth2.sdk.ErrorResponse.class),
+            examples = {
+              @ExampleObject(
+                  summary = "'startDate' or 'endDate' for method parameter is in incorrect format.",
+                  name =
+                      "A 400 error code indicates that the 'startTime' for method parameter type Local is in incorrect format.",
+                  value =
+                      """
                                                                       {
                                                                           "success": false,
                                                                           "requestId": "95f6439f-0351-4ac8-b649-fd843576155c#17",
@@ -139,20 +139,20 @@ import java.lang.annotation.Target;
                                                                               "code": 2
                                                                           }
                                                                       }"""),
-                }))
+            }))
 @ApiResponse(
-        responseCode = "500",
-        description = "A 500 error code indicates that something went wrong.",
-        content =
+    responseCode = "500",
+    description = "A 500 error code indicates that something went wrong.",
+    content =
         @Content(
-                schema = @Schema(implementation = ErrorResponse.class),
-                examples = {
-                        @ExampleObject(
-                                summary = "There was some error on server while processing the request.",
-                                name =
-                                        "A 500 error code indicates that there was some error on the server while processing the request.",
-                                value =
-                                        """
+            schema = @Schema(implementation = ErrorResponse.class),
+            examples = {
+              @ExampleObject(
+                  summary = "There was some error on server while processing the request.",
+                  name =
+                      "A 500 error code indicates that there was some error on the server while processing the request.",
+                  value =
+                      """
                                                                                                                 {
                                                                                                                     "success": false,
                                                                                                                     "requestId": "3b8b4852-93a6-4570-b685-1d2771ebce56",
@@ -163,5 +163,5 @@ import java.lang.annotation.Target;
                                                                                                                     }
                                                                                                                 }
                                                                                                                 """)
-                }))
+            }))
 public @interface GetTransferSchedulesListDocV2 {}
