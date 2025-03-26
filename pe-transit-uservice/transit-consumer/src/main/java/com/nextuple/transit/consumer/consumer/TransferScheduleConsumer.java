@@ -11,7 +11,10 @@ import com.nextuple.master.data.integration.consumer.MasterDataFeedConsumer;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.transit.consumer.dto.TransferScheduleDto;
 import com.nextuple.transit.consumer.impl.TransferScheduleBatchServiceImpl;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
@@ -35,13 +38,22 @@ public class TransferScheduleConsumer extends MasterDataFeedConsumer<TransferSch
   private final TransferScheduleBatchServiceImpl transferScheduleBatchService;
   private final TypeReference<List<BatchRequest<TransferScheduleDto>>>
       transferScheduleTypeReference = new TypeReference<>() {};
+  private final MeterRegistry meterRegistry;
 
   @KafkaHandler
   public void consumeTransferScheduleFeed(
       @Payload List<BatchRequest<TransferScheduleDto>> transferScheduleFeed,
       @Headers KafkaMessageHeaders headers) {
     try {
+      var timer =
+          Timer.builder("transfer.schedule.consumer.timer")
+              .publishPercentiles(0.99, 0.95)
+              .publishPercentileHistogram()
+              .register(meterRegistry);
+      long startTime = System.currentTimeMillis();
       consumeMasterDataFeed(transferScheduleFeed);
+      log.warn("Transfer Schedule Feed consumed successfully");
+      timer.record(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS);
     } catch (Exception e) {
       log.error(
           "Exception occurred while consuming transfer schedule feed : {}", transferScheduleFeed);
