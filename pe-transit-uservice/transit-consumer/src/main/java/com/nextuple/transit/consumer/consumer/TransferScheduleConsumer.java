@@ -29,7 +29,8 @@ import org.springframework.stereotype.Component;
     groupId = "${master-data.transfer-schedule.group-id}",
     batch = "true",
     autoStartup = "${kafka-topic-flags.master-data.transfer-schedule.enabled:false}",
-    containerFactory = "transferScheduleDeserializerConsumer")
+    containerFactory = "transferScheduleDeserializerConsumer",
+    concurrency = "${master-data.transfer-schedule.concurrency}")
 public class TransferScheduleConsumer extends MasterDataFeedConsumer<TransferScheduleDto> {
 
   private final TransferScheduleBatchServiceImpl transferScheduleBatchService;

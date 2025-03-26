@@ -28,6 +28,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +43,7 @@ public abstract class BatchService<T extends CommonMasterDataFieldsDto> { // NOS
 
   private final ObjectMapper objectMapper = new ObjectMapper();
   @Autowired ErrorHandlingService errorHandlingService;
+  private static final ExecutorService executors = Executors.newVirtualThreadPerTaskExecutor();
 
   @PostConstruct
   public void init() {
@@ -164,15 +170,34 @@ public abstract class BatchService<T extends CommonMasterDataFieldsDto> { // NOS
     int successfulRecords = 0;
     BatchResponse batchResponse = new BatchResponse();
     List<ResponseDto> responseDtoList = new ArrayList<>();
-    for (BatchRequest<T> batchRequest : batchRequestList) {
-      ResponseDto responseDto = processRecordBasedOnAction(batchRequest, isRetryRequired);
-      if (Objects.nonNull(batchRequest.getRecordNo()))
-        responseDto.setRecordNo(batchRequest.getRecordNo());
-      responseDtoList.add(responseDto);
-      if (responseDto.getStatusCode() == HttpStatus.OK.value()) {
-        successfulRecords++;
+    List<Callable<ResponseDto>> tasks =
+        batchRequestList.stream()
+            .map(
+                batchRequest ->
+                    (Callable<ResponseDto>)
+                        () -> {
+                          ResponseDto responseDto =
+                              processRecordBasedOnAction(batchRequest, isRetryRequired);
+                          if (Objects.nonNull(batchRequest.getRecordNo()))
+                            responseDto.setRecordNo(batchRequest.getRecordNo());
+                          return responseDto;
+                        })
+            .toList();
+
+    try {
+      List<Future<ResponseDto>> futures = executors.invokeAll(tasks);
+      for (Future<ResponseDto> future : futures) {
+        ResponseDto responseDto = future.get();
+        responseDtoList.add(responseDto);
+        if (responseDto.getStatusCode() == HttpStatus.OK.value()) {
+          successfulRecords++;
+        }
       }
+    } catch (InterruptedException | ExecutionException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException("Error processing batch records", e);
     }
+
     batchResponse.setTotalRecords(batchRequestList.size());
     batchResponse.setSuccessfulRecords(successfulRecords);
     batchResponse.setFailedRecords(batchRequestList.size() - successfulRecords);
