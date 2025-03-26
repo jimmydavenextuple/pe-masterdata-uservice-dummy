@@ -35,7 +35,6 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 @Service
@@ -96,7 +95,7 @@ public class TransferScheduleService {
     transferScheduleResponse.setColumns(transferScheduleColumnInfoDtos);
     transferScheduleResponse.setRows(transferScheduleRows);
     finalResponse.setData(transferScheduleResponse);
-    setPaginationIfNotEmpty(finalResponse, pagination, transferScheduleResponseList);
+    finalResponse.setPagination(pagination);
     return finalResponse;
   }
 
@@ -206,18 +205,6 @@ public class TransferScheduleService {
             getTransferColumnInfoDto(
                 attribute.getAttributeName(), attribute.getAttributeName(), false));
       }
-    }
-  }
-
-  private void setPaginationIfNotEmpty(
-      GenericPaginatedTableResponse finalResponse,
-      PagePayload.Pagination pagination,
-      List<TransferScheduleResponse> transferScheduleResponses) {
-
-    if (CollectionUtils.isEmpty(transferScheduleResponses)) {
-      finalResponse.setPagination(null);
-    } else {
-      finalResponse.setPagination(pagination);
     }
   }
 

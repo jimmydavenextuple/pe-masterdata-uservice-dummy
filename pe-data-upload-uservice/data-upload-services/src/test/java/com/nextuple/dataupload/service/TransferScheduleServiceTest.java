@@ -128,7 +128,7 @@ class TransferScheduleServiceTest {
     GenericPaginatedTableResponse response =
         transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPagination);
     assertNotNull(response.getData());
-    assertNull(response.getPagination());
+    assertNotNull(response.getPagination());
   }
 
   @Test
@@ -261,7 +261,7 @@ class TransferScheduleServiceTest {
 
     assertNotNull(response);
     assertNotNull(response.getData());
-    assertNull(response.getPagination());
+    assertNotNull(response.getPagination());
   }
 
   @Test
