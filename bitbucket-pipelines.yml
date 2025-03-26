@@ -86,24 +86,23 @@ server:
         max:
           memory: 2Gi
           cpu: 1
-    performance:
-      ingress: no
+    integration:
+      ingress: yes
       sidecar-keycloak-plugin: yes
       middleman: no
       prometheus: yes
       storage: yes
-      java-agents: -javaagent:/mnt/shared-storage/newrelic-agent.jar
-      java-opts: "-Xms1024m -Xmx1024m"
+      heapvolume: yes
       keyvault: yes
       scale:
         replicas: 1
       resources:
         min:
-          memory: 4Gi
-          cpu: 3
+          memory: 2Gi
+          cpu: 1
         max:
-          memory: 4Gi
-          cpu: 3
+          memory: 2Gi
+          cpu: 1
     orielly:
       ingress: yes
       middleman: yes
@@ -396,7 +395,14 @@ pipelines:
               name: Deploy Integration
               trigger: manual
               deployment: integration
-
+    
+    integration:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Integration
+          trigger: manual
+          deployment: integration
           # - step:
           #     !!merge <<: *deploy
           #     name: Deploy PERF
@@ -436,12 +442,6 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
-    perf_deployment_1.7:
-      - step: *build
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Performance
-          deployment: performance
     master2:
       - step: *Clear-Cache
       - step: *build

@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import kotlin.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
@@ -54,7 +55,8 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
     Root<TransferScheduleEntity> root = cq.from(TransferScheduleEntity.class);
 
     List<Predicate> predicates =
-        buildPredicates(cb, root, orgId, request, startDateTime, endDateTime);
+        buildPredicates(
+            cb, root, orgId, request, startDateTime, endDateTime, request.getRuleInfo());
     cq.where(predicates.toArray(new Predicate[0]));
 
     applySorting(cq, cb, root, pageable);
@@ -65,7 +67,8 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
 
     List<TransferScheduleEntity> transferSchedules = query.getResultList();
 
-    long total = fetchTotalCount(cb, orgId, request, startDateTime, endDateTime);
+    long total =
+        fetchTotalCount(cb, orgId, request, startDateTime, endDateTime, request.getRuleInfo());
 
     return new PageImpl<>(transferSchedules, pageable, total);
   }
@@ -129,7 +132,8 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
       String orgId,
       FetchTransferScheduleRequest request,
       DateTime startDateTime,
-      DateTime endDateTime) {
+      DateTime endDateTime,
+      List<Pair<String, String>> ruleInfo) {
     List<Predicate> predicates = new ArrayList<>();
     predicates.add(cb.equal(root.get(ORG_ID), orgId));
 
@@ -145,6 +149,24 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
 
     if (startDateTime != null && endDateTime != null) {
       predicates.add(cb.between(root.get(END_TIME), startDateTime.toDate(), endDateTime.toDate()));
+    }
+
+    if (Objects.nonNull(ruleInfo)) {
+      List<Predicate> rulePredicates = new ArrayList<>();
+
+      Predicate ruleAndRuleNameNull =
+          cb.and(cb.isNull(root.get("rule")), cb.isNull(root.get("ruleName")));
+      rulePredicates.add(ruleAndRuleNameNull);
+
+      for (Pair<String, String> entry : ruleInfo) {
+        Predicate ruleNameAndRuleMatch =
+            cb.and(
+                cb.equal(root.get("ruleName"), entry.getFirst()),
+                cb.equal(root.get("rule"), entry.getSecond()));
+        rulePredicates.add(ruleNameAndRuleMatch);
+      }
+
+      predicates.add(cb.or(rulePredicates.toArray(new Predicate[0])));
     }
 
     return predicates;
@@ -195,13 +217,14 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
       String orgId,
       FetchTransferScheduleRequest request,
       DateTime startDateTime,
-      DateTime endDateTime) {
+      DateTime endDateTime,
+      List<Pair<String, String>> ruleInfo) {
     CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
     Root<TransferScheduleEntity> countRoot = countQuery.from(TransferScheduleEntity.class);
     countQuery.select(cb.count(countRoot));
 
     List<Predicate> countPredicates =
-        buildPredicates(cb, countRoot, orgId, request, startDateTime, endDateTime);
+        buildPredicates(cb, countRoot, orgId, request, startDateTime, endDateTime, ruleInfo);
 
     countQuery.where(cb.and(countPredicates.toArray(new Predicate[0])));
 

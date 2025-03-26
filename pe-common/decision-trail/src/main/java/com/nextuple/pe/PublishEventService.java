@@ -129,7 +129,7 @@ public class PublishEventService {
     }
     Set<String> allowedPages = iTenantConfig.getAllowedPagesListForPublishingEvent();
     String pageName = MDC.get(PAGE_NAME);
-    SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy, HH:mm:ss.SSS a");
+    SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy, hh:mm:ss.SSS a");
 
     if (Objects.nonNull(pageName) && allowedPages.stream().noneMatch(pageName::equalsIgnoreCase))
       return;
