@@ -209,7 +209,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     }
 
     if (!ObjectUtil.isNull(request.getIsSourcingAttributeEnabled())
-        && request.getIsSourcingAttributeEnabled()) {
+        && Boolean.TRUE.equals(request.getIsSourcingAttributeEnabled())) {
       List<RulesConfigurationResponse> ruleConfigs =
           Objects.isNull(request.getSourcingAttributeId())
               ? Collections.emptyList()
