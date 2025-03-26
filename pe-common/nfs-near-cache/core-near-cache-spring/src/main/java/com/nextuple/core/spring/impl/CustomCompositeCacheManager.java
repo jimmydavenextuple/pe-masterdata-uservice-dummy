@@ -43,7 +43,10 @@ public class CustomCompositeCacheManager implements CacheManager {
 
   @Override
   public Cache getCache(String name) {
-    String cacheManagerType = cacheProperties.getCacheManagerMap().getOrDefault(name, "caffeine");
+    String cacheManagerType =
+        Optional.ofNullable(cacheProperties.getCacheManagerMap())
+            .map(map -> map.getOrDefault(name, "caffeine"))
+            .orElse("caffeine");
 
     if (isRedisEnabled && "redis".equalsIgnoreCase(cacheManagerType)) {
       return strategies.get("redis").getCache(name);
