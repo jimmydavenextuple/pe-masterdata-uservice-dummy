@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 @Operation(
     summary = "Fetch Transfer Schedules List With Transfer Rules",
     description =
-        "Retrieves transfer schedules based on organization ID , configuration type and transfer schedules parameters.")
+        "Retrieves transfer schedules based on organization ID, configuration type, and transfer schedule parameters.")
 @ApiResponse(
     responseCode = "200",
     description =
@@ -124,7 +124,7 @@ import java.lang.annotation.Target;
             schema = @Schema(implementation = com.nimbusds.oauth2.sdk.ErrorResponse.class),
             examples = {
               @ExampleObject(
-                  summary = "'startDate' for method parameter is in incorrect format.",
+                  summary = "'startDate' or 'endDate' for method parameter is in incorrect format.",
                   name =
                       "A 400 error code indicates that the 'startTime' for method parameter type Local is in incorrect format.",
                   value =
@@ -139,22 +139,6 @@ import java.lang.annotation.Target;
                                                             "code": 2
                                                         }
                                                     }"""),
-              @ExampleObject(
-                  summary = "'startDate' for method parameter is in incorrect format.",
-                  name =
-                      "A 400 error code indicates that the 'endTime' for method parameter type Local is in incorrect format.",
-                  value =
-                      """
-                                                    {
-                                                        "success": false,
-                                                        "requestId": "95f6439f-0351-4ac8-b649-fd843576155c#17",
-                                                        "timestamp": 1679545687292,
-                                                        "message": "JSON parse error: Invalid format: "2025-03-21T" is malformed at T",
-                                                        "payload": {
-                                                            "type": "ERROR",
-                                                            "code": 2
-                                                        }
-                                                    }""")
             }))
 @ApiResponse(
     responseCode = "500",

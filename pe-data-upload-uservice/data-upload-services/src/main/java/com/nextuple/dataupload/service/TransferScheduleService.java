@@ -35,6 +35,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 @Service
@@ -74,6 +75,7 @@ public class TransferScheduleService {
         getSourcingAttributesDefinitionInActiveStatus(orgId);
     List<SourcingAttributeResponse> optionalAttributeList = new ArrayList<>();
     List<SourcingAttributeResponse> requiredAttributeList = new ArrayList<>();
+    Long sourcingAttributeId = null;
     request.setIsSourcingAttributeEnabled(true);
     if (sourcingAttributeDefinitionResponse != null
         && sourcingAttributeDefinitionResponse.getPayload() != null) {
@@ -82,7 +84,8 @@ public class TransferScheduleService {
       requiredAttributeList = getSourcingAttributes(orgId, sourcingAttributeDefinitions, true);
 
       optionalAttributeList = getSourcingAttributes(orgId, sourcingAttributeDefinitions, false);
-      request.setSourcingAttributeId(sourcingAttributeDefinitions.getId());
+      sourcingAttributeId = sourcingAttributeDefinitions.getId();
+      request.setSourcingAttributeId(sourcingAttributeId);
     }
     BaseResponse<PagePayload<TransferScheduleResponse>> response =
         getTransferSchedulesBasedOnFilters(orgId, pageParams, request, isPagination);
@@ -95,7 +98,8 @@ public class TransferScheduleService {
     transferScheduleResponse.setColumns(transferScheduleColumnInfoDtos);
     transferScheduleResponse.setRows(transferScheduleRows);
     finalResponse.setData(transferScheduleResponse);
-    finalResponse.setPagination(pagination);
+    setPaginationIfNotEmpty(
+        finalResponse, pagination, transferScheduleResponseList, sourcingAttributeId);
     return finalResponse;
   }
 
@@ -205,6 +209,19 @@ public class TransferScheduleService {
             getTransferColumnInfoDto(
                 attribute.getAttributeName(), attribute.getAttributeName(), false));
       }
+    }
+  }
+
+  private void setPaginationIfNotEmpty(
+      GenericPaginatedTableResponse finalResponse,
+      PagePayload.Pagination pagination,
+      List<TransferScheduleResponse> transferScheduleResponses,
+      Long sourcingAttributeId) {
+
+    if (CollectionUtils.isEmpty(transferScheduleResponses) && Objects.isNull(sourcingAttributeId)) {
+      finalResponse.setPagination(null);
+    } else {
+      finalResponse.setPagination(pagination);
     }
   }
 

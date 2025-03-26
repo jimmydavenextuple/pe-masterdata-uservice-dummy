@@ -81,10 +81,10 @@ public class TransferSchedulesController {
       getTransferSchedulesListV2(
           @NotBlank(message = "OrgId can't be empty")
               @PathVariable
-              @Parameter(description = "Unique identifier for organization.")
+              @Parameter(description = "Unique identifier for the organization.")
               String orgId,
           @RequestParam(required = false, defaultValue = "true")
-              @Parameter(description = "Identifier to whether or not to apply pagination.")
+              @Parameter(description = "Indicates whether pagination should be applied.")
               Boolean isPaginated,
           @RequestParam(required = false, defaultValue = "1")
               @Parameter(description = "Page number for pagination.")

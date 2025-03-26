@@ -9,10 +9,12 @@ package com.nextuple.transit.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,9 +39,11 @@ import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.service.TransferSchedulePersistenceService;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -414,11 +418,7 @@ class TransferScheduleServiceImplTest {
       throws CommonServiceException, PromiseEngineException {
     String orgId = "TEST";
     Boolean isPaginated = true;
-    PageParams pageParams = new PageParams();
-    pageParams.setPageNo(Optional.of(1));
-    pageParams.setPageSize(Optional.of(10));
-    pageParams.setSortOrder(Optional.of("ASC"));
-    pageParams.setSortBy(Optional.of("sourceNodeId"));
+    PageParams pageParams = getPageParams();
     FetchTransferScheduleRequest request = new FetchTransferScheduleRequest();
     request.setIsSourcingAttributeEnabled(true);
     request.setSourcingAttributeId(1L);
@@ -460,11 +460,7 @@ class TransferScheduleServiceImplTest {
       throws CommonServiceException, PromiseEngineException {
     String orgId = "TEST";
     Boolean isPaginated = true;
-    PageParams pageParams = new PageParams();
-    pageParams.setPageNo(Optional.of(1));
-    pageParams.setPageSize(Optional.of(10));
-    pageParams.setSortOrder(Optional.of("ASC"));
-    pageParams.setSortBy(Optional.of("sourceNodeId"));
+    PageParams pageParameters = getPageParams();
     FetchTransferScheduleRequest request = new FetchTransferScheduleRequest();
 
     Page<TransferScheduleResponse> expectedPage = Page.empty();
@@ -473,7 +469,8 @@ class TransferScheduleServiceImplTest {
         .thenReturn(expectedPage);
 
     Page<TransferScheduleResponse> response =
-        transferScheduleService.fetchTransferScheduleList(orgId, isPaginated, pageParams, request);
+        transferScheduleService.fetchTransferScheduleList(
+            orgId, isPaginated, pageParameters, request);
 
     assertNotNull(response);
     assertEquals(expectedPage, response);
@@ -486,5 +483,98 @@ class TransferScheduleServiceImplTest {
     verify(transferSchedulePersistenceService, times(1))
         .fetchTransferSchedulesList(
             anyString(), any(FetchTransferScheduleRequest.class), any(Pageable.class));
+  }
+
+  @NotNull
+  private static PageParams getPageParams() {
+    PageParams pageParams = new PageParams();
+    pageParams.setPageNo(Optional.of(1));
+    pageParams.setPageSize(Optional.of(10));
+    pageParams.setSortOrder(Optional.of("ASC"));
+    pageParams.setSortBy(Optional.of("sourceNodeId"));
+    return pageParams;
+  }
+
+  @Test
+  @DisplayName("Test when SourcingAttributeEnabled is null")
+  void testWhenSourcingAttributeEnabledIsNull()
+      throws CommonServiceException, PromiseEngineException {
+    String orgId = "test";
+    Boolean isPaginated = true;
+    FetchTransferScheduleRequest request = new FetchTransferScheduleRequest();
+    request.setIsSourcingAttributeEnabled(null);
+    PageParams pageParameters = getPageParams();
+    transferScheduleService.fetchTransferScheduleList(orgId, isPaginated, pageParameters, request);
+
+    verify(ruleConfigurationService, never())
+        .fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+            anyString(), anyLong(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Test when SourcingAttributeEnabled is false")
+  void testWhenSourcingAttributeEnabledIsFalse()
+      throws PromiseEngineException, CommonServiceException {
+    String orgId = "test";
+    Boolean isPaginated = true;
+    FetchTransferScheduleRequest request = new FetchTransferScheduleRequest();
+    request.setIsSourcingAttributeEnabled(false);
+
+    PageParams pageParameters = getPageParams();
+    transferScheduleService.fetchTransferScheduleList(orgId, isPaginated, pageParameters, request);
+
+    verify(ruleConfigurationService, never())
+        .fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+            anyString(), anyLong(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Test when SourcingAttributeEnabled is true and SourcingAttributeId is null")
+  void testWhenSourcingAttributeEnabledIsTrueAndSourcingAttributeIdIsNull()
+      throws PromiseEngineException, CommonServiceException {
+    String orgId = "test";
+    Boolean isPaginated = true;
+    FetchTransferScheduleRequest request = new FetchTransferScheduleRequest();
+    request.setIsSourcingAttributeEnabled(true);
+    request.setSourcingAttributeId(null);
+
+    PageParams pageParameters = getPageParams();
+    transferScheduleService.fetchTransferScheduleList(orgId, isPaginated, pageParameters, request);
+
+    verify(ruleConfigurationService, never())
+        .fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+            anyString(), anyLong(), any(), any());
+    assertTrue(request.getRuleInfo().isEmpty());
+  }
+
+  @Test
+  @DisplayName("Test when SourcingAttributeEnabled is true and SourcingAttributeId is not null")
+  void testWhenSourcingAttributeEnabledIsTrueAndSourcingAttributeIdIsNotNull()
+      throws PromiseEngineException, CommonServiceException {
+    String orgId = "test";
+    Boolean isPaginated = true;
+    FetchTransferScheduleRequest request = new FetchTransferScheduleRequest();
+    request.setIsSourcingAttributeEnabled(true);
+    request.setSourcingAttributeId(1L);
+
+    List<RulesConfigurationResponse> ruleConfigs = new ArrayList<>();
+    RulesConfigurationResponse ruleConfig = new RulesConfigurationResponse();
+    ruleConfig.setRuleName("TestRule");
+    ruleConfig.setRule("TestRuleValue");
+    ruleConfigs.add(ruleConfig);
+
+    when(ruleConfigurationService.fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+            anyString(), anyLong(), any(), any()))
+        .thenReturn(ruleConfigs);
+
+    PageParams pageParameters = getPageParams();
+    transferScheduleService.fetchTransferScheduleList(orgId, isPaginated, pageParameters, request);
+
+    verify(ruleConfigurationService, times(1))
+        .fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+            anyString(), anyLong(), any(), any());
+    assertEquals(1, request.getRuleInfo().size());
+    assertEquals("TestRule", request.getRuleInfo().get(0).getFirst());
+    assertEquals("TestRuleValue", request.getRuleInfo().get(0).getSecond());
   }
 }
