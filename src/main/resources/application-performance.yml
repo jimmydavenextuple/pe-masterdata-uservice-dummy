@@ -191,7 +191,7 @@ master-data:
   transfer-schedule:
     topic-names: INTERNAL.PERFORMANCE.PE.TRANSFER_SCHEDULES
     group-id: transfer-schedules-master-performance
-    concurrency: 5
+    concurrency: 7
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
