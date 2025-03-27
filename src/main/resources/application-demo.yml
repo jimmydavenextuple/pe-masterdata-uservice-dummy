@@ -233,3 +233,59 @@ kafka:
   input:
     taskTopics: INTERNAL.DEMO.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry
+
+kafka-topic-flags:
+  item-master:
+    enabled: true
+  master_data_update_event:
+    enabled: true
+  jobs-framework:
+    feed-metrics-consumer:
+      enabled: true
+    job-completion-consumer:
+      enabled: true
+    kafka-publish:
+      enabled: true
+    result-publish:
+      enabled: true
+    result-consumer:
+      enabled: true
+    record-consumer:
+      enabled: true
+  pe-public-webhook:
+    iv-feed:
+      enabled: true
+    item-feed:
+      enabled: true
+    pe-response:
+      enabled: true
+  master-data:
+    node:
+      enabled: true
+    node-carrier:
+      enabled: true
+    carrier:
+      enabled: true
+    processing-lead-time:
+      enabled: true
+    calendar:
+      enabled: true
+    node-calendar:
+      enabled: true
+    carrier-service-calendar:
+      enabled: true
+    pickup-calendar:
+      enabled: true
+    node-service-option-buffer:
+      enabled: true
+    transit:
+      enabled: true
+    transit-buffer:
+      enabled: true
+    transfer-schedule:
+      enabled: true
+  refresh-cache:
+    enabled: true
+  input:
+    taskTopics:
+      enabled: true
