@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.transit.cache.domain.TransferScheduleCacheValue;
+import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.spring.cache.util.TestUtil;
 import java.util.List;
@@ -41,7 +42,7 @@ class TransferScheduleMapperTest {
     TransferScheduleCacheValue transferScheduleCacheValue =
         testUtil.getTransferScheduleCacheValue();
 
-    BaseResponse<List<TransferScheduleResponse>> response =
+    BaseResponse<List<TransferScheduleRangeResponse>> response =
         testUtil.getListBaseResponseOfTransferScheduleResponse();
     var responseCacheValue =
         mapper.responseToCacheValue(response).getTransferScheduleResponseList();
