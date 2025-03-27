@@ -41,6 +41,7 @@ import com.nextuple.transit.service.TransferScheduleService;
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -262,27 +263,28 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
   }
 
   private List<TransferScheduleRangeResponse> convertDtos(List<TransferScheduleDomainDto> dtos) {
-    return dtos.stream()
-        .map(
-            dto ->
-                TransferScheduleRangeResponse.builder()
-                    .id(dto.getId())
-                    .orgId(dto.getOrgId())
-                    .sourceNodeId(dto.getSourceNodeId())
-                    .dropoffNodeId(dto.getDropoffNodeId())
-                    .startTime(
-                        dto.getStartTime() != null
-                            ? OffsetDateTime.ofInstant(
-                                dto.getStartTime().toInstant(), ZoneOffset.UTC)
-                            : null)
-                    .endTime(
-                        dto.getEndTime() != null
-                            ? OffsetDateTime.ofInstant(dto.getEndTime().toInstant(), ZoneOffset.UTC)
-                            : null)
-                    .rule(dto.getRule())
-                    .ruleName(dto.getRuleName())
-                    .build())
-        .toList();
+    List<TransferScheduleRangeResponse> responses = new ArrayList<>();
+    for (TransferScheduleDomainDto dto : dtos) {
+      TransferScheduleRangeResponse response =
+          TransferScheduleRangeResponse.builder()
+              .id(dto.getId())
+              .orgId(dto.getOrgId())
+              .sourceNodeId(dto.getSourceNodeId())
+              .dropoffNodeId(dto.getDropoffNodeId())
+              .startTime(
+                  dto.getStartTime() != null
+                      ? OffsetDateTime.ofInstant(dto.getStartTime().toInstant(), ZoneOffset.UTC)
+                      : null)
+              .endTime(
+                  dto.getEndTime() != null
+                      ? OffsetDateTime.ofInstant(dto.getEndTime().toInstant(), ZoneOffset.UTC)
+                      : null)
+              .rule(dto.getRule())
+              .ruleName(dto.getRuleName())
+              .build();
+      responses.add(response);
+    }
+    return responses;
   }
 
   private static void validateSortBy(String sortBy) throws CommonServiceException {
