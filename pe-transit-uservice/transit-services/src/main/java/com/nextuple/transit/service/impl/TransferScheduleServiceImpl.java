@@ -39,9 +39,7 @@ import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.service.TransferSchedulePersistenceService;
 import com.nextuple.transit.service.TransferScheduleService;
 import jakarta.validation.constraints.NotNull;
-
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Date;
@@ -265,19 +263,26 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
 
   private List<TransferScheduleRangeResponse> convertDtos(List<TransferScheduleDomainDto> dtos) {
     return dtos.stream()
-            .map(dto -> TransferScheduleRangeResponse.builder()
+        .map(
+            dto ->
+                TransferScheduleRangeResponse.builder()
                     .id(dto.getId())
                     .orgId(dto.getOrgId())
                     .sourceNodeId(dto.getSourceNodeId())
                     .dropoffNodeId(dto.getDropoffNodeId())
-                    .startTime(dto.getStartTime() != null ?
-                            OffsetDateTime.ofInstant(dto.getStartTime().toInstant(), ZoneOffset.UTC) : null)
-                    .endTime(dto.getEndTime() != null ?
-                            OffsetDateTime.ofInstant(dto.getEndTime().toInstant(), ZoneOffset.UTC) : null)
+                    .startTime(
+                        dto.getStartTime() != null
+                            ? OffsetDateTime.ofInstant(
+                                dto.getStartTime().toInstant(), ZoneOffset.UTC)
+                            : null)
+                    .endTime(
+                        dto.getEndTime() != null
+                            ? OffsetDateTime.ofInstant(dto.getEndTime().toInstant(), ZoneOffset.UTC)
+                            : null)
                     .rule(dto.getRule())
                     .ruleName(dto.getRuleName())
                     .build())
-            .toList();
+        .toList();
   }
 
   private static void validateSortBy(String sortBy) throws CommonServiceException {

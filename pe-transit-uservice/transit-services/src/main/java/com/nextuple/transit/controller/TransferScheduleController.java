@@ -91,8 +91,9 @@ public class TransferScheduleController {
 
   @PostMapping(path = "/time-range", produces = MediaType.APPLICATION_JSON_VALUE)
   @GetTransferScheduleDoc
-  public ResponseEntity<BaseResponse<List<TransferScheduleRangeResponse>>> getTransferSchedulesInRange(
-      @RequestBody TransferScheduleRangeRequest transferScheduleRangeRequest) {
+  public ResponseEntity<BaseResponse<List<TransferScheduleRangeResponse>>>
+      getTransferSchedulesInRange(
+          @RequestBody TransferScheduleRangeRequest transferScheduleRangeRequest) {
     List<TransferScheduleRangeResponse> transferScheduleResponses =
         transferScheduleService.fetchTransferSchedulesInRange(transferScheduleRangeRequest);
     return ResponseEntity.ok(
