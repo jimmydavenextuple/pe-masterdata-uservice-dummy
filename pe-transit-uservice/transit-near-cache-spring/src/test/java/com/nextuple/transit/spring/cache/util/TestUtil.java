@@ -18,7 +18,6 @@ import com.nextuple.transit.cache.domain.ZoneCacheKey;
 import com.nextuple.transit.cache.domain.ZoneCacheValue;
 import com.nextuple.transit.domain.dto.TransitBufferDetailsDto;
 import com.nextuple.transit.domain.outbound.*;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -157,7 +156,7 @@ public class TestUtil {
     Instant instant = startDate.toInstant();
     Instant instant1 = endDate.toInstant();
     OffsetDateTime offsetDateTime = instant.atOffset(java.time.ZoneOffset.UTC);
-    OffsetDateTime offsetDateTime1= instant1.atOffset(java.time.ZoneOffset.UTC);
+    OffsetDateTime offsetDateTime1 = instant1.atOffset(java.time.ZoneOffset.UTC);
 
     return TransferScheduleRangeResponse.builder()
         .id(RANDOM_ID)

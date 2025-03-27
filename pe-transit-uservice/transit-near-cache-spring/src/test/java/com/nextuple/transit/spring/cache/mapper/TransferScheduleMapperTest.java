@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.transit.cache.domain.TransferScheduleCacheValue;
 import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
-import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.spring.cache.util.TestUtil;
 import java.util.List;
 import org.junit.jupiter.api.Test;

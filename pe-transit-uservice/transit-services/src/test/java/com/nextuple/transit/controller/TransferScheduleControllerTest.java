@@ -25,6 +25,7 @@ import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
+import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.service.TransferScheduleService;
 import java.util.Collections;
@@ -122,12 +123,12 @@ class TransferScheduleControllerTest {
   void testGetTransferSchedulesInRange() {
     // Arrange
     TransferScheduleRangeRequest request = new TransferScheduleRangeRequest();
-    List<TransferScheduleResponse> mockResponse =
-        Collections.singletonList(new TransferScheduleResponse());
+    List<TransferScheduleRangeResponse> mockResponse =
+        Collections.singletonList(new TransferScheduleRangeResponse());
     when(transferScheduleService.fetchTransferSchedulesInRange(request)).thenReturn(mockResponse);
 
     // Act
-    ResponseEntity<BaseResponse<List<TransferScheduleResponse>>> response =
+    ResponseEntity<BaseResponse<List<TransferScheduleRangeResponse>>> response =
         controller.getTransferSchedulesInRange(request);
 
     // Assert
