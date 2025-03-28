@@ -13,7 +13,7 @@ import com.nextuple.core.spring.service.AbstractGenericFeignClientServiceImpl;
 import com.nextuple.transit.cache.domain.TransferScheduleCacheKey;
 import com.nextuple.transit.cache.domain.TransferScheduleCacheValue;
 import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
-import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
+import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.spring.cache.feign.TransferScheduleFeignImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class TransferScheduleFeignClientServiceImpl
         TransferScheduleCacheKey,
         TransferScheduleCacheValue,
         String,
-        BaseResponse<List<TransferScheduleResponse>>> {
+        BaseResponse<List<TransferScheduleRangeResponse>>> {
   private final TransferScheduleFeignImpl transferScheduleFeign;
 
   @Value("${transfer-schedule.horizon-days:5}")
@@ -41,7 +41,7 @@ public class TransferScheduleFeignClientServiceImpl
           TransferScheduleCacheKey,
           TransferScheduleCacheValue,
           String,
-          BaseResponse<List<TransferScheduleResponse>>>
+          BaseResponse<List<TransferScheduleRangeResponse>>>
       transferScheduleMapper;
 
   @Override
@@ -64,7 +64,7 @@ public class TransferScheduleFeignClientServiceImpl
               .exclusive(true)
               .build();
 
-      BaseResponse<List<TransferScheduleResponse>> response =
+      BaseResponse<List<TransferScheduleRangeResponse>> response =
           transferScheduleFeign.fetchTransferSchedulesInRange(request);
       if (response.getPayload().isEmpty()) {
         return TransferScheduleCacheValue.builder().build();

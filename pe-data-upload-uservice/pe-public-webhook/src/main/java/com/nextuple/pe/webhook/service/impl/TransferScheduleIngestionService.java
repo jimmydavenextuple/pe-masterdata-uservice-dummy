@@ -54,7 +54,7 @@ public class TransferScheduleIngestionService
               batchRequest.setPayload(transferScheduleDto.getPayload());
               kafkaProducer.publishFeedToKafka(
                   batchRequest,
-                  transferScheduleDto.getPayload().getRule(),
+                  transferScheduleDto.getPayload().getDropoffNodeId(),
                   transferScheduleFeedTopic);
             });
   }

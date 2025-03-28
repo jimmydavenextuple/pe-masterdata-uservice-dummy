@@ -10,41 +10,24 @@ spring:
             scope: applicationclient-pe-masterdata-scope
         provider:
           my-client:
-            token-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev/protocol/openid-connect/token
-  application:
-    dependencies:
-      item: "http://localhost:8080/"
-      node-carrier: "http://localhost:8080/"
-      carrier: "http://localhost:8080/"
-      transit: "http://localhost:8080/"
-      data-upload: "http://localhost:8080/"
-      node: "http://localhost:8080/"
-      promise-sourcing-rule: "http://localhost:8080/"
-      calendar: "http://localhost:8080/"
-      postal-code-timezone: "http://localhost:8080/"
-      weightage-configuration: "http://localhost:8080/"
-      userexit: "http://localhost:8080/"
-      configuration: "http://localhost:8080/"
+            token-uri: https://keycloak-performance.nextuple.com/realms/noms-perf/protocol/openid-connect/token
   jpa:
     database: POSTGRESQL
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: password
-    hikari:
-      maximumPoolSize: 100
-      minimumIdle: 10
+    url: jdbc:postgresql://postgres.postgres.svc.cluster.local:5432/pe
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
   flyway:
     enabled: false
   kafka:
-    bootstrap-servers: "localhost:9092"
+    bootstrap-servers: "bootstrap.kafka.svc.cluster.local:9092"
     properties:
-      security.protocol: PLAINTEXT
-      sasl.mechanism: NA
-      sasl.jaas.config: NA
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
     consumer-retry-count: 1
     # NOTE: Below commented code is for the Avro consumer.
     # If we need to consume an avro record, please uncomment Avro properties and comment out the JSON Consumer and Producer.
@@ -57,8 +40,8 @@ spring:
     #      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
     #      topics:
     #        item_master:
-    #          name: INTERNAL.DEV.PROMISE_ITEMS
-    #          group-id: item-master-dev
+    #          name: INTERNAL.PERF.PROMISE_ITEMS
+    #          group-id: item-master-perf
     #    producer:
     #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
     #      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
@@ -76,17 +59,21 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         item_master:
-          names: ITEM_MASTER_INTEGRATION
-          group-id: item-master-local
+          names: INTERNAL.PERF.PROMISE_ITEMS
+          group-id: item-master-perf-\${random.value}
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.PERF.MASTER_DATA_UPDATE_EVENTS
       properties:
-        spring.json.trusted.packages: "*"
         acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -95,7 +82,10 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
-        max.poll.records: 10
+      topics:
+        master_data_update_event:
+          name: INTERNAL.PERF.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-perf
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -108,40 +98,15 @@ spring:
 
 logging:
   level:
-    com.nextuple: DEBUG
-entity-listener:
-  kafka:
-    enabled: false
-pe:
-  ui:
-    allowed-origin-url: "*"
-
-jobs-framework:
-  feed-metrics-consumer:
-    topic-name: INTERNAL.DEV.PE_JOB_FPM_METRICS_LOCAL, INTERNAL.DEV.PE_JOB_RECORD_FPM_METRICS_LOCAL, INTERNAL.DEV.PE_NEIP_FPM_METRICS_LOCAL
-    group-id: pe-fpm-metrics-local
-  job-completion-consumer:
-    topic-name: job-completion-local
-    group-id: jobs-completion-consumer-async-dev
-  kafka-publish:
-    topic-name: jobs-task-local
-  result-publish:
-    topic-name: jobs-result-local
-  result-consumer:
-    topic-name: jobs-result-local
-    group-id: jobs-result-consumer-async-local
-  record-consumer:
-    topic-names: jobs-task-local
-    group-id: jobs-task-consumer-async-local
-
+    com.nextuple: INFO
 pe-public-webhook:
   iv-feed:
-    topic: INTERNAL.DEV_ATP
+    topic: INTERNAL.PERF_ATP
   item-feed:
-    topic: ITEM_MASTER_INTEGRATION
+    topic: INTERNAL.PERF.PROMISE_ITEMS
   pe-response:
-    topics: INTERNAL.DEV.CART_EDD
-    group-id: pe-response-consumer-async-local
+    topics: INTERNAL.PERF.CART_EDD
+    group-id: pe-response-consumer-perf-async
   webhook:
     - tenantId: NEXTUPLE_GR
       moduleName: PROMISING
@@ -167,62 +132,69 @@ dataupload:
   base-path: "https://pedataupload.blob.core.windows.net"
   maxsize-in-kilobytes: 10240
   max-rows: 1000
-  bucket-name: "dataupload"
+  bucket-name: "perfdataupload"
   type: BLOB
   signed-url-expiry-minutes: 30
 
+jobs-framework:
+  feed-metrics-consumer:
+    topic-name: INTERNAL.PERF.PE_JOB_FPM_METRICS, INTERNAL.PERF.PE_JOB_RECORD_FPM_METRICS, INTERNAL.PERF.PE_NEIP_FPM_METRICS
+    group-id: pe-fpm-metrics-perf
+  job-completion-consumer:
+    topic-name: INTERNAL.PERF.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-perf
+  kafka-publish:
+    topic-name: INTERNAL.PERF.PE.JOB_TASK
+  result-publish:
+    topic-name: INTERNAL.PERF.PE.JOB_RESULT
+  result-consumer:
+    topic-name: INTERNAL.PERF.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async
+  record-consumer:
+    topic-names: INTERNAL.PERF.PE.JOB_TASK
+    group-id: jobs-task-consumer-async
+
 master-data:
   node:
-    topic-names: INTERNAL.DEV.PE.NODE_INTEGRATION
-    group-id: node-master-dev
-    dlt-topic: INTERNAL.DEV.PE.NODE_INTEGRATION.DLT
+    topic-names: INTERNAL.PERF.PE.NODE_INTEGRATION
+    group-id: node-master-perf
   node-carrier:
-    topic-names: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
-    group-id: node-carrier-master-dev
-    dlt-topic: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION.DLT
+    topic-names: INTERNAL.PERF.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-perf
   carrier:
-    topic-names: INTERNAL.DEV.PE.CARRIER_INTEGRATION
-    group-id: carrier-master-dev
-    dlt-topic: INTERNAL.DEV.PE.CARRIER_INTEGRATION.DLT
+    topic-names: INTERNAL.PERF.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-perf
   processing-lead-time:
-    topic-names: INTERNAL.DEV.PE.PROCESSING_LEAD_TIME_INTEGRATION
-    group-id: processing-lead-time-master-dev
-    dlt-topic: INTERNAL.DEV.PE.PROCESSING_LEAD_TIME_INTEGRATION.DLT
+    topic-names: INTERNAL.PERF.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-perf
   calendar:
-    topic-names: INTERNAL.DEV.PE.CALENDAR_INTEGRATION
-    group-id: calendar-master-dev
-    dlt-topic: INTERNAL.DEV.PE.CALENDAR_INTEGRATION.DLT
+    topic-names: INTERNAL.PERF.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-perf
   node-calendar:
-    topic-names: INTERNAL.DEV.PE.NODE_CALENDAR_INTEGRATION
-    group-id: node-calendar-master-dev
-    dlt-topic: INTERNAL.DEV.PE.NODE_CALENDAR_INTEGRATION.DLT
+    topic-names: INTERNAL.PERF.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-perf
   carrier-service-calendar:
-    topic-names: INTERNAL.DEV.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
-    group-id: carrier-service-calendar-master-dev
-    dlt-topic: INTERNAL.DEV.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION.DLT
+    topic-names: INTERNAL.PERF.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-perf
   pickup-calendar:
-    topic-names: INTERNAL.DEV.PE.PICKUP_CALENDAR_INTEGRATION
-    group-id: pickup-calendar-master-dev
-    dlt-topic: INTERNAL.DEV.PE.PICKUP_CALENDAR_INTEGRATION.DLT
+    topic-names: INTERNAL.PERF.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-perf
   node-service-option-buffer:
-    topic-names: INTERNAL.DEV.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
-    group-id: node-service-option-buffer-master-dev
-    dlt-topic: INTERNAL.DEV.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION.DLT
+    topic-names: INTERNAL.PERF.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-perf
   transit:
-    topic-names: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
-    group-id: transit-master-dev
-    dlt-topic: INTERNAL.DEV.PE.TRANSIT_INTEGRATION
+    topic-names: INTERNAL.PERF.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-perf
   transit-buffer:
-    topic-names: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
-    group-id: transit-buffer-master-dev
-    dlt-topic: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION.DLT
+    topic-names: INTERNAL.PERF.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-perf
   transfer-schedule:
-    topic-names: INTERNAL.DEV.PE.TRANSFER_SCHEDULES
-    group-id: transfer-schedules-master-dev
-    dlt-topic: INTERNAL.DEV.PE.TRANSFER_SCHEDULES.DLT
+    topic-names: INTERNAL.PERFORMANCE.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-performance
     concurrency: 2
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
+
 next-cache:
   caches:
     -
@@ -230,11 +202,11 @@ next-cache:
       ttlSeconds: 14400
       maxLimit: 50
   refresh-cache:
-    topic: INTERNAL.DEV.PE.REFRESH_CACHE_INV
+    topic: INTERNAL.PERF.PE.REFRESH_CACHE_INV
   cacheManager: caffeine
 platform:
   tasks:
-    enabled: false
+    enabled: true
   tasks-scheduler:
     enabled: true
     milliseconds: 5000
@@ -242,24 +214,56 @@ platform:
     enabled: false
 neo-platform:
   auth-injector:
-    enabled: true
     token-strategy: generate
     filter:
       enabled: true
     client-uri-mappings:
       my-client: /**
   auth-validator:
-    enabled: true
     application-name: pe-masterdata
     header:
       tenant-id: x-tenant-id
-    issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev
+    issuer-uri: https://keycloak-performance.nextuple.com/realms/noms-perf
     authz-config:
-      config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
+      config-path: "https://internal-performance.nextuple.com/services/authz-config/api/configurations/groups/application-group/scope-id/pe-masterdata"
       refresh-interval-mins: 30
       role:
-        json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles
+        json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles,\$.resource_access.applicationclient-pe-core-uservice.roles,\$.resource_access.applicationclient-pe-iv-cache.roles,\$.resource_access.applicationclient-pe-capacity-uservice.roles,\$.resource_access.applicationclient-pe-neip-uservice.roles,\$.resource_access.tenantclient-nextupleperf.roles,\$.resource_access.tenantclient-nextuplemed.roles
 kafka:
   input:
-    taskTopics: INTERNAL.DEV.PE.RETRY_TOPIC_INV
+    taskTopics: INTERNAL.PERF.PE.RETRY_TOPIC_INV
     taskGroupId: pe-retry
+
+kafka-topic-flags:
+  pe-public-webhook:
+    iv-feed:
+      enabled: true
+    item-feed:
+      enabled: true
+    pe-response:
+      enabled: true
+  master-data:
+    node:
+      enabled: false
+    node-carrier:
+      enabled: false
+    carrier:
+      enabled: false
+    processing-lead-time:
+      enabled: false
+    calendar:
+      enabled: false
+    node-calendar:
+      enabled: false
+    carrier-service-calendar:
+      enabled: false
+    pickup-calendar:
+      enabled: false
+    node-service-option-buffer:
+      enabled: false
+    transit:
+      enabled: false
+    transit-buffer:
+      enabled: false
+    transfer-schedule:
+      enabled: true
