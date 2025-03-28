@@ -29,6 +29,7 @@ import com.nextuple.promise.sourcing.rule.service.SourcingAttributesDefinitionSe
 import com.nextuple.transit.TestUtil;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
+import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.service.TransferSchedulePersistenceService;
@@ -320,7 +321,7 @@ class TransferScheduleServiceImplTest {
         .thenReturn(List.of(testUtil.getTransferScheduleEntity()));
 
     // Act
-    List<TransferScheduleResponse> actualResponse =
+    List<TransferScheduleRangeResponse> actualResponse =
         transferScheduleService.fetchTransferSchedulesInRange(request);
 
     // Assert
@@ -362,7 +363,7 @@ class TransferScheduleServiceImplTest {
         .thenReturn(response);
 
     // Act
-    List<TransferScheduleResponse> result =
+    List<TransferScheduleRangeResponse> result =
         transferScheduleService.fetchTransferSchedulesInRange(request);
 
     // Assert
@@ -388,7 +389,7 @@ class TransferScheduleServiceImplTest {
         .thenReturn(List.of(testUtil.getTransferScheduleEntity()));
 
     // Act
-    List<TransferScheduleResponse> actualResponse =
+    List<TransferScheduleRangeResponse> actualResponse =
         transferScheduleService.fetchTransferSchedulesInRange(request);
 
     // Assert
