@@ -103,6 +103,24 @@ server:
         max:
           memory: 2Gi
           cpu: 1
+    performance:
+      ingress: no
+      sidecar-keycloak-plugin: yes
+      middleman: no
+      prometheus: yes
+      storage: yes
+      java-agents: -javaagent:/mnt/shared-storage/newrelic-agent.jar
+      java-opts: "-Xms3072m -Xmx3072m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/mnt/heapdumps"
+      keyvault: yes
+      scale:
+        replicas: 3
+      resources:
+        min:
+          memory: 4Gi
+          cpu: 3
+        max:
+          memory: 4Gi
+          cpu: 3
     orielly:
       ingress: yes
       middleman: yes
@@ -319,7 +337,7 @@ definitions:
           - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotbugsMain
-#          - bash ./gradlew dependencyCheckAggregate --info
+          #          - bash ./gradlew dependencyCheckAggregate --info
           - bash ./gradlew sonarqube showSonarQubeLink --info
     - step: &Clear-Cache
         name: Clear Pipeline Cache
@@ -395,14 +413,7 @@ pipelines:
               name: Deploy Integration
               trigger: manual
               deployment: integration
-    
-    integration:
-      - step: *build
-      - step:
-          !!merge <<: *deploy
-          name: Deploy Integration
-          trigger: manual
-          deployment: integration
+
           # - step:
           #     !!merge <<: *deploy
           #     name: Deploy PERF
@@ -442,6 +453,12 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
+    perf_deployment_1.7:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Performance
+          deployment: performance
     master2:
       - step: *Clear-Cache
       - step: *build
