@@ -17,11 +17,10 @@ import com.nextuple.transit.cache.domain.TransitCacheValue;
 import com.nextuple.transit.cache.domain.ZoneCacheKey;
 import com.nextuple.transit.cache.domain.ZoneCacheValue;
 import com.nextuple.transit.domain.dto.TransitBufferDetailsDto;
-import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
-import com.nextuple.transit.domain.outbound.TransitBufferDetailsResponse;
-import com.nextuple.transit.domain.outbound.TransitResponse;
-import com.nextuple.transit.domain.outbound.ZoneResponse;
+import com.nextuple.transit.domain.outbound.*;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -146,19 +145,26 @@ public class TestUtil {
         .build();
   }
 
-  public BaseResponse<List<TransferScheduleResponse>>
+  public BaseResponse<List<TransferScheduleRangeResponse>>
       getListBaseResponseOfTransferScheduleResponse() {
     return BaseResponse.builder().payload(List.of(getTransferScheduleResponse())).build();
   }
 
-  public TransferScheduleResponse getTransferScheduleResponse() {
-    return TransferScheduleResponse.builder()
+  public TransferScheduleRangeResponse getTransferScheduleResponse() {
+    var startDate = new DateTime(DateTimeZone.UTC).toDate();
+    var endDate = new DateTime(DateTimeZone.UTC).plusHours(3).toDate();
+    Instant instant = startDate.toInstant();
+    Instant instant1 = endDate.toInstant();
+    OffsetDateTime offsetDateTime = instant.atOffset(java.time.ZoneOffset.UTC);
+    OffsetDateTime offsetDateTime1 = instant1.atOffset(java.time.ZoneOffset.UTC);
+
+    return TransferScheduleRangeResponse.builder()
         .id(RANDOM_ID)
         .sourceNodeId(SOURCE_NODE)
         .orgId(ORG_ID)
         .dropoffNodeId(DROPOFF_NODE)
-        .startTime(new DateTime(DateTimeZone.UTC).toDate())
-        .endTime(new DateTime(DateTimeZone.UTC).plusHours(3).toDate())
+        .startTime(offsetDateTime)
+        .endTime(offsetDateTime1)
         .build();
   }
 }

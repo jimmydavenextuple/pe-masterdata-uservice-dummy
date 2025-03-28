@@ -16,7 +16,11 @@ import com.nextuple.master.data.integration.outbound.BatchResponse;
 import com.nextuple.transit.consumer.TestUtil;
 import com.nextuple.transit.consumer.dto.TransferScheduleDto;
 import com.nextuple.transit.consumer.impl.TransferScheduleBatchServiceImpl;
+import io.micrometer.core.instrument.MockClock;
+import io.micrometer.core.instrument.simple.SimpleConfig;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +36,14 @@ class TransferScheduleConsumerTest {
   @InjectMocks private TransferScheduleConsumer transferScheduleConsumer;
   @Mock private TransferScheduleBatchServiceImpl transferScheduleBatchService;
   @InjectMocks TestUtil testUtil;
+  private static final MockClock clock = new MockClock();
+  private static final SimpleMeterRegistry meterRegistry =
+      new SimpleMeterRegistry(SimpleConfig.DEFAULT, clock);
+
+  @BeforeEach
+  void setup() {
+    ReflectionTestUtils.setField(transferScheduleConsumer, "meterRegistry", meterRegistry);
+  }
 
   @Test
   @DisplayName("When the transfer schedule feed gets consumed successfully.")

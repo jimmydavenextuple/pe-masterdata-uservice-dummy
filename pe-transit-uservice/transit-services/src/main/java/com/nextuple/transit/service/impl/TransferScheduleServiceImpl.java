@@ -33,12 +33,15 @@ import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
 import com.nextuple.transit.domain.mapper.TransferScheduleMapper;
+import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.service.TransferSchedulePersistenceService;
 import com.nextuple.transit.service.TransferScheduleService;
 import jakarta.validation.constraints.NotNull;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -235,7 +238,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
   }
 
   @Override
-  public List<TransferScheduleResponse> fetchTransferSchedulesInRange(
+  public List<TransferScheduleRangeResponse> fetchTransferSchedulesInRange(
       TransferScheduleRangeRequest request) {
     if (Objects.isNull(request.getRule()) || Objects.isNull(request.getRuleName())) {
       try {
@@ -282,7 +285,32 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
 
     List<TransferScheduleDomainDto> dtos =
         transferSchedulePersistenceService.fetchTransferSchedulesInRange(domainRequest);
-    return INSTANCE.convertToTransferScheduleResponseList(dtos);
+    return convertDtos(dtos);
+  }
+
+  private List<TransferScheduleRangeResponse> convertDtos(List<TransferScheduleDomainDto> dtos) {
+    List<TransferScheduleRangeResponse> responses = new ArrayList<>();
+    for (TransferScheduleDomainDto dto : dtos) {
+      TransferScheduleRangeResponse response =
+          TransferScheduleRangeResponse.builder()
+              .id(dto.getId())
+              .orgId(dto.getOrgId())
+              .sourceNodeId(dto.getSourceNodeId())
+              .dropoffNodeId(dto.getDropoffNodeId())
+              .startTime(
+                  dto.getStartTime() != null
+                      ? OffsetDateTime.ofInstant(dto.getStartTime().toInstant(), ZoneOffset.UTC)
+                      : null)
+              .endTime(
+                  dto.getEndTime() != null
+                      ? OffsetDateTime.ofInstant(dto.getEndTime().toInstant(), ZoneOffset.UTC)
+                      : null)
+              .rule(dto.getRule())
+              .ruleName(dto.getRuleName())
+              .build();
+      responses.add(response);
+    }
+    return responses;
   }
 
   private static void validateSortBy(String sortBy) throws CommonServiceException {
