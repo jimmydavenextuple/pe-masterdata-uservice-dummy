@@ -109,7 +109,6 @@ server:
       middleman: no
       prometheus: yes
       storage: yes
-      java-agents: -javaagent:/mnt/shared-storage/newrelic-agent.jar
       java-opts: "-Xms3072m -Xmx3072m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/mnt/heapdumps"
       keyvault: yes
       scale:
