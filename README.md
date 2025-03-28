@@ -133,12 +133,14 @@ The **Promising Engine Master Data Service** is a unified microservice that cons
      ```yml
      neo-platform:
        auth-injector:
+         enabled: true 
          token-strategy: generate
          filter:
            enabled: true
          client-uri-mappings:
            my-client: /**
        auth-validator:
+         enabled: true 
          application-name: pe-masterdata
          header:
            tenant-id: x-tenant-id
