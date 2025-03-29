@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
     batch = "true",
     autoStartup = "${kafka-topic-flags.master-data.transfer-schedule.enabled:false}",
     containerFactory = "transferScheduleDeserializerConsumer",
-    concurrency = "${master-data.transfer-schedule.concurrency}")
+    concurrency = "${master-data.transfer-schedule.concurrency:1}")
 public class TransferScheduleConsumer extends MasterDataFeedConsumer<TransferScheduleDto> {
 
   private final TransferScheduleBatchServiceImpl transferScheduleBatchService;
