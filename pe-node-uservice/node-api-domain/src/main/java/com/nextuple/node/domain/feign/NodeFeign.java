@@ -75,6 +75,10 @@ public interface NodeFeign {
       @RequestParam(required = false) String sortBy,
       @RequestParam(required = false) String sortOrder);
 
+  @GetMapping("/node/validate-nodes/orgId/{orgId}")
+  BaseResponse<List<String>> getValidNodes(
+      @RequestBody List<String> nodeIds, @PathVariable String orgId);
+
   @GetMapping("/node/get-all-cache-keys")
   BaseResponse<List<NodeCacheKeyDto>> getNodeCacheKeys(@NotNull @RequestParam Integer limit);
 

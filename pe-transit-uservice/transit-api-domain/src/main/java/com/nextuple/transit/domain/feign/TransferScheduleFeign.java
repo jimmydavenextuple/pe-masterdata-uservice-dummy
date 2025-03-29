@@ -9,10 +9,8 @@ package com.nextuple.transit.domain.feign;
 
 import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
+import com.nextuple.transit.domain.inbound.*;
+import com.nextuple.transit.domain.outbound.TransferScheduleBatchResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -23,12 +21,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
     name = "pe-transit-uservice",
     url = "${spring.application.dependencies.transit:http://pe-transit-uservice:8080/}")
 public interface TransferScheduleFeign {
+
+  @PostMapping("/transfer-schedule/batch/orgId/{orgId}")
+  BaseResponse<TransferScheduleBatchResponse> batchTransferSchedules(
+      @RequestBody TransferScheduleBatchRequest transferScheduleBatchRequest,
+      @PathVariable("orgId") String orgId,
+      @RequestHeader("x-tenant-id") String tenantId);
 
   @PostMapping("/transfer-schedule")
   BaseResponse<TransferScheduleResponse> createTransferSchedule(

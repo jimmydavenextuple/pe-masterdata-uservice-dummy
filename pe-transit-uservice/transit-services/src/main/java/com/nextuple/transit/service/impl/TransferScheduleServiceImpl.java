@@ -28,11 +28,10 @@ import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributes
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.RuleConfigurationParam;
 import com.nextuple.promise.sourcing.rule.service.RulesConfigurationService;
 import com.nextuple.promise.sourcing.rule.service.SourcingAttributesDefinitionService;
-import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
+import com.nextuple.transit.domain.inbound.*;
 import com.nextuple.transit.domain.mapper.TransferScheduleMapper;
+import com.nextuple.transit.domain.outbound.TransferScheduleBatchResponse;
+import com.nextuple.transit.domain.outbound.TransferScheduleConsumerResult;
 import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
@@ -42,14 +41,7 @@ import com.nextuple.transit.service.TransferScheduleService;
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import kotlin.Pair;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
@@ -90,6 +82,102 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     var transferScheduleDomainDto = INSTANCE.convertToTransferScheduleEntity(request);
     var entity = transferSchedulePersistenceService.saveTransferSchedule(transferScheduleDomainDto);
     return INSTANCE.convertToTransferScheduleResponse(entity);
+  }
+
+  @Override
+  public TransferScheduleBatchResponse batchTransferSchedules(
+      TransferScheduleBatchRequest transferScheduleBatchRequest, String orgId)
+      throws PromiseEngineException {
+    List<TransferScheduleConsumerResult> results = new ArrayList<>();
+    Set<String> uniqueNodeList = new HashSet<>();
+    Set<Pair<String, String>> uniqueRulePair = new HashSet<>();
+    List<String> validNodes;
+    List<Pair<String, String>> invalidRules = new ArrayList<>();
+
+    // TODO: Handle delete.
+
+    if (Boolean.TRUE.equals(transferScheduleBatchRequest.getApplyValidation())) {
+      transferScheduleBatchRequest
+          .getTransferScheduleConsumerRequests()
+          .forEach(
+              request -> {
+                uniqueNodeList.add(request.getDropoffNodeId());
+                uniqueNodeList.add(request.getSourceNodeId());
+                uniqueRulePair.add(new Pair<>(request.getRule(), request.getRuleName()));
+              });
+      validNodes = nodeFeign.getValidNodes(uniqueNodeList.stream().toList(), orgId).getPayload();
+      for (Pair<String, String> rulePair : uniqueRulePair) {
+        try {
+          validateRuleDetails(orgId, rulePair.getFirst(), rulePair.getSecond());
+        } catch (Exception e) {
+          invalidRules.add(rulePair);
+        }
+      }
+    } else {
+      validNodes = new ArrayList<>();
+    }
+
+    List<TransferScheduleConsumerRequest> validRequests =
+        transferScheduleBatchRequest.getTransferScheduleConsumerRequests().stream()
+            .filter(
+                request -> {
+                  if (transferScheduleBatchRequest.getApplyValidation()) {
+                    boolean isValid = (Objects.equals(orgId, request.getOrgId())) &&
+                        validNodes.contains(request.getDropoffNodeId())
+                            && validNodes.contains(request.getSourceNodeId())
+                            && !request.getStartTime().isAfter(request.getEndTime())
+                            && !invalidRules.contains(
+                                new Pair<>(request.getRule(),request.getRuleName()));
+                    if (!isValid) {
+                      results.add(
+                          TransferScheduleConsumerResult.builder()
+                              .index(request.getIndex())
+                              .success(false)
+                              .message("Rule or node or time validation failed")
+                              .statusCode(400) // Considered as bad request with no retry needed
+                              .build());
+                      return false;
+                    }
+                  }
+                  results.add(
+                      TransferScheduleConsumerResult.builder()
+                          .index(request.getIndex())
+                          .statusCode(-1)
+                          .build());
+                  return true;
+                })
+            .toList();
+
+    try {
+      transferSchedulePersistenceService.saveTransferSchedules(
+          INSTANCE.convertToTransferScheduleEntityList(validRequests));
+      results.forEach(
+          result -> {
+            if (result.getStatusCode() == -1) {
+              result.setSuccess(true);
+              result.setMessage("Transfer schedule created successfully");
+              result.setStatusCode(200);
+            }
+          });
+    } catch (Exception e) {
+      logger.error("Error while saving batch transfer schedules", e);
+      results.forEach(
+          result -> {
+            if (result.getStatusCode() == -1) {
+              result.setSuccess(false);
+              result.setMessage("Error while saving transfer schedule");
+              result.setStatusCode(500); // Considered as internal server error
+            }
+          });
+    }
+
+    return TransferScheduleBatchResponse.builder()
+        .totalCount(transferScheduleBatchRequest.getTransferScheduleConsumerRequests().size())
+        .successCount(
+            (int) results.stream().filter(TransferScheduleConsumerResult::getSuccess).count())
+        .failureCount((int) results.stream().filter(result -> !result.getSuccess()).count())
+        .results(results)
+        .build();
   }
 
   private void validateRuleDetails(String orgId, String rule, String ruleName)

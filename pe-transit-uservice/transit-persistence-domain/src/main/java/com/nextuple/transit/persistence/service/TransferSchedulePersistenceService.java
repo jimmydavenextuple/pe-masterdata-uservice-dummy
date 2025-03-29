@@ -25,6 +25,9 @@ public interface TransferSchedulePersistenceService
   TransferScheduleDomainDto saveTransferSchedule(
       TransferScheduleDomainDto transferScheduleDomainDto) throws PromiseEngineException;
 
+  List<TransferScheduleDomainDto> saveTransferSchedules(
+      List<TransferScheduleDomainDto> transferScheduleDomainDtos) throws PromiseEngineException;
+
   List<TransferScheduleDomainDto> fetchUpcomingTransferSchedules(
       String orgId, String dropOffNodeId);
 

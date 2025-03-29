@@ -366,4 +366,14 @@ public class NodeController {
             .payload(nodeService.getAllNodeTypesByOrgId(orgId))
             .build());
   }
+
+  @GetMapping("/validate-nodes/orgId/{orgId}")
+  public ResponseEntity<BaseResponse<List<String>>> getValidNodes(
+      @RequestBody List<String> nodeIds, @PathVariable String orgId) {
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node types fetched successfully")
+            .payload(nodeService.getValidNodes(nodeIds, orgId))
+            .build());
+  }
 }

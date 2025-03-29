@@ -23,6 +23,7 @@ import com.nextuple.transit.persistence.entity.key.TransferScheduleKey;
 import com.nextuple.transit.persistence.mapper.TransferScheduleEntityMapper;
 import com.nextuple.transit.persistence.repository.TransferScheduleRepository;
 import com.nextuple.transit.persistence.service.TransferSchedulePersistenceService;
+import jakarta.transaction.Transactional;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,27 @@ public class TransferSchedulePersistenceServiceImpl
           ExceptionCodeMapping.DAO_SAVE_FAILED,
           "Unable to save transfer schedule " + e.getMessage());
     }
+  }
+
+  @Override
+  @Transactional
+  public List<TransferScheduleDomainDto> saveTransferSchedules(
+      List<TransferScheduleDomainDto> transferScheduleDomainDtos) throws PromiseEngineException {
+    try {
+      return saveAll(transferScheduleDomainDtos);
+    } catch (Exception e) {
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_SAVE_FAILED,
+          "Unable to save transfer schedules " + e.getMessage());
+    }
+  }
+
+  private List<TransferScheduleDomainDto> saveAll(
+      List<TransferScheduleDomainDto> transferScheduleDomainDtos) {
+    List<TransferScheduleEntity> sourcingRuleDetailsEntities =
+        getRepository().saveAll(getMapper().toEntity(transferScheduleDomainDtos));
+    return getMapper().toDomain(sourcingRuleDetailsEntities);
   }
 
   @Override

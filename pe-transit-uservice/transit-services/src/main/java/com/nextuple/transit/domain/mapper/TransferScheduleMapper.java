@@ -7,6 +7,7 @@
 
 package com.nextuple.transit.domain.mapper;
 
+import com.nextuple.transit.domain.inbound.TransferScheduleConsumerRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
@@ -21,6 +22,12 @@ import org.mapstruct.ReportingPolicy;
 public interface TransferScheduleMapper {
   TransferScheduleDomainDto convertToTransferScheduleEntity(
       TransferScheduleCreationRequest request);
+
+  TransferScheduleDomainDto convertToTransferScheduleEntity(
+      TransferScheduleConsumerRequest request);
+
+  List<TransferScheduleDomainDto> convertToTransferScheduleEntityList(
+      List<TransferScheduleConsumerRequest> list);
 
   TransferScheduleResponse convertToTransferScheduleResponse(
       TransferScheduleDomainDto transferScheduleDomainDto);

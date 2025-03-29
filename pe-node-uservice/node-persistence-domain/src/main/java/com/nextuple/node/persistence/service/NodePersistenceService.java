@@ -48,4 +48,6 @@ public interface NodePersistenceService
       throws NodeDomainException;
 
   List<String> getAllUniqueNodeTypesByOrgId(String orgId);
+
+  List<String> getValidNodes(List<String> nodeIds, String orgId);
 }

@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":pe-common:common-util"))
     implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.1'
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
+    implementation(project(":pe-common:master-data-integration-framework"))
 }
 tasks.withType(Test).configureEach {
     useJUnitPlatform()

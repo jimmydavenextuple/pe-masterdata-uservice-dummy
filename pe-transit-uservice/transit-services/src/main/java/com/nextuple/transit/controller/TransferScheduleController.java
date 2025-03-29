@@ -19,10 +19,8 @@ import com.nextuple.transit.controller.docs.CreateTransferScheduleDoc;
 import com.nextuple.transit.controller.docs.DeleteTransferScheduleDoc;
 import com.nextuple.transit.controller.docs.FetchTransferScheduleListDoc;
 import com.nextuple.transit.controller.docs.GetTransferScheduleDoc;
-import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
+import com.nextuple.transit.domain.inbound.*;
+import com.nextuple.transit.domain.outbound.TransferScheduleBatchResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.service.TransferScheduleService;
@@ -36,17 +34,11 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
@@ -71,6 +63,25 @@ public class TransferScheduleController {
             .message("Transfer Schedule created successfully.")
             .payload(response)
             .build());
+  }
+
+  @PostMapping("/batch/orgId/{orgId}")
+  public ResponseEntity<BaseResponse<TransferScheduleBatchResponse>> batchTransferSchedules(
+      @RequestBody TransferScheduleBatchRequest transferScheduleBatchRequest,
+      @PathVariable("orgId") String orgId) throws PromiseEngineException {
+    TransferScheduleBatchResponse response =
+        transferScheduleService.batchTransferSchedules(transferScheduleBatchRequest, orgId);
+    if (response.getFailureCount() > 0) {
+      return new ResponseEntity<>(
+          BaseResponse.builder()
+              .message("Batch processing completed with errors.")
+              .payload(response)
+              .build(),
+          HttpStatus.MULTI_STATUS);
+    }
+
+    return ResponseEntity.ok(
+        BaseResponse.builder().message("Batch processing completed.").payload(response).build());
   }
 
   @GetMapping(

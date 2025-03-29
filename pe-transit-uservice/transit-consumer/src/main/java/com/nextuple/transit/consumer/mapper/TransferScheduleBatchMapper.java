@@ -7,6 +7,7 @@
 package com.nextuple.transit.consumer.mapper;
 
 import com.nextuple.transit.consumer.dto.TransferScheduleDto;
+import com.nextuple.transit.domain.inbound.TransferScheduleConsumerRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
 import org.mapstruct.Mapper;
@@ -19,6 +20,9 @@ import org.mapstruct.ReportingPolicy;
 public interface TransferScheduleBatchMapper {
 
   TransferScheduleCreationRequest toTransferScheduleCreateRequest(
+      TransferScheduleDto transferScheduleDto);
+
+  TransferScheduleConsumerRequest toTransferScheduleConsumerRequest(
       TransferScheduleDto transferScheduleDto);
 
   TransferScheduleRequest toTransferScheduleRequest(TransferScheduleDto transferScheduleDto);

@@ -164,7 +164,7 @@ public abstract class BatchService<T extends CommonMasterDataFieldsDto> { // NOS
     return processBatchRecords(batchRequestList, Boolean.FALSE);
   }
 
-  private BatchResponse processBatchRecords(
+  public BatchResponse processBatchRecords(
       List<BatchRequest<T>> batchRequestList, Boolean isRetryRequired) {
     batchRequestList = sortRecordsOnBasisOfProducedTimestamp(batchRequestList);
     int successfulRecords = 0;
@@ -205,7 +205,7 @@ public abstract class BatchService<T extends CommonMasterDataFieldsDto> { // NOS
     return batchResponse;
   }
 
-  private List<BatchRequest<T>> sortRecordsOnBasisOfProducedTimestamp(
+  protected List<BatchRequest<T>> sortRecordsOnBasisOfProducedTimestamp(
       List<BatchRequest<T>> batchRequestList) {
     List<BatchRequest<T>> batchRequestListWithNoProducedTimestamp =
         batchRequestList.stream()
