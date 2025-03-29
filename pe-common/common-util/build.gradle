@@ -22,6 +22,7 @@ dependencies {
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
 }
 tasks.withType(Test).configureEach {
