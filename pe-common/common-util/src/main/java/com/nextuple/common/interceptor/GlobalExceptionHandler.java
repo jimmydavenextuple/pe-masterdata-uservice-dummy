@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+  private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(RequestRejectedException.class)
-    public ResponseEntity<String> handleRequestRejectedException(RequestRejectedException ex) {
-        logger.error("RequestRejectedException occurred: ", ex);
-        return new ResponseEntity<>("Request was rejected: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
+  @ExceptionHandler(RequestRejectedException.class)
+  public ResponseEntity<String> handleRequestRejectedException(RequestRejectedException ex) {
+    logger.error("RequestRejectedException occurred: ", ex);
+    return new ResponseEntity<>("Request was rejected: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+  }
 }

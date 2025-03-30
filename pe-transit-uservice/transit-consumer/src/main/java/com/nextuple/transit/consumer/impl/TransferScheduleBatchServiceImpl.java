@@ -81,6 +81,7 @@ public class TransferScheduleBatchServiceImpl extends BatchService<TransferSched
       TransferScheduleConsumerRequest transferScheduleConsumerRequest =
           INSTANCE.toTransferScheduleConsumerRequest(request.getPayload());
       transferScheduleConsumerRequest.setIndex(batchIndex);
+      transferScheduleConsumerRequest.setAction(request.getAction());
       if (batchRequestMap.containsKey(orgIdValidationPair)) {
         batchRequestMap.get(orgIdValidationPair).add(transferScheduleConsumerRequest);
       } else {

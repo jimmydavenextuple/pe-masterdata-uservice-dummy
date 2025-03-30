@@ -33,7 +33,7 @@ public class TransferScheduleConsumerRequest implements Serializable {
   private Integer index;
 
   @Schema(description = "Action to be performed on the transfer schedule.", example = "CREATE")
-  private ActionEnum actionEnum;
+  private ActionEnum action;
 
   @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE")
   @NotBlank(message = "OrgId can't be blank")

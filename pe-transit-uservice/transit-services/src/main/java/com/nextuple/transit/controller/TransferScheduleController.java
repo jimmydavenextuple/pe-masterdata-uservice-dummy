@@ -68,7 +68,8 @@ public class TransferScheduleController {
   @PostMapping("/batch/orgId/{orgId}")
   public ResponseEntity<BaseResponse<TransferScheduleBatchResponse>> batchTransferSchedules(
       @RequestBody TransferScheduleBatchRequest transferScheduleBatchRequest,
-      @PathVariable("orgId") String orgId) throws PromiseEngineException {
+      @PathVariable("orgId") String orgId)
+      throws PromiseEngineException {
     TransferScheduleBatchResponse response =
         transferScheduleService.batchTransferSchedules(transferScheduleBatchRequest, orgId);
     if (response.getFailureCount() > 0) {

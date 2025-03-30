@@ -10,6 +10,7 @@ package com.nextuple.transit.persistence.repository;
 import static com.nextuple.common.constants.CommonConstants.ORG_ID;
 
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleDeleteRequest;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.entity.TransferScheduleEntity;
 import jakarta.persistence.EntityManager;
@@ -124,6 +125,63 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
     }
     cq.where(cb.and(predicates.toArray(new Predicate[0])));
     return entityManager.createQuery(cq).getResultList();
+  }
+
+  @Override
+  public List<TransferScheduleEntity> deleteTransferSchedules(
+      List<TransferScheduleDeleteRequest> transferScheduleDeleteRequests) {
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<TransferScheduleEntity> cq = cb.createQuery(TransferScheduleEntity.class);
+    Root<TransferScheduleEntity> root = cq.from(TransferScheduleEntity.class);
+
+    List<Predicate> predicates = new ArrayList<>();
+
+    for (TransferScheduleDeleteRequest request : transferScheduleDeleteRequests) {
+      predicates.add(cb.equal(root.get(ORG_ID), request.getOrgId()));
+      predicates.add(cb.equal(root.get(DROPOFF_NODE_ID), request.getDropoffNodeId()));
+
+      Predicate orgIdPredicate = cb.equal(root.get(ORG_ID), request.getOrgId());
+      Predicate sourceNodeIdPredicate =
+          cb.equal(root.get(SOURCE_NODE_ID), request.getSourceNodeId());
+      Predicate dropoffNodeIdPredicate =
+          cb.equal(root.get(DROPOFF_NODE_ID), request.getDropoffNodeId());
+      Predicate startTimePredicate = cb.equal(root.get(START_TIME), request.getStartTime());
+
+      Predicate combinedPredicate =
+          cb.and(orgIdPredicate, sourceNodeIdPredicate, dropoffNodeIdPredicate, startTimePredicate);
+      predicates.add(combinedPredicate);
+    }
+
+    cq.where(cb.or(predicates.toArray(Predicate[]::new)));
+
+    List<TransferScheduleEntity> entitiesToDelete = entityManager.createQuery(cq).getResultList();
+
+    CriteriaDelete<TransferScheduleEntity> criteriaDelete =
+        cb.createCriteriaDelete(TransferScheduleEntity.class);
+    Root<TransferScheduleEntity> deleteRoot = criteriaDelete.from(TransferScheduleEntity.class);
+    List<Predicate> deletePredicates = new ArrayList<>();
+    for (TransferScheduleDeleteRequest request : transferScheduleDeleteRequests) {
+      Predicate orgIdPredicate = cb.equal(deleteRoot.get(ORG_ID), request.getOrgId());
+      Predicate sourceNodeIdPredicate =
+          cb.equal(deleteRoot.get(SOURCE_NODE_ID), request.getSourceNodeId());
+      Predicate dropoffNodeIdPredicate =
+          cb.equal(deleteRoot.get(DROPOFF_NODE_ID), request.getDropoffNodeId());
+      Predicate startTimePredicate = cb.equal(deleteRoot.get(START_TIME), request.getStartTime());
+
+      Predicate combinedPredicate =
+          cb.and(orgIdPredicate, sourceNodeIdPredicate, dropoffNodeIdPredicate, startTimePredicate);
+      deletePredicates.add(combinedPredicate);
+    }
+    criteriaDelete.where(cb.or(deletePredicates.toArray(new Predicate[0])));
+    int deletedCount = entityManager.createQuery(criteriaDelete).executeUpdate();
+    if (deletedCount != entitiesToDelete.size()) {
+      log.error(
+          "Not all transfer schedules were deleted. Expected: {}, Deleted: {}",
+          entitiesToDelete.size(),
+          deletedCount);
+    }
+    return entitiesToDelete;
   }
 
   private List<Predicate> buildPredicates(

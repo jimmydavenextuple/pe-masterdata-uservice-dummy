@@ -19,6 +19,7 @@ import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.common.util.ObjectUtil;
+import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.node.domain.feign.NodeFeign;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
@@ -38,10 +39,12 @@ import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.service.TransferSchedulePersistenceService;
 import com.nextuple.transit.service.TransferScheduleService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 import kotlin.Pair;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
@@ -85,26 +88,138 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
   }
 
   @Override
+  @Transactional
   public TransferScheduleBatchResponse batchTransferSchedules(
       TransferScheduleBatchRequest transferScheduleBatchRequest, String orgId)
       throws PromiseEngineException {
+    List<TransferScheduleConsumerResult> results = new ArrayList<>();
+
+    Map<ActionEnum, List<TransferScheduleConsumerRequest>> actionMap =
+        transferScheduleBatchRequest.getTransferScheduleConsumerRequests().stream()
+            .filter(
+                req -> {
+                  boolean isValid = Objects.nonNull(req.getAction());
+                  if (!isValid) {
+                    results.add(
+                        TransferScheduleConsumerResult.builder()
+                            .index(req.getIndex())
+                            .success(false)
+                            .message("Action type cannot be null")
+                            .statusCode(400)
+                            .build());
+                    return false;
+                  }
+                  return true;
+                })
+            .collect(Collectors.groupingBy(TransferScheduleConsumerRequest::getAction));
+
+    for (ActionEnum actionEnum : actionMap.keySet()) {
+      switch (actionEnum) {
+        case ActionEnum.CREATE:
+          results.addAll(
+              batchCreateTransferSchedule(
+                  actionMap.get(actionEnum),
+                  orgId,
+                  transferScheduleBatchRequest.getApplyValidation()));
+          break;
+        case ActionEnum.DELETE:
+          results.addAll(batchDeleteTransferSchedule(actionMap.get(actionEnum)));
+          break;
+        default:
+          results.addAll(
+              actionMap.get(actionEnum).stream()
+                  .map(
+                      request ->
+                          TransferScheduleConsumerResult.builder()
+                              .index(request.getIndex())
+                              .success(false)
+                              .message("Invalid action type")
+                              .statusCode(400)
+                              .build())
+                  .toList());
+          break;
+      }
+    }
+
+    return TransferScheduleBatchResponse.builder()
+        .totalCount(transferScheduleBatchRequest.getTransferScheduleConsumerRequests().size())
+        .successCount(
+            (int) results.stream().filter(TransferScheduleConsumerResult::getSuccess).count())
+        .failureCount((int) results.stream().filter(result -> !result.getSuccess()).count())
+        .results(results)
+        .build();
+  }
+
+  private List<TransferScheduleConsumerResult> batchDeleteTransferSchedule(
+      List<TransferScheduleConsumerRequest> requests) {
+    List<TransferScheduleConsumerResult> results = new ArrayList<>();
+    List<TransferScheduleDomainDto> domainDto;
+    try {
+      List<TransferScheduleDeleteRequest> transferScheduleDeleteRequest = new ArrayList<>();
+      for (TransferScheduleConsumerRequest request : requests) {
+        TransferScheduleDeleteRequest deleteRequest = new TransferScheduleDeleteRequest();
+        deleteRequest.setOrgId(request.getOrgId());
+        deleteRequest.setSourceNodeId(request.getSourceNodeId());
+        deleteRequest.setDropoffNodeId(request.getDropoffNodeId());
+        deleteRequest.setStartTime(request.getStartTime().toDate());
+        transferScheduleDeleteRequest.add(deleteRequest);
+      }
+      domainDto =
+          transferSchedulePersistenceService.deleteTransferSchedules(transferScheduleDeleteRequest);
+    } catch (Exception e) {
+      requests.forEach(
+          request -> {
+            TransferScheduleConsumerResult result = new TransferScheduleConsumerResult();
+            result.setIndex(request.getIndex());
+            result.setSuccess(false);
+            result.setMessage("Error while deleting transfer schedule");
+            result.setStatusCode(500);
+            results.add(result);
+          });
+      return results;
+    }
+
+    for (TransferScheduleConsumerRequest request : requests) {
+      TransferScheduleConsumerResult result = new TransferScheduleConsumerResult();
+      result.setIndex(request.getIndex());
+      if (domainDto.stream()
+          .anyMatch(
+              dto ->
+                  Objects.equals(dto.getOrgId(), request.getOrgId())
+                      && dto.getSourceNodeId().equals(request.getSourceNodeId())
+                      && dto.getDropoffNodeId().equals(request.getDropoffNodeId())
+                      && (new DateTime(dto.getStartTime(), DateTimeZone.UTC)
+                          .isEqual(request.getStartTime().withZone(DateTimeZone.UTC))))) {
+        result.setSuccess(true);
+        result.setMessage("Transfer schedule deleted successfully");
+        result.setStatusCode(200);
+      } else {
+        result.setSuccess(false);
+        result.setMessage("Transfer schedule not found");
+        result.setStatusCode(404);
+      }
+      results.add(result);
+    }
+    return results;
+  }
+
+  private List<TransferScheduleConsumerResult> batchCreateTransferSchedule(
+      List<TransferScheduleConsumerRequest> transferScheduleBatchRequest,
+      String orgId,
+      Boolean applyValidation) {
     List<TransferScheduleConsumerResult> results = new ArrayList<>();
     Set<String> uniqueNodeList = new HashSet<>();
     Set<Pair<String, String>> uniqueRulePair = new HashSet<>();
     List<String> validNodes;
     List<Pair<String, String>> invalidRules = new ArrayList<>();
 
-    // TODO: Handle delete.
-
-    if (Boolean.TRUE.equals(transferScheduleBatchRequest.getApplyValidation())) {
-      transferScheduleBatchRequest
-          .getTransferScheduleConsumerRequests()
-          .forEach(
-              request -> {
-                uniqueNodeList.add(request.getDropoffNodeId());
-                uniqueNodeList.add(request.getSourceNodeId());
-                uniqueRulePair.add(new Pair<>(request.getRule(), request.getRuleName()));
-              });
+    if (Boolean.TRUE.equals(applyValidation)) {
+      transferScheduleBatchRequest.forEach(
+          request -> {
+            uniqueNodeList.add(request.getDropoffNodeId());
+            uniqueNodeList.add(request.getSourceNodeId());
+            uniqueRulePair.add(new Pair<>(request.getRule(), request.getRuleName()));
+          });
       validNodes = nodeFeign.getValidNodes(uniqueNodeList.stream().toList(), orgId).getPayload();
       for (Pair<String, String> rulePair : uniqueRulePair) {
         try {
@@ -118,16 +233,17 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     }
 
     List<TransferScheduleConsumerRequest> validRequests =
-        transferScheduleBatchRequest.getTransferScheduleConsumerRequests().stream()
+        transferScheduleBatchRequest.stream()
             .filter(
                 request -> {
-                  if (transferScheduleBatchRequest.getApplyValidation()) {
-                    boolean isValid = (Objects.equals(orgId, request.getOrgId())) &&
-                        validNodes.contains(request.getDropoffNodeId())
+                  if (applyValidation) {
+                    boolean isValid =
+                        (Objects.equals(orgId, request.getOrgId()))
+                            && validNodes.contains(request.getDropoffNodeId())
                             && validNodes.contains(request.getSourceNodeId())
                             && !request.getStartTime().isAfter(request.getEndTime())
                             && !invalidRules.contains(
-                                new Pair<>(request.getRule(),request.getRuleName()));
+                                new Pair<>(request.getRule(), request.getRuleName()));
                     if (!isValid) {
                       results.add(
                           TransferScheduleConsumerResult.builder()
@@ -171,13 +287,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
           });
     }
 
-    return TransferScheduleBatchResponse.builder()
-        .totalCount(transferScheduleBatchRequest.getTransferScheduleConsumerRequests().size())
-        .successCount(
-            (int) results.stream().filter(TransferScheduleConsumerResult::getSuccess).count())
-        .failureCount((int) results.stream().filter(result -> !result.getSuccess()).count())
-        .results(results)
-        .build();
+    return results;
   }
 
   private void validateRuleDetails(String orgId, String rule, String ruleName)

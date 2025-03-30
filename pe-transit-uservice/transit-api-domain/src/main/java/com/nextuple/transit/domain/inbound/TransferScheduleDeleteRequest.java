@@ -5,11 +5,10 @@
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
  */
 
-package com.nextuple.transit.domain.outbound;
+package com.nextuple.transit.domain.inbound;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,17 +18,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TransferScheduleBatchResponse implements Serializable {
+public class TransferScheduleDeleteRequest implements Serializable {
+  private static final long serialVersionUID = -3115486612222454583L;
 
-  @Schema(description = "Total number of records in the batch", example = "2")
-  private Integer totalCount;
-
-  @Schema(description = "Number of successful records in the batch", example = "2")
-  private Integer successCount;
-
-  @Schema(description = "Number of failed records in the batch", example = "0")
-  private Integer failureCount;
-
-  @Schema(description = "List of results for each record in the batch")
-  private List<TransferScheduleConsumerResult> results;
+  private String orgId;
+  private String sourceNodeId;
+  private String dropoffNodeId;
+  private Date startTime;
 }

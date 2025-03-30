@@ -14,6 +14,7 @@ import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.postgres.service.CommonPersistenceService;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleDeleteRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
@@ -23,7 +24,6 @@ import com.nextuple.transit.persistence.entity.key.TransferScheduleKey;
 import com.nextuple.transit.persistence.mapper.TransferScheduleEntityMapper;
 import com.nextuple.transit.persistence.repository.TransferScheduleRepository;
 import com.nextuple.transit.persistence.service.TransferSchedulePersistenceService;
-import jakarta.transaction.Transactional;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +66,6 @@ public class TransferSchedulePersistenceServiceImpl
   }
 
   @Override
-  @Transactional
   public List<TransferScheduleDomainDto> saveTransferSchedules(
       List<TransferScheduleDomainDto> transferScheduleDomainDtos) throws PromiseEngineException {
     try {
@@ -145,6 +144,13 @@ public class TransferSchedulePersistenceServiceImpl
   public List<TransferScheduleDomainDto> fetchTransferSchedulesInRange(
       TransferScheduleDomainRequest request) {
     List<TransferScheduleEntity> entities = getRepository().findTransferSchedulesInRange(request);
+    return getMapper().toDomain(entities);
+  }
+
+  @Override
+  public List<TransferScheduleDomainDto> deleteTransferSchedules(
+      List<TransferScheduleDeleteRequest> request) {
+    List<TransferScheduleEntity> entities = getRepository().deleteTransferSchedules(request);
     return getMapper().toDomain(entities);
   }
 }
