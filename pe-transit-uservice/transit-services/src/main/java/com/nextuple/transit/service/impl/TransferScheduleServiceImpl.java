@@ -251,10 +251,9 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     List<TransferScheduleConsumerRequest> validRequests =
         transferScheduleBatchRequest.stream()
             .filter(
-                request -> {
-                  return validateNodesAndRule(
-                      orgId, applyValidation, validNodes, invalidRules, results, request);
-                })
+                request ->
+                    validateNodesAndRule(
+                        orgId, applyValidation, validNodes, invalidRules, results, request))
             .toList();
 
     try {
