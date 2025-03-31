@@ -412,7 +412,13 @@ pipelines:
               name: Deploy Integration
               trigger: manual
               deployment: integration
-
+    integration:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Integration
+          trigger: manual
+          deployment: integration
           # - step:
           #     !!merge <<: *deploy
           #     name: Deploy PERF
