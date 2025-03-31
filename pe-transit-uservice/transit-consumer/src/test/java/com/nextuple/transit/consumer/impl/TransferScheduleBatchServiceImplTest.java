@@ -22,8 +22,11 @@ import com.nextuple.master.data.integration.service.ErrorHandlingService;
 import com.nextuple.transit.consumer.TestUtil;
 import com.nextuple.transit.consumer.dto.TransferScheduleDto;
 import com.nextuple.transit.domain.feign.TransferScheduleFeign;
+import com.nextuple.transit.persistence.entity.TransferScheduleEntity;
 import com.nextuple.transit.persistence.repository.TransferScheduleRepository;
+import java.util.*;
 import java.util.List;
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -94,5 +97,146 @@ public class TransferScheduleBatchServiceImplTest {
         transferScheduleBatchService.processRecordsWithRetry(transferScheduleFeedRequests);
     Assertions.assertEquals(batchResponse, result);
     verify(transferScheduleFeign, times(1)).batchTransferSchedules(any(), any());
+  }
+
+  @Test
+  @DisplayName("When an error occurs while processing batch request")
+  void processBatchRecordsTestWhenErrorOccurs() {
+    List<BatchRequest<TransferScheduleDto>> transferScheduleFeedRequests =
+        List.of(testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE));
+    Mockito.when(transferScheduleFeign.batchTransferSchedules(any(), any()))
+        .thenThrow(new RuntimeException("Feign client error"));
+
+    BatchResponse result =
+        transferScheduleBatchService.processBatchRecords(transferScheduleFeedRequests, true);
+
+    Assertions.assertEquals(1, result.getFailedRecords());
+    Assertions.assertEquals(0, result.getSuccessfulRecords());
+    Assertions.assertEquals(
+        "Error occurred while processing batch request: Feign client error",
+        result.getResponses().get(0).getMessage());
+    verify(transferScheduleFeign, times(1)).batchTransferSchedules(any(), any());
+  }
+
+  @Test
+  @DisplayName("When a transfer schedule is created successfully")
+  void createRecordImplTest() throws CommonServiceException {
+    TransferScheduleDto transferScheduleDto = new TransferScheduleDto();
+    // Set necessary fields for transferScheduleDto
+    transferScheduleDto.setOrgId("org123");
+    transferScheduleDto.setSourceNodeId("sourceNode123");
+    transferScheduleDto.setDropoffNodeId("dropoffNode123");
+    transferScheduleDto.setStartTime(new DateTime());
+    Mockito.when(transferScheduleFeign.createTransferSchedule(any()))
+        .thenReturn(
+            testUtil.getBaseResponseOfTransferScheduleFeed(
+                "Transfer Schedule created successfully"));
+
+    String responseMessage = transferScheduleBatchService.createRecordImpl(transferScheduleDto);
+
+    Assertions.assertEquals("Transfer Schedule created successfully", responseMessage);
+    verify(transferScheduleFeign, times(1)).createTransferSchedule(any());
+  }
+
+  @Test
+  @DisplayName("When updateRecordImpl is called, it should throw CommonServiceException")
+  void updateRecordImplTest() {
+    TransferScheduleDto transferScheduleDto = new TransferScheduleDto();
+    // Set necessary fields for transferScheduleDto
+    transferScheduleDto.setOrgId("org123");
+    transferScheduleDto.setSourceNodeId("sourceNode123");
+    transferScheduleDto.setDropoffNodeId("dropoffNode123");
+    transferScheduleDto.setStartTime(new DateTime());
+
+    CommonServiceException exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> transferScheduleBatchService.updateRecordImpl(transferScheduleDto));
+
+    Assertions.assertEquals("Action not supported : UPDATE", exception.getMessage());
+  }
+
+  @Test
+  @DisplayName("When a transfer schedule is deleted successfully")
+  void deleteRecordImplTest() throws CommonServiceException {
+    TransferScheduleDto transferScheduleDto = new TransferScheduleDto();
+    // Set necessary fields for transferScheduleDto
+    transferScheduleDto.setOrgId("org123");
+    transferScheduleDto.setSourceNodeId("sourceNode123");
+    transferScheduleDto.setDropoffNodeId("dropoffNode123");
+    transferScheduleDto.setStartTime(new DateTime());
+
+    Mockito.when(transferScheduleFeign.deleteTransferSchedule(any()))
+        .thenReturn(
+            testUtil.getBaseResponseOfTransferScheduleFeed(
+                "Transfer Schedule deleted successfully"));
+
+    String responseMessage = transferScheduleBatchService.deleteRecordImpl(transferScheduleDto);
+
+    Assertions.assertEquals("Transfer Schedule deleted successfully", responseMessage);
+    verify(transferScheduleFeign, times(1)).deleteTransferSchedule(any());
+  }
+
+  @Test
+  @DisplayName("When the record is not outdated")
+  void checkForOutdatedRecordTestNotOutdated() throws CommonServiceException {
+    TransferScheduleDto transferScheduleDto = new TransferScheduleDto();
+    transferScheduleDto.setOrgId("org123");
+    transferScheduleDto.setSourceNodeId("sourceNode123");
+    transferScheduleDto.setDropoffNodeId("dropoffNode123");
+    transferScheduleDto.setStartTime(new DateTime());
+    BatchRequest<TransferScheduleDto> batchRequest = new BatchRequest<>();
+    batchRequest.setPayload(transferScheduleDto);
+    batchRequest.setReceivedTimestamp(new Date(System.currentTimeMillis() + 3600 * 1000));
+
+    TransferScheduleEntity transferScheduleEntity = new TransferScheduleEntity();
+    transferScheduleEntity.setLastModifiedDate(new Date());
+
+    Mockito.when(
+            transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
+                anyString(), anyString(), any(Date.class), anyString()))
+        .thenReturn(Optional.of(transferScheduleEntity));
+
+    Assertions.assertDoesNotThrow(
+        () -> transferScheduleBatchService.checkForOutdatedRecord(batchRequest));
+  }
+
+  @Test
+  @DisplayName("When the record is outdated")
+  void checkForOutdatedRecordTestOutdated() {
+    TransferScheduleDto transferScheduleDto = new TransferScheduleDto();
+    transferScheduleDto.setOrgId("org123");
+    transferScheduleDto.setSourceNodeId("sourceNode123");
+    transferScheduleDto.setDropoffNodeId("dropoffNode123");
+    transferScheduleDto.setStartTime(new DateTime());
+    BatchRequest<TransferScheduleDto> batchRequest = new BatchRequest<>();
+    batchRequest.setPayload(transferScheduleDto);
+    batchRequest.setReceivedTimestamp(new Date());
+
+    TransferScheduleEntity transferScheduleEntity = new TransferScheduleEntity();
+    transferScheduleEntity.setLastModifiedDate(new Date(System.currentTimeMillis() + 10000));
+
+    Mockito.when(
+            transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
+                anyString(), anyString(), any(Date.class), anyString()))
+        .thenReturn(Optional.of(transferScheduleEntity));
+
+    CommonServiceException exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> transferScheduleBatchService.checkForOutdatedRecord(batchRequest));
+
+    Assertions.assertEquals("Can't process the record as it's outdated", exception.getMessage());
+  }
+
+  @Test
+  @DisplayName("When required fields are missing")
+  void checkForOutdatedRecordTestMissingFields() {
+    TransferScheduleDto transferScheduleDto = new TransferScheduleDto();
+    BatchRequest<TransferScheduleDto> batchRequest = new BatchRequest<>();
+    batchRequest.setPayload(transferScheduleDto);
+
+    Assertions.assertDoesNotThrow(
+        () -> transferScheduleBatchService.checkForOutdatedRecord(batchRequest));
   }
 }
