@@ -99,8 +99,6 @@ spring:
 logging:
   level:
     com.nextuple: INFO
-    org.springframework.security: DEBUG
-    org.springframework.security.web.firewall: TRACE
 pe-public-webhook:
   iv-feed:
     topic: INTERNAL.PERF_ATP
