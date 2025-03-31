@@ -80,8 +80,8 @@ public class NodeConstants {
       "Retrieves all the node types associated with a specific organization ID. For example, for the organization ID “NXT”, the API will display all the unique node types that are associated with the organization NXT.";
   public static final String GET_NODE_TYPES_SUCCESS =
       "A 200 success code indicates that the node types are retrieved successfully.";
-    public static final String CHECK_NODES_EXIST_DESC =
+  public static final String CHECK_NODES_EXIST_DESC =
       "Checks if the nodes exist for the given organization ID and list of node IDs. For example, for the organization ID “NXT” and node IDs “NODE-01” and “NODE-02”, the API will check if these nodes exist in the system.";
-public static final String CHECK_NODES_EXIST_SUCCESS =
+  public static final String CHECK_NODES_EXIST_SUCCESS =
       "A 200 success code indicates that successfully checked if the nodes exist for the given organization ID and list of node IDs.";
 }
