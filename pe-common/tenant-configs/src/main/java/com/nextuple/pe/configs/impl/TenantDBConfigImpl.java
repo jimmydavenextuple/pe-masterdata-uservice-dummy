@@ -65,10 +65,10 @@ public class TenantDBConfigImpl implements ITenantConfig {
   @Value("${sourcing.DEFAULT.ship-charge-capping-logic-enabled:false}")
   public String defaultShipChargeCappingLogicFlag;
 
-  @Value("${sourcing.DEFAULT.transfer-horizon-days:1}")
+  @Value("${sourcing.DEFAULT.transfer-schedule-horizon-days:1}")
   public String defaultTransferScheduleHorizonDays;
 
-  @Value("${sourcing.DEFAULT.transfer-past-days:1}")
+  @Value("${sourcing.DEFAULT.transfer-schedule-past-days:1}")
   public String defaultTransferSchedulePastDays;
 
   @Value("${sourcing.DEFAULT.transfers-enabled:false}")

@@ -214,3 +214,7 @@ kafka-topic-flags:
   input:
     taskTopics:
       enabled: false
+sourcing:
+  DEFAULT:
+    transfer-schedule-past-days: 20
+    transfer-schedule-horizon-days: 6

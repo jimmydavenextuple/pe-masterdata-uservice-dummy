@@ -292,3 +292,16 @@ kafka-topic-flags:
   input:
     taskTopics:
       enabled: true
+
+sourcing:
+  DEFAULT:
+    transfer-schedule-past-days: 20
+    transfer-schedule-horizon-days: 6
+
+azure.keyvault:
+  client-id: e558951a-8c66-4a66-a75f-f71254e23397
+  client-key: hvu8Q~WZ6hxz5eyKCQiTtCDKP-Qd3ANKCDeVUbhJ
+  enabled: true
+  tenant-id: a504dc87-820c-4014-a6f7-9bd271ec731f
+  uri: https://nextuple-dev.vault.azure.net/
+  secret-keys: "COMMON-MONGODB-CREDENTIAL,COMMON-KAFKA-CONFIG,COMMON-PE-API-KEY,KEYCLOAK-PRODUCT-CONFIG,PE-CORE-ELASTIC-SEARCH-LOGS-PASSWORD,PE-CORE-ELASTIC-SEARCH-LOGS-USERNAME,CORE-SOURCING-KEYCLOAK-CLIENT-ID"

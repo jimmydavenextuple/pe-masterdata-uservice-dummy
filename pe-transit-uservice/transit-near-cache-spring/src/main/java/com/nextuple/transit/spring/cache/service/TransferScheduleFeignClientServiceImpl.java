@@ -31,10 +31,10 @@ public class TransferScheduleFeignClientServiceImpl
         BaseResponse<List<TransferScheduleRangeResponse>>> {
   private final TransferScheduleFeignImpl transferScheduleFeign;
 
-  @Value("${transfer-schedule.horizon-days:5}")
+  @Value("${sourcing.DEFAULT.transfer-schedule.horizon-days:5}")
   private int horizonDays;
 
-  @Value("${transfer-schedule.past-days:5}")
+  @Value("${sourcing.DEFAULT.transfer-schedule.past-days:5}")
   private int pastDays;
 
   private final GenericMapper<
