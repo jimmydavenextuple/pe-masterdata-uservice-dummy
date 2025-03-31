@@ -120,7 +120,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
                             .index(req.getIndex())
                             .success(false)
                             .message("Action type cannot be null")
-                            .statusCode(400)
+                            .statusCode(HttpStatus.BAD_REQUEST.value())
                             .build());
                     return false;
                   }
@@ -146,12 +146,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
               actionMap.get(mapEntry.getKey()).stream()
                   .map(
                       request ->
-                          TransferScheduleConsumerResult.builder()
-                              .index(request.getIndex())
-                              .success(false)
-                              .message("Invalid action type")
-                              .statusCode(400)
-                              .build())
+                          new TransferScheduleConsumerResult(request.getIndex(), false, "Invalid action type", HttpStatus.BAD_REQUEST.value()))
                   .toList());
           break;
       }
@@ -173,12 +168,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     try {
       List<TransferScheduleDeleteRequest> transferScheduleDeleteRequest = new ArrayList<>();
       for (TransferScheduleConsumerRequest request : requests) {
-        TransferScheduleDeleteRequest deleteRequest = new TransferScheduleDeleteRequest();
-        deleteRequest.setOrgId(request.getOrgId());
-        deleteRequest.setSourceNodeId(request.getSourceNodeId());
-        deleteRequest.setDropoffNodeId(request.getDropoffNodeId());
-        deleteRequest.setStartTime(request.getStartTime().toDate());
-        transferScheduleDeleteRequest.add(deleteRequest);
+        transferScheduleDeleteRequest.add(new TransferScheduleDeleteRequest(request.getOrgId(), request.getSourceNodeId(), request.getDropoffNodeId(), request.getStartTime().toDate()));
       }
       domainDto =
           transferSchedulePersistenceService.deleteTransferSchedules(transferScheduleDeleteRequest);
@@ -189,7 +179,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
             result.setIndex(request.getIndex());
             result.setSuccess(false);
             result.setMessage("Error while deleting transfer schedule");
-            result.setStatusCode(500);
+            result.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             results.add(result);
           });
       return results;
@@ -208,11 +198,11 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
                           .isEqual(request.getStartTime().withZone(DateTimeZone.UTC))))) {
         result.setSuccess(true);
         result.setMessage("Transfer schedule deleted successfully");
-        result.setStatusCode(200);
+        result.setStatusCode(HttpStatus.OK.value());
       } else {
         result.setSuccess(false);
         result.setMessage("Transfer schedule not found");
-        result.setStatusCode(404);
+        result.setStatusCode(HttpStatus.NOT_FOUND.value());
       }
       results.add(result);
     }
@@ -249,14 +239,12 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
       validNodes = new ArrayList<>();
     }
 
-    List<TransferScheduleConsumerRequest> validRequests =
-        filterValidRequests(
-            transferScheduleBatchRequest,
-            orgId,
-            applyValidation,
-            validNodes,
-            invalidRules,
-            results);
+    List<TransferScheduleConsumerRequest> validRequests = transferScheduleBatchRequest.stream()
+            .filter(
+                    request -> {
+                      return validateNodesAndRule(orgId, applyValidation, validNodes, invalidRules, results, request);
+                    })
+            .toList();
 
     try {
       transferSchedulePersistenceService.saveTransferSchedules(
@@ -266,7 +254,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
             if (result.getStatusCode() == -1) {
               result.setSuccess(true);
               result.setMessage("Transfer schedule created successfully");
-              result.setStatusCode(200);
+              result.setStatusCode(HttpStatus.OK.value());
             }
           });
     } catch (Exception e) {
@@ -276,7 +264,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
             if (result.getStatusCode() == -1) {
               result.setSuccess(false);
               result.setMessage("Error while saving transfer schedule");
-              result.setStatusCode(500); // Considered as internal server error
+              result.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
           });
     }
@@ -284,43 +272,33 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     return results;
   }
 
-  private static List<TransferScheduleConsumerRequest> filterValidRequests(
-      List<TransferScheduleConsumerRequest> transferScheduleBatchRequest,
-      String orgId,
-      Boolean applyValidation,
-      List<String> validNodes,
-      List<Pair<String, String>> invalidRules,
-      List<TransferScheduleConsumerResult> results) {
-    return transferScheduleBatchRequest.stream()
-        .filter(
-            request -> {
-              if (Boolean.TRUE.equals(applyValidation)) {
-                boolean isValid =
-                    (Objects.equals(orgId, request.getOrgId()))
-                        && validNodes.contains(request.getDropoffNodeId())
-                        && validNodes.contains(request.getSourceNodeId())
-                        && !request.getStartTime().isAfter(request.getEndTime())
-                        && !invalidRules.contains(
-                            new Pair<>(request.getRule(), request.getRuleName()));
-                if (!isValid) {
-                  results.add(
-                      TransferScheduleConsumerResult.builder()
-                          .index(request.getIndex())
-                          .success(false)
-                          .message("Rule or node or time validation failed")
-                          .statusCode(400) // Considered as bad request with no retry needed
-                          .build());
-                  return false;
-                }
-              }
-              results.add(
-                  TransferScheduleConsumerResult.builder()
-                      .index(request.getIndex())
-                      .statusCode(-1)
-                      .build());
-              return true;
-            })
-        .toList();
+
+  private static boolean validateNodesAndRule(String orgId, Boolean applyValidation, List<String> validNodes, List<Pair<String, String>> invalidRules, List<TransferScheduleConsumerResult> results, TransferScheduleConsumerRequest request) {
+    if (Boolean.TRUE.equals(applyValidation)) {
+      boolean isValid =
+          (Objects.equals(orgId, request.getOrgId()))
+              && validNodes.contains(request.getDropoffNodeId())
+              && validNodes.contains(request.getSourceNodeId())
+              && !request.getStartTime().isAfter(request.getEndTime())
+              && !invalidRules.contains(
+                  new Pair<>(request.getRule(), request.getRuleName()));
+      if (!isValid) {
+        results.add(
+            TransferScheduleConsumerResult.builder()
+                .index(request.getIndex())
+                .success(false)
+                .message("Rule or node or time validation failed")
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .build());
+        return false;
+      }
+    }
+    results.add(
+        TransferScheduleConsumerResult.builder()
+            .index(request.getIndex())
+            .statusCode(-1)
+            .build());
+    return true;
   }
 
   private void validateRuleDetails(String orgId, String rule, String ruleName)
