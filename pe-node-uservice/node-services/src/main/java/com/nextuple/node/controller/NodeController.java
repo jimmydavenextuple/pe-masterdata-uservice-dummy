@@ -16,16 +16,7 @@ import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.util.PaginationUtil;
-import com.nextuple.node.controller.docs.CreateNodeDoc;
-import com.nextuple.node.controller.docs.DeleteNodeDoc;
-import com.nextuple.node.controller.docs.GetAllNodeList;
-import com.nextuple.node.controller.docs.GetNodeCacheKeysDoc;
-import com.nextuple.node.controller.docs.GetNodeDetailsDoc;
-import com.nextuple.node.controller.docs.GetNodeListDoc;
-import com.nextuple.node.controller.docs.GetNodeListV1Doc;
-import com.nextuple.node.controller.docs.GetNodeListV2Doc;
-import com.nextuple.node.controller.docs.GetNodeTypesDoc;
-import com.nextuple.node.controller.docs.UpdateNodeDetailsDoc;
+import com.nextuple.node.controller.docs.*;
 import com.nextuple.node.domain.NodeConstants;
 import com.nextuple.node.domain.dto.NodeCacheKeyDto;
 import com.nextuple.node.domain.dto.NodeDto;
@@ -367,12 +358,13 @@ public class NodeController {
             .build());
   }
 
-  @GetMapping("/validate-nodes/orgId/{orgId}")
+  @GetMapping("/check-nodes-exist/orgId/{orgId}")
+  @CheckNodesExistDoc
   public ResponseEntity<BaseResponse<List<String>>> getValidNodes(
       @RequestBody List<String> nodeIds, @PathVariable String orgId) {
     return ResponseEntity.ok(
         BaseResponse.builder()
-            .message("Node types fetched successfully")
+            .message("Node ids fetched successfully")
             .payload(nodeService.getValidNodes(nodeIds, orgId))
             .build());
   }

@@ -75,7 +75,7 @@ public interface NodeFeign {
       @RequestParam(required = false) String sortBy,
       @RequestParam(required = false) String sortOrder);
 
-  @GetMapping("/node/validate-nodes/orgId/{orgId}")
+  @GetMapping("/node/check-nodes-exist/orgId/{orgId}")
   BaseResponse<List<String>> getValidNodes(
       @RequestBody List<String> nodeIds, @PathVariable String orgId);
 
