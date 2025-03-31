@@ -22,8 +22,8 @@ import com.nextuple.master.data.integration.service.ErrorHandlingService;
 import com.nextuple.transit.consumer.TestUtil;
 import com.nextuple.transit.consumer.dto.TransferScheduleDto;
 import com.nextuple.transit.domain.feign.TransferScheduleFeign;
-import com.nextuple.transit.domain.inbound.TransferScheduleConsumerRequest;
 import com.nextuple.transit.persistence.repository.TransferScheduleRepository;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,12 +35,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.data.util.Pair;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransferScheduleBatchServiceImplTest {
@@ -86,20 +80,19 @@ public class TransferScheduleBatchServiceImplTest {
   @DisplayName("When transfer schedule feed with create action is processed successfully")
   void processBatchRecordsTestWhenActionIsCreate() {
     List<BatchRequest<TransferScheduleDto>> transferScheduleFeedRequests =
-            List.of(testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE));
+        List.of(testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE));
     Mockito.when(transferScheduleFeign.batchTransferSchedules(any(), any()))
-            .thenReturn(
-                    testUtil.getFeignTransferScheduleBatchResponse(
-                            "Transfer Schedule batch created successfully"));
+        .thenReturn(
+            testUtil.getFeignTransferScheduleBatchResponse(
+                "Transfer Schedule batch created successfully"));
     ResponseDto responseDto =
-            testUtil.createResponseDto(0, 200, "Transfer Schedule created successfully");
+        testUtil.createResponseDto(0, 200, "Transfer Schedule created successfully");
     List<ResponseDto> responseDtoList = List.of(responseDto);
     BatchResponse batchResponse = testUtil.getTransferScheduleBatchResponse(1, 1, 0);
     batchResponse.setResponses(responseDtoList);
-    BatchResponse result = transferScheduleBatchService.processRecordsWithRetry(transferScheduleFeedRequests);
-    Assertions.assertEquals(
-            batchResponse, result
-            );
+    BatchResponse result =
+        transferScheduleBatchService.processRecordsWithRetry(transferScheduleFeedRequests);
+    Assertions.assertEquals(batchResponse, result);
     verify(transferScheduleFeign, times(1)).batchTransferSchedules(any(), any());
   }
 }

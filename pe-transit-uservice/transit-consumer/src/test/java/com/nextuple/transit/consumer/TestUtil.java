@@ -20,7 +20,6 @@ import com.nextuple.transit.persistence.domain.TransitBufferV2DomainDto;
 import com.nextuple.transit.persistence.domain.TransitDomainDto;
 import java.util.Date;
 import java.util.List;
-
 import org.joda.time.DateTime;
 
 public class TestUtil {
@@ -218,17 +217,30 @@ public class TestUtil {
         .build();
   }
 
-  public TransferScheduleBatchResponse getTransferScheduleBatchResponse1(Integer totalRecords, int successfulRecords, int failedRecords) {
-    List<TransferScheduleConsumerResult> results = List.of(TransferScheduleConsumerResult.builder().success(true).statusCode(200).message("Transfer Schedule created successfully").index(0).build());
-    return TransferScheduleBatchResponse.builder().results(results).totalCount(totalRecords).successCount(successfulRecords).failureCount(failedRecords).build();
+  public TransferScheduleBatchResponse getTransferScheduleBatchResponse1(
+      Integer totalRecords, int successfulRecords, int failedRecords) {
+    List<TransferScheduleConsumerResult> results =
+        List.of(
+            TransferScheduleConsumerResult.builder()
+                .success(true)
+                .statusCode(200)
+                .message("Transfer Schedule created successfully")
+                .index(0)
+                .build());
+    return TransferScheduleBatchResponse.builder()
+        .results(results)
+        .totalCount(totalRecords)
+        .successCount(successfulRecords)
+        .failureCount(failedRecords)
+        .build();
   }
 
   public BaseResponse<TransferScheduleBatchResponse> getFeignTransferScheduleBatchResponse(
-          String message) {
+      String message) {
     return BaseResponse.builder()
-            .message(message)
-            .success(true)
-            .payload(getTransferScheduleBatchResponse1(1,1,0))
-            .build();
+        .message(message)
+        .success(true)
+        .payload(getTransferScheduleBatchResponse1(1, 1, 0))
+        .build();
   }
 }
