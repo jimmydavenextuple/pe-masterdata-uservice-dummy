@@ -236,7 +236,8 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
             uniqueNodeList.add(request.getSourceNodeId());
             uniqueRulePair.add(new Pair<>(request.getRule(), request.getRuleName()));
           });
-      validNodes = nodeFeign.checkIfNodesExist(uniqueNodeList.stream().toList(), orgId).getPayload();
+      validNodes =
+          nodeFeign.checkIfNodesExist(uniqueNodeList.stream().toList(), orgId).getPayload();
       for (Pair<String, String> rulePair : uniqueRulePair) {
         try {
           validateRuleDetails(orgId, rulePair.getFirst(), rulePair.getSecond());
