@@ -19,7 +19,11 @@ import com.nextuple.transit.controller.docs.CreateTransferScheduleDoc;
 import com.nextuple.transit.controller.docs.DeleteTransferScheduleDoc;
 import com.nextuple.transit.controller.docs.FetchTransferScheduleListDoc;
 import com.nextuple.transit.controller.docs.GetTransferScheduleDoc;
-import com.nextuple.transit.domain.inbound.*;
+import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleBatchRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleBatchResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
@@ -38,7 +42,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController

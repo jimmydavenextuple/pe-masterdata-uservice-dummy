@@ -7,6 +7,7 @@
 package com.nextuple.transit.consumer.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.nextuple.common.context.CurrentThreadContext;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.master.data.integration.dto.ResponseDto;
@@ -24,7 +25,13 @@ import com.nextuple.transit.domain.outbound.TransferScheduleBatchResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleConsumerResult;
 import com.nextuple.transit.persistence.entity.TransferScheduleEntity;
 import com.nextuple.transit.persistence.repository.TransferScheduleRepository;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
 import org.mapstruct.factory.Mappers;
@@ -51,8 +58,8 @@ public class TransferScheduleBatchServiceImpl extends BatchService<TransferSched
   public static final TransferScheduleBatchMapper INSTANCE =
       Mappers.getMapper(TransferScheduleBatchMapper.class);
 
-  @Value("${kafka-topic-flags.master-data.transfer-schedule.apply-validation:true}")
-  private Boolean applyValidation;
+  @Value("${kafka-topic-flags.master-data.transfer-schedule.default-apply-validation:true}")
+  private Boolean defaultApplyValidation;
 
   @Override
   public TaskInformation getTaskInformation() {
@@ -74,14 +81,16 @@ public class TransferScheduleBatchServiceImpl extends BatchService<TransferSched
       BatchRequest<TransferScheduleDto> request = batchRequest.get(batchIndex);
       Boolean isValidationRequired =
           Objects.isNull(request.getPayload().getApplyValidation())
-              ? applyValidation
+              ? defaultApplyValidation
               : request.getPayload().getApplyValidation();
+
       Pair<String, Boolean> orgIdValidationPair =
           Pair.of(request.getPayload().getOrgId(), isValidationRequired);
       TransferScheduleConsumerRequest transferScheduleConsumerRequest =
           INSTANCE.toTransferScheduleConsumerRequest(request.getPayload());
       transferScheduleConsumerRequest.setIndex(batchIndex);
       transferScheduleConsumerRequest.setAction(request.getAction());
+
       if (batchRequestMap.containsKey(orgIdValidationPair)) {
         batchRequestMap.get(orgIdValidationPair).add(transferScheduleConsumerRequest);
       } else {
@@ -97,6 +106,7 @@ public class TransferScheduleBatchServiceImpl extends BatchService<TransferSched
     // Iterate through the map and call the batchTransferSchedules method
     for (Pair<String, Boolean> orgIdValidationPair : batchRequestMap.keySet()) {
       String orgId = orgIdValidationPair.getFirst();
+      CurrentThreadContext.getLogContext().setTenantId(orgId);
       Boolean applyValidation = orgIdValidationPair.getSecond();
       TransferScheduleBatchRequest transferScheduleBatchRequest =
           TransferScheduleBatchRequest.builder()
@@ -104,11 +114,34 @@ public class TransferScheduleBatchServiceImpl extends BatchService<TransferSched
               .transferScheduleConsumerRequests(batchRequestMap.get(orgIdValidationPair))
               .build();
 
-      TransferScheduleBatchResponse transferScheduleBatchResponse =
-          transferScheduleFeign
-              .batchTransferSchedules(transferScheduleBatchRequest, orgId, orgId)
-              .getPayload();
-      // TODO: Handle Feign client failure as a failure for this batch
+      TransferScheduleBatchResponse transferScheduleBatchResponse;
+      try {
+        transferScheduleBatchResponse =
+            transferScheduleFeign
+                .batchTransferSchedules(transferScheduleBatchRequest, orgId)
+                .getPayload();
+      } catch (Exception e) {
+        logger.error("Error occurred while processing batch request: {}", e.getMessage());
+        transferScheduleBatchResponse =
+            TransferScheduleBatchResponse.builder()
+                .failureCount(
+                    transferScheduleBatchRequest.getTransferScheduleConsumerRequests().size())
+                .successCount(0)
+                .results(
+                    transferScheduleBatchRequest.getTransferScheduleConsumerRequests().stream()
+                        .map(
+                            transferScheduleConsumerRequest ->
+                                TransferScheduleConsumerResult.builder()
+                                    .index(transferScheduleConsumerRequest.getIndex())
+                                    .success(false)
+                                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                                    .message(
+                                        "Error occurred while processing batch request: "
+                                            + e.getMessage())
+                                    .build())
+                        .toList())
+                .build();
+      }
       successfulRecords += transferScheduleBatchResponse.getSuccessCount();
       for (TransferScheduleConsumerResult transferScheduleConsumerResult :
           transferScheduleBatchResponse.getResults()) {
