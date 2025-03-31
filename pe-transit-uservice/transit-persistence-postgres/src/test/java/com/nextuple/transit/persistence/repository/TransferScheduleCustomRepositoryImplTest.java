@@ -249,8 +249,7 @@ class TransferScheduleCustomRepositoryImplTest {
   @Test
   @DisplayName("Exception - Delete transfer schedules")
   void testDeleteTransferSchedulesException() {
-    assertThrows(
-        NullPointerException.class,
-        () -> repository.deleteTransferSchedules(Collections.emptyList()));
+    List<TransferScheduleDeleteRequest> request = Collections.emptyList();
+    assertThrows(NullPointerException.class, () -> repository.deleteTransferSchedules(request));
   }
 }

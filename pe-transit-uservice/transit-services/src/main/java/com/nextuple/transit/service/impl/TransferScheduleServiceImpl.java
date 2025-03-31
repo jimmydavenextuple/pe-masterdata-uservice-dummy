@@ -128,21 +128,22 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
                 })
             .collect(Collectors.groupingBy(TransferScheduleConsumerRequest::getAction));
 
-    for (ActionEnum actionEnum : actionMap.keySet()) {
-      switch (actionEnum) {
+    for (Map.Entry<ActionEnum, List<TransferScheduleConsumerRequest>> mapEntry :
+        actionMap.entrySet()) {
+      switch (mapEntry.getKey()) {
         case ActionEnum.CREATE:
           results.addAll(
               batchCreateTransferSchedule(
-                  actionMap.get(actionEnum),
+                  actionMap.get(mapEntry.getKey()),
                   orgId,
                   transferScheduleBatchRequest.getApplyValidation()));
           break;
         case ActionEnum.DELETE:
-          results.addAll(batchDeleteTransferSchedule(actionMap.get(actionEnum)));
+          results.addAll(batchDeleteTransferSchedule(actionMap.get(mapEntry.getKey())));
           break;
         default:
           results.addAll(
-              actionMap.get(actionEnum).stream()
+              actionMap.get(mapEntry.getKey()).stream()
                   .map(
                       request ->
                           TransferScheduleConsumerResult.builder()
@@ -248,36 +249,13 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     }
 
     List<TransferScheduleConsumerRequest> validRequests =
-        transferScheduleBatchRequest.stream()
-            .filter(
-                request -> {
-                  if (applyValidation) {
-                    boolean isValid =
-                        (Objects.equals(orgId, request.getOrgId()))
-                            && validNodes.contains(request.getDropoffNodeId())
-                            && validNodes.contains(request.getSourceNodeId())
-                            && !request.getStartTime().isAfter(request.getEndTime())
-                            && !invalidRules.contains(
-                                new Pair<>(request.getRule(), request.getRuleName()));
-                    if (!isValid) {
-                      results.add(
-                          TransferScheduleConsumerResult.builder()
-                              .index(request.getIndex())
-                              .success(false)
-                              .message("Rule or node or time validation failed")
-                              .statusCode(400) // Considered as bad request with no retry needed
-                              .build());
-                      return false;
-                    }
-                  }
-                  results.add(
-                      TransferScheduleConsumerResult.builder()
-                          .index(request.getIndex())
-                          .statusCode(-1)
-                          .build());
-                  return true;
-                })
-            .toList();
+        filterValidRequests(
+            transferScheduleBatchRequest,
+            orgId,
+            applyValidation,
+            validNodes,
+            invalidRules,
+            results);
 
     try {
       transferSchedulePersistenceService.saveTransferSchedules(
@@ -303,6 +281,45 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     }
 
     return results;
+  }
+
+  private static List<TransferScheduleConsumerRequest> filterValidRequests(
+      List<TransferScheduleConsumerRequest> transferScheduleBatchRequest,
+      String orgId,
+      Boolean applyValidation,
+      List<String> validNodes,
+      List<Pair<String, String>> invalidRules,
+      List<TransferScheduleConsumerResult> results) {
+    return transferScheduleBatchRequest.stream()
+        .filter(
+            request -> {
+              if (Boolean.TRUE.equals(applyValidation)) {
+                boolean isValid =
+                    (Objects.equals(orgId, request.getOrgId()))
+                        && validNodes.contains(request.getDropoffNodeId())
+                        && validNodes.contains(request.getSourceNodeId())
+                        && !request.getStartTime().isAfter(request.getEndTime())
+                        && !invalidRules.contains(
+                            new Pair<>(request.getRule(), request.getRuleName()));
+                if (!isValid) {
+                  results.add(
+                      TransferScheduleConsumerResult.builder()
+                          .index(request.getIndex())
+                          .success(false)
+                          .message("Rule or node or time validation failed")
+                          .statusCode(400) // Considered as bad request with no retry needed
+                          .build());
+                  return false;
+                }
+              }
+              results.add(
+                  TransferScheduleConsumerResult.builder()
+                      .index(request.getIndex())
+                      .statusCode(-1)
+                      .build());
+              return true;
+            })
+        .toList();
   }
 
   private void validateRuleDetails(String orgId, String rule, String ruleName)

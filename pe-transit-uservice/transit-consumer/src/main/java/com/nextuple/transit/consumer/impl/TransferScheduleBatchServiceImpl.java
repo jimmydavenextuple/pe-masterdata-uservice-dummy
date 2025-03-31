@@ -77,41 +77,20 @@ public class TransferScheduleBatchServiceImpl extends BatchService<TransferSched
     Map<Pair<String, Boolean>, List<TransferScheduleConsumerRequest>> batchRequestMap =
         new HashMap<>();
 
-    for (int batchIndex = 0; batchIndex < batchRequest.size(); batchIndex++) {
-      BatchRequest<TransferScheduleDto> request = batchRequest.get(batchIndex);
-      Boolean isValidationRequired =
-          Objects.isNull(request.getPayload().getApplyValidation())
-              ? defaultApplyValidation
-              : request.getPayload().getApplyValidation();
-
-      Pair<String, Boolean> orgIdValidationPair =
-          Pair.of(request.getPayload().getOrgId(), isValidationRequired);
-      TransferScheduleConsumerRequest transferScheduleConsumerRequest =
-          INSTANCE.toTransferScheduleConsumerRequest(request.getPayload());
-      transferScheduleConsumerRequest.setIndex(batchIndex);
-      transferScheduleConsumerRequest.setAction(request.getAction());
-
-      if (batchRequestMap.containsKey(orgIdValidationPair)) {
-        batchRequestMap.get(orgIdValidationPair).add(transferScheduleConsumerRequest);
-      } else {
-        List<TransferScheduleConsumerRequest> transferScheduleCreationRequestList =
-            new ArrayList<>();
-        transferScheduleCreationRequestList.add(transferScheduleConsumerRequest);
-        batchRequestMap.put(orgIdValidationPair, transferScheduleCreationRequestList);
-      }
-    }
+    groupBasedOnOrgIdValidationType(batchRequest, batchRequestMap);
 
     List<ResponseDto> responseDtosList = new ArrayList<>();
 
     // Iterate through the map and call the batchTransferSchedules method
-    for (Pair<String, Boolean> orgIdValidationPair : batchRequestMap.keySet()) {
-      String orgId = orgIdValidationPair.getFirst();
+    for (Map.Entry<Pair<String, Boolean>, List<TransferScheduleConsumerRequest>> mapEntry :
+        batchRequestMap.entrySet()) {
+      String orgId = mapEntry.getKey().getFirst();
       CurrentThreadContext.getLogContext().setTenantId(orgId);
-      Boolean applyValidation = orgIdValidationPair.getSecond();
+      Boolean applyValidation = mapEntry.getKey().getSecond();
       TransferScheduleBatchRequest transferScheduleBatchRequest =
           TransferScheduleBatchRequest.builder()
               .applyValidation(applyValidation)
-              .transferScheduleConsumerRequests(batchRequestMap.get(orgIdValidationPair))
+              .transferScheduleConsumerRequests(mapEntry.getValue())
               .build();
 
       TransferScheduleBatchResponse transferScheduleBatchResponse;
@@ -145,8 +124,8 @@ public class TransferScheduleBatchServiceImpl extends BatchService<TransferSched
       successfulRecords += transferScheduleBatchResponse.getSuccessCount();
       for (TransferScheduleConsumerResult transferScheduleConsumerResult :
           transferScheduleBatchResponse.getResults()) {
-        if (isRetryRequired) {
-          if (transferScheduleConsumerResult.getSuccess()) {
+        if (Boolean.TRUE.equals(isRetryRequired)) {
+          if (Boolean.TRUE.equals(transferScheduleConsumerResult.getSuccess())) {
             addTaskForSuccessResponse(batchRequest.get(transferScheduleConsumerResult.getIndex()));
           } else {
             addTaskForException(
@@ -170,6 +149,34 @@ public class TransferScheduleBatchServiceImpl extends BatchService<TransferSched
         .failedRecords(batchRequest.size() - successfulRecords)
         .responses(responseDtosList)
         .build();
+  }
+
+  private void groupBasedOnOrgIdValidationType(
+      List<BatchRequest<TransferScheduleDto>> batchRequest,
+      Map<Pair<String, Boolean>, List<TransferScheduleConsumerRequest>> batchRequestMap) {
+    for (int batchIndex = 0; batchIndex < batchRequest.size(); batchIndex++) {
+      BatchRequest<TransferScheduleDto> request = batchRequest.get(batchIndex);
+      Boolean isValidationRequired =
+          Objects.isNull(request.getPayload().getApplyValidation())
+              ? defaultApplyValidation
+              : request.getPayload().getApplyValidation();
+
+      Pair<String, Boolean> orgIdValidationPair =
+          Pair.of(request.getPayload().getOrgId(), isValidationRequired);
+      TransferScheduleConsumerRequest transferScheduleConsumerRequest =
+          INSTANCE.toTransferScheduleConsumerRequest(request.getPayload());
+      transferScheduleConsumerRequest.setIndex(batchIndex);
+      transferScheduleConsumerRequest.setAction(request.getAction());
+
+      if (batchRequestMap.containsKey(orgIdValidationPair)) {
+        batchRequestMap.get(orgIdValidationPair).add(transferScheduleConsumerRequest);
+      } else {
+        List<TransferScheduleConsumerRequest> transferScheduleCreationRequestList =
+            new ArrayList<>();
+        transferScheduleCreationRequestList.add(transferScheduleConsumerRequest);
+        batchRequestMap.put(orgIdValidationPair, transferScheduleCreationRequestList);
+      }
+    }
   }
 
   @Override

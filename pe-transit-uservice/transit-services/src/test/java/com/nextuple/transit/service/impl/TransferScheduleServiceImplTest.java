@@ -582,8 +582,7 @@ class TransferScheduleServiceImplTest {
 
   @Test
   @DisplayName("Test when batch transfer schedule is apply validation is true")
-  void testBatchTransferScheduleWithValidations()
-      throws PromiseEngineException, CommonServiceException {
+  void testBatchTransferScheduleWithValidations() throws PromiseEngineException {
     DateTime dateTime = DateTime.now();
     TransferScheduleBatchRequest request = testUtil.getTransferScheduleBatchRequest(dateTime);
     when(nodeFeign.getValidNodes(any(), any()))
@@ -593,14 +592,13 @@ class TransferScheduleServiceImplTest {
                 .success(true)
                 .build());
     when(ruleConfigurationService.fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
-            eq(
-                RuleConfigurationParam.builder()
-                    .orgId(TestUtil.ORG_ID)
-                    .rule("ABC:XYZ:001")
-                    .ruleName("TRANSFER_RULE")
-                    .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
-                    .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE)
-                    .build())))
+            RuleConfigurationParam.builder()
+                .orgId(TestUtil.ORG_ID)
+                .rule("ABC:XYZ:001")
+                .ruleName("TRANSFER_RULE")
+                .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
+                .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE)
+                .build()))
         .thenReturn(
             Optional.of(RulesConfigurationResponse.builder().orgId(TestUtil.ORG_ID).build()));
     List<TransferScheduleDomainDto> domainDtos = new ArrayList<>();
@@ -692,8 +690,7 @@ class TransferScheduleServiceImplTest {
 
   @Test
   @DisplayName("Test when batch transfer schedule is apply validation is false")
-  void testBatchTransferScheduleWithOutValidations()
-      throws PromiseEngineException, CommonServiceException {
+  void testBatchTransferScheduleWithOutValidations() throws PromiseEngineException {
     DateTime dateTime = DateTime.now();
     TransferScheduleBatchRequest request = testUtil.getTransferScheduleBatchRequest(dateTime);
     request.setApplyValidation(false);
@@ -704,14 +701,13 @@ class TransferScheduleServiceImplTest {
                 .success(true)
                 .build());
     when(ruleConfigurationService.fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
-            eq(
-                RuleConfigurationParam.builder()
-                    .orgId(TestUtil.ORG_ID)
-                    .rule("ABC:XYZ:001")
-                    .ruleName("TRANSFER_RULE")
-                    .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
-                    .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE)
-                    .build())))
+            RuleConfigurationParam.builder()
+                .orgId(TestUtil.ORG_ID)
+                .rule("ABC:XYZ:001")
+                .ruleName("TRANSFER_RULE")
+                .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
+                .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE)
+                .build()))
         .thenReturn(
             Optional.of(RulesConfigurationResponse.builder().orgId(TestUtil.ORG_ID).build()));
     List<TransferScheduleDomainDto> domainDtos = new ArrayList<>();
@@ -798,7 +794,7 @@ class TransferScheduleServiceImplTest {
 
   @Test
   @DisplayName("Test when batch transfer schedule failure")
-  void testBatchTransferScheduleFailure() throws PromiseEngineException, CommonServiceException {
+  void testBatchTransferScheduleFailure() throws PromiseEngineException {
     DateTime dateTime = DateTime.now();
     TransferScheduleBatchRequest request = testUtil.getTransferScheduleBatchRequest(dateTime);
     List<TransferScheduleConsumerRequest> transferScheduleConsumerRequests =
@@ -819,14 +815,13 @@ class TransferScheduleServiceImplTest {
                 .success(true)
                 .build());
     when(ruleConfigurationService.fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
-            eq(
-                RuleConfigurationParam.builder()
-                    .orgId(TestUtil.ORG_ID)
-                    .rule("ABC:XYZ:001")
-                    .ruleName("TRANSFER_RULE")
-                    .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
-                    .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE)
-                    .build())))
+            RuleConfigurationParam.builder()
+                .orgId(TestUtil.ORG_ID)
+                .rule("ABC:XYZ:001")
+                .ruleName("TRANSFER_RULE")
+                .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
+                .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE)
+                .build()))
         .thenReturn(
             Optional.of(RulesConfigurationResponse.builder().orgId(TestUtil.ORG_ID).build()));
     TransferScheduleBatchResponse response =
