@@ -308,7 +308,7 @@ public class NodeService {
     return NodeTypesResponse.builder().nodeTypes(nodeTypes).build();
   }
 
-  public List<String> getValidNodes(List<String> nodeIds, String orgId) {
-    return nodePersistenceService.getValidNodes(nodeIds, orgId);
+  public List<String> checkNodesExistByNodeIdsAndOrgId(List<String> nodeIds, String orgId) {
+    return nodePersistenceService.checkNodesExistByNodeIdsAndOrgId(nodeIds, orgId);
   }
 }

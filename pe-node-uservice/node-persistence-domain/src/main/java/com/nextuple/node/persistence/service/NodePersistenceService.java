@@ -49,5 +49,5 @@ public interface NodePersistenceService
 
   List<String> getAllUniqueNodeTypesByOrgId(String orgId);
 
-  List<String> getValidNodes(List<String> nodeIds, String orgId);
+  List<String> checkNodesExistByNodeIdsAndOrgId(List<String> nodeIds, String orgId);
 }

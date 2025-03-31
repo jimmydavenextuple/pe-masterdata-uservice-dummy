@@ -205,8 +205,8 @@ public class NodePersistenceServiceImpl
   }
 
   @Override
-  public List<String> getValidNodes(List<String> nodeIds, String orgId) {
-    return getRepository().findValidNodes(nodeIds, orgId);
+  public List<String> checkNodesExistByNodeIdsAndOrgId(List<String> nodeIds, String orgId) {
+    return getRepository().findDistinctNodeIdByNodeIdInAndOrgId(nodeIds, orgId);
   }
 
   public Page<NodeDomainDto> getNodeByOrgIdV1(String orgId, PageParams pageParams)

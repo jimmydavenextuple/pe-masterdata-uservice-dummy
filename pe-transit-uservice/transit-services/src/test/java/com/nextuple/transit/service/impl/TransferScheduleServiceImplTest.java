@@ -585,7 +585,7 @@ class TransferScheduleServiceImplTest {
   void testBatchTransferScheduleWithValidations() throws PromiseEngineException {
     DateTime dateTime = DateTime.now();
     TransferScheduleBatchRequest request = testUtil.getTransferScheduleBatchRequest(dateTime);
-    when(nodeFeign.getValidNodes(any(), any()))
+    when(nodeFeign.checkIfNodesExist(any(), any()))
         .thenReturn(
             BaseResponse.builder()
                 .payload(List.of("Node1", "Node2", "Node3"))
@@ -694,7 +694,7 @@ class TransferScheduleServiceImplTest {
     DateTime dateTime = DateTime.now();
     TransferScheduleBatchRequest request = testUtil.getTransferScheduleBatchRequest(dateTime);
     request.setApplyValidation(false);
-    when(nodeFeign.getValidNodes(any(), any()))
+    when(nodeFeign.checkIfNodesExist(any(), any()))
         .thenReturn(
             BaseResponse.builder()
                 .payload(List.of("Node1", "Node2", "Node3"))
@@ -808,7 +808,7 @@ class TransferScheduleServiceImplTest {
         .thenThrow(new RuntimeException("Error while delete"));
     when(transferSchedulePersistenceService.saveTransferSchedules(any()))
         .thenThrow(new RuntimeException("Error while create"));
-    when(nodeFeign.getValidNodes(any(), any()))
+    when(nodeFeign.checkIfNodesExist(any(), any()))
         .thenReturn(
             BaseResponse.builder()
                 .payload(List.of("Node1", "Node2", "Node3"))
