@@ -14,11 +14,15 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.master.data.integration.dto.ResponseDto;
 import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
+import com.nextuple.master.data.integration.outbound.BatchResponse;
 import com.nextuple.master.data.integration.service.ErrorHandlingService;
 import com.nextuple.transit.consumer.TestUtil;
+import com.nextuple.transit.consumer.dto.TransferScheduleDto;
 import com.nextuple.transit.domain.feign.TransferScheduleFeign;
+import com.nextuple.transit.domain.inbound.TransferScheduleConsumerRequest;
 import com.nextuple.transit.persistence.repository.TransferScheduleRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +35,12 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.data.util.Pair;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransferScheduleBatchServiceImplTest {
@@ -72,15 +82,24 @@ public class TransferScheduleBatchServiceImplTest {
     verify(transferScheduleFeign, times(1)).createTransferSchedule(any());
   }
 
-  //  @Test
-  //  @DisplayName("When the transferEntity is not found for the transfer schedule feed")
-  //  void processBatchRecordsTestForOutdatedRecordsTransferEntityNotFound() {
-  //    BatchRequest<TransferScheduleDto> batchRequest =
-  //            testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE);
-  //    when(transferScheduleRepository.findBySourceNodeIdAndDropoffNodeIdAndStartTimeAndOrgId(
-  //            any(), any(), any(), any()))
-  //            .thenReturn(Optional.empty());
-  //    transferScheduleBatchService.processRecordsWithRetry(List.of(batchRequest));
-  //    verify(transferScheduleFeign, times(1)).createTransferSchedule(any());
-  //  }
+  @Test
+  @DisplayName("When transfer schedule feed with create action is processed successfully")
+  void processBatchRecordsTestWhenActionIsCreate() {
+    List<BatchRequest<TransferScheduleDto>> transferScheduleFeedRequests =
+            List.of(testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE));
+    Mockito.when(transferScheduleFeign.batchTransferSchedules(any(), any()))
+            .thenReturn(
+                    testUtil.getFeignTransferScheduleBatchResponse(
+                            "Transfer Schedule batch created successfully"));
+    ResponseDto responseDto =
+            testUtil.createResponseDto(0, 200, "Transfer Schedule created successfully");
+    List<ResponseDto> responseDtoList = List.of(responseDto);
+    BatchResponse batchResponse = testUtil.getTransferScheduleBatchResponse(1, 1, 0);
+    batchResponse.setResponses(responseDtoList);
+    BatchResponse result = transferScheduleBatchService.processRecordsWithRetry(transferScheduleFeedRequests);
+    Assertions.assertEquals(
+            batchResponse, result
+            );
+    verify(transferScheduleFeign, times(1)).batchTransferSchedules(any(), any());
+  }
 }
