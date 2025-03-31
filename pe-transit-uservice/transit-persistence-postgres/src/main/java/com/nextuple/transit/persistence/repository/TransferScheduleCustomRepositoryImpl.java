@@ -138,9 +138,6 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
     List<Predicate> predicates = new ArrayList<>();
 
     for (TransferScheduleDeleteRequest request : transferScheduleDeleteRequests) {
-      predicates.add(cb.equal(root.get(ORG_ID), request.getOrgId()));
-      predicates.add(cb.equal(root.get(DROPOFF_NODE_ID), request.getDropoffNodeId()));
-
       Predicate orgIdPredicate = cb.equal(root.get(ORG_ID), request.getOrgId());
       Predicate sourceNodeIdPredicate =
           cb.equal(root.get(SOURCE_NODE_ID), request.getSourceNodeId());
