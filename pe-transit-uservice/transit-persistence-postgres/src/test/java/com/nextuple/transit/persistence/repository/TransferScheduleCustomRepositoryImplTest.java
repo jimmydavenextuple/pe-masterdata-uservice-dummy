@@ -16,12 +16,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleDeleteRequest;
 import com.nextuple.transit.persistence.TestUtil;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.entity.TransferScheduleEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import java.util.Arrays;
@@ -49,6 +51,7 @@ class TransferScheduleCustomRepositoryImplTest {
   @Mock private TypedQuery<TransferScheduleEntity> typedQuery;
   @Mock private CriteriaQuery<Long> countCriteriaQuery;
   @Mock private TypedQuery<Long> countTypedQuery;
+  @Mock private CriteriaDelete<TransferScheduleEntity> criteriaDelete;
   @InjectMocks private TransferScheduleCustomRepositoryImpl repository;
   @InjectMocks private TestUtil testUtil;
 
@@ -58,7 +61,6 @@ class TransferScheduleCustomRepositoryImplTest {
     when(criteriaBuilder.createQuery(TransferScheduleEntity.class)).thenReturn(criteriaQuery);
     when(criteriaQuery.from(TransferScheduleEntity.class)).thenReturn(root);
     when(entityManager.createQuery(criteriaQuery)).thenReturn(typedQuery);
-
     lenient().when(criteriaBuilder.createQuery(Long.class)).thenReturn(countCriteriaQuery);
     lenient().when(countCriteriaQuery.from(TransferScheduleEntity.class)).thenReturn(root);
     lenient().when(entityManager.createQuery(countCriteriaQuery)).thenReturn(countTypedQuery);
@@ -200,5 +202,54 @@ class TransferScheduleCustomRepositoryImplTest {
 
     assertEquals(2, actualResult.size());
     verify(entityManager, times(1)).createQuery(criteriaQuery);
+  }
+
+  @Test
+  @DisplayName("Happy Path - Delete transfer schedules")
+  void testDeleteTransferSchedules() {
+    when(criteriaBuilder.createCriteriaDelete(TransferScheduleEntity.class))
+        .thenReturn(criteriaDelete);
+    when(criteriaDelete.from(TransferScheduleEntity.class)).thenReturn(root);
+    when(entityManager.createQuery(criteriaDelete)).thenReturn(countTypedQuery);
+
+    List<TransferScheduleDeleteRequest> request =
+        Arrays.asList(new TransferScheduleDeleteRequest(ORG_ID, "source1", "dropoff1", new Date()));
+    List<TransferScheduleEntity> results =
+        Arrays.asList(new TransferScheduleEntity(), new TransferScheduleEntity());
+    when(typedQuery.getResultList()).thenReturn(results);
+    when(countTypedQuery.executeUpdate()).thenReturn(2);
+
+    List<TransferScheduleEntity> actualResult = repository.deleteTransferSchedules(request);
+
+    assertEquals(2, actualResult.size());
+    verify(entityManager, times(1)).createQuery(criteriaQuery);
+  }
+
+  @Test
+  @DisplayName("Happy Path - Delete transfer schedules with different count")
+  void testDeleteTransferSchedulesWithDifferentCount() {
+    when(criteriaBuilder.createCriteriaDelete(TransferScheduleEntity.class))
+        .thenReturn(criteriaDelete);
+    when(criteriaDelete.from(TransferScheduleEntity.class)).thenReturn(root);
+    when(entityManager.createQuery(criteriaDelete)).thenReturn(countTypedQuery);
+
+    List<TransferScheduleDeleteRequest> request =
+        Arrays.asList(new TransferScheduleDeleteRequest(ORG_ID, "source1", "dropoff1", new Date()));
+    List<TransferScheduleEntity> results =
+        Arrays.asList(new TransferScheduleEntity(), new TransferScheduleEntity());
+    when(typedQuery.getResultList()).thenReturn(results);
+    when(countTypedQuery.executeUpdate()).thenReturn(1);
+
+    List<TransferScheduleEntity> actualResult = repository.deleteTransferSchedules(request);
+
+    assertEquals(2, actualResult.size());
+    verify(entityManager, times(1)).createQuery(criteriaQuery);
+  }
+
+  @Test
+  @DisplayName("Exception - Delete transfer schedules")
+  void testDeleteTransferSchedulesException() {
+    List<TransferScheduleDeleteRequest> request = Collections.emptyList();
+    assertThrows(NullPointerException.class, () -> repository.deleteTransferSchedules(request));
   }
 }

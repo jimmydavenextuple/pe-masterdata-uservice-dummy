@@ -8,6 +8,7 @@
 package com.nextuple.transit.persistence.repository;
 
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleDeleteRequest;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.entity.TransferScheduleEntity;
 import java.util.List;
@@ -19,4 +20,7 @@ public interface TransferScheduleCustomRepository {
       String orgId, FetchTransferScheduleRequest request, Pageable pageable);
 
   List<TransferScheduleEntity> findTransferSchedulesInRange(TransferScheduleDomainRequest request);
+
+  List<TransferScheduleEntity> deleteTransferSchedules(
+      List<TransferScheduleDeleteRequest> transferScheduleDeleteRequests);
 }

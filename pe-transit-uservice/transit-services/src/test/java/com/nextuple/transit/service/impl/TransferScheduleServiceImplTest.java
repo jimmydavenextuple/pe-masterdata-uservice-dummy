@@ -10,9 +10,7 @@ package com.nextuple.transit.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -25,19 +23,22 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.node.domain.feign.NodeFeign;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.RulesConfigurationResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.pojo.RuleConfigurationParam;
 import com.nextuple.promise.sourcing.rule.service.RulesConfigurationService;
 import com.nextuple.promise.sourcing.rule.service.SourcingAttributesDefinitionService;
 import com.nextuple.transit.TestUtil;
-import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
+import com.nextuple.transit.domain.inbound.*;
+import com.nextuple.transit.domain.outbound.TransferScheduleBatchResponse;
+import com.nextuple.transit.domain.outbound.TransferScheduleConsumerResult;
 import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
+import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.service.TransferSchedulePersistenceService;
 import java.util.ArrayList;
@@ -577,5 +578,275 @@ class TransferScheduleServiceImplTest {
     assertEquals(1, request.getRuleInfo().size());
     assertEquals("TestRule", request.getRuleInfo().get(0).getFirst());
     assertEquals("TestRuleValue", request.getRuleInfo().get(0).getSecond());
+  }
+
+  @Test
+  @DisplayName("Test when batch transfer schedule is apply validation is true")
+  void testBatchTransferScheduleWithValidations() throws PromiseEngineException {
+    DateTime dateTime = DateTime.now();
+    TransferScheduleBatchRequest request = testUtil.getTransferScheduleBatchRequest(dateTime);
+    when(nodeFeign.checkIfNodesExist(any(), any()))
+        .thenReturn(
+            BaseResponse.builder()
+                .payload(List.of("Node1", "Node2", "Node3"))
+                .success(true)
+                .build());
+    when(ruleConfigurationService.fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
+            RuleConfigurationParam.builder()
+                .orgId(TestUtil.ORG_ID)
+                .rule("ABC:XYZ:001")
+                .ruleName("TRANSFER_RULE")
+                .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
+                .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE)
+                .build()))
+        .thenReturn(
+            Optional.of(RulesConfigurationResponse.builder().orgId(TestUtil.ORG_ID).build()));
+    List<TransferScheduleDomainDto> domainDtos = new ArrayList<>();
+    domainDtos.add(
+        new TransferScheduleDomainDto(
+            1L,
+            TestUtil.ORG_ID,
+            "Node1",
+            "Node2",
+            dateTime.toDate(),
+            dateTime.plusDays(5).toDate(),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    domainDtos.add(
+        new TransferScheduleDomainDto(
+            1L,
+            TestUtil.ORG_ID + "1",
+            "Node1" + "1",
+            "Node2",
+            dateTime.toDate(),
+            dateTime.plusDays(5).toDate(),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    domainDtos.add(
+        new TransferScheduleDomainDto(
+            1L,
+            TestUtil.ORG_ID,
+            "Node1",
+            "Node2" + "1",
+            dateTime.toDate(),
+            dateTime.plusDays(5).toDate(),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    domainDtos.add(
+        new TransferScheduleDomainDto(
+            1L,
+            TestUtil.ORG_ID,
+            "Node1",
+            "Node2",
+            dateTime.plusHours(5).toDate(),
+            dateTime.plusDays(5).toDate(),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+
+    when(transferSchedulePersistenceService.deleteTransferSchedules(any())).thenReturn(domainDtos);
+    TransferScheduleBatchResponse response =
+        transferScheduleService.batchTransferSchedules(request, TestUtil.ORG_ID);
+    List<TransferScheduleConsumerResult> expectedResults = new ArrayList<>();
+    expectedResults.add(
+        new TransferScheduleConsumerResult(1, true, "Transfer schedule created successfully", 200));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(
+            2, false, "Rule or node or time validation failed", 400));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(
+            3, false, "Rule or node or time validation failed", 400));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(
+            4, false, "Rule or node or time validation failed", 400));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(
+            5, false, "Rule or node or time validation failed", 400));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(
+            6, false, "Rule or node or time validation failed", 400));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(7, true, "Transfer schedule created successfully", 200));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(8, true, "Transfer schedule deleted successfully", 200));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(9, false, "Transfer schedule not found", 404));
+    expectedResults.add(new TransferScheduleConsumerResult(10, false, "Invalid action type", 400));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(11, false, "Action type cannot be null", 400));
+
+    TransferScheduleBatchResponse expectedResponse =
+        new TransferScheduleBatchResponse(11, 3, 8, expectedResults);
+
+    Assertions.assertEquals(expectedResponse.getTotalCount(), response.getTotalCount());
+    Assertions.assertEquals(expectedResponse.getSuccessCount(), response.getSuccessCount());
+    Assertions.assertEquals(expectedResponse.getFailureCount(), response.getFailureCount());
+    Assertions.assertEquals(expectedResponse.getResults().size(), response.getResults().size());
+    Assertions.assertEquals(
+        expectedResponse.getResults(),
+        response.getResults().stream()
+            .sorted((o1, o2) -> o1.getIndex().compareTo(o2.getIndex()))
+            .toList());
+  }
+
+  @Test
+  @DisplayName("Test when batch transfer schedule is apply validation is false")
+  void testBatchTransferScheduleWithOutValidations() throws PromiseEngineException {
+    DateTime dateTime = DateTime.now();
+    TransferScheduleBatchRequest request = testUtil.getTransferScheduleBatchRequest(dateTime);
+    request.setApplyValidation(false);
+    when(nodeFeign.checkIfNodesExist(any(), any()))
+        .thenReturn(
+            BaseResponse.builder()
+                .payload(List.of("Node1", "Node2", "Node3"))
+                .success(true)
+                .build());
+    when(ruleConfigurationService.fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
+            RuleConfigurationParam.builder()
+                .orgId(TestUtil.ORG_ID)
+                .rule("ABC:XYZ:001")
+                .ruleName("TRANSFER_RULE")
+                .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
+                .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE)
+                .build()))
+        .thenReturn(
+            Optional.of(RulesConfigurationResponse.builder().orgId(TestUtil.ORG_ID).build()));
+    List<TransferScheduleDomainDto> domainDtos = new ArrayList<>();
+    domainDtos.add(
+        new TransferScheduleDomainDto(
+            1L,
+            TestUtil.ORG_ID,
+            "Node1",
+            "Node2",
+            dateTime.toDate(),
+            dateTime.plusDays(5).toDate(),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    domainDtos.add(
+        new TransferScheduleDomainDto(
+            1L,
+            TestUtil.ORG_ID + "1",
+            "Node1" + "1",
+            "Node2",
+            dateTime.toDate(),
+            dateTime.plusDays(5).toDate(),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    domainDtos.add(
+        new TransferScheduleDomainDto(
+            1L,
+            TestUtil.ORG_ID,
+            "Node1",
+            "Node2" + "1",
+            dateTime.toDate(),
+            dateTime.plusDays(5).toDate(),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    domainDtos.add(
+        new TransferScheduleDomainDto(
+            1L,
+            TestUtil.ORG_ID,
+            "Node1",
+            "Node2",
+            dateTime.plusHours(5).toDate(),
+            dateTime.plusDays(5).toDate(),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+
+    when(transferSchedulePersistenceService.deleteTransferSchedules(any())).thenReturn(domainDtos);
+    TransferScheduleBatchResponse response =
+        transferScheduleService.batchTransferSchedules(request, TestUtil.ORG_ID);
+    List<TransferScheduleConsumerResult> expectedResults = new ArrayList<>();
+    expectedResults.add(
+        new TransferScheduleConsumerResult(1, true, "Transfer schedule created successfully", 200));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(2, true, "Transfer schedule created successfully", 200));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(3, true, "Transfer schedule created successfully", 200));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(4, true, "Transfer schedule created successfully", 200));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(5, true, "Transfer schedule created successfully", 200));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(6, true, "Transfer schedule created successfully", 200));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(7, true, "Transfer schedule created successfully", 200));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(8, true, "Transfer schedule deleted successfully", 200));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(9, false, "Transfer schedule not found", 404));
+    expectedResults.add(new TransferScheduleConsumerResult(10, false, "Invalid action type", 400));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(11, false, "Action type cannot be null", 400));
+
+    TransferScheduleBatchResponse expectedResponse =
+        new TransferScheduleBatchResponse(11, 8, 3, expectedResults);
+
+    Assertions.assertEquals(expectedResponse.getTotalCount(), response.getTotalCount());
+    Assertions.assertEquals(expectedResponse.getSuccessCount(), response.getSuccessCount());
+    Assertions.assertEquals(expectedResponse.getFailureCount(), response.getFailureCount());
+    Assertions.assertEquals(expectedResponse.getResults().size(), response.getResults().size());
+    Assertions.assertEquals(
+        expectedResponse.getResults(),
+        response.getResults().stream()
+            .sorted((o1, o2) -> o1.getIndex().compareTo(o2.getIndex()))
+            .toList());
+  }
+
+  @Test
+  @DisplayName("Test when batch transfer schedule failure")
+  void testBatchTransferScheduleFailure() throws PromiseEngineException {
+    DateTime dateTime = DateTime.now();
+    TransferScheduleBatchRequest request = testUtil.getTransferScheduleBatchRequest(dateTime);
+    List<TransferScheduleConsumerRequest> transferScheduleConsumerRequests =
+        List.of(
+            request.getTransferScheduleConsumerRequests().get(0),
+            request.getTransferScheduleConsumerRequests().get(1),
+            request.getTransferScheduleConsumerRequests().get(2));
+    transferScheduleConsumerRequests.get(2).setAction(ActionEnum.DELETE);
+    request.setTransferScheduleConsumerRequests(transferScheduleConsumerRequests);
+    when(transferSchedulePersistenceService.deleteTransferSchedules(any()))
+        .thenThrow(new RuntimeException("Error while delete"));
+    when(transferSchedulePersistenceService.saveTransferSchedules(any()))
+        .thenThrow(new RuntimeException("Error while create"));
+    when(nodeFeign.checkIfNodesExist(any(), any()))
+        .thenReturn(
+            BaseResponse.builder()
+                .payload(List.of("Node1", "Node2", "Node3"))
+                .success(true)
+                .build());
+    when(ruleConfigurationService.fetchRuleByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
+            RuleConfigurationParam.builder()
+                .orgId(TestUtil.ORG_ID)
+                .rule("ABC:XYZ:001")
+                .ruleName("TRANSFER_RULE")
+                .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
+                .scope(SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE)
+                .build()))
+        .thenReturn(
+            Optional.of(RulesConfigurationResponse.builder().orgId(TestUtil.ORG_ID).build()));
+    TransferScheduleBatchResponse response =
+        transferScheduleService.batchTransferSchedules(request, TestUtil.ORG_ID);
+    List<TransferScheduleConsumerResult> expectedResults = new ArrayList<>();
+    expectedResults.add(
+        new TransferScheduleConsumerResult(1, false, "Error while saving transfer schedule", 500));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(
+            2, false, "Rule or node or time validation failed", 400));
+    expectedResults.add(
+        new TransferScheduleConsumerResult(
+            3, false, "Error while deleting transfer schedule", 500));
+
+    TransferScheduleBatchResponse expectedResponse =
+        new TransferScheduleBatchResponse(3, 0, 3, expectedResults);
+
+    Assertions.assertEquals(expectedResponse.getTotalCount(), response.getTotalCount());
+    Assertions.assertEquals(expectedResponse.getSuccessCount(), response.getSuccessCount());
+    Assertions.assertEquals(expectedResponse.getFailureCount(), response.getFailureCount());
+    Assertions.assertEquals(expectedResponse.getResults().size(), response.getResults().size());
+    Assertions.assertEquals(
+        expectedResponse.getResults(),
+        response.getResults().stream()
+            .sorted((o1, o2) -> o1.getIndex().compareTo(o2.getIndex()))
+            .toList());
   }
 }

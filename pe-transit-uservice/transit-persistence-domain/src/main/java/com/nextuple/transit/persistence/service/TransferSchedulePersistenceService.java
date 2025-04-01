@@ -11,6 +11,7 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.service.DomainPersistenceService;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleDeleteRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
@@ -25,6 +26,9 @@ public interface TransferSchedulePersistenceService
   TransferScheduleDomainDto saveTransferSchedule(
       TransferScheduleDomainDto transferScheduleDomainDto) throws PromiseEngineException;
 
+  List<TransferScheduleDomainDto> saveTransferSchedules(
+      List<TransferScheduleDomainDto> transferScheduleDomainDtos) throws PromiseEngineException;
+
   List<TransferScheduleDomainDto> fetchUpcomingTransferSchedules(
       String orgId, String dropOffNodeId);
 
@@ -38,4 +42,7 @@ public interface TransferSchedulePersistenceService
 
   List<TransferScheduleDomainDto> fetchTransferSchedulesInRange(
       TransferScheduleDomainRequest request);
+
+  List<TransferScheduleDomainDto> deleteTransferSchedules(
+      List<TransferScheduleDeleteRequest> transferScheduleDeleteRequests);
 }
