@@ -303,6 +303,7 @@ definitions:
           - build/**
           - service-version.txt
     - step: &build-release
+        size: 4x
         name: Build Release
         script:
           - microdnf install git
