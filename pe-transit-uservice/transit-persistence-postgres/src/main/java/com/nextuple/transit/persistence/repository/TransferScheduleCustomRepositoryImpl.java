@@ -174,9 +174,10 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
     int deletedCount = entityManager.createQuery(criteriaDelete).executeUpdate();
     if (deletedCount != entitiesToDelete.size()) {
       log.error(
-          "Not all transfer schedules were deleted. Expected: {}, Deleted: {}",
+          "Not all transfer schedules were deleted. Expected: {}, Deleted: {}, params: {}",
           entitiesToDelete.size(),
-          deletedCount);
+          deletedCount,
+          transferScheduleDeleteRequests);
     }
     return entitiesToDelete;
   }
