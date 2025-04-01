@@ -305,6 +305,8 @@ definitions:
     - step: &build-release
         name: Build Release
         script:
+          - microdnf install git
+          - microdnf install findutils
           - bash ./gradlew -Pbuild_target=RELEASE clean build artifactoryPublish
     - step: &deploy
         caches:
