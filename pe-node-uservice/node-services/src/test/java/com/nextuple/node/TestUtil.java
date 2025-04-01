@@ -14,8 +14,12 @@ import com.nextuple.node.domain.dto.NodeCacheKeyDto;
 import com.nextuple.node.domain.dto.NodeDto;
 import com.nextuple.node.domain.inbound.NodeRequest;
 import com.nextuple.node.domain.inbound.NodeUpdationRequest;
+import com.nextuple.node.domain.inbound.VendorRequest;
+import com.nextuple.node.domain.inbound.VendorUpdationRequest;
 import com.nextuple.node.domain.outbound.NodeResponse;
+import com.nextuple.node.domain.outbound.VendorResponse;
 import com.nextuple.node.persistence.domain.NodeDomainDto;
+import com.nextuple.node.persistence.domain.VendorDomainDto;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +33,7 @@ import org.springframework.data.domain.Sort;
 public class TestUtil {
 
   public static final String NODE_ID = "node-1";
+  public static final String VENDOR_ID = "vendor-1";
   public static final String NODE_ID_2 = "node-2";
   public static final String ORG_ID = "org-1";
   public static final String STREET = "street-1";
@@ -74,6 +79,16 @@ public class TestUtil {
         .build();
   }
 
+  public VendorRequest getVendorRequest() {
+    return VendorRequest.builder()
+        .vendorId("vendor-1")
+        .orgId(ORG_ID)
+        .vendorName("vendor-1")
+        .vendorDescription("vendor-1")
+        .vendorType("Store")
+        .build();
+  }
+
   public NodeResponse getNodeResponse() {
     return NodeResponse.builder()
         .nodeId(NODE_ID)
@@ -95,6 +110,16 @@ public class TestUtil {
         .build();
   }
 
+  public VendorResponse getVendorResponse() {
+    return VendorResponse.builder()
+        .vendorId("vendor-1")
+        .orgId(ORG_ID)
+        .vendorName("vendor-1")
+        .vendorDescription("vendor-1")
+        .vendorType("Store")
+        .build();
+  }
+
   public NodeUpdationRequest getNodeUpdationRequest() {
     return NodeUpdationRequest.builder()
         .isActive(Boolean.FALSE)
@@ -104,6 +129,14 @@ public class TestUtil {
         .nodeLabourTier(NODE_LABOUR_TIER)
         .timezone(TIME_ZONE)
         .latitude("3526.5262")
+        .build();
+  }
+
+  public VendorUpdationRequest getVendorUpdationRequest() {
+    return VendorUpdationRequest.builder()
+        .vendorName("vendor-1")
+        .vendorDescription("vendor-1")
+        .vendorType("Store")
         .build();
   }
 
@@ -125,6 +158,16 @@ public class TestUtil {
         .shipToHome(SHIP_TO_TIME)
         .timezone(TIME_ZONE)
         .serviceOptionEligibilities(getServiceOptionEligibilities())
+        .build();
+  }
+
+  public VendorResponse getUpdatedVendorResponse() {
+    return VendorResponse.builder()
+        .vendorId("vendor-1")
+        .orgId(ORG_ID)
+        .vendorName("vendor-1")
+        .vendorDescription("vendor-1")
+        .vendorType("Store")
         .build();
   }
 
@@ -190,6 +233,16 @@ public class TestUtil {
         .serviceOptionEligibilities(getServiceOptionEligibilities())
         .startWorkingTime("08:00")
         .lastWorkingTime("16:00")
+        .build();
+  }
+
+  public VendorDomainDto getVendorDomainDto(String vendorId) {
+    return VendorDomainDto.builder()
+        .vendorId(vendorId)
+        .orgId(ORG_ID)
+        .vendorName("vendor-1")
+        .description("vendor-1")
+        .vendorType("Store")
         .build();
   }
 
