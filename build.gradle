@@ -596,7 +596,7 @@ class ApplicationVersion {
     }
 
     private String getRelease() {
-        return this.release ? '' : '-SNAPSHOT'
+        return this.release ? '-RELEASE' : '-SNAPSHOT'
     }
 
     String getVersion() {

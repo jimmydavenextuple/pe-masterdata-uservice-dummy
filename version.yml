@@ -2,5 +2,5 @@ version:
   major: 1
   minor: 7
   patch: 39
-  release: false
+  release: true
 allowed_version: 1007039
