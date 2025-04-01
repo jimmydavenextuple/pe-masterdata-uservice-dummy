@@ -305,7 +305,7 @@ definitions:
     - step: &build-release
         name: Build Release
         script:
-          - echo "Pre Deploy Step"
+          - bash ./gradlew -Pbuild_target=RELEASE clean build artifactoryPublish
     - step: &deploy
         caches:
           - gradle
