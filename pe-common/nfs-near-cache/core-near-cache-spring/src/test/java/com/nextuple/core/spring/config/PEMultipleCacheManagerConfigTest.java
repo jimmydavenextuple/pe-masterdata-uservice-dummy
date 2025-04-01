@@ -20,9 +20,9 @@ import org.redisson.spring.cache.RedissonSpringCacheManager;
 import org.springframework.cache.CacheManager;
 
 @ExtendWith(MockitoExtension.class)
-class MultipleCacheManagerConfigTest {
+class PEMultipleCacheManagerConfigTest {
 
-  @InjectMocks private MultipleCacheManagerConfig multipleCacheManagerConfig;
+  @InjectMocks private PEMultipleCacheManagerConfig PEMultipleCacheManagerConfig;
   @Mock private CacheProperties cacheProperties;
   @InjectMocks private TestUtil testUtil;
   @Mock private RedissonClient redissonClient;
@@ -30,7 +30,7 @@ class MultipleCacheManagerConfigTest {
   @Test
   void caffeineCacheManagerTest() {
     when(cacheProperties.getCachemap()).thenReturn(testUtil.getCacheMap());
-    CacheManager cacheManager = multipleCacheManagerConfig.cacheManager();
+    CacheManager cacheManager = PEMultipleCacheManagerConfig.cacheManager();
     assertNotNull(cacheManager);
     verify(cacheProperties, times(0)).setCacheDefaults();
   }
@@ -39,7 +39,7 @@ class MultipleCacheManagerConfigTest {
   void caffeineCacheManagerDefaultCachePropertiesTest() {
     when(cacheProperties.getCachemap()).thenReturn(null);
     when(cacheProperties.setCacheDefaults()).thenReturn(testUtil.getCacheMap());
-    CacheManager cacheManager = multipleCacheManagerConfig.cacheManager();
+    CacheManager cacheManager = PEMultipleCacheManagerConfig.cacheManager();
     assertNotNull(cacheManager);
     verify(cacheProperties, times(1)).setCacheDefaults();
   }
@@ -48,7 +48,7 @@ class MultipleCacheManagerConfigTest {
   void redisCacheManagerTest_whenRedisEnabled() {
     when(cacheProperties.getCachemap()).thenReturn(testUtil.getCacheMap());
 
-    CacheManager cacheManager = multipleCacheManagerConfig.redisCacheManager();
+    CacheManager cacheManager = PEMultipleCacheManagerConfig.redisCacheManager();
 
     assertNotNull(cacheManager);
     assertInstanceOf(RedissonSpringCacheManager.class, cacheManager);
@@ -61,7 +61,7 @@ class MultipleCacheManagerConfigTest {
     when(cacheProperties.getCachemap()).thenReturn(null);
     when(cacheProperties.setCacheDefaults()).thenReturn(cacheMap);
 
-    CacheManager cacheManager = multipleCacheManagerConfig.redisCacheManager();
+    CacheManager cacheManager = PEMultipleCacheManagerConfig.redisCacheManager();
 
     assertNotNull(cacheManager);
     verify(cacheProperties, times(1)).setCacheDefaults();
@@ -72,7 +72,7 @@ class MultipleCacheManagerConfigTest {
     CustomCompositeCacheManager customCompositeCacheManager =
         mock(CustomCompositeCacheManager.class);
     CacheManager cacheManager =
-        multipleCacheManagerConfig.compositeCacheManager(customCompositeCacheManager);
+        PEMultipleCacheManagerConfig.compositeCacheManager(customCompositeCacheManager);
 
     assertNotNull(cacheManager);
     assertEquals(customCompositeCacheManager, cacheManager);
