@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableCaching
 @ConditionalOnProperty(value = "nearcache.enabled", havingValue = "true")
 @RequiredArgsConstructor
-public class MultipleCacheManagerConfig implements CachingConfigurer {
+public class PEMultipleCacheManagerConfig implements CachingConfigurer {
   private final CacheProperties cacheProperties;
 
   @Autowired(required = false)
