@@ -23,7 +23,7 @@ dependencies {
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
-    implementation("com.nextuple.pe:core-common-util:1.7.52-${build_target}")
+    implementation("com.nextuple.pe:core-common-util:1.6.54-${build_target}")
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
