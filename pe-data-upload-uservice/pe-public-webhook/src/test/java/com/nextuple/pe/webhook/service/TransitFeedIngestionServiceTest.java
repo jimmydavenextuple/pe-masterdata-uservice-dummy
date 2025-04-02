@@ -10,7 +10,7 @@ package com.nextuple.pe.webhook.service;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import com.nextuple.master.data.integration.enums.ActionEnum;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.pe.webhook.domain.dtos.MasterDataIngestionDto;
 import com.nextuple.pe.webhook.domain.inbound.FeedRequest;
 import com.nextuple.pe.webhook.producer.KafkaProducer;

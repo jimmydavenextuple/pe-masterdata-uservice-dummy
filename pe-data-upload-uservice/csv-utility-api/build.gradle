@@ -23,7 +23,7 @@ dependencies {
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
-    implementation("com.nextuple.pe:core-common-util:1.6.54-${build_target}")
+    implementation("com.nextuple.pe:core-common-util:1.7.52-${build_target}")
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
@@ -31,6 +31,10 @@ dependencies {
     implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
     implementation 'commons-io:commons-io:2.13.0'
 
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0") {
+        exclude group: "io.swagger.core.v3", module:"swagger-annotations"
+    }
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.27'
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
     implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")
     implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")

@@ -7,7 +7,7 @@
 
 package com.nextuple.pe.webhook.domain.dtos;
 
-import com.nextuple.master.data.integration.enums.ActionEnum;
+import com.nextuple.common.enums.ActionEnum;
 import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 import lombok.AllArgsConstructor;

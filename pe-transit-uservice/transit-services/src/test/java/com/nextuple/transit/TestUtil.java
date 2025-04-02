@@ -8,6 +8,7 @@
 package com.nextuple.transit;
 
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.response.PreSignedUrlResponse;
 import com.nextuple.jobs.framework.common.domain.enums.JobStatusEnum;
@@ -16,7 +17,6 @@ import com.nextuple.jobs.framework.common.domain.outbound.FileMetaDataResponse;
 import com.nextuple.jobs.framework.common.domain.outbound.FileResponse;
 import com.nextuple.jobs.framework.common.domain.outbound.JobResponse;
 import com.nextuple.jobs.framework.common.domain.pojo.JobDetailsDto;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.postal.code.timezone.api.domain.dto.PostalCodeTimezoneDto;
 import com.nextuple.postal.code.timezone.api.domain.outbound.PostalCodeResponse;

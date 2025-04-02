@@ -38,7 +38,6 @@ dependencies {
     implementation "jakarta.validation:jakarta.validation-api:3.0.2"
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
     implementation 'io.swagger.core.v3:swagger-models:2.2.0'
-    implementation(project(":pe-common:master-data-integration-framework"))
 }
 
 test {

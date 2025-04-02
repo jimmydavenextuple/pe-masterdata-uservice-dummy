@@ -12,6 +12,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.ConfigException;
 import com.nextuple.common.response.error.ErrorPayload;
@@ -20,7 +21,6 @@ import com.nextuple.common.response.error.FieldError;
 import com.nextuple.common.util.DateUtil;
 import com.nextuple.jobs.framework.common.utils.ExceptionUtils;
 import com.nextuple.master.data.integration.TestUtil;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.enums.TaskInformation;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.mocks.MockDto;

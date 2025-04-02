@@ -13,9 +13,9 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.master.data.integration.dto.ResponseDto;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.outbound.BatchResponse;
 import com.nextuple.master.data.integration.service.ErrorHandlingService;

@@ -8,10 +8,10 @@ package com.nextuple.transit.consumer.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.nextuple.common.context.CurrentThreadContext;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.master.data.integration.dto.ResponseDto;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.enums.TaskInformation;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.outbound.BatchResponse;

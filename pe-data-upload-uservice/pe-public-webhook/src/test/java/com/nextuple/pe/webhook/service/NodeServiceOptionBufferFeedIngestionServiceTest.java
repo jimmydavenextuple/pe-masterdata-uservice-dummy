@@ -12,7 +12,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.nextuple.master.data.integration.enums.ActionEnum;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.node.carrier.consumer.dto.NodeServiceOptionBufferFeedDto;
 import com.nextuple.pe.webhook.domain.dtos.MasterDataIngestionDto;
 import com.nextuple.pe.webhook.domain.inbound.FeedRequest;

@@ -10,9 +10,9 @@ package com.nextuple.pe.webhook.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.master.data.integration.dto.ResponseDto;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.outbound.BatchResponse;
 import com.nextuple.pe.webhook.service.impl.CalendarFeedHandlingService;
