@@ -11,6 +11,7 @@ import static com.nextuple.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 import static com.nextuple.common.constants.CommonConstants.DESC_SORT_ORDER;
 import static com.nextuple.common.constants.CommonConstants.ORG_ID;
 
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.enums.ApplicationLayer;
 import com.nextuple.common.enums.ExceptionCodeMapping;
 import com.nextuple.common.exception.CommonServiceException;
@@ -19,7 +20,6 @@ import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.common.util.ObjectUtil;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.node.domain.feign.NodeFeign;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;

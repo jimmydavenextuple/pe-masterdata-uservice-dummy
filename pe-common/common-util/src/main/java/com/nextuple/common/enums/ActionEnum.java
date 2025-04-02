@@ -5,7 +5,7 @@
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
  */
 
-package com.nextuple.master.data.integration.enums;
+package com.nextuple.common.enums;
 
 public enum ActionEnum {
   CREATE,

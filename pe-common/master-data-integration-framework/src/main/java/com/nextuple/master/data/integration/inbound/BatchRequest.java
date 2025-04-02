@@ -7,8 +7,8 @@
 
 package com.nextuple.master.data.integration.inbound;
 
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.master.data.integration.constants.BatchApiConstants;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

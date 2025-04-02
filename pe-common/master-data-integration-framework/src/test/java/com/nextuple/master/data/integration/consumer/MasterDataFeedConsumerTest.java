@@ -8,8 +8,8 @@
 package com.nextuple.master.data.integration.consumer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.util.DateUtil;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import java.util.Date;
 import java.util.List;
