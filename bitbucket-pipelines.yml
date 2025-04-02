@@ -308,6 +308,8 @@ definitions:
         script:
           - microdnf install git
           - microdnf install findutils
+          - sed -i 's/release: false/release: true/' version.yml
+          - cat version.yml
           - bash ./gradlew -Pbuild_target=RELEASE clean build artifactoryPublish
     - step: &deploy
         caches:

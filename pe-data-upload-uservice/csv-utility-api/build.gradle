@@ -31,6 +31,10 @@ dependencies {
     implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
     implementation 'commons-io:commons-io:2.13.0'
 
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0") {
+        exclude group: "io.swagger.core.v3", module:"swagger-annotations"
+    }
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.27'
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
     implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")
     implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
