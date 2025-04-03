@@ -23,6 +23,7 @@ import com.nextuple.pe.webhook.domain.inbound.FeedRequest;
 import com.nextuple.transit.consumer.dto.TransferScheduleDto;
 import com.nextuple.transit.consumer.dto.TransitBufferFeedDto;
 import com.nextuple.transit.consumer.dto.TransitFeedDto;
+import com.nextuple.vendor.consumer.dto.VendorFeedDto;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -202,6 +203,16 @@ public class TestUtil {
     return feedRequest;
   }
 
+  public FeedRequest<MasterDataIngestionDto<?>> getVendorFeedIngestionRequest(ActionEnum action) {
+    FeedRequest<MasterDataIngestionDto<?>> feedRequest = new FeedRequest<>();
+    MasterDataIngestionDto<VendorFeedDto> vendorFeedIngestionRequest =
+        new MasterDataIngestionDto<>();
+    vendorFeedIngestionRequest.setAction(action);
+    vendorFeedIngestionRequest.setPayload(createVendorFeedDto());
+    feedRequest.setData(List.of(vendorFeedIngestionRequest));
+    return feedRequest;
+  }
+
   public FeedRequest<MasterDataIngestionDto<?>> getCarrierServiceCalendarFeedIngestionRequest(
       ActionEnum action) {
     FeedRequest<MasterDataIngestionDto<?>> feedRequest = new FeedRequest<>();
@@ -278,6 +289,15 @@ public class TestUtil {
         .description("description-1")
         .nodeId("node-id-1")
         .effectiveDate("10-02-2024")
+        .build();
+  }
+
+  public VendorFeedDto createVendorFeedDto() {
+    return VendorFeedDto.builder()
+        .vendorId("Vendor-1")
+        .orgId("NEXTUPLE")
+        .vendorType("Store")
+        .vendorDescription("Vendor 1")
         .build();
   }
 

@@ -156,7 +156,7 @@ class VendorBatchServiceImplTest {
   }
 
   @Test
-  void handleNodeRetryTest() throws CommonServiceException {
+  void handleNodeRetryTest() {
     BatchRequest<?> inputFeedRequest = testUtil.getVendorFeedRequest(ActionEnum.CREATE);
     Mockito.when(vendorFeign.createVendor(any()))
         .thenReturn(testUtil.getBaseResponseOfVendorFeed("Vendor created successfully"));
@@ -165,5 +165,53 @@ class VendorBatchServiceImplTest {
     Assertions.assertEquals("Vendor created successfully", responseMessage);
 
     verify(vendorFeign, times(1)).createVendor(any());
+  }
+
+  @Test
+  void checkForOutdatedRecordTestWhenRecordIsOutdated() throws VendorDomainException {
+    BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
+    batchRequest.setReceivedTimestamp(new Date());
+    VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto();
+    vendorDomainDto.setLastModifiedDate(DateUtil.addDaysToDate(new Date(), 1));
+    when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
+        .thenReturn(Optional.of(vendorDomainDto));
+    CommonServiceException exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> vendorBatchService.checkForOutdatedRecord(batchRequest));
+    Assertions.assertEquals("Can't process the record as it's outdated", exception.getMessage());
+  }
+
+  @Test
+  void checkForOutdatedRecordTestWhenRecordIsNotOutdated() throws VendorDomainException {
+    BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
+    batchRequest.setReceivedTimestamp(new Date());
+    VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto();
+    vendorDomainDto.setLastModifiedDate(DateUtil.addDaysToDate(new Date(), -1));
+    when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
+        .thenReturn(Optional.of(vendorDomainDto));
+    Assertions.assertDoesNotThrow(() -> vendorBatchService.checkForOutdatedRecord(batchRequest));
+  }
+
+  @Test
+  void checkForOutdatedRecordTestWhenVendorDoesNotExist() throws VendorDomainException {
+    BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
+    batchRequest.setReceivedTimestamp(new Date());
+    when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
+        .thenReturn(Optional.empty());
+    Assertions.assertDoesNotThrow(() -> vendorBatchService.checkForOutdatedRecord(batchRequest));
+  }
+
+  @Test
+  void checkForOutdatedRecordTestWhenVendorDomainExceptionIsThrown() throws VendorDomainException {
+    BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
+    batchRequest.setReceivedTimestamp(new Date());
+    when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
+        .thenThrow(
+            new VendorDomainException(
+                "Vendor not found",
+                batchRequest.getPayload().getVendorId(),
+                batchRequest.getPayload().getOrgId()));
+    Assertions.assertDoesNotThrow(() -> vendorBatchService.checkForOutdatedRecord(batchRequest));
   }
 }

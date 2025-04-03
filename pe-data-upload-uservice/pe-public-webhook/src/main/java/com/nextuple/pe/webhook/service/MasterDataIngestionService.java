@@ -11,18 +11,7 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.jobs.framework.common.enums.ModuleEnum;
 import com.nextuple.pe.webhook.domain.dtos.MasterDataIngestionDto;
 import com.nextuple.pe.webhook.domain.inbound.FeedRequest;
-import com.nextuple.pe.webhook.service.impl.CalendarFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.CarrierFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.CarrierServiceCalendarFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.NodeCalendarFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.NodeCarrierFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.NodeFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.NodeServiceOptionBufferFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.NodeServiceOptionFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.PickupCalendarFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.TransferScheduleFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.TransitBufferFeedHandlingService;
-import com.nextuple.pe.webhook.service.impl.TransitFeedHandlingService;
+import com.nextuple.pe.webhook.service.impl.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +36,7 @@ public class MasterDataIngestionService {
   private final NodeServiceOptionBufferFeedHandlingService
       nodeServiceOptionBufferFeedHandlingService;
   private final TransferScheduleFeedHandlingService transferScheduleFeedHandlingService;
+  private final VendorFeedHandlingService vendorFeedHandlingService;
 
   public void processMasterDataIngestionData(
       String moduleName,
@@ -92,6 +82,9 @@ public class MasterDataIngestionService {
         break;
       case TRANSFER_SCHEDULES:
         transferScheduleFeedHandlingService.publishRecords(masterDataIngestionFeedRequest, orgId);
+        break;
+      case VENDOR:
+        vendorFeedHandlingService.publishRecords(masterDataIngestionFeedRequest, orgId);
         break;
       default:
         throw new CommonServiceException(
