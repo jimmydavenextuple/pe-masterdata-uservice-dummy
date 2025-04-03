@@ -23,7 +23,7 @@ import org.springframework.util.CollectionUtils;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransferScheduleCacheValue extends AdditionalAttributes  implements CacheValue {
+public class TransferScheduleCacheValue extends AdditionalAttributes implements CacheValue {
   private List<TransferScheduleRangeResponse> transferScheduleResponseList;
 
   @Override
