@@ -55,7 +55,7 @@ import java.lang.annotation.Target;
                                                                   }
                                                               }"""),
               @ExampleObject(
-                  summary = "vendorId not passed.",
+                  summary = "VendorId not passed.",
                   name =
                       "A 400 error code indicates that the vendorId is not passed and it is a mandatory field.",
                   value =

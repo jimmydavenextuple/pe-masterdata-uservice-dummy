@@ -1,19 +1,20 @@
 package com.nextuple.vendor.domain.outbound;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class VendorResponse implements Serializable {
+public class VendorResponse extends AdditionalAttributes implements Serializable {
   @Schema(description = "Unique identifier of the vendor", example = "vendor-101")
   String vendorId;
 
