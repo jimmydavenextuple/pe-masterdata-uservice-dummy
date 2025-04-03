@@ -12,6 +12,7 @@ public class TaskConstants {
   public static final String UPDATE = "UPDATE";
   public static final String DELETE = "DELETE";
   public static final String NODE = "NODE";
+  public static final String VENDOR = "VENDOR";
   public static final String CARRIER = "CARRIER";
   public static final String NODE_CARRIER = "NODE_CARRIER";
   public static final String NODE_SERVICE_OPTION_BUFFER = "NODE_SERVICE_OPTION_BUFFER";

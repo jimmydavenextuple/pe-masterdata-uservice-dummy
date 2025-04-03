@@ -1,0 +1,47 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+jar{
+    enabled = true
+}
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation(project(":pe-vendor-uservice:vendor-persistence-domain"))
+    implementation(project(":pe-vendor-uservice:vendor-persistence-postgres"))
+    implementation(project(":pe-configuration-uservice:configuration-api-domain"))
+
+    testImplementation(platform("org.junit:junit-bom:5.9.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
+    testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
+    implementation(project(":pe-vendor-uservice:vendor-api-domain"))
+    runtimeOnly 'org.postgresql:postgresql:42.7.2'
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-common:common-domain"))
+    implementation(project(":pe-common:common-postgres"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-producer"))
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.1'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
+    implementation 'io.swagger.core.v3:swagger-models:2.2.0'
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.named('test') {
+    dependsOn ':pe-vendor-uservice:vendor-persistence-postgres:jar'
+    dependsOn ':pe-vendor-uservice:vendor-persistence-domain:jar'
+    dependsOn ':pe-configuration-uservice:configuration-api-domain:jar'
+    dependsOn ':pe-vendor-uservice:vendor-api-domain:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache-producer:jar'
+    dependsOn ':pe-common:common-util:jar'
+    dependsOn ':pe-common:common-postgres:jar'
+    dependsOn ':pe-common:common-domain:jar'
+    dependsOn ':pe-common:nfs-near-cache:core-near-cache:jar'
+}

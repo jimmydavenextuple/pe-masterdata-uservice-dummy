@@ -5,30 +5,32 @@
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
  */
 
-package com.nextuple.master.data.integration.enums;
+package com.nextuple.vendor.persistence.util;
 
-import com.nextuple.master.data.integration.constants.TaskConstants;
+import com.nextuple.vendor.persistence.domain.VendorDomainDto;
+import com.nextuple.vendor.persistence.entity.VendorEntity;
+import java.util.*;
 
-public enum TaskInformation {
-  NODE_FEED(TaskConstants.NODE),
-  VENDOR_FEED(TaskConstants.VENDOR),
-  CARRIER_FEED(TaskConstants.CARRIER),
-  NODE_CARRIER_FEED(TaskConstants.NODE_CARRIER),
-  NODE_SERVICE_OPTION_BUFFER_FEED(TaskConstants.NODE_SERVICE_OPTION_BUFFER),
-  PROCESSING_LEAD_TIME(TaskConstants.PROCESSING_LEAD_TIME),
-  CALENDAR_FEED(TaskConstants.CALENDAR),
-  NODE_CALENDAR_FEED(TaskConstants.NODE_CALENDAR),
-  CARRIER_SERVICE_CALENDAR_FEED(TaskConstants.CARRIER_SERVICE_CALENDAR),
-  PICKUP_CALENDAR_FEED(TaskConstants.PICKUP_CALENDAR),
-  TRANSIT_FEED(TaskConstants.TRANSIT),
-  TRANSIT_BUFFER_FEED(TaskConstants.TRANSIT_BUFFER);
-  private final String taskType;
+public class TestUtil {
 
-  TaskInformation(String taskType) {
-    this.taskType = taskType;
+  public static final String VENDOR_ID = "vendor-1";
+  public static final String ORG_ID = "org-1";
+
+  public com.nextuple.vendor.persistence.domain.VendorDomainDto getVendorDomainDto() {
+    return VendorDomainDto.builder()
+        .vendorId("vendor-1")
+        .vendorDescription("vendor-description")
+        .vendorType("Type 1")
+        .orgId("org-1")
+        .build();
   }
 
-  public String getTaskType() {
-    return taskType;
+  public VendorEntity getVendorEntity() {
+    return VendorEntity.builder()
+        .vendorId("vendor-1")
+        .vendorDescription("vendor-description")
+        .vendorType("Type 1")
+        .orgId("org-1")
+        .build();
   }
 }
