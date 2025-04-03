@@ -57,8 +57,6 @@ public class VendorPersistenceServiceImpl
   public void deleteVendor(VendorDomainDto vendorDomainDto) throws VendorDomainException {
     try {
       delete(vendorDomainDto);
-      // todo : add removal of item vendor mapping
-      // todo : add removal of vendors associated with this vendor.
     } catch (Exception e) {
       logger.error(String.valueOf(e), "Unable to delete vendor");
       throw new VendorDomainException(

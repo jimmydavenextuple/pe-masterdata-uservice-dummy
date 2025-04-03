@@ -40,24 +40,26 @@ import java.lang.annotation.Target;
                   name =
                       "A 404 error code indicates that vendor is not found with the given details.",
                   value =
-                      "{\n"
-                          + "    \"success\": false,\n"
-                          + "    \"requestId\": \"b46b2e8e-128a-4424-9db5-5615c7f2788d\",\n"
-                          + "    \"timestamp\": 1679576978020,\n"
-                          + "    \"message\": \"Vendor not found with given details\",\n"
-                          + "    \"payload\": {\n"
-                          + "        \"type\": \"ERROR\",\n"
-                          + "        \"code\": 6001,\n"
-                          + "        \"fields\": {\n"
-                          + "            \"nodeId\": {\n"
-                          + "                \"rejectedValue\": \"123\"\n"
-                          + "            },\n"
-                          + "            \"orgId\": {\n"
-                          + "                \"rejectedValue\": \"BAY\"\n"
-                          + "            }\n"
-                          + "        }\n"
-                          + "    }\n"
-                          + "}")
+                      """
+    {
+        "success": false,
+        "requestId": "b46b2e8e-128a-4424-9db5-5615c7f2788d",
+        "timestamp": 1679576978020,
+        "message": "Vendor not found with given details",
+        "payload": {
+            "type": "ERROR",
+            "code": 6001,
+            "fields": {
+                "nodeId": {
+                    "rejectedValue": "123"
+                },
+                "orgId": {
+                    "rejectedValue": "BAY"
+                }
+            }
+        }
+    }
+    """)
             }))
 @ApiResponse(
     responseCode = "500",
@@ -71,13 +73,15 @@ import java.lang.annotation.Target;
                   name =
                       "A 500 error code indicates that there was some error on the server while processing the request.",
                   value =
-                      "{\n"
-                          + "    \"success\": false,\n"
-                          + "    \"timestamp\": \"1670589273234\",\n"
-                          + "    \"payload\": {\n"
-                          + "        \"type\": \"ERROR\",\n"
-                          + "        \"code\": 2\n"
-                          + "    }\n"
-                          + "}")
+                      """
+    {
+        "success": false,
+        "timestamp": "1670589273234",
+        "payload": {
+            "type": "ERROR",
+            "code": 2
+        }
+    }
+    """)
             }))
 public @interface DeleteVendorDoc {}

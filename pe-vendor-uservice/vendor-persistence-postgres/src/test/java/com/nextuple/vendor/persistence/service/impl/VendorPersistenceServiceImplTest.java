@@ -23,7 +23,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class VendorPersistenceServiceImplTest {
+class VendorPersistenceServiceImplTest {
   @Mock private VendorRepository vendorRepository;
   @Mock private VendorEntityMapper vendorEntityMapper;
   @InjectMocks private VendorPersistenceServiceImpl vendorPersistenceService;

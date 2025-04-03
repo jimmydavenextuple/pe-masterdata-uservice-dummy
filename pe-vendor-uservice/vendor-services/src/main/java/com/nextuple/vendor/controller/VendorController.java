@@ -4,6 +4,7 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.vendor.controller.docs.CreateVendorDoc;
 import com.nextuple.vendor.controller.docs.DeleteVendorDoc;
+import com.nextuple.vendor.controller.docs.GetVendorDetailsDoc;
 import com.nextuple.vendor.controller.docs.UpdateVendorDetailsDoc;
 import com.nextuple.vendor.domain.VendorConstants;
 import com.nextuple.vendor.domain.inbound.VendorRequest;
@@ -89,7 +90,7 @@ public class VendorController {
     }
   }
 
-  // todo - add doc for get vendor details
+  @GetVendorDetailsDoc
   @GetMapping("/{vendorId}/{orgId}")
   public ResponseEntity<BaseResponse<VendorResponse>> getVendorDetails(
       @NotBlank(message = "vendorId can't be empty")

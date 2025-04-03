@@ -24,7 +24,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class VendorControllerTest {
+class VendorControllerTest {
   @InjectMocks private VendorController vendorController;
   @InjectMocks private TestUtil testUtil;
   @Mock private VendorService vendorService;

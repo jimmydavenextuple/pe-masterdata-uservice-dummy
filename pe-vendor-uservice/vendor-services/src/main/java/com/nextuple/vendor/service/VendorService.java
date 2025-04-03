@@ -30,8 +30,7 @@ public class VendorService {
   private static final String VENDOR_ID = "vendorId";
   private static final String VENDOR_EXCEPTION_MESSAGE = "Vendor not found with given details";
 
-  public VendorResponse createVendor(VendorRequest vendorRequest)
-      throws CommonServiceException, VendorDomainException {
+  public VendorResponse createVendor(VendorRequest vendorRequest) throws VendorDomainException {
     var vendorDetails = INSTANCE.vendorRequestToVendorEntity(vendorRequest);
     return INSTANCE.toVendorResponse(vendorPersistenceService.saveVendorDetails(vendorDetails));
   }

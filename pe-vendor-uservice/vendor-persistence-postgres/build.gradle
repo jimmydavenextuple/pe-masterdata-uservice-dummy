@@ -14,7 +14,6 @@ dependencies {
 
     implementation(project(":pe-vendor-uservice:vendor-api-domain"))
     implementation(project(":pe-vendor-uservice:vendor-persistence-domain"))
-    implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-common:common-util"))
     implementation(project(":pe-common:common-domain"))
     implementation(project(":pe-common:common-postgres"))

@@ -20,7 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class VendorServiceTest {
+class VendorServiceTest {
   @InjectMocks private VendorService vendorService;
   @InjectMocks private TestUtil testUtil;
   @Mock private VendorPersistenceService vendorPersistenceService;
