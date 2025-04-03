@@ -176,6 +176,10 @@ master-data:
     topic-names: INTERNAL.DEV.PE.NODE_INTEGRATION
     group-id: node-master-dev
     dlt-topic: INTERNAL.DEV.PE.NODE_INTEGRATION.DLT
+  vendor:
+    topic-names: INTERNAL.DEV.PE.VENDOR_INTEGRATION
+    group-id: vendor-master-dev
+    dlt-topic: INTERNAL.DEV.PE.VENDOR_INTEGRATION.DLT
   node-carrier:
     topic-names: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-dev
