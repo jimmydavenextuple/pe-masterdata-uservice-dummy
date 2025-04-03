@@ -27,6 +27,7 @@ public class VendorEntity extends CommonBaseEntity {
   @Column(name = "vendor_id")
   String vendorId;
 
+  @Id
   @Column(name = "org_id")
   String orgId;
 

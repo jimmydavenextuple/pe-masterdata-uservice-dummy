@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VendorDomainDto extends DomainBaseEntity implements Serializable {
+  private static final long serialVersionUID = 1240891589171888066L;
   String vendorId;
   String orgId;
   String vendorDescription;
