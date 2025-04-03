@@ -7,8 +7,8 @@
 
 package com.nextuple.node.carrier.domain.entity;
 
-import com.nextuple.common.base.CommonBaseEntity;
 import com.nextuple.core.event.listeners.CommonEntityListener;
+import com.nextuple.postgres.entity.CommonBaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -20,6 +20,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @IdClass(NodeCarrierSelectionId.class)
@@ -30,6 +31,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 @EntityListeners(CommonEntityListener.class)
 @Table(name = "node_carrier_selection")
+@SuperBuilder
 public class NodeCarrierSelectionEntity extends CommonBaseEntity {
   @Id
   @Column(name = "org_id")

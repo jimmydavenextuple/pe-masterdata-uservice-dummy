@@ -28,6 +28,7 @@ class ItemBufferEntityTest {
     assertNull(itemBufferEntity.getBufferHours());
     assertNull(itemBufferEntity.getBufferStartDate());
     assertNull(itemBufferEntity.getBufferEndDate());
+    assertNull(itemBufferEntity.getCustomAttributes());
   }
 
   @Test

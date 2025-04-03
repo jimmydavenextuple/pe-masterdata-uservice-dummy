@@ -90,6 +90,8 @@ class OptimizationAndCostTypesMappingControllerTest {
     assertEquals(request.getJavaClassName(), response.getBody().getPayload().getJavaClassName());
     assertEquals(request.getCostTypes(), response.getBody().getPayload().getCostTypes());
     assertEquals(request.getDescription(), response.getBody().getPayload().getDescription());
+    assertEquals(
+        request.getCustomAttributes(), response.getBody().getPayload().getCustomAttributes());
     verify(optimizationAndCostTypesMappingService, times(1))
         .updateOptimizationAndCostTypesMappingByIdAndOrgId(
             anyLong(), anyString(), any(UpdateOptimizationAndCostTypesMappingRequest.class));

@@ -97,19 +97,20 @@ public class TransitBufferV2ServiceImpl implements TransitBufferV2Service {
         orgId, destinationGeozone, requestDate, horizonDays, transitBufferEntities);
     Map<String, List<TransitBufferDetailsDto>> transitBuffersMap =
         getTransitBuffersMap(transitBufferEntities);
-    return transitBuffersMap.entrySet().stream()
-        .map(
-            entry -> {
-              String[] details = entry.getKey().split("\\|");
-              return TransitBufferDetailsResponse.builder()
-                  .orgId(details[0])
-                  .destinationGeozone(details[1])
-                  .sourceGeozone(details[2])
-                  .carrierServiceId(details[3])
-                  .transitBuffers(entry.getValue())
-                  .build();
-            })
-        .toList();
+    return (List<TransitBufferDetailsResponse>)
+        transitBuffersMap.entrySet().stream()
+            .map(
+                entry -> {
+                  String[] details = entry.getKey().split("\\|");
+                  return TransitBufferDetailsResponse.builder()
+                      .orgId(details[0])
+                      .destinationGeozone(details[1])
+                      .sourceGeozone(details[2])
+                      .carrierServiceId(details[3])
+                      .transitBuffers(entry.getValue())
+                      .build();
+                })
+            .toList();
   }
 
   @Transactional
@@ -344,6 +345,7 @@ public class TransitBufferV2ServiceImpl implements TransitBufferV2Service {
               .bufferDays(transitBufferV2DomainDto.getBufferDays())
               .bufferStartDate(transitBufferV2DomainDto.getBufferStartDate())
               .bufferEndDate(transitBufferV2DomainDto.getBufferEndDate())
+              .customAttributes(transitBufferV2DomainDto.getCustomAttributes())
               .build());
       transitBuffersMap.put(key, transitBufferDetailsDtoList);
     }

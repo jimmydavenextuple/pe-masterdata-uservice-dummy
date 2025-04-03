@@ -7,20 +7,23 @@
 
 package com.nextuple.transit.cache.domain;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.core.cache.domain.CacheValue;
 import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.util.CollectionUtils;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransferScheduleCacheValue implements CacheValue {
+public class TransferScheduleCacheValue extends AdditionalAttributes implements CacheValue {
   private List<TransferScheduleRangeResponse> transferScheduleResponseList;
 
   @Override

@@ -23,6 +23,7 @@ class ZoneEntityTest {
     assertNull(zoneEntity.getDestinationGeozone());
     assertNull(zoneEntity.getCarrierServiceId());
     assertNull(zoneEntity.getZone());
+    assertNull(zoneEntity.getCustomAttributes());
   }
 
   @Test

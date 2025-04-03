@@ -26,6 +26,7 @@ class TransitBufferV2EntityTest {
     assertNull(transitBufferV2EntityTest.getBufferStartDate());
     assertNull(transitBufferV2EntityTest.getBufferEndDate());
     assertNull(transitBufferV2EntityTest.getTransitBufferConfigRequestId());
+    assertNull(transitBufferV2EntityTest.getCustomAttributes());
   }
 
   @Test

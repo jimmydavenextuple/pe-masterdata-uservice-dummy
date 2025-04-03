@@ -7,6 +7,8 @@
 
 package com.nextuple.transit.domain.pojo;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public interface ProjectedTransitEntity {
 
   String getSourceGeozone();
@@ -14,4 +16,6 @@ public interface ProjectedTransitEntity {
   String getDestinationGeozone();
 
   Float getTransitDays();
+
+  JsonNode getCustomAttributes();
 }

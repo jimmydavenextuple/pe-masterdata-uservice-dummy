@@ -82,6 +82,9 @@ class GroupDefinitionServiceTest {
     GroupDefinitionResponse groupDefinitionResponse =
         groupDefinitionService.processAddGroupDefinition(groupDefinitionRequest);
     assertEquals(testUtil.getGroupDefinitionEntity().getId(), groupDefinitionResponse.getId());
+    assertEquals(
+        testUtil.getGroupDefinitionEntity().getCustomAttributes(),
+        groupDefinitionResponse.getCustomAttributes());
 
     verify(groupDefinitionDomain, times(1))
         .fetchGroupDefinitionListByOrgIdAndSourcingAttributesDefinitionIdAndReqAttributesValueAndOptionalAttributeValue(

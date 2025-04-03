@@ -8,6 +8,7 @@
 package com.nextuple.sourcing.cost.config.domain.entity;
 
 import com.nextuple.core.event.listeners.CommonEntityListener;
+import com.nextuple.postgres.entity.CommonBaseEntity;
 import com.nextuple.sourcing.cost.config.enums.ItineraryStatusEnum;
 import com.nextuple.sourcing.cost.config.enums.LevelAppliedEnum;
 import jakarta.persistence.Column;
@@ -19,11 +20,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
@@ -31,12 +32,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Builder
+@SuperBuilder
 @EntityListeners(CommonEntityListener.class)
 @Table(
     name = "cost_itinerary_and_factors",
     indexes = @Index(name = "cost_itinerary_and_factors_id_orgId", columnList = "id,org_id"))
-public class CostItineraryAndFactorsEntity {
+public class CostItineraryAndFactorsEntity extends CommonBaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")

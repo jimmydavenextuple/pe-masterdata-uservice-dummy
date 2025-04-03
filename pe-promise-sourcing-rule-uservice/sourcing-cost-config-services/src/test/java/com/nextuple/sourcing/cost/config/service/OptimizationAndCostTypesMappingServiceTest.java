@@ -79,6 +79,7 @@ class OptimizationAndCostTypesMappingServiceTest {
     assertNotNull(response);
     assertEquals(request.getOrgId(), response.getOrgId());
     assertEquals(request.getCostTypes(), response.getCostTypes());
+    assertEquals(request.getCustomAttributes(), response.getCustomAttributes());
     verify(optimizationAndCostTypesMappingRepository, times(1))
         .findByOrgIdAndOptimizationStrategy(anyString(), anyString());
     verify(tenantCostTypeRepository, times(1)).findByOrgIdAndCostTypeIn(anyString(), anySet());

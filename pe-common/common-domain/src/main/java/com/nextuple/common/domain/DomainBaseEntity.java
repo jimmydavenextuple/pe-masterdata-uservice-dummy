@@ -6,6 +6,7 @@
  */
 package com.nextuple.common.domain;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,4 +22,6 @@ public class DomainBaseEntity implements AuditService {
   private String updatedBy;
   private Date createdDate;
   private Date lastModifiedDate;
+
+  private JsonNode customAttributes;
 }

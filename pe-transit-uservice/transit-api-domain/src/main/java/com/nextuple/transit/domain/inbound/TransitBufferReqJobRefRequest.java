@@ -7,20 +7,23 @@
 
 package com.nextuple.transit.domain.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.transit.domain.enums.TransitBufferReqJobRefEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class TransitBufferReqJobRefRequest implements Serializable {
+public class TransitBufferReqJobRefRequest extends AdditionalAttributes implements Serializable {
 
   @Schema(description = "Unique identifier of the external reference or job.", example = "ref1232")
   @Length(max = 50)

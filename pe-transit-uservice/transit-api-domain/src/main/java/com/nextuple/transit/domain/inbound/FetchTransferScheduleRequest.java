@@ -9,21 +9,24 @@ package com.nextuple.transit.domain.inbound;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.OptBoolean;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.List;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.joda.time.LocalDate;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class FetchTransferScheduleRequest implements Serializable {
+@SuperBuilder
+public class FetchTransferScheduleRequest extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = 7032221653986642216L;
 
   @Schema(

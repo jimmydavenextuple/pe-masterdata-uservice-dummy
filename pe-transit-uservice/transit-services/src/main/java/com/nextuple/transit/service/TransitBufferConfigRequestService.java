@@ -530,6 +530,8 @@ public class TransitBufferConfigRequestService {
     transitBufferConfigRequest.setEndDate(transitBufferConfigRequestEntity.getEndDate());
     transitBufferConfigRequest.setStartDate(transitBufferConfigRequestEntity.getStartDate());
     transitBufferConfigRequest.setCreatedBy(createdBy);
+    transitBufferConfigRequest.setCustomAttributes(
+        transitBufferConfigRequestEntity.getCustomAttributes());
     return updateTransitBufferDetails(transitBufferConfigRequest);
   }
 }

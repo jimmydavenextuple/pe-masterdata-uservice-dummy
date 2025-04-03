@@ -7,19 +7,20 @@
 
 package com.nextuple.transit.domain.outbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class TransitResponse implements Serializable {
+@SuperBuilder
+public class TransitResponse extends AdditionalAttributes implements Serializable {
 
   @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE")
   private String orgId;

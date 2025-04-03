@@ -64,6 +64,7 @@ class PostalCodeServiceTest {
 
     PostalCodeResponse received_dto = postalCodeService.createPostalCode(postalCodeRequest);
     assertEquals(postalCodeEntity.getOrgId(), received_dto.getOrgId());
+    assertEquals(postalCodeEntity.getCustomAttributes(), received_dto.getCustomAttributes());
     verify(postalCodePersistenceService, times(1)).savePostalCode(any(PostalCodeDomainDto.class));
   }
 
@@ -79,6 +80,7 @@ class PostalCodeServiceTest {
 
     PostalCodeResponse received_dto = postalCodeService.createPostalCode(postalCodeRequest);
     assertEquals(postalCodeEntity.getOrgId(), received_dto.getOrgId());
+    assertEquals(postalCodeEntity.getCustomAttributes(), received_dto.getCustomAttributes());
     verify(postalCodePersistenceService, times(1)).savePostalCode(any(PostalCodeDomainDto.class));
   }
 
@@ -104,6 +106,8 @@ class PostalCodeServiceTest {
 
     PostalCodeResponse postalCodeResponsePojo = postalCodeService.fetchPostalCode(ORG_ID, ZIP_CODE);
     assertEquals(postalCodeResponsePojo.getOrgId(), postalCodeEntity.getOrgId());
+    assertEquals(
+        postalCodeResponsePojo.getCustomAttributes(), postalCodeEntity.getCustomAttributes());
     verify(postalCodePersistenceService, times(1)).fetchPostalCode(anyString(), anyString());
   }
 
@@ -133,6 +137,7 @@ class PostalCodeServiceTest {
     PostalCodeResponse postalCodeResponse = postalCodeService.updatePostalCode(postalCodeRequest);
     assertEquals(postalCodeRequest.getCountry(), postalCodeResponse.getCountry());
     assertEquals(postalCodeRequest.getCity(), postalCodeResponse.getCity());
+    assertEquals(postalCodeRequest.getCustomAttributes(), postalCodeResponse.getCustomAttributes());
     verify(postalCodePersistenceService, times(1)).fetchPostalCode(anyString(), anyString());
     verify(postalCodePersistenceService, times(1)).savePostalCode(any(PostalCodeDomainDto.class));
   }
@@ -161,6 +166,7 @@ class PostalCodeServiceTest {
     PostalCodeResponse postalCodeResponse =
         postalCodeService.processRemovePostalCode(ORG_ID, ZIP_CODE);
     assertEquals(postalCodeEntity.getOrgId(), postalCodeResponse.getOrgId());
+    assertEquals(postalCodeEntity.getCustomAttributes(), postalCodeResponse.getCustomAttributes());
   }
 
   @Test
@@ -186,6 +192,8 @@ class PostalCodeServiceTest {
     List<PostalCodeResponse> postalCodeEntityList =
         postalCodeService.fetchByPostalCodePrefix(ORG_ID, ZIP_CODE_PREFIX);
     assertEquals(postalCodeEntityList.get(0).getOrgId(), postalCodeEntity.getOrgId());
+    assertEquals(
+        postalCodeEntityList.get(0).getCustomAttributes(), postalCodeEntity.getCustomAttributes());
     verify(postalCodePersistenceService, times(1)).fetchPostalCodeList(anyString(), anyString());
   }
 
@@ -240,6 +248,8 @@ class PostalCodeServiceTest {
     CustomRegionResponse customRegionResponse1 =
         postalCodeService.fetchCustomRegionIdByPostalCode(ORG_ID, ZIP_CODE);
     assertEquals(customRegionResponse1.getId(), customRegionResponse.getId());
+    assertEquals(
+        customRegionResponse1.getCustomAttributes(), customRegionResponse.getCustomAttributes());
     verify(postalCodePersistenceService, times(1)).fetchPostalCode(anyString(), anyString());
   }
 

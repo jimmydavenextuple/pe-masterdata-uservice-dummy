@@ -26,6 +26,7 @@ class TransitEntityTest {
     assertNull(transitEntity.getBufferDays());
     assertNull(transitEntity.getBufferStartDate());
     assertNull(transitEntity.getBufferEndDate());
+    assertNull(transitEntity.getCustomAttributes());
   }
 
   @Test

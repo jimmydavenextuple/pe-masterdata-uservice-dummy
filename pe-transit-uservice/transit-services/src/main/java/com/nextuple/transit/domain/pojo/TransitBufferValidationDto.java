@@ -1,16 +1,17 @@
 package com.nextuple.transit.domain.pojo;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import java.util.Date;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-public class TransitBufferValidationDto {
+public class TransitBufferValidationDto extends AdditionalAttributes {
   private String orgId;
 
   private String carrierServiceId;

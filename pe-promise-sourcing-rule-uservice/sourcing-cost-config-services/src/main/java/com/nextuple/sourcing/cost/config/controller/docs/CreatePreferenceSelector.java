@@ -49,7 +49,10 @@ import java.lang.annotation.Target;
                                                          "id": 117,
                                                          "orgId": "NEXTUPLE_GR",
                                                          "selectorCf": "carrierServiceId",
-                                                         "costType": "NP_COST"
+                                                         "costType": "NP_COST",
+                                                         "customAttributes": {
+                                                           "dynamicAtrr1": true
+                                                         }
                                                      }
                                                  }
                                                           """)

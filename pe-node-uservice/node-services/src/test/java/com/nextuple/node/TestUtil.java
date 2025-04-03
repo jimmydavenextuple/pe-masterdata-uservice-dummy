@@ -7,6 +7,7 @@
 
 package com.nextuple.node;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
@@ -71,6 +72,8 @@ public class TestUtil {
         .shipToHome(SHIP_TO_TIME)
         .timezone(TIME_ZONE)
         .serviceOptionEligibilities(getServiceOptionEligibilities())
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -92,6 +95,8 @@ public class TestUtil {
         .shipToHome(SHIP_TO_TIME)
         .timezone(TIME_ZONE)
         .serviceOptionEligibilities(getServiceOptionEligibilities())
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -104,6 +109,8 @@ public class TestUtil {
         .nodeLabourTier(NODE_LABOUR_TIER)
         .timezone(TIME_ZONE)
         .latitude("3526.5262")
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -125,6 +132,8 @@ public class TestUtil {
         .shipToHome(SHIP_TO_TIME)
         .timezone(TIME_ZONE)
         .serviceOptionEligibilities(getServiceOptionEligibilities())
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -146,6 +155,8 @@ public class TestUtil {
         .state(STATE)
         .timezone(TIME_ZONE)
         .serviceOptionEligibilities(getServiceOptionEligibilities())
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .build();
   }
 
@@ -166,6 +177,8 @@ public class TestUtil {
         .city(CITY)
         .nodeType(NODE_TYPE)
         .nodeLabourTier(NODE_LABOUR_TIER)
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .state(STATE)
         .build();
   }
@@ -188,6 +201,8 @@ public class TestUtil {
         .shipToHome(SHIP_TO_TIME)
         .timezone(TIME_ZONE)
         .serviceOptionEligibilities(getServiceOptionEligibilities())
+        .customAttributes(
+            JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2"))
         .startWorkingTime("08:00")
         .lastWorkingTime("16:00")
         .build();

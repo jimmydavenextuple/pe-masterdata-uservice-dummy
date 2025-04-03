@@ -7,22 +7,23 @@
 
 package com.nextuple.postal.code.timezone.api.domain.dto;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class PostalCodeTimezoneDto implements Serializable {
+public class PostalCodeTimezoneDto extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -4258901633195345045L;
 
   @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE")

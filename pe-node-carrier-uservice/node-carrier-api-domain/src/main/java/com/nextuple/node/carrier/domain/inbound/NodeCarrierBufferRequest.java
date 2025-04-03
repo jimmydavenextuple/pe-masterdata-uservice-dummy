@@ -9,6 +9,7 @@ package com.nextuple.node.carrier.domain.inbound;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.OptBoolean;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.node.carrier.domain.constants.NodeCarrierConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -22,7 +23,7 @@ import org.hibernate.validator.constraints.Length;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class NodeCarrierBufferRequest {
+public class NodeCarrierBufferRequest extends AdditionalAttributes {
 
   @Schema(
       description = NodeCarrierConstants.NODE_ID,

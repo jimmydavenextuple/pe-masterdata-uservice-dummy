@@ -45,14 +45,20 @@ import java.util.List;
                                                        "sourceGeoZone": "M1T",
                                                        "destinationGeozone": "AIJ",
                                                        "carrierServiceId": "Fedex-Air",
-                                                       "zone": "Zone1"
+                                                       "zone": "Zone1",
+                                                       "customAttributes": {
+                                                          "Key": "value"
+                                                       }
                                                      },
                                                      {
                                                        "orgId": "NEXTUPLE_GR",
                                                        "sourceGeoZone": "T2P",
                                                        "destinationGeozone": "AIJ",
                                                        "carrierServiceId": "UPS-Ground",
-                                                       "zone": "Zone2"
+                                                       "zone": "Zone2",
+                                                       "customAttributes": {
+                                                          "Key": "value"
+                                                       }
                                                      }
                                                    ]
                                                  }
