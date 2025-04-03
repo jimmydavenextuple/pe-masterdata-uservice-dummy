@@ -44,8 +44,7 @@ public class VendorController {
   @CreateVendorDoc
   @PostMapping
   public ResponseEntity<BaseResponse<VendorResponse>> createVendor(
-      @Valid @RequestBody VendorRequest vendorRequest)
-      throws CommonServiceException, VendorDomainException {
+      @Valid @RequestBody VendorRequest vendorRequest) throws VendorDomainException {
     logger.debug("Processing vendor creation request");
     try {
       var vendorResponse = vendorService.createVendor(vendorRequest);

@@ -1,6 +1,7 @@
 package com.nextuple.vendor.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -39,7 +40,7 @@ class VendorServiceTest {
   }
 
   @Test
-  void updateVendorDetails_Success() throws VendorDomainException, CommonServiceException {
+  void updateVendorDetailsSuccess() throws VendorDomainException, CommonServiceException {
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto(TestUtil.VENDOR_ID);
     VendorUpdationRequest vendorUpdationRequest = testUtil.getVendorUpdationRequest();
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID))
@@ -59,7 +60,7 @@ class VendorServiceTest {
   }
 
   @Test
-  void updateVendorDetails_VendorNotFound() throws VendorDomainException {
+  void updateVendorDetailsVendorNotFound() throws VendorDomainException {
     VendorUpdationRequest vendorUpdationRequest = testUtil.getVendorUpdationRequest();
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID))
         .thenReturn(Optional.empty());
@@ -75,5 +76,69 @@ class VendorServiceTest {
     Assertions.assertEquals("Vendor not found with given details", exception.getMessage());
     verify(vendorPersistenceService, times(1))
         .findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID);
+  }
+
+  @Test
+  void getVendorDetailsSuccess() throws VendorDomainException, CommonServiceException {
+    VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto(TestUtil.VENDOR_ID);
+    when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
+        .thenReturn(Optional.of(vendorDomainDto));
+
+    VendorResponse response = vendorService.getVendorDetails(TestUtil.VENDOR_ID, TestUtil.ORG_ID);
+
+    Assertions.assertNotNull(response);
+    Assertions.assertEquals(TestUtil.VENDOR_ID, response.getVendorId());
+    verify(vendorPersistenceService, times(1))
+        .findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID);
+  }
+
+  @Test
+  void getVendorDetailsVendorNotFound() throws VendorDomainException {
+    when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
+        .thenReturn(Optional.empty());
+
+    CommonServiceException exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> {
+              vendorService.getVendorDetails(TestUtil.VENDOR_ID, TestUtil.ORG_ID);
+            });
+
+    Assertions.assertEquals("Vendor not found with given details", exception.getMessage());
+    verify(vendorPersistenceService, times(1))
+        .findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID);
+  }
+
+  @Test
+  void deleteVendorSuccess() throws VendorDomainException, CommonServiceException {
+    VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto(TestUtil.VENDOR_ID);
+    when(vendorPersistenceService.findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID))
+        .thenReturn(Optional.of(vendorDomainDto));
+
+    VendorResponse response = vendorService.deleteVendor(TestUtil.VENDOR_ID, TestUtil.ORG_ID);
+
+    Assertions.assertNotNull(response);
+    Assertions.assertEquals(TestUtil.VENDOR_ID, response.getVendorId());
+    verify(vendorPersistenceService, times(1))
+        .findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID);
+    verify(vendorPersistenceService, times(1)).deleteVendor(vendorDomainDto);
+  }
+
+  @Test
+  void deleteVendorNotFound() throws VendorDomainException {
+    when(vendorPersistenceService.findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID))
+        .thenReturn(Optional.empty());
+
+    CommonServiceException exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () -> {
+              vendorService.deleteVendor(TestUtil.VENDOR_ID, TestUtil.ORG_ID);
+            });
+
+    Assertions.assertEquals("Vendor not found with given details", exception.getMessage());
+    verify(vendorPersistenceService, times(1))
+        .findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID);
+    verify(vendorPersistenceService, times(0)).deleteVendor(any(VendorDomainDto.class));
   }
 }
