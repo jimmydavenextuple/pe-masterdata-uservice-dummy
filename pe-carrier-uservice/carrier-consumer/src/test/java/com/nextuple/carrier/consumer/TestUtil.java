@@ -12,9 +12,9 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.carrier.consumer.dto.CarrierFeedDto;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.carrier.persistence.domain.CarrierServiceDomainDto;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.master.data.integration.dto.ResponseDto;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.outbound.BatchResponse;
 

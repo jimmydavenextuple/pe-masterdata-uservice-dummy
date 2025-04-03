@@ -216,6 +216,11 @@ master-data:
     topic-names: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-dev
     dlt-topic: INTERNAL.DEV.PE.TRANSIT_BUFFER_INTEGRATION.DLT
+  transfer-schedule:
+    topic-names: INTERNAL.DEV.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-dev
+    dlt-topic: INTERNAL.DEV.PE.TRANSFER_SCHEDULES.DLT
+    concurrency: 2
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 next-cache:
@@ -237,12 +242,14 @@ platform:
     enabled: false
 neo-platform:
   auth-injector:
+    enabled: true
     token-strategy: generate
     filter:
       enabled: true
     client-uri-mappings:
       my-client: /**
   auth-validator:
+    enabled: true
     application-name: pe-masterdata
     header:
       tenant-id: x-tenant-id

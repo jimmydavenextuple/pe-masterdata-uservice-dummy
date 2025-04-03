@@ -29,4 +29,5 @@ public class TransferScheduleDomainRequest extends AdditionalAttributes {
   private Date endTimeUpperBound;
   private String rule;
   private String ruleName;
+  private Boolean exclusive;
 }

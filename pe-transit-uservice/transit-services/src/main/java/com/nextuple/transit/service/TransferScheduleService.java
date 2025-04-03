@@ -11,9 +11,12 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleBatchRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
+import com.nextuple.transit.domain.outbound.TransferScheduleBatchResponse;
+import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -21,6 +24,10 @@ import org.springframework.data.domain.Page;
 public interface TransferScheduleService {
   TransferScheduleResponse createTransferSchedule(TransferScheduleCreationRequest request)
       throws CommonServiceException, PromiseEngineException;
+
+  TransferScheduleBatchResponse batchTransferSchedules(
+      TransferScheduleBatchRequest transferScheduleCreationRequests, String orgId)
+      throws PromiseEngineException;
 
   List<TransferScheduleResponse> fetchTransferSchedules(String orgId, String dropoffNodeId);
 
@@ -34,6 +41,6 @@ public interface TransferScheduleService {
       FetchTransferScheduleRequest request)
       throws CommonServiceException, PromiseEngineException;
 
-  List<TransferScheduleResponse> fetchTransferSchedulesInRange(
+  List<TransferScheduleRangeResponse> fetchTransferSchedulesInRange(
       TransferScheduleRangeRequest transferScheduleRangeRequest);
 }

@@ -10,6 +10,7 @@ package com.nextuple.transit;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.response.PreSignedUrlResponse;
 import com.nextuple.jobs.framework.common.domain.enums.JobStatusEnum;
@@ -28,20 +29,7 @@ import com.nextuple.transit.domain.dto.TransitBufferDetailsDto;
 import com.nextuple.transit.domain.dto.TransitTimeEntriesDto;
 import com.nextuple.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
 import com.nextuple.transit.domain.enums.TransitBufferReqJobRefEnum;
-import com.nextuple.transit.domain.inbound.DistinctGeozonesResponse;
-import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
-import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
-import com.nextuple.transit.domain.inbound.TransitBufferConfigRequest;
-import com.nextuple.transit.domain.inbound.TransitBufferCreationRequest;
-import com.nextuple.transit.domain.inbound.TransitBufferDeletionRequest;
-import com.nextuple.transit.domain.inbound.TransitBufferReqJobRefRequest;
-import com.nextuple.transit.domain.inbound.TransitBufferRequest;
-import com.nextuple.transit.domain.inbound.TransitBufferV2UpdationRequest;
-import com.nextuple.transit.domain.inbound.TransitDataCreationRequest;
-import com.nextuple.transit.domain.inbound.TransitDataUpdationRequest;
-import com.nextuple.transit.domain.inbound.ZoneRequest;
-import com.nextuple.transit.domain.inbound.ZoneUpdateRequest;
+import com.nextuple.transit.domain.inbound.*;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.domain.outbound.TransitBufferConfigResponse;
 import com.nextuple.transit.domain.outbound.TransitBufferDetailsResponse;
@@ -867,5 +855,134 @@ public class TestUtil {
         .moduleName(RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE)
         .attributeDefinitionId(123L)
         .build();
+  }
+
+  public TransferScheduleBatchRequest getTransferScheduleBatchRequest(DateTime dateTime) {
+    TransferScheduleBatchRequest request = new TransferScheduleBatchRequest();
+    request.setApplyValidation(true);
+    List<TransferScheduleConsumerRequest> batchRequests = new ArrayList<>();
+    batchRequests.add(
+        new TransferScheduleConsumerRequest(
+            1,
+            ActionEnum.CREATE,
+            ORG_ID,
+            "Node1",
+            "Node2",
+            dateTime,
+            dateTime.plusDays(5),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    batchRequests.add(
+        new TransferScheduleConsumerRequest(
+            2,
+            ActionEnum.CREATE,
+            ORG_ID,
+            "Node1",
+            "Node3",
+            dateTime,
+            dateTime.plusDays(5),
+            "ABC:XYZ:002",
+            "TRANSFER_RULE"));
+    batchRequests.add(
+        new TransferScheduleConsumerRequest(
+            3,
+            ActionEnum.CREATE,
+            ORG_ID + "1",
+            "Node1",
+            "Node2",
+            dateTime,
+            dateTime.plusDays(5),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    batchRequests.add(
+        new TransferScheduleConsumerRequest(
+            4,
+            ActionEnum.CREATE,
+            ORG_ID,
+            "Node4",
+            "Node2",
+            dateTime,
+            dateTime.plusDays(5),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    batchRequests.add(
+        new TransferScheduleConsumerRequest(
+            5,
+            ActionEnum.CREATE,
+            ORG_ID,
+            "Node1",
+            "Node4",
+            dateTime,
+            dateTime.plusDays(5),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    batchRequests.add(
+        new TransferScheduleConsumerRequest(
+            6,
+            ActionEnum.CREATE,
+            ORG_ID,
+            "Node1",
+            "Node2",
+            dateTime.plusDays(7),
+            dateTime.plusDays(5),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    batchRequests.add(
+        new TransferScheduleConsumerRequest(
+            7,
+            ActionEnum.CREATE,
+            ORG_ID,
+            "Node1",
+            "Node2",
+            dateTime.plusDays(5),
+            dateTime.plusDays(10),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    batchRequests.add(
+        new TransferScheduleConsumerRequest(
+            8,
+            ActionEnum.DELETE,
+            ORG_ID,
+            "Node1",
+            "Node2",
+            dateTime,
+            dateTime.plusDays(5),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    batchRequests.add(
+        new TransferScheduleConsumerRequest(
+            9,
+            ActionEnum.DELETE,
+            ORG_ID,
+            "Node1",
+            "Node2",
+            dateTime.plusDays(5),
+            dateTime.plusDays(10),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    batchRequests.add(
+        new TransferScheduleConsumerRequest(
+            10,
+            ActionEnum.UPDATE,
+            ORG_ID,
+            "Node1",
+            "Node2",
+            dateTime,
+            dateTime.plusDays(5),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    batchRequests.add(
+        new TransferScheduleConsumerRequest(
+            11,
+            null,
+            ORG_ID,
+            "Node1",
+            "Node2",
+            dateTime,
+            dateTime.plusDays(5),
+            "ABC:XYZ:001",
+            "TRANSFER_RULE"));
+    request.setTransferScheduleConsumerRequests(batchRequests);
+    return request;
   }
 }

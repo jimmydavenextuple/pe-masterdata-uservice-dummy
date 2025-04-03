@@ -10,9 +10,9 @@ package com.nextuple.pe.webhook.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.master.data.integration.dto.ResponseDto;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.outbound.BatchResponse;
 import com.nextuple.pe.webhook.service.impl.CalendarFeedHandlingService;
@@ -24,6 +24,7 @@ import com.nextuple.pe.webhook.service.impl.NodeFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.NodeServiceOptionBufferFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.NodeServiceOptionFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.PickupCalendarFeedHandlingService;
+import com.nextuple.pe.webhook.service.impl.TransferScheduleFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransitBufferFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransitFeedHandlingService;
 import com.nextuple.pe.webhook.util.TestUtil;
@@ -49,6 +50,7 @@ class BatchProcessingServiceTest {
   @Mock PickupCalendarFeedHandlingService pickupCalendarFeedHandlingService;
   @Mock TransitFeedHandlingService transitFeedHandlingService;
   @Mock TransitBufferFeedHandlingService transitBufferFeedHandlingService;
+  @Mock TransferScheduleFeedHandlingService transferScheduleFeedHandlingService;
   @InjectMocks BatchProcessingService batchProcessingService;
   @InjectMocks TestUtil testUtil;
 
@@ -272,6 +274,26 @@ class BatchProcessingServiceTest {
     assertEquals(batchResponse, result);
 
     Mockito.verify(nodeServiceOptionBufferFeedHandlingService).processRecords(any(), any());
+  }
+
+  @Test
+  void testProcessRecordsWithTransferSchedules() throws CommonServiceException {
+    ResponseDto responseDto =
+        testUtil.createResponseDto(1, 200, "Transfer Schedules created successfully");
+    List<ResponseDto> responseDtoList = List.of(responseDto);
+    BatchResponse batchResponse = testUtil.getBatchResponse(1, 1, 0);
+    batchResponse.setResponses(responseDtoList);
+    BatchRequest<?> batchRequest = testUtil.getTransferScheduleFeedRequest(ActionEnum.CREATE);
+    List<BatchRequest<?>> batchFeed = Collections.singletonList(batchRequest);
+
+    Mockito.when(transferScheduleFeedHandlingService.processRecords(any(), any()))
+        .thenReturn(batchResponse);
+
+    BatchResponse result =
+        batchProcessingService.processRecords("transfer-schedules", batchFeed, TestUtil.ORG_ID);
+    assertEquals(batchResponse, result);
+
+    Mockito.verify(transferScheduleFeedHandlingService).processRecords(any(), any());
   }
 
   @Test

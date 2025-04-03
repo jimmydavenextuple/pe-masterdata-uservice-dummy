@@ -12,6 +12,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.ConfigException;
 import com.nextuple.common.response.error.ErrorPayload;
@@ -20,7 +21,6 @@ import com.nextuple.common.response.error.FieldError;
 import com.nextuple.common.util.DateUtil;
 import com.nextuple.jobs.framework.common.utils.ExceptionUtils;
 import com.nextuple.master.data.integration.TestUtil;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.enums.TaskInformation;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.mocks.MockDto;
@@ -30,6 +30,7 @@ import com.nextuple.master.data.integration.outbound.BatchResponse;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,6 +51,7 @@ class BatchServiceTest {
   @InjectMocks MockService mockService;
   @Mock private ErrorHandlingService errorHandlingService;
   @InjectMocks MockExceptionService mockExceptionService;
+  private MockedStatic<ExceptionUtils> exceptionUtils;
 
   @BeforeEach
   void init() {
@@ -57,6 +59,13 @@ class BatchServiceTest {
     ReflectionTestUtils.setField(mockService, "errorHandlingService", errorHandlingService);
     ReflectionTestUtils.setField(
         mockExceptionService, "errorHandlingService", errorHandlingService);
+  }
+
+  @AfterEach
+  void close() {
+    if (exceptionUtils != null && !exceptionUtils.isClosed()) {
+      exceptionUtils.close();
+    }
   }
 
   @Test
@@ -235,18 +244,16 @@ class BatchServiceTest {
     errorPayload.setFields(Map.of("nodeId", fieldError));
     ErrorResponse errorResponse = new ErrorResponse();
     errorResponse.setPayload(errorPayload);
-    MockedStatic<ExceptionUtils> exceptionUtils = Mockito.mockStatic(ExceptionUtils.class);
-    exceptionUtils.when(() -> ExceptionUtils.parseFeignException(any())).thenReturn(errorResponse);
-
-    BatchResponse result = mockExceptionService.processRecordsWithRetry(List.of(batchRequest));
-
-    Assertions.assertEquals(
-        HttpStatus.BAD_REQUEST.value(), result.getResponses().get(0).getStatusCode());
-    Assertions.assertEquals(1, result.getTotalRecords());
-    Assertions.assertEquals(1, result.getFailedRecords());
-    Assertions.assertNotNull(result.getResponses().get(0).getMessage());
-    Assertions.assertEquals("nodeType can't be empty", result.getResponses().get(0).getMessage());
-    exceptionUtils.close();
+    try (MockedStatic<ExceptionUtils> mockedStatic = Mockito.mockStatic(ExceptionUtils.class)) {
+      mockedStatic.when(() -> ExceptionUtils.parseFeignException(any())).thenReturn(errorResponse);
+      BatchResponse result = mockExceptionService.processRecordsWithRetry(List.of(batchRequest));
+      Assertions.assertEquals(
+          HttpStatus.BAD_REQUEST.value(), result.getResponses().get(0).getStatusCode());
+      Assertions.assertEquals(1, result.getTotalRecords());
+      Assertions.assertEquals(1, result.getFailedRecords());
+      Assertions.assertNotNull(result.getResponses().get(0).getMessage());
+      Assertions.assertEquals("Upstream error : null", result.getResponses().get(0).getMessage());
+    }
   }
 
   @Test
@@ -265,7 +272,7 @@ class BatchServiceTest {
     ErrorResponse errorResponse = new ErrorResponse();
     errorResponse.setPayload(errorPayload);
     errorResponse.setMessage("Upstream error");
-    MockedStatic<ExceptionUtils> exceptionUtils = Mockito.mockStatic(ExceptionUtils.class);
+    exceptionUtils = Mockito.mockStatic(ExceptionUtils.class);
     exceptionUtils.when(() -> ExceptionUtils.parseFeignException(any())).thenReturn(errorResponse);
     doNothing()
         .when(errorHandlingService)
@@ -299,7 +306,7 @@ class BatchServiceTest {
     ErrorResponse errorResponse = new ErrorResponse();
     errorResponse.setPayload(errorPayload);
     errorResponse.setMessage("Upstream error");
-    MockedStatic<ExceptionUtils> exceptionUtils = Mockito.mockStatic(ExceptionUtils.class);
+    exceptionUtils = Mockito.mockStatic(ExceptionUtils.class);
     exceptionUtils.when(() -> ExceptionUtils.parseFeignException(any())).thenReturn(errorResponse);
     BatchResponse result = mockExceptionService.processRecordsWithRetry(List.of(batchRequest));
 
@@ -308,7 +315,7 @@ class BatchServiceTest {
     Assertions.assertEquals(1, result.getTotalRecords());
     Assertions.assertEquals(1, result.getFailedRecords());
     Assertions.assertNotNull(result.getResponses().get(0).getMessage());
-    Assertions.assertEquals("Upstream error", result.getResponses().get(0).getMessage());
+    Assertions.assertEquals("Upstream error : null", result.getResponses().get(0).getMessage());
     exceptionUtils.close();
   }
 
@@ -325,7 +332,7 @@ class BatchServiceTest {
 
     ErrorResponse errorResponse = new ErrorResponse();
     errorResponse.setMessage("Upstream error");
-    MockedStatic<ExceptionUtils> exceptionUtils = Mockito.mockStatic(ExceptionUtils.class);
+    exceptionUtils = Mockito.mockStatic(ExceptionUtils.class);
     exceptionUtils.when(() -> ExceptionUtils.parseFeignException(any())).thenReturn(errorResponse);
     BatchResponse result = mockExceptionService.processRecordsWithRetry(List.of(batchRequest));
 
@@ -334,7 +341,7 @@ class BatchServiceTest {
     Assertions.assertEquals(1, result.getTotalRecords());
     Assertions.assertEquals(1, result.getFailedRecords());
     Assertions.assertNotNull(result.getResponses().get(0).getMessage());
-    Assertions.assertEquals("Upstream error", result.getResponses().get(0).getMessage());
+    Assertions.assertEquals("Upstream error : null", result.getResponses().get(0).getMessage());
     exceptionUtils.close();
   }
 

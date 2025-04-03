@@ -8,9 +8,12 @@
 package com.nextuple.dataupload.controller;
 
 import com.nextuple.common.base.PagePayload;
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.dataupload.common.outbound.GenericPaginatedTableResponse;
 import com.nextuple.dataupload.controller.docs.GetTransferSchedulesListDoc;
+import com.nextuple.dataupload.controller.docs.GetTransferSchedulesListDocV2;
 import com.nextuple.dataupload.service.TransferScheduleService;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
@@ -61,6 +64,52 @@ public class TransferSchedulesController {
 
     PagePayload<TransferScheduleResponse> transferScheduleDtoPage =
         transferScheduleService.getTransferScheduleList(orgId, pageParams, request);
+
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Transfer schedules list fetched successfully")
+            .payload(transferScheduleDtoPage)
+            .build());
+  }
+
+  @PostMapping(
+      path = "v2/orgId/{orgId}",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetTransferSchedulesListDocV2
+  public ResponseEntity<BaseResponse<PagePayload<TransferScheduleResponse>>>
+      getTransferSchedulesListV2(
+          @NotBlank(message = "OrgId can't be empty")
+              @PathVariable
+              @Parameter(description = "Unique identifier for the organization.")
+              String orgId,
+          @RequestParam(required = false, defaultValue = "true")
+              @Parameter(description = "Indicates whether pagination should be applied.")
+              Boolean isPaginated,
+          @RequestParam(required = false, defaultValue = "1")
+              @Parameter(description = "Page number for pagination.")
+              Integer pageNo,
+          @RequestParam(required = false, defaultValue = "10")
+              @Parameter(description = "Number of records per page.")
+              Integer pageSize,
+          @RequestParam(required = false, defaultValue = TRANSFER_SCHEDULE_DEFAULT_SORT_BY)
+              @Parameter(description = "The parameter by which the results should be sorted.")
+              String sortBy,
+          @RequestParam(required = false, defaultValue = "ASC")
+              @Parameter(
+                  description =
+                      "The sorting order of the results—either ascending (ASC) or descending (DESC).")
+              String sortOrder,
+          @RequestBody @Valid FetchTransferScheduleRequest request)
+          throws CommonServiceException {
+    PageParams pageParams = new PageParams();
+    pageParams.setPageNo(Optional.of(pageNo));
+    pageParams.setPageSize(Optional.of(pageSize));
+    pageParams.setSortBy(Optional.of(sortBy));
+    pageParams.setSortOrder(Optional.of(sortOrder));
+
+    GenericPaginatedTableResponse transferScheduleDtoPage =
+        transferScheduleService.getTransferScheduleListV2(orgId, pageParams, request, isPaginated);
 
     return ResponseEntity.ok(
         BaseResponse.builder()

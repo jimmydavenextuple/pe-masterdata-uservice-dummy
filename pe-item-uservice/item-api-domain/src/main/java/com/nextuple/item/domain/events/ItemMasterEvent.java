@@ -59,4 +59,5 @@ public class ItemMasterEvent extends AdditionalAttributes implements Serializabl
   private Map<String, List<String>> inventoryNodeTypes;
   private String handlingType;
   private Integer buyingCost;
+  private Double validDropoffDuration;
 }

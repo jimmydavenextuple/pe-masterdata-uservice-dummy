@@ -16,6 +16,7 @@ import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.util.PaginationUtil;
+import com.nextuple.node.controller.docs.CheckNodesExistDoc;
 import com.nextuple.node.controller.docs.CreateNodeDoc;
 import com.nextuple.node.controller.docs.DeleteNodeDoc;
 import com.nextuple.node.controller.docs.GetAllNodeList;
@@ -364,6 +365,17 @@ public class NodeController {
         BaseResponse.builder()
             .message("Node types fetched successfully")
             .payload(nodeService.getAllNodeTypesByOrgId(orgId))
+            .build());
+  }
+
+  @GetMapping("/check-nodes-exist/orgId/{orgId}")
+  @CheckNodesExistDoc
+  public ResponseEntity<BaseResponse<List<String>>> checkNodesExistByNodeIdsAndOrgId(
+      @RequestBody List<String> nodeIds, @PathVariable String orgId) {
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Node ids fetched successfully")
+            .payload(nodeService.checkNodesExistByNodeIdsAndOrgId(nodeIds, orgId))
             .build());
   }
 }
