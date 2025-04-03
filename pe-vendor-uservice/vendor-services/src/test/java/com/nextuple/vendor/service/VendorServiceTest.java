@@ -5,7 +5,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.vendor.TestUtil;
 import com.nextuple.vendor.domain.inbound.VendorRequest;
 import com.nextuple.vendor.domain.outbound.VendorResponse;
@@ -26,13 +25,13 @@ class VendorServiceTest {
   @Mock private VendorPersistenceService vendorPersistenceService;
 
   @Test
-  void createVendorTest() throws VendorDomainException, CommonServiceException {
+  void createVendorTest() throws VendorDomainException {
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto(TestUtil.VENDOR_ID);
     VendorRequest vendorRequest = testUtil.getVendorRequest();
     when(vendorPersistenceService.saveVendorDetails(any(VendorDomainDto.class)))
         .thenReturn(vendorDomainDto);
-    VendorResponse received_dto = vendorService.createVendor(testUtil.getVendorRequest());
-    Assertions.assertEquals(vendorRequest.getVendorId(), received_dto.getVendorId());
+    VendorResponse receivedDto = vendorService.createVendor(testUtil.getVendorRequest());
+    Assertions.assertEquals(vendorRequest.getVendorId(), receivedDto.getVendorId());
     verify(vendorPersistenceService, times(1)).saveVendorDetails(any(VendorDomainDto.class));
   }
 }
