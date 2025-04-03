@@ -43,9 +43,9 @@ import static com.nextuple.core.constants.NearCacheConstants.TRANSIT_BUFFER_V2_E
 import static com.nextuple.core.constants.NearCacheConstants.TRANSIT_ENTITY_NAME;
 import static com.nextuple.core.constants.NearCacheConstants.UE_CONFIG_DATA_ENTITY_NAME;
 import static com.nextuple.core.constants.NearCacheConstants.UE_META_DATA_ENTITY_NAME;
+import static com.nextuple.core.constants.NearCacheConstants.VENDOR_ENTITY_NAME;
 import static com.nextuple.core.constants.NearCacheConstants.WEIGHTAGE_CONFIGURATION_ENTITY_NAME;
 import static com.nextuple.core.constants.NearCacheConstants.ZONE_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.VENDOR_ENTITY_NAME;
 
 import java.util.HashMap;
 import java.util.List;
