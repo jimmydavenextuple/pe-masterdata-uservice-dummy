@@ -275,6 +275,59 @@ subprojects {
         }
     }
     generatePomFileForMavenJavaPublication.finalizedBy fixPom
+
+    tasks.named('javadoc') {
+        enabled = false
+    }
+}
+
+task aggregateJavadoc(type: Javadoc) {
+    description = 'Generates aggregate Javadoc for all modules and submodules'
+    group = 'documentation'
+
+    // Enable output
+    options.encoding = 'UTF-8'
+    options.memberLevel = JavadocMemberLevel.PROTECTED
+
+    // Configure source files
+    source subprojects.collect { project ->
+        project.sourceSets.main.allJava
+    }
+
+    // Configure classpath
+    classpath = files(subprojects.collect { project ->
+        project.sourceSets.main.compileClasspath
+    })
+
+    // Set destination directory
+    destinationDir = file("${buildDir}/docs/javadoc")
+
+    // Include all subproject sources
+    subprojects.each { project ->
+        project.tasks.withType(Javadoc).each { javadocTask ->
+            source += javadocTask.source
+            classpath += javadocTask.classpath
+            excludes += javadocTask.excludes
+            includes += javadocTask.includes
+        }
+    }
+
+    options {
+        memberLevel = JavadocMemberLevel.PROTECTED
+        author = true
+        version = true
+        links 'https://docs.oracle.com/en/java/javase/21/docs/api/'
+        links 'https://docs.spring.io/spring-framework/docs/current/javadoc-api/'
+        encoding 'UTF-8'
+        docEncoding 'UTF-8'
+        charSet 'UTF-8'
+    }
+
+    // Fail on Javadoc errors
+    failOnError = false
+
+    exclude '**/controller/docs/**'
+    exclude '**/mapper/**'
 }
 
 allprojects {
