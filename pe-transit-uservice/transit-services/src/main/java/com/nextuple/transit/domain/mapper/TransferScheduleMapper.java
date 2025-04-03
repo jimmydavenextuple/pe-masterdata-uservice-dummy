@@ -7,7 +7,9 @@
 
 package com.nextuple.transit.domain.mapper;
 
+import com.nextuple.transit.domain.inbound.TransferScheduleConsumerRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleDeleteRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
 import java.util.List;
@@ -22,9 +24,18 @@ public interface TransferScheduleMapper {
   TransferScheduleDomainDto convertToTransferScheduleEntity(
       TransferScheduleCreationRequest request);
 
+  TransferScheduleDomainDto convertToTransferScheduleEntity(
+      TransferScheduleConsumerRequest request);
+
+  List<TransferScheduleDomainDto> convertToTransferScheduleEntityList(
+      List<TransferScheduleConsumerRequest> list);
+
   TransferScheduleResponse convertToTransferScheduleResponse(
       TransferScheduleDomainDto transferScheduleDomainDto);
 
   List<TransferScheduleResponse> convertToTransferScheduleResponseList(
       List<TransferScheduleDomainDto> transferScheduleDomainDto);
+
+  List<TransferScheduleDeleteRequest> convertToTransferScheduleDeleteRequest(
+      List<TransferScheduleConsumerRequest> transferScheduleBatchRequest);
 }

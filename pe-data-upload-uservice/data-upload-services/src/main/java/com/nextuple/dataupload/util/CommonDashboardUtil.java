@@ -7,6 +7,11 @@
 
 package com.nextuple.dataupload.util;
 
+import static com.nextuple.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
+import static com.nextuple.common.constants.CommonConstants.DESC_SORT_ORDER;
+
+import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.response.error.FieldError;
 import com.nextuple.node.carrier.domain.outbound.NodeCarrierResponse;
 import com.nextuple.node.domain.dto.NodeDto;
 import java.util.Arrays;
@@ -17,6 +22,7 @@ import java.util.Map;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 
 @Slf4j
@@ -51,5 +57,23 @@ public class CommonDashboardUtil {
           }
         });
     return processingTime;
+  }
+
+  private static boolean isValidSortOrder(String sortOrder) {
+    return DEFAULT_SORT_ORDER.equalsIgnoreCase(sortOrder)
+        || DESC_SORT_ORDER.equalsIgnoreCase(sortOrder);
+  }
+
+  public static void handleInvalidSortOrder(String sortOrder) throws CommonServiceException {
+    if (!isValidSortOrder(sortOrder)) {
+      log.error("Invalid sort order");
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put("sortOrder", FieldError.builder().rejectedValue(sortOrder).build());
+      throw new CommonServiceException(
+          "Invalid sort order, consider giving either ASC or DESC",
+          HttpStatus.BAD_REQUEST,
+          0x1991,
+          errorMap);
+    }
   }
 }

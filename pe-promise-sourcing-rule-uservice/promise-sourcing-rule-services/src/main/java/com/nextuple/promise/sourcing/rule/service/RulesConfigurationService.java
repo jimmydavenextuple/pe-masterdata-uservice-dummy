@@ -18,6 +18,7 @@ import static com.nextuple.promise.sourcing.rule.utils.FetchRulesUtil.TOTAL_ATTR
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionStatus;
 import com.nextuple.promise.sourcing.rule.api.domain.inbound.FetchRuleConfigurationRequest;
@@ -346,5 +347,21 @@ public class RulesConfigurationService {
         rulesConfigurationPersistenceService.findByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
             ruleConfigurationParam);
     return rulesConfigurationDomainDtoOptional.map(INSTANCE::toRulesConfigurationResponse);
+  }
+
+  public List<RulesConfigurationResponse>
+      fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+          String orgId,
+          Long attributeDefinitionId,
+          RulesConfigurationModuleNameEnum moduleName,
+          SourcingAttributesDefinitionScopeEnum scope)
+          throws PromiseEngineException {
+    List<RulesConfigurationDomainDto> rulesConfigurationDomainDtoList =
+        rulesConfigurationPersistenceService
+            .findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+                orgId, attributeDefinitionId, moduleName, scope);
+    return rulesConfigurationDomainDtoList.stream()
+        .map(INSTANCE::toRulesConfigurationResponse)
+        .toList();
   }
 }

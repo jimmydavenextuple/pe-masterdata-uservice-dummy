@@ -9,23 +9,30 @@ package com.nextuple.master.data.integration.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.nextuple.common.context.CurrentThreadContext;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.ConfigException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.jobs.framework.common.utils.ExceptionUtils;
 import com.nextuple.master.data.integration.dto.CommonMasterDataFieldsDto;
 import com.nextuple.master.data.integration.dto.ResponseDto;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.enums.TaskInformation;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.outbound.BatchResponse;
 import feign.FeignException;
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,6 +43,12 @@ public abstract class BatchService<T extends CommonMasterDataFieldsDto> { // NOS
 
   private final ObjectMapper objectMapper = new ObjectMapper();
   @Autowired ErrorHandlingService errorHandlingService;
+  private static final ExecutorService executors = Executors.newVirtualThreadPerTaskExecutor();
+
+  @PostConstruct
+  public void init() {
+    objectMapper.registerModule(new JodaModule());
+  }
 
   public String handleRetry(BatchRequest<?> batchRequest) {
     try {
@@ -151,21 +164,40 @@ public abstract class BatchService<T extends CommonMasterDataFieldsDto> { // NOS
     return processBatchRecords(batchRequestList, Boolean.FALSE);
   }
 
-  private BatchResponse processBatchRecords(
+  public BatchResponse processBatchRecords(
       List<BatchRequest<T>> batchRequestList, Boolean isRetryRequired) {
     batchRequestList = sortRecordsOnBasisOfProducedTimestamp(batchRequestList);
     int successfulRecords = 0;
     BatchResponse batchResponse = new BatchResponse();
     List<ResponseDto> responseDtoList = new ArrayList<>();
-    for (BatchRequest<T> batchRequest : batchRequestList) {
-      ResponseDto responseDto = processRecordBasedOnAction(batchRequest, isRetryRequired);
-      if (Objects.nonNull(batchRequest.getRecordNo()))
-        responseDto.setRecordNo(batchRequest.getRecordNo());
-      responseDtoList.add(responseDto);
-      if (responseDto.getStatusCode() == HttpStatus.OK.value()) {
-        successfulRecords++;
+    List<Callable<ResponseDto>> tasks =
+        batchRequestList.stream()
+            .map(
+                batchRequest ->
+                    (Callable<ResponseDto>)
+                        () -> {
+                          ResponseDto responseDto =
+                              processRecordBasedOnAction(batchRequest, isRetryRequired);
+                          if (Objects.nonNull(batchRequest.getRecordNo()))
+                            responseDto.setRecordNo(batchRequest.getRecordNo());
+                          return responseDto;
+                        })
+            .toList();
+
+    try {
+      List<Future<ResponseDto>> futures = executors.invokeAll(tasks);
+      for (Future<ResponseDto> future : futures) {
+        ResponseDto responseDto = future.get();
+        responseDtoList.add(responseDto);
+        if (responseDto.getStatusCode() == HttpStatus.OK.value()) {
+          successfulRecords++;
+        }
       }
+    } catch (InterruptedException | ExecutionException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException("Error processing batch records", e);
     }
+
     batchResponse.setTotalRecords(batchRequestList.size());
     batchResponse.setSuccessfulRecords(successfulRecords);
     batchResponse.setFailedRecords(batchRequestList.size() - successfulRecords);
@@ -173,7 +205,7 @@ public abstract class BatchService<T extends CommonMasterDataFieldsDto> { // NOS
     return batchResponse;
   }
 
-  private List<BatchRequest<T>> sortRecordsOnBasisOfProducedTimestamp(
+  protected List<BatchRequest<T>> sortRecordsOnBasisOfProducedTimestamp(
       List<BatchRequest<T>> batchRequestList) {
     List<BatchRequest<T>> batchRequestListWithNoProducedTimestamp =
         batchRequestList.stream()

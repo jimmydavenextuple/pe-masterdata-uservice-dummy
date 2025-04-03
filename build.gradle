@@ -146,7 +146,7 @@ subprojects {
         implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.17.0'
 
         // Dependency version override to resolve high CVE coming transitively for tomcat-embed-core
-        implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.2'
+        implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.4'
         implementation 'io.netty:netty-handler:4.1.118.Final'
         implementation 'net.minidev:json-smart:2.5.2'
 
@@ -175,9 +175,12 @@ subprojects {
         //Caffeine
         implementation "org.springframework.boot:spring-boot-starter-cache:3.4.0"
         implementation "com.github.ben-manes.caffeine:caffeine:3.1.8"
+        implementation "org.redisson:redisson-spring-boot-starter:3.22.0"
 
         implementation 'org.flywaydb:flyway-core:9.16.3'
         api 'io.github.openfeign:feign-okhttp:12.1'
+        //adding it explicitly to resolve critical issue
+        implementation("org.springframework.security:spring-security-crypto:6.4.4")
 
     }
 
@@ -361,7 +364,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:16.0.2'
 
     // Dependency version override to resolve high CVE coming transitively for tomcat-embed-core
-    implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.2'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.4'
     implementation 'net.minidev:json-smart:2.5.2'
     implementation 'io.netty:netty-handler:4.1.118.Final'
 
@@ -466,9 +469,10 @@ dependencies {
     implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
     implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")
     implementation("com.nextuple.plt:plt-postgress-dao:1.0.8-${build_target}")
-    implementation "com.nextuple.neoplatform:auth-validator:1.0.49-${build_target}"
-    implementation "com.nextuple.neoplatform:auth-injector:1.0.49-${build_target}"
+    implementation "com.nextuple.neoplatform:auth-validator:1.0.67-${build_target}"
+    implementation "com.nextuple.neoplatform:auth-injector:1.0.67-${build_target}"
     api 'io.github.openfeign:feign-okhttp:12.1'
+    implementation("org.springframework.security:spring-security-crypto:6.4.4")
 }
 
 jacocoTestReport {
@@ -597,7 +601,7 @@ class ApplicationVersion {
     }
 
     private String getRelease() {
-        return this.release ? '' : '-SNAPSHOT'
+        return this.release ? '-RELEASE' : '-SNAPSHOT'
     }
 
     String getVersion() {

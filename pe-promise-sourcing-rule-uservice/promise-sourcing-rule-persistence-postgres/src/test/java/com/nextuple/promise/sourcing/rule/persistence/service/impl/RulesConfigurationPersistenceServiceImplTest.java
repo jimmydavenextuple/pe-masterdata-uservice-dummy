@@ -25,12 +25,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.common.exception.PromiseEngineException;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.persistence.domain.RulesConfigurationDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.entity.RulesConfigurationEntity;
 import com.nextuple.promise.sourcing.rule.persistence.mapper.RulesConfigurationEntityMapper;
 import com.nextuple.promise.sourcing.rule.persistence.repository.RulesConfigurationRepository;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -167,7 +168,7 @@ class RulesConfigurationPersistenceServiceImplTest {
         .thenReturn(rulesConfigurationEntity);
     when(rulesConfigurationRepository.findByOrgIdAndAttributeDefinitionIdAndRule(
             anyString(), anyLong(), anyString()))
-        .thenReturn(Optional.of(rulesConfigurationEntity));
+        .thenReturn(List.of(rulesConfigurationEntity));
     when(rulesConfigurationEntityMapper.toDomain(any(RulesConfigurationEntity.class)))
         .thenReturn(rulesConfigurationDomainDto);
 
@@ -236,5 +237,73 @@ class RulesConfigurationPersistenceServiceImplTest {
     assertEquals("Error while deleting rules configuration", exception.getMessage());
 
     verify(rulesConfigurationRepository, times(1)).delete(any(RulesConfigurationEntity.class));
+  }
+
+  @Test
+  @DisplayName("Find By Org Id And Attribute Definition Id And Module Name And Scope: Happy Path")
+  void findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScopeTest()
+      throws PromiseEngineException {
+    var rulesConfigurationEntity = testUtil.getRulesConfigurationEntity();
+    var rulesConfigurationDomainDto = testUtil.getRulesConfigurationDomainDto();
+
+    when(rulesConfigurationRepository.findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+            anyString(),
+            anyLong(),
+            any(RulesConfigurationModuleNameEnum.class),
+            any(SourcingAttributesDefinitionScopeEnum.class)))
+        .thenReturn(List.of(rulesConfigurationEntity));
+    when(rulesConfigurationEntityMapper.toDomain(anyList()))
+        .thenReturn(List.of(rulesConfigurationDomainDto));
+
+    var fetchedDomainDto =
+        rulesConfigurationPersistenceService
+            .findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+                ORG_ID,
+                SOURCING_ATTRIBUTES_DEFINITION_ID,
+                RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE,
+                SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
+
+    assertNotNull(fetchedDomainDto);
+    assertEquals(rulesConfigurationDomainDto.getOrgId(), fetchedDomainDto.getFirst().getOrgId());
+    assertEquals(
+        rulesConfigurationDomainDto.getRuleName(), fetchedDomainDto.getFirst().getRuleName());
+
+    verify(rulesConfigurationRepository, times(1))
+        .findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+            anyString(),
+            anyLong(),
+            any(RulesConfigurationModuleNameEnum.class),
+            any(SourcingAttributesDefinitionScopeEnum.class));
+  }
+
+  @Test
+  @DisplayName("Find By Org Id And Attribute Definition Id And Module Name And Scope: Exception")
+  void findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScopeExceptionTest() {
+    when(rulesConfigurationRepository.findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+            anyString(),
+            anyLong(),
+            any(RulesConfigurationModuleNameEnum.class),
+            any(SourcingAttributesDefinitionScopeEnum.class)))
+        .thenThrow(new RuntimeException("Database error"));
+
+    Exception exception =
+        assertThrows(
+            PromiseEngineException.class,
+            () ->
+                rulesConfigurationPersistenceService
+                    .findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+                        ORG_ID,
+                        SOURCING_ATTRIBUTES_DEFINITION_ID,
+                        RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE,
+                        SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE));
+
+    assertEquals("Error while finding rules configuration", exception.getMessage());
+
+    verify(rulesConfigurationRepository, times(1))
+        .findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+            anyString(),
+            anyLong(),
+            any(RulesConfigurationModuleNameEnum.class),
+            any(SourcingAttributesDefinitionScopeEnum.class));
   }
 }

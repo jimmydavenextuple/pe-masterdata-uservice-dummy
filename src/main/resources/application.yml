@@ -1,4 +1,6 @@
 spring:
+  autoconfigure:
+    exclude: org.redisson.spring.starter.RedissonAutoConfiguration
   application:
     dependencies:
       item: "http://pe-masterdata-uservice:8080/"
@@ -204,6 +206,8 @@ kafka-topic-flags:
     transit:
       enabled: false
     transit-buffer:
+      enabled: false
+    transfer-schedule:
       enabled: false
   refresh-cache:
     enabled: false

@@ -74,4 +74,10 @@ public class TransferScheduleRangeRequest extends AdditionalAttributes implement
           "Number of days in past to be deducted from end time to consider for the transfer",
       example = "1")
   private Integer pastDays;
+
+  @Schema(
+      description =
+          "Flag to indicate if the start time & end time should be considered as exclusive or inclusive",
+      example = "true")
+  private Boolean exclusive;
 }

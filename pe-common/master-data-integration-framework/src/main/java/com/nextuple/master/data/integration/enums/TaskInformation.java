@@ -21,7 +21,8 @@ public enum TaskInformation {
   CARRIER_SERVICE_CALENDAR_FEED(TaskConstants.CARRIER_SERVICE_CALENDAR),
   PICKUP_CALENDAR_FEED(TaskConstants.PICKUP_CALENDAR),
   TRANSIT_FEED(TaskConstants.TRANSIT),
-  TRANSIT_BUFFER_FEED(TaskConstants.TRANSIT_BUFFER);
+  TRANSIT_BUFFER_FEED(TaskConstants.TRANSIT_BUFFER),
+  TRANSFER_SCHEDULE(TaskConstants.TRANSFER_SCHEDULE);
   private final String taskType;
 
   TaskInformation(String taskType) {

@@ -9,6 +9,8 @@ package com.nextuple.promise.sourcing.rule.persistence.service;
 
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.service.DomainPersistenceService;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
+import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.RuleConfigurationParam;
 import com.nextuple.promise.sourcing.rule.persistence.domain.RulesConfigurationDomainDto;
 import com.nextuple.promise.sourcing.rule.persistence.domain.key.RulesConfigurationDomainKey;
@@ -31,5 +33,12 @@ public interface RulesConfigurationPersistenceService
       RuleConfigurationParam ruleConfigurationParam) throws PromiseEngineException;
 
   void deleteRuleConfiguration(RulesConfigurationDomainDto rulesConfigurationDomainDto)
+      throws PromiseEngineException;
+
+  List<RulesConfigurationDomainDto> findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+      String orgId,
+      Long attributeDefinitionId,
+      RulesConfigurationModuleNameEnum moduleName,
+      SourcingAttributesDefinitionScopeEnum scope)
       throws PromiseEngineException;
 }

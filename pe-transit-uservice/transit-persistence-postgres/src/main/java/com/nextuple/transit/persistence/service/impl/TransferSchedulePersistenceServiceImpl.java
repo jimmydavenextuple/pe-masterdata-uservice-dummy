@@ -14,6 +14,7 @@ import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.postgres.service.CommonPersistenceService;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleDeleteRequest;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
@@ -62,6 +63,26 @@ public class TransferSchedulePersistenceServiceImpl
           ExceptionCodeMapping.DAO_SAVE_FAILED,
           "Unable to save transfer schedule " + e.getMessage());
     }
+  }
+
+  @Override
+  public List<TransferScheduleDomainDto> saveTransferSchedules(
+      List<TransferScheduleDomainDto> transferScheduleDomainDtos) throws PromiseEngineException {
+    try {
+      return saveAll(transferScheduleDomainDtos);
+    } catch (Exception e) {
+      throw new PromiseEngineException(
+          ApplicationLayer.DAO_LAYER,
+          ExceptionCodeMapping.DAO_SAVE_FAILED,
+          "Unable to save transfer schedules " + e.getMessage());
+    }
+  }
+
+  private List<TransferScheduleDomainDto> saveAll(
+      List<TransferScheduleDomainDto> transferScheduleDomainDtos) {
+    List<TransferScheduleEntity> sourcingRuleDetailsEntities =
+        getRepository().saveAll(getMapper().toEntity(transferScheduleDomainDtos));
+    return getMapper().toDomain(sourcingRuleDetailsEntities);
   }
 
   @Override
@@ -123,6 +144,13 @@ public class TransferSchedulePersistenceServiceImpl
   public List<TransferScheduleDomainDto> fetchTransferSchedulesInRange(
       TransferScheduleDomainRequest request) {
     List<TransferScheduleEntity> entities = getRepository().findTransferSchedulesInRange(request);
+    return getMapper().toDomain(entities);
+  }
+
+  @Override
+  public List<TransferScheduleDomainDto> deleteTransferSchedules(
+      List<TransferScheduleDeleteRequest> request) {
+    List<TransferScheduleEntity> entities = getRepository().deleteTransferSchedules(request);
     return getMapper().toDomain(entities);
   }
 }
