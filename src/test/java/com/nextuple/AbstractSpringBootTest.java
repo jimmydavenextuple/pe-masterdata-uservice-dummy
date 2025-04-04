@@ -27,7 +27,7 @@ import org.testcontainers.utility.DockerImageName;
       "spring.datasource.url=jdbc:tc:postgresql:17-alpine:///pe?TC_INITSCRIPT=file:src/test/resources/db_setup.sql",
       "server.port=8080"
     })
-@ActiveProfiles("container")
+@ActiveProfiles("test")
 public abstract class AbstractSpringBootTest {
 
   /** Kafka container */
