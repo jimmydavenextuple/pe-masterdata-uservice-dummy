@@ -27,6 +27,7 @@ import com.nextuple.pe.webhook.service.impl.PickupCalendarFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransferScheduleFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransitBufferFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransitFeedHandlingService;
+import com.nextuple.pe.webhook.service.impl.VendorFeedHandlingService;
 import com.nextuple.pe.webhook.util.TestUtil;
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +52,7 @@ class BatchProcessingServiceTest {
   @Mock TransitFeedHandlingService transitFeedHandlingService;
   @Mock TransitBufferFeedHandlingService transitBufferFeedHandlingService;
   @Mock TransferScheduleFeedHandlingService transferScheduleFeedHandlingService;
+  @Mock VendorFeedHandlingService vendorFeedHandlingService;
   @InjectMocks BatchProcessingService batchProcessingService;
   @InjectMocks TestUtil testUtil;
 
@@ -294,6 +296,24 @@ class BatchProcessingServiceTest {
     assertEquals(batchResponse, result);
 
     Mockito.verify(transferScheduleFeedHandlingService).processRecords(any(), any());
+  }
+
+  @Test
+  void testProcessRecordsWithVendor() throws CommonServiceException {
+    ResponseDto responseDto = testUtil.createResponseDto(1, 200, "Vendor created successfully");
+    List<ResponseDto> responseDtoList = List.of(responseDto);
+    BatchResponse batchResponse = testUtil.getBatchResponse(1, 1, 0);
+    batchResponse.setResponses(responseDtoList);
+    BatchRequest<?> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.CREATE);
+    List<BatchRequest<?>> batchFeed = Collections.singletonList(batchRequest);
+
+    Mockito.when(vendorFeedHandlingService.processRecords(any(), any())).thenReturn(batchResponse);
+
+    BatchResponse result =
+        batchProcessingService.processRecords("vendor", batchFeed, TestUtil.ORG_ID);
+    assertEquals(batchResponse, result);
+
+    Mockito.verify(vendorFeedHandlingService).processRecords(any(), any());
   }
 
   @Test

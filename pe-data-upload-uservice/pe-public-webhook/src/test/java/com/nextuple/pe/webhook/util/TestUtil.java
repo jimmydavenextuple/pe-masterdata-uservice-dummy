@@ -499,4 +499,12 @@ public class TestUtil {
     batchRequest.setPayload(createTransferScheduleDto());
     return batchRequest;
   }
+
+  public BatchRequest<VendorFeedDto> getVendorFeedRequest(ActionEnum action) {
+    BatchRequest<VendorFeedDto> batchRequest = new BatchRequest<>();
+    batchRequest.setAction(action);
+    batchRequest.setRecordNo(1);
+    batchRequest.setPayload(createVendorFeedDto());
+    return batchRequest;
+  }
 }
