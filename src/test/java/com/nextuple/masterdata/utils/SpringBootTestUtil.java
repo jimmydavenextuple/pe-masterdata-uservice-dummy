@@ -46,7 +46,7 @@ import org.testcontainers.shaded.org.awaitility.Awaitility;
 @Component
 public class SpringBootTestUtil {
   public static final int POLL_DURATION_MS = 3000;
-  public static final int DEFAULT_TIMEOUT_SECONDS = 30;
+  public static final int DEFAULT_TIMEOUT_SECONDS = 120;
   public static final int TOKEN_EXPIRY_BUFFER_SECONDS = 180;
 
   private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);

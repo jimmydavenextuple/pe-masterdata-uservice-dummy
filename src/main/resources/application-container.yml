@@ -1,4 +1,6 @@
 spring:
+  autoconfigure:
+    exclude: org.redisson.spring.starter.RedissonAutoConfiguration
   security:
     oauth2:
       client:
@@ -81,9 +83,13 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.TEST_CONTAINER.MASTER_DATA_UPDATE_EVENTS
       properties:
-        spring.json.trusted.packages: "*"
         acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -93,6 +99,10 @@ spring:
         spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
         max.poll.records: 10
+      topics:
+        master_data_update_event:
+          name: INTERNAL.TEST_CONTAINER.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-dev
     consumer-string:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -115,25 +125,6 @@ entity-listener:
 pe:
   ui:
     allowed-origin-url: "*"
-
-jobs-framework:
-  feed-metrics-consumer:
-    topic-name: INTERNAL.TEST_CONTAINER.PE_JOB_FPM_METRICS, INTERNAL.TEST_CONTAINER.PE_JOB_RECORD_FPM_METRICS, INTERNAL.TEST_CONTAINER.PE_NEIP_FPM_METRICS
-    group-id: pe-fpm-metrics-testcontainer
-  job-completion-consumer:
-    topic-name: INTERNAL.TEST_CONTAINER.PE.JOB_COMPLETION
-    group-id: jobs-completion-consumer-async-testcontainer
-  kafka-publish:
-    topic-name: INTERNAL.TEST_CONTAINER.PE.JOB_TASK
-  result-publish:
-    topic-name: INTERNAL.TEST_CONTAINER.PE.JOB_RESULT
-  result-consumer:
-    topic-name: INTERNAL.TEST_CONTAINER.PE.JOB_RESULT
-    group-id: jobs-result-consumer-async
-  record-consumer:
-    topic-names: INTERNAL.TEST_CONTAINER.PE.JOB_TASK
-    group-id: jobs-task-consumer-async
-
 pe-public-webhook:
   iv-feed:
     topic: INTERNAL.TEST_CONTAINER_ATP
@@ -171,6 +162,24 @@ dataupload:
   type: BLOB
   signed-url-expiry-minutes: 30
 
+jobs-framework:
+  feed-metrics-consumer:
+    topic-name: INTERNAL.TEST_CONTAINER.PE_JOB_FPM_METRICS, INTERNAL.TEST_CONTAINER.PE_JOB_RECORD_FPM_METRICS, INTERNAL.TEST_CONTAINER.PE_NEIP_FPM_METRICS
+    group-id: pe-fpm-metrics-dev
+  job-completion-consumer:
+    topic-name: INTERNAL.TEST_CONTAINER.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-dev
+  kafka-publish:
+    topic-name: INTERNAL.TEST_CONTAINER.PE.JOB_TASK
+  result-publish:
+    topic-name: INTERNAL.TEST_CONTAINER.PE.JOB_RESULT
+  result-consumer:
+    topic-name: INTERNAL.TEST_CONTAINER.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async
+  record-consumer:
+    topic-names: INTERNAL.TEST_CONTAINER.PE.JOB_TASK
+    group-id: jobs-task-consumer-async
+
 master-data:
   node:
     topic-names: INTERNAL.TEST_CONTAINER.PE.NODE_INTEGRATION
@@ -205,6 +214,9 @@ master-data:
   transit-buffer:
     topic-names: INTERNAL.TEST_CONTAINER.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-testcontainer
+  transfer-schedule:
+    topic-names: INTERNAL.TEST_CONTAINER.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-testcontainer
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
@@ -227,12 +239,14 @@ platform:
     enabled: false
 neo-platform:
   auth-injector:
+    enabled: true
     token-strategy: generate
     filter:
       enabled: disabled # To be enabled in the future
     client-uri-mappings:
       my-client: /**
   auth-validator:
+    enabled: true
     application-name: pe-masterdata
     header:
       tenant-id: x-tenant-id
@@ -295,6 +309,8 @@ kafka-topic-flags:
       enabled: true
     transit-buffer:
       enabled: true
+    transfer-schedule:
+      enabled: true
   refresh-cache:
     enabled: true
   input:
@@ -308,10 +324,10 @@ test-container:
     password: \${PE-TEST-CONTAINER-KEYCLOAK-PASSWORD} # Replace for local testing
 
 azure.keyvault:
-  client-id: \${AZURE_KEYVAULT_CLIENTID}
-  client-key: \${AZURE_KEYVAULT_CLIENTKEY}
+  client-id: e558951a-8c66-4a66-a75f-f71254e23397
+  client-key: hvu8Q~WZ6hxz5eyKCQiTtCDKP-Qd3ANKCDeVUbhJ
   enabled: true
-  tenant-id: \${AZURE_KEYVAULT_TENANTID}
-  uri: \${AZURE_KEYVAULT_URI}
+  tenant-id: a504dc87-820c-4014-a6f7-9bd271ec731f
+  uri: https://nextuple-dev.vault.azure.net/
   secret-keys: "PE-TEST-CONTAINER-KEYCLOAK-USERNAME,PE-TEST-CONTAINER-KEYCLOAK-PASSWORD,MASTER-DATA-KEYCLOAK-CLIENT-ID"
 
