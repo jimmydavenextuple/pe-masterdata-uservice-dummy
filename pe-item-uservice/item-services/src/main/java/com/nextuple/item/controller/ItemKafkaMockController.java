@@ -23,6 +23,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Mock controller for testing Kafka message production.
+ *
+ * <p>This controller is for testing purposes only and should not be used in production. It provides
+ * endpoints to simulate Kafka message production for item master events.
+ *
+ * @hidden
+ */
 @RestController
 @Tag(name = "Kafka Mock APIs")
 @RequiredArgsConstructor
@@ -33,6 +41,15 @@ public class ItemKafkaMockController {
   @Qualifier("ItemSerializerProducer")
   private final KafkaTemplate<String, Object> kafkaTemplate;
 
+  /**
+   * Produces a mock Kafka message for testing purposes.
+   *
+   * @param topicName The name of the Kafka topic
+   * @param itemMasterEvent The item master event to be sent
+   * @return A {@link ResponseEntity} with success/failure message
+   * @throws Exception If message production fails
+   * @hidden
+   */
   @ProduceKafkaMessageDoc
   @PostMapping("producer/{topicName}/messages")
   public ResponseEntity<String> produceKafkaMessage(

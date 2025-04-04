@@ -29,6 +29,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Item Buffer Dashboard operations.
+ *
+ * <p>This controller provides UI-specific endpoints for retrieving and managing item buffer
+ * configurations. It supports paginated queries and detailed item buffer information retrieval with
+ * various filtering options.
+ *
+ * <p>Key features include:
+ *
+ * <ul>
+ *   <li>Retrieval of item buffers by organization, item ID, and UOM
+ *   <li>Paginated list of items with configured buffers
+ *   <li>Version-specific endpoints with enhanced filtering capabilities
+ *   <li>Support for organization-level operations
+ * </ul>
+ *
+ * @see ItemBufferService
+ * @see ItemBufferResponse
+ * @see PageResponseForItemBuffer
+ */
 @Validated
 @RestController
 @Tag(name = "Item Buffer Dashboard APIs")
@@ -38,6 +58,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class ItemBufferUIController {
   private final ItemBufferService itemBufferService;
 
+  /**
+   * Retrieves item buffers for a specific organization, item ID, and UOM combination.
+   *
+   * <p>This method processes a GET request to fetch all item buffers that match the specified
+   * criteria. All parameters are required for successful retrieval.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param itemId The unique identifier for the item. Must not be blank. Example value: "ITEM123"
+   * @param uom The unit of measure for the item. Must not be blank. Example value: "EACH"
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a list of {@link
+   *     ItemBufferResponse} objects.
+   * @throws CommonServiceException If there is an error in processing the request.
+   */
   @GetMapping("/{orgId}/{itemId}/{uom}")
   public ResponseEntity<BaseResponse<List<ItemBufferResponse>>>
       getItemBuffersByOrgIdAndItemIdAndUom(
@@ -64,6 +98,20 @@ public class ItemBufferUIController {
             .build());
   }
 
+  /**
+   * Retrieves a paginated list of items with configured buffers for an organization.
+   *
+   * <p>This method processes a GET request to fetch a paginated list of items that have buffer
+   * configurations. Supports customizable page size and number.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param pageNo The page number to retrieve (default: 1)
+   * @param pageSize The number of records per page (default: 10)
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a {@link
+   *     PageResponseForItemBuffer} containing the paginated results.
+   * @throws CommonServiceException If there is an error in processing the request.
+   */
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PageResponseForItemBuffer>> getItemsListWithConfiguredBuffers(
       @NotBlank(message = "orgId can't be empty")
@@ -84,6 +132,22 @@ public class ItemBufferUIController {
             .build());
   }
 
+  /**
+   * Version 1 of the paginated items list retrieval with enhanced filtering.
+   *
+   * <p>This method provides additional functionality over the base version, including the ability
+   * to filter by specific item IDs.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param itemIds Optional comma-separated list of item IDs to filter the results. Example value:
+   *     "ITEM123,ITEM456"
+   * @param pageNo The page number to retrieve (default: 1)
+   * @param pageSize The number of records per page (default: 10)
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a {@link
+   *     PageResponseForItemBuffer} containing the filtered, paginated results.
+   * @throws CommonServiceException If there is an error in processing the request.
+   */
   @GetMapping("/v1/{orgId}")
   public ResponseEntity<BaseResponse<PageResponseForItemBuffer>>
       getItemsListWithConfiguredBuffersV1(
