@@ -30,6 +30,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing node groups in the organization dashboard.
+ *
+ * <p>This controller provides APIs for creating, editing, deleting, and retrieving node groups
+ * associated with an organization.
+ *
+ * <p>The controller is tagged with "Node Group Dashboard APIs" for easy categorization in the API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/ui")
 @RequiredArgsConstructor
@@ -40,6 +49,18 @@ public class NodeGroupDashboardController {
   private final NodeGroupService nodeGroupService;
   private final SourcingRulesConfigurationService sourcingRulesConfigurationService;
 
+  /**
+   * Creates a new Node Group from the dashboard.
+   *
+   * <p>This method processes a POST request to create a Node Group and its associated nodes.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param nodeGroupWithNodes The details of the Node Group to be created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     created Node Group.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -66,6 +87,19 @@ public class NodeGroupDashboardController {
     }
   }
 
+  /**
+   * Edits an existing Node Group from the dashboard.
+   *
+   * <p>This method processes a PUT request to update the details of an existing Node Group.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param nodeGroupId The unique identifier of the Node Group to be updated.
+   * @param nodeGroupWithNodes The updated details of the Node Group.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated Node Group
+   *     details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @PutMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -96,6 +130,18 @@ public class NodeGroupDashboardController {
     }
   }
 
+  /**
+   * Deletes a Node Group and its associated node priorities.
+   *
+   * <p>This method processes a DELETE request to remove a Node Group identified by its ID and
+   * organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param nodeGroupId The unique identifier of the Node Group to be deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @DeleteMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
       value = "/node-priority/{orgId}/{nodeGroupId}")
@@ -124,6 +170,17 @@ public class NodeGroupDashboardController {
     }
   }
 
+  /**
+   * Deletes multiple Node Groups and their associated node priorities by organization ID.
+   *
+   * <p>This method processes a DELETE request to remove Node Groups based on the organization ID
+   * and a request payload.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param request The request containing details of the Node Groups to be deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/node-priority/{orgId}")
   @Operation(summary = "Delete Node Group", description = "Deletes the node group details.")
   @ApiResponse(
@@ -146,6 +203,18 @@ public class NodeGroupDashboardController {
     }
   }
 
+  /**
+   * Retrieves Node Groups and their priorities for a specific organization.
+   *
+   * <p>This method processes a GET request to fetch Node Groups along with their priority details.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param pageParams The pagination parameters for the request.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a paginated response of
+   *     Node Groups and their priorities.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @GetMapping(
       value = "/node-group/{orgId}/node-priority",
       produces = MediaType.APPLICATION_JSON_VALUE)
@@ -176,6 +245,20 @@ public class NodeGroupDashboardController {
             .build());
   }
 
+  /**
+   * Edits the sourcing rule configuration for a specific organization.
+   *
+   * <p>This method processes a PUT request to update the sourcing rule configuration based on the
+   * request payload.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param sourcingRuleEditRequest The request containing the details of the sourcing rule
+   *     configuration to be updated.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated sourcing
+   *     rule configuration details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @PutMapping(
       value = "/sourcing-rules-configuration/{orgId}",
       produces = MediaType.APPLICATION_JSON_VALUE)

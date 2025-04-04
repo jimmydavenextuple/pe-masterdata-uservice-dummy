@@ -40,6 +40,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing node groups in an organization.
+ *
+ * <p>This controller provides APIs for adding, retrieving, updating, and deleting node groups. A
+ * node group is a collection of nodes associated with an organization, which can be optimized and
+ * managed for specific operations.
+ *
+ * <p>The controller is tagged with "Node Group APIs" for easy categorization in the API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/node-group")
@@ -51,6 +61,19 @@ public class NodeGroupController {
 
   private final NodeGroupService nodeGroupService;
 
+  /**
+   * Creates a new Node Group.
+   *
+   * <p>This method processes a POST request to create a Node Group with the details provided in the
+   * request body.
+   *
+   * @param nodeGroupRequest The request body containing the details of the Node Group to be
+   *     created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     created Node Group.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @CreateNodeGroupDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -72,6 +95,19 @@ public class NodeGroupController {
     }
   }
 
+  /**
+   * Retrieves a Node Group by its ID and organization ID.
+   *
+   * <p>This method processes a GET request to fetch the details of a Node Group using its unique ID
+   * and organization ID.
+   *
+   * @param id The unique identifier of the Node Group.
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the Node
+   *     Group.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @GetNodeGroupDetailsDoc
   @GetMapping(value = "/orgId/{orgId}/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<NodeGroupResponse>> getNodeGroupByIdandOrgId(
@@ -99,6 +135,20 @@ public class NodeGroupController {
     }
   }
 
+  /**
+   * Updates an existing Node Group.
+   *
+   * <p>This method processes a PUT request to update the details of an existing Node Group.
+   *
+   * @param id The unique identifier of the Node Group to be updated.
+   * @param orgId The unique identifier of the organization.
+   * @param updateNodeGroupRequest The request body containing the updated details of the Node
+   *     Group.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated Node Group
+   *     details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @UpdateNodeGroupDoc
   @PutMapping(
       value = "/orgId/{orgId}/id/{id}",
@@ -130,6 +180,17 @@ public class NodeGroupController {
     }
   }
 
+  /**
+   * Retrieves a list of Node Groups for a specific organization.
+   *
+   * <p>This method processes a GET request to fetch all Node Groups associated with a given
+   * organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of Node
+   *     Groups.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @GetMapping(value = "/orgId/{orgId}", produces = MediaType.APPLICATION_JSON_VALUE)
   @GetAllNodeGroupsByOrgIdDoc
   public ResponseEntity<BaseResponse<List<NodeGroupDomainDto>>> getNodeGroupListByOrgId(

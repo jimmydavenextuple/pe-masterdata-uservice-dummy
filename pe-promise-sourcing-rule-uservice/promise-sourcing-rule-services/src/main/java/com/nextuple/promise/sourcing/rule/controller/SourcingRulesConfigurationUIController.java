@@ -41,6 +41,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing sourcing rules configuration in the user interface.
+ *
+ * <p>This controller provides APIs for creating, retrieving, deleting, and fetching sourcing rules
+ * associated with a specific organization. Sourcing rules are crucial for managing how resources
+ * are selected based on predefined conditions within the sourcing environment.
+ *
+ * <p>The controller is tagged with "Sourcing Rules Configuration UI APIs" for easy categorization
+ * in the API documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/ui/sourcing-rules-configuration")
@@ -52,6 +62,19 @@ public class SourcingRulesConfigurationUIController {
 
   private final SourcingRulesConfigurationService sourcingRulesConfigurationService;
 
+  /**
+   * Creates a new sourcing rule for the specified organization.
+   *
+   * <p>This method processes a POST request to create a sourcing rule for the given organization
+   * ID.
+   *
+   * @param orgId The unique identifier of the organization. Must not be null.
+   * @param createRequest The request body containing details for the sourcing rule to be created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     created sourcing rule.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service error occurs while processing the request.
+   */
   @Operation(
       summary = "Create Sourcing Rule for a given orgId.",
       description =
@@ -83,6 +106,20 @@ public class SourcingRulesConfigurationUIController {
     }
   }
 
+  /**
+   * Retrieves all sourcing rules for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch the details of all active sourcing rules for a
+   * given organization ID, with optional pagination parameters.
+   *
+   * @param orgId The unique identifier of the organization. Must not be null.
+   * @param pageNo The page number for pagination. Defaults to 1 if not specified.
+   * @param pageSize The page size for pagination. If null, all records are retrieved.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the paginated list of
+   *     sourcing rules.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service error occurs while processing the request.
+   */
   @Operation(
       summary = "Get All Sourcing Rules",
       description =
@@ -116,6 +153,20 @@ public class SourcingRulesConfigurationUIController {
     }
   }
 
+  /**
+   * Deletes multiple sourcing rules for the specified organization.
+   *
+   * <p>This method processes a DELETE request to remove multiple sourcing rules for the given
+   * organization ID.
+   *
+   * @param orgId The unique identifier of the organization. Must not be null.
+   * @param sourcingRuleIdRequest The request body containing the list of sourcing rule IDs to be
+   *     deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted sourcing rules.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service error occurs while processing the request.
+   */
   @Operation(
       summary = "Delete Multiple Sourcing Rule",
       description =
@@ -146,6 +197,19 @@ public class SourcingRulesConfigurationUIController {
     }
   }
 
+  /**
+   * Retrieves the details of a specific sourcing rule for the given organization and rule ID.
+   *
+   * <p>This method processes a GET request to fetch the details of an active sourcing rule for the
+   * specified organization ID and sourcing rule ID.
+   *
+   * @param orgId The unique identifier of the organization. Must not be null.
+   * @param sourcingRuleId The unique identifier of the sourcing rule. Must not be null.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     sourcing rule.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service error occurs while processing the request.
+   */
   @Operation(
       summary = "Get Sourcing Rule Details",
       description =
@@ -179,6 +243,16 @@ public class SourcingRulesConfigurationUIController {
     }
   }
 
+  /**
+   * Paginates the list of sourcing rules.
+   *
+   * <p>This helper method creates a paginated response for the given list of sourcing rules.
+   *
+   * @param allSourcingRulesResponseList The list of sourcing rules to be paginated.
+   * @param pageNo The page number for pagination.
+   * @param pageSize The page size for pagination. If null, no pagination is applied.
+   * @return A {@link PagePayload} containing the paginated list of sourcing rules.
+   */
   private PagePayload<AllSourcingRulesResponse> paginateAllSourcingRulesResponses(
       List<AllSourcingRulesResponse> allSourcingRulesResponseList,
       Integer pageNo,
