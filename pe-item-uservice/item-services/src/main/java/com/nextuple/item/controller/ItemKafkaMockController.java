@@ -47,7 +47,6 @@ public class ItemKafkaMockController {
    * @param topicName The name of the Kafka topic
    * @param itemMasterEvent The item master event to be sent
    * @return A {@link ResponseEntity} with success/failure message
-   * @throws Exception If message production fails
    * @hidden
    */
   @ProduceKafkaMessageDoc

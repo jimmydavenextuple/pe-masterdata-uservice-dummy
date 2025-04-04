@@ -55,7 +55,7 @@ import org.springframework.web.bind.annotation.RestController;
  * itineraries and factors for a specific organization. It also supports updating the status and
  * active status of these mappings, and allows fetching cache keys related to them.
  *
- * <p>The controller is tagged with "Cost Itinerary & Cost Factors Mapping APIs" for easy
+ * <p>The controller is tagged with "Cost Itinerary &amp; Cost Factors Mapping APIs" for easy
  * categorization in API documentation.
  */
 @Validated
