@@ -51,6 +51,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing custom regions.
+ *
+ * <p>This controller provides APIs to create, update, delete, and retrieve custom regions for a
+ * specific organization. It supports pagination for retrieving lists of custom regions and allows
+ * the retrieval of individual custom region details based on organization ID and custom region ID.
+ *
+ * <p>The controller is tagged with "Custom Region APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/custom-region")
@@ -64,6 +74,20 @@ public class CustomRegionController {
   private static final String PAGINATION_URL = "/%s?pageNo=%d&pageSize=%d";
   public static final String CUSTOM_REGION_DEFAULT_SORT_BY = "id";
 
+  /**
+   * Creates a custom region with the given details.
+   *
+   * <p>This method processes a POST request to create a new custom region based on the details
+   * provided in the request body.
+   *
+   * @param customRegionRequest The request body containing the details for the custom region to be
+   *     created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created custom
+   *     region details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @Operation(
       summary = "Create Custom Region",
       description = "Creates a custom region with the given details.")
@@ -82,6 +106,19 @@ public class CustomRegionController {
         HttpStatus.CREATED);
   }
 
+  /**
+   * Retrieves the details of a custom region by organization ID and custom region ID.
+   *
+   * <p>This method processes a GET request to fetch the details of a custom region identified by
+   * the given organization ID and custom region ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the custom region.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched custom
+   *     region details.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @Operation(
       summary = "Get Custom Region",
       description = "Retrieves the custom region by the organization ID and custom region ID.")
@@ -106,6 +143,20 @@ public class CustomRegionController {
             .build());
   }
 
+  /**
+   * Updates a custom region with the given details.
+   *
+   * <p>This method processes a PUT request to update an existing custom region based on the details
+   * provided in the request body.
+   *
+   * @param customRegionRequest The request body containing the details for the custom region to be
+   *     updated.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated custom
+   *     region details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @Operation(
       summary = "Update Custom Region",
       description = "Updates the custom region with the given details.")
@@ -122,6 +173,20 @@ public class CustomRegionController {
             .build());
   }
 
+  /**
+   * Deletes a custom region by organization ID and custom region ID.
+   *
+   * <p>This method processes a DELETE request to remove a custom region identified by the given
+   * organization ID and custom region ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the custom region.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted custom region.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @Operation(
       summary = "Delete Custom Region",
       description = "Deletes the custom region by the organization ID and custom region ID.")
@@ -145,6 +210,21 @@ public class CustomRegionController {
             .build());
   }
 
+  /**
+   * Deletes custom region geozones by organization ID and custom region ID.
+   *
+   * <p>This method processes a DELETE request to remove geozones of a custom region identified by
+   * the given organization ID and custom region ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param deleteCustomRegionGeozonesRequest The request body containing the details for the
+   *     geozones to be deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted custom region geozones.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @Operation(
       summary = "Delete Custom Region",
       description = "Deletes the custom region by the organization ID and custom region ID.")
@@ -173,6 +253,20 @@ public class CustomRegionController {
             .build());
   }
 
+  /**
+   * Deletes custom region geozones based on the provided custom region request.
+   *
+   * <p>This method processes a DELETE request to remove geozones of a custom region based on the
+   * details provided in the request body.
+   *
+   * @param customRegionRequest The request body containing the details for the custom region
+   *     geozones to be deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted custom region geozones.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @DeleteMapping
   @DeleteCustomRegionGeozones
   public ResponseEntity<BaseResponse<CustomRegionResponse>> deleteCustomRegionByRequest(
@@ -192,6 +286,21 @@ public class CustomRegionController {
             .build());
   }
 
+  /**
+   * Retrieves a paginated list of custom regions for a given organization ID.
+   *
+   * <p>This method processes a GET request to fetch a paginated list of custom regions based on the
+   * organization ID and provided pagination parameters.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param pageParams The pagination parameters including page number, page size, sort by, and sort
+   *     order.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the paginated list of
+   *     custom regions.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @GetCustomRegionListDoc
   @GetMapping("/list/orgId/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<CustomRegionDto>>> getCustomRegionList(
@@ -221,6 +330,25 @@ public class CustomRegionController {
             .build());
   }
 
+  /**
+   * Retrieves custom region information by organization ID and country.
+   *
+   * <p>This method processes a GET request to fetch custom region information based on the
+   * organization ID, country, and optional custom region IDs and names.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param country The unique identifier of the country.
+   * @param customRegionIds Optional comma-separated values for unique identifiers of the custom
+   *     regions.
+   * @param customRegionNames Optional comma-separated values for custom region names.
+   * @param pageParams The pagination parameters including page number, page size, sort by, and sort
+   *     order.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the paginated list of
+   *     custom region information.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @GetCustomRegionInfoDoc
   @GetMapping("/orgId/{orgId}/country/{country}")
   public ResponseEntity<BaseResponse<PagePayload<CustomRegionInfo>>> getCustomRegionInfo(
