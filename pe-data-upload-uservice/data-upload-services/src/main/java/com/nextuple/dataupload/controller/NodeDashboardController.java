@@ -22,6 +22,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Node Details.
+ *
+ * <p>This controller provides APIs to retrieve unique node types for a specified organization. It
+ * enables clients to fetch data related to node configurations based on the organization ID.
+ *
+ * <p>The controller is tagged with "Node Details UI APIs" for categorization in API documentation.
+ */
 @RestController
 @RequestMapping("/ui/node")
 @RequiredArgsConstructor
@@ -31,6 +39,15 @@ public class NodeDashboardController {
 
   private final NodeDetailsService nodeDetailsService;
 
+  /**
+   * Retrieves the unique node types for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch the unique node types associated with the
+   * provided organization ID. It returns a response containing the list of node types.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the node types.
+   */
   @GetMapping("/node-types/{orgId}")
   @GetNodeTypesDoc
   public ResponseEntity<BaseResponse<NodeTypesResponse>> getUniqueNodeTypes(

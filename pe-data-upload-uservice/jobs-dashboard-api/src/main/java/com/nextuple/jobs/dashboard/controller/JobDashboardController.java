@@ -53,6 +53,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Job Dashboard operations.
+ *
+ * <p>This controller provides APIs to handle job management tasks such as processing jobs offline,
+ * retrieving job details, managing job records, and applying filters to fetch job data. It supports
+ * operations using file-based data or JSON inputs.
+ *
+ * <p>Tagged under "Job Dashboard APIs" for documentation, this controller ensures seamless job data
+ * management with validation and robust error handling.
+ */
 @Validated
 @RestController
 @Slf4j
@@ -72,6 +82,19 @@ public class JobDashboardController {
   private static final String PAGINATION_URL =
       DATA_UPLOAD_PAGINATION_URL_CONSTANT + "/org/%s/jobs/filters/?pageNo=%d&pageSize=%d";
 
+  /**
+   * Processes a job offline using a CSV file.
+   *
+   * <p>This method processes an offline job by uploading a CSV file and associating it with a job
+   * type and a specific organization ID. It returns the job response after processing the file.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobType The type of the job to be processed.
+   * @param csvFile The CSV file to be uploaded and processed.
+   * @param fileName The name of the file to be uploaded.
+   * @return A {@link ResponseEntity} containing the {@link BaseResponse} with the job response.
+   * @throws JobException If there is an error while processing the job.
+   */
   @PostMapping(
       path = "/org/{orgId}/jobs",
       produces = APPLICATION_JSON_VALUE,
@@ -96,6 +119,18 @@ public class JobDashboardController {
     return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
   }
 
+  /**
+   * Processes a job offline using JSON data.
+   *
+   * <p>This method processes an offline job by accepting JSON data, associating it with a job type
+   * and a specific organization ID. It returns the job response after processing the JSON data.
+   *
+   * @param jobType The type of the job to be processed.
+   * @param orgId The unique identifier for the organization.
+   * @param request The JSON data to be processed for the job.
+   * @return A {@link ResponseEntity} containing the {@link BaseResponse} with the job response.
+   * @throws JobException If there is an error while processing the job.
+   */
   @PostMapping(
       path = "/org/{orgId}/jobs",
       produces = APPLICATION_JSON_VALUE,
@@ -115,6 +150,18 @@ public class JobDashboardController {
     return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
   }
 
+  /**
+   * Processes a job offline using JSON data by the scheduler.
+   *
+   * <p>This method processes a job offline using JSON data, associated with a specific job ID and a
+   * job type for the provided organization ID. It is intended to be triggered by the scheduler.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobType The type of the job to be processed.
+   * @param jobId The unique identifier for the job to be processed.
+   * @return A {@link ResponseEntity} containing the {@link BaseResponse} with the job response.
+   * @throws JobException If there is an error while processing the job.
+   */
   @PutMapping(path = "/org/{orgId}/jobs/{jobId}", produces = APPLICATION_JSON_VALUE)
   @ProcessJobJsonBySchedulerDoc
   public ResponseEntity<BaseResponse<JobResponse>> processJobJsonByScheduler(
@@ -135,6 +182,17 @@ public class JobDashboardController {
     return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
   }
 
+  /**
+   * Retrieves job details by its unique identifier.
+   *
+   * <p>This method fetches the job details associated with the provided organization ID and job ID.
+   * It returns the job data if the job exists.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobId The unique identifier for the job.
+   * @return A {@link ResponseEntity} containing the {@link BaseResponse} with the job details.
+   * @throws JobException If there is an error while fetching the job.
+   */
   @GetMapping(path = "/org/{orgId}/jobs/{jobId}", produces = MediaType.APPLICATION_JSON_VALUE)
   @GetJobDoc
   public ResponseEntity<BaseResponse<JobDto>> getJob(
@@ -160,10 +218,17 @@ public class JobDashboardController {
   }
 
   /**
-   * @param orgId
-   * @param jobFilters
-   * @return
-   * @throws JobException
+   * Retrieves a list of jobs filtered by the given parameters.
+   *
+   * <p>This method fetches jobs based on the filter parameters, including job type, days, sort
+   * criteria, and pagination details. It returns the paginated list of jobs.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobFilters The filter criteria for fetching jobs, including job type, days, pagination,
+   *     etc.
+   * @return A {@link ResponseEntity} containing the {@link BaseResponse} with a paginated list of
+   *     job responses.
+   * @throws JobException If there is an error while fetching the jobs.
    */
   @GetMapping(path = "/org/{orgId}/jobs/filters", produces = MediaType.APPLICATION_JSON_VALUE)
   @GetJobsByFilterDoc
@@ -225,12 +290,17 @@ public class JobDashboardController {
   }
 
   /**
-   * Get the detailed information of a job
+   * Retrieves the job records filtered by status.
    *
-   * @param jobId
-   * @param status
-   * @return
-   * @throws JobException
+   * <p>This method retrieves the records for a job, filtered by the status (e.g., COMPLETED). It
+   * returns a list of job records.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobId The unique identifier for the job.
+   * @param status The status of the job to filter records (optional).
+   * @return A {@link ResponseEntity} containing the {@link BaseResponse} with the filtered job
+   *     records.
+   * @throws JobException If there is an error while fetching the job records.
    */
   @GetMapping(
       path = "/org/{orgId}/jobs-dashboard/{jobId}/results",
@@ -262,6 +332,19 @@ public class JobDashboardController {
                 .build());
   }
 
+  /**
+   * Processes a job offline using file metadata ID.
+   *
+   * <p>This method processes an offline job by associating it with a file metadata ID instead of a
+   * file. It is useful when the file is already uploaded and stored, and the metadata is being
+   * used.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobType The type of the job to be processed.
+   * @param fileMetadataId The unique identifier for the file metadata.
+   * @return A {@link ResponseEntity} containing the {@link BaseResponse} with the job response.
+   * @throws JobException If there is an error while processing the job.
+   */
   @PostMapping(path = "/v1/org/{orgId}/jobs", produces = APPLICATION_JSON_VALUE)
   @ProcessJobOfflineWithFileMetaDataIdDoc
   public ResponseEntity<BaseResponse<JobResponse>> processJobOfflineWithFileMetaDataId(
@@ -285,6 +368,21 @@ public class JobDashboardController {
     return ResponseEntity.ok(BaseResponse.builder().message(MESSAGE).payload(jobDto).build());
   }
 
+  /**
+   * Retrieves job records with filters and pagination.
+   *
+   * <p>This method fetches job records filtered by status, with support for pagination. It returns
+   * the paginated records for the job.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobId The unique identifier for the job.
+   * @param status The status of the job (optional).
+   * @param pageNo The page number for pagination (optional).
+   * @param pageSize The page size for pagination (optional).
+   * @return A {@link ResponseEntity} containing the {@link BaseResponse} with the paginated job
+   *     records.
+   * @throws JobException If there is an error while fetching the job records.
+   */
   @GetMapping(
       path = "/v1/org/{orgId}/jobs-dashboard/{jobId}/results",
       produces = MediaType.APPLICATION_JSON_VALUE)
@@ -342,6 +440,21 @@ public class JobDashboardController {
                 .build());
   }
 
+  /**
+   * Retrieves jobs by filter for notifications.
+   *
+   * <p>This method fetches jobs based on the filter parameters specifically for notification
+   * purposes. It supports pagination and returns the filtered jobs in a paginated format.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param jobFilters The filter criteria for fetching jobs, including job type, days, pagination,
+   *     etc.
+   * @return A {@link ResponseEntity} containing the {@link BaseResponse} with the filtered jobs for
+   *     notification.
+   * @throws JobException If there is an error while fetching the jobs.
+   * @throws com.nextuple.plt.exception.JobException If there is an error specific to job
+   *     processing.
+   */
   @GetMapping(path = "/v2/org/{orgId}/jobs/filters", produces = MediaType.APPLICATION_JSON_VALUE)
   @GetJobsByFilterDoc
   public ResponseEntity<BaseResponse<PagePayload<JobResponseForNotification>>> getJobsByFilterV2(

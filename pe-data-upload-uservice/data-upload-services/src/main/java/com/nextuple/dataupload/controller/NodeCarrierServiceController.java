@@ -30,6 +30,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Node Carrier Service details.
+ *
+ * <p>This controller provides APIs to retrieve node and carrier service details associated with a
+ * specified organization. The data is paginated and supports sorting based on the provided
+ * parameters.
+ *
+ * <p>The controller is tagged with "Node Carrier Service APIs" for categorization in API
+ * documentation.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/ui/node-carrier-service")
@@ -44,6 +54,19 @@ public class NodeCarrierServiceController {
       DATA_UPLOAD_PAGINATION_URL_CONSTANT_UI
           + "/node-carrier-service/%s?pageNo=%d&pageSize=%d&sortBy=%s&sortOrder=%s";
 
+  /**
+   * Retrieves a paginated list of node and carrier service details for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch a paginated list of node and carrier service
+   * details based on the provided organization ID. Pagination and sorting are supported through the
+   * `pageParams` parameter.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param pageParams The pagination parameters, such as page number, page size, sorting criteria,
+   *     and sort order.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a paginated list of
+   *     node and carrier service details.
+   */
   @GetMapping("/{orgId}")
   @GetNodeCarrierServiceDoc
   public ResponseEntity<BaseResponse<PagePayload<NodeCarrierServiceResponse>>>

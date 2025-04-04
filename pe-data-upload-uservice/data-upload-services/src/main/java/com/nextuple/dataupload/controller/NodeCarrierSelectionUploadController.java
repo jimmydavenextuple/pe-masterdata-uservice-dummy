@@ -21,6 +21,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Controller for node carrier selection upload APIs.
+ *
+ * <p>This controller provides an API to upload node carrier selection data from a specified file
+ * URI. It handles the ingestion and processing of data related to node carrier selection for
+ * further use.
+ *
+ * <p>The controller is responsible for coordinating with the service layer to process the uploaded
+ * data and return appropriate responses.
+ */
 @Validated
 @Controller
 @RequestMapping("/upload")
@@ -29,6 +39,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class NodeCarrierSelectionUploadController {
   private final NodeCarrierSelectionUploadService nodeCarrierSelectionUploadService;
 
+  /**
+   * Uploads the node carrier selection data from the specified file URI.
+   *
+   * <p>This method processes a POST request to upload node carrier selection data by fetching the
+   * file located at the specified file URI and processing it.
+   *
+   * @param fileUri The URI of the file containing the node carrier selection data to be uploaded.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message if
+   *     the upload is successful.
+   * @throws IOException If there is an error during file reading or processing.
+   * @throws CommonServiceException If there is a general error during the service process.
+   */
   @PostMapping("/node-carrier-selection-upload")
   public ResponseEntity<BaseResponse<String>> nodeCarrierSelectionUpload(
       @NotBlank(message = "fileUri can't be empty") @RequestParam String fileUri)

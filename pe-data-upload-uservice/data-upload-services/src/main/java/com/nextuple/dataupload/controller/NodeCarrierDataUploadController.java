@@ -21,6 +21,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Controller for node carrier data upload APIs.
+ *
+ * <p>This controller provides APIs to upload node carrier data from a specified file URI and
+ * process it for storage or further use.
+ *
+ * <p>The controller is tagged for handling node carrier data upload functionality, facilitating
+ * file-based data ingestion and processing.
+ */
 @Validated
 @Controller
 @RequestMapping("/upload")
@@ -29,6 +38,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class NodeCarrierDataUploadController {
   private final NodeCarrierDataUploadService nodeCarrierDataUploadService;
 
+  /**
+   * Uploads the node carrier data from the specified file URI.
+   *
+   * <p>This method processes a POST request to upload node carrier data by fetching the file
+   * located at the specified file URI and processing it.
+   *
+   * @param fileUri The URI of the file containing the node carrier data to be uploaded.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message if
+   *     the upload is successful.
+   * @throws IOException If there is an error during file reading or processing.
+   * @throws CommonServiceException If there is a general error during the service process.
+   */
   @PostMapping("/node-carrier")
   public ResponseEntity<BaseResponse<String>> uploadNodeCarrierData(
       @NotBlank(message = "fileUri can't be empty") @RequestParam String fileUri)

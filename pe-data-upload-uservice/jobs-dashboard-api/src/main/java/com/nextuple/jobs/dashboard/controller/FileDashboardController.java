@@ -23,6 +23,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing file upload and download operations via pre-signed URLs.
+ *
+ * <p>This controller provides APIs to generate pre-signed URLs for uploading and downloading files
+ * in a secure and controlled manner. The URLs allow direct interaction with the storage layer
+ * without requiring direct access to the server, ensuring security and scalability.
+ *
+ * <p>Tagged under "File Dashboard APIs" for documentation categorization, this controller supports
+ * seamless integration for file management operations across modules.
+ */
 @RestController
 @Validated
 @RequestMapping("/data-upload/ui")
@@ -34,6 +44,18 @@ public class FileDashboardController {
 
   private static final Logger logger = LoggerFactory.getLogger(FileDashboardController.class);
 
+  /**
+   * Generates a pre-signed URL for file upload.
+   *
+   * <p>This method generates a pre-signed URL that allows uploading a file to a specific location.
+   * The URL is valid for a specified time and can be used to upload a file without requiring direct
+   * access to the server or storage.
+   *
+   * @param fileName The name of the file to be uploaded.
+   * @param moduleName The name of the module where the file will be uploaded.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the pre-signed URL.
+   * @throws CommonServiceException If there is an error while generating the pre-signed URL.
+   */
   @GetMapping("/pre-signed-url")
   @GetPreSignedUrlDoc
   public ResponseEntity<BaseResponse<PreSignedUrlResponse>> getPreSignedUrl(
@@ -61,6 +83,17 @@ public class FileDashboardController {
     }
   }
 
+  /**
+   * Fetches the pre-signed URL for downloading a file.
+   *
+   * <p>This method retrieves a pre-signed URL that allows downloading a file from a specific
+   * location based on the file's metadata identifier.
+   *
+   * @param fileMetaId The unique identifier for the file metadata.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the file's download
+   *     URL.
+   * @throws CommonServiceException If there is an error while fetching the download URL.
+   */
   @GetMapping("/file/{fileMetaId}")
   @DownloadFileUrlDoc
   public ResponseEntity<BaseResponse<PreSignedUrlResponse>> downloadFileURL(

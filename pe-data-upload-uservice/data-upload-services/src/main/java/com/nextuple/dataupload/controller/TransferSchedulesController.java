@@ -29,6 +29,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing transfer schedules.
+ *
+ * <p>This controller provides APIs to retrieve and manage transfer schedules for organizations. It
+ * supports paginated queries with sorting capabilities and includes versioned endpoints for
+ * enhanced functionality.
+ *
+ * <p>Key features include:
+ *
+ * <ul>
+ *   <li>Paginated retrieval of transfer schedules
+ *   <li>Customizable sorting options
+ *   <li>Version 2 API with additional pagination controls
+ *   <li>Support for complex transfer schedule queries
+ * </ul>
+ *
+ * @see TransferScheduleService
+ * @see TransferScheduleResponse
+ * @see FetchTransferScheduleRequest
+ */
 @Validated
 @RestController
 @RequestMapping("transfer-schedule/ui")
@@ -39,6 +59,21 @@ public class TransferSchedulesController {
   private final TransferScheduleService transferScheduleService;
   public static final String TRANSFER_SCHEDULE_DEFAULT_SORT_BY = "sourceNodeId";
 
+  /**
+   * Retrieves a paginated list of all transfer schedules for the specified organization.
+   *
+   * <p>This endpoint processes a POST request to fetch transfer schedules based on the provided
+   * criteria. The results are paginated and can be sorted according to the specified parameters.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param pageNo The page number to retrieve (default: 1)
+   * @param pageSize The number of records per page (default: 10)
+   * @param sortBy The field to sort by (default: sourceNodeId)
+   * @param sortOrder The sort direction, either "ASC" or "DESC" (default: ASC)
+   * @param request The {@link FetchTransferScheduleRequest} containing filter criteria
+   * @return A {@link ResponseEntity} containing a paginated list of transfer schedules
+   */
   @PostMapping(
       path = "/orgId/{orgId}",
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -72,6 +107,24 @@ public class TransferSchedulesController {
             .build());
   }
 
+  /**
+   * Version 2 of the transfer schedules list retrieval endpoint with enhanced filtering based on
+   * transfer schedule rules.
+   *
+   * <p>This endpoint provides additional functionality over v1, including the ability to show
+   * transfer schedule which are either not associated to any rules or associated to rule with
+   * active transfer schedule rule definition.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank.
+   * @param isPaginated Flag to enable/disable pagination (default: true)
+   * @param pageNo The page number to retrieve (default: 1)
+   * @param pageSize The number of records per page (default: 10)
+   * @param sortBy The field to sort by (default: sourceNodeId)
+   * @param sortOrder The sort direction, either "ASC" or "DESC" (default: ASC)
+   * @param request The {@link FetchTransferScheduleRequest} containing filter criteria
+   * @return A {@link ResponseEntity} containing a paginated or complete list of transfer schedules
+   * @throws CommonServiceException If there is an error processing the request
+   */
   @PostMapping(
       path = "v2/orgId/{orgId}",
       consumes = MediaType.APPLICATION_JSON_VALUE,
