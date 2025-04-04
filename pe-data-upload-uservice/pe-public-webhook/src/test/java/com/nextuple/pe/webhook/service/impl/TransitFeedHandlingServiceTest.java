@@ -12,8 +12,8 @@ import static org.mockito.ArgumentMatchers.any;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.master.data.integration.dto.ResponseDto;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.outbound.BatchResponse;
 import com.nextuple.pe.webhook.domain.dtos.MasterDataIngestionDto;

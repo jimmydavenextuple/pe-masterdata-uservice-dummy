@@ -204,6 +204,11 @@ public class NodePersistenceServiceImpl
     return getRepository().findDistinctNodeTypesByOrgId(orgId);
   }
 
+  @Override
+  public List<String> checkNodesExistByNodeIdsAndOrgId(List<String> nodeIds, String orgId) {
+    return getRepository().findDistinctNodeIdByNodeIdInAndOrgId(nodeIds, orgId);
+  }
+
   public Page<NodeDomainDto> getNodeByOrgIdV1(String orgId, PageParams pageParams)
       throws NodeDomainException {
     try {

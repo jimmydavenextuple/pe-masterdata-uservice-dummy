@@ -11,6 +11,7 @@ import static com.nextuple.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
 import static com.nextuple.common.constants.CommonConstants.DESC_SORT_ORDER;
 import static com.nextuple.common.constants.CommonConstants.ORG_ID;
 
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.enums.ApplicationLayer;
 import com.nextuple.common.enums.ExceptionCodeMapping;
 import com.nextuple.common.exception.CommonServiceException;
@@ -18,31 +19,48 @@ import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.common.response.error.FieldError;
+import com.nextuple.common.util.ObjectUtil;
 import com.nextuple.node.domain.feign.NodeFeign;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.RulesConfigurationModuleNameEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.enums.SourcingAttributesDefinitionScopeEnum;
 import com.nextuple.promise.sourcing.rule.api.domain.outbound.RulesConfigurationResponse;
+import com.nextuple.promise.sourcing.rule.api.domain.outbound.SourcingAttributesDefinitionResponse;
 import com.nextuple.promise.sourcing.rule.api.domain.pojo.RuleConfigurationParam;
 import com.nextuple.promise.sourcing.rule.service.RulesConfigurationService;
+import com.nextuple.promise.sourcing.rule.service.SourcingAttributesDefinitionService;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleBatchRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleConsumerRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleCreationRequest;
+import com.nextuple.transit.domain.inbound.TransferScheduleDeleteRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRangeRequest;
 import com.nextuple.transit.domain.inbound.TransferScheduleRequest;
 import com.nextuple.transit.domain.mapper.TransferScheduleMapper;
+import com.nextuple.transit.domain.outbound.TransferScheduleBatchResponse;
+import com.nextuple.transit.domain.outbound.TransferScheduleConsumerResult;
+import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainDto;
 import com.nextuple.transit.persistence.domain.TransferScheduleDomainRequest;
 import com.nextuple.transit.persistence.service.TransferSchedulePersistenceService;
 import com.nextuple.transit.service.TransferScheduleService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import kotlin.Pair;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -64,6 +82,7 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
   private final TransferSchedulePersistenceService transferSchedulePersistenceService;
   private final RulesConfigurationService ruleConfigurationService;
   private final NodeFeign nodeFeign;
+  private final SourcingAttributesDefinitionService sourcingAttributesDefinitionService;
   private static final TransferScheduleMapper INSTANCE =
       Mappers.getMapper(TransferScheduleMapper.class);
 
@@ -81,6 +100,216 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     var transferScheduleDomainDto = INSTANCE.convertToTransferScheduleEntity(request);
     var entity = transferSchedulePersistenceService.saveTransferSchedule(transferScheduleDomainDto);
     return INSTANCE.convertToTransferScheduleResponse(entity);
+  }
+
+  @Override
+  @Transactional
+  public TransferScheduleBatchResponse batchTransferSchedules(
+      TransferScheduleBatchRequest transferScheduleBatchRequest, String orgId)
+      throws PromiseEngineException {
+    List<TransferScheduleConsumerResult> results = new ArrayList<>();
+
+    Map<ActionEnum, List<TransferScheduleConsumerRequest>> actionMap =
+        transferScheduleBatchRequest.getTransferScheduleConsumerRequests().stream()
+            .filter(
+                req -> {
+                  boolean isValid = Objects.nonNull(req.getAction());
+                  if (!isValid) {
+                    results.add(
+                        TransferScheduleConsumerResult.builder()
+                            .index(req.getIndex())
+                            .success(false)
+                            .message("Action type cannot be null")
+                            .statusCode(HttpStatus.BAD_REQUEST.value())
+                            .build());
+                    return false;
+                  }
+                  return true;
+                })
+            .collect(Collectors.groupingBy(TransferScheduleConsumerRequest::getAction));
+
+    for (Map.Entry<ActionEnum, List<TransferScheduleConsumerRequest>> mapEntry :
+        actionMap.entrySet()) {
+      switch (mapEntry.getKey()) {
+        case ActionEnum.CREATE:
+          results.addAll(
+              batchCreateTransferSchedule(
+                  actionMap.get(mapEntry.getKey()),
+                  orgId,
+                  transferScheduleBatchRequest.getApplyValidation()));
+          break;
+        case ActionEnum.DELETE:
+          results.addAll(batchDeleteTransferSchedule(actionMap.get(mapEntry.getKey())));
+          break;
+        default:
+          results.addAll(
+              actionMap.get(mapEntry.getKey()).stream()
+                  .map(
+                      request ->
+                          new TransferScheduleConsumerResult(
+                              request.getIndex(),
+                              false,
+                              "Invalid action type",
+                              HttpStatus.BAD_REQUEST.value()))
+                  .toList());
+          break;
+      }
+    }
+
+    return TransferScheduleBatchResponse.builder()
+        .totalCount(transferScheduleBatchRequest.getTransferScheduleConsumerRequests().size())
+        .successCount(
+            (int) results.stream().filter(TransferScheduleConsumerResult::getSuccess).count())
+        .failureCount((int) results.stream().filter(result -> !result.getSuccess()).count())
+        .results(results)
+        .build();
+  }
+
+  private List<TransferScheduleConsumerResult> batchDeleteTransferSchedule(
+      List<TransferScheduleConsumerRequest> requests) {
+    List<TransferScheduleConsumerResult> results = new ArrayList<>();
+    List<TransferScheduleDomainDto> domainDto;
+    try {
+      List<TransferScheduleDeleteRequest> transferScheduleDeleteRequest = new ArrayList<>();
+      for (TransferScheduleConsumerRequest request : requests) {
+        transferScheduleDeleteRequest.add(
+            new TransferScheduleDeleteRequest(
+                request.getOrgId(),
+                request.getSourceNodeId(),
+                request.getDropoffNodeId(),
+                request.getStartTime().toDate()));
+      }
+      domainDto =
+          transferSchedulePersistenceService.deleteTransferSchedules(transferScheduleDeleteRequest);
+    } catch (Exception e) {
+      requests.forEach(
+          request -> {
+            TransferScheduleConsumerResult result = new TransferScheduleConsumerResult();
+            result.setIndex(request.getIndex());
+            result.setSuccess(false);
+            result.setMessage("Error while deleting transfer schedule");
+            result.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            results.add(result);
+          });
+      return results;
+    }
+
+    for (TransferScheduleConsumerRequest request : requests) {
+      TransferScheduleConsumerResult result = new TransferScheduleConsumerResult();
+      result.setIndex(request.getIndex());
+      if (domainDto.stream()
+          .anyMatch(
+              dto ->
+                  Objects.equals(dto.getOrgId(), request.getOrgId())
+                      && dto.getSourceNodeId().equals(request.getSourceNodeId())
+                      && dto.getDropoffNodeId().equals(request.getDropoffNodeId())
+                      && (new DateTime(dto.getStartTime(), DateTimeZone.UTC)
+                          .isEqual(request.getStartTime().withZone(DateTimeZone.UTC))))) {
+        result.setSuccess(true);
+        result.setMessage("Transfer schedule deleted successfully");
+        result.setStatusCode(HttpStatus.OK.value());
+      } else {
+        result.setSuccess(false);
+        result.setMessage("Transfer schedule not found");
+        result.setStatusCode(HttpStatus.NOT_FOUND.value());
+      }
+      results.add(result);
+    }
+    return results;
+  }
+
+  private List<TransferScheduleConsumerResult> batchCreateTransferSchedule(
+      List<TransferScheduleConsumerRequest> transferScheduleBatchRequest,
+      String orgId,
+      Boolean applyValidation) {
+    List<TransferScheduleConsumerResult> results = new ArrayList<>();
+    Set<String> uniqueNodeList = new HashSet<>();
+    Set<Pair<String, String>> uniqueRulePair = new HashSet<>();
+    List<String> validNodes;
+    List<Pair<String, String>> invalidRules = new ArrayList<>();
+
+    if (Boolean.TRUE.equals(applyValidation)) {
+      transferScheduleBatchRequest.forEach(
+          request -> {
+            uniqueNodeList.add(request.getDropoffNodeId());
+            uniqueNodeList.add(request.getSourceNodeId());
+            uniqueRulePair.add(new Pair<>(request.getRule(), request.getRuleName()));
+          });
+      validNodes =
+          nodeFeign.checkIfNodesExist(uniqueNodeList.stream().toList(), orgId).getPayload();
+      for (Pair<String, String> rulePair : uniqueRulePair) {
+        try {
+          validateRuleDetails(orgId, rulePair.getFirst(), rulePair.getSecond());
+        } catch (Exception e) {
+          invalidRules.add(rulePair);
+        }
+      }
+    } else {
+      validNodes = new ArrayList<>();
+    }
+
+    List<TransferScheduleConsumerRequest> validRequests =
+        transferScheduleBatchRequest.stream()
+            .filter(
+                request ->
+                    validateNodesAndRule(
+                        orgId, applyValidation, validNodes, invalidRules, results, request))
+            .toList();
+
+    try {
+      transferSchedulePersistenceService.saveTransferSchedules(
+          INSTANCE.convertToTransferScheduleEntityList(validRequests));
+      results.forEach(
+          result -> {
+            if (result.getStatusCode() == -1) {
+              result.setSuccess(true);
+              result.setMessage("Transfer schedule created successfully");
+              result.setStatusCode(HttpStatus.OK.value());
+            }
+          });
+    } catch (Exception e) {
+      logger.error("Error while saving batch transfer schedules", e);
+      results.forEach(
+          result -> {
+            if (result.getStatusCode() == -1) {
+              result.setSuccess(false);
+              result.setMessage("Error while saving transfer schedule");
+              result.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            }
+          });
+    }
+
+    return results;
+  }
+
+  private static boolean validateNodesAndRule(
+      String orgId,
+      Boolean applyValidation,
+      List<String> validNodes,
+      List<Pair<String, String>> invalidRules,
+      List<TransferScheduleConsumerResult> results,
+      TransferScheduleConsumerRequest request) {
+    if (Boolean.TRUE.equals(applyValidation)) {
+      boolean isValid =
+          (Objects.equals(orgId, request.getOrgId()))
+              && validNodes.contains(request.getDropoffNodeId())
+              && validNodes.contains(request.getSourceNodeId())
+              && !request.getStartTime().isAfter(request.getEndTime())
+              && !invalidRules.contains(new Pair<>(request.getRule(), request.getRuleName()));
+      if (!isValid) {
+        results.add(
+            TransferScheduleConsumerResult.builder()
+                .index(request.getIndex())
+                .success(false)
+                .message("Rule or node or time validation failed")
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .build());
+        return false;
+      }
+    }
+    results.add(
+        TransferScheduleConsumerResult.builder().index(request.getIndex()).statusCode(-1).build());
+    return true;
   }
 
   private void validateRuleDetails(String orgId, String rule, String ruleName)
@@ -201,12 +430,48 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
     } else {
       pageable = PageRequest.of(pageParams.getPageNo().get() - 1, Integer.MAX_VALUE, sort);
     }
+
+    if (!ObjectUtil.isNull(request.getIsSourcingAttributeEnabled())
+        && Boolean.TRUE.equals(request.getIsSourcingAttributeEnabled())) {
+      List<RulesConfigurationResponse> ruleConfigs =
+          Objects.isNull(request.getSourcingAttributeId())
+              ? Collections.emptyList()
+              : ruleConfigurationService
+                  .fetchRuleByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+                      orgId,
+                      request.getSourcingAttributeId(),
+                      RulesConfigurationModuleNameEnum.TRANSFER_SCHEDULE,
+                      SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
+      List<Pair<String, String>> ruleInfo = prepareRuleInfo(ruleConfigs);
+      request.setRuleInfo(ruleInfo);
+    }
+
     return transferSchedulePersistenceService.fetchTransferSchedulesList(orgId, request, pageable);
   }
 
+  private List<Pair<String, String>> prepareRuleInfo(List<RulesConfigurationResponse> ruleConfigs) {
+    List<Pair<String, String>> ruleInfoList = new ArrayList<>();
+    for (RulesConfigurationResponse ruleConfig : ruleConfigs) {
+      ruleInfoList.add(new Pair<>(ruleConfig.getRuleName(), ruleConfig.getRule()));
+    }
+    return ruleInfoList;
+  }
+
   @Override
-  public List<TransferScheduleResponse> fetchTransferSchedulesInRange(
+  public List<TransferScheduleRangeResponse> fetchTransferSchedulesInRange(
       TransferScheduleRangeRequest request) {
+    if (Objects.isNull(request.getRule()) || Objects.isNull(request.getRuleName())) {
+      try {
+        SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
+            sourcingAttributesDefinitionService
+                .processGetSourcingAttributesDefinitionInActiveStatus(
+                    request.getOrgId(),
+                    SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
+        if (Objects.nonNull(sourcingAttributesDefinitionResponse)) return Collections.emptyList();
+      } catch (Exception e) {
+        logger.error("Failed to fetch sourcing attributes definition in active status", e);
+      }
+    }
     // start time bound is the maximum allowed start time for the transfer schedule
     Date startTimeBound = null;
     Date startTimeLowerBound = null;
@@ -235,11 +500,37 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
             .startTimeUpperBound(startTimeBound)
             .endTimeLowerBound(endTimeBound)
             .endTimeUpperBound(endTimeUpperBound)
+            .exclusive(request.getExclusive())
             .build();
 
     List<TransferScheduleDomainDto> dtos =
         transferSchedulePersistenceService.fetchTransferSchedulesInRange(domainRequest);
-    return INSTANCE.convertToTransferScheduleResponseList(dtos);
+    return convertDtos(dtos);
+  }
+
+  private List<TransferScheduleRangeResponse> convertDtos(List<TransferScheduleDomainDto> dtos) {
+    List<TransferScheduleRangeResponse> responses = new ArrayList<>();
+    for (TransferScheduleDomainDto dto : dtos) {
+      TransferScheduleRangeResponse response =
+          TransferScheduleRangeResponse.builder()
+              .id(dto.getId())
+              .orgId(dto.getOrgId())
+              .sourceNodeId(dto.getSourceNodeId())
+              .dropoffNodeId(dto.getDropoffNodeId())
+              .startTime(
+                  dto.getStartTime() != null
+                      ? OffsetDateTime.ofInstant(dto.getStartTime().toInstant(), ZoneOffset.UTC)
+                      : null)
+              .endTime(
+                  dto.getEndTime() != null
+                      ? OffsetDateTime.ofInstant(dto.getEndTime().toInstant(), ZoneOffset.UTC)
+                      : null)
+              .rule(dto.getRule())
+              .ruleName(dto.getRuleName())
+              .build();
+      responses.add(response);
+    }
+    return responses;
   }
 
   private static void validateSortBy(String sortBy) throws CommonServiceException {

@@ -20,13 +20,19 @@ public interface RulesConfigurationRepository
   List<RulesConfigurationEntity> findByOrgIdAndAttributeDefinitionIdAndRuleStartsWith(
       String orgId, Long attributeDefinitionId, String rule);
 
-  Optional<RulesConfigurationEntity> findByOrgIdAndAttributeDefinitionIdAndRule(
+  List<RulesConfigurationEntity> findByOrgIdAndAttributeDefinitionIdAndRule(
       String orgId, Long attributeDefinitionId, String rule);
 
   Optional<RulesConfigurationEntity> findByOrgIdAndRuleNameAndRuleAndModuleNameAndScope(
       String orgId,
       String ruleName,
       String rule,
+      RulesConfigurationModuleNameEnum moduleName,
+      SourcingAttributesDefinitionScopeEnum scope);
+
+  List<RulesConfigurationEntity> findByOrgIdAndAttributeDefinitionIdAndModuleNameAndScope(
+      String orgId,
+      Long attributeDefinitionId,
       RulesConfigurationModuleNameEnum moduleName,
       SourcingAttributesDefinitionScopeEnum scope);
 }

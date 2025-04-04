@@ -7,7 +7,8 @@ ext.libs = [
 
         //Nextupe
         'nxCommonUtil': 'com.hbc.controltower:common-util:1.10.0-${build_target}',
-        'nxCoreCommonLib': 'com.hbc.core:core-common-lib:1.10.0-${build_target}'
+        'nxCoreCommonLib': 'com.hbc.core:core-common-lib:1.10.0-${build_target}',
+        "openapi": 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 ]
 
 ext.libTests = [

@@ -7,8 +7,8 @@
 
 package com.nextuple.transit.consumer.consumer;
 
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.master.data.integration.dto.ResponseDto;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.outbound.BatchResponse;
 import com.nextuple.transit.consumer.TestUtil;

@@ -19,8 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -64,7 +64,7 @@ public class NodeCalendarSpringNearCacheService
   @Override
   public void delete(NodeCalendarCacheKey key) {
     super.delete(key);
-    CaffeineCacheManager caffeineCacheManager = getCacheManager();
+    CacheManager caffeineCacheManager = getCacheManager();
     if (Objects.isNull(caffeineCacheManager)) return;
     Cache cache = caffeineCacheManager.getCache(getCacheName());
     if (Objects.isNull(cache)) return;

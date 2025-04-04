@@ -177,6 +177,9 @@ master-data:
   transit-buffer:
     topic-name: INTERNAL.ORIELLY.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-orielly
+  transfer-schedule:
+    topic-names: INTERNAL.ORIELLY.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-orielly
 
 next-cache:
   caches:

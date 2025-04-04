@@ -9,7 +9,7 @@ package com.nextuple.transit.cache.domain;
 
 import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.core.cache.domain.CacheValue;
-import com.nextuple.transit.domain.outbound.TransferScheduleResponse;
+import com.nextuple.transit.domain.outbound.TransferScheduleRangeResponse;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +24,7 @@ import org.springframework.util.CollectionUtils;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransferScheduleCacheValue extends AdditionalAttributes implements CacheValue {
-  private List<TransferScheduleResponse> transferScheduleResponseList;
+  private List<TransferScheduleRangeResponse> transferScheduleResponseList;
 
   @Override
   public boolean isUndefined() {

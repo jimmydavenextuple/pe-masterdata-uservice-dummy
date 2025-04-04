@@ -188,6 +188,9 @@ master-data:
   transit-buffer:
     topic-names: INTERNAL.QA.PE.TRANSIT_BUFFER_INTEGRATION
     group-id: transit-buffer-master-qa
+  transfer-schedule:
+    topic-names: INTERNAL.QA.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-qa
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
@@ -212,12 +215,14 @@ platform:
     enabled: false
 neo-platform:
   auth-injector:
+    enabled: true
     token-strategy: generate
     filter:
       enabled: true
     client-uri-mappings:
       my-client: /**
   auth-validator:
+    enabled: true
     application-name: pe-masterdata
     header:
       tenant-id: x-tenant-id
@@ -279,6 +284,8 @@ kafka-topic-flags:
     transit:
       enabled: true
     transit-buffer:
+      enabled: true
+    transfer-schedule:
       enabled: true
   refresh-cache:
     enabled: true

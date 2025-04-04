@@ -9,15 +9,22 @@ package com.nextuple.master.data.integration.consumer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
+import jakarta.annotation.PostConstruct;
 import java.util.Date;
 import java.util.List;
 
 public abstract class MasterDataFeedConsumer<T> {
   private final ObjectMapper objectMapper = new ObjectMapper();
   private static final Logger logger = LoggerFactory.getLogger(MasterDataFeedConsumer.class);
+
+  @PostConstruct
+  public void init() {
+    objectMapper.registerModule(new JodaModule());
+  }
 
   public void consumeMasterDataFeed(List<BatchRequest<T>> feedRequest) {
     logger.info("Inside master data consumer feed with feed: {} ", feedRequest);

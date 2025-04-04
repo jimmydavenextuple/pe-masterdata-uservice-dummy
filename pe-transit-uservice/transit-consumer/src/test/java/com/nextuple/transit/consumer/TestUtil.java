@@ -9,19 +9,20 @@ package com.nextuple.transit.consumer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.master.data.integration.dto.ResponseDto;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.outbound.BatchResponse;
+import com.nextuple.transit.consumer.dto.TransferScheduleDto;
 import com.nextuple.transit.consumer.dto.TransitBufferFeedDto;
 import com.nextuple.transit.consumer.dto.TransitFeedDto;
-import com.nextuple.transit.domain.outbound.TransitBufferResponse;
-import com.nextuple.transit.domain.outbound.TransitBufferV2Response;
-import com.nextuple.transit.domain.outbound.TransitResponse;
+import com.nextuple.transit.domain.outbound.*;
 import com.nextuple.transit.persistence.domain.TransitBufferV2DomainDto;
 import com.nextuple.transit.persistence.domain.TransitDomainDto;
 import java.util.Date;
+import java.util.List;
+import org.joda.time.DateTime;
 
 public class TestUtil {
   public static final String ORG_ID = "NEXTUPLE";
@@ -56,6 +57,16 @@ public class TestUtil {
         .bufferEndDate(BUFFER_END_DATE)
         .bufferDays(TRANSIT_BUFFER_DAYS)
         .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
+  }
+
+  public TransferScheduleDto createTransferScheduleDto() {
+    return TransferScheduleDto.builder()
+        .orgId(ORG_ID)
+        .sourceNodeId("A1B")
+        .dropoffNodeId("H1R")
+        .startTime(new DateTime())
+        .endTime(new DateTime().plusHours(3))
         .build();
   }
 
@@ -147,6 +158,16 @@ public class TestUtil {
         .build();
   }
 
+  public TransferScheduleDto getTransferScheduleDto() {
+    return TransferScheduleDto.builder()
+        .orgId(ORG_ID)
+        .sourceNodeId("A1B")
+        .dropoffNodeId("H1R")
+        .startTime(new DateTime())
+        .endTime(new DateTime().plusHours(3))
+        .build();
+  }
+
   public TransitBufferV2DomainDto getTransitBufferDomainDto() {
     return TransitBufferV2DomainDto.builder()
         .orgId(ORG_ID)
@@ -157,6 +178,79 @@ public class TestUtil {
         .bufferEndDate(BUFFER_END_DATE)
         .bufferDays(TRANSIT_BUFFER_DAYS)
         .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
+  }
+
+  public BatchRequest<TransferScheduleDto> getTransferScheduleFeedRequest(ActionEnum actionEnum) {
+    BatchRequest<TransferScheduleDto> batchRequest = new BatchRequest<>();
+    batchRequest.setAction(actionEnum);
+    batchRequest.setRecordNo(1);
+    batchRequest.setPayload(createTransferFeedDto());
+    return batchRequest;
+  }
+
+  private TransferScheduleDto createTransferFeedDto() {
+    return TransferScheduleDto.builder()
+        .orgId(ORG_ID)
+        .sourceNodeId("A1B")
+        .dropoffNodeId("H1R")
+        .startTime(new DateTime())
+        .endTime(new DateTime().plusHours(3))
+        .build();
+  }
+
+  public BaseResponse<TransferScheduleResponse> getBaseResponseOfTransferScheduleFeed(
+      String message) {
+    return BaseResponse.builder()
+        .message(message)
+        .success(true)
+        .payload(getTransferScheduleResponse())
+        .build();
+  }
+
+  private TransferScheduleResponse getTransferScheduleResponse() {
+    return TransferScheduleResponse.builder()
+        .orgId(ORG_ID)
+        .sourceNodeId("A1B")
+        .dropoffNodeId("H1R")
+        .startTime(new Date())
+        .endTime(new Date())
+        .build();
+  }
+
+  public BatchResponse getTransferScheduleBatchResponse(
+      int totalRecords, int successfulRecords, int failedRecords) {
+    return BatchResponse.builder()
+        .totalRecords(totalRecords)
+        .successfulRecords(successfulRecords)
+        .failedRecords(failedRecords)
+        .build();
+  }
+
+  public TransferScheduleBatchResponse getTransferScheduleBatchResponse1(
+      Integer totalRecords, int successfulRecords, int failedRecords) {
+    List<TransferScheduleConsumerResult> results =
+        List.of(
+            TransferScheduleConsumerResult.builder()
+                .success(true)
+                .statusCode(200)
+                .message("Transfer Schedule created successfully")
+                .index(0)
+                .build());
+    return TransferScheduleBatchResponse.builder()
+        .results(results)
+        .totalCount(totalRecords)
+        .successCount(successfulRecords)
+        .failureCount(failedRecords)
+        .build();
+  }
+
+  public BaseResponse<TransferScheduleBatchResponse> getFeignTransferScheduleBatchResponse(
+      String message) {
+    return BaseResponse.builder()
+        .message(message)
+        .success(true)
+        .payload(getTransferScheduleBatchResponse1(1, 1, 0))
         .build();
   }
 }

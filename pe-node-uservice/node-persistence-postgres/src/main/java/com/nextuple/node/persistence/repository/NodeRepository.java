@@ -27,6 +27,11 @@ public interface NodeRepository extends CommonJpaRepository<NodeEntity, NodeKey>
   @Query(value = "SELECT DISTINCT node_type FROM node WHERE org_id = ?1", nativeQuery = true)
   List<String> findDistinctNodeTypesByOrgId(String orgId);
 
+  @Query(
+      value = "SELECT DISTINCT node_id FROM node WHERE node_id IN ?1 AND org_id = ?2",
+      nativeQuery = true)
+  List<String> findDistinctNodeIdByNodeIdInAndOrgId(List<String> nodeIds, String orgId);
+
   Page<NodeEntity> findByNodeIdInAndNodeTypeAndOrgId(
       List<String> nodeIdsList, String nodeType, String orgId, Pageable pageable);
 

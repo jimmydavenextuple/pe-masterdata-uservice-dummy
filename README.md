@@ -133,12 +133,14 @@ The **Promising Engine Master Data Service** is a unified microservice that cons
      ```yml
      neo-platform:
        auth-injector:
+         enabled: true 
          token-strategy: generate
          filter:
            enabled: true
          client-uri-mappings:
            my-client: /**
        auth-validator:
+         enabled: true 
          application-name: pe-masterdata
          header:
            tenant-id: x-tenant-id
@@ -150,7 +152,7 @@ The **Promising Engine Master Data Service** is a unified microservice that cons
              json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles
    
      ```
-  >   **NOTE:**  `config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"` is the path to the `plt-authz-config-uservice`. This service is used to get the roles and permissions for the application. This can be changed based on the environment. For example, in dev, it is `"https://internal-dev.nextuple.com/services/api/configurations/groups/application-group/scope-id/pe-masterdata"`
+  >   **NOTE:**  `config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"` is the path to the `plt-authz-config-uservice`. This service is used to get the roles and permissions for the application. This can be changed based on the environment. For example, in dev, it is `"https://internal-dev.nextuple.com/services/authz-config/api/configurations/groups/application-group/scope-id/pe-masterdata"`
   > **NOTE:** `token-strategy: generate` can be changed to `reuse` if running master data in standalone mode and it requires making external API calls..
    ```
 

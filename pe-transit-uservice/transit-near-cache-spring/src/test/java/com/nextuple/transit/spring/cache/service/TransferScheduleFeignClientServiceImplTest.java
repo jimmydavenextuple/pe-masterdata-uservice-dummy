@@ -18,7 +18,9 @@ import com.nextuple.transit.cache.domain.TransferScheduleCacheValue;
 import com.nextuple.transit.domain.outbound.TransitBufferDetailsResponse;
 import com.nextuple.transit.spring.cache.feign.TransferScheduleFeignImpl;
 import com.nextuple.transit.spring.cache.util.TestUtil;
+import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -61,6 +63,22 @@ class TransferScheduleFeignClientServiceImplTest {
   void getExceptionTest() {
     TransferScheduleCacheKey invalidCacheKey = testUtil.getTransferScheduleCacheKey();
     assertNotNull(transferScheduleFeignClientService.get(invalidCacheKey));
+    verify(mapper, times(0)).responseToCacheValue(any());
+  }
+
+  @Test
+  @DisplayName("Test get with empty payload")
+  void getTestWithEmptyPayload() {
+    TransferScheduleCacheKey cacheKey = testUtil.getTransferScheduleCacheKey();
+    BaseResponse response = BaseResponse.builder().payload(new ArrayList<>()).build();
+
+    when(transferScheduleFeign.fetchTransferSchedulesInRange(any())).thenReturn(response);
+
+    assertEquals(
+        TransferScheduleCacheValue.builder().build(),
+        transferScheduleFeignClientService.get(cacheKey));
+    assertNotNull(transferScheduleFeignClientService.get(cacheKey));
+    assertTrue(transferScheduleFeignClientService.get(cacheKey).isUndefined());
     verify(mapper, times(0)).responseToCacheValue(any());
   }
 }

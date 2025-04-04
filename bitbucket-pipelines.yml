@@ -86,6 +86,40 @@ server:
         max:
           memory: 2Gi
           cpu: 1
+    integration:
+      ingress: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
+      prometheus: yes
+      storage: yes
+      heapvolume: yes
+      keyvault: yes
+      scale:
+        replicas: 1
+      resources:
+        min:
+          memory: 2Gi
+          cpu: 1
+        max:
+          memory: 2Gi
+          cpu: 1
+    performance:
+      ingress: no
+      sidecar-keycloak-plugin: yes
+      middleman: no
+      prometheus: yes
+      storage: yes
+      java-opts: "-Xms3072m -Xmx3072m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/mnt/heapdumps"
+      keyvault: yes
+      scale:
+        replicas: 3
+      resources:
+        min:
+          memory: 4Gi
+          cpu: 3
+        max:
+          memory: 4Gi
+          cpu: 3
     orielly:
       ingress: yes
       middleman: yes
@@ -272,9 +306,14 @@ definitions:
           - build/**
           - service-version.txt
     - step: &build-release
+        size: 4x
         name: Build Release
         script:
-          - echo "Pre Deploy Step"
+          - microdnf install git
+          - microdnf install findutils
+          - "sed -i 's/release: false/release: true/' version.yml"
+          - cat version.yml
+          - bash ./gradlew -Pbuild_target=RELEASE clean build artifactoryPublish
     - step: &deploy
         caches:
           - gradle
@@ -299,6 +338,7 @@ definitions:
           - sonar
           - cve
         script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
           - microdnf install git
           - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
@@ -368,13 +408,6 @@ pipelines:
           trigger: manual
           deployment: prod
   branches:
-    minor-1.8.0:
-      - step: *build
-      - step:
-          !!merge <<: *deploy
-          name: Deploy to devpe
-#          trigger: manual
-          deployment: devpe
     vapt:
       - step: *build
       - step:
@@ -404,7 +437,13 @@ pipelines:
               name: Deploy Integration
               trigger: manual
               deployment: integration
-
+    integration:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Integration
+          trigger: manual
+          deployment: integration
           # - step:
           #     !!merge <<: *deploy
           #     name: Deploy PERF
@@ -444,6 +483,12 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
+    perf_deployment_1.7:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Performance
+          deployment: performance
     master2:
       - step: *Clear-Cache
       - step: *build

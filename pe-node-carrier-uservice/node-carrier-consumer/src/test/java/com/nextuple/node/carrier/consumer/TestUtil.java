@@ -7,9 +7,9 @@
 
 package com.nextuple.node.carrier.consumer;
 
+import com.nextuple.common.enums.ActionEnum;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.master.data.integration.dto.ResponseDto;
-import com.nextuple.master.data.integration.enums.ActionEnum;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.master.data.integration.outbound.BatchResponse;
 import com.nextuple.node.carrier.consumer.dto.NodeCarrierFeedDto;
