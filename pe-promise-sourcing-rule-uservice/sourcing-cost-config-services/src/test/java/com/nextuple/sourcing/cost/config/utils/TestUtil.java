@@ -7,6 +7,8 @@
 
 package com.nextuple.sourcing.cost.config.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.promise.sourcing.rule.persistence.domain.NamedOptimizationStrategyDomainDto;
 import com.nextuple.sourcing.cost.config.domain.entity.CostAttributeDetailsEntity;
 import com.nextuple.sourcing.cost.config.domain.entity.CostAttributeMappingEntity;
@@ -134,7 +136,6 @@ public class TestUtil {
   public static final String JAVA_CLASS_NAME = "com.org.impl.CostImpl";
   public static final String OPT_STRATEGY = "COST";
   public static final String OPT_STRATEGY_PROFIT = "PROFIT";
-
   public static final String COST_ITINERARY_KEY = "costItinerary";
   public static final String COST_TYPE_KEY = "costType";
   public static final String SELECTOR_CF_KEY = "selectorCf";
@@ -174,6 +175,8 @@ public class TestUtil {
 
   public static final String INVALID_LEVEL_APPLIED_EXCEPTION =
       "Level applied of cost factor is not valid";
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public List<PreferenceSelectorCacheKeyDto> getPreferenceSelectorCacheKeys() {
     PreferenceSelectorCacheKeyDto preferenceSelectorCacheKeyDto1 =
@@ -261,6 +264,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .selectorCf(SELECTOR_CF)
         .costType(COST_TYPE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -270,6 +274,7 @@ public class TestUtil {
     preferenceSelectorEntity.setOrgId(ORG_ID);
     preferenceSelectorEntity.setSelectorCf(SELECTOR_CF);
     preferenceSelectorEntity.setCostType(COST_TYPE);
+    preferenceSelectorEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return preferenceSelectorEntity;
   }
 
@@ -279,6 +284,7 @@ public class TestUtil {
     preferenceSelectorEntity.setOrgId(ORG_ID);
     preferenceSelectorEntity.setSelectorCf(SELECTOR_CF);
     preferenceSelectorEntity.setCostType(COST_TYPE_CAMEL_CASE);
+    preferenceSelectorEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return preferenceSelectorEntity;
   }
 
@@ -288,6 +294,7 @@ public class TestUtil {
     preferenceSelectorEntity.setOrgId(ORG_ID);
     preferenceSelectorEntity.setSelectorCf(INVALID_SELECTOR_CF);
     preferenceSelectorEntity.setCostType(COST_TYPE_CAMEL_CASE);
+    preferenceSelectorEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return preferenceSelectorEntity;
   }
 
@@ -299,11 +306,15 @@ public class TestUtil {
     return CreatePreferenceSelectorRequest.builder()
         .selectorCf(SELECTOR_CF)
         .costType(COST_TYPE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
   public UpdatePreferenceSelectorRequest getUpdatePreferenceSelectorRequest() {
-    return UpdatePreferenceSelectorRequest.builder().selectorCf(SELECTOR_CF).build();
+    return UpdatePreferenceSelectorRequest.builder()
+        .selectorCf(SELECTOR_CF)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public CostFactorEntity getCostFactorEntity() {
@@ -320,6 +331,7 @@ public class TestUtil {
     costFactorEntity.setDataType(DataTypeEnum.NUMBER);
     costFactorEntity.setIsBucketed(true);
     costFactorEntity.setIsRateCardLookUpRequired(true);
+    costFactorEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return costFactorEntity;
   }
 
@@ -400,6 +412,7 @@ public class TestUtil {
         .uom(UOM)
         .isBucketed(true)
         .isRateCardLookUpRequired(true)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -469,6 +482,7 @@ public class TestUtil {
         .costItinerary(COST_ITINERARY)
         .costFactors(COST_FACTOR)
         .levelApplied(LEVEL_APPLIED)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -484,12 +498,16 @@ public class TestUtil {
         .costType(COST_TYPE_SHIPPING_COST)
         .displayName(DISPLAY_NAME)
         .label(LabelEnum.COST)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
   public TenantCostTypeUpdateRequest getTenantCostTypeUpdateRequest() {
 
-    return TenantCostTypeUpdateRequest.builder().displayName(DISPLAY_NAME).build();
+    return TenantCostTypeUpdateRequest.builder()
+        .displayName(DISPLAY_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public TenantCostTypeResponse getTenantCostTypeResponse() {
@@ -500,12 +518,19 @@ public class TestUtil {
         .costType(COST_TYPE_SHIPPING_COST)
         .displayName(DISPLAY_NAME)
         .label(LabelEnum.COST)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
   public TenantCostTypeEntity getTenantCostTypeEntity() {
-    return new TenantCostTypeEntity(
-        ID, ORG_ID, COST_TYPE_SHIPPING_COST, DISPLAY_NAME, LabelEnum.COST);
+    return TenantCostTypeEntity.builder()
+        .id(ID)
+        .orgId(ORG_ID)
+        .costType(COST_TYPE_SHIPPING_COST)
+        .displayName(DISPLAY_NAME)
+        .label(LabelEnum.COST)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .build();
   }
 
   public List<TenantCostTypeEntity> getTenantCostTypeEntityList() {
@@ -528,6 +553,7 @@ public class TestUtil {
         .costType(COST_TYPE_SHIPPING_COST)
         .selectorCfValue(SELECTOR_CF_VALUE)
         .selectorCf(SELECTOR_CF)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -536,6 +562,7 @@ public class TestUtil {
 
     return UpdateSelectorAndCostItineraryMappingRequest.builder()
         .costItinerary(COST_ITINERARY_UPSLIKE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -547,6 +574,7 @@ public class TestUtil {
         .costType(COST_TYPE_SHIPPING_COST)
         .selectorCfValue(null)
         .selectorCf(SELECTOR_CF)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -558,6 +586,7 @@ public class TestUtil {
         .selectorCfValue(SELECTOR_CF_VALUE)
         .costItinerary(COST_ITINERARY_UPSLIKE)
         .costType(COST_TYPE_SHIPPING_COST)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -577,6 +606,7 @@ public class TestUtil {
         .canonicalName(CANONICAL_NAME)
         .displayName(CANONICAL_ATTRIBUTE_DISPLAY_NAME)
         .attributeName(ATTRIBUTE_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -592,9 +622,14 @@ public class TestUtil {
   }
 
   public CostAttributeMappingEntity getCostAttributeMappingEntity() {
-
-    return new CostAttributeMappingEntity(
-        ID, ORG_ID, CANONICAL_NAME, CANONICAL_ATTRIBUTE_DISPLAY_NAME, ATTRIBUTE_NAME);
+    CostAttributeMappingEntity costAttributeMappingEntity = new CostAttributeMappingEntity();
+    costAttributeMappingEntity.setId(ID);
+    costAttributeMappingEntity.setOrgId(ORG_ID);
+    costAttributeMappingEntity.setCanonicalName(CANONICAL_NAME);
+    costAttributeMappingEntity.setDisplayName(CANONICAL_ATTRIBUTE_DISPLAY_NAME);
+    costAttributeMappingEntity.setAttributeName(ATTRIBUTE_NAME);
+    costAttributeMappingEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
+    return costAttributeMappingEntity;
   }
 
   public List<CostAttributeMappingEntity> getCostAttributeMappingEntityList() {
@@ -609,6 +644,7 @@ public class TestUtil {
     costAttributeDetailsEntity.setDisplayName(ATTRIBUTE_NAME);
     costAttributeDetailsEntity.setIsPublished(Boolean.TRUE);
     costAttributeDetailsEntity.setLookupContext(LookupContextEnum.SOLUTION);
+    costAttributeDetailsEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return costAttributeDetailsEntity;
   }
 
@@ -624,6 +660,7 @@ public class TestUtil {
         .displayName(ATTRIBUTE_NAME)
         .isPublished(Boolean.TRUE)
         .lookupContext(LookupContextEnum.SOLUTION)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -655,6 +692,7 @@ public class TestUtil {
             .orgId(ORG_ID)
             .costValue(COST_VALUE_WITH_OUT_PREV_SLB)
             .costItinerary(COST_ITINERARY)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .costFactorCombinationKey(COST_FACTOR_COMBINATION_KEY);
     if (Boolean.TRUE.equals(withPrevSlab)) {
       costValueResponseBuilder.costValue(COST_VALUE_WITH_PREV_SLB);
@@ -668,6 +706,7 @@ public class TestUtil {
         CreateCostValueRequest.builder()
             .costValue(COST_VALUE_WITH_OUT_PREV_SLB)
             .costItinerary(COST_ITINERARY)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .costFactorCombinationKey(COST_FACTOR_COMBINATION_KEY);
     if (Boolean.TRUE.equals(withPrevSlab)) {
       createCostValueRequestBuilder.costValue(COST_VALUE_WITH_PREV_SLB);
@@ -679,7 +718,9 @@ public class TestUtil {
   public UpdateCostValueRequest getUpdateCostValueRequest(Boolean withPrevSlab) {
 
     UpdateCostValueRequest.UpdateCostValueRequestBuilder updateCostValueRequestBuilder =
-        UpdateCostValueRequest.builder().costValue(COST_VALUE_WITH_OUT_PREV_SLB);
+        UpdateCostValueRequest.builder()
+            .customAttributes(CUSTOM_ATTRIBUTES)
+            .costValue(COST_VALUE_WITH_OUT_PREV_SLB);
     if (Boolean.TRUE.equals(withPrevSlab)) {
       updateCostValueRequestBuilder.costValue(COST_VALUE_WITH_PREV_SLB);
       updateCostValueRequestBuilder.prevSlabValue(PREV_SLAB_VALUE);
@@ -839,6 +880,7 @@ public class TestUtil {
     return CostFactorBucketTypeRequest.builder()
         .bucketType(DISCRETE_BUCKET_TYPE)
         .costFactor(COST_FACTOR)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -852,6 +894,7 @@ public class TestUtil {
         .orgId(ORG_ID)
         .costFactor(COST_FACTOR)
         .bucketType(DISCRETE_BUCKET_TYPE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -868,6 +911,7 @@ public class TestUtil {
         .isFromValueInclusive(true)
         .toValue(TO_VALUE)
         .isToValueInclusive(false)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -893,6 +937,7 @@ public class TestUtil {
         .costFactor(COST_FACTOR)
         .notation(NOTATION)
         .notationDisplayName(NOTATION_DISPLAY_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .valueList(VALUE_LIST)
         .build();
   }
@@ -919,6 +964,7 @@ public class TestUtil {
         .isFromValueInclusive(true)
         .toValue(TO_VALUE)
         .isToValueInclusive(false)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -929,6 +975,7 @@ public class TestUtil {
         .costFactor(COST_FACTOR)
         .notation(NOTATION)
         .notationDisplayName(NOTATION_DISPLAY_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .valueList(VALUE_LIST)
         .build();
   }
@@ -1010,6 +1057,7 @@ public class TestUtil {
     costValueEntity.setCostItinerary(COST_ITINERARY);
     costValueEntity.setCostValue(COST_VALUE_WITH_PREV_SLB);
     costValueEntity.setCostFactorCombinationKey(costFactorKey);
+    costValueEntity.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return costValueEntity;
   }
 
@@ -1040,6 +1088,7 @@ public class TestUtil {
             .costFactor(COST_FACTOR)
             .notation(NOTATION)
             .notationDisplayName(NOTATION_DISPLAY_NAME)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .valueList(VALUE_LIST)
             .build());
     costFactorDiscreteBucketEntities.add(
@@ -1050,6 +1099,7 @@ public class TestUtil {
             .notation("S")
             .notationDisplayName(NOTATION_DISPLAY_NAME)
             .valueList(VALUE_LIST)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build());
     costFactorDiscreteBucketEntities.add(
         CostFactorDiscreteBucketEntity.builder()
@@ -1059,6 +1109,7 @@ public class TestUtil {
             .notation("L")
             .notationDisplayName(NOTATION_DISPLAY_NAME)
             .valueList(VALUE_LIST)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build());
     return costFactorDiscreteBucketEntities;
   }
@@ -1539,12 +1590,14 @@ public class TestUtil {
             .orgId(ORG_ID)
             .costItinerary(COST_ITINERARY)
             .costFactorCombinationKey(COST_FACTOR_COMBINATION_KEY)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build());
     costValueEntities.add(
         CostValueEntity.builder()
             .orgId(ORG_ID)
             .costItinerary(COST_ITINERARY)
             .costFactorCombinationKey(COST_FACTOR_COMBINATION_KEY)
+            .customAttributes(CUSTOM_ATTRIBUTES)
             .build());
     return costValueEntities;
   }
@@ -1628,6 +1681,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1640,6 +1694,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY_PROFIT)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1651,6 +1706,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1662,6 +1718,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY_PROFIT)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1671,6 +1728,7 @@ public class TestUtil {
         .costTypes(COST_TYPE_SHIPPING_COST)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -1682,6 +1740,7 @@ public class TestUtil {
         .optimizationStrategy(OPT_STRATEGY)
         .description(DESCRIPTION)
         .javaClassName(JAVA_CLASS_NAME)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 

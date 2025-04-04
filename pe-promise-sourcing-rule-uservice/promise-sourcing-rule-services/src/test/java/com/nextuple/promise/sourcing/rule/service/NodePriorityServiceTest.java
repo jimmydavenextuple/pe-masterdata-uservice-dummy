@@ -7,6 +7,7 @@
 
 package com.nextuple.promise.sourcing.rule.service;
 
+import static com.nextuple.promise.sourcing.rule.TestUtil.CUSTOM_ATTRIBUTES;
 import static com.nextuple.promise.sourcing.rule.TestUtil.NODE_GROUP_ID;
 import static com.nextuple.promise.sourcing.rule.TestUtil.NODE_ID;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -82,6 +83,7 @@ class NodePriorityServiceTest {
     NodePriorityResponse nodePriorityResponse =
         nodePriorityService.processAddNodePriorityToNodeGroup(nodePriorityRequest);
     assertEquals(testUtil.getNodeGroupEntity().getId(), nodePriorityResponse.getId());
+    assertEquals(CUSTOM_ATTRIBUTES, nodePriorityResponse.getCustomAttributes());
 
     verify(nodeGroupPersistenceService, times(1))
         .fetchNodeGroupByIdAndOrgId(anyLong(), anyString());
@@ -294,6 +296,9 @@ class NodePriorityServiceTest {
     assertEquals(
         testUtil.getUpdatedNodePriorityResponse(100).getPriority(),
         nodePriorityResponse.getPriority());
+    assertEquals(
+        updatedNodePriorityEntity.getCustomAttributes(),
+        nodePriorityResponse.getCustomAttributes());
 
     verify(nodePriorityPersistenceService, times(1))
         .saveNodePriorityEntity(any(NodePriorityDomainDto.class));

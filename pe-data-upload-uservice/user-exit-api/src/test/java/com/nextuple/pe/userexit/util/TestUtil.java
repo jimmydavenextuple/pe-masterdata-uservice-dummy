@@ -6,6 +6,8 @@
  */
 package com.nextuple.pe.userexit.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.userexit.domain.dto.UserExitConfigDataDto;
 import com.nextuple.common.userexit.domain.dto.UserExitMetaDataDto;
 import com.nextuple.common.userexit.domain.entity.UserExitConfigData;
@@ -36,6 +38,9 @@ public class TestUtil {
   public static final String ORG_ID = "SIGNET";
   public static final String USER_EXIT_NAME = "GetItemDetails";
 
+  private static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
+
   public UserExitMetaData getUserExitMetaData() {
     UserExitMetaData metaData = new UserExitMetaData();
     metaData.setName("GetSourcing");
@@ -44,6 +49,7 @@ public class TestUtil {
     metaData.setDescription("Changing data priority");
     metaData.setExecutionFailureType(ExecutionFailureEnum.SOFT);
     metaData.setType(UserExitTypeEnum.REGULAR);
+    metaData.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return metaData;
   }
 
@@ -54,6 +60,7 @@ public class TestUtil {
     configData.setServiceName("Sourcing");
     configData.setUeImplType(UEImplTypeEnum.REST);
     configData.setPropagateError(true);
+    configData.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return configData;
   }
 
@@ -62,6 +69,7 @@ public class TestUtil {
         .name("GetSourcing")
         .serviceName("Sourcing")
         .appName("PE")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -71,6 +79,7 @@ public class TestUtil {
         .appName("PE")
         .orgId("SIGNET")
         .serviceName("Sourcing")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -79,6 +88,7 @@ public class TestUtil {
         .name("GetSourcing")
         .serviceName("Sourcing")
         .appName("PE")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -88,6 +98,7 @@ public class TestUtil {
         .orgId("SIGNET")
         .serviceName("Sourcing")
         .appName("PE")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -97,6 +108,7 @@ public class TestUtil {
         .name("GetSourcing")
         .appName("PE")
         .serviceName("Sourcing")
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -143,6 +155,7 @@ public class TestUtil {
     metaDataDto.setDescription("Changing data priority");
     metaDataDto.setExecutionFailureType(ExecutionFailureEnum.SOFT);
     metaDataDto.setType(UserExitTypeEnum.REGULAR);
+    metaDataDto.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return metaDataDto;
   }
 
@@ -153,6 +166,7 @@ public class TestUtil {
     configDataDto.setServiceName("Sourcing");
     configDataDto.setUeImplType(UEImplTypeEnum.REST);
     configDataDto.setPropagateError(true);
+    configDataDto.setCustomAttributes(CUSTOM_ATTRIBUTES);
     return configDataDto;
   }
 }

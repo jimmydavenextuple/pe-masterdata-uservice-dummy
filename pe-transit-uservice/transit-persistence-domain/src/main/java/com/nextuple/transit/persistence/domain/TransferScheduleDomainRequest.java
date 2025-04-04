@@ -7,17 +7,20 @@
 
 package com.nextuple.transit.persistence.domain;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import java.util.Date;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class TransferScheduleDomainRequest {
+@SuperBuilder
+public class TransferScheduleDomainRequest extends AdditionalAttributes {
   private String orgId;
   private String dropoffNodeId;
   private Date startTimeLowerBound;

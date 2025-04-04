@@ -7,18 +7,19 @@
 
 package com.nextuple.promise.sourcing.rule.api.domain.pojo;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-public class NodePriorityInfo implements Serializable {
+public class NodePriorityInfo extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = 2347887507605655996L;
 
   @Schema(description = "Unique identifier for node", example = "DC1")

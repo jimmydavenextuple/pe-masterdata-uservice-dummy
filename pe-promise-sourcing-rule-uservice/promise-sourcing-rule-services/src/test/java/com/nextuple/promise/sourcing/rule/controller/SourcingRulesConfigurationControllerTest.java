@@ -7,6 +7,7 @@
 
 package com.nextuple.promise.sourcing.rule.controller;
 
+import static com.nextuple.promise.sourcing.rule.TestUtil.CUSTOM_ATTRIBUTES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -171,7 +172,26 @@ class SourcingRulesConfigurationControllerTest {
 
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     assertEquals(1, responseEntity.getBody().getPayload().getSourcingRulesInfo().size());
-
+    assertEquals(
+        CUSTOM_ATTRIBUTES,
+        responseEntity
+            .getBody()
+            .getPayload()
+            .getSourcingRulesInfo()
+            .getFirst()
+            .getCustomAttributes());
+    assertEquals(
+        CUSTOM_ATTRIBUTES,
+        responseEntity
+            .getBody()
+            .getPayload()
+            .getSourcingRulesInfo()
+            .getFirst()
+            .getNodeGroupDetailsInfo()
+            .getFirst()
+            .getNodeInfo()
+            .getFirst()
+            .getCustomAttributes());
     verify(sourcingRulesConfigurationService, times(1))
         .processGetSourcingRules(any(FetchSourcingRulesRequest.class));
   }

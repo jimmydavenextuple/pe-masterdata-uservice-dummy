@@ -8,20 +8,20 @@ package com.nextuple.transit.domain.inbound;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.OptBoolean;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.Date;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class TransitBufferV2UpdationRequest implements Serializable {
+@SuperBuilder
+public class TransitBufferV2UpdationRequest extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = -5654983637522525529L;
 

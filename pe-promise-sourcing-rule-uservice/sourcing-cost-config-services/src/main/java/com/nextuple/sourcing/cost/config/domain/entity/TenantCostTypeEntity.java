@@ -6,8 +6,8 @@
  */
 package com.nextuple.sourcing.cost.config.domain.entity;
 
-import com.nextuple.common.base.CommonBaseEntity;
 import com.nextuple.core.event.listeners.CommonEntityListener;
+import com.nextuple.postgres.entity.CommonBaseEntity;
 import com.nextuple.sourcing.cost.config.enums.LabelEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,6 +22,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
@@ -29,6 +30,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@SuperBuilder
 @EntityListeners(CommonEntityListener.class)
 @Table(
     name = "tenant_cost_type",

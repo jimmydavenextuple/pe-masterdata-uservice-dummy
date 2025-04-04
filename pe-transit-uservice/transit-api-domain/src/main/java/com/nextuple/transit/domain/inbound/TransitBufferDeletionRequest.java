@@ -2,20 +2,23 @@ package com.nextuple.transit.domain.inbound;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.OptBoolean;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class TransitBufferDeletionRequest implements Serializable {
+@SuperBuilder
+public class TransitBufferDeletionRequest extends AdditionalAttributes implements Serializable {
 
   @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE")
   private String orgId;

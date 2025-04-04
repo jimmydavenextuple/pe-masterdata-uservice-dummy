@@ -9,18 +9,19 @@ package com.nextuple.postal.code.timezone.api.domain.outbound;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostalCodeResponse implements Serializable {
+public class PostalCodeResponse extends AdditionalAttributes implements Serializable {
 
   @Schema(description = "Unique identifier of the organization.", example = "NEXTUPLE")
   private String orgId;

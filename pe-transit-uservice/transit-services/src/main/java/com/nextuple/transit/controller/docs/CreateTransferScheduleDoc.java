@@ -51,7 +51,10 @@ import java.lang.annotation.Target;
                                                 "sourceNodeId": "Node1",
                                                 "dropoffNodeId": "Node4",
                                                 "startTime": "2024-06-30T20:30:00.000Z",
-                                                "endTime": "2024-06-30T22:30:00.000Z"
+                                                "endTime": "2024-06-30T22:30:00.000Z",
+                                                "customAttributes": {
+                                                    "dynamicAtrr": true
+                                                }
                                             }
                                         }
                                         """)

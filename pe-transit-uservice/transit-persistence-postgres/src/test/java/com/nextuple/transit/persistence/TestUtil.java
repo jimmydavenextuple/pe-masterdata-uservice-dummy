@@ -7,6 +7,8 @@
 
 package com.nextuple.transit.persistence;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.transit.domain.enums.TransitBufferConfigRequestStatusEnum;
 import com.nextuple.transit.domain.enums.TransitBufferReqJobRefEnum;
 import com.nextuple.transit.domain.inbound.FetchTransferScheduleRequest;
@@ -77,6 +79,8 @@ public class TestUtil {
   public static final String ZONE = "Zone1";
   public static final String SOURCE_NODE = "Node1";
   public static final String DESTINATION_NODE = "Node2";
+  public static final JsonNode CUSTOM_ATTRIBUTES =
+      JsonNodeFactory.instance.objectNode().put("key1", "value1").put("key2", "value2");
 
   public ZoneDomainDto getZoneDomainDto() {
     return ZoneDomainDto.builder()
@@ -85,6 +89,7 @@ public class TestUtil {
         .sourceGeozone(SOURCE_GEOZONE)
         .destinationGeozone(DESTINATION_GEOZONE)
         .zone(ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -95,6 +100,7 @@ public class TestUtil {
         .sourceGeozone(SOURCE_GEOZONE)
         .destinationGeozone(DESTINATION_GEOZONE)
         .zone(ZONE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -111,6 +117,7 @@ public class TestUtil {
         .endDate(bufferEndDate)
         .status(status)
         .fileMetaDataId(FILE_META_DATA_ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -127,6 +134,7 @@ public class TestUtil {
         .endDate(bufferEndDate)
         .status(status)
         .fileMetaDataId(FILE_META_DATA_ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -140,6 +148,7 @@ public class TestUtil {
         .bufferStartDate(new Date(1000))
         .bufferEndDate(new Date(1000))
         .transitBufferConfigRequestId(TRANS_BUFFER_CONFIG_REQUEST_ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -153,6 +162,7 @@ public class TestUtil {
         .bufferStartDate(new Date(1000))
         .bufferEndDate(new Date(1000))
         .transitBufferConfigRequestId(TRANS_BUFFER_CONFIG_REQUEST_ID)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -162,6 +172,7 @@ public class TestUtil {
         .transitBufferReqId(TransitBufferReqId)
         .action(TransitBufferReqJobRefEnum.CREATE)
         .extReferenceId(EXTERNAL_REFERENCE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -171,6 +182,7 @@ public class TestUtil {
         .transitBufferReqId(TransitBufferReqId)
         .action(TransitBufferReqJobRefEnum.CREATE)
         .extReferenceId(EXTERNAL_REFERENCE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -186,6 +198,7 @@ public class TestUtil {
         .bufferDays(BUFFER_DAYS)
         .bufferStartDate(bufferStartDate)
         .bufferEndDate(bufferEndDate)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -201,6 +214,7 @@ public class TestUtil {
         .bufferDays(BUFFER_DAYS)
         .bufferStartDate(bufferStartDate)
         .bufferEndDate(bufferEndDate)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -211,6 +225,7 @@ public class TestUtil {
         .destinationGeozone(DESTINATION_GEOZONE)
         .carrierServiceId(carrierServiceId)
         .transitDays(TRANSIT_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -221,6 +236,7 @@ public class TestUtil {
         .destinationGeozone(DESTINATION_GEOZONE)
         .carrierServiceId(carrierServiceId)
         .transitDays(TRANSIT_DAYS)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -240,6 +256,11 @@ public class TestUtil {
       public Float getTransitDays() {
         return TRANSIT_DAYS;
       }
+
+      @Override
+      public JsonNode getCustomAttributes() {
+        return CUSTOM_ATTRIBUTES;
+      }
     };
   }
 
@@ -256,6 +277,7 @@ public class TestUtil {
               .bufferDays(BUFFER_DAYS)
               .bufferStartDate(LocalDate.now().plusDays(no).toDate())
               .bufferEndDate(LocalDate.now().plusDays(no + 2).toDate())
+              .customAttributes(CUSTOM_ATTRIBUTES)
               .build());
     }
     return list;
@@ -274,6 +296,7 @@ public class TestUtil {
               .bufferDays(BUFFER_DAYS)
               .bufferStartDate(LocalDate.now().plusDays(no).toDate())
               .bufferEndDate(LocalDate.now().plusDays(no + 2).toDate())
+              .customAttributes(CUSTOM_ATTRIBUTES)
               .build());
     }
     return list;
@@ -289,6 +312,7 @@ public class TestUtil {
         .bufferDays(BUFFER_DAYS)
         .bufferStartDate(LocalDate.now().plusDays(no).toDate())
         .bufferEndDate(LocalDate.now().plusDays(no + 2).toDate())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -299,6 +323,7 @@ public class TestUtil {
         .dropoffNodeId(DESTINATION_NODE)
         .startTime(new Date())
         .endTime(new Date())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -307,6 +332,7 @@ public class TestUtil {
         .id(1L)
         .sourceNodeId(SOURCE_NODE)
         .dropoffNodeId(DESTINATION_NODE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -334,6 +360,7 @@ public class TestUtil {
         .dropoffNodeId(DESTINATION_NODE)
         .startTime(new Date())
         .endTime(new Date())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 
@@ -346,6 +373,7 @@ public class TestUtil {
         .ruleName("Rule1")
         .startTimeLowerBound(new Date())
         .endTimeLowerBound(new Date())
+        .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
   }
 }

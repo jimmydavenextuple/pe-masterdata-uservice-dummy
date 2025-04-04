@@ -788,6 +788,7 @@ public class SourcingRulesConfigurationService {
             NodePriorityInfo nodePriorityInfo = new NodePriorityInfo();
             nodePriorityInfo.setNodeId(nodePriorityEntity.getNodeId());
             nodePriorityInfo.setPriority(nodePriorityEntity.getPriority());
+            nodePriorityInfo.setCustomAttributes(nodePriorityEntity.getCustomAttributes());
             nodePriorityInfoList.add(nodePriorityInfo);
           }
           nodeGroupDetailsInfo.setNodeGroupId(nodeGroupId);

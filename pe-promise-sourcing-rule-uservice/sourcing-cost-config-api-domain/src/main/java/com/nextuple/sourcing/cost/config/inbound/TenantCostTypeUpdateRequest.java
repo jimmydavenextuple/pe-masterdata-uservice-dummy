@@ -6,19 +6,20 @@
  */
 package com.nextuple.sourcing.cost.config.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-public class TenantCostTypeUpdateRequest implements Serializable {
+public class TenantCostTypeUpdateRequest extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = 223679438894713118L;
 
   @NotBlank(message = "Display name can't be empty")

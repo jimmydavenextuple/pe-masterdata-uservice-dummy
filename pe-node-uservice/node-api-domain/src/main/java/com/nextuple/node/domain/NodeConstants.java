@@ -11,13 +11,13 @@ public class NodeConstants {
   private NodeConstants() {} // NOSONAR
 
   public static final String CREATE_NODE_DESC =
-      "Creates a node using different attributes such as the organization ID, address, and zip code. The following types of nodes can be created: Fulfillment Centre (FC), Micro-Fulfillment Centre (MFC), Store and Drop-Ship Vendor (DSV).";
+      "Creates a node using different attributes such as the organization ID, address, customAttributes and zip code. The following types of nodes can be created: Fulfillment Centre (FC), Micro-Fulfillment Centre (MFC), Store and Drop-Ship Vendor (DSV).";
   public static final String DELETE_NODE_DESC =
       "Deletes an existing node when it is no longer required. Nodes can be deleted for various reasons such as closing stores as part of a rebranding strategy or if a store is too small to effectively handle the volume of merchandise. This API deletes the nodes by passing the organization ID and node ID attributes in the path parameters for the required node.";
   public static final String GET_NODES_DESC =
       "Retrieves the information about the nodes and provides retailers with a holistic view of their operations, customer preferences, and trends. This API retrieves the information by passing the organization ID and node ID attributes in the path parameters for the required node.";
   public static final String UPDATE_NODE_DESC =
-      "Updates the node information such as organization ID, address, and zip code for the given node ID and organization ID.";
+      "Updates the node information such as organization ID, address, customAttributes and zip code for the given node ID and organization ID.";
   public static final String GET_NODE_PAGE_DESC =
       "Retrieves the details of all the nodes associated with a specific organization ID. For example, for the organization ID “NXT”, the API will display all the nodes that are associated with the organization NXT.";
   public static final String GET_ALL_NODE_DESC = "Retrieves the details of all the nodes.";

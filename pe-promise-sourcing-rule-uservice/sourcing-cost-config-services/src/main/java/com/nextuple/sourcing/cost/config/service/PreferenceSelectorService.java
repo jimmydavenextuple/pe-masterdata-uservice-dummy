@@ -174,6 +174,9 @@ public class PreferenceSelectorService {
     preferenceSelectorEntity
         .get()
         .setSelectorCf(updateCreatePreferenceSelectorRequest.getSelectorCf());
+    preferenceSelectorEntity
+        .get()
+        .setCustomAttributes(updateCreatePreferenceSelectorRequest.getCustomAttributes());
     return convertToPreferenceSelectorDto(
         preferenceSelectorRepository.save(preferenceSelectorEntity.get()));
   }

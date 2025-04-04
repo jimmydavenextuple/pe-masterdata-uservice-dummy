@@ -7,17 +7,20 @@
 
 package com.nextuple.postal.code.timezone.api.domain.inbound;
 
+import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@NoArgsConstructor
+@SuperBuilder
 @AllArgsConstructor
-public class UpdatePostalCodeTimezoneRequest implements Serializable {
+public class UpdatePostalCodeTimezoneRequest extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = 9006684261651646439L;
 
   @Schema(description = "Country of the source or destination node.", example = "US")

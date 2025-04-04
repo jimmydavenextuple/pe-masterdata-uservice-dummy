@@ -62,6 +62,7 @@ class ZoneServiceImplTest {
     assertNotNull(response);
     assertEquals(zoneRequest.getCarrierServiceId(), response.getCarrierServiceId());
     assertEquals(zoneRequest.getZone(), response.getZone());
+    assertEquals(zoneRequest.getCustomAttributes(), response.getCustomAttributes());
     verify(zonePersistenceService, times(1)).saveZone(any(ZoneDomainDto.class));
   }
 
@@ -168,6 +169,7 @@ class ZoneServiceImplTest {
     assertNotNull(response);
     assertEquals(zoneDomainDto.getZone(), response.getZone());
     assertEquals(zoneDomainDto.getCarrierServiceId(), response.getCarrierServiceId());
+    assertEquals(zoneDomainDto.getCustomAttributes(), response.getCustomAttributes());
     verify(zonePersistenceService, times(1)).fetchZoneDetails(any(), any(), any(), any());
   }
 
@@ -212,6 +214,7 @@ class ZoneServiceImplTest {
     assertNotNull(response);
     assertEquals(zoneDomainDto.getZone(), response.getZone());
     assertEquals(zoneDomainDto.getCarrierServiceId(), response.getCarrierServiceId());
+    assertEquals(zoneDomainDto.getCustomAttributes(), response.getCustomAttributes());
     verify(zonePersistenceService, times(1)).deleteZoneDetails(any(ZoneDomainDto.class));
   }
 
@@ -250,6 +253,8 @@ class ZoneServiceImplTest {
     assertEquals(zoneEntityList.size(), response.size());
     assertEquals(
         zoneEntityList.get(0).getCarrierServiceId(), response.get(0).getCarrierServiceId());
+    assertEquals(
+        zoneEntityList.get(0).getCustomAttributes(), response.get(0).getCustomAttributes());
     verify(zonePersistenceService, times(1)).fetchZoneByOrgIdAndDestGeozone(any(), any());
   }
 
