@@ -36,6 +36,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for Transit Buffer Details for Carrier Services APIs.
+ *
+ * <p>This controller provides APIs to interact with transit time buffer details and configurations
+ * for carrier services. It supports operations like fetching transit buffer details with
+ * pagination, sorting, and filtering.
+ *
+ * <p>The controller is tagged with "Transit Buffer Details for Carrier Service APIs" for easy
+ * categorization in API documentation.
+ */
 @RestController
 @RequestMapping("/ui/v1/transit-buffer")
 @RequiredArgsConstructor
@@ -51,6 +61,17 @@ public class TransitTimeBufferForCarrerServiceController {
       DATA_UPLOAD_PAGINATION_URL_CONSTANT_UI
           + "/v1/transit-buffer/%s?pageNo=%d&pageSize=%d&sortBy=%s&sortOrder=%s";
 
+  /**
+   * Fetches the transit time buffer details for carrier services for the given organization.
+   *
+   * <p>This method processes a GET request to fetch transit time buffer details for carrier
+   * services. The results are paginated based on the provided page parameters.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param pageParams The pagination parameters (page number, page size, sorting order).
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched transit
+   *     time buffer details.
+   */
   @GetMapping("/{orgId}")
   @GetTransitBufferDetailsForCarrierServicesDoc
   public ResponseEntity<BaseResponse<PagePayload<TransitBufferDetailsResponse>>>
@@ -77,6 +98,16 @@ public class TransitTimeBufferForCarrerServiceController {
             .build());
   }
 
+  /**
+   * Updates the pagination details (next and previous URIs) for the given page payload.
+   *
+   * <p>This method calculates and sets the next and previous pagination links in the provided
+   * {@link PagePayload}.
+   *
+   * @param pagePayload The {@link PagePayload} containing the current page data.
+   * @param orgId The unique identifier for the organization.
+   * @param pageParams The pagination parameters (page number, page size, sorting order).
+   */
   private void updatePaginationDetails(
       PagePayload<TransitBufferDetailsResponse> pagePayload, String orgId, PageParams pageParams) {
     int currentPage = pagePayload.getPagination().getCurrentPage();
@@ -108,6 +139,18 @@ public class TransitTimeBufferForCarrerServiceController {
     pagePayload.getPagination().setPrevious(previousUri);
   }
 
+  /**
+   * Fetches the transit buffer configuration requests for a specific carrier service and
+   * organization.
+   *
+   * <p>This method processes a GET request to fetch the transit buffer configuration requests for a
+   * specified carrier service and organization.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param carrierServiceId The unique identifier for the carrier service.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched transit
+   *     buffer configurations.
+   */
   @GetMapping("/request/{orgId}")
   @GetTransitBufferConfigDoc
   public ResponseEntity<BaseResponse<List<TransitBufferConfigResponse>>>

@@ -31,6 +31,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for Regional Node Details APIs.
+ *
+ * <p>This controller provides APIs to retrieve and manage regional node details for a given
+ * organization. It supports fetching a paginated list of nodes with optional filters such as node
+ * IDs and node types.
+ *
+ * <p>The controller is tagged with "Regional Node Details APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/ui/regions-nodes")
@@ -45,6 +55,23 @@ public class RegionalNodesDetailsController {
 
   private final RegionalNodesDetailsService regionalNodesDetailsService;
 
+  /**
+   * Retrieves a paginated list of nodes for a given organization, with optional filters for node
+   * IDs and types.
+   *
+   * <p>This method processes a GET request to fetch a list of nodes associated with a specific
+   * organization, with optional filters for node IDs and node types. The results are paginated
+   * based on the provided page parameters, including the current page and page size.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param nodeIds A comma-separated list of node IDs to filter the nodes (optional).
+   * @param nodeType The type of node to filter by (optional).
+   * @param pageParams The pagination details, including page number, page size, sort order, and
+   *     sort by fields.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the paginated list of
+   *     node details.
+   * @throws CommonServiceException If there is an error during the retrieval of the node list.
+   */
   @GetMapping("/nodes/orgId/{orgId}")
   @GetRegionalNodeDetailsDoc
   public ResponseEntity<BaseResponse<PagePayload<NodeListDto>>> getNodesList(

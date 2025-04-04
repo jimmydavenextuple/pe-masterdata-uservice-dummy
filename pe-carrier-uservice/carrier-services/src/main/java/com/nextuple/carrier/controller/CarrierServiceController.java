@@ -51,6 +51,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing carrier services.
+ *
+ * <p>This controller provides APIs to create, update, delete, and retrieve carrier services. It
+ * also supports fetching carrier service details by carrier service ID and organization ID, as well
+ * as retrieving the list of carrier services for a specific organization with pagination.
+ *
+ * <p>The controller is tagged with "Carrier Service APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @Tag(name = "Carrier Service APIs")
@@ -63,6 +73,19 @@ public class CarrierServiceController {
   private final CarrierServiceService carrierserviceService;
   private final PageProperties pageProperties;
 
+  /**
+   * Creates a new carrier service.
+   *
+   * <p>This method processes a POST request to create a carrier service based on the details
+   * provided in the request body.
+   *
+   * @param carrierServiceRequest The request body containing the details for the carrier service to
+   *     be created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created carrier
+   *     service details.
+   * @throws CarrierServiceDomainException If a domain-specific error occurs.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @PostMapping
   @CreateCarrierServiceDoc
   public ResponseEntity<BaseResponse<CarrierServiceResponse>> createCarrierService(
@@ -84,6 +107,20 @@ public class CarrierServiceController {
     }
   }
 
+  /**
+   * Retrieves the details of a specific carrier service.
+   *
+   * <p>This method processes a GET request to fetch the details of a carrier service identified by
+   * the given carrier ID, carrier service ID, and organization ID.
+   *
+   * @param carrierId The unique identifier of the carrier.
+   * @param carrierServiceId The unique identifier of the carrier service.
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched carrier
+   *     service details.
+   * @throws CarrierServiceDomainException If a domain-specific error occurs.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @GetCarrierServiceDetailsDoc
   @GetMapping("/{carrierId}/{carrierServiceId}/{orgId}")
   public ResponseEntity<BaseResponse<CarrierServiceResponse>> getCarrierServiceDetails(
@@ -117,6 +154,22 @@ public class CarrierServiceController {
     }
   }
 
+  /**
+   * Updates an existing carrier service.
+   *
+   * <p>This method processes a PUT request to update a carrier service based on the given carrier
+   * ID, carrier service ID, organization ID, and details provided in the request body.
+   *
+   * @param carrierId The unique identifier of the carrier.
+   * @param carrierServiceId The unique identifier of the carrier service.
+   * @param orgId The unique identifier of the organization.
+   * @param carrierServiceUpdateRequest The request body containing the updated details for the
+   *     carrier service.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated carrier
+   *     service details.
+   * @throws CarrierServiceDomainException If a domain-specific error occurs.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @UpdateCarrierServiceDetailsDoc
   @PutMapping("/{carrierId}/{carrierServiceId}/{orgId}")
   public ResponseEntity<BaseResponse<CarrierServiceResponse>> updateCarrierServiceDetails(
@@ -153,6 +206,20 @@ public class CarrierServiceController {
     }
   }
 
+  /**
+   * Deletes a carrier service.
+   *
+   * <p>This method processes a DELETE request to remove a carrier service identified by the given
+   * carrier ID, carrier service ID, and organization ID.
+   *
+   * @param carrierId The unique identifier of the carrier.
+   * @param carrierServiceId The unique identifier of the carrier service.
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted carrier service.
+   * @throws CarrierServiceDomainException If a domain-specific error occurs.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @DeleteCarrierServiceDoc
   @DeleteMapping("/{carrierId}/{carrierServiceId}/{orgId}")
   public ResponseEntity<BaseResponse<CarrierServiceResponse>> deleteCarrierService(
@@ -185,6 +252,20 @@ public class CarrierServiceController {
     }
   }
 
+  /**
+   * Retrieves a paginated list of carrier services for a specific organization.
+   *
+   * <p>This method processes a GET request to fetch a list of carrier services for a given
+   * organization ID, with pagination applied.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param pageParams The pagination parameters, including page number, page size, and sorting
+   *     details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the paginated list of
+   *     carrier services.
+   * @throws CarrierServiceDomainException If a domain-specific error occurs.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @GetCarrierServiceListWithPaginationDoc
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<CarrierServiceResponse>>>
@@ -214,6 +295,19 @@ public class CarrierServiceController {
             .build());
   }
 
+  /**
+   * Retrieves the details of carrier services by carrier service ID and organization ID.
+   *
+   * <p>This method processes a GET request to fetch the details of carrier services associated with
+   * the given carrier service ID and organization ID.
+   *
+   * @param carrierServiceId The unique identifier of the carrier service.
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of carrier
+   *     service details.
+   * @throws CarrierServiceDomainException If a domain-specific error occurs.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @GetCarrierServiceDetailsByCarrierServiceIdAndOrgId
   @GetMapping("/{carrierServiceId}/{orgId}")
   public ResponseEntity<BaseResponse<List<CarrierServiceResponse>>>
@@ -247,6 +341,16 @@ public class CarrierServiceController {
     }
   }
 
+  /**
+   * Retrieves all carrier cache keys up to a specified limit.
+   *
+   * <p>This method processes a GET request to fetch carrier cache keys.
+   *
+   * @param limit The maximum number of cache keys to retrieve.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of carrier
+   *     cache keys.
+   * @throws CarrierServiceDomainException If a domain-specific error occurs.
+   */
   @GetCarrierCacheKeysDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<CarrierCacheKeyDto>>> getCarrierCacheKeys(
@@ -299,6 +403,17 @@ public class CarrierServiceController {
     return pagePayload;
   }
 
+  /**
+   * Retrieves the list of carrier services for a specific organization.
+   *
+   * <p>This method processes a GET request to fetch a list of carrier services for the given
+   * organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of carrier
+   *     services.
+   * @throws CarrierServiceDomainException If a domain-specific error occurs.
+   */
   @GetCarrierServiceListByOrgIdDoc
   @GetMapping("/orgId/{orgId}")
   public ResponseEntity<BaseResponse<List<CarrierServiceResponse>>> getCarrierServiceListByOrgId(

@@ -41,6 +41,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Controller for CSV upload utility APIs.
+ *
+ * <p>This controller provides APIs to upload various types of CSV data, including transit times,
+ * processing lead times, transit buffers, and related data.
+ *
+ * <p>The controller is tagged with "CSV Upload Utility APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -51,6 +60,20 @@ public class CsvUploadUtilityController {
 
   private static final Logger logger = LoggerFactory.getLogger(CsvUploadUtilityController.class);
 
+  /**
+   * Uploads the transit times data for the specified organization.
+   *
+   * <p>This method processes a POST request to upload transit times data from a CSV file for a
+   * given organization.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param csvFile The CSV file containing transit times data to be uploaded.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the upload result.
+   * @throws CsvException If there is an error with CSV parsing.
+   * @throws IOException If there is an error while reading the file.
+   * @throws CsvFormatValidationFailedException If the CSV file format is invalid.
+   * @throws JobSubmissionException If there is an error during job submission.
+   */
   @PostMapping(
       path = "/org/{orgId}/upload/transit-times",
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -73,6 +96,21 @@ public class CsvUploadUtilityController {
             .build());
   }
 
+  /**
+   * Uploads the processing lead times data for the specified organization.
+   *
+   * <p>This method processes a POST request to upload processing lead times data from a CSV file
+   * for a given organization.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param csvFile The CSV file containing processing lead times data to be uploaded.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the upload result.
+   * @throws CsvParsingException If there is an error while parsing the CSV file.
+   * @throws CsvFormatValidationFailedException If the CSV file format is invalid.
+   * @throws JobSubmissionException If there is an error during job submission.
+   * @throws IOException If there is an error while reading the file.
+   * @throws CsvException If there is an error with CSV parsing.
+   */
   @PostMapping(
       path = "/org/{orgId}/upload/processing-lead-times",
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -99,6 +137,18 @@ public class CsvUploadUtilityController {
             .build());
   }
 
+  /**
+   * Uploads the transit buffer data for the specified transit buffer configuration.
+   *
+   * <p>This method processes a POST request to upload transit buffer data for a specific transit
+   * buffer configuration request.
+   *
+   * @param transitBufferConfigRequest The transit buffer configuration request containing the data
+   *     to be uploaded.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the result of the
+   *     upload.
+   * @throws CommonServiceException If there is an error during the upload process.
+   */
   @PostMapping("/ui/upload/transit-buffer")
   @UploadTransitBufferDoc
   public ResponseEntity<BaseResponse<TransitBufferConfigResponse>> uploadTransitBuffer(
@@ -112,6 +162,18 @@ public class CsvUploadUtilityController {
             .build());
   }
 
+  /**
+   * Updates the transit buffer data for the specified transit buffer configuration.
+   *
+   * <p>This method processes a PUT request to update existing transit buffer records for a specific
+   * transit buffer configuration.
+   *
+   * @param transitBufferConfigRequest The updated transit buffer configuration request containing
+   *     the new data.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the result of the
+   *     update.
+   * @throws CommonServiceException If there is an error during the update process.
+   */
   @PutMapping("/ui/upload/transit-buffer")
   @UpdateTransitBufferUploadDoc
   public ResponseEntity<BaseResponse<TransitBufferConfigResponse>> updateTransitBufferUpload(
@@ -125,6 +187,17 @@ public class CsvUploadUtilityController {
             .build());
   }
 
+  /**
+   * Deletes the transit buffer records for the specified transit buffer configuration request.
+   *
+   * <p>This method processes a DELETE request to remove transit buffer records based on the
+   * provided transit buffer request ID and user name.
+   *
+   * @param transitBufferRequestId The unique identifier for the transit buffer request.
+   * @param createdBy The name of the user who initiated the deletion.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} confirming the deletion.
+   * @throws CommonServiceException If there is an error during the deletion process.
+   */
   @DeleteMapping("/ui/upload/transit-buffer")
   @DeleteTransitBufferUploadDoc
   public ResponseEntity<BaseResponse<TransitBufferConfigResponse>> deleteTransitBufferUpload(
