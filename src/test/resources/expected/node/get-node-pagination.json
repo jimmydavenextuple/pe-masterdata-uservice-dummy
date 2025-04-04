@@ -1,0 +1,125 @@
+{
+  "data": [
+    {
+      "nodeId": "nodeFeedId-010",
+      "orgId": "NEXTUPLE_GR",
+      "street": "street",
+      "city": "city",
+      "state": "state",
+      "zipCode": "zipCode",
+      "country": "IN",
+      "latitude": "latitude",
+      "longitude": "longitude",
+      "timezone": "America/New_York",
+      "startWorkingTime": "08:00",
+      "lastWorkingTime": "17:00",
+      "serviceOptionEligibilities": {
+        "EXPRESS": true,
+        "STANDARD": false
+      },
+      "shipToHome": true,
+      "bopisEligible": true,
+      "nodeType": "STORE",
+      "nodeLabourTier": "nodeLabourTier",
+      "isActive": true,
+      "customAttributes": {
+        "dynamicAtrr1": true,
+        "dynamicAtrr2": "value",
+        "dynamicAtrr3": 123
+      }
+    },
+    {
+      "nodeId": "nodeFeedId-011",
+      "orgId": "NEXTUPLE_GR",
+      "street": "street",
+      "city": "city",
+      "state": "state",
+      "zipCode": "zipCode",
+      "country": "IN",
+      "latitude": "latitude",
+      "longitude": "longitude",
+      "timezone": "America/New_York",
+      "startWorkingTime": "08:00",
+      "lastWorkingTime": "17:00",
+      "serviceOptionEligibilities": {
+        "EXPRESS": true,
+        "STANDARD": false
+      },
+      "shipToHome": true,
+      "bopisEligible": true,
+      "nodeType": "STORE",
+      "nodeLabourTier": "nodeLabourTier",
+      "isActive": true,
+      "customAttributes": {
+        "dynamicAtrr1": true,
+        "dynamicAtrr2": "value",
+        "dynamicAtrr3": 123
+      }
+    },
+    {
+      "nodeId": "nodeFeedId-012",
+      "orgId": "NEXTUPLE_GR",
+      "street": "street",
+      "city": "city",
+      "state": "state",
+      "zipCode": "zipCode",
+      "country": "IN",
+      "latitude": "latitude",
+      "longitude": "longitude",
+      "timezone": "America/New_York",
+      "startWorkingTime": "08:00",
+      "lastWorkingTime": "17:00",
+      "serviceOptionEligibilities": {
+        "EXPRESS": true,
+        "STANDARD": false
+      },
+      "shipToHome": true,
+      "bopisEligible": true,
+      "nodeType": "STORE",
+      "nodeLabourTier": "nodeLabourTier",
+      "isActive": true,
+      "customAttributes": {
+        "dynamicAtrr1": true,
+        "dynamicAtrr2": "value",
+        "dynamicAtrr3": 123
+      }
+    },
+    {
+      "nodeId": "nodeFeedId-013",
+      "orgId": "NEXTUPLE_GR",
+      "street": "street",
+      "city": "city",
+      "state": "state",
+      "zipCode": "zipCode",
+      "country": "IN",
+      "latitude": "latitude",
+      "longitude": "longitude",
+      "timezone": "America/New_York",
+      "startWorkingTime": "08:00",
+      "lastWorkingTime": "17:00",
+      "serviceOptionEligibilities": {
+        "EXPRESS": true,
+        "STANDARD": false
+      },
+      "shipToHome": true,
+      "bopisEligible": true,
+      "nodeType": "STORE",
+      "nodeLabourTier": "nodeLabourTier",
+      "isActive": true,
+      "customAttributes": {
+        "dynamicAtrr1": true,
+        "dynamicAtrr2": "value",
+        "dynamicAtrr3": 123
+      }
+    }
+  ],
+  "pagination": {
+    "next": null,
+    "previous": 0,
+    "totalPages": 2,
+    "currentPage": 2,
+    "totalRecords": 14,
+    "sortOrder": "ASC",
+    "sortBy": "nodeId"
+  }
+}

@@ -262,6 +262,7 @@ definitions:
           - gradle
           - sonar
         script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
           - microdnf install git
           - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/deployment-scripts.git
@@ -285,6 +286,7 @@ definitions:
           - gradle
           - sonar
         script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
           - bash ./gradlew -Pbuild_target=QA clean build --refresh-dependencies artifactoryPublish
           - export SPACE=" "
           - bash ./gradlew -Pbuild_target=QA -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
@@ -296,6 +298,7 @@ definitions:
         caches:
           - gradle
         script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
           - bash ./gradlew -Pbuild_target=STAGED clean build artifactoryPublish
           - export SPACE=" "
           - bash ./gradlew -Pbuild_target=STAGED -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
@@ -335,14 +338,30 @@ definitions:
           - sonar
           - cve
         script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
           - microdnf install git
           - microdnf install findutils
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
           - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
-          - bash ./gradlew -Pbuild_target=SNAPSHOT clean build jacocoTestReport spotbugsMain
-          #          - bash ./gradlew dependencyCheckAggregate --info
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -PexcludeTests='**/*ContainerTest*,**/*PerfTest*' clean build jacocoTestReport spotbugsMain
+#          - bash ./gradlew dependencyCheckAggregate --info
           - bash ./gradlew sonarqube showSonarQubeLink --info
+    - step: &container-test
+        size: 4x
+        name: Container Test
+        caches:
+          - gradle
+          - sonar
+          - cve
+        services:
+          - docker
+        artifacts:
+          - build/reports/tests/test/**
+        script:
+          - microdnf install findutils
+          - export TESTCONTAINERS_RYUK_DISABLED=true
+          - bash ./gradlew :test --tests "com.nextuple.masterdata.**.*ContainerTest"
     - step: &Clear-Cache
         name: Clear Pipeline Cache
         script:
@@ -354,6 +373,7 @@ pipelines:
   pull-requests:
     '**':
       - step: *pr-build
+      - step: *container-test
   tags:
     '*-SNAPSHOT':
       - step: *Clear-Cache

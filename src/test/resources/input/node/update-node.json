@@ -1,0 +1,25 @@
+{
+  "street": "street-1",
+  "city": "city-1",
+  "state": "state-1",
+  "zipCode": "zipCode-1",
+  "country": "US",
+  "latitude": "latitude-1",
+  "longitude": "longitude-1",
+  "timezone": "UTC",
+  "startWorkingTime": "09:00",
+  "lastWorkingTime": "18:00",
+  "serviceOptionEligibilities": {
+    "SDND": false,
+    "STANDARD": true
+  },
+  "shipToHome": false,
+  "bopisEligible": false,
+  "nodeType": "MFC",
+  "nodeLabourTier": "nodeLabourTier-1",
+  "isActive": false,
+  "customAttributes": {
+    "dynamicAtrr4": true,
+    "dynamicAtrr5": "value"
+  }
+}
