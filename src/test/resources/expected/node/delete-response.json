@@ -1,0 +1,30 @@
+{
+  "nodeId": "nodeId-002",
+  "orgId": "NEXTUPLE_GR",
+  "street": "street-2",
+  "city": "city-2",
+  "state": "state-2",
+  "zipCode": "zipCode-2",
+  "country": "CA",
+  "latitude": "latitude-2",
+  "longitude": "longitude-2",
+  "timezone": "Pacific/Auckland",
+  "startWorkingTime": "10:00",
+  "lastWorkingTime": "20:00",
+  "serviceOptionEligibilities": {
+    "EXPRESS": true,
+    "STANDARD": false
+  },
+  "shipToHome": true,
+  "bopisEligible": true,
+  "nodeType": "MFC",
+  "nodeLabourTier": "nodeLabourTier-2",
+  "isActive": true,
+  "customAttributes": {
+    "TEST": {
+      "dynamicAtrr1": true,
+      "dynamicAtrr2": "value",
+      "dynamicAtrr3": 123
+    }
+  }
+}

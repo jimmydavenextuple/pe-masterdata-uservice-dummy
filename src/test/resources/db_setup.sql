@@ -1,0 +1,28 @@
+create table if not exists tenant_configdata
+(
+    config_key         varchar(255),
+    config_value       varchar(2000),
+    org_id             varchar(255)
+);
+
+insert into tenant_configdata (config_key, config_value, org_id)
+values ('buffer-horizon-days', '7', 'NEXTUPLE_GR'),
+       ('capacity-enabled', 'true', 'NEXTUPLE_GR'),
+       ('capacity-horizon', '7', 'NEXTUPLE_GR'),
+       ('event-allowed-pages', '{ExceptionEvent: ERROR}', 'NEXTUPLE_GR'),
+       ('event-log-level', '{ExceptionEvent: ERROR}', 'NEXTUPLE_GR'),
+       ('event-publish-enabled',
+        '{ItemDetailsEvent: false,OrderLinesWithShipNodeIdEvent: false,OrderLineEligibilityEvent: false,EligibleItemNodeTypesEvent: false,InventoryDetailsEvent: false,WeightageDetailsEvent: false,SourcingSolutionEvent: false,SuggestedPromiseEvent: true,TransitDetailsEvent: false, ReservationRequestEvent: false,ReservationResponseEvent: false,NodeCarrierPriorityEvent:false}',
+        'NEXTUPLE_GR'),
+       ('final-solutions-cap', '10', 'NEXTUPLE_GR'),
+       ('line-solutions-required', '1000', 'NEXTUPLE_GR'),
+       ('line-threshold', '10', 'NEXTUPLE_GR'),
+       ('log-suppression-service-options', 'cart,checkout,billing,orderreview', 'NEXTUPLE_GR'),
+       ('max-solutions', '1000000', 'NEXTUPLE_GR'),
+       ('node-types', 'STORE,MFC,DC,FC', 'NEXTUPLE_GR'),
+       ('processing-time-computation', 'ADDITION', 'NEXTUPLE_GR'),
+       ('service-option-inventory-type-mapping', 'SDND:PICK,EXPRESS:SHIP,STANDARD:SHIP,BOPIS:PICK,NEXTDAY:SHIP',
+        'NEXTUPLE_GR'),
+       ('service-options', 'EXPRESS,STANDARD,SDND,NEXTDAY', 'NEXTUPLE_GR'),
+       ('sourcing-no-of-solution', '3', 'NEXTUPLE_GR'),
+       ('top-solutions-count', '10', 'NEXTUPLE_GR');
