@@ -39,6 +39,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Zone data and configurations in the transit system.
+ *
+ * <p>This controller provides APIs for adding, updating, fetching, and deleting zone data. It
+ * allows users to manage zones and their configurations within the transit system, including
+ * handling operations based on provided zone requests, such as creating and updating zones,
+ * retrieving zone details, and deleting outdated zone data.
+ *
+ * <p>The controller is tagged with "Zone APIs" for easy categorization in API documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/zone")
@@ -50,6 +60,18 @@ public class ZoneController {
 
   private final ZoneService zoneService;
 
+  /**
+   * Adds zone data to the system.
+   *
+   * <p>This method processes a POST request to add new zone data based on the provided request
+   * details.
+   *
+   * @param zoneRequest The request object containing the zone data to be added.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the created zone data.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @AddZoneDataDoc
   @PostMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -66,6 +88,22 @@ public class ZoneController {
             .build());
   }
 
+  /**
+   * Updates zone data in the system.
+   *
+   * <p>This method processes a PUT request to update existing zone data based on the provided
+   * details, including organization, geo zones, carrier service, and the update request.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param sourceGeozone The source geo zone for the zone data.
+   * @param destinationGeozone The destination geo zone for the zone data.
+   * @param carrierServiceId The unique identifier of the carrier service.
+   * @param zoneUpdateRequest The request object containing the updated zone data.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the updated zone data.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @UpdateZoneDataDoc
   @PutMapping(
       path = "/{orgId}/{sourceGeozone}/{destinationGeozone}/{carrierServiceId}",
@@ -101,6 +139,21 @@ public class ZoneController {
             .build());
   }
 
+  /**
+   * Retrieves the zone details based on the provided parameters.
+   *
+   * <p>This method processes a GET request to fetch zone details for a given organization, source
+   * and destination geo zones, and carrier service ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param sourceGeozone The source geo zone for which zone details are to be fetched.
+   * @param destinationGeozone The destination geo zone for which zone details are to be fetched.
+   * @param carrierServiceId The unique identifier of the carrier service.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the fetched zone details.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @GetZoneDetailsDoc
   @GetMapping(
       path = "/{orgId}/{sourceGeozone}/{destinationGeozone}/{carrierServiceId}",
@@ -135,6 +188,21 @@ public class ZoneController {
             .build());
   }
 
+  /**
+   * Deletes the zone details based on the provided parameters.
+   *
+   * <p>This method processes a DELETE request to remove zone details for a given organization,
+   * source and destination geo zones, and carrier service ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param sourceGeozone The source geo zone for which zone details are to be deleted.
+   * @param destinationGeozone The destination geo zone for which zone details are to be deleted.
+   * @param carrierServiceId The unique identifier of the carrier service.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the result of the deletion operation.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @DeleteZoneDetailsDoc
   @DeleteMapping(
       path = "/{orgId}/{sourceGeozone}/{destinationGeozone}/{carrierServiceId}",
@@ -169,6 +237,20 @@ public class ZoneController {
             .build());
   }
 
+  /**
+   * Fetches a list of zone details for the given organization and destination geo zone.
+   *
+   * <p>This method processes a GET request to retrieve zone details for a specific organization and
+   * destination geo zone.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param destinationGeozone The destination geo zone for which the zone details are to be
+   *     fetched.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched zone
+   *     details list.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @GetZoneDetailsListForDestinationGeoZoneDoc
   @GetMapping(path = "/{orgId}/{destinationGeozone}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<List<ZoneResponse>>> getZoneDetailsList(

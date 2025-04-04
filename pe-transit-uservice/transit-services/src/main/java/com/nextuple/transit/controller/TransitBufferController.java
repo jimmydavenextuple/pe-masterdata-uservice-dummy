@@ -41,6 +41,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Transit Buffer configurations. This includes creating, updating,
+ * retrieving, and deleting transit buffer details.
+ *
+ * <p>The Transit Buffer Controller provides API endpoints for interacting with transit buffers,
+ * including fetching details by organization ID and destination geozone, creating and updating
+ * transit buffer configurations, and deleting existing transit buffers.
+ *
+ * <p>The controller is tagged with "Transit Buffer APIs" for easy categorization in API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/transit/v1/buffer")
 @RequiredArgsConstructor
@@ -52,6 +63,22 @@ public class TransitBufferController {
 
   private static final Logger logger = LoggerFactory.getLogger(TransitBufferController.class);
 
+  /**
+   * Creates a new transit buffer configuration.
+   *
+   * <p>This method processes the request to create a new transit buffer based on the provided
+   * transit buffer data. The response will indicate whether the transit buffer was successfully
+   * created.
+   *
+   * @param transitBufferRequest The request body containing the details of the transit buffer to be
+   *     created. This is a required parameter and must be validated using the {@link Valid}
+   *     annotation.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the {@link
+   *     TransitBufferResponse} indicating the result of the creation operation and a success
+   *     message.
+   * @throws CommonServiceException If there is a general error during the service processing.
+   * @throws TransitDomainException If an error specific to the transit buffer domain occurs.
+   */
   @CreateTransitBufferDoc
   @PostMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -68,6 +95,22 @@ public class TransitBufferController {
             .build());
   }
 
+  /**
+   * Fetches the transit buffer details based on the organization ID and destination geo zone.
+   *
+   * <p>This method retrieves a list of transit buffer details for the given organization and
+   * destination geozone. The response will include the transit buffer data for the specified
+   * criteria.
+   *
+   * @param orgId The unique identifier of the organization. It is a required parameter and cannot
+   *     be blank.
+   * @param destinationGeozone The destination geo zone of the transit. It is a required parameter
+   *     and cannot be blank.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a list of {@link
+   *     TransitBufferResponse} that matches the organization ID and destination geo zone.
+   * @throws CommonServiceException If an error occurs during the retrieval of transit buffer
+   *     details.
+   */
   @GetByOrgIdAndDestinationGeozoneDoc
   @GetMapping(path = "/org/{orgId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<List<TransitBufferResponse>>> getByOrgIdAndDestinationGeozone(
@@ -91,6 +134,20 @@ public class TransitBufferController {
             .build());
   }
 
+  /**
+   * Updates the existing transit buffer with the provided details.
+   *
+   * <p>This method processes the request to update a transit buffer based on the details provided
+   * in the {@link TransitBufferRequest}. The transit buffer will be updated in the system, and a
+   * response with the updated transit buffer details will be returned.
+   *
+   * @param transitBufferRequest The request body containing the updated details for the transit
+   *     buffer.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated {@link
+   *     TransitBufferResponse}.
+   * @throws CommonServiceException If an error occurs during the processing of the request.
+   * @throws TransitDomainException If an error occurs related to transit buffer domain rules.
+   */
   @UpdateTransitBufferDoc
   @PutMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -107,6 +164,19 @@ public class TransitBufferController {
             .build());
   }
 
+  /**
+   * Deletes the transit buffer details based on the provided request.
+   *
+   * <p>This method processes the request to delete a transit buffer based on the details provided
+   * in the {@link TransitBufferRequest}. The transit buffer corresponding to the given
+   * organization, carrier service, source geo zone, and destination geo zone will be deleted.
+   *
+   * @param transitBufferRequest The request body containing the details of the transit buffer to be
+   *     deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the {@link
+   *     TransitBufferResponse} indicating the result of the deletion.
+   * @throws CommonServiceException If an error occurs during the processing of the request.
+   */
   @DeleteTransitBufferDetailsDoc
   @DeleteMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -129,6 +199,23 @@ public class TransitBufferController {
             .build());
   }
 
+  /**
+   * Retrieves the transit buffer details for given transit buffer config request ID and generates a
+   * pre-signed URL for file download.
+   *
+   * <p>This method retrieves the transit buffer details associated with a given {@code
+   * transitBufferConfigRequestId} and checks if a pre-signed URL for an already uploaded file is
+   * available. If the file is not present, it creates a new CSV file, uploads it to S3, and returns
+   * a pre-signed URL for downloading the file.
+   *
+   * @param transitBufferConfigRequestId The unique identifier of the transit buffer configuration
+   *     request.
+   * @param createdBy The user who created the request.
+   * @return A {@link PreSignedUrlResponse} containing the pre-signed URL for downloading the
+   *     transit buffer file.
+   * @throws IOException If an error occurs while creating or uploading the CSV file.
+   * @throws CommonServiceException If an error occurs during the processing of the request.
+   */
   @GetTransitBufferDetailsDoc
   @GetMapping("/{transitBufferConfigRequestId}")
   public ResponseEntity<BaseResponse<PreSignedUrlResponse>> getTransitBufferDetails(
