@@ -26,8 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,25 +43,25 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Vendor APIs")
 @RequestMapping("/vendor")
 @RequiredArgsConstructor
+@Slf4j
 public class VendorController {
-  private static final Logger logger = LoggerFactory.getLogger(VendorController.class);
   private final VendorService vendorService;
 
   @CreateVendorDoc
   @PostMapping
   public ResponseEntity<BaseResponse<VendorResponse>> createVendor(
       @Valid @RequestBody VendorRequest vendorRequest) throws VendorDomainException {
-    logger.debug("Processing vendor creation request");
+    log.debug("Processing vendor creation request");
     try {
       var vendorResponse = vendorService.createVendor(vendorRequest);
-      logger.info("Response after creation of vendor :{}", vendorResponse);
+      log.info("Response after creation of vendor :{}", vendorResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Vendor successfully created")
               .payload(vendorResponse)
               .build());
     } catch (Exception e) {
-      logger.error("Failed to create vendor");
+      log.error("Failed to create vendor");
       throw e;
     }
   }
@@ -80,18 +79,18 @@ public class VendorController {
           String orgId,
       @Valid @RequestBody VendorUpdationRequest vendorUpdationRequest)
       throws VendorDomainException, CommonServiceException {
-    logger.debug("Processing update vendor details");
+    log.debug("Processing update vendor details");
     try {
       var vendorResponse =
           vendorService.updateVendorDetails(vendorId, orgId, vendorUpdationRequest);
-      logger.info("Response after updation of vendor :{}", vendorResponse);
+      log.info("Response after updation of vendor :{}", vendorResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Vendor details updated successfully")
               .payload(vendorResponse)
               .build());
     } catch (Exception e) {
-      logger.error("Failed to update vendor details");
+      log.error("Failed to update vendor details");
       throw e;
     }
   }
@@ -108,7 +107,7 @@ public class VendorController {
           @PathVariable
           String orgId)
       throws VendorDomainException, CommonServiceException {
-    logger.debug("Processing get vendor details");
+    log.debug("Processing get vendor details");
     try {
       var vendorResponse = vendorService.getVendorDetails(vendorId, orgId);
       return ResponseEntity.ok(
@@ -117,7 +116,7 @@ public class VendorController {
               .payload(vendorResponse)
               .build());
     } catch (Exception e) {
-      logger.error("Failed to fetch vendor details");
+      log.error("Failed to fetch vendor details");
       throw e;
     }
   }
@@ -138,17 +137,17 @@ public class VendorController {
           @PathVariable
           String orgId)
       throws VendorDomainException, CommonServiceException {
-    logger.debug("Processing delete vendor");
+    log.debug("Processing delete vendor");
     try {
       var vendorResponse = vendorService.deleteVendor(vendorId, orgId);
-      logger.info("Response after deletion of vendor :{}", vendorResponse);
+      log.info("Response after deletion of vendor :{}", vendorResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Vendor deleted successfully")
               .payload(vendorResponse)
               .build());
     } catch (Exception e) {
-      logger.error("Failed to delete vendor");
+      log.error("Failed to delete vendor");
       throw e;
     }
   }

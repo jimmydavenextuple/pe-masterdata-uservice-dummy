@@ -12,6 +12,7 @@ import static java.lang.annotation.ElementType.METHOD;
 
 import com.nextuple.common.response.error.ErrorResponse;
 import com.nextuple.vendor.domain.VendorConstants;
+import com.nextuple.vendor.domain.outbound.VendorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -26,7 +27,31 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Operation(summary = "Get Vendor Details", description = VendorConstants.GET_VENDOR_DESC)
-@ApiResponse(responseCode = "200", description = VendorConstants.GET_VENDOR_DETAILS_SUCCESS)
+@ApiResponse(
+    responseCode = "200",
+    description = VendorConstants.GET_VENDOR_DETAILS_SUCCESS,
+    content =
+        @Content(
+            schema = @Schema(implementation = VendorResponse.class),
+            examples = {
+              @ExampleObject(
+                  summary = "Get Vendor Details",
+                  name = "Get Vendor Details",
+                  value =
+                      """
+                            {
+                            "success": true,
+                            "requestId": "f8788a11-7b1d-440d-9a2c-fde9ae072a79",
+                            "timestamp": 1679573885650,
+                            "message": "Vendor Details fetched successfully",
+                            "payload": {
+                                "vendorId": "vendor-1",
+                                "vendorDescription": "vendor-description",
+                                "vendorType": "Type 1",
+                                "orgId": "org-1"
+                            }
+                        }""")
+            }))
 @ApiResponse(
     responseCode = "400",
     description =
