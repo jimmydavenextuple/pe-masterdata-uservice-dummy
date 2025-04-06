@@ -61,6 +61,20 @@ repositories {
 }
 
 test {
+    if (project.hasProperty('excludeTests')) {
+        def excludeTests = project.excludeTests.split(',')
+        excludeTests.each { excludeTest ->
+            exclude '**/' + excludeTest
+        }
+    }
+
+    if (project.hasProperty('includeTests')) {
+        def includeTests = project.includeTests.split(',')
+        includeTests.each { includeTest ->
+            include '**/' + includeTest
+        }
+    }
+
     useJUnitPlatform()
 }
 
@@ -471,6 +485,13 @@ dependencies {
     implementation "com.nextuple.neoplatform:auth-injector:1.0.67-${build_target}"
     api 'io.github.openfeign:feign-okhttp:12.1'
     implementation("org.springframework.security:spring-security-crypto:6.4.4")
+
+    // Test container dependencies
+    testImplementation 'org.testcontainers:postgresql:1.20.0'
+    testImplementation 'org.testcontainers:kafka:1.20.1'
+    testImplementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    testImplementation(project(":pe-node-uservice:node-persistence-domain"))
+    testImplementation(project(":pe-node-uservice:node-persistence-postgres"))
 }
 
 jacocoTestReport {

@@ -1,0 +1,28 @@
+{
+  "nodeId": "nodeId-001",
+  "orgId": "NEXTUPLE_GR",
+  "street": "street",
+  "city": "city",
+  "state": "state",
+  "zipCode": "zipCode",
+  "country": "IN",
+  "latitude": "latitude",
+  "longitude": "longitude",
+  "timezone": "America/New_York",
+  "startWorkingTime": "08:00",
+  "lastWorkingTime": "17:00",
+  "serviceOptionEligibilities": {
+    "EXPRESS": true,
+    "STANDARD": false
+  },
+  "shipToHome": true,
+  "bopisEligible": true,
+  "nodeType": "STORE",
+  "nodeLabourTier": "nodeLabourTier",
+  "isActive": true,
+  "customAttributes": {
+    "dynamicAtrr1": true,
+    "dynamicAtrr2": "value",
+    "dynamicAtrr3": 123
+  }
+}
