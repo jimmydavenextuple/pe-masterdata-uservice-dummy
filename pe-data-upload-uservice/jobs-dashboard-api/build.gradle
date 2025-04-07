@@ -26,8 +26,8 @@ dependencies {
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
-    implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")
-    implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
+    implementation("com.nextuple.plt:plt-fpm-service:${platformFPMVersion}")
+    implementation("com.nextuple.plt:plt-common:${platformFPMVersion}")
     implementation 'io.swagger.core.v3:swagger-models:2.2.0'
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }
