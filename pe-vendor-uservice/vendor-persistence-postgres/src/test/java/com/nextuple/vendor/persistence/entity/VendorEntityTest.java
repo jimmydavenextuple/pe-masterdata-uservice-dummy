@@ -11,14 +11,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.nextuple.vendor.persistence.entity.key.VendorKey;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class VendorEntityTest {
 
-  public static final String NODE_ID = "node-1";
+  public static final String VENDOR_ID = "vendor-1";
   public static final String ORG_ID = "org-1";
 
   @Test
+  @DisplayName("Vendor Entity Fields Test")
   void vendorEntityTest() {
     VendorEntity vendorEntity = new VendorEntity();
     assertNull(vendorEntity.getVendorId());
@@ -28,6 +30,7 @@ public class VendorEntityTest {
   }
 
   @Test
+  @DisplayName("Vendor Test, when vendorId is null")
   void vendorIdNullTest() {
     VendorKey vendorKey = new VendorKey();
     assertNull(vendorKey.getVendorId());
@@ -35,8 +38,9 @@ public class VendorEntityTest {
   }
 
   @Test
+  @DisplayName("Vendor Key Fields Test")
   void vendorIdTest() {
-    VendorKey vendorKey = new VendorKey(NODE_ID, ORG_ID);
+    VendorKey vendorKey = new VendorKey(VENDOR_ID, ORG_ID);
     assertNotNull(vendorKey.getVendorId());
     assertNotNull(vendorKey.getOrgId());
   }

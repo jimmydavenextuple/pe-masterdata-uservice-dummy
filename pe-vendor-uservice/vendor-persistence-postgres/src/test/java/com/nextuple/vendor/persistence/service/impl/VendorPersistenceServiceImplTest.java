@@ -26,6 +26,7 @@ import com.nextuple.vendor.persistence.util.TestUtil;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -46,6 +47,7 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
+  @DisplayName("Save Vendor Happy Path Test")
   void saveVendorTest() throws PromiseEngineException {
     VendorEntity vendorEntity = testUtil.getVendorEntity();
     when(vendorEntityMapper.toEntity(any(VendorDomainDto.class))).thenReturn(vendorEntity);
@@ -59,6 +61,7 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
+  @DisplayName("Save Vendor Test - Exception Case")
   void saveVendorExceptionTest() {
     when(vendorRepository.save(any())).thenThrow(new RuntimeException("Error while saving"));
     Exception exception =
@@ -70,6 +73,7 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
+  @DisplayName("Get Vendor Details Happy Path Test")
   void getVendorDetailsTest() throws PromiseEngineException {
     VendorEntity vendorEntity = testUtil.getVendorEntity();
     when(vendorEntityMapper.toEntity(any(VendorDomainDto.class))).thenReturn(vendorEntity);
@@ -84,6 +88,7 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
+  @DisplayName("Get Vendor Details Test - Exception Case")
   void getVendorDetailsTestException() {
     when(vendorRepository.findById(any()))
         .thenThrow(new RuntimeException("Error while fetching details"));
@@ -99,6 +104,7 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
+  @DisplayName("Delete Vendor by vendorId and ordId Happy Path Test")
   void vendorDeletionTest() throws CommonServiceException {
     when(vendorEntityMapper.toEntity(any(VendorDomainDto.class)))
         .thenReturn(testUtil.getVendorEntity());
@@ -112,6 +118,7 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
+  @DisplayName("Delete Vendor by vendorId and ordId Test - Exception Case")
   void vendorDeletionTestException() {
     doThrow(new RuntimeException("error while deleting")).when(vendorRepository).delete(any());
     Exception exception =

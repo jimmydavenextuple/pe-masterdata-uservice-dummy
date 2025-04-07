@@ -15,6 +15,7 @@ import org.springframework.boot.SpringApplication;
 
 class MasterDataNodeApplicationTest {
   @Test
+  @DisplayName("Main test for PE-Vendor")
   void mainTest() {
     MockedStatic<SpringApplication> mock = Mockito.mockStatic(SpringApplication.class);
     mock.when(
