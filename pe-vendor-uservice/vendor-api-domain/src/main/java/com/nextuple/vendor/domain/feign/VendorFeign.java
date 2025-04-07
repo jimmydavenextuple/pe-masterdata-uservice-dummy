@@ -35,11 +35,11 @@ public interface VendorFeign {
       @NotBlank @PathVariable String orgId,
       @Valid @RequestBody VendorUpdationRequest vendorUpdationRequest);
 
-  @GetMapping("/node/{nodeId}/{orgId}")
+  @GetMapping("/vendor/{vendorId}/{orgId}")
   BaseResponse<VendorResponse> getVendorDetails(
-      @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId);
+      @NotBlank @PathVariable String vendorId, @NotBlank @PathVariable String orgId);
 
-  @DeleteMapping("/node/{nodeId}/{orgId}")
+  @DeleteMapping("/vendor/{vendorId}/{orgId}")
   BaseResponse<VendorResponse> deleteVendor(
-      @NotBlank @PathVariable String nodeId, @NotBlank @PathVariable String orgId);
+      @NotBlank @PathVariable String vendorId, @NotBlank @PathVariable String orgId);
 }

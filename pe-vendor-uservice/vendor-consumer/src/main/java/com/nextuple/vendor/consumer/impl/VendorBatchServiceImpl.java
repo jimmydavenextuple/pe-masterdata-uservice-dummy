@@ -78,11 +78,7 @@ public class VendorBatchServiceImpl extends BatchService<VendorFeedDto> {
       try {
         Optional<VendorDomainDto> vendorDomainDto =
             vendorPersistenceService.findVendorByVendorIdAndOrgId(vendorId, orgId);
-        if (vendorDomainDto.isPresent()
-            && (vendorDomainDto
-                .get()
-                .getLastModifiedDate()
-                .after(vendorBatchRequest.getReceivedTimestamp()))) {
+        if (checkForBatchRequestExpired(vendorBatchRequest, vendorDomainDto)) {
           Map<String, FieldError> errorMap = new HashMap<>();
           errorMap.put(
               "receivedTimestamp",
@@ -107,5 +103,14 @@ public class VendorBatchServiceImpl extends BatchService<VendorFeedDto> {
             vendorId);
       }
     }
+  }
+
+  private static boolean checkForBatchRequestExpired(
+      BatchRequest<VendorFeedDto> vendorBatchRequest, Optional<VendorDomainDto> vendorDomainDto) {
+    return vendorDomainDto.isPresent()
+        && (vendorDomainDto
+            .get()
+            .getLastModifiedDate()
+            .after(vendorBatchRequest.getReceivedTimestamp()));
   }
 }

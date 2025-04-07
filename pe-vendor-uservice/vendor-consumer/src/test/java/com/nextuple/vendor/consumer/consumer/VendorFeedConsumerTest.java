@@ -20,6 +20,7 @@ import com.nextuple.vendor.consumer.TestUtil;
 import com.nextuple.vendor.consumer.dto.VendorFeedDto;
 import com.nextuple.vendor.consumer.impl.VendorBatchServiceImpl;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,6 +35,7 @@ class VendorFeedConsumerTest {
   @InjectMocks private TestUtil testUtil;
 
   @Test
+  @DisplayName("Consume Master Data Feed for Vendor")
   void consumeMasterDataFeedTest() {
     List<BatchRequest<VendorFeedDto>> vendorFeedRequests =
         List.of(testUtil.getVendorFeedRequest(ActionEnum.CREATE));

@@ -23,6 +23,7 @@ import com.nextuple.vendor.persistence.exception.VendorDomainException;
 import com.nextuple.vendor.persistence.service.VendorPersistenceService;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,6 +37,7 @@ class VendorServiceTest {
   @Mock private VendorPersistenceService vendorPersistenceService;
 
   @Test
+  @DisplayName("Create Vendor Test - happy path")
   void createVendorTest() throws VendorDomainException {
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto(TestUtil.VENDOR_ID);
     VendorRequest vendorRequest = testUtil.getVendorRequest();
@@ -47,6 +49,7 @@ class VendorServiceTest {
   }
 
   @Test
+  @DisplayName("Update Vendor Test - happy path")
   void updateVendorDetailsSuccess() throws VendorDomainException, CommonServiceException {
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto(TestUtil.VENDOR_ID);
     VendorUpdationRequest vendorUpdationRequest = testUtil.getVendorUpdationRequest();
@@ -67,6 +70,7 @@ class VendorServiceTest {
   }
 
   @Test
+  @DisplayName("Update Vendor Test - vendor not found")
   void updateVendorDetailsVendorNotFound() throws VendorDomainException {
     VendorUpdationRequest vendorUpdationRequest = testUtil.getVendorUpdationRequest();
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID))
@@ -86,6 +90,7 @@ class VendorServiceTest {
   }
 
   @Test
+  @DisplayName("Get Vendor Details Test - happy path")
   void getVendorDetailsSuccess() throws VendorDomainException, CommonServiceException {
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto(TestUtil.VENDOR_ID);
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
@@ -100,6 +105,7 @@ class VendorServiceTest {
   }
 
   @Test
+  @DisplayName("Get Vendor Details Test - vendor not found")
   void getVendorDetailsVendorNotFound() throws VendorDomainException {
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
         .thenReturn(Optional.empty());
@@ -117,6 +123,7 @@ class VendorServiceTest {
   }
 
   @Test
+  @DisplayName("Delete Vendor Test - happy path")
   void deleteVendorSuccess() throws VendorDomainException, CommonServiceException {
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto(TestUtil.VENDOR_ID);
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID))
@@ -132,6 +139,7 @@ class VendorServiceTest {
   }
 
   @Test
+  @DisplayName("Delete Vendor Test - vendor not found")
   void deleteVendorNotFound() throws VendorDomainException {
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID))
         .thenReturn(Optional.empty());

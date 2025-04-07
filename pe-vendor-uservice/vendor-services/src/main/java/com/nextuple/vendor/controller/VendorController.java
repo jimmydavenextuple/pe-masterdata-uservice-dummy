@@ -54,7 +54,7 @@ public class VendorController {
     log.debug("Processing vendor creation request");
     try {
       var vendorResponse = vendorService.createVendor(vendorRequest);
-      log.info("Response after creation of vendor :{}", vendorResponse);
+      log.debug("Response after creation of vendor :{}", vendorResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Vendor successfully created")
@@ -83,7 +83,7 @@ public class VendorController {
     try {
       var vendorResponse =
           vendorService.updateVendorDetails(vendorId, orgId, vendorUpdationRequest);
-      log.info("Response after updation of vendor :{}", vendorResponse);
+      log.debug("Response after updation of vendor :{}", vendorResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Vendor details updated successfully")
@@ -140,7 +140,7 @@ public class VendorController {
     log.debug("Processing delete vendor");
     try {
       var vendorResponse = vendorService.deleteVendor(vendorId, orgId);
-      log.info("Response after deletion of vendor :{}", vendorResponse);
+      log.debug("Response after deletion of vendor :{}", vendorResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Vendor deleted successfully")

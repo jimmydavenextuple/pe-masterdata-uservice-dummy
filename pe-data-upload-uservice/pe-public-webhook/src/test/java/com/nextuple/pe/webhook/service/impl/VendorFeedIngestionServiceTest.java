@@ -20,9 +20,11 @@ import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.pe.webhook.domain.dtos.MasterDataIngestionDto;
 import com.nextuple.pe.webhook.domain.inbound.FeedRequest;
 import com.nextuple.pe.webhook.producer.KafkaProducer;
+import com.nextuple.pe.webhook.util.TestUtil;
 import com.nextuple.vendor.consumer.dto.VendorFeedDto;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -44,8 +46,9 @@ class VendorFeedIngestionServiceTest {
   }
 
   @Test
+  @DisplayName("Publish Vendor Feed Test")
   void testPublish() {
-    String orgId = "testOrg";
+    String orgId = TestUtil.ORG_ID;
     FeedRequest<MasterDataIngestionDto<VendorFeedDto>> feedRequest = new FeedRequest<>();
     MasterDataIngestionDto<VendorFeedDto> dto = new MasterDataIngestionDto<>();
     VendorFeedDto vendorFeedDto = new VendorFeedDto();
@@ -65,6 +68,7 @@ class VendorFeedIngestionServiceTest {
   }
 
   @Test
+  @DisplayName("Vendor Feed isEnabled flag test")
   void testIsPublishEnabled() {
     assertTrue(vendorFeedIngestionService.isPublishEnabled());
 
@@ -73,9 +77,10 @@ class VendorFeedIngestionServiceTest {
   }
 
   @Test
+  @DisplayName("Publish Vendor Feed to Kafka Test - isPublishEnabled flag is disabled")
   void testPublishFeedToKafkaDisabled() {
     ReflectionTestUtils.setField(vendorFeedIngestionService, "isPublishEnabled", false);
-    String orgId = "testOrg";
+    String orgId = TestUtil.ORG_ID;
     FeedRequest<MasterDataIngestionDto<VendorFeedDto>> feedRequest = new FeedRequest<>();
 
     vendorFeedIngestionService.publishFeedToKafka(orgId, feedRequest);
