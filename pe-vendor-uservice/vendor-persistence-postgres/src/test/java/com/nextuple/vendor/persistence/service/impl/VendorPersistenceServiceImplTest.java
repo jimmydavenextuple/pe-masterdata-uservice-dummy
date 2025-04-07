@@ -130,7 +130,7 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
-  void getVendorByOrgIdDefaultSortOrderTest() throws VendorDomainException {
+  void getVendorByOrgIdDefaultSortOrderTest() throws PromiseEngineException {
     List<VendorEntity> nodeEntityList = testUtil.getVendorEntityList();
     Pageable pageable = PageRequest.of(1, 1, Sort.by(TestUtil.SORT_BY).ascending());
     Page<VendorEntity> vendorEntityPage =
@@ -151,7 +151,7 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
-  void getVendorByOrgIdDESCSortOrderTest() throws VendorDomainException {
+  void getVendorByOrgIdDESCSortOrderTest() throws PromiseEngineException {
     List<VendorEntity> vendorEntityList = testUtil.getVendorEntityList();
     Pageable pageable = PageRequest.of(1, 1, Sort.by(TestUtil.SORT_BY).descending());
     Page<VendorEntity> vendorEntityPage =
@@ -177,11 +177,12 @@ class VendorPersistenceServiceImplTest {
         .thenThrow(new RuntimeException("Error while fetching vendor list"));
     Exception exception =
         assertThrows(
-            VendorDomainException.class,
+            PromiseEngineException.class,
             () ->
                 vendorPersistenceService.getVendorByOrgId(
                     TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "ASC"));
-    Assertions.assertEquals("Error while finding vendor list", exception.getMessage());
+    Assertions.assertEquals(
+        "Unable to fetch vendor : Error while fetching vendor list", exception.getMessage());
     verify(vendorRepository, times(1)).findVendorByOrgId(anyString(), any(Pageable.class));
   }
 }
