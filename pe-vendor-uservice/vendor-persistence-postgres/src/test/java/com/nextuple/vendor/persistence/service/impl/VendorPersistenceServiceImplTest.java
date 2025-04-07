@@ -9,6 +9,7 @@ package com.nextuple.vendor.persistence.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -21,6 +22,7 @@ import com.nextuple.vendor.persistence.exception.VendorDomainException;
 import com.nextuple.vendor.persistence.mapper.VendorEntityMapper;
 import com.nextuple.vendor.persistence.repository.VendorRepository;
 import com.nextuple.vendor.persistence.util.TestUtil;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +30,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 
 class VendorPersistenceServiceImplTest {
@@ -115,5 +122,61 @@ class VendorPersistenceServiceImplTest {
             () -> vendorPersistenceService.deleteVendor(testUtil.getVendorDomainDto()));
     Assertions.assertEquals("Error while deleting vendor", exception.getMessage());
     verify(vendorRepository, times(1)).delete(any());
+  }
+
+  @Test
+  void getVendorByOrgIdDefaultSortOrderTest() throws VendorDomainException {
+    List<VendorEntity> nodeEntityList = testUtil.getVendorEntityList();
+    Pageable pageable = PageRequest.of(1, 1, Sort.by(TestUtil.SORT_BY).ascending());
+    Page<VendorEntity> vendorEntityPage =
+        new PageImpl<>(nodeEntityList, pageable, nodeEntityList.size());
+    when(vendorRepository.findVendorByOrgId(anyString(), any(Pageable.class)))
+        .thenReturn(vendorEntityPage);
+    when(vendorEntityMapper.toDomain(any(VendorEntity.class)))
+        .thenReturn(testUtil.getVendorDomainDtoList().get(0))
+        .thenReturn(testUtil.getVendorDomainDtoList().get(1));
+    Page<VendorDomainDto> response =
+        vendorPersistenceService.getVendorByOrgId(TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "ASC");
+    Assertions.assertEquals(nodeEntityList.size(), response.getContent().size());
+    Assertions.assertEquals(2, response.getTotalPages());
+    Assertions.assertEquals(1, response.getPageable().getPageSize());
+    Assertions.assertEquals(2, response.getTotalElements());
+    Assertions.assertEquals("vendorId: ASC", response.getSort().toString());
+    verify(vendorRepository, times(1)).findVendorByOrgId(anyString(), any(Pageable.class));
+  }
+
+  @Test
+  void getVendorByOrgIdDESCSortOrderTest() throws VendorDomainException {
+    List<VendorEntity> vendorEntityList = testUtil.getVendorEntityList();
+    Pageable pageable = PageRequest.of(1, 1, Sort.by(TestUtil.SORT_BY).descending());
+    Page<VendorEntity> vendorEntityPage =
+        new PageImpl<>(vendorEntityList, pageable, vendorEntityList.size());
+    when(vendorRepository.findVendorByOrgId(anyString(), any(Pageable.class)))
+        .thenReturn(vendorEntityPage);
+    when(vendorEntityMapper.toDomain(any(VendorEntity.class)))
+        .thenReturn(testUtil.getVendorDomainDtoList().get(0))
+        .thenReturn(testUtil.getVendorDomainDtoList().get(1));
+    Page<VendorDomainDto> response =
+        vendorPersistenceService.getVendorByOrgId(TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "desc");
+    Assertions.assertEquals(vendorEntityList.size(), response.getContent().size());
+    Assertions.assertEquals(2, response.getTotalPages());
+    Assertions.assertEquals(1, response.getPageable().getPageSize());
+    Assertions.assertEquals(2, response.getTotalElements());
+    Assertions.assertEquals("vendorId: DESC", response.getSort().toString());
+    verify(vendorRepository, times(1)).findVendorByOrgId(anyString(), any(Pageable.class));
+  }
+
+  @Test
+  void getVendorByOrgIdTestException() {
+    when(vendorRepository.findVendorByOrgId(anyString(), any(Pageable.class)))
+        .thenThrow(new RuntimeException("Error while fetching vendor list"));
+    Exception exception =
+        assertThrows(
+            VendorDomainException.class,
+            () ->
+                vendorPersistenceService.getVendorByOrgId(
+                    TestUtil.ORG_ID, 1, 1, TestUtil.SORT_BY, "ASC"));
+    Assertions.assertEquals("Error while finding vendor list", exception.getMessage());
+    verify(vendorRepository, times(1)).findVendorByOrgId(anyString(), any(Pageable.class));
   }
 }

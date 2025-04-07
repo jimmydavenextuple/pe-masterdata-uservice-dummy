@@ -14,7 +14,9 @@ import java.util.*;
 public class TestUtil {
 
   public static final String VENDOR_ID = "vendor-1";
+  public static final String VENDOR_ID_2 = "vendor-2";
   public static final String ORG_ID = "org-1";
+  public static final String SORT_BY = "vendorId";
 
   public com.nextuple.vendor.persistence.domain.VendorDomainDto getVendorDomainDto() {
     return VendorDomainDto.builder()
@@ -31,6 +33,32 @@ public class TestUtil {
         .vendorDescription("vendor-description")
         .vendorType("Type 1")
         .orgId("org-1")
+        .build();
+  }
+
+  public List<VendorEntity> getVendorEntityList() {
+    return Arrays.asList(getVendorEntity(VENDOR_ID), getVendorEntity(VENDOR_ID_2));
+  }
+
+  public VendorEntity getVendorEntity(String vendorId) {
+    return VendorEntity.builder()
+        .vendorId(vendorId)
+        .vendorDescription("vendor-description")
+        .vendorType("Store")
+        .orgId("NEXTUPLE_GR")
+        .build();
+  }
+
+  public List<VendorDomainDto> getVendorDomainDtoList() {
+    return Arrays.asList(getVendorDomainDto(VENDOR_ID), getVendorDomainDto(VENDOR_ID_2));
+  }
+
+  public VendorDomainDto getVendorDomainDto(String vendorId) {
+    return VendorDomainDto.builder()
+        .vendorId(vendorId)
+        .vendorDescription("vendor-description")
+        .vendorType("Store")
+        .orgId("NEXTUPLE_GR")
         .build();
   }
 }
