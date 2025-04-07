@@ -8,6 +8,7 @@
 package com.nextuple.vendor.controller;
 
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.vendor.controller.docs.CreateVendorDoc;
 import com.nextuple.vendor.controller.docs.DeleteVendorDoc;
@@ -17,7 +18,6 @@ import com.nextuple.vendor.domain.VendorConstants;
 import com.nextuple.vendor.domain.inbound.VendorRequest;
 import com.nextuple.vendor.domain.inbound.VendorUpdationRequest;
 import com.nextuple.vendor.domain.outbound.VendorResponse;
-import com.nextuple.vendor.persistence.exception.VendorDomainException;
 import com.nextuple.vendor.service.VendorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,7 +50,7 @@ public class VendorController {
   @CreateVendorDoc
   @PostMapping
   public ResponseEntity<BaseResponse<VendorResponse>> createVendor(
-      @Valid @RequestBody VendorRequest vendorRequest) throws VendorDomainException {
+      @Valid @RequestBody VendorRequest vendorRequest) throws PromiseEngineException {
     log.debug("Processing vendor creation request");
     try {
       var vendorResponse = vendorService.createVendor(vendorRequest);
@@ -78,7 +78,7 @@ public class VendorController {
           @PathVariable
           String orgId,
       @Valid @RequestBody VendorUpdationRequest vendorUpdationRequest)
-      throws VendorDomainException, CommonServiceException {
+      throws CommonServiceException, PromiseEngineException {
     log.debug("Processing update vendor details");
     try {
       var vendorResponse =
@@ -106,7 +106,7 @@ public class VendorController {
           @Parameter(description = "Unique identifier of the organization.", example = "NEXTUPLE")
           @PathVariable
           String orgId)
-      throws VendorDomainException, CommonServiceException {
+      throws CommonServiceException, PromiseEngineException {
     log.debug("Processing get vendor details");
     try {
       var vendorResponse = vendorService.getVendorDetails(vendorId, orgId);
@@ -136,7 +136,7 @@ public class VendorController {
           @Parameter(description = "Unique identifier of the organization.", example = "NEXTUPLE")
           @PathVariable
           String orgId)
-      throws VendorDomainException, CommonServiceException {
+      throws CommonServiceException, PromiseEngineException {
     log.debug("Processing delete vendor");
     try {
       var vendorResponse = vendorService.deleteVendor(vendorId, orgId);

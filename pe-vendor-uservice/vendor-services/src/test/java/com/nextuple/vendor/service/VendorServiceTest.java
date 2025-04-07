@@ -14,12 +14,12 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.vendor.TestUtil;
 import com.nextuple.vendor.domain.inbound.VendorRequest;
 import com.nextuple.vendor.domain.inbound.VendorUpdationRequest;
 import com.nextuple.vendor.domain.outbound.VendorResponse;
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
-import com.nextuple.vendor.persistence.exception.VendorDomainException;
 import com.nextuple.vendor.persistence.service.VendorPersistenceService;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -38,7 +38,7 @@ class VendorServiceTest {
 
   @Test
   @DisplayName("Create Vendor Test - happy path")
-  void createVendorTest() throws VendorDomainException {
+  void createVendorTest() throws PromiseEngineException {
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto(TestUtil.VENDOR_ID);
     VendorRequest vendorRequest = testUtil.getVendorRequest();
     when(vendorPersistenceService.saveVendorDetails(any(VendorDomainDto.class)))
@@ -50,7 +50,7 @@ class VendorServiceTest {
 
   @Test
   @DisplayName("Update Vendor Test - happy path")
-  void updateVendorDetailsSuccess() throws VendorDomainException, CommonServiceException {
+  void updateVendorDetailsSuccess() throws CommonServiceException, PromiseEngineException {
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto(TestUtil.VENDOR_ID);
     VendorUpdationRequest vendorUpdationRequest = testUtil.getVendorUpdationRequest();
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID))
@@ -71,7 +71,7 @@ class VendorServiceTest {
 
   @Test
   @DisplayName("Update Vendor Test - vendor not found")
-  void updateVendorDetailsVendorNotFound() throws VendorDomainException {
+  void updateVendorDetailsVendorNotFound() throws CommonServiceException, PromiseEngineException {
     VendorUpdationRequest vendorUpdationRequest = testUtil.getVendorUpdationRequest();
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID))
         .thenReturn(Optional.empty());
@@ -91,7 +91,7 @@ class VendorServiceTest {
 
   @Test
   @DisplayName("Get Vendor Details Test - happy path")
-  void getVendorDetailsSuccess() throws VendorDomainException, CommonServiceException {
+  void getVendorDetailsSuccess() throws CommonServiceException, PromiseEngineException {
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto(TestUtil.VENDOR_ID);
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
         .thenReturn(Optional.of(vendorDomainDto));
@@ -106,7 +106,7 @@ class VendorServiceTest {
 
   @Test
   @DisplayName("Get Vendor Details Test - vendor not found")
-  void getVendorDetailsVendorNotFound() throws VendorDomainException {
+  void getVendorDetailsVendorNotFound() throws CommonServiceException, PromiseEngineException {
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
         .thenReturn(Optional.empty());
 
@@ -124,7 +124,7 @@ class VendorServiceTest {
 
   @Test
   @DisplayName("Delete Vendor Test - happy path")
-  void deleteVendorSuccess() throws VendorDomainException, CommonServiceException {
+  void deleteVendorSuccess() throws CommonServiceException, PromiseEngineException {
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto(TestUtil.VENDOR_ID);
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID))
         .thenReturn(Optional.of(vendorDomainDto));
@@ -140,7 +140,7 @@ class VendorServiceTest {
 
   @Test
   @DisplayName("Delete Vendor Test - vendor not found")
-  void deleteVendorNotFound() throws VendorDomainException {
+  void deleteVendorNotFound() throws CommonServiceException, PromiseEngineException {
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(TestUtil.VENDOR_ID, TestUtil.ORG_ID))
         .thenReturn(Optional.empty());
 

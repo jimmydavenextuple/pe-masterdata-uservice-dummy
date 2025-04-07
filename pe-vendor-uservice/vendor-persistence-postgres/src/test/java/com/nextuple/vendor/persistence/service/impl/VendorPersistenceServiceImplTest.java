@@ -15,9 +15,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
 import com.nextuple.vendor.persistence.entity.VendorEntity;
-import com.nextuple.vendor.persistence.exception.VendorDomainException;
+import com.nextuple.vendor.persistence.entity.key.VendorKey;
 import com.nextuple.vendor.persistence.mapper.VendorEntityMapper;
 import com.nextuple.vendor.persistence.repository.VendorRepository;
 import com.nextuple.vendor.persistence.util.TestUtil;
@@ -44,7 +46,7 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
-  void saveVendorTest() throws VendorDomainException {
+  void saveVendorTest() throws PromiseEngineException {
     VendorEntity vendorEntity = testUtil.getVendorEntity();
     when(vendorEntityMapper.toEntity(any(VendorDomainDto.class))).thenReturn(vendorEntity);
     when(vendorEntityMapper.toDomain(any(VendorEntity.class)))
@@ -61,14 +63,14 @@ class VendorPersistenceServiceImplTest {
     when(vendorRepository.save(any())).thenThrow(new RuntimeException("Error while saving"));
     Exception exception =
         assertThrows(
-            VendorDomainException.class,
+            PromiseEngineException.class,
             () -> vendorPersistenceService.saveVendorDetails(testUtil.getVendorDomainDto()));
-    Assertions.assertEquals("Error while saving the vendor", exception.getMessage());
+    Assertions.assertEquals("Unable to save vendor : Error while saving", exception.getMessage());
     verify(vendorRepository, times(1)).save(any());
   }
 
   @Test
-  void getVendorDetailsTest() throws VendorDomainException {
+  void getVendorDetailsTest() throws PromiseEngineException {
     VendorEntity vendorEntity = testUtil.getVendorEntity();
     when(vendorEntityMapper.toEntity(any(VendorDomainDto.class))).thenReturn(vendorEntity);
     when(vendorEntityMapper.toDomain(any(VendorEntity.class)))
@@ -87,21 +89,24 @@ class VendorPersistenceServiceImplTest {
         .thenThrow(new RuntimeException("Error while fetching details"));
     Exception exception =
         assertThrows(
-            VendorDomainException.class,
+            PromiseEngineException.class,
             () ->
                 vendorPersistenceService.findVendorByVendorIdAndOrgId(
                     TestUtil.VENDOR_ID, TestUtil.ORG_ID));
-    Assertions.assertEquals("Error while finding vendor", exception.getMessage());
+    Assertions.assertEquals(
+        "Unable to fetch vendor : Error while fetching details", exception.getMessage());
     verify(vendorRepository, times(1)).findById(any());
   }
 
   @Test
-  void vendorDeletionTest() throws VendorDomainException {
+  void vendorDeletionTest() throws CommonServiceException {
     when(vendorEntityMapper.toEntity(any(VendorDomainDto.class)))
         .thenReturn(testUtil.getVendorEntity());
     when(vendorEntityMapper.toDomain(any(VendorEntity.class)))
         .thenReturn(testUtil.getVendorDomainDto());
     doNothing().when(vendorRepository).delete(any());
+    when(vendorRepository.findById(any(VendorKey.class)))
+        .thenReturn(Optional.of(testUtil.getVendorEntity()));
     vendorPersistenceService.deleteVendor(testUtil.getVendorDomainDto());
     verify(vendorRepository, times(1)).delete(any());
   }
@@ -111,9 +116,9 @@ class VendorPersistenceServiceImplTest {
     doThrow(new RuntimeException("error while deleting")).when(vendorRepository).delete(any());
     Exception exception =
         assertThrows(
-            VendorDomainException.class,
+            CommonServiceException.class,
             () -> vendorPersistenceService.deleteVendor(testUtil.getVendorDomainDto()));
-    Assertions.assertEquals("Error while deleting vendor", exception.getMessage());
-    verify(vendorRepository, times(1)).delete(any());
+    Assertions.assertEquals("Vendor not found for given orgId, vendorId", exception.getMessage());
+    verify(vendorRepository, times(0)).delete(any());
   }
 }

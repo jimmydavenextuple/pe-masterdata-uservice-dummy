@@ -15,7 +15,10 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.nextuple.common.enums.ActionEnum;
+import com.nextuple.common.enums.ApplicationLayer;
+import com.nextuple.common.enums.ExceptionCodeMapping;
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.util.DateUtil;
 import com.nextuple.master.data.integration.dto.ResponseDto;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
@@ -25,7 +28,6 @@ import com.nextuple.vendor.consumer.TestUtil;
 import com.nextuple.vendor.consumer.dto.VendorFeedDto;
 import com.nextuple.vendor.domain.feign.VendorFeign;
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
-import com.nextuple.vendor.persistence.exception.VendorDomainException;
 import com.nextuple.vendor.persistence.service.VendorPersistenceService;
 import java.util.Date;
 import java.util.List;
@@ -143,7 +145,8 @@ class VendorBatchServiceImplTest {
 
   @Test
   @DisplayName("When vendor feed for outdated records")
-  void processBatchRecordsTestForOutdatedRecords() throws VendorDomainException {
+  void processBatchRecordsTestForOutdatedRecords()
+      throws CommonServiceException, PromiseEngineException {
     BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
     batchRequest.setReceivedTimestamp(new Date());
     List<BatchRequest<VendorFeedDto>> vendorFeedRequests = List.of(batchRequest);
@@ -180,7 +183,8 @@ class VendorBatchServiceImplTest {
 
   @Test
   @DisplayName("When vendor feed for outdated records - outdated vendors present")
-  void checkForOutdatedRecordTestWhenRecordIsOutdated() throws VendorDomainException {
+  void checkForOutdatedRecordTestWhenRecordIsOutdated()
+      throws CommonServiceException, PromiseEngineException {
     BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
     batchRequest.setReceivedTimestamp(new Date());
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto();
@@ -196,7 +200,8 @@ class VendorBatchServiceImplTest {
 
   @Test
   @DisplayName("When vendor feed for outdated records - no outdated vendors present")
-  void checkForOutdatedRecordTestWhenRecordIsNotOutdated() throws VendorDomainException {
+  void checkForOutdatedRecordTestWhenRecordIsNotOutdated()
+      throws CommonServiceException, PromiseEngineException {
     BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
     batchRequest.setReceivedTimestamp(new Date());
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto();
@@ -208,7 +213,8 @@ class VendorBatchServiceImplTest {
 
   @Test
   @DisplayName("When vendor feed for outdated records - no vendor found")
-  void checkForOutdatedRecordTestWhenVendorDoesNotExist() throws VendorDomainException {
+  void checkForOutdatedRecordTestWhenVendorDoesNotExist()
+      throws CommonServiceException, PromiseEngineException {
     BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
     batchRequest.setReceivedTimestamp(new Date());
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
@@ -218,15 +224,14 @@ class VendorBatchServiceImplTest {
 
   @Test
   @DisplayName("When vendor feed for outdated records - exception case")
-  void checkForOutdatedRecordTestWhenVendorDomainExceptionIsThrown() throws VendorDomainException {
+  void checkForOutdatedRecordTestWhenVendorDomainExceptionIsThrown()
+      throws CommonServiceException, PromiseEngineException {
     BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
     batchRequest.setReceivedTimestamp(new Date());
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
         .thenThrow(
-            new VendorDomainException(
-                "Vendor not found",
-                batchRequest.getPayload().getVendorId(),
-                batchRequest.getPayload().getOrgId()));
+            new PromiseEngineException(
+                ApplicationLayer.DAO_LAYER, ExceptionCodeMapping.ACCEPT, "Something went wrong"));
     Assertions.assertDoesNotThrow(() -> vendorBatchService.checkForOutdatedRecord(batchRequest));
   }
 }

@@ -8,6 +8,7 @@
 package com.nextuple.vendor.service;
 
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.postgres.config.ReaderDS;
 import com.nextuple.vendor.domain.inbound.VendorRequest;
@@ -15,7 +16,6 @@ import com.nextuple.vendor.domain.inbound.VendorUpdationRequest;
 import com.nextuple.vendor.domain.mapper.VendorMapper;
 import com.nextuple.vendor.domain.outbound.VendorResponse;
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
-import com.nextuple.vendor.persistence.exception.VendorDomainException;
 import com.nextuple.vendor.persistence.service.VendorPersistenceService;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,14 +37,14 @@ public class VendorService {
   private static final String VENDOR_ID = "vendorId";
   private static final String VENDOR_EXCEPTION_MESSAGE = "Vendor not found with given details";
 
-  public VendorResponse createVendor(VendorRequest vendorRequest) throws VendorDomainException {
+  public VendorResponse createVendor(VendorRequest vendorRequest) throws PromiseEngineException {
     var vendorDetails = INSTANCE.vendorRequestToVendorEntity(vendorRequest);
     return INSTANCE.toVendorResponse(vendorPersistenceService.saveVendorDetails(vendorDetails));
   }
 
   public VendorResponse updateVendorDetails(
       String vendorId, String orgId, VendorUpdationRequest vendorUpdationRequest)
-      throws VendorDomainException, CommonServiceException {
+      throws CommonServiceException, PromiseEngineException {
     Optional<VendorDomainDto> existingVendorDetails =
         vendorPersistenceService.findVendorByVendorIdAndOrgId(vendorId, orgId);
     if (existingVendorDetails.isEmpty()) {
@@ -63,7 +63,7 @@ public class VendorService {
 
   @ReaderDS
   public VendorResponse getVendorDetails(String vendorId, String orgId)
-      throws VendorDomainException, CommonServiceException {
+      throws CommonServiceException, PromiseEngineException {
     Optional<VendorDomainDto> vendorDetails =
         vendorPersistenceService.findVendorByVendorIdAndOrgId(vendorId, orgId);
     if (vendorDetails.isEmpty()) {
@@ -78,7 +78,7 @@ public class VendorService {
   }
 
   public VendorResponse deleteVendor(String vendorId, String orgId)
-      throws VendorDomainException, CommonServiceException {
+      throws CommonServiceException, PromiseEngineException {
     Optional<VendorDomainDto> vendorDetails =
         vendorPersistenceService.findVendorByVendorIdAndOrgId(vendorId, orgId);
     if (vendorDetails.isEmpty()) {
