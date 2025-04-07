@@ -31,6 +31,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * Controller for Node Service Option Operations.
+ *
+ * <p>This controller provides APIs to fetch and manage node service options for specified
+ * organizations. It supports pagination and sorting to retrieve a detailed list of node service
+ * options.
+ *
+ * <p>The controller is tagged with "Node Service Option APIs" for better categorization in API
+ * documentation.
+ */
 @Validated
 @Controller
 @RequestMapping("/ui/node-service-option")
@@ -44,6 +54,20 @@ public class NodeServiceOptionController {
   private final NodeServiceOptionService nodeServiceOptionService;
   private final PageProperties pageProperties;
 
+  /**
+   * Retrieves a paginated list of node service options for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch a paginated list of node service options based
+   * on the provided organization ID. Pagination and sorting are supported through the `pageParams`
+   * parameter.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param pageParams The pagination parameters, such as page number, page size, sorting criteria,
+   *     and sort order.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a paginated list of
+   *     node service options.
+   * @throws CommonServiceException If there is an error while fetching node service options.
+   */
   @GetMapping("/orgId/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<NodeServiceOptionDto>>> getNodeServiceOption(
       @PathVariable

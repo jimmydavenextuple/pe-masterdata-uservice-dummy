@@ -40,6 +40,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing promise sourcing rules within an organization.
+ *
+ * <p>This controller provides APIs for creating, editing, retrieving, updating, and deleting
+ * promise sourcing rules, which are used to define sourcing strategies for optimizing node
+ * performance within an organization. The rules are associated with specific service options,
+ * geozones, allocation rules, and priorities.
+ *
+ * <p>The controller is tagged with "Promise Sourcing Rule APIs" for easy categorization in the API
+ * documentation.
+ */
 @Validated
 @RestController
 @Tag(name = "Promise Sourcing Rule APIs")
@@ -50,6 +61,20 @@ public class PromiseSourcingRuleController {
   private static final Logger logger = LoggerFactory.getLogger(PromiseSourcingRuleController.class);
   private final PromiseSourcingRuleService promiseSourcingRuleService;
 
+  /**
+   * Fetches Promise Sourcing Rules based on the specified filters.
+   *
+   * <p>This method processes a POST request to retrieve promise sourcing rules by applying various
+   * filters provided in the request body, such as organization ID, service option, geozone, and
+   * other attributes.
+   *
+   * @param baseRequest The request body containing the filters for fetching the promise sourcing
+   *     rules.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of fetched
+   *     sourcing rules.
+   * @throws PromiseEngineException If an error occurs related to the promise engine during the
+   *     operation.
+   */
   @FetchSourcingRuleDoc
   @PostMapping("/fetch-rules")
   public ResponseEntity<BaseResponse<FetchPromiseSourcingRuleResponse>> fetchSourcingRule(
@@ -68,6 +93,20 @@ public class PromiseSourcingRuleController {
     }
   }
 
+  /**
+   * Creates a new Promise Sourcing Rule.
+   *
+   * <p>This method processes a POST request to create a new promise sourcing rule based on the
+   * details provided in the request body.
+   *
+   * @param baseRequest The request body containing the details of the promise sourcing rule to be
+   *     created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     newly created rule.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @CreatePromiseSourcingRuleDoc
   @PostMapping
   public ResponseEntity<BaseResponse<PromiseSourcingRuleDto>> createPromiseSourcingRule(
@@ -89,6 +128,22 @@ public class PromiseSourcingRuleController {
     }
   }
 
+  /**
+   * Retrieves a specific Promise Sourcing Rule.
+   *
+   * <p>This method processes a GET request to fetch a specific promise sourcing rule based on the
+   * provided organization ID, service option, destination geozone, allocation rule ID, and
+   * priority.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param serviceOption The service option associated with the promise sourcing rule.
+   * @param destinationGeoZone The destination geozone for the rule.
+   * @param allocationRuleId The allocation rule ID of the sourcing rule.
+   * @param priority The priority level of the rule.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     fetched rule.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @GetPromiseSourcingRuleDoc
   @GetMapping
   public ResponseEntity<BaseResponse<PromiseSourcingRuleDto>> getPromiseSourcingRule(
@@ -127,6 +182,18 @@ public class PromiseSourcingRuleController {
     }
   }
 
+  /**
+   * Retrieves all Promise Sourcing Rules for a given organization ID.
+   *
+   * <p>This method processes a GET request to fetch all sourcing rules associated with the
+   * specified organization.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of all promise
+   *     sourcing rules.
+   * @throws PromiseEngineException If an error occurs related to the promise engine during the
+   *     operation.
+   */
   @GetPromiseSourcingRulesByOrgIdDoc
   @GetMapping("/{orgId}@oid")
   public ResponseEntity<BaseResponse<List<PromiseSourcingRuleDto>>> getPromiseSourcingRulesByOrgId(
@@ -150,6 +217,18 @@ public class PromiseSourcingRuleController {
     }
   }
 
+  /**
+   * Retrieves Promise Sourcing Rules based on the priority.
+   *
+   * <p>This method processes a GET request to fetch sourcing rules that match the specified
+   * priority level.
+   *
+   * @param priority The priority level of the sourcing rules to fetch.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of matching
+   *     sourcing rules.
+   * @throws PromiseEngineException If an error occurs related to the promise engine during the
+   *     operation.
+   */
   @GetPromiseSourcingRulesByPriority
   @GetMapping("/{priority}@pty")
   public ResponseEntity<BaseResponse<List<PromiseSourcingRuleDto>>>
@@ -173,6 +252,24 @@ public class PromiseSourcingRuleController {
     }
   }
 
+  /**
+   * Updates an existing Promise Sourcing Rule.
+   *
+   * <p>This method processes a PUT request to update an existing promise sourcing rule using the
+   * provided details.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param serviceOption The service option associated with the promise sourcing rule.
+   * @param destinationGeoZone The destination geozone for the rule.
+   * @param allocationRuleId The allocation rule ID of the sourcing rule.
+   * @param priority The priority level of the rule.
+   * @param baseRequest The request body containing the updated details for the sourcing rule.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated sourcing
+   *     rule details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @UpdatePromiseSourcingRuleDoc
   @PutMapping
   public ResponseEntity<BaseResponse<PromiseSourcingRuleDto>> updatePromiseSourcingRule(
@@ -214,6 +311,20 @@ public class PromiseSourcingRuleController {
     }
   }
 
+  /**
+   * Deletes an existing Promise Sourcing Rule.
+   *
+   * <p>This method processes a DELETE request to remove a promise sourcing rule based on the
+   * provided identifiers.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param serviceOption The service option associated with the promise sourcing rule.
+   * @param destinationGeoZone The destination geozone for the rule.
+   * @param allocationRuleId The allocation rule ID of the sourcing rule.
+   * @param priority The priority level of the rule.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} confirming the deletion.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @DeletePromiseSourcingRuleDoc
   @Transactional
   @DeleteMapping

@@ -21,6 +21,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for Rate Card Dashboard APIs.
+ *
+ * <p>This controller provides an API to interact with the rate card dashboard for managing cost
+ * configurations. It allows fetching rate card table data for a specified organization using the
+ * provided cost definition request.
+ *
+ * <p>The controller is tagged with "Rate Card Dashboard APIs" for easy categorization in API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/cost-config/ui/rate-card")
 @RequiredArgsConstructor
@@ -30,6 +40,18 @@ public class RateCardController {
 
   private final RateCardService rateCardService;
 
+  /**
+   * Retrieves rate card table data for the specified organization based on the provided cost
+   * definition request.
+   *
+   * <p>This method processes a POST request to fetch the rate card table data for a given
+   * organization, using the provided {@link CostDefinitionRequest} to fetch the relevant data.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param costDefinitionRequest The request payload containing the cost definition details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the rate card table
+   *     data.
+   */
   @RateCardDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,

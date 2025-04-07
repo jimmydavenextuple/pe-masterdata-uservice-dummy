@@ -37,6 +37,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing tenant configuration data.
+ *
+ * <p>This controller provides APIs for adding, updating, retrieving, and deleting tenant-specific
+ * configuration data based on unique configuration keys and organization IDs. These operations
+ * allow clients to manage configuration settings for various tenants.
+ *
+ * <p>The controller is tagged with "Tenant Configuration APIs" for easy categorization in the API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/tenant-configuration")
@@ -47,6 +57,20 @@ public class TenantConfigdataController {
 
   private final TenantConfigdataService tenantConfigdataService;
 
+  /**
+   * Adds tenant configuration data.
+   *
+   * <p>This method processes a POST request to add new tenant-specific configuration data based on
+   * the details provided in the request body.
+   *
+   * @param tenantConfigdataRequest The request body containing the details of the tenant
+   *     configuration data to be added.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the added tenant
+   *     configuration data details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @AddTenantConfigdataDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -69,6 +93,20 @@ public class TenantConfigdataController {
     }
   }
 
+  /**
+   * Retrieves tenant configuration data by organization ID and configuration key.
+   *
+   * <p>This method processes a GET request to fetch the configuration data associated with the
+   * specified organization ID and configuration key.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param configKey The unique configuration key of the tenant-based configuration.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched tenant
+   *     configuration data.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @GetTenantConfigdataDoc
   @GetMapping(
       value = "/orgId/{orgId}/configKey/{configKey}",
@@ -101,6 +139,22 @@ public class TenantConfigdataController {
     }
   }
 
+  /**
+   * Updates tenant configuration data.
+   *
+   * <p>This method processes a PUT request to update existing tenant configuration data based on
+   * the specified organization ID, configuration key, and the details provided in the request body.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param configKey The unique configuration key of the tenant-based configuration to be updated.
+   * @param tenantConfigdataUpdateRequest The request body containing the updated details of the
+   *     tenant configuration data.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated tenant
+   *     configuration data.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @UpdateTenantConfigdataDoc
   @PutMapping(
       value = "/orgId/{orgId}/configKey/{configKey}",
@@ -133,6 +187,20 @@ public class TenantConfigdataController {
     }
   }
 
+  /**
+   * Deletes tenant configuration data.
+   *
+   * <p>This method processes a DELETE request to remove tenant-specific configuration data based on
+   * the specified organization ID and configuration key.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param configKey The unique configuration key of the tenant-based configuration to be deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted tenant configuration data.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @DeleteTenantConfigdataDoc
   @DeleteMapping(
       value = "/orgId/{orgId}/configKey/{configKey}",

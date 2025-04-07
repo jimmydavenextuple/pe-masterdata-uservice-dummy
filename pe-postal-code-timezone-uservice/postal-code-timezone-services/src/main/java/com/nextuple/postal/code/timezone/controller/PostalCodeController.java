@@ -49,6 +49,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing postal codes.
+ *
+ * <p>This controller provides APIs to create, update, delete, and retrieve postal codes for a
+ * specific organization. It also allows retrieval of zip code prefixes, custom regions, and
+ * timezone information related to postal codes. Additionally, the controller supports fetching
+ * lists of market regions for an organization and handling state-specific postal code prefixes.
+ *
+ * <p>The controller is tagged with "Zip Code APIs" for easy categorization in API documentation.
+ */
 @Validated
 @RestController
 @Tag(name = "Zip Code APIs")
@@ -59,6 +69,20 @@ public class PostalCodeController {
   private static final Logger logger = LoggerFactory.getLogger(PostalCodeController.class);
   private final PostalCodeService postalCodeService;
 
+  /**
+   * Creates a zip code with the given details.
+   *
+   * <p>This method processes a POST request to create a new zip code based on the details provided
+   * in the request body.
+   *
+   * @param postalCodeRequest The request body containing the details for the zip code to be
+   *     created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created zip code
+   *     details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @Operation(
       summary = "Create Zip Code",
       description = "Creates the zip code with the given details.")
@@ -81,6 +105,20 @@ public class PostalCodeController {
     }
   }
 
+  /**
+   * Updates a zip code with the given details.
+   *
+   * <p>This method processes a PUT request to update an existing zip code based on the details
+   * provided in the request body.
+   *
+   * @param postalCodeRequest The request body containing the details for the zip code to be
+   *     updated.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated zip code
+   *     details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @Operation(
       summary = "Update Zip Code",
       description = "Updates the zip code with the given details.")
@@ -103,6 +141,20 @@ public class PostalCodeController {
     }
   }
 
+  /**
+   * Retrieves a zip code by the organization ID and zip code.
+   *
+   * <p>This method processes a GET request to fetch the details of a zip code identified by the
+   * given organization ID and zip code.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param postalCode The zip code of the source or destination node.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched zip code
+   *     details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @Operation(
       summary = "Get Zip Code",
       description = "Retrieves the zip code by the organization ID and zip code.")
@@ -134,6 +186,20 @@ public class PostalCodeController {
     }
   }
 
+  /**
+   * Deletes a zip code for the given organization ID and zip code.
+   *
+   * <p>This method processes a DELETE request to remove a zip code identified by the given
+   * organization ID and zip code.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param postalCode The zip code of the source or destination node.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted zip code.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @Operation(
       summary = "Delete Zip Code",
       description = "Deletes the zip code for the given organization ID and zip code.")
@@ -166,6 +232,19 @@ public class PostalCodeController {
     }
   }
 
+  /**
+   * Retrieves a list of zip codes by the organization ID and zip code prefix.
+   *
+   * <p>This method processes a GET request to fetch a list of zip codes based on the organization
+   * ID and the provided zip code prefix.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param zipCodePrefix The first three characters of the zip code.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of zip codes.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @Operation(
       summary = "Get Zip Code List",
       description =
@@ -188,6 +267,20 @@ public class PostalCodeController {
             .build());
   }
 
+  /**
+   * Retrieves the custom region ID by the organization ID and zip code.
+   *
+   * <p>This method processes a GET request to fetch the custom region ID for the given organization
+   * ID and zip code.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param postalCode The zip code of the source or destination node.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the custom region ID
+   *     details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @Operation(
       summary = "Get Custom Region ID",
       description = "Retrieves the custom region ID  by the zip code.")
@@ -210,6 +303,18 @@ public class PostalCodeController {
             .build());
   }
 
+  /**
+   * Retrieves the timezone for zip codes by the organization ID and country.
+   *
+   * <p>This method processes a GET request to fetch the timezone details for zip codes based on the
+   * organization ID and country.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param country The country of the source or destination node.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the timezone details
+   *     for zip codes.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @GetPostalCodeTimezoneForOrgIdAndCountryDetails
   @GetMapping("/market-region/org/{orgId}")
   public ResponseEntity<BaseResponse<List<PostalCodeResponse>>>
@@ -232,6 +337,17 @@ public class PostalCodeController {
             .build());
   }
 
+  /**
+   * Retrieves market regions for a given organization ID.
+   *
+   * <p>This method processes a GET request to fetch the market regions associated with the given
+   * organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the market regions for
+   *     the organization.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @GetMargetRegionsForOrgIdDetails
   @GetMapping("/market-regions/org/{orgId}")
   public ResponseEntity<BaseResponse<List<MarketRegionInfo>>> getMarketRegionsForOrgId(
@@ -248,6 +364,18 @@ public class PostalCodeController {
             .build());
   }
 
+  /**
+   * Retrieves zip code prefixes for a given organization ID and state.
+   *
+   * <p>This method processes a GET request to fetch zip code prefixes for the provided organization
+   * ID and state.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param state The state of the source or destination node.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of zip code
+   *     prefixes.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @GetPostalCodePrefixListForOrgIdAndStateDetails
   @GetMapping("/list/org/{orgId}")
   public ResponseEntity<BaseResponse<List<String>>> getPostalCodePrefixForOrgIdAndState(
@@ -267,6 +395,17 @@ public class PostalCodeController {
             .build());
   }
 
+  /**
+   * Retrieves the list of state and zip code prefixes for a given organization ID.
+   *
+   * <p>This method processes a GET request to fetch the list of state and zip code prefixes based
+   * on the organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the state and zip code
+   *     prefix list.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @GetPostalCodePrefixListDetails
   @GetMapping("/ui/state-postal-code-prefix/orgId/{orgId}")
   public ResponseEntity<BaseResponse<List<PostalCodePrefixDto>>> fetchPostalCodePrefixList(

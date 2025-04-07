@@ -45,6 +45,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Node Carrier operations (Version 2).
+ *
+ * <p>This controller provides APIs for creating, fetching, updating, and deleting Node Carrier
+ * details. It also includes operations for retrieving lists of node carriers and unique carrier
+ * service names. This is the version 2 of the Node Carriers API.
+ *
+ * <p>The controller is tagged with "Node Carriers APIs" for easy categorization in API
+ * documentation.
+ *
+ * <p>Each API endpoint is annotated with detailed information about its purpose, input parameters,
+ * response structure, and potential exceptions.
+ */
 @Validated
 @RestController
 @Tag(name = "Node Carriers APIs")
@@ -55,6 +68,22 @@ public class NodeCarriersController {
   private final NodeCarriersService nodeCarriersService;
   private static final Logger logger = LoggerFactory.getLogger(NodeCarriersController.class);
 
+  /**
+   * Creates a new node carrier based on the provided request data.
+   *
+   * <p>This endpoint processes the creation of a new node carrier. It accepts a {@link
+   * NodeCarriersRequest} containing the necessary information for the node carrier and returns the
+   * created node carrier details in the response.
+   *
+   * @param nodeCarriersRequest the request body containing the data to create a new node carrier.
+   *     Must be a valid object as per the validation annotations on the {@link
+   *     NodeCarriersRequest}.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     created node carrier.
+   * @throws CommonServiceException if a service-related error occurs during the creation process.
+   * @throws InvalidDataException if the provided data is invalid or does not meet the required
+   *     criteria.
+   */
   @CreateNodeCarriersDoc
   @PostMapping
   public ResponseEntity<BaseResponse<NodeCarriersResponse>> createNodeCarrier(
@@ -68,6 +97,21 @@ public class NodeCarriersController {
             .build());
   }
 
+  /**
+   * Fetches the details of a node carrier based on the provided identifiers.
+   *
+   * <p>This endpoint retrieves the details of a specific node carrier using the given parameters:
+   * organization ID, node ID, carrier service ID, and service option. It returns the details of the
+   * node carrier if found.
+   *
+   * @param orgId the unique identifier for the organization. Cannot be blank.
+   * @param nodeId the unique identifier for the node. Cannot be blank.
+   * @param carrierServiceId the unique identifier for the carrier service. Cannot be blank.
+   * @param serviceOption the service option for the node carrier. Cannot be blank.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     requested node carrier.
+   * @throws CommonServiceException if an error occurs while fetching the node carrier details.
+   */
   @GetNodeCarriersDoc
   @GetMapping("/{orgId}/{nodeId}/{carrierServiceId}/{serviceOption}")
   public ResponseEntity<BaseResponse<NodeCarriersResponse>> getNodeCarrier(
@@ -111,6 +155,23 @@ public class NodeCarriersController {
             .build());
   }
 
+  /**
+   * Updates the details of a node carrier based on the provided identifiers and update request.
+   *
+   * <p>This endpoint allows updating an existing node carrier by providing the organization ID,
+   * node ID, carrier service ID, service option, and the details to update.
+   *
+   * @param orgId the unique identifier for the organization. Cannot be blank.
+   * @param nodeId the unique identifier for the node. Cannot be blank.
+   * @param carrierServiceId the unique identifier for the carrier service. Cannot be blank.
+   * @param serviceOption the service option for the node carrier. Cannot be blank.
+   * @param nodeCarriersUpdateRequest the request containing the updated details for the node
+   *     carrier.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the updated node
+   *     carrier details.
+   * @throws CommonServiceException if an error occurs while updating the node carrier.
+   * @throws InvalidDataException if the provided update data is invalid.
+   */
   @UpdateNodeCarriersDoc
   @PutMapping("/{orgId}/{nodeId}/{carrierServiceId}/{serviceOption}")
   public ResponseEntity<BaseResponse<NodeCarriersResponse>> updateNodeCarrier(
@@ -155,6 +216,20 @@ public class NodeCarriersController {
             .build());
   }
 
+  /**
+   * Deletes a node carrier based on the provided identifiers.
+   *
+   * <p>This endpoint allows deleting a node carrier by providing the organization ID, node ID,
+   * carrier service ID, and service option.
+   *
+   * @param orgId the unique identifier for the organization. Cannot be blank.
+   * @param nodeId the unique identifier for the node. Cannot be blank.
+   * @param carrierServiceId the unique identifier for the carrier service. Cannot be blank.
+   * @param serviceOption the service option for the node carrier. Cannot be blank.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} indicating success of the
+   *     deletion.
+   * @throws CommonServiceException if an error occurs while deleting the node carrier.
+   */
   @DeleteNodeCarriersDoc
   @DeleteMapping("/{orgId}/{nodeId}/{carrierServiceId}/{serviceOption}")
   public ResponseEntity<BaseResponse<NodeCarriersResponse>> deleteNodeCarrier(
@@ -198,6 +273,16 @@ public class NodeCarriersController {
             .build());
   }
 
+  /**
+   * Deletes a node carrier based on the provided organization ID and node ID.
+   *
+   * <p>This endpoint allows deleting a node carrier by providing the organization ID and node ID.
+   *
+   * @param orgId the unique identifier for the organization. Cannot be blank.
+   * @param nodeId the unique identifier for the node. Cannot be blank. return a {@link
+   *     ResponseEntity} containing a {@link BaseResponse} indicating success of the deletion with a
+   *     list of deleted node carriers.
+   */
   @DeleteNodeCarrierByNodeIdDoc
   @DeleteMapping("/{orgId}/{nodeId}")
   public ResponseEntity<BaseResponse<List<NodeCarriersResponse>>> deleteNodeCarrierByNodeId(
@@ -222,6 +307,17 @@ public class NodeCarriersController {
             .build());
   }
 
+  /**
+   * Retrieves a list of node carriers based on the provided organization ID and node ID.
+   *
+   * <p>This endpoint returns a list of node carriers for a given organization and node.
+   *
+   * @param orgId the unique identifier for the organization. Cannot be blank.
+   * @param nodeId the unique identifier for the node. Cannot be blank.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the list of node
+   *     carriers.
+   * @throws CommonServiceException if an error occurs while fetching the node carriers list.
+   */
   @GetNodeCarriersListDoc
   @GetMapping("/{orgId}/{nodeId}")
   public ResponseEntity<BaseResponse<List<NodeCarriersResponse>>> getNodeCarriersList(
@@ -249,6 +345,19 @@ public class NodeCarriersController {
             .build());
   }
 
+  /**
+   * Retrieves a list of unique carrier service names based on the provided organization ID and node
+   * ID.
+   *
+   * <p>This endpoint returns a list of carrier service names that are associated with a given
+   * organization and node.
+   *
+   * @param orgId the unique identifier for the organization. Cannot be blank.
+   * @param nodeId the unique identifier for the node. Cannot be blank.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the list of carrier
+   *     service names.
+   * @throws CommonServiceException if an error occurs while fetching the list of carrier services.
+   */
   @GetUniqueNodeCarriersServiceListDoc
   @GetMapping("/{orgId}/{nodeId}/carrier-service")
   public ResponseEntity<BaseResponse<List<String>>> getUniqueNodeCarrierServiceList(
@@ -272,6 +381,20 @@ public class NodeCarriersController {
             .build());
   }
 
+  /**
+   * Retrieves a list of node carriers based on the provided organization ID, node ID, and service
+   * option.
+   *
+   * <p>This endpoint returns a list of node carriers associated with the given organization, node,
+   * and service option.
+   *
+   * @param orgId the unique identifier for the organization. Cannot be blank.
+   * @param nodeId the unique identifier for the node. Cannot be blank.
+   * @param serviceOption the service option for the node carrier. Cannot be blank.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the list of node
+   *     carriers.
+   * @throws CommonServiceException if an error occurs while fetching the list of node carriers.
+   */
   @GetNodeCarriersListByOrgIdAndNodeIdAndServiceOptionDoc
   @GetMapping("/{orgId}/{nodeId}/{serviceOption}")
   public ResponseEntity<BaseResponse<List<NodeCarriersResponse>>>
@@ -305,6 +428,17 @@ public class NodeCarriersController {
             .build());
   }
 
+  /**
+   * Retrieves a list of Node Carrier cache keys with an optional limit on the number of results.
+   *
+   * <p>This endpoint allows users to fetch Node Carrier cache keys, with an optional limit to
+   * control the number of results returned.
+   *
+   * @param limit the maximum number of cache keys to return. Must be a positive integer.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the list of Node
+   *     Carrier cache keys.
+   * @throws CommonServiceException if an error occurs while fetching the Node Carrier cache keys.
+   */
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<NodeCarrierListCacheKeyDto>>> getNodeCarriersCacheKeys(
       @RequestParam Integer limit) throws CommonServiceException {
@@ -317,6 +451,19 @@ public class NodeCarriersController {
             .build());
   }
 
+  /**
+   * Retrieves a list of Node Carriers based on the given organization ID and carrier service ID.
+   *
+   * <p>This endpoint allows users to fetch all Node Carriers for a specific organization and
+   * carrier service.
+   *
+   * @param orgId the unique identifier for the organization. It cannot be empty.
+   * @param carrierServiceId the unique identifier for the carrier service. It cannot be empty.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the list of Node
+   *     Carriers.
+   * @throws CommonServiceException if an error occurs while fetching the Node Carriers for the
+   *     given orgId and carrierServiceId.
+   */
   @GetMapping("/org/{orgId}/carrier-service/{carrierServiceId}")
   public ResponseEntity<BaseResponse<List<NodeCarriersResponse>>>
       getAllNodeCarriersByOrgIdCarrierServiceId(
@@ -344,6 +491,21 @@ public class NodeCarriersController {
             .build());
   }
 
+  /**
+   * Retrieves a list of Node Carriers based on the given organization ID, node ID, and carrier
+   * service ID.
+   *
+   * <p>This endpoint allows users to fetch all Node Carriers for a specific organization, node, and
+   * carrier service.
+   *
+   * @param orgId the unique identifier for the organization. It cannot be empty.
+   * @param nodeId the unique identifier for the node. It cannot be empty.
+   * @param carrierServiceId the unique identifier for the carrier service. It cannot be empty.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} with the list of Node
+   *     Carriers.
+   * @throws CommonServiceException if an error occurs while fetching the Node Carriers for the
+   *     given
+   */
   @GetMapping("/org/{orgId}/nodeId/{nodeId}/carrier-service/{carrierServiceId}")
   @GetNodeCarriersListByOrgIdNodeIdCarrierServiceIdDoc
   public ResponseEntity<BaseResponse<List<NodeCarriersResponse>>>

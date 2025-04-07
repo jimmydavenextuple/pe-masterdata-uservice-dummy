@@ -39,6 +39,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing holiday cutoff operations.
+ *
+ * <p>This controller provides APIs for adding, updating, retrieving, and deleting holiday cutoff
+ * data associated with specific organizations. These operations manage holiday cutoff rules and
+ * override data used in the sourcing process.
+ *
+ * <p>The controller is tagged with "Holiday Cutoff APIs" for easy categorization in the API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/holiday-cutoff")
 @RequiredArgsConstructor
@@ -47,6 +57,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class HolidayCutoffController {
   private final HolidayCutoffService holidayCutoffService;
 
+  /**
+   * Creates a new holiday cutoff.
+   *
+   * <p>This method processes a POST request to create holiday cutoff override data based on the
+   * provided request body.
+   *
+   * @param holidayCutoffRequest The request body containing details for the new holiday cutoff.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created holiday
+   *     cutoff information.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws ParseException If there is an error parsing date-related fields.
+   */
   @CreateHolidayCutoffDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -63,6 +87,20 @@ public class HolidayCutoffController {
             .build());
   }
 
+  /**
+   * Fetches holiday cutoff rules.
+   *
+   * <p>This method processes a POST request to retrieve the holiday cutoff rules based on the
+   * provided request body.
+   *
+   * @param holidayCutoffRulesRequest The request body containing the criteria for fetching holiday
+   *     cutoff rules.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched holiday
+   *     cutoff rules.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @FetchHolidayCutoffRulesDoc
   @PostMapping(
       value = "/fetch-rules",
@@ -81,6 +119,23 @@ public class HolidayCutoffController {
             .build());
   }
 
+  /**
+   * Updates an existing holiday cutoff.
+   *
+   * <p>This method processes a PUT request to update the details of a holiday cutoff identified by
+   * the organization ID, holiday cutoff name, and rule.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param holidayCutoffName The name of the holiday cutoff.
+   * @param holidayCutoffRule The colon-separated value of attributes defining the holiday cutoff
+   *     rule.
+   * @param holidayCutoffUpdateRequest The request body containing the updated details for the
+   *     holiday cutoff.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated holiday
+   *     cutoff information.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @UpdateHolidayCutoffDoc
   @PutMapping(
       value = "/{orgId}/{holidayCutoffName}/{holidayCutoffRule}",
@@ -117,6 +172,21 @@ public class HolidayCutoffController {
             .build());
   }
 
+  /**
+   * Fetches a specific holiday cutoff by organization ID, name, and rule.
+   *
+   * <p>This method processes a GET request to retrieve the details of a holiday cutoff identified
+   * by the organization ID, holiday cutoff name, and rule.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param holidayCutoffName The name of the holiday cutoff.
+   * @param holidayCutoffRule The colon-separated value of attributes defining the holiday cutoff
+   *     rule.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched holiday
+   *     cutoff information.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @FetchHolidayCutoffDoc
   @GetMapping(
       value = "/{orgId}/{holidayCutoffName}/{holidayCutoffRule}",
@@ -143,6 +213,21 @@ public class HolidayCutoffController {
             .build());
   }
 
+  /**
+   * Deletes a specific holiday cutoff by organization ID, name, and rule.
+   *
+   * <p>This method processes a DELETE request to remove a holiday cutoff identified by the
+   * organization ID, holiday cutoff name, and rule.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param holidayCutoffName The name of the holiday cutoff.
+   * @param holidayCutoffRule The colon-separated value of attributes defining the holiday cutoff
+   *     rule.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the deleted holiday
+   *     cutoff information.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @DeleteHolidayCutoffDoc
   @DeleteMapping(
       value = "/{orgId}/{holidayCutoffName}/{holidayCutoffRule}",

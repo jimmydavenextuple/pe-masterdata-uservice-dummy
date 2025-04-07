@@ -41,6 +41,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing cost factor bucket types.
+ *
+ * <p>This controller provides APIs to create, retrieve, update, and delete cost factor bucket types
+ * for a specific organization. It also includes methods to fetch cache keys associated with cost
+ * factor bucket types. The controller ensures that all operations related to cost factor bucketing
+ * are efficiently handled through interaction with the service layer.
+ *
+ * <p>The controller is tagged with "Cost factor bucketing APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/cost-config/cost-factor-buckets")
@@ -51,6 +62,20 @@ public class CostFactorBucketingController {
   private static final Logger logger = LoggerFactory.getLogger(CostFactorBucketingController.class);
   private final CostFactorBucketTypeServiceImpl costFactorBucketTypeServiceImpl;
 
+  /**
+   * Creates a new cost factor bucket type.
+   *
+   * <p>This method processes a POST request to create a cost factor bucket type for a specific
+   * organization.
+   *
+   * @param orgId The unique identifier of the organization. Must not be empty.
+   * @param costFactorBucketTypeRequest The request body containing details of the cost factor
+   *     bucket type to be created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created cost factor
+   *     bucket type details.
+   * @throws CommonServiceException If an error occurs during the creation of the cost factor bucket
+   *     type.
+   */
   @CreateCostFactorBucketTypeDoc
   @PostMapping(value = "/{orgId}")
   public ResponseEntity<BaseResponse<CostFactorBucketTypeDto>> createCostFactorBucketType(
@@ -74,6 +99,19 @@ public class CostFactorBucketingController {
                 .build());
   }
 
+  /**
+   * Retrieves cost factor bucket type details.
+   *
+   * <p>This method processes a GET request to fetch the details of a cost factor bucket type for a
+   * given organization and cost factor.
+   *
+   * @param orgId The unique identifier of the organization. Must not be empty.
+   * @param costFactor The cost factor for the bucket type. Must not be empty.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched cost factor
+   *     bucket type details.
+   * @throws CommonServiceException If an error occurs while retrieving the cost factor bucket type
+   *     details.
+   */
   @GetCostFactorBucketDoc
   @GetMapping(value = "/{orgId}/{costFactor}")
   public ResponseEntity<BaseResponse<CostFactorBucketTypeDto>> getCostFactorBucket(
@@ -100,6 +138,21 @@ public class CostFactorBucketingController {
                 .build());
   }
 
+  /**
+   * Updates an existing cost factor bucket type.
+   *
+   * <p>This method processes a PUT request to update a cost factor bucket type for a given
+   * organization and cost factor.
+   *
+   * @param orgId The unique identifier of the organization. Must not be empty.
+   * @param costFactor The cost factor for the bucket type. Must not be empty.
+   * @param updateCostFactorBucketTypeRequest The request body containing updated details of the
+   *     cost factor bucket type.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated cost factor
+   *     bucket type details.
+   * @throws CommonServiceException If an error occurs during the update of the cost factor bucket
+   *     type.
+   */
   @UpdateCostFactorBucketDoc
   @PutMapping(value = "{orgId}/{costFactor}")
   public ResponseEntity<BaseResponse<CostFactorBucketTypeDto>> updateCostFactorBucket(
@@ -128,6 +181,19 @@ public class CostFactorBucketingController {
                 .build());
   }
 
+  /**
+   * Deletes an existing cost factor bucket type.
+   *
+   * <p>This method processes a DELETE request to remove a cost factor bucket type for a given
+   * organization and cost factor.
+   *
+   * @param orgId The unique identifier of the organization. Must not be empty.
+   * @param costFactor The cost factor for the bucket type. Must not be empty.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted cost factor bucket type.
+   * @throws CommonServiceException If an error occurs during the deletion of the cost factor bucket
+   *     type.
+   */
   @DeleteCostFactorBucketDoc
   @DeleteMapping(value = "{orgId}/{costFactor}")
   public ResponseEntity<BaseResponse<CostFactorBucketTypeDto>> deleteCostFactorBucket(
@@ -154,6 +220,15 @@ public class CostFactorBucketingController {
                 .build());
   }
 
+  /**
+   * Retrieves all cache keys for cost factor bucket types.
+   *
+   * <p>This method processes a GET request to fetch a list of cache keys associated with cost
+   * factor bucket types.
+   *
+   * @param limit The maximum number of cache keys to retrieve. Defaults to 100.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of cache keys.
+   */
   @GetCostFactorBucketTypeCacheKeyDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<CostFactorBucketTypeCacheKeyDto>>>

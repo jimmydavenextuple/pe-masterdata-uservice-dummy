@@ -48,6 +48,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Transfer Schedules in the transit system.
+ *
+ * <p>This controller provides APIs for creating, updating, fetching, and deleting transfer
+ * schedules. It allows users to manage transfer schedules and their configurations within the
+ * transit system, including handling operations based on provided transfer schedule requests, such
+ * as creating and updating transfer schedules, retrieving transfer schedule details, and deleting
+ * outdated transfer schedules.
+ *
+ * <p>The controller is tagged with "Transfer Schedule APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/transfer-schedule")
@@ -58,6 +70,22 @@ public class TransferScheduleController {
   private final TransferScheduleService transferScheduleService;
   private final PageProperties pageProperties;
 
+  /**
+   * Creates a new transfer schedule in the transit system.
+   *
+   * <p>This method processes a POST request to create a new transfer schedule based on the provided
+   * request details. It validates the input request and delegates the creation process to the
+   * `TransferScheduleService`.
+   *
+   * @param tranferScheduleRequest The request object containing the details of the transfer
+   *     schedule to be created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the created transfer schedule details.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   * @throws PromiseEngineException If an error occurs related to the promise engine during the
+   *     creation process.
+   */
   @PostMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
@@ -73,6 +101,21 @@ public class TransferScheduleController {
             .build());
   }
 
+  /**
+   * Processes a batch of transfer schedules for a specific organization.
+   *
+   * <p>This method processes a POST request to handle a batch of transfer schedules based on the
+   * provided request details. It validates the input request and delegates the batch processing to
+   * the `TransferScheduleService`.
+   *
+   * @param transferScheduleBatchRequest The request object containing the details of the transfer
+   *     schedules to be processed in batch.
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the batch processing result.
+   * @throws PromiseEngineException If an error occurs related to the promise engine during the
+   *     batch processing.
+   */
   @PostMapping("/batch/orgId/{orgId}")
   @BatchTransferScheduleDoc
   public ResponseEntity<BaseResponse<TransferScheduleBatchResponse>> batchTransferSchedules(
@@ -94,6 +137,18 @@ public class TransferScheduleController {
         BaseResponse.builder().message("Batch processing completed.").payload(response).build());
   }
 
+  /**
+   * Retrieves transfer schedules for a specific organization and dropoff node.
+   *
+   * <p>This method processes a GET request to fetch transfer schedules based on the provided
+   * organization ID and dropoff node ID. It delegates the retrieval process to the
+   * `TransferScheduleService`.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param dropoffNodeId The unique identifier of the dropoff node.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the list of transfer schedules.
+   */
   @GetMapping(
       path = "/orgId/{orgId}/dropoffNodeId/{dropoffNodeId}",
       produces = MediaType.APPLICATION_JSON_VALUE)
@@ -110,6 +165,17 @@ public class TransferScheduleController {
             .build());
   }
 
+  /**
+   * Retrieves transfer schedules within a specified time range.
+   *
+   * <p>This method processes a POST request to fetch transfer schedules based on the provided time
+   * range request details. It delegates the retrieval process to the `TransferScheduleService`.
+   *
+   * @param transferScheduleRangeRequest The request object containing the time range details for
+   *     fetching transfer schedules.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the list of transfer schedules within the specified time range.
+   */
   @PostMapping(path = "/time-range", produces = MediaType.APPLICATION_JSON_VALUE)
   @GetTransferScheduleDoc
   public ResponseEntity<BaseResponse<List<TransferScheduleRangeResponse>>>
@@ -124,6 +190,21 @@ public class TransferScheduleController {
             .build());
   }
 
+  /**
+   * Deletes a transfer schedule based on the provided request details.
+   *
+   * <p>This method processes a DELETE request to remove a transfer schedule based on the provided
+   * request details. It delegates the deletion process to the `TransferScheduleService`.
+   *
+   * @param request The request object containing the details of the transfer schedule to be
+   *     deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the deleted transfer schedule details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine during the
+   *     deletion process.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   @DeleteTransferScheduleDoc
   public ResponseEntity<BaseResponse<TransferScheduleResponse>> deleteTransferSchedule(
@@ -137,6 +218,27 @@ public class TransferScheduleController {
             .build());
   }
 
+  /**
+   * Fetches a paginated list of transfer schedules based on the provided request details.
+   *
+   * <p>This method processes a POST request to retrieve a paginated list of transfer schedules
+   * based on the provided request details. It delegates the retrieval process to the
+   * `TransferScheduleService`.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param isPaginated Indicates whether the response should be paginated or not.
+   * @param pageNo The page number for pagination (default: 1).
+   * @param pageSize The number of items per page for pagination (default: 10).
+   * @param sortBy The field by which to sort the results (default: "createdAt").
+   * @param sortOrder The order in which to sort the results (default: "ASC").
+   * @param request The request object containing the details for fetching transfer schedules.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the paginated list of transfer schedules.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   * @throws PromiseEngineException If an error occurs related to the promise engine during the
+   *     retrieval process.
+   */
   @PostMapping(
       path = "/orgId/{orgId}",
       consumes = MediaType.APPLICATION_JSON_VALUE,

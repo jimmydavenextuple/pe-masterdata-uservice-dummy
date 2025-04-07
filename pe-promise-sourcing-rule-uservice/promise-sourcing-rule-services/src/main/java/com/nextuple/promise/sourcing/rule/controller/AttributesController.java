@@ -21,6 +21,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing sourcing attribute values.
+ *
+ * <p>This controller provides APIs for adding, retrieving, and deleting values for sourcing
+ * attributes associated with specific organizations. These operations allow users to manage the
+ * attribute values for various sourcing attributes in their organization.
+ *
+ * <p>The controller is tagged with "Attributes APIs" for easy categorization in the API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/ui")
 @RequiredArgsConstructor
@@ -29,6 +39,22 @@ public class AttributesController {
   private static final Logger logger = LoggerFactory.getLogger(AttributesController.class);
   private final AttributeService attributeService;
 
+  /**
+   * Adds a value to an attribute for a specific organization.
+   *
+   * <p>This method processes a POST request to add a new value to an existing sourcing attribute
+   * identified by its name and organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param attributeName The name of the sourcing attribute.
+   * @param attributeValueRequest The request body containing the value to be added to the
+   *     attribute.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the added attribute
+   *     value details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -54,6 +80,20 @@ public class AttributesController {
             .build());
   }
 
+  /**
+   * Retrieves all values associated with an attribute for a specific organization.
+   *
+   * <p>This method processes a GET request to fetch the values of a sourcing attribute identified
+   * by its name and organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param attributeName The name of the sourcing attribute.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of attribute
+   *     values.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @GetMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
       value = "attribute-value/{orgId}/{attributeName}")
@@ -76,6 +116,21 @@ public class AttributesController {
             .build());
   }
 
+  /**
+   * Deletes a specific value from an attribute for a specific organization.
+   *
+   * <p>This method processes a DELETE request to remove a value from a sourcing attribute
+   * identified by its name and organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param attributeName The name of the sourcing attribute.
+   * @param value The value of the sourcing attribute to be deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with details of the deleted
+   *     attribute value.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @DeleteMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
       value = "/attribute-value/{orgId}/{attributeName}/{value}")

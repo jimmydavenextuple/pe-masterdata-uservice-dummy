@@ -26,6 +26,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing rate card table data for a specific organization.
+ *
+ * <p>This controller handles the process of fetching rate card table data based on an
+ * organization's identifier and a provided cost definition request. The data is retrieved by
+ * sending a POST request with the relevant details.
+ *
+ * <p>The controller is tagged with "Rate Card Dashboard APIs" for easy categorization in API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/cost-config/rate-card")
 @RequiredArgsConstructor
@@ -35,6 +45,20 @@ public class RateCardTableDashboardController {
 
   private final RateCardTableDashboardService rateCardTableDashboardService;
 
+  /**
+   * Retrieves the rate card table data for the specified organization.
+   *
+   * <p>This method processes a POST request to fetch rate card table data based on the provided
+   * organization identifier and cost definition request.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param costDefinitionRequest The request payload containing the details for fetching the rate
+   *     card table data.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched rate card
+   *     table data.
+   * @throws CommonServiceException If there is an error during the process of fetching rate card
+   *     table data.
+   */
   @Hidden
   @RateCardTableDashboardDoc
   @PostMapping(

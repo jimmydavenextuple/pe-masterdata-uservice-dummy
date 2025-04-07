@@ -43,6 +43,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Item Buffer operations.
+ *
+ * <p>This class provides endpoints for creating, updating, retrieving, and deleting item buffers.
+ * It handles the management of item buffer configurations and supports operations at both
+ * organization and individual buffer levels.
+ *
+ * <p>Key features include:
+ *
+ * <ul>
+ *   <li>Creation and deletion of item buffers
+ *   <li>Retrieval of specific item buffer details
+ *   <li>Update operations for existing item buffers
+ *   <li>Support for organization-level operations
+ * </ul>
+ *
+ * <p>The controller includes error handling for invalid format exceptions and validates all
+ * incoming requests.
+ *
+ * @see ItemBufferService
+ * @see ItemBufferRequest
+ * @see ItemBufferResponse
+ */
 @Validated
 @RestController
 @Tag(name = "Item Buffer APIs")
@@ -53,6 +76,15 @@ public class ItemBufferController {
 
   private final ItemBufferService itemBufferService;
 
+  /**
+   * Handles validation errors for invalid format exceptions.
+   *
+   * <p>This exception handler processes invalid format exceptions and returns appropriate error
+   * responses with detailed field error information.
+   *
+   * @param ex The invalid format exception to be handled
+   * @return A {@link ResponseEntity} containing the error response
+   */
   @ExceptionHandler(InvalidFormatException.class)
   public ResponseEntity<ErrorResponse> handleInvalidFormatException(InvalidFormatException ex) {
     return ResponseEntity.badRequest()
@@ -71,6 +103,18 @@ public class ItemBufferController {
                 .build());
   }
 
+  /**
+   * Creates a new item buffer based on the provided request.
+   *
+   * <p>This method processes a POST request to create a new item buffer. The creation is performed
+   * based on the details provided in the {@link ItemBufferRequest}.
+   *
+   * @param itemBufferRequest The request object containing the item buffer details
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created {@link
+   *     ItemBufferResponse}
+   * @throws CommonServiceException If there is an error in processing the request
+   * @throws ItemDomainException If there is a domain-specific error
+   */
   @CreateItemBufferDoc
   @PostMapping
   public ResponseEntity<BaseResponse<ItemBufferResponse>> createItemBuffer(
@@ -84,6 +128,19 @@ public class ItemBufferController {
             .build());
   }
 
+  /**
+   * Deletes an item buffer based on the provided request.
+   *
+   * <p>This method processes a DELETE request to remove an existing item buffer configuration. The
+   * deletion is performed based on the details provided in the {@link ItemBufferRequest}.
+   *
+   * @param itemBufferRequest The request object containing the item buffer details to be deleted.
+   *     Must not be null and must contain valid organization and buffer IDs.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the deleted {@link
+   *     ItemBufferResponse} details.
+   * @throws CommonServiceException If there is an error in processing the request, such as when the
+   *     item buffer doesn't exist or cannot be deleted.
+   */
   @DeleteItemBufferDoc
   @DeleteMapping
   public ResponseEntity<BaseResponse<ItemBufferResponse>> deleteItemBuffer(
@@ -96,6 +153,21 @@ public class ItemBufferController {
             .build());
   }
 
+  /**
+   * Retrieves an item buffer by organization ID and buffer ID.
+   *
+   * <p>This method processes a GET request to fetch a specific item buffer configuration identified
+   * by the combination of organization ID and buffer ID. The method validates both parameters
+   * before processing the request.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param id The unique identifier for the item buffer. Must not be null. Example value: 12345
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the retrieved {@link
+   *     ItemBufferResponse}.
+   * @throws CommonServiceException If there is an error in processing the request, such as when the
+   *     item buffer doesn't exist or cannot be accessed.
+   */
   @GetItemBufferByOrgIdAndIdDoc
   @GetMapping("/{orgId}/{id}")
   public ResponseEntity<BaseResponse<ItemBufferResponse>> getItemBufferByOrgIdAndId(
@@ -116,6 +188,21 @@ public class ItemBufferController {
             .build());
   }
 
+  /**
+   * Deletes an item buffer by organization ID and buffer ID.
+   *
+   * <p>This method processes a DELETE request to remove a specific item buffer configuration
+   * identified by the combination of organization ID and buffer ID. The method validates both
+   * parameters before processing the deletion request.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param id The unique identifier for the item buffer. Must not be null. Example value: 12345
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the deleted {@link
+   *     ItemBufferResponse}.
+   * @throws CommonServiceException If there is an error in processing the request, such as when the
+   *     item buffer doesn't exist or cannot be deleted.
+   */
   @DeleteItemBufferByOrgIdAndIdDoc
   @DeleteMapping("/{orgId}/{id}")
   public ResponseEntity<BaseResponse<ItemBufferResponse>> deleteItemBufferByOrgIdAndId(
@@ -136,6 +223,23 @@ public class ItemBufferController {
             .build());
   }
 
+  /**
+   * Updates an existing item buffer configuration by organization ID and buffer ID.
+   *
+   * <p>This method processes a PUT request to update a specific item buffer configuration
+   * identified by the combination of organization ID and buffer ID. The update is performed using
+   * the details provided in the {@link ItemBufferUpdateRequest}.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param id The unique identifier for the item buffer. Must not be null. Example value: 12345
+   * @param updateRequest The {@link ItemBufferUpdateRequest} containing the updated configuration
+   *     details for the item buffer.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated {@link
+   *     ItemBufferResponse}.
+   * @throws CommonServiceException If there is an error in processing the request, such as when the
+   *     item buffer doesn't exist or the update is invalid.
+   */
   @UpdateItemBufferByOrgIdAndIdDoc
   @PutMapping("/{orgId}/{id}")
   public ResponseEntity<BaseResponse<ItemBufferResponse>> updateItemBufferByOrgIdAndId(

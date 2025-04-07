@@ -52,6 +52,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing transit data and buffer configurations.
+ *
+ * <p>This controller provides a set of APIs for adding, updating, fetching, and deleting transit
+ * details, as well as managing transit buffer configurations. It facilitates interaction with the
+ * transit service layer, handling operations based on provided transit and buffer requests,
+ * including CRUD (Create, Read, Update, Delete) functionalities.
+ *
+ * <p>The controller is tagged with "Transit APIs" for easy categorization in API documentation.
+ *
+ * <p>All API methods are designed to process various transit-related tasks, such as adding new
+ * data, updating existing records, fetching transit details, and deleting outdated information,
+ * with appropriate error handling for domain-specific and general service exceptions.
+ */
 @Validated
 @RestController
 @RequestMapping("/transit")
@@ -64,6 +78,20 @@ public class TransitController {
       "Failed to fetch transit details list";
   private final TransitService transitService;
 
+  /**
+   * Adds new transit data.
+   *
+   * <p>This method processes a POST request to add new transit data based on the provided {@link
+   * TransitDataCreationRequest} payload. It calls the service layer to add the transit data and
+   * returns a response containing the result of the addition process.
+   *
+   * @param transitDataCreationRequest The request payload containing the details for adding the
+   *     transit data.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the payload of the
+   *     added transit data and a success message.
+   * @throws CommonServiceException If a general service error occurs while adding the transit data.
+   * @throws TransitDomainException If a domain-specific error occurs during the addition process.
+   */
   @AddTransitDataDoc
   @PostMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -86,6 +114,22 @@ public class TransitController {
     }
   }
 
+  /**
+   * Updates the details of a transit buffer.
+   *
+   * <p>This method processes a PUT request to update the details of an existing transit buffer
+   * based on the provided {@link TransitBufferCreationRequest} payload. It calls the service layer
+   * to update the transit buffer and returns a response containing the result of the update
+   * process.
+   *
+   * @param transitBufferCreationRequest The request payload containing the details for updating the
+   *     transit buffer.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the payload of the
+   *     updated transit data and a success message.
+   * @throws TransitDomainException If a domain-specific error occurs during the update process.
+   * @throws CommonServiceException If a general service error occurs while updating the transit
+   *     buffer details.
+   */
   @UpdateTransitBufferDetailsDoc
   @PutMapping(
       path = "/buffer",
@@ -109,6 +153,27 @@ public class TransitController {
     }
   }
 
+  /**
+   * Updates the transit data based on various parameters.
+   *
+   * <p>This method processes a PUT request to update the transit data based on the provided
+   * organization ID, source geo zone, destination geo zone, carrier service ID, and the {@link
+   * TransitDataUpdationRequest} payload. It calls the service layer to update the transit data and
+   * returns a response containing the result of the update process.
+   *
+   * @param orgId The unique identifier of the organization. Example: "NEXTUPLE".
+   * @param sourceGeozone The source geo zone to update the transit details. Example: "A1B".
+   * @param destinationGeozone The destination geo zone to update the transit details. Example:
+   *     "H1R".
+   * @param carrierServiceId The unique identifier of the carrier service. Example: "UPS-GROUND".
+   * @param transitDataUpdationRequest The request payload containing the details for updating the
+   *     transit data.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the payload of the
+   *     updated transit data and a success message.
+   * @throws TransitDomainException If a domain-specific error occurs during the update process.
+   * @throws CommonServiceException If a general service error occurs while updating the transit
+   *     data.
+   */
   @UpdateTransitDataDoc
   @PutMapping(
       path = "/{orgId}/{sourceGeozone}/{destinationGeozone}/{carrierServiceId}",
@@ -158,6 +223,27 @@ public class TransitController {
     }
   }
 
+  /**
+   * Retrieves the transit details based on various parameters.
+   *
+   * <p>This method processes a GET request to fetch transit details based on the provided
+   * organization ID, source geo zone, destination geo zone, carrier service ID, and service option.
+   * It calls the service layer to get the transit details and returns a response containing the
+   * result.
+   *
+   * @param orgId The unique identifier of the organization. Example: "NEXTUPLE".
+   * @param sourceGeozone The source geo zone to fetch the transit details. Example: "A1B".
+   * @param destinationGeozone The destination geo zone to fetch the transit details. Example:
+   *     "H1R".
+   * @param carrierServiceId The unique identifier of the carrier service. Example: "UPS-GROUND".
+   * @param serviceOption The service option to fetch the transit details. Example: "EXPRESS".
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the payload of the
+   *     transit details and a success message.
+   * @throws TransitDomainException If a domain-specific error occurs while fetching the transit
+   *     details.
+   * @throws CommonServiceException If a general service error occurs while fetching the transit
+   *     details.
+   */
   @GetTransitDetailsDoc
   @GetMapping(
       path = "/{orgId}/{sourceGeozone}/{destinationGeozone}/{carrierServiceId}/{serviceOption}",
@@ -202,6 +288,25 @@ public class TransitController {
     }
   }
 
+  /**
+   * Deletes the transit details based on various parameters.
+   *
+   * <p>This method processes a DELETE request to delete the transit details based on the provided
+   * organization ID, source geo zone, destination geo zone, and carrier service ID. It calls the
+   * service layer to delete the transit details and returns a response confirming the deletion.
+   *
+   * @param orgId The unique identifier of the organization. Example: "NEXTUPLE".
+   * @param sourceGeozone The source geo zone to delete the transit details. Example: "A1B".
+   * @param destinationGeozone The destination geo zone to delete the transit details. Example:
+   *     "H1R".
+   * @param carrierServiceId The unique identifier of the carrier service. Example: "UPS-GROUND".
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the result of the deletion.
+   * @throws TransitDomainException If a domain-specific error occurs while deleting the transit
+   *     details.
+   * @throws CommonServiceException If a general service error occurs while deleting the transit
+   *     details.
+   */
   @DeleteTransitionDetailsDoc
   @DeleteMapping(
       path = "/{orgId}/{sourceGeozone}/{destinationGeozone}/{carrierServiceId}",
@@ -247,6 +352,23 @@ public class TransitController {
     }
   }
 
+  /**
+   * Retrieves a list of transit details based on organization ID, destination geo zone, and source
+   * geo zones.
+   *
+   * <p>This method processes a GET request to fetch a list of transit details for the specified
+   * organization, destination geo zone, and a list of source geo zones. The service layer is called
+   * to get the data, and the response is returned with the list of transit details.
+   *
+   * @param orgId The unique identifier of the organization. Example: "NEXTUPLE".
+   * @param destinationGeozone The destination geo zone to get the transit details. Example: "H1R".
+   * @param sourceGeozones A list of source geo zones to get the transit details. Example: ["A1B",
+   *     "A2B"].
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the list of transit details.
+   * @throws TransitDomainException If a domain-specific error occurs while fetching the transit
+   *     details.
+   */
   @GetTransitDetailsListDoc
   @GetMapping(path = "/{orgId}/{destinationGeozone}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<List<TransitResponse>>> getTransitDetailsList(
@@ -282,6 +404,24 @@ public class TransitController {
     }
   }
 
+  /**
+   * Retrieves a distinct list of destination geo zones based on the organization ID, source geo
+   * zone, and carrier service IDs.
+   *
+   * <p>This method processes a POST request to fetch a distinct list of destination geo zones for
+   * the specified organization, source geo zone, and list of carrier service IDs. The service layer
+   * is called to get the data, and the response is returned with the list of distinct destination
+   * geo zones.
+   *
+   * @param orgId The unique identifier of the organization. Example: "NEXTUPLE".
+   * @param sourceGeozone The source geo zone to get the transit details. Example: "A1B".
+   * @param carrierServiceIds A list of carrier service IDs to filter the destination geo zones.
+   *     Example: ["UPS-Ground", "Canpar Express"].
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the list of distinct destination geo zones.
+   * @throws TransitDomainException If a domain-specific error occurs while fetching the destination
+   *     geo zones.
+   */
   @GetDistinctDestinationGeoZonesDoc
   @PostMapping(
       path = "/distinct/dFSA/{orgId}/{sourceGeozone}",
@@ -317,6 +457,20 @@ public class TransitController {
     }
   }
 
+  /**
+   * Retrieves the transit time entries for the specified organization and carrier service.
+   *
+   * <p>This method processes a GET request to fetch the transit time entries for the given
+   * organization and carrier service ID. The service layer is called to get the data, and the
+   * response is returned with the transit time entries.
+   *
+   * @param orgId The unique identifier of the organization. Example: "NEXTUPLE".
+   * @param carrierServiceId The unique identifier of the carrier service. Example: "UPS-GROUND".
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the transit time entries.
+   * @throws TransitDomainException If a domain-specific error occurs while fetching the transit
+   *     time entries.
+   */
   @GetTransitTimeEntriesDoc
   @GetMapping(
       path = "/transit-entries/{orgId}/{carrierServiceId}",
@@ -340,6 +494,19 @@ public class TransitController {
             .build());
   }
 
+  /**
+   * Retrieves the list of transit details for the specified organization and destination geo zone.
+   *
+   * <p>This method processes a GET request to fetch the list of transit details for a given
+   * organization and destination geo zone. The service layer is called to retrieve the data, and
+   * the response is returned containing the transit details.
+   *
+   * @param orgId The unique identifier of the organization. Example: "NEXTUPLE".
+   * @param destinationGeozone The destination geo zone to get the transit details for. Example:
+   *     "H1R".
+   * @return A {@link BaseResponse} containing the transit details for the specified geo zone.
+   * @throws CommonServiceException If an error occurs while fetching the transit details.
+   */
   @GetTransitDetailsListForDestinationGeoZoneDoc
   @GetMapping(
       path = "/batch-transit/{orgId}/{destinationGeozone}",
@@ -367,6 +534,22 @@ public class TransitController {
     }
   }
 
+  /**
+   * Retrieves the transit time details for the specified organization, carrier service, and list of
+   * destination geo zones.
+   *
+   * <p>This method processes a POST request to fetch the transit time details for multiple
+   * destination geo zones, based on the provided organization ID, carrier service ID, and a list of
+   * destination geo zones.
+   *
+   * @param orgId The unique identifier of the organization. Example: "NEXTUPLE".
+   * @param carrierServiceId The unique identifier of the carrier service. Example: "UPS-GROUND".
+   * @param transitDetailsRequest A request object containing the list of destination geo zones to
+   *     fetch transit details for.
+   * @return A {@link ResponseEntity} with a {@link BaseResponse} containing the transit time
+   *     details for the given geo zones.
+   * @throws TransitDomainException If an error occurs while fetching the transit time details.
+   */
   @GetTransitTimeDetailsForDestinationGeoZonesListDoc
   @PostMapping(
       path = "/transit-entries/{orgId}/{carrierServiceId}/geozones",
@@ -396,6 +579,21 @@ public class TransitController {
             .build());
   }
 
+  /**
+   * Updates the transit buffer days for the specified organization, carrier service, and geo zones.
+   *
+   * <p>This method processes a PUT request to update the transit buffer days for a specific
+   * combination of organization ID, carrier service ID, source geo zone, and destination geo zone.
+   *
+   * @param orgId The unique identifier of the organization. Example: "NEXTUPLE".
+   * @param carrierServiceId The unique identifier of the carrier service. Example: "UPS-GROUND".
+   * @param sourceGeoZone The source geo zone to update the transit buffer days for. Example: "A1B".
+   * @param destinationGeoZone The destination geo zone to update the transit buffer days for.
+   *     Example: "H1R".
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the updated transit data.
+   * @throws TransitDomainException If an error occurs while updating the transit buffer days.
+   */
   @UpdateTransitBufferDayDoc
   @PutMapping(
       path = "/{orgId}/{carrierServiceId}/buffer-days",
@@ -430,6 +628,19 @@ public class TransitController {
                 .build());
   }
 
+  /**
+   * Fetches the distinct source and destination geo zones for the specified organization and
+   * carrier service.
+   *
+   * <p>This method processes a GET request to retrieve a list of distinct source and destination
+   * geo zones associated with a given organization and carrier service.
+   *
+   * @param orgId The unique identifier of the organization. Example: "NEXTUPLE".
+   * @param carrierServiceId The unique identifier of the carrier service. Example: "UPS-GROUND".
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the list of distinct geo zones.
+   * @throws TransitDomainException If an error occurs while fetching the distinct geo zones.
+   */
   @GetDistinctSourceAndDestinationGeozonesDoc
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<DistinctGeozonesResponse>>
@@ -452,6 +663,21 @@ public class TransitController {
             .build());
   }
 
+  /**
+   * Fetches the list of transit details for a given organization and destination geo zone.
+   *
+   * <p>This method processes a GET request to retrieve the transit details for the specified
+   * destination geo zone and organization.
+   *
+   * @param orgId The unique identifier of the organization. Example: "NEXTUPLE".
+   * @param destinationGeozone The destination geo zone to fetch transit details for. Example:
+   *     "H1R".
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the list of transit details.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   * @throws TransitDomainException If an error occurs related to the transit domain.
+   */
   @GetTransitDetailsListForDestinationGeoZoneDoc
   @GetMapping(
       path = "/v2/{orgId}/{destinationGeozone}",

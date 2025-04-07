@@ -37,6 +37,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Optimization and Cost Types Mappings in the system.
+ *
+ * <p>This controller provides APIs for creating, updating, fetching, and deleting optimization and
+ * cost types mappings. It allows users to manage these mappings and their configurations within the
+ * system.
+ *
+ * <p>The controller is tagged with "Optimization And Cost Types Mapping APIs" for easy
+ * categorization in API documentation.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/cost-config/optimization-cost-types-mapping")
@@ -45,6 +55,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class OptimizationAndCostTypesMappingController {
   private final OptimizationAndCostTypesMappingService optimizationAndCostTypesMappingService;
 
+  /**
+   * Creates a new optimization and cost types mapping in the system.
+   *
+   * <p>This method processes a POST request to create a new optimization and cost types mapping
+   * based on the provided request details. It validates the input request and delegates the
+   * creation process to the `OptimizationAndCostTypesMappingService`.
+   *
+   * @param createOptimizationAndCostTypesMappingRequest The request object containing the details
+   *     of the optimization and cost types mapping to be created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the created optimization and cost types mapping details.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @CreateOptimizationAndCostTypesMappingDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -68,6 +92,21 @@ public class OptimizationAndCostTypesMappingController {
                 .build());
   }
 
+  /**
+   * Updates an existing optimization and cost types mapping for the specified organization and
+   * mapping ID.
+   *
+   * <p>This method processes a PUT request to update an existing optimization and cost types
+   * mapping.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param id The unique identifier of the optimization and cost types mapping.
+   * @param updateOptimizationAndCostTypesMappingRequest The request payload containing the updated
+   *     optimization and cost types mapping details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated
+   *     optimization and cost types mapping details.
+   * @throws CommonServiceException If there is an error during the update process.
+   */
   @UpdateOptimizationAndCostTypesMappingByIdAndOrgIdDoc
   @PutMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -107,6 +146,20 @@ public class OptimizationAndCostTypesMappingController {
             .build());
   }
 
+  /**
+   * Retrieves an optimization and cost types mapping for a specific organization and optimization
+   * strategy.
+   *
+   * <p>This method processes a GET request to fetch an optimization and cost types mapping based on
+   * the provided organization ID and optimization strategy. It delegates the retrieval process to
+   * the `OptimizationAndCostTypesMappingService`.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param optimizationStrategy The name of the optimization strategy.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the optimization and cost types mapping details.
+   * @throws CommonServiceException If there is an error during the fetch process.
+   */
   @FetchOptimizationAndCostTypesMappingByOrgIdAndOptStrategyDoc
   @GetMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -138,6 +191,19 @@ public class OptimizationAndCostTypesMappingController {
             .build());
   }
 
+  /**
+   * Retrieves an optimization and cost types mapping for a specific organization and mapping ID.
+   *
+   * <p>This method processes a GET request to fetch an optimization and cost types mapping based on
+   * the provided organization ID and mapping ID. It delegates the retrieval process to the
+   * `OptimizationAndCostTypesMappingService`.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the optimization and cost types mapping.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message and
+   *     the optimization and cost types mapping details.
+   * @throws CommonServiceException If there is an error during the fetch process.
+   */
   @FetchOptimizationAndCostTypesMappingByOrgIdAndIdDoc
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{orgId}/{id}")
   public ResponseEntity<BaseResponse<OptimizationAndCostTypesMappingResponse>>
@@ -171,6 +237,19 @@ public class OptimizationAndCostTypesMappingController {
             .build());
   }
 
+  /**
+   * Deletes an optimization and cost types mapping for a specific organization and mapping ID.
+   *
+   * <p>This method processes a DELETE request to remove an optimization and cost types mapping
+   * based on the provided organization ID and mapping ID. It delegates the deletion process to the
+   * `OptimizationAndCostTypesMappingService`.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the optimization and cost types mapping.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message
+   *     confirming the deletion.
+   * @throws CommonServiceException If there is an error during the deletion process.
+   */
   @DeleteOptimizationAndCostTypesMappingByOrgIdAndIdDoc
   @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{orgId}/{id}")
   public ResponseEntity<BaseResponse<OptimizationAndCostTypesMappingResponse>>

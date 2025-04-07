@@ -27,6 +27,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing sourcing attributes within an organization.
+ *
+ * <p>This controller provides APIs for creating and retrieving sourcing attributes associated with
+ * a specific organization. A sourcing attribute represents a characteristic used in sourcing rules
+ * and can be managed and optimized for sourcing operations.
+ *
+ * <p>The controller is tagged with "Sourcing Attributes APIs" for easy categorization in the API
+ * documentation.
+ */
 @Validated
 @RestController
 @Tag(name = "Sourcing Attributes APIs")
@@ -38,6 +48,18 @@ public class SourcingAttributeController {
 
   private final SourcingAttributeService sourcingAttributeService;
 
+  /**
+   * Creates a new sourcing attribute.
+   *
+   * <p>Processes a POST request to create a sourcing attribute using the provided request details.
+   *
+   * @param sourcingAttributeRequest The {@link CreateSourcingAttributeRequest} containing details
+   *     for the sourcing attribute.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created sourcing
+   *     attribute details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs during the process.
+   */
   @PostMapping
   @CreateSourcingAttributeDoc
   public ResponseEntity<BaseResponse<SourcingAttributeResponse>> createSourcingAttribute(
@@ -58,6 +80,19 @@ public class SourcingAttributeController {
     }
   }
 
+  /**
+   * Retrieves a sourcing attribute by its ID and organization ID.
+   *
+   * <p>Processes a GET request to fetch a sourcing attribute based on the specified organization ID
+   * and attribute ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier for the sourcing attribute.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched sourcing
+   *     attribute details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs during the process.
+   */
   @GetMapping("/orgId/{orgId}/id/{id}")
   public ResponseEntity<BaseResponse<SourcingAttributeResponse>> getSourcingAttributeByOrgIdAndId(
       @NotBlank(message = "orgId can't be empty")

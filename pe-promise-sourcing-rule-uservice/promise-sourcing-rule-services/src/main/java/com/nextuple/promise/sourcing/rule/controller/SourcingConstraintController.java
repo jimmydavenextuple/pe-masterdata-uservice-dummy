@@ -43,6 +43,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing sourcing constraints in an organization.
+ *
+ * <p>This controller provides APIs for adding, retrieving, updating, and deleting sourcing
+ * constraints associated with specific organizations and groups. It allows you to manage
+ * constraints that define various sourcing rules for a given group or organization.
+ *
+ * <p>The controller is tagged with "Sourcing Constraint APIs" for easy categorization in the API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/sourcing-constraint")
@@ -54,6 +64,16 @@ public class SourcingConstraintController {
 
   private final SourcingConstraintService sourcingConstraintService;
 
+  /**
+   * Adds a new sourcing constraint for the specified request details.
+   *
+   * @param sourcingConstraintRequest The request body containing the details of the sourcing
+   *     constraint to be added.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     newly added sourcing constraint.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service error occurs during processing.
+   */
   @AddSourcingConstraintDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -76,6 +96,19 @@ public class SourcingConstraintController {
     }
   }
 
+  /**
+   * Retrieves a list of sourcing constraints for a specified organization and group.
+   *
+   * <p>This method processes a GET request to fetch all sourcing constraints associated with the
+   * given organization ID and group ID.
+   *
+   * @param orgId The unique identifier of the organization. Must not be blank.
+   * @param groupId The unique identifier of the group for which constraints need to be fetched.
+   *     Must not be blank.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of sourcing
+   *     constraints.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @GetSourcingConstraintListDoc
   @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<SourcingConstraintsResponse>> fetchSourcingConstraintsList(
@@ -105,6 +138,20 @@ public class SourcingConstraintController {
     }
   }
 
+  /**
+   * Fetches details of a specific sourcing constraint using its ID and the organization ID.
+   *
+   * <p>This method processes a GET request to retrieve details of a sourcing constraint by its
+   * unique identifier and the associated organization ID.
+   *
+   * @param orgId The unique identifier of the organization. Must not be blank.
+   * @param id The unique identifier of the sourcing constraint. Must not be null and should be
+   *     greater than 0.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     sourcing constraint.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service error occurs while processing the request.
+   */
   @GetSourcingConstraintDetailsDoc
   @GetMapping(value = "/orgId/{orgId}/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<SourcingConstraintDetailsResponse>>
@@ -136,6 +183,22 @@ public class SourcingConstraintController {
     }
   }
 
+  /**
+   * Updates an existing sourcing constraint with new details.
+   *
+   * <p>This method processes a PUT request to modify an existing sourcing constraint for the
+   * specified organization, group, and constraint type.
+   *
+   * @param orgId The unique identifier of the organization. Must not be blank.
+   * @param groupId The unique identifier of the group for which the constraint is to be updated.
+   *     Must not be blank.
+   * @param sourcingConstraint The specific constraint to be updated. Must not be null.
+   * @param updationRequest The request body containing updated details of the sourcing constraint.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with details of the updated
+   *     sourcing constraint.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service error occurs while processing the request.
+   */
   @UpdateSourcingConstraintDoc
   @PutMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -173,6 +236,21 @@ public class SourcingConstraintController {
     }
   }
 
+  /**
+   * Deletes a sourcing constraint for the specified organization and group.
+   *
+   * <p>This method processes a DELETE request to remove a specific sourcing constraint from the
+   * provided organization and group.
+   *
+   * @param orgId The unique identifier of the organization. Must not be blank.
+   * @param groupId The unique identifier of the group from which the constraint is to be deleted.
+   *     Must not be blank.
+   * @param sourcingConstraint The specific constraint to be deleted. Must not be null.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with details of the deleted
+   *     sourcing constraint.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service error occurs while processing the request.
+   */
   @DeleteSourcingConstraintDoc
   @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<SourcingConstraintDetailsResponse>> deleteSourcingConstraint(

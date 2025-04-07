@@ -22,6 +22,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing the sourcing attributes definition dashboard for organizations.
+ *
+ * <p>This controller provides an API to fetch the required and optional sourcing attribute
+ * definitions for a specific organization. These attributes can be scoped to different areas such
+ * as sourcing rules and optimization.
+ *
+ * <p>The controller is tagged with "Sourcing Attributes Definition Dashboard APIs" for easy
+ * categorization in the API documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/ui/sourcing-attributes-definition")
@@ -32,6 +42,20 @@ public class SourcingAttributesDefinitionUIController {
       LoggerFactory.getLogger(SourcingAttributesDefinitionUIController.class);
   private final SourcingAttributesDefinitionService sourcingAttributesDefinitionService;
 
+  /**
+   * Retrieves required and optional sourcing attributes definitions for a specific organization.
+   *
+   * <p>Processes a GET request to fetch active sourcing attribute definitions based on the
+   * organization ID and optionally the scope.
+   *
+   * @param orgId The unique identifier of the organization. Must not be null.
+   * @param scope (Optional) The {@link SourcingAttributesDefinitionScopeEnum} specifying the scope
+   *     of the attributes definition.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the required and
+   *     optional attributes definitions.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs during the process.
+   */
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, path = "/{orgId}")
   @GetRequiredAndOptionalAttributeDoc
   public ResponseEntity<BaseResponse<SourcingAttributeDefinitionUIResponse>>

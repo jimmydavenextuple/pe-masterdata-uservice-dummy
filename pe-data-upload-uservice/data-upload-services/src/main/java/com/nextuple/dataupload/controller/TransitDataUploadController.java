@@ -21,6 +21,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Controller for Transit Data Upload APIs.
+ *
+ * <p>This controller provides an API to upload transit data from a specified file URI. It handles
+ * processing the transit data file and returns the result of the upload operation.
+ *
+ * <p>The controller is tagged with "Transit Data Upload APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @Controller
 @RequestMapping("/upload")
@@ -29,6 +38,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class TransitDataUploadController {
   private final TransitDataUploadService transitDataUploadService;
 
+  /**
+   * Handles the upload of transit data from a specified file URI.
+   *
+   * <p>This method processes a POST request to upload transit data using the provided file URI. The
+   * transit data file is uploaded for further processing, and a response containing the result of
+   * the upload is returned.
+   *
+   * @param fileUri The URI of the transit data file to be uploaded.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the result of the
+   *     upload operation.
+   * @throws IOException If there is an error reading the file.
+   * @throws CommonServiceException If there is an error processing the file upload.
+   */
   @PostMapping("/transit")
   public ResponseEntity<BaseResponse<String>> uploadTransitData(
       @NotBlank(message = "fileUri can't be empty") @RequestParam String fileUri)

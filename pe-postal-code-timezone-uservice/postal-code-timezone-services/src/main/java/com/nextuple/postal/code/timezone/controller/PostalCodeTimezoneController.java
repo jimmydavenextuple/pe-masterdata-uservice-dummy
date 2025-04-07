@@ -41,6 +41,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing postal code timezones.
+ *
+ * <p>This controller provides APIs to create, update, delete, and retrieve postal code timezones
+ * for a specific organization. It also allows retrieval of zip code prefixes and related
+ * information such as custom regions and timezone details. The controller supports operations for
+ * managing postal code timezones, fetching timezone details, and deleting timezone data for
+ * specific postal codes.
+ *
+ * <p>The controller is tagged with "Postal Code Timezone APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @Tag(name = "Postal Code Timezone APIs")
@@ -51,6 +63,20 @@ public class PostalCodeTimezoneController {
   private static final Logger logger = LoggerFactory.getLogger(PostalCodeTimezoneController.class);
   private final PostalCodeTimezoneService postalCodeTimezoneService;
 
+  /**
+   * Creates a zip code timezone with the given details.
+   *
+   * <p>This method processes a POST request to create a new zip code timezone based on the details
+   * provided in the request body.
+   *
+   * @param baseRequest The request body containing the details for the zip code timezone to be
+   *     created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created zip code
+   *     timezone details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @CreatePostalCodeTimezoneDetails
   @PostMapping
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> createPostalCodeTimezone(
@@ -71,6 +97,19 @@ public class PostalCodeTimezoneController {
     }
   }
 
+  /**
+   * Retrieves a zip code timezone by the organization ID and zip code prefix.
+   *
+   * <p>This method processes a GET request to fetch the details of a zip code timezone identified
+   * by the given organization ID and zip code prefix.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param zipCodePrefix The first three characters of the zip code of the source or destination
+   *     node.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched zip code
+   *     timezone details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @GetPostalCodeTimezoneDetails
   @GetMapping
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> getPostalCodeTimezone(
@@ -99,6 +138,23 @@ public class PostalCodeTimezoneController {
     }
   }
 
+  /**
+   * Updates a zip code timezone with the given details.
+   *
+   * <p>This method processes a PUT request to update an existing zip code timezone based on the
+   * organization ID, zip code prefix, and details provided in the request body.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param zipCodePrefix The first three characters of the zip code of the source or destination
+   *     node.
+   * @param baseRequest The request body containing the details for the zip code timezone to be
+   *     updated.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated zip code
+   *     timezone details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @UpdatePostalCodeTimezoneDetails
   @PutMapping
   public ResponseEntity<BaseResponse<PostalCodeTimezoneDto>> updatePostalCodeTimezone(
@@ -131,6 +187,19 @@ public class PostalCodeTimezoneController {
     }
   }
 
+  /**
+   * Deletes a zip code timezone for the given organization ID and zip code prefix.
+   *
+   * <p>This method processes a DELETE request to remove a zip code timezone identified by the given
+   * organization ID and zip code prefix.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param zipCodePrefix The first three characters of the zip code of the source or destination
+   *     node.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted zip code timezone.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @DeletePostalCodeTimezoneDetails
   @Transactional
   @DeleteMapping
@@ -163,6 +232,17 @@ public class PostalCodeTimezoneController {
     }
   }
 
+  /**
+   * Retrieves a list of state and zip code prefixes for a given organization ID.
+   *
+   * <p>This method processes a GET request to fetch the list of state and zip code prefixes based
+   * on the organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the state and zip code
+   *     prefix list.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @GetPostalCodePrefixListDetails
   @GetMapping("/ui/state-postal-code-prefix/orgId/{orgId}")
   public ResponseEntity<BaseResponse<List<PostalCodePrefixDto>>> getPostalCodePrefixList(
