@@ -32,7 +32,7 @@ dependencies {
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
     implementation group: 'com.opencsv', name: 'opencsv', version: '5.2'
-    implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
+    implementation("com.nextuple.plt:plt-common:${platformFPMVersion}")
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }
 tasks.withType(Test).configureEach {

@@ -23,7 +23,7 @@ dependencies {
     testImplementation "org.mockito:mockito-junit-jupiter:4.11.0"
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
-    implementation("com.nextuple.pe:core-common-util:1.6.54-${build_target}")
+    implementation("com.nextuple.pe:core-common-util:${peCoreVersion}")
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
@@ -36,8 +36,8 @@ dependencies {
     }
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.27'
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
-    implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")
-    implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
+    implementation("com.nextuple.plt:plt-fpm-service:${platformFPMVersion}")
+    implementation("com.nextuple.plt:plt-common:${platformFPMVersion}")
 
 }
 tasks.withType(Test).configureEach {
