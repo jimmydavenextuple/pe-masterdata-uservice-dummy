@@ -56,7 +56,7 @@ public class JobConsumerService {
   /**
    * @param recordDto
    * @return
-   * @throws JobException
+   * @throws InvalidJobTypeException
    */
   public RecordStatusDto executeTask(RecordDto recordDto) throws InvalidJobTypeException {
     log.debug("Inside getRecordStatus service");

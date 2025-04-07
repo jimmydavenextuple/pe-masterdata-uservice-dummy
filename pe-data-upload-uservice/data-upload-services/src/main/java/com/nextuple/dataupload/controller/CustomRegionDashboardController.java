@@ -28,6 +28,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for custom region dashboard APIs.
+ *
+ * <p>This controller provides APIs to manage and retrieve custom region information for
+ * organizations, with support for filtering by country, region IDs, and region names. It includes
+ * pagination and sorting capabilities for efficient data retrieval.
+ *
+ * <p>The controller utilizes {@link PostalCodeFeign} client to interact with the postal code
+ * service and retrieve custom region information. Key features include:
+ *
+ * <ul>
+ *   <li>Filtering custom regions by organization and country
+ *   <li>Optional filtering by region IDs and region names
+ *   <li>Pagination support with customizable page size and number
+ *   <li>Flexible sorting options with default sorting by customRegionId
+ * </ul>
+ *
+ * <p>The controller is tagged with "Custom Regions APIs" for easy categorization in API
+ * documentation.
+ *
+ * @see PostalCodeFeign
+ * @see PageProperties
+ * @see CustomRegionInfo
+ */
 @RestController
 @RequestMapping("/ui/custom-region")
 @RequiredArgsConstructor
@@ -41,6 +65,22 @@ public class CustomRegionDashboardController {
 
   private static final String DEFAULT_SORT_BY_CUSTOM_REGION = "customRegionId";
 
+  /**
+   * Retrieves a paginated list of custom regions filtered by organization and country.
+   *
+   * <p>This method processes a GET request to fetch custom region data with support for additional
+   * filtering by region IDs and names. It returns a paginated response containing custom region
+   * entries.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank.
+   * @param country The country code to filter custom regions. Must not be blank.
+   * @param regionIds Optional comma-separated list of custom region IDs to filter the results.
+   * @param regionNames Optional comma-separated list of custom region names to filter the results.
+   * @param pageParams The pagination parameters including page number, page size, and sorting
+   *     criteria.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a paginated list of
+   *     custom regions.
+   */
   @GetMapping("/orgId/{orgId}/country/{country}")
   @GetMarketRegionsDoc
   public ResponseEntity<BaseResponse<PagePayload<CustomRegionInfo>>> getCustomRegions(

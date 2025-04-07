@@ -48,6 +48,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Cost Itinerary and Cost Factors Mappings within an organization.
+ *
+ * <p>This controller provides APIs to create, retrieve, update, and delete mappings of cost
+ * itineraries and factors for a specific organization. It also supports updating the status and
+ * active status of these mappings, and allows fetching cache keys related to them.
+ *
+ * <p>The controller is tagged with "Cost Itinerary &amp; Cost Factors Mapping APIs" for easy
+ * categorization in API documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/cost-config/cost-itinerary-factors-mapping")
@@ -59,6 +69,19 @@ public class CostItineraryAndFactorsController {
       LoggerFactory.getLogger(CostItineraryAndFactorsController.class);
   private final CostItineraryAndFactorsService costItineraryAndFactorsService;
 
+  /**
+   * Creates a new Cost Itinerary and Cost Factors Mapping.
+   *
+   * <p>This method processes a POST request to create a mapping of cost itineraries and factors for
+   * a given organization.
+   *
+   * @param orgId The unique identifier of the organization for which the mapping is to be created.
+   * @param costItineraryAndFactorsRequest The request payload containing details of the cost
+   *     itinerary and factors to be created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created mapping
+   *     details.
+   * @throws CommonServiceException If an error occurs during the creation process.
+   */
   @CreateCostItineraryAndFactors
   @PostMapping(value = "/{orgId}")
   public ResponseEntity<BaseResponse<CostItineraryAndFactorsDto>> createCostItineraryAndFactors(
@@ -80,6 +103,17 @@ public class CostItineraryAndFactorsController {
                 .build());
   }
 
+  /**
+   * Retrieves the Cost Itinerary and Cost Factors Mapping by Organization ID and Mapping ID.
+   *
+   * <p>This method processes a GET request to fetch the details of a cost itinerary and cost
+   * factors mapping for a specific organization and mapping identifier.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the cost itinerary and cost factors mapping.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the mapping details.
+   * @throws CommonServiceException If the mapping cannot be found or retrieved.
+   */
   @GetCostItineraryAndFactorsByOrgIdAndId
   @GetMapping(value = "/{orgId}/{id}")
   public ResponseEntity<BaseResponse<CostItineraryAndFactorsDto>>
@@ -109,6 +143,21 @@ public class CostItineraryAndFactorsController {
             .build());
   }
 
+  /**
+   * Retrieves Cost Itinerary and Factors Mapping by Organization ID, Cost Itinerary, Itinerary
+   * Status, and Active Status.
+   *
+   * <p>This method processes a GET request to fetch cost itinerary and cost factors mappings based
+   * on the organization ID, cost itinerary, itinerary status, and active status.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param costItinerary The specific cost itinerary to determine the mapping.
+   * @param itineraryStatus The status of the itinerary (e.g., DRAFT, CREATED).
+   * @param isActive The active status of the itinerary (true or false).
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the retrieved mapping
+   *     details.
+   * @throws CommonServiceException If no mapping matches the specified parameters.
+   */
   @GetCostItineraryAndFactorsByOrgIdCostItineraryItineraryStatusAndIsActiveDoc
   @GetMapping(value = "{orgId}/{costItinerary}/{itineraryStatus}/{isActive}")
   public ResponseEntity<BaseResponse<CostItineraryAndFactorsDto>>
@@ -146,6 +195,20 @@ public class CostItineraryAndFactorsController {
             .build());
   }
 
+  /**
+   * Updates an existing Cost Itinerary and Cost Factors Mapping.
+   *
+   * <p>This method processes a PUT request to update the details of an existing cost itinerary and
+   * factors mapping for a given organization and mapping ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the cost itinerary and cost factors mapping.
+   * @param updateCostItineraryAndFactorsRequest The request payload containing updated details of
+   *     the mapping.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated mapping
+   *     details.
+   * @throws CommonServiceException If an error occurs during the update process.
+   */
   @UpdateCostItineraryAndFactors
   @PutMapping(value = "/{orgId}/{id}")
   public ResponseEntity<BaseResponse<CostItineraryAndFactorsDto>> updateCostItineraryAndFactors(
@@ -174,6 +237,17 @@ public class CostItineraryAndFactorsController {
             .build());
   }
 
+  /**
+   * Updates the status of an existing Cost Itinerary and Cost Factors Mapping.
+   *
+   * <p>This method processes a PUT request to update the status of a cost itinerary and cost
+   * factors mapping for a given organization and mapping ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the cost itinerary and cost factors mapping.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated status.
+   * @throws CommonServiceException If an error occurs during the update process.
+   */
   @UpdateCostItineraryAndFactorsStatus
   @PutMapping(value = "itinerary-status/{orgId}/{id}")
   public ResponseEntity<BaseResponse<CostItineraryAndFactorsDto>>
@@ -205,6 +279,18 @@ public class CostItineraryAndFactorsController {
             .build());
   }
 
+  /**
+   * Updates the status of a Cost Itinerary and Factors Mapping by Cost Itinerary.
+   *
+   * <p>This method processes a PUT request to update the status of a cost itinerary and factors
+   * mapping for a specific cost itinerary within an organization.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param costItinerary The specific cost itinerary to update.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated status
+   *     details.
+   * @throws CommonServiceException If an error occurs during the update process.
+   */
   @Hidden
   @UpdateCostItineraryAndFactorsStatusByCostItinerary
   @PutMapping(value = "/itinerary-status/orgId/{orgId}/costItinerary/{costItinerary}")
@@ -238,6 +324,19 @@ public class CostItineraryAndFactorsController {
             .build());
   }
 
+  /**
+   * Updates the active status of a Cost Itinerary and Factors Mapping by Cost Itinerary.
+   *
+   * <p>This method processes a PUT request to update the active status of a cost itinerary and
+   * factors mapping for a specific cost itinerary within an organization.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param costItinerary The specific cost itinerary to update.
+   * @param isActive The new active status to be set (true or false).
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated active
+   *     status details.
+   * @throws CommonServiceException If an error occurs during the update process.
+   */
   @UpdateCostItineraryAndFactorsActiveStatusByCostItinerary
   @PutMapping(
       value = "/itinerary-active/orgId/{orgId}/costItinerary/{costItinerary}/isActive/{isActive}")
@@ -276,6 +375,18 @@ public class CostItineraryAndFactorsController {
             .build());
   }
 
+  /**
+   * Deletes a Cost Itinerary and Cost Factors Mapping.
+   *
+   * <p>This method processes a DELETE request to remove a specific cost itinerary and cost factors
+   * mapping based on the organization ID and mapping ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the cost itinerary and cost factors mapping.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with details of the deleted
+   *     mapping.
+   * @throws CommonServiceException If the mapping cannot be deleted or found.
+   */
   @DeleteCostItineraryAndFactors
   @DeleteMapping(value = "/{orgId}/{id}")
   public ResponseEntity<BaseResponse<CostItineraryAndFactorsDto>> deleteCostItineraryAndFactors(
@@ -303,6 +414,15 @@ public class CostItineraryAndFactorsController {
                 .build());
   }
 
+  /**
+   * Retrieves Cache Keys for Cost Itinerary and Factors Mappings.
+   *
+   * <p>This method processes a GET request to fetch a list of cache keys associated with cost
+   * itinerary and factors mappings.
+   *
+   * @param limit The maximum number of cache keys to retrieve. Defaults to 100.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of cache keys.
+   */
   @GetCostItineraryAndFactorsCacheKeyDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<CostItineraryAndFactorsCacheKeyDto>>>

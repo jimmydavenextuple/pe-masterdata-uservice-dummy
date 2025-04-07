@@ -146,11 +146,11 @@ public class NodeCarrierServiceCalendarService {
     }
   }
 
-  /** Get Node, Carrier&Service Calendar details by orgId, nodeId and carrierServiceId */
   @ReaderDS
   public List<NodeCarrierServiceCalendarResponse> processGetNodeCarrierServiceCalendar(
       String orgId, String nodeId, String carrierServiceId, Optional<String> serviceOption)
       throws CalendarDomainException {
+    // Get Node, Carrier&Service Calendar details by orgId, nodeId and carrierServiceId
     return INSTANCE.convertToNodeCarrierServiceCalendarResponseList(
         getAndFilterNodeCarrierServiceCalendar(orgId, nodeId, carrierServiceId, serviceOption));
   }

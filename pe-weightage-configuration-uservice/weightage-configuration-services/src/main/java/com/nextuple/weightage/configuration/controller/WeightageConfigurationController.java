@@ -37,6 +37,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing Weightage Configurations.
+ *
+ * <p>This class provides endpoints for creating, fetching, updating, and deleting weightage
+ * configurations, as well as for retrieving weightage cache keys. The available weightage types
+ * include AVAILABILITY, PRIORITY, and PROXIMITY.
+ *
+ * <p>The controller is tagged with "Weightage Configuration APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @Tag(name = "Weightage Configuration APIs")
@@ -47,6 +57,18 @@ public class WeightageConfigurationController {
       LoggerFactory.getLogger(WeightageConfigurationController.class);
   private final WeightageConfigurationService weightageConfigurationService;
 
+  /**
+   * Fetches the weightage based on the provided request details.
+   *
+   * <p>This method processes a POST request to retrieve weightage information using the provided
+   * <code>baseRequest</code> body.
+   *
+   * @param baseRequest The request body containing the parameters required to fetch the weightage.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched weightage
+   *     data as a map.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
   @FetchWeightageDoc
   @PostMapping
   public ResponseEntity<BaseResponse<Map<String, Float>>> fetchWeightage(
@@ -65,6 +87,20 @@ public class WeightageConfigurationController {
     }
   }
 
+  /**
+   * Creates a new weightage configuration based on the provided request details.
+   *
+   * <p>This method processes a POST request to create a new weightage configuration using the
+   * provided <code>baseRequest</code> body. It returns a {@link ResponseEntity} containing a {@link
+   * BaseResponse} with the created weightage configuration details.
+   *
+   * @param baseRequest The request body containing the details required to create the weightage
+   *     configuration.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created weightage
+   *     configuration.
+   * @throws CommonServiceException If a general service exception occurs while processing the
+   *     request.
+   */
   @CreateWeightConfigurationDoc
   @PostMapping("/create")
   public ResponseEntity<BaseResponse<WeightageConfigurationDto>> createWeightageConfiguration(
@@ -87,6 +123,23 @@ public class WeightageConfigurationController {
     }
   }
 
+  /**
+   * Fetches the weightage configuration for a given organization, type, and key.
+   *
+   * <p>This method processes a GET request to retrieve the weightage configuration based on the
+   * provided <code>orgId</code>, <code>type</code>, and <code>key</code> parameters. The weightage
+   * configuration can be of type AVAILABILITY, PRIORITY, or PROXIMITY, and is identified by a
+   * unique combination of the source, geozone, line, order, and priority.
+   *
+   * @param orgId The unique identifier of the organization requesting the weightage configuration.
+   * @param type The type of weightage configuration. It could be AVAILABILITY, PRIORITY, or
+   *     PROXIMITY.
+   * @param key The unique combination of source, geozone, line, order, and priority identifying the
+   *     configuration.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched weightage
+   *     configuration.
+   * @throws PromiseEngineException If an error occurs while fetching the configuration.
+   */
   @GetWeightageConfigurationDoc
   @GetMapping
   public ResponseEntity<BaseResponse<WeightageConfigurationDto>> getWeightageConfiguration(
@@ -121,6 +174,19 @@ public class WeightageConfigurationController {
     }
   }
 
+  /**
+   * Fetches the list of weightage configurations based on the provided key.
+   *
+   * <p>This method processes a GET request to retrieve the weightage configurations associated with
+   * the given <code>key</code>. The key is a unique combination of source, geozone, line, order,
+   * and priority, which identifies the set of configurations.
+   *
+   * @param key The unique combination of source, geozone, line, order, and priority identifying the
+   *     weightage configurations.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a list of the fetched
+   *     weightage configurations.
+   * @throws PromiseEngineException If an error occurs while fetching the configurations.
+   */
   @GetWeightageConfigurationByKeyDoc
   @GetMapping("/{key}")
   public ResponseEntity<BaseResponse<List<WeightageConfigurationDto>>>
@@ -145,6 +211,24 @@ public class WeightageConfigurationController {
     }
   }
 
+  /**
+   * Updates the weightage configuration based on the provided organization ID, type, key, and
+   * request details.
+   *
+   * <p>This method processes a PUT request to update an existing weightage configuration. It
+   * requires the organization ID, type, key, and request body containing the details of the
+   * configuration to be updated.
+   *
+   * @param orgId The unique identifier of the organization. Cannot be empty.
+   * @param type The weightage type of the configuration, such as AVAILABILITY, PRIORITY, or
+   *     PROXIMITY.
+   * @param key The combination of the source, geozone, line, order, and priority that uniquely
+   *     identifies the configuration.
+   * @param baseRequest The request body containing the updated weightage configuration details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated weightage
+   *     configuration.
+   * @throws PromiseEngineException If an error occurs during the update process.
+   */
   @UpdateWeightageConfigurationDoc
   @PutMapping
   public ResponseEntity<BaseResponse<WeightageConfigurationDto>> updateWeightageConfiguration(
@@ -185,6 +269,21 @@ public class WeightageConfigurationController {
     }
   }
 
+  /**
+   * Deletes a weightage configuration based on the provided organization ID, type, and key.
+   *
+   * <p>This method processes a DELETE request to remove an existing weightage configuration. It
+   * requires the organization ID, type, and key to identify the configuration to be deleted.
+   *
+   * @param orgId The unique identifier of the organization. Cannot be empty.
+   * @param type The weightage type of the configuration, such as AVAILABILITY, PRIORITY, or
+   *     PROXIMITY.
+   * @param key The combination of the source, geozone, line, order, and priority that uniquely
+   *     identifies the configuration.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the deleted weightage
+   *     configuration.
+   * @throws PromiseEngineException If an error occurs during the deletion process.
+   */
   @DeleteWeightageConfigurationDoc
   @Transactional
   @DeleteMapping
@@ -224,6 +323,19 @@ public class WeightageConfigurationController {
     }
   }
 
+  /**
+   * Retrieves a list of weightage cache keys.
+   *
+   * <p>This method processes a GET request to fetch weightage cache keys, with an optional limit on
+   * the number of keys to be retrieved. The limit parameter defines the maximum number of keys to
+   * return.
+   *
+   * @param limit The maximum number of cache keys to retrieve. If null, all keys will be fetched.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of fetched
+   *     {@link WeightageCacheKeyDto} objects.
+   * @throws PromiseEngineException If an error occurs during the process of fetching the cache
+   *     keys.
+   */
   @GetMapping("/get-all-cache-keys")
   @GetWeightageCacheKeysDoc
   public ResponseEntity<BaseResponse<List<WeightageCacheKeyDto>>> getWeightageCacheKeys(

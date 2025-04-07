@@ -63,10 +63,10 @@ public class KafkaUtils {
    *     </ul>
    *     <p>Example Usage:
    *     <pre>
-   *     KafkaOperations<String, Object> kafkaOperations = ...;
+   *     KafkaOperations&lt;String, Object&gt; kafkaOperations = ...;
    *     String dltTopic = "my-dlt-topic";
    *     CommonErrorHandler errorHandler = kafkaErrorHandler(kafkaOperations, dltTopic);
-   * </pre>
+   *         </pre>
    *
    * @see FixedBackOff
    * @see DeadLetterPublishingRecoverer

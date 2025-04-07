@@ -42,6 +42,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing selector and cost itinerary mappings for a specific organization.
+ *
+ * <p>This controller provides various endpoints for creating, retrieving, updating, and deleting
+ * selector and cost itinerary mappings. It also includes functionality for retrieving cache keys
+ * associated with these mappings.
+ *
+ * <p>The controller is tagged with "Selector and Cost Itinerary Mapping APIs" for easy
+ * categorization in API documentation.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/cost-config/selector-itinerary-mapping")
@@ -54,6 +64,19 @@ public class SelectorAndCostItineraryMappingController {
 
   private final SelectorAndCostItineraryMappingService selectorAndCostItineraryMappingService;
 
+  /**
+   * Creates a new selector and cost itinerary mapping for the specified organization.
+   *
+   * <p>This method processes a POST request to create a new mapping based on the provided
+   * organization identifier and the selector and cost itinerary mapping request.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param selectorAndCostItineraryMappingRequest The request payload containing the details for
+   *     creating the mapping.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created mapping
+   *     data.
+   * @throws CommonServiceException If there is an error during the creation process.
+   */
   @CreateSelectorAndCostItineraryMappingDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -81,6 +104,18 @@ public class SelectorAndCostItineraryMappingController {
                 .build());
   }
 
+  /**
+   * Retrieves a selector and cost itinerary mapping by organization ID and mapping ID.
+   *
+   * <p>This method processes a GET request to fetch a specific selector and cost itinerary mapping
+   * based on the provided organization ID and mapping ID.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param id The unique identifier of the selector and cost itinerary mapping.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched mapping
+   *     data.
+   * @throws CommonServiceException If there is an error during the fetch process.
+   */
   @GetSelectorAndCostItineraryMappingDoc
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{orgId}/{id}")
   public ResponseEntity<BaseResponse<SelectorAndCostItineraryMappingResponse>>
@@ -108,6 +143,19 @@ public class SelectorAndCostItineraryMappingController {
             .build());
   }
 
+  /**
+   * Retrieves a list of selector and cost itinerary mappings by organization ID, cost type, and
+   * optional cost factor.
+   *
+   * <p>This method processes a GET request to fetch mappings based on the provided organization ID,
+   * cost type, and optionally, a cost factor selector.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param costType The cost type (e.g., "SHIPPING_COST").
+   * @param selectorCf The value of the selected cost factor (optional).
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a list of mappings.
+   * @throws CommonServiceException If there is an error during the fetch process.
+   */
   @GetSelectorAndCostItineraryByOrgIdSelectorCfAndCostTypeDoc
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{orgId}/costType/{costType}")
   public ResponseEntity<BaseResponse<List<SelectorAndCostItineraryMappingResponse>>>
@@ -137,6 +185,17 @@ public class SelectorAndCostItineraryMappingController {
             .build());
   }
 
+  /**
+   * Deletes a selector and cost itinerary mapping for the specified organization and mapping ID.
+   *
+   * <p>This method processes a DELETE request to remove a specific mapping based on the provided
+   * organization ID and mapping ID.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param id The unique identifier of the selector and cost itinerary mapping.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} confirming the deletion.
+   * @throws CommonServiceException If there is an error during the deletion process.
+   */
   @DeleteSelectorAndCostItineraryMappingDoc
   @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "{orgId}/{id}")
   public ResponseEntity<BaseResponse<SelectorAndCostItineraryMappingResponse>>
@@ -166,6 +225,15 @@ public class SelectorAndCostItineraryMappingController {
             .build());
   }
 
+  /**
+   * Retrieves all selector and cost itinerary mapping cache keys with an optional limit.
+   *
+   * <p>This method processes a GET request to fetch all cache keys related to selector and cost
+   * itinerary mappings, with an optional parameter for limiting the number of rows returned.
+   *
+   * @param limit The maximum number of rows to be returned from the database (default is 100).
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of cache keys.
+   */
   @GetSelectorAndCostItineraryMappingCacheKeysDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<SelectorAndCostItineraryMappingCacheKeyDto>>>
@@ -180,6 +248,21 @@ public class SelectorAndCostItineraryMappingController {
             .build());
   }
 
+  /**
+   * Updates an existing selector and cost itinerary mapping for the specified organization and
+   * mapping ID.
+   *
+   * <p>This method processes a PUT request to update an existing mapping based on the provided
+   * organization ID, mapping ID, and the request payload containing the updated details.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param id The unique identifier of the selector and cost itinerary mapping.
+   * @param updateSelectorAndCostItineraryMappingRequest The request payload containing the updated
+   *     mapping details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated mapping
+   *     data.
+   * @throws CommonServiceException If there is an error during the update process.
+   */
   @UpdateSelectorAndCostItineraryMappingDoc
   @PutMapping("/{orgId}/{id}")
   public ResponseEntity<BaseResponse<SelectorAndCostItineraryMappingResponse>>

@@ -41,6 +41,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Transit Buffer configuration requests.
+ *
+ * <p>This controller provides APIs for creating, updating, fetching, and deleting transit buffer
+ * configuration requests. It allows users to manage the lifecycle of buffer configuration requests
+ * within the transit system.
+ *
+ * <p>The controller is tagged with "Transit Buffer Configuration Request APIs" for easy
+ * categorization in API documentation.
+ */
 @Validated
 @RestController
 @Tag(name = "Transit Buffer Configuration Request APIs")
@@ -52,6 +62,23 @@ public class TransitBufferConfigRequestController {
       LoggerFactory.getLogger(TransitBufferConfigRequestController.class);
   private final TransitBufferConfigRequestService transitBufferConfigRequestService;
 
+  /**
+   * Handles the creation of a transit buffer configuration request.
+   *
+   * <p>This method processes the provided {@link TransitBufferConfigRequest} and returns the
+   * response as a {@link TransitBufferConfigResponse}.
+   *
+   * @param transitBufferConfigRequest The request payload containing the transit buffer
+   *     configuration details. It must be a valid {@link TransitBufferConfigRequest} object.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the result of the
+   *     processing. The response includes a message indicating the success of the creation process
+   *     and the payload as a {@link TransitBufferConfigResponse}.
+   * @throws CommonServiceException If there is a general error processing the request.
+   * @throws IOException If an I/O error occurs while processing the request.
+   * @throws TransitBufferReqJobRefDomainException If there is an error related to the transit
+   *     buffer request job reference.
+   * @throws CsvException If there is an error related to CSV parsing or generation.
+   */
   @ProcessTransitBufferConfigRequestDoc
   @PostMapping
   public ResponseEntity<BaseResponse<TransitBufferConfigResponse>>
@@ -76,6 +103,22 @@ public class TransitBufferConfigRequestController {
     }
   }
 
+  /**
+   * Updates the status of a transit buffer configuration request.
+   *
+   * <p>This method allows updating the status of a transit buffer configuration request by
+   * providing a unique identifier and a new status.
+   *
+   * @param id The unique identifier of the transit buffer configuration request. This is a required
+   *     parameter that is passed as a {@link PathVariable}.
+   * @param status The new status to update the transit buffer configuration request to. This is
+   *     passed as a {@link RequestParam} and should be a valid value of {@link
+   *     TransitBufferConfigRequestStatusEnum}.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the result of the
+   *     update process. The response includes a success message and the updated {@link
+   *     TransitBufferConfigResponse}.
+   * @throws CommonServiceException If there is a general error while processing the update request.
+   */
   @UpdateTransitBufferConfigRequestStatusDoc
   @PutMapping("/update-status/{id}")
   public ResponseEntity<BaseResponse<TransitBufferConfigResponse>>
@@ -108,6 +151,23 @@ public class TransitBufferConfigRequestController {
     }
   }
 
+  /**
+   * Retrieves the transit buffer configuration requests for a given organization and carrier
+   * service.
+   *
+   * <p>This method fetches the list of transit buffer configuration requests for a specified
+   * organization and carrier service. The requests are returned as a list of {@link
+   * TransitBufferConfigResponse} objects in the response body.
+   *
+   * @param orgId The unique identifier of the organization. This is a required parameter passed as
+   *     a {@link PathVariable}.
+   * @param carrierServiceId The unique identifier of the carrier service. This is a required
+   *     parameter passed as a {@link RequestParam}.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of fetched
+   *     {@link TransitBufferConfigResponse} objects and a success message.
+   * @throws CommonServiceException If there is an error while fetching the transit buffer
+   *     configuration requests.
+   */
   @GetTransitBufferConfigRequestsDoc
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<List<TransitBufferConfigResponse>>>
@@ -137,6 +197,26 @@ public class TransitBufferConfigRequestController {
     }
   }
 
+  /**
+   * Deletes a transit buffer configuration request.
+   *
+   * <p>This method deletes the specified transit buffer configuration request based on the provided
+   * request identifier and creator information. A response is returned indicating whether the
+   * deletion was successful.
+   *
+   * @param transitBufferRequestId The unique identifier of the transit buffer configuration
+   *     request. This is a required parameter passed as a {@link RequestParam}.
+   * @param createdBy The user who created the request. This is a required parameter passed as a
+   *     {@link RequestParam}.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the {@link
+   *     TransitBufferConfigResponse} indicating the result of the deletion operation and a success
+   *     message.
+   * @throws CommonServiceException If there is an error during the service processing.
+   * @throws IOException If there is an I/O error during the request.
+   * @throws TransitBufferReqJobRefDomainException If an error related to the domain of the transit
+   *     buffer request occurs.
+   * @throws CsvException If there is an error during CSV processing.
+   */
   @DeleteTransitBufferConfigRequestDoc
   @DeleteMapping
   public ResponseEntity<BaseResponse<TransitBufferConfigResponse>> deleteTransitBufferConfigRequest(

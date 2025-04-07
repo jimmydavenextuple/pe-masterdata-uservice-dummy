@@ -29,6 +29,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for carrier transit time APIs.
+ *
+ * <p>This controller provides APIs to fetch carrier transit times for organizations, with support
+ * for pagination and sorting of the transit time entries.
+ *
+ * <p>The controller is tagged with "Carrier Transit Time APIs" for easy categorization in API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/ui/carrier-transit-time")
 @RequiredArgsConstructor
@@ -42,6 +51,19 @@ public class CarrierTransitTimeController {
 
   private final CarrierTransitTimeService carrierTransitTimeService;
 
+  /**
+   * Retrieves a paginated list of carrier transit times for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch carrier transit times data for a specific
+   * organization, with support for pagination and sorting. It returns a paginated response
+   * containing carrier transit time entries.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param pageParams The pagination parameters, such as page number, page size, sorting criteria,
+   *     and sort order.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a paginated list of
+   *     carrier transit times.
+   */
   @GetMapping("/orgId/{orgId}")
   @GetCarrierTransitTimeDoc
   public ResponseEntity<BaseResponse<PagePayload<CarrierTransitDto>>> getCarrierTransitTimeList(

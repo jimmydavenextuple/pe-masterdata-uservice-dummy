@@ -66,7 +66,7 @@ public class WeightageConfigurationService {
    * Fetch Weightage
    *
    * @param baseRequest Fetch Weightage Request
-   * @return Map<String, Float> fetchWeightageResponse
+   * @return Map&lt;String, Float&gt; fetchWeightageResponse
    * @throws PromiseEngineException
    */
   public Map<String, Float> fetchWeightage(FetchWeightageRequest baseRequest)

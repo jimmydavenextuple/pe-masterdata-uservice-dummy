@@ -42,6 +42,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing recommendation rules and target profit margins.
+ *
+ * <p>This controller provides APIs to configure, update, and manage recommendation rules including
+ * target profit margins and ship charge capping configurations. It supports operations for:
+ *
+ * <ul>
+ *   <li>Creating and updating target profit margins
+ *   <li>Managing ship charge capping constants
+ *   <li>Fetching attribute details and configurations
+ *   <li>Deleting target profit margin configurations
+ * </ul>
+ *
+ * <p>The controller exposes endpoints for managing recommendation rules at the organization level,
+ * with support for attribute-based configurations and ship charge capping logic.
+ *
+ * @see RecommendationRulesService
+ * @see TargetProfitMarginRequest
+ * @see ConfigureShipChargeCappingRequest
+ */
 @RestController
 @RequestMapping("/ui/recommendation-rules")
 @RequiredArgsConstructor
@@ -51,6 +71,18 @@ public class RecommendationRulesController {
 
   private final RecommendationRulesService recommendationRulesService;
 
+  /**
+   * Creates a new target profit margin configuration for an organization.
+   *
+   * <p>This endpoint processes a POST request to create a target profit margin configuration based
+   * on the provided organization ID and target profit margin details.
+   *
+   * @param orgId The unique identifier for the organization.
+   * @param targetProfitMarginRequest The request payload containing target profit margin details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created target
+   *     profit margin configuration.
+   * @throws CommonServiceException If there is an error in processing the request.
+   */
   @ConfigureTargetProfitMarginDoc
   @PostMapping(value = "/{orgId}")
   public ResponseEntity<BaseResponse<TargetProfitMarginResponse>> createTargetProfitMargin(
@@ -73,6 +105,22 @@ public class RecommendationRulesController {
                 .build());
   }
 
+  /**
+   * Updates an existing target profit margin configuration for an organization.
+   *
+   * <p>This method processes a PUT request to update the target profit margin configuration for a
+   * given organization. The update is performed based on the provided {@link
+   * TargetProfitMarginRequest} which contains the new target profit margin details.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param targetProfitMarginRequest The request payload containing updated target profit margin
+   *     details including attribute name, value and target gross profit margin.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated target
+   *     profit margin configuration.
+   * @throws CommonServiceException If there is an error in processing the request or if the target
+   *     profit margin configuration does not exist.
+   */
   @PutMapping("/{orgId}")
   @UpdateTargetProfitMarginDoc
   public ResponseEntity<BaseResponse<TargetProfitMarginResponse>> updateTargetProfitMarginConfig(
@@ -95,6 +143,23 @@ public class RecommendationRulesController {
                 .build());
   }
 
+  /**
+   * Deletes target profit margin configurations for specified attributes in an organization.
+   *
+   * <p>This method processes a PUT request to delete target profit margin configurations for a
+   * given organization based on the specified attribute name and values. The deletion is performed
+   * using the provided {@link DeleteTargetProfitMarginRequest} which contains the attribute details
+   * to be removed.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param request The {@link DeleteTargetProfitMarginRequest} containing the attribute name and
+   *     values for which the target profit margins should be deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message
+   *     indicating the target profit margins were deleted.
+   * @throws CommonServiceException If there is an error in processing the request or if the target
+   *     profit margin configurations do not exist.
+   */
   @PutMapping(value = "/{orgId}/delete")
   @DeleteTargetProfitMarginDoc
   public ResponseEntity<BaseResponse<String>> deleteTargetProfitMargin(
@@ -112,6 +177,22 @@ public class RecommendationRulesController {
             BaseResponse.builder().message("Target profit margin(s) deleted successfully").build());
   }
 
+  /**
+   * Retrieves target profit margin configurations for a specific organization and attribute.
+   *
+   * <p>This method processes a GET request to fetch target profit margin configurations for a given
+   * organization and attribute name. It returns all configured profit margins associated with the
+   * specified attribute within the organization.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param attributeName The name of the attribute for which to fetch profit margins. This
+   *     identifies the category of profit margins to retrieve.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a list of {@link
+   *     TargetProfitMarginResponse} objects representing the configured profit margins.
+   * @throws CommonServiceException If there is an error in processing the request or if the
+   *     configurations cannot be retrieved.
+   */
   @GetMapping(value = "/{orgId}/{attributeName}")
   @FetchTargetProfitMarginDoc
   public ResponseEntity<BaseResponse<List<TargetProfitMarginResponse>>> fetchTargetProfitMargins(
@@ -131,6 +212,21 @@ public class RecommendationRulesController {
                 .build());
   }
 
+  /**
+   * Retrieves attribute details for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch all available attribute details and their
+   * corresponding values for a given organization. These attributes are used in target profit
+   * margin configurations.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with an {@link
+   *     AttributeAndValuesTGMResponse} object representing the available attributes and their
+   *     values.
+   * @throws CommonServiceException If there is an error in processing the request or if the
+   *     attribute details cannot be retrieved.
+   */
   @GetMapping(value = "/fetch-attribute-details/{orgId}")
   @FetchAttributeDetailsDoc
   public ResponseEntity<BaseResponse<AttributeAndValuesTGMResponse>> fetchAttributeDetails(
@@ -145,6 +241,19 @@ public class RecommendationRulesController {
                 .build());
   }
 
+  /**
+   * Retrieves ship charge capping constants for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch all ship charge capping constants configured
+   * for a given organization. These constants are used to determine shipping charge limits and
+   * thresholds.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a {@link
+   *     ShipChargeDetailsTGMResponse} object representing the configured ship charge capping
+   *     constants.
+   */
   @GetMapping(value = "/ship-charge-capping-constants/{orgId}")
   @FetchShipChargeDetailsDoc
   public ResponseEntity<BaseResponse<ShipChargeDetailsTGMResponse>> fetchShipChargeDetailsDetails(
@@ -159,6 +268,23 @@ public class RecommendationRulesController {
                 .build());
   }
 
+  /**
+   * Configures ship charge capping constants for the specified organization.
+   *
+   * <p>This method processes a POST request to configure ship charge capping constants for a given
+   * organization. The configuration is performed using the provided {@link
+   * ConfigureShipChargeCappingRequest} which contains the capping thresholds and limits.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param request The {@link ConfigureShipChargeCappingRequest} containing the ship charge capping
+   *     configuration details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a {@link
+   *     ConfigureShipChargeCappingResponse} object representing the configured ship charge capping
+   *     constants.
+   * @throws CommonServiceException If there is an error in processing the request or if the
+   *     configuration cannot be applied.
+   */
   @PostMapping(value = "/ship-charge-capping-constants/{orgId}")
   @ConfigureShipChargeCappingDoc
   public ResponseEntity<BaseResponse<ConfigureShipChargeCappingResponse>>
@@ -176,6 +302,22 @@ public class RecommendationRulesController {
                 .build());
   }
 
+  /**
+   * Updates the ship charge capping status for the specified organization.
+   *
+   * <p>This method processes a PUT request to update the ship charge capping logic status for a
+   * given organization. The status determines whether shipping charge capping logic should be
+   * applied during calculations.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param isShipChargeCappingLogicEnabled Boolean flag indicating whether the shipping charge
+   *     capping logic should be enabled or disabled. True enables the logic, false disables it.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message
+   *     indicating the status was updated.
+   * @throws CommonServiceException If there is an error in processing the request or if the status
+   *     cannot be updated.
+   */
   @PutMapping(value = "/update-ship-charge-capping-status/{orgId}")
   @UpdateShipChargeCappingStatusDoc
   public ResponseEntity<BaseResponse<String>> updateShipChargeCappingStatus(

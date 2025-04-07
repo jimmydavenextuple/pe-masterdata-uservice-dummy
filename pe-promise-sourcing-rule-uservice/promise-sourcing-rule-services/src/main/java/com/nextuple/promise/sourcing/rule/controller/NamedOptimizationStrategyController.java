@@ -41,6 +41,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing named optimization strategies.
+ *
+ * <p>This controller provides APIs for adding, retrieving, updating, and deleting named
+ * optimization strategies. These strategies are defined for specific organizations and groups and
+ * are used to optimize certain processes in the system.
+ *
+ * <p>The controller is tagged with "Named Optimization Strategy APIs" for easy categorization in
+ * the API documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/named-optimization-strategy")
@@ -53,6 +63,19 @@ public class NamedOptimizationStrategyController {
 
   private final NamedOptimizationStrategyService namedOptimizationStrategyService;
 
+  /**
+   * Adds a new named optimization strategy.
+   *
+   * <p>This method processes a POST request to add a named optimization strategy with the provided
+   * details.
+   *
+   * @param namedOptimizationStrategyRequest The request body containing details of the named
+   *     optimization strategy to be added.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     added named optimization strategy.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @AddOptimizationStrategyDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -76,6 +99,19 @@ public class NamedOptimizationStrategyController {
     }
   }
 
+  /**
+   * Retrieves a named optimization strategy by its ID and organization ID.
+   *
+   * <p>This method processes a GET request to fetch the details of a named optimization strategy
+   * using its unique ID and organization ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the named optimization strategy.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     named optimization strategy.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @GetOptimizationStrategyByIdDoc
   @GetMapping(value = "/orgId/{orgId}/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<NamedOptimizationStrategyResponse>>
@@ -109,6 +145,19 @@ public class NamedOptimizationStrategyController {
     }
   }
 
+  /**
+   * Retrieves named optimization strategies for a specific organization and group.
+   *
+   * <p>This method processes a GET request to fetch optimization strategies associated with a given
+   * organization ID and group ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param groupId The reference to the group.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the optimization
+   *     strategies.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @GetOptimizationStrategyByOrgIdAndGroupIdDoc
   @GetMapping(
       value = "/orgId/{orgId}/groupId/{groupId}",
@@ -143,6 +192,21 @@ public class NamedOptimizationStrategyController {
     }
   }
 
+  /**
+   * Updates a named optimization strategy.
+   *
+   * <p>This method processes a PUT request to update the details of an existing named optimization
+   * strategy.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param groupId The reference to the group.
+   * @param namedOptimizationStrategyUpdationRequest The request body containing the updated details
+   *     of the optimization strategy.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated
+   *     optimization strategy details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @UpdateOptimizationStrategyDoc
   @PutMapping(
       value = "/orgId/{orgId}/groupId/{groupId}",
@@ -176,6 +240,19 @@ public class NamedOptimizationStrategyController {
     }
   }
 
+  /**
+   * Deletes a named optimization strategy.
+   *
+   * <p>This method processes a DELETE request to remove a named optimization strategy associated
+   * with the provided organization and group IDs.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param groupId The reference to the group.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} confirming the deletion of
+   *     the optimization strategy.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @DeleteOptimizationStrategyDoc
   @DeleteMapping(
       value = "/orgId/{orgId}/groupId/{groupId}",

@@ -59,6 +59,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Node operations.
+ *
+ * <p>This controller provides APIs to perform operations such as creating, updating, fetching, and
+ * deleting nodes, as well as retrieving paginated lists of nodes.
+ *
+ * <p>The controller is tagged with "Node APIs" for easy categorization in API documentation.
+ */
 @Validated
 @RestController
 @Tag(name = "Node APIs")
@@ -72,6 +80,19 @@ public class NodeController {
   private final NodeService nodeService;
   private final PageProperties pageProperties;
 
+  /**
+   * Handles the creation of a new node.
+   *
+   * <p>This endpoint processes incoming requests to create a node based on the details provided in
+   * the request body.
+   *
+   * @param nodeRequest the {@link NodeRequest} object containing details about the node to be
+   *     created. Must be valid as per the defined constraints.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} object with a success
+   *     message and the created {@link NodeResponse}.
+   * @throws CommonServiceException if a common service-related error occurs during node creation.
+   * @throws NodeDomainException if a domain-specific error occurs during node creation.
+   */
   @CreateNodeDoc
   @PostMapping
   public ResponseEntity<BaseResponse<NodeResponse>> createNode(
@@ -92,6 +113,25 @@ public class NodeController {
     }
   }
 
+  /**
+   * Updates the details of an existing node.
+   *
+   * <p>This endpoint processes incoming requests to update the details of a node identified by its
+   * {@code nodeId} and {@code orgId}.
+   *
+   * @param nodeId the unique identifier of the node to be updated. Must not be blank. See {@link
+   *     NodeConstants#NODE_ID} for description and {@link NodeConstants#NODE_ID_EXAMPLE} for an
+   *     example value.
+   * @param orgId the unique identifier of the organization to which the node belongs. Must not be
+   *     blank. See {@link NodeConstants#ORG_ID} for description and {@link
+   *     NodeConstants#ORG_ID_EXAMPLE} for an example value.
+   * @param nodeUpdationRequest the {@link NodeUpdationRequest} object containing the updated
+   *     details of the node. Must be valid as per the defined constraints.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} object with a success
+   *     message and the updated {@link NodeResponse}.
+   * @throws NodeDomainException if a domain-specific error occurs during node update.
+   * @throws CommonServiceException if a common service-related error occurs during node update.
+   */
   @UpdateNodeDetailsDoc
   @PutMapping("/{nodeId}/{orgId}")
   public ResponseEntity<BaseResponse<NodeResponse>> updateNodeDetails(
@@ -122,6 +162,24 @@ public class NodeController {
     }
   }
 
+  /**
+   * Retrieves the details of a specific node.
+   *
+   * <p>This endpoint processes requests to fetch the details of a node identified by its {@code
+   * nodeId} and {@code orgId}.
+   *
+   * @param nodeId the unique identifier of the node whose details are to be fetched. Must not be
+   *     blank. See {@link NodeConstants#NODE_ID} for description and {@link
+   *     NodeConstants#NODE_ID_EXAMPLE} for an example value.
+   * @param orgId the unique identifier of the organization to which the node belongs. Must not be
+   *     blank. See {@link NodeConstants#ORG_ID} for description and {@link
+   *     NodeConstants#ORG_ID_EXAMPLE} for an example value.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} object with a success
+   *     message and the fetched {@link NodeResponse}.
+   * @throws NodeDomainException if a domain-specific error occurs during the retrieval process.
+   * @throws CommonServiceException if a common service-related error occurs during the retrieval
+   *     process.
+   */
   @GetMapping("/{nodeId}/{orgId}")
   @GetNodeDetailsDoc
   public ResponseEntity<BaseResponse<NodeResponse>> getNodeDetails(
@@ -150,6 +208,24 @@ public class NodeController {
     }
   }
 
+  /**
+   * Deletes a specific node.
+   *
+   * <p>This endpoint processes requests to delete a node identified by its {@code nodeId} and
+   * {@code orgId}.
+   *
+   * @param nodeId the unique identifier of the node to be deleted. Must not be blank. See {@link
+   *     NodeConstants#NODE_ID} for description and {@link NodeConstants#NODE_ID_EXAMPLE} for an
+   *     example value.
+   * @param orgId the unique identifier of the organization to which the node belongs. Must not be
+   *     blank. See {@link NodeConstants#ORG_ID} for description and {@link
+   *     NodeConstants#ORG_ID_EXAMPLE} for an example value.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} object with a success
+   *     message and the details of the deleted {@link NodeResponse}.
+   * @throws NodeDomainException if a domain-specific error occurs during the deletion process.
+   * @throws CommonServiceException if a common service-related error occurs during the deletion
+   *     process.
+   */
   @Operation(summary = "Delete Node", description = NodeConstants.DELETE_NODE_DESC)
   @ApiResponse(responseCode = "200", description = NodeConstants.DELETE_NODE_SUCCESS)
   @DeleteNodeDoc
@@ -181,6 +257,22 @@ public class NodeController {
     }
   }
 
+  /**
+   * Retrieves a paginated list of nodes for a specific organization.
+   *
+   * <p>This endpoint processes requests to fetch a list of nodes associated with a given {@code
+   * orgId}. Pagination parameters are passed through the {@code pageParams}.
+   *
+   * @param orgId the unique identifier of the organization for which the node list is to be
+   *     fetched. Must not be blank. See {@link NodeConstants#ORG_ID} for description and {@link
+   *     NodeConstants#ORG_ID_EXAMPLE} for an example value.
+   * @param pageParams an object containing pagination parameters, such as page number and size.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} object with a success
+   *     message and a {@link PagePayload} object that includes the list of {@link NodeDto} and
+   *     pagination details.
+   * @throws CommonServiceException if a common service-related error occurs during the process.
+   * @throws NodeDomainException if a domain-specific error occurs while fetching the node list.
+   */
   @GetNodeListDoc
   @GetMapping("/{orgId}")
   public ResponseEntity<BaseResponse<PagePayload<NodeDto>>> getNodeList(
@@ -203,6 +295,25 @@ public class NodeController {
             .build());
   }
 
+  /**
+   * Retrieves a paginated list of nodes for a specific organization with optional filters.
+   *
+   * <p>This endpoint processes requests to fetch a list of nodes associated with a given {@code
+   * orgId}. Optional filters for node IDs and node types can be applied. Pagination parameters are
+   * passed through the {@code pageParams}.
+   *
+   * @param orgId the unique identifier of the organization for which the node list is to be
+   *     fetched. Must not be blank. See {@link NodeConstants#ORG_ID} for description and {@link
+   *     NodeConstants#ORG_ID_EXAMPLE} for an example value.
+   * @param nodeIds an optional comma-separated list of node IDs to filter the results. Can be null.
+   * @param nodeType an optional node type to filter the results. Can be null.
+   * @param pageParams an object containing pagination parameters, such as page number and size.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} object with a success
+   *     message and a {@link PagePayload} object that includes the list of {@link NodeDto} and
+   *     pagination details.
+   * @throws CommonServiceException if a common service-related error occurs during the process.
+   * @throws NodeDomainException if a domain-specific error occurs while fetching the node list.
+   */
   @GetNodeListV2Doc
   @GetMapping("/{orgId}/v2")
   public ResponseEntity<BaseResponse<PagePayload<NodeDto>>> getNodeListV2(
@@ -228,6 +339,26 @@ public class NodeController {
             .build());
   }
 
+  /**
+   * Retrieves a paginated list of all nodes across organizations.
+   *
+   * <p>This endpoint processes requests to fetch all nodes, with support for pagination and
+   * sorting. If pagination parameters (such as page number, page size, sort field, and sort order)
+   * are not provided, default values are applied.
+   *
+   * @param pageParams an object containing optional pagination and sorting parameters:
+   *     <ul>
+   *       <li>Page number ({@code pageNo})
+   *       <li>Page size ({@code pageSize})
+   *       <li>Sorting field ({@code sortBy})
+   *       <li>Sort order ({@code sortOrder})
+   *     </ul>
+   *     If not specified, default values from application properties are used.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} object with a success
+   *     message and a {@link PagePayload} object containing the list of {@link NodeDto} and
+   *     pagination details.
+   * @throws NodeDomainException if a domain-specific error occurs while fetching the node list.
+   */
   @GetAllNodeList
   @GetMapping("/all-nodes")
   public ResponseEntity<BaseResponse<PagePayload<NodeDto>>> getAllNodesList(PageParams pageParams)
@@ -250,6 +381,17 @@ public class NodeController {
             .build());
   }
 
+  /**
+   * Retrieves a list of node cache keys with a specified limit.
+   *
+   * <p>This endpoint processes requests to fetch a limited number of node cache keys. The limit
+   * determines the maximum number of keys to be retrieved.
+   *
+   * @param limit the maximum number of node cache keys to fetch. Must be a non-null integer.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} object with a success
+   *     message and a list of {@link NodeCacheKeyDto}.
+   * @throws NodeDomainException if a domain-specific error occurs while fetching the cache keys.
+   */
   @GetNodeCacheKeysDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<NodeCacheKeyDto>>> getNodeCacheKeys(
@@ -335,6 +477,23 @@ public class NodeController {
     return pagePayload;
   }
 
+  /**
+   * Retrieves a paginated list of nodes for a specific organization (Version 1).
+   *
+   * <p>This endpoint processes requests to fetch a list of nodes associated with a given {@code
+   * orgId}. Pagination parameters are passed through the {@code pageParams}.
+   *
+   * @param orgId the unique identifier of the organization for which the node list is to be
+   *     fetched. Must not be blank. See {@link NodeConstants#ORG_ID} for description and {@link
+   *     NodeConstants#ORG_ID_EXAMPLE} for an example value.
+   * @param pageParams an object containing pagination parameters, such as page number and size.
+   *     Defaults are used if parameters are absent.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} object with a success
+   *     message and a {@link PagePayload} object that includes the list of {@link NodeDto} and
+   *     pagination details.
+   * @throws NodeDomainException if a domain-specific error occurs while fetching the node list.
+   * @throws CommonServiceException if a common service-related error occurs during the process.
+   */
   @GetNodeListV1Doc
   @GetMapping("/{orgId}/v1")
   public ResponseEntity<BaseResponse<PagePayload<NodeDto>>> getNodeListV1(
@@ -357,6 +516,19 @@ public class NodeController {
             .build());
   }
 
+  /**
+   * Retrieves all node types for a specific organization.
+   *
+   * <p>This endpoint processes requests to fetch all node types associated with the given {@code
+   * orgId}.
+   *
+   * @param orgId the unique identifier of the organization for which the node types are to be
+   *     fetched. Must not be blank.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} object with a success
+   *     message and a {@link NodeTypesResponse} containing the list of node types.
+   * @throws CommonServiceException if a common service-related error occurs while fetching the node
+   *     types.
+   */
   @GetMapping("/node-types/{orgId}")
   @GetNodeTypesDoc
   public ResponseEntity<BaseResponse<NodeTypesResponse>> getAllNodeTypes(@PathVariable String orgId)
@@ -368,6 +540,18 @@ public class NodeController {
             .build());
   }
 
+  /**
+   * Checks if nodes exist based on a list of node IDs and an organization ID.
+   *
+   * <p>This endpoint processes requests to verify the existence of nodes identified by their {@code
+   * nodeIds} and associated with a given {@code orgId}.
+   *
+   * @param nodeIds the list of node IDs to check for existence. Must not be null or empty.
+   * @param orgId the unique identifier of the organization to which the nodes belong. Must not be
+   *     blank.
+   * @return a {@link ResponseEntity} containing a {@link BaseResponse} object with a success
+   *     message and a list of node IDs that exist.
+   */
   @GetMapping("/check-nodes-exist/orgId/{orgId}")
   @CheckNodesExistDoc
   public ResponseEntity<BaseResponse<List<String>>> checkNodesExistByNodeIdsAndOrgId(

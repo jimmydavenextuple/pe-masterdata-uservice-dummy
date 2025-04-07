@@ -20,6 +20,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Controller for node calendar data upload APIs.
+ *
+ * <p>This controller provides APIs to upload node calendar data from a specified file URI and
+ * process it for storage or further use.
+ *
+ * <p>The controller is tagged for handling node calendar data upload functionality.
+ */
 @Controller
 @RequestMapping("/upload")
 @Slf4j
@@ -27,6 +35,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class NodeCalendarDataUploadController {
   private final NodeCalendarDataUploadService nodeCalendarDataUploadService;
 
+  /**
+   * Uploads the node calendar data from the specified file URI.
+   *
+   * <p>This method processes a POST request to upload node calendar data by fetching the file
+   * located at the specified file URI and processing it.
+   *
+   * @param fileUri The URI of the file containing the node calendar data to be uploaded.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a success message if
+   *     the upload is successful.
+   * @throws IOException If there is an error during file reading or processing.
+   * @throws CommonServiceException If there is a general error during the service process.
+   */
   @PostMapping("/node-calendar")
   public ResponseEntity<BaseResponse<String>> uploadNodeCalendarData(
       @NotBlank(message = "fileUri can't be empty") @RequestParam String fileUri)

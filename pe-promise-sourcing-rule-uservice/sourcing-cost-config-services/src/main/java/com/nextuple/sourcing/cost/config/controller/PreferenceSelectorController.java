@@ -43,6 +43,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing tenant preference selectors within an organization.
+ *
+ * <p>This controller handles operations such as creating, updating, fetching, and deleting
+ * preference selectors for cost types and selectors within a given organization. It also includes
+ * functionality to retrieve cache keys associated with preference selectors.
+ *
+ * <p>The controller is tagged with "Tenant Preference for Selector APIs" for easy categorization in
+ * API documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/cost-config/selector")
@@ -55,6 +65,19 @@ public class PreferenceSelectorController {
 
   private final PreferenceSelectorService preferenceSelectorService;
 
+  /**
+   * Creates a new preference selector for the specified organization.
+   *
+   * <p>This method processes a POST request to create a new preference selector based on the
+   * provided details and organization identifier.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param createPreferenceSelectorRequest The request payload containing the details for creating
+   *     the preference selector.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created preference
+   *     selector's data.
+   * @throws CommonServiceException If there is an error during the creation process.
+   */
   @CreatePreferenceSelector
   @PostMapping(value = "/{orgId}")
   public ResponseEntity<BaseResponse<PreferenceSelectorDto>> createPreferenceSelector(
@@ -77,6 +100,18 @@ public class PreferenceSelectorController {
                 .build());
   }
 
+  /**
+   * Retrieves a preference selector by organization ID and selector ID.
+   *
+   * <p>This method processes a GET request to fetch a specific preference selector based on the
+   * provided organization ID and selector ID.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param selectorId The unique identifier of the tenant preference for the selector.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the retrieved
+   *     preference selector's data.
+   * @throws CommonServiceException If there is an error during the fetch process.
+   */
   @GetPreferenceSelectorByOrgIdAndSelectorId
   @GetMapping(value = "/{orgId}/{selectorId}")
   public ResponseEntity<BaseResponse<PreferenceSelectorDto>>
@@ -104,6 +139,18 @@ public class PreferenceSelectorController {
             .build());
   }
 
+  /**
+   * Retrieves a preference selector by organization ID and cost type.
+   *
+   * <p>This method processes a GET request to fetch a specific preference selector based on the
+   * provided organization ID and cost type.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param costType The type of cost (e.g., "SHIPPING_COST").
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the retrieved
+   *     preference selector's data.
+   * @throws CommonServiceException If there is an error during the fetch process.
+   */
   @GetPreferenceSelectorByOrgIdAndCostTypeDoc
   @GetMapping(value = "/{orgId}/costType/{costType}")
   public ResponseEntity<BaseResponse<PreferenceSelectorDto>>
@@ -129,6 +176,19 @@ public class PreferenceSelectorController {
             .build());
   }
 
+  /**
+   * Updates an existing preference selector for the specified organization and selector ID.
+   *
+   * <p>This method processes a PUT request to update an existing preference selector.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param selectorId The unique identifier of the tenant preference for the selector.
+   * @param updateCreatePreferenceSelectorRequest The request payload containing the updated
+   *     preference selector details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated preference
+   *     selector's data.
+   * @throws CommonServiceException If there is an error during the update process.
+   */
   @UpdatePreferenceSelector
   @PutMapping(value = "/{orgId}/{selectorId}")
   public ResponseEntity<BaseResponse<PreferenceSelectorDto>> updatePreferenceSelector(
@@ -157,6 +217,17 @@ public class PreferenceSelectorController {
             .build());
   }
 
+  /**
+   * Deletes a preference selector for the specified organization and selector ID.
+   *
+   * <p>This method processes a DELETE request to remove a specific preference selector based on the
+   * provided organization ID and selector ID.
+   *
+   * @param orgId The unique identifier of the organization (e.g., "NEXTUPLE_GR").
+   * @param selectorId The unique identifier of the tenant preference for the selector.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} confirming the deletion.
+   * @throws CommonServiceException If there is an error during the deletion process.
+   */
   @DeletePreferenceSelector
   @DeleteMapping(value = "/{orgId}/{selectorId}")
   public ResponseEntity<BaseResponse<PreferenceSelectorDto>> deletePreferenceSelector(
@@ -183,6 +254,16 @@ public class PreferenceSelectorController {
             .build());
   }
 
+  /**
+   * Retrieves all preference selector cache keys with an optional limit.
+   *
+   * <p>This method processes a GET request to fetch all cache keys related to preference selectors,
+   * with an optional parameter for limiting the number of rows returned.
+   *
+   * @param limit The maximum number of rows to be returned from the database (default is 100).
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of preference
+   *     selector cache keys.
+   */
   @GetPreferenceSelectorCacheKeysDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<PreferenceSelectorCacheKeyDto>>>
