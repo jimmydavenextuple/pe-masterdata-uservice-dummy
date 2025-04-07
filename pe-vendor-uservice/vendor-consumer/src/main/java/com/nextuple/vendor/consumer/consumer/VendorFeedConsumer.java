@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-    topics = "#{'${master-data.vendor.topic-names}'.split(',')}",
+    topics = "#{'${master-data.vendor.topic-names:null}'.split(',')}",
     groupId = "${master-data.vendor.group-id}",
     batch = "true",
     autoStartup = "${kafka-topic-flags.master-data.vendor.enabled:false}",
