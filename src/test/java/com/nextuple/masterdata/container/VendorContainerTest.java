@@ -59,7 +59,6 @@ class VendorContainerTest extends AbstractContainerTest {
 
     // Assert the REST response
     Assertions.assertEquals(expectedVendorResponse, convertedObject);
-    Assertions.assertEquals(3, convertedObject.getCustomAttributes().size());
 
     // Poll the database and assert the values
     util.pollAndAssert(
@@ -84,10 +83,7 @@ class VendorContainerTest extends AbstractContainerTest {
 
     String res =
         util.callRestPayload(
-            "http://localhost:8080/vendor/vendorId-001/NEXTUPLE_GR",
-            HttpMethod.GET,
-            null,
-            "payload");
+            "http://localhost:8080/vendor/Vendor-001/NEXTUPLE_GR", HttpMethod.GET, null, "payload");
     VendorResponse convertedObject = util.parseStringToClass(res, VendorResponse.class);
     Assertions.assertEquals(expectedVendorResponse, convertedObject);
   }
@@ -107,20 +103,19 @@ class VendorContainerTest extends AbstractContainerTest {
 
     String res =
         util.callRestPayload(
-            "http://localhost:8080/vendor/vendorId-001/NEXTUPLE_GR",
+            "http://localhost:8080/vendor/Vendor-001/NEXTUPLE_GR",
             HttpMethod.PUT,
             vendorRequestBody,
             "payload");
     VendorResponse convertedObject = util.parseStringToClass(res, VendorResponse.class);
     Assertions.assertEquals(expectedVendorResponse, convertedObject);
-    Assertions.assertEquals(2, convertedObject.getCustomAttributes().size());
 
     util.pollAndAssert(
         () ->
             Assertions.assertDoesNotThrow(
                 () ->
                     vendorPersistenceServiceImpl.findVendorByVendorIdAndOrgId(
-                        "vendorId-001", "NEXTUPLE_GR")),
+                        "Vendor-001", "NEXTUPLE_GR")),
         (input) -> {
           Assertions.assertTrue(input.isPresent());
           Assertions.assertEquals(expectedVendorDomainDto, input.get());
@@ -197,6 +192,14 @@ class VendorContainerTest extends AbstractContainerTest {
           Assertions.assertTrue(input.isPresent());
           Assertions.assertEquals(expectedVendorResponse2, input.get());
         });
+    String response =
+        util.callRestPayload(
+            "http://localhost:8080/vendor/Vendor-003/NEXTUPLE_GR",
+            HttpMethod.GET,
+            null,
+            "message",
+            404);
+    Assertions.assertEquals("\"Vendor not found with given details\"", response);
   }
 
   @Test
@@ -208,7 +211,7 @@ class VendorContainerTest extends AbstractContainerTest {
 
     String res =
         util.callRestPayload(
-            "http://localhost:8080/vendor/vendorId-002/NEXTUPLE_GR",
+            "http://localhost:8080/vendor/Vendor-002/NEXTUPLE_GR",
             HttpMethod.DELETE,
             null,
             "payload");
@@ -230,7 +233,7 @@ class VendorContainerTest extends AbstractContainerTest {
   void getVendorDetailsWithInvalidInput() throws IOException {
     String response =
         util.callRestPayload(
-            "http://localhost:8080/vendor/vendorId-002/NEXTUPLE_GR",
+            "http://localhost:8080/vendor/Vendor-002/NEXTUPLE_GR",
             HttpMethod.GET,
             null,
             "message",

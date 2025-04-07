@@ -31,7 +31,9 @@
       "action": "DELETE",
       "payload": {
         "vendorId":"Vendor-003",
-        "orgId":"NEXTUPLE_GR"
+        "orgId":"NEXTUPLE_GR",
+        "vendorType": "DC",
+        "vendorDescription":"BCD Retail Vendor"
       }
     },
     {
