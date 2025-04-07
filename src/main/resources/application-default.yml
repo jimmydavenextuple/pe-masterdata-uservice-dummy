@@ -25,6 +25,7 @@ spring:
       weightage-configuration: "http://localhost:8080/"
       userexit: "http://localhost:8080/"
       configuration: "http://localhost:8080/"
+      vendor: "http://localhost:8080/"
   jpa:
     database: POSTGRESQL
     show-sql: true
