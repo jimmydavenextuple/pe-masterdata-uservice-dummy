@@ -27,6 +27,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for item buffer UI APIs.
+ *
+ * <p>This controller provides APIs to fetch item buffer configurations and buffer details for
+ * organizations, with support for pagination and filtering.
+ *
+ * <p>The controller is tagged with "Item Buffer UI APIs" for easy categorization in API
+ * documentation.
+ */
 @RestController
 @RequestMapping("/item-buffer/ui/orgId/{orgId}")
 @RequiredArgsConstructor
@@ -36,6 +45,20 @@ public class ItemBufferDashboardController {
 
   private final ItemBufferDetailsService itemBufferDetailsService;
 
+  /**
+   * Retrieves a paginated list of items with buffer configurations for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch a list of items with buffer configurations
+   * based on the provided organization ID and optional item IDs, with support for pagination.
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param itemIds The optional comma-separated string containing references of the items to be
+   *     searched for.
+   * @param pageNo The page number for pagination (default is 1).
+   * @param pageSize The page size for pagination (default is 10).
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the paginated list of
+   *     items and buffer configurations.
+   */
   @GetMapping
   @GetItemListWithBufferConfiguredDoc
   public ResponseEntity<BaseResponse<PageResponseForItemBuffer>> getItemDetails(
@@ -57,6 +80,19 @@ public class ItemBufferDashboardController {
             .build());
   }
 
+  /**
+   * Retrieves the buffer details for the specified item in the specified organization and unit of
+   * measure.
+   *
+   * <p>This method processes a GET request to fetch the buffer details for a specific item,
+   * organization, and unit of measure (UOM).
+   *
+   * @param orgId The unique identifier for the organization (e.g., "NEXTUPLE_GR").
+   * @param itemId The unique identifier for the item.
+   * @param uom The unit of measure for the item.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of buffer
+   *     details for the item.
+   */
   @GetMapping("/{itemId}/{uom}")
   @GetItemBuffersDetailsForOrgIdAndItemIdDoc
   public ResponseEntity<BaseResponse<List<ItemBufferResponse>>> getItemBufferDetails(

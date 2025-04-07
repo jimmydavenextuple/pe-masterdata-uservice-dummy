@@ -122,7 +122,6 @@ public class CarrierServiceCalendarService {
     return INSTANCE.convertToCarrierServiceCalendarResponse(savedCarrierServiceCalendarDomainDto);
   }
 
-  /** Get Carrier&Service Calendar details by orgId and carrierServiceId */
   @ReaderDS
   public List<CarrierServiceCalendarResponse> processGetCarrierServiceCalendar(
       String orgId,
@@ -130,6 +129,7 @@ public class CarrierServiceCalendarService {
       Optional<String> serviceOption,
       Optional<String> shippingStage)
       throws CalendarDomainException, CalenderServiceException {
+    // Get Carrier&Service Calendar details by orgId and carrierServiceId
     return INSTANCE.convertToCarrierServiceCalendarResponseList(
         getAndFilterCarrierServiceCalendar(orgId, carrierServiceId, serviceOption, shippingStage));
   }

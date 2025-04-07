@@ -41,6 +41,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing sourcing attributes definitions within an organization.
+ *
+ * <p>This controller provides APIs for creating, retrieving, updating, and fetching active sourcing
+ * attributes definitions. Sourcing attributes definitions are used to manage various attributes
+ * involved in sourcing rules, and can be configured for specific organizational needs.
+ *
+ * <p>The controller is tagged with "Sourcing Attributes Definition APIs" for easy categorization in
+ * the API documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/sourcing-attributes-definition")
@@ -53,6 +63,19 @@ public class SourcingAttributesDefinitionController {
 
   private final SourcingAttributesDefinitionService sourcingAttributesDefinitionService;
 
+  /**
+   * Creates a new sourcing attributes definition.
+   *
+   * <p>Processes a POST request to create a sourcing attributes definition using the provided
+   * request details.
+   *
+   * @param sourcingRuleAttributesDefinitionRequest The {@link SourcingAttributesDefinitionRequest}
+   *     containing the details for the sourcing attributes definition.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created sourcing
+   *     attributes definition details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs during the process.
+   */
   @CreateSourcingAttributesDefinitionDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -78,6 +101,19 @@ public class SourcingAttributesDefinitionController {
     }
   }
 
+  /**
+   * Retrieves a sourcing attributes definition by its ID and organization ID.
+   *
+   * <p>Processes a GET request to fetch a sourcing attributes definition based on the specified
+   * organization ID and definition ID.
+   *
+   * @param id The unique identifier for the sourcing attributes definition.
+   * @param orgId The unique identifier of the organization.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched sourcing
+   *     attributes definition details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs during the process.
+   */
   @GetSourcingAttributesDefinitionDoc
   @GetMapping(value = "/orgId/{orgId}/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<SourcingAttributesDefinitionResponse>>
@@ -112,6 +148,20 @@ public class SourcingAttributesDefinitionController {
     }
   }
 
+  /**
+   * Retrieves sourcing attributes definitions in active status.
+   *
+   * <p>Processes a GET request to fetch active sourcing attributes definitions for the specified
+   * organization and scope.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param scope The {@link SourcingAttributesDefinitionScopeEnum} specifying the scope for the
+   *     attributes definitions.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched active
+   *     sourcing attributes definitions.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs during the process.
+   */
   @GetActiveSourcingAttributesDefinitionDoc
   @GetMapping(value = "/orgId/{orgId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<SourcingAttributesDefinitionResponse>>
@@ -145,6 +195,22 @@ public class SourcingAttributesDefinitionController {
     }
   }
 
+  /**
+   * Updates an existing sourcing attributes definition.
+   *
+   * <p>Processes a PUT request to update a sourcing attributes definition using the provided
+   * organization ID, definition ID, and update details.
+   *
+   * @param id The unique identifier for the sourcing attributes definition.
+   * @param orgId The unique identifier of the organization.
+   * @param sourcingRuleAttributesDefinitionUpdationRequest The {@link
+   *     SourcingAttributesDefinitionUpdationRequest} containing the updated details for the
+   *     sourcing attributes definition.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated sourcing
+   *     attributes definition details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs during the process.
+   */
   @UpdateSourcingAttributesDefinitionDoc
   @PutMapping(
       value = "/orgId/{orgId}/id/{id}",

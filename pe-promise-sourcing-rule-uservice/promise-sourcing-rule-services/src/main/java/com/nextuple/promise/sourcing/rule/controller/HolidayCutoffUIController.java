@@ -31,6 +31,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing holiday cutoff data in the UI.
+ *
+ * <p>This controller provides APIs for fetching holiday cutoff details based on various filters and
+ * pagination options. The details can be fetched for a specific organization, with support for
+ * paginated or non-paginated results.
+ *
+ * <p>The controller is tagged with "Holiday cutoff Dashboard APIs" for easy categorization in the
+ * API documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/holiday-cutoff/v1")
@@ -40,6 +50,29 @@ import org.springframework.web.bind.annotation.RestController;
 public class HolidayCutoffUIController {
   private final HolidayCutoffService holidayCutoffService;
 
+  /**
+   * Retrieves holiday cutoff details for the UI.
+   *
+   * <p>This method processes a POST request to fetch holiday cutoff details based on filters and
+   * pagination options provided in the request. It supports paginated or non-paginated results
+   * based on the `isPaginated` parameter.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param isPaginated A boolean flag indicating whether the results should be paginated. Default
+   *     is `true`.
+   * @param pageNo The page number for pagination. Default is `1`.
+   * @param pageSize The number of records per page for pagination. Default is `10`.
+   * @param sortBy The field to sort the results by. Default is `ruleName`.
+   * @param sortOrder The order of sorting, either `ASC` for ascending or `DESC` for descending.
+   *     Default is `ASC`.
+   * @param holidayCutoffUIRequest The request body containing filter criteria for fetching holiday
+   *     cutoff details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the holiday cutoff
+   *     details.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   */
   @PostMapping(value = "/orgId/{orgId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<PageResponseForHolidayCutoff>> getHolidayCutoffDetails(
       @NotBlank(message = "orgId can't be empty")

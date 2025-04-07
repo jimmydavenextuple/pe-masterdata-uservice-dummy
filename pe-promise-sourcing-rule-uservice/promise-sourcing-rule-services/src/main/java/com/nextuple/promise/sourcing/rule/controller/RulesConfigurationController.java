@@ -29,6 +29,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing rules configurations within the organization.
+ *
+ * <p>This controller provides APIs for creating, fetching, and deleting rule configurations related
+ * to promise sourcing. Rule configurations define the specific parameters and criteria used in
+ * sourcing rules within an organization.
+ *
+ * <p>The controller is tagged with "Rules Configuration APIs" for easy categorization in the API
+ * documentation.
+ */
 @Validated
 @RestController
 @Tag(name = "Rules Configuration APIs")
@@ -38,6 +48,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class RulesConfigurationController {
   private final RulesConfigurationService rulesConfigurationService;
 
+  /**
+   * Creates a new rule configuration.
+   *
+   * <p>Processes a POST request to create a rule configuration based on the provided details.
+   *
+   * @param request The {@link RulesConfigurationsRequest} containing details for the new rule
+   *     configuration.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created rule
+   *     configuration details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs during the process.
+   */
   @PostMapping
   public ResponseEntity<BaseResponse<RulesConfigurationResponse>> createRulesConfiguration(
       @Valid @RequestBody RulesConfigurationsRequest request)
@@ -55,6 +77,18 @@ public class RulesConfigurationController {
     }
   }
 
+  /**
+   * Fetches an existing rule configuration.
+   *
+   * <p>Processes a POST request to fetch a rule configuration based on the provided criteria.
+   *
+   * @param request The {@link FetchRuleConfigurationRequest} containing criteria for fetching the
+   *     rule configuration.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched rule
+   *     configuration details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs during the process.
+   */
   @FetchRulesConfigurationDoc
   @PostMapping("/fetch-rule")
   public ResponseEntity<BaseResponse<RulesConfigurationResponse>> fetchRulesConfiguration(
@@ -68,6 +102,17 @@ public class RulesConfigurationController {
             .build());
   }
 
+  /**
+   * Deletes an existing rule configuration.
+   *
+   * <p>Processes a DELETE request to delete a rule configuration based on the provided parameters.
+   *
+   * @param ruleConfigurationParam The {@link RuleConfigurationParam} containing details of the rule
+   *     configuration to be deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} confirming the deletion.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs during the process.
+   */
   @DeleteRuleConfigurationDoc
   @DeleteMapping
   public ResponseEntity<BaseResponse<RulesConfigurationResponse>> deleteRuleConfiguration(

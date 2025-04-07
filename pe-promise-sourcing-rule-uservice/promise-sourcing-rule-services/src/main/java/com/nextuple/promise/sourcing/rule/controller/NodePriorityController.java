@@ -48,6 +48,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing node priorities within Node Groups in an organization.
+ *
+ * <p>This controller provides APIs for adding, updating, retrieving, and removing nodes and their
+ * priorities within a node group in an organization. A node group is a collection of nodes, and the
+ * node priorities dictate the order or importance of nodes within that group.
+ *
+ * <p>The controller is tagged with "Node Priority APIs" for easy categorization in the API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/node-priority")
@@ -59,6 +69,18 @@ public class NodePriorityController {
 
   private final NodePriorityService nodePriorityService;
 
+  /**
+   * Adds a Node Priority to a Node Group.
+   *
+   * <p>This method processes a POST request to associate a Node with a Node Group and define its
+   * priority.
+   *
+   * @param nodePriorityRequest The details of the Node Priority to be added.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     added Node Priority.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @AddNodeToNodeGroupDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -81,6 +103,18 @@ public class NodePriorityController {
     }
   }
 
+  /**
+   * Fetches the Nodes associated with a specific Node Group.
+   *
+   * <p>This method processes a GET request to retrieve all Nodes belonging to a given Node Group.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param nodeGroupId The unique identifier of the Node Group.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of Nodes in
+   *     the Node Group.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @GetNodesAssociatedToNodeGroupDoc
   @GetMapping(
       value = "/list/orgId/{orgId}/nodeGroupId/{nodeGroupId}",
@@ -111,6 +145,18 @@ public class NodePriorityController {
     }
   }
 
+  /**
+   * Retrieves the priority details of a Node within an organization.
+   *
+   * <p>This method processes a GET request to fetch the priority details of a specific Node.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param id The unique identifier of the Node.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the Node Priority
+   *     details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @GetNodePriorityDetailsDoc
   @GetMapping(value = "/orgId/{orgId}/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<NodePriorityResponse>> getNodePriorityDetailsByOrgIdAndId(
@@ -139,6 +185,18 @@ public class NodePriorityController {
     }
   }
 
+  /**
+   * Retrieves the priority details of a Node within an organization.
+   *
+   * <p>This method processes a GET request to fetch the priority details of a specific Node.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param nodeId The unique identifier of the Node.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the Node Priority
+   *     details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @GetNodePriorityByNodeId
   @GetMapping(value = "/orgId/{orgId}/nodeId/{nodeId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<List<NodePriorityResponse>>>
@@ -168,6 +226,21 @@ public class NodePriorityController {
     }
   }
 
+  /**
+   * Updates the priority of a Node within a Node Group.
+   *
+   * <p>This method processes a PUT request to modify the priority of a Node in a specific Node
+   * Group.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param nodeGroupId The unique identifier of the Node Group.
+   * @param nodeId The unique identifier of the Node.
+   * @param nodePriorityUpdationRequest The details for updating the Node Priority.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated Node
+   *     Priority details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @UpdateNodePriorityDoc
   @PutMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -203,6 +276,19 @@ public class NodePriorityController {
     }
   }
 
+  /**
+   * Removes a Node from a Node Group.
+   *
+   * <p>This method processes a DELETE request to dissociate a Node from a Node Group.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param nodeGroupId The unique identifier of the Node Group.
+   * @param nodeId The unique identifier of the Node to be removed.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     removed Node.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @RemoveNodeFromNodeGroupDoc
   @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<NodePriorityResponse>> removeNodeFromNodeGroup(
@@ -234,6 +320,20 @@ public class NodePriorityController {
     }
   }
 
+  /**
+   * Updates multiple Nodes within a Node Group.
+   *
+   * <p>This method processes a PUT request to modify the association and details of Nodes in a Node
+   * Group.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param nodeGroupName The name of the Node Group to update.
+   * @param nodeGroupWithNodes The updated details of the Node Group and its associated Nodes.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated Node Group
+   *     details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @UpdateNodesWithinNodeGroupDoc
   @PutMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -264,6 +364,19 @@ public class NodePriorityController {
     }
   }
 
+  /**
+   * Removes all Nodes from a specific Node Group.
+   *
+   * <p>This method processes a DELETE request to remove all Nodes associated with a given Node
+   * Group.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param nodeGroupId The unique identifier of the Node Group.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     removed Nodes.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @DeleteMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
       value = "/orgId/{orgId}/nodeGroupId/{nodeGroupId}")

@@ -55,6 +55,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing Item operations.
+ *
+ * <p>This controller provides REST endpoints for creating, updating, retrieving, and deleting
+ * items. It supports both individual item operations and batch processing with pagination.
+ *
+ * <p>Key features include:
+ *
+ * <ul>
+ *   <li>Item creation and modification
+ *   <li>Detailed item information retrieval
+ *   <li>Item deletion
+ *   <li>Batch item retrieval with pagination
+ *   <li>Support for item buffer configuration
+ * </ul>
+ *
+ * <p>The controller includes comprehensive error handling and validation for all operations. It
+ * uses {@link ItemService} for business logic implementation and supports both standard and
+ * paginated responses.
+ *
+ * @see ItemService
+ * @see ItemResponse
+ * @see ItemCreationRequest
+ * @see ItemUpdationRequest
+ * @see PagePayload
+ */
 @Validated
 @RestController
 @Tag(name = "Item APIs")
@@ -68,6 +94,13 @@ public class ItemController {
 
   private static final String PAGINATION_URL = "/%s/itemList?itemIds=%s&pageNo=%d&pageSize=%d";
 
+  /**
+   * Creates a new item based on the provided request.
+   *
+   * @param itemCreationRequest The request containing item details for creation
+   * @return A {@link ResponseEntity} containing the created item details
+   * @throws ItemDomainException If there is an error in item creation
+   */
   @AddItemDoc
   @PostMapping
   public ResponseEntity<BaseResponse<ItemResponse>> addItem(
@@ -86,6 +119,17 @@ public class ItemController {
     }
   }
 
+  /**
+   * Updates existing item details.
+   *
+   * @param itemId The unique identifier for the item
+   * @param orgId The organization identifier
+   * @param uom The unit of measure
+   * @param itemUpdationRequest The request containing updated item details
+   * @return A {@link ResponseEntity} containing the updated item details
+   * @throws ItemDomainException If there is an error in item update
+   * @throws CommonServiceException If there is a general service error
+   */
   @UpdateItemDetailsDoc
   @PutMapping("/{itemId}/{orgId}/{uom}")
   public ResponseEntity<BaseResponse<ItemResponse>> updateItemDetails(
@@ -118,6 +162,20 @@ public class ItemController {
     }
   }
 
+  /**
+   * Retrieves detailed information for a specific item.
+   *
+   * <p>This method processes a GET request to fetch detailed information about an item identified
+   * by the combination of item ID, organization ID, and unit of measure.
+   *
+   * @param itemId The unique identifier for the item. Must not be blank. Example value: "ITEM-01"
+   * @param orgId The organization identifier. Must not be blank. Example value: "NEXTUPLE"
+   * @param uom The unit of measure for the item. Must not be blank. Example value: "EACH"
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the {@link
+   *     ItemResponse} containing detailed item information.
+   * @throws ItemDomainException If there is an error in the item domain processing
+   * @throws CommonServiceException If there is a general service error
+   */
   @GetItemDetailsDoc
   @GetMapping("/{itemId}/{orgId}/{uom}")
   public ResponseEntity<BaseResponse<ItemResponse>> getItemDetails(
@@ -148,6 +206,22 @@ public class ItemController {
     }
   }
 
+  /**
+   * Deletes a specific item from the system.
+   *
+   * <p>This method processes a DELETE request to remove an item identified by the combination of
+   * item ID, organization ID, and unit of measure. The method performs validation checks before
+   * proceeding with the deletion.
+   *
+   * @param itemId The unique identifier for the item. Must not be blank. Example value: "ITEM-01"
+   * @param orgId The organization identifier. Must not be blank. Example value: "NEXTUPLE"
+   * @param uom The unit of measure for the item. Must not be blank. Example value: "EACH"
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the {@link
+   *     ItemResponse} of the deleted item.
+   * @throws ItemDomainException If there is an error in the item domain processing
+   * @throws CommonServiceException If there is a general service error or the item cannot be
+   *     deleted
+   */
   @DeleteItemDoc
   @DeleteMapping("/{itemId}/{orgId}/{uom}")
   public ResponseEntity<BaseResponse<ItemResponse>> deleteItem(
@@ -180,6 +254,25 @@ public class ItemController {
     }
   }
 
+  /**
+   * Retrieves a list of items based on specified criteria.
+   *
+   * <p>This method processes a GET request to fetch multiple items at once. It supports optional
+   * item buffer configuration and promising engine date parameters for enhanced item information
+   * retrieval.
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param itemList List of item IDs to retrieve. Must not be empty. Example value: ["ITEM-01",
+   *     "ITEM-02"]
+   * @param isItemBufferEnabled Optional flag to enable item buffer information. Default value is
+   *     false. Example value: true
+   * @param promisingEngineDate Optional date used for promising engine computations. Format:
+   *     ISO-8601 Example value: "2030-05-30T22:00:00Z"
+   * @return A List of {@link ItemResponse} objects containing the requested item details
+   * @throws CommonServiceException If there is a general service error
+   * @throws ItemBatchingDomainException If there is an error in batch processing of items
+   */
   @GetItemListDoc
   @GetMapping("/{orgId}")
   public List<ItemResponse> getItemList(
@@ -211,6 +304,39 @@ public class ItemController {
     }
   }
 
+  /**
+   * Retrieves a paginated list of items for a specific organization.
+   *
+   * <p>This method processes a GET request to fetch a paginated list of items based on provided
+   * item IDs and organization ID. It supports customizable pagination and sorting options through
+   * the {@link PageParams}.
+   *
+   * <p>The pagination features include:
+   *
+   * <ul>
+   *   <li>Configurable page size and number
+   *   <li>Sorting by specified fields
+   *   <li>Navigation links for next and previous pages
+   *   <li>Total record count and page information
+   * </ul>
+   *
+   * @param orgId The unique identifier for the organization. Must not be blank. Example value:
+   *     "NEXTUPLE"
+   * @param itemIds Comma-separated list of item IDs to retrieve. Must not be blank. Example value:
+   *     "ITEM-01,ITEM-02"
+   * @param pageParams The pagination parameters including:
+   *     <ul>
+   *       <li>pageNo - Page number (default: from properties)
+   *       <li>pageSize - Records per page (default: from properties)
+   *       <li>sortBy - Field to sort by (default: ITEM_SORT_BY)
+   *       <li>sortOrder - Sort direction (default: DEFAULT_SORT_ORDER)
+   *     </ul>
+   *
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with a {@link PagePayload}
+   *     of {@link ItemListResponse} objects.
+   * @throws CommonServiceException If there is a general service error
+   * @throws ItemBatchingDomainException If there is an error in batch processing of items
+   */
   @GetItemListPaginatedDoc
   @GetMapping("/{orgId}/itemList")
   public ResponseEntity<BaseResponse<PagePayload<ItemListResponse>>> getItemsListPaginated(

@@ -23,6 +23,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for validating formula expressions within an organization.
+ *
+ * <p>This controller provides an API to validate formula expressions, typically used within
+ * specific libraries (e.g., "SPEL"). It processes the validation of expressions for a given
+ * organization and returns a response indicating whether the expression is valid or not.
+ *
+ * <p>The controller is tagged with "Formula Expression Validation APIs" for easy categorization in
+ * API documentation.
+ */
 @RestController
 @RequestMapping("/cost-config")
 @RequiredArgsConstructor
@@ -32,6 +42,19 @@ public class ExpressionValidationController {
 
   private final ExpressionValidationService expressionValidationService;
 
+  /**
+   * Validates a formula expression.
+   *
+   * <p>This method processes a POST request to validate a formula expression for a specific
+   * organization and library name.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param libraryName The name of the formula expression library (e.g., "SPEL").
+   * @param expressionValidationRequest The request payload containing the expression details to
+   *     validate.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the validation result.
+   * @throws CommonServiceException If there is an error during the validation process.
+   */
   @ExpressionValidationDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,

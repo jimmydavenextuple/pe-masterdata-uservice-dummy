@@ -43,6 +43,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing cost factors within an organization.
+ *
+ * <p>This controller provides APIs for creating, updating, retrieving, and deleting cost factors
+ * based on the organization and cost factor identifiers. Additionally, it allows fetching cache
+ * keys associated with cost factors.
+ *
+ * <p>The controller is tagged with "Tenant Cost Factor APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/cost-config/cost-factor")
@@ -53,6 +63,18 @@ public class CostFactorController {
   private static final Logger logger = LoggerFactory.getLogger(CostFactorBucketingController.class);
   private final CostFactorService costFactorService;
 
+  /**
+   * Creates a new cost factor for the specified organization.
+   *
+   * <p>This method processes a POST request to create a cost factor based on the details provided.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param costFactorRequest The request body containing the details for the cost factor to be
+   *     created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created cost factor
+   *     details.
+   * @throws CommonServiceException If an error occurs during the creation process.
+   */
   @CreateCostFactor
   @PostMapping(value = "/{orgId}")
   public ResponseEntity<BaseResponse<CostFactorDto>> createCostFactor(
@@ -74,6 +96,18 @@ public class CostFactorController {
                 .build());
   }
 
+  /**
+   * Retrieves a cost factor by its unique identifier for a specified organization.
+   *
+   * <p>This method processes a GET request to fetch the cost factor details based on the
+   * organization ID and cost factor ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param costFactorId The unique identifier of the cost factor.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the requested cost
+   *     factor details.
+   * @throws CommonServiceException If the cost factor cannot be retrieved.
+   */
   @GetCostFactorByOrgIdAndCostFactorId
   @GetMapping(value = "/{orgId}/{costFactorId}")
   public ResponseEntity<BaseResponse<CostFactorDto>> getCostFactorByOrgIdAndCostFactorId(
@@ -98,6 +132,18 @@ public class CostFactorController {
             .build());
   }
 
+  /**
+   * Fetches a cost factor by its name for the specified organization.
+   *
+   * <p>This method processes a GET request to fetch the cost factor details based on the
+   * organization ID and cost factor name.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param costFactor The name of the cost factor.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the requested cost
+   *     factor details.
+   * @throws CommonServiceException If the cost factor cannot be retrieved.
+   */
   @GetCostFactorByOrgIdAndCostFactorDoc
   @GetMapping(value = "/{orgId}/costFactor/{costFactor}")
   public ResponseEntity<BaseResponse<CostFactorDto>> getCostFactorByOrgIdAndCostFactor(
@@ -122,6 +168,19 @@ public class CostFactorController {
             .build());
   }
 
+  /**
+   * Updates an existing cost factor for the specified organization.
+   *
+   * <p>This method processes a PUT request to update the cost factor based on the details provided
+   * in the request body.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param costFactorId The unique identifier of the cost factor.
+   * @param updateCostFactorRequest The request body containing the updated cost factor details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated cost factor
+   *     details.
+   * @throws CommonServiceException If an error occurs during the update process.
+   */
   @UpdateCostFactor
   @PutMapping(value = "/{orgId}/{costFactorId}")
   public ResponseEntity<BaseResponse<CostFactorDto>> updateCostFactor(
@@ -147,6 +206,18 @@ public class CostFactorController {
             .build());
   }
 
+  /**
+   * Deletes a cost factor by its unique identifier for the specified organization.
+   *
+   * <p>This method processes a DELETE request to remove the cost factor based on the provided
+   * organization ID and cost factor ID.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param costFactorId The unique identifier of the cost factor.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted cost factor.
+   * @throws CommonServiceException If the cost factor cannot be deleted.
+   */
   @DeleteCostFactor
   @DeleteMapping(value = "/{orgId}/{costFactorId}")
   public ResponseEntity<BaseResponse<CostFactorDto>> deleteCostFactor(
@@ -170,6 +241,15 @@ public class CostFactorController {
             .build());
   }
 
+  /**
+   * Retrieves cache keys for cost factors.
+   *
+   * <p>This method processes a GET request to fetch a list of cache keys associated with cost
+   * factors.
+   *
+   * @param limit The maximum number of cache keys to retrieve. Defaults to 100.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of cache keys.
+   */
   @GetCostFactorCacheKeyDoc
   @GetMapping("/get-all-cache-keys")
   public ResponseEntity<BaseResponse<List<CostFactorCacheKeyDto>>> getCostFactorCacheKeys(

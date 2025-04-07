@@ -48,6 +48,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing optimization rules within an organization.
+ *
+ * <p>This controller provides APIs for adding, editing, deleting, and retrieving optimization
+ * rules. Optimization rules define strategies for selecting and prioritizing nodes within a system.
+ * These rules are associated with an organization and are used to control how nodes are optimized
+ * for specific operations within the organization.
+ *
+ * <p>The controller is tagged with "Optimization Rule dashboard APIs" for easy categorization in
+ * the API documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/ui/optimization-rules")
@@ -60,6 +71,19 @@ public class OptimizationRulesDashboardController {
 
   private final NamedOptimizationStrategyService namedOptimizationStrategyService;
 
+  /**
+   * Creates a new Optimization Rule for the specified organization.
+   *
+   * <p>This method processes a POST request to create an Optimization Rule within a given
+   * organization.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param optimizationStrategyUIRequest The details of the Optimization Rule to be created.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     created Optimization Rule.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @CreateOptimizationRuleDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -87,6 +111,19 @@ public class OptimizationRulesDashboardController {
     }
   }
 
+  /**
+   * Edits an existing Optimization Rule within the specified organization.
+   *
+   * <p>This method processes a PUT request to update the details of an Optimization Rule.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param optimizationRuleId The unique identifier of the Optimization Rule to be updated.
+   * @param optimizationRuleUpdationUIRequest The updated details of the Optimization Rule.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated
+   *     Optimization Rule details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @EditOptimizationRuleDoc
   @PutMapping(
       value = "/{orgId}/{optimizationRuleId}",
@@ -119,6 +156,20 @@ public class OptimizationRulesDashboardController {
     }
   }
 
+  /**
+   * Deletes multiple Optimization Rules for a specific organization.
+   *
+   * <p>This method processes a DELETE request to remove multiple Optimization Rules based on the
+   * provided identifiers.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param optimizationRuleIds The request containing the IDs of the Optimization Rules to be
+   *     deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of deleted
+   *     Optimization Rules.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @DeleteMultipleOptimizationRulesDoc
   @Transactional
   @DeleteMapping(value = "/{orgId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -148,6 +199,15 @@ public class OptimizationRulesDashboardController {
     }
   }
 
+  /**
+   * Retrieves all UI constraints for Optimization Rules.
+   *
+   * <p>This method processes a GET request to fetch all constraints used for validation or display
+   * purposes in the UI.
+   *
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the list of UI
+   *     constraints.
+   */
   @GetAllUIConstraintsDoc
   @GetMapping(value = "/constraints", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<List<AllConstraintUIDto>>> getAllUIConstraints() {
@@ -165,6 +225,18 @@ public class OptimizationRulesDashboardController {
     }
   }
 
+  /**
+   * Fetches an Optimization Rule by organization ID and Optimization Rule ID.
+   *
+   * <p>This method processes a GET request to retrieve the details of a specific Optimization Rule.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param optimizationRuleId The unique identifier of the Optimization Rule.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     Optimization Rule.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @GetOptimizationRuleByOrgIdAndNamedOptimazationStrategyIdDoc
   @GetMapping(value = "/{orgId}/{optimizationRuleId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<OptimizationRuleUIResponse>>
@@ -201,6 +273,19 @@ public class OptimizationRulesDashboardController {
     }
   }
 
+  /**
+   * Fetches all Optimization Rules for a specific organization with pagination.
+   *
+   * <p>This method processes a GET request to retrieve a paginated list of Optimization Rules for
+   * the given organization.
+   *
+   * @param orgId The unique identifier of the organization.
+   * @param pageParams The pagination parameters for fetching Optimization Rules.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the paginated list of
+   *     Optimization Rules.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
   @GetAllOptimizationRulesByOrgIdDoc
   @GetMapping(value = "/{orgId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<PageResponse<OptimizationRuleUIResponse>>>

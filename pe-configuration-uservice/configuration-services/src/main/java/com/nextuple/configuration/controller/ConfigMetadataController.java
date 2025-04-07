@@ -36,6 +36,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for managing configuration metadata.
+ *
+ * <p>This controller provides APIs to add, update, retrieve, and delete configuration metadata
+ * based on configuration keys. It allows interaction with the configuration metadata, enabling
+ * clients to manage configuration details related to various settings.
+ *
+ * <p>The controller is tagged with "Configuration Metadata APIs" for easy categorization in API
+ * documentation.
+ */
 @Validated
 @RestController
 @RequestMapping("/configuration-metadata")
@@ -46,6 +56,20 @@ public class ConfigMetadataController {
 
   private final ConfigMetadataService configMetadataService;
 
+  /**
+   * Adds configuration metadata.
+   *
+   * <p>This method processes a POST request to add new configuration metadata based on the details
+   * provided in the request body.
+   *
+   * @param configMetadataRequest The request body containing the details of the configuration
+   *     metadata to be added.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the added configuration
+   *     metadata details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @AddConfigMetadataDoc
   @PostMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -69,6 +93,19 @@ public class ConfigMetadataController {
     }
   }
 
+  /**
+   * Retrieves configuration metadata by configuration key.
+   *
+   * <p>This method processes a GET request to fetch the configuration metadata associated with the
+   * specified configuration key.
+   *
+   * @param configKey The unique configuration key used to identify the metadata.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the fetched
+   *     configuration metadata details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @GetConfigMetadataDoc
   @GetMapping(value = "/configKey/{configKey}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<ConfigMetadataResponse>> getConfigMetadataByConfigKey(
@@ -91,6 +128,21 @@ public class ConfigMetadataController {
     }
   }
 
+  /**
+   * Updates configuration metadata.
+   *
+   * <p>This method processes a PUT request to update existing configuration metadata based on the
+   * specified configuration key and the details provided in the request body.
+   *
+   * @param configKey The unique configuration key identifying the metadata to be updated.
+   * @param configMetadataUpdateRequest The request body containing the updated details of the
+   *     configuration metadata.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated
+   *     configuration metadata details.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @UpdateConfigMetadataDoc
   @PutMapping(
       value = "/configKey/{configKey}",
@@ -119,6 +171,19 @@ public class ConfigMetadataController {
     }
   }
 
+  /**
+   * Deletes configuration metadata.
+   *
+   * <p>This method processes a DELETE request to remove configuration metadata associated with the
+   * specified configuration key.
+   *
+   * @param configKey The unique configuration key identifying the metadata to be deleted.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the details of the
+   *     deleted configuration metadata.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a general service-related error occurs while processing the
+   *     request.
+   */
   @DeleteConfigMetadataDoc
   @DeleteMapping(value = "/configKey/{configKey}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<BaseResponse<ConfigMetadataResponse>> deleteConfigMetadata(
