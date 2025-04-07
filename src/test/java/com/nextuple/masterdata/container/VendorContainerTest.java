@@ -39,7 +39,8 @@ class VendorContainerTest extends AbstractContainerTest {
   @CsvSource(
       value = {
         "input/vendor/create-vendor.json, expected/vendor/create-vendor-db-value.json, expected/vendor/create-vendor-response.json",
-        "input/vendor/create-vendor-2.json, expected/vendor/create-vendor-db-value-2.json, expected/vendor/create-vendor-response-2.json"
+        "input/vendor/create-vendor-2.json, expected/vendor/create-vendor-db-value-2.json, expected/vendor/create-vendor-response-2.json",
+        "input/vendor/create-vendor-3.json, expected/vendor/create-vendor-db-value-3.json, expected/vendor/create-vendor-response-3.json"
       })
   void createVendorWithValidInput(
       String vendorRequest, String vendorDomainDto, String vendorResponse) throws IOException {
@@ -135,9 +136,10 @@ class VendorContainerTest extends AbstractContainerTest {
         util.parseClassFromJSON(
             "input/vendor/vendor-feed.json",
             new TypeReference<FeedRequest<MasterDataIngestionDto<VendorFeedDto>>>() {});
-    List<VendorDomainDto> expectedVendorResponse =
-        util.parseClassFromJSON(
-            "expected/vendor/vendor-feed.json", new TypeReference<List<VendorDomainDto>>() {});
+    VendorDomainDto expectedVendorResponse1 =
+        util.parseClassFromJSON("expected/vendor/vendor-feed-1.json", VendorDomainDto.class);
+    VendorDomainDto expectedVendorResponse2 =
+        util.parseClassFromJSON("expected/vendor/vendor-feed-2.json", VendorDomainDto.class);
 
     // Initialize the Kafka consumer & subscribe to the topic
     util.subscribeToTopics(List.of(vendorFeedTopic));
@@ -178,15 +180,22 @@ class VendorContainerTest extends AbstractContainerTest {
         () ->
             Assertions.assertDoesNotThrow(
                 () ->
-                    vendorPersistenceServiceImpl.getVendorByOrgId(
-                        "NEXTUPLE_GR", 1, 10, "vendorId", "ASC")),
+                    vendorPersistenceServiceImpl.findVendorByVendorIdAndOrgId(
+                        "Vendor-10", "NEXTUPLE_GR")),
         (input) -> {
-          Assertions.assertEquals(expectedVendorResponse.size(), input.getSize());
-          Assertions.assertEquals(
-              expectedVendorResponse.stream()
-                  .sorted(Comparator.comparing(VendorDomainDto::getVendorId))
-                  .toList(),
-              input.stream().sorted(Comparator.comparing(VendorDomainDto::getVendorId)).toList());
+          Assertions.assertTrue(input.isPresent());
+          Assertions.assertEquals(expectedVendorResponse1, input.get());
+        });
+
+    util.pollAndAssert(
+        () ->
+            Assertions.assertDoesNotThrow(
+                () ->
+                    vendorPersistenceServiceImpl.findVendorByVendorIdAndOrgId(
+                        "Vendor-001", "NEXTUPLE_GR")),
+        (input) -> {
+          Assertions.assertTrue(input.isPresent());
+          Assertions.assertEquals(expectedVendorResponse2, input.get());
         });
   }
 

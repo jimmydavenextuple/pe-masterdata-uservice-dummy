@@ -13,7 +13,6 @@ import com.nextuple.common.service.DomainPersistenceService;
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
 import com.nextuple.vendor.persistence.domain.key.VendorDomainKey;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
 
 public interface VendorPersistenceService
     extends DomainPersistenceService<VendorDomainDto, VendorDomainKey> {
@@ -23,8 +22,4 @@ public interface VendorPersistenceService
       throws CommonServiceException, PromiseEngineException;
 
   void deleteVendor(VendorDomainDto vendorDomainDto) throws CommonServiceException;
-
-  Page<VendorDomainDto> getVendorByOrgId(
-      String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
-      throws PromiseEngineException;
 }

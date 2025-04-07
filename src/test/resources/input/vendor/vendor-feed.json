@@ -19,21 +19,19 @@
       }
     },
     {
-      "action": "CREATE",
+      "action": "UPDATE",
       "payload": {
-        "vendorId":"Vendor-6",
+        "vendorId":"Vendor-001",
         "orgId":"NEXTUPLE_GR",
         "vendorDescription":"DEF Retail Vendor",
         "vendorType":"Store"
       }
     },
     {
-      "action": "CREATE",
+      "action": "DELETE",
       "payload": {
-        "vendorId":"Vendor-7",
-        "orgId":"NEXTUPLE_GR",
-        "vendorDescription":"XYZ Retail Vendor",
-        "vendorType":"DC"
+        "vendorId":"Vendor-003",
+        "orgId":"NEXTUPLE_GR"
       }
     },
     {

@@ -7,8 +7,6 @@
 
 package com.nextuple.vendor.persistence.service.impl;
 
-import static com.nextuple.common.constants.CommonConstants.DEFAULT_SORT_ORDER;
-
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.enums.ApplicationLayer;
@@ -28,10 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -94,26 +88,5 @@ public class VendorPersistenceServiceImpl
           "Vendor not found for given orgId, vendorId", HttpStatus.NOT_FOUND, 0X2771, errorMap);
     }
     delete(vendorDomainDto);
-  }
-
-  @Override
-  public Page<VendorDomainDto> getVendorByOrgId(
-      String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
-      throws PromiseEngineException {
-    try {
-      Pageable pageable;
-      if (sortOrder.equalsIgnoreCase(DEFAULT_SORT_ORDER)) {
-        pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).ascending());
-      } else {
-        pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).descending());
-      }
-      return getRepository().findVendorByOrgId(orgId, pageable).map(getMapper()::toDomain);
-    } catch (Exception e) {
-      logger.error(String.valueOf(e), "Unable to find vendor list");
-      throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Unable to fetch vendor : " + e.getMessage());
-    }
   }
 }
