@@ -474,11 +474,11 @@ dependencies {
 
     implementation 'org.flywaydb:flyway-core:9.16.3'
 
-    implementation("com.nextuple.plt:plt-common:1.0.8-${build_target}")
-    implementation("com.nextuple.plt:plt-fpm-service:1.0.8-${build_target}")
-    implementation("com.nextuple.plt:plt-postgress-dao:1.0.8-${build_target}")
-    implementation "com.nextuple.neoplatform:auth-validator:1.0.67-${build_target}"
-    implementation "com.nextuple.neoplatform:auth-injector:1.0.67-${build_target}"
+    implementation("com.nextuple.plt:plt-common:${platformFPMVersion}")
+    implementation("com.nextuple.plt:plt-fpm-service:${platformFPMVersion}")
+    implementation("com.nextuple.plt:plt-postgress-dao:${platformFPMVersion}")
+    implementation "com.nextuple.neoplatform:auth-validator:${authVersion}"
+    implementation "com.nextuple.neoplatform:auth-injector:${authVersion}"
     api 'io.github.openfeign:feign-okhttp:12.1'
     implementation("org.springframework.security:spring-security-crypto:6.4.4")
 
