@@ -1,0 +1,32 @@
+[
+  {
+    "vendorId":"Vendor-4",
+    "orgId":"NEXTUPLE_GR",
+    "vendorDescription":"BCD Retail Vendor",
+    "vendorType":"Store"
+  },
+  {
+    "vendorId":"Vendor-5",
+    "orgId":"NEXTUPLE_GR",
+    "vendorDescription":"ACD Retail Vendor",
+    "vendorType":"Store"
+  },
+  {
+    "vendorId":"Vendor-6",
+    "orgId":"NEXTUPLE_GR",
+    "vendorDescription":"DEF Retail Vendor",
+    "vendorType":"Store"
+  },
+  {
+    "vendorId":"Vendor-7",
+    "orgId":"NEXTUPLE_GR",
+    "vendorDescription":"XYZ Retail Vendor",
+    "vendorType":"DC"
+  },
+  {
+    "vendorId": "Vendor-10",
+    "orgId": "NEXTUPLE_GR",
+    "vendorDescription": "DOA Retail Vendor",
+    "vendorType": "DC"
+  }
+]

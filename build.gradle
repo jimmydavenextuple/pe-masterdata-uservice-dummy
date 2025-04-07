@@ -492,6 +492,8 @@ dependencies {
     testImplementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     testImplementation(project(":pe-node-uservice:node-persistence-domain"))
     testImplementation(project(":pe-node-uservice:node-persistence-postgres"))
+    testImplementation(project(":pe-vendor-uservice:vendor-persistence-domain"))
+    testImplementation(project(":pe-vendor-uservice:vendor-persistence-postgres"))
 }
 
 jacocoTestReport {

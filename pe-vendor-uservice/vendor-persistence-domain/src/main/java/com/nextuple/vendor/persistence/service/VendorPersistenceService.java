@@ -12,6 +12,7 @@ import com.nextuple.vendor.persistence.domain.VendorDomainDto;
 import com.nextuple.vendor.persistence.domain.key.VendorDomainKey;
 import com.nextuple.vendor.persistence.exception.VendorDomainException;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 
 public interface VendorPersistenceService
     extends DomainPersistenceService<VendorDomainDto, VendorDomainKey> {
@@ -21,4 +22,8 @@ public interface VendorPersistenceService
       throws VendorDomainException;
 
   void deleteVendor(VendorDomainDto vendorDomainDto) throws VendorDomainException;
+
+  Page<VendorDomainDto> getVendorByOrgId(
+      String orgId, Integer pageNo, Integer pageSize, String sortBy, String sortOrder)
+      throws VendorDomainException;
 }
