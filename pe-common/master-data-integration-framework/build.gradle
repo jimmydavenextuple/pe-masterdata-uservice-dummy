@@ -10,15 +10,15 @@ bootJar {
 }
 
 dependencies {
-    implementation "com.nextuple.platform:common:1.1.5Java21-${build_target}"
-    implementation "com.nextuple.platform:sql:1.1.5Java21-${build_target}"
-    implementation "com.nextuple.platform:kafka:1.1.5Java21-${build_target}"
-    implementation "com.nextuple.platform:tasks:1.1.5Java21-${build_target}"
-    implementation "com.nextuple.platform:tasks-sql:1.1.5Java21-${build_target}"
+    implementation "com.nextuple.platform:common:${platformTaskVersion}"
+    implementation "com.nextuple.platform:sql:${platformTaskVersion}"
+    implementation "com.nextuple.platform:kafka:${platformTaskVersion}"
+    implementation "com.nextuple.platform:tasks:${platformTaskVersion}"
+    implementation "com.nextuple.platform:tasks-sql:${platformTaskVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
-    implementation "com.nextuple.platform:next-cache:1.1.5Java21-${build_target}"
-    implementation "com.nextuple.platform:purge:1.1.6Java21-${build_target}"
-    implementation "com.nextuple.platform:purge-sql:1.1.6Java21-${build_target}"
+    implementation "com.nextuple.platform:next-cache:${platformTaskVersion}"
+    implementation "com.nextuple.platform:purge:${platformPurgeVersion}"
+    implementation "com.nextuple.platform:purge-sql:${platformPurgeVersion}"
     implementation(project(":pe-data-upload-uservice:job-framework-common-util"))
     implementation(project(":pe-common:common-util"))
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.3'
