@@ -9,6 +9,7 @@ package com.nextuple.vendor.consumer.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.master.data.integration.enums.TaskInformation;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
@@ -17,7 +18,6 @@ import com.nextuple.vendor.consumer.dto.VendorFeedDto;
 import com.nextuple.vendor.consumer.mapper.VendorBatchMapper;
 import com.nextuple.vendor.domain.feign.VendorFeign;
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
-import com.nextuple.vendor.persistence.exception.VendorDomainException;
 import com.nextuple.vendor.persistence.service.VendorPersistenceService;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,11 +78,7 @@ public class VendorBatchServiceImpl extends BatchService<VendorFeedDto> {
       try {
         Optional<VendorDomainDto> vendorDomainDto =
             vendorPersistenceService.findVendorByVendorIdAndOrgId(vendorId, orgId);
-        if (vendorDomainDto.isPresent()
-            && (vendorDomainDto
-                .get()
-                .getLastModifiedDate()
-                .after(vendorBatchRequest.getReceivedTimestamp()))) {
+        if (checkForBatchRequestExpired(vendorBatchRequest, vendorDomainDto)) {
           Map<String, FieldError> errorMap = new HashMap<>();
           errorMap.put(
               "receivedTimestamp",
@@ -100,12 +96,21 @@ public class VendorBatchServiceImpl extends BatchService<VendorFeedDto> {
               0x1771,
               errorMap);
         }
-      } catch (VendorDomainException e) {
+      } catch (PromiseEngineException e) {
         log.debug(
             "Cannot check for outdated record as the given vendor does not exist for the given details orgId:{} vendorId:{}",
             orgId,
             vendorId);
       }
     }
+  }
+
+  private static boolean checkForBatchRequestExpired(
+      BatchRequest<VendorFeedDto> vendorBatchRequest, Optional<VendorDomainDto> vendorDomainDto) {
+    return vendorDomainDto.isPresent()
+        && (vendorDomainDto
+            .get()
+            .getLastModifiedDate()
+            .after(vendorBatchRequest.getReceivedTimestamp()));
   }
 }

@@ -21,6 +21,7 @@ import com.nextuple.vendor.consumer.dto.VendorFeedDto;
 import com.nextuple.vendor.consumer.impl.VendorBatchServiceImpl;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -40,6 +41,7 @@ class VendorFeedHandlingServiceTest {
   }
 
   @Test
+  @DisplayName("Get Type Reference for Vendor test")
   void testGetTypeReference() {
     TypeReference<List<BatchRequest<VendorFeedDto>>> typeReference =
         vendorFeedHandlingService.getTypeReference();
@@ -49,6 +51,7 @@ class VendorFeedHandlingServiceTest {
   }
 
   @Test
+  @DisplayName("Invoke Batch Feed for Vendor test")
   void testInvokeBatchFeedImplMethod() {
     List<BatchRequest<VendorFeedDto>> batchRequests = List.of(new BatchRequest<>());
     BatchResponse expectedResponse = new BatchResponse();
@@ -62,6 +65,7 @@ class VendorFeedHandlingServiceTest {
   }
 
   @Test
+  @DisplayName("Populate OrgId for Vendor test")
   void testPopulateOrgId() {
     String orgId = "testOrg";
     BatchRequest<VendorFeedDto> batchRequest = new BatchRequest<>();
@@ -75,6 +79,7 @@ class VendorFeedHandlingServiceTest {
   }
 
   @Test
+  @DisplayName("Get Type Reference for Publishing for Vendor test")
   void testGetTypeReferenceForPublishing() {
     TypeReference<FeedRequest<MasterDataIngestionDto<VendorFeedDto>>> typeReference =
         vendorFeedHandlingService.getTypeReferenceForPublishing();
@@ -84,6 +89,7 @@ class VendorFeedHandlingServiceTest {
   }
 
   @Test
+  @DisplayName("Publish Feed to Kafka for Vendor test")
   void testPublishFeedToKafka() {
     String orgId = "testOrg";
     FeedRequest<MasterDataIngestionDto<VendorFeedDto>> feedRequest = new FeedRequest<>();

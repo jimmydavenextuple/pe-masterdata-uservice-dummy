@@ -20,10 +20,10 @@ import com.nextuple.vendor.TestUtil;
 import com.nextuple.vendor.domain.inbound.VendorRequest;
 import com.nextuple.vendor.domain.inbound.VendorUpdationRequest;
 import com.nextuple.vendor.domain.outbound.VendorResponse;
-import com.nextuple.vendor.persistence.exception.VendorDomainException;
 import com.nextuple.vendor.service.VendorService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -42,8 +42,8 @@ class VendorControllerTest {
   }
 
   @Test
-  void createVendorTest()
-      throws CommonServiceException, VendorDomainException, PromiseEngineException {
+  @DisplayName("Create Vendor Controller Test - happy path")
+  void createVendorTest() throws PromiseEngineException {
     VendorRequest vendorRequest = testUtil.getVendorRequest();
     when(vendorService.createVendor(any(VendorRequest.class)))
         .thenReturn(testUtil.getVendorResponse());
@@ -55,8 +55,8 @@ class VendorControllerTest {
   }
 
   @Test
-  void createVendorExceptionTest()
-      throws VendorDomainException, CommonServiceException, VendorDomainException {
+  @DisplayName("Create Vendor Controller Test - exception case")
+  void createVendorExceptionTest() throws PromiseEngineException {
     VendorRequest vendorRequest = testUtil.getVendorRequest();
     when(vendorService.createVendor(any(VendorRequest.class)))
         .thenThrow(new RuntimeException("Failed to create vendor"));
@@ -68,8 +68,9 @@ class VendorControllerTest {
   }
 
   @Test
+  @DisplayName("Get Vendor Details by Vendor Id and OrgId Controller Test - happy path")
   void getVendorDetailsByVendorIdAndOrgIdTest()
-      throws VendorDomainException, CommonServiceException {
+      throws CommonServiceException, PromiseEngineException {
     VendorResponse vendorResponse = testUtil.getVendorResponse();
     when(vendorService.getVendorDetails(any(), any())).thenReturn(vendorResponse);
     ResponseEntity<BaseResponse<VendorResponse>> responseEntity =
@@ -80,8 +81,9 @@ class VendorControllerTest {
   }
 
   @Test
+  @DisplayName("Get Vendor Details by Vendor Id and OrgId Controller Test - exception case")
   void getVendorDetailsByVendorIdAndOrgIdExceptionTest()
-      throws VendorDomainException, CommonServiceException {
+      throws CommonServiceException, PromiseEngineException {
     when(vendorService.getVendorDetails(any(), any()))
         .thenThrow(new RuntimeException("Unable to fetch vendor details"));
     Exception exception =
@@ -93,7 +95,8 @@ class VendorControllerTest {
   }
 
   @Test
-  void updateVendorTest() throws VendorDomainException, CommonServiceException {
+  @DisplayName("Update Vendor Controller Test - happy path")
+  void updateVendorTest() throws CommonServiceException, PromiseEngineException {
     VendorUpdationRequest vendorUpdationRequest = testUtil.getVendorUpdationRequest();
     when(vendorService.updateVendorDetails(
             anyString(), anyString(), any(VendorUpdationRequest.class)))
@@ -108,7 +111,8 @@ class VendorControllerTest {
   }
 
   @Test
-  void updateVendorExceptionTest() throws VendorDomainException, CommonServiceException {
+  @DisplayName("Update Vendor Controller Test - exception case")
+  void updateVendorExceptionTest() throws CommonServiceException, PromiseEngineException {
     VendorUpdationRequest vendorUpdationRequest = testUtil.getVendorUpdationRequest();
     when(vendorService.updateVendorDetails(
             anyString(), anyString(), any(VendorUpdationRequest.class)))
@@ -124,7 +128,8 @@ class VendorControllerTest {
   }
 
   @Test
-  void deleteVendorTest() throws VendorDomainException, CommonServiceException {
+  @DisplayName("Delete Vendor Controller Test - happy path")
+  void deleteVendorTest() throws CommonServiceException, PromiseEngineException {
     when(vendorService.deleteVendor(any(), any())).thenReturn(testUtil.getVendorResponse());
     ResponseEntity<BaseResponse<VendorResponse>> responseEntity =
         vendorController.deleteVendor(TestUtil.VENDOR_ID, TestUtil.ORG_ID);
@@ -134,7 +139,8 @@ class VendorControllerTest {
   }
 
   @Test
-  void deleteVendorExceptionTest() throws VendorDomainException, CommonServiceException {
+  @DisplayName("Delete Vendor Controller Test - exception case")
+  void deleteVendorExceptionTest() throws CommonServiceException, PromiseEngineException {
     when(vendorService.deleteVendor(any(), any()))
         .thenThrow(new RuntimeException("Error while deleting vendor"));
     Exception exception =

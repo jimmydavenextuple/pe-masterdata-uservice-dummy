@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -299,6 +300,7 @@ class BatchProcessingServiceTest {
   }
 
   @Test
+  @DisplayName("Process records with vendor test")
   void testProcessRecordsWithVendor() throws CommonServiceException {
     ResponseDto responseDto = testUtil.createResponseDto(1, 200, "Vendor created successfully");
     List<ResponseDto> responseDtoList = List.of(responseDto);

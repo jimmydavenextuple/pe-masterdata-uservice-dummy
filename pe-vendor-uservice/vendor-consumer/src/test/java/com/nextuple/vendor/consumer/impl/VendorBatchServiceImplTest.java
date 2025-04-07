@@ -15,7 +15,10 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.nextuple.common.enums.ActionEnum;
+import com.nextuple.common.enums.ApplicationLayer;
+import com.nextuple.common.enums.ExceptionCodeMapping;
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.util.DateUtil;
 import com.nextuple.master.data.integration.dto.ResponseDto;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
@@ -25,7 +28,6 @@ import com.nextuple.vendor.consumer.TestUtil;
 import com.nextuple.vendor.consumer.dto.VendorFeedDto;
 import com.nextuple.vendor.domain.feign.VendorFeign;
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
-import com.nextuple.vendor.persistence.exception.VendorDomainException;
 import com.nextuple.vendor.persistence.service.VendorPersistenceService;
 import java.util.Date;
 import java.util.List;
@@ -81,6 +83,7 @@ class VendorBatchServiceImplTest {
   }
 
   @Test
+  @DisplayName("When vendor feed with create action is processed successfully - no retry")
   void processBatchRecordsTestWithNoRetry() {
     List<BatchRequest<VendorFeedDto>> vendorFeedRequests =
         List.of(testUtil.getVendorFeedRequest(ActionEnum.CREATE));
@@ -98,6 +101,7 @@ class VendorBatchServiceImplTest {
   }
 
   @Test
+  @DisplayName("When vendor feed with update action is processed successfully")
   void processBatchRecordsTestWhenActionIsUpdate() {
     List<BatchRequest<VendorFeedDto>> vendorFeedRequests =
         List.of(testUtil.getVendorFeedRequest(ActionEnum.UPDATE));
@@ -119,6 +123,7 @@ class VendorBatchServiceImplTest {
   }
 
   @Test
+  @DisplayName("When vendor feed with delete action is processed successfully")
   void processBatchRecordsTestWhenActionIsDelete() {
     List<BatchRequest<VendorFeedDto>> vendorFeedRequests =
         List.of(testUtil.getVendorFeedRequest(ActionEnum.DELETE));
@@ -139,8 +144,9 @@ class VendorBatchServiceImplTest {
   }
 
   @Test
+  @DisplayName("When vendor feed for outdated records")
   void processBatchRecordsTestForOutdatedRecords()
-      throws CommonServiceException, VendorDomainException {
+      throws CommonServiceException, PromiseEngineException {
     BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
     batchRequest.setReceivedTimestamp(new Date());
     List<BatchRequest<VendorFeedDto>> vendorFeedRequests = List.of(batchRequest);
@@ -163,7 +169,8 @@ class VendorBatchServiceImplTest {
   }
 
   @Test
-  void handleNodeRetryTest() {
+  @DisplayName("Test Retry capability for vendor feed")
+  void handleVendorRetryTest() {
     BatchRequest<?> inputFeedRequest = testUtil.getVendorFeedRequest(ActionEnum.CREATE);
     Mockito.when(vendorFeign.createVendor(any()))
         .thenReturn(testUtil.getBaseResponseOfVendorFeed("Vendor created successfully"));
@@ -175,7 +182,9 @@ class VendorBatchServiceImplTest {
   }
 
   @Test
-  void checkForOutdatedRecordTestWhenRecordIsOutdated() throws VendorDomainException {
+  @DisplayName("When vendor feed for outdated records - outdated vendors present")
+  void checkForOutdatedRecordTestWhenRecordIsOutdated()
+      throws CommonServiceException, PromiseEngineException {
     BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
     batchRequest.setReceivedTimestamp(new Date());
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto();
@@ -190,7 +199,9 @@ class VendorBatchServiceImplTest {
   }
 
   @Test
-  void checkForOutdatedRecordTestWhenRecordIsNotOutdated() throws VendorDomainException {
+  @DisplayName("When vendor feed for outdated records - no outdated vendors present")
+  void checkForOutdatedRecordTestWhenRecordIsNotOutdated()
+      throws CommonServiceException, PromiseEngineException {
     BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
     batchRequest.setReceivedTimestamp(new Date());
     VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto();
@@ -201,7 +212,9 @@ class VendorBatchServiceImplTest {
   }
 
   @Test
-  void checkForOutdatedRecordTestWhenVendorDoesNotExist() throws VendorDomainException {
+  @DisplayName("When vendor feed for outdated records - no vendor found")
+  void checkForOutdatedRecordTestWhenVendorDoesNotExist()
+      throws CommonServiceException, PromiseEngineException {
     BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
     batchRequest.setReceivedTimestamp(new Date());
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
@@ -210,15 +223,15 @@ class VendorBatchServiceImplTest {
   }
 
   @Test
-  void checkForOutdatedRecordTestWhenVendorDomainExceptionIsThrown() throws VendorDomainException {
+  @DisplayName("When vendor feed for outdated records - exception case")
+  void checkForOutdatedRecordTestWhenVendorDomainExceptionIsThrown()
+      throws CommonServiceException, PromiseEngineException {
     BatchRequest<VendorFeedDto> batchRequest = testUtil.getVendorFeedRequest(ActionEnum.UPDATE);
     batchRequest.setReceivedTimestamp(new Date());
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
         .thenThrow(
-            new VendorDomainException(
-                "Vendor not found",
-                batchRequest.getPayload().getVendorId(),
-                batchRequest.getPayload().getOrgId()));
+            new PromiseEngineException(
+                ApplicationLayer.DAO_LAYER, ExceptionCodeMapping.ACCEPT, "Something went wrong"));
     Assertions.assertDoesNotThrow(() -> vendorBatchService.checkForOutdatedRecord(batchRequest));
   }
 }

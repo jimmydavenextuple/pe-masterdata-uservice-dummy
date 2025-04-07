@@ -39,10 +39,12 @@ public class VendorFeedIngestionService
         .forEach(
             vendorDto -> {
               vendorDto.getPayload().setOrgId(orgId);
-              BatchRequest<VendorFeedDto> batchRequest = new BatchRequest<>();
-              batchRequest.setAction(vendorDto.getAction());
-              batchRequest.setProducedTimestamp(vendorDto.getProducedTimestamp());
-              batchRequest.setPayload(vendorDto.getPayload());
+              BatchRequest<VendorFeedDto> batchRequest =
+                  BatchRequest.<VendorFeedDto>builder()
+                      .action(vendorDto.getAction())
+                      .producedTimestamp(vendorDto.getProducedTimestamp())
+                      .payload(vendorDto.getPayload())
+                      .build();
               kafkaProducer.publishFeedToKafka(
                   batchRequest, vendorDto.getPayload().getVendorId(), vendorFeedTopic);
             });
