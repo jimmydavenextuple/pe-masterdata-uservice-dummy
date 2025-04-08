@@ -52,18 +52,13 @@ public class VendorController {
   public ResponseEntity<BaseResponse<VendorResponse>> createVendor(
       @Valid @RequestBody VendorRequest vendorRequest) throws PromiseEngineException {
     log.debug("Processing vendor creation request");
-    try {
-      var vendorResponse = vendorService.createVendor(vendorRequest);
-      log.debug("Response after creation of vendor :{}", vendorResponse);
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Vendor successfully created")
-              .payload(vendorResponse)
-              .build());
-    } catch (Exception e) {
-      log.error("Failed to create vendor");
-      throw e;
-    }
+    var vendorResponse = vendorService.createVendor(vendorRequest);
+    log.debug("Response after creation of vendor :{}", vendorResponse);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Vendor successfully created")
+            .payload(vendorResponse)
+            .build());
   }
 
   @UpdateVendorDetailsDoc
@@ -80,19 +75,13 @@ public class VendorController {
       @Valid @RequestBody VendorUpdationRequest vendorUpdationRequest)
       throws CommonServiceException, PromiseEngineException {
     log.debug("Processing update vendor details");
-    try {
-      var vendorResponse =
-          vendorService.updateVendorDetails(vendorId, orgId, vendorUpdationRequest);
-      log.debug("Response after updation of vendor :{}", vendorResponse);
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Vendor details updated successfully")
-              .payload(vendorResponse)
-              .build());
-    } catch (Exception e) {
-      log.error("Failed to update vendor details");
-      throw e;
-    }
+    var vendorResponse = vendorService.updateVendorDetails(vendorId, orgId, vendorUpdationRequest);
+    log.debug("Response after updation of vendor :{}", vendorResponse);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Vendor details updated successfully")
+            .payload(vendorResponse)
+            .build());
   }
 
   @GetVendorDetailsDoc
@@ -108,17 +97,12 @@ public class VendorController {
           String orgId)
       throws CommonServiceException, PromiseEngineException {
     log.debug("Processing get vendor details");
-    try {
-      var vendorResponse = vendorService.getVendorDetails(vendorId, orgId);
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Vendor details fetched successfully")
-              .payload(vendorResponse)
-              .build());
-    } catch (Exception e) {
-      log.error("Failed to fetch vendor details");
-      throw e;
-    }
+    var vendorResponse = vendorService.getVendorDetails(vendorId, orgId);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Vendor details fetched successfully")
+            .payload(vendorResponse)
+            .build());
   }
 
   @Operation(
@@ -138,17 +122,12 @@ public class VendorController {
           String orgId)
       throws CommonServiceException, PromiseEngineException {
     log.debug("Processing delete vendor");
-    try {
-      var vendorResponse = vendorService.deleteVendor(vendorId, orgId);
-      log.debug("Response after deletion of vendor :{}", vendorResponse);
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Vendor deleted successfully")
-              .payload(vendorResponse)
-              .build());
-    } catch (Exception e) {
-      log.error("Failed to delete vendor");
-      throw e;
-    }
+    var vendorResponse = vendorService.deleteVendor(vendorId, orgId);
+    log.debug("Response after deletion of vendor :{}", vendorResponse);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Vendor deleted successfully")
+            .payload(vendorResponse)
+            .build());
   }
 }

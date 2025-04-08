@@ -55,7 +55,7 @@ public class VendorService {
       throw new CommonServiceException(
           VENDOR_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-    logger.info("Response before updation of vendor :{}", existingVendorDetails.get());
+    logger.debug("Response before updation of vendor :{}", existingVendorDetails.get());
     INSTANCE.updateVendorDetails(vendorUpdationRequest, existingVendorDetails.get());
     return INSTANCE.toVendorResponse(
         vendorPersistenceService.saveVendorDetails(existingVendorDetails.get()));
@@ -89,7 +89,7 @@ public class VendorService {
       throw new CommonServiceException(
           VENDOR_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-    logger.info(
+    logger.debug(
         "Response before deletion of vendor :{}", INSTANCE.toVendorResponse(vendorDetails.get()));
     var vendorResponse = INSTANCE.toVendorResponse(vendorDetails.get());
     vendorPersistenceService.deleteVendor(vendorDetails.get());

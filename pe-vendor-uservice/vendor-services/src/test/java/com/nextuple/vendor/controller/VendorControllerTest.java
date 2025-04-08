@@ -42,7 +42,7 @@ class VendorControllerTest {
   }
 
   @Test
-  @DisplayName("Create Vendor Controller Test - happy path")
+  @DisplayName("Create Vendor Controller Test - vendor successfully created")
   void createVendorTest() throws PromiseEngineException {
     VendorRequest vendorRequest = testUtil.getVendorRequest();
     when(vendorService.createVendor(any(VendorRequest.class)))
@@ -55,7 +55,7 @@ class VendorControllerTest {
   }
 
   @Test
-  @DisplayName("Create Vendor Controller Test - exception case")
+  @DisplayName("Create Vendor Controller Test - Runtime exception thrown")
   void createVendorExceptionTest() throws PromiseEngineException {
     VendorRequest vendorRequest = testUtil.getVendorRequest();
     when(vendorService.createVendor(any(VendorRequest.class)))
@@ -68,7 +68,8 @@ class VendorControllerTest {
   }
 
   @Test
-  @DisplayName("Get Vendor Details by Vendor Id and OrgId Controller Test - happy path")
+  @DisplayName(
+      "Get Vendor Details by Vendor Id and OrgId Controller Test - vendor successfully fetched")
   void getVendorDetailsByVendorIdAndOrgIdTest()
       throws CommonServiceException, PromiseEngineException {
     VendorResponse vendorResponse = testUtil.getVendorResponse();
@@ -81,7 +82,8 @@ class VendorControllerTest {
   }
 
   @Test
-  @DisplayName("Get Vendor Details by Vendor Id and OrgId Controller Test - exception case")
+  @DisplayName(
+      "Get Vendor Details by Vendor Id and OrgId Controller Test - Unable to fetch vendor details")
   void getVendorDetailsByVendorIdAndOrgIdExceptionTest()
       throws CommonServiceException, PromiseEngineException {
     when(vendorService.getVendorDetails(any(), any()))
@@ -95,7 +97,7 @@ class VendorControllerTest {
   }
 
   @Test
-  @DisplayName("Update Vendor Controller Test - happy path")
+  @DisplayName("Update Vendor Controller Test - vendor successfully updated")
   void updateVendorTest() throws CommonServiceException, PromiseEngineException {
     VendorUpdationRequest vendorUpdationRequest = testUtil.getVendorUpdationRequest();
     when(vendorService.updateVendorDetails(
@@ -111,7 +113,7 @@ class VendorControllerTest {
   }
 
   @Test
-  @DisplayName("Update Vendor Controller Test - exception case")
+  @DisplayName("Update Vendor Controller Test - Runtime exception thrown")
   void updateVendorExceptionTest() throws CommonServiceException, PromiseEngineException {
     VendorUpdationRequest vendorUpdationRequest = testUtil.getVendorUpdationRequest();
     when(vendorService.updateVendorDetails(
@@ -128,7 +130,7 @@ class VendorControllerTest {
   }
 
   @Test
-  @DisplayName("Delete Vendor Controller Test - happy path")
+  @DisplayName("Delete Vendor Controller Test - vendor successfully deleted")
   void deleteVendorTest() throws CommonServiceException, PromiseEngineException {
     when(vendorService.deleteVendor(any(), any())).thenReturn(testUtil.getVendorResponse());
     ResponseEntity<BaseResponse<VendorResponse>> responseEntity =
@@ -139,7 +141,7 @@ class VendorControllerTest {
   }
 
   @Test
-  @DisplayName("Delete Vendor Controller Test - exception case")
+  @DisplayName("Delete Vendor Controller Test - Runtime Exception thrown")
   void deleteVendorExceptionTest() throws CommonServiceException, PromiseEngineException {
     when(vendorService.deleteVendor(any(), any()))
         .thenThrow(new RuntimeException("Error while deleting vendor"));

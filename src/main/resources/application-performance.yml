@@ -243,33 +243,33 @@ kafka-topic-flags:
     iv-feed:
       enabled: true
     item-feed:
-      enabled: true
     pe-response:
+      enabled: true
       enabled: true
   master-data:
     node:
-      enabled: false
+      enabled: true
     vendor:
-      enabled: false
+      enabled: true
     node-carrier:
-      enabled: false
+      enabled: true
     carrier:
-      enabled: false
+      enabled: true
     processing-lead-time:
-      enabled: false
+      enabled: true
     calendar:
-      enabled: false
+      enabled: true
     node-calendar:
-      enabled: false
+      enabled: true
     carrier-service-calendar:
-      enabled: false
+      enabled: true
     pickup-calendar:
-      enabled: false
+      enabled: true
     node-service-option-buffer:
-      enabled: false
+      enabled: true
     transit:
-      enabled: false
+      enabled: true
     transit-buffer:
-      enabled: false
+      enabled: true
     transfer-schedule:
       enabled: true
