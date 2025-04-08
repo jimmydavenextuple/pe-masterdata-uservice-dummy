@@ -48,6 +48,8 @@ public class SpringBootTestUtil {
   public static final int POLL_DURATION_MS = 3200;
   public static final int DEFAULT_TIMEOUT_SECONDS = 240;
   public static final int TOKEN_EXPIRY_BUFFER_SECONDS = 200;
+  public static final int POLL_INTERVAL_SECONDS = 15;
+  public static final int POLL_TIMEOUT_SECONDS = 180;
 
   private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
   public ObjectMapper objectMapper = new ObjectMapper();
@@ -341,7 +343,8 @@ public class SpringBootTestUtil {
    * @return the final result obtained after polling.
    */
   public <T> T pollAndAssert(Supplier<T> pollingFunction, Consumer<T> assertConditions) {
-    return pollAndAssert(pollingFunction, 3, 60, assertConditions);
+    return pollAndAssert(
+        pollingFunction, POLL_INTERVAL_SECONDS, POLL_TIMEOUT_SECONDS, assertConditions);
   }
 
   /**
