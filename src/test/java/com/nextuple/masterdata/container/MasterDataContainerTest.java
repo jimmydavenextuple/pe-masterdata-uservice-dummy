@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class MasterDataContainerTests extends AbstractContainerTest {
+class MasterDataContainerTest extends AbstractContainerTest {
 
   @Autowired NodePersistenceServiceImpl nodePersistenceServiceImpl;
 
