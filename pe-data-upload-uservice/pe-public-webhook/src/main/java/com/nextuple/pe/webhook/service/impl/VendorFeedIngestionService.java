@@ -53,7 +53,7 @@ public class VendorFeedIngestionService
   @Override
   public boolean isPublishEnabled() {
     if (Boolean.TRUE.equals(isPublishEnabled)) return true;
-    log.warn("Not publishing vendor feed messages since it is disabled.");
+    log.debug("Not publishing vendor feed messages since it is disabled.");
     return false;
   }
 }
