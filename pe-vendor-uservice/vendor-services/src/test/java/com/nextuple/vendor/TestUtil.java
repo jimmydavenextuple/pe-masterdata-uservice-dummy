@@ -19,35 +19,35 @@ public class TestUtil {
 
   public VendorRequest getVendorRequest() {
     return VendorRequest.builder()
-        .vendorId("vendor-1")
+        .vendorId(VENDOR_ID)
         .vendorDescription("vendor-description")
         .vendorType("Type 1")
-        .orgId("org-1")
+        .orgId("NEXTUPLE_GR")
         .build();
   }
 
   public VendorResponse getVendorResponse() {
     return VendorResponse.builder()
-        .vendorId("vendor-1")
+        .vendorId(VENDOR_ID)
         .vendorDescription("vendor-description")
         .vendorType("Type 1")
-        .orgId("org-1")
+        .orgId("NEXTUPLE_GR")
         .build();
   }
 
   public VendorUpdationRequest getVendorUpdationRequest() {
     return VendorUpdationRequest.builder()
         .vendorDescription("vendor-description")
-        .vendorType("Type 1")
+        .vendorType("DC")
         .build();
   }
 
   public VendorResponse getUpdatedVendorResponse() {
     return VendorResponse.builder()
-        .vendorId("vendor-1")
+        .vendorId(VENDOR_ID)
         .vendorDescription("vendor-description")
-        .vendorType("Type 1")
-        .orgId("org-1")
+        .vendorType("DC")
+        .orgId("NEXTUPLE_GR")
         .build();
   }
 
