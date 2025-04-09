@@ -44,7 +44,7 @@ public class VendorService {
 
   public VendorResponse updateVendorDetails(
       String vendorId, String orgId, VendorUpdationRequest vendorUpdationRequest)
-      throws CommonServiceException, PromiseEngineException {
+      throws CommonServiceException {
     Optional<VendorDomainDto> existingVendorDetails =
         vendorPersistenceService.findVendorByVendorIdAndOrgId(vendorId, orgId);
     if (existingVendorDetails.isEmpty()) {
@@ -63,7 +63,7 @@ public class VendorService {
 
   @ReaderDS
   public VendorResponse getVendorDetails(String vendorId, String orgId)
-      throws CommonServiceException, PromiseEngineException {
+      throws CommonServiceException {
     Optional<VendorDomainDto> vendorDetails =
         vendorPersistenceService.findVendorByVendorIdAndOrgId(vendorId, orgId);
     if (vendorDetails.isEmpty()) {
@@ -77,8 +77,7 @@ public class VendorService {
     return INSTANCE.toVendorResponse(vendorDetails.get());
   }
 
-  public VendorResponse deleteVendor(String vendorId, String orgId)
-      throws CommonServiceException, PromiseEngineException {
+  public VendorResponse deleteVendor(String vendorId, String orgId) throws CommonServiceException {
     Optional<VendorDomainDto> vendorDetails =
         vendorPersistenceService.findVendorByVendorIdAndOrgId(vendorId, orgId);
     if (vendorDetails.isEmpty()) {

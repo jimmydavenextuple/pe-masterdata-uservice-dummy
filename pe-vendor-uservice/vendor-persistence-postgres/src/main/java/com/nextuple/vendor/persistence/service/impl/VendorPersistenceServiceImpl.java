@@ -7,10 +7,6 @@
 
 package com.nextuple.vendor.persistence.service.impl;
 
-import com.nextuple.common.context.Logger;
-import com.nextuple.common.context.LoggerFactory;
-import com.nextuple.common.exception.CommonServiceException;
-import com.nextuple.common.response.error.FieldError;
 import com.nextuple.postgres.service.CommonPersistenceService;
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
 import com.nextuple.vendor.persistence.domain.key.VendorDomainKey;
@@ -19,11 +15,8 @@ import com.nextuple.vendor.persistence.entity.key.VendorKey;
 import com.nextuple.vendor.persistence.mapper.VendorEntityMapper;
 import com.nextuple.vendor.persistence.repository.VendorRepository;
 import com.nextuple.vendor.persistence.service.VendorPersistenceService;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,8 +30,6 @@ public class VendorPersistenceServiceImpl
         VendorRepository,
         VendorEntityMapper>
     implements VendorPersistenceService {
-  private static final Logger logger = LoggerFactory.getLogger(VendorPersistenceServiceImpl.class);
-
   @Override
   public VendorDomainDto saveVendorDetails(VendorDomainDto vendorDomainDto) {
     return save(vendorDomainDto);
@@ -50,23 +41,7 @@ public class VendorPersistenceServiceImpl
   }
 
   @Override
-  public void deleteVendor(VendorDomainDto vendorDomainDto) throws CommonServiceException {
-    Optional<VendorEntity> vendorEntity =
-        getRepository()
-            .findById(
-                VendorKey.builder()
-                    .vendorId(vendorDomainDto.getVendorId())
-                    .orgId(vendorDomainDto.getOrgId())
-                    .build());
-    if (vendorEntity.isEmpty()) {
-      logger.error("Unable to find vendor");
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put("orgId", FieldError.builder().rejectedValue(vendorDomainDto.getOrgId()).build());
-      errorMap.put(
-          "vendorId", FieldError.builder().rejectedValue(vendorDomainDto.getVendorId()).build());
-      throw new CommonServiceException(
-          "Vendor not found for given orgId, vendorId", HttpStatus.NOT_FOUND, 0X2771, errorMap);
-    }
+  public void deleteVendor(VendorDomainDto vendorDomainDto) {
     delete(vendorDomainDto);
   }
 }

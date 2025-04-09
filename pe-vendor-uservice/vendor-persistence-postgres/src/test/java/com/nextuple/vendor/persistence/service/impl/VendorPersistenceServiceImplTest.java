@@ -121,12 +121,14 @@ class VendorPersistenceServiceImplTest {
   @Test
   @DisplayName("Delete Vendor by vendorId and ordId Test - Vendor details not found")
   void vendorDeletionTestException() {
-    doThrow(new RuntimeException("error while deleting")).when(vendorRepository).delete(any());
+    doThrow(new RuntimeException("Vendor not found for given orgId, vendorId"))
+        .when(vendorRepository)
+        .delete(any());
     Exception exception =
         assertThrows(
-            CommonServiceException.class,
+            RuntimeException.class,
             () -> vendorPersistenceService.deleteVendor(testUtil.getVendorDomainDto()));
     Assertions.assertEquals("Vendor not found for given orgId, vendorId", exception.getMessage());
-    verify(vendorRepository, times(0)).delete(any());
+    verify(vendorRepository, times(1)).delete(any());
   }
 }

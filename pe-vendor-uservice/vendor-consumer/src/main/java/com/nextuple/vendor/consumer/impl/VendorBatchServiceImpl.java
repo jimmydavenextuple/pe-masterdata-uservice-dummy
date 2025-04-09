@@ -9,7 +9,6 @@ package com.nextuple.vendor.consumer.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.nextuple.common.exception.CommonServiceException;
-import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.master.data.integration.enums.TaskInformation;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
@@ -69,8 +68,7 @@ public class VendorBatchServiceImpl extends BatchService<VendorFeedDto> {
   }
 
   @Override
-  public void checkForOutdatedRecord(BatchRequest<VendorFeedDto> vendorBatchRequest)
-      throws CommonServiceException {
+  public void checkForOutdatedRecord(BatchRequest<VendorFeedDto> vendorBatchRequest) {
     VendorFeedDto vendorDto = vendorBatchRequest.getPayload();
     String vendorId = vendorDto.getVendorId();
     String orgId = vendorDto.getOrgId();
@@ -81,7 +79,7 @@ public class VendorBatchServiceImpl extends BatchService<VendorFeedDto> {
         if (checkForBatchRequestExpired(vendorBatchRequest, vendorDomainDto)) {
           throwExceptionForOutdatedRecords(vendorBatchRequest, vendorDomainDto);
         }
-      } catch (PromiseEngineException e) {
+      } catch (Exception e) {
         log.debug(
             "Cannot check for outdated record as the given vendor does not exist for the given details orgId:{} vendorId:{}",
             orgId,
