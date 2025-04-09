@@ -16,7 +16,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.common.exception.CommonServiceException;
-import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
 import com.nextuple.vendor.persistence.entity.VendorEntity;
 import com.nextuple.vendor.persistence.entity.key.VendorKey;
@@ -47,8 +46,8 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
-  @DisplayName("Save Vendor Happy Path Test")
-  void saveVendorTest() throws PromiseEngineException {
+  @DisplayName("Save Vendor Details with Valid Response")
+  void saveVendorTest() {
     VendorEntity vendorEntity = testUtil.getVendorEntity();
     when(vendorEntityMapper.toEntity(any(VendorDomainDto.class))).thenReturn(vendorEntity);
     when(vendorEntityMapper.toDomain(any(VendorEntity.class)))
@@ -61,20 +60,21 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
-  @DisplayName("Save Vendor Test - Exception Case")
+  @DisplayName("Save Vendor Test - Encountered a runtime exception")
   void saveVendorExceptionTest() {
-    when(vendorRepository.save(any())).thenThrow(new RuntimeException("Error while saving"));
+    when(vendorRepository.save(any()))
+        .thenThrow(new RuntimeException("Unable to save vendor : Error while saving"));
     Exception exception =
         assertThrows(
-            PromiseEngineException.class,
+            RuntimeException.class,
             () -> vendorPersistenceService.saveVendorDetails(testUtil.getVendorDomainDto()));
     Assertions.assertEquals("Unable to save vendor : Error while saving", exception.getMessage());
     verify(vendorRepository, times(1)).save(any());
   }
 
   @Test
-  @DisplayName("Get Vendor Details Happy Path Test")
-  void getVendorDetailsTest() throws PromiseEngineException {
+  @DisplayName("Get Vendor Details when the vendor details exists")
+  void getVendorDetailsTest() {
     VendorEntity vendorEntity = testUtil.getVendorEntity();
     when(vendorEntityMapper.toEntity(any(VendorDomainDto.class))).thenReturn(vendorEntity);
     when(vendorEntityMapper.toDomain(any(VendorEntity.class)))
@@ -88,13 +88,13 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
-  @DisplayName("Get Vendor Details Test - Exception Case")
+  @DisplayName("Get Vendor Details Test Encountered Runtime error in fetching vendor details")
   void getVendorDetailsTestException() {
     when(vendorRepository.findById(any()))
-        .thenThrow(new RuntimeException("Error while fetching details"));
+        .thenThrow(new RuntimeException("Unable to fetch vendor : Error while fetching details"));
     Exception exception =
         assertThrows(
-            PromiseEngineException.class,
+            RuntimeException.class,
             () ->
                 vendorPersistenceService.findVendorByVendorIdAndOrgId(
                     TestUtil.VENDOR_ID, TestUtil.ORG_ID));
@@ -104,7 +104,8 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
-  @DisplayName("Delete Vendor by vendorId and ordId Happy Path Test")
+  @DisplayName(
+      "Delete Vendor by vendorId and ordId when the vendor details exist and is deleted successfully")
   void vendorDeletionTest() throws CommonServiceException {
     when(vendorEntityMapper.toEntity(any(VendorDomainDto.class)))
         .thenReturn(testUtil.getVendorEntity());
@@ -118,7 +119,7 @@ class VendorPersistenceServiceImplTest {
   }
 
   @Test
-  @DisplayName("Delete Vendor by vendorId and ordId Test - Exception Case")
+  @DisplayName("Delete Vendor by vendorId and ordId Test - Vendor details not found")
   void vendorDeletionTestException() {
     doThrow(new RuntimeException("error while deleting")).when(vendorRepository).delete(any());
     Exception exception =

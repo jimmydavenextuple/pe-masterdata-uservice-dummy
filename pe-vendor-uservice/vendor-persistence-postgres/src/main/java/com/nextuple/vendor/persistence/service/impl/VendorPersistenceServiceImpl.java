@@ -9,10 +9,7 @@ package com.nextuple.vendor.persistence.service.impl;
 
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
-import com.nextuple.common.enums.ApplicationLayer;
-import com.nextuple.common.enums.ExceptionCodeMapping;
 import com.nextuple.common.exception.CommonServiceException;
-import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.postgres.service.CommonPersistenceService;
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
@@ -43,30 +40,13 @@ public class VendorPersistenceServiceImpl
   private static final Logger logger = LoggerFactory.getLogger(VendorPersistenceServiceImpl.class);
 
   @Override
-  public VendorDomainDto saveVendorDetails(VendorDomainDto vendorDomainDto)
-      throws PromiseEngineException {
-    try {
-      return save(vendorDomainDto);
-    } catch (Exception e) {
-      logger.error(String.valueOf(e), "Unable to save vendor");
-      throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_SAVE_FAILED,
-          "Unable to save vendor : " + e.getMessage());
-    }
+  public VendorDomainDto saveVendorDetails(VendorDomainDto vendorDomainDto) {
+    return save(vendorDomainDto);
   }
 
   @Override
-  public Optional<VendorDomainDto> findVendorByVendorIdAndOrgId(String vendorId, String orgId)
-      throws PromiseEngineException {
-    try {
-      return findByKey(VendorDomainKey.builder().orgId(orgId).vendorId(vendorId).build());
-    } catch (Exception e) {
-      throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Unable to fetch vendor : " + e.getMessage());
-    }
+  public Optional<VendorDomainDto> findVendorByVendorIdAndOrgId(String vendorId, String orgId) {
+    return findByKey(VendorDomainKey.builder().orgId(orgId).vendorId(vendorId).build());
   }
 
   @Override
