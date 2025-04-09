@@ -8,7 +8,6 @@
 package com.nextuple.vendor.service;
 
 import com.nextuple.common.exception.CommonServiceException;
-import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.postgres.config.ReaderDS;
 import com.nextuple.vendor.domain.inbound.VendorRequest;
@@ -37,7 +36,7 @@ public class VendorService {
   private static final String VENDOR_ID = "vendorId";
   private static final String VENDOR_EXCEPTION_MESSAGE = "Vendor not found with given details";
 
-  public VendorResponse createVendor(VendorRequest vendorRequest) throws PromiseEngineException {
+  public VendorResponse createVendor(VendorRequest vendorRequest) {
     var vendorDetails = INSTANCE.vendorRequestToVendorEntity(vendorRequest);
     return INSTANCE.toVendorResponse(vendorPersistenceService.saveVendorDetails(vendorDetails));
   }

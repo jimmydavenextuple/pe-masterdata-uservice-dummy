@@ -64,10 +64,11 @@ class VendorPersistenceServiceImplTest {
   void saveVendorExceptionTest() {
     when(vendorRepository.save(any()))
         .thenThrow(new RuntimeException("Unable to save vendor : Error while saving"));
+    VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto();
     Exception exception =
         assertThrows(
             RuntimeException.class,
-            () -> vendorPersistenceService.saveVendorDetails(testUtil.getVendorDomainDto()));
+            () -> vendorPersistenceService.saveVendorDetails(vendorDomainDto));
     Assertions.assertEquals("Unable to save vendor : Error while saving", exception.getMessage());
     verify(vendorRepository, times(1)).save(any());
   }
@@ -124,10 +125,10 @@ class VendorPersistenceServiceImplTest {
     doThrow(new RuntimeException("Vendor not found for given orgId, vendorId"))
         .when(vendorRepository)
         .delete(any());
+    VendorDomainDto vendorDomainDto = testUtil.getVendorDomainDto();
     Exception exception =
         assertThrows(
-            RuntimeException.class,
-            () -> vendorPersistenceService.deleteVendor(testUtil.getVendorDomainDto()));
+            RuntimeException.class, () -> vendorPersistenceService.deleteVendor(vendorDomainDto));
     Assertions.assertEquals("Vendor not found for given orgId, vendorId", exception.getMessage());
     verify(vendorRepository, times(1)).delete(any());
   }

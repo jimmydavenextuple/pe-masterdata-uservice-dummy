@@ -91,15 +91,17 @@ public class VendorBatchServiceImpl extends BatchService<VendorFeedDto> {
   private static void throwExceptionForOutdatedRecords(
       BatchRequest<VendorFeedDto> vendorBatchRequest, Optional<VendorDomainDto> vendorDomainDto)
       throws CommonServiceException {
-    Map<String, FieldError> errorMap = new HashMap<>();
-    errorMap.put(
-        "receivedTimestamp",
-        FieldError.builder().rejectedValue(vendorBatchRequest.getReceivedTimestamp()).build());
-    errorMap.put(
-        "lastUpdatedTimestamp",
-        FieldError.builder().rejectedValue(vendorDomainDto.get().getLastModifiedDate()).build());
-    throw new CommonServiceException(
-        "Can't process the record as it's outdated", HttpStatus.BAD_REQUEST, 0x1771, errorMap);
+    if (vendorDomainDto.isPresent()) {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          "receivedTimestamp",
+          FieldError.builder().rejectedValue(vendorBatchRequest.getReceivedTimestamp()).build());
+      errorMap.put(
+          "lastUpdatedTimestamp",
+          FieldError.builder().rejectedValue(vendorDomainDto.get().getLastModifiedDate()).build());
+      throw new CommonServiceException(
+          "Can't process the record as it's outdated", HttpStatus.BAD_REQUEST, 0x1771, errorMap);
+    }
   }
 
   private static boolean checkForBatchRequestExpired(
