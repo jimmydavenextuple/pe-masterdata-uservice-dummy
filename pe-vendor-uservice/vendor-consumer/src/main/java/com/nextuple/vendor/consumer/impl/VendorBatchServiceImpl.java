@@ -68,22 +68,16 @@ public class VendorBatchServiceImpl extends BatchService<VendorFeedDto> {
   }
 
   @Override
-  public void checkForOutdatedRecord(BatchRequest<VendorFeedDto> vendorBatchRequest) {
+  public void checkForOutdatedRecord(BatchRequest<VendorFeedDto> vendorBatchRequest)
+      throws CommonServiceException {
     VendorFeedDto vendorDto = vendorBatchRequest.getPayload();
     String vendorId = vendorDto.getVendorId();
     String orgId = vendorDto.getOrgId();
     if (Objects.nonNull(vendorId) && Objects.nonNull(orgId)) {
-      try {
-        Optional<VendorDomainDto> vendorDomainDto =
-            vendorPersistenceService.findVendorByVendorIdAndOrgId(vendorId, orgId);
-        if (checkForBatchRequestExpired(vendorBatchRequest, vendorDomainDto)) {
-          throwExceptionForOutdatedRecords(vendorBatchRequest, vendorDomainDto);
-        }
-      } catch (Exception e) {
-        log.debug(
-            "Cannot check for outdated record as the given vendor does not exist for the given details orgId:{} vendorId:{}",
-            orgId,
-            vendorId);
+      Optional<VendorDomainDto> vendorDomainDto =
+          vendorPersistenceService.findVendorByVendorIdAndOrgId(vendorId, orgId);
+      if (checkForBatchRequestExpired(vendorBatchRequest, vendorDomainDto)) {
+        throwExceptionForOutdatedRecords(vendorBatchRequest, vendorDomainDto);
       }
     }
   }

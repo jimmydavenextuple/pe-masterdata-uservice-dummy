@@ -148,9 +148,10 @@ class VendorBatchServiceImplTest {
     batchRequest.setReceivedTimestamp(new Date());
     List<BatchRequest<VendorFeedDto>> vendorFeedRequests = List.of(batchRequest);
     ResponseDto responseDto =
-        testUtil.createResponseDto(1, HttpStatus.OK.value(), "Vendor details updated successfully");
+        testUtil.createResponseDto(
+            1, HttpStatus.BAD_REQUEST.value(), "Can't process the record as it's outdated");
     List<ResponseDto> responseDtoList = List.of(responseDto);
-    BatchResponse batchResponse = testUtil.getVendorBatchResponse(1, 1, 0);
+    BatchResponse batchResponse = testUtil.getVendorBatchResponse(1, 0, 1);
     batchResponse.setResponses(responseDtoList);
     Mockito.doNothing()
         .when(errorHandlingService)
@@ -159,8 +160,6 @@ class VendorBatchServiceImplTest {
     vendorDomainDto.setLastModifiedDate(DateUtil.addDaysToDate(new Date(), 1));
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
         .thenReturn(Optional.of(vendorDomainDto));
-    when(vendorFeign.updateVendorDetails(any(), any(), any()))
-        .thenReturn(testUtil.getBaseResponseOfVendorFeed("Vendor details updated successfully"));
     Assertions.assertEquals(
         batchResponse, vendorBatchService.processRecordsWithRetry(vendorFeedRequests));
     verify(vendorFeign, times(0)).createVendor(any());
@@ -188,7 +187,9 @@ class VendorBatchServiceImplTest {
     vendorDomainDto.setLastModifiedDate(DateUtil.addDaysToDate(new Date(), 1));
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
         .thenReturn(Optional.of(vendorDomainDto));
-    Assertions.assertDoesNotThrow(() -> vendorBatchService.checkForOutdatedRecord(batchRequest));
+    Assertions.assertThrows(
+        CommonServiceException.class,
+        () -> vendorBatchService.checkForOutdatedRecord(batchRequest));
   }
 
   @Test
@@ -221,6 +222,7 @@ class VendorBatchServiceImplTest {
     batchRequest.setReceivedTimestamp(new Date());
     when(vendorPersistenceService.findVendorByVendorIdAndOrgId(anyString(), anyString()))
         .thenThrow(new RuntimeException("Something went wrong"));
-    Assertions.assertDoesNotThrow(() -> vendorBatchService.checkForOutdatedRecord(batchRequest));
+    Assertions.assertThrows(
+        RuntimeException.class, () -> vendorBatchService.checkForOutdatedRecord(batchRequest));
   }
 }
