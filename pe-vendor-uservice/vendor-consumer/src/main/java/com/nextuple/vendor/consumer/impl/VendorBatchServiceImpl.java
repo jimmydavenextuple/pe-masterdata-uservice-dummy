@@ -9,7 +9,6 @@ package com.nextuple.vendor.consumer.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.nextuple.common.exception.CommonServiceException;
-import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.master.data.integration.enums.TaskInformation;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
@@ -75,33 +74,27 @@ public class VendorBatchServiceImpl extends BatchService<VendorFeedDto> {
     String vendorId = vendorDto.getVendorId();
     String orgId = vendorDto.getOrgId();
     if (Objects.nonNull(vendorId) && Objects.nonNull(orgId)) {
-      try {
-        Optional<VendorDomainDto> vendorDomainDto =
-            vendorPersistenceService.findVendorByVendorIdAndOrgId(vendorId, orgId);
-        if (checkForBatchRequestExpired(vendorBatchRequest, vendorDomainDto)) {
-          Map<String, FieldError> errorMap = new HashMap<>();
-          errorMap.put(
-              "receivedTimestamp",
-              FieldError.builder()
-                  .rejectedValue(vendorBatchRequest.getReceivedTimestamp())
-                  .build());
-          errorMap.put(
-              "lastUpdatedTimestamp",
-              FieldError.builder()
-                  .rejectedValue(vendorDomainDto.get().getLastModifiedDate())
-                  .build());
-          throw new CommonServiceException(
-              "Can't process the record as it's outdated",
-              HttpStatus.BAD_REQUEST,
-              0x1771,
-              errorMap);
-        }
-      } catch (PromiseEngineException e) {
-        log.debug(
-            "Cannot check for outdated record as the given vendor does not exist for the given details orgId:{} vendorId:{}",
-            orgId,
-            vendorId);
+      Optional<VendorDomainDto> vendorDomainDto =
+          vendorPersistenceService.findVendorByVendorIdAndOrgId(vendorId, orgId);
+      if (checkForBatchRequestExpired(vendorBatchRequest, vendorDomainDto)) {
+        throwExceptionForOutdatedRecords(vendorBatchRequest, vendorDomainDto);
       }
+    }
+  }
+
+  private static void throwExceptionForOutdatedRecords(
+      BatchRequest<VendorFeedDto> vendorBatchRequest, Optional<VendorDomainDto> vendorDomainDto)
+      throws CommonServiceException {
+    if (vendorDomainDto.isPresent()) {
+      Map<String, FieldError> errorMap = new HashMap<>();
+      errorMap.put(
+          "receivedTimestamp",
+          FieldError.builder().rejectedValue(vendorBatchRequest.getReceivedTimestamp()).build());
+      errorMap.put(
+          "lastUpdatedTimestamp",
+          FieldError.builder().rejectedValue(vendorDomainDto.get().getLastModifiedDate()).build());
+      throw new CommonServiceException(
+          "Can't process the record as it's outdated", HttpStatus.BAD_REQUEST, 0x1771, errorMap);
     }
   }
 

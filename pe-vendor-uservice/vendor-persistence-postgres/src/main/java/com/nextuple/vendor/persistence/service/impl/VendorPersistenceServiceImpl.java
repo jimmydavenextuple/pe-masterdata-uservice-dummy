@@ -7,13 +7,6 @@
 
 package com.nextuple.vendor.persistence.service.impl;
 
-import com.nextuple.common.context.Logger;
-import com.nextuple.common.context.LoggerFactory;
-import com.nextuple.common.enums.ApplicationLayer;
-import com.nextuple.common.enums.ExceptionCodeMapping;
-import com.nextuple.common.exception.CommonServiceException;
-import com.nextuple.common.exception.PromiseEngineException;
-import com.nextuple.common.response.error.FieldError;
 import com.nextuple.postgres.service.CommonPersistenceService;
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
 import com.nextuple.vendor.persistence.domain.key.VendorDomainKey;
@@ -22,11 +15,8 @@ import com.nextuple.vendor.persistence.entity.key.VendorKey;
 import com.nextuple.vendor.persistence.mapper.VendorEntityMapper;
 import com.nextuple.vendor.persistence.repository.VendorRepository;
 import com.nextuple.vendor.persistence.service.VendorPersistenceService;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -40,53 +30,18 @@ public class VendorPersistenceServiceImpl
         VendorRepository,
         VendorEntityMapper>
     implements VendorPersistenceService {
-  private static final Logger logger = LoggerFactory.getLogger(VendorPersistenceServiceImpl.class);
-
   @Override
-  public VendorDomainDto saveVendorDetails(VendorDomainDto vendorDomainDto)
-      throws PromiseEngineException {
-    try {
-      return save(vendorDomainDto);
-    } catch (Exception e) {
-      logger.error(String.valueOf(e), "Unable to save vendor");
-      throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_SAVE_FAILED,
-          "Unable to save vendor : " + e.getMessage());
-    }
+  public VendorDomainDto saveVendorDetails(VendorDomainDto vendorDomainDto) {
+    return save(vendorDomainDto);
   }
 
   @Override
-  public Optional<VendorDomainDto> findVendorByVendorIdAndOrgId(String vendorId, String orgId)
-      throws PromiseEngineException {
-    try {
-      return findByKey(VendorDomainKey.builder().orgId(orgId).vendorId(vendorId).build());
-    } catch (Exception e) {
-      throw new PromiseEngineException(
-          ApplicationLayer.DAO_LAYER,
-          ExceptionCodeMapping.DAO_FIND_FAILED,
-          "Unable to fetch vendor : " + e.getMessage());
-    }
+  public Optional<VendorDomainDto> findVendorByVendorIdAndOrgId(String vendorId, String orgId) {
+    return findByKey(VendorDomainKey.builder().orgId(orgId).vendorId(vendorId).build());
   }
 
   @Override
-  public void deleteVendor(VendorDomainDto vendorDomainDto) throws CommonServiceException {
-    Optional<VendorEntity> vendorEntity =
-        getRepository()
-            .findById(
-                VendorKey.builder()
-                    .vendorId(vendorDomainDto.getVendorId())
-                    .orgId(vendorDomainDto.getOrgId())
-                    .build());
-    if (vendorEntity.isEmpty()) {
-      logger.error("Unable to find vendor");
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put("orgId", FieldError.builder().rejectedValue(vendorDomainDto.getOrgId()).build());
-      errorMap.put(
-          "vendorId", FieldError.builder().rejectedValue(vendorDomainDto.getVendorId()).build());
-      throw new CommonServiceException(
-          "Vendor not found for given orgId, vendorId", HttpStatus.NOT_FOUND, 0X2771, errorMap);
-    }
+  public void deleteVendor(VendorDomainDto vendorDomainDto) {
     delete(vendorDomainDto);
   }
 }
