@@ -434,6 +434,6 @@ class MasterDataContainerTest extends AbstractContainerTest {
             null,
             "message",
             404);
-    Assertions.assertEquals("Vendor not found with given details", response);
+    Assertions.assertEquals("\"Vendor not found with given details\"", response);
   }
 }
