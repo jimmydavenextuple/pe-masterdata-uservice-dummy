@@ -8,6 +8,7 @@ server:
     name: "pe-masterdata-uservice"
     path:
       - promising-engine/pe-node
+      - promising-engine/pe-vendor
       - promising-engine/pe-item
       - promising-engine/pe-data-upload
       - promising-engine/pe-promise-sourcing-rule

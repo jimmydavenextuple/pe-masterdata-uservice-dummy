@@ -11,6 +11,7 @@ import com.nextuple.master.data.integration.constants.TaskConstants;
 
 public enum TaskInformation {
   NODE_FEED(TaskConstants.NODE),
+  VENDOR_FEED(TaskConstants.VENDOR),
   CARRIER_FEED(TaskConstants.CARRIER),
   NODE_CARRIER_FEED(TaskConstants.NODE_CARRIER),
   NODE_SERVICE_OPTION_BUFFER_FEED(TaskConstants.NODE_SERVICE_OPTION_BUFFER),

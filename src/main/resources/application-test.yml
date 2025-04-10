@@ -184,6 +184,9 @@ master-data:
   node:
     topic-names: INTERNAL.TEST_CONTAINER.PE.NODE_INTEGRATION
     group-id: node-master-testcontainer
+  vendor:
+    topic-names: INTERNAL.TEST.PE.VENDOR_INTEGRATION
+    group-id: vendor-master-testcontainer
   node-carrier:
     topic-names: INTERNAL.TEST_CONTAINER.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-testcontainer
@@ -288,6 +291,8 @@ kafka-topic-flags:
       enabled: true
   master-data:
     node:
+      enabled: true
+    vendor:
       enabled: true
     node-carrier:
       enabled: true
