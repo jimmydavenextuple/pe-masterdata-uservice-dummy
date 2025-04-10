@@ -10,11 +10,7 @@ package com.nextuple.vendor.persistence.repository;
 import com.nextuple.postgres.repository.CommonJpaRepository;
 import com.nextuple.vendor.persistence.entity.VendorEntity;
 import com.nextuple.vendor.persistence.entity.key.VendorKey;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VendorRepository extends CommonJpaRepository<VendorEntity, VendorKey> {
-  Page<VendorEntity> findVendorByOrgId(String orgId, Pageable pageable);
-}
+public interface VendorRepository extends CommonJpaRepository<VendorEntity, VendorKey> {}

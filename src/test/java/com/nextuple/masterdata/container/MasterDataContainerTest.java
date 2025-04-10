@@ -230,7 +230,7 @@ class MasterDataContainerTest extends AbstractContainerTest {
   }
 
   @Order(7)
-  @DisplayName("Happy Path: Create Vendor")
+  @DisplayName("Test case to create multiple new vendors")
   @ParameterizedTest(name = "Create Vendor with {0}")
   @CsvSource(
       value = {
@@ -271,7 +271,7 @@ class MasterDataContainerTest extends AbstractContainerTest {
 
   @Test
   @Order(8)
-  @DisplayName("Happy Path: Get Vendor Details")
+  @DisplayName("Get Details of an existing Vendor")
   void getVendorDetailsWithValidInput() throws IOException {
     VendorResponse expectedVendorResponse =
         util.parseClassFromJSON(
@@ -286,7 +286,7 @@ class MasterDataContainerTest extends AbstractContainerTest {
 
   @Test
   @Order(9)
-  @DisplayName("Happy Path: Update Vendor Details")
+  @DisplayName("Update the details of an existing Vendor")
   void updateVendorDetailsWithValidInput() throws IOException {
     VendorRequest vendorRequestBody =
         util.parseClassFromJSON("input/vendor/update-vendor.json", VendorRequest.class);
@@ -320,7 +320,7 @@ class MasterDataContainerTest extends AbstractContainerTest {
 
   @Test
   @Order(10)
-  @DisplayName("Happy Path: Create, Update and Delete Vendor with MDI")
+  @DisplayName("Perform Create, Update and Delete Vendor using MDI")
   void createVendorFeedIngestionWithValidInput() throws IOException {
     // Fetch the input from the resources
     FeedRequest<MasterDataIngestionDto<VendorFeedDto>> vendorRequestBody =
@@ -399,7 +399,7 @@ class MasterDataContainerTest extends AbstractContainerTest {
   }
 
   @Test
-  @DisplayName("Happy Path: Delete Vendor")
+  @DisplayName("Happy Path: Delete a Vendor that exists in the db")
   @Order(11)
   void deleteVendorWithValidInput() throws IOException {
     VendorResponse expectedVendorResponse =
@@ -425,7 +425,7 @@ class MasterDataContainerTest extends AbstractContainerTest {
 
   @Test
   @Order(12)
-  @DisplayName("Happy Path: Get Vendor Details of a Deleted Vendor")
+  @DisplayName("Attempt getting Vendor Details of the Deleted Vendor")
   void getVendorDetailsWithInvalidInput() throws IOException {
     String response =
         util.callRestPayload(
@@ -434,6 +434,6 @@ class MasterDataContainerTest extends AbstractContainerTest {
             null,
             "message",
             404);
-    Assertions.assertEquals("\"Vendor not found with given details\"", response);
+    Assertions.assertEquals("Vendor not found with given details", response);
   }
 }
