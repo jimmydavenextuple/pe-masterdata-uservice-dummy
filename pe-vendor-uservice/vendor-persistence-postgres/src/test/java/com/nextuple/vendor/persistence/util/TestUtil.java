@@ -9,7 +9,6 @@ package com.nextuple.vendor.persistence.util;
 
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
 import com.nextuple.vendor.persistence.entity.VendorEntity;
-import java.util.*;
 
 public class TestUtil {
 
