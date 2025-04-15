@@ -147,6 +147,9 @@ master-data:
   node:
     topic-name: INTERNAL.ORIELLY.PE.NODE_INTEGRATION
     group-id: node-master-orielly
+  vendor:
+    topic-name: INTERNAL.ORIELLY.PE.VENDOR_INTEGRATION
+    group-id: vendor-master-orielly
   node-carrier:
     topic-name: INTERNAL.ORIELLY.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-orielly

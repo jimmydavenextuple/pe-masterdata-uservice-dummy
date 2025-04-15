@@ -159,6 +159,9 @@ master-data:
   node:
     topic-names: INTERNAL.INTEGRATION.PE.NODE_INTEGRATION
     group-id: node-master-integration
+  vendor:
+    topic-names: INTERNAL.INTEGRATION.PE.VENDOR_INTEGRATION
+    group-id: vendor-master-integration
   node-carrier:
     topic-names: INTERNAL.INTEGRATION.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-integration
@@ -263,6 +266,8 @@ kafka-topic-flags:
       enabled: true
   master-data:
     node:
+      enabled: true
+    vendor:
       enabled: true
     node-carrier:
       enabled: true

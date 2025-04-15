@@ -25,9 +25,11 @@ import com.nextuple.pe.webhook.service.impl.PickupCalendarFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransferScheduleFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransitBufferFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransitFeedHandlingService;
+import com.nextuple.pe.webhook.service.impl.VendorFeedHandlingService;
 import com.nextuple.pe.webhook.util.TestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -47,6 +49,7 @@ class MasterDataIngestionServiceTest {
   @Mock NodeServiceOptionFeedHandlingService nodeServiceOptionFeedHandlingService;
   @Mock NodeServiceOptionBufferFeedHandlingService nodeServiceOptionBufferFeedHandlingService;
   @Mock TransferScheduleFeedHandlingService transferScheduleFeedHandlingService;
+  @Mock VendorFeedHandlingService vendorFeedHandlingService;
   @InjectMocks MasterDataIngestionService masterDataIngestionService;
   @InjectMocks TestUtil testUtil;
 
@@ -210,5 +213,17 @@ class MasterDataIngestionServiceTest {
         "transfer-schedules", batchRequest, TestUtil.ORG_ID);
     Mockito.verify(transferScheduleFeedHandlingService, Mockito.times(1))
         .publishRecords(any(), any());
+  }
+
+  @Test
+  @DisplayName("Ingest Vendor Feed Test")
+  void ingestVendorFeedTest() throws CommonServiceException {
+    FeedRequest<MasterDataIngestionDto<?>> batchRequest =
+        testUtil.getVendorFeedIngestionRequest(ActionEnum.CREATE);
+    Mockito.doNothing().when(vendorFeedHandlingService).publishRecords(any(), any());
+
+    masterDataIngestionService.processMasterDataIngestionData(
+        "vendor", batchRequest, TestUtil.ORG_ID);
+    Mockito.verify(vendorFeedHandlingService, Mockito.times(1)).publishRecords(any(), any());
   }
 }

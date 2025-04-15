@@ -54,6 +54,13 @@ include 'pe-node-uservice:node-master-data-near-cache'
 include 'pe-node-uservice:node-consumer'
 include 'pe-node-uservice:node-api-domain'
 
+include ':pe-vendor-uservice'
+include 'pe-vendor-uservice:vendor-services'
+include 'pe-vendor-uservice:vendor-persistence-postgres'
+include 'pe-vendor-uservice:vendor-persistence-domain'
+include 'pe-vendor-uservice:vendor-consumer'
+include 'pe-vendor-uservice:vendor-api-domain'
+
 include ':pe-carrier-uservice'
 include 'pe-carrier-uservice:carrier-api-domain'
 include 'pe-carrier-uservice:carrier-consumer'

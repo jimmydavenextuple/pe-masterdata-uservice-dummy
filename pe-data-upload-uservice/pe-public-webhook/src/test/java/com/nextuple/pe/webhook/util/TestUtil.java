@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025., Nextuple, Inc. and/or its affiliates. All rights reserved.
+ *
+ * The software, code and related documentation made available to you by Nextuple, Inc. are provided under a written agreement containing restrictions on use and disclosure and are protected by copyright and other intellectual property laws. As described in and unless expressly permitted in your agreement, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or de-compilation of this software, unless required by law or permitted via contract for interoperability, is strictly prohibited.
+ * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
+ */
+
 package com.nextuple.pe.webhook.util;
 
 import com.nextuple.calendar.consumer.dto.CalendarFeedDto;
@@ -23,6 +30,7 @@ import com.nextuple.pe.webhook.domain.inbound.FeedRequest;
 import com.nextuple.transit.consumer.dto.TransferScheduleDto;
 import com.nextuple.transit.consumer.dto.TransitBufferFeedDto;
 import com.nextuple.transit.consumer.dto.TransitFeedDto;
+import com.nextuple.vendor.consumer.dto.VendorFeedDto;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -202,6 +210,16 @@ public class TestUtil {
     return feedRequest;
   }
 
+  public FeedRequest<MasterDataIngestionDto<?>> getVendorFeedIngestionRequest(ActionEnum action) {
+    FeedRequest<MasterDataIngestionDto<?>> feedRequest = new FeedRequest<>();
+    MasterDataIngestionDto<VendorFeedDto> vendorFeedIngestionRequest =
+        new MasterDataIngestionDto<>();
+    vendorFeedIngestionRequest.setAction(action);
+    vendorFeedIngestionRequest.setPayload(createVendorFeedDto());
+    feedRequest.setData(List.of(vendorFeedIngestionRequest));
+    return feedRequest;
+  }
+
   public FeedRequest<MasterDataIngestionDto<?>> getCarrierServiceCalendarFeedIngestionRequest(
       ActionEnum action) {
     FeedRequest<MasterDataIngestionDto<?>> feedRequest = new FeedRequest<>();
@@ -278,6 +296,15 @@ public class TestUtil {
         .description("description-1")
         .nodeId("node-id-1")
         .effectiveDate("10-02-2024")
+        .build();
+  }
+
+  public VendorFeedDto createVendorFeedDto() {
+    return VendorFeedDto.builder()
+        .vendorId("Vendor-1")
+        .orgId("NEXTUPLE")
+        .vendorType("Store")
+        .vendorDescription("Vendor 1")
         .build();
   }
 
@@ -477,6 +504,14 @@ public class TestUtil {
     batchRequest.setAction(action);
     batchRequest.setRecordNo(1);
     batchRequest.setPayload(createTransferScheduleDto());
+    return batchRequest;
+  }
+
+  public BatchRequest<VendorFeedDto> getVendorFeedRequest(ActionEnum action) {
+    BatchRequest<VendorFeedDto> batchRequest = new BatchRequest<>();
+    batchRequest.setAction(action);
+    batchRequest.setRecordNo(1);
+    batchRequest.setPayload(createVendorFeedDto());
     return batchRequest;
   }
 }

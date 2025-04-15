@@ -159,6 +159,9 @@ master-data:
   node:
     topic-names: INTERNAL.DEV.PE.NODE_INTEGRATION
     group-id: node-master-dev
+  vendor:
+    topic-names: INTERNAL.DEV.PE.VENDOR_INTEGRATION
+    group-id: vendor-master-dev
   node-carrier:
     topic-names: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-dev
@@ -285,6 +288,8 @@ kafka-topic-flags:
     transit-buffer:
       enabled: true
     transfer-schedule:
+      enabled: true
+    vendor:
       enabled: true
   refresh-cache:
     enabled: true
