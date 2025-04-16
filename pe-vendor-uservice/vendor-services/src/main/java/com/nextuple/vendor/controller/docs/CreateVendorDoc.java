@@ -1,0 +1,134 @@
+/*
+ * Copyright (c) 2025., Nextuple, Inc. and/or its affiliates. All rights reserved.
+ *
+ * The software, code and related documentation made available to you by Nextuple, Inc. are provided under a written agreement containing restrictions on use and disclosure and are protected by copyright and other intellectual property laws. As described in and unless expressly permitted in your agreement, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or de-compilation of this software, unless required by law or permitted via contract for interoperability, is strictly prohibited.
+ * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
+ */
+
+package com.nextuple.vendor.controller.docs;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.METHOD;
+
+import com.nextuple.common.response.error.ErrorResponse;
+import com.nextuple.vendor.domain.VendorConstants;
+import com.nextuple.vendor.domain.outbound.VendorResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target({METHOD, ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@Operation(summary = "Create Vendor", description = VendorConstants.CREATE_VENDOR_DESC)
+@ApiResponse(
+    responseCode = "200",
+    description = VendorConstants.CREATE_VENDOR_DETAILS_SUCCESS,
+    content =
+        @Content(
+            schema = @Schema(implementation = VendorResponse.class),
+            examples = {
+              @ExampleObject(
+                  summary = "Create Vendor",
+                  name = "Create Vendor",
+                  value =
+                      """
+                                                {
+                                                "success": true,
+                                                "requestId": "f8788a11-7b1d-440d-9a2c-fde9ae072a79",
+                                                "timestamp": 1679573885650,
+                                                "message": "Vendor successfully created",
+                                                "payload": {
+                                                    "vendorId": "vendor-1",
+                                                    "vendorDescription": "vendor-description",
+                                                    "vendorType": "Type 1",
+                                                    "orgId": "org-1"
+                                                }
+                                            }""")
+            }))
+@ApiResponse(
+    responseCode = "400",
+    description =
+        "A 400 error code indicates that there is an issue with the input."
+            + "<ul>"
+            + "<li><b>Error code: 2</b>: Organization ID is not passed.</li>"
+            + "<li><b>Error code: 2</b>: Vendor ID is not passed.</li>"
+            + "</ul>",
+    content =
+        @Content(
+            schema = @Schema(implementation = ErrorResponse.class),
+            examples = {
+              @ExampleObject(
+                  summary = "OrgId is not passed.",
+                  name =
+                      "A 400 error code indicates that the orgId is not passed and it is a mandatory field.",
+                  value =
+                      """
+                                            {
+                                            "success": false,
+                                            "requestId": "f8788a11-7b1d-440d-9a2c-fde9ae072a79",
+                                            "timestamp": 1679573885650,
+                                            "message": "Bad Request",
+                                            "payload": {
+                                                "type": "ERROR",
+                                                "code": 2,
+                                                "fields": {
+                                                              "vendorId": {
+                                                              "rejectedValue": "",
+                                                              "errorMessage": "orgId can't be blank"
+                                                        }
+                                                    }
+                                                }
+                                            }"""),
+              @ExampleObject(
+                  summary = "vendorId not passed.",
+                  name =
+                      "A 400 error code indicates that the vendorId is not passed and it is a mandatory field.",
+                  value =
+                      """
+                                            {
+                                            "success": false,
+                                            "requestId": "166b6603-8a1c-426f-95a3-a6d7666c351a#624",
+                                            "timestamp": 1679537974009,
+                                            "message": "Bad Request",
+                                            "payload": {
+                                            "type": "ERROR",
+                                            "code": 2,
+                                            "fields": {
+                                                              "serviceOption": {
+                                                                "rejectedValue": "",
+                                                                "errorMessage": "vendorId must not be blank"
+                                                        }
+                                                    }
+                                                }
+                                            }""")
+            }))
+@ApiResponse(
+    responseCode = "500",
+    description = "A 500 error code indicates that something went wrong.",
+    content =
+        @Content(
+            schema = @Schema(implementation = ErrorResponse.class),
+            examples = {
+              @ExampleObject(
+                  summary = "There was some error on server while processing the request.",
+                  name =
+                      "A 500 error code indicates that there was some error on the server while processing the request.",
+                  value =
+                      """
+                                            {
+                                            "success": false,
+                                            "timestamp": "1670589273234",
+                                            "payload": {
+                                            "type": "ERROR",
+                                            "code": 2
+                                                }
+                                            }""")
+            }))
+public @interface CreateVendorDoc {}

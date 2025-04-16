@@ -25,6 +25,7 @@ import com.nextuple.pe.webhook.service.impl.PickupCalendarFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransferScheduleFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransitBufferFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.TransitFeedHandlingService;
+import com.nextuple.pe.webhook.service.impl.VendorFeedHandlingService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -50,6 +51,7 @@ public class BatchProcessingService {
   private final CarrierServiceCalendarFeedHandlingService carrierServiceCalendarFeedHandlingService;
   private final PickupCalendarFeedHandlingService pickupCalendarFeedHandlingService;
   private final TransferScheduleFeedHandlingService transferScheduleFeedHandlingService;
+  private final VendorFeedHandlingService vendorFeedHandlingService;
 
   public BatchResponse processRecords(
       String moduleName, List<BatchRequest<?>> batchFeed, String orgId)
@@ -80,6 +82,8 @@ public class BatchProcessingService {
         return nodeServiceOptionBufferFeedHandlingService.processRecords(batchFeed, orgId);
       case TRANSFER_SCHEDULES:
         return transferScheduleFeedHandlingService.processRecords(batchFeed, orgId);
+      case VENDOR:
+        return vendorFeedHandlingService.processRecords(batchFeed, orgId);
       default:
         throw new CommonServiceException(
             "Invalid module name : " + moduleName, HttpStatus.BAD_REQUEST, 0x1771, null);

@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "vendorId":"Vendor-4",
+      "orgId":"NEXTUPLE_GR",
+      "vendorDescription":"BCD Retail Vendor",
+      "vendorType":"Store"
+    },
+    {
+      "vendorId":"Vendor-5",
+      "orgId":"NEXTUPLE_GR",
+      "vendorDescription":"BCD Retail Vendor",
+      "vendorType":"Store"
+    }
+  ],
+  "pagination": {
+    "next": null,
+    "previous": 0,
+    "totalPages": 1,
+    "currentPage": 1,
+    "totalRecords": 2,
+    "sortOrder": "ASC",
+    "sortBy": "vendorId"
+  }
+}

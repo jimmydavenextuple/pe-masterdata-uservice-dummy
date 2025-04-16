@@ -16,6 +16,7 @@ spring:
       userexit: "http://pe-masterdata-uservice:8080/"
       configuration: "http://pe-masterdata-uservice:8080/"
       fpm-service: "http://pe-masterdata-uservice:8080/"
+      vendor: "http://pe-masterdata-uservice:8080/"
     name: "pe-masterdata-uservice"
     version: 2.6.0
     title: "Master Data Service"
@@ -208,6 +209,8 @@ kafka-topic-flags:
     transit-buffer:
       enabled: false
     transfer-schedule:
+      enabled: false
+    vendor:
       enabled: false
   refresh-cache:
     enabled: false

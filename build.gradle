@@ -481,6 +481,9 @@ dependencies {
     implementation(project(":pe-node-uservice:node-api-domain"))
     implementation(project(":pe-node-uservice:node-services"))
 
+    implementation(project(":pe-vendor-uservice:vendor-api-domain"))
+    implementation(project(":pe-vendor-uservice:vendor-services"))
+
     implementation(project(":pe-postal-code-timezone-uservice::postal-code-timezone-services"))
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
 
@@ -497,6 +500,7 @@ dependencies {
     implementation(project(":pe-weightage-configuration-uservice:weightage-configuration-api-domain"))
 
     implementation(project(":pe-node-uservice:node-consumer"))
+    implementation(project(":pe-vendor-uservice:vendor-consumer"))
     implementation(project(":pe-carrier-uservice:carrier-consumer"))
     implementation(project(":pe-calendar-uservice:calendar-consumer"))
     implementation(project(":pe-transit-uservice:transit-consumer"))
@@ -543,6 +547,8 @@ dependencies {
     testImplementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     testImplementation(project(":pe-node-uservice:node-persistence-domain"))
     testImplementation(project(":pe-node-uservice:node-persistence-postgres"))
+    testImplementation(project(":pe-vendor-uservice:vendor-persistence-domain"))
+    testImplementation(project(":pe-vendor-uservice:vendor-persistence-postgres"))
 }
 
 jacocoTestReport {

@@ -158,6 +158,9 @@ master-data:
   node:
     topic-names: INTERNAL.PERF.PE.NODE_INTEGRATION
     group-id: node-master-perf
+  vendor:
+    topic-names: INTERNAL.PERF.PE.VENDOR_INTEGRATION
+    group-id: vendor-master-perf
   node-carrier:
     topic-names: INTERNAL.PERF.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-perf
