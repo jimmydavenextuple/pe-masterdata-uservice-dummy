@@ -34,4 +34,19 @@ public class GenericUploadRequest {
 
   @Schema(description = "Additional data of the file")
   private Map<String, String> additionalReference;
+
+  public String getBucketName() {
+    return splitFilePath()[0];
+  }
+
+  public String getFilePathUrl() {
+    return splitFilePath()[1];
+  }
+
+  private String[] splitFilePath() {
+    if (this.filePath == null || !this.filePath.contains("/")) {
+      throw new IllegalArgumentException("Invalid file path: " + this.filePath);
+    }
+    return this.filePath.split("/", 2);
+  }
 }

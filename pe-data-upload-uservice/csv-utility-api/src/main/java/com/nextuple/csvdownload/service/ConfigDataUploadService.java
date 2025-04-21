@@ -54,8 +54,8 @@ public class ConfigDataUploadService {
           Map.of("templateType", FieldError.builder().rejectedValue(moduleName).build()));
     }
 
-    String bucketName = uploadRequest.getFilePath().split("/", 2)[0];
-    String filePath = uploadRequest.getFilePath().split("/", 2)[1];
+    String bucketName = uploadRequest.getBucketName();
+    String filePath = uploadRequest.getFilePathUrl();
 
     // download file from storage
     var fileResponse = fileService.getFile(bucketName, filePath);
