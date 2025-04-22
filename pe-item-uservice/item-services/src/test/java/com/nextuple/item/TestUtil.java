@@ -11,10 +11,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.item.domain.events.ItemMasterEvent;
+import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemBufferRequest;
 import com.nextuple.item.domain.inbound.ItemBufferUpdateRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
-import com.nextuple.item.domain.inbound.ItemUpdationRequest;
 import com.nextuple.item.domain.outbound.ItemBufferResponse;
 import com.nextuple.item.domain.outbound.ItemDetail;
 import com.nextuple.item.domain.outbound.ItemListResponse;
@@ -137,7 +137,7 @@ public class TestUtil {
         .isHazmat(IS_HAZMAT)
         .cost(COST)
         .parcelShipmentEligible(PARCEL_SHIPMENT_ELIGIBLE)
-        .processingTime(PROCESSING_TIME)
+        .processingTime(Optional.of(PROCESSING_TIME))
         .product(PRODUCT)
         .shipEligible(SHIP_ELIGIBLE)
         .height(HEIGHT)
@@ -180,8 +180,8 @@ public class TestUtil {
         .build();
   }
 
-  public ItemUpdationRequest getItemUpdationRequest() {
-    return ItemUpdationRequest.builder()
+  public ItemBaseRequest getItemUpdationRequest() {
+    return ItemBaseRequest.builder()
         .pickEligible(Boolean.FALSE)
         .color("color-2")
         .shipAlone(Boolean.FALSE)

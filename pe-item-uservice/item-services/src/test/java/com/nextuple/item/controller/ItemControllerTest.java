@@ -16,9 +16,10 @@ import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageProperties;
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.common.validation.ValidatorUtil;
 import com.nextuple.item.TestUtil;
+import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
-import com.nextuple.item.domain.inbound.ItemUpdationRequest;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import com.nextuple.item.persistence.exception.ItemBatchingDomainException;
@@ -46,8 +47,8 @@ class ItemControllerTest {
   @InjectMocks private TestUtil testUtil;
 
   @Mock private ItemService itemService;
-
   @Mock private PageProperties pageProperties;
+  @Mock ValidatorUtil validatorUtil;
 
   @BeforeEach
   void setUp() {
@@ -113,13 +114,13 @@ class ItemControllerTest {
 
   @Test
   void updateItemTest() throws ItemDomainException, CommonServiceException {
-    ItemUpdationRequest itemUpdationRequest = new ItemUpdationRequest();
-    when(itemService.updateItemDetails(any(), any(), any(), any(ItemUpdationRequest.class)))
+    ItemBaseRequest itemBaseRequest = new ItemBaseRequest();
+    when(itemService.updateItemDetails(any(), any(), any(), any(ItemBaseRequest.class)))
         .thenReturn(testUtil.getUpdatedItemResponse());
 
     ResponseEntity<BaseResponse<ItemResponse>> responseEntity =
         itemController.updateItemDetails(
-            TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM, itemUpdationRequest);
+            TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM, itemBaseRequest);
 
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertEquals(
@@ -130,8 +131,8 @@ class ItemControllerTest {
 
   @Test
   void updateItemExceptionTest() throws ItemDomainException, CommonServiceException {
-    ItemUpdationRequest itemUpdationRequest = new ItemUpdationRequest();
-    when(itemService.updateItemDetails(any(), any(), any(), any(ItemUpdationRequest.class)))
+    ItemBaseRequest itemBaseRequest = new ItemBaseRequest();
+    when(itemService.updateItemDetails(any(), any(), any(), any(ItemBaseRequest.class)))
         .thenThrow(new RuntimeException("Unable to update the item details"));
 
     Exception exception =
@@ -139,7 +140,7 @@ class ItemControllerTest {
             Exception.class,
             () ->
                 itemController.updateItemDetails(
-                    TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM, itemUpdationRequest));
+                    TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM, itemBaseRequest));
     Assertions.assertEquals("Unable to update the item details", exception.getMessage());
 
     verify(itemService, times(1)).updateItemDetails(any(), any(), any(), any());
@@ -243,5 +244,36 @@ class ItemControllerTest {
 
     verify(itemService, times(1))
         .getItemListByItemIdAndOrgId(any(), any(), any(), any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Test: Add or Update Item when item does not exist")
+  void addOrUpdateItemWhenItemDoesNotExist() throws ItemDomainException, CommonServiceException {
+    when(itemService.upsertItem(any(ItemCreationRequest.class)))
+        .thenReturn(testUtil.getItemResponse());
+
+    ResponseEntity<BaseResponse<ItemResponse>> responseEntity =
+        itemController.addOrUpdateItem(testUtil.getItemCreationRequest());
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals("Item saved successfully", responseEntity.getBody().getMessage());
+    Assertions.assertEquals(testUtil.getItemResponse(), responseEntity.getBody().getPayload());
+    verify(itemService, times(1)).upsertItem(any(ItemCreationRequest.class));
+  }
+
+  @Test
+  @DisplayName("Test: Add or Update Item when item exists and is updated")
+  void addOrUpdateItemWhenItemExistsAndIsUpdated()
+      throws ItemDomainException, CommonServiceException {
+    when(itemService.upsertItem(any(ItemCreationRequest.class)))
+        .thenReturn(testUtil.getItemResponse());
+
+    ResponseEntity<BaseResponse<ItemResponse>> responseEntity =
+        itemController.addOrUpdateItem(testUtil.getItemCreationRequest());
+
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertEquals("Item saved successfully", responseEntity.getBody().getMessage());
+    Assertions.assertEquals(testUtil.getItemResponse(), responseEntity.getBody().getPayload());
+    verify(itemService, times(1)).upsertItem(any(ItemCreationRequest.class));
   }
 }

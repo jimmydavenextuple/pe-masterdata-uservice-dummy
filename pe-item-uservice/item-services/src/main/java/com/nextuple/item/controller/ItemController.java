@@ -24,9 +24,10 @@ import com.nextuple.item.controller.docs.GetItemDetailsDoc;
 import com.nextuple.item.controller.docs.GetItemListDoc;
 import com.nextuple.item.controller.docs.GetItemListPaginatedDoc;
 import com.nextuple.item.controller.docs.UpdateItemDetailsDoc;
+import com.nextuple.item.controller.docs.UpsertItemDoc;
 import com.nextuple.item.domain.constants.ItemConstants;
+import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
-import com.nextuple.item.domain.inbound.ItemUpdationRequest;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import com.nextuple.item.persistence.exception.ItemBatchingDomainException;
@@ -78,7 +79,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @see ItemService
  * @see ItemResponse
  * @see ItemCreationRequest
- * @see ItemUpdationRequest
+ * @see ItemBaseRequest
  * @see PagePayload
  */
 @Validated
@@ -95,6 +96,35 @@ public class ItemController {
   private static final String PAGINATION_URL = "/%s/itemList?itemIds=%s&pageNo=%d&pageSize=%d";
 
   /**
+   * Creates a new item or updates an existing item based on the provided request. The method first
+   * checks if the item exists based on the itemId, orgId, and uom. If the item exists, it updates
+   * the item; if not, it creates a new item.
+   *
+   * @param itemCreationRequest The request containing item details for creation or update
+   * @return A {@link ResponseEntity} containing the item details after creation or update
+   * @throws ItemDomainException If there is an error during item creation or update
+   * @throws CommonServiceException If there is a service-related error during the process
+   */
+  @UpsertItemDoc
+  @PostMapping("/upsert")
+  public ResponseEntity<BaseResponse<ItemResponse>> addOrUpdateItem(
+      @RequestBody ItemCreationRequest itemCreationRequest)
+      throws ItemDomainException, CommonServiceException {
+    logger.debug("Processing item create or update request");
+
+    try {
+      ItemResponse itemResponse = itemService.upsertItem(itemCreationRequest);
+
+      return ResponseEntity.ok(
+          BaseResponse.builder().message("Item saved successfully").payload(itemResponse).build());
+
+    } catch (Exception e) {
+      logger.error("Failed to create or update item");
+      throw e;
+    }
+  }
+
+  /**
    * Creates a new item based on the provided request.
    *
    * @param itemCreationRequest The request containing item details for creation
@@ -107,7 +137,6 @@ public class ItemController {
       @Valid @RequestBody ItemCreationRequest itemCreationRequest) throws ItemDomainException {
     logger.debug("Processing item creation request");
     try {
-
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Item successfully created")
@@ -125,7 +154,7 @@ public class ItemController {
    * @param itemId The unique identifier for the item
    * @param orgId The organization identifier
    * @param uom The unit of measure
-   * @param itemUpdationRequest The request containing updated item details
+   * @param itemBaseRequest The request containing updated item details
    * @return A {@link ResponseEntity} containing the updated item details
    * @throws ItemDomainException If there is an error in item update
    * @throws CommonServiceException If there is a general service error
@@ -145,11 +174,11 @@ public class ItemController {
           @Parameter(description = ItemConstants.UOM, example = ItemConstants.UOM_EXAMPLE)
           @PathVariable
           String uom,
-      @Valid @RequestBody ItemUpdationRequest itemUpdationRequest)
+      @Valid @RequestBody ItemBaseRequest itemBaseRequest)
       throws ItemDomainException, CommonServiceException {
     logger.debug("Processing update item details");
     try {
-      var itemResponse = itemService.updateItemDetails(itemId, orgId, uom, itemUpdationRequest);
+      var itemResponse = itemService.updateItemDetails(itemId, orgId, uom, itemBaseRequest);
       logger.info("Response after updating of item data :{}", itemResponse);
       return ResponseEntity.ok(
           BaseResponse.builder()
