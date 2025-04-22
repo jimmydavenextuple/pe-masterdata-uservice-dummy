@@ -190,7 +190,7 @@ public class TransferScheduleService {
       List<SourcingAttributeResponse> requiredAttributesList,
       List<SourcingAttributeResponse> optionalAttributesList) {
     if (!CollectionUtils.isEmpty(requiredAttributesList)
-        && !CollectionUtils.isEmpty(optionalAttributesList)) {
+        || !CollectionUtils.isEmpty(optionalAttributesList)) {
       transferColumnInfoDtos.add(getTransferColumnInfoDto(RULE_NAME_COLUMN, RULE_NAME, false));
     }
     transferColumnInfoDtos.add(getTransferColumnInfoDto(ORIGIN_NODE_COLUMN, SOURCE_NODE_ID, true));
