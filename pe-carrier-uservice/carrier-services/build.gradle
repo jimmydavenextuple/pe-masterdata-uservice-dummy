@@ -26,8 +26,6 @@ dependencies {
     implementation(project(":pe-common:nfs-near-cache:core-near-cache-producer"))
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
     implementation 'io.swagger.core.v3:swagger-models:2.2.0'
-
-    api "com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.17.0"
 }
 
 tasks.named('test') {
