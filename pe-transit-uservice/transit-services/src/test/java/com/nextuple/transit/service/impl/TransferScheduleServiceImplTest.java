@@ -355,8 +355,53 @@ class TransferScheduleServiceImplTest {
   }
 
   @Test
+  @DisplayName("Fetch schedules in range with both start time and end time")
+  void testFetchTransferSchedulesInRangeWithRuleInRequest() {
+    // Arrange
+    TransferScheduleRangeRequest request = new TransferScheduleRangeRequest();
+    request.setStartTime(DateTime.now());
+    request.setEndTime(DateTime.now().plusDays(5));
+    request.setHorizonDays(2);
+    request.setPastDays(1);
+    request.setRuleName("R1");
+    request.setRule("R1");
+
+    List<TransferScheduleResponse> expectedResponse =
+        List.of(
+            testUtil.getTransferScheduleResponse(), testUtil.getTransferScheduleResponseWithRule());
+
+    when(transferSchedulePersistenceService.fetchTransferSchedulesInRange(any()))
+        .thenReturn(
+            List.of(
+                testUtil.getTransferScheduleEntity(),
+                testUtil.getTransferScheduleEntityWithRule()));
+
+    // Act
+    List<TransferScheduleRangeResponse> actualResponse =
+        transferScheduleService.fetchTransferSchedulesInRange(request);
+
+    // Assert
+    assertNotNull(actualResponse);
+    assertEquals(
+        expectedResponse.get(0).getSourceNodeId(), actualResponse.get(0).getSourceNodeId());
+    assertEquals(
+        expectedResponse.get(0).getDropoffNodeId(), actualResponse.get(0).getDropoffNodeId());
+
+    verify(transferSchedulePersistenceService, times(1))
+        .fetchTransferSchedulesInRange(any(TransferScheduleDomainRequest.class));
+
+    request.setHorizonDays(null);
+    actualResponse = transferScheduleService.fetchTransferSchedulesInRange(request);
+    assertNotNull(actualResponse);
+    assertEquals(
+        expectedResponse.get(0).getSourceNodeId(), actualResponse.get(0).getSourceNodeId());
+    assertEquals(
+        expectedResponse.get(0).getDropoffNodeId(), actualResponse.get(0).getDropoffNodeId());
+  }
+
+  @Test
   @DisplayName(
-      "Return empty list when rule and rule name is null and there is an active transfer rule definition")
+      "Return list of null rule schedules when rule and rule name is null and there is an active transfer rule definition")
   void testFetchTransfersWithNullRuleAndRuleNameAndActiveRuleDefinition()
       throws PromiseEngineException, CommonServiceException {
     // Arrange
@@ -380,7 +425,7 @@ class TransferScheduleServiceImplTest {
     // Assert
     assertEquals(Collections.emptyList(), result);
 
-    verify(transferSchedulePersistenceService, times(0))
+    verify(transferSchedulePersistenceService, times(1))
         .fetchTransferSchedulesInRange(any(TransferScheduleDomainRequest.class));
   }
 

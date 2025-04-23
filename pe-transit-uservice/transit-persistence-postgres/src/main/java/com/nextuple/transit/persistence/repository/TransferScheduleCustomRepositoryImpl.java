@@ -88,8 +88,27 @@ public class TransferScheduleCustomRepositoryImpl implements TransferScheduleCus
 
     // optional predicates
     if (Objects.nonNull(request.getRule()) && Objects.nonNull(request.getRuleName())) {
-      predicates.add(cb.equal(root.get("rule"), request.getRule()));
-      predicates.add(cb.equal(root.get("ruleName"), request.getRuleName()));
+      // If rule and ruleName are provided, get schedules that:
+      // 1. Match exactly the rule and ruleName values, OR
+      // 2. Have null values for both rule and ruleName
+      List<Predicate> rulePredicates = new ArrayList<>();
+
+      // Case 1: Schedules with exactly matching rule and ruleName
+      Predicate exactMatch =
+          cb.and(
+              cb.equal(root.get("rule"), request.getRule()),
+              cb.equal(root.get("ruleName"), request.getRuleName()));
+      rulePredicates.add(exactMatch);
+
+      // Case 2: Schedules with null rule and ruleName
+      Predicate bothNull = cb.and(cb.isNull(root.get("rule")), cb.isNull(root.get("ruleName")));
+      rulePredicates.add(bothNull);
+
+      predicates.add(cb.or(rulePredicates.toArray(new Predicate[0])));
+    } else if (Objects.isNull(request.getRule()) && Objects.isNull(request.getRuleName())) {
+      // If both are null, only fetch records where both rule and ruleName are null
+      predicates.add(cb.isNull(root.get("rule")));
+      predicates.add(cb.isNull(root.get("ruleName")));
     }
 
     if (request.getExclusive() != null
