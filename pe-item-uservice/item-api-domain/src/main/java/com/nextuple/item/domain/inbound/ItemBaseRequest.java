@@ -8,9 +8,12 @@
 package com.nextuple.item.domain.inbound;
 
 import com.nextuple.common.pojo.AdditionalAttributes;
+import com.nextuple.common.validation.ValidationGroups;
 import com.nextuple.item.domain.constants.ItemConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +27,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class ItemUpdationRequest extends AdditionalAttributes implements Serializable {
+public class ItemBaseRequest extends AdditionalAttributes implements Serializable {
 
   private static final long serialVersionUID = -9137352122126908186L;
 
@@ -43,17 +46,23 @@ public class ItemUpdationRequest extends AdditionalAttributes implements Seriali
   @Schema(description = ItemConstants.SIZE, example = ItemConstants.SIZE_EXAMPLE)
   private String size;
 
+  @NotNull(message = "shipEligible can't be null", groups = ValidationGroups.Create.class)
   @Schema(description = ItemConstants.SHIP_ELIGIBLE, example = ItemConstants.BOOL_EXAMPLE)
   private Boolean shipEligible;
 
+  @NotNull(message = "parcelShipmentEligible can't be null", groups = ValidationGroups.Create.class)
   @Schema(
       description = ItemConstants.PARCEL_SHIPMENT_ELIGIBLE,
       example = ItemConstants.BOOL_EXAMPLE)
   private Boolean parcelShipmentEligible;
 
+  @NotNull(message = "pickEligible can't be null", groups = ValidationGroups.Create.class)
   @Schema(description = ItemConstants.PICK_ELIGIBLE, example = ItemConstants.BOOL_EXAMPLE)
   private Boolean pickEligible;
 
+  @NotNull(
+      message = "serviceOptionEligibilities can't be null",
+      groups = ValidationGroups.Create.class)
   @Schema(
       description = ItemConstants.SERVICE_OPTION_ELIGIBILITIES,
       example = ItemConstants.SERVICE_OPTION_ELIGIBILITIES_EXAMPLE)
@@ -62,19 +71,19 @@ public class ItemUpdationRequest extends AdditionalAttributes implements Seriali
   @Schema(description = ItemConstants.SHIP_ALONE, example = ItemConstants.BOOL_EXAMPLE)
   private Boolean shipAlone;
 
-  @Min(value = 0, message = "height can't be negative")
+  @Min(value = 0, message = "height can't be negative", groups = ValidationGroups.Update.class)
   @Schema(description = ItemConstants.HEIGHT, example = ItemConstants.DIMENSION_EXAMPLE)
   private Double height;
 
-  @Min(value = 0, message = "width can't be negative")
+  @Min(value = 0, message = "width can't be negative", groups = ValidationGroups.Update.class)
   @Schema(description = ItemConstants.WIDTH, example = ItemConstants.DIMENSION_EXAMPLE)
   private Double width;
 
-  @Min(value = 0, message = "length can't be negative")
+  @Min(value = 0, message = "length can't be negative", groups = ValidationGroups.Update.class)
   @Schema(description = ItemConstants.LENGTH, example = ItemConstants.DIMENSION_EXAMPLE)
   private Double length;
 
-  @Min(value = 0, message = "volume can't be negative")
+  @Min(value = 0, message = "volume can't be negative", groups = ValidationGroups.Update.class)
   @Schema(description = ItemConstants.VOLUME, example = ItemConstants.DIMENSION_EXAMPLE)
   private Double volume;
 
@@ -84,7 +93,7 @@ public class ItemUpdationRequest extends AdditionalAttributes implements Seriali
   @Schema(description = ItemConstants.VOLUME_UOM, example = ItemConstants.VOLUME_UOM_EXAMPLE)
   private String volumeUom;
 
-  @Min(value = 0, message = "weight can't be negative")
+  @Min(value = 0, message = "weight can't be negative", groups = ValidationGroups.Update.class)
   @Schema(description = ItemConstants.WEIGHT, example = ItemConstants.DIMENSION_EXAMPLE)
   private Double weight;
 
@@ -106,10 +115,11 @@ public class ItemUpdationRequest extends AdditionalAttributes implements Seriali
       example = ItemConstants.ITEM_BANNER_EXAMPLE)
   private String shortDescription;
 
+  @NotNull(message = "isWhiteGlove can't be null", groups = ValidationGroups.Create.class)
   @Schema(description = ItemConstants.IS_WHITE_GLOVE, example = ItemConstants.BOOL_EXAMPLE)
   private Boolean isWhiteGlove;
 
-  @Min(value = 0, message = "leadTime can't be negative")
+  @Min(value = 0, message = "leadTime can't be negative", groups = ValidationGroups.Update.class)
   @Schema(description = ItemConstants.LEAD_TIME, example = ItemConstants.TIME_EXAMPLE)
   private Long leadTime;
 
@@ -132,6 +142,7 @@ public class ItemUpdationRequest extends AdditionalAttributes implements Seriali
   @Schema(description = ItemConstants.ITEM_BANNER, example = ItemConstants.ITEM_BANNER_EXAMPLE)
   private String itemBanner;
 
+  @NotBlank(message = "handlingType can't be blank", groups = ValidationGroups.Create.class)
   @Schema(description = ItemConstants.HANDLING_TYPE, example = ItemConstants.HANDLING_TYPE_EXAMPLE)
   private String handlingType;
 

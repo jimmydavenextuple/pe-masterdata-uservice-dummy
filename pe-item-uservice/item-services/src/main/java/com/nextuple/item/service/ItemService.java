@@ -12,8 +12,10 @@ import static com.nextuple.common.constants.CommonConstants.DESC_SORT_ORDER;
 
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
+import com.nextuple.common.validation.ValidationGroups;
+import com.nextuple.common.validation.ValidatorUtil;
+import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
-import com.nextuple.item.domain.inbound.ItemUpdationRequest;
 import com.nextuple.item.domain.mapper.ItemMapper;
 import com.nextuple.item.domain.outbound.ActiveItemBufferResponse;
 import com.nextuple.item.domain.outbound.ItemListResponse;
@@ -75,8 +77,34 @@ public class ItemService {
 
   private static final String KEY_SEPARATOR = "-";
 
+  private final ValidatorUtil validatorUtil;
+
+  public ItemResponse upsertItem(ItemCreationRequest request)
+      throws ItemDomainException, CommonServiceException {
+
+    Optional<ItemDomainDto> itemDomainDto =
+        itemPersistenceService.findItemByItemIdAndOrgIdAndUom(
+            request.getItemId(), request.getOrgId(), request.getUom());
+
+    if (itemDomainDto.isPresent()) {
+      ItemResponse itemResponse =
+          updateItemDetails(
+              itemDomainDto.get().getItemId(),
+              itemDomainDto.get().getOrgId(),
+              itemDomainDto.get().getUom(),
+              request);
+      logger.info("Item updated successfully: {}", itemResponse);
+      return itemResponse;
+    } else {
+      ItemResponse itemResponse = createItem(request);
+      logger.info("New item created successfully: {}", itemResponse);
+      return itemResponse;
+    }
+  }
+
   public ItemResponse createItem(ItemCreationRequest itemCreationRequest)
       throws ItemDomainException {
+    validatorUtil.validateWithGroup(itemCreationRequest, ValidationGroups.Create.class);
 
     Set<ConstraintViolation<ItemCreationRequest>> violations =
         validator.validate(itemCreationRequest);
@@ -99,8 +127,9 @@ public class ItemService {
   }
 
   public ItemResponse updateItemDetails(
-      String itemId, String orgId, String uom, ItemUpdationRequest itemUpdationRequest)
+      String itemId, String orgId, String uom, ItemBaseRequest itemBaseRequest)
       throws ItemDomainException, CommonServiceException {
+    validatorUtil.validateWithGroup(itemBaseRequest, ValidationGroups.Update.class);
 
     Optional<ItemDomainDto> existingItemDomainDto =
         itemPersistenceService.findItemByItemIdAndOrgIdAndUom(itemId, orgId, uom);
@@ -117,9 +146,9 @@ public class ItemService {
     logger.info(
         "Response before updating of item data :{}",
         INSTANCE.toItemResponse(existingItemDomainDto.get()));
-    INSTANCE.updateItemEntity(itemUpdationRequest, existingItemDomainDto.get());
-    if (Objects.nonNull(itemUpdationRequest.getProcessingTime())) {
-      Optional<Double> optionalProcessingTime = itemUpdationRequest.getProcessingTime();
+    INSTANCE.updateItemEntity(itemBaseRequest, existingItemDomainDto.get());
+    if (Objects.nonNull(itemBaseRequest.getProcessingTime())) {
+      Optional<Double> optionalProcessingTime = itemBaseRequest.getProcessingTime();
       if (optionalProcessingTime.isPresent()) {
         existingItemDomainDto.get().setProcessingTime(optionalProcessingTime.get());
       } else {

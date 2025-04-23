@@ -9,8 +9,8 @@ package com.nextuple.item.domain.feign;
 
 import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
-import com.nextuple.item.domain.inbound.ItemUpdationRequest;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import java.util.Date;
@@ -29,6 +29,9 @@ import org.springframework.web.bind.annotation.RequestParam;
     url = "${spring.application.dependencies.item:http://pe-item-uservice:8080/}")
 public interface ItemFeign {
 
+  @PostMapping("/item/upsert")
+  BaseResponse<ItemResponse> addOrUpdateItem(@RequestBody ItemCreationRequest itemCreationRequest);
+
   @PostMapping("/item")
   BaseResponse<ItemResponse> addItem(@RequestBody ItemCreationRequest itemCreationRequest);
 
@@ -37,7 +40,7 @@ public interface ItemFeign {
       @PathVariable String itemId,
       @PathVariable String orgId,
       @PathVariable String uom,
-      @RequestBody ItemUpdationRequest itemUpdationRequest);
+      @RequestBody ItemBaseRequest itemBaseRequest);
 
   @GetMapping("/item/{itemId}/{orgId}/{uom}")
   BaseResponse<ItemResponse> getItemDetails(

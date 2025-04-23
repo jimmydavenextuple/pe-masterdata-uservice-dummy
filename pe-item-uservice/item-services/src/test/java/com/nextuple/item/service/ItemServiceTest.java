@@ -6,6 +6,8 @@
  */
 package com.nextuple.item.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -13,9 +15,10 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.common.validation.ValidatorUtil;
 import com.nextuple.item.TestUtil;
+import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
-import com.nextuple.item.domain.inbound.ItemUpdationRequest;
 import com.nextuple.item.domain.outbound.ActiveItemBufferResponse;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
@@ -53,6 +56,8 @@ class ItemServiceTest {
   @Mock private ItemPersistenceServiceImpl itemPersistenceService;
   @Mock private ItemBufferPersistenceServiceImpl itemBufferPersistenceService;
 
+  @Mock ValidatorUtil validatorUtil;
+
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
@@ -66,7 +71,7 @@ class ItemServiceTest {
     when(itemPersistenceService.saveItem(any(ItemDomainDto.class))).thenReturn(itemEntity);
 
     ItemResponse received_dto = itemService.createItem(itemCreationRequest);
-    Assertions.assertEquals(itemCreationRequest.getItemId(), received_dto.getItemId());
+    assertEquals(itemCreationRequest.getItemId(), received_dto.getItemId());
     verify(itemPersistenceService, times(1)).saveItem(any(ItemDomainDto.class));
   }
 
@@ -82,7 +87,7 @@ class ItemServiceTest {
 
     Exception ex =
         Assertions.assertThrows(Exception.class, () -> itemService.createItem(itemCreationRequest));
-    Assertions.assertEquals("Error occurred: uom - uom can't be blank", ex.getMessage());
+    assertEquals("Error occurred: uom - uom can't be blank", ex.getMessage());
     verify(itemPersistenceService, times(0)).saveItem(any(ItemDomainDto.class));
   }
 
@@ -98,7 +103,7 @@ class ItemServiceTest {
     ItemResponse itemResponse =
         itemService.updateItemDetails(
             TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM, testUtil.getItemUpdationRequest());
-    Assertions.assertEquals(testUtil.getUpdatedItemResponse(), itemResponse);
+    assertEquals(testUtil.getUpdatedItemResponse(), itemResponse);
 
     verify(itemPersistenceService, times(1)).saveItem(any(ItemDomainDto.class));
     verify(itemPersistenceService, times(1)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
@@ -118,8 +123,8 @@ class ItemServiceTest {
     ItemResponse itemResponse =
         itemService.updateItemDetails(
             TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM, testUtil.getItemUpdationRequest());
-    Assertions.assertEquals(testUtil.getUpdatedItemResponse(), itemResponse);
-    Assertions.assertEquals(TestUtil.PROCESSING_TIME, itemResponse.getProcessingTime());
+    assertEquals(testUtil.getUpdatedItemResponse(), itemResponse);
+    assertEquals(TestUtil.PROCESSING_TIME, itemResponse.getProcessingTime());
 
     verify(itemPersistenceService, times(1)).saveItem(any(ItemDomainDto.class));
     verify(itemPersistenceService, times(1)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
@@ -129,8 +134,8 @@ class ItemServiceTest {
   @DisplayName("When item processing time is passed as null in the update request")
   void updateItemDetailsTestWhenProcessingTimeIsPassedAsNull()
       throws ItemDomainException, CommonServiceException {
-    ItemUpdationRequest itemUpdationRequest = testUtil.getItemUpdationRequest();
-    itemUpdationRequest.setProcessingTime(Optional.empty());
+    ItemBaseRequest itemBaseRequest = testUtil.getItemUpdationRequest();
+    itemBaseRequest.setProcessingTime(Optional.empty());
 
     ItemDomainDto itemEntity = testUtil.getItemDomainDto();
     ItemDomainDto updatedItemEntity = testUtil.getUpdatedItemDomainDto();
@@ -145,8 +150,8 @@ class ItemServiceTest {
 
     ItemResponse itemResponse =
         itemService.updateItemDetails(
-            TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM, itemUpdationRequest);
-    Assertions.assertEquals(updatedItemResponse, itemResponse);
+            TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM, itemBaseRequest);
+    assertEquals(updatedItemResponse, itemResponse);
     Assertions.assertNull(itemResponse.getProcessingTime());
 
     verify(itemPersistenceService, times(1)).saveItem(any(ItemDomainDto.class));
@@ -157,8 +162,8 @@ class ItemServiceTest {
   @DisplayName("When item processing time is passed as non null in the update request")
   void updateItemDetailsTestWhenProcessingTimeIsPassedAsNonNull()
       throws ItemDomainException, CommonServiceException {
-    ItemUpdationRequest itemUpdationRequest = testUtil.getItemUpdationRequest();
-    itemUpdationRequest.setProcessingTime(Optional.of(10.0));
+    ItemBaseRequest itemBaseRequest = testUtil.getItemUpdationRequest();
+    itemBaseRequest.setProcessingTime(Optional.of(10.0));
 
     ItemDomainDto itemEntity = testUtil.getItemDomainDto();
     ItemDomainDto updatedItemEntity = testUtil.getUpdatedItemDomainDto();
@@ -173,9 +178,9 @@ class ItemServiceTest {
 
     ItemResponse itemResponse =
         itemService.updateItemDetails(
-            TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM, itemUpdationRequest);
-    Assertions.assertEquals(updatedItemResponse, itemResponse);
-    Assertions.assertEquals(10.0, itemResponse.getProcessingTime());
+            TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM, itemBaseRequest);
+    assertEquals(updatedItemResponse, itemResponse);
+    assertEquals(10.0, itemResponse.getProcessingTime());
 
     verify(itemPersistenceService, times(1)).saveItem(any(ItemDomainDto.class));
     verify(itemPersistenceService, times(1)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
@@ -195,7 +200,7 @@ class ItemServiceTest {
                     TestUtil.ORG_ID,
                     TestUtil.UOM,
                     testUtil.getItemUpdationRequest()));
-    Assertions.assertEquals("Item not found with given details", exception.getMessage());
+    assertEquals("Item not found with given details", exception.getMessage());
 
     verify(itemPersistenceService, times(0)).saveItem(any(ItemDomainDto.class));
     verify(itemPersistenceService, times(1)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
@@ -211,7 +216,7 @@ class ItemServiceTest {
 
     ItemResponse itemResponse =
         itemService.getItemDetails(TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM);
-    Assertions.assertEquals(testUtil.getItemResponse(), itemResponse);
+    assertEquals(testUtil.getItemResponse(), itemResponse);
     verify(itemPersistenceService, times(1)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
   }
 
@@ -224,7 +229,7 @@ class ItemServiceTest {
         Assertions.assertThrows(
             CommonServiceException.class,
             () -> itemService.getItemDetails(TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM));
-    Assertions.assertEquals("Item not found with given details", exception.getMessage());
+    assertEquals("Item not found with given details", exception.getMessage());
 
     verify(itemPersistenceService, times(1)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
   }
@@ -238,7 +243,7 @@ class ItemServiceTest {
 
     ItemResponse itemResponse =
         itemService.deleteItem(TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM);
-    Assertions.assertEquals(testUtil.getItemResponse(), itemResponse);
+    assertEquals(testUtil.getItemResponse(), itemResponse);
     verify(itemPersistenceService, times(1)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
   }
 
@@ -251,7 +256,7 @@ class ItemServiceTest {
         Assertions.assertThrows(
             CommonServiceException.class,
             () -> itemService.deleteItem(TestUtil.ITEM_ID, TestUtil.ORG_ID, TestUtil.UOM));
-    Assertions.assertEquals("Item not found with given details", exception.getMessage());
+    assertEquals("Item not found with given details", exception.getMessage());
 
     verify(itemPersistenceService, times(1)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
   }
@@ -273,7 +278,7 @@ class ItemServiceTest {
 
     List<ItemResponse> itemResponse =
         itemService.getItemList(itemList, TestUtil.ORG_ID, false, new Date());
-    Assertions.assertEquals(itemResponseList, itemResponse);
+    assertEquals(itemResponseList, itemResponse);
     verify(itemPersistenceService, times(1)).findItemListByItemIdsAndOrgId(any(), any());
   }
 
@@ -290,7 +295,7 @@ class ItemServiceTest {
         Assertions.assertThrows(
             CommonServiceException.class,
             () -> itemService.getItemList(itemList, TestUtil.ORG_ID, false, new Date()));
-    Assertions.assertEquals("Items not found with given details", exception.getMessage());
+    assertEquals("Items not found with given details", exception.getMessage());
 
     verify(itemPersistenceService, times(1)).findItemListByItemIdsAndOrgId(any(), any());
   }
@@ -329,18 +334,17 @@ class ItemServiceTest {
     List<ItemResponse> itemResponseList =
         itemService.getItemList(itemList, orgId, isItemBufferEnabled, promisingEngineDate);
 
-    Assertions.assertEquals(1, itemResponseList.size());
+    assertEquals(1, itemResponseList.size());
     ItemResponse itemResponse = itemResponseList.get(0);
-    Assertions.assertEquals(itemDomainDto.getItemId(), itemResponse.getItemId());
-    Assertions.assertEquals(itemDomainDto.getUom(), itemResponse.getUom());
+    assertEquals(itemDomainDto.getItemId(), itemResponse.getItemId());
+    assertEquals(itemDomainDto.getUom(), itemResponse.getUom());
 
     ActiveItemBufferResponse activeItemBufferResponse = itemResponse.getActiveItemBuffer();
-    Assertions.assertNotNull(activeItemBufferResponse);
-    Assertions.assertEquals(
-        itemBufferDomainDto.getBufferHours(), activeItemBufferResponse.getBufferHours());
-    Assertions.assertEquals(
+    assertNotNull(activeItemBufferResponse);
+    assertEquals(itemBufferDomainDto.getBufferHours(), activeItemBufferResponse.getBufferHours());
+    assertEquals(
         itemBufferDomainDto.getBufferStartDate(), activeItemBufferResponse.getBufferStartDate());
-    Assertions.assertEquals(
+    assertEquals(
         itemBufferDomainDto.getBufferEndDate(), activeItemBufferResponse.getBufferEndDate());
 
     verify(itemPersistenceService, times(1)).findItemListByItemIdsAndOrgId(itemList, orgId);
@@ -365,9 +369,8 @@ class ItemServiceTest {
     Page<ItemListResponse> itemListResponses =
         itemService.getItemListByItemIdAndOrgId(
             itemIds, TestUtil.ORG_ID, 1, 15, TestUtil.SORT_BY, "ASC");
-    Assertions.assertEquals(2, itemListResponses.getContent().size());
-    Assertions.assertEquals(
-        TestUtil.ITEM_ID_1, itemListResponses.getContent().getFirst().getItemId());
+    assertEquals(2, itemListResponses.getContent().size());
+    assertEquals(TestUtil.ITEM_ID_1, itemListResponses.getContent().getFirst().getItemId());
     verify(itemPersistenceService, Mockito.times(1))
         .getItemByItemIdListAndOrgId(any(), any(), any());
   }
@@ -387,9 +390,8 @@ class ItemServiceTest {
     String itemIds = TestUtil.ITEM_ID_1 + TestUtil.ITEM_ID_2;
     Page<ItemListResponse> itemListResponses =
         itemService.getItemListByItemIdAndOrgId(itemIds, TestUtil.ORG_ID, 1, 15, "itemId", "DESC");
-    Assertions.assertEquals(2, itemListResponses.getContent().size());
-    Assertions.assertEquals(
-        TestUtil.ITEM_ID_2, itemListResponses.getContent().getFirst().getItemId());
+    assertEquals(2, itemListResponses.getContent().size());
+    assertEquals(TestUtil.ITEM_ID_2, itemListResponses.getContent().getFirst().getItemId());
     verify(itemPersistenceService, Mockito.times(1))
         .getItemByItemIdListAndOrgId(any(), any(), any());
   }
@@ -403,8 +405,54 @@ class ItemServiceTest {
                 itemService.getItemListByItemIdAndOrgId(
                     "item-01,item-02", TestUtil.ORG_ID, 1, 1, "itemId", "invalid sort order"));
 
-    Assertions.assertEquals(
-        "Invalid sort order, consider giving either ASC or DESC", exception.getMessage());
+    assertEquals("Invalid sort order, consider giving either ASC or DESC", exception.getMessage());
     verifyNoInteractions(itemPersistenceService);
+  }
+
+  @Test
+  @DisplayName("Test upsertItem - Item Exists (Update)")
+  void upsertItemTest_ItemExists() throws ItemDomainException, CommonServiceException {
+    ItemCreationRequest itemCreationRequest = testUtil.getItemCreationRequest();
+    ItemDomainDto existingItemDto = testUtil.getItemDomainDto();
+
+    when(itemPersistenceService.findItemByItemIdAndOrgIdAndUom(
+            itemCreationRequest.getItemId(),
+            itemCreationRequest.getOrgId(),
+            itemCreationRequest.getUom()))
+        .thenReturn(Optional.of(existingItemDto));
+
+    ItemResponse updatedItemResponse = testUtil.getUpdatedItemResponse();
+    when(itemPersistenceService.saveItem(any(ItemDomainDto.class))).thenReturn(existingItemDto);
+
+    ItemResponse result = itemService.upsertItem(itemCreationRequest);
+
+    assertEquals(updatedItemResponse.getItemId(), result.getItemId());
+    assertEquals(updatedItemResponse.getUom(), result.getUom());
+
+    verify(itemPersistenceService, times(2)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
+    verify(itemPersistenceService, times(1)).saveItem(any(ItemDomainDto.class));
+  }
+
+  @Test
+  @DisplayName("Test upsertItem - Item Does Not Exist (Create)")
+  void upsertItemTest_ItemDoesNotExist() throws ItemDomainException, CommonServiceException {
+    ItemCreationRequest itemCreationRequest = testUtil.getItemCreationRequest();
+
+    when(itemPersistenceService.findItemByItemIdAndOrgIdAndUom(
+            itemCreationRequest.getItemId(),
+            itemCreationRequest.getOrgId(),
+            itemCreationRequest.getUom()))
+        .thenReturn(Optional.empty());
+
+    ItemResponse createdItemResponse = testUtil.getItemResponse();
+    when(itemPersistenceService.saveItem(any(ItemDomainDto.class)))
+        .thenReturn(testUtil.getItemDomainDto());
+
+    ItemResponse result = itemService.upsertItem(itemCreationRequest);
+
+    assertEquals(createdItemResponse.getItemId(), result.getItemId());
+    assertEquals(createdItemResponse.getUom(), result.getUom());
+    verify(itemPersistenceService, times(1)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
+    verify(itemPersistenceService, times(1)).saveItem(any(ItemDomainDto.class));
   }
 }
