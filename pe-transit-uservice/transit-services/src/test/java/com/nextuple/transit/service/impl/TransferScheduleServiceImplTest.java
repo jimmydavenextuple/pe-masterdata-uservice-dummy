@@ -355,6 +355,144 @@ class TransferScheduleServiceImplTest {
   }
 
   @Test
+  @DisplayName(
+      "Fetch schedules in range with both start time and end time and no active definition")
+  void testFetchTransferSchedulesInRangeNoActiveDefinition()
+      throws PromiseEngineException, CommonServiceException {
+    // Arrange
+    TransferScheduleRangeRequest request = new TransferScheduleRangeRequest();
+    request.setStartTime(DateTime.now());
+    request.setEndTime(DateTime.now().plusDays(5));
+    request.setHorizonDays(2);
+    request.setPastDays(1);
+
+    List<TransferScheduleResponse> expectedResponse =
+        List.of(testUtil.getTransferScheduleResponse());
+
+    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionInActiveStatus(
+            any(), any()))
+        .thenThrow(new PromiseEngineException(null, null, null));
+    when(transferSchedulePersistenceService.fetchTransferSchedulesInRange(any()))
+        .thenReturn(List.of(testUtil.getTransferScheduleEntity()));
+
+    // Act
+    List<TransferScheduleRangeResponse> actualResponse =
+        transferScheduleService.fetchTransferSchedulesInRange(request);
+
+    // Assert
+    assertNotNull(actualResponse);
+    assertEquals(
+        expectedResponse.get(0).getSourceNodeId(), actualResponse.get(0).getSourceNodeId());
+    assertEquals(
+        expectedResponse.get(0).getDropoffNodeId(), actualResponse.get(0).getDropoffNodeId());
+
+    verify(transferSchedulePersistenceService, times(1))
+        .fetchTransferSchedulesInRange(any(TransferScheduleDomainRequest.class));
+
+    request.setHorizonDays(null);
+    actualResponse = transferScheduleService.fetchTransferSchedulesInRange(request);
+    assertNotNull(actualResponse);
+    assertEquals(
+        expectedResponse.get(0).getSourceNodeId(), actualResponse.get(0).getSourceNodeId());
+    assertEquals(
+        expectedResponse.get(0).getDropoffNodeId(), actualResponse.get(0).getDropoffNodeId());
+  }
+
+  @Test
+  @DisplayName("Fetch schedules in range with both start time and end time and rule")
+  void testFetchTransferSchedulesInRangeWithRules()
+      throws PromiseEngineException, CommonServiceException {
+    // Arrange
+    TransferScheduleRangeRequest request = new TransferScheduleRangeRequest();
+    request.setStartTime(DateTime.now());
+    request.setEndTime(DateTime.now().plusDays(5));
+    request.setHorizonDays(2);
+    request.setPastDays(1);
+    request.setRule("R1");
+    request.setRuleName("R1");
+
+    List<TransferScheduleResponse> expectedResponse =
+        List.of(testUtil.getTransferScheduleResponse());
+    SourcingAttributesDefinitionResponse response = new SourcingAttributesDefinitionResponse();
+    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionInActiveStatus(
+            request.getOrgId(), SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE))
+        .thenReturn(response);
+    when(transferSchedulePersistenceService.fetchTransferSchedulesInRange(any()))
+        .thenReturn(List.of(testUtil.getTransferScheduleEntity()));
+
+    // Act
+    List<TransferScheduleRangeResponse> actualResponse =
+        transferScheduleService.fetchTransferSchedulesInRange(request);
+
+    // Assert
+    assertNotNull(actualResponse);
+    assertEquals(
+        expectedResponse.get(0).getSourceNodeId(), actualResponse.get(0).getSourceNodeId());
+    assertEquals(
+        expectedResponse.get(0).getDropoffNodeId(), actualResponse.get(0).getDropoffNodeId());
+
+    verify(transferSchedulePersistenceService, times(1))
+        .fetchTransferSchedulesInRange(any(TransferScheduleDomainRequest.class));
+
+    request.setHorizonDays(null);
+    actualResponse = transferScheduleService.fetchTransferSchedulesInRange(request);
+    assertNotNull(actualResponse);
+    assertEquals(
+        expectedResponse.get(0).getSourceNodeId(), actualResponse.get(0).getSourceNodeId());
+    assertEquals(
+        expectedResponse.get(0).getDropoffNodeId(), actualResponse.get(0).getDropoffNodeId());
+  }
+
+  @Test
+  @DisplayName(
+      "Fetch schedules in range with both start time and end time and rule and no schedule found with rule")
+  void testFetchTransferSchedulesInRangeWithRulesButNoScheduleFound()
+      throws PromiseEngineException, CommonServiceException {
+    // Arrange
+    TransferScheduleRangeRequest request = new TransferScheduleRangeRequest();
+    request.setStartTime(DateTime.now());
+    request.setEndTime(DateTime.now().plusDays(5));
+    request.setHorizonDays(2);
+    request.setPastDays(1);
+    request.setRule("R1");
+    request.setRuleName("R1");
+
+    List<TransferScheduleResponse> expectedResponse =
+        List.of(testUtil.getTransferScheduleResponse());
+    SourcingAttributesDefinitionResponse response = new SourcingAttributesDefinitionResponse();
+    when(sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionInActiveStatus(
+            request.getOrgId(), SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE))
+        .thenReturn(response);
+    when(transferSchedulePersistenceService.fetchTransferSchedulesInRange(any()))
+        .thenReturn(
+            List.of(
+                testUtil.getTransferScheduleEntity(),
+                testUtil.getTransferScheduleEntityWithRule()));
+
+    // Act
+    List<TransferScheduleRangeResponse> actualResponse =
+        transferScheduleService.fetchTransferSchedulesInRange(request);
+
+    // Assert
+    assertNotNull(actualResponse);
+    assertEquals(
+        expectedResponse.get(0).getSourceNodeId(), actualResponse.get(0).getSourceNodeId());
+    assertEquals(
+        expectedResponse.get(0).getDropoffNodeId(), actualResponse.get(0).getDropoffNodeId());
+
+    verify(transferSchedulePersistenceService, times(1))
+        .fetchTransferSchedulesInRange(any(TransferScheduleDomainRequest.class));
+
+    request.setHorizonDays(null);
+    actualResponse = transferScheduleService.fetchTransferSchedulesInRange(request);
+    assertNotNull(actualResponse);
+    assertEquals(
+        expectedResponse.get(0).getSourceNodeId(), actualResponse.get(0).getSourceNodeId());
+    assertEquals(
+        expectedResponse.get(0).getDropoffNodeId(), actualResponse.get(0).getDropoffNodeId());
+  }
+
+  @Test
   @DisplayName("Fetch schedules in range with both start time and end time")
   void testFetchTransferSchedulesInRangeWithRuleInRequest() {
     // Arrange
