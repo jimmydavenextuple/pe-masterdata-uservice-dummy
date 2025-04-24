@@ -509,4 +509,32 @@ class CarrierServiceServiceTest {
     verify(carrierServicePersistenceService, times(1))
         .findCarrierServiceByServiceIdAndOrgId(any(), any());
   }
+
+  @Test
+  @DisplayName("Upsert Carrier Service - Creates new when existingCarrierService is empty")
+  void upsertCarrierService_CreatesNew_WhenOptionalIsEmpty()
+      throws CarrierServiceDomainException, CommonServiceException {
+
+    CarrierServiceRequest carrierServiceRequest = testUtil.getCarrierServiceRequest();
+    CarrierServiceDomainDto domainDto = testUtil.getCarrierServiceDomainDto();
+    CarrierServiceResponse expectedResponse = testUtil.getCarrierServiceResponse();
+
+    Set<String> serviceOptions =
+        Set.of("SDND", "STANDARD", "EXPRESS", "NEXTDAY", TestUtil.SERVICE_OPTIONS);
+
+    when(carrierOptionConfig.getServiceOptions(any())).thenReturn(serviceOptions);
+    when(carrierServicePersistenceService.findCarrierServiceByServiceIdAndOrgId(any(), any()))
+        .thenReturn(Optional.empty());
+
+    when(carrierServicePersistenceService.saveCarrierService(any())).thenReturn(domainDto);
+
+    CarrierServiceResponse actualResponse =
+        carrierServiceService.upsertCarrierService(carrierServiceRequest);
+
+    assertEquals(expectedResponse.getCarrierId(), actualResponse.getCarrierId());
+
+    verify(carrierServicePersistenceService, times(2))
+        .findCarrierServiceByServiceIdAndOrgId(any(), any());
+    verify(carrierServicePersistenceService, times(1)).saveCarrierService(any());
+  }
 }

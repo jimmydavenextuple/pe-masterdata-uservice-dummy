@@ -15,6 +15,7 @@ import static com.nextuple.postal.code.timezone.TestUtil.STATUS_CODE;
 import static com.nextuple.postal.code.timezone.TestUtil.ZIP_CODE;
 import static com.nextuple.postal.code.timezone.TestUtil.ZIP_CODE_PREFIX;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -36,6 +37,7 @@ import com.nextuple.postal.code.timezone.service.PostalCodeService;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
@@ -233,7 +235,7 @@ class PostalCodeControllerTest {
     ResponseEntity<BaseResponse<List<String>>> responseEntity =
         postalCodeController.getPostalCodePrefixForOrgIdAndState(ORG_ID, STATE);
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    Assertions.assertNotNull(responseEntity.getBody());
+    assertNotNull(responseEntity.getBody());
     Assertions.assertFalse(CollectionUtils.isEmpty(responseEntity.getBody().getPayload()));
     verify(postalCodeService, times(1))
         .fetchPostalCodePrefixForOrgIdAndState(anyString(), anyString());
@@ -247,7 +249,7 @@ class PostalCodeControllerTest {
     ResponseEntity<BaseResponse<List<PostalCodeResponse>>> responseEntity =
         postalCodeController.getPostalCodeTimeZoneForOrgIdAndCountry(ORG_ID, COUNTRY);
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    Assertions.assertNotNull(responseEntity.getBody());
+    assertNotNull(responseEntity.getBody());
     Assertions.assertFalse(CollectionUtils.isEmpty(responseEntity.getBody().getPayload()));
     verify(postalCodeService, times(1))
         .fetchPostalCodeTimezoneByOrgIdAndCountry(anyString(), anyString());
@@ -261,7 +263,7 @@ class PostalCodeControllerTest {
     ResponseEntity<BaseResponse<List<MarketRegionInfo>>> responseEntity =
         postalCodeController.getMarketRegionsForOrgId(ORG_ID);
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    Assertions.assertNotNull(responseEntity.getBody());
+    assertNotNull(responseEntity.getBody());
     verify(postalCodeService, times(1)).getMarketRegionForOrgId(anyString());
   }
 
@@ -291,5 +293,39 @@ class PostalCodeControllerTest {
         });
 
     verify(postalCodeService, times(1)).getPostalCodePrefixList(anyString());
+  }
+
+  @Test
+  @DisplayName("Should successfully upsert zip code and return OK status with payload")
+  void upsertPostalCodeSuccessTest() throws PromiseEngineException, CommonServiceException {
+    PostalCodeRequest postalCodeRequest = testUtil.getPostalCodeRequest();
+    PostalCodeResponse postalCodeResponse = testUtil.getPostalCodeResponse();
+
+    when(postalCodeService.upsertPostalCode(any(PostalCodeRequest.class)))
+        .thenReturn(postalCodeResponse);
+
+    ResponseEntity<BaseResponse<PostalCodeResponse>> responseEntity =
+        postalCodeController.upsertPostalCode(postalCodeRequest);
+
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    assertNotNull(responseEntity.getBody());
+    assertEquals(postalCodeResponse, responseEntity.getBody().getPayload());
+
+    verify(postalCodeService, times(1)).upsertPostalCode(any(PostalCodeRequest.class));
+  }
+
+  @Test
+  @DisplayName("Should throw PromiseEngineException when service fails during upsert")
+  void upsertPostalCodeExceptionTest() throws PromiseEngineException, CommonServiceException {
+    PostalCodeRequest postalCodeRequest = testUtil.getPostalCodeRequest();
+
+    when(postalCodeService.upsertPostalCode(any(PostalCodeRequest.class)))
+        .thenThrow(PromiseEngineException.class);
+
+    assertThrows(
+        PromiseEngineException.class,
+        () -> postalCodeController.upsertPostalCode(postalCodeRequest));
+
+    verify(postalCodeService, times(1)).upsertPostalCode(any(PostalCodeRequest.class));
   }
 }

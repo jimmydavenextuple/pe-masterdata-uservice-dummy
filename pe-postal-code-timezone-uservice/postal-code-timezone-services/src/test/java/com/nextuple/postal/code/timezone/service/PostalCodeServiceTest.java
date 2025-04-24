@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -351,5 +352,43 @@ class PostalCodeServiceTest {
         PromiseEngineException.class, () -> postalCodeService.getMarketRegionForOrgId(ORG_ID));
 
     verify(postalCodePersistenceService, times(1)).getRecordsForOrgId(anyString());
+  }
+
+  @Test
+  @DisplayName("Should update postal code when it already exists during upsert")
+  void upsertPostalCode_shouldUpdate_WhenZipCodeExists()
+      throws PromiseEngineException, CommonServiceException {
+    PostalCodeRequest postalCodeRequest = testUtil.getPostalCodeRequest();
+    PostalCodeDomainDto existingPostalCode = testUtil.getPostalCodeEntity();
+
+    when(postalCodePersistenceService.fetchPostalCode(anyString(), anyString()))
+        .thenReturn(Optional.of(existingPostalCode));
+    when(postalCodePersistenceService.savePostalCode(any(PostalCodeDomainDto.class)))
+        .thenReturn(existingPostalCode);
+
+    PostalCodeResponse response = postalCodeService.upsertPostalCode(postalCodeRequest);
+
+    assertEquals(existingPostalCode.getOrgId(), response.getOrgId());
+    verify(postalCodePersistenceService, times(2)).fetchPostalCode(anyString(), anyString());
+    verify(postalCodePersistenceService, times(1)).savePostalCode(any(PostalCodeDomainDto.class));
+  }
+
+  @Test
+  @DisplayName("Should create postal code when it does not exist during upsert")
+  void upsertPostalCode_shouldCreate_WhenZipCodeDoesNotExist()
+      throws PromiseEngineException, CommonServiceException {
+    PostalCodeRequest postalCodeRequest = testUtil.getPostalCodeRequest();
+    PostalCodeDomainDto savedPostalCode = testUtil.getPostalCodeEntity();
+
+    when(postalCodePersistenceService.fetchPostalCode(anyString(), anyString()))
+        .thenReturn(Optional.empty());
+    when(postalCodePersistenceService.savePostalCode(any(PostalCodeDomainDto.class)))
+        .thenReturn(savedPostalCode);
+
+    PostalCodeResponse response = postalCodeService.upsertPostalCode(postalCodeRequest);
+
+    assertEquals(savedPostalCode.getOrgId(), response.getOrgId());
+    verify(postalCodePersistenceService, times(2)).fetchPostalCode(anyString(), anyString());
+    verify(postalCodePersistenceService, times(1)).savePostalCode(any(PostalCodeDomainDto.class));
   }
 }
