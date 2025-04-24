@@ -9,8 +9,8 @@ package com.nextuple.node.domain.mapper;
 
 import com.nextuple.node.domain.dto.NodeCacheKeyDto;
 import com.nextuple.node.domain.dto.NodeDto;
+import com.nextuple.node.domain.inbound.NodeBaseRequest;
 import com.nextuple.node.domain.inbound.NodeRequest;
-import com.nextuple.node.domain.inbound.NodeUpdationRequest;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.node.persistence.domain.NodeDomainDto;
 import com.nextuple.node.persistence.entity.NodeEntity;
@@ -30,7 +30,7 @@ public interface NodeMapper {
   NodeResponse toNodeResponse(NodeDomainDto nodeDetails);
 
   NodeDomainDto updateNodeDetails(
-      NodeUpdationRequest nodeUpdationRequest, @MappingTarget NodeDomainDto existingNodeDetails);
+      NodeBaseRequest nodeBaseRequest, @MappingTarget NodeDomainDto existingNodeDetails);
 
   NodeDomainDto toNodeDomainDto(NodeEntity nodeEntity);
 

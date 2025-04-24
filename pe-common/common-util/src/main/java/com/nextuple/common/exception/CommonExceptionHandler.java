@@ -85,7 +85,7 @@ public class CommonExceptionHandler {
                         .rejectedValue(
                             Objects.nonNull(violation.getInvalidValue())
                                 ? violation.getInvalidValue().toString()
-                                : null)
+                                : "null")
                         .build()));
     return ResponseEntity.badRequest().body(builder.build());
   }
