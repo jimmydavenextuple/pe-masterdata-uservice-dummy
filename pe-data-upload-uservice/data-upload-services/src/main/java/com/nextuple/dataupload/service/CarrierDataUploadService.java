@@ -25,8 +25,8 @@ import static com.nextuple.dataupload.helper.CarrierDataUploadConstants.CARRIER_
 import static com.nextuple.dataupload.helper.CarrierDataUploadConstants.CARRIER_DATA_UPLOAD_LARGE_ROW_SIZE;
 
 import com.nextuple.carrier.domain.feign.CarrierFeign;
+import com.nextuple.carrier.domain.inbound.CarrierServiceBaseRequest;
 import com.nextuple.carrier.domain.inbound.CarrierServiceRequest;
-import com.nextuple.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
@@ -182,7 +182,7 @@ public class CarrierDataUploadService {
       String serviceName,
       String serviceOptions) {
     var carrierServiceUpdateRequest =
-        CarrierServiceUpdateRequest.builder()
+        CarrierServiceBaseRequest.builder()
             .carrierName(carrierName)
             .serviceName(serviceName)
             .serviceOptions(serviceOptions)
