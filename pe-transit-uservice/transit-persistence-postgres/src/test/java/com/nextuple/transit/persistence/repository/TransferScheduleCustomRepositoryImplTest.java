@@ -137,6 +137,24 @@ class TransferScheduleCustomRepositoryImplTest {
   }
 
   @Test
+  @DisplayName("Happy Path - Find transfer schedules in range with empty ruleName fields")
+  void findTransferSchedulesInRangeNullRuleNameTest() {
+    TransferScheduleDomainRequest request = testUtil.getTransferScheduleDomainRequest();
+    request.setStartTimeLowerBound(null);
+    request.setEndTimeLowerBound(null);
+    request.setRule("Rule1");
+    request.setRuleName(null);
+    List<TransferScheduleEntity> results =
+        Arrays.asList(new TransferScheduleEntity(), new TransferScheduleEntity());
+
+    when(typedQuery.getResultList()).thenReturn(results);
+    List<TransferScheduleEntity> actualResult = repository.findTransferSchedulesInRange(request);
+
+    assertEquals(2, actualResult.size());
+    verify(entityManager, times(1)).createQuery(criteriaQuery);
+  }
+
+  @Test
   @DisplayName("Happy Path - Find transfer schedules in range with empty fields")
   void findTransferSchedulesInRangeNullTest() {
     TransferScheduleDomainRequest request = testUtil.getTransferScheduleDomainRequest();
