@@ -8,12 +8,13 @@
 package com.nextuple.item.domain.mapper;
 
 import com.nextuple.item.domain.events.ItemMasterEvent;
+import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
-import com.nextuple.item.domain.inbound.ItemUpdationRequest;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import com.nextuple.item.persistence.domain.ItemDomainDto;
 import java.util.List;
+import java.util.Optional;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -33,10 +34,18 @@ public interface ItemMapper {
 
   @Mapping(target = "processingTime", ignore = true)
   ItemDomainDto updateItemEntity(
-      ItemUpdationRequest itemUpdationRequest, @MappingTarget ItemDomainDto existingItemDomainDto);
+      ItemBaseRequest itemBaseRequest, @MappingTarget ItemDomainDto existingItemDomainDto);
 
   @Mapping(target = "weightUom", source = "weightUOM")
   ItemCreationRequest convertItemMasterEventToItemCreationRequest(ItemMasterEvent itemMasterEvent);
 
   ItemListResponse toItemListResponse(ItemDomainDto itemDomainDtoList);
+
+  default Double map(Optional<Double> value) {
+    return value.orElse(null);
+  }
+
+  default Optional<Double> mapToOptional(Double value) {
+    return Optional.of(value);
+  }
 }
