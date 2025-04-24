@@ -460,17 +460,18 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
   @Override
   public List<TransferScheduleRangeResponse> fetchTransferSchedulesInRange(
       TransferScheduleRangeRequest request) {
-    if (Objects.isNull(request.getRule()) || Objects.isNull(request.getRuleName())) {
-      try {
-        SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse =
-            sourcingAttributesDefinitionService
-                .processGetSourcingAttributesDefinitionInActiveStatus(
-                    request.getOrgId(),
-                    SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
-        if (Objects.nonNull(sourcingAttributesDefinitionResponse)) return Collections.emptyList();
-      } catch (Exception e) {
-        logger.error("Failed to fetch sourcing attributes definition in active status", e);
-      }
+    SourcingAttributesDefinitionResponse sourcingAttributesDefinitionResponse;
+    try {
+      sourcingAttributesDefinitionResponse =
+          sourcingAttributesDefinitionService.processGetSourcingAttributesDefinitionInActiveStatus(
+              request.getOrgId(), SourcingAttributesDefinitionScopeEnum.TRANSFER_SCHEDULE_RULE);
+    } catch (Exception e) {
+      logger.error("Failed to fetch sourcing attributes definition in active status", e);
+      sourcingAttributesDefinitionResponse = null;
+    }
+    if (Objects.isNull(sourcingAttributesDefinitionResponse)) {
+      request.setRule(null);
+      request.setRuleName(null);
     }
     // start time bound is the maximum allowed start time for the transfer schedule
     Date startTimeBound = null;
@@ -505,6 +506,13 @@ public class TransferScheduleServiceImpl implements TransferScheduleService {
 
     List<TransferScheduleDomainDto> dtos =
         transferSchedulePersistenceService.fetchTransferSchedulesInRange(domainRequest);
+    if (Objects.nonNull(request.getRule()) && Objects.nonNull(request.getRuleName())) {
+      List<TransferScheduleDomainDto> dtosWithNonNullRule =
+          dtos.stream().filter(x -> Objects.nonNull(x.getRule())).toList();
+      if (!dtosWithNonNullRule.isEmpty()) {
+        dtos = dtosWithNonNullRule;
+      }
+    }
     return convertDtos(dtos);
   }
 
