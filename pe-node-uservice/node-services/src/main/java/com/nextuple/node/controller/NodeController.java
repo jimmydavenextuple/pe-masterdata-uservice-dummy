@@ -27,11 +27,12 @@ import com.nextuple.node.controller.docs.GetNodeListV1Doc;
 import com.nextuple.node.controller.docs.GetNodeListV2Doc;
 import com.nextuple.node.controller.docs.GetNodeTypesDoc;
 import com.nextuple.node.controller.docs.UpdateNodeDetailsDoc;
+import com.nextuple.node.controller.docs.UpsertNodeDoc;
 import com.nextuple.node.domain.NodeConstants;
 import com.nextuple.node.domain.dto.NodeCacheKeyDto;
 import com.nextuple.node.domain.dto.NodeDto;
+import com.nextuple.node.domain.inbound.NodeBaseRequest;
 import com.nextuple.node.domain.inbound.NodeRequest;
-import com.nextuple.node.domain.inbound.NodeUpdationRequest;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.node.domain.outbound.NodeTypesResponse;
 import com.nextuple.node.persistence.exception.NodeDomainException;
@@ -81,6 +82,36 @@ public class NodeController {
   private final PageProperties pageProperties;
 
   /**
+   * Upserts (creates or updates) a node based on the provided request.
+   *
+   * <p>This endpoint first checks if the node exists based on the nodeId and orgId. If the node
+   * exists, it updates the node; if not, it creates a new node.
+   *
+   * @param nodeRequest the request containing the details of the node to be created or updated.
+   * @return a {@link ResponseEntity} containing a success message and the resulting {@link
+   *     NodeResponse}.
+   * @throws NodeDomainException if there is an error during node creation or update.
+   * @throws CommonServiceException if there is a service-related error during the process.
+   */
+  @PostMapping("/upsert")
+  @UpsertNodeDoc
+  public ResponseEntity<BaseResponse<NodeResponse>> upsertNode(
+      @Valid @RequestBody NodeRequest nodeRequest)
+      throws NodeDomainException, CommonServiceException {
+    logger.debug("Processing node create or update request");
+
+    try {
+      NodeResponse nodeResponse = nodeService.upsertNode(nodeRequest);
+      return ResponseEntity.ok(
+          BaseResponse.builder().message("Node saved successfully").payload(nodeResponse).build());
+
+    } catch (Exception e) {
+      logger.error("Failed to create or update node");
+      throw e;
+    }
+  }
+
+  /**
    * Handles the creation of a new node.
    *
    * <p>This endpoint processes incoming requests to create a node based on the details provided in
@@ -125,8 +156,8 @@ public class NodeController {
    * @param orgId the unique identifier of the organization to which the node belongs. Must not be
    *     blank. See {@link NodeConstants#ORG_ID} for description and {@link
    *     NodeConstants#ORG_ID_EXAMPLE} for an example value.
-   * @param nodeUpdationRequest the {@link NodeUpdationRequest} object containing the updated
-   *     details of the node. Must be valid as per the defined constraints.
+   * @param nodeBaseRequest the {@link NodeBaseRequest} object containing the updated details of the
+   *     node. Must be valid as per the defined constraints.
    * @return a {@link ResponseEntity} containing a {@link BaseResponse} object with a success
    *     message and the updated {@link NodeResponse}.
    * @throws NodeDomainException if a domain-specific error occurs during node update.
@@ -143,12 +174,12 @@ public class NodeController {
           @Parameter(description = NodeConstants.ORG_ID, example = NodeConstants.ORG_ID_EXAMPLE)
           @PathVariable
           String orgId,
-      @Valid @RequestBody NodeUpdationRequest nodeUpdationRequest)
+      @Valid @RequestBody NodeBaseRequest nodeBaseRequest)
       throws NodeDomainException, CommonServiceException {
     logger.debug("Processing update node details");
     try {
 
-      var nodeResponse = nodeService.updateNodeDetails(nodeId, orgId, nodeUpdationRequest);
+      var nodeResponse = nodeService.updateNodeDetails(nodeId, orgId, nodeBaseRequest);
       logger.info("Response after updation of node :{}", nodeResponse);
 
       return ResponseEntity.ok(
