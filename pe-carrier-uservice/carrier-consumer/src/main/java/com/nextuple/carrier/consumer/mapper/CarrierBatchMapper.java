@@ -8,8 +8,8 @@
 package com.nextuple.carrier.consumer.mapper;
 
 import com.nextuple.carrier.consumer.dto.CarrierFeedDto;
+import com.nextuple.carrier.domain.inbound.CarrierServiceBaseRequest;
 import com.nextuple.carrier.domain.inbound.CarrierServiceRequest;
-import com.nextuple.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -20,5 +20,5 @@ import org.mapstruct.ReportingPolicy;
 public interface CarrierBatchMapper {
   CarrierServiceRequest toCarrierRequest(CarrierFeedDto carrierFeedDto);
 
-  CarrierServiceUpdateRequest toCarrierUpdateRequest(CarrierFeedDto carrierFeedDto);
+  CarrierServiceBaseRequest toCarrierUpdateRequest(CarrierFeedDto carrierFeedDto);
 }

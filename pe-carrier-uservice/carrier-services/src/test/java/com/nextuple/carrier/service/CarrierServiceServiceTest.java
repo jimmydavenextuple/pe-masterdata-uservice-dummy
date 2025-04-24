@@ -17,8 +17,8 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.nextuple.carrier.TestUtil;
 import com.nextuple.carrier.config.CarrierTenantBasedDBConfig;
 import com.nextuple.carrier.domain.dto.CarrierCacheKeyDto;
+import com.nextuple.carrier.domain.inbound.CarrierServiceBaseRequest;
 import com.nextuple.carrier.domain.inbound.CarrierServiceRequest;
-import com.nextuple.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.carrier.persistence.domain.CarrierServiceDomainDto;
 import com.nextuple.carrier.persistence.exception.CarrierServiceDomainException;
@@ -231,8 +231,7 @@ class CarrierServiceServiceTest {
   void updateCarrierServiceDetailsTest()
       throws CarrierServiceDomainException, CommonServiceException {
     CarrierServiceDomainDto carrierServiceEntity = testUtil.getCarrierServiceDomainDto();
-    CarrierServiceUpdateRequest carrierServiceUpdateRequest =
-        testUtil.getCarrierServiceUpdateRequest();
+    CarrierServiceBaseRequest carrierServiceBaseRequest = testUtil.getCarrierServiceUpdateRequest();
     CarrierServiceDomainDto updateCarrierServiceEntity = testUtil.getCarrierServiceDomainDto();
     Set<String> serviceOptions =
         Set.of("SDND", "STANDARD", "EXPRESS", "NEXTDAY", TestUtil.SERVICE_OPTIONS);
@@ -248,7 +247,7 @@ class CarrierServiceServiceTest {
             TestUtil.CARRIER_ID,
             TestUtil.CARRIER_SERVICE_ID,
             TestUtil.ORG_ID,
-            carrierServiceUpdateRequest);
+            carrierServiceBaseRequest);
     assertEquals(testUtil.getCarrierServiceUpdateResponse(), CarrierServiceResponse);
 
     verify(carrierServicePersistenceService, times(1))
@@ -262,8 +261,7 @@ class CarrierServiceServiceTest {
       "Update Carrier Service Test - Exception : Carrier service not found with given details")
   void updateCarrierServiceDetailsTestNotFoundException()
       throws CarrierServiceDomainException, CommonServiceException {
-    CarrierServiceUpdateRequest carrierServiceUpdateRequest =
-        testUtil.getCarrierServiceUpdateRequest();
+    CarrierServiceBaseRequest carrierServiceBaseRequest = testUtil.getCarrierServiceUpdateRequest();
     Set<String> serviceOptions =
         Set.of("SDND", "STANDARD", "EXPRESS", "NEXTDAY", TestUtil.SERVICE_OPTIONS);
     when(carrierOptionConfig.getServiceOptions(any())).thenReturn(serviceOptions);
@@ -279,7 +277,7 @@ class CarrierServiceServiceTest {
                     TestUtil.CARRIER_ID,
                     TestUtil.CARRIER_SERVICE_ID,
                     TestUtil.ORG_ID,
-                    carrierServiceUpdateRequest));
+                    carrierServiceBaseRequest));
     assertEquals("Carrier service not found with given details", exception.getMessage());
 
     verify(carrierServicePersistenceService, times(0))
@@ -460,5 +458,55 @@ class CarrierServiceServiceTest {
 
     assertEquals("Invalid service option", exception.getMessage());
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+  }
+
+  @Test
+  @DisplayName("Upsert Carrier Service - Creates new service when no existing service found")
+  void upsertCarrierService_CreateNew_WhenOptionalEmpty()
+      throws CarrierServiceDomainException, CommonServiceException {
+
+    CarrierServiceRequest carrierServiceRequest = testUtil.getCarrierServiceRequest();
+    CarrierServiceDomainDto domainDto = testUtil.getCarrierServiceDomainDto();
+    CarrierServiceResponse expectedResponse = testUtil.getCarrierServiceResponse();
+    Set<String> serviceOptions =
+        Set.of("SDND", "STANDARD", "EXPRESS", "NEXTDAY", TestUtil.SERVICE_OPTIONS);
+    when(carrierOptionConfig.getServiceOptions(any())).thenReturn(serviceOptions);
+    when(carrierServicePersistenceService.findCarrierServiceByServiceIdAndOrgId(any(), any()))
+        .thenReturn(Optional.of(List.of()));
+    when(carrierServicePersistenceService.saveCarrierService(any())).thenReturn(domainDto);
+
+    CarrierServiceResponse actualResponse =
+        carrierServiceService.upsertCarrierService(carrierServiceRequest);
+
+    assertEquals(expectedResponse.getCarrierId(), actualResponse.getCarrierId());
+    verify(carrierServicePersistenceService, times(1)).saveCarrierService(any());
+  }
+
+  @Test
+  @DisplayName("Upsert Carrier Service - Updates existing service when found")
+  void upsertCarrierService_Update_WhenServiceExists()
+      throws CarrierServiceDomainException, CommonServiceException {
+
+    CarrierServiceRequest carrierServiceRequest = testUtil.getCarrierServiceRequest();
+    CarrierServiceDomainDto existingService = testUtil.getCarrierServiceDomainDto();
+    CarrierServiceResponse expectedResponse = testUtil.getCarrierServiceResponse();
+
+    Set<String> serviceOptions =
+        Set.of("SDND", "STANDARD", "EXPRESS", "NEXTDAY", TestUtil.SERVICE_OPTIONS);
+    when(carrierOptionConfig.getServiceOptions(any())).thenReturn(serviceOptions);
+    when(carrierServicePersistenceService.findCarrierServiceByServiceIdAndOrgId(any(), any()))
+        .thenReturn(Optional.of(List.of(existingService)));
+    when(carrierServicePersistenceService.findCarrierServiceByCarrierIdAndServiceIdAndOrgId(
+            any(), any(), any()))
+        .thenReturn(Optional.of(existingService));
+    when(carrierServicePersistenceService.saveCarrierService(any())).thenReturn(existingService);
+
+    CarrierServiceResponse actualResponse =
+        carrierServiceService.upsertCarrierService(carrierServiceRequest);
+
+    assertEquals(expectedResponse.getCarrierId(), actualResponse.getCarrierId());
+    verify(carrierServicePersistenceService, times(1)).saveCarrierService(any());
+    verify(carrierServicePersistenceService, times(1))
+        .findCarrierServiceByServiceIdAndOrgId(any(), any());
   }
 }

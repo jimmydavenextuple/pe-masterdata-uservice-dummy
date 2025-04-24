@@ -12,8 +12,8 @@ import static com.nextuple.common.constants.CommonConstants.DESC_SORT_ORDER;
 
 import com.nextuple.carrier.config.CarrierTenantBasedDBConfig;
 import com.nextuple.carrier.domain.dto.CarrierCacheKeyDto;
+import com.nextuple.carrier.domain.inbound.CarrierServiceBaseRequest;
 import com.nextuple.carrier.domain.inbound.CarrierServiceRequest;
-import com.nextuple.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.nextuple.carrier.domain.mapper.CarrierServiceMapper;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.carrier.persistence.domain.CarrierServiceDomainDto;
@@ -64,6 +64,23 @@ public class CarrierServiceService {
 
   private static final String CARRIER_SERVICE_DELTE_EXCEPTION_MESSAGE =
       "Carrier cannot be deleted. Please delete the associated node-carrier and last Pickup time details before deleting this carrier";
+
+  public CarrierServiceResponse upsertCarrierService(CarrierServiceRequest carrierServiceRequest)
+      throws CarrierServiceDomainException, CommonServiceException {
+    Optional<List<CarrierServiceDomainDto>> existingCarrierService =
+        carrierServicePersistenceService.findCarrierServiceByServiceIdAndOrgId(
+            carrierServiceRequest.getCarrierServiceId(), carrierServiceRequest.getOrgId());
+
+    if (existingCarrierService.isEmpty() || existingCarrierService.get().isEmpty()) {
+      return createCarrierService(carrierServiceRequest);
+    } else {
+      return updateCarrierServiceDetails(
+          carrierServiceRequest.getCarrierId(),
+          carrierServiceRequest.getCarrierServiceId(),
+          carrierServiceRequest.getOrgId(),
+          carrierServiceRequest);
+    }
+  }
 
   public CarrierServiceResponse createCarrierService(CarrierServiceRequest carrierServiceRequest)
       throws CarrierServiceDomainException, CommonServiceException {
@@ -171,10 +188,10 @@ public class CarrierServiceService {
       String carrierId,
       String serviceId,
       String orgId,
-      CarrierServiceUpdateRequest carrierServiceUpdateRequest)
+      CarrierServiceBaseRequest carrierServiceBaseRequest)
       throws CarrierServiceDomainException, CommonServiceException {
 
-    validateServiceOptions(orgId, carrierServiceUpdateRequest.getServiceOptions());
+    validateServiceOptions(orgId, carrierServiceBaseRequest.getServiceOptions());
 
     Optional<CarrierServiceDomainDto> carrierServiceEntity =
         carrierServicePersistenceService.findCarrierServiceByCarrierIdAndServiceIdAndOrgId(
@@ -192,7 +209,7 @@ public class CarrierServiceService {
     logger.info(
         "Response before updation of carrier :{}",
         INSTANCE.toCarrierServiceResponse(carrierServiceEntity.get()));
-    INSTANCE.updateCarrierServiceEntity(carrierServiceUpdateRequest, carrierServiceEntity.get());
+    INSTANCE.updateCarrierServiceEntity(carrierServiceBaseRequest, carrierServiceEntity.get());
     return INSTANCE.toCarrierServiceResponse(
         carrierServicePersistenceService.saveCarrierService(carrierServiceEntity.get()));
   }
