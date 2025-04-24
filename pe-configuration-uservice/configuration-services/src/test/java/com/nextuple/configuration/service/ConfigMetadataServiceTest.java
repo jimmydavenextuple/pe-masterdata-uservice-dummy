@@ -20,8 +20,8 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.configuration.TestUtil;
+import com.nextuple.configuration.inbound.ConfigMetadataBaseRequest;
 import com.nextuple.configuration.inbound.ConfigMetadataRequest;
-import com.nextuple.configuration.inbound.ConfigMetadataUpdateRequest;
 import com.nextuple.configuration.outbound.ConfigMetadataResponse;
 import com.nextuple.configuration.persistence.domain.ConfigMetadataDomainDto;
 import com.nextuple.configuration.persistence.service.ConfigMetadataPersistenceService;
@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -181,15 +182,57 @@ class ConfigMetadataServiceTest {
 
   @Test
   void serializableClassTest() {
-    ConfigMetadataUpdateRequest request = new ConfigMetadataUpdateRequest();
+    ConfigMetadataBaseRequest request = new ConfigMetadataBaseRequest();
     assertTrue(request instanceof Serializable);
   }
 
   @Test
   void serialVersionUIDTest() throws NoSuchFieldException, IllegalAccessException {
-    Field field = ConfigMetadataUpdateRequest.class.getDeclaredField("serialVersionUID");
+    Field field = ConfigMetadataBaseRequest.class.getDeclaredField("serialVersionUID");
     field.setAccessible(true);
     assertNotNull(field);
     assertEquals(-8804756792804347818L, field.getLong(null));
+  }
+
+  @Test
+  @DisplayName("Should update config metadata when configKey already exists")
+  void upsertConfigMetadata_UpdateFlow_Success()
+      throws PromiseEngineException, CommonServiceException {
+    ConfigMetadataRequest request = testUtil.getConfigMetadataRequest();
+    ConfigMetadataDomainDto existingDto = testUtil.getConfigMetadataDomainDto();
+    ConfigMetadataDomainDto updatedDto = testUtil.getUpdatedConfigMetadataDomainDto();
+    ConfigMetadataResponse expectedResponse = testUtil.getConfigMetadataResponse();
+
+    when(configMetadataPersistenceService.fetchConfigMetadataByConfigKey(request.getConfigKey()))
+        .thenReturn(Optional.of(existingDto));
+
+    when(configMetadataPersistenceService.saveConfigMetadata(any(ConfigMetadataDomainDto.class)))
+        .thenReturn(updatedDto);
+
+    ConfigMetadataResponse actualResponse = configMetadataService.upsertConfigMetadata(request);
+
+    assertNotNull(actualResponse);
+    assertEquals(expectedResponse.getId(), actualResponse.getId());
+
+    verify(configMetadataPersistenceService, times(2))
+        .fetchConfigMetadataByConfigKey(request.getConfigKey());
+    verify(configMetadataPersistenceService, times(1))
+        .saveConfigMetadata(any(ConfigMetadataDomainDto.class));
+  }
+
+  @Test
+  @DisplayName("Should throw exception for invalid configKey format in upsert")
+  void upsertConfigMetadata_InvalidKey_ThrowsException() {
+    ConfigMetadataRequest request = new ConfigMetadataRequest();
+    request.setConfigKey("invalid--key");
+
+    CommonServiceException exception =
+        assertThrows(
+            CommonServiceException.class,
+            () -> configMetadataService.upsertConfigMetadata(request));
+
+    assertEquals(
+        "Invalid format! Only letters and hyphens are allowed in configKey",
+        exception.getMessage());
   }
 }

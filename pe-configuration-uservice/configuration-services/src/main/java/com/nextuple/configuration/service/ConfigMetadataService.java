@@ -12,8 +12,8 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.configuration.domain.mapper.ConfigMetadataMapper;
+import com.nextuple.configuration.inbound.ConfigMetadataBaseRequest;
 import com.nextuple.configuration.inbound.ConfigMetadataRequest;
-import com.nextuple.configuration.inbound.ConfigMetadataUpdateRequest;
 import com.nextuple.configuration.outbound.ConfigMetadataResponse;
 import com.nextuple.configuration.persistence.domain.ConfigMetadataDomainDto;
 import com.nextuple.configuration.persistence.service.ConfigMetadataPersistenceService;
@@ -37,6 +37,20 @@ public class ConfigMetadataService {
   private final ConfigMetadataPersistenceService configMetadataPersistenceService;
   private static final ConfigMetadataMapper INSTANCE =
       Mappers.getMapper(ConfigMetadataMapper.class);
+
+  public ConfigMetadataResponse upsertConfigMetadata(ConfigMetadataRequest configMetadataRequest)
+      throws PromiseEngineException, CommonServiceException {
+
+    Optional<ConfigMetadataDomainDto> existingMetadataOpt =
+        configMetadataPersistenceService.fetchConfigMetadataByConfigKey(
+            configMetadataRequest.getConfigKey());
+    if (existingMetadataOpt.isPresent()) {
+      return processUpdateConfigMetadata(
+          configMetadataRequest.getConfigKey(), configMetadataRequest);
+    } else {
+      return processAddConfigMetadata(configMetadataRequest);
+    }
+  }
 
   public ConfigMetadataResponse processAddConfigMetadata(
       ConfigMetadataRequest configMetadataRequest)
@@ -81,11 +95,11 @@ public class ConfigMetadataService {
   }
 
   public ConfigMetadataResponse processUpdateConfigMetadata(
-      String configKey, ConfigMetadataUpdateRequest configMetadataUpdateRequest)
+      String configKey, ConfigMetadataBaseRequest configMetadataBaseRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside processUpdateConfigMetadata Service --");
     var existingConfigMetadataDto = fetchConfigMetadataDto(configKey);
-    INSTANCE.updateConfigMetadataDto(configMetadataUpdateRequest, existingConfigMetadataDto);
+    INSTANCE.updateConfigMetadataDto(configMetadataBaseRequest, existingConfigMetadataDto);
     return INSTANCE.toConfigMetadataResponse(
         configMetadataPersistenceService.saveConfigMetadata(existingConfigMetadataDto));
   }

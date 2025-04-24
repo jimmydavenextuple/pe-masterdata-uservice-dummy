@@ -7,6 +7,7 @@
 package com.nextuple.configuration.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -18,11 +19,12 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.configuration.TestUtil;
+import com.nextuple.configuration.inbound.ConfigMetadataBaseRequest;
 import com.nextuple.configuration.inbound.ConfigMetadataRequest;
-import com.nextuple.configuration.inbound.ConfigMetadataUpdateRequest;
 import com.nextuple.configuration.outbound.ConfigMetadataResponse;
 import com.nextuple.configuration.service.ConfigMetadataService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -107,7 +109,7 @@ class ConfigMetadataControllerTest {
     ConfigMetadataResponse configMetadataResponse = testUtil.getConfigMetadataResponse();
     configMetadataResponse.setDefaultConfigValue(TestUtil.DEFAULT_CONFIG_VALUE_2);
     when(configMetadataService.processUpdateConfigMetadata(
-            anyString(), any(ConfigMetadataUpdateRequest.class)))
+            anyString(), any(ConfigMetadataBaseRequest.class)))
         .thenReturn(configMetadataResponse);
     ResponseEntity<BaseResponse<ConfigMetadataResponse>> response =
         configMetadataController.updateConfigMetadata(
@@ -125,7 +127,7 @@ class ConfigMetadataControllerTest {
     ConfigMetadataResponse configMetadataResponse = testUtil.getConfigMetadataResponse();
     configMetadataResponse.setDefaultConfigValue(TestUtil.DEFAULT_CONFIG_VALUE_2);
     when(configMetadataService.processUpdateConfigMetadata(
-            anyString(), any(ConfigMetadataUpdateRequest.class)))
+            anyString(), any(ConfigMetadataBaseRequest.class)))
         .thenThrow(new RuntimeException("Failed to process update configuration metadata request"));
     Exception ex =
         assertThrows(
@@ -162,5 +164,40 @@ class ConfigMetadataControllerTest {
             });
     assertEquals("Failed to process delete configuration metadata request", ex.getMessage());
     verify(configMetadataService, times(1)).processDeleteConfigMetadata(anyString());
+  }
+
+  @Test
+  @DisplayName("Should upsert configuration metadata successfully when it doesn't exist")
+  void upsertConfigMetadataTest() throws PromiseEngineException, CommonServiceException {
+    ConfigMetadataResponse mockResponse = testUtil.getConfigMetadataResponse();
+
+    when(configMetadataService.upsertConfigMetadata(any(ConfigMetadataRequest.class)))
+        .thenReturn(mockResponse);
+
+    ResponseEntity<BaseResponse<ConfigMetadataResponse>> response =
+        configMetadataController.upsertConfigMetadata(testUtil.getConfigMetadataRequest());
+
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertNotNull(response.getBody());
+    assertEquals(mockResponse.getId(), response.getBody().getPayload().getId());
+    assertEquals("Configuration metadata saved successfully", response.getBody().getMessage());
+
+    verify(configMetadataService, times(1)).upsertConfigMetadata(any(ConfigMetadataRequest.class));
+  }
+
+  @Test
+  @DisplayName("Should throw exception while upserting configuration metadata")
+  void upsertConfigMetadataExceptionTest() throws PromiseEngineException, CommonServiceException {
+    when(configMetadataService.upsertConfigMetadata(any(ConfigMetadataRequest.class)))
+        .thenThrow(new RuntimeException("Failed to process upsert configuration metadata request"));
+
+    Exception exception =
+        assertThrows(
+            RuntimeException.class,
+            () ->
+                configMetadataController.upsertConfigMetadata(testUtil.getConfigMetadataRequest()));
+
+    assertEquals("Failed to process upsert configuration metadata request", exception.getMessage());
+    verify(configMetadataService, times(1)).upsertConfigMetadata(any(ConfigMetadataRequest.class));
   }
 }

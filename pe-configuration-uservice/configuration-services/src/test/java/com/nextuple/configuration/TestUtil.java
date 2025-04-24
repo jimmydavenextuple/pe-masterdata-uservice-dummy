@@ -9,8 +9,8 @@ package com.nextuple.configuration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.nextuple.configuration.inbound.ConfigMetadataBaseRequest;
 import com.nextuple.configuration.inbound.ConfigMetadataRequest;
-import com.nextuple.configuration.inbound.ConfigMetadataUpdateRequest;
 import com.nextuple.configuration.inbound.TenantConfigdataRequest;
 import com.nextuple.configuration.inbound.TenantConfigdataUpdateRequest;
 import com.nextuple.configuration.outbound.ConfigMetadataResponse;
@@ -72,8 +72,8 @@ public class TestUtil {
         .build();
   }
 
-  public ConfigMetadataUpdateRequest getConfigMetadataUpdateRequest() {
-    return ConfigMetadataUpdateRequest.builder()
+  public ConfigMetadataBaseRequest getConfigMetadataUpdateRequest() {
+    return ConfigMetadataBaseRequest.builder()
         .defaultConfigValue(DEFAULT_CONFIG_VALUE_2)
         .customAttributes(CUSTOM_ATTRIBUTES)
         .build();

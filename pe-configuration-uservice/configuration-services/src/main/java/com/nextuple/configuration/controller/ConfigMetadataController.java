@@ -13,8 +13,9 @@ import com.nextuple.configuration.controller.docs.AddConfigMetadataDoc;
 import com.nextuple.configuration.controller.docs.DeleteConfigMetadataDoc;
 import com.nextuple.configuration.controller.docs.GetConfigMetadataDoc;
 import com.nextuple.configuration.controller.docs.UpdateConfigMetadataDoc;
+import com.nextuple.configuration.controller.docs.UpsertConfigMetadataDoc;
+import com.nextuple.configuration.inbound.ConfigMetadataBaseRequest;
 import com.nextuple.configuration.inbound.ConfigMetadataRequest;
-import com.nextuple.configuration.inbound.ConfigMetadataUpdateRequest;
 import com.nextuple.configuration.outbound.ConfigMetadataResponse;
 import com.nextuple.configuration.service.ConfigMetadataService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -55,6 +56,39 @@ public class ConfigMetadataController {
   private static final Logger logger = LoggerFactory.getLogger(ConfigMetadataController.class);
 
   private final ConfigMetadataService configMetadataService;
+
+  /**
+   * Upserts configuration metadata: adds if not present, updates otherwise.
+   *
+   * @param configMetadataRequest Request body containing the configuration metadata details.
+   * @return A {@link ResponseEntity} with the upserted configuration metadata.
+   * @throws PromiseEngineException If an error occurs in the promise engine.
+   * @throws CommonServiceException If validation or processing fails.
+   */
+  @UpsertConfigMetadataDoc
+  @PostMapping(
+      value = "/upsert",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<BaseResponse<ConfigMetadataResponse>> upsertConfigMetadata(
+      @Valid @RequestBody ConfigMetadataRequest configMetadataRequest)
+      throws PromiseEngineException, CommonServiceException {
+
+    logger.debug("-- Processing upsert configuration metadata request --");
+    try {
+      var configMetadataResponse =
+          configMetadataService.upsertConfigMetadata(configMetadataRequest);
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Configuration metadata saved successfully")
+              .payload(configMetadataResponse)
+              .build());
+
+    } catch (Exception e) {
+      logger.error("Failed to process upsert configuration metadata request", e);
+      throw e;
+    }
+  }
 
   /**
    * Adds configuration metadata.
@@ -135,7 +169,7 @@ public class ConfigMetadataController {
    * specified configuration key and the details provided in the request body.
    *
    * @param configKey The unique configuration key identifying the metadata to be updated.
-   * @param configMetadataUpdateRequest The request body containing the updated details of the
+   * @param configMetadataBaseRequest The request body containing the updated details of the
    *     configuration metadata.
    * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated
    *     configuration metadata details.
@@ -153,12 +187,12 @@ public class ConfigMetadataController {
           @PathVariable
           @Parameter(description = "Configuration key of the tenant-based configuration")
           String configKey,
-      @Valid @RequestBody ConfigMetadataUpdateRequest configMetadataUpdateRequest)
+      @Valid @RequestBody ConfigMetadataBaseRequest configMetadataBaseRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("-- Processing update configuration metadata request--");
     try {
       var configMetadataResponse =
-          configMetadataService.processUpdateConfigMetadata(configKey, configMetadataUpdateRequest);
+          configMetadataService.processUpdateConfigMetadata(configKey, configMetadataBaseRequest);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Configuration metadata successfully updated")

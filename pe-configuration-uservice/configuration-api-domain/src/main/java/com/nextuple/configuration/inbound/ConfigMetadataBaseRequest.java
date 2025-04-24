@@ -21,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @NoArgsConstructor
-public class ConfigMetadataUpdateRequest extends AdditionalAttributes implements Serializable {
+public class ConfigMetadataBaseRequest extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = -8804756792804347818L;
 
   @NotBlank(message = "defaultConfigValue can't be empty")

@@ -6,7 +6,6 @@
  */
 package com.nextuple.configuration.inbound;
 
-import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -21,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @NoArgsConstructor
-public class ConfigMetadataRequest extends AdditionalAttributes implements Serializable {
+public class ConfigMetadataRequest extends ConfigMetadataBaseRequest implements Serializable {
   private static final long serialVersionUID = 6902428905933095800L;
 
   @NotBlank(message = "configKey can't be empty")
@@ -33,8 +32,4 @@ public class ConfigMetadataRequest extends AdditionalAttributes implements Seria
   @NotBlank(message = "appName can't be empty")
   @Schema(description = "Name of the application or service", example = "PE")
   private String appName;
-
-  @NotBlank(message = "defaultConfigValue can't be empty")
-  @Schema(description = "Default value for cache key", example = "SDND,EXPRESS,STANDARD")
-  private String defaultConfigValue;
 }

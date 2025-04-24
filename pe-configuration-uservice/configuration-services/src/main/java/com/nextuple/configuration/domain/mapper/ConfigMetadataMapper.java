@@ -6,8 +6,8 @@
  */
 package com.nextuple.configuration.domain.mapper;
 
+import com.nextuple.configuration.inbound.ConfigMetadataBaseRequest;
 import com.nextuple.configuration.inbound.ConfigMetadataRequest;
-import com.nextuple.configuration.inbound.ConfigMetadataUpdateRequest;
 import com.nextuple.configuration.outbound.ConfigMetadataResponse;
 import com.nextuple.configuration.persistence.domain.ConfigMetadataDomainDto;
 import org.mapstruct.Mapper;
@@ -20,7 +20,7 @@ import org.mapstruct.ReportingPolicy;
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ConfigMetadataMapper {
   void updateConfigMetadataDto(
-      ConfigMetadataUpdateRequest configMetadataUpdateRequest,
+      ConfigMetadataBaseRequest configMetadataBaseRequest,
       @MappingTarget ConfigMetadataDomainDto configMetadataDomainDto);
 
   ConfigMetadataDomainDto toConfigMetadataDto(ConfigMetadataRequest configMetadataRequest);
