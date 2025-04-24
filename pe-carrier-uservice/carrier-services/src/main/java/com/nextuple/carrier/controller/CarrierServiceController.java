@@ -18,9 +18,10 @@ import com.nextuple.carrier.controller.docs.GetCarrierServiceDetailsDoc;
 import com.nextuple.carrier.controller.docs.GetCarrierServiceListByOrgIdDoc;
 import com.nextuple.carrier.controller.docs.GetCarrierServiceListWithPaginationDoc;
 import com.nextuple.carrier.controller.docs.UpdateCarrierServiceDetailsDoc;
+import com.nextuple.carrier.controller.docs.UpsertCarrierServiceDoc;
 import com.nextuple.carrier.domain.dto.CarrierCacheKeyDto;
+import com.nextuple.carrier.domain.inbound.CarrierServiceBaseRequest;
 import com.nextuple.carrier.domain.inbound.CarrierServiceRequest;
-import com.nextuple.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.carrier.persistence.exception.CarrierServiceDomainException;
 import com.nextuple.carrier.service.CarrierServiceService;
@@ -72,6 +73,43 @@ public class CarrierServiceController {
   private static final String PAGINATION_URL = "/%s?pageNo=%d&pageSize=%d";
   private final CarrierServiceService carrierserviceService;
   private final PageProperties pageProperties;
+
+  /**
+   * Creates or updates a carrier service.
+   *
+   * <p>This method processes a POST request to upsert (create or update) a carrier service based on
+   * the given request data. If the carrier service already exists, it will be updated; otherwise, a
+   * new one will be created.
+   *
+   * @param carrierServiceRequest The request body containing the carrier service details.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the created or updated
+   *     carrier service.
+   * @throws CarrierServiceDomainException If a domain-specific error occurs.
+   * @throws CommonServiceException If a general service-related error occurs.
+   */
+  @PostMapping("/upsert")
+  @UpsertCarrierServiceDoc
+  public ResponseEntity<BaseResponse<CarrierServiceResponse>> upsertCarrierService(
+      @Valid @RequestBody CarrierServiceRequest carrierServiceRequest)
+      throws CarrierServiceDomainException, CommonServiceException {
+
+    logger.debug("Processing upsert carrier service request");
+    try {
+      CarrierServiceResponse carrierServiceResponse =
+          carrierserviceService.upsertCarrierService(carrierServiceRequest);
+
+      logger.info("CarrierService upserted successfully: {}", carrierServiceResponse);
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Carrier Service saved successfully")
+              .payload(carrierServiceResponse)
+              .build());
+
+    } catch (Exception e) {
+      logger.error("Failed to upsert CarrierService");
+      throw e;
+    }
+  }
 
   /**
    * Creates a new carrier service.
@@ -163,7 +201,7 @@ public class CarrierServiceController {
    * @param carrierId The unique identifier of the carrier.
    * @param carrierServiceId The unique identifier of the carrier service.
    * @param orgId The unique identifier of the organization.
-   * @param carrierServiceUpdateRequest The request body containing the updated details for the
+   * @param carrierServiceBaseRequest The request body containing the updated details for the
    *     carrier service.
    * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated carrier
    *     service details.
@@ -185,14 +223,14 @@ public class CarrierServiceController {
           @NotBlank(message = "orgId can't be empty")
           @PathVariable
           String orgId,
-      @Valid @RequestBody CarrierServiceUpdateRequest carrierServiceUpdateRequest)
+      @Valid @RequestBody CarrierServiceBaseRequest carrierServiceBaseRequest)
       throws CarrierServiceDomainException, CommonServiceException {
     logger.debug("Processing update CarrierService details");
     try {
 
       var carrierServiceResponse =
           carrierserviceService.updateCarrierServiceDetails(
-              carrierId, carrierServiceId, orgId, carrierServiceUpdateRequest);
+              carrierId, carrierServiceId, orgId, carrierServiceBaseRequest);
       logger.info("Response after updation of carrier :{}", carrierServiceResponse);
 
       return ResponseEntity.ok(
