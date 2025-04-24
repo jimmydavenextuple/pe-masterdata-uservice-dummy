@@ -242,4 +242,66 @@ class TenantConfigdataServiceTest {
     Assertions.assertDoesNotThrow(
         () -> tenantConfigdataService.validateConfigValueFormat(tenantConfigdataRequest));
   }
+
+  @Test
+  @DisplayName("Should call update method when existing config data is found")
+  void upsertTenantConfigdata_existingData_shouldCallUpdate()
+      throws PromiseEngineException, CommonServiceException {
+
+    TenantConfigdataRequest request = testUtil.getTenantConfigdataRequest();
+    TenantConfigdataDomainDto existingDto = testUtil.getTenantConfigdataDomainDto();
+    TenantConfigdataResponse expectedResponse = testUtil.getTenantConfigdataResponse();
+
+    when(tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
+            request.getOrgId(), request.getConfigKey()))
+        .thenReturn(Optional.of(existingDto));
+
+    when(tenantConfigdataPersistenceService.saveTenantConfigdata(any()))
+        .thenReturn(testUtil.getTenantConfigdataDomainDto());
+
+    TenantConfigdataResponse response = tenantConfigdataService.upsertTenantConfigdata(request);
+
+    assertEquals(expectedResponse.getId(), response.getId());
+    verify(tenantConfigdataPersistenceService, times(2))
+        .fetchTenantConfigdataByOrgIdAndConfigKey(request.getOrgId(), request.getConfigKey());
+  }
+
+  @Test
+  @DisplayName("Should call add method when no existing config data is found")
+  void upsertTenantConfigdata_noExistingData_shouldCallAdd()
+      throws PromiseEngineException, CommonServiceException {
+
+    TenantConfigdataRequest request = testUtil.getTenantConfigdataRequest();
+    TenantConfigdataResponse expectedResponse = testUtil.getTenantConfigdataResponse();
+
+    when(tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
+            request.getOrgId(), request.getConfigKey()))
+        .thenReturn(Optional.empty());
+
+    when(tenantConfigdataPersistenceService.saveTenantConfigdata(any()))
+        .thenReturn(testUtil.getTenantConfigdataDomainDto());
+
+    TenantConfigdataResponse response = tenantConfigdataService.upsertTenantConfigdata(request);
+
+    assertEquals(expectedResponse.getId(), response.getId());
+    verify(tenantConfigdataPersistenceService, times(2))
+        .fetchTenantConfigdataByOrgIdAndConfigKey(request.getOrgId(), request.getConfigKey());
+    verify(tenantConfigdataPersistenceService, times(1)).saveTenantConfigdata(any());
+  }
+
+  @Test
+  @DisplayName("Should throw exception for invalid configKey format")
+  void upsertTenantConfigdata_invalidConfigKey_shouldThrowException() {
+    TenantConfigdataRequest invalidRequest = testUtil.getTenantConfigdataRequest();
+    invalidRequest.setConfigKey("invalid,key");
+
+    Exception exception =
+        assertThrows(
+            CommonServiceException.class,
+            () -> tenantConfigdataService.upsertTenantConfigdata(invalidRequest));
+
+    assertEquals(
+        "Invalid format! Only letters and hyphens are allowed in configKey",
+        exception.getMessage());
+  }
 }

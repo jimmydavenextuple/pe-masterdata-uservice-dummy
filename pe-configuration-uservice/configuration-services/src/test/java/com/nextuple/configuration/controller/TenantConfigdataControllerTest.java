@@ -8,6 +8,7 @@
 package com.nextuple.configuration.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -23,6 +24,7 @@ import com.nextuple.configuration.inbound.TenantConfigdataRequest;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
 import com.nextuple.configuration.service.TenantConfigdataService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -171,5 +173,43 @@ class TenantConfigdataControllerTest {
     assertEquals("Failed to process delete tenant configuration data request", ex.getMessage());
     verify(tenantConfigdataService, times(1))
         .processDeleteTenantConfigdata(anyString(), anyString());
+  }
+
+  @Test
+  @DisplayName("Should upsert tenant config data successfully and return 200 OK")
+  void upsertTenantConfigdataTest() throws PromiseEngineException, CommonServiceException {
+    TenantConfigdataResponse tenantConfigdataResponse = testUtil.getTenantConfigdataResponse();
+    when(tenantConfigdataService.upsertTenantConfigdata(any(TenantConfigdataRequest.class)))
+        .thenReturn(tenantConfigdataResponse);
+
+    ResponseEntity<BaseResponse<TenantConfigdataResponse>> response =
+        tenantConfigdataController.upsertTenantConfigdata(testUtil.getTenantConfigdataRequest());
+
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertNotNull(response.getBody());
+    assertEquals(tenantConfigdataResponse.getId(), response.getBody().getPayload().getId());
+
+    verify(tenantConfigdataService, times(1)).upsertTenantConfigdata(any());
+  }
+
+  @Test
+  @DisplayName("Should throw exception when upserting tenant config data fails")
+  void upsertTenantConfigdataExceptionTest() throws PromiseEngineException, CommonServiceException {
+    when(tenantConfigdataService.upsertTenantConfigdata(any(TenantConfigdataRequest.class)))
+        .thenThrow(
+            new RuntimeException("Failed to process upsert tenant configuration data request"));
+
+    Exception exception =
+        assertThrows(
+            Exception.class,
+            () -> {
+              tenantConfigdataController.upsertTenantConfigdata(
+                  testUtil.getTenantConfigdataRequest());
+            });
+
+    assertEquals(
+        "Failed to process upsert tenant configuration data request", exception.getMessage());
+
+    verify(tenantConfigdataService, times(1)).upsertTenantConfigdata(any());
   }
 }
