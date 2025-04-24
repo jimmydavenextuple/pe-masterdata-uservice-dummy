@@ -14,8 +14,9 @@ import com.nextuple.configuration.controller.docs.AddTenantConfigdataDoc;
 import com.nextuple.configuration.controller.docs.DeleteTenantConfigdataDoc;
 import com.nextuple.configuration.controller.docs.GetTenantConfigdataDoc;
 import com.nextuple.configuration.controller.docs.UpdateTenantConfigdataDoc;
+import com.nextuple.configuration.controller.docs.UpsertTenantConfigdataDoc;
+import com.nextuple.configuration.inbound.TenantConfigdataBaseRequest;
 import com.nextuple.configuration.inbound.TenantConfigdataRequest;
-import com.nextuple.configuration.inbound.TenantConfigdataUpdateRequest;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
 import com.nextuple.configuration.service.TenantConfigdataService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -57,7 +58,7 @@ public class TenantConfigdataController {
 
   private final TenantConfigdataService tenantConfigdataService;
 
-  //    @UpsertTenantConfigdataDoc
+  @UpsertTenantConfigdataDoc
   @PostMapping(
       value = "/upsert",
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -170,7 +171,7 @@ public class TenantConfigdataController {
    *
    * @param orgId The unique identifier of the organization.
    * @param configKey The unique configuration key of the tenant-based configuration to be updated.
-   * @param tenantConfigdataUpdateRequest The request body containing the updated details of the
+   * @param tenantConfigdataBaseRequest The request body containing the updated details of the
    *     tenant configuration data.
    * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the updated tenant
    *     configuration data.
@@ -192,13 +193,13 @@ public class TenantConfigdataController {
           @PathVariable
           @Parameter(description = "Configuration key of the tenant-based configuration")
           String configKey,
-      @Valid @RequestBody TenantConfigdataUpdateRequest tenantConfigdataUpdateRequest)
+      @Valid @RequestBody TenantConfigdataBaseRequest tenantConfigdataBaseRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("-- Processing update tenant configuration data request --");
     try {
       var tenantCofigdataResponse =
           tenantConfigdataService.processUpdateTenantConfigdata(
-              orgId, configKey, tenantConfigdataUpdateRequest);
+              orgId, configKey, tenantConfigdataBaseRequest);
       return ResponseEntity.ok(
           BaseResponse.builder()
               .message("Tenant config data successfully updated")

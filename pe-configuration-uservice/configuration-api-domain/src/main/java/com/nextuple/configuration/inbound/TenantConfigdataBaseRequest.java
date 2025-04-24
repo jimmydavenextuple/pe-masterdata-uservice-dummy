@@ -22,7 +22,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @NoArgsConstructor
-public class TenantConfigdataUpdateRequest extends AdditionalAttributes implements Serializable {
+public class TenantConfigdataBaseRequest extends AdditionalAttributes implements Serializable {
   private static final long serialVersionUID = 8888099156428428830L;
 
   @NotBlank(message = "configValue can't be empty")

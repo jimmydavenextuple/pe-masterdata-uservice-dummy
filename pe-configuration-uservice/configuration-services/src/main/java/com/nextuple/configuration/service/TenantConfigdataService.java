@@ -15,8 +15,8 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.exception.PromiseEngineException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.configuration.domain.mapper.TenantConfigdataMapper;
+import com.nextuple.configuration.inbound.TenantConfigdataBaseRequest;
 import com.nextuple.configuration.inbound.TenantConfigdataRequest;
-import com.nextuple.configuration.inbound.TenantConfigdataUpdateRequest;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
 import com.nextuple.configuration.persistence.domain.ConfigMetadataDomainDto;
 import com.nextuple.configuration.persistence.domain.TenantConfigdataDomainDto;
@@ -126,19 +126,18 @@ public class TenantConfigdataService {
   }
 
   public TenantConfigdataResponse processUpdateTenantConfigdata(
-      String orgId, String configKey, TenantConfigdataUpdateRequest tenantConfigdataUpdateRequest)
+      String orgId, String configKey, TenantConfigdataBaseRequest tenantConfigdataBaseRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside processUpdateTenantConfigdata Service --");
     validateConfigValueFormat(
         TenantConfigdataRequest.builder()
             .orgId(orgId)
-            .configValue(tenantConfigdataUpdateRequest.getConfigValue())
+            .configValue(tenantConfigdataBaseRequest.getConfigValue())
             .configKey(configKey)
             .build());
     var existingTenantConfigdataDomainDto =
         getTenantConfigdataByOrgIdAndConfigKey(orgId, configKey);
-    INSTANCE.updateTenantConfigdata(
-        tenantConfigdataUpdateRequest, existingTenantConfigdataDomainDto);
+    INSTANCE.updateTenantConfigdata(tenantConfigdataBaseRequest, existingTenantConfigdataDomainDto);
     return INSTANCE.toTenantConfigdataResponse(
         tenantConfigdataPersistenceService.saveTenantConfigdata(existingTenantConfigdataDomainDto));
   }

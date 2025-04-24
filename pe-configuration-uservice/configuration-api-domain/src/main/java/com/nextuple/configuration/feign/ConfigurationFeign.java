@@ -8,8 +8,8 @@
 package com.nextuple.configuration.feign;
 
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.configuration.inbound.TenantConfigdataBaseRequest;
 import com.nextuple.configuration.inbound.TenantConfigdataRequest;
-import com.nextuple.configuration.inbound.TenantConfigdataUpdateRequest;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -37,7 +37,7 @@ public interface ConfigurationFeign {
   BaseResponse<TenantConfigdataResponse> updateTenantConfigdata(
       @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
       @NotBlank(message = "configKey can't be empty") @PathVariable String configKey,
-      @RequestBody TenantConfigdataUpdateRequest tenantConfigdataUpdateRequest);
+      @RequestBody TenantConfigdataBaseRequest tenantConfigdataBaseRequest);
 
   @DeleteMapping(value = "/tenant-configuration/orgId/{orgId}/configKey/{configKey}")
   BaseResponse<TenantConfigdataResponse> deleteTenantConfigdata(

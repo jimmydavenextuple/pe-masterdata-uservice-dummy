@@ -17,8 +17,8 @@ import static com.nextuple.common.constants.ConfigKeyConstants.TARGET_GROSS_PROF
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.configuration.feign.ConfigurationFeign;
+import com.nextuple.configuration.inbound.TenantConfigdataBaseRequest;
 import com.nextuple.configuration.inbound.TenantConfigdataRequest;
-import com.nextuple.configuration.inbound.TenantConfigdataUpdateRequest;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
 import com.nextuple.dataupload.common.inbound.ConfigureShipChargeCappingRequest;
 import com.nextuple.dataupload.common.inbound.DeleteTargetProfitMarginRequest;
@@ -117,7 +117,7 @@ public class RecommendationRulesService {
         configurationFeign.updateTenantConfigdata(
             orgId,
             configKey,
-            TenantConfigdataUpdateRequest.builder().configValue(configValueUpdated).build());
+            TenantConfigdataBaseRequest.builder().configValue(configValueUpdated).build());
       }
     } catch (FeignException exception) {
       log.error("{}: {}", CONFIGURE_TARGET_PROFIT_MARGIN_ERROR_MESSAGE, exception.getMessage());
@@ -152,7 +152,7 @@ public class RecommendationRulesService {
       configurationFeign.updateTenantConfigdata(
           orgId,
           TARGET_GROSS_PROFIT_MARGINS_CONFIG_KEY + targetProfitMarginRequest.getAttributeName(),
-          TenantConfigdataUpdateRequest.builder().configValue(configValueUpdated).build());
+          TenantConfigdataBaseRequest.builder().configValue(configValueUpdated).build());
     } catch (FeignException exception) {
       log.error("{}: {}", UPDATE_TARGET_PROFIT_MARGIN_ERROR_MESSAGE, exception.getMessage());
       throw new CommonServiceException(
@@ -250,8 +250,8 @@ public class RecommendationRulesService {
       configValueMap.keySet().removeAll(attributeValues);
       String configValueUpdated = getUpdatedConfigValue(configValueMap);
       if (StringUtils.hasLength(configValueUpdated)) {
-        TenantConfigdataUpdateRequest updateRequest =
-            TenantConfigdataUpdateRequest.builder().configValue(configValueUpdated).build();
+        TenantConfigdataBaseRequest updateRequest =
+            TenantConfigdataBaseRequest.builder().configValue(configValueUpdated).build();
         configurationFeign.updateTenantConfigdata(orgId, configKey, updateRequest);
       } else {
         configurationFeign.deleteTenantConfigdata(orgId, configKey);
@@ -422,8 +422,8 @@ public class RecommendationRulesService {
       throws CommonServiceException {
     try {
       if (isUpdate) {
-        TenantConfigdataUpdateRequest updateRequest =
-            TenantConfigdataUpdateRequest.builder().configValue(configValue).build();
+        TenantConfigdataBaseRequest updateRequest =
+            TenantConfigdataBaseRequest.builder().configValue(configValue).build();
         configurationFeign.updateTenantConfigdata(orgId, configKey, updateRequest);
       } else {
         TenantConfigdataRequest createRequest =

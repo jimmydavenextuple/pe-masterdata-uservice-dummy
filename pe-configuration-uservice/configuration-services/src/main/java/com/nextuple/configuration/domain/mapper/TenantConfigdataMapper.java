@@ -7,8 +7,8 @@
 
 package com.nextuple.configuration.domain.mapper;
 
+import com.nextuple.configuration.inbound.TenantConfigdataBaseRequest;
 import com.nextuple.configuration.inbound.TenantConfigdataRequest;
-import com.nextuple.configuration.inbound.TenantConfigdataUpdateRequest;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
 import com.nextuple.configuration.persistence.domain.TenantConfigdataDomainDto;
 import org.mapstruct.Mapper;
@@ -24,7 +24,7 @@ public interface TenantConfigdataMapper {
       TenantConfigdataDomainDto tenantConfigdataDomainDto);
 
   void updateTenantConfigdata(
-      TenantConfigdataUpdateRequest tenantConfigdataUpdateRequest,
+      TenantConfigdataBaseRequest tenantConfigdataBaseRequest,
       @MappingTarget TenantConfigdataDomainDto tenantConfigdataDomainDto);
 
   TenantConfigdataDomainDto toTenantConfigdataDomainDto(

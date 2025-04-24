@@ -21,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @NoArgsConstructor
-public class TenantConfigdataRequest extends TenantConfigdataUpdateRequest implements Serializable {
+public class TenantConfigdataRequest extends TenantConfigdataBaseRequest implements Serializable {
   private static final long serialVersionUID = 7422930074580500512L;
 
   @NotBlank(message = "orgId can't be empty")

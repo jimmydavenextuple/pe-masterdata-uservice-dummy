@@ -11,8 +11,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.configuration.inbound.ConfigMetadataRequest;
 import com.nextuple.configuration.inbound.ConfigMetadataUpdateRequest;
+import com.nextuple.configuration.inbound.TenantConfigdataBaseRequest;
 import com.nextuple.configuration.inbound.TenantConfigdataRequest;
-import com.nextuple.configuration.inbound.TenantConfigdataUpdateRequest;
 import com.nextuple.configuration.outbound.ConfigMetadataResponse;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
 import com.nextuple.configuration.persistence.domain.ConfigMetadataDomainDto;
@@ -118,8 +118,8 @@ public class TestUtil {
         .build();
   }
 
-  public TenantConfigdataUpdateRequest getTenantConfigdataUpdateRequest() {
-    return TenantConfigdataUpdateRequest.builder()
+  public TenantConfigdataBaseRequest getTenantConfigdataUpdateRequest() {
+    return TenantConfigdataBaseRequest.builder()
         .configValue(CONFIG_VALUE_2)
         .customAttributes(CUSTOM_ATTRIBUTES)
         .build();
