@@ -7,7 +7,6 @@
 
 package com.nextuple.configuration.inbound;
 
-import com.nextuple.common.pojo.AdditionalAttributes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -22,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @NoArgsConstructor
-public class TenantConfigdataRequest extends AdditionalAttributes implements Serializable {
+public class TenantConfigdataRequest extends TenantConfigdataUpdateRequest implements Serializable {
   private static final long serialVersionUID = 7422930074580500512L;
 
   @NotBlank(message = "orgId can't be empty")
@@ -34,10 +33,4 @@ public class TenantConfigdataRequest extends AdditionalAttributes implements Ser
       description = "Configuration key of the tenant-based configuration",
       example = "service-options")
   private String configKey;
-
-  @NotBlank(message = "configValue can't be empty")
-  @Schema(
-      description = "Configuration value of the tenant-based configuration",
-      example = "SDND,EXPRESS,STANDARD")
-  private String configValue;
 }

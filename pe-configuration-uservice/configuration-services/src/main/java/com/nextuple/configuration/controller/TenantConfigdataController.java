@@ -57,6 +57,29 @@ public class TenantConfigdataController {
 
   private final TenantConfigdataService tenantConfigdataService;
 
+  //    @UpsertTenantConfigdataDoc
+  @PostMapping(
+      value = "/upsert",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<BaseResponse<TenantConfigdataResponse>> upsertTenantConfigdata(
+      @Valid @RequestBody TenantConfigdataRequest tenantConfigdataRequest)
+      throws PromiseEngineException, CommonServiceException {
+    logger.debug("-- Processing upsert tenant configuration data request --");
+    try {
+      var tenantConfigdataResponse =
+          tenantConfigdataService.upsertTenantConfigdata(tenantConfigdataRequest);
+      return ResponseEntity.ok(
+          BaseResponse.<TenantConfigdataResponse>builder()
+              .message("Tenant configuration data saved successfully")
+              .payload(tenantConfigdataResponse)
+              .build());
+    } catch (Exception e) {
+      logger.error("Failed to process upsert tenant configuration data request", e);
+      throw e;
+    }
+  }
+
   /**
    * Adds tenant configuration data.
    *

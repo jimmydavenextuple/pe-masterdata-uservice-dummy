@@ -49,6 +49,25 @@ public class TenantConfigdataService {
   private static final String CONFIG_VAL_FORMAT_ERROR_MSG =
       "The config value for %s can not contain comma separated string";
 
+  public TenantConfigdataResponse upsertTenantConfigdata(
+      TenantConfigdataRequest tenantConfigdataRequest)
+      throws PromiseEngineException, CommonServiceException {
+
+    ConfigurationUtil.validateConfigKeyFormat(tenantConfigdataRequest.getConfigKey());
+    Optional<TenantConfigdataDomainDto> existingDataOpt =
+        tenantConfigdataPersistenceService.fetchTenantConfigdataByOrgIdAndConfigKey(
+            tenantConfigdataRequest.getOrgId(), tenantConfigdataRequest.getConfigKey());
+
+    if (existingDataOpt.isPresent()) {
+      return processUpdateTenantConfigdata(
+          tenantConfigdataRequest.getOrgId(),
+          tenantConfigdataRequest.getConfigKey(),
+          tenantConfigdataRequest);
+    } else {
+      return processAddTenantConfigdata(tenantConfigdataRequest);
+    }
+  }
+
   public TenantConfigdataResponse processAddTenantConfigdata(
       TenantConfigdataRequest tenantConfigdataRequest)
       throws PromiseEngineException, CommonServiceException {
