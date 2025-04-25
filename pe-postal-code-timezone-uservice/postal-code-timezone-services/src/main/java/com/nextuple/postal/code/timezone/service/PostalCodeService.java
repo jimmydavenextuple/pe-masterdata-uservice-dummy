@@ -62,6 +62,18 @@ public class PostalCodeService {
   private final PostalCodePersistenceService postalCodePersistenceService;
   private final CustomRegionPersistenceService customRegionPersistenceService;
 
+  public PostalCodeResponse upsertPostalCode(PostalCodeRequest postalCodeRequest)
+      throws PromiseEngineException, CommonServiceException {
+    Optional<PostalCodeDomainDto> existingPostalCode =
+        postalCodePersistenceService.fetchPostalCode(
+            postalCodeRequest.getOrgId(), postalCodeRequest.getZipCode());
+    if (existingPostalCode.isPresent()) {
+      return updatePostalCode(postalCodeRequest);
+    } else {
+      return createPostalCode(postalCodeRequest);
+    }
+  }
+
   public PostalCodeResponse createPostalCode(PostalCodeRequest postalCodeRequest)
       throws PromiseEngineException, CommonServiceException {
     logger.debug("-- inside createPostalCode service --");
