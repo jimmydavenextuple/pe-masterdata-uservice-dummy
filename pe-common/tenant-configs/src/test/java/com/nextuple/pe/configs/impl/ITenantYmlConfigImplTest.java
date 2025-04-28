@@ -714,4 +714,18 @@ class ITenantYmlConfigImplTest {
     Boolean resp = iTenantYmlConfigImpl.getRecommendationEngineEnabledFlag();
     assertTrue(resp);
   }
+
+  @Test
+  @DisplayName("Get Ship Together Enabled Flag")
+  void getShipTogetherEnabledFlagTest() {
+    when(sourcingConfig.getSourcing())
+        .thenReturn(
+            Map.of(
+                TestUtil.ORG_ID,
+                Map.of("ship-together-enabled", true),
+                DEFAULT,
+                Map.of("ship-together-enabled", false)));
+    Boolean resp = iTenantYmlConfigImpl.getShipTogetherEnabledFlag();
+    assertTrue(resp);
+  }
 }

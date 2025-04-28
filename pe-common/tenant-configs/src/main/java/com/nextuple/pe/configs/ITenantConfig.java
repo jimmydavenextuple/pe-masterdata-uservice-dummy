@@ -92,4 +92,6 @@ public interface ITenantConfig {
   Boolean getPromisingIntermediateEventsEnabled();
 
   Boolean getCapacityEnabledFlag();
+
+  Boolean getShipTogetherEnabledFlag();
 }

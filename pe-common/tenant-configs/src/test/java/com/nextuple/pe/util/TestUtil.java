@@ -25,6 +25,7 @@ public class TestUtil {
   public static final String DEFAULT_NODE_WORKING_HOURS = "00:00-23:59";
   public static final String DEFAULT_ITEM_BUFFER_ENABLED = "false";
   public static final String DEFAULT_PROMISE_INTERMEDIATE_EVENT_ENABLED_FLAG = "true";
+  public static final String DEFAULT_SHIP_TOGETHER_ENABLED_FLAG = "true";
 
   public Map<String, Object> getSourcingConfigValueForOrg() {
     return Map.of("no-of-solution", 3, "no-of-nodes", 8);
