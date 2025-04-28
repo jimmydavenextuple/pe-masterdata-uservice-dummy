@@ -11,8 +11,8 @@ import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.node.domain.dto.NodeCacheKeyDto;
 import com.nextuple.node.domain.dto.NodeDto;
+import com.nextuple.node.domain.inbound.NodeBaseRequest;
 import com.nextuple.node.domain.inbound.NodeRequest;
-import com.nextuple.node.domain.inbound.NodeUpdationRequest;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.node.domain.outbound.NodeTypesResponse;
 import jakarta.validation.Valid;
@@ -33,6 +33,9 @@ import org.springframework.web.bind.annotation.RequestParam;
     url = "${spring.application.dependencies.node:http://pe-node-uservice:8080/}")
 public interface NodeFeign {
 
+  @PostMapping("/node/upsert")
+  BaseResponse<NodeResponse> upsertNode(@Valid @RequestBody NodeRequest nodeRequest);
+
   @PostMapping("/node")
   BaseResponse<NodeResponse> createNode(@Valid @RequestBody NodeRequest nodeRequest);
 
@@ -40,7 +43,7 @@ public interface NodeFeign {
   BaseResponse<NodeResponse> updateNodeDetails(
       @NotBlank @PathVariable String nodeId,
       @NotBlank @PathVariable String orgId,
-      @Valid @RequestBody NodeUpdationRequest nodeUpdationRequest);
+      @Valid @RequestBody NodeBaseRequest nodeBaseRequest);
 
   @GetMapping("/node/{nodeId}/{orgId}")
   BaseResponse<NodeResponse> getNodeDetails(

@@ -27,6 +27,7 @@ import com.nextuple.postal.code.timezone.controller.docs.GetPostalCodePrefixList
 import com.nextuple.postal.code.timezone.controller.docs.GetPostalCodePrefixListForOrgIdAndStateDetails;
 import com.nextuple.postal.code.timezone.controller.docs.GetPostalCodeTimezoneForOrgIdAndCountryDetails;
 import com.nextuple.postal.code.timezone.controller.docs.UpdatePostalCodeDetails;
+import com.nextuple.postal.code.timezone.controller.docs.UpsertPostalCodeDoc;
 import com.nextuple.postal.code.timezone.service.PostalCodeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -68,6 +69,41 @@ public class PostalCodeController {
 
   private static final Logger logger = LoggerFactory.getLogger(PostalCodeController.class);
   private final PostalCodeService postalCodeService;
+
+  /**
+   * Creates or updates a zip code with the given details.
+   *
+   * <p>This method processes a POST request to either create a new zip code or update an existing
+   * one based on the presence of the zip code in the system. It uses the organization ID and zip
+   * code to determine whether to perform a create or update operation.
+   *
+   * @param postalCodeRequest The request body containing the details for the zip code to be created
+   *     or updated.
+   * @return A {@link ResponseEntity} containing a {@link BaseResponse} with the zip code details
+   *     after creation or update.
+   * @throws PromiseEngineException If an error occurs related to the promise engine.
+   * @throws CommonServiceException If a common service exception occurs while processing the
+   *     request.
+   */
+  @Operation(
+      summary = "Upsert Zip Code",
+      description = "Creates a new zip code or updates an existing one based on existence.")
+  @UpsertPostalCodeDoc
+  @PostMapping("/upsert")
+  public ResponseEntity<BaseResponse<PostalCodeResponse>> upsertPostalCode(
+      @Valid @RequestBody PostalCodeRequest postalCodeRequest)
+      throws PromiseEngineException, CommonServiceException {
+
+    logger.debug("Processing upsert zip code request");
+    try {
+      PostalCodeResponse response = postalCodeService.upsertPostalCode(postalCodeRequest);
+      return ResponseEntity.ok(
+          BaseResponse.builder().message("Zip Code successfully saved!").payload(response).build());
+    } catch (Exception e) {
+      logger.error("Failed to process upsert zip code request", e);
+      throw e;
+    }
+  }
 
   /**
    * Creates a zip code with the given details.

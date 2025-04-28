@@ -25,8 +25,8 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.dataupload.util.TestUtil;
 import com.nextuple.node.domain.feign.NodeFeign;
+import com.nextuple.node.domain.inbound.NodeBaseRequest;
 import com.nextuple.node.domain.inbound.NodeRequest;
-import com.nextuple.node.domain.inbound.NodeUpdationRequest;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -68,7 +68,7 @@ class NodeDataUploadServiceTest {
 
     BaseResponse<NodeResponse> baseResponse = testUtil.getSuccessfulBaseResponseForNode();
     when(nodeFeign.createNode(any(NodeRequest.class))).thenReturn(baseResponse);
-    when(nodeFeign.updateNodeDetails(anyString(), anyString(), any(NodeUpdationRequest.class)))
+    when(nodeFeign.updateNodeDetails(anyString(), anyString(), any(NodeBaseRequest.class)))
         .thenReturn(baseResponse);
     when(nodeFeign.deleteNode(anyString(), anyString())).thenReturn(baseResponse);
     ResponseEntity<BaseResponse<String>> response =
@@ -87,7 +87,7 @@ class NodeDataUploadServiceTest {
     BaseResponse<NodeResponse> baseResponse =
         testUtil.getSuccessfulBaseResponseForNodeWithStartAndLastWorkingTime();
     when(nodeFeign.createNode(any(NodeRequest.class))).thenReturn(baseResponse);
-    when(nodeFeign.updateNodeDetails(anyString(), anyString(), any(NodeUpdationRequest.class)))
+    when(nodeFeign.updateNodeDetails(anyString(), anyString(), any(NodeBaseRequest.class)))
         .thenReturn(baseResponse);
     when(nodeFeign.deleteNode(anyString(), anyString())).thenReturn(baseResponse);
     ResponseEntity<BaseResponse<String>> response =
@@ -120,7 +120,7 @@ class NodeDataUploadServiceTest {
     BaseResponse<NodeResponse> failedBaseResponse = testUtil.getFailedBaseResponseForNode();
 
     when(nodeFeign.createNode(any(NodeRequest.class))).thenReturn(successfulBaseResponse);
-    when(nodeFeign.updateNodeDetails(anyString(), anyString(), any(NodeUpdationRequest.class)))
+    when(nodeFeign.updateNodeDetails(anyString(), anyString(), any(NodeBaseRequest.class)))
         .thenReturn(failedBaseResponse);
     when(nodeFeign.deleteNode(anyString(), anyString())).thenReturn(failedBaseResponse);
     ResponseEntity<BaseResponse<String>> response =

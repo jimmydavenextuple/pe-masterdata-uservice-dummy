@@ -10,8 +10,8 @@ package com.nextuple.carrier;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.carrier.domain.dto.CarrierCacheKeyDto;
+import com.nextuple.carrier.domain.inbound.CarrierServiceBaseRequest;
 import com.nextuple.carrier.domain.inbound.CarrierServiceRequest;
-import com.nextuple.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.carrier.persistence.domain.CarrierServiceDomainDto;
 import com.nextuple.common.pojo.PageParams;
@@ -115,8 +115,8 @@ public class TestUtil {
     return Arrays.asList(nodeCarriersResponse1, nodeCarriersResponse2);
   }
 
-  public CarrierServiceUpdateRequest getCarrierServiceUpdateRequest() {
-    return CarrierServiceUpdateRequest.builder()
+  public CarrierServiceBaseRequest getCarrierServiceUpdateRequest() {
+    return CarrierServiceBaseRequest.builder()
         .carrierName(CARRIER_NAME)
         .serviceName(SERVICE_NAME)
         .serviceOptions(SERVICE_OPTIONS)

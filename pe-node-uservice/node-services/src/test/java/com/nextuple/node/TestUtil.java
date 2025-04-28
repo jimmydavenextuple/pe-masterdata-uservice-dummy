@@ -13,8 +13,8 @@ import com.nextuple.common.response.BaseResponse;
 import com.nextuple.configuration.outbound.TenantConfigdataResponse;
 import com.nextuple.node.domain.dto.NodeCacheKeyDto;
 import com.nextuple.node.domain.dto.NodeDto;
+import com.nextuple.node.domain.inbound.NodeBaseRequest;
 import com.nextuple.node.domain.inbound.NodeRequest;
-import com.nextuple.node.domain.inbound.NodeUpdationRequest;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.node.persistence.domain.NodeDomainDto;
 import java.util.Arrays;
@@ -100,8 +100,8 @@ public class TestUtil {
         .build();
   }
 
-  public NodeUpdationRequest getNodeUpdationRequest() {
-    return NodeUpdationRequest.builder()
+  public NodeBaseRequest getNodeUpdationRequest() {
+    return NodeBaseRequest.builder()
         .isActive(Boolean.FALSE)
         .city("city-2")
         .country(COUNTRY)

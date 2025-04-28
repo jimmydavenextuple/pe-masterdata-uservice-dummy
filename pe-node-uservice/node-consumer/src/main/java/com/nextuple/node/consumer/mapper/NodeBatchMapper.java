@@ -8,8 +8,8 @@
 package com.nextuple.node.consumer.mapper;
 
 import com.nextuple.node.consumer.dto.NodeFeedDto;
+import com.nextuple.node.domain.inbound.NodeBaseRequest;
 import com.nextuple.node.domain.inbound.NodeRequest;
-import com.nextuple.node.domain.inbound.NodeUpdationRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -20,5 +20,5 @@ import org.mapstruct.ReportingPolicy;
 public interface NodeBatchMapper {
   NodeRequest toNodeRequest(NodeFeedDto nodeDto);
 
-  NodeUpdationRequest toNodeUpdateRequest(NodeFeedDto nodeDto);
+  NodeBaseRequest toNodeUpdateRequest(NodeFeedDto nodeDto);
 }

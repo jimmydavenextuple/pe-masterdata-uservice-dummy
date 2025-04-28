@@ -18,18 +18,22 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
+import com.nextuple.common.validation.ValidationGroups;
+import com.nextuple.common.validation.ValidatorUtil;
 import com.nextuple.node.TestUtil;
 import com.nextuple.node.config.NodeTenantBasedDBConfig;
 import com.nextuple.node.domain.dto.NodeCacheKeyDto;
 import com.nextuple.node.domain.dto.NodeDto;
+import com.nextuple.node.domain.inbound.NodeBaseRequest;
 import com.nextuple.node.domain.inbound.NodeRequest;
-import com.nextuple.node.domain.inbound.NodeUpdationRequest;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.node.domain.outbound.NodeTypesResponse;
 import com.nextuple.node.persistence.domain.NodeDomainDto;
 import com.nextuple.node.persistence.exception.NodeDomainException;
 import com.nextuple.node.persistence.service.NodePersistenceService;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
@@ -58,6 +62,8 @@ class NodeServiceTest {
   @Mock NodeTenantBasedDBConfig nodeTenantBasedDBConfig;
 
   @Mock private PageProperties pageProperties;
+
+  @Mock ValidatorUtil validatorUtil;
 
   @Test
   void createNodeTest() throws NodeDomainException, CommonServiceException {
@@ -138,7 +144,7 @@ class NodeServiceTest {
   @Test
   void updateNodeDetailsTest() throws NodeDomainException, CommonServiceException {
     NodeDomainDto nodeDomainDto = testUtil.getNodeDomainDto(TestUtil.NODE_ID);
-    NodeUpdationRequest nodeUpdationRequest = testUtil.getNodeUpdationRequest();
+    NodeBaseRequest nodeBaseRequest = testUtil.getNodeUpdationRequest();
     NodeDomainDto updatedNodeDomainDto = testUtil.getUpdatedNodeDomainDto();
     Set<String> nodeTypes = Set.of("STORE", "FC", "MFC", "DROPSHIP VENDOR");
     when(nodeTenantBasedDBConfig.getNodeTypes(anyString())).thenReturn(nodeTypes);
@@ -147,7 +153,7 @@ class NodeServiceTest {
     when(nodePersistenceService.saveNodeDetails(any())).thenReturn(updatedNodeDomainDto);
 
     NodeResponse nodeResponse =
-        nodeService.updateNodeDetails(TestUtil.NODE_ID, TestUtil.ORG_ID, nodeUpdationRequest);
+        nodeService.updateNodeDetails(TestUtil.NODE_ID, TestUtil.ORG_ID, nodeBaseRequest);
     Assertions.assertEquals(testUtil.getUpdatedNodeResponse(), nodeResponse);
 
     verify(nodePersistenceService, times(1)).saveNodeDetails(any(NodeDomainDto.class));
@@ -160,9 +166,9 @@ class NodeServiceTest {
   void updateNodeDetailsTestWithStartAndLastWorkingTime()
       throws NodeDomainException, CommonServiceException {
     NodeDomainDto nodeDomainDto = testUtil.getNodeDomainDto(TestUtil.NODE_ID);
-    NodeUpdationRequest nodeUpdationRequest = testUtil.getNodeUpdationRequest();
-    nodeUpdationRequest.setStartWorkingTime("08:00");
-    nodeUpdationRequest.setLastWorkingTime("16:00");
+    NodeBaseRequest nodeBaseRequest = testUtil.getNodeUpdationRequest();
+    nodeBaseRequest.setStartWorkingTime("08:00");
+    nodeBaseRequest.setLastWorkingTime("16:00");
     NodeDomainDto updatedNodeDomainDto = testUtil.getUpdatedNodeDomainDto();
     updatedNodeDomainDto.setStartWorkingTime("08:00");
     updatedNodeDomainDto.setLastWorkingTime("16:00");
@@ -173,9 +179,9 @@ class NodeServiceTest {
     when(nodePersistenceService.saveNodeDetails(any())).thenReturn(updatedNodeDomainDto);
 
     NodeResponse nodeResponse =
-        nodeService.updateNodeDetails(TestUtil.NODE_ID, TestUtil.ORG_ID, nodeUpdationRequest);
+        nodeService.updateNodeDetails(TestUtil.NODE_ID, TestUtil.ORG_ID, nodeBaseRequest);
     Assertions.assertEquals(
-        nodeUpdationRequest.getStartWorkingTime(), nodeResponse.getStartWorkingTime());
+        nodeBaseRequest.getStartWorkingTime(), nodeResponse.getStartWorkingTime());
 
     verify(nodePersistenceService, times(1)).saveNodeDetails(any(NodeDomainDto.class));
     verify(nodePersistenceService, times(1)).findNodeByNodeIdAndOrgId(any(), any());
@@ -184,7 +190,7 @@ class NodeServiceTest {
   @Test
   void updateNodeDetailsTestNodeNotFoundException()
       throws NodeDomainException, CommonServiceException {
-    NodeUpdationRequest nodeUpdationRequest = testUtil.getNodeUpdationRequest();
+    NodeBaseRequest nodeBaseRequest = testUtil.getNodeUpdationRequest();
     when(nodePersistenceService.findNodeByNodeIdAndOrgId(any(), any()))
         .thenReturn(Optional.empty());
     Set<String> nodeTypes = Set.of("STORE", "FC", "MFC", "DROPSHIP VENDOR");
@@ -194,8 +200,7 @@ class NodeServiceTest {
         Assertions.assertThrows(
             CommonServiceException.class,
             () ->
-                nodeService.updateNodeDetails(
-                    TestUtil.NODE_ID, TestUtil.ORG_ID, nodeUpdationRequest));
+                nodeService.updateNodeDetails(TestUtil.NODE_ID, TestUtil.ORG_ID, nodeBaseRequest));
     Assertions.assertEquals("Node not found with given details", exception.getMessage());
 
     verify(nodePersistenceService, times(0)).saveNodeDetails(any(NodeDomainDto.class));
@@ -564,5 +569,72 @@ class NodeServiceTest {
 
     verify(nodePersistenceService, Mockito.times(1))
         .getByNodeIdInAndOrgId(anyString(), anyList(), any(PageParams.class));
+  }
+
+  @Test
+  @DisplayName("Upsert node - existing node triggers update flow")
+  void upsertNode_existingNode_triggersUpdate() throws NodeDomainException, CommonServiceException {
+    NodeRequest nodeRequest = testUtil.getNodeRequest();
+
+    NodeDomainDto existingNode = testUtil.getNodeDomainDto(TestUtil.NODE_ID);
+    existingNode.setServiceOptionEligibilities(
+        new HashMap<>(
+            Map.of(
+                "nextdayEligible", true,
+                "sdndEligible", true,
+                "expressEligible", true)));
+
+    NodeDomainDto updatedNode = testUtil.getUpdatedNodeDomainDto();
+    updatedNode.setServiceOptionEligibilities(
+        new HashMap<>(
+            Map.of(
+                "nextdayEligible", true,
+                "sdndEligible", true,
+                "expressEligible", true)));
+
+    Set<String> nodeTypes = Set.of("STORE", "FC", "MFC", "DROPSHIP VENDOR");
+
+    when(nodePersistenceService.findNodeByNodeIdAndOrgId(
+            nodeRequest.getNodeId(), nodeRequest.getOrgId()))
+        .thenReturn(Optional.of(existingNode));
+    when(nodeTenantBasedDBConfig.getNodeTypes(anyString())).thenReturn(nodeTypes);
+    when(nodePersistenceService.saveNodeDetails(any(NodeDomainDto.class))).thenReturn(updatedNode);
+
+    NodeResponse result = nodeService.upsertNode(nodeRequest);
+
+    Assertions.assertEquals(nodeRequest.getNodeId(), result.getNodeId());
+    verify(nodePersistenceService, times(2)).findNodeByNodeIdAndOrgId(any(), any());
+    verify(nodePersistenceService, times(1)).saveNodeDetails(any());
+  }
+
+  @Test
+  @DisplayName("Upsert node - creates new node when node does not exist")
+  void upsertNode_createsNewNode_whenNodeDoesNotExist()
+      throws NodeDomainException, CommonServiceException {
+
+    NodeRequest nodeRequest = testUtil.getNodeRequest();
+
+    NodeDomainDto createdNode = testUtil.getNodeDomainDto(TestUtil.NODE_ID);
+    createdNode.setServiceOptionEligibilities(
+        new HashMap<>(
+            Map.of(
+                "nextdayEligible", true,
+                "sdndEligible", true,
+                "expressEligible", true)));
+
+    Set<String> nodeTypes = Set.of("STORE", "FC", "MFC", "DROPSHIP VENDOR");
+
+    when(nodePersistenceService.findNodeByNodeIdAndOrgId(
+            nodeRequest.getNodeId(), nodeRequest.getOrgId()))
+        .thenReturn(Optional.empty());
+
+    when(nodePersistenceService.saveNodeDetails(any(NodeDomainDto.class))).thenReturn(createdNode);
+    when(nodeTenantBasedDBConfig.getNodeTypes(anyString())).thenReturn(nodeTypes);
+
+    NodeResponse result = nodeService.upsertNode(nodeRequest);
+
+    Assertions.assertEquals(nodeRequest.getNodeId(), result.getNodeId());
+    verify(validatorUtil, times(1)).validateWithGroup(nodeRequest, ValidationGroups.Create.class);
+    verify(nodePersistenceService, times(1)).saveNodeDetails(any(NodeDomainDto.class));
   }
 }

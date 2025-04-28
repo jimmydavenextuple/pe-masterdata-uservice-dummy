@@ -814,6 +814,17 @@ public class TestUtil {
         .build();
   }
 
+  public TransferScheduleResponse getTransferScheduleResponseWithRule() {
+    return TransferScheduleResponse.builder()
+        .orgId(ORG_ID)
+        .sourceNodeId(SOURCE_NODE)
+        .dropoffNodeId(DROPOFF_NODE)
+        .customAttributes(CUSTOM_ATTRIBUTES)
+        .rule("R1")
+        .ruleName("R1")
+        .build();
+  }
+
   public TransferScheduleRequest getTransferScheduleRequest() {
     return TransferScheduleRequest.builder()
         .orgId(ORG_ID)
@@ -841,6 +852,18 @@ public class TestUtil {
         .id(1L)
         .sourceNodeId(SOURCE_NODE)
         .dropoffNodeId(DROPOFF_NODE)
+        .startTime(new Date())
+        .endTime(new Date())
+        .build();
+  }
+
+  public TransferScheduleDomainDto getTransferScheduleEntityWithRule() {
+    return TransferScheduleDomainDto.builder()
+        .id(1L)
+        .sourceNodeId(SOURCE_NODE)
+        .dropoffNodeId(DROPOFF_NODE)
+        .rule("R1")
+        .ruleName("R1")
         .startTime(new Date())
         .endTime(new Date())
         .build();

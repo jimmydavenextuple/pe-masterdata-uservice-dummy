@@ -42,8 +42,8 @@ import com.nextuple.common.response.BaseResponse;
 import com.nextuple.dataupload.common.utils.DataUploadUtil;
 import com.nextuple.jobs.framework.common.domain.pojo.NodeData;
 import com.nextuple.node.domain.feign.NodeFeign;
+import com.nextuple.node.domain.inbound.NodeBaseRequest;
 import com.nextuple.node.domain.inbound.NodeRequest;
-import com.nextuple.node.domain.inbound.NodeUpdationRequest;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import java.io.IOException;
 import java.io.Reader;
@@ -183,7 +183,7 @@ public class NodeDataUploadService {
 
   private boolean isUpdateNodeSuccessful(NodeData nodeData) {
     var nodeUpdationRequest =
-        NodeUpdationRequest.builder()
+        NodeBaseRequest.builder()
             .street(nodeData.getStreet())
             .city(nodeData.getCity())
             .state(nodeData.getState())
