@@ -131,6 +131,11 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
     return (Boolean) getCapacityConfigMap().get(CAPACITY_ENABLED_FLAG);
   }
 
+  @Override
+  public Boolean getShipTogetherEnabledFlag() {
+    return (Boolean) getSourcingConfigValue(SHIP_TOGETHER_ENABLED_FLAG);
+  }
+
   private Map<String, Object> getCapacityConfigMap() {
     return (Map<String, Object>)
         capacityConfig

@@ -58,6 +58,7 @@ public class ConfigKeyConstants {
       "recommendation-engine-impl-class-name";
   public static final String TRANSFER_HORIZON_DAYS_CONFIG_KEY = "transfer-schedule-horizon-days";
   public static final String TRANSFER_PAST_DAYS_CONFIG_KEY = "transfer-schedule-past-days";
+  public static final String SHIP_TOGETHER_ENABLED_FLAG = "ship-together-enabled";
 
   public static final List<String> CONFIG_KEYS_MULTIPLE_VALUES_NOT_ALLOWED =
       List.of(SELECTED_ATTRIBUTE_FOR_TARGET_MARGINS_CONFIG_KEY);

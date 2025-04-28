@@ -1,5 +1,6 @@
 package com.nextuple.pe.configs.impl;
 
+import static com.nextuple.common.constants.ConfigKeyConstants.SHIP_TOGETHER_ENABLED_FLAG;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -50,6 +51,8 @@ class TenantDBConfigImplTest {
         tenantDBConfigImpl, "defaultCapacityFlag", TestUtil.DEFAULT_CAPACITY_ENABLED_FLAG);
     ReflectionTestUtils.setField(
         tenantDBConfigImpl, "defaultTransfersEnabled", TestUtil.DEFAULT_TRANSFER_ENABLED);
+    ReflectionTestUtils.setField(
+        tenantDBConfigImpl, "defaultShipTogetherFlag", TestUtil.DEFAULT_SHIP_TOGETHER_ENABLED_FLAG);
   }
 
   @Test
@@ -794,5 +797,26 @@ class TenantDBConfigImplTest {
                 .configValue("10")
                 .build());
     assertEquals(10, tenantDBConfigImpl.getLineThreshold());
+  }
+
+  @Test
+  @DisplayName("Get Ship Together enabled flag for tenant")
+  void getShipTogetherEnabledFlagTest() {
+    when(tenantConfigdataNearCacheService.get(any()))
+        .thenReturn(
+            TenantConfigdataCacheValue.builder()
+                .configKey(SHIP_TOGETHER_ENABLED_FLAG)
+                .configValue("false")
+                .build());
+    assertFalse(tenantDBConfigImpl.getShipTogetherEnabledFlag());
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Get default Ship Together enabled flag")
+  void getDefaultShipTogetherEnabledFlagTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+    assertTrue(tenantDBConfigImpl.getShipTogetherEnabledFlag());
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
   }
 }
