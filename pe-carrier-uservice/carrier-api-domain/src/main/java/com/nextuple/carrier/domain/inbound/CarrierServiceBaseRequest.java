@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class CarrierServiceUpdateRequest extends AdditionalAttributes implements Serializable {
+public class CarrierServiceBaseRequest extends AdditionalAttributes implements Serializable {
   @Schema(description = "Name of the carrier.", example = "UPS")
   private String carrierName;
 

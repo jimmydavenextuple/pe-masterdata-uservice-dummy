@@ -8,8 +8,8 @@
 package com.nextuple.carrier.domain.mapper;
 
 import com.nextuple.carrier.domain.dto.CarrierCacheKeyDto;
+import com.nextuple.carrier.domain.inbound.CarrierServiceBaseRequest;
 import com.nextuple.carrier.domain.inbound.CarrierServiceRequest;
-import com.nextuple.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.carrier.persistence.domain.CarrierServiceDomainDto;
 import java.util.List;
@@ -31,7 +31,7 @@ public interface CarrierServiceMapper {
       List<CarrierServiceDomainDto> carrierServiceDomainDto);
 
   CarrierServiceDomainDto updateCarrierServiceEntity(
-      CarrierServiceUpdateRequest carrierServiceUpdateRequest,
+      CarrierServiceBaseRequest carrierServiceBaseRequest,
       @MappingTarget CarrierServiceDomainDto carrierServiceDomainDto);
 
   List<CarrierCacheKeyDto> toCarrierCacheKeyList(

@@ -21,8 +21,8 @@ import com.nextuple.common.response.BaseResponse;
 import com.nextuple.node.TestUtil;
 import com.nextuple.node.domain.dto.NodeCacheKeyDto;
 import com.nextuple.node.domain.dto.NodeDto;
+import com.nextuple.node.domain.inbound.NodeBaseRequest;
 import com.nextuple.node.domain.inbound.NodeRequest;
-import com.nextuple.node.domain.inbound.NodeUpdationRequest;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.node.domain.outbound.NodeTypesResponse;
 import com.nextuple.node.persistence.exception.NodeDomainException;
@@ -112,12 +112,12 @@ class NodeControllerTest {
 
   @Test
   void updateNodeTest() throws NodeDomainException, CommonServiceException {
-    NodeUpdationRequest nodeUpdationRequest = testUtil.getNodeUpdationRequest();
-    when(nodeService.updateNodeDetails(anyString(), anyString(), any(NodeUpdationRequest.class)))
+    NodeBaseRequest nodeBaseRequest = testUtil.getNodeUpdationRequest();
+    when(nodeService.updateNodeDetails(anyString(), anyString(), any(NodeBaseRequest.class)))
         .thenReturn(testUtil.getUpdatedNodeResponse());
 
     ResponseEntity<BaseResponse<NodeResponse>> responseEntity =
-        nodeController.updateNodeDetails(TestUtil.NODE_ID, TestUtil.ORG_ID, nodeUpdationRequest);
+        nodeController.updateNodeDetails(TestUtil.NODE_ID, TestUtil.ORG_ID, nodeBaseRequest);
 
     Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertEquals(
@@ -128,8 +128,8 @@ class NodeControllerTest {
 
   @Test
   void updateNodeExceptionTest() throws NodeDomainException, CommonServiceException {
-    NodeUpdationRequest nodeUpdationRequest = testUtil.getNodeUpdationRequest();
-    when(nodeService.updateNodeDetails(anyString(), anyString(), any(NodeUpdationRequest.class)))
+    NodeBaseRequest nodeBaseRequest = testUtil.getNodeUpdationRequest();
+    when(nodeService.updateNodeDetails(anyString(), anyString(), any(NodeBaseRequest.class)))
         .thenThrow(new RuntimeException("Unable to update the node details"));
 
     Exception exception =
@@ -137,7 +137,7 @@ class NodeControllerTest {
             Exception.class,
             () ->
                 nodeController.updateNodeDetails(
-                    TestUtil.NODE_ID, TestUtil.ORG_ID, nodeUpdationRequest));
+                    TestUtil.NODE_ID, TestUtil.ORG_ID, nodeBaseRequest));
     Assertions.assertEquals("Unable to update the node details", exception.getMessage());
 
     verify(nodeService, times(1)).updateNodeDetails(anyString(), anyString(), any());
@@ -441,5 +441,47 @@ class NodeControllerTest {
         nodeController.getAllNodeTypes(TestUtil.ORG_ID);
     Assertions.assertEquals(List.of("DC", "MFC"), response.getBody().getPayload().getNodeTypes());
     verify(nodeService, times(1)).getAllNodeTypesByOrgId(any());
+  }
+
+  @Test
+  @DisplayName("Upsert node - should create or update node successfully")
+  void upsertNodeSuccessTest() throws NodeDomainException, CommonServiceException {
+    NodeRequest nodeRequest = testUtil.getNodeRequest();
+    NodeResponse expectedResponse = testUtil.getNodeResponse();
+
+    when(nodeService.upsertNode(any(NodeRequest.class))).thenReturn(expectedResponse);
+
+    ResponseEntity<BaseResponse<NodeResponse>> response = nodeController.upsertNode(nodeRequest);
+
+    Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Should return HTTP 200");
+    Assertions.assertNotNull(response.getBody(), "Response body should not be null");
+    Assertions.assertEquals(
+        expectedResponse, response.getBody().getPayload(), "Payload should match expected");
+    Assertions.assertEquals(
+        "Node saved successfully", response.getBody().getMessage(), "Success message should match");
+
+    verify(nodeService, times(1)).upsertNode(any(NodeRequest.class));
+  }
+
+  @Test
+  @DisplayName("Upsert node - should throw exception when node creation/updation fails")
+  void upsertNodeFailureTest() throws NodeDomainException, CommonServiceException {
+    NodeRequest nodeRequest = testUtil.getNodeRequest();
+
+    when(nodeService.upsertNode(any(NodeRequest.class)))
+        .thenThrow(new RuntimeException("Failed to create or update node"));
+
+    Exception exception =
+        Assertions.assertThrows(
+            Exception.class,
+            () -> nodeController.upsertNode(nodeRequest),
+            "Should throw exception when service fails");
+
+    Assertions.assertEquals(
+        "Failed to create or update node",
+        exception.getMessage(),
+        "Exception message should match");
+
+    verify(nodeService, times(1)).upsertNode(any(NodeRequest.class));
   }
 }

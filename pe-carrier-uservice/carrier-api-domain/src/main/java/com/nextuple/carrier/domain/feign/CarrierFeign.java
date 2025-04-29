@@ -8,8 +8,8 @@
 package com.nextuple.carrier.domain.feign;
 
 import com.nextuple.carrier.domain.dto.CarrierCacheKeyDto;
+import com.nextuple.carrier.domain.inbound.CarrierServiceBaseRequest;
 import com.nextuple.carrier.domain.inbound.CarrierServiceRequest;
-import com.nextuple.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.response.BaseResponse;
@@ -30,6 +30,11 @@ import org.springframework.web.bind.annotation.RequestParam;
     name = "pe-carrier-uservice",
     url = "${spring.application.dependencies.carrier:http://pe-carrier-uservice:8080/}")
 public interface CarrierFeign {
+
+  @PostMapping("/carrier-service/upsert")
+  BaseResponse<CarrierServiceResponse> upsertCarrierService(
+      @Valid @RequestBody CarrierServiceRequest carrierServiceRequest);
+
   @PostMapping("/carrier-service")
   BaseResponse<CarrierServiceResponse> createCarrierService(
       @Valid @RequestBody CarrierServiceRequest carrierServiceRequest);
@@ -49,7 +54,7 @@ public interface CarrierFeign {
       @NotBlank @PathVariable String carrierId,
       @NotBlank @PathVariable String carrierServiceId,
       @NotBlank @PathVariable String orgId,
-      @Valid @RequestBody CarrierServiceUpdateRequest carrierServiceUpdateRequest);
+      @Valid @RequestBody CarrierServiceBaseRequest carrierServiceBaseRequest);
 
   @DeleteMapping("/carrier-service/{carrierId}/{carrierServiceId}/{orgId}")
   BaseResponse<CarrierServiceResponse> deleteCarrierService(

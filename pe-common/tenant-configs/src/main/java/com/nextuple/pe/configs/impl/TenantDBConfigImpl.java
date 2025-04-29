@@ -77,6 +77,9 @@ public class TenantDBConfigImpl implements ITenantConfig {
   @Value("${sourcing.DEFAULT.recommendation-enabled:false}")
   public String defaultRecommendationEngineFlag;
 
+  @Value("${sourcing.DEFAULT.ship-together-enabled:true}")
+  public String defaultShipTogetherFlag;
+
   public static final Gson gson = new Gson();
 
   public static Gson getGsonObject() {
@@ -306,6 +309,12 @@ public class TenantDBConfigImpl implements ITenantConfig {
   @Override
   public Boolean getCapacityEnabledFlag() {
     return Boolean.valueOf(getTenantConfiguration(CAPACITY_ENABLED_FLAG, defaultCapacityFlag));
+  }
+
+  @Override
+  public Boolean getShipTogetherEnabledFlag() {
+    return Boolean.valueOf(
+        getTenantConfiguration(SHIP_TOGETHER_ENABLED_FLAG, defaultShipTogetherFlag));
   }
 
   @Override

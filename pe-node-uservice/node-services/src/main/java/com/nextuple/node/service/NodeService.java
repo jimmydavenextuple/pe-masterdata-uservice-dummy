@@ -15,11 +15,13 @@ import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.common.pojo.PageProperties;
 import com.nextuple.common.response.error.FieldError;
+import com.nextuple.common.validation.ValidationGroups;
+import com.nextuple.common.validation.ValidatorUtil;
 import com.nextuple.node.config.NodeTenantBasedDBConfig;
 import com.nextuple.node.domain.dto.NodeCacheKeyDto;
 import com.nextuple.node.domain.dto.NodeDto;
+import com.nextuple.node.domain.inbound.NodeBaseRequest;
 import com.nextuple.node.domain.inbound.NodeRequest;
-import com.nextuple.node.domain.inbound.NodeUpdationRequest;
 import com.nextuple.node.domain.mapper.NodeMapper;
 import com.nextuple.node.domain.outbound.NodeResponse;
 import com.nextuple.node.domain.outbound.NodeTypesResponse;
@@ -72,8 +74,26 @@ public class NodeService {
   private static final String TIMEZONE_EXCEPTION_MESSAGE = "Invalid Timezone Found";
   private static final String COUNTRY_EXCEPTION_MESSAGE = "Invalid Country Found";
 
+  private final ValidatorUtil validatorUtil;
+
+  public NodeResponse upsertNode(NodeRequest nodeRequest)
+      throws NodeDomainException, CommonServiceException {
+
+    Optional<NodeDomainDto> existingNode =
+        nodePersistenceService.findNodeByNodeIdAndOrgId(
+            nodeRequest.getNodeId(), nodeRequest.getOrgId());
+
+    if (existingNode.isPresent()) {
+      return updateNodeDetails(
+          existingNode.get().getNodeId(), existingNode.get().getOrgId(), nodeRequest);
+    } else {
+      return createNode(nodeRequest);
+    }
+  }
+
   public NodeResponse createNode(NodeRequest nodeRequest)
       throws CommonServiceException, NodeDomainException {
+    validatorUtil.validateWithGroup(nodeRequest, ValidationGroups.Create.class);
     validateNodeTypeTimezoneAndCountry(
         nodeRequest.getNodeType(),
         nodeRequest.getTimezone(),
@@ -90,12 +110,13 @@ public class NodeService {
   }
 
   public NodeResponse updateNodeDetails(
-      String nodeId, String orgId, NodeUpdationRequest nodeUpdationRequest)
+      String nodeId, String orgId, NodeBaseRequest nodeBaseRequest)
       throws NodeDomainException, CommonServiceException {
+    validatorUtil.validateWithGroup(nodeBaseRequest, ValidationGroups.Update.class);
     validateNodeTypeTimezoneAndCountry(
-        nodeUpdationRequest.getNodeType(),
-        nodeUpdationRequest.getTimezone(),
-        nodeUpdationRequest.getCountry(),
+        nodeBaseRequest.getNodeType(),
+        nodeBaseRequest.getTimezone(),
+        nodeBaseRequest.getCountry(),
         orgId);
     Optional<NodeDomainDto> existingNodeDetails =
         nodePersistenceService.findNodeByNodeIdAndOrgId(nodeId, orgId);
@@ -108,13 +129,13 @@ public class NodeService {
       throw new CommonServiceException(
           NODE_EXCEPTION_MESSAGE, HttpStatus.NOT_FOUND, 0x1771, errorMap);
     }
-    if (Objects.nonNull(nodeUpdationRequest.getStartWorkingTime())
-        || Objects.nonNull(nodeUpdationRequest.getLastWorkingTime())) {
+    if (Objects.nonNull(nodeBaseRequest.getStartWorkingTime())
+        || Objects.nonNull(nodeBaseRequest.getLastWorkingTime())) {
       validateStartAndLastWorkingTime(
-          nodeUpdationRequest.getStartWorkingTime(), nodeUpdationRequest.getLastWorkingTime());
+          nodeBaseRequest.getStartWorkingTime(), nodeBaseRequest.getLastWorkingTime());
     }
     logger.info("Response before updation of node :{}", existingNodeDetails.get());
-    INSTANCE.updateNodeDetails(nodeUpdationRequest, existingNodeDetails.get());
+    INSTANCE.updateNodeDetails(nodeBaseRequest, existingNodeDetails.get());
     return INSTANCE.toNodeResponse(
         nodePersistenceService.saveNodeDetails(existingNodeDetails.get()));
   }

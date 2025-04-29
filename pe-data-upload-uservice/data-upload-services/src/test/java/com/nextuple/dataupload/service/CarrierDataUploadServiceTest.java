@@ -22,8 +22,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.carrier.domain.feign.CarrierFeign;
+import com.nextuple.carrier.domain.inbound.CarrierServiceBaseRequest;
 import com.nextuple.carrier.domain.inbound.CarrierServiceRequest;
-import com.nextuple.carrier.domain.inbound.CarrierServiceUpdateRequest;
 import com.nextuple.carrier.domain.outbound.CarrierServiceResponse;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
@@ -72,7 +72,7 @@ class CarrierDataUploadServiceTest {
     when(carrierFeign.createCarrierService(any(CarrierServiceRequest.class)))
         .thenReturn(baseResponse);
     when(carrierFeign.updateCarrierServiceDetails(
-            anyString(), anyString(), anyString(), any(CarrierServiceUpdateRequest.class)))
+            anyString(), anyString(), anyString(), any(CarrierServiceBaseRequest.class)))
         .thenReturn(baseResponse);
     when(carrierFeign.deleteCarrierService(anyString(), anyString(), anyString()))
         .thenReturn(baseResponse);
@@ -97,7 +97,7 @@ class CarrierDataUploadServiceTest {
     when(carrierFeign.createCarrierService(any(CarrierServiceRequest.class)))
         .thenReturn(successfulBaseResponse);
     when(carrierFeign.updateCarrierServiceDetails(
-            anyString(), anyString(), anyString(), any(CarrierServiceUpdateRequest.class)))
+            anyString(), anyString(), anyString(), any(CarrierServiceBaseRequest.class)))
         .thenReturn(failedBaseResponse);
     when(carrierFeign.deleteCarrierService(anyString(), anyString(), anyString()))
         .thenReturn(failedBaseResponse);
