@@ -94,4 +94,8 @@ public interface ITenantConfig {
   Boolean getCapacityEnabledFlag();
 
   Boolean getShipTogetherEnabledFlag();
+
+  Boolean getEnableFutureAvailability();
+
+  Boolean getEnableAvailabilitySorting();
 }

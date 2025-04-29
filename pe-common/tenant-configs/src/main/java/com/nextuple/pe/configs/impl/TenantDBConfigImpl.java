@@ -80,6 +80,12 @@ public class TenantDBConfigImpl implements ITenantConfig {
   @Value("${sourcing.DEFAULT.ship-together-enabled:true}")
   public String defaultShipTogetherFlag;
 
+  @Value("${sourcing.DEFAULT.enable-future-availability:false}")
+  public String defaultEnableFutureAvailability;
+
+  @Value("${sourcing.DEFAULT.enable-availability-sorting:false}")
+  public String defaultEnableAvailabilitySorting;
+
   public static final Gson gson = new Gson();
 
   public static Gson getGsonObject() {
@@ -328,6 +334,20 @@ public class TenantDBConfigImpl implements ITenantConfig {
     return Boolean.valueOf(
         getTenantConfiguration(
             "promising-intermediate-event-enabled", defaultPromisingIntermediateEventEnabled));
+  }
+
+  @Override
+  public Boolean getEnableFutureAvailability() {
+    return Boolean.valueOf(
+        getTenantConfiguration(
+            ENABLE_FUTURE_AVAILABILITY_CONFIG_KEY, defaultEnableFutureAvailability));
+  }
+
+  @Override
+  public Boolean getEnableAvailabilitySorting() {
+    return Boolean.valueOf(
+        getTenantConfiguration(
+            ENABLE_AVAILABILITY_SORTING_CONFIG_KEY, defaultEnableAvailabilitySorting));
   }
 
   private String getTenantConfigdataCacheValue(String configKey) {

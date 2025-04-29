@@ -1,5 +1,7 @@
 package com.nextuple.pe.configs.impl;
 
+import static com.nextuple.common.constants.ConfigKeyConstants.ENABLE_AVAILABILITY_SORTING_CONFIG_KEY;
+import static com.nextuple.common.constants.ConfigKeyConstants.ENABLE_FUTURE_AVAILABILITY_CONFIG_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.TRANSFERS_ENABLED;
 import static com.nextuple.common.constants.ConfigKeyConstants.TRANSFER_HORIZON_DAYS_CONFIG_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.TRANSFER_PAST_DAYS_CONFIG_KEY;
@@ -727,5 +729,33 @@ class ITenantYmlConfigImplTest {
                 Map.of("ship-together-enabled", false)));
     Boolean resp = iTenantYmlConfigImpl.getShipTogetherEnabledFlag();
     assertTrue(resp);
+  }
+
+  @Test
+  @DisplayName("Get Enable Future Availability")
+  void getEnableFutureAvailabilityTest() {
+    CurrentThreadContext.getLogContext().setTenantId(TestUtil.ORG_ID);
+    when(sourcingConfig.getSourcing())
+        .thenReturn(
+            Map.of(
+                TestUtil.ORG_ID,
+                Map.of(ENABLE_FUTURE_AVAILABILITY_CONFIG_KEY, true),
+                DEFAULT,
+                Map.of(ENABLE_FUTURE_AVAILABILITY_CONFIG_KEY, false)));
+    assertTrue(iTenantYmlConfigImpl.getEnableFutureAvailability());
+  }
+
+  @Test
+  @DisplayName("Get Enable Availability Sorting")
+  void getEnableAvailabilitySortingTest() {
+    CurrentThreadContext.getLogContext().setTenantId(TestUtil.ORG_ID);
+    when(sourcingConfig.getSourcing())
+        .thenReturn(
+            Map.of(
+                TestUtil.ORG_ID,
+                Map.of(ENABLE_AVAILABILITY_SORTING_CONFIG_KEY, true),
+                DEFAULT,
+                Map.of(ENABLE_AVAILABILITY_SORTING_CONFIG_KEY, false)));
+    assertTrue(iTenantYmlConfigImpl.getEnableAvailabilitySorting());
   }
 }
