@@ -1,5 +1,7 @@
 package com.nextuple.pe.configs.impl;
 
+import static com.nextuple.common.constants.ConfigKeyConstants.ENABLE_AVAILABILITY_SORTING_CONFIG_KEY;
+import static com.nextuple.common.constants.ConfigKeyConstants.ENABLE_FUTURE_AVAILABILITY_CONFIG_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.SHIP_TOGETHER_ENABLED_FLAG;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -818,5 +820,74 @@ class TenantDBConfigImplTest {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
     assertTrue(tenantDBConfigImpl.getShipTogetherEnabledFlag());
     verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Get Enable Future Availability")
+  void getEnableFutureAvailabilityTest() {
+    when(tenantConfigdataNearCacheService.get(any()))
+        .thenReturn(
+            TenantConfigdataCacheValue.builder()
+                .configKey(ENABLE_FUTURE_AVAILABILITY_CONFIG_KEY)
+                .configValue("true")
+                .build());
+    assertTrue(tenantDBConfigImpl.getEnableFutureAvailability());
+  }
+
+  @Test
+  @DisplayName("Get Enable Future Availability - Exception")
+  void getEnableFutureAvailabilityExceptionTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+    PromisingEngineException ex =
+        assertThrows(
+            PromisingEngineException.class, () -> tenantDBConfigImpl.getEnableFutureAvailability());
+    assertNotNull(ex);
+    assertEquals(
+        "Tenant Configuration not found for given orgId and configKey enable-future-availability",
+        ex.getMessage());
+  }
+
+  @Test
+  @DisplayName("Get Enable Future Availability - Default")
+  void getEnableFutureAvailabilityDefaultTest() {
+    ReflectionTestUtils.setField(tenantDBConfigImpl, "defaultEnableFutureAvailability", "false");
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+    boolean response = tenantDBConfigImpl.getEnableFutureAvailability();
+    assertFalse(response);
+  }
+
+  @Test
+  @DisplayName("Get Enable Availability Sorting")
+  void getEnableAvailabilitySortingTest() {
+    when(tenantConfigdataNearCacheService.get(any()))
+        .thenReturn(
+            TenantConfigdataCacheValue.builder()
+                .configKey(ENABLE_AVAILABILITY_SORTING_CONFIG_KEY)
+                .configValue("true")
+                .build());
+    assertTrue(tenantDBConfigImpl.getEnableAvailabilitySorting());
+  }
+
+  @Test
+  @DisplayName("Get Enable Availability Sorting - Exception")
+  void getEnableAvailabilitySortingExceptionTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+    PromisingEngineException ex =
+        assertThrows(
+            PromisingEngineException.class,
+            () -> tenantDBConfigImpl.getEnableAvailabilitySorting());
+    assertNotNull(ex);
+    assertEquals(
+        "Tenant Configuration not found for given orgId and configKey enable-availability-sorting",
+        ex.getMessage());
+  }
+
+  @Test
+  @DisplayName("Get Enable Availability Sorting - Default")
+  void getEnableAvailabilitySortingDefaultTest() {
+    ReflectionTestUtils.setField(tenantDBConfigImpl, "defaultEnableAvailabilitySorting", "false");
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+    boolean response = tenantDBConfigImpl.getEnableAvailabilitySorting();
+    assertFalse(response);
   }
 }

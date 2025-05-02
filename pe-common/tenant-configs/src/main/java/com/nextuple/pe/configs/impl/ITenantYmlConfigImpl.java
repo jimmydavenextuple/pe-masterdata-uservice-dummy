@@ -75,6 +75,12 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Value("${buffer.horizon-days}")
   public Integer horizonDays;
 
+  @Value("${sourcing.DEFAULT.enable-future-availability:false}")
+  public String defaultEnableFutureAvailability;
+
+  @Value("${sourcing.DEFAULT.enable-availability-sorting:false}")
+  public String defaultEnableAvailabilitySorting;
+
   private static final String DEFAULT = "DEFAULT";
   private static final String NO_OF_LINE_SOLUTIONS_REQUIRED = "line-solutions-required";
   private static final String LINE_THRESHOLD = "line-threshold";
@@ -379,5 +385,15 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Override
   public Boolean getItemBufferEnabled() {
     return (Boolean) getSourcingConfigValue(ITEM_BUFFER_ENABLED_CONFIG_KEY);
+  }
+
+  @Override
+  public Boolean getEnableFutureAvailability() {
+    return (Boolean) getSourcingConfigValue(ENABLE_FUTURE_AVAILABILITY_CONFIG_KEY);
+  }
+
+  @Override
+  public Boolean getEnableAvailabilitySorting() {
+    return (Boolean) getSourcingConfigValue(ENABLE_AVAILABILITY_SORTING_CONFIG_KEY);
   }
 }
