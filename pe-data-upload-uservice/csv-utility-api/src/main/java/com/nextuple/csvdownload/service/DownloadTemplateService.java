@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
@@ -173,17 +174,23 @@ public class DownloadTemplateService {
     CSVReader reader = new CSVReader(new InputStreamReader(cs.getInputStream()));
     List<String[]> lines = reader.readAll();
     reader.close();
+
+    // Sort the maps by keys
+    Map<String, String> sortedLineCustomAttributes = new TreeMap<>(lineCustomAttributes);
+    Map<String, String> sortedCustomAttributes = new TreeMap<>(customAttributes);
+
     // Add the new column header
     List<String> headers = new ArrayList<>(Arrays.asList(lines.get(0)));
     List<String> values = new ArrayList<>();
 
     int orgIdIndex = headers.indexOf(ORG_ID);
-    lineCustomAttributes.forEach(
+
+    sortedLineCustomAttributes.forEach(
         (key, value) -> {
           headers.add(DynamicCsvHeadersValidation.LINES_CUSTOM_ATTRIBUTES_HEADER_PREFIX + key);
           values.add(value);
         });
-    customAttributes.forEach(
+    sortedCustomAttributes.forEach(
         (key, value) -> {
           headers.add(DynamicCsvHeadersValidation.CUSTOM_ATTRIBUTES_HEADER_PREFIX + key);
           values.add(value);
