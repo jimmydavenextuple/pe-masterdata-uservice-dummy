@@ -104,7 +104,7 @@ server:
           memory: 2Gi
           cpu: 1
     performance:
-      ingress: no
+      ingress: yes
       sidecar-keycloak-plugin: yes
       middleman: no
       prometheus: yes
@@ -112,7 +112,7 @@ server:
       java-opts: "-Xms3072m -Xmx3072m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/mnt/heapdumps"
       keyvault: yes
       scale:
-        replicas: 3
+        replicas: 1
       resources:
         min:
           memory: 4Gi
