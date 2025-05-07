@@ -229,7 +229,7 @@ neo-platform:
       config-path: "https://internal-performance.nextuple.com/services/authz-config/api/configurations/groups/application-group/scope-id/pe-masterdata"
       refresh-interval-mins: 30
       role:
-        json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles,\$.resource_access.applicationclient-pe-core-uservice.roles,\$.resource_access.applicationclient-pe-iv-cache.roles,\$.resource_access.applicationclient-pe-capacity-uservice.roles,\$.resource_access.applicationclient-pe-neip-uservice.roles,\$.resource_access.tenantclient-nextupleperf.roles,\$.resource_access.tenantclient-nextuplemed.roles
+        json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles,\$.resource_access.applicationclient-pe-core-uservice.roles,\$.resource_access.applicationclient-pe-iv-cache.roles,\$.resource_access.applicationclient-pe-capacity-uservice.roles,\$.resource_access.applicationclient-pe-neip-uservice.roles,\$.resource_access.tenantclient-nextupleperf.roles,\$.resource_access.tenantclient-nextuplemed.roles,\$.resource_access.tenantclient-nextuplerts.roles
 kafka:
   input:
     taskTopics: INTERNAL.PERF.PE.RETRY_TOPIC_INV
