@@ -30,22 +30,19 @@ public class InboundProcessingRequest {
 
   @Schema(
       description = "Rule group used to categorize or group related rules",
-      example = "default-rule-group",
-      required = true)
+      example = "default-rule-group")
   @NotBlank(message = "ruleGroup can't be blank")
   private String ruleGroup;
 
   @Schema(
       description =
           "Strategy used for filtering rules. Optional. Defaults to 'inbound-processing-time-filter' if not provided.",
-      example = "inbound-processing-time-filter",
-      required = false)
+      example = "inbound-processing-time-filter")
   private String ruleFilterStrategy = "inbound-processing-time-filter";
 
   @Schema(
       description =
-          "Request payload containing data required for rule evaluation. Flexible structure depending on the rule group.",
-      required = true)
+          "Request payload containing data required for rule evaluation. Flexible structure depending on the rule group.")
   @NotNull(message = "ruleEvaluationRequest can't be null")
   private Object ruleEvaluationRequest;
 }
