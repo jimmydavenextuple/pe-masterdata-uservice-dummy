@@ -20,11 +20,11 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class InboundProcessingRequest {
 
-  @Schema(description = "Node identifier", example = "node-123", required = true)
+  @Schema(description = "Node identifier", example = "node-123")
   @NotBlank(message = "nodeId can't be blank")
   private String nodeId;
 
-  @Schema(description = "Organization identifier", example = "org-456", required = true)
+  @Schema(description = "Organization identifier", example = "org-456")
   @NotBlank(message = "orgId can't be blank")
   private String orgId;
 
