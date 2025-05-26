@@ -17,6 +17,8 @@ spring:
       configuration: "http://pe-masterdata-uservice:8080/"
       fpm-service: "http://pe-masterdata-uservice:8080/"
       vendor: "http://pe-masterdata-uservice:8080/"
+      rule-craft-service: "https://internal-dev.nextuple.com/services/rule-crafter-suite/api-gateway"
+      rce-api-key: "8767c34a-291b-4060-8fb9-ebcf845a93e8"
     name: "pe-masterdata-uservice"
     version: 2.6.0
     title: "Master Data Service"
@@ -217,3 +219,11 @@ kafka-topic-flags:
   input:
     taskTopics:
       enabled: false
+
+azure.keyvault:
+  client-id: e558951a-8c66-4a66-a75f-f71254e23397
+  client-key: hvu8Q~WZ6hxz5eyKCQiTtCDKP-Qd3ANKCDeVUbhJ
+  enabled: true
+  tenant-id: a504dc87-820c-4014-a6f7-9bd271ec731f
+  uri: https://nextuple-dev.vault.azure.net/
+  secret-keys: "COMMON-REDIS-PASSWORD,COMMON-PE-POSTGRES-USER,COMMON-PE-POSTGRES-PASSWORD,CORE-SOURCING-KEYCLOAK-CLIENT-ID"

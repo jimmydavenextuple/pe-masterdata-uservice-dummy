@@ -26,15 +26,20 @@ spring:
       userexit: "http://localhost:8080/"
       configuration: "http://localhost:8080/"
       vendor: "http://localhost:8080/"
+      rule-craft-service: "https://internal-dev.nextuple.com/services/rule-crafter-suite/api-gateway"
+      rce-api-key: "8767c34a-291b-4060-8fb9-ebcf845a93e8"
   jpa:
     database: POSTGRESQL
     show-sql: true
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: password
+#    url: jdbc:postgresql://localhost:5432/postgres
+#    username: postgres
+#    password: password
+    url: jdbc:postgresql://postgresql00-nonprod-wu2.nextuple.net:5432/pe
+    username: \${COMMON-PE-POSTGRES-USER}
+    password: \${COMMON-PE-POSTGRES-PASSWORD}
     hikari:
       maximumPoolSize: 100
       minimumIdle: 10
@@ -234,8 +239,18 @@ next-cache:
       cacheName: task-info
       ttlSeconds: 14400
       maxLimit: 50
+    -
+      cacheName: resourceIds
+      ttlSeconds: 1800
+      maxLimit: 50
+    -
+      cacheName: ruleDefinitions
+      ttlSeconds: 1800
+      maxLimit: 50
+
   refresh-cache:
     topic: INTERNAL.DEV.PE.REFRESH_CACHE_INV
+#    topic: REFRESH_CACHE_LOCAL
   cacheManager: caffeine
 platform:
   tasks:
@@ -246,9 +261,41 @@ platform:
   authFilter:
     enabled: false
 neo-platform:
+  groupIdPrefix: "rce-refresh-cache-local"
+  rule-engine:
+    # Disables saving rule execution trace. Default value false.
+    skip-save-rule-execution-info: true
+    # Possible values: local, remote.
+    # local: The data will be stored in the local database.
+    # remote: The data will be stored in the remote database.
+    datasource: remote #since it's near RCE
+    # Possible values: pre-load, post-load, none.
+    # pre-load: The data will be loaded at the time of application startup.
+    # post-load: The data will be loaded on demand.
+    # none: The data will not be loaded. Default value is none.
+    cache-type: post-load
+    cache-refresh-topic: topic-name
+    # Optional, default will load all the rule groups.
+    # If we want to load specific rules, confgure this
+    # (Optional) List of specific rule groups for pre-load caching. If not specified, it will load all the rules.
+#    cache-rule-groups: rule-group1, rule-group2 // commenting to load all for initial testing : AV
+    # Refresh interval in minutes for pre load cache.
+    cache-refresh-interval-mins: 30
+  tagify:
+    # Possible values: local, remote.
+    # local: The data will be stored in the local database.
+    # remote: The data will be stored in the remote database.
+    datasource: remote
+    # Possible values: pre-load, post-load, none.
+    cache-type: post-load
+    # Refresh interval in minutes for pre load cache.
+    cache-refresh-interval-mins: 30
+    # Optional, default will load all the resources.
+    # cache-resource-types: resource-type1, resource-type2
+
   auth-injector:
     enabled: true
-    token-strategy: generate
+    token-strategy: reuse
     filter:
       enabled: true
     client-uri-mappings:
@@ -260,7 +307,7 @@ neo-platform:
       tenant-id: x-tenant-id
     issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev
     authz-config:
-      config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
+      config-path: "https://internal-dev.nextuple.com/services/authz-config/api/configurations/groups/application-group/scope-id/pe-masterdata"
       refresh-interval-mins: 30
       role:
         json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-dashboard-uservice.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles
