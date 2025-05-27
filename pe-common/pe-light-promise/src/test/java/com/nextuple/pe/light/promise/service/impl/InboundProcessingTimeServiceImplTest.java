@@ -33,13 +33,48 @@ class InboundProcessingTimeServiceImplTest {
   }
 
   @Test
-  void evaluateInboundProcessingTime() {
+  void evaluateInboundProcessingTime_withNullRuleFilterStrategy() {
+    // Arrange
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+    request.setRuleFilterStrategy(null); // Set ruleFilterStrategy to null
     Map<String, Object> mockResponse = Map.of("key", "value");
     when(ruleEngineApi.evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest()))
         .thenReturn(mockResponse);
     InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertEquals("inbound-processing-time-filter", request.getRuleFilterStrategy());
+    assertEquals(mockResponse, response.getInbound());
+    verify(ruleEngineApi).evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest());
+  }
+
+  @Test
+  void evaluateInboundProcessingTime_withBlankRuleFilterStrategy() {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+    request.setRuleFilterStrategy(" "); // Set ruleFilterStrategy to blank
+    Map<String, Object> mockResponse = Map.of("key", "value");
+    when(ruleEngineApi.evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest()))
+        .thenReturn(mockResponse);
+
+    InboundProcessingTimeResponse response =
+        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+    assertEquals("inbound-processing-time-filter", request.getRuleFilterStrategy());
+    assertEquals(mockResponse, response.getInbound());
+    verify(ruleEngineApi).evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest());
+  }
+
+  @Test
+  void evaluateInboundProcessingTime_withValidRuleFilterStrategy() {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+    request.setRuleFilterStrategy("valid-strategy"); // Set ruleFilterStrategy to a valid value
+    Map<String, Object> mockResponse = Map.of("key", "value");
+    when(ruleEngineApi.evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest()))
+        .thenReturn(mockResponse);
+
+    InboundProcessingTimeResponse response =
+        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertEquals("valid-strategy", request.getRuleFilterStrategy()); // Ensure it remains unchanged
     assertEquals(mockResponse, response.getInbound());
     verify(ruleEngineApi).evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest());
   }
