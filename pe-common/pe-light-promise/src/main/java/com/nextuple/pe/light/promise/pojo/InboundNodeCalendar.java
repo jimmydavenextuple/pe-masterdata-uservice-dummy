@@ -16,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InboundCalendarDays {
+public class InboundNodeCalendar {
 
   @Schema(description = "Date for which status needs to be checked", example = "2023-01-01")
   private String date;

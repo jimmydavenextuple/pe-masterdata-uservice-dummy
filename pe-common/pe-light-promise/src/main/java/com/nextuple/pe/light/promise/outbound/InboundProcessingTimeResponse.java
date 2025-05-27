@@ -6,7 +6,7 @@
  */
 package com.nextuple.pe.light.promise.outbound;
 
-import com.nextuple.pe.light.promise.pojo.InboundCalendarDays;
+import com.nextuple.pe.light.promise.pojo.InboundNodeCalendar;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -35,7 +35,7 @@ public class InboundProcessingTimeResponse {
   @Schema(
       description =
           "List of calendar day statuses indicating which days are considered working days.")
-  private List<InboundCalendarDays> calendarDays;
+  private List<InboundNodeCalendar> calendarDays;
 
   @Schema(
       description =

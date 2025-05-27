@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeService {
 
+  public static final String INBOUND_PROCESSING_TIME_FILTER = "inbound-processing-time-filter";
   private final RuleEngineApi ruleEngineApi;
 
   /** For initial testing only — logic will be revised. */
@@ -31,7 +32,8 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
     Object facts = inboundProcessingTimeRequest.getRuleEvaluationRequest();
     if (inboundProcessingTimeRequest.getRuleFilterStrategy() == null
         || inboundProcessingTimeRequest.getRuleFilterStrategy().isBlank()) {
-      inboundProcessingTimeRequest.setRuleFilterStrategy("inbound-processing-time-filter");
+
+      inboundProcessingTimeRequest.setRuleFilterStrategy(INBOUND_PROCESSING_TIME_FILTER);
     }
 
     Map<String, Object> mapResponse = ruleEngineApi.evaluateRules(ruleGroup, facts);
