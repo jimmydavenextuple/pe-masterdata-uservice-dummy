@@ -35,8 +35,6 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
     }
 
     Map<String, Object> mapResponse = ruleEngineApi.evaluateRules(ruleGroup, facts);
-    InboundProcessingTimeResponse inboundProcessingTimeResponse =
-        InboundProcessingTimeResponse.builder().inbound(mapResponse).build();
-    return inboundProcessingTimeResponse;
+    return InboundProcessingTimeResponse.builder().inbound(mapResponse).build();
   }
 }

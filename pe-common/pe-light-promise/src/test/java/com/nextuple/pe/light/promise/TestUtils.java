@@ -8,7 +8,7 @@ package com.nextuple.pe.light.promise;
 
 import com.nextuple.pe.light.promise.inbound.InboundProcessingTimeRequest;
 import com.nextuple.pe.light.promise.outbound.InboundProcessingTimeResponse;
-import com.nextuple.pe.light.promise.pojo.CalendarDaysStatus;
+import com.nextuple.pe.light.promise.pojo.InboundCalendarDays;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,9 +25,9 @@ public class TestUtils {
   }
 
   public static InboundProcessingTimeResponse createInboundProcessingResponse() {
-    List<CalendarDaysStatus> calendarDays =
+    List<InboundCalendarDays> calendarDays =
         Collections.singletonList(
-            CalendarDaysStatus.builder().date("2023-01-01").isActive(true).build());
+            InboundCalendarDays.builder().date("2023-01-01").isActive(true).build());
 
     return InboundProcessingTimeResponse.builder()
         .nodeId("node-123")
