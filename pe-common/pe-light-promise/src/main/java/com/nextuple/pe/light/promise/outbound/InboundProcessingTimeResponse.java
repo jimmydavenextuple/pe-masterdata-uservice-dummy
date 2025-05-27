@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class InboundProcessingResponse {
+public class InboundProcessingTimeResponse {
 
   @Schema(description = "Unique identifier of the node.", example = "NODE01")
   private String nodeId;

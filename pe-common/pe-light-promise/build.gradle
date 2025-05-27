@@ -4,7 +4,7 @@ plugins {
 
 
 dependencies {
-    implementation("com.nextuple.rulecraft:rule-engine:1.1.79-RELEASE")
+    implementation("com.nextuple.rulecraft:rule-engine:${rulecraftVersion}")
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 
 }

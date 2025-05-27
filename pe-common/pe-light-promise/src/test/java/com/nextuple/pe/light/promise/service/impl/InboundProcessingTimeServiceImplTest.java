@@ -11,8 +11,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.pe.light.promise.TestUtils;
-import com.nextuple.pe.light.promise.inbound.InboundProcessingRequest;
-import com.nextuple.pe.light.promise.outbound.InboundProcessingResponse;
+import com.nextuple.pe.light.promise.inbound.InboundProcessingTimeRequest;
+import com.nextuple.pe.light.promise.outbound.InboundProcessingTimeResponse;
 import com.nextuple.rulecraft.engine.api.RuleEngineApi;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,11 +34,11 @@ class InboundProcessingTimeServiceImplTest {
 
   @Test
   void evaluateInboundProcessingTime() {
-    InboundProcessingRequest request = TestUtils.createInboundProcessingRequest();
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
     Map<String, Object> mockResponse = Map.of("key", "value");
     when(ruleEngineApi.evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest()))
         .thenReturn(mockResponse);
-    InboundProcessingResponse response =
+    InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
     assertEquals(mockResponse, response.getInbound());
     verify(ruleEngineApi).evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest());

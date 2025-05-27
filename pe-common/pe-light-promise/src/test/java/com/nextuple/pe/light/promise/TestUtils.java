@@ -6,16 +6,16 @@
  */
 package com.nextuple.pe.light.promise;
 
-import com.nextuple.pe.light.promise.inbound.InboundProcessingRequest;
-import com.nextuple.pe.light.promise.outbound.InboundProcessingResponse;
+import com.nextuple.pe.light.promise.inbound.InboundProcessingTimeRequest;
+import com.nextuple.pe.light.promise.outbound.InboundProcessingTimeResponse;
 import com.nextuple.pe.light.promise.pojo.CalendarDaysStatus;
 import java.util.Collections;
 import java.util.List;
 
 public class TestUtils {
 
-  public static InboundProcessingRequest createInboundProcessingRequest() {
-    return InboundProcessingRequest.builder()
+  public static InboundProcessingTimeRequest createInboundProcessingRequest() {
+    return InboundProcessingTimeRequest.builder()
         .nodeId("node-123")
         .orgId("org-456")
         .ruleGroup("default-rule-group")
@@ -24,12 +24,12 @@ public class TestUtils {
         .build();
   }
 
-  public static InboundProcessingResponse createInboundProcessingResponse() {
+  public static InboundProcessingTimeResponse createInboundProcessingResponse() {
     List<CalendarDaysStatus> calendarDays =
         Collections.singletonList(
             CalendarDaysStatus.builder().date("2023-01-01").isActive(true).build());
 
-    return InboundProcessingResponse.builder()
+    return InboundProcessingTimeResponse.builder()
         .nodeId("node-123")
         .orgId("org-456")
         .startWorkingTime("09:00")

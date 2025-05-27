@@ -18,13 +18,13 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class InboundProcessingRequest {
+public class InboundProcessingTimeRequest {
 
   @Schema(description = "Node identifier", example = "node-123")
   @NotBlank(message = "nodeId can't be blank")
   private String nodeId;
 
-  @Schema(description = "Organization identifier", example = "org-456")
+  @Schema(description = "Organization identifier", example = "Nextuple")
   @NotBlank(message = "orgId can't be blank")
   private String orgId;
 
@@ -38,7 +38,7 @@ public class InboundProcessingRequest {
       description =
           "Strategy used for filtering rules. Optional. Defaults to 'inbound-processing-time-filter' if not provided.",
       example = "inbound-processing-time-filter")
-  private String ruleFilterStrategy = "inbound-processing-time-filter";
+  private String ruleFilterStrategy;
 
   @Schema(
       description =

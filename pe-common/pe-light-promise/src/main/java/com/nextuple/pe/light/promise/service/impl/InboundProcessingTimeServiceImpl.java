@@ -6,8 +6,8 @@
  */
 package com.nextuple.pe.light.promise.service.impl;
 
-import com.nextuple.pe.light.promise.inbound.InboundProcessingRequest;
-import com.nextuple.pe.light.promise.outbound.InboundProcessingResponse;
+import com.nextuple.pe.light.promise.inbound.InboundProcessingTimeRequest;
+import com.nextuple.pe.light.promise.outbound.InboundProcessingTimeResponse;
 import com.nextuple.pe.light.promise.service.InboundProcessingTimeService;
 import com.nextuple.rulecraft.engine.api.RuleEngineApi;
 import java.util.Map;
@@ -24,16 +24,19 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
 
   /** For initial testing only — logic will be revised. */
   @Override
-  public InboundProcessingResponse evaluateInboundProcessingTime(
-      InboundProcessingRequest inboundProcessingRequest) {
+  public InboundProcessingTimeResponse evaluateInboundProcessingTime(
+      InboundProcessingTimeRequest inboundProcessingTimeRequest) {
 
-    String ruleGroup = inboundProcessingRequest.getRuleGroup();
-    Object facts = inboundProcessingRequest.getRuleEvaluationRequest();
+    String ruleGroup = inboundProcessingTimeRequest.getRuleGroup();
+    Object facts = inboundProcessingTimeRequest.getRuleEvaluationRequest();
+    if (inboundProcessingTimeRequest.getRuleFilterStrategy() == null
+        || inboundProcessingTimeRequest.getRuleFilterStrategy().isBlank()) {
+      inboundProcessingTimeRequest.setRuleFilterStrategy("inbound-processing-time-filter");
+    }
 
     Map<String, Object> mapResponse = ruleEngineApi.evaluateRules(ruleGroup, facts);
-    InboundProcessingResponse inboundProcessingResponse =
-        InboundProcessingResponse.builder().build();
-    inboundProcessingResponse.setInbound(mapResponse);
-    return inboundProcessingResponse;
+    InboundProcessingTimeResponse inboundProcessingTimeResponse =
+        InboundProcessingTimeResponse.builder().inbound(mapResponse).build();
+    return inboundProcessingTimeResponse;
   }
 }

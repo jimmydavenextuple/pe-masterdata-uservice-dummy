@@ -6,11 +6,11 @@
  */
 package com.nextuple.pe.light.promise.service;
 
-import com.nextuple.pe.light.promise.inbound.InboundProcessingRequest;
-import com.nextuple.pe.light.promise.outbound.InboundProcessingResponse;
+import com.nextuple.pe.light.promise.inbound.InboundProcessingTimeRequest;
+import com.nextuple.pe.light.promise.outbound.InboundProcessingTimeResponse;
 
 public interface InboundProcessingTimeService {
 
-  InboundProcessingResponse evaluateInboundProcessingTime(
-      InboundProcessingRequest inboundProcessingRequest);
+  InboundProcessingTimeResponse evaluateInboundProcessingTime(
+      InboundProcessingTimeRequest inboundProcessingTimeRequest);
 }
