@@ -36,15 +36,15 @@ class InboundProcessingTimeServiceImplTest {
   void evaluateInboundProcessingTime_withNullRuleFilterStrategy() {
     // Arrange
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-    request.setRuleFilterStrategy(null); // Set ruleFilterStrategy to null
     Map<String, Object> mockResponse = Map.of("key", "value");
+    request.setRuleFilterStrategy(null);
     when(ruleEngineApi.evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest()))
         .thenReturn(mockResponse);
     InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
 
-    assertEquals("inbound-processing-time-filter", request.getRuleFilterStrategy());
     assertEquals(mockResponse, response.getInbound());
+    assertEquals("inbound-processing-time-filter", request.getRuleFilterStrategy());
     verify(ruleEngineApi).evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest());
   }
 
@@ -66,16 +66,14 @@ class InboundProcessingTimeServiceImplTest {
   @Test
   void evaluateInboundProcessingTime_withValidRuleFilterStrategy() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-    request.setRuleFilterStrategy("valid-strategy"); // Set ruleFilterStrategy to a valid value
     Map<String, Object> mockResponse = Map.of("key", "value");
+    request.setRuleFilterStrategy("valid-strategy"); // Set ruleFilterStrategy to a valid value
     when(ruleEngineApi.evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest()))
         .thenReturn(mockResponse);
-
     InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
-
+    verify(ruleEngineApi).evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest());
     assertEquals("valid-strategy", request.getRuleFilterStrategy()); // Ensure it remains unchanged
     assertEquals(mockResponse, response.getInbound());
-    verify(ruleEngineApi).evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest());
   }
 }
