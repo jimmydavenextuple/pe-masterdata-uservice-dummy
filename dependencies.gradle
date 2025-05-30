@@ -40,6 +40,7 @@ ext {
     platformTaskVersion = "1.1.5Java21-${build_target}"
     platformPurgeVersion = "1.1.6Java21-${build_target}"
     platformFPMVersion = "1.0.8-${build_target}"
+    rulecraftVersion="1.1.79-RELEASE"
 //    micrometerPrometheusVersion = "1.5.1"
     sourceJdkVersion = JavaVersion.VERSION_21
     targetJdkVersion = JavaVersion.VERSION_21
