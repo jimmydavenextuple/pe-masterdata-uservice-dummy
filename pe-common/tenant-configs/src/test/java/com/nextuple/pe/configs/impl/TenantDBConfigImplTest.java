@@ -890,4 +890,70 @@ class TenantDBConfigImplTest {
     boolean response = tenantDBConfigImpl.getEnableAvailabilitySorting();
     assertFalse(response);
   }
+
+  @Test
+  @DisplayName("Get Order Operations - Happy Path")
+  void getOrderOperationsTest() {
+    var cacheValue = testUtil.getTenantConfigCacheValueForOrderOperations();
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+    Set<String> response = tenantDBConfigImpl.getOrderOperations();
+    assertNotNull(response);
+    assertEquals(4, response.size());
+  }
+
+  @Test
+  @DisplayName("Get Order Operations - Exception Scenario")
+  void getOrderOperationsExceptionTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+    PromisingEngineException ex =
+        assertThrows(PromisingEngineException.class, () -> tenantDBConfigImpl.getOrderOperations());
+    assertNotNull(ex);
+    assertEquals(
+        "Tenant Configuration not found for given orgId and configKey order-operations",
+        ex.getMessage());
+  }
+
+  @Test
+  @DisplayName("Get Promise Coordination Templates")
+  void getTemplatesTest() {
+    var cacheValue = testUtil.getTenantConfigCacheValueForTemplates();
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+    Set<String> response = tenantDBConfigImpl.getTemplates();
+    assertNotNull(response);
+    assertEquals(3, response.size());
+  }
+
+  @Test
+  @DisplayName("Get Promise Coordination Templates - Exception Scenario")
+  void getTemplatesExceptionTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+    PromisingEngineException ex =
+        assertThrows(PromisingEngineException.class, () -> tenantDBConfigImpl.getTemplates());
+    assertNotNull(ex);
+    assertEquals(
+        "Tenant Configuration not found for given orgId and configKey templates", ex.getMessage());
+  }
+
+  @Test
+  void getOperationTemplateMappingTest() {
+    var cacheValue1 = testUtil.getTenantConfigCacheValueOperationTemplateMapping();
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue1);
+    Map<String, String> response = tenantDBConfigImpl.getOperationTemplateMapping();
+    assertNotNull(response);
+    assertTrue(response.containsKey("CREATE"));
+    assertTrue(response.containsKey("CANCEL"));
+    assertTrue(response.containsKey("CANCEL_LINE"));
+  }
+
+  @Test
+  void getOperationTemplateMappingExceptionTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+    PromisingEngineException ex =
+        assertThrows(
+            PromisingEngineException.class, () -> tenantDBConfigImpl.getOperationTemplateMapping());
+    assertNotNull(ex);
+    assertEquals(
+        "Tenant Configuration not found for given orgId and configKey operation-template-mapping",
+        ex.getMessage());
+  }
 }
