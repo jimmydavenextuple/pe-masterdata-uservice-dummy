@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(
     name = "tenant-configuration",
     havingValue = "configDatabase",
-    matchIfMissing = true)
+    matchIfMissing = false)
 public class TenantDBConfigImpl implements ITenantConfig {
 
   private static final Logger logger = LoggerFactory.getLogger(TenantDBConfigImpl.class);

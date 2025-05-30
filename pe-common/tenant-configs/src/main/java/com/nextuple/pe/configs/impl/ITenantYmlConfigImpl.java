@@ -41,9 +41,7 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Autowired EventConfig eventConfig;
   @Autowired CostConfig costConfig;
   @Autowired CapacityConfig capacityConfig;
-  @Autowired OrderOperationConfig orderOperationConfig;
-  @Autowired TemplateConfig templateConfig;
-  @Autowired OperationalTemplateConfig operationalTemplateConfig;
+  @Autowired PromiseCoordinationConfig promiseCoordinationConfig;
 
   @Value("${promise.service.options.DEFAULT}")
   public String defaultServiceOptions;
@@ -158,9 +156,9 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   }
 
   private String getOrderOperationsList() {
-    return orderOperationConfig
-        .getOperationConfigMap()
-        .getOrDefault(getOrgId(), orderOperationConfig.getOperationConfigMap().get(DEFAULT));
+    return promiseCoordinationConfig
+        .getOrderOperations()
+        .getOrDefault(getOrgId(), promiseCoordinationConfig.getOrderOperations().get(DEFAULT));
   }
 
   @Override
@@ -169,17 +167,17 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   }
 
   private String getTemplatesList() {
-    return templateConfig
-        .getTemplateConfigMap()
-        .getOrDefault(getOrgId(), templateConfig.getTemplateConfigMap().get(DEFAULT));
+    return promiseCoordinationConfig
+        .getTemplates()
+        .getOrDefault(getOrgId(), promiseCoordinationConfig.getTemplates().get(DEFAULT));
   }
 
   @Override
   public Map<String, String> getOperationTemplateMapping() {
-    return operationalTemplateConfig
-        .getOperationalTemplateConfigMap()
+    return promiseCoordinationConfig
+        .getOperationTemplateMapping()
         .getOrDefault(
-            getOrgId(), operationalTemplateConfig.getOperationalTemplateConfigMap().get(DEFAULT));
+            getOrgId(), promiseCoordinationConfig.getOperationTemplateMapping().get(DEFAULT));
   }
 
   public static Gson getGsonObject() {

@@ -16,13 +16,11 @@ import com.nextuple.pe.configs.CapacityConfig;
 import com.nextuple.pe.configs.DefaultCarrierPriorityConfig;
 import com.nextuple.pe.configs.EventConfig;
 import com.nextuple.pe.configs.LogSuppressionServiceOptionsConfig;
-import com.nextuple.pe.configs.OperationalTemplateConfig;
-import com.nextuple.pe.configs.OrderOperationConfig;
+import com.nextuple.pe.configs.PromiseCoordinationConfig;
 import com.nextuple.pe.configs.PublishEddOnPageConfig;
 import com.nextuple.pe.configs.ServiceOptionConfig;
 import com.nextuple.pe.configs.ServiceOptionIVTypeMappingConfig;
 import com.nextuple.pe.configs.SourcingConfig;
-import com.nextuple.pe.configs.TemplateConfig;
 import com.nextuple.pe.util.TestUtil;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -58,9 +56,7 @@ class ITenantYmlConfigImplTest {
   @Mock SourcingConfig sourcingConfig;
   @Mock EventConfig eventConfig;
   @Mock CapacityConfig capacityConfig;
-  @Mock OperationalTemplateConfig operationalTemplateConfig;
-  @Mock OrderOperationConfig orderOperationConfig;
-  @Mock TemplateConfig templateConfig;
+  @Mock PromiseCoordinationConfig promiseCoordinationConfig;
 
   @BeforeEach
   void init() {
@@ -115,7 +111,7 @@ class ITenantYmlConfigImplTest {
   @Test
   void getOrderOperationsTest() {
     String orderOperation = "CANCEL_LINE";
-    Mockito.when(orderOperationConfig.getOperationConfigMap())
+    Mockito.when(promiseCoordinationConfig.getOrderOperations())
         .thenReturn(Map.of(TestUtil.ORG_ID, orderOperation, "DEFAULT", "CREATE"));
 
     Set<String> orderOperationResponse = iTenantYmlConfigImpl.getOrderOperations();
@@ -126,7 +122,7 @@ class ITenantYmlConfigImplTest {
   @Test
   void getOrderOperationsTestDefault() {
     String defaultOrderOperation = "CREATE";
-    Mockito.when(orderOperationConfig.getOperationConfigMap())
+    Mockito.when(promiseCoordinationConfig.getOrderOperations())
         .thenReturn(Map.of("DEFAULT", defaultOrderOperation));
 
     Set<String> orderOperationResponse = iTenantYmlConfigImpl.getOrderOperations();
@@ -137,7 +133,7 @@ class ITenantYmlConfigImplTest {
   @Test
   void getTemplatesTest() {
     String templates = "processCreateOrder";
-    Mockito.when(templateConfig.getTemplateConfigMap())
+    Mockito.when(promiseCoordinationConfig.getTemplates())
         .thenReturn(Map.of(TestUtil.ORG_ID, templates, "DEFAULT", "processCancelOrder"));
 
     Set<String> templatesResponse = iTenantYmlConfigImpl.getTemplates();
@@ -148,7 +144,7 @@ class ITenantYmlConfigImplTest {
   @Test
   void getTemplatesTestDefault() {
     String defaultTemplates = "processCancelOrder";
-    Mockito.when(templateConfig.getTemplateConfigMap())
+    Mockito.when(promiseCoordinationConfig.getTemplates())
         .thenReturn(Map.of("DEFAULT", defaultTemplates));
 
     Set<String> orderOperationResponse = iTenantYmlConfigImpl.getTemplates();
@@ -159,7 +155,7 @@ class ITenantYmlConfigImplTest {
   @Test
   void getOrderOperationMappingTest() {
     Map<String, String> operationTemplateMapping = Map.of("CREATE", "processCreateOrder");
-    Mockito.when(operationalTemplateConfig.getOperationalTemplateConfigMap())
+    Mockito.when(promiseCoordinationConfig.getOperationTemplateMapping())
         .thenReturn(
             Map.of(
                 TestUtil.ORG_ID,
@@ -177,7 +173,7 @@ class ITenantYmlConfigImplTest {
   @Test
   void getOrderOperationMappingTestDefault() {
     Map<String, String> defaultOperationTemplateMapping = Map.of("CANCEL", "processCancelOrder");
-    Mockito.when(operationalTemplateConfig.getOperationalTemplateConfigMap())
+    Mockito.when(promiseCoordinationConfig.getOperationTemplateMapping())
         .thenReturn(Map.of("DEFAULT", defaultOperationTemplateMapping));
 
     Map<String, String> operationTemplateMappingResponse =

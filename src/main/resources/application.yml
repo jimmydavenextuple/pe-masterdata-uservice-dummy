@@ -99,25 +99,6 @@ promise:
 availability:
   keys: LINE,ORDER
 
-promise-coordination:
-  order-operations:
-    DEFAULT: CREATE, CANCEL, EDD_ENQUIRY, EDD_OVERRIDE
-    NEXTUPLE_GR: CREATE, CANCEL, EDD_ENQUIRY, EDD_OVERRIDE
-
-  templates:
-    DEFAULT: processCreateOrder,processCancelOrder,processCancelLineOrder
-    NEXTUPLE_GR: processCreateOrder,processCancelOrder,processCancelLineOrder
-
-  operation-template-mapping:
-    DEFAULT:
-      CREATE: processCreateOrder
-      CANCEL: processCancelOrder
-      CANCEL_LINE: processCancelLineOrder
-    NEXTUPLE_GR:
-      CREATE: processCreateOrder
-      CANCEL: processCancelOrder
-      CANCEL_LINE: processCancelLineOrder
-
 base-api-url: '/promising-engine/pe-promise-sourcing-rule'
 
 node-carrier-service-page-properties:
