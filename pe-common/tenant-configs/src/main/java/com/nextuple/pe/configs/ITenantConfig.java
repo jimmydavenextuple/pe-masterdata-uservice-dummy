@@ -98,4 +98,10 @@ public interface ITenantConfig {
   Boolean getEnableFutureAvailability();
 
   Boolean getEnableAvailabilitySorting();
+
+  Set<String> getOrderOperations();
+
+  Set<String> getTemplates();
+
+  Map<String, String> getOperationTemplateMapping();
 }
