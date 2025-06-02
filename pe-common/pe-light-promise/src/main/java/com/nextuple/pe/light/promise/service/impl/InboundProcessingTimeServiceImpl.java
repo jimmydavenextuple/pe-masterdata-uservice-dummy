@@ -80,8 +80,8 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
 
     if (mapResponse.get(INBOUND_PROCESSING_TIME_KEY) != null) {
       Object inboundProcessingTimeObj = mapResponse.get(INBOUND_PROCESSING_TIME_KEY);
-      if (inboundProcessingTimeObj instanceof Number) {
-        inboundProcessingTime = ((Number) inboundProcessingTimeObj).doubleValue();
+      if (inboundProcessingTimeObj instanceof Number number) {
+        inboundProcessingTime = number.doubleValue();
         log.info("Inbound processing time response: {}", inboundProcessingTime);
         return inboundProcessingTime;
       } else {
