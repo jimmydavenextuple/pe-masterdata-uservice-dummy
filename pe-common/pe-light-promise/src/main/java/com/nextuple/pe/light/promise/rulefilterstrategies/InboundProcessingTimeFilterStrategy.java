@@ -46,8 +46,7 @@ public class InboundProcessingTimeFilterStrategy implements RuleFilterStrategy {
       return List.of();
     }
     List<TagPojo> optionalTags = getOptionalTags(facts);
-    List<List<TagPojo>> result = generateTagCombinations(orgTag, optionalTags);
-    return result;
+    return generateTagCombinations(orgTag, optionalTags);
   }
 
   /**
