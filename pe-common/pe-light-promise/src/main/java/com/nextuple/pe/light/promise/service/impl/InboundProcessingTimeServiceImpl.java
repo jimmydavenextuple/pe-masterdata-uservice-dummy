@@ -82,10 +82,10 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
       Object inboundProcessingTimeObj = mapResponse.get(INBOUND_PROCESSING_TIME_KEY);
       if (inboundProcessingTimeObj instanceof Number number) {
         inboundProcessingTime = number.doubleValue();
-        log.info("Inbound processing time response: {}", inboundProcessingTime);
+        log.debug("Inbound processing time response: {}", inboundProcessingTime);
         return inboundProcessingTime;
       } else {
-        log.warn("Inbound processing time key is not a valid number.");
+        log.debug("Inbound processing time key is not a valid number.");
         throw new CommonServiceException(
             "Inbound processing time key is not a valid number.",
             HttpStatus.BAD_REQUEST,
@@ -93,7 +93,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
             Map.of("inboundProcessingTime", new FieldError()));
       }
     } else {
-      log.warn("Inbound processing time key is null in the response.");
+      log.debug("Inbound processing time key is null in the response.");
       throw new CommonServiceException(
           "Inbound processing time key is null in the response.",
           HttpStatus.BAD_REQUEST,
@@ -113,7 +113,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
       InboundProcessingTimeRequest inboundProcessingTimeRequest) throws CommonServiceException {
     if (inboundProcessingTimeRequest.getNodeId() == null
         || inboundProcessingTimeRequest.getNodeId().isBlank()) {
-      log.warn("Validation failed: nodeId can't be blank.");
+      log.debug("Validation failed: nodeId can't be blank.");
       throw new CommonServiceException(
           "Validation failed: nodeId can't be blank.",
           HttpStatus.BAD_REQUEST,
@@ -123,7 +123,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
 
     if (inboundProcessingTimeRequest.getOrgId() == null
         || inboundProcessingTimeRequest.getOrgId().isBlank()) {
-      log.warn("Validation failed: orgId can't be blank.");
+      log.debug("Validation failed: orgId can't be blank.");
       throw new CommonServiceException(
           "Validation failed: orgId can't be blank.",
           HttpStatus.BAD_REQUEST,
@@ -133,7 +133,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
 
     if (inboundProcessingTimeRequest.getRuleGroup() == null
         || inboundProcessingTimeRequest.getRuleGroup().isBlank()) {
-      log.warn("Validation failed: ruleGroup can't be blank.");
+      log.debug("Validation failed: ruleGroup can't be blank.");
       throw new CommonServiceException(
           "Validation failed: ruleGroup can't be blank.",
           HttpStatus.BAD_REQUEST,
@@ -142,7 +142,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
     }
 
     if (inboundProcessingTimeRequest.getRuleEvaluationFacts() == null) {
-      log.warn("Validation failed: ruleEvaluationFacts can't be null.");
+      log.debug("Validation failed: ruleEvaluationFacts can't be null.");
       throw new CommonServiceException(
           "Validation failed: ruleEvaluationFacts can't be null.",
           HttpStatus.BAD_REQUEST,
