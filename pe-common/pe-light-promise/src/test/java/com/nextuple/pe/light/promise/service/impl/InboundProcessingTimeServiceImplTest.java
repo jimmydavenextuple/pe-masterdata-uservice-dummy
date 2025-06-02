@@ -7,13 +7,18 @@
 package com.nextuple.pe.light.promise.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.pe.light.promise.TestUtils;
 import com.nextuple.pe.light.promise.inbound.InboundProcessingTimeRequest;
 import com.nextuple.pe.light.promise.outbound.InboundProcessingTimeResponse;
 import com.nextuple.rulecraft.engine.api.RuleEngineApi;
+import com.nextuple.rulecraft.engine.model.ResourceTagEvalRequest;
+import java.util.Collections;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,47 +38,184 @@ class InboundProcessingTimeServiceImplTest {
   }
 
   @Test
-  void evaluateInboundProcessingTime_withNullRuleFilterStrategy() {
-    // Arrange
+  void validateInboundProcessingRequest_withBlankNodeId_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-    Map<String, Object> mockResponse = Map.of("key", "value");
-    request.setRuleFilterStrategy(null);
-    when(ruleEngineApi.evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest()))
-        .thenReturn(mockResponse);
-    InboundProcessingTimeResponse response =
-        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+    request.setNodeId(" "); // Set nodeId to blank
 
-    assertEquals(mockResponse, response.getInbound());
-    assertEquals("inbound-processing-time-filter", request.getRuleFilterStrategy());
-    verify(ruleEngineApi).evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest());
+    CommonServiceException exception =
+        assertThrows(
+            CommonServiceException.class,
+            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+
+    assertEquals("Validation failed: nodeId can't be blank.", exception.getMessage());
   }
 
   @Test
-  void evaluateInboundProcessingTime_withBlankRuleFilterStrategy() {
+  void validateInboundProcessingRequest_withNullOrgId_throwsException() {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+    request.setOrgId(null); // Set orgId to null
+
+    CommonServiceException exception =
+        assertThrows(
+            CommonServiceException.class,
+            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+
+    assertEquals("Validation failed: orgId can't be blank.", exception.getMessage());
+  }
+
+  @Test
+  void validateInboundProcessingRequest_withBlankRuleGroup_throwsException() {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+    request.setRuleGroup(" "); // Set ruleGroup to blank
+
+    CommonServiceException exception =
+        assertThrows(
+            CommonServiceException.class,
+            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+
+    assertEquals("Validation failed: ruleGroup can't be blank.", exception.getMessage());
+  }
+
+  @Test
+  void validateInboundProcessingRequest_withNullRuleEvaluationFacts_throwsException() {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+    request.setRuleEvaluationFacts(null); // Set ruleEvaluationFacts to null
+
+    CommonServiceException exception =
+        assertThrows(
+            CommonServiceException.class,
+            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+
+    assertEquals("Validation failed: ruleEvaluationFacts can't be null.", exception.getMessage());
+  }
+
+  @Test
+  void getInboundProcessingTime_withNullResponseKey_throwsException() {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+    Map<String, Object> mockResponse = Collections.emptyMap(); // Simulate null response key
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    CommonServiceException exception =
+        assertThrows(
+            CommonServiceException.class,
+            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+
+    assertEquals("Inbound processing time key is null in the response.", exception.getMessage());
+  }
+
+  @Test
+  void evaluateInboundProcessingTime_withValidRequest() throws CommonServiceException {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    InboundProcessingTimeResponse response =
+        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertNotNull(response);
+    assertEquals(10.0, response.getInboundProcessingTime());
+    verify(ruleEngineApi)
+        .evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest);
+  }
+
+  @Test
+  void evaluateInboundProcessingTime_withNullRuleFilterStrategy() throws CommonServiceException {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+    request.setRuleFilterStrategy(null); // Set ruleFilterStrategy to null
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    InboundProcessingTimeResponse response =
+        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertNotNull(response);
+    assertEquals(10.0, response.getInboundProcessingTime());
+    assertEquals("inbound-processing-time-filter", request.getRuleFilterStrategy());
+    verify(ruleEngineApi)
+        .evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest);
+  }
+
+  @Test
+  void evaluateInboundProcessingTime_withBlankRuleFilterStrategy() throws CommonServiceException {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
     request.setRuleFilterStrategy(" "); // Set ruleFilterStrategy to blank
-    Map<String, Object> mockResponse = Map.of("key", "value");
-    when(ruleEngineApi.evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest()))
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
         .thenReturn(mockResponse);
 
     InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertNotNull(response);
+    assertEquals(10.0, response.getInboundProcessingTime());
     assertEquals("inbound-processing-time-filter", request.getRuleFilterStrategy());
-    assertEquals(mockResponse, response.getInbound());
-    verify(ruleEngineApi).evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest());
+    verify(ruleEngineApi)
+        .evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest);
   }
 
   @Test
-  void evaluateInboundProcessingTime_withValidRuleFilterStrategy() {
+  void getInboundProcessingTime_withInvalidResponseKeyType_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-    Map<String, Object> mockResponse = Map.of("key", "value");
-    request.setRuleFilterStrategy("valid-strategy"); // Set ruleFilterStrategy to a valid value
-    when(ruleEngineApi.evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest()))
+    Map<String, Object> mockResponse =
+        Map.of("inboundProcessingTime", "invalidType"); // Simulate invalid type
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
         .thenReturn(mockResponse);
-    InboundProcessingTimeResponse response =
-        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
-    verify(ruleEngineApi).evaluateRules(request.getRuleGroup(), request.getRuleEvaluationRequest());
-    assertEquals("valid-strategy", request.getRuleFilterStrategy()); // Ensure it remains unchanged
-    assertEquals(mockResponse, response.getInbound());
+
+    CommonServiceException exception =
+        assertThrows(
+            CommonServiceException.class,
+            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+
+    assertEquals("Inbound processing time key is not a valid number.", exception.getMessage());
   }
 }

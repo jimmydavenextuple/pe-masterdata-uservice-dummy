@@ -5,6 +5,8 @@ plugins {
 
 dependencies {
     implementation("com.nextuple.rulecraft:rule-engine:${rulecraftVersion}")
+    implementation "com.nextuple.neoplatform:tags:${neoPlatformVersion}"
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
+    implementation project(path: ':pe-common:common-util')
 
 }

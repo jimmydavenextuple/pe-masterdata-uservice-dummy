@@ -20,7 +20,7 @@ public class TestUtils {
         .orgId("org-456")
         .ruleGroup("default-rule-group")
         .ruleFilterStrategy("inbound-processing-time-filter")
-        .ruleEvaluationRequest(Collections.singletonMap("key", "value"))
+        .ruleEvaluationFacts(Collections.singletonMap("key", "value"))
         .build();
   }
 
@@ -35,7 +35,7 @@ public class TestUtils {
         .startWorkingTime("09:00")
         .lastWorkingTime("18:00")
         .calendarDays(calendarDays)
-        .inbound(Collections.singletonMap("processingTime", 10.0))
+        .inboundProcessingTime(10.0)
         .build();
   }
 }

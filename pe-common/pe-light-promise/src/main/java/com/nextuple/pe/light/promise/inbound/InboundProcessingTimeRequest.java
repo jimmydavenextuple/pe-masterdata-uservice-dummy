@@ -9,6 +9,7 @@ package com.nextuple.pe.light.promise.inbound;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,7 +43,8 @@ public class InboundProcessingTimeRequest {
 
   @Schema(
       description =
-          "Request payload containing data required for rule evaluation. Flexible structure depending on the rule group.")
-  @NotNull(message = "ruleEvaluationRequest can't be null")
-  private Object ruleEvaluationRequest;
+          "Request payload containing data required for rule evaluation. Flexible structure depending on the rule group.",
+      example = "{ \"key1\": \"value1\", \"key2\": \"value2\" }")
+  @NotNull(message = "ruleEvaluationFacts can't be null")
+  private Map<String, Object> ruleEvaluationFacts;
 }
