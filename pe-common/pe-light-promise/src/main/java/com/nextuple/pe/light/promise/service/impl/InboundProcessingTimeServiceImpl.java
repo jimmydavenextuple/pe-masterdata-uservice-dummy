@@ -18,6 +18,7 @@ import com.nextuple.rulecraft.engine.api.RuleEngineApi;
 import com.nextuple.rulecraft.engine.model.ResourceTagEvalRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -111,43 +112,37 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
    */
   private void validateInboundProcessingRequest(
       InboundProcessingTimeRequest inboundProcessingTimeRequest) throws CommonServiceException {
-    if (inboundProcessingTimeRequest.getNodeId() == null
-        || inboundProcessingTimeRequest.getNodeId().isBlank()) {
-      log.debug("Validation failed: nodeId can't be blank.");
-      throw new CommonServiceException(
-          "Validation failed: nodeId can't be blank.",
-          HttpStatus.BAD_REQUEST,
-          400,
-          Map.of("nodeId", new FieldError()));
-    }
+    validateField(inboundProcessingTimeRequest.getNodeId(), "nodeId", "nodeId can't be blank.");
+    validateField(inboundProcessingTimeRequest.getOrgId(), "orgId", "orgId can't be blank.");
+    validateField(
+        inboundProcessingTimeRequest.getRuleGroup(), "ruleGroup", "ruleGroup can't be blank.");
+    validateMap(
+        inboundProcessingTimeRequest.getRuleEvaluationFacts(),
+        "ruleEvaluationFacts",
+        "ruleEvaluationFacts can't be null.");
+  }
 
-    if (inboundProcessingTimeRequest.getOrgId() == null
-        || inboundProcessingTimeRequest.getOrgId().isBlank()) {
-      log.debug("Validation failed: orgId can't be blank.");
+  private void validateField(String fieldValue, String fieldName, String errorMessage)
+      throws CommonServiceException {
+    if (Objects.isNull(fieldValue) || fieldValue.isBlank()) {
+      log.debug("Validation failed: {}", errorMessage);
       throw new CommonServiceException(
-          "Validation failed: orgId can't be blank.",
+          "Validation failed: " + errorMessage,
           HttpStatus.BAD_REQUEST,
           400,
-          Map.of("orgId", new FieldError()));
+          Map.of(fieldName, new FieldError()));
     }
+  }
 
-    if (inboundProcessingTimeRequest.getRuleGroup() == null
-        || inboundProcessingTimeRequest.getRuleGroup().isBlank()) {
-      log.debug("Validation failed: ruleGroup can't be blank.");
+  private void validateMap(Map<String, Object> map, String fieldName, String errorMessage)
+      throws CommonServiceException {
+    if (Objects.isNull(map)) {
+      log.debug("Validation failed: {}", errorMessage);
       throw new CommonServiceException(
-          "Validation failed: ruleGroup can't be blank.",
+          "Validation failed: " + errorMessage,
           HttpStatus.BAD_REQUEST,
           400,
-          Map.of("ruleGroup", new FieldError()));
-    }
-
-    if (inboundProcessingTimeRequest.getRuleEvaluationFacts() == null) {
-      log.debug("Validation failed: ruleEvaluationFacts can't be null.");
-      throw new CommonServiceException(
-          "Validation failed: ruleEvaluationFacts can't be null.",
-          HttpStatus.BAD_REQUEST,
-          400,
-          Map.of("ruleEvaluationFacts", new FieldError()));
+          Map.of(fieldName, new FieldError()));
     }
   }
 }
