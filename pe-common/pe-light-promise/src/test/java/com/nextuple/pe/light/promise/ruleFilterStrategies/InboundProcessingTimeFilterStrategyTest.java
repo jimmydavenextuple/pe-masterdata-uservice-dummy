@@ -14,6 +14,7 @@ import com.nextuple.neoplatform.tags.pojo.TagPojo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class InboundProcessingTimeFilterStrategyTest {
@@ -22,11 +23,13 @@ class InboundProcessingTimeFilterStrategyTest {
       new InboundProcessingTimeFilterStrategy();
 
   @Test
+  @DisplayName("Test strategy name retrieval")
   void testGetStrategyName() {
     assertEquals("inbound-processing-time-filter", strategy.getStrategyName());
   }
 
   @Test
+  @DisplayName("Test filters with valid facts")
   void testGetFiltersWithValidFacts() {
     Map<String, Object> facts = new HashMap<>();
     facts.put("orgId", "org123");
@@ -45,6 +48,7 @@ class InboundProcessingTimeFilterStrategyTest {
   }
 
   @Test
+  @DisplayName("Test filters with missing orgId")
   void testGetFiltersWithMissingOrgId() {
     Map<String, Object> facts = new HashMap<>();
     facts.put("itemId", "item456");
@@ -55,6 +59,7 @@ class InboundProcessingTimeFilterStrategyTest {
   }
 
   @Test
+  @DisplayName("Test filters with partial optional tags")
   void testGetFiltersWithPartialOptionalTags() {
     Map<String, Object> facts = new HashMap<>();
     facts.put("orgId", "org123");
@@ -69,6 +74,7 @@ class InboundProcessingTimeFilterStrategyTest {
   }
 
   @Test
+  @DisplayName("Test filters with no optional tags")
   void testGetFiltersWithNoOptionalTags() {
     Map<String, Object> facts = new HashMap<>();
     facts.put("orgId", "org123");
@@ -79,6 +85,7 @@ class InboundProcessingTimeFilterStrategyTest {
   }
 
   @Test
+  @DisplayName("Test filters with empty facts")
   void testGetFiltersWithEmptyFacts() {
     Map<String, Object> facts = new HashMap<>();
     List<List<TagPojo>> filters = strategy.getFilters(facts);

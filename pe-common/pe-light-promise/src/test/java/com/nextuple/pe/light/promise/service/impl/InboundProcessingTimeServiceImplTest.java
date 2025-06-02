@@ -21,6 +21,7 @@ import com.nextuple.rulecraft.engine.model.ResourceTagEvalRequest;
 import java.util.Collections;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -38,6 +39,7 @@ class InboundProcessingTimeServiceImplTest {
   }
 
   @Test
+  @DisplayName("Validate request with blank nodeId throws exception")
   void validateInboundProcessingRequest_withBlankNodeId_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
     request.setNodeId(" "); // Set nodeId to blank
@@ -51,6 +53,7 @@ class InboundProcessingTimeServiceImplTest {
   }
 
   @Test
+  @DisplayName("Validate request with null orgId throws exception")
   void validateInboundProcessingRequest_withNullOrgId_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
     request.setOrgId(null); // Set orgId to null
@@ -64,6 +67,7 @@ class InboundProcessingTimeServiceImplTest {
   }
 
   @Test
+  @DisplayName("Validate request with blank ruleGroup throws exception")
   void validateInboundProcessingRequest_withBlankRuleGroup_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
     request.setRuleGroup(" "); // Set ruleGroup to blank
@@ -77,6 +81,7 @@ class InboundProcessingTimeServiceImplTest {
   }
 
   @Test
+  @DisplayName("Validate request with null ruleEvaluationFacts throws exception")
   void validateInboundProcessingRequest_withNullRuleEvaluationFacts_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
     request.setRuleEvaluationFacts(null); // Set ruleEvaluationFacts to null
@@ -90,6 +95,7 @@ class InboundProcessingTimeServiceImplTest {
   }
 
   @Test
+  @DisplayName("Get inbound processing time with null response key throws exception")
   void getInboundProcessingTime_withNullResponseKey_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
     Map<String, Object> mockResponse = Collections.emptyMap(); // Simulate null response key
@@ -112,6 +118,7 @@ class InboundProcessingTimeServiceImplTest {
   }
 
   @Test
+  @DisplayName("Evaluate inbound processing time with valid request")
   void evaluateInboundProcessingTime_withValidRequest() throws CommonServiceException {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
     Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
@@ -139,6 +146,7 @@ class InboundProcessingTimeServiceImplTest {
   }
 
   @Test
+  @DisplayName("Evaluate inbound processing time with null ruleFilterStrategy")
   void evaluateInboundProcessingTime_withNullRuleFilterStrategy() throws CommonServiceException {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
     request.setRuleFilterStrategy(null); // Set ruleFilterStrategy to null
@@ -168,6 +176,7 @@ class InboundProcessingTimeServiceImplTest {
   }
 
   @Test
+  @DisplayName("Evaluate inbound processing time with blank ruleFilterStrategy")
   void evaluateInboundProcessingTime_withBlankRuleFilterStrategy() throws CommonServiceException {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
     request.setRuleFilterStrategy(" "); // Set ruleFilterStrategy to blank
@@ -197,6 +206,7 @@ class InboundProcessingTimeServiceImplTest {
   }
 
   @Test
+  @DisplayName("Get inbound processing time with invalid response key type throws exception")
   void getInboundProcessingTime_withInvalidResponseKeyType_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
     Map<String, Object> mockResponse =
