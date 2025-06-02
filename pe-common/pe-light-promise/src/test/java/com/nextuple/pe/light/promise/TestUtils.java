@@ -10,17 +10,21 @@ import com.nextuple.pe.light.promise.inbound.InboundProcessingTimeRequest;
 import com.nextuple.pe.light.promise.outbound.InboundProcessingTimeResponse;
 import com.nextuple.pe.light.promise.pojo.InboundNodeCalendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TestUtils {
 
   public static InboundProcessingTimeRequest createInboundProcessingRequest() {
+    Map<String, Object> ruleEvaluationFacts = new HashMap<>();
+    ruleEvaluationFacts.put("key", "value");
     return InboundProcessingTimeRequest.builder()
         .nodeId("node-123")
         .orgId("org-456")
         .ruleGroup("default-rule-group")
         .ruleFilterStrategy("inbound-processing-time-filter")
-        .ruleEvaluationFacts(Collections.singletonMap("key", "value"))
+        .ruleEvaluationFacts(ruleEvaluationFacts)
         .build();
   }
 

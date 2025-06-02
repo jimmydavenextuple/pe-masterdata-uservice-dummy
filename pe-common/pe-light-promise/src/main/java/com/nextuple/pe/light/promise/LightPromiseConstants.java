@@ -11,6 +11,9 @@ public class LightPromiseConstants {
   private LightPromiseConstants() {} // NOSONAR
 
   public static final String INBOUND_PROCESSING_TIME_FILTER = "inbound-processing-time-filter";
-
   public static final String INBOUND_PROCESSING_TIME_KEY = "inboundProcessingTime";
+  public static final String ORG_ID_KEY = "orgId";
+  public static final String NODE_ID_KEY = "nodeId";
+  public static final String RULE_GROUP_KEY = "ruleGroup";
+  public static final String RULE_EVALUATION_FACTS_KEY = "ruleEvaluationFacts";
 }

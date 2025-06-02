@@ -8,6 +8,10 @@ package com.nextuple.pe.light.promise.service.impl;
 
 import static com.nextuple.pe.light.promise.LightPromiseConstants.INBOUND_PROCESSING_TIME_FILTER;
 import static com.nextuple.pe.light.promise.LightPromiseConstants.INBOUND_PROCESSING_TIME_KEY;
+import static com.nextuple.pe.light.promise.LightPromiseConstants.NODE_ID_KEY;
+import static com.nextuple.pe.light.promise.LightPromiseConstants.ORG_ID_KEY;
+import static com.nextuple.pe.light.promise.LightPromiseConstants.RULE_EVALUATION_FACTS_KEY;
+import static com.nextuple.pe.light.promise.LightPromiseConstants.RULE_GROUP_KEY;
 
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
@@ -66,6 +70,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
     String ruleGroup = inboundProcessingTimeRequest.getRuleGroup();
 
     Map<String, Object> facts = inboundProcessingTimeRequest.getRuleEvaluationFacts();
+    facts.put(ORG_ID_KEY, tenantId);
     if (inboundProcessingTimeRequest.getRuleFilterStrategy() == null
         || inboundProcessingTimeRequest.getRuleFilterStrategy().isBlank()) {
 
@@ -98,7 +103,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
       throw new CommonServiceException(
           "Inbound processing time key is null in the response.",
           HttpStatus.BAD_REQUEST,
-          404,
+          400,
           Map.of("inboundProcessingTime", new FieldError()));
     }
   }
@@ -112,13 +117,13 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
    */
   private void validateInboundProcessingRequest(
       InboundProcessingTimeRequest inboundProcessingTimeRequest) throws CommonServiceException {
-    validateField(inboundProcessingTimeRequest.getNodeId(), "nodeId", "nodeId can't be blank.");
-    validateField(inboundProcessingTimeRequest.getOrgId(), "orgId", "orgId can't be blank.");
+    validateField(inboundProcessingTimeRequest.getNodeId(), NODE_ID_KEY, "nodeId can't be blank.");
+    validateField(inboundProcessingTimeRequest.getOrgId(), ORG_ID_KEY, "orgId can't be blank.");
     validateField(
-        inboundProcessingTimeRequest.getRuleGroup(), "ruleGroup", "ruleGroup can't be blank.");
+        inboundProcessingTimeRequest.getRuleGroup(), RULE_GROUP_KEY, "ruleGroup can't be blank.");
     validateMap(
         inboundProcessingTimeRequest.getRuleEvaluationFacts(),
-        "ruleEvaluationFacts",
+        RULE_EVALUATION_FACTS_KEY,
         "ruleEvaluationFacts can't be null.");
   }
 
