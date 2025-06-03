@@ -47,4 +47,7 @@ public class InboundProcessingTimeRequest {
       example = "{ \"key1\": \"value1\", \"key2\": \"value2\" }")
   @NotNull(message = "ruleEvaluationFacts can't be null")
   private Map<String, Object> ruleEvaluationFacts;
+
+  @Schema(description = "Flag to indicate if the request is for a calendar day.")
+  private String requestDate;
 }

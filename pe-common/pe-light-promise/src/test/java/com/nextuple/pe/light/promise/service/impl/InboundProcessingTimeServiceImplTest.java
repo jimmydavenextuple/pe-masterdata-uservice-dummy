@@ -9,16 +9,26 @@ package com.nextuple.pe.light.promise.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nextuple.calendar.domain.CalendarDaysStatusInfo;
 import com.nextuple.common.exception.CommonServiceException;
+import com.nextuple.node.calendar.cache.domain.NodeCalendarCacheKey;
+import com.nextuple.node.calendar.cache.domain.NodeCalendarCacheValue;
+import com.nextuple.node.calendar.cache.service.NodeCalendarNearCacheService;
+import com.nextuple.node.data.cache.domain.NodeDataCacheKey;
+import com.nextuple.node.data.cache.domain.NodeDataCacheValue;
+import com.nextuple.node.data.cache.service.NodeDataNearCacheService;
 import com.nextuple.pe.light.promise.TestUtils;
 import com.nextuple.pe.light.promise.inbound.InboundProcessingTimeRequest;
 import com.nextuple.pe.light.promise.outbound.InboundProcessingTimeResponse;
 import com.nextuple.rulecraft.engine.api.RuleEngineApi;
 import com.nextuple.rulecraft.engine.model.ResourceTagEvalRequest;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,9 +43,29 @@ class InboundProcessingTimeServiceImplTest {
 
   @Mock private RuleEngineApi ruleEngineApi;
 
+  @Mock private NodeDataNearCacheService nodeDataNearCacheService;
+
+  @Mock private NodeCalendarNearCacheService nodeCalendarNearCacheService;
+
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
+
+    // Setup default mock responses for the services
+    NodeDataCacheValue mockNodeData =
+        NodeDataCacheValue.builder().startWorkingTime("09:00").lastWorkingTime("17:00").build();
+    when(nodeDataNearCacheService.get(any(NodeDataCacheKey.class))).thenReturn(mockNodeData);
+
+    List<CalendarDaysStatusInfo> calendarDays = new ArrayList<>();
+    CalendarDaysStatusInfo info = new CalendarDaysStatusInfo();
+    info.setDate("2023-01-01");
+    info.setIsActive(true);
+    calendarDays.add(info);
+
+    NodeCalendarCacheValue mockCalendarValue =
+        NodeCalendarCacheValue.builder().calendarDaysStatusInfo(calendarDays).build();
+    when(nodeCalendarNearCacheService.get(any(NodeCalendarCacheKey.class)))
+        .thenReturn(mockCalendarValue);
   }
 
   @Test

@@ -15,16 +15,24 @@ import static com.nextuple.pe.light.promise.LightPromiseConstants.RULE_GROUP_KEY
 
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
+import com.nextuple.node.calendar.cache.domain.NodeCalendarCacheKey;
+import com.nextuple.node.calendar.cache.service.NodeCalendarNearCacheService;
+import com.nextuple.node.data.cache.domain.NodeDataCacheKey;
+import com.nextuple.node.data.cache.domain.NodeDataCacheValue;
+import com.nextuple.node.data.cache.service.NodeDataNearCacheService;
 import com.nextuple.pe.light.promise.inbound.InboundProcessingTimeRequest;
 import com.nextuple.pe.light.promise.outbound.InboundProcessingTimeResponse;
+import com.nextuple.pe.light.promise.pojo.InboundNodeCalendar;
 import com.nextuple.pe.light.promise.service.InboundProcessingTimeService;
 import com.nextuple.rulecraft.engine.api.RuleEngineApi;
 import com.nextuple.rulecraft.engine.model.ResourceTagEvalRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +42,8 @@ import org.springframework.stereotype.Service;
 public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeService {
 
   private final RuleEngineApi ruleEngineApi;
+  @Autowired NodeDataNearCacheService nodeDataNearCacheService;
+  @Autowired NodeCalendarNearCacheService nodeCalendarNearCacheService;
 
   /**
    * Evaluates the inbound processing time based on the provided request.
@@ -47,10 +57,17 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
       InboundProcessingTimeRequest inboundProcessingTimeRequest) throws CommonServiceException {
 
     Double inboundProcessingTime = getInboundProcessingTime(inboundProcessingTimeRequest);
+    NodeDataCacheValue nodeData = getNodeDataCacheValue(inboundProcessingTimeRequest);
+    List<InboundNodeCalendar> calendarDays =
+        getNodeCalendarCacheValue(inboundProcessingTimeRequest);
+
     return InboundProcessingTimeResponse.builder()
         .nodeId(inboundProcessingTimeRequest.getNodeId())
         .orgId(inboundProcessingTimeRequest.getOrgId())
         .inboundProcessingTime(inboundProcessingTime)
+        .calendarDays(calendarDays)
+        .startWorkingTime(nodeData.getStartWorkingTime())
+        .lastWorkingTime(nodeData.getLastWorkingTime())
         .build();
   }
 
@@ -149,5 +166,50 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
           400,
           Map.of(fieldName, new FieldError()));
     }
+  }
+
+  /**
+   * Retrieves the node data cache value for the given request.
+   *
+   * @param request The inbound processing time request.
+   * @return The NodeDataCacheValue for the requested node.
+   */
+  private NodeDataCacheValue getNodeDataCacheValue(InboundProcessingTimeRequest request) {
+    return nodeDataNearCacheService.get(
+        NodeDataCacheKey.builder().nodeId(request.getNodeId()).orgId(request.getOrgId()).build());
+  }
+
+  /**
+   * Retrieves and validates the node calendar cache value for the given request.
+   *
+   * @param request The inbound processing time request.
+   * @return The validated node calendar cache value.
+   * @throws CommonServiceException If the node calendar response is null.
+   */
+  private List<InboundNodeCalendar> getNodeCalendarCacheValue(InboundProcessingTimeRequest request)
+      throws CommonServiceException {
+    var nodeCalendarCacheKey =
+        NodeCalendarCacheKey.builder()
+            .nodeId(request.getNodeId())
+            .orgId(request.getOrgId())
+            .fromDate(request.getRequestDate())
+            .build();
+
+    var nodeCalendarCacheValue = nodeCalendarNearCacheService.get(nodeCalendarCacheKey);
+    if (nodeCalendarCacheValue == null) {
+      throw new CommonServiceException(
+          "Node calender response is null.",
+          HttpStatus.BAD_REQUEST,
+          404,
+          Map.of("nodeCalendarCacheValue", new FieldError()));
+    }
+    return nodeCalendarCacheValue.getCalendarDaysStatusInfo().stream()
+        .map(
+            info ->
+                InboundNodeCalendar.builder()
+                    .date(info.getDate())
+                    .isActive(info.getIsActive())
+                    .build())
+        .collect(Collectors.toList());
   }
 }
