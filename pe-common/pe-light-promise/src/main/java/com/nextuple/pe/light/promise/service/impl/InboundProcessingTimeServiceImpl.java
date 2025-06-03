@@ -174,9 +174,24 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
    * @param request The inbound processing time request.
    * @return The NodeDataCacheValue for the requested node.
    */
-  private NodeDataCacheValue getNodeDataCacheValue(InboundProcessingTimeRequest request) {
-    return nodeDataNearCacheService.get(
-        NodeDataCacheKey.builder().nodeId(request.getNodeId()).orgId(request.getOrgId()).build());
+  private NodeDataCacheValue getNodeDataCacheValue(InboundProcessingTimeRequest request)
+      throws CommonServiceException {
+    NodeDataCacheValue nodeDataCacheValue =
+        nodeDataNearCacheService.get(
+            NodeDataCacheKey.builder()
+                .nodeId(request.getNodeId())
+                .orgId(request.getOrgId())
+                .build());
+
+    if (nodeDataCacheValue == null) {
+      throw new CommonServiceException(
+          "Node data response is null.",
+          HttpStatus.BAD_REQUEST,
+          404,
+          Map.of("nodeDataCacheValue", new FieldError()));
+    }
+
+    return nodeDataCacheValue;
   }
 
   /**

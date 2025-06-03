@@ -6,10 +6,9 @@
  */
 package com.nextuple.pe.light.promise.service.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -51,7 +50,10 @@ class InboundProcessingTimeServiceImplTest {
   void setUp() {
     MockitoAnnotations.openMocks(this);
 
-    // Setup default mock responses for the services
+    inboundProcessingTimeService = new InboundProcessingTimeServiceImpl(ruleEngineApi);
+    inboundProcessingTimeService.nodeDataNearCacheService = nodeDataNearCacheService;
+    inboundProcessingTimeService.nodeCalendarNearCacheService = nodeCalendarNearCacheService;
+
     NodeDataCacheValue mockNodeData =
         NodeDataCacheValue.builder().startWorkingTime("09:00").lastWorkingTime("17:00").build();
     when(nodeDataNearCacheService.get(any(NodeDataCacheKey.class))).thenReturn(mockNodeData);
@@ -72,7 +74,7 @@ class InboundProcessingTimeServiceImplTest {
   @DisplayName("Validate request with blank nodeId throws exception")
   void validateInboundProcessingRequest_withBlankNodeId_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-    request.setNodeId(" "); // Set nodeId to blank
+    request.setNodeId(" ");
 
     CommonServiceException exception =
         assertThrows(
@@ -86,7 +88,7 @@ class InboundProcessingTimeServiceImplTest {
   @DisplayName("Validate request with null orgId throws exception")
   void validateInboundProcessingRequest_withNullOrgId_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-    request.setOrgId(null); // Set orgId to null
+    request.setOrgId(null);
 
     CommonServiceException exception =
         assertThrows(
@@ -100,7 +102,7 @@ class InboundProcessingTimeServiceImplTest {
   @DisplayName("Validate request with blank ruleGroup throws exception")
   void validateInboundProcessingRequest_withBlankRuleGroup_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-    request.setRuleGroup(" "); // Set ruleGroup to blank
+    request.setRuleGroup(" ");
 
     CommonServiceException exception =
         assertThrows(
@@ -114,7 +116,7 @@ class InboundProcessingTimeServiceImplTest {
   @DisplayName("Validate request with null ruleEvaluationFacts throws exception")
   void validateInboundProcessingRequest_withNullRuleEvaluationFacts_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-    request.setRuleEvaluationFacts(null); // Set ruleEvaluationFacts to null
+    request.setRuleEvaluationFacts(null);
 
     CommonServiceException exception =
         assertThrows(
@@ -128,7 +130,7 @@ class InboundProcessingTimeServiceImplTest {
   @DisplayName("Get inbound processing time with null response key throws exception")
   void getInboundProcessingTime_withNullResponseKey_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-    Map<String, Object> mockResponse = Collections.emptyMap(); // Simulate null response key
+    Map<String, Object> mockResponse = Collections.emptyMap();
     ResourceTagEvalRequest resourceTagEvalRequest =
         new ResourceTagEvalRequest(
             request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
@@ -179,7 +181,7 @@ class InboundProcessingTimeServiceImplTest {
   @DisplayName("Evaluate inbound processing time with null ruleFilterStrategy")
   void evaluateInboundProcessingTime_withNullRuleFilterStrategy() throws CommonServiceException {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-    request.setRuleFilterStrategy(null); // Set ruleFilterStrategy to null
+    request.setRuleFilterStrategy(null);
     Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
     ResourceTagEvalRequest resourceTagEvalRequest =
         new ResourceTagEvalRequest(
@@ -209,7 +211,8 @@ class InboundProcessingTimeServiceImplTest {
   @DisplayName("Evaluate inbound processing time with blank ruleFilterStrategy")
   void evaluateInboundProcessingTime_withBlankRuleFilterStrategy() throws CommonServiceException {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-    request.setRuleFilterStrategy(" "); // Set ruleFilterStrategy to blank
+    request.setRuleFilterStrategy(" ");
+
     Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
     ResourceTagEvalRequest resourceTagEvalRequest =
         new ResourceTagEvalRequest(
@@ -221,26 +224,54 @@ class InboundProcessingTimeServiceImplTest {
             resourceTagEvalRequest))
         .thenReturn(mockResponse);
 
+    NodeDataCacheKey expectedNodeDataKey =
+        NodeDataCacheKey.builder().nodeId(request.getNodeId()).orgId(request.getOrgId()).build();
+    NodeDataCacheValue mockNodeData =
+        NodeDataCacheValue.builder().startWorkingTime("09:00").lastWorkingTime("17:00").build();
+    when(nodeDataNearCacheService.get(eq(expectedNodeDataKey))).thenReturn(mockNodeData);
+
+    NodeCalendarCacheKey expectedCalendarKey =
+        NodeCalendarCacheKey.builder()
+            .nodeId(request.getNodeId())
+            .orgId(request.getOrgId())
+            .fromDate(request.getRequestDate())
+            .build();
+    List<CalendarDaysStatusInfo> calendarDays = new ArrayList<>();
+    CalendarDaysStatusInfo info = new CalendarDaysStatusInfo();
+    info.setDate("2023-01-01");
+    info.setIsActive(true);
+    calendarDays.add(info);
+    NodeCalendarCacheValue mockCalendarValue =
+        NodeCalendarCacheValue.builder().calendarDaysStatusInfo(calendarDays).build();
+    when(nodeCalendarNearCacheService.get(eq(expectedCalendarKey))).thenReturn(mockCalendarValue);
+
     InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
 
     assertNotNull(response);
     assertEquals(10.0, response.getInboundProcessingTime());
     assertEquals("inbound-processing-time-filter", request.getRuleFilterStrategy());
+    assertEquals("09:00", response.getStartWorkingTime());
+    assertEquals("17:00", response.getLastWorkingTime());
+    assertNotNull(response.getCalendarDays());
+    assertEquals(1, response.getCalendarDays().size());
+    assertEquals("2023-01-01", response.getCalendarDays().get(0).getDate());
+
     verify(ruleEngineApi)
         .evaluateRules(
             request.getOrgId(),
             request.getRuleGroup(),
             Collections.singletonList("inbound-processing-time-filter"),
             resourceTagEvalRequest);
+    verify(nodeDataNearCacheService).get(any(NodeDataCacheKey.class));
+    verify(nodeCalendarNearCacheService).get(any(NodeCalendarCacheKey.class));
   }
 
   @Test
   @DisplayName("Get inbound processing time with invalid response key type throws exception")
   void getInboundProcessingTime_withInvalidResponseKeyType_throwsException() {
     InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-    Map<String, Object> mockResponse =
-        Map.of("inboundProcessingTime", "invalidType"); // Simulate invalid type
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", "invalidType");
     ResourceTagEvalRequest resourceTagEvalRequest =
         new ResourceTagEvalRequest(
             request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
@@ -257,5 +288,376 @@ class InboundProcessingTimeServiceImplTest {
             () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
 
     assertEquals("Inbound processing time key is not a valid number.", exception.getMessage());
+  }
+
+  @Test
+  @DisplayName("Test null Node Calendar Cache response throws exception")
+  void getNodeCalendarCacheValue_withNullResponse_throwsException() {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    NodeCalendarCacheKey expectedCalendarKey =
+        NodeCalendarCacheKey.builder()
+            .nodeId(request.getNodeId())
+            .orgId(request.getOrgId())
+            .fromDate(request.getRequestDate())
+            .build();
+    when(nodeCalendarNearCacheService.get(eq(expectedCalendarKey))).thenReturn(null);
+
+    CommonServiceException exception =
+        assertThrows(
+            CommonServiceException.class,
+            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+
+    assertEquals("Node calender response is null.", exception.getMessage());
+    verify(nodeCalendarNearCacheService).get(any(NodeCalendarCacheKey.class));
+  }
+
+  @Test
+  @DisplayName("Test with custom rule filter strategy")
+  void evaluateInboundProcessingTime_withCustomRuleFilterStrategy() throws CommonServiceException {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+    String customFilterStrategy = "custom-filter-strategy";
+    request.setRuleFilterStrategy(customFilterStrategy);
+
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 15.5);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList(customFilterStrategy),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    InboundProcessingTimeResponse response =
+        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertNotNull(response);
+    assertEquals(15.5, response.getInboundProcessingTime());
+    assertEquals(customFilterStrategy, request.getRuleFilterStrategy());
+    verify(ruleEngineApi)
+        .evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList(customFilterStrategy),
+            resourceTagEvalRequest);
+  }
+
+  @Test
+  @DisplayName("Test with custom request date")
+  void evaluateInboundProcessingTime_withCustomRequestDate() throws CommonServiceException {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+    String customDate = "2023-05-15";
+    request.setRequestDate(customDate);
+
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    NodeCalendarCacheKey expectedCalendarKey =
+        NodeCalendarCacheKey.builder()
+            .nodeId(request.getNodeId())
+            .orgId(request.getOrgId())
+            .fromDate(customDate)
+            .build();
+
+    List<CalendarDaysStatusInfo> calendarDays = new ArrayList<>();
+    CalendarDaysStatusInfo info = new CalendarDaysStatusInfo();
+    info.setDate(customDate);
+    info.setIsActive(true);
+    calendarDays.add(info);
+
+    NodeCalendarCacheValue mockCalendarValue =
+        NodeCalendarCacheValue.builder().calendarDaysStatusInfo(calendarDays).build();
+    when(nodeCalendarNearCacheService.get(eq(expectedCalendarKey))).thenReturn(mockCalendarValue);
+
+    InboundProcessingTimeResponse response =
+        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertNotNull(response);
+    assertEquals(10.0, response.getInboundProcessingTime());
+    assertEquals(1, response.getCalendarDays().size());
+    assertEquals(customDate, response.getCalendarDays().get(0).getDate());
+    verify(nodeCalendarNearCacheService).get(eq(expectedCalendarKey));
+  }
+
+  @Test
+  @DisplayName("Test with inactive calendar day")
+  void evaluateInboundProcessingTime_withInactiveCalendarDay() throws CommonServiceException {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    NodeCalendarCacheKey expectedCalendarKey =
+        NodeCalendarCacheKey.builder()
+            .nodeId(request.getNodeId())
+            .orgId(request.getOrgId())
+            .fromDate(request.getRequestDate())
+            .build();
+
+    List<CalendarDaysStatusInfo> calendarDays = new ArrayList<>();
+    CalendarDaysStatusInfo info = new CalendarDaysStatusInfo();
+    info.setDate("2023-01-01");
+    info.setIsActive(false);
+    calendarDays.add(info);
+
+    NodeCalendarCacheValue mockCalendarValue =
+        NodeCalendarCacheValue.builder().calendarDaysStatusInfo(calendarDays).build();
+    when(nodeCalendarNearCacheService.get(eq(expectedCalendarKey))).thenReturn(mockCalendarValue);
+
+    InboundProcessingTimeResponse response =
+        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertNotNull(response);
+    assertEquals(10.0, response.getInboundProcessingTime());
+    assertEquals(1, response.getCalendarDays().size());
+    assertEquals(false, response.getCalendarDays().get(0).getIsActive());
+    verify(nodeCalendarNearCacheService).get(any(NodeCalendarCacheKey.class));
+  }
+
+  @Test
+  @DisplayName("Test with multiple calendar days")
+  void evaluateInboundProcessingTime_withMultipleCalendarDays() throws CommonServiceException {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    List<CalendarDaysStatusInfo> calendarDays = new ArrayList<>();
+
+    CalendarDaysStatusInfo day1 = new CalendarDaysStatusInfo();
+    day1.setDate("2023-01-01");
+    day1.setIsActive(true);
+    calendarDays.add(day1);
+
+    CalendarDaysStatusInfo day2 = new CalendarDaysStatusInfo();
+    day2.setDate("2023-01-02");
+    day2.setIsActive(false);
+    calendarDays.add(day2);
+
+    CalendarDaysStatusInfo day3 = new CalendarDaysStatusInfo();
+    day3.setDate("2023-01-03");
+    day3.setIsActive(true);
+    calendarDays.add(day3);
+
+    NodeCalendarCacheValue mockCalendarValue =
+        NodeCalendarCacheValue.builder().calendarDaysStatusInfo(calendarDays).build();
+    when(nodeCalendarNearCacheService.get(any(NodeCalendarCacheKey.class)))
+        .thenReturn(mockCalendarValue);
+
+    InboundProcessingTimeResponse response =
+        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertNotNull(response);
+    assertEquals(10.0, response.getInboundProcessingTime());
+    assertEquals(3, response.getCalendarDays().size());
+    assertEquals("2023-01-01", response.getCalendarDays().get(0).getDate());
+    assertEquals(true, response.getCalendarDays().get(0).getIsActive());
+    assertEquals("2023-01-02", response.getCalendarDays().get(1).getDate());
+    assertEquals(false, response.getCalendarDays().get(1).getIsActive());
+    assertEquals("2023-01-03", response.getCalendarDays().get(2).getDate());
+    assertEquals(true, response.getCalendarDays().get(2).getIsActive());
+  }
+
+  @Test
+  @DisplayName("Test null Node Data Cache response throws exception")
+  void getNodeDataCacheValue_withNullResponse_throwsException() {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    NodeDataCacheKey expectedNodeDataKey =
+        NodeDataCacheKey.builder().nodeId(request.getNodeId()).orgId(request.getOrgId()).build();
+    when(nodeDataNearCacheService.get(eq(expectedNodeDataKey))).thenReturn(null);
+
+    CommonServiceException exception =
+        assertThrows(
+            CommonServiceException.class,
+            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+
+    assertEquals("Node data response is null.", exception.getMessage());
+    verify(nodeDataNearCacheService).get(any(NodeDataCacheKey.class));
+  }
+
+  @Test
+  @DisplayName("Test Node Data Cache retrieval with specific properties")
+  void getNodeDataCacheValue_withSpecificWorkingTimeProperties() throws CommonServiceException {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    String startTime = "08:30";
+    String endTime = "18:30";
+
+    NodeDataCacheKey expectedNodeDataKey =
+        NodeDataCacheKey.builder().nodeId(request.getNodeId()).orgId(request.getOrgId()).build();
+    NodeDataCacheValue mockNodeData =
+        NodeDataCacheValue.builder().startWorkingTime(startTime).lastWorkingTime(endTime).build();
+    when(nodeDataNearCacheService.get(eq(expectedNodeDataKey))).thenReturn(mockNodeData);
+
+    InboundProcessingTimeResponse response =
+        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertNotNull(response);
+    assertEquals(10.0, response.getInboundProcessingTime());
+    assertEquals(startTime, response.getStartWorkingTime());
+    assertEquals(endTime, response.getLastWorkingTime());
+    verify(nodeDataNearCacheService).get(eq(expectedNodeDataKey));
+  }
+
+  @Test
+  @DisplayName("Test Node Data Cache with empty working time values")
+  void getNodeDataCacheValue_withEmptyWorkingTimeValues() throws CommonServiceException {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    NodeDataCacheKey expectedNodeDataKey =
+        NodeDataCacheKey.builder().nodeId(request.getNodeId()).orgId(request.getOrgId()).build();
+    NodeDataCacheValue mockNodeData =
+        NodeDataCacheValue.builder().startWorkingTime("").lastWorkingTime("").build();
+    when(nodeDataNearCacheService.get(eq(expectedNodeDataKey))).thenReturn(mockNodeData);
+
+    InboundProcessingTimeResponse response =
+        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertNotNull(response);
+    assertEquals(10.0, response.getInboundProcessingTime());
+    assertEquals("", response.getStartWorkingTime());
+    assertEquals("", response.getLastWorkingTime());
+    verify(nodeDataNearCacheService).get(eq(expectedNodeDataKey));
+  }
+
+  @Test
+  @DisplayName("Test Node Data Cache with null working time values")
+  void getNodeDataCacheValue_withNullWorkingTimeValues() throws CommonServiceException {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    NodeDataCacheKey expectedNodeDataKey =
+        NodeDataCacheKey.builder().nodeId(request.getNodeId()).orgId(request.getOrgId()).build();
+    NodeDataCacheValue mockNodeData =
+        NodeDataCacheValue.builder().startWorkingTime(null).lastWorkingTime(null).build();
+    when(nodeDataNearCacheService.get(eq(expectedNodeDataKey))).thenReturn(mockNodeData);
+
+    InboundProcessingTimeResponse response =
+        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertNotNull(response);
+    assertEquals(10.0, response.getInboundProcessingTime());
+    assertNull(response.getStartWorkingTime());
+    assertNull(response.getLastWorkingTime());
+    verify(nodeDataNearCacheService).get(eq(expectedNodeDataKey));
+  }
+
+  @Test
+  @DisplayName("Test Node Data Cache call with different node and org IDs")
+  void getNodeDataCacheValue_withDifferentNodeAndOrgIds() throws CommonServiceException {
+    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
+    request.setNodeId("specificNodeId");
+    request.setOrgId("specificOrgId");
+
+    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
+    ResourceTagEvalRequest resourceTagEvalRequest =
+        new ResourceTagEvalRequest(
+            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
+    when(ruleEngineApi.evaluateRules(
+            request.getOrgId(),
+            request.getRuleGroup(),
+            Collections.singletonList("inbound-processing-time-filter"),
+            resourceTagEvalRequest))
+        .thenReturn(mockResponse);
+
+    NodeDataCacheKey expectedNodeDataKey =
+        NodeDataCacheKey.builder().nodeId("specificNodeId").orgId("specificOrgId").build();
+
+    NodeDataCacheValue mockNodeData =
+        NodeDataCacheValue.builder().startWorkingTime("10:00").lastWorkingTime("20:00").build();
+
+    when(nodeDataNearCacheService.get(eq(expectedNodeDataKey))).thenReturn(mockNodeData);
+
+    InboundProcessingTimeResponse response =
+        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+
+    assertNotNull(response);
+    assertEquals("specificNodeId", response.getNodeId());
+    assertEquals("specificOrgId", response.getOrgId());
+    assertEquals("10:00", response.getStartWorkingTime());
+    assertEquals("20:00", response.getLastWorkingTime());
+
+    verify(nodeDataNearCacheService).get(eq(expectedNodeDataKey));
   }
 }
