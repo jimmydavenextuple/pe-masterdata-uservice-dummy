@@ -193,7 +193,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
   private List<CalendarDaysStatusInfo> getNodeCalendarCacheValue(
       String orgId, String nodeId, String requestDate) throws CommonServiceException {
     var nodeCalendarCacheKey =
-        NodeCalendarCacheKey.builder().nodeId(orgId).orgId(nodeId).fromDate(requestDate).build();
+        NodeCalendarCacheKey.builder().nodeId(nodeId).orgId(orgId).fromDate(requestDate).build();
 
     var nodeCalendarCacheValue = nodeCalendarNearCacheService.get(nodeCalendarCacheKey);
     if (nodeCalendarCacheValue.getCalendarDaysStatusInfo() == null) {
