@@ -1,6 +1,9 @@
 package com.nextuple.pe.light.promise.service.impl;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.nextuple.core.cache.service.GenericNearCacheService;
 import java.util.ArrayList;
@@ -15,13 +18,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-public class CacheWarmupServiceTest {
+public class NearCacheServiceTest {
 
   @Mock private GenericNearCacheService<?, ?> mockCacheService1;
 
   @Mock private GenericNearCacheService<?, ?> mockCacheService2;
 
-  @InjectMocks private CacheWarmUpService cacheWarmUpService;
+  @InjectMocks private NearCacheService nearCacheService;
 
   private List<GenericNearCacheService<?, ?>> nearCacheServices;
 
@@ -30,32 +33,32 @@ public class CacheWarmupServiceTest {
     nearCacheServices = new ArrayList<>();
     nearCacheServices.add(mockCacheService1);
     nearCacheServices.add(mockCacheService2);
-    ReflectionTestUtils.setField(cacheWarmUpService, "nearCacheServices", nearCacheServices);
+    ReflectionTestUtils.setField(nearCacheService, "nearCacheServices", nearCacheServices);
   }
 
   @Test
   @DisplayName("Test successful deletion of all near cache data")
-  public void testDeleteAllNearCacheData_Success() {
-    cacheWarmUpService.deleteAllNearCacheData();
+  public void testDeleteAllNearCacheDataSuccess() {
+    nearCacheService.deleteAllNearCacheData();
     verify(mockCacheService1, times(1)).deleteAll();
     verify(mockCacheService2, times(1)).deleteAll();
   }
 
   @Test
   @DisplayName("Test deletion when one cache service throws an exception")
-  public void testDeleteAllNearCacheData_WithException() {
+  public void testDeleteAllNearCacheDataWithException() {
     doThrow(new RuntimeException("Test Exception")).when(mockCacheService1).deleteAll();
     when(mockCacheService1.getEntityName()).thenReturn("TestCache1");
-    cacheWarmUpService.deleteAllNearCacheData();
+    nearCacheService.deleteAllNearCacheData();
     verify(mockCacheService1, times(1)).deleteAll();
     verify(mockCacheService2, times(1)).deleteAll();
   }
 
   @Test
   @DisplayName("Test deletion with empty cache services list")
-  public void testDeleteAllNearCacheData_EmptyList() {
+  public void testDeleteAllNearCacheDataEmptyList() {
     List<GenericNearCacheService<?, ?>> emptyList = new ArrayList<>();
-    ReflectionTestUtils.setField(cacheWarmUpService, "nearCacheServices", emptyList);
-    cacheWarmUpService.deleteAllNearCacheData();
+    ReflectionTestUtils.setField(nearCacheService, "nearCacheServices", emptyList);
+    nearCacheService.deleteAllNearCacheData();
   }
 }

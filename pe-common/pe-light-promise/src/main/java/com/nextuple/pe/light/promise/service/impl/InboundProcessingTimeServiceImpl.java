@@ -13,6 +13,7 @@ import static com.nextuple.pe.light.promise.LightPromiseConstants.ORG_ID_KEY;
 import static com.nextuple.pe.light.promise.LightPromiseConstants.RULE_EVALUATION_FACTS_KEY;
 import static com.nextuple.pe.light.promise.LightPromiseConstants.RULE_GROUP_KEY;
 
+import com.nextuple.calendar.domain.CalendarDaysStatusInfo;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.node.calendar.cache.domain.NodeCalendarCacheKey;
@@ -22,7 +23,6 @@ import com.nextuple.node.data.cache.domain.NodeDataCacheValue;
 import com.nextuple.node.data.cache.service.NodeDataNearCacheService;
 import com.nextuple.pe.light.promise.inbound.InboundProcessingTimeRequest;
 import com.nextuple.pe.light.promise.outbound.InboundProcessingTimeResponse;
-import com.nextuple.pe.light.promise.pojo.InboundNodeCalendar;
 import com.nextuple.pe.light.promise.service.InboundProcessingTimeService;
 import com.nextuple.rulecraft.engine.api.RuleEngineApi;
 import com.nextuple.rulecraft.engine.model.ResourceTagEvalRequest;
@@ -57,9 +57,14 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
       InboundProcessingTimeRequest inboundProcessingTimeRequest) throws CommonServiceException {
 
     Double inboundProcessingTime = getInboundProcessingTime(inboundProcessingTimeRequest);
-    NodeDataCacheValue nodeData = getNodeDataCacheValue(inboundProcessingTimeRequest);
-    List<InboundNodeCalendar> calendarDays =
-        getNodeCalendarCacheValue(inboundProcessingTimeRequest);
+    NodeDataCacheValue nodeData =
+        getNodeDataCacheValue(
+            inboundProcessingTimeRequest.getOrgId(), inboundProcessingTimeRequest.getNodeId());
+    List<CalendarDaysStatusInfo> calendarDays =
+        getNodeCalendarCacheValue(
+            inboundProcessingTimeRequest.getOrgId(),
+            inboundProcessingTimeRequest.getNodeId(),
+            inboundProcessingTimeRequest.getRequestDate());
 
     return InboundProcessingTimeResponse.builder()
         .nodeId(inboundProcessingTimeRequest.getNodeId())
@@ -168,20 +173,11 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
     }
   }
 
-  /**
-   * Retrieves the node data cache value for the given request.
-   *
-   * @param request The inbound processing time request.
-   * @return The NodeDataCacheValue for the requested node.
-   */
-  private NodeDataCacheValue getNodeDataCacheValue(InboundProcessingTimeRequest request)
+  private NodeDataCacheValue getNodeDataCacheValue(String orgId, String nodeId)
       throws CommonServiceException {
     NodeDataCacheValue nodeDataCacheValue =
         nodeDataNearCacheService.get(
-            NodeDataCacheKey.builder()
-                .nodeId(request.getNodeId())
-                .orgId(request.getOrgId())
-                .build());
+            NodeDataCacheKey.builder().nodeId(nodeId).orgId(orgId).build());
 
     if (nodeDataCacheValue == null) {
       throw new CommonServiceException(
@@ -194,21 +190,10 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
     return nodeDataCacheValue;
   }
 
-  /**
-   * Retrieves and validates the node calendar cache value for the given request.
-   *
-   * @param request The inbound processing time request.
-   * @return The validated node calendar cache value.
-   * @throws CommonServiceException If the node calendar response is null.
-   */
-  private List<InboundNodeCalendar> getNodeCalendarCacheValue(InboundProcessingTimeRequest request)
-      throws CommonServiceException {
+  private List<CalendarDaysStatusInfo> getNodeCalendarCacheValue(
+      String orgId, String nodeId, String requestDate) throws CommonServiceException {
     var nodeCalendarCacheKey =
-        NodeCalendarCacheKey.builder()
-            .nodeId(request.getNodeId())
-            .orgId(request.getOrgId())
-            .fromDate(request.getRequestDate())
-            .build();
+        NodeCalendarCacheKey.builder().nodeId(orgId).orgId(nodeId).fromDate(requestDate).build();
 
     var nodeCalendarCacheValue = nodeCalendarNearCacheService.get(nodeCalendarCacheKey);
     if (nodeCalendarCacheValue.getCalendarDaysStatusInfo() == null) {
@@ -221,7 +206,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
     return nodeCalendarCacheValue.getCalendarDaysStatusInfo().stream()
         .map(
             info ->
-                InboundNodeCalendar.builder()
+                CalendarDaysStatusInfo.builder()
                     .date(info.getDate())
                     .isActive(info.getIsActive())
                     .build())

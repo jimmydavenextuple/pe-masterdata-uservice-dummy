@@ -12,10 +12,9 @@ import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.common.exception.HardExecutionFailureException;
 import com.nextuple.common.exception.ServiceUnavailableException;
 import com.nextuple.common.response.BaseResponse;
-import com.nextuple.pe.light.promise.service.impl.CacheWarmUpService;
+import com.nextuple.pe.light.promise.service.impl.NearCacheService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,19 +35,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Cache Warmup APIs")
 @Hidden
-public class CacheWarmupController {
+public class NearCacheController {
 
-  private static Logger logger = LoggerFactory.getLogger(CacheWarmupController.class);
-  @Autowired CacheWarmUpService cacheWarmUpService;
+  private static Logger logger = LoggerFactory.getLogger(NearCacheController.class);
+  @Autowired NearCacheService nearCacheService;
 
   @Operation(summary = "Evict near cache", description = "Deletes all the values in near cache.")
   @DeleteMapping(value = "/evict-cache")
   public ResponseEntity<BaseResponse<String>> evictNearCache() {
     var message = "";
     try {
-      cacheWarmUpService.deleteAllNearCacheData();
+      nearCacheService.deleteAllNearCacheData();
       message = "Near cache values evicted successfully!";
       return ResponseEntity.ok(BaseResponse.builder().message(message).build());
     } catch (ServiceUnavailableException | HardExecutionFailureException e) {

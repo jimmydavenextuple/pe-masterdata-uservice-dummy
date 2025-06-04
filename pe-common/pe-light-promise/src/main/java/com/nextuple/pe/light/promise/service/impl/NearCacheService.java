@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CacheWarmUpService {
-  private static final Logger logger = LoggerFactory.getLogger(CacheWarmUpService.class);
+public class NearCacheService {
+  private static final Logger logger = LoggerFactory.getLogger(NearCacheService.class);
 
   @Autowired List<GenericNearCacheService> nearCacheServices; // NOSONAR
 

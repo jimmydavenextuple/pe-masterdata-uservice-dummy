@@ -9,6 +9,7 @@ package com.nextuple.pe.light.promise.inbound;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -48,6 +49,11 @@ public class InboundProcessingTimeRequest {
   @NotNull(message = "ruleEvaluationFacts can't be null")
   private Map<String, Object> ruleEvaluationFacts;
 
-  @Schema(description = "Flag to indicate if the request is for a calendar day.")
+  @Schema(
+      description = "Request Date is the date to start the calendar days from. Format: yyyy-MM-dd",
+      example = "2024-06-03")
+  @Pattern(
+      regexp = "^\\d{4}-\\d{2}-\\d{2}$",
+      message = "requestDate must be in the format yyyy-MM-dd")
   private String requestDate;
 }
