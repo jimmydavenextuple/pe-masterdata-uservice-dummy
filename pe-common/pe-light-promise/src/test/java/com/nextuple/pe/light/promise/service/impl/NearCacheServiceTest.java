@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-public class NearCacheServiceTest {
+class NearCacheServiceTest {
 
   @Mock private GenericNearCacheService<?, ?> mockCacheService1;
 
@@ -29,7 +29,7 @@ public class NearCacheServiceTest {
   private List<GenericNearCacheService<?, ?>> nearCacheServices;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     nearCacheServices = new ArrayList<>();
     nearCacheServices.add(mockCacheService1);
     nearCacheServices.add(mockCacheService2);
@@ -38,7 +38,7 @@ public class NearCacheServiceTest {
 
   @Test
   @DisplayName("Test successful deletion of all near cache data")
-  public void testDeleteAllNearCacheDataSuccess() {
+  void testDeleteAllNearCacheDataSuccess() {
     nearCacheService.deleteAllNearCacheData();
     verify(mockCacheService1, times(1)).deleteAll();
     verify(mockCacheService2, times(1)).deleteAll();
@@ -46,7 +46,7 @@ public class NearCacheServiceTest {
 
   @Test
   @DisplayName("Test deletion when one cache service throws an exception")
-  public void testDeleteAllNearCacheDataWithException() {
+  void testDeleteAllNearCacheDataWithException() {
     doThrow(new RuntimeException("Test Exception")).when(mockCacheService1).deleteAll();
     when(mockCacheService1.getEntityName()).thenReturn("TestCache1");
     nearCacheService.deleteAllNearCacheData();
@@ -56,7 +56,7 @@ public class NearCacheServiceTest {
 
   @Test
   @DisplayName("Test deletion with empty cache services list")
-  public void testDeleteAllNearCacheDataEmptyList() {
+  void testDeleteAllNearCacheDataEmptyList() {
     List<GenericNearCacheService<?, ?>> emptyList = new ArrayList<>();
     ReflectionTestUtils.setField(nearCacheService, "nearCacheServices", emptyList);
     nearCacheService.deleteAllNearCacheData();

@@ -29,7 +29,6 @@ import com.nextuple.rulecraft.engine.model.ResourceTagEvalRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,6 +209,6 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
                     .date(info.getDate())
                     .isActive(info.getIsActive())
                     .build())
-        .collect(Collectors.toList());
+        .toList();
   }
 }
