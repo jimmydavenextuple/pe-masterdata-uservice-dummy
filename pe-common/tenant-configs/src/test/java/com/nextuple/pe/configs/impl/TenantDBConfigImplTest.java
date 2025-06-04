@@ -890,4 +890,37 @@ class TenantDBConfigImplTest {
     boolean response = tenantDBConfigImpl.getEnableAvailabilitySorting();
     assertFalse(response);
   }
+
+  @Test
+  @DisplayName("Test getTransitHorizonDays() with valid config value")
+  void getTransitHorizonDaysTest() {
+    // Create a cache value with transit horizon days set to 15
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey("transit-horizon-days")
+            .configValue("15")
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Integer response = tenantDBConfigImpl.getTransitHorizonDays();
+    assertNotNull(response);
+    assertEquals(15, response);
+
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getTransitHorizonDays() with default value when config is not found")
+  void getTransitHorizonDaysWithDefaultValueTest() {
+    // Return null to simulate config not found
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+
+    Integer response = tenantDBConfigImpl.getTransitHorizonDays();
+    assertNotNull(response);
+    assertEquals(20, response); // Default value is 20 as specified in the implementation
+
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
 }

@@ -350,6 +350,11 @@ public class TenantDBConfigImpl implements ITenantConfig {
             ENABLE_AVAILABILITY_SORTING_CONFIG_KEY, defaultEnableAvailabilitySorting));
   }
 
+  @Override
+  public Integer getTransitHorizonDays() {
+    return Integer.parseInt(getTenantConfiguration(TRANSIT_HORIZON_CONFIG_KEY, "20"));
+  }
+
   private String getTenantConfigdataCacheValue(String configKey) {
     return getTenantConfiguration(configKey, null);
   }

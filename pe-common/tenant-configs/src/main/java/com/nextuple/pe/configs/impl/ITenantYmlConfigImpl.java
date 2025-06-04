@@ -75,6 +75,9 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Value("${buffer.horizon-days}")
   public Integer horizonDays;
 
+  @Value("${transit-horizon-days}")
+  public Integer transitHorizonDays;
+
   @Value("${sourcing.DEFAULT.enable-future-availability:false}")
   public String defaultEnableFutureAvailability;
 
@@ -395,5 +398,10 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Override
   public Boolean getEnableAvailabilitySorting() {
     return (Boolean) getSourcingConfigValue(ENABLE_AVAILABILITY_SORTING_CONFIG_KEY);
+  }
+
+  @Override
+  public Integer getTransitHorizonDays() {
+    return transitHorizonDays;
   }
 }

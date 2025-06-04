@@ -758,4 +758,20 @@ class ITenantYmlConfigImplTest {
                 Map.of(ENABLE_AVAILABILITY_SORTING_CONFIG_KEY, false)));
     assertTrue(iTenantYmlConfigImpl.getEnableAvailabilitySorting());
   }
+
+  @Test
+  @DisplayName("Test getTransitHorizonDays() returns configured value")
+  void getTransitHorizonDaysTest() {
+    // Set up a test value for transitHorizonDays
+    Integer expectedTransitHorizon = 15;
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl, "transitHorizonDays", expectedTransitHorizon);
+
+    // Call the method and verify the result
+    Integer result = iTenantYmlConfigImpl.getTransitHorizonDays();
+
+    // Assertions
+    assertNotNull(result);
+    assertEquals(expectedTransitHorizon, result);
+  }
 }
