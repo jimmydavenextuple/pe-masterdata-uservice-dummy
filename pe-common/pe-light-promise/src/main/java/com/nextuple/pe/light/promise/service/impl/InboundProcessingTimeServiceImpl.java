@@ -211,7 +211,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
             .build();
 
     var nodeCalendarCacheValue = nodeCalendarNearCacheService.get(nodeCalendarCacheKey);
-    if (nodeCalendarCacheValue == null) {
+    if (nodeCalendarCacheValue.getCalendarDaysStatusInfo() == null) {
       throw new CommonServiceException(
           "Node calender response is null.",
           HttpStatus.BAD_REQUEST,

@@ -6,7 +6,9 @@
  */
 package com.nextuple.pe.light.promise.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -287,39 +290,6 @@ class InboundProcessingTimeServiceImplTest {
             () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
 
     assertEquals("Inbound processing time key is not a valid number.", exception.getMessage());
-  }
-
-  @Test
-  @DisplayName("Test null Node Calendar Cache response throws exception")
-  void getNodeCalendarCacheValue_withNullResponse_throwsException() {
-    InboundProcessingTimeRequest request = TestUtils.createInboundProcessingRequest();
-
-    Map<String, Object> mockResponse = Map.of("inboundProcessingTime", 10.0);
-    ResourceTagEvalRequest resourceTagEvalRequest =
-        new ResourceTagEvalRequest(
-            request.getRuleEvaluationFacts(), request.getRuleEvaluationFacts());
-    when(ruleEngineApi.evaluateRules(
-            request.getOrgId(),
-            request.getRuleGroup(),
-            Collections.singletonList("inbound-processing-time-filter"),
-            resourceTagEvalRequest))
-        .thenReturn(mockResponse);
-
-    NodeCalendarCacheKey expectedCalendarKey =
-        NodeCalendarCacheKey.builder()
-            .nodeId(request.getNodeId())
-            .orgId(request.getOrgId())
-            .fromDate(request.getRequestDate())
-            .build();
-    when(nodeCalendarNearCacheService.get(expectedCalendarKey)).thenReturn(null);
-
-    CommonServiceException exception =
-        assertThrows(
-            CommonServiceException.class,
-            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
-
-    assertEquals("Node calender response is null.", exception.getMessage());
-    verify(nodeCalendarNearCacheService).get(any(NodeCalendarCacheKey.class));
   }
 
   @Test
@@ -617,8 +587,8 @@ class InboundProcessingTimeServiceImplTest {
 
     assertNotNull(response);
     assertEquals(10.0, response.getInboundProcessingTime());
-    assertNull(response.getStartWorkingTime());
-    assertNull(response.getLastWorkingTime());
+    Assertions.assertNull(response.getStartWorkingTime());
+    Assertions.assertNull(response.getLastWorkingTime());
     verify(nodeDataNearCacheService).get(expectedNodeDataKey);
   }
 

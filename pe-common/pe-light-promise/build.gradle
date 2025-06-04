@@ -17,8 +17,4 @@ dependencies {
     implementation project( ':pe-calendar-uservice:node-calendar-near-cache-spring')
     implementation project(':pe-calendar-uservice:calendar-api-domain')
 
-
-
-
-
 }
