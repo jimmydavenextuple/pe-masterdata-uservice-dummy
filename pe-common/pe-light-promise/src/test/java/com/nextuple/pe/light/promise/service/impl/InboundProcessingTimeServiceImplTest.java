@@ -8,7 +8,6 @@ package com.nextuple.pe.light.promise.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -228,7 +227,7 @@ class InboundProcessingTimeServiceImplTest {
         NodeDataCacheKey.builder().nodeId(request.getNodeId()).orgId(request.getOrgId()).build();
     NodeDataCacheValue mockNodeData =
         NodeDataCacheValue.builder().startWorkingTime("09:00").lastWorkingTime("17:00").build();
-    when(nodeDataNearCacheService.get(eq(expectedNodeDataKey))).thenReturn(mockNodeData);
+    when(nodeDataNearCacheService.get(expectedNodeDataKey)).thenReturn(mockNodeData);
 
     NodeCalendarCacheKey expectedCalendarKey =
         NodeCalendarCacheKey.builder()
@@ -243,7 +242,7 @@ class InboundProcessingTimeServiceImplTest {
     calendarDays.add(info);
     NodeCalendarCacheValue mockCalendarValue =
         NodeCalendarCacheValue.builder().calendarDaysStatusInfo(calendarDays).build();
-    when(nodeCalendarNearCacheService.get(eq(expectedCalendarKey))).thenReturn(mockCalendarValue);
+    when(nodeCalendarNearCacheService.get(expectedCalendarKey)).thenReturn(mockCalendarValue);
 
     InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
@@ -312,7 +311,7 @@ class InboundProcessingTimeServiceImplTest {
             .orgId(request.getOrgId())
             .fromDate(request.getRequestDate())
             .build();
-    when(nodeCalendarNearCacheService.get(eq(expectedCalendarKey))).thenReturn(null);
+    when(nodeCalendarNearCacheService.get(expectedCalendarKey)).thenReturn(null);
 
     CommonServiceException exception =
         assertThrows(
@@ -388,7 +387,7 @@ class InboundProcessingTimeServiceImplTest {
 
     NodeCalendarCacheValue mockCalendarValue =
         NodeCalendarCacheValue.builder().calendarDaysStatusInfo(calendarDays).build();
-    when(nodeCalendarNearCacheService.get(eq(expectedCalendarKey))).thenReturn(mockCalendarValue);
+    when(nodeCalendarNearCacheService.get(expectedCalendarKey)).thenReturn(mockCalendarValue);
 
     InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
@@ -397,7 +396,7 @@ class InboundProcessingTimeServiceImplTest {
     assertEquals(10.0, response.getInboundProcessingTime());
     assertEquals(1, response.getCalendarDays().size());
     assertEquals(customDate, response.getCalendarDays().get(0).getDate());
-    verify(nodeCalendarNearCacheService).get(eq(expectedCalendarKey));
+    verify(nodeCalendarNearCacheService).get(expectedCalendarKey);
   }
 
   @Test
@@ -431,7 +430,7 @@ class InboundProcessingTimeServiceImplTest {
 
     NodeCalendarCacheValue mockCalendarValue =
         NodeCalendarCacheValue.builder().calendarDaysStatusInfo(calendarDays).build();
-    when(nodeCalendarNearCacheService.get(eq(expectedCalendarKey))).thenReturn(mockCalendarValue);
+    when(nodeCalendarNearCacheService.get(expectedCalendarKey)).thenReturn(mockCalendarValue);
 
     InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
@@ -513,7 +512,7 @@ class InboundProcessingTimeServiceImplTest {
 
     NodeDataCacheKey expectedNodeDataKey =
         NodeDataCacheKey.builder().nodeId(request.getNodeId()).orgId(request.getOrgId()).build();
-    when(nodeDataNearCacheService.get(eq(expectedNodeDataKey))).thenReturn(null);
+    when(nodeDataNearCacheService.get(expectedNodeDataKey)).thenReturn(null);
 
     CommonServiceException exception =
         assertThrows(
@@ -547,7 +546,7 @@ class InboundProcessingTimeServiceImplTest {
         NodeDataCacheKey.builder().nodeId(request.getNodeId()).orgId(request.getOrgId()).build();
     NodeDataCacheValue mockNodeData =
         NodeDataCacheValue.builder().startWorkingTime(startTime).lastWorkingTime(endTime).build();
-    when(nodeDataNearCacheService.get(eq(expectedNodeDataKey))).thenReturn(mockNodeData);
+    when(nodeDataNearCacheService.get(expectedNodeDataKey)).thenReturn(mockNodeData);
 
     InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
@@ -556,7 +555,7 @@ class InboundProcessingTimeServiceImplTest {
     assertEquals(10.0, response.getInboundProcessingTime());
     assertEquals(startTime, response.getStartWorkingTime());
     assertEquals(endTime, response.getLastWorkingTime());
-    verify(nodeDataNearCacheService).get(eq(expectedNodeDataKey));
+    verify(nodeDataNearCacheService).get(expectedNodeDataKey);
   }
 
   @Test
@@ -579,7 +578,7 @@ class InboundProcessingTimeServiceImplTest {
         NodeDataCacheKey.builder().nodeId(request.getNodeId()).orgId(request.getOrgId()).build();
     NodeDataCacheValue mockNodeData =
         NodeDataCacheValue.builder().startWorkingTime("").lastWorkingTime("").build();
-    when(nodeDataNearCacheService.get(eq(expectedNodeDataKey))).thenReturn(mockNodeData);
+    when(nodeDataNearCacheService.get(expectedNodeDataKey)).thenReturn(mockNodeData);
 
     InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
@@ -588,7 +587,7 @@ class InboundProcessingTimeServiceImplTest {
     assertEquals(10.0, response.getInboundProcessingTime());
     assertEquals("", response.getStartWorkingTime());
     assertEquals("", response.getLastWorkingTime());
-    verify(nodeDataNearCacheService).get(eq(expectedNodeDataKey));
+    verify(nodeDataNearCacheService).get(expectedNodeDataKey);
   }
 
   @Test
@@ -611,7 +610,7 @@ class InboundProcessingTimeServiceImplTest {
         NodeDataCacheKey.builder().nodeId(request.getNodeId()).orgId(request.getOrgId()).build();
     NodeDataCacheValue mockNodeData =
         NodeDataCacheValue.builder().startWorkingTime(null).lastWorkingTime(null).build();
-    when(nodeDataNearCacheService.get(eq(expectedNodeDataKey))).thenReturn(mockNodeData);
+    when(nodeDataNearCacheService.get(expectedNodeDataKey)).thenReturn(mockNodeData);
 
     InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
@@ -620,7 +619,7 @@ class InboundProcessingTimeServiceImplTest {
     assertEquals(10.0, response.getInboundProcessingTime());
     assertNull(response.getStartWorkingTime());
     assertNull(response.getLastWorkingTime());
-    verify(nodeDataNearCacheService).get(eq(expectedNodeDataKey));
+    verify(nodeDataNearCacheService).get(expectedNodeDataKey);
   }
 
   @Test
@@ -647,7 +646,7 @@ class InboundProcessingTimeServiceImplTest {
     NodeDataCacheValue mockNodeData =
         NodeDataCacheValue.builder().startWorkingTime("10:00").lastWorkingTime("20:00").build();
 
-    when(nodeDataNearCacheService.get(eq(expectedNodeDataKey))).thenReturn(mockNodeData);
+    when(nodeDataNearCacheService.get(expectedNodeDataKey)).thenReturn(mockNodeData);
 
     InboundProcessingTimeResponse response =
         inboundProcessingTimeService.evaluateInboundProcessingTime(request);
@@ -658,6 +657,6 @@ class InboundProcessingTimeServiceImplTest {
     assertEquals("10:00", response.getStartWorkingTime());
     assertEquals("20:00", response.getLastWorkingTime());
 
-    verify(nodeDataNearCacheService).get(eq(expectedNodeDataKey));
+    verify(nodeDataNearCacheService).get(expectedNodeDataKey);
   }
 }
