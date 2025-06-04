@@ -355,6 +355,18 @@ public class TenantDBConfigImpl implements ITenantConfig {
     return Integer.parseInt(getTenantConfiguration(TRANSIT_HORIZON_CONFIG_KEY, "20"));
   }
 
+  @Override
+  public Integer getNodeCalenderPastLookupDays() {
+    return Integer.parseInt(
+        getTenantConfiguration(NODE_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY, "40"));
+  }
+
+  @Override
+  public Integer getCarrierCalenderPastLookupDays() {
+    return Integer.parseInt(
+        getTenantConfiguration(CARRIER_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY, "40"));
+  }
+
   private String getTenantConfigdataCacheValue(String configKey) {
     return getTenantConfiguration(configKey, null);
   }

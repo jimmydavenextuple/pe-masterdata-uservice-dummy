@@ -100,4 +100,8 @@ public interface ITenantConfig {
   Boolean getEnableAvailabilitySorting();
 
   Integer getTransitHorizonDays();
+
+  Integer getNodeCalenderPastLookupDays();
+
+  Integer getCarrierCalenderPastLookupDays();
 }

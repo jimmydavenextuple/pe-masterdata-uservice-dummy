@@ -1,7 +1,9 @@
 package com.nextuple.pe.configs.impl;
 
+import static com.nextuple.common.constants.ConfigKeyConstants.CARRIER_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.ENABLE_AVAILABILITY_SORTING_CONFIG_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.ENABLE_FUTURE_AVAILABILITY_CONFIG_KEY;
+import static com.nextuple.common.constants.ConfigKeyConstants.NODE_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.SHIP_TOGETHER_ENABLED_FLAG;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -920,6 +922,71 @@ class TenantDBConfigImplTest {
     Integer response = tenantDBConfigImpl.getTransitHorizonDays();
     assertNotNull(response);
     assertEquals(20, response); // Default value is 20 as specified in the implementation
+
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getNodeCalenderPastLookupDays() with valid config value")
+  void getNodeCalenderPastLookupDaysTest() {
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey(NODE_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY)
+            .configValue("20")
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Integer response = tenantDBConfigImpl.getNodeCalenderPastLookupDays();
+    assertNotNull(response);
+    assertEquals(20, response);
+
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getNodeCalenderPastLookupDays() with default value when config is not found")
+  void getNodeCalenderPastLookupDaysWithDefaultValueTest() {
+    // Return null to simulate config not found
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+
+    Integer response = tenantDBConfigImpl.getNodeCalenderPastLookupDays();
+    assertNotNull(response);
+    assertEquals(40, response); // Default value is 20 as specified in the implementation
+
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getCarrierCalenderPastLookupDays() with valid config value")
+  void getCarrierCalenderPastLookupDaysTest() {
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey(CARRIER_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY)
+            .configValue("20")
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Integer response = tenantDBConfigImpl.getCarrierCalenderPastLookupDays();
+    assertNotNull(response);
+    assertEquals(20, response);
+
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName(
+      "Test getCarrierCalenderPastLookupDays() with default value when config is not found")
+  void getCarrierCalenderPastLookupDaysWithDefaultValueTest() {
+    // Return null to simulate config not found
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+
+    Integer response = tenantDBConfigImpl.getCarrierCalenderPastLookupDays();
+    assertNotNull(response);
+    assertEquals(40, response); // Default value is 20 as specified in the implementation
 
     verify(tenantConfigdataNearCacheService, times(1)).get(any());
   }

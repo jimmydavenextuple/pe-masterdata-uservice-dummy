@@ -78,6 +78,12 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Value("${transit-horizon-days}")
   public Integer transitHorizonDays;
 
+  @Value("${calendar.node-calender-past-lookup-days}")
+  public Integer nodeCalenderPastLookupDays;
+
+  @Value("${calendar.carrier-calender-past-lookup-days}")
+  public Integer carrierCalenderPastLookupDays;
+
   @Value("${sourcing.DEFAULT.enable-future-availability:false}")
   public String defaultEnableFutureAvailability;
 
@@ -403,5 +409,15 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Override
   public Integer getTransitHorizonDays() {
     return transitHorizonDays;
+  }
+
+  @Override
+  public Integer getNodeCalenderPastLookupDays() {
+    return nodeCalenderPastLookupDays;
+  }
+
+  @Override
+  public Integer getCarrierCalenderPastLookupDays() {
+    return carrierCalenderPastLookupDays;
   }
 }
