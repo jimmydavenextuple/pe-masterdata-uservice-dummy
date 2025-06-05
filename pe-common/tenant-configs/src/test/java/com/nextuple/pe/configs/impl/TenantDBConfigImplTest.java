@@ -953,7 +953,7 @@ class TenantDBConfigImplTest {
 
     Integer response = tenantDBConfigImpl.getNodeCalenderPastLookupDays();
     assertNotNull(response);
-    assertEquals(40, response); // Default value is 20 as specified in the implementation
+    assertEquals(40, response); // Default value is 40 as specified in the implementation
 
     verify(tenantConfigdataNearCacheService, times(1)).get(any());
   }
@@ -986,7 +986,7 @@ class TenantDBConfigImplTest {
 
     Integer response = tenantDBConfigImpl.getCarrierCalenderPastLookupDays();
     assertNotNull(response);
-    assertEquals(40, response); // Default value is 20 as specified in the implementation
+    assertEquals(40, response); // Default value is 40 as specified in the implementation
 
     verify(tenantConfigdataNearCacheService, times(1)).get(any());
   }
