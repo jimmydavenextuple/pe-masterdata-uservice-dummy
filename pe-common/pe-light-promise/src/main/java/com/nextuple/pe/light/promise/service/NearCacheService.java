@@ -6,12 +6,6 @@
  */
 package com.nextuple.pe.light.promise.service;
 
-import com.nextuple.common.exception.CommonServiceException;
-import com.nextuple.pe.light.promise.inbound.InboundProcessingTimeRequest;
-import com.nextuple.pe.light.promise.outbound.InboundProcessingTimeResponse;
-
-public interface InboundProcessingTimeService {
-
-  InboundProcessingTimeResponse evaluate(InboundProcessingTimeRequest inboundProcessingTimeRequest)
-      throws CommonServiceException;
+public interface NearCacheService {
+  void deleteAllNearCacheData();
 }

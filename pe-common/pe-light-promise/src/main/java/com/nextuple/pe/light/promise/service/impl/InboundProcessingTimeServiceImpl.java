@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -41,8 +40,8 @@ import org.springframework.stereotype.Service;
 public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeService {
 
   private final RuleEngineApi ruleEngineApi;
-  @Autowired NodeDataNearCacheService nodeDataNearCacheService;
-  @Autowired NodeCalendarNearCacheService nodeCalendarNearCacheService;
+  private final NodeDataNearCacheService nodeDataNearCacheService;
+  private final NodeCalendarNearCacheService nodeCalendarNearCacheService;
 
   /**
    * Evaluates the inbound processing time based on the provided request.
@@ -52,7 +51,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
    * @throws CommonServiceException If validation or processing fails.
    */
   @Override
-  public InboundProcessingTimeResponse evaluateInboundProcessingTime(
+  public InboundProcessingTimeResponse evaluate(
       InboundProcessingTimeRequest inboundProcessingTimeRequest) throws CommonServiceException {
 
     Double inboundProcessingTime = getInboundProcessingTime(inboundProcessingTimeRequest);
@@ -202,13 +201,6 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
           404,
           Map.of("nodeCalendarCacheValue", new FieldError()));
     }
-    return nodeCalendarCacheValue.getCalendarDaysStatusInfo().stream()
-        .map(
-            info ->
-                CalendarDaysStatusInfo.builder()
-                    .date(info.getDate())
-                    .isActive(info.getIsActive())
-                    .build())
-        .toList();
+    return nodeCalendarCacheValue.getCalendarDaysStatusInfo();
   }
 }

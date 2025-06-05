@@ -52,9 +52,9 @@ class InboundProcessingTimeServiceImplTest {
   void setUp() {
     MockitoAnnotations.openMocks(this);
 
-    inboundProcessingTimeService = new InboundProcessingTimeServiceImpl(ruleEngineApi);
-    inboundProcessingTimeService.nodeDataNearCacheService = nodeDataNearCacheService;
-    inboundProcessingTimeService.nodeCalendarNearCacheService = nodeCalendarNearCacheService;
+    inboundProcessingTimeService =
+        new InboundProcessingTimeServiceImpl(
+            ruleEngineApi, nodeDataNearCacheService, nodeCalendarNearCacheService);
 
     NodeDataCacheValue mockNodeData =
         NodeDataCacheValue.builder().startWorkingTime("09:00").lastWorkingTime("17:00").build();
@@ -80,8 +80,7 @@ class InboundProcessingTimeServiceImplTest {
 
     CommonServiceException exception =
         assertThrows(
-            CommonServiceException.class,
-            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+            CommonServiceException.class, () -> inboundProcessingTimeService.evaluate(request));
 
     assertEquals("Validation failed: nodeId can't be blank.", exception.getMessage());
   }
@@ -94,8 +93,7 @@ class InboundProcessingTimeServiceImplTest {
 
     CommonServiceException exception =
         assertThrows(
-            CommonServiceException.class,
-            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+            CommonServiceException.class, () -> inboundProcessingTimeService.evaluate(request));
 
     assertEquals("Validation failed: orgId can't be blank.", exception.getMessage());
   }
@@ -108,8 +106,7 @@ class InboundProcessingTimeServiceImplTest {
 
     CommonServiceException exception =
         assertThrows(
-            CommonServiceException.class,
-            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+            CommonServiceException.class, () -> inboundProcessingTimeService.evaluate(request));
 
     assertEquals("Validation failed: ruleGroup can't be blank.", exception.getMessage());
   }
@@ -122,8 +119,7 @@ class InboundProcessingTimeServiceImplTest {
 
     CommonServiceException exception =
         assertThrows(
-            CommonServiceException.class,
-            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+            CommonServiceException.class, () -> inboundProcessingTimeService.evaluate(request));
 
     assertEquals("Validation failed: ruleEvaluationFacts can't be null.", exception.getMessage());
   }
@@ -145,8 +141,7 @@ class InboundProcessingTimeServiceImplTest {
 
     CommonServiceException exception =
         assertThrows(
-            CommonServiceException.class,
-            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+            CommonServiceException.class, () -> inboundProcessingTimeService.evaluate(request));
 
     assertEquals("Inbound processing time key is null in the response.", exception.getMessage());
   }
@@ -166,8 +161,7 @@ class InboundProcessingTimeServiceImplTest {
             resourceTagEvalRequest))
         .thenReturn(mockResponse);
 
-    InboundProcessingTimeResponse response =
-        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+    InboundProcessingTimeResponse response = inboundProcessingTimeService.evaluate(request);
 
     assertNotNull(response);
     assertEquals(10.0, response.getInboundProcessingTime());
@@ -195,8 +189,7 @@ class InboundProcessingTimeServiceImplTest {
             resourceTagEvalRequest))
         .thenReturn(mockResponse);
 
-    InboundProcessingTimeResponse response =
-        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+    InboundProcessingTimeResponse response = inboundProcessingTimeService.evaluate(request);
 
     assertNotNull(response);
     assertEquals(10.0, response.getInboundProcessingTime());
@@ -247,8 +240,7 @@ class InboundProcessingTimeServiceImplTest {
         NodeCalendarCacheValue.builder().calendarDaysStatusInfo(calendarDays).build();
     when(nodeCalendarNearCacheService.get(expectedCalendarKey)).thenReturn(mockCalendarValue);
 
-    InboundProcessingTimeResponse response =
-        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+    InboundProcessingTimeResponse response = inboundProcessingTimeService.evaluate(request);
 
     assertNotNull(response);
     assertEquals(10.0, response.getInboundProcessingTime());
@@ -286,8 +278,7 @@ class InboundProcessingTimeServiceImplTest {
 
     CommonServiceException exception =
         assertThrows(
-            CommonServiceException.class,
-            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+            CommonServiceException.class, () -> inboundProcessingTimeService.evaluate(request));
 
     assertEquals("Inbound processing time key is not a valid number.", exception.getMessage());
   }
@@ -310,8 +301,7 @@ class InboundProcessingTimeServiceImplTest {
             resourceTagEvalRequest))
         .thenReturn(mockResponse);
 
-    InboundProcessingTimeResponse response =
-        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+    InboundProcessingTimeResponse response = inboundProcessingTimeService.evaluate(request);
 
     assertNotNull(response);
     assertEquals(15.5, response.getInboundProcessingTime());
@@ -362,8 +352,7 @@ class InboundProcessingTimeServiceImplTest {
     when(nodeCalendarNearCacheService.get(any(NodeCalendarCacheKey.class)))
         .thenReturn(mockCalendarValue);
 
-    InboundProcessingTimeResponse response =
-        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+    InboundProcessingTimeResponse response = inboundProcessingTimeService.evaluate(request);
 
     assertNotNull(response);
     assertEquals(10.0, response.getInboundProcessingTime());
@@ -398,8 +387,7 @@ class InboundProcessingTimeServiceImplTest {
 
     CommonServiceException exception =
         assertThrows(
-            CommonServiceException.class,
-            () -> inboundProcessingTimeService.evaluateInboundProcessingTime(request));
+            CommonServiceException.class, () -> inboundProcessingTimeService.evaluate(request));
 
     assertEquals("Node data response is null.", exception.getMessage());
     verify(nodeDataNearCacheService).get(any(NodeDataCacheKey.class));
@@ -430,8 +418,7 @@ class InboundProcessingTimeServiceImplTest {
         NodeDataCacheValue.builder().startWorkingTime(startTime).lastWorkingTime(endTime).build();
     when(nodeDataNearCacheService.get(expectedNodeDataKey)).thenReturn(mockNodeData);
 
-    InboundProcessingTimeResponse response =
-        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+    InboundProcessingTimeResponse response = inboundProcessingTimeService.evaluate(request);
 
     assertNotNull(response);
     assertEquals(10.0, response.getInboundProcessingTime());
@@ -462,8 +449,7 @@ class InboundProcessingTimeServiceImplTest {
         NodeDataCacheValue.builder().startWorkingTime("").lastWorkingTime("").build();
     when(nodeDataNearCacheService.get(expectedNodeDataKey)).thenReturn(mockNodeData);
 
-    InboundProcessingTimeResponse response =
-        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+    InboundProcessingTimeResponse response = inboundProcessingTimeService.evaluate(request);
 
     assertNotNull(response);
     assertEquals(10.0, response.getInboundProcessingTime());
@@ -494,8 +480,7 @@ class InboundProcessingTimeServiceImplTest {
         NodeDataCacheValue.builder().startWorkingTime(null).lastWorkingTime(null).build();
     when(nodeDataNearCacheService.get(expectedNodeDataKey)).thenReturn(mockNodeData);
 
-    InboundProcessingTimeResponse response =
-        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+    InboundProcessingTimeResponse response = inboundProcessingTimeService.evaluate(request);
 
     assertNotNull(response);
     assertEquals(10.0, response.getInboundProcessingTime());
@@ -530,8 +515,7 @@ class InboundProcessingTimeServiceImplTest {
 
     when(nodeDataNearCacheService.get(expectedNodeDataKey)).thenReturn(mockNodeData);
 
-    InboundProcessingTimeResponse response =
-        inboundProcessingTimeService.evaluateInboundProcessingTime(request);
+    InboundProcessingTimeResponse response = inboundProcessingTimeService.evaluate(request);
 
     assertNotNull(response);
     assertEquals("specificNodeId", response.getNodeId());
