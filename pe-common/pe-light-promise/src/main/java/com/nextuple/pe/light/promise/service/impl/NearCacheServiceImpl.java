@@ -26,11 +26,7 @@ public class NearCacheServiceImpl implements NearCacheService {
 
   public void deleteAllNearCacheData() {
     for (GenericNearCacheService genericNearCacheService : nearCacheServices) { // NOSONAR
-      try {
-        genericNearCacheService.deleteAll();
-      } catch (Exception e) {
-        logger.error("Exception while cache evict for " + genericNearCacheService.getEntityName());
-      }
+      genericNearCacheService.deleteAll();
     }
   }
 }
