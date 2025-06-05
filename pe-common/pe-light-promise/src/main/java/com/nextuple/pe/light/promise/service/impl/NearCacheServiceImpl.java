@@ -7,8 +7,6 @@
 
 package com.nextuple.pe.light.promise.service.impl;
 
-import com.nextuple.common.context.Logger;
-import com.nextuple.common.context.LoggerFactory;
 import com.nextuple.core.cache.service.GenericNearCacheService;
 import com.nextuple.pe.light.promise.service.NearCacheService;
 import java.util.List;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class NearCacheServiceImpl implements NearCacheService {
-  private static final Logger logger = LoggerFactory.getLogger(NearCacheServiceImpl.class);
 
   private final List<GenericNearCacheService> nearCacheServices; // NOSONAR
 

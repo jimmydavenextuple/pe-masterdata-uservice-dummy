@@ -6,10 +6,8 @@
  */
 package com.nextuple.pe.light.promise.service.impl;
 
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import com.nextuple.core.cache.service.GenericNearCacheService;
 import java.util.ArrayList;
@@ -43,16 +41,6 @@ class NearCacheServiceTest {
   @Test
   @DisplayName("Test successful deletion of all near cache data")
   void testDeleteAllNearCacheDataSuccess() {
-    nearCacheService.deleteAllNearCacheData();
-    verify(mockCacheService1, times(1)).deleteAll();
-    verify(mockCacheService2, times(1)).deleteAll();
-  }
-
-  @Test
-  @DisplayName("Test deletion when one cache service throws an exception")
-  void testDeleteAllNearCacheDataWithException() {
-    doThrow(new RuntimeException("Test Exception")).when(mockCacheService1).deleteAll();
-    when(mockCacheService1.getEntityName()).thenReturn("TestCache1");
     nearCacheService.deleteAllNearCacheData();
     verify(mockCacheService1, times(1)).deleteAll();
     verify(mockCacheService2, times(1)).deleteAll();

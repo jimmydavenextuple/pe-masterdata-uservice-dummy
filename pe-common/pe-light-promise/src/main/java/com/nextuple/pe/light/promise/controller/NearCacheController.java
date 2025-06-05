@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,8 +34,16 @@ public class NearCacheController {
   @Operation(summary = "Evict near cache", description = "Deletes all the values in near cache.")
   @DeleteMapping(value = "/evict-cache")
   public ResponseEntity<BaseResponse<String>> evictNearCache() {
-    nearCacheService.deleteAllNearCacheData();
-    return ResponseEntity.ok(
-        BaseResponse.builder().message("Near cache values evicted successfully!").build());
+    try {
+      nearCacheService.deleteAllNearCacheData();
+      return ResponseEntity.ok(
+          BaseResponse.builder().message("Near cache values evicted successfully!").build());
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(
+              BaseResponse.builder()
+                  .message("Error in performing near cache eviction Reason: " + e.getMessage())
+                  .build());
+    }
   }
 }

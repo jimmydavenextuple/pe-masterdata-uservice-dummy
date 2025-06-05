@@ -52,7 +52,7 @@ class NearCacheControllerTest {
     ResponseEntity<BaseResponse<String>> response = controller.evictNearCache();
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     assertEquals(
-        "Some error in performing near cache eviction Reason: Generic error",
+        "Error in performing near cache eviction Reason: Generic error",
         response.getBody().getMessage());
     verify(nearCacheService, times(1)).deleteAllNearCacheData();
   }
@@ -69,9 +69,12 @@ class NearCacheControllerTest {
   @Test
   @DisplayName("Test cache eviction with RuntimeException")
   void evictNearCacheExceptionTest() {
-    doThrow(new RuntimeException()).when(nearCacheService).deleteAllNearCacheData();
+    doThrow(new RuntimeException("Test exception")).when(nearCacheService).deleteAllNearCacheData();
     ResponseEntity<BaseResponse<String>> response = controller.evictNearCache();
     Assertions.assertNotNull(response);
     Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    Assertions.assertEquals(
+        "Error in performing near cache eviction Reason: Test exception",
+        response.getBody().getMessage());
   }
 }
