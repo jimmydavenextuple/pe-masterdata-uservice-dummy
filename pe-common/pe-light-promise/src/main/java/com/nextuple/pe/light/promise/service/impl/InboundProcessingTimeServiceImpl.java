@@ -13,7 +13,6 @@ import static com.nextuple.pe.light.promise.LightPromiseConstants.ORG_ID_KEY;
 import static com.nextuple.pe.light.promise.LightPromiseConstants.RULE_EVALUATION_FACTS_KEY;
 import static com.nextuple.pe.light.promise.LightPromiseConstants.RULE_GROUP_KEY;
 
-import com.nextuple.calendar.domain.CalendarDaysStatusInfo;
 import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.node.calendar.cache.domain.NodeCalendarCacheKey;
@@ -23,6 +22,7 @@ import com.nextuple.node.data.cache.domain.NodeDataCacheValue;
 import com.nextuple.node.data.cache.service.NodeDataNearCacheService;
 import com.nextuple.pe.light.promise.inbound.InboundProcessingTimeRequest;
 import com.nextuple.pe.light.promise.outbound.InboundProcessingTimeResponse;
+import com.nextuple.pe.light.promise.pojo.InboundNodeCalendar;
 import com.nextuple.pe.light.promise.service.InboundProcessingTimeService;
 import com.nextuple.rulecraft.engine.api.RuleEngineApi;
 import com.nextuple.rulecraft.engine.model.ResourceTagEvalRequest;
@@ -58,7 +58,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
     NodeDataCacheValue nodeData =
         getNodeDataCacheValue(
             inboundProcessingTimeRequest.getOrgId(), inboundProcessingTimeRequest.getNodeId());
-    List<CalendarDaysStatusInfo> calendarDays =
+    List<InboundNodeCalendar> calendarDays =
         getNodeCalendarCacheValue(
             inboundProcessingTimeRequest.getOrgId(),
             inboundProcessingTimeRequest.getNodeId(),
@@ -188,7 +188,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
     return nodeDataCacheValue;
   }
 
-  private List<CalendarDaysStatusInfo> getNodeCalendarCacheValue(
+  private List<InboundNodeCalendar> getNodeCalendarCacheValue(
       String orgId, String nodeId, String requestDate) throws CommonServiceException {
     var nodeCalendarCacheKey =
         NodeCalendarCacheKey.builder().nodeId(nodeId).orgId(orgId).fromDate(requestDate).build();
@@ -201,6 +201,13 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
           404,
           Map.of("nodeCalendarCacheValue", new FieldError()));
     }
-    return nodeCalendarCacheValue.getCalendarDaysStatusInfo();
+    return nodeCalendarCacheValue.getCalendarDaysStatusInfo().stream()
+        .map(
+            calendarDaysStatusInfo ->
+                InboundNodeCalendar.builder()
+                    .date(calendarDaysStatusInfo.getDate())
+                    .isActive(calendarDaysStatusInfo.getIsActive())
+                    .build())
+        .toList();
   }
 }
