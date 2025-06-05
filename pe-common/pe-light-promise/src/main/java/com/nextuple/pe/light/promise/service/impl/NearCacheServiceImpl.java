@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class NearCacheServiceImpl implements NearCacheService {
-  private static final Logger logger = LoggerFactory.getLogger(NearCacheService.class);
+  private static final Logger logger = LoggerFactory.getLogger(NearCacheServiceImpl.class);
 
   private final List<GenericNearCacheService> nearCacheServices; // NOSONAR
 
