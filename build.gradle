@@ -590,23 +590,23 @@ task showSonarQubeLink {
 artifactoryPublish.skip = false
 
 artifactory {
-    contextUrl = "${artifactory_contextUrl}"
+    contextUrl = System.getenv("artifactory_contextUrl")
     publish {
         repository {
             repoKey = 'gradle-dev-local'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
+            username = System.getenv("artifactory_user")
+            password = System.getenv("artifactory_password")
             maven = true
         }
         defaults {
-            publications('mavenJava')
+            publications ('mavenJava')
         }
     }
     resolve {
         repository {
             repoKey = 'gradle-dev'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
+            username = System.getenv("artifactory_user")
+            password = System.getenv("artifactory_password")
             maven = true
         }
     }
