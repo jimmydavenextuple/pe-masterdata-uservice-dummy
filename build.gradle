@@ -590,7 +590,7 @@ task showSonarQubeLink {
 artifactoryPublish.skip = false
 
 artifactory {
-    contextUrl = System.getenv("artifactory_contextUrl")
+    contextUrl = "${artifactory_contextUrl}"
     publish {
         repository {
             repoKey = 'gradle-dev-local'
