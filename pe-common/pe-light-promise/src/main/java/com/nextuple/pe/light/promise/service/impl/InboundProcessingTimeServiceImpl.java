@@ -180,7 +180,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
     if (nodeDataCacheValue == null) {
       throw new CommonServiceException(
           "Node data response is null.",
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.NOT_FOUND,
           404,
           Map.of("nodeDataCacheValue", new FieldError()));
     }
@@ -197,7 +197,7 @@ public class InboundProcessingTimeServiceImpl implements InboundProcessingTimeSe
     if (nodeCalendarCacheValue.getCalendarDaysStatusInfo() == null) {
       throw new CommonServiceException(
           "Node calender response is null.",
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.NOT_FOUND,
           404,
           Map.of("nodeCalendarCacheValue", new FieldError()));
     }
