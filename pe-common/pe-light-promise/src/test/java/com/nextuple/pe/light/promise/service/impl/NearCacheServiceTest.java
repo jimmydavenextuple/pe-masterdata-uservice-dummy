@@ -6,9 +6,13 @@
  */
 package com.nextuple.pe.light.promise.service.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.core.cache.service.GenericNearCacheService;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,7 +45,7 @@ class NearCacheServiceTest {
 
   @Test
   @DisplayName("Test successful deletion of all near cache data")
-  void testDeleteAllNearCacheDataSuccess() {
+  void testDeleteAllNearCacheDataSuccess() throws CommonServiceException {
     nearCacheService.deleteAllNearCacheData();
     verify(mockCacheService1, times(1)).deleteAll();
     verify(mockCacheService2, times(1)).deleteAll();
@@ -48,9 +53,29 @@ class NearCacheServiceTest {
 
   @Test
   @DisplayName("Test deletion with empty cache services list")
-  void testDeleteAllNearCacheDataEmptyList() {
+  void testDeleteAllNearCacheDataEmptyList() throws CommonServiceException {
     List<GenericNearCacheService<?, ?>> emptyList = new ArrayList<>();
     ReflectionTestUtils.setField(nearCacheService, "nearCacheServices", emptyList);
     nearCacheService.deleteAllNearCacheData();
+  }
+
+  @Test
+  @DisplayName("Test exception handling when a cache service fails to delete")
+  void testDeleteAllNearCacheDataWithException() {
+    RuntimeException mockException = new RuntimeException("Delete failed");
+    doThrow(mockException).when(mockCacheService1).deleteAll();
+
+    CommonServiceException exception =
+        assertThrows(
+            CommonServiceException.class,
+            () -> {
+              nearCacheService.deleteAllNearCacheData();
+            });
+
+    assertEquals("Error while deleting near cache data", exception.getMessage());
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getHttpStatus());
+    assertEquals(0x2003, exception.getErrorCode());
+    verify(mockCacheService1, times(1)).deleteAll();
+    verify(mockCacheService2, times(0)).deleteAll();
   }
 }

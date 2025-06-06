@@ -8,10 +8,10 @@ package com.nextuple.pe.light.promise.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.pe.light.promise.service.NearCacheService;
 import org.junit.jupiter.api.Assertions;
@@ -37,7 +37,7 @@ class NearCacheControllerTest {
 
   @Test
   @DisplayName("Test successful cache eviction")
-  void evictNearCacheSuccess() {
+  void evictNearCacheSuccess() throws CommonServiceException {
     doNothing().when(nearCacheService).deleteAllNearCacheData();
     ResponseEntity<BaseResponse<String>> response = controller.evictNearCache();
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -46,35 +46,11 @@ class NearCacheControllerTest {
   }
 
   @Test
-  @DisplayName("Test cache eviction with generic Exception")
-  void evictNearCacheGenericException() {
-    doThrow(new RuntimeException("Generic error")).when(nearCacheService).deleteAllNearCacheData();
-    ResponseEntity<BaseResponse<String>> response = controller.evictNearCache();
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    assertEquals(
-        "Error in performing near cache eviction Reason: Generic error",
-        response.getBody().getMessage());
-    verify(nearCacheService, times(1)).deleteAllNearCacheData();
-  }
-
-  @Test
   @DisplayName("Test successful cache eviction with status code check")
-  void evictNearCacheTest() {
+  void evictNearCacheTest() throws CommonServiceException {
     doNothing().when(nearCacheService).deleteAllNearCacheData();
     ResponseEntity<BaseResponse<String>> response = controller.evictNearCache();
     Assertions.assertNotNull(response);
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-  }
-
-  @Test
-  @DisplayName("Test cache eviction with RuntimeException")
-  void evictNearCacheExceptionTest() {
-    doThrow(new RuntimeException("Test exception")).when(nearCacheService).deleteAllNearCacheData();
-    ResponseEntity<BaseResponse<String>> response = controller.evictNearCache();
-    Assertions.assertNotNull(response);
-    Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    Assertions.assertEquals(
-        "Error in performing near cache eviction Reason: Test exception",
-        response.getBody().getMessage());
   }
 }

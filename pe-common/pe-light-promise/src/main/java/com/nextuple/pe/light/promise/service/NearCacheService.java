@@ -6,6 +6,8 @@
  */
 package com.nextuple.pe.light.promise.service;
 
+import com.nextuple.common.exception.CommonServiceException;
+
 public interface NearCacheService {
-  void deleteAllNearCacheData();
+  void deleteAllNearCacheData() throws CommonServiceException;
 }
