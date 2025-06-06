@@ -599,7 +599,7 @@ artifactory {
             maven = true
         }
         defaults {
-            publications ('mavenJava')
+            publications('mavenJava')
         }
     }
     resolve {
