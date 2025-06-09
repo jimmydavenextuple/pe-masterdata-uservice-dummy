@@ -237,8 +237,8 @@ subprojects {
         publish {
             repository {
                 repoKey = 'gradle-dev-local'
-                username = "${artifactory_user}"
-                password = "${artifactory_password}"
+                username = System.getenv("artifactory_user")
+                password = System.getenv("artifactory_password")
                 maven = true
             }
             defaults {
@@ -248,8 +248,8 @@ subprojects {
         resolve {
             repository {
                 repoKey = 'gradle-dev'
-                username = "${artifactory_user}"
-                password = "${artifactory_password}"
+                username = System.getenv("artifactory_user")
+                password = System.getenv("artifactory_password")
                 maven = true
             }
         }
@@ -594,8 +594,8 @@ artifactory {
     publish {
         repository {
             repoKey = 'gradle-dev-local'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
+            username = System.getenv("artifactory_user")
+            password = System.getenv("artifactory_password")
             maven = true
         }
         defaults {
@@ -605,8 +605,8 @@ artifactory {
     resolve {
         repository {
             repoKey = 'gradle-dev'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
+            username = System.getenv("artifactory_user")
+            password = System.getenv("artifactory_password")
             maven = true
         }
     }
