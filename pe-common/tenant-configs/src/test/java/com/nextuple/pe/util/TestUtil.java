@@ -78,6 +78,20 @@ public class TestUtil {
         .build();
   }
 
+  public TenantConfigdataCacheValue getTenantConfigCacheValueForOrderOperations() {
+    return TenantConfigdataCacheValue.builder()
+        .configKey("order-operations")
+        .configValue("CREATE, CANCEL, EDD_ENQUIRY, EDD_OVERRIDE")
+        .build();
+  }
+
+  public TenantConfigdataCacheValue getTenantConfigCacheValueForTemplates() {
+    return TenantConfigdataCacheValue.builder()
+        .configKey("templates")
+        .configValue("processCreateOrder,processCancelOrder,processCancelLineOrder")
+        .build();
+  }
+
   public TenantConfigdataCacheValue
       getTenantConfigCacheValueForServiceOptionsInventoryTypeMapping() {
     return TenantConfigdataCacheValue.builder()
@@ -140,6 +154,14 @@ public class TestUtil {
     return TenantConfigdataCacheValue.builder()
         .configKey("event-log-level")
         .configValue("{ExceptionEvent: ERROR}")
+        .build();
+  }
+
+  public TenantConfigdataCacheValue getTenantConfigCacheValueOperationTemplateMapping() {
+    return TenantConfigdataCacheValue.builder()
+        .configKey("operation-template-mapping")
+        .configValue(
+            "{\"CREATE\":\"processCreateOrder\",\"CANCEL\":\"processCancelOrder\",\"CANCEL_LINE\":\"processCancelLineOrder\"}")
         .build();
   }
 

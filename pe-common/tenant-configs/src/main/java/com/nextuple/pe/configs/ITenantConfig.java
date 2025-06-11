@@ -99,6 +99,12 @@ public interface ITenantConfig {
 
   Boolean getEnableAvailabilitySorting();
 
+  Set<String> getOrderOperations();
+
+  Set<String> getTemplates();
+
+  Map<String, String> getOperationTemplateMapping();
+
   Integer getTransitHorizonDays();
 
   Integer getNodeCalenderPastLookupDays();
