@@ -415,6 +415,14 @@ pipelines:
           !!merge <<: *deploy
           name: Deploy vapt
           deployment: vapt
+    1.8.0-ashley:
+      - step: *build
+      - parallel:
+          - step:
+              !!merge <<: *deploy
+              trigger: manual
+              name: Deploy Devpe
+              deployment: devpe
     development:
       - step: *build
       - parallel:
