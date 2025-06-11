@@ -409,12 +409,6 @@ pipelines:
           trigger: manual
           deployment: prod
   branches:
-    1.8.0-ashley:
-      - step: *build
-      - step:
-          !!merge <<: *deploy
-          name: Deploy to devpe
-          deployment: devpe
     vapt:
       - step: *build
       - step:
