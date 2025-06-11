@@ -104,4 +104,10 @@ public interface ITenantConfig {
   Set<String> getTemplates();
 
   Map<String, String> getOperationTemplateMapping();
+
+  Integer getTransitHorizonDays();
+
+  Integer getNodeCalenderPastLookupDays();
+
+  Integer getCarrierCalenderPastLookupDays();
 }

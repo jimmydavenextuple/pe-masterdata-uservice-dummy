@@ -64,6 +64,11 @@ public class ConfigKeyConstants {
   public static final String ORDER_OPERATIONS_CONFIG_KEY = "order-operations";
   public static final String TEMPLATES = "templates";
   public static final String OPERATION_TEMPLATE_MAPPING = "operation-template-mapping";
+  public static final String TRANSIT_HORIZON_CONFIG_KEY = "transit-horizon-days";
+  public static final String CARRIER_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY =
+      "carrier-calender-past-lookup-days";
+  public static final String NODE_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY =
+      "node-calender-past-lookup-days";
 
   public static final List<String> CONFIG_KEYS_MULTIPLE_VALUES_NOT_ALLOWED =
       List.of(SELECTED_ATTRIBUTE_FOR_TARGET_MARGINS_CONFIG_KEY);

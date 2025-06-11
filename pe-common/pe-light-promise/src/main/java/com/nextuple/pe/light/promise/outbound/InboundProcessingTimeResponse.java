@@ -39,7 +39,7 @@ public class InboundProcessingTimeResponse {
 
   @Schema(
       description =
-          "Object containing the Rule Craft Engine (RCE) response, including processing time and other evaluation data.",
-      example = "{ \"processingTime\": 10.0 }")
-  private Object inbound;
+          "Processing time extracted from the Rule Craft Engine (RCE) response. Represents the time in seconds.",
+      example = "10.0")
+  private Double inboundProcessingTime;
 }

@@ -834,4 +834,52 @@ class ITenantYmlConfigImplTest {
                 Map.of(ENABLE_AVAILABILITY_SORTING_CONFIG_KEY, false)));
     assertTrue(iTenantYmlConfigImpl.getEnableAvailabilitySorting());
   }
+
+  @Test
+  @DisplayName("Test getTransitHorizonDays() returns configured value")
+  void getTransitHorizonDaysTest() {
+    // Set up a test value for transitHorizonDays
+    Integer expectedTransitHorizon = 15;
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl, "transitHorizonDays", expectedTransitHorizon);
+
+    // Call the method and verify the result
+    Integer result = iTenantYmlConfigImpl.getTransitHorizonDays();
+
+    // Assertions
+    assertNotNull(result);
+    assertEquals(expectedTransitHorizon, result);
+  }
+
+  @Test
+  @DisplayName("Test getCarrierCalenderPastLookupDays() returns configured value")
+  void getCarrierCalenderPastLookupDaysTest() {
+    Integer expectedCarrierCalenderPastLookupDays = 15;
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl,
+        "carrierCalenderPastLookupDays",
+        expectedCarrierCalenderPastLookupDays);
+
+    // Call the method and verify the result
+    Integer result = iTenantYmlConfigImpl.getCarrierCalenderPastLookupDays();
+
+    // Assertions
+    assertNotNull(result);
+    assertEquals(expectedCarrierCalenderPastLookupDays, result);
+  }
+
+  @Test
+  @DisplayName("Test getNodeCalenderPastLookupDays() returns configured value")
+  void getNodeCalenderPastLookupDaysTest() {
+    Integer expectedNodeCalenderPastLookupDays = 15;
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl, "nodeCalenderPastLookupDays", expectedNodeCalenderPastLookupDays);
+
+    // Call the method and verify the result
+    Integer result = iTenantYmlConfigImpl.getNodeCalenderPastLookupDays();
+
+    // Assertions
+    assertNotNull(result);
+    assertEquals(expectedNodeCalenderPastLookupDays, result);
+  }
 }
