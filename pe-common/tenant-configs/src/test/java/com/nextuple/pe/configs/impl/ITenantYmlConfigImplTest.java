@@ -16,6 +16,7 @@ import com.nextuple.pe.configs.CapacityConfig;
 import com.nextuple.pe.configs.DefaultCarrierPriorityConfig;
 import com.nextuple.pe.configs.EventConfig;
 import com.nextuple.pe.configs.LogSuppressionServiceOptionsConfig;
+import com.nextuple.pe.configs.PromiseCoordinationConfig;
 import com.nextuple.pe.configs.PublishEddOnPageConfig;
 import com.nextuple.pe.configs.ServiceOptionConfig;
 import com.nextuple.pe.configs.ServiceOptionIVTypeMappingConfig;
@@ -55,6 +56,7 @@ class ITenantYmlConfigImplTest {
   @Mock SourcingConfig sourcingConfig;
   @Mock EventConfig eventConfig;
   @Mock CapacityConfig capacityConfig;
+  @Mock PromiseCoordinationConfig promiseCoordinationConfig;
 
   @BeforeEach
   void init() {
@@ -103,6 +105,80 @@ class ITenantYmlConfigImplTest {
 
     String serviceOptionsResponse = iTenantYmlConfigImpl.getServiceOptions();
     Assertions.assertEquals(defaultServiceOptions, serviceOptionsResponse);
+  }
+
+  @DisplayName("Returns order operations for the org, when we have data for orgId in yml")
+  @Test
+  void getOrderOperationsTest() {
+    String orderOperation = "CANCEL_LINE";
+    Mockito.when(promiseCoordinationConfig.getOrderOperations())
+        .thenReturn(Map.of(TestUtil.ORG_ID, orderOperation, "DEFAULT", "CREATE"));
+
+    Set<String> orderOperationResponse = iTenantYmlConfigImpl.getOrderOperations();
+    Assertions.assertEquals(Set.of(orderOperation), orderOperationResponse);
+  }
+
+  @DisplayName("Returns order operations for the org, when we do not have data for orgId in yml")
+  @Test
+  void getOrderOperationsTestDefault() {
+    String defaultOrderOperation = "CREATE";
+    Mockito.when(promiseCoordinationConfig.getOrderOperations())
+        .thenReturn(Map.of("DEFAULT", defaultOrderOperation));
+
+    Set<String> orderOperationResponse = iTenantYmlConfigImpl.getOrderOperations();
+    Assertions.assertEquals(Set.of(defaultOrderOperation), orderOperationResponse);
+  }
+
+  @DisplayName("Returns order operations for the org, when we have data for orgId in yml")
+  @Test
+  void getTemplatesTest() {
+    String templates = "processCreateOrder";
+    Mockito.when(promiseCoordinationConfig.getTemplates())
+        .thenReturn(Map.of(TestUtil.ORG_ID, templates, "DEFAULT", "processCancelOrder"));
+
+    Set<String> templatesResponse = iTenantYmlConfigImpl.getTemplates();
+    Assertions.assertEquals(Set.of(templates), templatesResponse);
+  }
+
+  @DisplayName("Returns order operations for the org, when we do not have data for orgId in yml")
+  @Test
+  void getTemplatesTestDefault() {
+    String defaultTemplates = "processCancelOrder";
+    Mockito.when(promiseCoordinationConfig.getTemplates())
+        .thenReturn(Map.of("DEFAULT", defaultTemplates));
+
+    Set<String> orderOperationResponse = iTenantYmlConfigImpl.getTemplates();
+    Assertions.assertEquals(Set.of(defaultTemplates), orderOperationResponse);
+  }
+
+  @DisplayName("Returns operation template mapping for the org, when we have data for orgId in yml")
+  @Test
+  void getOrderOperationMappingTest() {
+    Map<String, String> operationTemplateMapping = Map.of("CREATE", "processCreateOrder");
+    Mockito.when(promiseCoordinationConfig.getOperationTemplateMapping())
+        .thenReturn(
+            Map.of(
+                TestUtil.ORG_ID,
+                operationTemplateMapping,
+                "DEFAULT",
+                Map.of("CANCEL", "processCancelOrder")));
+
+    Map<String, String> operationTemplateMappingResponse =
+        iTenantYmlConfigImpl.getOperationTemplateMapping();
+    Assertions.assertEquals(operationTemplateMapping, operationTemplateMappingResponse);
+  }
+
+  @DisplayName(
+      "Returns operation template mapping for the org, when we do not have data for orgId in yml")
+  @Test
+  void getOrderOperationMappingTestDefault() {
+    Map<String, String> defaultOperationTemplateMapping = Map.of("CANCEL", "processCancelOrder");
+    Mockito.when(promiseCoordinationConfig.getOperationTemplateMapping())
+        .thenReturn(Map.of("DEFAULT", defaultOperationTemplateMapping));
+
+    Map<String, String> operationTemplateMappingResponse =
+        iTenantYmlConfigImpl.getOperationTemplateMapping();
+    Assertions.assertEquals(defaultOperationTemplateMapping, operationTemplateMappingResponse);
   }
 
   @DisplayName("Returns service options list")

@@ -351,6 +351,26 @@ public class TenantDBConfigImpl implements ITenantConfig {
   }
 
   @Override
+  public Set<String> getOrderOperations() {
+    String orderOperations = getTenantConfigdataCacheValue(ORDER_OPERATIONS_CONFIG_KEY);
+    return new HashSet<>(Arrays.asList(orderOperations.split(",")));
+  }
+
+  @Override
+  public Set<String> getTemplates() {
+    String orderOperations = getTenantConfigdataCacheValue(TEMPLATES);
+    return new HashSet<>(Arrays.asList(orderOperations.split(",")));
+  }
+
+  @Override
+  public Map<String, String> getOperationTemplateMapping() {
+    Type type = new TypeToken<Map<String, String>>() {}.getType();
+    String operationTemplateMappingString =
+        getTenantConfigdataCacheValue(OPERATION_TEMPLATE_MAPPING);
+    return getGsonObject().fromJson(operationTemplateMappingString, type);
+  }
+
+  @Override
   public Integer getTransitHorizonDays() {
     return Integer.parseInt(getTenantConfiguration(TRANSIT_HORIZON_CONFIG_KEY, "20"));
   }

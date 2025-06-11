@@ -61,6 +61,9 @@ public class ConfigKeyConstants {
   public static final String SHIP_TOGETHER_ENABLED_FLAG = "ship-together-enabled";
   public static final String ENABLE_FUTURE_AVAILABILITY_CONFIG_KEY = "enable-future-availability";
   public static final String ENABLE_AVAILABILITY_SORTING_CONFIG_KEY = "enable-availability-sorting";
+  public static final String ORDER_OPERATIONS_CONFIG_KEY = "order-operations";
+  public static final String TEMPLATES = "templates";
+  public static final String OPERATION_TEMPLATE_MAPPING = "operation-template-mapping";
   public static final String TRANSIT_HORIZON_CONFIG_KEY = "transit-horizon-days";
   public static final String CARRIER_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY =
       "carrier-calender-past-lookup-days";
