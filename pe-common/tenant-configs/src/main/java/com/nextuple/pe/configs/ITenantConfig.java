@@ -110,4 +110,6 @@ public interface ITenantConfig {
   Integer getNodeCalenderPastLookupDays();
 
   Integer getCarrierCalenderPastLookupDays();
+
+  String getInventoryMissingLinesAction();
 }

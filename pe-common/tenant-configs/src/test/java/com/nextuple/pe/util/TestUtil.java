@@ -26,6 +26,7 @@ public class TestUtil {
   public static final String DEFAULT_ITEM_BUFFER_ENABLED = "false";
   public static final String DEFAULT_PROMISE_INTERMEDIATE_EVENT_ENABLED_FLAG = "true";
   public static final String DEFAULT_SHIP_TOGETHER_ENABLED_FLAG = "true";
+  public static final String DEFAULT_INVENTORY_MISSING_ACTION = "CANCEL_RESERVATION";
 
   public Map<String, Object> getSourcingConfigValueForOrg() {
     return Map.of("no-of-solution", 3, "no-of-nodes", 8);
@@ -75,6 +76,13 @@ public class TestUtil {
     return TenantConfigdataCacheValue.builder()
         .configKey("service-options")
         .configValue("SDND, EXPRESS, STANDARD")
+        .build();
+  }
+
+  public TenantConfigdataCacheValue getTenantConfigCacheValueForInventoryMissingLinesAction() {
+    return TenantConfigdataCacheValue.builder()
+        .configKey("inventory-missing-lines-action")
+        .configValue("CANCEL_RESERVATION")
         .build();
   }
 

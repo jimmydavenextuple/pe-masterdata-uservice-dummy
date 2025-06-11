@@ -64,6 +64,8 @@ public class ConfigKeyConstants {
   public static final String ORDER_OPERATIONS_CONFIG_KEY = "order-operations";
   public static final String TEMPLATES = "templates";
   public static final String OPERATION_TEMPLATE_MAPPING = "operation-template-mapping";
+  public static final String INVENTORY_MISSING_LINES_ACTION_CONFIG_KEY =
+      "inventory-missing-lines-action";
   public static final String TRANSIT_HORIZON_CONFIG_KEY = "transit-horizon-days";
   public static final String CARRIER_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY =
       "carrier-calender-past-lookup-days";
