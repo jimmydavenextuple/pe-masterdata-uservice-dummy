@@ -364,7 +364,7 @@ public class TenantDBConfigImpl implements ITenantConfig {
 
   @Override
   public String getInventoryMissingLinesAction() {
-    return getTenantConfigdataCacheValue(INVENTORY_MISSING_LINES_ACTION_CONFIG_KEY);
+    return getTenantConfiguration(INVENTORY_MISSING_LINES_ACTION_CONFIG_KEY, "CANCEL_RESERVATION");
   }
 
   @Override

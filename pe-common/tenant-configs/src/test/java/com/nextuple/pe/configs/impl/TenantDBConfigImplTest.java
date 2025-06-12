@@ -904,6 +904,15 @@ class TenantDBConfigImplTest {
   }
 
   @Test
+  @DisplayName("Get Inventory Missing Lines Action - Default Scenario")
+  void getInventoryMissingLinesActionDefaultTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+    String response = tenantDBConfigImpl.getInventoryMissingLinesAction();
+    assertNotNull(response);
+    assertEquals(TestUtil.DEFAULT_INVENTORY_MISSING_ACTION, response);
+  }
+
+  @Test
   @DisplayName("Get Inventory Missing Lines Action - Exception Scenario")
   void getInventoryMissingLinesActionExceptionTest() {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
