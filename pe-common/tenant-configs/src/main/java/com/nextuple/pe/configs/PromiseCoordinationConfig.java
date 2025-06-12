@@ -22,4 +22,5 @@ public class PromiseCoordinationConfig {
   private Map<String, String> orderOperations;
   private Map<String, String> templates;
   private Map<String, Map<String, String>> operationTemplateMapping;
+  private Map<String, String> inventoryMissingLinesAction;
 }

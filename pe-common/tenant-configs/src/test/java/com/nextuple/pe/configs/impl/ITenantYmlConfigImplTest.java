@@ -107,6 +107,29 @@ class ITenantYmlConfigImplTest {
     Assertions.assertEquals(defaultServiceOptions, serviceOptionsResponse);
   }
 
+  @DisplayName("Get Inventory Missing Lines Action from yml - Happy Path")
+  @Test
+  void getInventoryMissingLinesActionTest() {
+    String action = "CANCEL_RESERVATION";
+    Mockito.when(promiseCoordinationConfig.getInventoryMissingLinesAction())
+        .thenReturn(
+            Map.of(TestUtil.ORG_ID, action, "DEFAULT", TestUtil.DEFAULT_INVENTORY_MISSING_ACTION));
+
+    String response = iTenantYmlConfigImpl.getInventoryMissingLinesAction();
+    Assertions.assertEquals(action, response);
+  }
+
+  @DisplayName("Get Inventory Missing Lines Action from yml - Default Scenario")
+  @Test
+  void getInventoryMissingLinesActionTestDefault() {
+    String defaultAction = TestUtil.DEFAULT_INVENTORY_MISSING_ACTION;
+    Mockito.when(promiseCoordinationConfig.getInventoryMissingLinesAction())
+        .thenReturn(Map.of("DEFAULT", defaultAction));
+
+    String orderOperationResponse = iTenantYmlConfigImpl.getInventoryMissingLinesAction();
+    Assertions.assertEquals(defaultAction, orderOperationResponse);
+  }
+
   @DisplayName("Returns order operations for the org, when we have data for orgId in yml")
   @Test
   void getOrderOperationsTest() {
