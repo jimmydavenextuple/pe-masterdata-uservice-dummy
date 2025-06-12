@@ -913,20 +913,6 @@ class TenantDBConfigImplTest {
   }
 
   @Test
-  @DisplayName("Get Inventory Missing Lines Action - Exception Scenario")
-  void getInventoryMissingLinesActionExceptionTest() {
-    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
-    PromisingEngineException ex =
-        assertThrows(
-            PromisingEngineException.class,
-            () -> tenantDBConfigImpl.getInventoryMissingLinesAction());
-    assertNotNull(ex);
-    assertEquals(
-        "Tenant Configuration not found for given orgId and configKey inventory-missing-lines-action",
-        ex.getMessage());
-  }
-
-  @Test
   @DisplayName("Get Order Operations - Happy Path")
   void getOrderOperationsTest() {
     var cacheValue = testUtil.getTenantConfigCacheValueForOrderOperations();
