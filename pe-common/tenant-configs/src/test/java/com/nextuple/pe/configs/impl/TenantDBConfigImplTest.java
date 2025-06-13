@@ -904,17 +904,12 @@ class TenantDBConfigImplTest {
   }
 
   @Test
-  @DisplayName("Get Inventory Missing Lines Action - Exception Scenario")
-  void getInventoryMissingLinesActionExceptionTest() {
+  @DisplayName("Get Inventory Missing Lines Action - Default Scenario")
+  void getInventoryMissingLinesActionDefaultTest() {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
-    PromisingEngineException ex =
-        assertThrows(
-            PromisingEngineException.class,
-            () -> tenantDBConfigImpl.getInventoryMissingLinesAction());
-    assertNotNull(ex);
-    assertEquals(
-        "Tenant Configuration not found for given orgId and configKey inventory-missing-lines-action",
-        ex.getMessage());
+    String response = tenantDBConfigImpl.getInventoryMissingLinesAction();
+    assertNotNull(response);
+    assertEquals(TestUtil.DEFAULT_INVENTORY_MISSING_ACTION, response);
   }
 
   @Test
