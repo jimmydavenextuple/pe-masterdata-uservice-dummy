@@ -933,4 +933,23 @@ class ITenantYmlConfigImplTest {
         iTenantYmlConfigImpl.getRuleCraftEngineConfigMap();
     Assertions.assertEquals(gson.fromJson(ruleCraftEngineConfig, type), ruleCraftConfig);
   }
+
+  @Test
+  @DisplayName("Test getRuleCraftEngineConfig() value is already populated")
+  void getRuleCraftEngineConfigValueAlreadyPopulatedTest() {
+    Gson gson = new Gson();
+    Type type = new TypeToken<Map<String, Map<String, String>>>() {}.getType();
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String ruleCraftEngineConfig = (String) valueForOrg.get("rule-craft-engine-config");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+    Map<String, Map<String, String>> dummyMap = Map.of("key", Map.of("l1k1", "l1v1"));
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "ruleCraftEngineConfigMap", dummyMap);
+
+    Map<String, Map<String, String>> ruleCraftConfig =
+        iTenantYmlConfigImpl.getRuleCraftEngineConfigMap();
+    Assertions.assertEquals(dummyMap, ruleCraftConfig);
+  }
 }
