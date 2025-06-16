@@ -304,6 +304,7 @@ definitions:
           - build/**
           - service-version.txt
     - step: &build-and-push
+        size: 4x
         name: Build and Push Docker
         caches:
           - gradle
