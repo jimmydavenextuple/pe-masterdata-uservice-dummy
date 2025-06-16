@@ -398,13 +398,13 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   public Map<String, Map<String, String>> getRuleCraftEngineConfigMap() {
     if (ObjectUtils.isEmpty(ruleCraftEngineConfigMap)) {
       Type type = new TypeToken<Map<String, String>>() {}.getType();
-      String logLevelString =
+      String ruleCraftConfigString =
           (String)
               eventConfig
                   .getEvent()
                   .getOrDefault(getOrgId(), getDefaultEventProperties())
                   .get("ruleCraftEngineConfig");
-      ruleCraftEngineConfigMap = getGsonObject().fromJson(logLevelString, type);
+      ruleCraftEngineConfigMap = getGsonObject().fromJson(ruleCraftConfigString, type);
     }
     return ruleCraftEngineConfigMap;
   }
