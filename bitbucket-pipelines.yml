@@ -314,7 +314,7 @@ definitions:
           - export TESTCONTAINERS_RYUK_DISABLED=true
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build --refresh-dependencies
           - export SPACE=" "
-          - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" > service-version.txt
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" | head -n 1 > service-version.txt
           - docker login nextuple-docker.jfrog.io --username $DOCKER_REGISTRY_USERNAME --password $DOCKER_REGISTRY_PASSWORD
           - LATEST_TAG=$(cat service-version.txt)
           - docker build -t nextuple-docker.jfrog.io/pe-masterdata-uservice:"$LATEST_TAG" .
