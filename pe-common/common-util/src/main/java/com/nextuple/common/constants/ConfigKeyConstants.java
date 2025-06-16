@@ -75,8 +75,18 @@ public class ConfigKeyConstants {
       "inbound-processing-time-enabled";
   public static final String RULE_CRAFT_ENGINE_CONFIG_MAP = "rule-craft-engine-config";
 
+  public static final String CAPACITY_AWARE_CONFIG_KEY = "capacity-aware";
+
+  public static final String CAPACITY_FUTURE_LOOKUP_DAYS_CONFIG_KEY = "capacity-future-lookup-days";
+  public static final String CAPACITY_PAST_LOOKBACK_DAYS_CONFIG_KEY = "capacity-past-lookback-days";
+
   public static final List<String> CONFIG_KEYS_MULTIPLE_VALUES_NOT_ALLOWED =
       List.of(SELECTED_ATTRIBUTE_FOR_TARGET_MARGINS_CONFIG_KEY);
 
   public static final Integer CAPACITY_SOLUTION_COUNT = 1;
+
+  public static final String DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS =
+      "{\"outbound\": 0, \"transport\": 0, \"receiving\": 0}";
+  public static final String DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS =
+      "{\"outbound\": 20, \"transport\": 20, \"receiving\": 20}";
 }

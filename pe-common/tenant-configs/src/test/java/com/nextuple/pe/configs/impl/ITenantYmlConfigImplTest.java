@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nextuple.common.constants.ConfigKeyConstants;
 import com.nextuple.common.context.CurrentThreadContext;
+import com.nextuple.common.enums.CapacityType;
 import com.nextuple.pe.configs.CapacityConfig;
 import com.nextuple.pe.configs.DefaultCarrierPriorityConfig;
 import com.nextuple.pe.configs.EventConfig;
@@ -948,5 +949,72 @@ class ITenantYmlConfigImplTest {
     Map<String, Map<String, String>> ruleCraftConfig =
         iTenantYmlConfigImpl.getRuleCraftEngineConfigMap();
     Assertions.assertEquals(dummyMap, ruleCraftConfig);
+  @DisplayName("Test getCapacityAware() returns configured value")
+  void getCapacityAwareTest() {
+    Boolean expectedCapacityAware = true;
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "capacityAware", expectedCapacityAware);
+
+    Boolean result = iTenantYmlConfigImpl.getCapacityAware();
+
+    assertNotNull(result);
+    assertEquals(expectedCapacityAware, result);
+  }
+
+  @Test
+  @DisplayName("Test getCapacityFutureLookUpDays() returns parsed values")
+  void getCapacityFutureLookUpDaysTest() {
+    String jsonConfig = "{\"outbound\": 7, \"transport\": 7, \"receiving\": 7}";
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl, "capacityFutureLookupDaysConfig", jsonConfig);
+
+    Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getCapacityFutureLookUpDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(7, result.get(CapacityType.OUTBOUND));
+    assertEquals(7, result.get(CapacityType.TRANSPORT));
+    assertEquals(7, result.get(CapacityType.RECEIVING));
+  }
+
+  @Test
+  @DisplayName("Test getCapacityPastLookBackDays() returns parsed values")
+  void getCapacityPastLookBackDaysTest() {
+    String jsonConfig = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl, "capacityPastLookbackDaysConfig", jsonConfig);
+
+    Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getCapacityPastLookBackDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(30, result.get(CapacityType.OUTBOUND));
+    assertEquals(15, result.get(CapacityType.TRANSPORT));
+    assertEquals(10, result.get(CapacityType.RECEIVING));
+  }
+
+  @Test
+  @DisplayName("Test getCapacityFutureLookUpDays() returns default map for null config")
+  void getCapacityFutureLookUpDaysWithNullConfigTest() {
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "capacityFutureLookupDaysConfig", null);
+
+    Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getCapacityFutureLookUpDays();
+
+    assertNotNull(result);
+    assertEquals(20, result.get(CapacityType.OUTBOUND));
+    assertEquals(20, result.get(CapacityType.TRANSPORT));
+    assertEquals(20, result.get(CapacityType.RECEIVING));
+  }
+
+  @Test
+  @DisplayName("Test getCapacityPastLookBackDays() returns default map for null config")
+  void getCapacityPastLookBackDaysWithNullConfigTest() {
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "capacityPastLookbackDaysConfig", null);
+
+    Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getCapacityPastLookBackDays();
+
+    assertNotNull(result);
+    assertEquals(0, result.get(CapacityType.OUTBOUND));
+    assertEquals(0, result.get(CapacityType.TRANSPORT));
+    assertEquals(0, result.get(CapacityType.RECEIVING));
   }
 }
