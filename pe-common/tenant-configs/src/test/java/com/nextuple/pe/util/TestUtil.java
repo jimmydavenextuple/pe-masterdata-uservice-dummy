@@ -165,6 +165,14 @@ public class TestUtil {
         .build();
   }
 
+  public TenantConfigdataCacheValue getTenantConfigCacheValueGetRuleCraftConfig() {
+    return TenantConfigdataCacheValue.builder()
+        .configKey("rule-craft-engine-config")
+        .configValue(
+            "{\"inboundProcessingTime\": {\"ruleFilterStrategy\": \"ruleFilterStrategy1\",\"ruleGroup\":\"ruleGroup\"}}")
+        .build();
+  }
+
   public TenantConfigdataCacheValue getTenantConfigCacheValueOperationTemplateMapping() {
     return TenantConfigdataCacheValue.builder()
         .configKey("operation-template-mapping")

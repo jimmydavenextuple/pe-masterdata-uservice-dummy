@@ -91,6 +91,9 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Value("${sourcing.DEFAULT.enable-availability-sorting:false}")
   public String defaultEnableAvailabilitySorting;
 
+  @Value("${inbound.inbound-processing-time-enabled:false}")
+  public String inboundProcessingTimeEnabled;
+
   private static final String DEFAULT = "DEFAULT";
   private static final String NO_OF_LINE_SOLUTIONS_REQUIRED = "line-solutions-required";
   private static final String LINE_THRESHOLD = "line-threshold";
@@ -100,6 +103,7 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   public static final Gson gson = new Gson();
   Map<String, Boolean> publishEnabledMap = new HashMap<>();
   Map<String, String> logLevelMap = new HashMap<>();
+  Map<String, Map<String, String>> ruleCraftEngineConfigMap = new HashMap<>();
   Map<String, Boolean> consoleLogListenEnabledMap = new HashMap<>();
 
   @Override
@@ -303,6 +307,11 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   }
 
   @Override
+  public Boolean getInboundProcessingTimeEnabledFlag() {
+    return Boolean.valueOf(inboundProcessingTimeEnabled);
+  }
+
+  @Override
   public Integer getCapacityHorizon() {
     return (Integer) getCapacityConfigMap().get(CAPACITY_HORIZON);
   }
@@ -373,6 +382,21 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
       consoleLogListenEnabledMap = getGsonObject().fromJson(consoleLogListenEnabledString, type);
     }
     return consoleLogListenEnabledMap;
+  }
+
+  @Override
+  public Map<String, Map<String, String>> getRuleCraftEngineConfigMap() {
+    if (ObjectUtils.isEmpty(ruleCraftEngineConfigMap)) {
+      Type type = new TypeToken<Map<String, String>>() {}.getType();
+      String logLevelString =
+          (String)
+              eventConfig
+                  .getEvent()
+                  .getOrDefault(getOrgId(), getDefaultEventProperties())
+                  .get("ruleCraftEngineConfig");
+      ruleCraftEngineConfigMap = getGsonObject().fromJson(logLevelString, type);
+    }
+    return ruleCraftEngineConfigMap;
   }
 
   public Integer getNumberOfSolutions(Boolean isCapacityEnabled) {

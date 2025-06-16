@@ -3,6 +3,7 @@ package com.nextuple.pe.configs.impl;
 import static com.nextuple.common.constants.ConfigKeyConstants.CARRIER_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.ENABLE_AVAILABILITY_SORTING_CONFIG_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.ENABLE_FUTURE_AVAILABILITY_CONFIG_KEY;
+import static com.nextuple.common.constants.ConfigKeyConstants.INBOUND_PROCESSING_TIME_ENABLED_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.NODE_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.SHIP_TOGETHER_ENABLED_FLAG;
 import static org.junit.jupiter.api.Assertions.*;
@@ -1074,5 +1075,58 @@ class TenantDBConfigImplTest {
     assertEquals(40, response); // Default value is 40 as specified in the implementation
 
     verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getInboundProcessingTimeEnabledFlag() with valid config value")
+  void getInboundProcessingTimeEnabledFlagTest() {
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey(INBOUND_PROCESSING_TIME_ENABLED_KEY)
+            .configValue("true")
+            .build();
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+    Boolean response = tenantDBConfigImpl.getInboundProcessingTimeEnabledFlag();
+    assertNotNull(response);
+    assertTrue(response);
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName(
+      "Test getInboundProcessingTimeEnabledFlag() with default value when config is not found")
+  void getInboundProcessingTimeEnabledFlagWithDefaultValueTest() {
+    // Return null to simulate config not found
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+    ReflectionTestUtils.setField(
+        tenantDBConfigImpl, "defaultInboundProcessingTimeEnabledFlag", "false");
+    Boolean response = tenantDBConfigImpl.getInboundProcessingTimeEnabledFlag();
+    assertNotNull(response);
+    assertFalse(response); // Default value is 40 as specified in the implementation
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getRuleCraftEngineConfigMap() with valid config value")
+  void getRuleCraftEngineTest() {
+    var cacheValue1 = testUtil.getTenantConfigCacheValueGetRuleCraftConfig();
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue1);
+    Map<String, Map<String, String>> response = tenantDBConfigImpl.getRuleCraftEngineConfigMap();
+    assertNotNull(response);
+    assertTrue(response.containsKey("inboundProcessingTime"));
+  }
+
+  @Test
+  @DisplayName("Test getRuleCraftEngineConfigMap() with config value not found")
+  void getRuleCraftEngineConfigValueNotFoundTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+    PromisingEngineException ex =
+        assertThrows(
+            PromisingEngineException.class, () -> tenantDBConfigImpl.getRuleCraftEngineConfigMap());
+    assertNotNull(ex);
+    assertEquals(
+        "Tenant Configuration not found for given orgId and configKey rule-craft-engine-config",
+        ex.getMessage());
   }
 }
