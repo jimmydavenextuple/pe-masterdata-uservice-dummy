@@ -7,6 +7,7 @@
 
 package com.nextuple.pe.configs;
 
+import com.nextuple.common.enums.CapacityType;
 import java.util.Map;
 import java.util.Set;
 
@@ -110,4 +111,10 @@ public interface ITenantConfig {
   Integer getNodeCalenderPastLookupDays();
 
   Integer getCarrierCalenderPastLookupDays();
+
+  Boolean getCapacityAware();
+
+  Map<CapacityType, Integer> getCapacityFutureLookUpDays();
+
+  Map<CapacityType, Integer> getCapacityPastLookBackDays();
 }

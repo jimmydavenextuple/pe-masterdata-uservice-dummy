@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nextuple.common.context.CurrentThreadContext;
+import com.nextuple.common.enums.CapacityType;
 import com.nextuple.common.exception.PromisingEngineException;
 import com.nextuple.configuration.cache.domain.TenantConfigdataCacheValue;
 import com.nextuple.configuration.cache.service.TenantConfigdataNearCacheService;
@@ -1054,6 +1055,157 @@ class TenantDBConfigImplTest {
     assertNotNull(response);
     assertEquals(40, response); // Default value is 40 as specified in the implementation
 
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getCapacityAware() with valid config value")
+  void getCapacityAwareTest() {
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey("capacity-aware")
+            .configValue("true")
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Boolean result = tenantDBConfigImpl.getCapacityAware();
+
+    assertNotNull(result);
+    assertTrue(result);
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getCapacityAware() with default value when config is not found")
+  void getCapacityAwareDefaultTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+
+    Boolean result = tenantDBConfigImpl.getCapacityAware();
+
+    assertNotNull(result);
+    assertFalse(result);
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getCapacityFutureLookUpDays() with valid config JSON value")
+  void getCapacityFutureLookUpDaysJsonTest() {
+    String jsonConfig = "{\"outbound\": 07, \"transport\": 07, \"receiving\": 07}";
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey("capacity-future-lookup-days")
+            .configValue(jsonConfig)
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Map<CapacityType, Integer> result = tenantDBConfigImpl.getCapacityFutureLookUpDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(7, result.get(CapacityType.OUTBOUND));
+    assertEquals(7, result.get(CapacityType.TRANSPORT));
+    assertEquals(7, result.get(CapacityType.RECEIVING));
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getCapacityFutureLookUpDays() with null config value")
+  void getCapacityFutureLookUpDaysNullConfigTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+
+    Map<CapacityType, Integer> result = tenantDBConfigImpl.getCapacityFutureLookUpDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(20, result.get(CapacityType.OUTBOUND));
+    assertEquals(20, result.get(CapacityType.TRANSPORT));
+    assertEquals(20, result.get(CapacityType.RECEIVING));
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getCapacityPastLookBackDays() with valid config JSON value")
+  void getCapacityPastLookBackDaysJsonTest() {
+    String jsonConfig = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey("capacity-past-lookback-days")
+            .configValue(jsonConfig)
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Map<CapacityType, Integer> result = tenantDBConfigImpl.getCapacityPastLookBackDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(30, result.get(CapacityType.OUTBOUND));
+    assertEquals(15, result.get(CapacityType.TRANSPORT));
+    assertEquals(10, result.get(CapacityType.RECEIVING));
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getCapacityPastLookBackDays() with null config value")
+  void getCapacityPastLookBackDaysNullConfigTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+
+    Map<CapacityType, Integer> result = tenantDBConfigImpl.getCapacityPastLookBackDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(0, result.get(CapacityType.OUTBOUND));
+    assertEquals(0, result.get(CapacityType.TRANSPORT));
+    assertEquals(0, result.get(CapacityType.RECEIVING));
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getCapacityFutureLookUpDays() with empty config value")
+  void getCapacityFutureLookUpDaysEmptyConfigTest() {
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey("capacity-future-lookup-days")
+            .configValue("")
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Map<CapacityType, Integer> result = tenantDBConfigImpl.getCapacityFutureLookUpDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(20, result.get(CapacityType.OUTBOUND));
+    assertEquals(20, result.get(CapacityType.TRANSPORT));
+    assertEquals(20, result.get(CapacityType.RECEIVING));
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getCapacityPastLookBackDays() with empty config value")
+  void getCapacityPastLookBackDaysEmptyConfigTest() {
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey("capacity-past-lookback-days")
+            .configValue("")
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Map<CapacityType, Integer> result = tenantDBConfigImpl.getCapacityPastLookBackDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(0, result.get(CapacityType.OUTBOUND));
+    assertEquals(0, result.get(CapacityType.TRANSPORT));
+    assertEquals(0, result.get(CapacityType.RECEIVING));
     verify(tenantConfigdataNearCacheService, times(1)).get(any());
   }
 }

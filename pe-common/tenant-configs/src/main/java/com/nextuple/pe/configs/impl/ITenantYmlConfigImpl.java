@@ -12,6 +12,7 @@ import static com.nextuple.common.constants.ConfigKeyConstants.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nextuple.common.context.CurrentThreadContext;
+import com.nextuple.common.enums.CapacityType;
 import com.nextuple.pe.configs.*;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -90,6 +91,15 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
 
   @Value("${sourcing.DEFAULT.enable-availability-sorting:false}")
   public String defaultEnableAvailabilitySorting;
+
+  @Value("${capacity.aware:false}")
+  public Boolean capacityAware;
+
+  @Value("${capacity.future-lookup-days}")
+  public String capacityFutureLookupDaysConfig;
+
+  @Value("${capacity.past-lookup-days}")
+  public String capacityPastLookbackDaysConfig;
 
   private static final String DEFAULT = "DEFAULT";
   private static final String NO_OF_LINE_SOLUTIONS_REQUIRED = "line-solutions-required";
@@ -450,5 +460,22 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Override
   public Integer getCarrierCalenderPastLookupDays() {
     return carrierCalenderPastLookupDays;
+  }
+
+  @Override
+  public Boolean getCapacityAware() {
+    return capacityAware;
+  }
+
+  @Override
+  public Map<CapacityType, Integer> getCapacityFutureLookUpDays() {
+    return TenantConfigUtil.parseCapacityConfigString(
+        capacityFutureLookupDaysConfig, DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS);
+  }
+
+  @Override
+  public Map<CapacityType, Integer> getCapacityPastLookBackDays() {
+    return TenantConfigUtil.parseCapacityConfigString(
+        capacityPastLookbackDaysConfig, DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS);
   }
 }
