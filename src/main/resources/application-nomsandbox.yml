@@ -1,0 +1,300 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          my-client:
+            client-id: applicationclient-pe-masterdata-uservice
+            client-secret: \${MASTER-DATA-KEYCLOAK-CLIENT-ID}
+            authorization-grant-type: client_credentials
+            scope: applicationclient-pe-masterdata-scope
+        provider:
+          my-client:
+            token-uri: \${KEYCLOAK_ENDPOINT}
+  jpa:
+    database: POSTGRESQL
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://postgresql.postgres.svc.cluster.local:5432/pe_sandbox
+    username: \${COMMON-POSTGRES-USER}
+    password: \${COMMON-POSTGRES-PASSWORD}
+  flyway:
+    enabled: false
+  kafka:
+    bootstrap-servers: "kafka.kafka.svc.cluster.local:9092"
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: \${COMMON-KAFKA-CONFIG}
+    consumer-retry-count: 1
+    # NOTE: Below commented code is for the Avro consumer.
+    # If we need to consume an avro record, please uncomment Avro properties and comment out the JSON Consumer and Producer.
+    #
+    #    consumer:
+    #      type: avro
+    #      enable-auto-commit: true
+    #      auto-offset-reset: latest
+    #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    #      value-deserializer: com.nextuple.item.consumer.serializer.ItemDeserializer
+    #      topics:
+    #        item_master:
+    #          name: INTERNAL.DEV.PROMISE_ITEMS
+    #          group-id: item-master-dev
+    #    producer:
+    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    #      value-serializer: com.nextuple.item.consumer.serializer.ItemSerializer
+    consumer-item:
+      type: json
+      enable-auto-commit: true
+      auto-offset-reset: latest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring-deserializer-key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+        spring-deserializer-value-delegate-class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring-json-trusted-packages: "*"
+        spring-json-type-mapping: com.nextuple.pe.webhook.domain.dtos.Item:com.nextuple.item.domain.events.ItemMasterEvent
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      topics:
+        item_master:
+          name: INTERNAL.SANDBOX.PROMISE_ITEMS
+          group-id: item-master-sandbox-\${random.value}
+    producer-item:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.nextuple.item.consumer.serializer.JsonSerializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      topics:
+        master_data_update_event: INTERNAL.SANDBOX.MASTER_DATA_UPDATE_EVENTS
+      properties:
+        acks: 1
+        retries: 5
+        retry.backoff.ms: 1000
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaProducerContextInterceptor"
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+        max.poll.records: 10
+      topics:
+        master_data_update_event:
+          name: INTERNAL.SANDBOX.MASTER_DATA_UPDATE_EVENTS
+          group-id: master-data-update-sandbox
+    consumer-string:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      key-delegate-class: org.apache.kafka.common.serialization.StringDeserializer
+      trusted-packages: "*"
+      interceptor-classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+      enable-auto-commit: true
+      auto-offset-reset: latest
+  sql.init.platform: postgres
+
+logging:
+  level:
+    com.nextuple: INFO
+
+pe-public-webhook:
+  iv-feed:
+    topic: INTERNAL.SANDBOX_ATP
+  item-feed:
+    topic: INTERNAL.SANDBOX.PROMISE_ITEMS
+  pe-response:
+    topics: INTERNAL.SANDBOX.CART_EDD
+    group-id: pe-response-consumer-async-sandbox
+  webhook:
+    - tenantId: NEXTUPLE_GR
+      moduleName: PROMISING
+      webhookName: PROMISING_INTERMEDIATE_EVENT
+      webhookDetail:
+        endpoint: "https://225aed84-a428-4edc-a997-29ec1daee504.mock.pstmn.io"
+        method: POST
+        headers:
+          contentType: "application/json"
+          x-api-key: "PMAK-649a8bdac1cdd700425b7f2d-382143ed5331700e39637f015dfd580b09"
+#          Dummy API Key
+    - tenantId: WALMART
+      moduleName: PROMISING
+      webhookName: PROMISING_INTERMEDIATE_EVENT
+      webhookDetail:
+        endpoint: "https://225aed84-a428-4edc-a997-29ec1daee504.mock.pstmn.io"
+        method: POST
+        headers:
+          contentType: "application/json"
+          x-api-key: "PMAK-649a8bdac1cdd700425b7f2d-382143ed5331700e39637f015dfd580b09"
+#          Dummy API Key
+dataupload:
+  base-path: "https://pedataupload.blob.core.windows.net"
+  maxsize-in-kilobytes: 10240
+  max-rows: 1000
+  bucket-name: "sandboxdataupload"
+  type: BLOB
+  signed-url-expiry-minutes: 30
+
+jobs-framework:
+  feed-metrics-consumer:
+    topic-name: INTERNAL.SANDBOX.PE_JOB_FPM_METRICS, INTERNAL.SANDBOX.PE_JOB_RECORD_FPM_METRICS, INTERNAL.SANDBOX.PE_NEIP_FPM_METRICS
+    group-id: pe-fpm-metrics-sandbox
+  job-completion-consumer:
+    topic-name: INTERNAL.SANDBOX.PE.JOB_COMPLETION
+    group-id: jobs-completion-consumer-async-sandbox
+  kafka-publish:
+    topic-name: INTERNAL.SANDBOX.PE.JOB_TASK
+  result-publish:
+    topic-name: INTERNAL.SANDBOX.PE.JOB_RESULT
+  result-consumer:
+    topic-name: INTERNAL.SANDBOX.PE.JOB_RESULT
+    group-id: jobs-result-consumer-async-SANDBOX
+  record-consumer:
+    topic-names: INTERNAL.SANDBOX.PE.JOB_TASK
+    group-id: jobs-task-consumer-async-sandbox
+master-data:
+  node:
+    topic-names: INTERNAL.SANDBOX.PE.NODE_INTEGRATION
+    group-id: node-master-sandbox
+  vendor:
+    topic-names: INTERNAL.SANDBOX.PE.VENDOR_INTEGRATION
+    group-id: vendor-master-sandbox
+  node-carrier:
+    topic-names: INTERNAL.SANDBOX.PE.NODE_CARRIER_INTEGRATION
+    group-id: node-carrier-master-sandbox
+  carrier:
+    topic-names: INTERNAL.SANDBOX.PE.CARRIER_INTEGRATION
+    group-id: carrier-master-sandbox
+  processing-lead-time:
+    topic-names: INTERNAL.SANDBOX.PE.PROCESSING_LEAD_TIME_INTEGRATION
+    group-id: processing-lead-time-master-sandbox
+  calendar:
+    topic-names: INTERNAL.SANDBOX.PE.CALENDAR_INTEGRATION
+    group-id: calendar-master-sandbox
+  node-calendar:
+    topic-names: INTERNAL.SANDBOX.PE.NODE_CALENDAR_INTEGRATION
+    group-id: node-calendar-master-sandbox
+  carrier-service-calendar:
+    topic-names: INTERNAL.SANDBOX.PE.CARRIER_SERVICE_CALENDAR_INTEGRATION
+    group-id: carrier-service-calendar-master-sandbox
+  pickup-calendar:
+    topic-names: INTERNAL.SANDBOX.PE.PICKUP_CALENDAR_INTEGRATION
+    group-id: pickup-calendar-master-sandbox
+  node-service-option-buffer:
+    topic-names: INTERNAL.SANDBOX.PE.NODE_SERVICE_OPTION_BUFFER_INTEGRATION
+    group-id: node-service-option-buffer-master-sandbox
+  transit:
+    topic-names: INTERNAL.SANDBOX.PE.TRANSIT_INTEGRATION
+    group-id: transit-master-sandbox
+  transit-buffer:
+    topic-names: INTERNAL.SANDBOX.PE.TRANSIT_BUFFER_INTEGRATION
+    group-id: transit-buffer-master-sandbox
+  transfer-schedule:
+    topic-names: INTERNAL.SANDBOX.PE.TRANSFER_SCHEDULES
+    group-id: transfer-schedules-master-sandbox
+  item:
+    dlt-topic: ITEM_MASTER_INTEGRATION.DLT
+
+
+
+next-cache:
+  caches:
+    -
+      cacheName: task-info
+      ttlSeconds: 14400
+      maxLimit: 50
+  refresh-cache:
+    topic: INTERNAL.SANDBOX.PE.REFRESH_CACHE_INV
+  cacheManager: caffeine
+platform:
+  tasks:
+    enabled: true
+  tasks-scheduler:
+    enabled: true
+    milliseconds: 5000
+  authFilter:
+    enabled: false
+neo-platform:
+  auth-injector:
+    enabled: true
+    token-strategy: generate
+    filter:
+      enabled: true
+    client-uri-mappings:
+      my-client: /**
+  auth-validator:
+    enabled: true
+    application-name: pe-masterdata
+    header:
+      tenant-id: x-tenant-id
+    issuer-uri: \${KEYCLOAK_ENDPOINT}
+    authz-config:
+      config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
+      refresh-interval-mins: 30
+      role:
+        json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-dashboard-uservice.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles,\$.resource_access.applicationclient-pe-core-uservice.roles,\$.resource_access.applicationclient-pe-iv-cache.roles,\$.resource_access.applicationclient-pe-capacity-uservice.roles,\$.resource_access.applicationclient-pe-neip-uservice.roles
+kafka:
+  input:
+    taskTopics: INTERNAL.SANDBOX.PE.RETRY_TOPIC_INV
+    taskGroupId: pe-retry
+
+kafka-topic-flags:
+  item-master:
+    enabled: true
+  master_data_update_event:
+    enabled: true
+  jobs-framework:
+    feed-metrics-consumer:
+      enabled: true
+    job-completion-consumer:
+      enabled: true
+    kafka-publish:
+      enabled: true
+    result-publish:
+      enabled: true
+    result-consumer:
+      enabled: true
+    record-consumer:
+      enabled: true
+  pe-public-webhook:
+    iv-feed:
+      enabled: true
+    item-feed:
+      enabled: true
+    pe-response:
+      enabled: true
+  master-data:
+    node:
+      enabled: true
+    vendor:
+      enabled: true
+    node-carrier:
+      enabled: true
+    carrier:
+      enabled: true
+    processing-lead-time:
+      enabled: true
+    calendar:
+      enabled: true
+    node-calendar:
+      enabled: true
+    carrier-service-calendar:
+      enabled: true
+    pickup-calendar:
+      enabled: true
+    node-service-option-buffer:
+      enabled: true
+    transit:
+      enabled: true
+    transit-buffer:
+      enabled: true
+    transfer-schedule:
+      enabled: true
+  refresh-cache:
+    enabled: true
+  input:
+    taskTopics:
+      enabled: true
