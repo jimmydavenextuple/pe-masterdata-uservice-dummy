@@ -23,12 +23,12 @@ import org.springframework.data.util.Pair;
 /** Configuration related to OpenAPI documentation should be placed here */
 @Configuration
 @RequiredArgsConstructor
-public class OpenAPIConfig {
+public class OpenAPIConfiguration {
 
   private final ApplicationProperties applicationProperties;
 
   @Bean
-  public Info serviceInfo() {
+  public Info serviceInformation() {
     return new Info()
         .title(applicationProperties.getTitle())
         .description(applicationProperties.getDescription())
@@ -45,7 +45,7 @@ public class OpenAPIConfig {
   }
 
   @Bean
-  public OpenAPI openAPI(Info serviceInfo) {
+  public OpenAPI openAPIConfig(Info serviceInformation) {
     // Global security
     Components components = new Components();
     components.addSecuritySchemes(
@@ -94,7 +94,7 @@ public class OpenAPIConfig {
                     .addServerVariable("customer", customerServerVariable)
                     .addServerVariable("module", basePathServerVariable)));
     return new OpenAPI()
-        .info(serviceInfo)
+        .info(serviceInformation)
         .components(components)
         .servers(servers)
         .security(

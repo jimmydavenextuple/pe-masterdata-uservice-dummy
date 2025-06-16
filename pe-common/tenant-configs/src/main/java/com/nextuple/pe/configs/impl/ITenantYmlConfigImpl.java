@@ -181,6 +181,14 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   }
 
   @Override
+  public String getInventoryMissingLinesAction() {
+    return promiseCoordinationConfig
+        .getInventoryMissingLinesAction()
+        .getOrDefault(
+            getOrgId(), promiseCoordinationConfig.getInventoryMissingLinesAction().get(DEFAULT));
+  }
+
+  @Override
   public Set<String> getTemplates() {
     return new HashSet<>(Arrays.asList(getTemplatesList().split(",")));
   }

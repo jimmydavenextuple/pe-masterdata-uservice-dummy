@@ -365,6 +365,11 @@ public class TenantDBConfigImpl implements ITenantConfig {
   }
 
   @Override
+  public String getInventoryMissingLinesAction() {
+    return getTenantConfiguration(INVENTORY_MISSING_LINES_ACTION_CONFIG_KEY, "CANCEL_RESERVATION");
+  }
+
+  @Override
   public Map<String, String> getOperationTemplateMapping() {
     Type type = new TypeToken<Map<String, String>>() {}.getType();
     String operationTemplateMappingString =

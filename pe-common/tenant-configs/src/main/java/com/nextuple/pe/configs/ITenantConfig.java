@@ -112,6 +112,8 @@ public interface ITenantConfig {
 
   Integer getCarrierCalenderPastLookupDays();
 
+  String getInventoryMissingLinesAction();
+
   Boolean getCapacityAware();
 
   Map<CapacityType, Integer> getCapacityFutureLookUpDays();

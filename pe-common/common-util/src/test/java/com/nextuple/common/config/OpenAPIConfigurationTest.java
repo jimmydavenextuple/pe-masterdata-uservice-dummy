@@ -12,9 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-public class OpenAPIConfigTest {
+public class OpenAPIConfigurationTest {
 
-  @InjectMocks OpenAPIConfig openAPIConfig;
+  @InjectMocks OpenAPIConfiguration openAPIConfig;
 
   @BeforeEach
   void init() {
@@ -33,8 +33,8 @@ public class OpenAPIConfigTest {
   }
 
   @Test
-  void serviceInfoTest() {
-    Info info = openAPIConfig.serviceInfo();
+  void serviceInformationTest() {
+    Info info = openAPIConfig.serviceInformation();
     Assertions.assertEquals("title", info.getTitle());
     Assertions.assertEquals("version", info.getVersion());
     Assertions.assertEquals("contactName", info.getContact().getName());
@@ -43,8 +43,8 @@ public class OpenAPIConfigTest {
 
   @Test
   void openAPITest() {
-    Info info = openAPIConfig.serviceInfo();
-    OpenAPI openAPI = openAPIConfig.openAPI(info);
+    Info info = openAPIConfig.serviceInformation();
+    OpenAPI openAPI = openAPIConfig.openAPIConfig(info);
     Assertions.assertNotNull(openAPI);
     Assertions.assertEquals(info, openAPI.getInfo());
   }

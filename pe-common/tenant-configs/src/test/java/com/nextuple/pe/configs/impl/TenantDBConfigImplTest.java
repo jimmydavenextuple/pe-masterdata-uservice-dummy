@@ -895,6 +895,25 @@ class TenantDBConfigImplTest {
   }
 
   @Test
+  @DisplayName("Get Inventory Missing Lines Action - Happy Path")
+  void getInventoryMissingLinesActionTest() {
+    var cacheValue = testUtil.getTenantConfigCacheValueForInventoryMissingLinesAction();
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+    String response = tenantDBConfigImpl.getInventoryMissingLinesAction();
+    assertNotNull(response);
+    assertEquals(TestUtil.DEFAULT_INVENTORY_MISSING_ACTION, response);
+  }
+
+  @Test
+  @DisplayName("Get Inventory Missing Lines Action - Default Scenario")
+  void getInventoryMissingLinesActionDefaultTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+    String response = tenantDBConfigImpl.getInventoryMissingLinesAction();
+    assertNotNull(response);
+    assertEquals(TestUtil.DEFAULT_INVENTORY_MISSING_ACTION, response);
+  }
+
+  @Test
   @DisplayName("Get Order Operations - Happy Path")
   void getOrderOperationsTest() {
     var cacheValue = testUtil.getTenantConfigCacheValueForOrderOperations();
