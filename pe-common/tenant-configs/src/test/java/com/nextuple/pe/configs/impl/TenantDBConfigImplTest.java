@@ -1121,7 +1121,7 @@ class TenantDBConfigImplTest {
         tenantDBConfigImpl, "defaultInboundProcessingTimeEnabledFlag", "false");
     Boolean response = tenantDBConfigImpl.getInboundProcessingTimeEnabledFlag();
     assertNotNull(response);
-    assertFalse(response); // Default value is 40 as specified in the implementation
+    assertFalse(response);
   }
 
   @DisplayName("Test getCapacityAware() with default value when config is not found")
