@@ -94,7 +94,7 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
 
   @Value("${inbound.inbound-processing-time-enabled:false}")
   public String inboundProcessingTimeEnabled;
-  
+
   @Value("${capacity.aware:false}")
   public Boolean capacityAware;
 

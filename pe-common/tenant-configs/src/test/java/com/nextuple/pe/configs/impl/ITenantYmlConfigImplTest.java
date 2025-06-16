@@ -949,6 +949,8 @@ class ITenantYmlConfigImplTest {
     Map<String, Map<String, String>> ruleCraftConfig =
         iTenantYmlConfigImpl.getRuleCraftEngineConfigMap();
     Assertions.assertEquals(dummyMap, ruleCraftConfig);
+  }
+
   @DisplayName("Test getCapacityAware() returns configured value")
   void getCapacityAwareTest() {
     Boolean expectedCapacityAware = true;

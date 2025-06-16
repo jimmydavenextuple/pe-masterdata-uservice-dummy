@@ -1091,6 +1091,8 @@ class TenantDBConfigImplTest {
     Boolean response = tenantDBConfigImpl.getInboundProcessingTimeEnabledFlag();
     assertNotNull(response);
     assertTrue(response);
+  }
+
   @DisplayName("Test getCapacityAware() with valid config value")
   void getCapacityAwareTest() {
     var cacheValue =
@@ -1120,6 +1122,8 @@ class TenantDBConfigImplTest {
     Boolean response = tenantDBConfigImpl.getInboundProcessingTimeEnabledFlag();
     assertNotNull(response);
     assertFalse(response); // Default value is 40 as specified in the implementation
+  }
+
   @DisplayName("Test getCapacityAware() with default value when config is not found")
   void getCapacityAwareDefaultTest() {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
@@ -1152,6 +1156,8 @@ class TenantDBConfigImplTest {
     assertEquals(
         "Tenant Configuration not found for given orgId and configKey rule-craft-engine-config",
         ex.getMessage());
+  }
+
   @DisplayName("Test getCapacityFutureLookUpDays() with valid config JSON value")
   void getCapacityFutureLookUpDaysJsonTest() {
     String jsonConfig = "{\"outbound\": 07, \"transport\": 07, \"receiving\": 07}";
