@@ -309,6 +309,7 @@ definitions:
           - gradle
           - sonar
         script:
+          - microdnf install findutils
           - export TESTCONTAINERS_RYUK_DISABLED=true
           - bash ./gradlew -Pbuild_target=SNAPSHOT clean build --refresh-dependencies
           - export SPACE=" "
