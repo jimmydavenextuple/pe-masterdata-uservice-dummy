@@ -10,7 +10,7 @@ spring:
             scope: applicationclient-pe-masterdata-scope
         provider:
           my-client:
-            token-uri: \${KEYCLOAK_ENDPOINT}
+            token-uri: "\${KEYCLOAK_ENDPOINT}/protocol/openid-connect/token"
   jpa:
     database: POSTGRESQL
     show-sql: false
