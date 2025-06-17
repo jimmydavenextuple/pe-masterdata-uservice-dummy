@@ -79,6 +79,9 @@ public class TenantDBConfigImpl implements ITenantConfig {
   @Value("${sourcing.DEFAULT.recommendation-enabled:false}")
   public String defaultRecommendationEngineFlag;
 
+  @Value("${inbound.inbound-processing-time-enabled:false}")
+  public String defaultInboundProcessingTimeEnabledFlag;
+
   @Value("${sourcing.DEFAULT.ship-together-enabled:true}")
   public String defaultShipTogetherFlag;
 
@@ -103,6 +106,12 @@ public class TenantDBConfigImpl implements ITenantConfig {
   public Boolean getRecommendationEngineEnabledFlag() {
     return Boolean.valueOf(
         getTenantConfiguration(RECOMMENDATION_ENABLED_CONFIG_KEY, defaultRecommendationEngineFlag));
+  }
+
+  public Boolean getInboundProcessingTimeEnabledFlag() {
+    return Boolean.valueOf(
+        getTenantConfiguration(
+            INBOUND_PROCESSING_TIME_ENABLED_KEY, defaultInboundProcessingTimeEnabledFlag));
   }
 
   @Override
@@ -291,6 +300,12 @@ public class TenantDBConfigImpl implements ITenantConfig {
     Type type = new TypeToken<Map<String, String>>() {}.getType();
     String logLevelString = getTenantConfigdataCacheValue(EVENT_LOG_LEVEL_CONFIG_KEY);
     return getGsonObject().fromJson(logLevelString, type);
+  }
+
+  public Map<String, Map<String, String>> getRuleCraftEngineConfigMap() {
+    Type type = new TypeToken<Map<String, Map<String, String>>>() {}.getType();
+    String ruleCraftConfigString = getTenantConfigdataCacheValue(RULE_CRAFT_ENGINE_CONFIG_MAP);
+    return getGsonObject().fromJson(ruleCraftConfigString, type);
   }
 
   public Map<String, Boolean> getConsoleLogListenEnabledMap() {

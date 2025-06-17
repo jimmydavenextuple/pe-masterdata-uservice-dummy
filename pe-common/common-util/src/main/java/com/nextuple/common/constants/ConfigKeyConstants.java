@@ -71,6 +71,9 @@ public class ConfigKeyConstants {
       "carrier-calender-past-lookup-days";
   public static final String NODE_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY =
       "node-calender-past-lookup-days";
+  public static final String INBOUND_PROCESSING_TIME_ENABLED_KEY =
+      "inbound-processing-time-enabled";
+  public static final String RULE_CRAFT_ENGINE_CONFIG_MAP = "rule-craft-engine-config";
 
   public static final String CAPACITY_AWARE_CONFIG_KEY = "capacity-aware";
 

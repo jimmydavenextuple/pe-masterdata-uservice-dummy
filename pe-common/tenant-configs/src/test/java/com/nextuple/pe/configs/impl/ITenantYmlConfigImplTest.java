@@ -908,6 +908,49 @@ class ITenantYmlConfigImplTest {
   }
 
   @Test
+  @DisplayName("Test getInboundProcessingTimeEnabledFlag() returns configured value")
+  void getInboundProcessingTimeEnabledTest() {
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "inboundProcessingTimeEnabled", "true");
+    // Call the method and verify the result
+    Boolean result = iTenantYmlConfigImpl.getInboundProcessingTimeEnabledFlag();
+    // Assertions
+    assertNotNull(result);
+    assertTrue(result);
+  }
+
+  @Test
+  @DisplayName("Test getRuleCraftEngineConfig() returns valid value")
+  void getRuleCraftEngineConfigTest() {
+    Gson gson = new Gson();
+    Type type = new TypeToken<Map<String, Map<String, String>>>() {}.getType();
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String ruleCraftEngineConfig = (String) valueForOrg.get("rule-craft-engine-config");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+
+    Map<String, Map<String, String>> ruleCraftConfig =
+        iTenantYmlConfigImpl.getRuleCraftEngineConfigMap();
+    Assertions.assertEquals(gson.fromJson(ruleCraftEngineConfig, type), ruleCraftConfig);
+  }
+
+  @Test
+  @DisplayName("Test getRuleCraftEngineConfig() value is already populated")
+  void getRuleCraftEngineConfigValueAlreadyPopulatedTest() {
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+    Map<String, Map<String, String>> dummyMap = Map.of("key", Map.of("l1k1", "l1v1"));
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "ruleCraftEngineConfigMap", dummyMap);
+
+    Map<String, Map<String, String>> ruleCraftConfig =
+        iTenantYmlConfigImpl.getRuleCraftEngineConfigMap();
+    Assertions.assertEquals(dummyMap, ruleCraftConfig);
+  }
+
   @DisplayName("Test getCapacityAware() returns configured value")
   void getCapacityAwareTest() {
     Boolean expectedCapacityAware = true;
