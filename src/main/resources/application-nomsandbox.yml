@@ -230,7 +230,7 @@ neo-platform:
     application-name: pe-masterdata
     header:
       tenant-id: x-tenant-id
-    issuer-uri: ${KEYCLOAK_ENDPOINT}
+    issuer-uri: "${KEYCLOAK_ENDPOINT}"
     authz-config:
       config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
       refresh-interval-mins: 30
