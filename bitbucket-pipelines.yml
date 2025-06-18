@@ -117,7 +117,7 @@ server:
       keyvault: yes
       dockerbuild: yes
       scale:
-        replicas: 3
+        replicas: 1
       resources:
         min:
           memory: 4Gi

@@ -245,7 +245,6 @@ kafka-topic-flags:
     item-feed:
     pe-response:
       enabled: true
-      enabled: true
   master-data:
     node:
       enabled: true
