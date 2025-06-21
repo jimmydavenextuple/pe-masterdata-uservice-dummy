@@ -104,6 +104,9 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Value("${capacity.past-lookup-days}")
   public String capacityPastLookbackDaysConfig;
 
+  @Value("${capacity.model-name}")
+  public String capacityModelName;
+
   private static final String DEFAULT = "DEFAULT";
   private static final String NO_OF_LINE_SOLUTIONS_REQUIRED = "line-solutions-required";
   private static final String LINE_THRESHOLD = "line-threshold";
@@ -501,13 +504,19 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
 
   @Override
   public Map<CapacityType, Integer> getCapacityFutureLookUpDays() {
-    return TenantConfigUtil.parseCapacityConfigString(
+    return TenantConfigUtil.parseCapacityConfigAsInteger(
         capacityFutureLookupDaysConfig, DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS);
   }
 
   @Override
   public Map<CapacityType, Integer> getCapacityPastLookBackDays() {
-    return TenantConfigUtil.parseCapacityConfigString(
+    return TenantConfigUtil.parseCapacityConfigAsInteger(
         capacityPastLookbackDaysConfig, DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS);
+  }
+
+  @Override
+  public Map<CapacityType, String> getCapacityModel() {
+    return TenantConfigUtil.parseCapacityConfigAsString(
+        capacityModelName, DEFAULT_CAPACITY_MODEL_NAME);
   }
 }

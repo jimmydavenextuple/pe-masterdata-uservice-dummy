@@ -10,7 +10,8 @@ package com.nextuple.pe.configs.impl;
 import static com.nextuple.common.constants.CommonConstants.CONFIG_KEY;
 import static com.nextuple.common.constants.CommonConstants.ORG_ID;
 import static com.nextuple.common.constants.ConfigKeyConstants.*;
-import static com.nextuple.pe.configs.TenantConfigUtil.parseCapacityConfigString;
+import static com.nextuple.pe.configs.TenantConfigUtil.parseCapacityConfigAsInteger;
+import static com.nextuple.pe.configs.TenantConfigUtil.parseCapacityConfigAsString;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -417,7 +418,7 @@ public class TenantDBConfigImpl implements ITenantConfig {
 
   @Override
   public Map<CapacityType, Integer> getCapacityFutureLookUpDays() {
-    return parseCapacityConfigString(
+    return parseCapacityConfigAsInteger(
         getTenantConfiguration(
             CAPACITY_FUTURE_LOOKUP_DAYS_CONFIG_KEY, DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS),
         DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS);
@@ -425,10 +426,17 @@ public class TenantDBConfigImpl implements ITenantConfig {
 
   @Override
   public Map<CapacityType, Integer> getCapacityPastLookBackDays() {
-    return parseCapacityConfigString(
+    return parseCapacityConfigAsInteger(
         getTenantConfiguration(
             CAPACITY_PAST_LOOKBACK_DAYS_CONFIG_KEY, DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS),
         DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS);
+  }
+
+  @Override
+  public Map<CapacityType, String> getCapacityModel() {
+    return parseCapacityConfigAsString(
+        getTenantConfiguration(CAPACITY_MODEL_NAME_CONFIG_KEY, DEFAULT_CAPACITY_MODEL_NAME),
+        DEFAULT_CAPACITY_MODEL_NAME);
   }
 
   private String getTenantConfigdataCacheValue(String configKey) {

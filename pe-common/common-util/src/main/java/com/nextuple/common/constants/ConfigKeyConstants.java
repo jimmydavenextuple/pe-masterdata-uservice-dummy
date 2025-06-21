@@ -79,6 +79,7 @@ public class ConfigKeyConstants {
 
   public static final String CAPACITY_FUTURE_LOOKUP_DAYS_CONFIG_KEY = "capacity-future-lookup-days";
   public static final String CAPACITY_PAST_LOOKBACK_DAYS_CONFIG_KEY = "capacity-past-lookback-days";
+  public static final String CAPACITY_MODEL_NAME_CONFIG_KEY = "capacity-model-name";
 
   public static final List<String> CONFIG_KEYS_MULTIPLE_VALUES_NOT_ALLOWED =
       List.of(SELECTED_ATTRIBUTE_FOR_TARGET_MARGINS_CONFIG_KEY);
@@ -89,4 +90,5 @@ public class ConfigKeyConstants {
       "{\"outbound\": 0, \"transport\": 0, \"receiving\": 0}";
   public static final String DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS =
       "{\"outbound\": 20, \"transport\": 20, \"receiving\": 20}";
+  public static final String DEFAULT_CAPACITY_MODEL_NAME = "{}";
 }
