@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,17 +47,20 @@ public class ItemSubstitutionController {
 
   @GetMapping("/{orgId}/{primaryItemId}/{primaryUom}")
   public ResponseEntity<BaseResponse<List<ItemSubstitutionResponse>>> getItemSubstitution(
-      @Parameter(
+      @NotBlank(message = "Organisation ID can't be blank")
+          @Parameter(
               description = ItemSubstitutionConstants.ORG_ID,
               example = ItemSubstitutionConstants.ORG_ID_EXAMPLE)
           @PathVariable(name = "orgId")
           String orgId,
-      @Parameter(
+      @NotBlank(message = "Primary Item ID can't be blank")
+          @Parameter(
               description = ItemSubstitutionConstants.PRIMARY_ITEM_ID,
               example = ItemSubstitutionConstants.PRIMARY_ITEM_ID_EXAMPLE)
           @PathVariable(name = "primaryItemId")
           String primaryItemId,
-      @Parameter(
+      @NotBlank(message = "Primary UOM can't be blank")
+          @Parameter(
               description = ItemSubstitutionConstants.PRIMARY_UOM,
               example = ItemSubstitutionConstants.PRIMARY_UOM_EXAMPLE)
           @PathVariable(name = "primaryUom")
