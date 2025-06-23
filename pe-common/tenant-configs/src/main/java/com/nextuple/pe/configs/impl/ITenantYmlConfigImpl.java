@@ -12,6 +12,7 @@ import static com.nextuple.common.constants.ConfigKeyConstants.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nextuple.common.context.CurrentThreadContext;
+import com.nextuple.common.enums.CapacityType;
 import com.nextuple.pe.configs.*;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -91,6 +92,18 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Value("${sourcing.DEFAULT.enable-availability-sorting:false}")
   public String defaultEnableAvailabilitySorting;
 
+  @Value("${inbound.inbound-processing-time-enabled:false}")
+  public String inboundProcessingTimeEnabled;
+
+  @Value("${capacity.aware:false}")
+  public Boolean capacityAware;
+
+  @Value("${capacity.future-lookup-days}")
+  public String capacityFutureLookupDaysConfig;
+
+  @Value("${capacity.past-lookup-days}")
+  public String capacityPastLookbackDaysConfig;
+
   private static final String DEFAULT = "DEFAULT";
   private static final String NO_OF_LINE_SOLUTIONS_REQUIRED = "line-solutions-required";
   private static final String LINE_THRESHOLD = "line-threshold";
@@ -100,6 +113,7 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   public static final Gson gson = new Gson();
   Map<String, Boolean> publishEnabledMap = new HashMap<>();
   Map<String, String> logLevelMap = new HashMap<>();
+  Map<String, Map<String, String>> ruleCraftEngineConfigMap = new HashMap<>();
   Map<String, Boolean> consoleLogListenEnabledMap = new HashMap<>();
 
   @Override
@@ -168,6 +182,14 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
     return promiseCoordinationConfig
         .getOrderOperations()
         .getOrDefault(getOrgId(), promiseCoordinationConfig.getOrderOperations().get(DEFAULT));
+  }
+
+  @Override
+  public String getInventoryMissingLinesAction() {
+    return promiseCoordinationConfig
+        .getInventoryMissingLinesAction()
+        .getOrDefault(
+            getOrgId(), promiseCoordinationConfig.getInventoryMissingLinesAction().get(DEFAULT));
   }
 
   @Override
@@ -295,6 +317,11 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   }
 
   @Override
+  public Boolean getInboundProcessingTimeEnabledFlag() {
+    return Boolean.valueOf(inboundProcessingTimeEnabled);
+  }
+
+  @Override
   public Integer getCapacityHorizon() {
     return (Integer) getCapacityConfigMap().get(CAPACITY_HORIZON);
   }
@@ -365,6 +392,21 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
       consoleLogListenEnabledMap = getGsonObject().fromJson(consoleLogListenEnabledString, type);
     }
     return consoleLogListenEnabledMap;
+  }
+
+  @Override
+  public Map<String, Map<String, String>> getRuleCraftEngineConfigMap() {
+    if (ObjectUtils.isEmpty(ruleCraftEngineConfigMap)) {
+      Type type = new TypeToken<Map<String, String>>() {}.getType();
+      String ruleCraftConfigString =
+          (String)
+              eventConfig
+                  .getEvent()
+                  .getOrDefault(getOrgId(), getDefaultEventProperties())
+                  .get("ruleCraftEngineConfig");
+      ruleCraftEngineConfigMap = getGsonObject().fromJson(ruleCraftConfigString, type);
+    }
+    return ruleCraftEngineConfigMap;
   }
 
   public Integer getNumberOfSolutions(Boolean isCapacityEnabled) {
@@ -450,5 +492,22 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Override
   public Integer getCarrierCalenderPastLookupDays() {
     return carrierCalenderPastLookupDays;
+  }
+
+  @Override
+  public Boolean getCapacityAware() {
+    return capacityAware;
+  }
+
+  @Override
+  public Map<CapacityType, Integer> getCapacityFutureLookUpDays() {
+    return TenantConfigUtil.parseCapacityConfigString(
+        capacityFutureLookupDaysConfig, DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS);
+  }
+
+  @Override
+  public Map<CapacityType, Integer> getCapacityPastLookBackDays() {
+    return TenantConfigUtil.parseCapacityConfigString(
+        capacityPastLookbackDaysConfig, DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS);
   }
 }

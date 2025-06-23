@@ -10,12 +10,14 @@ package com.nextuple.pe.configs.impl;
 import static com.nextuple.common.constants.CommonConstants.CONFIG_KEY;
 import static com.nextuple.common.constants.CommonConstants.ORG_ID;
 import static com.nextuple.common.constants.ConfigKeyConstants.*;
+import static com.nextuple.pe.configs.TenantConfigUtil.parseCapacityConfigString;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nextuple.common.context.CurrentThreadContext;
 import com.nextuple.common.context.Logger;
 import com.nextuple.common.context.LoggerFactory;
+import com.nextuple.common.enums.CapacityType;
 import com.nextuple.common.exception.PromisingEngineException;
 import com.nextuple.common.response.error.FieldError;
 import com.nextuple.configuration.cache.domain.TenantConfigdataCacheKey;
@@ -77,6 +79,9 @@ public class TenantDBConfigImpl implements ITenantConfig {
   @Value("${sourcing.DEFAULT.recommendation-enabled:false}")
   public String defaultRecommendationEngineFlag;
 
+  @Value("${inbound.inbound-processing-time-enabled:false}")
+  public String defaultInboundProcessingTimeEnabledFlag;
+
   @Value("${sourcing.DEFAULT.ship-together-enabled:true}")
   public String defaultShipTogetherFlag;
 
@@ -101,6 +106,12 @@ public class TenantDBConfigImpl implements ITenantConfig {
   public Boolean getRecommendationEngineEnabledFlag() {
     return Boolean.valueOf(
         getTenantConfiguration(RECOMMENDATION_ENABLED_CONFIG_KEY, defaultRecommendationEngineFlag));
+  }
+
+  public Boolean getInboundProcessingTimeEnabledFlag() {
+    return Boolean.valueOf(
+        getTenantConfiguration(
+            INBOUND_PROCESSING_TIME_ENABLED_KEY, defaultInboundProcessingTimeEnabledFlag));
   }
 
   @Override
@@ -291,6 +302,12 @@ public class TenantDBConfigImpl implements ITenantConfig {
     return getGsonObject().fromJson(logLevelString, type);
   }
 
+  public Map<String, Map<String, String>> getRuleCraftEngineConfigMap() {
+    Type type = new TypeToken<Map<String, Map<String, String>>>() {}.getType();
+    String ruleCraftConfigString = getTenantConfigdataCacheValue(RULE_CRAFT_ENGINE_CONFIG_MAP);
+    return getGsonObject().fromJson(ruleCraftConfigString, type);
+  }
+
   public Map<String, Boolean> getConsoleLogListenEnabledMap() {
     Type type = new TypeToken<Map<String, String>>() {}.getType();
     String consoleLogListenEnabledString =
@@ -363,6 +380,11 @@ public class TenantDBConfigImpl implements ITenantConfig {
   }
 
   @Override
+  public String getInventoryMissingLinesAction() {
+    return getTenantConfiguration(INVENTORY_MISSING_LINES_ACTION_CONFIG_KEY, "CANCEL_RESERVATION");
+  }
+
+  @Override
   public Map<String, String> getOperationTemplateMapping() {
     Type type = new TypeToken<Map<String, String>>() {}.getType();
     String operationTemplateMappingString =
@@ -385,6 +407,28 @@ public class TenantDBConfigImpl implements ITenantConfig {
   public Integer getCarrierCalenderPastLookupDays() {
     return Integer.parseInt(
         getTenantConfiguration(CARRIER_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY, "40"));
+  }
+
+  @Override
+  public Boolean getCapacityAware() {
+    return Boolean.valueOf(
+        getTenantConfiguration(CAPACITY_AWARE_CONFIG_KEY, Boolean.FALSE.toString()));
+  }
+
+  @Override
+  public Map<CapacityType, Integer> getCapacityFutureLookUpDays() {
+    return parseCapacityConfigString(
+        getTenantConfiguration(
+            CAPACITY_FUTURE_LOOKUP_DAYS_CONFIG_KEY, DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS),
+        DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS);
+  }
+
+  @Override
+  public Map<CapacityType, Integer> getCapacityPastLookBackDays() {
+    return parseCapacityConfigString(
+        getTenantConfiguration(
+            CAPACITY_PAST_LOOKBACK_DAYS_CONFIG_KEY, DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS),
+        DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS);
   }
 
   private String getTenantConfigdataCacheValue(String configKey) {

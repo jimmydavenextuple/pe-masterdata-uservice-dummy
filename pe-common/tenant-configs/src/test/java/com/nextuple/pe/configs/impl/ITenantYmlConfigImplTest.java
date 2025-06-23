@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nextuple.common.constants.ConfigKeyConstants;
 import com.nextuple.common.context.CurrentThreadContext;
+import com.nextuple.common.enums.CapacityType;
 import com.nextuple.pe.configs.CapacityConfig;
 import com.nextuple.pe.configs.DefaultCarrierPriorityConfig;
 import com.nextuple.pe.configs.EventConfig;
@@ -105,6 +106,29 @@ class ITenantYmlConfigImplTest {
 
     String serviceOptionsResponse = iTenantYmlConfigImpl.getServiceOptions();
     Assertions.assertEquals(defaultServiceOptions, serviceOptionsResponse);
+  }
+
+  @DisplayName("Get Inventory Missing Lines Action from yml - Happy Path")
+  @Test
+  void getInventoryMissingLinesActionTest() {
+    String action = "CANCEL_RESERVATION";
+    Mockito.when(promiseCoordinationConfig.getInventoryMissingLinesAction())
+        .thenReturn(
+            Map.of(TestUtil.ORG_ID, action, "DEFAULT", TestUtil.DEFAULT_INVENTORY_MISSING_ACTION));
+
+    String response = iTenantYmlConfigImpl.getInventoryMissingLinesAction();
+    Assertions.assertEquals(action, response);
+  }
+
+  @DisplayName("Get Inventory Missing Lines Action from yml - Default Scenario")
+  @Test
+  void getInventoryMissingLinesActionTestDefault() {
+    String defaultAction = TestUtil.DEFAULT_INVENTORY_MISSING_ACTION;
+    Mockito.when(promiseCoordinationConfig.getInventoryMissingLinesAction())
+        .thenReturn(Map.of("DEFAULT", defaultAction));
+
+    String orderOperationResponse = iTenantYmlConfigImpl.getInventoryMissingLinesAction();
+    Assertions.assertEquals(defaultAction, orderOperationResponse);
   }
 
   @DisplayName("Returns order operations for the org, when we have data for orgId in yml")
@@ -881,5 +905,118 @@ class ITenantYmlConfigImplTest {
     // Assertions
     assertNotNull(result);
     assertEquals(expectedNodeCalenderPastLookupDays, result);
+  }
+
+  @Test
+  @DisplayName("Test getInboundProcessingTimeEnabledFlag() returns configured value")
+  void getInboundProcessingTimeEnabledTest() {
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "inboundProcessingTimeEnabled", "true");
+    // Call the method and verify the result
+    Boolean result = iTenantYmlConfigImpl.getInboundProcessingTimeEnabledFlag();
+    // Assertions
+    assertNotNull(result);
+    assertTrue(result);
+  }
+
+  @Test
+  @DisplayName("Test getRuleCraftEngineConfig() returns valid value")
+  void getRuleCraftEngineConfigTest() {
+    Gson gson = new Gson();
+    Type type = new TypeToken<Map<String, Map<String, String>>>() {}.getType();
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    String ruleCraftEngineConfig = (String) valueForOrg.get("rule-craft-engine-config");
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+
+    Map<String, Map<String, String>> ruleCraftConfig =
+        iTenantYmlConfigImpl.getRuleCraftEngineConfigMap();
+    Assertions.assertEquals(gson.fromJson(ruleCraftEngineConfig, type), ruleCraftConfig);
+  }
+
+  @Test
+  @DisplayName("Test getRuleCraftEngineConfig() value is already populated")
+  void getRuleCraftEngineConfigValueAlreadyPopulatedTest() {
+    Map<String, Object> valueForOrg = testUtil.getEventConfigValueForOrg();
+    Map<String, Object> defaultValue = testUtil.getDefaultEventConfigValue();
+    Map<String, Map<String, Object>> eventConfigMap =
+        Map.of(TestUtil.ORG_ID, valueForOrg, "DEFAULT", defaultValue);
+    Mockito.when(eventConfig.getEvent()).thenReturn(eventConfigMap);
+    Map<String, Map<String, String>> dummyMap = Map.of("key", Map.of("l1k1", "l1v1"));
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "ruleCraftEngineConfigMap", dummyMap);
+
+    Map<String, Map<String, String>> ruleCraftConfig =
+        iTenantYmlConfigImpl.getRuleCraftEngineConfigMap();
+    Assertions.assertEquals(dummyMap, ruleCraftConfig);
+  }
+
+  @DisplayName("Test getCapacityAware() returns configured value")
+  void getCapacityAwareTest() {
+    Boolean expectedCapacityAware = true;
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "capacityAware", expectedCapacityAware);
+
+    Boolean result = iTenantYmlConfigImpl.getCapacityAware();
+
+    assertNotNull(result);
+    assertEquals(expectedCapacityAware, result);
+  }
+
+  @Test
+  @DisplayName("Test getCapacityFutureLookUpDays() returns parsed values")
+  void getCapacityFutureLookUpDaysTest() {
+    String jsonConfig = "{\"outbound\": 7, \"transport\": 7, \"receiving\": 7}";
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl, "capacityFutureLookupDaysConfig", jsonConfig);
+
+    Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getCapacityFutureLookUpDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(7, result.get(CapacityType.OUTBOUND));
+    assertEquals(7, result.get(CapacityType.TRANSPORT));
+    assertEquals(7, result.get(CapacityType.RECEIVING));
+  }
+
+  @Test
+  @DisplayName("Test getCapacityPastLookBackDays() returns parsed values")
+  void getCapacityPastLookBackDaysTest() {
+    String jsonConfig = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
+    ReflectionTestUtils.setField(
+        iTenantYmlConfigImpl, "capacityPastLookbackDaysConfig", jsonConfig);
+
+    Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getCapacityPastLookBackDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(30, result.get(CapacityType.OUTBOUND));
+    assertEquals(15, result.get(CapacityType.TRANSPORT));
+    assertEquals(10, result.get(CapacityType.RECEIVING));
+  }
+
+  @Test
+  @DisplayName("Test getCapacityFutureLookUpDays() returns default map for null config")
+  void getCapacityFutureLookUpDaysWithNullConfigTest() {
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "capacityFutureLookupDaysConfig", null);
+
+    Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getCapacityFutureLookUpDays();
+
+    assertNotNull(result);
+    assertEquals(20, result.get(CapacityType.OUTBOUND));
+    assertEquals(20, result.get(CapacityType.TRANSPORT));
+    assertEquals(20, result.get(CapacityType.RECEIVING));
+  }
+
+  @Test
+  @DisplayName("Test getCapacityPastLookBackDays() returns default map for null config")
+  void getCapacityPastLookBackDaysWithNullConfigTest() {
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "capacityPastLookbackDaysConfig", null);
+
+    Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getCapacityPastLookBackDays();
+
+    assertNotNull(result);
+    assertEquals(0, result.get(CapacityType.OUTBOUND));
+    assertEquals(0, result.get(CapacityType.TRANSPORT));
+    assertEquals(0, result.get(CapacityType.RECEIVING));
   }
 }

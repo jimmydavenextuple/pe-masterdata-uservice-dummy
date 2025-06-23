@@ -7,6 +7,7 @@
 
 package com.nextuple.pe.configs;
 
+import com.nextuple.common.enums.CapacityType;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,6 +54,8 @@ public interface ITenantConfig {
 
   Boolean getRecommendationEngineEnabledFlag();
 
+  Boolean getInboundProcessingTimeEnabledFlag();
+
   Integer getNumberOfNodes();
 
   Set<String> getAllowedPagesListForPublishingEvent();
@@ -62,6 +65,8 @@ public interface ITenantConfig {
   Map<String, String> getLogLevelMap();
 
   Map<String, Boolean> getConsoleLogListenEnabledMap();
+
+  Map<String, Map<String, String>> getRuleCraftEngineConfigMap();
 
   Integer getNoOfLineSolutionsRequired();
 
@@ -110,4 +115,12 @@ public interface ITenantConfig {
   Integer getNodeCalenderPastLookupDays();
 
   Integer getCarrierCalenderPastLookupDays();
+
+  String getInventoryMissingLinesAction();
+
+  Boolean getCapacityAware();
+
+  Map<CapacityType, Integer> getCapacityFutureLookUpDays();
+
+  Map<CapacityType, Integer> getCapacityPastLookBackDays();
 }

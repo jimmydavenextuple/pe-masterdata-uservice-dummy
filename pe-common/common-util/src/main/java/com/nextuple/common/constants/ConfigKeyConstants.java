@@ -64,14 +64,29 @@ public class ConfigKeyConstants {
   public static final String ORDER_OPERATIONS_CONFIG_KEY = "order-operations";
   public static final String TEMPLATES = "templates";
   public static final String OPERATION_TEMPLATE_MAPPING = "operation-template-mapping";
+  public static final String INVENTORY_MISSING_LINES_ACTION_CONFIG_KEY =
+      "inventory-missing-lines-action";
   public static final String TRANSIT_HORIZON_CONFIG_KEY = "transit-horizon-days";
   public static final String CARRIER_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY =
       "carrier-calender-past-lookup-days";
   public static final String NODE_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY =
       "node-calender-past-lookup-days";
+  public static final String INBOUND_PROCESSING_TIME_ENABLED_KEY =
+      "inbound-processing-time-enabled";
+  public static final String RULE_CRAFT_ENGINE_CONFIG_MAP = "rule-craft-engine-config";
+
+  public static final String CAPACITY_AWARE_CONFIG_KEY = "capacity-aware";
+
+  public static final String CAPACITY_FUTURE_LOOKUP_DAYS_CONFIG_KEY = "capacity-future-lookup-days";
+  public static final String CAPACITY_PAST_LOOKBACK_DAYS_CONFIG_KEY = "capacity-past-lookback-days";
 
   public static final List<String> CONFIG_KEYS_MULTIPLE_VALUES_NOT_ALLOWED =
       List.of(SELECTED_ATTRIBUTE_FOR_TARGET_MARGINS_CONFIG_KEY);
 
   public static final Integer CAPACITY_SOLUTION_COUNT = 1;
+
+  public static final String DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS =
+      "{\"outbound\": 0, \"transport\": 0, \"receiving\": 0}";
+  public static final String DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS =
+      "{\"outbound\": 20, \"transport\": 20, \"receiving\": 20}";
 }
