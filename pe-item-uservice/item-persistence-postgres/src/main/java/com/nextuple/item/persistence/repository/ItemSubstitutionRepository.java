@@ -17,8 +17,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ItemSubstitutionRepository
     extends CommonJpaRepository<ItemSubstitutionEntity, ItemSubstitutionKey> {
-  List<ItemSubstitutionEntity> findByPrimaryItemIdAndPrimaryUom(
-      String primaryItemId, String primaryUom);
+  List<ItemSubstitutionEntity> findByOrgIdAndPrimaryItemIdAndPrimaryUom(
+      String orgId, String primaryItemId, String primaryUom);
 
   ItemSubstitutionDomainDto findByPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
       String primaryItemId, String primaryUom, String alternateItemId, String alternateUom);

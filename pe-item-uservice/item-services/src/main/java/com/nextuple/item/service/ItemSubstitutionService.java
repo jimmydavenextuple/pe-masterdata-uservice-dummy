@@ -52,16 +52,16 @@ public class ItemSubstitutionService {
     return INSTANCE.entityToDomainDto(savedEntity);
   }
 
-  public List<ItemSubstitutionResponse> getItemSubstitution(String primaryItemId, String primaryUom)
-      throws CommonServiceException {
+  public List<ItemSubstitutionResponse> getItemSubstitution(
+      String orgId, String primaryItemId, String primaryUom) throws CommonServiceException {
     log.debug(
         "Getting item substitution for primaryItemId: {}, primaryUom: {}",
         primaryItemId,
         primaryUom);
 
     List<ItemSubstitutionDomainDto> entity =
-        itemSubstitutionPersistenceService.findByPrimaryItemIdAndPrimaryUom(
-            primaryItemId, primaryUom);
+        itemSubstitutionPersistenceService.findByOrgIdAndPrimaryItemIdAndPrimaryUom(
+            orgId, primaryItemId, primaryUom);
 
     return INSTANCE.domainDtoToResponse(entity);
   }

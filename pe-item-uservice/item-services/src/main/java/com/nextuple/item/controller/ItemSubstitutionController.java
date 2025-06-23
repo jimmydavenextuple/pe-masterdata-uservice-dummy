@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,28 +45,22 @@ public class ItemSubstitutionController {
             .build());
   }
 
-  @GetMapping
+  @GetMapping("/{orgId}/{primaryItemId}/{primaryUom}")
   public ResponseEntity<BaseResponse<List<ItemSubstitutionResponse>>> getItemSubstitution(
-      @NotBlank(message = "Organisation ID can't be blank")
-          @RequestParam
-          @Parameter(
+      @Parameter(
               description = ItemSubstitutionConstants.ORG_ID,
               example = ItemSubstitutionConstants.ORG_ID_EXAMPLE)
-          @PathVariable
+          @PathVariable(name = "orgId")
           String orgId,
-      @NotBlank(message = "Primary Item ID can't be blank")
-          @RequestParam
-          @Parameter(
+      @Parameter(
               description = ItemSubstitutionConstants.PRIMARY_ITEM_ID,
               example = ItemSubstitutionConstants.PRIMARY_ITEM_ID_EXAMPLE)
-          @PathVariable
+          @PathVariable(name = "primaryItemId")
           String primaryItemId,
-      @NotBlank(message = "Primary UOM can't be blank")
-          @RequestParam
-          @Parameter(
+      @Parameter(
               description = ItemSubstitutionConstants.PRIMARY_UOM,
               example = ItemSubstitutionConstants.PRIMARY_UOM_EXAMPLE)
-          @PathVariable
+          @PathVariable(name = "primaryUom")
           String primaryUom)
       throws CommonServiceException {
     log.debug(
@@ -78,14 +71,14 @@ public class ItemSubstitutionController {
     return ResponseEntity.ok(
         BaseResponse.builder()
             .message("Item substitution retrieved successfully")
-            .payload(itemSubstitutionService.getItemSubstitution(primaryItemId, primaryUom))
+            .payload(itemSubstitutionService.getItemSubstitution(orgId, primaryItemId, primaryUom))
             .build());
   }
 
   @DeleteMapping
   @Operation(summary = "Delete an Item Substitution by primary item ID and UOM")
   public ResponseEntity<BaseResponse<Void>> deleteItemSubstitution(
-      @Valid @RequestParam DeleteItemSubstitutionRequest deleteRequest)
+      @Valid @RequestBody DeleteItemSubstitutionRequest deleteRequest)
       throws CommonServiceException {
     log.debug("Deleting item substitution for deleteRequest: {}", deleteRequest);
     itemSubstitutionService.deleteItemSubstitution(deleteRequest);

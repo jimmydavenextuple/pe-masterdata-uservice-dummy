@@ -16,8 +16,8 @@ import java.util.Optional;
 
 public interface ItemSubstitutionPersistenceService
     extends DomainPersistenceService<ItemSubstitutionDomainDto, ItemSubstitutionDomainKey> {
-  List<ItemSubstitutionDomainDto> findByPrimaryItemIdAndPrimaryUom(
-      String primaryItemId, String primaryUom) throws CommonServiceException;
+  List<ItemSubstitutionDomainDto> findByOrgIdAndPrimaryItemIdAndPrimaryUom(
+      String orgId, String primaryItemId, String primaryUom) throws CommonServiceException;
 
   Optional<ItemSubstitutionDomainDto>
       findByPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(

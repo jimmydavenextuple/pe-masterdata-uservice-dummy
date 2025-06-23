@@ -32,11 +32,13 @@ public class ItemSubstitutionPersistenceServiceImpl
         ItemSubstitutionEntityMapper>
     implements ItemSubstitutionPersistenceService {
   @Override
-  public List<ItemSubstitutionDomainDto> findByPrimaryItemIdAndPrimaryUom(
-      String primaryItemId, String primaryUom) throws CommonServiceException {
+  public List<ItemSubstitutionDomainDto> findByOrgIdAndPrimaryItemIdAndPrimaryUom(
+      String orgId, String primaryItemId, String primaryUom) throws CommonServiceException {
     try {
       return getMapper()
-          .toDomain(getRepository().findByPrimaryItemIdAndPrimaryUom(primaryItemId, primaryUom));
+          .toDomain(
+              getRepository()
+                  .findByOrgIdAndPrimaryItemIdAndPrimaryUom(orgId, primaryItemId, primaryUom));
     } catch (Exception e) {
       log.debug("Unable to find item substitution", e);
       throw new CommonServiceException(
