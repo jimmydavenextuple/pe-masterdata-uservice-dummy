@@ -1019,4 +1019,29 @@ class ITenantYmlConfigImplTest {
     assertEquals(0, result.get(CapacityType.TRANSPORT));
     assertEquals(0, result.get(CapacityType.RECEIVING));
   }
+
+  @Test
+  @DisplayName("Test getCapacityModel() returns configured value")
+  void getCapacityModelTest() {
+    String jsonConfig =
+        "{\"outbound\": \"OUTBOUND_MODEL_NAME\", \"transport\": \"TRANSPORT_MODEL_NAME\", \"receiving\": \"RECEIVING_MODEL_NAME\"}";
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "capacityModelName", jsonConfig);
+    Map<CapacityType, String> result = iTenantYmlConfigImpl.getCapacityModel();
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals("OUTBOUND_MODEL_NAME", result.get(CapacityType.OUTBOUND));
+    assertEquals("TRANSPORT_MODEL_NAME", result.get(CapacityType.TRANSPORT));
+    assertEquals("RECEIVING_MODEL_NAME", result.get(CapacityType.RECEIVING));
+  }
+
+  @Test
+  @DisplayName("Test getCapacityModel() returns default map for null config")
+  void getCapacityModelWithNullConfigTest() {
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "capacityModelName", null);
+
+    Map<CapacityType, String> result = iTenantYmlConfigImpl.getCapacityModel();
+
+    assertNotNull(result);
+    assertEquals(0, result.size());
+  }
 }
