@@ -1276,4 +1276,38 @@ class TenantDBConfigImplTest {
     assertEquals(0, result.get(CapacityType.RECEIVING));
     verify(tenantConfigdataNearCacheService, times(1)).get(any());
   }
+
+  @Test
+  @DisplayName("Test getCapacityModel() with valid config value")
+  void getCapacityModelTest() {
+    String jsonConfig =
+        "{\"outbound\": \"OUTBOUND_MODEL_NAME\", \"transport\": \"TRANSPORT_MODEL_NAME\", \"receiving\": \"RECEIVING_MODEL_NAME\"}";
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey("capacity-model")
+            .configValue(jsonConfig)
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Map<CapacityType, String> response = tenantDBConfigImpl.getCapacityModel();
+
+    assertNotNull(response);
+    assertEquals(3, response.size());
+    assertEquals("OUTBOUND_MODEL_NAME", response.get(CapacityType.OUTBOUND));
+    assertEquals("TRANSPORT_MODEL_NAME", response.get(CapacityType.TRANSPORT));
+    assertEquals("RECEIVING_MODEL_NAME", response.get(CapacityType.RECEIVING));
+  }
+
+  @Test
+  @DisplayName("Test getCapacityModel() with null config value")
+  void getCapacityModelNullConfigTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+
+    Map<CapacityType, String> response = tenantDBConfigImpl.getCapacityModel();
+
+    assertNotNull(response);
+    assertEquals(0, response.size());
+  }
 }
