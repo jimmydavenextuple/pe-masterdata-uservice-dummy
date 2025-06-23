@@ -9,7 +9,6 @@ package com.nextuple.item.domain.mapper;
 import com.nextuple.item.domain.inbound.UpsertItemSubstitutionRequest;
 import com.nextuple.item.domain.outbound.ItemSubstitutionResponse;
 import com.nextuple.item.persistence.domain.ItemSubstitutionDomainDto;
-import com.nextuple.item.persistence.entity.ItemSubstitutionEntity;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -25,6 +24,4 @@ public interface ItemSubstitutionMapper {
       UpsertItemSubstitutionRequest upsertItemSubstitutionRequest);
 
   List<ItemSubstitutionResponse> domainDtoToResponse(List<ItemSubstitutionDomainDto> dtoList);
-
-  ItemSubstitutionEntity domainDtoToEntity(ItemSubstitutionDomainDto domainDto);
 }

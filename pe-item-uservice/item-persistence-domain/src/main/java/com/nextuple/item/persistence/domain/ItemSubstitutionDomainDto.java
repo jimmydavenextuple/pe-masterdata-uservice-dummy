@@ -22,6 +22,7 @@ import lombok.experimental.SuperBuilder;
 public class ItemSubstitutionDomainDto extends DomainBaseEntity implements Serializable {
   @Serial private static final long serialVersionUID = 2571474529368167456L;
 
+  private String orgId;
   private String primaryItemId;
   private String primaryUom;
   private String alternateItemId;

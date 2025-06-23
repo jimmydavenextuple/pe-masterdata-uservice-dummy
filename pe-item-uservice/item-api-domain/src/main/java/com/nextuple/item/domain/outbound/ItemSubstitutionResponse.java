@@ -22,6 +22,11 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class ItemSubstitutionResponse extends AdditionalAttributes implements Serializable {
   @Schema(
+      description = ItemSubstitutionConstants.ORG_ID,
+      example = ItemSubstitutionConstants.ORG_ID_EXAMPLE)
+  private String orgId;
+
+  @Schema(
       description = ItemSubstitutionConstants.PRIMARY_ITEM_ID,
       example = ItemSubstitutionConstants.PRIMARY_ITEM_ID_EXAMPLE)
   private String primaryItemId;

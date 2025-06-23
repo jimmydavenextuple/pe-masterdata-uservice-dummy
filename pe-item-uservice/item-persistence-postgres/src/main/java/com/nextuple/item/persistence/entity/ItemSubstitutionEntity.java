@@ -9,8 +9,11 @@ package com.nextuple.item.persistence.entity;
 
 import com.nextuple.item.persistence.entity.key.ItemSubstitutionKey;
 import com.nextuple.postgres.entity.CommonBaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,12 +28,37 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Data
-@Table(name = "item")
+@Table(
+    name = "item_substitution",
+    indexes =
+        @Index(
+            name = "orgId_primaryItemId_primaryUom",
+            columnList = "org_id,primary_item_id,primary_uom"))
 public class ItemSubstitutionEntity extends CommonBaseEntity {
+
+  @Id
+  @Column(name = "org_id")
+  private String orgId;
+
+  @Id
+  @Column(name = "primary_item_id")
   private String primaryItemId;
+
+  @Id
+  @Column(name = "primary_uom")
   private String primaryUom;
+
+  @Id
+  @Column(name = "alternate_item_id")
   private String alternateItemId;
+
+  @Id
+  @Column(name = "alternate_uom")
   private String alternateUom;
+
+  @Column(name = "conversion_factor")
   private Integer conversionFactor;
+
+  @Column(name = "priority")
   private Integer priority;
 }

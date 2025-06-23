@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 public class ItemSubstitutionKey extends BaseEntityKey implements Serializable {
   @Serial private static final long serialVersionUID = 3915042938485570461L;
 
+  private String orgId;
   private String primaryItemId;
   private String primaryUom;
   private String alternateItemId;
