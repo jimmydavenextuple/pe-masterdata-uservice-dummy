@@ -7,7 +7,6 @@
 
 package com.nextuple.item.persistence.repository;
 
-import com.nextuple.item.persistence.domain.ItemSubstitutionDomainDto;
 import com.nextuple.item.persistence.entity.ItemSubstitutionEntity;
 import com.nextuple.item.persistence.entity.key.ItemSubstitutionKey;
 import com.nextuple.postgres.repository.CommonJpaRepository;
@@ -20,6 +19,10 @@ public interface ItemSubstitutionRepository
   List<ItemSubstitutionEntity> findByOrgIdAndPrimaryItemIdAndPrimaryUom(
       String orgId, String primaryItemId, String primaryUom);
 
-  ItemSubstitutionDomainDto findByPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
-      String primaryItemId, String primaryUom, String alternateItemId, String alternateUom);
+  ItemSubstitutionEntity findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+      String orgId,
+      String primaryItemId,
+      String primaryUom,
+      String alternateItemId,
+      String alternateUom);
 }

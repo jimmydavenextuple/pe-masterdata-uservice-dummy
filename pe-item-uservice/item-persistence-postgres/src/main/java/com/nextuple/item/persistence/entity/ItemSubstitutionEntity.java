@@ -30,10 +30,14 @@ import lombok.experimental.SuperBuilder;
 @Data
 @Table(
     name = "item_substitution",
-    indexes =
-        @Index(
-            name = "orgId_primaryItemId_primaryUom",
-            columnList = "org_id,primary_item_id,primary_uom"))
+    indexes = {
+      @Index(
+          name = "idx_item_substitution_primary",
+          columnList = "org_id,primary_item_id,primary_uom"),
+      @Index(
+          name = "idx_item_substitution_full",
+          columnList = "org_id,primary_item_id,primary_uom,alternate_item_id,alternate_uom")
+    })
 public class ItemSubstitutionEntity extends CommonBaseEntity {
 
   @Id

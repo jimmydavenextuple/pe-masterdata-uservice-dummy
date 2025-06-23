@@ -7,7 +7,6 @@
 
 package com.nextuple.item.persistence.service.impl;
 
-import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.item.persistence.domain.ItemSubstitutionDomainDto;
 import com.nextuple.item.persistence.domain.key.ItemSubstitutionDomainKey;
 import com.nextuple.item.persistence.entity.ItemSubstitutionEntity;
@@ -18,9 +17,12 @@ import com.nextuple.item.persistence.service.ItemSubstitutionPersistenceService;
 import com.nextuple.postgres.service.CommonPersistenceService;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
 @Slf4j
 public class ItemSubstitutionPersistenceServiceImpl
     extends CommonPersistenceService<
@@ -33,34 +35,25 @@ public class ItemSubstitutionPersistenceServiceImpl
     implements ItemSubstitutionPersistenceService {
   @Override
   public List<ItemSubstitutionDomainDto> findByOrgIdAndPrimaryItemIdAndPrimaryUom(
-      String orgId, String primaryItemId, String primaryUom) throws CommonServiceException {
-    try {
-      return getMapper()
-          .toDomain(
-              getRepository()
-                  .findByOrgIdAndPrimaryItemIdAndPrimaryUom(orgId, primaryItemId, primaryUom));
-    } catch (Exception e) {
-      log.debug("Unable to find item substitution", e);
-      throw new CommonServiceException(
-          "Error while finding item substitution", HttpStatus.INTERNAL_SERVER_ERROR, null, null);
-    }
+      String orgId, String primaryItemId, String primaryUom) {
+    return getMapper()
+        .toDomain(
+            getRepository()
+                .findByOrgIdAndPrimaryItemIdAndPrimaryUom(orgId, primaryItemId, primaryUom));
   }
 
   @Override
   public Optional<ItemSubstitutionDomainDto>
-      findByPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
-          String primaryItemId, String primaryUom, String alternateItemId, String alternateUom)
-          throws CommonServiceException {
-    try {
-      ItemSubstitutionDomainDto dto =
-          this.getRepository()
-              .findByPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
-                  primaryItemId, primaryUom, alternateItemId, alternateUom);
-      return Optional.ofNullable(dto);
-    } catch (Exception e) {
-      log.error("Unable to find item substitution", e);
-      throw new CommonServiceException(
-          "Error while finding item substitution", HttpStatus.INTERNAL_SERVER_ERROR, null, null);
-    }
+      findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+          String orgId,
+          String primaryItemId,
+          String primaryUom,
+          String alternateItemId,
+          String alternateUom) {
+    ItemSubstitutionEntity entity =
+        getRepository()
+            .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+                orgId, primaryItemId, primaryUom, alternateItemId, alternateUom);
+    return Optional.ofNullable(entity).map(getMapper()::toDomain);
   }
 }

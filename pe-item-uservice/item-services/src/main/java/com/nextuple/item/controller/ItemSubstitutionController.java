@@ -7,7 +7,6 @@
 
 package com.nextuple.item.controller;
 
-import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.item.domain.constants.ItemSubstitutionConstants;
 import com.nextuple.item.domain.inbound.DeleteItemSubstitutionRequest;
@@ -61,8 +60,7 @@ public class ItemSubstitutionController {
               description = ItemSubstitutionConstants.PRIMARY_UOM,
               example = ItemSubstitutionConstants.PRIMARY_UOM_EXAMPLE)
           @PathVariable(name = "primaryUom")
-          String primaryUom)
-      throws CommonServiceException {
+          String primaryUom) {
     log.debug(
         "Getting item substitution for orgId:{}, primaryItemId: {}, primaryUom: {}",
         orgId,
@@ -78,8 +76,7 @@ public class ItemSubstitutionController {
   @DeleteMapping
   @Operation(summary = "Delete an Item Substitution by primary item ID and UOM")
   public ResponseEntity<BaseResponse<Void>> deleteItemSubstitution(
-      @Valid @RequestBody DeleteItemSubstitutionRequest deleteRequest)
-      throws CommonServiceException {
+      @Valid @RequestBody DeleteItemSubstitutionRequest deleteRequest) {
     log.debug("Deleting item substitution for deleteRequest: {}", deleteRequest);
     itemSubstitutionService.deleteItemSubstitution(deleteRequest);
     return ResponseEntity.ok(

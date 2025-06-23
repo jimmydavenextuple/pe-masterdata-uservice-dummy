@@ -7,7 +7,6 @@
 
 package com.nextuple.item.persistence.service;
 
-import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.common.service.DomainPersistenceService;
 import com.nextuple.item.persistence.domain.ItemSubstitutionDomainDto;
 import com.nextuple.item.persistence.domain.key.ItemSubstitutionDomainKey;
@@ -17,10 +16,13 @@ import java.util.Optional;
 public interface ItemSubstitutionPersistenceService
     extends DomainPersistenceService<ItemSubstitutionDomainDto, ItemSubstitutionDomainKey> {
   List<ItemSubstitutionDomainDto> findByOrgIdAndPrimaryItemIdAndPrimaryUom(
-      String orgId, String primaryItemId, String primaryUom) throws CommonServiceException;
+      String orgId, String primaryItemId, String primaryUom);
 
   Optional<ItemSubstitutionDomainDto>
-      findByPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
-          String primaryItemId, String primaryUom, String alternateItemId, String alternateUom)
-          throws CommonServiceException;
+      findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+          String orgId,
+          String primaryItemId,
+          String primaryUom,
+          String alternateItemId,
+          String alternateUom);
 }

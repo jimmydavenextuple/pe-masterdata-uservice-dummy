@@ -6,7 +6,6 @@
 
 package com.nextuple.item.service;
 
-import com.nextuple.common.exception.CommonServiceException;
 import com.nextuple.item.domain.inbound.DeleteItemSubstitutionRequest;
 import com.nextuple.item.domain.inbound.UpsertItemSubstitutionRequest;
 import com.nextuple.item.domain.mapper.ItemSubstitutionMapper;
@@ -53,7 +52,7 @@ public class ItemSubstitutionService {
   }
 
   public List<ItemSubstitutionResponse> getItemSubstitution(
-      String orgId, String primaryItemId, String primaryUom) throws CommonServiceException {
+      String orgId, String primaryItemId, String primaryUom) {
     log.debug(
         "Getting item substitution for primaryItemId: {}, primaryUom: {}",
         primaryItemId,
@@ -67,13 +66,13 @@ public class ItemSubstitutionService {
   }
 
   @Transactional
-  public void deleteItemSubstitution(DeleteItemSubstitutionRequest deleteItemSubstitutionRequest)
-      throws CommonServiceException {
+  public void deleteItemSubstitution(DeleteItemSubstitutionRequest deleteItemSubstitutionRequest) {
     log.debug("Deleting item substitution for request: {}", deleteItemSubstitutionRequest);
 
     Optional<ItemSubstitutionDomainDto> dtoOptional =
         itemSubstitutionPersistenceService
-            .findByPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+            .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+                deleteItemSubstitutionRequest.getOrgId(),
                 deleteItemSubstitutionRequest.getPrimaryItemId(),
                 deleteItemSubstitutionRequest.getPrimaryUom(),
                 deleteItemSubstitutionRequest.getAlternateItemId(),
