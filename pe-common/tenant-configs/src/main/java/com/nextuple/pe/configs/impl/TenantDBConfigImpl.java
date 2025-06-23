@@ -435,8 +435,7 @@ public class TenantDBConfigImpl implements ITenantConfig {
   @Override
   public Map<CapacityType, String> getCapacityModel() {
     return parseCapacityConfigAsString(
-        getTenantConfiguration(CAPACITY_MODEL_NAME_CONFIG_KEY, DEFAULT_CAPACITY_MODEL_NAME),
-        DEFAULT_CAPACITY_MODEL_NAME);
+        getTenantConfiguration(CAPACITY_MODEL_NAME_CONFIG_KEY, DEFAULT_EMPTY_CAPACITY_MODEL_JSON));
   }
 
   private String getTenantConfigdataCacheValue(String configKey) {

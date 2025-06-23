@@ -516,7 +516,6 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
 
   @Override
   public Map<CapacityType, String> getCapacityModel() {
-    return TenantConfigUtil.parseCapacityConfigAsString(
-        capacityModelName, DEFAULT_CAPACITY_MODEL_NAME);
+    return TenantConfigUtil.parseCapacityConfigAsString(capacityModelName);
   }
 }

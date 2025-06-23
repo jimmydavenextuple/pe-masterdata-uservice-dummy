@@ -90,5 +90,5 @@ public class ConfigKeyConstants {
       "{\"outbound\": 0, \"transport\": 0, \"receiving\": 0}";
   public static final String DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS =
       "{\"outbound\": 20, \"transport\": 20, \"receiving\": 20}";
-  public static final String DEFAULT_CAPACITY_MODEL_NAME = "{}";
+  public static final String DEFAULT_EMPTY_CAPACITY_MODEL_JSON = "{}";
 }

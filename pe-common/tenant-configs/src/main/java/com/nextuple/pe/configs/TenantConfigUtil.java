@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.nextuple.common.enums.CapacityType;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
 import org.springframework.util.ObjectUtils;
@@ -24,8 +24,7 @@ public class TenantConfigUtil {
     return parseCapacityConfig(configString, JsonElement::getAsInt);
   }
 
-  public static Map<CapacityType, String> parseCapacityConfigAsString(
-      String configString, String defaultValue) {
+  public static Map<CapacityType, String> parseCapacityConfigAsString(String configString) {
     return parseCapacityConfig(configString, JsonElement::getAsString);
   }
 
@@ -36,7 +35,7 @@ public class TenantConfigUtil {
       return Map.of();
     }
 
-    Map<CapacityType, T> result = new HashMap<>();
+    Map<CapacityType, T> result = new EnumMap<>(CapacityType.class);
 
     try {
       JsonObject jsonObject = JsonParser.parseString(configString.trim()).getAsJsonObject();
