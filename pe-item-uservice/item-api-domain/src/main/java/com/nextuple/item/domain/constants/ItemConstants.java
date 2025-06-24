@@ -104,6 +104,10 @@ public class ItemConstants {
   public static final String ACTIVE_ITEM_BUFFER = "Specifies an active buffer for an item.";
   public static final String ACTIVE_ITEM_BUFFER_EXAMPLE =
       "{\"bufferHours\":1,\"bufferStartDate\":\"2024-06-14T01:00:00.000+00:00\",\"bufferEndDate\":\"2025-06-13T21:59:00.000+00:00\"}";
+  public static final String ITEM_SUBSTITUTION_RESPONSE =
+      "Specifies the item substitution details.";
+  public static final String ITEM_SUBSTITUTION_RESPONSE_EXAMPLE =
+      "{\"item01\":true,\"item02\":\"false\",\"item03\":\"true\"}";
   public static final String BUYING_COST = "Per unit buying cost of the item.";
   public static final String BUYING_COST_EXAMPLE = "2";
   public static final String SHORT_DESCRIPTION_EXAMPLE = "Bold fit Skipping Rope";
@@ -115,4 +119,10 @@ public class ItemConstants {
   public static final String VALID_DROPOFF_DURATION =
       "Valid dropOff duration in hours for the item.";
   public static final String VALID_DROPOFF_DURATION_EXAMPLE = "2.4";
+
+  public static final String CONVERSION_FACTOR = "Conversion factor of the alternate item.";
+
+  public static final String CONVERSION_FACTOR_EXAMPLE = "in";
+  public static final String PRIORITY = "Priority for the alternate item substitution.";
+  public static final String PRIORITY_EXAMPLE = "1";
 }

@@ -132,4 +132,9 @@ public class ItemResponse extends AdditionalAttributes implements Serializable {
       description = ItemConstants.VALID_DROPOFF_DURATION,
       example = ItemConstants.VALID_DROPOFF_DURATION_EXAMPLE)
   private Double validDropoffDuration;
+
+  @Schema(
+      description = ItemConstants.ITEM_SUBSTITUTION_RESPONSE,
+      example = ItemConstants.ITEM_SUBSTITUTION_RESPONSE_EXAMPLE)
+  private List<ItemSubstitutionInfo> itemSubstitutionResponse;
 }

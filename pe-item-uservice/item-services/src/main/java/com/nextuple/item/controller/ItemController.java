@@ -28,6 +28,7 @@ import com.nextuple.item.controller.docs.UpsertItemDoc;
 import com.nextuple.item.domain.constants.ItemConstants;
 import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
+import com.nextuple.item.domain.inbound.ItemDetailsRequest;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import com.nextuple.item.persistence.exception.ItemBatchingDomainException;
@@ -40,6 +41,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -326,7 +329,28 @@ public class ItemController {
       throws CommonServiceException, ItemBatchingDomainException {
     logger.debug("Processing get item details");
     try {
-      return itemService.getItemList(itemList, orgId, isItemBufferEnabled, promisingEngineDate);
+      return itemService.getItemList(
+          itemList, orgId, isItemBufferEnabled, promisingEngineDate, Map.of());
+    } catch (Exception e) {
+      logger.error("Failed to fetch list of item details");
+      throw e;
+    }
+  }
+
+  @GetItemListDoc
+  @PostMapping("/itemDetails")
+  public List<ItemResponse> getItemDetailsList(
+      @Valid @RequestBody ItemDetailsRequest itemDetailsRequest)
+      throws CommonServiceException, ItemBatchingDomainException {
+    logger.debug("Processing get item details");
+    try {
+      return itemService.getItemList(
+          itemDetailsRequest.getItemList(),
+          itemDetailsRequest.getOrgId(),
+          Objects.nonNull(itemDetailsRequest.getIsItemBufferEnabled())
+              && itemDetailsRequest.getIsItemBufferEnabled(),
+          itemDetailsRequest.getPromisingEngineDate(),
+          itemDetailsRequest.getItemSubstitutionMap());
     } catch (Exception e) {
       logger.error("Failed to fetch list of item details");
       throw e;

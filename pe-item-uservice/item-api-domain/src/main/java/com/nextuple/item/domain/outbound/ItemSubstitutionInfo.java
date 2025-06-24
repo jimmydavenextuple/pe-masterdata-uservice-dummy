@@ -5,25 +5,29 @@
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
  */
 
-package com.nextuple.item.persistence.repository;
+package com.nextuple.item.domain.outbound;
 
-import com.nextuple.item.persistence.entity.ItemSubstitutionEntity;
-import com.nextuple.item.persistence.entity.key.ItemSubstitutionKey;
-import com.nextuple.postgres.repository.CommonJpaRepository;
-import java.util.List;
-import org.springframework.stereotype.Repository;
+import java.io.Serializable;
 
-@Repository
-public interface ItemSubstitutionRepository
-    extends CommonJpaRepository<ItemSubstitutionEntity, ItemSubstitutionKey>,
-        ItemSubstitutionCustomRepository {
-  List<ItemSubstitutionEntity> findByOrgIdAndPrimaryItemIdAndPrimaryUom(
-      String orgId, String primaryItemId, String primaryUom);
+import com.nextuple.item.domain.constants.ItemConstants;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-  ItemSubstitutionEntity findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
-      String orgId,
-      String primaryItemId,
-      String primaryUom,
-      String alternateItemId,
-      String alternateUom);
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class ItemSubstitutionInfo implements Serializable {
+
+  @Schema(description = ItemConstants.ITEM_ID, example = ItemConstants.ITEM_ID_EXAMPLE)
+  private String itemId;
+  @Schema(description = ItemConstants.UOM, example = ItemConstants.UOM_EXAMPLE)
+  private String uom;
+  @Schema(description = ItemConstants.CONVERSION_FACTOR, example = ItemConstants.CONVERSION_FACTOR_EXAMPLE)
+  private Integer conversionFactor;
+  @Schema(description = ItemConstants.PRIORITY, example = ItemConstants.PRIORITY_EXAMPLE)
+  private Integer priority;
 }

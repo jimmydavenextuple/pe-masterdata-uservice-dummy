@@ -31,6 +31,7 @@ import com.nextuple.item.persistence.service.impl.ItemPersistenceServiceImpl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
@@ -277,7 +278,7 @@ class ItemServiceTest {
         .thenReturn(itemEntityList);
 
     List<ItemResponse> itemResponse =
-        itemService.getItemList(itemList, TestUtil.ORG_ID, false, new Date());
+        itemService.getItemList(itemList, TestUtil.ORG_ID, false, new Date(), Map.of());
     assertEquals(itemResponseList, itemResponse);
     verify(itemPersistenceService, times(1)).findItemListByItemIdsAndOrgId(any(), any());
   }
@@ -294,7 +295,7 @@ class ItemServiceTest {
     Exception exception =
         Assertions.assertThrows(
             CommonServiceException.class,
-            () -> itemService.getItemList(itemList, TestUtil.ORG_ID, false, new Date()));
+            () -> itemService.getItemList(itemList, TestUtil.ORG_ID, false, new Date(), Map.of()));
     assertEquals("Items not found with given details", exception.getMessage());
 
     verify(itemPersistenceService, times(1)).findItemListByItemIdsAndOrgId(any(), any());
@@ -332,7 +333,8 @@ class ItemServiceTest {
         .thenReturn(itemBufferDomainDtoList);
 
     List<ItemResponse> itemResponseList =
-        itemService.getItemList(itemList, orgId, isItemBufferEnabled, promisingEngineDate);
+        itemService.getItemList(
+            itemList, orgId, isItemBufferEnabled, promisingEngineDate, Map.of());
 
     assertEquals(1, itemResponseList.size());
     ItemResponse itemResponse = itemResponseList.get(0);

@@ -20,6 +20,7 @@ import com.nextuple.common.validation.ValidatorUtil;
 import com.nextuple.item.TestUtil;
 import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
+import com.nextuple.item.domain.inbound.ItemDetailsRequest;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import com.nextuple.item.persistence.exception.ItemBatchingDomainException;
@@ -28,6 +29,7 @@ import com.nextuple.item.service.ItemService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -181,29 +183,30 @@ class ItemControllerTest {
     List<String> itemList = new ArrayList<>();
     itemList.add(TestUtil.ITEM_ID);
     itemResponseList.add(itemResponse);
-    when(itemService.getItemList(any(), any(), any(), any())).thenReturn(itemResponseList);
+    when(itemService.getItemList(any(), any(), any(), any(), any())).thenReturn(itemResponseList);
 
     List<ItemResponse> responseEntity =
-        itemController.getItemList(TestUtil.ORG_ID, itemList, true, new Date());
+        itemController.getItemList(TestUtil.ORG_ID, itemList, true, new Date(), Map.of());
 
     Assertions.assertEquals(1, responseEntity.size());
 
-    verify(itemService, times(1)).getItemList(any(), any(), any(), any());
+    verify(itemService, times(1)).getItemList(any(), any(), any(), any(), any());
   }
 
   @Test
   void getItemListByItemIdAndOrgIdAndUomExceptionTest()
       throws CommonServiceException, ItemBatchingDomainException {
-    when(itemService.getItemList(any(), any(), any(), any()))
+    when(itemService.getItemList(any(), any(), any(), any(), any()))
         .thenThrow(new RuntimeException("Failed to fetch list of item details"));
     List<String> itemList = new ArrayList<>();
     itemList.add(TestUtil.ITEM_ID);
     Exception exception =
         Assertions.assertThrows(
             Exception.class,
-            () -> itemController.getItemList(TestUtil.ORG_ID, itemList, true, new Date()));
+            () ->
+                itemController.getItemList(TestUtil.ORG_ID, itemList, true, new Date(), Map.of()));
     Assertions.assertEquals("Failed to fetch list of item details", exception.getMessage());
-    verify(itemService, times(1)).getItemList(any(), any(), any(), any());
+    verify(itemService, times(1)).getItemList(any(), any(), any(), any(), any());
   }
 
   @Test
@@ -275,5 +278,27 @@ class ItemControllerTest {
     Assertions.assertEquals("Item saved successfully", responseEntity.getBody().getMessage());
     Assertions.assertEquals(testUtil.getItemResponse(), responseEntity.getBody().getPayload());
     verify(itemService, times(1)).upsertItem(any(ItemCreationRequest.class));
+  }
+
+  @Test
+  @DisplayName("Test: Get Item details with all the fields populated")
+  void getItemDetailsList() throws CommonServiceException, ItemBatchingDomainException {
+    List<ItemResponse> itemResponseList = List.of(testUtil.getItemResponse());
+    when(itemService.getItemList(any(), any(), any(), any(), any())).thenReturn(itemResponseList);
+    ItemDetailsRequest itemDetailsRequest =
+        ItemDetailsRequest.builder()
+            .itemList(List.of(TestUtil.ITEM_ID))
+            .isItemBufferEnabled(true)
+            .itemSubstitutionMap(Map.of())
+            .promisingEngineDate(new Date())
+            .orgId("NEXTUPLE_GR")
+            .build();
+
+    List<ItemResponse> responseEntity = itemController.getItemDetailsList(itemDetailsRequest);
+
+    Assertions.assertEquals(1, responseEntity.size());
+    Assertions.assertEquals(itemResponseList.getFirst(), responseEntity.getFirst());
+
+    verify(itemService, times(1)).getItemList(any(), any(), any(), any(), any());
   }
 }
