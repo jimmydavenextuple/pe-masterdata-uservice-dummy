@@ -23,7 +23,7 @@ spring:
   flyway:
     enabled: false
   kafka:
-    bootstrap-servers: kbrk-nonprod.nextuple.net:9092
+    bootstrap-servers: "kbrk-nonprod.nextuple.net:9092"
     properties:
       security.protocol: SASL_PLAINTEXT
       sasl.mechanism: SCRAM-SHA-256
@@ -59,7 +59,7 @@ spring:
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
       topics:
         item_master:
-          name: INTERNAL.DEMO.PROMISE_ITEMS
+          names: INTERNAL.DEMO.PROMISE_ITEMS
           group-id: item-master-demo-\${random.value}
     producer-item:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -82,6 +82,7 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: "*"
         interceptor.classes: "com.nextuple.common.interceptor.KafkaConsumerContextInterceptor"
+        max.poll.records: 10
       topics:
         master_data_update_event:
           name: INTERNAL.DEMO.MASTER_DATA_UPDATE_EVENTS
@@ -233,7 +234,7 @@ neo-platform:
       config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
       refresh-interval-mins: 30
       role:
-        json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-dashboard-uservice.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles,\$.resource_access.applicationclient-pe-core-uservice.roles,\$.resource_access.applicationclient-pe-iv-cache.roles,\$.resource_access.applicationclient-pe-capacity-uservice.roles,\$.resource_access.applicationclient-pe-neip-uservice.roles
+        json-paths: \$.resource_access.tenantclient-nextuple.roles,\$.resource_access.tenantclient-kohls.roles,\$.resource_access.tenantclient-xyzinc.roles,\$.resource_access.tenantclient-abcinc.roles,\$.resource_access.tenantclient-neednow.roles,\$.resource_access.tenantclient-ctppt.roles,\$.resource_access.applicationclient-pe-dashboard-uservice.roles,\$.resource_access.applicationclient-pe-masterdata-uservice.roles,\$.resource_access.applicationclient-pe-core-uservice.roles,\$.resource_access.applicationclient-pe-iv-cache.roles,\$.resource_access.applicationclient-pe-capacity-uservice.roles,\$.resource_access.applicationclient-pe-neip-uservice.roles,\$.resource_access.applicationclient-pe-coordination-uservice.roles,\$.resource_access.tenantclient-autoinc.roles,\$.resource_access.tenantclient-testinc.roles,\$.resource_access.tenantclient-qainc.roles,\$.resource_access.tenantclient-ryder.roles,\$.resource_access.tenantclient-perfautomation.roles
 kafka:
   input:
     taskTopics: INTERNAL.DEMO.PE.RETRY_TOPIC_INV
