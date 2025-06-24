@@ -250,10 +250,7 @@ public class ItemService {
 
       CompletableFuture<Void> itemUOMSubstitutionFuture =
           CompletableFuture.runAsync(
-              () -> {
-                addItemUOMSubstitution(uomConversionEnabled, itemResponse, orgId);
-              },
-              executor);
+              () -> addItemUOMSubstitution(uomConversionEnabled, itemResponse, orgId), executor);
 
       CompletableFuture.allOf(activeItemBufferFuture, itemUOMSubstitutionFuture).join();
 
@@ -264,7 +261,7 @@ public class ItemService {
     return itemResponse;
   }
 
-  private void addItemUOMSubstitution(
+  void addItemUOMSubstitution(
       Map<String, Boolean> uomConversionEnabled, List<ItemResponse> itemResponse, String orgId) {
 
     if (CollectionUtils.isEmpty(uomConversionEnabled)) return;

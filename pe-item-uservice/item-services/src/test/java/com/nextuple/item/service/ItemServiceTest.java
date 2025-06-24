@@ -9,6 +9,8 @@ package com.nextuple.item.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -24,11 +26,14 @@ import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import com.nextuple.item.persistence.domain.ItemBufferDomainDto;
 import com.nextuple.item.persistence.domain.ItemDomainDto;
+import com.nextuple.item.persistence.domain.ItemSubstitutionDomainDto;
 import com.nextuple.item.persistence.exception.ItemBatchingDomainException;
 import com.nextuple.item.persistence.exception.ItemDomainException;
+import com.nextuple.item.persistence.service.ItemSubstitutionPersistenceService;
 import com.nextuple.item.persistence.service.impl.ItemBufferPersistenceServiceImpl;
 import com.nextuple.item.persistence.service.impl.ItemPersistenceServiceImpl;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +61,7 @@ class ItemServiceTest {
 
   @Mock private ItemPersistenceServiceImpl itemPersistenceService;
   @Mock private ItemBufferPersistenceServiceImpl itemBufferPersistenceService;
-
+  @Mock private ItemSubstitutionPersistenceService itemSubstitutionPersistenceService;
   @Mock ValidatorUtil validatorUtil;
 
   @BeforeEach
@@ -456,5 +461,71 @@ class ItemServiceTest {
     assertEquals(createdItemResponse.getUom(), result.getUom());
     verify(itemPersistenceService, times(1)).findItemByItemIdAndOrgIdAndUom(any(), any(), any());
     verify(itemPersistenceService, times(1)).saveItem(any(ItemDomainDto.class));
+  }
+
+  @Test
+  @DisplayName("Add Item UOM Substitution with empty UOM enabled map provided")
+  void testAddItemUOMSubstitution() {
+    // Mock input data
+    Map<String, Boolean> uomConversionEnabled = Map.of("ITEM001", true, "ITEM002", false);
+    String orgId = "org1";
+
+    List<ItemResponse> itemResponseList = new ArrayList<>();
+    ItemResponse itemResponse1 = new ItemResponse();
+    itemResponse1.setItemId("ITEM001");
+    itemResponse1.setUom("EA");
+    itemResponseList.add(itemResponse1);
+
+    ItemResponse itemResponse2 = new ItemResponse();
+    itemResponse2.setItemId("ITEM002");
+    itemResponse2.setUom("KG");
+    itemResponseList.add(itemResponse2);
+
+    List<ItemSubstitutionDomainDto> itemSubstitutionDetails = new ArrayList<>();
+    ItemSubstitutionDomainDto substitutionDto = new ItemSubstitutionDomainDto();
+    substitutionDto.setPrimaryItemId("ITEM001");
+    substitutionDto.setPrimaryUom("EA");
+    substitutionDto.setAlternateItemId("ITEM002");
+    substitutionDto.setAlternateUom("PALLET");
+    itemSubstitutionDetails.add(substitutionDto);
+
+    when(itemSubstitutionPersistenceService.findByOrgIdAndPrimaryItemIdAndPrimaryUomList(
+            eq(orgId), anyList()))
+        .thenReturn(itemSubstitutionDetails);
+
+    // Call the method
+    itemService.addItemUOMSubstitution(uomConversionEnabled, itemResponseList, orgId);
+
+    // Verify behavior
+    assertEquals(1, itemResponseList.getFirst().getItemSubstitutionResponse().size());
+    assertEquals(
+        "ITEM002",
+        itemResponseList.getFirst().getItemSubstitutionResponse().getFirst().getItemId());
+    assertEquals(
+        "PALLET", itemResponseList.getFirst().getItemSubstitutionResponse().getFirst().getUom());
+
+    verify(itemSubstitutionPersistenceService, Mockito.times(1))
+        .findByOrgIdAndPrimaryItemIdAndPrimaryUomList(eq(orgId), anyList());
+  }
+
+  @Test
+  @DisplayName("Add Item UOM Substitution with empty UOM conversion enabled map")
+  void testAddItemUOMSubstitutionWithEmptyUOMConversionEnabled() {
+    // Mock input data
+    Map<String, Boolean> uomConversionEnabled = Collections.emptyMap();
+    String orgId = "org1";
+
+    List<ItemResponse> itemResponseList = new ArrayList<>();
+    ItemResponse itemResponse1 = new ItemResponse();
+    itemResponse1.setItemId("ITEM001");
+    itemResponse1.setUom("EA");
+    itemResponseList.add(itemResponse1);
+
+    // Call the method
+    itemService.addItemUOMSubstitution(uomConversionEnabled, itemResponseList, orgId);
+
+    // Verify behavior
+    assertEquals(null, itemResponseList.get(0).getItemSubstitutionResponse());
+    verifyNoInteractions(itemSubstitutionPersistenceService);
   }
 }

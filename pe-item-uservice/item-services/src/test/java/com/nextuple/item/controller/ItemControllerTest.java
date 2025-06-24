@@ -300,4 +300,26 @@ class ItemControllerTest {
 
     verify(itemService, times(1)).getItemList(any(), any(), any(), any(), any());
   }
+
+  @Test
+  @DisplayName("Test: Get Item details with buffer enabled flag as null the fields populated")
+  void getItemDetailsListBufferDisabledTest()
+      throws CommonServiceException, ItemBatchingDomainException {
+    List<ItemResponse> itemResponseList = List.of(testUtil.getItemResponse());
+    when(itemService.getItemList(any(), any(), any(), any(), any())).thenReturn(itemResponseList);
+    ItemDetailsRequest itemDetailsRequest =
+        ItemDetailsRequest.builder()
+            .itemList(List.of(TestUtil.ITEM_ID))
+            .itemSubstitutionMap(Map.of())
+            .promisingEngineDate(new Date())
+            .orgId("NEXTUPLE_GR")
+            .build();
+
+    List<ItemResponse> responseEntity = itemController.getItemDetailsList(itemDetailsRequest);
+
+    Assertions.assertEquals(1, responseEntity.size());
+    Assertions.assertEquals(itemResponseList.getFirst(), responseEntity.getFirst());
+
+    verify(itemService, times(1)).getItemList(any(), any(), any(), any(), any());
+  }
 }
