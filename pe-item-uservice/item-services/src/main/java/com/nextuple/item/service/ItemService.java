@@ -236,17 +236,24 @@ public class ItemService {
     ExecutorService executor = Executors.newFixedThreadPool(2);
 
     try {
-      CompletableFuture<Void> activeItemBufferFuture = CompletableFuture.runAsync(() -> {
-        try {
-          addActiveItemBuffer(isItemBufferEnabled, promisingEngineDate, itemResponse, itemList, orgId);
-        } catch (CommonServiceException e) {
-          throw new CompletionException(e);
-        }
-      }, executor);
+      CompletableFuture<Void> activeItemBufferFuture =
+          CompletableFuture.runAsync(
+              () -> {
+                try {
+                  addActiveItemBuffer(
+                      isItemBufferEnabled, promisingEngineDate, itemResponse, itemList, orgId);
+                } catch (CommonServiceException e) {
+                  throw new CompletionException(e);
+                }
+              },
+              executor);
 
-      CompletableFuture<Void> itemUOMSubstitutionFuture = CompletableFuture.runAsync(() -> {
-        addItemUOMSubstitution(uomConversionEnabled, itemResponse, orgId);
-      }, executor);
+      CompletableFuture<Void> itemUOMSubstitutionFuture =
+          CompletableFuture.runAsync(
+              () -> {
+                addItemUOMSubstitution(uomConversionEnabled, itemResponse, orgId);
+              },
+              executor);
 
       CompletableFuture.allOf(activeItemBufferFuture, itemUOMSubstitutionFuture).join();
 
