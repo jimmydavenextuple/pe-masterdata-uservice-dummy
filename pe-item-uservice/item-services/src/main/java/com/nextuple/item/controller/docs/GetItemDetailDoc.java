@@ -109,43 +109,47 @@ import java.lang.annotation.Target;
                   name =
                       "A 400 error code indicates that the orgId is not passed and it is a mandatory field.",
                   value =
-                      "{\n"
-                          + "    \"success\": false,\n"
-                          + "    \"requestId\": \"571473d2-d27f-4f0b-903c-91149805876e\",\n"
-                          + "    \"timestamp\": 1679648554379,\n"
-                          + "    \"message\": \"Bad Request\",\n"
-                          + "    \"payload\": {\n"
-                          + "        \"type\": \"ERROR\",\n"
-                          + "        \"code\": 2,\n"
-                          + "        \"fields\": {\n"
-                          + "            \"orgId\": {\n"
-                          + "                \"rejectedValue\": \"\",\n"
-                          + "                \"errorMessage\": \"orgId can't be blank\"\n"
-                          + "            }\n"
-                          + "        }\n"
-                          + "    }\n"
-                          + "}"),
+                      """
+        {
+            "success": false,
+            "requestId": "571473d2-d27f-4f0b-903c-91149805876e",
+            "timestamp": 1679648554379,
+            "message": "Bad Request",
+            "payload": {
+                "type": "ERROR",
+                "code": 2,
+                "fields": {
+                    "orgId": {
+                        "rejectedValue": "",
+                        "errorMessage": "orgId can't be blank"
+                    }
+                }
+            }
+        }
+        """),
               @ExampleObject(
                   summary = "ItemList is not passed.",
                   name =
                       "A 400 error code indicates that the ItemList is not passed and it is a mandatory field.",
                   value =
-                      "{\n"
-                          + "    \"success\": false,\n"
-                          + "    \"requestId\": \"571473d2-d27f-4f0b-903c-91149805876e\",\n"
-                          + "    \"timestamp\": 1679648554379,\n"
-                          + "    \"message\": \"Bad Request\",\n"
-                          + "    \"payload\": {\n"
-                          + "        \"type\": \"ERROR\",\n"
-                          + "        \"code\": 2,\n"
-                          + "        \"fields\": {\n"
-                          + "            \"orgId\": {\n"
-                          + "                \"rejectedValue\": \"\",\n"
-                          + "                \"errorMessage\": \"itemList can't be empty\"\n"
-                          + "            }\n"
-                          + "        }\n"
-                          + "    }\n"
-                          + "}")
+                      """
+        {
+            "success": false,
+            "requestId": "571473d2-d27f-4f0b-903c-91149805876e",
+            "timestamp": 1679648554379,
+            "message": "Bad Request",
+            "payload": {
+                "type": "ERROR",
+                "code": 2,
+                "fields": {
+                    "orgId": {
+                        "rejectedValue": "",
+                        "errorMessage": "itemList can't be empty"
+                    }
+                }
+            }
+        }
+        """)
             }))
 @ApiResponse(
     responseCode = "500",
@@ -159,13 +163,15 @@ import java.lang.annotation.Target;
                   name =
                       "A 500 error code indicates that there was some error on the server while processing the request.",
                   value =
-                      "{\n"
-                          + "    \"success\": false,\n"
-                          + "    \"timestamp\": \"1670589273234\",\n"
-                          + "    \"payload\": {\n"
-                          + "        \"type\": \"ERROR\",\n"
-                          + "        \"code\": 2\n"
-                          + "    }\n"
-                          + "}")
+                      """
+        {
+            "success": false,
+            "timestamp": "1670589273234",
+            "payload": {
+                "type": "ERROR",
+                "code": 2
+            }
+        }
+        """)
             }))
 public @interface GetItemDetailDoc {}
