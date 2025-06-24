@@ -11,10 +11,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nextuple.common.pojo.PageParams;
 import com.nextuple.item.domain.events.ItemMasterEvent;
+import com.nextuple.item.domain.inbound.DeleteItemSubstitutionRequest;
 import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemBufferRequest;
 import com.nextuple.item.domain.inbound.ItemBufferUpdateRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
+import com.nextuple.item.domain.inbound.UpsertItemSubstitutionRequest;
 import com.nextuple.item.domain.outbound.ItemBufferResponse;
 import com.nextuple.item.domain.outbound.ItemDetail;
 import com.nextuple.item.domain.outbound.ItemListResponse;
@@ -22,6 +24,7 @@ import com.nextuple.item.domain.outbound.ItemResponse;
 import com.nextuple.item.domain.outbound.PageResponseForItemBuffer;
 import com.nextuple.item.persistence.domain.ItemBufferDomainDto;
 import com.nextuple.item.persistence.domain.ItemDomainDto;
+import com.nextuple.item.persistence.domain.ItemSubstitutionDomainDto;
 import com.nextuple.item.persistence.entity.ItemEntity;
 import com.nextuple.item.persistence.mapper.ItemEntityMapper;
 import java.util.Date;
@@ -518,5 +521,53 @@ public class TestUtil {
   public PageResponseForItemBuffer getPageResponseForItemBuffer() {
     ItemDetail itemDetail = ItemDetail.builder().itemId(ITEM_ID_1).uom(UOM).orgId(ORG_ID).build();
     return PageResponseForItemBuffer.builder().data(List.of(itemDetail)).build();
+  }
+
+  public DeleteItemSubstitutionRequest getDeleteItemSubstitutionRequest() {
+    String orgId = "org1";
+    String primaryItemId = "item1";
+    String primaryUom = "EACH";
+    String substituteItemId = "item2";
+    String substituteUom = "EACH";
+
+    return DeleteItemSubstitutionRequest.builder()
+        .orgId(orgId)
+        .primaryItemId(primaryItemId)
+        .primaryUom(primaryUom)
+        .alternateUom(substituteUom)
+        .alternateItemId(substituteItemId)
+        .build();
+  }
+
+  public ItemSubstitutionDomainDto getItemSubstitutionDomainDto() {
+    String orgId = "org1";
+    String primaryItemId = "item1";
+    String primaryUom = "EACH";
+    String substituteItemId = "item2";
+    String substituteUom = "EACH";
+
+    return ItemSubstitutionDomainDto.builder()
+        .orgId(orgId)
+        .primaryItemId(primaryItemId)
+        .primaryUom(primaryUom)
+        .alternateUom(substituteUom)
+        .alternateItemId(substituteItemId)
+        .build();
+  }
+
+  public UpsertItemSubstitutionRequest getUpsertItemSubstitutionRequest() {
+    String orgId = "org1";
+    String primaryItemId = "item1";
+    String primaryUom = "EACH";
+    String substituteItemId = "item2";
+    String substituteUom = "EACH";
+
+    return UpsertItemSubstitutionRequest.builder()
+        .orgId(orgId)
+        .primaryItemId(primaryItemId)
+        .primaryUom(primaryUom)
+        .alternateUom(substituteUom)
+        .alternateItemId(substituteItemId)
+        .build();
   }
 }
