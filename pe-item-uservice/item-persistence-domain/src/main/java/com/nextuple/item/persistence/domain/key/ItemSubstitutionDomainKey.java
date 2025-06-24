@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 public class ItemSubstitutionDomainKey extends DomainKey implements Serializable {
   @Serial private static final long serialVersionUID = 3314265178853610370L;
 
+  private String orgId;
   private String primaryItemId;
   private String primaryUom;
   private String alternateItemId;
