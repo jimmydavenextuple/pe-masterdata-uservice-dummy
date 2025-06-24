@@ -677,7 +677,7 @@ class ApplicationVersion {
     }
 
     private String getRelease() {
-        return this.release ? '-RELEASE' : '-SNAPSHOT'
+        return this.release ? '-RELEASE' : '-LIVERPOOL-SNAPSHOT'
     }
 
     String getVersion() {
