@@ -1310,4 +1310,34 @@ class TenantDBConfigImplTest {
     assertNotNull(response);
     assertEquals(0, response.size());
   }
+
+  @Test
+  @DisplayName("Test getPartialQuantityEnabled() with valid config value")
+  void getPartialQuantityEnabledTest() {
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey("partial-quantity-enabled")
+            .configValue("true")
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Boolean result = tenantDBConfigImpl.getPartialQuantityEnabled();
+
+    assertNotNull(result);
+    assertTrue(result);
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getPartialQuantityEnabled() with default value when config is not found")
+  void getPartialQuantityEnabledDefaultTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+
+    Boolean result = tenantDBConfigImpl.getPartialQuantityEnabled();
+
+    assertNotNull(result);
+    assertFalse(result);
+  }
 }

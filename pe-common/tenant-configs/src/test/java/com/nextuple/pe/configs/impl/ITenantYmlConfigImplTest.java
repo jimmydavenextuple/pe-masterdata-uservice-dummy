@@ -1044,4 +1044,15 @@ class ITenantYmlConfigImplTest {
     assertNotNull(result);
     assertEquals(0, result.size());
   }
+
+  @Test
+  @DisplayName("Test getPartialQuantityEnabled() returns configured value")
+  void getPartialQuantityEnabledTest() {
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "partialQuantityEnabled", true);
+
+    Boolean result = iTenantYmlConfigImpl.getPartialQuantityEnabled();
+
+    assertNotNull(result);
+    assertEquals(true, result);
+  }
 }
