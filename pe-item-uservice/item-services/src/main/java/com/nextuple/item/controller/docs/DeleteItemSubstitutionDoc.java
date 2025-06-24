@@ -67,22 +67,24 @@ import java.lang.annotation.Target;
                   name =
                       "A 400 error code indicates that the orgId is not passed and it is a mandatory field.",
                   value =
-                      "{\n"
-                          + "    \"success\": false,\n"
-                          + "    \"requestId\": \"571473d2-d27f-4f0b-903c-91149805876e\",\n"
-                          + "    \"timestamp\": 1679648554379,\n"
-                          + "    \"message\": \"Bad Request\",\n"
-                          + "    \"payload\": {\n"
-                          + "        \"type\": \"ERROR\",\n"
-                          + "        \"code\": 2,\n"
-                          + "        \"fields\": {\n"
-                          + "            \"orgId\": {\n"
-                          + "                \"rejectedValue\": \"\",\n"
-                          + "                \"errorMessage\": \"Organisation ID can't be blank\"\n"
-                          + "            }\n"
-                          + "        }\n"
-                          + "    }\n"
-                          + "}")
+                      """
+                                {
+                                    "success": false,
+                                    "requestId": "571473d2-d27f-4f0b-903c-91149805876e",
+                                    "timestamp": 1679648554379,
+                                    "message": "Bad Request",
+                                    "payload": {
+                                        "type": "ERROR",
+                                        "code": 2,
+                                        "fields": {
+                                            "orgId": {
+                                                "rejectedValue": "",
+                                                "errorMessage": "Organisation ID can't be blank"
+                                            }
+                                        }
+                                    }
+                                }
+                                """)
             }))
 @ApiResponse(
     responseCode = "404",
@@ -96,17 +98,19 @@ import java.lang.annotation.Target;
                   name =
                       "A 404 error code indicates that the substitution to delete was not found.",
                   value =
-                      "{\n"
-                          + "    \"success\": false,\n"
-                          + "    \"requestId\": \"571473d2-d27f-4f0b-903c-91149805876e\",\n"
-                          + "    \"timestamp\": 1679648554379,\n"
-                          + "    \"message\": \"Not Found\",\n"
-                          + "    \"payload\": {\n"
-                          + "        \"type\": \"ERROR\",\n"
-                          + "        \"code\": 3,\n"
-                          + "        \"message\": \"No substitution found for the item ITEM12345 with UOM EACH and alternate item ALT-ITEM-456\"\n"
-                          + "    }\n"
-                          + "}")
+                      """
+                                {
+                                    "success": false,
+                                    "requestId": "571473d2-d27f-4f0b-903c-91149805876e",
+                                    "timestamp": 1679648554379,
+                                    "message": "Not Found",
+                                    "payload": {
+                                        "type": "ERROR",
+                                        "code": 3,
+                                        "message": "No substitution found for the item ITEM12345 with UOM EACH and alternate item ALT-ITEM-456"
+                                    }
+                                }
+                                """)
             }))
 @ApiResponse(
     responseCode = "500",
@@ -120,13 +124,15 @@ import java.lang.annotation.Target;
                   name =
                       "A 500 error code indicates that there was some error on the server while processing the request.",
                   value =
-                      "{\n"
-                          + "    \"success\": false,\n"
-                          + "    \"timestamp\": \"1670589273234\",\n"
-                          + "    \"payload\": {\n"
-                          + "        \"type\": \"ERROR\",\n"
-                          + "        \"code\": 2\n"
-                          + "    }\n"
-                          + "}")
+                      """
+                                {
+                                    "success": false,
+                                    "timestamp": "1670589273234",
+                                    "payload": {
+                                        "type": "ERROR",
+                                        "code": 2
+                                    }
+                                }
+                                """)
             }))
 public @interface DeleteItemSubstitutionDoc {}
