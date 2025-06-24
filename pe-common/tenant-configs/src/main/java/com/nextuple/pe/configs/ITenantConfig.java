@@ -126,5 +126,5 @@ public interface ITenantConfig {
 
   Map<CapacityType, String> getCapacityModel();
 
-  Boolean getPartialQuantityEnabled();
+  Boolean getPartialInventoryDisabled();
 }

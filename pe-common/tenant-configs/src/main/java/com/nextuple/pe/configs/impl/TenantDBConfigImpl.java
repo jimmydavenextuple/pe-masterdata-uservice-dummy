@@ -439,9 +439,9 @@ public class TenantDBConfigImpl implements ITenantConfig {
   }
 
   @Override
-  public Boolean getPartialQuantityEnabled() {
+  public Boolean getPartialInventoryDisabled() {
     return Boolean.valueOf(
-        getTenantConfiguration(PARTIAL_QUANTITY_ENABLED_CONFIG_KEY, Boolean.FALSE.toString()));
+        getTenantConfiguration(DISABLE_PARTIAL_INVENTORY_CONFIG_KEY, Boolean.FALSE.toString()));
   }
 
   private String getTenantConfigdataCacheValue(String configKey) {

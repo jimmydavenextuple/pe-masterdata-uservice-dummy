@@ -92,5 +92,5 @@ public class ConfigKeyConstants {
       "{\"outbound\": 20, \"transport\": 20, \"receiving\": 20}";
   public static final String DEFAULT_EMPTY_CAPACITY_MODEL_JSON = "{}";
 
-  public static final String PARTIAL_QUANTITY_ENABLED_CONFIG_KEY = "partial-quantity-enabled";
+  public static final String DISABLE_PARTIAL_INVENTORY_CONFIG_KEY = "partial-inventory-disabled";
 }

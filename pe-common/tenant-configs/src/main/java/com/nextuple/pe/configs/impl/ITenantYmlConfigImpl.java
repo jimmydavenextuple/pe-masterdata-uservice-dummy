@@ -107,8 +107,8 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Value("${capacity.model-name}")
   public String capacityModelName;
 
-  @Value("${partial.quantity.enabled:false}")
-  public Boolean partialQuantityEnabled;
+  @Value("${partial.inventory.disabled:false}")
+  public Boolean partialInventoryDisabled;
 
   private static final String DEFAULT = "DEFAULT";
   private static final String NO_OF_LINE_SOLUTIONS_REQUIRED = "line-solutions-required";
@@ -523,7 +523,7 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   }
 
   @Override
-  public Boolean getPartialQuantityEnabled() {
-    return partialQuantityEnabled;
+  public Boolean getPartialInventoryDisabled() {
+    return partialInventoryDisabled;
   }
 }

@@ -1313,7 +1313,7 @@ class TenantDBConfigImplTest {
 
   @Test
   @DisplayName("Test getPartialQuantityEnabled() with valid config value")
-  void getPartialQuantityEnabledTest() {
+  void getPartialInventoryDisabledConfigTest() {
     var cacheValue =
         TenantConfigdataCacheValue.builder()
             .orgId(TestUtil.ORG_ID)
@@ -1323,7 +1323,7 @@ class TenantDBConfigImplTest {
 
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
 
-    Boolean result = tenantDBConfigImpl.getPartialQuantityEnabled();
+    Boolean result = tenantDBConfigImpl.getPartialInventoryDisabled();
 
     assertNotNull(result);
     assertTrue(result);
@@ -1332,10 +1332,10 @@ class TenantDBConfigImplTest {
 
   @Test
   @DisplayName("Test getPartialQuantityEnabled() with default value when config is not found")
-  void getPartialQuantityEnabledDefaultTest() {
+  void getPartialInventoryDisabledTest() {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
 
-    Boolean result = tenantDBConfigImpl.getPartialQuantityEnabled();
+    Boolean result = tenantDBConfigImpl.getPartialInventoryDisabled();
 
     assertNotNull(result);
     assertFalse(result);
