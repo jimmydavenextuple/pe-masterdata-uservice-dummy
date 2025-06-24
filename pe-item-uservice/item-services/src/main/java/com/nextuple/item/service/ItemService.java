@@ -267,7 +267,7 @@ public class ItemService {
   private void addItemUOMSubstitution(
       Map<String, Boolean> uomConversionEnabled, List<ItemResponse> itemResponse, String orgId) {
 
-    if (Objects.isNull(uomConversionEnabled)) return;
+    if (CollectionUtils.isEmpty(uomConversionEnabled)) return;
     Map<String, ItemResponse> itemMap = new HashMap<>();
     for (ItemResponse itemResponse1 : itemResponse) {
       itemMap.put(itemResponse1.getItemId(), itemResponse1);

@@ -186,7 +186,7 @@ class ItemControllerTest {
     when(itemService.getItemList(any(), any(), any(), any(), any())).thenReturn(itemResponseList);
 
     List<ItemResponse> responseEntity =
-        itemController.getItemList(TestUtil.ORG_ID, itemList, true, new Date(), Map.of());
+        itemController.getItemList(TestUtil.ORG_ID, itemList, true, new Date());
 
     Assertions.assertEquals(1, responseEntity.size());
 
@@ -203,8 +203,7 @@ class ItemControllerTest {
     Exception exception =
         Assertions.assertThrows(
             Exception.class,
-            () ->
-                itemController.getItemList(TestUtil.ORG_ID, itemList, true, new Date(), Map.of()));
+            () -> itemController.getItemList(TestUtil.ORG_ID, itemList, true, new Date()));
     Assertions.assertEquals("Failed to fetch list of item details", exception.getMessage());
     verify(itemService, times(1)).getItemList(any(), any(), any(), any(), any());
   }
