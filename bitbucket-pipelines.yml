@@ -245,7 +245,8 @@ server:
           cpu: 3
     demo:
       ingress: yes
-      middleman: yes
+      sidecar-keycloak-plugin: yes
+      middleman: no
       prometheus: yes
       keyvault: yes
       storage: yes
@@ -459,6 +460,12 @@ pipelines:
           #     name: Deploy PERF
           #     trigger: manual
           #     deployment: perf
+    liverpool-demo:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy Demo
+          deployment: demo
     master:
       - step: *Clear-Cache
       - step: *build
