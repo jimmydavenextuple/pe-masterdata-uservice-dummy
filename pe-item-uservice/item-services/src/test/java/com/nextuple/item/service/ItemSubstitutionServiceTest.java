@@ -118,8 +118,9 @@ class ItemSubstitutionServiceTest {
   }
 
   @Test
-  @DisplayName("Test get item substitution - Should return list of substitutions when found")
-  void testGetItemSubstitution() {
+  @DisplayName(
+      "Test get item substitution by orgId, primaryItemId and primaryUom - Should return list of substitutions when found")
+  void testGetItemSubstitutionByOrgIdAndPrimaryItemIdAndPrimaryUom() {
     // Arrange
     List<ItemSubstitutionDomainDto> mockResults = new ArrayList<>();
     mockResults.add(mockDomainDto);
@@ -130,7 +131,8 @@ class ItemSubstitutionServiceTest {
 
     // Act
     List<ItemSubstitutionResponse> responses =
-        itemSubstitutionService.getItemSubstitution("test-org", "item1", "EACH");
+        itemSubstitutionService.getItemSubstitutionByOrgIdAndPrimaryItemIdAndPrimaryUom(
+            "test-org", "item1", "EACH");
 
     // Assert
     assertNotNull(responses);
@@ -141,8 +143,9 @@ class ItemSubstitutionServiceTest {
   }
 
   @Test
-  @DisplayName("Test get item substitution with no results - Should return empty list")
-  void testGetItemSubstitutionNoResults() {
+  @DisplayName(
+      "Test get item substitution by orgId, primaryItemId and primaryUom with no results - Should return empty list")
+  void testGetItemSubstitutionByOrgIdAndPrimaryItemIdAndPrimaryUomNoResults() {
     // Arrange
     when(itemSubstitutionPersistenceService.findByOrgIdAndPrimaryItemIdAndPrimaryUom(
             "test-org", "item1", "EACH"))
@@ -150,7 +153,8 @@ class ItemSubstitutionServiceTest {
 
     // Act
     List<ItemSubstitutionResponse> responses =
-        itemSubstitutionService.getItemSubstitution("test-org", "item1", "EACH");
+        itemSubstitutionService.getItemSubstitutionByOrgIdAndPrimaryItemIdAndPrimaryUom(
+            "test-org", "item1", "EACH");
 
     // Assert
     assertNotNull(responses);

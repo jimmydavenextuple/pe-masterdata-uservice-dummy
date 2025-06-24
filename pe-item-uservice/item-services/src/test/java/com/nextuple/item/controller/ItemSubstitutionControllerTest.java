@@ -70,8 +70,9 @@ class ItemSubstitutionControllerTest {
   }
 
   @Test
-  @DisplayName("Test get item substitution - Should return list of item substitutions")
-  void testGetItemSubstitution() {
+  @DisplayName(
+      "Test get item substitution by orgId, primaryItemId and primaryUom - Should return list of item substitutions")
+  void testGetItemSubstitutionByOrgIdAndPrimaryItemIdAndPrimaryUom() {
     // Arrange
     String orgId = "org1";
     String primaryItemId = "item1";
@@ -80,12 +81,14 @@ class ItemSubstitutionControllerTest {
     List<ItemSubstitutionResponse> mockResponses = new ArrayList<>();
     mockResponses.add(new ItemSubstitutionResponse());
 
-    when(itemSubstitutionService.getItemSubstitution(orgId, primaryItemId, primaryUom))
+    when(itemSubstitutionService.getItemSubstitutionByOrgIdAndPrimaryItemIdAndPrimaryUom(
+            orgId, primaryItemId, primaryUom))
         .thenReturn(mockResponses);
 
     // Act
     ResponseEntity<BaseResponse<List<ItemSubstitutionResponse>>> responseEntity =
-        itemSubstitutionController.getItemSubstitution(orgId, primaryItemId, primaryUom);
+        itemSubstitutionController.getItemSubstitutionByOrgIdAndPrimaryItemIdAndPrimaryUom(
+            orgId, primaryItemId, primaryUom);
 
     // Assert
     Assertions.assertNotNull(responseEntity);
@@ -93,7 +96,8 @@ class ItemSubstitutionControllerTest {
     Assertions.assertEquals(mockResponses, responseEntity.getBody().getPayload());
 
     // Verify service call
-    verify(itemSubstitutionService, times(1)).getItemSubstitution(orgId, primaryItemId, primaryUom);
+    verify(itemSubstitutionService, times(1))
+        .getItemSubstitutionByOrgIdAndPrimaryItemIdAndPrimaryUom(orgId, primaryItemId, primaryUom);
   }
 
   @Test

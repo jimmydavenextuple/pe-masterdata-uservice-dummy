@@ -8,12 +8,14 @@
 package com.nextuple.item.controller;
 
 import com.nextuple.common.response.BaseResponse;
+import com.nextuple.item.controller.docs.DeleteItemSubstitutionDoc;
+import com.nextuple.item.controller.docs.GetItemSubstitutionDoc;
+import com.nextuple.item.controller.docs.UpsertItemSubstitutionDoc;
 import com.nextuple.item.domain.constants.ItemSubstitutionConstants;
 import com.nextuple.item.domain.inbound.DeleteItemSubstitutionRequest;
 import com.nextuple.item.domain.inbound.UpsertItemSubstitutionRequest;
 import com.nextuple.item.domain.outbound.ItemSubstitutionResponse;
 import com.nextuple.item.service.ItemSubstitutionService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 public class ItemSubstitutionController {
   private final ItemSubstitutionService itemSubstitutionService;
 
+  @UpsertItemSubstitutionDoc
   @PostMapping
   public ResponseEntity<BaseResponse<ItemSubstitutionResponse>> upsertItemSubstitution(
       @Valid @RequestBody UpsertItemSubstitutionRequest upsertItemSubstitutionRequest) {
@@ -45,26 +48,28 @@ public class ItemSubstitutionController {
             .build());
   }
 
+  @GetItemSubstitutionDoc
   @GetMapping("/{orgId}/{primaryItemId}/{primaryUom}")
-  public ResponseEntity<BaseResponse<List<ItemSubstitutionResponse>>> getItemSubstitution(
-      @NotBlank(message = "Organisation ID can't be blank")
-          @Parameter(
-              description = ItemSubstitutionConstants.ORG_ID,
-              example = ItemSubstitutionConstants.ORG_ID_EXAMPLE)
-          @PathVariable(name = "orgId")
-          String orgId,
-      @NotBlank(message = "Primary Item ID can't be blank")
-          @Parameter(
-              description = ItemSubstitutionConstants.PRIMARY_ITEM_ID,
-              example = ItemSubstitutionConstants.PRIMARY_ITEM_ID_EXAMPLE)
-          @PathVariable(name = "primaryItemId")
-          String primaryItemId,
-      @NotBlank(message = "Primary UOM can't be blank")
-          @Parameter(
-              description = ItemSubstitutionConstants.PRIMARY_UOM,
-              example = ItemSubstitutionConstants.PRIMARY_UOM_EXAMPLE)
-          @PathVariable(name = "primaryUom")
-          String primaryUom) {
+  public ResponseEntity<BaseResponse<List<ItemSubstitutionResponse>>>
+      getItemSubstitutionByOrgIdAndPrimaryItemIdAndPrimaryUom(
+          @NotBlank(message = "Organisation ID can't be blank")
+              @Parameter(
+                  description = ItemSubstitutionConstants.ORG_ID,
+                  example = ItemSubstitutionConstants.ORG_ID_EXAMPLE)
+              @PathVariable(name = "orgId")
+              String orgId,
+          @NotBlank(message = "Primary Item ID can't be blank")
+              @Parameter(
+                  description = ItemSubstitutionConstants.PRIMARY_ITEM_ID,
+                  example = ItemSubstitutionConstants.PRIMARY_ITEM_ID_EXAMPLE)
+              @PathVariable(name = "primaryItemId")
+              String primaryItemId,
+          @NotBlank(message = "Primary UOM can't be blank")
+              @Parameter(
+                  description = ItemSubstitutionConstants.PRIMARY_UOM,
+                  example = ItemSubstitutionConstants.PRIMARY_UOM_EXAMPLE)
+              @PathVariable(name = "primaryUom")
+              String primaryUom) {
     log.debug(
         "Getting item substitution for orgId:{}, primaryItemId: {}, primaryUom: {}",
         orgId,
@@ -73,12 +78,14 @@ public class ItemSubstitutionController {
     return ResponseEntity.ok(
         BaseResponse.builder()
             .message("Item substitution retrieved successfully")
-            .payload(itemSubstitutionService.getItemSubstitution(orgId, primaryItemId, primaryUom))
+            .payload(
+                itemSubstitutionService.getItemSubstitutionByOrgIdAndPrimaryItemIdAndPrimaryUom(
+                    orgId, primaryItemId, primaryUom))
             .build());
   }
 
+  @DeleteItemSubstitutionDoc
   @DeleteMapping
-  @Operation(summary = "Delete an Item Substitution by primary item ID and UOM")
   public ResponseEntity<BaseResponse<Void>> deleteItemSubstitution(
       @Valid @RequestBody DeleteItemSubstitutionRequest deleteRequest) {
     log.debug("Deleting item substitution for deleteRequest: {}", deleteRequest);

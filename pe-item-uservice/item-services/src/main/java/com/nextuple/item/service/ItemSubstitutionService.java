@@ -51,7 +51,7 @@ public class ItemSubstitutionService {
     return INSTANCE.entityToDomainDto(savedEntity);
   }
 
-  public List<ItemSubstitutionResponse> getItemSubstitution(
+  public List<ItemSubstitutionResponse> getItemSubstitutionByOrgIdAndPrimaryItemIdAndPrimaryUom(
       String orgId, String primaryItemId, String primaryUom) {
     log.debug(
         "Getting item substitution for primaryItemId: {}, primaryUom: {}",
