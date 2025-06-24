@@ -123,4 +123,6 @@ public interface ITenantConfig {
   Map<CapacityType, Integer> getCapacityFutureLookUpDays();
 
   Map<CapacityType, Integer> getCapacityPastLookBackDays();
+
+  Map<CapacityType, String> getCapacityModel();
 }

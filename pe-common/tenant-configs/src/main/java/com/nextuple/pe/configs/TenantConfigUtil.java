@@ -5,8 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.nextuple.common.enums.CapacityType;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Function;
 import org.springframework.util.ObjectUtils;
 
 public class TenantConfigUtil {
@@ -14,15 +15,27 @@ public class TenantConfigUtil {
 
   private TenantConfigUtil() {}
 
-  public static Map<CapacityType, Integer> parseCapacityConfigString(
+  public static Map<CapacityType, Integer> parseCapacityConfigAsInteger(
       String configString, String defaultValue) {
-    if (ObjectUtils.isEmpty(configString) && ObjectUtils.isEmpty(defaultValue)) {
-      return Map.of();
-    } else if (ObjectUtils.isEmpty(configString) && !ObjectUtils.isEmpty(defaultValue)) {
+    if (ObjectUtils.isEmpty(configString)) {
       configString = defaultValue;
     }
 
-    Map<CapacityType, Integer> result = new HashMap<>();
+    return parseCapacityConfig(configString, JsonElement::getAsInt);
+  }
+
+  public static Map<CapacityType, String> parseCapacityConfigAsString(String configString) {
+    return parseCapacityConfig(configString, JsonElement::getAsString);
+  }
+
+  private static <T> Map<CapacityType, T> parseCapacityConfig(
+      String configString, Function<JsonElement, T> valueExtractor) {
+
+    if (ObjectUtils.isEmpty(configString)) {
+      return Map.of();
+    }
+
+    Map<CapacityType, T> result = new EnumMap<>(CapacityType.class);
 
     try {
       JsonObject jsonObject = JsonParser.parseString(configString.trim()).getAsJsonObject();
@@ -30,14 +43,14 @@ public class TenantConfigUtil {
       for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
         try {
           CapacityType type = CapacityType.fromString(entry.getKey().trim());
-          Integer days = entry.getValue().getAsInt();
-          result.put(type, days);
-        } catch (IllegalArgumentException e) {
-          // Skip invalid entries
+          T value = valueExtractor.apply(entry.getValue());
+          result.put(type, value);
+        } catch (IllegalArgumentException | UnsupportedOperationException e) {
+          // Skip invalid keys or parsing issues
         }
       }
     } catch (Exception e) {
-      // If JSON parsing fails, return empty result
+      // Malformed JSON — return empty map
     }
 
     return result;

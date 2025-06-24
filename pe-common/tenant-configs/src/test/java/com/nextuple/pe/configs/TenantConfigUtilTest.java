@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 class TenantConfigUtilTest {
 
   @Test
-  @DisplayName("Test parseCapacityConfigString with valid JSON config string")
+  @DisplayName("Test parseCapacityConfigAsInteger with valid JSON config string")
   void parseCapacityConfigStringWithValidConfig() {
     String configString = "{\"outbound\": 20, \"transport\": 20, \"receiving\": 20}";
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigString(configString, defaultValue);
+        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertEquals(3, result.size());
@@ -26,26 +26,26 @@ class TenantConfigUtilTest {
   }
 
   @Test
-  @DisplayName("Test parseCapacityConfigString with null config and null default")
+  @DisplayName("Test parseCapacityConfigAsInteger with null config and null default")
   void parseCapacityConfigStringWithNullConfigAndNullDefault() {
     String configString = null;
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigString(configString, defaultValue);
+        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
   }
 
   @Test
-  @DisplayName("Test parseCapacityConfigString with empty config and null default")
+  @DisplayName("Test parseCapacityConfigAsInteger with empty config and null default")
   void parseCapacityConfigStringWithEmptyConfigAndNullDefault() {
     String configString = "";
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigString(configString, defaultValue);
+        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
@@ -53,13 +53,13 @@ class TenantConfigUtilTest {
 
   @Test
   @DisplayName(
-      "Test parseCapacityConfigString with null config and valid default - specifically testing the condition")
+      "Test parseCapacityConfigAsInteger with null config and valid default - specifically testing the condition")
   void parseCapacityConfigStringWithNullConfigAndValidDefault() {
     String configString = null;
     String defaultValue = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigString(configString, defaultValue);
+        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertEquals(3, result.size());
@@ -70,13 +70,13 @@ class TenantConfigUtilTest {
 
   @Test
   @DisplayName(
-      "Test parseCapacityConfigString with empty string config and valid default - specifically testing the condition")
+      "Test parseCapacityConfigAsInteger with empty string config and valid default - specifically testing the condition")
   void parseCapacityConfigStringWithEmptyStringConfigAndValidDefault() {
     String configString = "";
     String defaultValue = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigString(configString, defaultValue);
+        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertEquals(3, result.size());
@@ -86,39 +86,39 @@ class TenantConfigUtilTest {
   }
 
   @Test
-  @DisplayName("Test parseCapacityConfigString with blank string config and valid default")
+  @DisplayName("Test parseCapacityConfigAsInteger with blank string config and valid default")
   void parseCapacityConfigStringWithBlankStringConfigAndValidDefault() {
     String configString = "  ";
     String defaultValue = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigString(configString, defaultValue);
+        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
   }
 
   @Test
-  @DisplayName("Test parseCapacityConfigString with invalid JSON config")
+  @DisplayName("Test parseCapacityConfigAsInteger with invalid JSON config")
   void parseCapacityConfigStringWithInvalidJsonConfig() {
     String configString = "invalid-json";
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigString(configString, defaultValue);
+        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
   }
 
   @Test
-  @DisplayName("Test parseCapacityConfigString with valid JSON but invalid capacity type")
+  @DisplayName("Test parseCapacityConfigAsInteger with valid JSON but invalid capacity type")
   void parseCapacityConfigStringWithInvalidCapacityType() {
     String configString = "{\"invalid_type\": 20, \"outbound\": 20}";
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigString(configString, defaultValue);
+        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertEquals(1, result.size());
@@ -127,13 +127,13 @@ class TenantConfigUtilTest {
   }
 
   @Test
-  @DisplayName("Test parseCapacityConfigString with valid JSON but invalid value type")
-  void parseCapacityConfigStringWithInvalidValueType() {
+  @DisplayName("Test parseCapacityConfigAsInteger with valid JSON but invalid value type")
+  void parseCapacityConfigAsIntegerWithInvalidValueType() {
     String configString = "{\"outbound\": \"not-a-number\", \"transport\": 20}";
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigString(configString, defaultValue);
+        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertEquals(1, result.size());
@@ -142,13 +142,13 @@ class TenantConfigUtilTest {
   }
 
   @Test
-  @DisplayName("Test parseCapacityConfigString with mixed case capacity types")
-  void parseCapacityConfigStringWithMixedCaseTypes() {
+  @DisplayName("Test parseCapacityConfigAsInteger with mixed case capacity types")
+  void parseCapacityConfigAsIntegerWithMixedCaseTypes() {
     String configString = "{\"OutBound\": 20, \"TRANSPORT\": 15, \"Receiving\": 10}";
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigString(configString, defaultValue);
+        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertEquals(3, result.size());
@@ -158,13 +158,14 @@ class TenantConfigUtilTest {
   }
 
   @Test
-  @DisplayName("Test parseCapacityConfigString with invalid config but valid default as fallback")
+  @DisplayName(
+      "Test parseCapacityConfigAsInteger with invalid config but valid default as fallback")
   void parseCapacityConfigStringWithInvalidConfigAndValidDefault() {
     String configString = "not-valid-json";
     String defaultValue = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigString(configString, defaultValue);
+        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
