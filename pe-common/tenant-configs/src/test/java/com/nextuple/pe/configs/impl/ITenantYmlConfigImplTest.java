@@ -1048,7 +1048,7 @@ class ITenantYmlConfigImplTest {
   @Test
   @DisplayName("Test getPartialQuantityEnabled() returns configured value")
   void getPartialInventoryDisabled() {
-    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "partialQuantityEnabled", true);
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "partialInventoryDisabled", true);
 
     Boolean result = iTenantYmlConfigImpl.getPartialInventoryDisabled();
 
