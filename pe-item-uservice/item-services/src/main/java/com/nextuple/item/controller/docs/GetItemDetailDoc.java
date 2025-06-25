@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 @Operation(summary = "Add Item", description = ItemConstants.ADD_ITEM_DESC)
 @ApiResponse(
     responseCode = "200",
-    description = ItemConstants.ADD_ITEM_SUCCESS,
+    description = ItemConstants.GET_ITEM_LIST_SUCCESS,
     content =
         @Content(
             schema = @Schema(implementation = ItemResponse.class),
