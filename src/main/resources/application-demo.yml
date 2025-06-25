@@ -10,7 +10,7 @@ spring:
             scope: applicationclient-pe-masterdata-scope
         provider:
           my-client:
-            token-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev/protocol/openid-connect/token
+            token-uri: https://keycloak-nonprod.nextuple.com/realms/noms-demo/protocol/openid-connect/token
   jpa:
     database: POSTGRESQL
     show-sql: false
@@ -229,7 +229,7 @@ neo-platform:
     application-name: pe-masterdata
     header:
       tenant-id: x-tenant-id
-    issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-dev
+    issuer-uri: https://keycloak-nonprod.nextuple.com/realms/noms-demo
     authz-config:
       config-path: "http://plt-authz-config-uservice:8080/api/configurations/groups/application-group/scope-id/pe-masterdata"
       refresh-interval-mins: 30
