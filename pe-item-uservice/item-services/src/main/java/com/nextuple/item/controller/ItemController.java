@@ -343,18 +343,13 @@ public class ItemController {
       @Valid @RequestBody ItemDetailsRequest itemDetailsRequest)
       throws CommonServiceException, ItemBatchingDomainException {
     logger.debug("Processing get item details");
-    try {
-      return itemService.getItemList(
-          itemDetailsRequest.getItemList(),
-          itemDetailsRequest.getOrgId(),
-          Objects.nonNull(itemDetailsRequest.getIsItemBufferEnabled())
-              && itemDetailsRequest.getIsItemBufferEnabled(),
-          itemDetailsRequest.getPromisingEngineDate(),
-          itemDetailsRequest.getItemSubstitutionMap());
-    } catch (Exception e) {
-      logger.error("Failed to fetch list of item details");
-      throw e;
-    }
+    return itemService.getItemList(
+        itemDetailsRequest.getItemList(),
+        itemDetailsRequest.getOrgId(),
+        Objects.nonNull(itemDetailsRequest.getIsItemBufferEnabled())
+            && itemDetailsRequest.getIsItemBufferEnabled(),
+        itemDetailsRequest.getPromisingEngineDate(),
+        itemDetailsRequest.getItemSubstitutionMap());
   }
 
   /**
