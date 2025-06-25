@@ -74,14 +74,14 @@ public class ItemSubstitutionBatchServiceImpl extends BatchService<ItemSubstitut
   }
 
   @Override
-  public String deleteRecordImpl(ItemSubstitutionFeedDto payload) throws CommonServiceException {
+  public String deleteRecordImpl(ItemSubstitutionFeedDto payload) {
     BaseResponse<Void> responseBody =
         itemSubstitutionFeign
             .deleteItemSubstitution(INSTANCE.toItemSubstitutionDeleteRequest(payload))
             .getBody();
     return Objects.nonNull(responseBody)
         ? responseBody.getMessage()
-        : "Failure in updating the item substitute";
+        : "Failure in deleting the item substitute";
   }
 
   @Override

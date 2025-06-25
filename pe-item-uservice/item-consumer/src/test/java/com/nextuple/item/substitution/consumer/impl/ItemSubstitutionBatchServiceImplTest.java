@@ -5,7 +5,7 @@
  * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
  */
 
-package com.nextuple.item.substitution.consumer.consumer;
+package com.nextuple.item.substitution.consumer.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,7 +21,6 @@ import com.nextuple.item.domain.outbound.ItemSubstitutionResponse;
 import com.nextuple.item.persistence.domain.ItemSubstitutionDomainDto;
 import com.nextuple.item.persistence.service.ItemSubstitutionPersistenceService;
 import com.nextuple.item.substitution.consumer.dto.ItemSubstitutionFeedDto;
-import com.nextuple.item.substitution.consumer.impl.ItemSubstitutionBatchServiceImpl;
 import com.nextuple.master.data.integration.enums.TaskInformation;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import java.util.Date;
@@ -121,6 +120,27 @@ class ItemSubstitutionBatchServiceImplTest {
     itemSubstitutionBatchService.checkForOutdatedRecord(batchRequest);
 
     verify(itemSubstitutionPersistenceService, times(1))
+        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+            "org1", "item1", "EA", "item2", "KG");
+  }
+
+  @Test
+  void testCheckForOutdatedRecordNullAlternateUom() throws CommonServiceException {
+    BatchRequest<ItemSubstitutionFeedDto> batchRequest = new BatchRequest<>();
+    ItemSubstitutionFeedDto payload = new ItemSubstitutionFeedDto();
+    payload.setPrimaryItemId("item1");
+    payload.setOrgId("org1");
+    payload.setPrimaryUom("EA");
+    payload.setAlternateItemId("item2");
+    batchRequest.setPayload(payload);
+    batchRequest.setReceivedTimestamp(new Date());
+
+    ItemSubstitutionDomainDto domainDto = new ItemSubstitutionDomainDto();
+    domainDto.setLastModifiedDate(new Date(System.currentTimeMillis() - 1000));
+
+    itemSubstitutionBatchService.checkForOutdatedRecord(batchRequest);
+
+    verify(itemSubstitutionPersistenceService, times(0))
         .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
             "org1", "item1", "EA", "item2", "KG");
   }
