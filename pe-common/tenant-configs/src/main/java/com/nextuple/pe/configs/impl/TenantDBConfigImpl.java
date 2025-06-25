@@ -438,6 +438,12 @@ public class TenantDBConfigImpl implements ITenantConfig {
         getTenantConfiguration(CAPACITY_MODEL_NAME_CONFIG_KEY, DEFAULT_EMPTY_CAPACITY_MODEL_JSON));
   }
 
+  @Override
+  public Boolean getPartialInventoryDisabled() {
+    return Boolean.valueOf(
+        getTenantConfiguration(DISABLE_PARTIAL_INVENTORY_CONFIG_KEY, Boolean.FALSE.toString()));
+  }
+
   private String getTenantConfigdataCacheValue(String configKey) {
     return getTenantConfiguration(configKey, null);
   }
