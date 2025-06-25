@@ -33,62 +33,25 @@ import java.lang.annotation.Target;
                   value =
                       """
                                                   {
-                                                                       "success": true,
-                                                                       "requestId": "c7d82dbf-1f5b-47c1-8d83-8c346b9ea89a",
-                                                                       "timestamp": 1701767128015,
-                                                                       "message": "Item successfully created",
-                                                                       "payload": {
-                                                                            "itemId": 246,
-                                                                            "itemSource": "DSV-ITEM"
-                                                                            "orgId": "NEXTUPLE_GR",
-                                                                            "uom": "EACH",
-                                                                            "vendorType": "DSV",
-                                                                            "product": "PRODUCT-01",
-                                                                            "color": "RED",
-                                                                            "size": "10",
-                                                                            "shipEligible": true,
-                                                                            "parcelShipmentEligible": true,
-                                                                            "pickEligible": true,
-                                                                            "isDSVEligible: true,
-                                                                            "serviceOptionEligibilities": {
-                                                                                "sdndEligible": true
-                                                                            },
-                                                                           "height": 10.0,
-                                                                           "width": 5.0,
-                                                                           "length": 6.0,
-                                                                           "volume": 3.6,
-                                                                           "dimensionUom": "in",
-                                                                           "volumeUom": "litre",
-                                                                           "weight": 10.0,
-                                                                           "weightUom": "lbs",
-                                                                           "processingTime": 1.0,
-                                                                           "cost": "50",
-                                                                           "isHazmat": true,
-                                                                           "leadTime": 0,
-                                                                           "isWhiteGlove": true,
-                                                                           "inventoryNodeTypes": {
-                                                                              "S": ["MFC"]
-                                                                           }
-                                                                           "itemBanner": "Men's Shirt",
-                                                                           "handlingType": "Conveyable",
-                                                                           "activeItemBuffer": {
-                                                                              "bufferHours": 1.0,
-                                                                              "bufferStartDate": "2024-06-14T01:00:00.000+00:00",
-                                                                              "bufferEndDate":"2025-06-13T21:59:00.000+00:00"
-                                                                           },
-                                                                           "buyingCost": 20,
-                                                                           "customAttributes": {
-                                                                              "dynamicAtrr1": true
-                                                                           },
-                                                                           "itemSubstitutionResponse": [
-                                                                                     {
-                                                                                         "itemId": "ITEM003",
-                                                                                         "uom": "PALLET",
-                                                                                         "conversionFactor": 30,
-                                                                                         "priority": 1
-                                                                                     }
-                                                                                 ]
-                                                                       }
+                                                                       [
+                                                      {
+                                                         "itemId": "item141017232-002",
+                                                         "itemSource": "item-source",
+                                                         "orgId": "NEXTUPLE_GR",
+                                                         "uom": "in",
+                                                         "shortDescription": "string",
+                                                         "serviceOptions": "EXPRESS,SDND,NEXTDAY",
+                                                         "processingTime": 0.0,
+                                                         "leadTime": null,
+                                                         "handlingType": null,
+                                                         "itemSubstitutionResponse":{
+                                                            "itemId": "item141017232-003",
+                                                            "uom": "EACH",
+                                                            "priority":"1",
+                                                            "conversionFactor": 1.0,
+                                                         }
+                                                      }
+                                                   ]
                                                   }
                                                   """)
             }))
