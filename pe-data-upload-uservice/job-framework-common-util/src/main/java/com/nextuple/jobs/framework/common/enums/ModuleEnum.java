@@ -38,7 +38,8 @@ public enum ModuleEnum {
   COST_DEFINITION("cost-definition"),
   NEIP_RECORD("neip"),
   TRANSFER_SCHEDULES("transfer-schedules"),
-  VENDOR("vendor");
+  VENDOR("vendor"),
+  ITEM_SUBSTITUTION("item-substitution");
 
   private final String moduleValue;
   private static final Map<String, ModuleEnum> moduleEnumMap = new HashMap<>();
