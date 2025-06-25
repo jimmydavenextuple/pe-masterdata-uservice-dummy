@@ -12,11 +12,15 @@ import com.nextuple.item.persistence.domain.ItemSubstitutionDomainDto;
 import com.nextuple.item.persistence.domain.key.ItemSubstitutionDomainKey;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.util.Pair;
 
 public interface ItemSubstitutionPersistenceService
     extends DomainPersistenceService<ItemSubstitutionDomainDto, ItemSubstitutionDomainKey> {
   List<ItemSubstitutionDomainDto> findByOrgIdAndPrimaryItemIdAndPrimaryUom(
       String orgId, String primaryItemId, String primaryUom);
+
+  List<ItemSubstitutionDomainDto> findByOrgIdAndPrimaryItemIdAndPrimaryUomList(
+      String orgId, List<Pair<String, String>> primaryItemIdAndUomList);
 
   Optional<ItemSubstitutionDomainDto>
       findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(

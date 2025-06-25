@@ -32,4 +32,8 @@ public class ItemSubstitutionConstants {
 
   public static final String PRIORITY = "Priority of the substitution";
   public static final String PRIORITY_EXAMPLE = "1";
+  public static final String ITEM_SUBSTITUTION_RESPONSE =
+      "Specifies the item substitution details.";
+  public static final String ITEM_SUBSTITUTION_RESPONSE_EXAMPLE =
+      "{\"item01\":true,\"item02\":\"false\",\"item03\":\"true\"}";
 }

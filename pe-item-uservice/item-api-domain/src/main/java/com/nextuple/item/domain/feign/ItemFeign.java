@@ -11,6 +11,7 @@ import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
+import com.nextuple.item.domain.inbound.ItemDetailsRequest;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import java.util.Date;
@@ -59,6 +60,9 @@ public interface ItemFeign {
       @RequestParam List<String> itemList,
       @RequestParam Boolean isItemBufferEnabled,
       @RequestParam Date promisingEngineDate);
+
+  @PostMapping("/item/itemDetails")
+  List<ItemResponse> getItemDetailList(@RequestBody ItemDetailsRequest itemDetailsRequest);
 
   @GetMapping("/item/{orgId}/itemList")
   BaseResponse<PagePayload<ItemListResponse>> getItemsListPaginated(
