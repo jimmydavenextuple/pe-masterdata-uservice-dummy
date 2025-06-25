@@ -115,10 +115,4 @@ public class ItemConstants {
   public static final String VALID_DROPOFF_DURATION =
       "Valid dropOff duration in hours for the item.";
   public static final String VALID_DROPOFF_DURATION_EXAMPLE = "2.4";
-
-  public static final String CONVERSION_FACTOR = "Conversion factor of the alternate item.";
-
-  public static final String CONVERSION_FACTOR_EXAMPLE = "in";
-  public static final String PRIORITY = "Priority for the alternate item substitution.";
-  public static final String PRIORITY_EXAMPLE = "1";
 }

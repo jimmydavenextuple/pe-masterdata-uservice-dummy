@@ -8,6 +8,7 @@
 package com.nextuple.item.domain.outbound;
 
 import com.nextuple.item.domain.constants.ItemConstants;
+import com.nextuple.item.domain.constants.ItemSubstitutionConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
@@ -29,10 +30,12 @@ public class ItemSubstitutionInfo implements Serializable {
   private String uom;
 
   @Schema(
-      description = ItemConstants.CONVERSION_FACTOR,
-      example = ItemConstants.CONVERSION_FACTOR_EXAMPLE)
+      description = ItemSubstitutionConstants.CONVERSION_FACTOR,
+      example = ItemSubstitutionConstants.CONVERSION_FACTOR_EXAMPLE)
   private Integer conversionFactor;
 
-  @Schema(description = ItemConstants.PRIORITY, example = ItemConstants.PRIORITY_EXAMPLE)
+  @Schema(
+      description = ItemSubstitutionConstants.PRIORITY,
+      example = ItemSubstitutionConstants.PRIORITY_EXAMPLE)
   private Integer priority;
 }
