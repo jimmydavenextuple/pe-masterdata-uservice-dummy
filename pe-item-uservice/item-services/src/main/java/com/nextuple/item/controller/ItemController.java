@@ -28,7 +28,7 @@ import com.nextuple.item.controller.docs.UpsertItemDoc;
 import com.nextuple.item.domain.constants.ItemConstants;
 import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
-import com.nextuple.item.domain.inbound.ItemDetailsRequest;
+import com.nextuple.item.domain.inbound.ItemDetailsWithSubstitutionRequest;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import com.nextuple.item.persistence.exception.ItemBatchingDomainException;
@@ -340,16 +340,16 @@ public class ItemController {
   @GetItemListDoc
   @PostMapping("/itemDetails")
   public List<ItemResponse> getItemDetailsList(
-      @Valid @RequestBody ItemDetailsRequest itemDetailsRequest)
+      @Valid @RequestBody ItemDetailsWithSubstitutionRequest itemDetailsWithSubstitutionRequest)
       throws CommonServiceException, ItemBatchingDomainException {
     logger.debug("Processing get item details");
     return itemService.getItemList(
-        itemDetailsRequest.getItemList(),
-        itemDetailsRequest.getOrgId(),
-        Objects.nonNull(itemDetailsRequest.getIsItemBufferEnabled())
-            && itemDetailsRequest.getIsItemBufferEnabled(),
-        itemDetailsRequest.getPromisingEngineDate(),
-        itemDetailsRequest.getItemSubstitutionMap());
+        itemDetailsWithSubstitutionRequest.getItemList(),
+        itemDetailsWithSubstitutionRequest.getOrgId(),
+        Objects.nonNull(itemDetailsWithSubstitutionRequest.getIsItemBufferEnabled())
+            && itemDetailsWithSubstitutionRequest.getIsItemBufferEnabled(),
+        itemDetailsWithSubstitutionRequest.getPromisingEngineDate(),
+        itemDetailsWithSubstitutionRequest.getItemSubstitutionMap());
   }
 
   /**

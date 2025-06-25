@@ -11,6 +11,7 @@ import com.nextuple.item.domain.constants.ItemConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -24,9 +25,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ItemDetailsRequest implements Serializable {
-
-  private static final long serialVersionUID = 1905122041950251297L;
+public class ItemDetailsWithSubstitutionRequest implements Serializable {
+  @Serial private static final long serialVersionUID = 1905122041950251297L;
 
   @NotEmpty
   @Schema(description = "List of the item IDs.", example = "ITEM-01,ITEM-02")
