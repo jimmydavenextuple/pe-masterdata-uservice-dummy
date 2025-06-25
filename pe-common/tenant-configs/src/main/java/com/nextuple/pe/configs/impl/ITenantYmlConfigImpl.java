@@ -107,6 +107,9 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Value("${capacity.model-name}")
   public String capacityModelName;
 
+  @Value("${partial.inventory.disabled:false}")
+  public Boolean partialInventoryDisabled;
+
   private static final String DEFAULT = "DEFAULT";
   private static final String NO_OF_LINE_SOLUTIONS_REQUIRED = "line-solutions-required";
   private static final String LINE_THRESHOLD = "line-threshold";
@@ -517,5 +520,10 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Override
   public Map<CapacityType, String> getCapacityModel() {
     return TenantConfigUtil.parseCapacityConfigAsString(capacityModelName);
+  }
+
+  @Override
+  public Boolean getPartialInventoryDisabled() {
+    return partialInventoryDisabled;
   }
 }
