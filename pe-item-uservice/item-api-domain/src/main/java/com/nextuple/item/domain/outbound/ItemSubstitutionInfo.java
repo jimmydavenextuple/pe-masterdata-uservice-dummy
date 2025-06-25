@@ -20,6 +20,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class ItemSubstitutionInfo implements Serializable {
+  private static final long serialVersionUID = 1905122041950253207L;
 
   @Schema(description = ItemConstants.ITEM_ID, example = ItemConstants.ITEM_ID_EXAMPLE)
   private String itemId;

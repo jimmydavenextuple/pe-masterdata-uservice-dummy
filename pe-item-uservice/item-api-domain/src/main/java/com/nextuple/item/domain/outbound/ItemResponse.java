@@ -10,6 +10,7 @@ package com.nextuple.item.domain.outbound;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.nextuple.common.pojo.AdditionalAttributes;
 import com.nextuple.item.domain.constants.ItemConstants;
+import com.nextuple.item.domain.constants.ItemSubstitutionConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.List;
@@ -134,7 +135,7 @@ public class ItemResponse extends AdditionalAttributes implements Serializable {
   private Double validDropoffDuration;
 
   @Schema(
-      description = ItemConstants.ITEM_SUBSTITUTION_RESPONSE,
-      example = ItemConstants.ITEM_SUBSTITUTION_RESPONSE_EXAMPLE)
+      description = ItemSubstitutionConstants.ITEM_SUBSTITUTION_RESPONSE,
+      example = ItemSubstitutionConstants.ITEM_SUBSTITUTION_RESPONSE_EXAMPLE)
   private List<ItemSubstitutionInfo> itemSubstitutionResponse;
 }

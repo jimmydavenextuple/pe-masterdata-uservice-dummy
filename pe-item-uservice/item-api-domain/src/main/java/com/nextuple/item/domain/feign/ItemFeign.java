@@ -11,11 +11,11 @@ import com.nextuple.common.base.PagePayload;
 import com.nextuple.common.response.BaseResponse;
 import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
+import com.nextuple.item.domain.inbound.ItemDetailsRequest;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,12 +62,7 @@ public interface ItemFeign {
       @RequestParam Date promisingEngineDate);
 
   @PostMapping("/item/itemDetails")
-  List<ItemResponse> getItemDetailList(
-      @PathVariable String orgId,
-      @RequestParam List<String> itemList,
-      @RequestParam Boolean isItemBufferEnabled,
-      @RequestParam Date promisingEngineDate,
-      @RequestParam Map<String, Boolean> uomConversionEnabled);
+  List<ItemResponse> getItemDetailList(@RequestBody ItemDetailsRequest itemDetailsRequest);
 
   @GetMapping("/item/{orgId}/itemList")
   BaseResponse<PagePayload<ItemListResponse>> getItemsListPaginated(

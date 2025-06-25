@@ -25,6 +25,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ItemDetailsRequest implements Serializable {
+
+  private static final long serialVersionUID = 1905122041950251297L;
+
   @NotEmpty
   @Schema(description = "List of the item IDs.", example = "ITEM-01,ITEM-02")
   private List<String> itemList;
