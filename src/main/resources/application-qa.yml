@@ -270,6 +270,8 @@ kafka-topic-flags:
       enabled: true
     vendor:
       enabled: true
+    item-substitution:
+      enabled: true
     node-carrier:
       enabled: true
     carrier:

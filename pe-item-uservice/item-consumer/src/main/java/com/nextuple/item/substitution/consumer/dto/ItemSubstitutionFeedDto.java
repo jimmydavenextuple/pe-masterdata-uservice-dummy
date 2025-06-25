@@ -1,14 +1,20 @@
+/*
+ * Copyright (c) 2025., Nextuple, Inc. and/or its affiliates. All rights reserved.
+ *
+ * The software, code and related documentation made available to you by Nextuple, Inc. are provided under a written agreement containing restrictions on use and disclosure and are protected by copyright and other intellectual property laws. As described in and unless expressly permitted in your agreement, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or de-compilation of this software, unless required by law or permitted via contract for interoperability, is strictly prohibited.
+ * The information contained herein is subject to change without notice and is not warranted to be error-free. If you find any errors, please report them to us in writing.
+ */
+
 package com.nextuple.item.substitution.consumer.dto;
 
 import com.nextuple.item.domain.constants.ItemSubstitutionConstants;
 import com.nextuple.master.data.integration.dto.CommonMasterDataFieldsDto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
@@ -16,40 +22,40 @@ import java.io.Serializable;
 @SuperBuilder
 public class ItemSubstitutionFeedDto extends CommonMasterDataFieldsDto implements Serializable {
 
-    private static final long serialVersionUID = 1240891589171888066L;
+  private static final long serialVersionUID = 1240891589171888066L;
 
-    @Schema(
-            description = ItemSubstitutionConstants.ORG_ID,
-            example = ItemSubstitutionConstants.ORG_ID_EXAMPLE)
-    private String orgId;
+  @Schema(
+      description = ItemSubstitutionConstants.ORG_ID,
+      example = ItemSubstitutionConstants.ORG_ID_EXAMPLE)
+  private String orgId;
 
-    @Schema(
-            description = ItemSubstitutionConstants.PRIMARY_ITEM_ID,
-            example = ItemSubstitutionConstants.PRIMARY_ITEM_ID_EXAMPLE)
-    private String primaryItemId;
+  @Schema(
+      description = ItemSubstitutionConstants.PRIMARY_ITEM_ID,
+      example = ItemSubstitutionConstants.PRIMARY_ITEM_ID_EXAMPLE)
+  private String primaryItemId;
 
-    @Schema(
-            description = ItemSubstitutionConstants.PRIMARY_UOM,
-            example = ItemSubstitutionConstants.PRIMARY_UOM_EXAMPLE)
-    private String primaryUom;
+  @Schema(
+      description = ItemSubstitutionConstants.PRIMARY_UOM,
+      example = ItemSubstitutionConstants.PRIMARY_UOM_EXAMPLE)
+  private String primaryUom;
 
-    @Schema(
-            description = ItemSubstitutionConstants.ALTERNATE_ITEM_ID,
-            example = ItemSubstitutionConstants.ALTERNATE_ITEM_ID_EXAMPLE)
-    private String alternateItemId;
+  @Schema(
+      description = ItemSubstitutionConstants.ALTERNATE_ITEM_ID,
+      example = ItemSubstitutionConstants.ALTERNATE_ITEM_ID_EXAMPLE)
+  private String alternateItemId;
 
-    @Schema(
-            description = ItemSubstitutionConstants.ALTERNATE_UOM,
-            example = ItemSubstitutionConstants.ALTERNATE_UOM_EXAMPLE)
-    private String alternateUom;
+  @Schema(
+      description = ItemSubstitutionConstants.ALTERNATE_UOM,
+      example = ItemSubstitutionConstants.ALTERNATE_UOM_EXAMPLE)
+  private String alternateUom;
 
-    @Schema(
-            description = ItemSubstitutionConstants.CONVERSION_FACTOR,
-            example = ItemSubstitutionConstants.CONVERSION_FACTOR_EXAMPLE)
-    private Integer conversionFactor;
+  @Schema(
+      description = ItemSubstitutionConstants.CONVERSION_FACTOR,
+      example = ItemSubstitutionConstants.CONVERSION_FACTOR_EXAMPLE)
+  private Integer conversionFactor;
 
-    @Schema(
-            description = ItemSubstitutionConstants.PRIORITY,
-            example = ItemSubstitutionConstants.PRIORITY_EXAMPLE)
-    private Integer priority;
+  @Schema(
+      description = ItemSubstitutionConstants.PRIORITY,
+      example = ItemSubstitutionConstants.PRIORITY_EXAMPLE)
+  private Integer priority;
 }

@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":pe-common:common-domain"))
     implementation(project(":pe-configuration-uservice:configuration-api-domain"))
     implementation(project(":pe-item-uservice:item-api-domain"))
+    implementation(project(":pe-item-uservice:item-persistence-domain"))
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }
 

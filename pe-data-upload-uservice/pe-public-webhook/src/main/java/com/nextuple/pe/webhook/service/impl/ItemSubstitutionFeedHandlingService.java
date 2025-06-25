@@ -21,34 +21,38 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class ItemSubstitutionFeedHandlingService extends FeedHandlingService<ItemSubstitutionFeedDto> {
-    private final ItemSubstitutionBatchServiceImpl itemSubstitutionBatchService;
-    private final ItemSubstitutionFeedIngestionService itemSubstitutionFeedIngestionService;
+public class ItemSubstitutionFeedHandlingService
+    extends FeedHandlingService<ItemSubstitutionFeedDto> {
+  private final ItemSubstitutionBatchServiceImpl itemSubstitutionBatchService;
+  private final ItemSubstitutionFeedIngestionService itemSubstitutionFeedIngestionService;
 
-    @Override
-    public TypeReference<List<BatchRequest<ItemSubstitutionFeedDto>>> getTypeReference() {
-        return new TypeReference<List<BatchRequest<ItemSubstitutionFeedDto>>>() {};
-    }
+  @Override
+  public TypeReference<List<BatchRequest<ItemSubstitutionFeedDto>>> getTypeReference() {
+    return new TypeReference<List<BatchRequest<ItemSubstitutionFeedDto>>>() {};
+  }
 
-    @Override
-    public BatchResponse invokeBatchFeedImplMethod(List<BatchRequest<ItemSubstitutionFeedDto>> batchRequests) {
-        return itemSubstitutionBatchService.processRecordsWithoutRetry(batchRequests);
-    }
+  @Override
+  public BatchResponse invokeBatchFeedImplMethod(
+      List<BatchRequest<ItemSubstitutionFeedDto>> batchRequests) {
+    return itemSubstitutionBatchService.processRecordsWithoutRetry(batchRequests);
+  }
 
-    @Override
-    public void populateOrgId(List<BatchRequest<ItemSubstitutionFeedDto>> batchRequests, String orgId) {
-        batchRequests.forEach(itemSubstitutionBatchRequest -> itemSubstitutionBatchRequest.getPayload().setOrgId(orgId));
-    }
+  @Override
+  public void populateOrgId(
+      List<BatchRequest<ItemSubstitutionFeedDto>> batchRequests, String orgId) {
+    batchRequests.forEach(
+        itemSubstitutionBatchRequest -> itemSubstitutionBatchRequest.getPayload().setOrgId(orgId));
+  }
 
-    @Override
-    public TypeReference<FeedRequest<MasterDataIngestionDto<ItemSubstitutionFeedDto>>>
-    getTypeReferenceForPublishing() {
-        return new TypeReference<FeedRequest<MasterDataIngestionDto<ItemSubstitutionFeedDto>>>() {};
-    }
+  @Override
+  public TypeReference<FeedRequest<MasterDataIngestionDto<ItemSubstitutionFeedDto>>>
+      getTypeReferenceForPublishing() {
+    return new TypeReference<FeedRequest<MasterDataIngestionDto<ItemSubstitutionFeedDto>>>() {};
+  }
 
-    @Override
-    public void publishFeedToKafka(
-            String orgId, FeedRequest<MasterDataIngestionDto<ItemSubstitutionFeedDto>> batchRequests) {
-        itemSubstitutionFeedIngestionService.publishFeedToKafka(orgId, batchRequests);
-    }
+  @Override
+  public void publishFeedToKafka(
+      String orgId, FeedRequest<MasterDataIngestionDto<ItemSubstitutionFeedDto>> batchRequests) {
+    itemSubstitutionFeedIngestionService.publishFeedToKafka(orgId, batchRequests);
+  }
 }

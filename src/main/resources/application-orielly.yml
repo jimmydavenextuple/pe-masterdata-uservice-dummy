@@ -183,6 +183,9 @@ master-data:
   transfer-schedule:
     topic-names: INTERNAL.ORIELLY.PE.TRANSFER_SCHEDULES
     group-id: transfer-schedules-master-orielly
+  item-substitution:
+    topic-name: INTERNAL.ORIELLY.PE.ITEM_SUBSTITUTION_INTEGRATION
+    group-id: item-substitution-master-orielly
 
 next-cache:
   caches:
