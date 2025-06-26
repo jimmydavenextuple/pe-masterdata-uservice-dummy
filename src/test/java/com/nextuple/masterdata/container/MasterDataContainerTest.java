@@ -27,6 +27,9 @@ import com.nextuple.vendor.domain.inbound.VendorRequest;
 import com.nextuple.vendor.domain.outbound.VendorResponse;
 import com.nextuple.vendor.persistence.domain.VendorDomainDto;
 import com.nextuple.vendor.persistence.service.impl.VendorPersistenceServiceImpl;
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -38,10 +41,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
-
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MasterDataContainerTest extends AbstractContainerTest {
@@ -459,11 +458,11 @@ class MasterDataContainerTest extends AbstractContainerTest {
   @DisplayName("Test case to create multiple new item-substitutions")
   @ParameterizedTest(name = "Create Item Substitution with {0}")
   @CsvSource(
-          value = {
-                  "input/item-substitution/create-item-substitution.json, expected/item-substitution/create-item-substitution-db-value.json, expected/item-substitution/create-item-substitution-response.json",
-                  "input/item-substitution/create-item-substitution-2.json, expected/item-substitution/create-item-substitution-db-value-2.json, expected/item-substitution/create-item-substitution-response-2.json",
-                  "input/item-substitution/create-item-substitution-3.json, expected/item-substitution/create-item-substitution-db-value-3.json, expected/item-substitution/create-item-substitution-response-3.json"
-          })
+      value = {
+        "input/item-substitution/create-item-substitution.json, expected/item-substitution/create-item-substitution-db-value.json, expected/item-substitution/create-item-substitution-response.json",
+        "input/item-substitution/create-item-substitution-2.json, expected/item-substitution/create-item-substitution-db-value-2.json, expected/item-substitution/create-item-substitution-response-2.json",
+        "input/item-substitution/create-item-substitution-3.json, expected/item-substitution/create-item-substitution-db-value-3.json, expected/item-substitution/create-item-substitution-response-3.json"
+      })
   void createItemSubstitutionWithValidInput(
       String itemSubstitutionRequest,
       String itemSubstitutionDomainDto,
@@ -516,8 +515,7 @@ class MasterDataContainerTest extends AbstractContainerTest {
     List<ItemSubstitutionResponse> expectedItemSubstitutionResponse =
         util.parseClassFromJSON(
             "expected/item-substitution/get-item-substitution-response.json",
-                new TypeReference<List<ItemSubstitutionResponse>>() {}
-        );
+            new TypeReference<List<ItemSubstitutionResponse>>() {});
 
     String res =
         util.callRestPayload(
@@ -526,8 +524,7 @@ class MasterDataContainerTest extends AbstractContainerTest {
             null,
             "payload");
     List<ItemSubstitutionResponse> convertedObject =
-            util.parseStringToClass(res, new TypeReference<List<ItemSubstitutionResponse>>() {});
-
+        util.parseStringToClass(res, new TypeReference<List<ItemSubstitutionResponse>>() {});
 
     Assertions.assertEquals(expectedItemSubstitutionResponse, convertedObject);
   }
@@ -579,66 +576,73 @@ class MasterDataContainerTest extends AbstractContainerTest {
   void createItemSubstitutionFeedIngestionWithValidInput() throws IOException {
     // Fetch the input from the resources
     FeedRequest<MasterDataIngestionDto<ItemSubstitutionFeedDto>> itemSubstitutionRequestBody =
-            util.parseClassFromJSON(
-                    "input/item-substitution/item-substitution-feed.json",
-                    new TypeReference<FeedRequest<MasterDataIngestionDto<ItemSubstitutionFeedDto>>>() {});
+        util.parseClassFromJSON(
+            "input/item-substitution/item-substitution-feed.json",
+            new TypeReference<FeedRequest<MasterDataIngestionDto<ItemSubstitutionFeedDto>>>() {});
     ItemSubstitutionDomainDto expectedItemSubstitutionResponse1 =
-            util.parseClassFromJSON("expected/item-substitution/item-substitution-feed-1.json", ItemSubstitutionDomainDto.class);
+        util.parseClassFromJSON(
+            "expected/item-substitution/item-substitution-feed-1.json",
+            ItemSubstitutionDomainDto.class);
 
     // Initialize the Kafka consumer & subscribe to the topic
     util.subscribeToTopics(List.of(itemSubstitutionFeedTopic));
 
     // Call the REST API
     util.callRestPayload(
-            "http://localhost:8080/ingest-data/item-substitution", HttpMethod.POST, itemSubstitutionRequestBody, "payload");
+        "http://localhost:8080/ingest-data/item-substitution",
+        HttpMethod.POST,
+        itemSubstitutionRequestBody,
+        "payload");
 
     // Poll the Kafka consumer and assert the values
     List<BatchRequest<ItemSubstitutionFeedDto>> records =
-            util.pollKafkaConsumer(
-                    itemSubstitutionRequestBody.getData().size(),
-                    new TypeReference<BatchRequest<ItemSubstitutionFeedDto>>() {},
-                    itemSubstitutionFeedTopic
-
-                    );
+        util.pollKafkaConsumer(
+            itemSubstitutionRequestBody.getData().size(),
+            new TypeReference<BatchRequest<ItemSubstitutionFeedDto>>() {},
+            itemSubstitutionFeedTopic);
 
     Assertions.assertEquals(itemSubstitutionRequestBody.getData().size(), records.size());
     Assertions.assertEquals(
-            itemSubstitutionRequestBody.getData().stream()
-                    .map(input -> input.getAction().name() + input.getPayload().getPrimaryItemId())
-                    .sorted()
-                    .toList(),
-            records.stream()
-                    .map(input -> input.getAction().name() + input.getPayload().getPrimaryItemId())
-                    .sorted()
-                    .toList());
+        itemSubstitutionRequestBody.getData().stream()
+            .map(input -> input.getAction().name() + input.getPayload().getPrimaryItemId())
+            .sorted()
+            .toList(),
+        records.stream()
+            .map(input -> input.getAction().name() + input.getPayload().getPrimaryItemId())
+            .sorted()
+            .toList());
     Assertions.assertEquals(
-            itemSubstitutionRequestBody.getData().stream()
-                    .map(MasterDataIngestionDto::getPayload)
-                    .sorted(Comparator.comparing(ItemSubstitutionFeedDto::getPrimaryItemId))
-                    .toList(),
-            records.stream()
-                    .map(BatchRequest::getPayload)
-                    .sorted(Comparator.comparing(ItemSubstitutionFeedDto::getPrimaryItemId))
-                    .toList());
+        itemSubstitutionRequestBody.getData().stream()
+            .map(MasterDataIngestionDto::getPayload)
+            .sorted(Comparator.comparing(ItemSubstitutionFeedDto::getPrimaryItemId))
+            .toList(),
+        records.stream()
+            .map(BatchRequest::getPayload)
+            .sorted(Comparator.comparing(ItemSubstitutionFeedDto::getPrimaryItemId))
+            .toList());
 
     // Poll the database and assert the values
     util.pollAndAssert(
-            () ->
-                    Assertions.assertDoesNotThrow(
-                            () ->
-                                    itemSubstitutionPersistenceServiceImpl.findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom("NEXTUPLE_GR","IITEM025", "EA", "IITEM026", "KG")),
-            input -> {
-              Assertions.assertTrue(input.isPresent());
-              Assertions.assertEquals(expectedItemSubstitutionResponse1, input.get());
-            });
+        () ->
+            Assertions.assertDoesNotThrow(
+                () ->
+                    itemSubstitutionPersistenceServiceImpl
+                        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+                            "NEXTUPLE_GR", "IITEM025", "EA", "IITEM026", "KG")),
+        input -> {
+          Assertions.assertTrue(input.isPresent());
+          Assertions.assertEquals(expectedItemSubstitutionResponse1, input.get());
+        });
     util.pollAndAssert(
-            () ->
-                    Assertions.assertDoesNotThrow(
-                            () ->
-                                    itemSubstitutionPersistenceServiceImpl.findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom("NEXTUPLE_GR","IITEM003", "EA", "IITEM004", "KG")),
-            input -> {
-              Assertions.assertTrue(input.isPresent());
-              Assertions.assertEquals(expectedItemSubstitutionResponse1, input.get());
-            });
+        () ->
+            Assertions.assertDoesNotThrow(
+                () ->
+                    itemSubstitutionPersistenceServiceImpl
+                        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+                            "NEXTUPLE_GR", "IITEM003", "EA", "IITEM004", "KG")),
+        input -> {
+          Assertions.assertTrue(input.isPresent());
+          Assertions.assertEquals(expectedItemSubstitutionResponse1, input.get());
+        });
   }
 }

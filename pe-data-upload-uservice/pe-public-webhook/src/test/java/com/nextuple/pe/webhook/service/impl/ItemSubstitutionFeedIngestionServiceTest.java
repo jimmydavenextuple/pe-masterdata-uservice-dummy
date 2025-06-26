@@ -40,7 +40,8 @@ class ItemSubstitutionFeedIngestionServiceTest {
   }
 
   @Test
-  @DisplayName("Test getTypeReference method returns correct TypeReference , and publishes successfully")
+  @DisplayName(
+      "Test getTypeReference method returns correct TypeReference , and publishes successfully")
   void testPublish() {
     FeedRequest<MasterDataIngestionDto<ItemSubstitutionFeedDto>> feedRequest = new FeedRequest<>();
     MasterDataIngestionDto<ItemSubstitutionFeedDto> ingestionDto = new MasterDataIngestionDto<>();

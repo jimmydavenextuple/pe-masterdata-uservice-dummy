@@ -102,7 +102,8 @@ class ItemSubstitutionBatchServiceImplTest {
   }
 
   @Test
-  @DisplayName("Test for outdated records for item substitution success case, records are not outdated")
+  @DisplayName(
+      "Test for outdated records for item substitution success case, records are not outdated")
   void testCheckForOutdatedRecord() throws CommonServiceException {
     BatchRequest<ItemSubstitutionFeedDto> batchRequest = new BatchRequest<>();
     ItemSubstitutionFeedDto payload = new ItemSubstitutionFeedDto();
