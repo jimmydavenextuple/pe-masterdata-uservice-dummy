@@ -453,122 +453,124 @@ class MasterDataContainerTest extends AbstractContainerTest {
     Assertions.assertEquals("\"Vendor not found with given details\"", response);
   }
 
-    @Order(8)
-    @DisplayName("Test case to create multiple new item-substitutions")
-    @ParameterizedTest(name = "Create Item Substitution with {0}")
-    @CsvSource(
-        value = {
-          "input/item-substitution/create-item-substitution.json",
-   "expected/item-substitution/create-item-substitution-db-value.json",
-   "expected/item-substitution/create-item-substitution-response.json",
-          "input/item-substitution/create-item-substitution-2.json",
-   "expected/item-substitution/create-item-substitution-db-value-2.json",
-   "expected/item-substitution/create-item-substitution-response-2.json",
-          "input/item-substitution/create-item-substitution-3.json",
-   "expected/item-substitution/create-item-substitution-db-value-3.json",
-   "expected/item-substitution/create-item-substitution-response-3.json"
-        })
-    void createItemSubstitutionWithValidInput(
-        String itemSubstitutionRequest,
-        String itemSubstitutionDomainDto,
-        String itemSubstitutionResponse)
-        throws IOException {
-      // Fetch the input from the resources
-      UpsertItemSubstitutionRequest upsertItemSubstitutionRequest =
-          util.parseClassFromJSON(itemSubstitutionRequest, UpsertItemSubstitutionRequest.class);
-      ItemSubstitutionDomainDto expectedItemSubstitutionDomainDto =
-          util.parseClassFromJSON(itemSubstitutionDomainDto, ItemSubstitutionDomainDto.class);
-      ItemSubstitutionResponse expectedItemSubstitutionResponse =
-          util.parseClassFromJSON(itemSubstitutionResponse, ItemSubstitutionResponse.class);
+  @Order(13)
+  @DisplayName("Test case to create multiple new item-substitutions")
+  @ParameterizedTest(name = "Create Item Substitution with {0}")
+  @CsvSource(
+      value = {
+        "input/item-substitution/create-item-substitution.json",
+        "expected/item-substitution/create-item-substitution-db-value.json",
+        "expected/item-substitution/create-item-substitution-response.json",
+        "input/item-substitution/create-item-substitution-2.json",
+        "expected/item-substitution/create-item-substitution-db-value-2.json",
+        "expected/item-substitution/create-item-substitution-response-2.json",
+        "input/item-substitution/create-item-substitution-3.json",
+        "expected/item-substitution/create-item-substitution-db-value-3.json",
+        "expected/item-substitution/create-item-substitution-response-3.json"
+      })
+  void createItemSubstitutionWithValidInput(
+      String itemSubstitutionRequest,
+      String itemSubstitutionDomainDto,
+      String itemSubstitutionResponse)
+      throws IOException {
+    // Fetch the input from the resources
+    UpsertItemSubstitutionRequest upsertItemSubstitutionRequest =
+        util.parseClassFromJSON(itemSubstitutionRequest, UpsertItemSubstitutionRequest.class);
+    ItemSubstitutionDomainDto expectedItemSubstitutionDomainDto =
+        util.parseClassFromJSON(itemSubstitutionDomainDto, ItemSubstitutionDomainDto.class);
+    ItemSubstitutionResponse expectedItemSubstitutionResponse =
+        util.parseClassFromJSON(itemSubstitutionResponse, ItemSubstitutionResponse.class);
 
-      // Call the REST API
-      String res =
-          util.callRestPayload(
-              "http://localhost:8080/item-substitution",
-              HttpMethod.POST,
-              upsertItemSubstitutionRequest,
-              "payload",
-              200);
-      ItemSubstitutionResponse convertedObject =
-          util.parseStringToClass(res, ItemSubstitutionResponse.class);
+    // Call the REST API
+    String res =
+        util.callRestPayload(
+            "http://localhost:8080/item-substitution",
+            HttpMethod.POST,
+            upsertItemSubstitutionRequest,
+            "payload",
+            200);
+    ItemSubstitutionResponse convertedObject =
+        util.parseStringToClass(res, ItemSubstitutionResponse.class);
 
-      // Assert the REST response
-      Assertions.assertEquals(expectedItemSubstitutionResponse, convertedObject);
+    // Assert the REST response
+    Assertions.assertEquals(expectedItemSubstitutionResponse, convertedObject);
 
-      // Poll the database and assert the values
-      util.pollAndAssert(
-          () ->
-              Assertions.assertDoesNotThrow(
-                  () ->
-                      itemSubstitutionPersistenceServiceImpl
+    // Poll the database and assert the values
+    util.pollAndAssert(
+        () ->
+            Assertions.assertDoesNotThrow(
+                () ->
+                    itemSubstitutionPersistenceServiceImpl
+                        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+                            upsertItemSubstitutionRequest.getOrgId(),
+                            upsertItemSubstitutionRequest.getPrimaryItemId(),
+                            upsertItemSubstitutionRequest.getPrimaryUom(),
+                            upsertItemSubstitutionRequest.getAlternateItemId(),
+                            upsertItemSubstitutionRequest.getAlternateUom())),
+        input -> {
+          Assertions.assertTrue(input.isPresent());
+          Assertions.assertEquals(expectedItemSubstitutionDomainDto, input.get());
+        });
+  }
 
-   .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
-                              upsertItemSubstitutionRequest.getOrgId(),
-                              upsertItemSubstitutionRequest.getPrimaryItemId(),
-                              upsertItemSubstitutionRequest.getPrimaryUom(),
-                              upsertItemSubstitutionRequest.getAlternateItemId(),
-                              upsertItemSubstitutionRequest.getAlternateUom())),
-          input -> {
-            Assertions.assertTrue(input.isPresent());
-            Assertions.assertEquals(expectedItemSubstitutionDomainDto, input.get());
-          });
-    }
+  @Test
+  @Order(14)
+  @DisplayName("Get Details of an existing ItemSubstitution")
+  void getItemSubstitutionDetailsWithValidInput() throws IOException {
+    ItemSubstitutionResponse expectedItemSubstitutionResponse =
+        util.parseClassFromJSON(
+            "expected/item-substitution/create-item-substitution-response.json",
+            ItemSubstitutionResponse.class);
 
-    @Test
-    @Order(9)
-    @DisplayName("Get Details of an existing ItemSubstitution")
-    void getItemSubstitutionDetailsWithValidInput() throws IOException {
-      ItemSubstitutionResponse expectedItemSubstitutionResponse =
-              util.parseClassFromJSON(
-                      "expected/item-substitution/create-item-substitution-response.json",
-   ItemSubstitutionResponse.class);
+    String res =
+        util.callRestPayload(
+            "http://localhost:8080/item-substitution/ITEM001/NEXTUPLE_GR",
+            HttpMethod.GET,
+            null,
+            "payload");
+    ItemSubstitutionResponse convertedObject =
+        util.parseStringToClass(res, ItemSubstitutionResponse.class);
+    Assertions.assertEquals(expectedItemSubstitutionResponse, convertedObject);
+  }
 
-      String res =
-              util.callRestPayload(
-                      "http://localhost:8080/item-substitution/ITEM001/NEXTUPLE_GR",
-   HttpMethod.GET, null, "payload");
-      ItemSubstitutionResponse convertedObject = util.parseStringToClass(res,
-   ItemSubstitutionResponse.class);
-      Assertions.assertEquals(expectedItemSubstitutionResponse, convertedObject);
-    }
+  @Test
+  @Order(15)
+  @DisplayName("Update the details of an existing Item Substitution")
+  void updateItemSubstitutionDetailsWithValidInput() throws IOException {
+    UpsertItemSubstitutionRequest updateItemSubstitutionRequestBody =
+        util.parseClassFromJSON(
+            "input/item-substitution/update-item-substitution.json",
+            UpsertItemSubstitutionRequest.class);
+    ItemSubstitutionDomainDto expectedItemSubstitutionDomainDto =
+        util.parseClassFromJSON(
+            "expected/item-substitution/update-item-substitution-db-value.json",
+            ItemSubstitutionDomainDto.class);
+    ItemSubstitutionResponse expectedItemSubstitutionResponse =
+        util.parseClassFromJSON(
+            "expected/item-substitution/update-item-substitution-response.json",
+            ItemSubstitutionResponse.class);
 
-    @Test
-    @Order(10)
-    @DisplayName("Update the details of an existing Item Substitution")
-    void updateItemSubstitutionDetailsWithValidInput() throws IOException {
-      UpsertItemSubstitutionRequest updateItemSubstitutionRequestBody =
-              util.parseClassFromJSON("input/item-substitution/update-item-substitution.json",
-   UpsertItemSubstitutionRequest.class);
-      ItemSubstitutionDomainDto expectedItemSubstitutionDomainDto =
-              util.parseClassFromJSON(
-                      "expected/item-substitution/update-item-substitution-db-value.json",
-   ItemSubstitutionDomainDto.class);
-      ItemSubstitutionResponse expectedItemSubstitutionResponse =
-              util.parseClassFromJSON(
-                      "expected/item-substitution/update-item-substitution-response.json",
-   ItemSubstitutionResponse.class);
+    String res =
+        util.callRestPayload(
+            "http://localhost:8080/item-substitution",
+            HttpMethod.POST,
+            updateItemSubstitutionRequestBody,
+            "payload",
+            200);
+    ItemSubstitutionResponse convertedObject =
+        util.parseStringToClass(res, ItemSubstitutionResponse.class);
+    Assertions.assertEquals(expectedItemSubstitutionResponse, convertedObject);
 
-      String res =
-              util.callRestPayload(
-                      "http://localhost:8080/item-substitution",
-                      HttpMethod.POST,
-                      updateItemSubstitutionRequestBody,
-                      "payload",
-                      200);
-      ItemSubstitutionResponse convertedObject = util.parseStringToClass(res,
-   ItemSubstitutionResponse.class);
-      Assertions.assertEquals(expectedItemSubstitutionResponse, convertedObject);
-
-      util.pollAndAssert(
-              () ->
-                      Assertions.assertDoesNotThrow(
-                              () ->
-
-   itemSubstitutionPersistenceServiceImpl.findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom("NEXTUPLE_GR","ITEM001", "EA",
-                                              "ITEM002", "KG")),
-              input -> {
-                Assertions.assertTrue(input.isPresent());
-                Assertions.assertEquals(expectedItemSubstitutionDomainDto, input.get());
-              });
-    }
+    util.pollAndAssert(
+        () ->
+            Assertions.assertDoesNotThrow(
+                () ->
+                    itemSubstitutionPersistenceServiceImpl
+                        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+                            "NEXTUPLE_GR", "ITEM001", "EA", "ITEM002", "KG")),
+        input -> {
+          Assertions.assertTrue(input.isPresent());
+          Assertions.assertEquals(expectedItemSubstitutionDomainDto, input.get());
+        });
+  }
 }
