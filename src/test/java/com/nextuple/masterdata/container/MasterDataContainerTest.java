@@ -8,6 +8,10 @@
 package com.nextuple.masterdata.container;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.nextuple.item.domain.inbound.UpsertItemSubstitutionRequest;
+import com.nextuple.item.domain.outbound.ItemSubstitutionResponse;
+import com.nextuple.item.persistence.domain.ItemSubstitutionDomainDto;
+import com.nextuple.item.persistence.service.impl.ItemSubstitutionPersistenceServiceImpl;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.masterdata.AbstractContainerTest;
 import com.nextuple.node.consumer.dto.NodeFeedDto;
@@ -44,11 +48,16 @@ class MasterDataContainerTest extends AbstractContainerTest {
 
   @Autowired VendorPersistenceServiceImpl vendorPersistenceServiceImpl;
 
+  @Autowired ItemSubstitutionPersistenceServiceImpl itemSubstitutionPersistenceServiceImpl;
+
   @Value("${master-data.vendor.topic-names:null}")
   private String vendorFeedTopic;
 
   @Value("${master-data.node.topic-names:null}")
   private String nodeFeedTopic;
+
+  @Value("${master-data.item-substitution.topic-names:null}")
+  private String itemSubstitutionFeedTopic;
 
   @Order(1)
   @DisplayName("Happy Path: Create Node")
@@ -442,5 +451,59 @@ class MasterDataContainerTest extends AbstractContainerTest {
             "message",
             404);
     Assertions.assertEquals("\"Vendor not found with given details\"", response);
+  }
+
+  @Order(8)
+  @DisplayName("Test case to create multiple new item-substitutions")
+  @ParameterizedTest(name = "Create Item Substitution with {0}")
+  @CsvSource(
+      value = {
+        "input/item-substitution/create-item-substitution.json, expected/item-substitution/create-item-substitution-db-value.json, expected/item-substitution/create-item-substitution-response.json",
+        "input/item-substitution/create-item-substitution-2.json, expected/item-substitution/create-item-substitution-db-value-2.json, expected/item-substitution/create-item-substitution-response-2.json",
+        "input/item-substitution/create-item-substitution-3.json, expected/item-substitution/create-item-substitution-db-value-3.json, expected/item-substitution/create-item-substitution-response-3.json"
+      })
+  void createItemSubstitutionWithValidInput(
+      String itemSubstitutionRequest,
+      String itemSubstitutionDomainDto,
+      String itemSubstitutionResponse)
+      throws IOException {
+    // Fetch the input from the resources
+    UpsertItemSubstitutionRequest upsertItemSubstitutionRequest =
+        util.parseClassFromJSON(itemSubstitutionRequest, UpsertItemSubstitutionRequest.class);
+    ItemSubstitutionDomainDto expectedItemSubstitutionDomainDto =
+        util.parseClassFromJSON(itemSubstitutionDomainDto, ItemSubstitutionDomainDto.class);
+    ItemSubstitutionResponse expectedItemSubstitutionResponse =
+        util.parseClassFromJSON(itemSubstitutionResponse, ItemSubstitutionResponse.class);
+
+    // Call the REST API
+    String res =
+        util.callRestPayload(
+            "http://localhost:8080/item-substitution",
+            HttpMethod.POST,
+            upsertItemSubstitutionRequest,
+            "payload",
+            200);
+    ItemSubstitutionResponse convertedObject =
+        util.parseStringToClass(res, ItemSubstitutionResponse.class);
+
+    // Assert the REST response
+    Assertions.assertEquals(expectedItemSubstitutionResponse, convertedObject);
+
+    // Poll the database and assert the values
+    util.pollAndAssert(
+        () ->
+            Assertions.assertDoesNotThrow(
+                () ->
+                    itemSubstitutionPersistenceServiceImpl
+                        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+                            upsertItemSubstitutionRequest.getOrgId(),
+                            upsertItemSubstitutionRequest.getPrimaryItemId(),
+                            upsertItemSubstitutionRequest.getPrimaryUom(),
+                            upsertItemSubstitutionRequest.getAlternateItemId(),
+                            upsertItemSubstitutionRequest.getAlternateUom())),
+        input -> {
+          Assertions.assertTrue(input.isPresent());
+          Assertions.assertEquals(expectedItemSubstitutionDomainDto, input.get());
+        });
   }
 }

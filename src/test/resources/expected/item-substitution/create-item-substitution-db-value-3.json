@@ -1,0 +1,9 @@
+{
+  "orgId": "NEXTUPLE_GR",
+  "primaryItemId": "ITEM005",
+  "primaryUom": "PACK",
+  "alternateItemId": "ITEM006",
+  "alternateUom": "GALLON",
+  "conversionFactor": 20,
+  "priority": 1
+}
