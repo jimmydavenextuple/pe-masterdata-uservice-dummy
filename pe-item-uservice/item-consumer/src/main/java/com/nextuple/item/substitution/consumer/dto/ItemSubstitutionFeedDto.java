@@ -22,7 +22,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class ItemSubstitutionFeedDto extends CommonMasterDataFieldsDto implements Serializable {
 
-  private static final long serialVersionUID = 1240891589171888066L;
+  private static final long serialVersionUID = 1240891009171888066L;
 
   @Schema(
       description = ItemSubstitutionConstants.ORG_ID,

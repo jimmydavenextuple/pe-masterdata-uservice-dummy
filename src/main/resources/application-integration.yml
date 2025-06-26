@@ -195,6 +195,9 @@ master-data:
   transfer-schedule:
     topic-names: INTERNAL.INTEGRATION.PE.TRANSFER_SCHEDULES
     group-id: transfer-schedules-master-integration
+  item-substitution:
+    topic-names: INTERNAL.INTEGRATION.PE.ITEM_SUBSTITUTION_INTEGRATION
+    group-id: item-substitution-master-integration
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
