@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +34,7 @@ public class ItemSubstitutionPersistenceServiceImpl
         ItemSubstitutionRepository,
         ItemSubstitutionEntityMapper>
     implements ItemSubstitutionPersistenceService {
+
   @Override
   public List<ItemSubstitutionDomainDto> findByOrgIdAndPrimaryItemIdAndPrimaryUom(
       String orgId, String primaryItemId, String primaryUom) {
@@ -40,6 +42,15 @@ public class ItemSubstitutionPersistenceServiceImpl
         .toDomain(
             getRepository()
                 .findByOrgIdAndPrimaryItemIdAndPrimaryUom(orgId, primaryItemId, primaryUom));
+  }
+
+  @Override
+  public List<ItemSubstitutionDomainDto> findByOrgIdAndPrimaryItemIdAndPrimaryUomList(
+      String orgId, List<Pair<String, String>> primaryItemIdAndUomList) {
+    return getMapper()
+        .toDomain(
+            getRepository()
+                .findByOrgIdAndPrimaryItemIdAndPrimaryUomList(orgId, primaryItemIdAndUomList));
   }
 
   @Override
