@@ -8,22 +8,11 @@
 package com.nextuple.item.persistence.repository;
 
 import com.nextuple.item.persistence.entity.ItemSubstitutionEntity;
-import com.nextuple.item.persistence.entity.key.ItemSubstitutionKey;
-import com.nextuple.postgres.repository.CommonJpaRepository;
 import java.util.List;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.util.Pair;
 
-@Repository
-public interface ItemSubstitutionRepository
-    extends CommonJpaRepository<ItemSubstitutionEntity, ItemSubstitutionKey>,
-        ItemSubstitutionCustomRepository {
-  List<ItemSubstitutionEntity> findByOrgIdAndPrimaryItemIdAndPrimaryUom(
-      String orgId, String primaryItemId, String primaryUom);
+public interface ItemSubstitutionCustomRepository {
 
-  ItemSubstitutionEntity findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
-      String orgId,
-      String primaryItemId,
-      String primaryUom,
-      String alternateItemId,
-      String alternateUom);
+  List<ItemSubstitutionEntity> findByOrgIdAndPrimaryItemIdAndPrimaryUomList(
+      String orgId, List<Pair<String, String>> itemIdUomPairs);
 }

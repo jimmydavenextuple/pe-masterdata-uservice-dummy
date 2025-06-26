@@ -22,10 +22,12 @@ import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import com.nextuple.item.persistence.domain.ItemBufferDomainDto;
 import com.nextuple.item.persistence.domain.ItemDomainDto;
+import com.nextuple.item.persistence.domain.ItemSubstitutionDomainDto;
 import com.nextuple.item.persistence.exception.ItemBatchingDomainException;
 import com.nextuple.item.persistence.exception.ItemDomainException;
 import com.nextuple.item.persistence.service.ItemBufferPersistenceService;
 import com.nextuple.item.persistence.service.ItemPersistenceService;
+import com.nextuple.item.persistence.service.ItemSubstitutionPersistenceService;
 import com.nextuple.postgres.config.ReaderDS;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -40,6 +42,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -50,8 +56,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 @RequiredArgsConstructor
@@ -67,6 +75,8 @@ public class ItemService {
 
   private final ItemPersistenceService itemPersistenceService;
   private final ItemBufferPersistenceService itemBufferPersistenceService;
+  private final ItemSubstitutionPersistenceService itemSubstitutionPersistenceService;
+
   @Autowired Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
   public static final ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
@@ -78,6 +88,7 @@ public class ItemService {
   private static final String KEY_SEPARATOR = "-";
 
   private final ValidatorUtil validatorUtil;
+  private static final ExecutorService taskExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
   public ItemResponse upsertItem(ItemCreationRequest request)
       throws ItemDomainException, CommonServiceException {
@@ -201,7 +212,11 @@ public class ItemService {
   }
 
   public List<ItemResponse> getItemList(
-      List<String> itemList, String orgId, Boolean isItemBufferEnabled, Date promisingEngineDate)
+      List<String> itemList,
+      String orgId,
+      Boolean isItemBufferEnabled,
+      Date promisingEngineDate,
+      Map<String, Boolean> uomConversionEnabled)
       throws CommonServiceException, ItemBatchingDomainException {
 
     List<ItemDomainDto> existingItemDomainDto =
@@ -217,8 +232,77 @@ public class ItemService {
     }
 
     List<ItemResponse> itemResponse = INSTANCE.toItemResponseList(existingItemDomainDto);
-    addActiveItemBuffer(isItemBufferEnabled, promisingEngineDate, itemResponse, itemList, orgId);
+
+    ExecutorService executor = Executors.newFixedThreadPool(2);
+
+    try {
+      CompletableFuture<Void> activeItemBufferFuture =
+          CompletableFuture.runAsync(
+              () -> {
+                try {
+                  addActiveItemBuffer(
+                      isItemBufferEnabled, promisingEngineDate, itemResponse, itemList, orgId);
+                } catch (CommonServiceException e) {
+                  throw new CompletionException(e);
+                }
+              },
+              executor);
+
+      CompletableFuture<Void> itemUOMSubstitutionFuture =
+          CompletableFuture.runAsync(
+              () -> addItemUOMSubstitution(uomConversionEnabled, itemResponse, orgId), executor);
+
+      CompletableFuture.allOf(activeItemBufferFuture, itemUOMSubstitutionFuture).join();
+
+    } finally {
+      executor.shutdown();
+    }
+
     return itemResponse;
+  }
+
+  void addItemUOMSubstitution(
+      Map<String, Boolean> uomConversionEnabled, List<ItemResponse> itemResponse, String orgId) {
+
+    if (CollectionUtils.isEmpty(uomConversionEnabled)) return;
+    Map<String, ItemResponse> itemMap = new HashMap<>();
+    for (ItemResponse itemResponse1 : itemResponse) {
+      itemMap.put(itemResponse1.getItemId(), itemResponse1);
+    }
+
+    List<Pair<String, String>> itemIdUomPairs =
+        itemResponse.stream()
+            .filter(
+                itemResponseEntry ->
+                    uomConversionEnabled.getOrDefault(itemResponseEntry.getItemId(), false))
+            .map(item -> Pair.of(item.getItemId(), item.getUom()))
+            .toList();
+
+    List<ItemSubstitutionDomainDto> itemSubstitutionDetails =
+        itemSubstitutionPersistenceService.findByOrgIdAndPrimaryItemIdAndPrimaryUomList(
+            orgId, itemIdUomPairs);
+
+    List<List<ItemSubstitutionDomainDto>> itemSubstitutionInfoList =
+        groupByPrimaryItemIdAndUom(itemSubstitutionDetails);
+
+    for (List<ItemSubstitutionDomainDto> itemSubstitutionInfos : itemSubstitutionInfoList) {
+      if (!CollectionUtils.isEmpty(itemSubstitutionInfos)) {
+        String itemId = itemSubstitutionInfos.getFirst().getPrimaryItemId();
+        ItemResponse itemValue = itemMap.get(itemId);
+        itemValue.setItemSubstitutionResponse(INSTANCE.toItemSubstituteList(itemSubstitutionInfos));
+      }
+    }
+  }
+
+  private List<List<ItemSubstitutionDomainDto>> groupByPrimaryItemIdAndUom(
+      List<ItemSubstitutionDomainDto> itemSubstitutionDetails) {
+    return itemSubstitutionDetails.stream()
+        .collect(
+            Collectors.groupingBy(item -> Pair.of(item.getPrimaryItemId(), item.getPrimaryUom())))
+        .values()
+        .stream()
+        .map(group -> group.stream().toList())
+        .toList();
   }
 
   private void addActiveItemBuffer(

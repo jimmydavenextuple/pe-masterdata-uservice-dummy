@@ -32,6 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.util.Pair;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -242,5 +243,31 @@ class ItemSubstitutionPersistenceServiceImplTest {
     // Assert & Verify interactions
     verify(itemSubstitutionEntityMapper, times(1)).toEntity(mockDomainDto);
     verify(itemSubstitutionRepository, times(1)).delete(mockEntity);
+  }
+
+  @Test
+  void testFindByOrgIdAndPrimaryItemIdAndPrimaryUomListEmptyResult() {
+    // Arrange
+    String orgId = "test-org";
+    List<Pair<String, String>> primaryItemIdAndUomList =
+        List.of(Pair.of("item1", "EACH"), Pair.of("item2", "EACH"));
+
+    when(itemSubstitutionRepository.findByOrgIdAndPrimaryItemIdAndPrimaryUomList(
+            orgId, primaryItemIdAndUomList))
+        .thenReturn(new ArrayList<>());
+    when(itemSubstitutionEntityMapper.toDomain(new ArrayList<>())).thenReturn(new ArrayList<>());
+
+    // Act
+    List<ItemSubstitutionDomainDto> result =
+        itemSubstitutionPersistenceService.findByOrgIdAndPrimaryItemIdAndPrimaryUomList(
+            orgId, primaryItemIdAndUomList);
+
+    // Assert
+    assertEquals(0, result.size());
+
+    // Verify interactions
+    verify(itemSubstitutionRepository, times(1))
+        .findByOrgIdAndPrimaryItemIdAndPrimaryUomList(orgId, primaryItemIdAndUomList);
+    verify(itemSubstitutionEntityMapper, times(1)).toDomain(new ArrayList<>());
   }
 }
