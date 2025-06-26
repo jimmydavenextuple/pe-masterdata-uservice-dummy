@@ -8,6 +8,7 @@
 package com.nextuple.item.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -20,7 +21,7 @@ import com.nextuple.common.validation.ValidatorUtil;
 import com.nextuple.item.TestUtil;
 import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
-import com.nextuple.item.domain.inbound.ItemDetailsRequest;
+import com.nextuple.item.domain.inbound.ItemDetailsWithSubstitutionRequest;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import com.nextuple.item.persistence.exception.ItemBatchingDomainException;
@@ -284,8 +285,8 @@ class ItemControllerTest {
   void getItemDetailsList() throws CommonServiceException, ItemBatchingDomainException {
     List<ItemResponse> itemResponseList = List.of(testUtil.getItemResponse());
     when(itemService.getItemList(any(), any(), any(), any(), any())).thenReturn(itemResponseList);
-    ItemDetailsRequest itemDetailsRequest =
-        ItemDetailsRequest.builder()
+    ItemDetailsWithSubstitutionRequest itemDetailsWithSubstitutionRequest =
+        ItemDetailsWithSubstitutionRequest.builder()
             .itemList(List.of(TestUtil.ITEM_ID))
             .isItemBufferEnabled(true)
             .itemSubstitutionMap(Map.of())
@@ -293,7 +294,8 @@ class ItemControllerTest {
             .orgId("NEXTUPLE_GR")
             .build();
 
-    List<ItemResponse> responseEntity = itemController.getItemDetailsList(itemDetailsRequest);
+    List<ItemResponse> responseEntity =
+        itemController.getItemDetailsList(itemDetailsWithSubstitutionRequest);
 
     Assertions.assertEquals(1, responseEntity.size());
     Assertions.assertEquals(itemResponseList.getFirst(), responseEntity.getFirst());
@@ -307,19 +309,44 @@ class ItemControllerTest {
       throws CommonServiceException, ItemBatchingDomainException {
     List<ItemResponse> itemResponseList = List.of(testUtil.getItemResponse());
     when(itemService.getItemList(any(), any(), any(), any(), any())).thenReturn(itemResponseList);
-    ItemDetailsRequest itemDetailsRequest =
-        ItemDetailsRequest.builder()
+    ItemDetailsWithSubstitutionRequest itemDetailsWithSubstitutionRequest =
+        ItemDetailsWithSubstitutionRequest.builder()
             .itemList(List.of(TestUtil.ITEM_ID))
             .itemSubstitutionMap(Map.of())
             .promisingEngineDate(new Date())
             .orgId("NEXTUPLE_GR")
             .build();
 
-    List<ItemResponse> responseEntity = itemController.getItemDetailsList(itemDetailsRequest);
+    List<ItemResponse> responseEntity =
+        itemController.getItemDetailsList(itemDetailsWithSubstitutionRequest);
 
     Assertions.assertEquals(1, responseEntity.size());
     Assertions.assertEquals(itemResponseList.getFirst(), responseEntity.getFirst());
 
     verify(itemService, times(1)).getItemList(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Test: Get Item details with isItemBufferEnabled set to false")
+  void getItemDetailsListWithFalseItemBufferEnabled()
+      throws CommonServiceException, ItemBatchingDomainException {
+    List<ItemResponse> itemResponseList = List.of(testUtil.getItemResponse());
+    when(itemService.getItemList(any(), any(), any(), any(), any())).thenReturn(itemResponseList);
+    ItemDetailsWithSubstitutionRequest itemDetailsWithSubstitutionRequest =
+        ItemDetailsWithSubstitutionRequest.builder()
+            .itemList(List.of(TestUtil.ITEM_ID))
+            .isItemBufferEnabled(false)
+            .itemSubstitutionMap(Map.of())
+            .promisingEngineDate(new Date())
+            .orgId("NEXTUPLE_GR")
+            .build();
+
+    List<ItemResponse> responseEntity =
+        itemController.getItemDetailsList(itemDetailsWithSubstitutionRequest);
+
+    Assertions.assertEquals(1, responseEntity.size());
+    // Verify that isItemBufferEnabled parameter was passed as false to the service
+    verify(itemService, times(1))
+        .getItemList(any(), any(), /* isItemBufferEnabled */ eq(false), any(), any());
   }
 }
