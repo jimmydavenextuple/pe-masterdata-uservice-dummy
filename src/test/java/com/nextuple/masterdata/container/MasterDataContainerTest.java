@@ -642,7 +642,6 @@ class MasterDataContainerTest extends AbstractContainerTest {
                             "NEXTUPLE_GR", "IITEM003", "EA", "IITEM004", "KG")),
         input -> {
           Assertions.assertFalse(input.isPresent());
-          Assertions.assertEquals(expectedItemSubstitutionResponse1, input.get());
         });
   }
 }
