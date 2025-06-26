@@ -8,6 +8,11 @@
 package com.nextuple.masterdata.container;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.nextuple.item.domain.inbound.UpsertItemSubstitutionRequest;
+import com.nextuple.item.domain.outbound.ItemSubstitutionResponse;
+import com.nextuple.item.persistence.domain.ItemSubstitutionDomainDto;
+import com.nextuple.item.persistence.service.impl.ItemSubstitutionPersistenceServiceImpl;
+import com.nextuple.item.substitution.consumer.dto.ItemSubstitutionFeedDto;
 import com.nextuple.master.data.integration.inbound.BatchRequest;
 import com.nextuple.masterdata.AbstractContainerTest;
 import com.nextuple.node.consumer.dto.NodeFeedDto;
@@ -44,11 +49,16 @@ class MasterDataContainerTest extends AbstractContainerTest {
 
   @Autowired VendorPersistenceServiceImpl vendorPersistenceServiceImpl;
 
+  @Autowired ItemSubstitutionPersistenceServiceImpl itemSubstitutionPersistenceServiceImpl;
+
   @Value("${master-data.vendor.topic-names:null}")
   private String vendorFeedTopic;
 
   @Value("${master-data.node.topic-names:null}")
   private String nodeFeedTopic;
+
+  @Value("${master-data.item-substitution.topic-names:null}")
+  private String itemSubstitutionFeedTopic;
 
   @Order(1)
   @DisplayName("Happy Path: Create Node")
@@ -442,5 +452,196 @@ class MasterDataContainerTest extends AbstractContainerTest {
             "message",
             404);
     Assertions.assertEquals("\"Vendor not found with given details\"", response);
+  }
+
+  @Order(13)
+  @DisplayName("Test case to create multiple new item-substitutions")
+  @ParameterizedTest(name = "Create Item Substitution with {0}")
+  @CsvSource(
+      value = {
+        "input/item-substitution/create-item-substitution.json, expected/item-substitution/create-item-substitution-db-value.json, expected/item-substitution/create-item-substitution-response.json",
+        "input/item-substitution/create-item-substitution-2.json, expected/item-substitution/create-item-substitution-db-value-2.json, expected/item-substitution/create-item-substitution-response-2.json",
+        "input/item-substitution/create-item-substitution-3.json, expected/item-substitution/create-item-substitution-db-value-3.json, expected/item-substitution/create-item-substitution-response-3.json"
+      })
+  void createItemSubstitutionWithValidInput(
+      String itemSubstitutionRequest,
+      String itemSubstitutionDomainDto,
+      String itemSubstitutionResponse)
+      throws IOException {
+    // Fetch the input from the resources
+    UpsertItemSubstitutionRequest upsertItemSubstitutionRequest =
+        util.parseClassFromJSON(itemSubstitutionRequest, UpsertItemSubstitutionRequest.class);
+    ItemSubstitutionDomainDto expectedItemSubstitutionDomainDto =
+        util.parseClassFromJSON(itemSubstitutionDomainDto, ItemSubstitutionDomainDto.class);
+    ItemSubstitutionResponse expectedItemSubstitutionResponse =
+        util.parseClassFromJSON(itemSubstitutionResponse, ItemSubstitutionResponse.class);
+
+    // Call the REST API
+    String res =
+        util.callRestPayload(
+            "http://localhost:8080/item-substitution",
+            HttpMethod.POST,
+            upsertItemSubstitutionRequest,
+            "payload",
+            200);
+    ItemSubstitutionResponse convertedObject =
+        util.parseStringToClass(res, ItemSubstitutionResponse.class);
+
+    // Assert the REST response
+    Assertions.assertEquals(expectedItemSubstitutionResponse, convertedObject);
+
+    // Poll the database and assert the values
+    util.pollAndAssert(
+        () ->
+            Assertions.assertDoesNotThrow(
+                () ->
+                    itemSubstitutionPersistenceServiceImpl
+                        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+                            upsertItemSubstitutionRequest.getOrgId(),
+                            upsertItemSubstitutionRequest.getPrimaryItemId(),
+                            upsertItemSubstitutionRequest.getPrimaryUom(),
+                            upsertItemSubstitutionRequest.getAlternateItemId(),
+                            upsertItemSubstitutionRequest.getAlternateUom())),
+        input -> {
+          Assertions.assertTrue(input.isPresent());
+          Assertions.assertEquals(expectedItemSubstitutionDomainDto, input.get());
+        });
+  }
+
+  @Test
+  @Order(14)
+  @DisplayName("Get Details of an existing ItemSubstitution")
+  void getItemSubstitutionDetailsWithValidInput() throws IOException {
+    List<ItemSubstitutionResponse> expectedItemSubstitutionResponse =
+        util.parseClassFromJSON(
+            "expected/item-substitution/get-item-substitution-response.json",
+            new TypeReference<List<ItemSubstitutionResponse>>() {});
+
+    String res =
+        util.callRestPayload(
+            "http://localhost:8080/item-substitution/NEXTUPLE_GR/IITEM001/EA",
+            HttpMethod.GET,
+            null,
+            "payload");
+    List<ItemSubstitutionResponse> convertedObject =
+        util.parseStringToClass(res, new TypeReference<List<ItemSubstitutionResponse>>() {});
+
+    Assertions.assertEquals(expectedItemSubstitutionResponse, convertedObject);
+  }
+
+  @Test
+  @Order(15)
+  @DisplayName("Update the details of an existing Item Substitution")
+  void updateItemSubstitutionDetailsWithValidInput() throws IOException {
+    UpsertItemSubstitutionRequest updateItemSubstitutionRequestBody =
+        util.parseClassFromJSON(
+            "input/item-substitution/update-item-substitution.json",
+            UpsertItemSubstitutionRequest.class);
+    ItemSubstitutionDomainDto expectedItemSubstitutionDomainDto =
+        util.parseClassFromJSON(
+            "expected/item-substitution/update-item-substitution-db-value.json",
+            ItemSubstitutionDomainDto.class);
+    ItemSubstitutionResponse expectedItemSubstitutionResponse =
+        util.parseClassFromJSON(
+            "expected/item-substitution/update-item-substitution-response.json",
+            ItemSubstitutionResponse.class);
+
+    String res =
+        util.callRestPayload(
+            "http://localhost:8080/item-substitution",
+            HttpMethod.POST,
+            updateItemSubstitutionRequestBody,
+            "payload",
+            200);
+    ItemSubstitutionResponse convertedObject =
+        util.parseStringToClass(res, ItemSubstitutionResponse.class);
+    Assertions.assertEquals(expectedItemSubstitutionResponse, convertedObject);
+
+    util.pollAndAssert(
+        () ->
+            Assertions.assertDoesNotThrow(
+                () ->
+                    itemSubstitutionPersistenceServiceImpl
+                        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+                            "NEXTUPLE_GR", "IITEM001", "EA", "IITEM002", "KG")),
+        input -> {
+          Assertions.assertTrue(input.isPresent());
+          Assertions.assertEquals(expectedItemSubstitutionDomainDto, input.get());
+        });
+  }
+
+  @Test
+  @Order(16)
+  @DisplayName("Perform Create, Update and Delete ItemSubstitution using MDI")
+  void createItemSubstitutionFeedIngestionWithValidInput() throws IOException {
+    // Fetch the input from the resources
+    FeedRequest<MasterDataIngestionDto<ItemSubstitutionFeedDto>> itemSubstitutionRequestBody =
+        util.parseClassFromJSON(
+            "input/item-substitution/item-substitution-feed.json",
+            new TypeReference<FeedRequest<MasterDataIngestionDto<ItemSubstitutionFeedDto>>>() {});
+    ItemSubstitutionDomainDto expectedItemSubstitutionResponse1 =
+        util.parseClassFromJSON(
+            "expected/item-substitution/item-substitution-feed-1.json",
+            ItemSubstitutionDomainDto.class);
+
+    // Initialize the Kafka consumer & subscribe to the topic
+    util.subscribeToTopics(List.of(itemSubstitutionFeedTopic));
+
+    // Call the REST API
+    util.callRestPayload(
+        "http://localhost:8080/ingest-data/item-substitution",
+        HttpMethod.POST,
+        itemSubstitutionRequestBody,
+        "payload");
+
+    // Poll the Kafka consumer and assert the values
+    List<BatchRequest<ItemSubstitutionFeedDto>> records =
+        util.pollKafkaConsumer(
+            itemSubstitutionRequestBody.getData().size(),
+            new TypeReference<BatchRequest<ItemSubstitutionFeedDto>>() {},
+            itemSubstitutionFeedTopic);
+
+    Assertions.assertEquals(itemSubstitutionRequestBody.getData().size(), records.size());
+    Assertions.assertEquals(
+        itemSubstitutionRequestBody.getData().stream()
+            .map(input -> input.getAction().name() + input.getPayload().getPrimaryItemId())
+            .sorted()
+            .toList(),
+        records.stream()
+            .map(input -> input.getAction().name() + input.getPayload().getPrimaryItemId())
+            .sorted()
+            .toList());
+    Assertions.assertEquals(
+        itemSubstitutionRequestBody.getData().stream()
+            .map(MasterDataIngestionDto::getPayload)
+            .sorted(Comparator.comparing(ItemSubstitutionFeedDto::getPrimaryItemId))
+            .toList(),
+        records.stream()
+            .map(BatchRequest::getPayload)
+            .sorted(Comparator.comparing(ItemSubstitutionFeedDto::getPrimaryItemId))
+            .toList());
+
+    // Poll the database and assert the values
+    util.pollAndAssert(
+        () ->
+            Assertions.assertDoesNotThrow(
+                () ->
+                    itemSubstitutionPersistenceServiceImpl
+                        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+                            "NEXTUPLE_GR", "IITEM025", "EA", "IITEM026", "KG")),
+        input -> {
+          Assertions.assertTrue(input.isPresent());
+          Assertions.assertEquals(expectedItemSubstitutionResponse1, input.get());
+        });
+    util.pollAndAssert(
+        () ->
+            Assertions.assertDoesNotThrow(
+                () ->
+                    itemSubstitutionPersistenceServiceImpl
+                        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+                            "NEXTUPLE_GR", "IITEM003", "EA", "IITEM004", "KG")),
+        input -> {
+          Assertions.assertFalse(input.isPresent());
+        });
   }
 }

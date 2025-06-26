@@ -1,7 +1,7 @@
 pluginManagement {
-	repositories {
-		gradlePluginPortal()
-	}
+    repositories {
+        gradlePluginPortal()
+    }
 }
 
 rootProject.name = 'pe-master-data'
@@ -27,6 +27,7 @@ include 'pe-item-uservice:item-api-domain'
 include 'pe-item-uservice:item-services'
 include 'pe-item-uservice:item-persistence-domain'
 include 'pe-item-uservice:item-persistence-postgres'
+include 'pe-item-uservice:item-consumer'
 
 include ':pe-transit-uservice'
 include 'pe-transit-uservice:transit-api-domain'

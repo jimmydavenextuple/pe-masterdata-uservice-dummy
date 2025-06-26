@@ -195,6 +195,9 @@ master-data:
   transfer-schedule:
     topic-names: INTERNAL.DEV.PE.TRANSFER_SCHEDULES
     group-id: transfer-schedules-master-dev
+  item-substitution:
+    topic-names: INTERNAL.DEV.PE.ITEM_SUBSTITUTION
+    group-id: item-substitution-master-dev
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
@@ -290,6 +293,8 @@ kafka-topic-flags:
     transfer-schedule:
       enabled: true
     vendor:
+      enabled: true
+    item-substitution:
       enabled: true
   refresh-cache:
     enabled: true
