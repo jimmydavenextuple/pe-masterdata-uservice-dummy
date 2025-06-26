@@ -26,6 +26,7 @@ import com.nextuple.master.data.integration.inbound.BatchRequest;
 import java.util.Date;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -125,6 +126,7 @@ class ItemSubstitutionBatchServiceImplTest {
   }
 
   @Test
+  @DisplayName("Test Check For Outdated Record with Null Alternate UOM")
   void testCheckForOutdatedRecordNullAlternateUom() throws CommonServiceException {
     BatchRequest<ItemSubstitutionFeedDto> batchRequest = new BatchRequest<>();
     ItemSubstitutionFeedDto payload = new ItemSubstitutionFeedDto();
@@ -132,6 +134,93 @@ class ItemSubstitutionBatchServiceImplTest {
     payload.setOrgId("org1");
     payload.setPrimaryUom("EA");
     payload.setAlternateItemId("item2");
+    batchRequest.setPayload(payload);
+    batchRequest.setReceivedTimestamp(new Date());
+
+    ItemSubstitutionDomainDto domainDto = new ItemSubstitutionDomainDto();
+    domainDto.setLastModifiedDate(new Date(System.currentTimeMillis() - 1000));
+
+    itemSubstitutionBatchService.checkForOutdatedRecord(batchRequest);
+
+    verify(itemSubstitutionPersistenceService, times(0))
+        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+            "org1", "item1", "EA", "item2", "KG");
+  }
+
+  @Test
+  @DisplayName("Test Check For Outdated Record with Null Alternate item id")
+  void testCheckForOutdatedRecordNullAlternateItemId() throws CommonServiceException {
+    BatchRequest<ItemSubstitutionFeedDto> batchRequest = new BatchRequest<>();
+    ItemSubstitutionFeedDto payload = new ItemSubstitutionFeedDto();
+    payload.setPrimaryItemId("item1");
+    payload.setOrgId("org1");
+    payload.setPrimaryUom("EA");
+    payload.setAlternateUom("KG");
+    batchRequest.setPayload(payload);
+    batchRequest.setReceivedTimestamp(new Date());
+
+    ItemSubstitutionDomainDto domainDto = new ItemSubstitutionDomainDto();
+    domainDto.setLastModifiedDate(new Date(System.currentTimeMillis() - 1000));
+
+    itemSubstitutionBatchService.checkForOutdatedRecord(batchRequest);
+
+    verify(itemSubstitutionPersistenceService, times(0))
+        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+            "org1", "item1", "EA", "item2", "KG");
+  }
+
+  @Test
+  @DisplayName("Test Check For Outdated Record with Null Primary UOM")
+  void testCheckForOutdatedRecordNullPrimaryUom() throws CommonServiceException {
+    BatchRequest<ItemSubstitutionFeedDto> batchRequest = new BatchRequest<>();
+    ItemSubstitutionFeedDto payload = new ItemSubstitutionFeedDto();
+    payload.setOrgId("org1");
+    payload.setPrimaryItemId("item1");
+    payload.setAlternateItemId("item2");
+    payload.setAlternateUom("KG");
+    batchRequest.setPayload(payload);
+    batchRequest.setReceivedTimestamp(new Date());
+
+    ItemSubstitutionDomainDto domainDto = new ItemSubstitutionDomainDto();
+    domainDto.setLastModifiedDate(new Date(System.currentTimeMillis() - 1000));
+
+    itemSubstitutionBatchService.checkForOutdatedRecord(batchRequest);
+
+    verify(itemSubstitutionPersistenceService, times(0))
+        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+            "org1", "item1", "EA", "item2", "KG");
+  }
+
+  @Test
+  @DisplayName("Test Check For Outdated Record with Null Primary ItemId")
+  void testCheckForOutdatedRecordNullPrimaryItemId() throws CommonServiceException {
+    BatchRequest<ItemSubstitutionFeedDto> batchRequest = new BatchRequest<>();
+    ItemSubstitutionFeedDto payload = new ItemSubstitutionFeedDto();
+    payload.setOrgId("org1");
+    payload.setPrimaryUom("EA");
+    payload.setAlternateItemId("item2");
+    batchRequest.setPayload(payload);
+    batchRequest.setReceivedTimestamp(new Date());
+
+    ItemSubstitutionDomainDto domainDto = new ItemSubstitutionDomainDto();
+    domainDto.setLastModifiedDate(new Date(System.currentTimeMillis() - 1000));
+
+    itemSubstitutionBatchService.checkForOutdatedRecord(batchRequest);
+
+    verify(itemSubstitutionPersistenceService, times(0))
+        .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
+            "org1", "item1", "EA", "item2", "KG");
+  }
+
+  @Test
+  @DisplayName("Test Check For Outdated Record with Null orgId")
+  void testCheckForOutdatedRecordNullOrgId() throws CommonServiceException {
+    BatchRequest<ItemSubstitutionFeedDto> batchRequest = new BatchRequest<>();
+    ItemSubstitutionFeedDto payload = new ItemSubstitutionFeedDto();
+    payload.setPrimaryItemId("item1");
+    payload.setPrimaryUom("EA");
+    payload.setAlternateItemId("item2");
+    payload.setAlternateUom("KG");
     batchRequest.setPayload(payload);
     batchRequest.setReceivedTimestamp(new Date());
 
@@ -175,5 +264,35 @@ class ItemSubstitutionBatchServiceImplTest {
     verify(itemSubstitutionPersistenceService, times(1))
         .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
             "org1", "item1", "EA", "item2", "KG");
+  }
+
+  @Test
+  @DisplayName("Test Create Record Imp when response is Null")
+  void testCreateRecordImpNullResponse() {
+    ItemSubstitutionFeedDto itemSubstitutionFeedDto = ItemSubstitutionFeedDto.builder().build();
+    when(itemSubstitutionFeign.upsertItemSubstitution(any())).thenReturn(ResponseEntity.ok(null));
+    assertEquals(
+        "Failure in creating the item substitute",
+        itemSubstitutionBatchService.createRecordImpl(itemSubstitutionFeedDto));
+  }
+
+  @Test
+  @DisplayName("Test Update Record Imp when response is Null")
+  void testUpdateRecordImpNullResponse() throws CommonServiceException {
+    ItemSubstitutionFeedDto itemSubstitutionFeedDto = ItemSubstitutionFeedDto.builder().build();
+    when(itemSubstitutionFeign.upsertItemSubstitution(any())).thenReturn(ResponseEntity.ok(null));
+    assertEquals(
+        "Failure in updating the item substitute",
+        itemSubstitutionBatchService.updateRecordImpl(itemSubstitutionFeedDto));
+  }
+
+  @Test
+  @DisplayName("Test Delete Record Imp when response is Null")
+  void testDeleteRecordImpNullResponse() {
+    ItemSubstitutionFeedDto itemSubstitutionFeedDto = ItemSubstitutionFeedDto.builder().build();
+    when(itemSubstitutionFeign.deleteItemSubstitution(any())).thenReturn(ResponseEntity.ok(null));
+    assertEquals(
+        "Failure in deleting the item substitute",
+        itemSubstitutionBatchService.deleteRecordImpl(itemSubstitutionFeedDto));
   }
 }
