@@ -474,6 +474,7 @@ dependencies {
     implementation(project(":pe-item-uservice:item-api-domain"))
     implementation(project(":pe-item-uservice:item-persistence-domain"))
     implementation(project(":pe-item-uservice:item-persistence-postgres"))
+    implementation(project(":pe-item-uservice:item-consumer"))
 
     implementation(project(":pe-node-carrier-uservice:node-carrier-api-domain"))
     implementation(project(":pe-node-carrier-uservice:node-carrier-services"))

@@ -161,6 +161,9 @@ master-data:
   vendor:
     topic-names: INTERNAL.QA.PE.VENDOR_INTEGRATION
     group-id: vendor-master-qa
+  item-substitution:
+    topic-names: INTERNAL.QA.PE.ITEM_SUBSTITUTION_INTEGRATION
+    group-id: item-substitution-master-qa
   node-carrier:
     topic-names: INTERNAL.QA.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-qa
