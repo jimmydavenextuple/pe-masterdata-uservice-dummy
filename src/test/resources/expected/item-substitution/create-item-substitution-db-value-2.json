@@ -1,8 +1,8 @@
 {
   "orgId": "NEXTUPLE_GR",
-  "primaryItemId": "ITEM003",
+  "primaryItemId": "IITEM003",
   "primaryUom": "BOX",
-  "alternateItemId": "ITEM004",
+  "alternateItemId": "IITEM004",
   "alternateUom": "LBS",
   "conversionFactor": 5,
   "priority": 1

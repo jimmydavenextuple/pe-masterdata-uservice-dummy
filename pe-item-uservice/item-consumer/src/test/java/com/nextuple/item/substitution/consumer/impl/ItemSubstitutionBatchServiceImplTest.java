@@ -47,12 +47,14 @@ class ItemSubstitutionBatchServiceImplTest {
   }
 
   @Test
+  @DisplayName("Test Get Task Information method")
   void testGetTaskInformation() {
     TaskInformation taskInformation = itemSubstitutionBatchService.getTaskInformation();
     assertEquals(TaskInformation.ITEM_SUBSTITUTION_FEED, taskInformation);
   }
 
   @Test
+  @DisplayName("Test create Record for item substitution success case")
   void testCreateRecordImpl() {
     ItemSubstitutionFeedDto payload = new ItemSubstitutionFeedDto();
     BaseResponse<ItemSubstitutionResponse> mockResponse = new BaseResponse<>();
@@ -69,6 +71,7 @@ class ItemSubstitutionBatchServiceImplTest {
   }
 
   @Test
+  @DisplayName("Test update Record for item substitution success case")
   void testUpdateRecordImpl() throws CommonServiceException {
     ItemSubstitutionFeedDto payload = new ItemSubstitutionFeedDto();
     BaseResponse<ItemSubstitutionResponse> mockResponse = new BaseResponse<>();
@@ -84,7 +87,8 @@ class ItemSubstitutionBatchServiceImplTest {
   }
 
   @Test
-  void testDeleteRecordImpl() throws CommonServiceException {
+  @DisplayName("Test delete Record for item substitution success case")
+  void testDeleteRecordImpl() {
     ItemSubstitutionFeedDto payload = new ItemSubstitutionFeedDto();
     BaseResponse<Void> mockResponse = new BaseResponse<>();
     mockResponse.setMessage("Deleted");
@@ -98,6 +102,7 @@ class ItemSubstitutionBatchServiceImplTest {
   }
 
   @Test
+  @DisplayName("Test for outdated records for item substitution success case, records are not outdated")
   void testCheckForOutdatedRecord() throws CommonServiceException {
     BatchRequest<ItemSubstitutionFeedDto> batchRequest = new BatchRequest<>();
     ItemSubstitutionFeedDto payload = new ItemSubstitutionFeedDto();
@@ -235,6 +240,7 @@ class ItemSubstitutionBatchServiceImplTest {
   }
 
   @Test
+  @DisplayName("Test Check For Outdated Record Throws Exception due to outdated records")
   void testCheckForOutdatedRecordThrowsException() {
     BatchRequest<ItemSubstitutionFeedDto> batchRequest = new BatchRequest<>();
     ItemSubstitutionFeedDto payload = new ItemSubstitutionFeedDto();
