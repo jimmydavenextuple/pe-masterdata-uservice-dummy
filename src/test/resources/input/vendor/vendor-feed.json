@@ -1,49 +1,49 @@
-{
-  "data": [
-    {
-      "action": "CREATE",
-      "payload": {
-        "vendorId":"Vendor-4",
-        "orgId":"NEXTUPLE_GR",
-        "vendorDescription":"BCD Retail Vendor",
-        "vendorType":"Store"
+  {
+    "data": [
+      {
+        "action": "CREATE",
+        "payload": {
+          "vendorId":"Vendor-4",
+          "orgId":"NEXTUPLE_GR",
+          "vendorDescription":"BCD Retail Vendor",
+          "vendorType":"Store"
+        }
+      },
+      {
+        "action": "CREATE",
+        "payload": {
+          "vendorId":"Vendor-5",
+          "orgId":"NEXTUPLE_GR",
+          "vendorDescription":"ACD Retail Vendor",
+          "vendorType":"Store"
+        }
+      },
+      {
+        "action": "UPDATE",
+        "payload": {
+          "vendorId":"Vendor-001",
+          "orgId":"NEXTUPLE_GR",
+          "vendorDescription":"DEF Retail Vendor",
+          "vendorType":"Store"
+        }
+      },
+      {
+        "action": "DELETE",
+        "payload": {
+          "vendorId":"Vendor-003",
+          "orgId":"NEXTUPLE_GR",
+          "vendorType": "DC",
+          "vendorDescription":"BCD Retail Vendor"
+        }
+      },
+      {
+        "action": "CREATE",
+        "payload": {
+          "vendorId":"Vendor-10",
+          "orgId":"NEXTUPLE_GR",
+          "vendorDescription":"DOA Retail Vendor",
+          "vendorType":"DC"
+        }
       }
-    },
-    {
-      "action": "CREATE",
-      "payload": {
-        "vendorId":"Vendor-5",
-        "orgId":"NEXTUPLE_GR",
-        "vendorDescription":"ACD Retail Vendor",
-        "vendorType":"Store"
-      }
-    },
-    {
-      "action": "UPDATE",
-      "payload": {
-        "vendorId":"Vendor-001",
-        "orgId":"NEXTUPLE_GR",
-        "vendorDescription":"DEF Retail Vendor",
-        "vendorType":"Store"
-      }
-    },
-    {
-      "action": "DELETE",
-      "payload": {
-        "vendorId":"Vendor-003",
-        "orgId":"NEXTUPLE_GR",
-        "vendorType": "DC",
-        "vendorDescription":"BCD Retail Vendor"
-      }
-    },
-    {
-      "action": "CREATE",
-      "payload": {
-        "vendorId":"Vendor-10",
-        "orgId":"NEXTUPLE_GR",
-        "vendorDescription":"DOA Retail Vendor",
-        "vendorType":"DC"
-      }
-    }
-  ]
-}
+    ]
+  }

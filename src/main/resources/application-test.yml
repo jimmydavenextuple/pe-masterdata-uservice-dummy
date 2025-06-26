@@ -221,7 +221,7 @@ master-data:
   transfer-schedule:
     topic-names: INTERNAL.TEST_CONTAINER.PE.TRANSFER_SCHEDULES
     group-id: transfer-schedules-master-testcontainer
-  vendor:
+  item-substitution:
     topic-names: INTERNAL.TEST.PE.ITEM_SUBSTITUTION_INTEGRATION
     group-id: item-substitution-master-testcontainer
   item:
