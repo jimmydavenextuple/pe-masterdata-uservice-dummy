@@ -641,7 +641,7 @@ class MasterDataContainerTest extends AbstractContainerTest {
                         .findByOrgIdAndPrimaryItemIdAndPrimaryUomAndAlternateItemIdAndAlternateUom(
                             "NEXTUPLE_GR", "IITEM003", "EA", "IITEM004", "KG")),
         input -> {
-          Assertions.assertTrue(input.isPresent());
+          Assertions.assertFalse(input.isPresent());
           Assertions.assertEquals(expectedItemSubstitutionResponse1, input.get());
         });
   }
