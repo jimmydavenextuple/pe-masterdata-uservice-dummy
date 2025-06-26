@@ -337,6 +337,20 @@ public class ItemController {
     }
   }
 
+  /**
+   * Retrieves a list of item details with substitution information based on the provided request.
+   *
+   * <p>This method processes a POST request to fetch detailed information about multiple items,
+   * including substitution options. It supports item buffer configuration and promising engine date
+   * parameters.
+   *
+   * @param itemDetailsWithSubstitutionRequest The request containing item details and substitution
+   *     information
+   * @return A List of {@link ItemResponse} objects containing the requested item details with
+   *     substitutions
+   * @throws CommonServiceException If there is a general service error
+   * @throws ItemBatchingDomainException If there is an error in batch processing of items
+   */
   @GetItemListDoc
   @PostMapping("/itemDetails")
   public List<ItemResponse> getItemDetailsList(
