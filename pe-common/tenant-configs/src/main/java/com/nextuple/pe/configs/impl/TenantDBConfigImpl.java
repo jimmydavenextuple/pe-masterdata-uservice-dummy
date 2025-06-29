@@ -10,8 +10,6 @@ package com.nextuple.pe.configs.impl;
 import static com.nextuple.common.constants.CommonConstants.CONFIG_KEY;
 import static com.nextuple.common.constants.CommonConstants.ORG_ID;
 import static com.nextuple.common.constants.ConfigKeyConstants.*;
-import static com.nextuple.pe.configs.TenantConfigUtil.parseCapacityConfigAsInteger;
-import static com.nextuple.pe.configs.TenantConfigUtil.parseCapacityConfigAsString;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,6 +22,7 @@ import com.nextuple.common.response.error.FieldError;
 import com.nextuple.configuration.cache.domain.TenantConfigdataCacheKey;
 import com.nextuple.configuration.cache.service.TenantConfigdataNearCacheService;
 import com.nextuple.pe.configs.ITenantConfig;
+import com.nextuple.pe.configs.TenantConfigUtil;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,6 +48,7 @@ public class TenantDBConfigImpl implements ITenantConfig {
 
   private static final Logger logger = LoggerFactory.getLogger(TenantDBConfigImpl.class);
   @Autowired TenantConfigdataNearCacheService tenantConfigdataNearCacheService;
+  @Autowired TenantConfigUtil tenantConfigUtil;
 
   @Value("${sourcing.DEFAULT.processing-time-computation:HIERARCHICAL}")
   public String defaultProcessingTimeComputation;
@@ -418,7 +418,7 @@ public class TenantDBConfigImpl implements ITenantConfig {
 
   @Override
   public Map<CapacityType, Integer> getCapacityFutureLookUpDays() {
-    return parseCapacityConfigAsInteger(
+    return tenantConfigUtil.parseCapacityConfigAsInteger(
         getTenantConfiguration(
             CAPACITY_FUTURE_LOOKUP_DAYS_CONFIG_KEY, DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS),
         DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS);
@@ -426,7 +426,7 @@ public class TenantDBConfigImpl implements ITenantConfig {
 
   @Override
   public Map<CapacityType, Integer> getCapacityPastLookBackDays() {
-    return parseCapacityConfigAsInteger(
+    return tenantConfigUtil.parseCapacityConfigAsInteger(
         getTenantConfiguration(
             CAPACITY_PAST_LOOKBACK_DAYS_CONFIG_KEY, DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS),
         DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS);
@@ -434,7 +434,7 @@ public class TenantDBConfigImpl implements ITenantConfig {
 
   @Override
   public Map<CapacityType, String> getCapacityModel() {
-    return parseCapacityConfigAsString(
+    return tenantConfigUtil.parseCapacityConfigAsString(
         getTenantConfiguration(CAPACITY_MODEL_NAME_CONFIG_KEY, DEFAULT_EMPTY_CAPACITY_MODEL_JSON));
   }
 
