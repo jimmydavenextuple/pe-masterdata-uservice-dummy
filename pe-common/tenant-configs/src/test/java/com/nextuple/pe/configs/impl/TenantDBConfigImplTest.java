@@ -17,6 +17,7 @@ import com.nextuple.common.enums.CapacityType;
 import com.nextuple.common.exception.PromisingEngineException;
 import com.nextuple.configuration.cache.domain.TenantConfigdataCacheValue;
 import com.nextuple.configuration.cache.service.TenantConfigdataNearCacheService;
+import com.nextuple.pe.configs.TenantConfigUtil;
 import com.nextuple.pe.util.TestUtil;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,8 @@ class TenantDBConfigImplTest {
   @InjectMocks TenantDBConfigImpl tenantDBConfigImpl;
 
   @Mock TenantConfigdataNearCacheService tenantConfigdataNearCacheService;
+
+  @InjectMocks TenantConfigUtil tenantConfigUtil;
 
   @InjectMocks private TestUtil testUtil;
 
@@ -59,6 +62,7 @@ class TenantDBConfigImplTest {
         tenantDBConfigImpl, "defaultTransfersEnabled", TestUtil.DEFAULT_TRANSFER_ENABLED);
     ReflectionTestUtils.setField(
         tenantDBConfigImpl, "defaultShipTogetherFlag", TestUtil.DEFAULT_SHIP_TOGETHER_ENABLED_FLAG);
+    ReflectionTestUtils.setField(tenantDBConfigImpl, "tenantConfigUtil", tenantConfigUtil);
   }
 
   @Test

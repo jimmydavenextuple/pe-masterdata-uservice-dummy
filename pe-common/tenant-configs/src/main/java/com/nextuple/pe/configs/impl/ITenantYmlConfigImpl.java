@@ -43,6 +43,7 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Autowired CostConfig costConfig;
   @Autowired CapacityConfig capacityConfig;
   @Autowired PromiseCoordinationConfig promiseCoordinationConfig;
+  @Autowired TenantConfigUtil tenantConfigUtil;
 
   @Value("${promise.service.options.DEFAULT}")
   public String defaultServiceOptions;
@@ -507,19 +508,19 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
 
   @Override
   public Map<CapacityType, Integer> getCapacityFutureLookUpDays() {
-    return TenantConfigUtil.parseCapacityConfigAsInteger(
+    return tenantConfigUtil.parseCapacityConfigAsInteger(
         capacityFutureLookupDaysConfig, DEFAULT_CAPACITY_FUTURE_LOOKUP_DAYS);
   }
 
   @Override
   public Map<CapacityType, Integer> getCapacityPastLookBackDays() {
-    return TenantConfigUtil.parseCapacityConfigAsInteger(
+    return tenantConfigUtil.parseCapacityConfigAsInteger(
         capacityPastLookbackDaysConfig, DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS);
   }
 
   @Override
   public Map<CapacityType, String> getCapacityModel() {
-    return TenantConfigUtil.parseCapacityConfigAsString(capacityModelName);
+    return tenantConfigUtil.parseCapacityConfigAsString(capacityModelName);
   }
 
   @Override

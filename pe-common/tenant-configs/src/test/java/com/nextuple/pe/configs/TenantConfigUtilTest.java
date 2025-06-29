@@ -4,10 +4,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.nextuple.common.enums.CapacityType;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
 
 class TenantConfigUtilTest {
+
+  @InjectMocks TenantConfigUtil tenantConfigUtil;
+
+  @BeforeEach
+  void init() {
+    MockitoAnnotations.openMocks(this);
+  }
 
   @Test
   @DisplayName("Test parseCapacityConfigAsInteger with valid JSON config string")
@@ -16,7 +26,7 @@ class TenantConfigUtilTest {
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
+        tenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertEquals(3, result.size());
@@ -32,7 +42,7 @@ class TenantConfigUtilTest {
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
+        tenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
@@ -45,7 +55,7 @@ class TenantConfigUtilTest {
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
+        tenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
@@ -59,7 +69,7 @@ class TenantConfigUtilTest {
     String defaultValue = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
+        tenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertEquals(3, result.size());
@@ -76,7 +86,7 @@ class TenantConfigUtilTest {
     String defaultValue = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
+        tenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertEquals(3, result.size());
@@ -92,7 +102,7 @@ class TenantConfigUtilTest {
     String defaultValue = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
+        tenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
@@ -105,7 +115,7 @@ class TenantConfigUtilTest {
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
+        tenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
@@ -118,7 +128,7 @@ class TenantConfigUtilTest {
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
+        tenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertEquals(1, result.size());
@@ -133,7 +143,7 @@ class TenantConfigUtilTest {
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
+        tenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertEquals(1, result.size());
@@ -148,7 +158,7 @@ class TenantConfigUtilTest {
     String defaultValue = null;
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
+        tenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertEquals(3, result.size());
@@ -165,7 +175,7 @@ class TenantConfigUtilTest {
     String defaultValue = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
 
     Map<CapacityType, Integer> result =
-        TenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
+        tenantConfigUtil.parseCapacityConfigAsInteger(configString, defaultValue);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
