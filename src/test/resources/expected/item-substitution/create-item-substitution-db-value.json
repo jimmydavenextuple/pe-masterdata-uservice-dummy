@@ -1,0 +1,9 @@
+{
+  "orgId": "NEXTUPLE_GR",
+  "primaryItemId": "IITEM001",
+  "primaryUom": "EA",
+  "alternateItemId": "IITEM002",
+  "alternateUom": "KG",
+  "conversionFactor": 10,
+  "priority": 1
+}

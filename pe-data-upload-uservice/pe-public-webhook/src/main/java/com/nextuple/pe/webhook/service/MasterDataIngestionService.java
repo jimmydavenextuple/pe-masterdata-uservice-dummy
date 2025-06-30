@@ -14,6 +14,7 @@ import com.nextuple.pe.webhook.domain.inbound.FeedRequest;
 import com.nextuple.pe.webhook.service.impl.CalendarFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.CarrierFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.CarrierServiceCalendarFeedHandlingService;
+import com.nextuple.pe.webhook.service.impl.ItemSubstitutionFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.NodeCalendarFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.NodeCarrierFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.NodeFeedHandlingService;
@@ -49,6 +50,7 @@ public class MasterDataIngestionService {
       nodeServiceOptionBufferFeedHandlingService;
   private final TransferScheduleFeedHandlingService transferScheduleFeedHandlingService;
   private final VendorFeedHandlingService vendorFeedHandlingService;
+  private final ItemSubstitutionFeedHandlingService itemSubstitutionFeedHandlingService;
 
   public void processMasterDataIngestionData(
       String moduleName,
@@ -97,6 +99,9 @@ public class MasterDataIngestionService {
         break;
       case VENDOR:
         vendorFeedHandlingService.publishRecords(masterDataIngestionFeedRequest, orgId);
+        break;
+      case ITEM_SUBSTITUTION:
+        itemSubstitutionFeedHandlingService.publishRecords(masterDataIngestionFeedRequest, orgId);
         break;
       default:
         throw new CommonServiceException(

@@ -194,6 +194,9 @@ master-data:
   transfer-schedule:
     topic-names: INTERNAL.PERFORMANCE.PE.TRANSFER_SCHEDULES
     group-id: transfer-schedules-master-performance
+  item-substitution:
+    topic-names: INTERNAL.PERF.PE.ITEM_SUBSTITUTION_INTEGRATION
+    group-id: item-substitution-master-perf
   item:
     dlt-topic: ITEM_MASTER_INTEGRATION.DLT
 
@@ -249,6 +252,8 @@ kafka-topic-flags:
     node:
       enabled: true
     vendor:
+      enabled: true
+    item-substitution:
       enabled: true
     node-carrier:
       enabled: true

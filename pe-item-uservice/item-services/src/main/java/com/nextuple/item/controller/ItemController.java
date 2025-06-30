@@ -28,6 +28,7 @@ import com.nextuple.item.controller.docs.UpsertItemDoc;
 import com.nextuple.item.domain.constants.ItemConstants;
 import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
+import com.nextuple.item.domain.inbound.ItemDetailsWithSubstitutionRequest;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
 import com.nextuple.item.persistence.exception.ItemBatchingDomainException;
@@ -40,6 +41,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -326,11 +329,41 @@ public class ItemController {
       throws CommonServiceException, ItemBatchingDomainException {
     logger.debug("Processing get item details");
     try {
-      return itemService.getItemList(itemList, orgId, isItemBufferEnabled, promisingEngineDate);
+      return itemService.getItemList(
+          itemList, orgId, isItemBufferEnabled, promisingEngineDate, Map.of());
     } catch (Exception e) {
       logger.error("Failed to fetch list of item details");
       throw e;
     }
+  }
+
+  /**
+   * Retrieves a list of item details with substitution information based on the provided request.
+   *
+   * <p>This method processes a POST request to fetch detailed information about multiple items,
+   * including substitution options. It supports item buffer configuration and promising engine date
+   * parameters.
+   *
+   * @param itemDetailsWithSubstitutionRequest The request containing item details and substitution
+   *     information
+   * @return A List of {@link ItemResponse} objects containing the requested item details with
+   *     substitutions
+   * @throws CommonServiceException If there is a general service error
+   * @throws ItemBatchingDomainException If there is an error in batch processing of items
+   */
+  @GetItemListDoc
+  @PostMapping("/itemDetails")
+  public List<ItemResponse> getItemDetailsList(
+      @Valid @RequestBody ItemDetailsWithSubstitutionRequest itemDetailsWithSubstitutionRequest)
+      throws CommonServiceException, ItemBatchingDomainException {
+    logger.debug("Processing get item details");
+    return itemService.getItemList(
+        itemDetailsWithSubstitutionRequest.getItemList(),
+        itemDetailsWithSubstitutionRequest.getOrgId(),
+        Objects.nonNull(itemDetailsWithSubstitutionRequest.getIsItemBufferEnabled())
+            && itemDetailsWithSubstitutionRequest.getIsItemBufferEnabled(),
+        itemDetailsWithSubstitutionRequest.getPromisingEngineDate(),
+        itemDetailsWithSubstitutionRequest.getItemSubstitutionMap());
   }
 
   /**

@@ -17,6 +17,7 @@ import com.nextuple.common.enums.CapacityType;
 import com.nextuple.common.exception.PromisingEngineException;
 import com.nextuple.configuration.cache.domain.TenantConfigdataCacheValue;
 import com.nextuple.configuration.cache.service.TenantConfigdataNearCacheService;
+import com.nextuple.pe.configs.TenantConfigUtil;
 import com.nextuple.pe.util.TestUtil;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,8 @@ class TenantDBConfigImplTest {
   @InjectMocks TenantDBConfigImpl tenantDBConfigImpl;
 
   @Mock TenantConfigdataNearCacheService tenantConfigdataNearCacheService;
+
+  @InjectMocks TenantConfigUtil tenantConfigUtil;
 
   @InjectMocks private TestUtil testUtil;
 
@@ -59,6 +62,7 @@ class TenantDBConfigImplTest {
         tenantDBConfigImpl, "defaultTransfersEnabled", TestUtil.DEFAULT_TRANSFER_ENABLED);
     ReflectionTestUtils.setField(
         tenantDBConfigImpl, "defaultShipTogetherFlag", TestUtil.DEFAULT_SHIP_TOGETHER_ENABLED_FLAG);
+    ReflectionTestUtils.setField(tenantDBConfigImpl, "tenantConfigUtil", tenantConfigUtil);
   }
 
   @Test
@@ -1309,5 +1313,35 @@ class TenantDBConfigImplTest {
 
     assertNotNull(response);
     assertEquals(0, response.size());
+  }
+
+  @Test
+  @DisplayName("Test getPartialQuantityEnabled() with valid config value")
+  void getPartialInventoryDisabledConfigTest() {
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey("partial-quantity-enabled")
+            .configValue("true")
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Boolean result = tenantDBConfigImpl.getPartialInventoryDisabled();
+
+    assertNotNull(result);
+    assertTrue(result);
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getPartialQuantityEnabled() with default value when config is not found")
+  void getPartialInventoryDisabledTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+
+    Boolean result = tenantDBConfigImpl.getPartialInventoryDisabled();
+
+    assertNotNull(result);
+    assertFalse(result);
   }
 }

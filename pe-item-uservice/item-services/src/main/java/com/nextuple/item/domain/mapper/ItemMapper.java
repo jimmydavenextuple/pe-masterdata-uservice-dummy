@@ -12,7 +12,9 @@ import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
 import com.nextuple.item.domain.outbound.ItemListResponse;
 import com.nextuple.item.domain.outbound.ItemResponse;
+import com.nextuple.item.domain.outbound.ItemSubstitutionInfo;
 import com.nextuple.item.persistence.domain.ItemDomainDto;
+import com.nextuple.item.persistence.domain.ItemSubstitutionDomainDto;
 import java.util.List;
 import java.util.Optional;
 import org.mapstruct.Mapper;
@@ -31,6 +33,13 @@ public interface ItemMapper {
   ItemResponse toItemResponse(ItemDomainDto itemDomainDto);
 
   List<ItemResponse> toItemResponseList(List<ItemDomainDto> itemDomainDtoList);
+
+  @Mapping(target = "itemId", source = "alternateItemId")
+  @Mapping(target = "uom", source = "alternateUom")
+  ItemSubstitutionInfo toItemSubstitute(ItemSubstitutionDomainDto itemSubstitutionResponse);
+
+  List<ItemSubstitutionInfo> toItemSubstituteList(
+      List<ItemSubstitutionDomainDto> itemSubstitutionResponses);
 
   @Mapping(target = "processingTime", ignore = true)
   ItemDomainDto updateItemEntity(

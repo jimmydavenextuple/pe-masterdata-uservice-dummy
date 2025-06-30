@@ -25,6 +25,7 @@ public class TaskConstants {
   public static final String TRANSIT_BUFFER = "TRANSIT_BUFFER";
   public static final String TRANSFER_SCHEDULE = "TRANSFER_SCHEDULE";
   public static final String RETRY_METHOD_NAME = "handleRetry";
+  public static final String ITEM_SUBSTITUTION = "ITEM_SUBSTITUTION";
 
   private TaskConstants() {}
 }

@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-consumer"))
     implementation(project(":pe-vendor-uservice:vendor-consumer"))
+    implementation(project(":pe-item-uservice:item-consumer"))
     implementation(project(":pe-transit-uservice:transit-consumer"))
     implementation(project(":pe-transit-uservice:transit-api-domain"))
     implementation(project(":pe-transit-uservice:transit-services"))

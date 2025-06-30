@@ -1,0 +1,62 @@
+{
+  "data": [
+    {
+      "action": "CREATE",
+      "payload": {
+        "orgId": "NEXTUPLE_GR",
+        "primaryItemId": "IITEM021",
+        "primaryUom": "EA",
+        "alternateItemId": "IITEM022",
+        "alternateUom": "KG",
+        "conversionFactor": 10,
+        "priority": 1
+      }
+    },
+    {
+      "action": "CREATE",
+      "payload": {
+        "orgId": "NEXTUPLE_GR",
+        "primaryItemId": "IITEM023",
+        "primaryUom": "EA",
+        "alternateItemId": "IITEM024",
+        "alternateUom": "KG",
+        "conversionFactor": 20,
+        "priority": 1
+      }
+    },
+    {
+      "action": "UPDATE",
+      "payload": {
+        "orgId": "NEXTUPLE_GR",
+        "primaryItemId": "IITEM001",
+        "primaryUom": "EA",
+        "alternateItemId": "IITEM001",
+        "alternateUom": "KG",
+        "conversionFactor": 80,
+        "priority": 1
+      }
+    },
+    {
+      "action": "CREATE",
+      "payload": {
+        "orgId": "NEXTUPLE_GR",
+        "primaryItemId": "IITEM025",
+        "primaryUom": "EA",
+        "alternateItemId": "IITEM026",
+        "alternateUom": "KG",
+        "conversionFactor": 5,
+        "priority": 1
+      }
+    },
+    {
+      "action": "DELETE",
+      "payload": {
+        "orgId": "NEXTUPLE_GR",
+        "primaryItemId": "IITEM003",
+        "primaryUom": "EA",
+        "alternateItemId": "IITEM004",
+        "alternateUom": "KG"
+      }
+    }
+  ]
+}

@@ -16,6 +16,7 @@ import com.nextuple.pe.webhook.domain.inbound.FeedRequest;
 import com.nextuple.pe.webhook.service.impl.CalendarFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.CarrierFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.CarrierServiceCalendarFeedHandlingService;
+import com.nextuple.pe.webhook.service.impl.ItemSubstitutionFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.NodeCalendarFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.NodeCarrierFeedHandlingService;
 import com.nextuple.pe.webhook.service.impl.NodeFeedHandlingService;
@@ -50,6 +51,7 @@ class MasterDataIngestionServiceTest {
   @Mock NodeServiceOptionBufferFeedHandlingService nodeServiceOptionBufferFeedHandlingService;
   @Mock TransferScheduleFeedHandlingService transferScheduleFeedHandlingService;
   @Mock VendorFeedHandlingService vendorFeedHandlingService;
+  @Mock ItemSubstitutionFeedHandlingService itemSubstitutionFeedHandlingService;
   @InjectMocks MasterDataIngestionService masterDataIngestionService;
   @InjectMocks TestUtil testUtil;
 
@@ -225,5 +227,18 @@ class MasterDataIngestionServiceTest {
     masterDataIngestionService.processMasterDataIngestionData(
         "vendor", batchRequest, TestUtil.ORG_ID);
     Mockito.verify(vendorFeedHandlingService, Mockito.times(1)).publishRecords(any(), any());
+  }
+
+  @Test
+  @DisplayName("Ingest Item Substitution Feed Test")
+  void ingestItemSubstitutionFeedTest() throws CommonServiceException {
+    FeedRequest<MasterDataIngestionDto<?>> batchRequest =
+        testUtil.getVendorFeedIngestionRequest(ActionEnum.CREATE);
+    Mockito.doNothing().when(itemSubstitutionFeedHandlingService).publishRecords(any(), any());
+
+    masterDataIngestionService.processMasterDataIngestionData(
+        "item-substitution", batchRequest, TestUtil.ORG_ID);
+    Mockito.verify(itemSubstitutionFeedHandlingService, Mockito.times(1))
+        .publishRecords(any(), any());
   }
 }

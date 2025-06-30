@@ -181,6 +181,10 @@ master-data:
     topic-names: INTERNAL.DEV.PE.VENDOR_INTEGRATION
     group-id: vendor-master-dev
     dlt-topic: INTERNAL.DEV.PE.VENDOR_INTEGRATION.DLT
+  item-substitution:
+    topic-names: INTERNAL.DEV.PE.ITEM_SUBSTITUTION_INTEGRATION
+    group-id: item-substitution-master-dev
+    dlt-topic: INTERNAL.DEV.PE.ITEM_SUBSTITUTION_INTEGRATION.DLT
   node-carrier:
     topic-names: INTERNAL.DEV.PE.NODE_CARRIER_INTEGRATION
     group-id: node-carrier-master-dev

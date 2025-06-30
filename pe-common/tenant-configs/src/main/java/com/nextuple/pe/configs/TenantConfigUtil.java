@@ -8,14 +8,18 @@ import com.nextuple.common.enums.CapacityType;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+@Component
+@Slf4j
 public class TenantConfigUtil {
   private static final Gson gson = new Gson();
 
   private TenantConfigUtil() {}
 
-  public static Map<CapacityType, Integer> parseCapacityConfigAsInteger(
+  public Map<CapacityType, Integer> parseCapacityConfigAsInteger(
       String configString, String defaultValue) {
     if (ObjectUtils.isEmpty(configString)) {
       configString = defaultValue;
@@ -24,11 +28,11 @@ public class TenantConfigUtil {
     return parseCapacityConfig(configString, JsonElement::getAsInt);
   }
 
-  public static Map<CapacityType, String> parseCapacityConfigAsString(String configString) {
+  public Map<CapacityType, String> parseCapacityConfigAsString(String configString) {
     return parseCapacityConfig(configString, JsonElement::getAsString);
   }
 
-  private static <T> Map<CapacityType, T> parseCapacityConfig(
+  private <T> Map<CapacityType, T> parseCapacityConfig(
       String configString, Function<JsonElement, T> valueExtractor) {
 
     if (ObjectUtils.isEmpty(configString)) {
@@ -46,11 +50,13 @@ public class TenantConfigUtil {
           T value = valueExtractor.apply(entry.getValue());
           result.put(type, value);
         } catch (IllegalArgumentException | UnsupportedOperationException e) {
-          // Skip invalid keys or parsing issues
+          log.error("Invalid capacity type in config: {}", entry.getKey(), e);
+          // Skip invalid capacity types
         }
       }
     } catch (Exception e) {
-      // Malformed JSON — return empty map
+      log.error("Error parsing capacity config: {}", configString, e);
+      // Return an empty map if parsing fails
     }
 
     return result;

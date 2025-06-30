@@ -22,6 +22,7 @@ import com.nextuple.pe.configs.PublishEddOnPageConfig;
 import com.nextuple.pe.configs.ServiceOptionConfig;
 import com.nextuple.pe.configs.ServiceOptionIVTypeMappingConfig;
 import com.nextuple.pe.configs.SourcingConfig;
+import com.nextuple.pe.configs.TenantConfigUtil;
 import com.nextuple.pe.util.TestUtil;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -58,6 +59,7 @@ class ITenantYmlConfigImplTest {
   @Mock EventConfig eventConfig;
   @Mock CapacityConfig capacityConfig;
   @Mock PromiseCoordinationConfig promiseCoordinationConfig;
+  @InjectMocks TenantConfigUtil tenantConfigUtil;
 
   @BeforeEach
   void init() {
@@ -76,6 +78,7 @@ class ITenantYmlConfigImplTest {
         iTenantYmlConfigImpl,
         "defaultLogSuppressionServiceOptions",
         defaultLogSuppressionServiceOptions);
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "tenantConfigUtil", tenantConfigUtil);
     CurrentThreadContext.getLogContext().setTenantId(TestUtil.ORG_ID);
   }
 
@@ -1043,5 +1046,16 @@ class ITenantYmlConfigImplTest {
 
     assertNotNull(result);
     assertEquals(0, result.size());
+  }
+
+  @Test
+  @DisplayName("Test getPartialQuantityEnabled() returns configured value")
+  void getPartialInventoryDisabled() {
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "partialInventoryDisabled", true);
+
+    Boolean result = iTenantYmlConfigImpl.getPartialInventoryDisabled();
+
+    assertNotNull(result);
+    assertEquals(true, result);
   }
 }
