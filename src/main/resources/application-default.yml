@@ -16,6 +16,7 @@ spring:
       item: "http://localhost:8080/"
       node-carrier: "http://localhost:8080/"
       carrier: "http://localhost:8080/"
+      postalcode-carrier: "http://localhost:8080/"
       transit: "http://localhost:8080/"
       data-upload: "http://localhost:8080/"
       node: "http://localhost:8080/"

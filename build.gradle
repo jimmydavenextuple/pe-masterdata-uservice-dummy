@@ -487,6 +487,9 @@ dependencies {
     implementation(project(":pe-postal-code-timezone-uservice::postal-code-timezone-services"))
     implementation(project(":pe-postal-code-timezone-uservice:postal-code-timezone-api-domain"))
 
+    implementation(project(":pe-postal-code-carrier-service-uservice:postal-code-carrier-service-services"))
+    implementation(project(":pe-postal-code-carrier-service-uservice:postal-code-carrier-service-api-domain"))
+
     implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-services"))
     implementation(project(":pe-promise-sourcing-rule-uservice:promise-sourcing-rule-api-domain"))
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-services"))
@@ -590,12 +593,12 @@ task showSonarQubeLink {
 artifactoryPublish.skip = false
 
 artifactory {
-    contextUrl = "${artifactory_contextUrl}"
+    contextUrl = "https://jfrog-oss.nextuple.com/artifactory"
     publish {
         repository {
             repoKey = 'gradle-dev-local'
-            username = System.getenv("artifactory_user")
-            password = System.getenv("artifactory_password")
+            username = "app"
+            password = "Nextuple@321"
             maven = true
         }
         defaults {
@@ -605,8 +608,8 @@ artifactory {
     resolve {
         repository {
             repoKey = 'gradle-dev'
-            username = System.getenv("artifactory_user")
-            password = System.getenv("artifactory_password")
+            username = "app"
+            password = "Nextuple@321"
             maven = true
         }
     }

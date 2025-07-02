@@ -1,0 +1,24 @@
+dependencies {
+    implementation(project(":pe-postal-code-carrier-service-uservice:postal-code-carrier-service-api-domain"))
+    implementation(project(":pe-postal-code-carrier-service-uservice:postal-code-carrier-service-persistence-domain"))
+    implementation(project(":pe-postal-code-carrier-service-uservice:postal-code-carrier-service-persistence-postgres"))
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-common:common-domain"))
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+}
+
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}

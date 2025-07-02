@@ -63,4 +63,5 @@ public class NearCacheConstants {
   public static final String OPT_COST_TYPES_MAPPING_ENTITY_NAME = "OptimizationAndCostTypesMapping";
   public static final String TRANSFER_SCHEDULE_ENTITY_NAME = "TransferSchedules";
   public static final String NODE_GROUP_ENTITY_NAME = "NodeGroup";
+  public static final String POSTAL_CODE_CARRIER_SERVICE_ENTITY_NAME = "PostalCodeCarrierService";
 }

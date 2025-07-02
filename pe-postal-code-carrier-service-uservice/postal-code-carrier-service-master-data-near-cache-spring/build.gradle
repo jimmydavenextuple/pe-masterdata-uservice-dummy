@@ -1,0 +1,24 @@
+dependencies {
+    implementation(project(":pe-postal-code-carrier-service-uservice:postal-code-carrier-service-master-data-near-cache"))
+    implementation(project(":pe-postal-code-carrier-service-uservice:postal-code-carrier-service-api-domain"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
+    implementation(project(":pe-common:common-util"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-consumer"))
+    implementation(project(":pe-common:nfs-near-cache:core-near-cache-spring"))
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+}
+
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}

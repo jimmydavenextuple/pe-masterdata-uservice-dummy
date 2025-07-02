@@ -7,52 +7,7 @@
 
 package com.nextuple.core.mapper;
 
-import static com.nextuple.core.constants.NearCacheConstants.CARRIER_CALENDAR_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.CARRIER_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.COMMON_CONFIG_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.COST_ATTRIBUTE_DETAILS_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.COST_ATTRIBUTE_MAPPING_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.COST_FACTOR_BUCKET_TYPE_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.COST_FACTOR_CONTIGUOUS_BUCKET_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.COST_FACTOR_DISCRETE_BUCKET_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.COST_FACTOR_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.COST_ITINERARY_AND_FACTORS_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.COST_VALUE_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.GROUP_DEFINITION_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.GROUP_DEFINITION_RULE_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.HOLIDAY_CUTOFF_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.NODE_CALENDAR_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.NODE_CARRIERS_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.NODE_CARRIER_CALENDAR_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.NODE_CARRIER_LIST_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.NODE_CARRIER_SELECTION_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.NODE_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.NODE_GROUP_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.NODE_SERVICE_OPTION_BUFFER_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.NODE_SERVICE_OPTION_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.OPTIMIZATION_STRATEGY_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.OPT_COST_TYPES_MAPPING_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.POSTAL_CODE_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.POSTAL_CODE_TIME_ZONE_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.PREFERENCE_SELECTOR_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.PROMISE_SOURCING_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.RULES_CONFIGURATION_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.SELECTOR_AND_COST_ITINERARY_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.SOURCING_ATTRIBUTES_DEFINITION_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.SOURCING_ATTRIBUTE_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.SOURCING_CONSTRAINT_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.SOURCING_CUSTOM_REGION_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.SOURCING_RULE_DETAILS_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.TENANT_CONFIG_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.TENANT_COST_TYPE_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.TRANSFER_SCHEDULE_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.TRANSIT_BUFFER_V2_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.TRANSIT_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.UE_CONFIG_DATA_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.UE_META_DATA_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.VENDOR_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.WEIGHTAGE_CONFIGURATION_ENTITY_NAME;
-import static com.nextuple.core.constants.NearCacheConstants.ZONE_ENTITY_NAME;
+import static com.nextuple.core.constants.NearCacheConstants.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -129,6 +84,8 @@ public class NearCacheEntityNameMapper {
       registry.put(
           "OptimizationAndCostTypesMappingEntity", List.of(OPT_COST_TYPES_MAPPING_ENTITY_NAME));
       registry.put("TransferScheduleEntity", List.of(TRANSFER_SCHEDULE_ENTITY_NAME));
+      registry.put(
+          "PostCodeCarrierServiceEntity", List.of(POSTAL_CODE_CARRIER_SERVICE_ENTITY_NAME));
     }
     log.debug("Registry value : {}", registry);
     return registry;
