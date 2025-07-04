@@ -51,7 +51,7 @@ public interface ItemMapper {
   ItemListResponse toItemListResponse(ItemDomainDto itemDomainDtoList);
 
   default Double map(Optional<Double> value) {
-    return value.orElse(null);
+    return Optional.ofNullable(value).orElse(Optional.empty()).orElse(null);
   }
 
   default Optional<Double> mapToOptional(Double value) {
