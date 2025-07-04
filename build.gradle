@@ -241,8 +241,11 @@ subprojects {
                 password = System.getenv("ASHLEY_ARTIFACTORY_PASSWORD")
                 maven = true
             }
-
-            buildInfo = false
+            buildInfoRepository {
+                repoKey = 'epic-nextuple-gradle'  // Use same repo for build metadata
+                username = System.getenv("ASHLEY_ARTIFACTORY_USER")
+                password = System.getenv("ASHLEY_ARTIFACTORY_PASSWORD")
+            }
             defaults {
                 publications('mavenJava')
             }
@@ -602,7 +605,11 @@ artifactory {
             password = System.getenv("ASHLEY_ARTIFACTORY_PASSWORD")
             maven = true
         }
-        buildInfo = false
+        buildInfoRepository {
+            repoKey = 'epic-nextuple-gradle'
+            username = System.getenv("ASHLEY_ARTIFACTORY_USER")
+            password = System.getenv("ASHLEY_ARTIFACTORY_PASSWORD")
+        }
         defaults {
             publications('mavenJava')
         }
