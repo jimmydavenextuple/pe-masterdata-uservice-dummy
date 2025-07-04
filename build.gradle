@@ -233,12 +233,12 @@ subprojects {
     }
 
     artifactory {
-        contextUrl = "${artifactory_contextUrl}"
+        contextUrl = "https://ashleyfurniture.jfrog.io/artifactory"
         publish {
             repository {
-                repoKey = 'gradle-dev-local'
-                username = System.getenv("artifactory_user")
-                password = System.getenv("artifactory_password")
+                repoKey = 'epic-nextuple-gradle'
+                username = System.getenv("ASHLEY_ARTIFACTORY_USER")
+                password = System.getenv("ASHLEY_ARTIFACTORY_PASSWORD")
                 maven = true
             }
             defaults {
@@ -246,6 +246,7 @@ subprojects {
             }
         }
         resolve {
+            contextUrl = "https://jfrog-oss.nextuple.com/artifactory"
             repository {
                 repoKey = 'gradle-dev'
                 username = System.getenv("artifactory_user")
@@ -591,12 +592,12 @@ task showSonarQubeLink {
 artifactoryPublish.skip = false
 
 artifactory {
-    contextUrl = "${artifactory_contextUrl}"
+    contextUrl = "https://ashleyfurniture.jfrog.io/artifactory"
     publish {
         repository {
-            repoKey = 'gradle-dev-local'
-            username = System.getenv("artifactory_user")
-            password = System.getenv("artifactory_password")
+            repoKey = 'epic-nextuple-gradle'
+            username = System.getenv("ASHLEY_ARTIFACTORY_USER")
+            password = System.getenv("ASHLEY_ARTIFACTORY_PASSWORD")
             maven = true
         }
         defaults {
@@ -604,6 +605,7 @@ artifactory {
         }
     }
     resolve {
+        contextUrl = "https://jfrog-oss.nextuple.com/artifactory"
         repository {
             repoKey = 'gradle-dev'
             username = System.getenv("artifactory_user")
