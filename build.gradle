@@ -233,8 +233,8 @@ subprojects {
     }
 
     artifactory {
-        contextUrl = "https://ashleyfurniture.jfrog.io/artifactory"
         publish {
+            contextUrl = "https://ashleyfurniture.jfrog.io/artifactory"
             repository {
                 repoKey = 'epic-nextuple-gradle'
                 username = System.getenv("ASHLEY_ARTIFACTORY_USER")
@@ -592,8 +592,8 @@ task showSonarQubeLink {
 artifactoryPublish.skip = false
 
 artifactory {
-    contextUrl = "https://ashleyfurniture.jfrog.io/artifactory"
     publish {
+        contextUrl = "https://ashleyfurniture.jfrog.io/artifactory"
         repository {
             repoKey = 'epic-nextuple-gradle'
             username = System.getenv("ASHLEY_ARTIFACTORY_USER")
