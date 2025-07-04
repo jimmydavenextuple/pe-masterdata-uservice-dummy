@@ -325,6 +325,7 @@ definitions:
           - cat version.yml
           - bash ./gradlew -Pbuild_target=RELEASE clean build artifactoryPublish
     - step: &build-snapshot-ashley
+        size: 4x
         name: Build Snapshot and Deploy to Ashley Jfrog
         caches:
           - gradle
