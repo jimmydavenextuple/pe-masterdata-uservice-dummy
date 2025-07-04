@@ -241,6 +241,8 @@ subprojects {
                 password = System.getenv("ASHLEY_ARTIFACTORY_PASSWORD")
                 maven = true
             }
+
+            buildInfo = false
             defaults {
                 publications('mavenJava')
             }
@@ -600,6 +602,7 @@ artifactory {
             password = System.getenv("ASHLEY_ARTIFACTORY_PASSWORD")
             maven = true
         }
+        buildInfo = false
         defaults {
             publications('mavenJava')
         }
