@@ -324,6 +324,19 @@ definitions:
           - "sed -i 's/release: false/release: true/' version.yml"
           - cat version.yml
           - bash ./gradlew -Pbuild_target=RELEASE clean build artifactoryPublish
+    - step: &build-snapshot-ashley
+        name: Build Snapshot and Deploy to Ashley Jfrog
+        caches:
+          - gradle
+          - sonar
+        script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
+          - microdnf install git
+          - microdnf install findutils
+          - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
+          - ./infra-automation/basic_build_validations.sh
+          - ./infra-automation/copySuppressions.sh
+          - bash ./gradlew -Pbuild_target=SNAPSHOT clean build -Partifactory_contextUrl=$ASHLEY_ARTIFACTORY_URL -Partifactory_user=$ASHLEY_ARTIFACTORY_USER -Partifactory_password=$ASHLEY_ARTIFACTORY_PASSWORD -Partifactory_repoKey=epic-nextuple-gradle -Partifactory_resolveRepoKey=epic-nextuple-gradle artifactoryPublish
     - step: &deploy
         caches:
           - gradle
@@ -543,3 +556,6 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
+    1.8.x-ashley:
+      - step: *build-snapshot-ashley
+        name: Deploy Ashley
