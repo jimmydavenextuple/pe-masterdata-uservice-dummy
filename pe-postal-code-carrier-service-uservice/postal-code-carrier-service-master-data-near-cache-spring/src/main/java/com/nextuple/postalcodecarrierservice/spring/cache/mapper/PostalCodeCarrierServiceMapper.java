@@ -1,6 +1,5 @@
 package com.nextuple.postalcodecarrierservice.spring.cache.mapper;
 
-import com.nextuple.common.response.BaseResponse;
 import com.nextuple.core.cache.mapper.GenericMapper;
 import com.nextuple.postalcodecarrierservice.data.cache.domain.PostalCodeCarrierServiceDataCacheKey;
 import com.nextuple.postalcodecarrierservice.data.cache.domain.PostalCodeCarrierServiceDataCacheValue;
@@ -13,7 +12,7 @@ public class PostalCodeCarrierServiceMapper
         PostalCodeCarrierServiceDataCacheKey,
         PostalCodeCarrierServiceDataCacheValue,
         String,
-        BaseResponse<PostalCodeCarrierServiceResponse>> {
+        PostalCodeCarrierServiceResponse> {
 
   @Override
   public PostalCodeCarrierServiceDataCacheKey requestToCacheKey(String request) {
@@ -27,14 +26,14 @@ public class PostalCodeCarrierServiceMapper
 
   @Override
   public PostalCodeCarrierServiceDataCacheValue responseToCacheValue(
-      BaseResponse<PostalCodeCarrierServiceResponse> resp) {
+      PostalCodeCarrierServiceResponse resp) {
     return PostalCodeCarrierServiceDataCacheValue.builder()
-        .postalCodeCarrierServiceResponse(resp.getPayload())
+        .postalCodeCarrierServiceResponse(resp)
         .build();
   }
 
   @Override
-  public BaseResponse<PostalCodeCarrierServiceResponse> cacheValueToResponse(
+  public PostalCodeCarrierServiceResponse cacheValueToResponse(
       PostalCodeCarrierServiceDataCacheValue cacheValue) {
     return null;
   }

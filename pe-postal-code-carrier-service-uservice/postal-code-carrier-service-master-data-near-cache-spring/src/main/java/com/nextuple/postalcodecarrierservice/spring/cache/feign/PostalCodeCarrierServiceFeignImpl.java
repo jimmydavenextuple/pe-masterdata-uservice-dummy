@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface PostalCodeCarrierServiceFeignImpl
     extends GenericFeignService<String, BaseResponse<PostalCodeCarrierServiceResponse>> {
   @GetMapping("/api/v1/postal-code-carrier-service/{zipcode}/{carrierServiceId}")
-  BaseResponse<PostalCodeCarrierServiceResponse> getPostalCodeCarrierService(
+  PostalCodeCarrierServiceResponse getPostalCodeCarrierService(
       @PathVariable String zipcode, @PathVariable String carrierServiceId);
 
   @GetMapping("/{orgId}")
