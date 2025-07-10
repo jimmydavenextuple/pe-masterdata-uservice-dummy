@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
-    name = "pe-postalcode-carrier-uservice",
+    name = "pe-masterdata-uservice",
     url =
-        "${spring.application.dependencies.postalcode-carrier:http://pe-postalcode-carrier-uservice:8080/}")
+        "${spring.application.dependencies.postalcode-carrier:http://pe-masterdata-uservice:8080/}")
 public interface PostalCodeCarrierServiceFeignImpl
     extends GenericFeignService<String, BaseResponse<PostalCodeCarrierServiceResponse>> {
   @GetMapping("/api/v1/postal-code-carrier-service/{zipcode}/{carrierServiceId}")
