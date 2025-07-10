@@ -7,6 +7,7 @@
 
 package com.nextuple.postalcodecarrierservice.controller;
 
+import com.nextuple.common.response.BaseResponse;
 import com.nextuple.postalcodecarrierservice.domain.PostalCodeCarrierServiceConstants;
 import com.nextuple.postalcodecarrierservice.domain.dto.PostalCodeCarrierServiceCacheKeyDto;
 import com.nextuple.postalcodecarrierservice.domain.dto.PostalCodeCarrierServiceDto;
@@ -75,7 +76,7 @@ public class PostalCodeCarrierServiceController {
   @ApiResponse(
       responseCode = "200",
       description = PostalCodeCarrierServiceConstants.GET_POSTAL_CODE_CARRIER_SERVICE_SUCCESS)
-  public ResponseEntity<PostalCodeCarrierServiceResponse> getPostalCodeCarrierService(
+  public ResponseEntity<BaseResponse<PostalCodeCarrierServiceResponse>> getPostalCodeCarrierService(
       @Parameter(
               description = PostalCodeCarrierServiceConstants.ZIP_CODE,
               example = PostalCodeCarrierServiceConstants.ZIP_CODE_EXAMPLE)
@@ -98,7 +99,11 @@ public class PostalCodeCarrierServiceController {
     PostalCodeCarrierServiceResponse response =
         PostalCodeCarrierServiceResponse.builder().postalCodeCarrierServices(List.of(dto)).build();
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(
+        BaseResponse.builder()
+            .message("Postal code carrier service fetched successfully")
+            .payload(response)
+            .build());
   }
 
   @PutMapping("/{zipcode}/{carrierServiceId}")
