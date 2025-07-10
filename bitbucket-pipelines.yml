@@ -20,6 +20,7 @@ server:
       - promising-engine/pe-carrier
       - promising-engine/pe-configuration
       - promising-engine/pe-neip-fpm
+      - promising-engine/pe-postal-code-carrier-service-uservice
     health-check-endpoint: "/actuator/health"
   environments:
     vapt:
