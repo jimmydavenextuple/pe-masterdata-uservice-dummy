@@ -27,7 +27,6 @@ import com.nextuple.postgres.service.CommonPersistenceService;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -226,10 +225,7 @@ public class NodePersistenceServiceImpl
     var sortBy = pageParams.getSortBy().orElse(NODE_DEFAULT_SORT_BY);
     var sortOrder = pageParams.getSortOrder().orElse(DEFAULT_SORT_ORDER);
     Sort sort = Sort.by(sortBy);
-    sort =
-        StringUtils.equalsIgnoreCase(sortOrder, DEFAULT_SORT_ORDER)
-            ? sort.ascending()
-            : sort.descending();
+    sort = DEFAULT_SORT_ORDER.equalsIgnoreCase(sortOrder) ? sort.ascending() : sort.descending();
 
     var pageNo = pageParams.getPageNo().orElse(pageProperties.getPageNo()) - 1;
     var pageSize = pageParams.getPageSize().orElse(pageProperties.getPageSize());
