@@ -466,6 +466,12 @@ pipelines:
           name: Deploy devpe
           trigger: manual
           deployment: devpe
+    Ashley-1.9.0:
+      - step: *build
+      - step:
+          !!merge <<: *deploy
+          name: Deploy devpe
+          deployment: devpe
     master:
       - step: *Clear-Cache
       - step: *build
