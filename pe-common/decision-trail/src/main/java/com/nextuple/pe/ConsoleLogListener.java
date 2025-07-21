@@ -8,13 +8,18 @@
 package com.nextuple.pe;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import com.nextuple.pe.config.gson.LocalDateAdapter;
 import com.nextuple.pe.config.gson.LocalDateTimeAdapter;
+import com.nextuple.pe.config.gson.LocalTimeAdapter;
 import com.nextuple.pe.configs.ITenantConfig;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Map;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -60,6 +65,13 @@ public class ConsoleLogListener {
                 .setDateFormat(dateFormat)
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .registerTypeAdapter(
+                    Instant.class,
+                    (JsonSerializer<Instant>)
+                        (src, typeOfSrc, context) ->
+                            new JsonPrimitive(src.toString()) // Or format as needed
+                    )
+                .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
                 .create()
                 .toJson(baseEvent);
         SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy, hh:mm:ss.SSS a");
