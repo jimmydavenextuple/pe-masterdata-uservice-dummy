@@ -166,7 +166,6 @@ subprojects {
 
         runtimeOnly 'org.postgresql:postgresql:42.7.2'
 
-        //Updated the version to latest
         implementation "org.springframework.kafka:spring-kafka:4.0.0-M2"
         implementation 'org.yaml:snakeyaml:2.2'
         implementation 'org.xerial.snappy:snappy-java:1.1.10.5'
@@ -194,9 +193,7 @@ subprojects {
 
         implementation 'org.flywaydb:flyway-core:9.16.3'
 
-        //Updated the version to latest
         api 'io.github.openfeign:feign-okhttp:13.5'
-        //adding it explicitly to resolve critical issue
         implementation("org.springframework.security:spring-security-crypto")
         //adding it explicitly to resolve critical issue
         implementation("commons-beanutils:commons-beanutils:1.11.0")
@@ -514,7 +511,6 @@ dependencies {
 
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
 
-    //Updated the version to latest
     implementation "org.springframework.kafka:spring-kafka:4.0.0-M2"
     implementation 'org.yaml:snakeyaml:2.2'
     implementation 'org.xerial.snappy:snappy-java:1.1.10.5'
@@ -545,7 +541,6 @@ dependencies {
     implementation("com.nextuple.plt:plt-postgress-dao:${platformFPMVersion}")
     implementation "com.nextuple.neoplatform:auth-validator:${authVersion}"
     implementation "com.nextuple.neoplatform:auth-injector:${authVersion}"
-    //Version update for vulnerability issue fix
     api 'io.github.openfeign:feign-okhttp:13.5'
     implementation("org.springframework.security:spring-security-crypto:6.4.4")
 
