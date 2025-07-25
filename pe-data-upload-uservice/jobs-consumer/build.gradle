@@ -31,7 +31,7 @@ dependencies {
     implementation(project(":pe-carrier-uservice:carrier-api-domain"))
     implementation(project(":pe-calendar-uservice:calendar-api-domain"))
     implementation(project(":pe-promise-sourcing-rule-uservice:sourcing-cost-config-api-domain"))
-    implementation group: 'com.opencsv', name: 'opencsv', version: '5.2'
+    implementation group: 'com.opencsv', name: 'opencsv', version: '5.11.1'
     implementation("com.nextuple.plt:plt-common:${platformFPMVersion}")
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }

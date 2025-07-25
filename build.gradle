@@ -194,7 +194,6 @@ subprojects {
         implementation 'org.flywaydb:flyway-core:9.16.3'
 
         api 'io.github.openfeign:feign-okhttp:13.5'
-        implementation("org.springframework.security:spring-security-crypto")
 
     }
 
@@ -540,7 +539,6 @@ dependencies {
     implementation "com.nextuple.neoplatform:auth-validator:${authVersion}"
     implementation "com.nextuple.neoplatform:auth-injector:${authVersion}"
     api 'io.github.openfeign:feign-okhttp:13.5'
-    implementation("org.springframework.security:spring-security-crypto:6.4.4")
 
     // Test container dependencies
     testImplementation 'org.testcontainers:postgresql:1.20.0'

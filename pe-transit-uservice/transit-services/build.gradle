@@ -34,7 +34,7 @@ dependencies {
     implementation "org.springframework.kafka:spring-kafka"
     implementation 'org.apache.commons:commons-csv:1.5'
     implementation "org.springframework.boot:spring-boot-starter-validation:3.2.4"
-    implementation group: 'com.opencsv', name: 'opencsv', version: '5.2'
+    implementation group: 'com.opencsv', name: 'opencsv', version: '5.11.1'
     implementation "jakarta.validation:jakarta.validation-api:3.0.2"
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
     implementation 'io.swagger.core.v3:swagger-models:2.2.0'

@@ -17,7 +17,7 @@ configurations {
 dependencies {
     implementation(project(":pe-data-upload-uservice:data-upload-services"))
 
-    implementation 'com.opencsv:opencsv:5.9'
+    implementation 'com.opencsv:opencsv:5.11.1'
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
     testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
     testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
