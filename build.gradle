@@ -195,8 +195,6 @@ subprojects {
 
         api 'io.github.openfeign:feign-okhttp:13.5'
         implementation("org.springframework.security:spring-security-crypto")
-        //adding it explicitly to resolve critical issue
-        implementation("commons-beanutils:commons-beanutils:1.11.0")
 
     }
 
@@ -553,8 +551,6 @@ dependencies {
     testImplementation(project(":pe-vendor-uservice:vendor-persistence-domain"))
     testImplementation(project(":pe-vendor-uservice:vendor-persistence-postgres"))
 
-    //adding it explicitly to resolve critical issue
-    implementation("commons-beanutils:commons-beanutils:1.11.0")
 }
 
 jacocoTestReport {
