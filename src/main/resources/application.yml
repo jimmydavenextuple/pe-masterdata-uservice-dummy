@@ -54,7 +54,7 @@ entity-listener:
     enabled: true
 
 constants:
-  default-number-of-days-in-future: 45
+  default-number-of-days-in-future: 70
 
 pagination:
   pageNo: 1
