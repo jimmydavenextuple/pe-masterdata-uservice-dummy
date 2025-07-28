@@ -518,4 +518,16 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   public Map<CapacityType, String> getCapacityModel() {
     return TenantConfigUtil.parseCapacityConfigAsString(capacityModelName);
   }
+
+  @Override
+  public Map<String, Map<String, Double>> getCostWeightages() {
+    Type type = new TypeToken<Map<String, Double>>() {}.getType();
+    String costWeightageConfigString =
+        (String)
+            eventConfig
+                .getEvent()
+                .getOrDefault(getOrgId(), getDefaultEventProperties())
+                .get("costWeightages");
+    return getGsonObject().fromJson(costWeightageConfigString, type);
+  }
 }

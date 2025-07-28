@@ -438,6 +438,13 @@ public class TenantDBConfigImpl implements ITenantConfig {
         getTenantConfiguration(CAPACITY_MODEL_NAME_CONFIG_KEY, DEFAULT_EMPTY_CAPACITY_MODEL_JSON));
   }
 
+  @Override
+  public Map<String, Map<String, Double>> getCostWeightages() {
+    Type type = new TypeToken<Map<String, Map<String, Double>>>() {}.getType();
+    String costWeightagesConfigString = getTenantConfigdataCacheValue(COST_WEIGHTAGE_CONFIG_MAP);
+    return getGsonObject().fromJson(costWeightagesConfigString, type);
+  }
+
   private String getTenantConfigdataCacheValue(String configKey) {
     return getTenantConfiguration(configKey, null);
   }

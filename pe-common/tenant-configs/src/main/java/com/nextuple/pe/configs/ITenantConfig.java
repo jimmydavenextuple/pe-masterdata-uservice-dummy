@@ -125,4 +125,6 @@ public interface ITenantConfig {
   Map<CapacityType, Integer> getCapacityPastLookBackDays();
 
   Map<CapacityType, String> getCapacityModel();
+
+  Map<String, Map<String, Double>> getCostWeightages();
 }
