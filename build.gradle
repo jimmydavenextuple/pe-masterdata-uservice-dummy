@@ -95,7 +95,7 @@ subprojects {
 
     group = 'com.nextuple.pe'
 
-  //  version = "1.4.0-${build_target}"
+    version = "1.8.0-PERF-${build_target}"
 
     sourceCompatibility = "${sourceJdkVersion}"
     targetCompatibility = "${targetJdkVersion}"
@@ -347,7 +347,8 @@ task aggregateJavadoc(type: Javadoc) {
 }
 
 allprojects {
-    version = loadVersion().version.getVersion();
+//    version = loadVersion().version.getVersion();
+    version = "1.8.0-PERF-${build_target}"
 }
 
 apply from: "$rootProject.projectDir/dependencies.gradle"
@@ -736,7 +737,8 @@ task updateAllowedVersion {
     }
 }
 
-version = loadVersion().version.getVersion()
+//version = loadVersion().version.getVersion()
+version = "1.8.0-PERF-${build_target}"
 
 task patchVersionUpdate(group: 'versioning', description: 'Bump to next patch version') {
     doFirst {

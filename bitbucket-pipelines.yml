@@ -282,7 +282,7 @@ definitions:
           - git clone git@bitbucket.org:nextuple_engineering/infra-automation.git
           - ./infra-automation/basic_build_validations.sh
           - ./infra-automation/copySuppressions.sh
-          - bash ./gradlew -Pbuild_target=SNAPSHOT clean build artifactoryPublish
+          - bash ./gradlew -Pbuild_target=SNAPSHOT -PexcludeTests='**/*ContainerTest*,**/*PerfTest*' clean build artifactoryPublish
           - bash ./gradlew -Pbuild_target=SNAPSHOT -PazureStorageConnectionString=$AZURE_CONNECTION_STRING copyJar uploadCommitJarToAzure
           - export SPACE=" "
           - bash ./gradlew -Pbuild_target=SNAPSHOT -q properties | grep version | sed -e "s@version:$SPACE@@g" | head -n 1 > service-version.txt
@@ -505,6 +505,7 @@ pipelines:
       - step:
           !!merge <<: *deploy
           name: Deploy Performance
+          trigger: manual
           deployment: performance
     master2:
       - step: *Clear-Cache

@@ -1,6 +1,5 @@
 package com.nextuple.pe.configs;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -15,10 +14,6 @@ import org.springframework.util.ObjectUtils;
 @Component
 @Slf4j
 public class TenantConfigUtil {
-  private static final Gson gson = new Gson();
-
-  private TenantConfigUtil() {}
-
   public Map<CapacityType, Integer> parseCapacityConfigAsInteger(
       String configString, String defaultValue) {
     if (ObjectUtils.isEmpty(configString)) {
