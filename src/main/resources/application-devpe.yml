@@ -301,6 +301,3 @@ kafka-topic-flags:
   input:
     taskTopics:
       enabled: true
-entity-listener:
-  kafka:
-    enabled: false
