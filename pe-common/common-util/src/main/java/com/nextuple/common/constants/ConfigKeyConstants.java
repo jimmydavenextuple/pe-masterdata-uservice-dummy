@@ -93,4 +93,10 @@ public class ConfigKeyConstants {
   public static final String DEFAULT_EMPTY_CAPACITY_MODEL_JSON = "{}";
 
   public static final String COST_WEIGHTAGE_CONFIG_MAP = "cost-weightage-config";
+  public static final String MAX_RECORDS_FOR_FILTERING_CONFIG_KEY = "max-records-for-filtering";
+  public static final String MIN_RECORDS_FOR_FILTERING_CONFIG_KEY = "min-records-for-filtering";
+  public static final String START_PERCENTILE_FOR_FILTERING_CONFIG_KEY =
+      "start-percentile-for-filtering";
+  public static final String MIN_PERCENTILE_FOR_FILTERING_CONFIG_KEY =
+      "min-percentile-for-filtering";
 }

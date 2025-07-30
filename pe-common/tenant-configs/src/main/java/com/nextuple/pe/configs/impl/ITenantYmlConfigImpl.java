@@ -530,4 +530,24 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
                 .get("costWeightages");
     return getGsonObject().fromJson(costWeightageConfigString, type);
   }
+
+  @Override
+  public Integer getMaxRecordsForFiltering() {
+    return null;
+  }
+
+  @Override
+  public Integer getMinRecordsForFiltering() {
+    return null;
+  }
+
+  @Override
+  public Integer getStartPercentileForFiltering() {
+    return null;
+  }
+
+  @Override
+  public Integer getMinPercentileForFiltering() {
+    return null;
+  }
 }
