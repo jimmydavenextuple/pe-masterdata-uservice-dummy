@@ -532,22 +532,7 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   }
 
   @Override
-  public Integer getMaxRecordsForFiltering() {
-    return null;
-  }
-
-  @Override
-  public Integer getMinRecordsForFiltering() {
-    return null;
-  }
-
-  @Override
-  public Integer getStartPercentileForFiltering() {
-    return null;
-  }
-
-  @Override
-  public Integer getMinPercentileForFiltering() {
+  public Map<String, Map<String, Integer>> getCostFilteringValues() {
     return null;
   }
 }

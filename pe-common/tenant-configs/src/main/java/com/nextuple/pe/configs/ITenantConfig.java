@@ -128,11 +128,5 @@ public interface ITenantConfig {
 
   Map<String, Map<String, Double>> getCostWeightages();
 
-  Integer getMaxRecordsForFiltering();
-
-  Integer getMinRecordsForFiltering();
-
-  Integer getStartPercentileForFiltering();
-
-  Integer getMinPercentileForFiltering();
+  Map<String, Map<String, Integer>> getCostFilteringValues();
 }

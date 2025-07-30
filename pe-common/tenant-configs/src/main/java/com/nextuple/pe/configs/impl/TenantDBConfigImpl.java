@@ -446,24 +446,10 @@ public class TenantDBConfigImpl implements ITenantConfig {
   }
 
   @Override
-  public Integer getMaxRecordsForFiltering() {
-    return Integer.parseInt(getTenantConfiguration(MAX_RECORDS_FOR_FILTERING_CONFIG_KEY, "30"));
-  }
-
-  @Override
-  public Integer getMinRecordsForFiltering() {
-    return Integer.parseInt(getTenantConfiguration(MIN_RECORDS_FOR_FILTERING_CONFIG_KEY, "15"));
-  }
-
-  @Override
-  public Integer getStartPercentileForFiltering() {
-    return Integer.parseInt(
-        getTenantConfiguration(START_PERCENTILE_FOR_FILTERING_CONFIG_KEY, "100"));
-  }
-
-  @Override
-  public Integer getMinPercentileForFiltering() {
-    return Integer.parseInt(getTenantConfiguration(MIN_PERCENTILE_FOR_FILTERING_CONFIG_KEY, "75"));
+  public Map<String, Map<String, Integer>> getCostFilteringValues() {
+    Type type = new TypeToken<Map<String, Map<String, Integer>>>() {}.getType();
+    String costFilteringConfigString = getTenantConfigdataCacheValue(COST_FILTERING_CONFIG_KEY);
+    return getGsonObject().fromJson(costFilteringConfigString, type);
   }
 
   private String getTenantConfigdataCacheValue(String configKey) {
