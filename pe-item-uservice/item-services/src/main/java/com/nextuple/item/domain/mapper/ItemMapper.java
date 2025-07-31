@@ -7,6 +7,7 @@
 
 package com.nextuple.item.domain.mapper;
 
+import com.nextuple.common.util.ObjectUtil;
 import com.nextuple.item.domain.events.ItemMasterEvent;
 import com.nextuple.item.domain.inbound.ItemBaseRequest;
 import com.nextuple.item.domain.inbound.ItemCreationRequest;
@@ -51,10 +52,11 @@ public interface ItemMapper {
   ItemListResponse toItemListResponse(ItemDomainDto itemDomainDtoList);
 
   default Double map(Optional<Double> value) {
-    return value.orElse(null);
+    return Optional.ofNullable(value).orElse(Optional.empty()).orElse(null);
   }
 
   default Optional<Double> mapToOptional(Double value) {
+    if (ObjectUtil.isNull(value)) return Optional.empty();
     return Optional.of(value);
   }
 }
