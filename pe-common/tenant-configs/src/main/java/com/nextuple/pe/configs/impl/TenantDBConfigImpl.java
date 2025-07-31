@@ -433,6 +433,20 @@ public class TenantDBConfigImpl implements ITenantConfig {
   }
 
   @Override
+  public Map<CapacityType, Integer> getEddFutureCapacityLookUpDays() {
+    return tenantConfigUtil.parseCapacityConfigAsInteger(
+        getTenantConfiguration(EDD_FUTURE_LOOKUP_DAYS_CONFIG_KEY, DEFAULT_EDD_FUTURE_LOOKUP_DAYS),
+        DEFAULT_EDD_FUTURE_LOOKUP_DAYS);
+  }
+
+  @Override
+  public Map<CapacityType, Integer> getEddPastCapacityLookBackDays() {
+    return tenantConfigUtil.parseCapacityConfigAsInteger(
+        getTenantConfiguration(EDD_PAST_LOOKBACK_DAYS_CONFIG_KEY, DEFAULT_EDD_PAST_LOOKBACK_DAYS),
+        DEFAULT_EDD_PAST_LOOKBACK_DAYS);
+  }
+
+  @Override
   public Map<CapacityType, String> getCapacityModel() {
     return tenantConfigUtil.parseCapacityConfigAsString(
         getTenantConfiguration(CAPACITY_MODEL_NAME_CONFIG_KEY, DEFAULT_EMPTY_CAPACITY_MODEL_JSON));

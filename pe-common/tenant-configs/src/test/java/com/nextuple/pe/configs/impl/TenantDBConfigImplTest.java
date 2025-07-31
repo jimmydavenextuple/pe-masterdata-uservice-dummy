@@ -1,6 +1,8 @@
 package com.nextuple.pe.configs.impl;
 
 import static com.nextuple.common.constants.ConfigKeyConstants.CARRIER_CALENDAR_PAST_LOOKUP_DAYS_CONFIG_KEY;
+import static com.nextuple.common.constants.ConfigKeyConstants.EDD_FUTURE_LOOKUP_DAYS_CONFIG_KEY;
+import static com.nextuple.common.constants.ConfigKeyConstants.EDD_PAST_LOOKBACK_DAYS_CONFIG_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.ENABLE_AVAILABILITY_SORTING_CONFIG_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.ENABLE_FUTURE_AVAILABILITY_CONFIG_KEY;
 import static com.nextuple.common.constants.ConfigKeyConstants.INBOUND_PROCESSING_TIME_ENABLED_KEY;
@@ -1097,6 +1099,7 @@ class TenantDBConfigImplTest {
     assertTrue(response);
   }
 
+  @Test
   @DisplayName("Test getCapacityAware() with valid config value")
   void getCapacityAwareTest() {
     var cacheValue =
@@ -1128,6 +1131,7 @@ class TenantDBConfigImplTest {
     assertFalse(response);
   }
 
+  @Test
   @DisplayName("Test getCapacityAware() with default value when config is not found")
   void getCapacityAwareDefaultTest() {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
@@ -1162,6 +1166,7 @@ class TenantDBConfigImplTest {
         ex.getMessage());
   }
 
+  @Test
   @DisplayName("Test getCapacityFutureLookUpDays() with valid config JSON value")
   void getCapacityFutureLookUpDaysJsonTest() {
     String jsonConfig = "{\"outbound\": 07, \"transport\": 07, \"receiving\": 07}";
@@ -1272,6 +1277,126 @@ class TenantDBConfigImplTest {
     when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
 
     Map<CapacityType, Integer> result = tenantDBConfigImpl.getCapacityPastLookBackDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(0, result.get(CapacityType.OUTBOUND));
+    assertEquals(0, result.get(CapacityType.TRANSPORT));
+    assertEquals(0, result.get(CapacityType.RECEIVING));
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getEddFutureLookUpDays() with valid config JSON value")
+  void getEddFutureCapacityLookUpDaysJsonTest() {
+    String jsonConfig = "{\"outbound\": 07, \"transport\": 07, \"receiving\": 07}";
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey(EDD_FUTURE_LOOKUP_DAYS_CONFIG_KEY)
+            .configValue(jsonConfig)
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Map<CapacityType, Integer> result = tenantDBConfigImpl.getEddFutureCapacityLookUpDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(7, result.get(CapacityType.OUTBOUND));
+    assertEquals(7, result.get(CapacityType.TRANSPORT));
+    assertEquals(7, result.get(CapacityType.RECEIVING));
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getEddFutureLookUpDays() with null config value")
+  void getEddFutureCapacityLookUpDaysNullConfigTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+
+    Map<CapacityType, Integer> result = tenantDBConfigImpl.getEddFutureCapacityLookUpDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(30, result.get(CapacityType.OUTBOUND));
+    assertEquals(30, result.get(CapacityType.TRANSPORT));
+    assertEquals(30, result.get(CapacityType.RECEIVING));
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getEddPastLookBackDays() with valid config JSON value")
+  void getEddPastCapacityLookBackDaysJsonTest() {
+    String jsonConfig = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey(EDD_PAST_LOOKBACK_DAYS_CONFIG_KEY)
+            .configValue(jsonConfig)
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Map<CapacityType, Integer> result = tenantDBConfigImpl.getEddPastCapacityLookBackDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(30, result.get(CapacityType.OUTBOUND));
+    assertEquals(15, result.get(CapacityType.TRANSPORT));
+    assertEquals(10, result.get(CapacityType.RECEIVING));
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getEddPastLookBackDays() with null config value")
+  void getEddPastCapacityLookBackDaysNullConfigTest() {
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(null);
+
+    Map<CapacityType, Integer> result = tenantDBConfigImpl.getEddPastCapacityLookBackDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(0, result.get(CapacityType.OUTBOUND));
+    assertEquals(0, result.get(CapacityType.TRANSPORT));
+    assertEquals(0, result.get(CapacityType.RECEIVING));
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getEddFutureLookUpDays() with empty config value")
+  void getEddFutureCapacityLookUpDaysEmptyConfigTest() {
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey(EDD_FUTURE_LOOKUP_DAYS_CONFIG_KEY)
+            .configValue("")
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Map<CapacityType, Integer> result = tenantDBConfigImpl.getEddFutureCapacityLookUpDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(30, result.get(CapacityType.OUTBOUND));
+    assertEquals(30, result.get(CapacityType.TRANSPORT));
+    assertEquals(30, result.get(CapacityType.RECEIVING));
+    verify(tenantConfigdataNearCacheService, times(1)).get(any());
+  }
+
+  @Test
+  @DisplayName("Test getEddPastLookBackDays() with empty config value")
+  void getEddPastCapacityLookBackDaysEmptyConfigTest() {
+    var cacheValue =
+        TenantConfigdataCacheValue.builder()
+            .orgId(TestUtil.ORG_ID)
+            .configKey(EDD_PAST_LOOKBACK_DAYS_CONFIG_KEY)
+            .configValue("")
+            .build();
+
+    when(tenantConfigdataNearCacheService.get(any())).thenReturn(cacheValue);
+
+    Map<CapacityType, Integer> result = tenantDBConfigImpl.getEddPastCapacityLookBackDays();
 
     assertNotNull(result);
     assertEquals(3, result.size());

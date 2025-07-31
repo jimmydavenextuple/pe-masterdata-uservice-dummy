@@ -124,6 +124,10 @@ public interface ITenantConfig {
 
   Map<CapacityType, Integer> getCapacityPastLookBackDays();
 
+  Map<CapacityType, Integer> getEddFutureCapacityLookUpDays();
+
+  Map<CapacityType, Integer> getEddPastCapacityLookBackDays();
+
   Map<CapacityType, String> getCapacityModel();
 
   Boolean getPartialInventoryDisabled();

@@ -102,8 +102,14 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   @Value("${capacity.future-lookup-days}")
   public String capacityFutureLookupDaysConfig;
 
-  @Value("${capacity.past-lookup-days}")
+  @Value("${capacity.past-lookback-days}")
   public String capacityPastLookbackDaysConfig;
+
+  @Value("${edd.future-capacity-lookup-days}")
+  public String eddFutureLookupDaysConfig;
+
+  @Value("${edd.past-capacity-lookback-days}")
+  public String eddPastLookbackDaysConfig;
 
   @Value("${capacity.model-name}")
   public String capacityModelName;
@@ -516,6 +522,18 @@ public class ITenantYmlConfigImpl implements ITenantConfig {
   public Map<CapacityType, Integer> getCapacityPastLookBackDays() {
     return tenantConfigUtil.parseCapacityConfigAsInteger(
         capacityPastLookbackDaysConfig, DEFAULT_CAPACITY_PAST_LOOKBACK_DAYS);
+  }
+
+  @Override
+  public Map<CapacityType, Integer> getEddFutureCapacityLookUpDays() {
+    return tenantConfigUtil.parseCapacityConfigAsInteger(
+        eddFutureLookupDaysConfig, DEFAULT_EDD_FUTURE_LOOKUP_DAYS);
+  }
+
+  @Override
+  public Map<CapacityType, Integer> getEddPastCapacityLookBackDays() {
+    return tenantConfigUtil.parseCapacityConfigAsInteger(
+        eddPastLookbackDaysConfig, DEFAULT_EDD_PAST_LOOKBACK_DAYS);
   }
 
   @Override
