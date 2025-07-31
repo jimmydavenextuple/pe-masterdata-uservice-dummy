@@ -417,7 +417,6 @@ pipelines:
           name: Deploy Prod
           trigger: manual
           deployment: prod
-
   branches:
     vapt:
       - step: *build
