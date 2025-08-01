@@ -954,6 +954,7 @@ class ITenantYmlConfigImplTest {
     Assertions.assertEquals(dummyMap, ruleCraftConfig);
   }
 
+  @Test
   @DisplayName("Test getCapacityAware() returns configured value")
   void getCapacityAwareTest() {
     Boolean expectedCapacityAware = true;
@@ -1016,6 +1017,62 @@ class ITenantYmlConfigImplTest {
     ReflectionTestUtils.setField(iTenantYmlConfigImpl, "capacityPastLookbackDaysConfig", null);
 
     Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getCapacityPastLookBackDays();
+
+    assertNotNull(result);
+    assertEquals(0, result.get(CapacityType.OUTBOUND));
+    assertEquals(0, result.get(CapacityType.TRANSPORT));
+    assertEquals(0, result.get(CapacityType.RECEIVING));
+  }
+
+  @Test
+  @DisplayName("Test getEddFutureCapacityLookUpDays() returns parsed values")
+  void getEddFutureCapacityLookUpDaysTest() {
+    String jsonConfig = "{\"outbound\": 7, \"transport\": 7, \"receiving\": 7}";
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "eddFutureLookupDaysConfig", jsonConfig);
+
+    Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getEddFutureCapacityLookUpDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(7, result.get(CapacityType.OUTBOUND));
+    assertEquals(7, result.get(CapacityType.TRANSPORT));
+    assertEquals(7, result.get(CapacityType.RECEIVING));
+  }
+
+  @Test
+  @DisplayName("Test getEddPastLookBackDays() returns parsed values")
+  void getEddPastCapacityLookBackDaysTest() {
+    String jsonConfig = "{\"outbound\": 30, \"transport\": 15, \"receiving\": 10}";
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "eddPastLookbackDaysConfig", jsonConfig);
+
+    Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getEddPastCapacityLookBackDays();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(30, result.get(CapacityType.OUTBOUND));
+    assertEquals(15, result.get(CapacityType.TRANSPORT));
+    assertEquals(10, result.get(CapacityType.RECEIVING));
+  }
+
+  @Test
+  @DisplayName("Test getEddFutureLookUpDays() returns default map for null config")
+  void getEddFutureCapacityLookUpDaysWithNullConfigTest() {
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "eddFutureLookupDaysConfig", null);
+
+    Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getEddFutureCapacityLookUpDays();
+
+    assertNotNull(result);
+    assertEquals(30, result.get(CapacityType.OUTBOUND));
+    assertEquals(30, result.get(CapacityType.TRANSPORT));
+    assertEquals(30, result.get(CapacityType.RECEIVING));
+  }
+
+  @Test
+  @DisplayName("Test getEddPastLookBackDays() returns default map for null config")
+  void getEddPastCapacityLookBackDaysWithNullConfigTest() {
+    ReflectionTestUtils.setField(iTenantYmlConfigImpl, "eddPastLookbackDaysConfig", null);
+
+    Map<CapacityType, Integer> result = iTenantYmlConfigImpl.getEddPastCapacityLookBackDays();
 
     assertNotNull(result);
     assertEquals(0, result.get(CapacityType.OUTBOUND));
