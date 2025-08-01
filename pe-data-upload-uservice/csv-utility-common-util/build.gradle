@@ -10,7 +10,7 @@ bootJar {
 }
 
 dependencies {
-    implementation 'com.opencsv:opencsv:5.9'
+    implementation 'com.opencsv:opencsv:5.11.1'
     implementation(project(":pe-transit-uservice:transit-api-domain"))
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.14'
 }

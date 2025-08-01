@@ -12,7 +12,7 @@ jar {
 }
 
 dependencies {
-    implementation 'com.opencsv:opencsv:5.9'
+    implementation 'com.opencsv:opencsv:5.11.1'
     implementation(project(":pe-data-upload-uservice:csv-utility-common-util"))
     implementation(project(":pe-transit-uservice:transit-api-domain"))
     implementation(project(":pe-common:common-util"))

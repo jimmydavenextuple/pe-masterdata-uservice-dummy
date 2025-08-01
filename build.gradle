@@ -19,7 +19,7 @@ buildscript {
 
 plugins {
     id 'java-library'
-    id "org.springframework.boot" version "3.4.0"
+    id "org.springframework.boot" version "3.5.4"
     id "io.spring.dependency-management" version "1.1.4"
     id "org.sonarqube" version "4.4.1.3373"
     id "com.diffplug.spotless" version "6.22.0"
@@ -95,7 +95,7 @@ subprojects {
 
     group = 'com.nextuple.pe'
 
-  //  version = "1.4.0-${build_target}"
+    //  version = "1.4.0-${build_target}"
 
     sourceCompatibility = "${sourceJdkVersion}"
     targetCompatibility = "${targetJdkVersion}"
@@ -123,7 +123,7 @@ subprojects {
 
     dependencyManagement {
         imports {
-            mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.0")
+            mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.4")
             mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
             mavenBom("com.azure.spring:spring-cloud-azure-dependencies:${springCloudAzureVersion}")
         }
@@ -144,14 +144,14 @@ subprojects {
     dependencies {
 
         implementation libs.logstash
-        api "org.springframework.boot:spring-boot-starter-web:3.4.0"
-        api "org.springframework.boot:spring-boot-starter-actuator:3.4.0"
-        api "org.springframework.cloud:spring-cloud-starter-openfeign:4.1.2"
+        api "org.springframework.boot:spring-boot-starter-web"
+        api "org.springframework.boot:spring-boot-starter-actuator"
+        api "org.springframework.cloud:spring-cloud-starter-openfeign:4.3.0"
         implementation("io.github.openfeign:feign-hc5:10.12")
-        implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.4.0'
-        implementation 'org.springframework.boot:spring-boot-starter-validation:3.4.0'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
         compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:3.4.0'
+        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
         annotationProcessor 'org.projectlombok:lombok'
         annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
         implementation "org.mapstruct:mapstruct:${mapstructVersion}"
@@ -159,17 +159,15 @@ subprojects {
         api "io.micrometer:micrometer-registry-prometheus:1.10.7"
         implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:5.17.0'
 
-        // Dependency version override to resolve high CVE coming transitively for tomcat-embed-core
-        implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.4'
         implementation 'io.netty:netty-handler:4.1.118.Final'
         implementation 'net.minidev:json-smart:2.5.2'
 
         runtimeOnly 'org.postgresql:postgresql:42.7.2'
 
-        implementation "org.springframework.kafka:spring-kafka:3.2.4"
+        implementation "org.springframework.kafka:spring-kafka:4.0.0-M2"
         implementation 'org.yaml:snakeyaml:2.2'
         implementation 'org.xerial.snappy:snappy-java:1.1.10.5'
-        implementation 'commons-fileupload:commons-fileupload:1.5'
+        implementation 'commons-fileupload:commons-fileupload:1.6.0'
         implementation 'com.amazonaws:aws-java-sdk-s3:1.12.748'
         implementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.13.4'
         implementation 'commons-io:commons-io:2.16.1'
@@ -187,14 +185,13 @@ subprojects {
         testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
 
         //Caffeine
-        implementation "org.springframework.boot:spring-boot-starter-cache:3.4.0"
+        implementation "org.springframework.boot:spring-boot-starter-cache"
         implementation "com.github.ben-manes.caffeine:caffeine:3.1.8"
         implementation "org.redisson:redisson-spring-boot-starter:3.22.0"
 
         implementation 'org.flywaydb:flyway-core:9.16.3'
-        api 'io.github.openfeign:feign-okhttp:12.1'
-        //adding it explicitly to resolve critical issue
-        implementation("org.springframework.security:spring-security-crypto:6.4.4")
+
+        api 'io.github.openfeign:feign-okhttp:13.5'
 
     }
 
@@ -394,7 +391,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.0")
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.4")
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
         mavenBom("com.azure.spring:spring-cloud-azure-dependencies:${springCloudAzureVersion}")
     }
@@ -416,14 +413,14 @@ configurations {
 dependencies {
 
     implementation libs.logstash
-    api "org.springframework.boot:spring-boot-starter-web:3.4.0"
-    api "org.springframework.boot:spring-boot-starter-actuator:3.4.0"
-    api "org.springframework.cloud:spring-cloud-starter-openfeign:4.1.2"
+    api "org.springframework.boot:spring-boot-starter-web"
+    api "org.springframework.boot:spring-boot-starter-actuator"
+    api "org.springframework.cloud:spring-cloud-starter-openfeign:4.2.2"
     implementation("io.github.openfeign:feign-hc5:10.12")
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.4.0'
-    implementation 'org.springframework.boot:spring-boot-starter-validation:3.4.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:3.4.0'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
@@ -433,7 +430,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:16.0.2'
 
     // Dependency version override to resolve high CVE coming transitively for tomcat-embed-core
-    implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.4'
+//    implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.8'
     implementation 'net.minidev:json-smart:2.5.2'
     implementation 'io.netty:netty-handler:4.1.118.Final'
 
@@ -509,10 +506,10 @@ dependencies {
 
     runtimeOnly 'org.postgresql:postgresql:42.7.2'
 
-    implementation "org.springframework.kafka:spring-kafka"
+    implementation "org.springframework.kafka:spring-kafka:4.0.0-M2"
     implementation 'org.yaml:snakeyaml:2.2'
     implementation 'org.xerial.snappy:snappy-java:1.1.10.5'
-    implementation 'commons-fileupload:commons-fileupload:1.5'
+    implementation 'commons-fileupload:commons-fileupload:1.6.0'
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.748'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.13.4'
 
@@ -539,8 +536,7 @@ dependencies {
     implementation("com.nextuple.plt:plt-postgress-dao:${platformFPMVersion}")
     implementation "com.nextuple.neoplatform:auth-validator:${authVersion}"
     implementation "com.nextuple.neoplatform:auth-injector:${authVersion}"
-    api 'io.github.openfeign:feign-okhttp:12.1'
-    implementation("org.springframework.security:spring-security-crypto:6.4.4")
+    api 'io.github.openfeign:feign-okhttp:13.5'
 
     // Test container dependencies
     testImplementation 'org.testcontainers:postgresql:1.20.0'
@@ -550,6 +546,7 @@ dependencies {
     testImplementation(project(":pe-node-uservice:node-persistence-postgres"))
     testImplementation(project(":pe-vendor-uservice:vendor-persistence-domain"))
     testImplementation(project(":pe-vendor-uservice:vendor-persistence-postgres"))
+
 }
 
 jacocoTestReport {
