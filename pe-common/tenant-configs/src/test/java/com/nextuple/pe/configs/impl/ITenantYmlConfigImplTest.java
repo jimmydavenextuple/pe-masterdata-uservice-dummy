@@ -114,7 +114,7 @@ class ITenantYmlConfigImplTest {
   @DisplayName("Get Inventory Missing Lines Action from yml - Happy Path")
   @Test
   void getInventoryMissingLinesActionTest() {
-    String action = "CANCEL_RESERVATION";
+    String action = "CANCEL_DEMAND";
     Mockito.when(promiseCoordinationConfig.getInventoryMissingLinesAction())
         .thenReturn(
             Map.of(TestUtil.ORG_ID, action, "DEFAULT", TestUtil.DEFAULT_INVENTORY_MISSING_ACTION));
