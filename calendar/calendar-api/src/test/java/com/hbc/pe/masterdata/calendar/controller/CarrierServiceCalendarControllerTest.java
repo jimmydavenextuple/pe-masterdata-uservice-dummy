@@ -145,4 +145,50 @@ class CarrierServiceCalendarControllerTest {
     verify(carrierServiceCalendarService, times(1))
         .getCarrierServiceAssociationWithCalendar(any(), any());
   }
+
+  @Test
+  void handleUpsertCarrierServiceCalendarTest()
+      throws CalendarDomainException, DateException, CommonServiceException {
+    when(carrierServiceCalendarService.processUpsertCarrierServiceCalendar(any()))
+        .thenReturn(testUtil.getCarrierServiceCalendarResponse());
+
+    ResponseEntity<BaseResponse<CarrierServiceCalendarResponse>> resp =
+        carrierServiceCalendarController.handleUpsertCarrierServiceCalendar(
+            TestUtil.CALENDAR_ID,
+            TestUtil.ORG_ID,
+            TestUtil.CARRIER_SERVICE_ID,
+            TestUtil.SHIPPING_STAGE,
+            TestUtil.EFFECTIVE_DATE,
+            testUtil.getCarrierServiceCalendarRequest());
+
+    Assertions.assertEquals(HttpStatus.OK, resp.getStatusCode());
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.getBody()).getPayload().getCalendarId());
+    Assertions.assertEquals(
+        "Carrier service calendar upserted successfully!",
+        Objects.requireNonNull(resp.getBody()).getMessage());
+    verify(carrierServiceCalendarService, times(1)).processUpsertCarrierServiceCalendar(any());
+  }
+
+  @Test
+  void handleUpsertCarrierServiceCalendarExceptionTest()
+      throws CalendarDomainException, CommonServiceException, DateException {
+    when(carrierServiceCalendarService.processUpsertCarrierServiceCalendar(any()))
+        .thenThrow(new NullPointerException("error"));
+
+    Exception ex =
+        Assertions.assertThrows(
+            Exception.class,
+            () ->
+                carrierServiceCalendarController.handleUpsertCarrierServiceCalendar(
+                    TestUtil.CALENDAR_ID,
+                    TestUtil.ORG_ID,
+                    TestUtil.CARRIER_SERVICE_ID,
+                    TestUtil.SHIPPING_STAGE,
+                    TestUtil.EFFECTIVE_DATE,
+                    testUtil.getCarrierServiceCalendarRequest()));
+
+    Assertions.assertEquals("error", ex.getMessage());
+    verify(carrierServiceCalendarService, times(1)).processUpsertCarrierServiceCalendar(any());
+  }
 }

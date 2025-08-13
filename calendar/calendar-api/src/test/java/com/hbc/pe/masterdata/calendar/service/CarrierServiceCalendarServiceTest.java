@@ -255,4 +255,58 @@ class CarrierServiceCalendarServiceTest {
     verify(carrierServiceCalendarDomain, times(1))
         .getCarrierServiceCalendarByOrgIdAndCalendarId(any(), any());
   }
+
+  @Test
+  void processUpsertCarrierServiceCalendarTest()
+      throws CalendarDomainException, DateException, CommonServiceException {
+    when(carrierServiceCalendarDomain.saveCarrierServiceCalendarEntity(any()))
+        .thenReturn(testUtil.getCarrierServiceCalendarEntity());
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
+    when(calendarDomain.getCalendar(any(), any())).thenReturn(testUtil.getCalendarEntity());
+
+    CarrierServiceCalendarResponse resp =
+        carrierServiceCalendarService.processUpsertCarrierServiceCalendar(
+            testUtil.getCarrierServiceCalendarRequest());
+
+    Assertions.assertEquals(TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.getCalendarId()));
+    Assertions.assertEquals(TestUtil.ORG_ID, Objects.requireNonNull(resp.getOrgId()));
+    Assertions.assertEquals(
+        TestUtil.CARRIER_SERVICE_ID, Objects.requireNonNull(resp.getCarrierServiceId()));
+    Assertions.assertEquals(
+        TestUtil.SHIPPING_STAGE, Objects.requireNonNull(resp.getShippingStage()));
+    Assertions.assertEquals(
+        TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.getEffectiveDate()));
+    Assertions.assertEquals(TestUtil.DESCRIPTION, Objects.requireNonNull(resp.getDescription()));
+    verify(carrierServiceCalendarDomain, times(1)).saveCarrierServiceCalendarEntity(any());
+  }
+
+  @Test
+  void processUpsertCarrierServiceCalendarWithInvalidDateTest()
+      throws CalendarDomainException, DateException {
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.FALSE);
+    Exception exception =
+        Assertions.assertThrows(
+            DateException.class,
+            () ->
+                carrierServiceCalendarService.processUpsertCarrierServiceCalendar(
+                    testUtil.getCarrierServiceCalendarRequest()));
+    Assertions.assertEquals("Invalid Date", exception.getMessage());
+  }
+
+  @Test
+  void processUpsertCarrierServiceCalendarWithInvalidCalendarTest()
+      throws CalendarDomainException {
+    when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
+    when(calendarDomain.getCalendar(any(), any())).thenReturn(null);
+    Exception exception =
+        Assertions.assertThrows(
+            CommonServiceException.class,
+            () ->
+                carrierServiceCalendarService.processUpsertCarrierServiceCalendar(
+                    testUtil.getCarrierServiceCalendarRequest()));
+    Assertions.assertEquals(
+        "Cannot create a carrier service calendar as calendarId/orgId is invalid",
+        exception.getMessage());
+    verify(calendarDomain, times(1)).getCalendar(any(), any());
+  }
 }
