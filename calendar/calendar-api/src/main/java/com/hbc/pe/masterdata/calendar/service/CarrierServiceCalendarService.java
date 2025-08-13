@@ -199,4 +199,25 @@ public class CarrierServiceCalendarService {
 
     return INSTANCE.convertToCarrierServiceCalendarResponseList(carrierServiceCalendarEntities);
   }
+
+  /** Upserts a Carrier Service Calendar (creates new or updates existing) */
+  public CarrierServiceCalendarResponse processUpsertCarrierServiceCalendar(
+      CarrierServiceCalendarRequest carrierServiceCalendarRequest)
+      throws CalendarDomainException, CommonServiceException, DateException {
+    if (!dateValidation.validateDate(carrierServiceCalendarRequest.getEffectiveDate())) {
+      throw new DateException(
+          "Invalid Date",
+          carrierServiceCalendarRequest.getCalendarId(),
+          carrierServiceCalendarRequest.getOrgId());
+    }
+    validateCalendarId(
+        carrierServiceCalendarRequest.getCalendarId(), carrierServiceCalendarRequest.getOrgId());
+    
+    var carrierServiceCalendarEntity =
+        INSTANCE.convertToCarrierServiceCalendarEntity(carrierServiceCalendarRequest);
+    
+    var savedCarrierServiceCalendarEntity =
+        carrierServiceCalendarDomain.saveCarrierServiceCalendarEntity(carrierServiceCalendarEntity);
+    return INSTANCE.convertToCarrierServiceCalendarResponse(savedCarrierServiceCalendarEntity);
+  }
 }

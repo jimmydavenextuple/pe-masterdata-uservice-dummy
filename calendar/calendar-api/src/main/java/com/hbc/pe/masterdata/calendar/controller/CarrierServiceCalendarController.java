@@ -108,4 +108,40 @@ public class CarrierServiceCalendarController {
             .payload(response)
             .build());
   }
+
+  @PutMapping("/{calendarId}/{orgId}/{carrierServiceId}/{shippingStage}/{effectiveDate}")
+  public ResponseEntity<BaseResponse<CarrierServiceCalendarResponse>>
+      handleUpsertCarrierServiceCalendar(
+          @NotBlank(message = "calendarId can't be empty") @PathVariable String calendarId,
+          @NotBlank(message = "orgId can't be empty") @PathVariable String orgId,
+          @NotBlank(message = "carrierServiceId can't be empty") @PathVariable String carrierServiceId,
+          @NotBlank(message = "shippingStage can't be empty") @PathVariable String shippingStage,
+          @NotBlank(message = "effectiveDate can't be empty") @PathVariable String effectiveDate,
+          @Valid @RequestBody CarrierServiceCalendarRequest request)
+          throws CalendarDomainException, CommonServiceException, DateException {
+
+    logger.debug(
+        "Inside handleUpsertCarrierServiceCalendar() for calendarId:{}, orgId:{}, carrierServiceId:{}, shippingStage:{}, effectiveDate:{}, request: {}",
+        calendarId, orgId, carrierServiceId, shippingStage, effectiveDate, request);
+    
+    try {
+      request.setCalendarId(calendarId);
+      request.setOrgId(orgId);
+      request.setCarrierServiceId(carrierServiceId);
+      request.setShippingStage(shippingStage);
+      request.setEffectiveDate(effectiveDate);
+      
+      var calendarResponse =
+          carrierServiceCalendarService.processUpsertCarrierServiceCalendar(request);
+      logger.info("Response after upsert of carrier service calendar:{}", calendarResponse);
+      return ResponseEntity.ok(
+          BaseResponse.builder()
+              .message("Carrier service calendar upserted successfully!")
+              .payload(calendarResponse)
+              .build());
+    } catch (Exception e) {
+      logger.error("Error in handleUpsertCarrierServiceCalendar()");
+      throw e;
+    }
+  }
 }

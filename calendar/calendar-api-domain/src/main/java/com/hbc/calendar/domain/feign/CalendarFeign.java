@@ -39,6 +39,15 @@ public interface CalendarFeign {
   BaseResponse<CarrierServiceCalendarResponse> createCarrierServiceCalendar(
       @Valid @RequestBody CarrierServiceCalendarRequest carrierServiceCalendarRequest);
 
+  @PutMapping("/carrier-service-calendar/{calendarId}/{orgId}/{carrierServiceId}/{shippingStage}/{effectiveDate}")
+  BaseResponse<CarrierServiceCalendarResponse> upsertCarrierServiceCalendar(
+      @PathVariable String calendarId,
+      @PathVariable String orgId,
+      @PathVariable String carrierServiceId,
+      @PathVariable String shippingStage,
+      @PathVariable String effectiveDate,
+      @Valid @RequestBody CarrierServiceCalendarRequest carrierServiceCalendarRequest);
+
   @PostMapping("/node-carrier-service-calendar")
   BaseResponse<NodeCarrierServiceCalendarResponse> createNodeCarrierServiceCalendar(
       @Valid @RequestBody NodeCarrierServiceCalendarRequest nodeCarrierServiceCalendarRequest);
