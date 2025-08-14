@@ -47,7 +47,7 @@ public class NodeCalendarService {
   private static final String NODE_ID = "nodeId";
   private static final String EFFECTIVE_DATE = "effectiveDate";
 
-  /** Creates a new Node Calendar */
+  /** Creates or updates a Node Calendar (upsert functionality) */
   public NodeCalendarResponse processCreateNodeCalendar(NodeCalendarRequest nodeCalendarRequest)
       throws CalendarDomainException, CommonServiceException, DateException {
     if (!dateValidation.validateDate(nodeCalendarRequest.getEffectiveDate())) {
@@ -57,40 +57,24 @@ public class NodeCalendarService {
     validateCalendarId(nodeCalendarRequest.getCalendarId(), nodeCalendarRequest.getOrgId());
     calendarValidation.validateNodeId(
         nodeCalendarRequest.getNodeId(), nodeCalendarRequest.getOrgId());
-    var nodeCalendarDomainDto = INSTANCE.convertToNodeCalendarDomainDto(nodeCalendarRequest);
+    
     Optional<NodeCalendarDomainDto> existingNodeCalendarDomainDto =
         nodeCalendarPersistenceService.findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(
             nodeCalendarRequest.getCalendarId(),
             nodeCalendarRequest.getNodeId(),
             nodeCalendarRequest.getOrgId(),
             nodeCalendarRequest.getEffectiveDate());
+    
     if (existingNodeCalendarDomainDto.isPresent()) {
-      logger.error(
-          "Node Calendar already exists for calendarId:{} , nodeId:{} , orgId:{}, effectiveDate:{}",
-          nodeCalendarDomainDto.getCalendarId(),
-          nodeCalendarDomainDto.getNodeId(),
-          nodeCalendarDomainDto.getOrgId(),
-          nodeCalendarDomainDto.getEffectiveDate());
-      Map<String, FieldError> errorMap = new HashMap<>();
-      errorMap.put(
-          CALENDAR_ID,
-          FieldError.builder().rejectedValue(nodeCalendarDomainDto.getCalendarId()).build());
-      errorMap.put(
-          NODE_ID, FieldError.builder().rejectedValue(nodeCalendarDomainDto.getNodeId()).build());
-      errorMap.put(
-          ORG_ID, FieldError.builder().rejectedValue(nodeCalendarDomainDto.getOrgId()).build());
-      errorMap.put(
-          EFFECTIVE_DATE,
-          FieldError.builder().rejectedValue(nodeCalendarDomainDto.getEffectiveDate()).build());
-      throw new CommonServiceException(
-          "Node Calendar already exists for the given details",
-          HttpStatus.BAD_REQUEST,
-          0x1772,
-          errorMap);
+      var existingEntity = existingNodeCalendarDomainDto.get();
+      existingEntity.setDescription(nodeCalendarRequest.getDescription());
+      var savedNodeCalendarDomainDto = nodeCalendarPersistenceService.saveNodeCalendar(existingEntity);
+      return INSTANCE.convertToNodeCalendarResponse(savedNodeCalendarDomainDto);
+    } else {
+      var nodeCalendarDomainDto = INSTANCE.convertToNodeCalendarDomainDto(nodeCalendarRequest);
+      var savedNodeCalendarDomainDto = nodeCalendarPersistenceService.saveNodeCalendar(nodeCalendarDomainDto);
+      return INSTANCE.convertToNodeCalendarResponse(savedNodeCalendarDomainDto);
     }
-    var savedNodeCalendarDomainDto =
-        nodeCalendarPersistenceService.saveNodeCalendar(nodeCalendarDomainDto);
-    return INSTANCE.convertToNodeCalendarResponse(savedNodeCalendarDomainDto);
   }
 
   /** Get Node Calendar details by calendarId and orgId */
@@ -99,6 +83,17 @@ public class NodeCalendarService {
       throws CalendarDomainException {
     return INSTANCE.convertToNodeCalendarResponseList(
         nodeCalendarPersistenceService.getNodeCalendar(orgId, nodeId));
+  }
+
+  /** Checks if the operation will be a create (true) or update (false) */
+  public boolean isCreateOperation(NodeCalendarRequest request) {
+    Optional<NodeCalendarDomainDto> existingNodeCalendarDomainDto =
+        nodeCalendarPersistenceService.findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(
+            request.getCalendarId(),
+            request.getNodeId(),
+            request.getOrgId(),
+            request.getEffectiveDate());
+    return !existingNodeCalendarDomainDto.isPresent();
   }
 
   public void validateCalendarId(String calendarId, String orgId)

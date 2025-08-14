@@ -27,6 +27,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -76,13 +77,24 @@ public class NodeCalendarController {
     logger.debug(
         "Inside handleCreateNodeCalendar() for nodeCalendarRequest: {}", nodeCalendarRequest);
     try {
+      boolean isCreateOperation = nodeCalendarService.isCreateOperation(nodeCalendarRequest);
+      
       var nodeCalendarResponse = nodeCalendarService.processCreateNodeCalendar(nodeCalendarRequest);
-      logger.info("Response after creation of node calendar:{}", nodeCalendarResponse);
-      return ResponseEntity.ok(
-          BaseResponse.builder()
-              .message("Node calendar created successfully!")
-              .payload(nodeCalendarResponse)
-              .build());
+      logger.info("Response after upsert of node calendar:{}", nodeCalendarResponse);
+      
+      if (isCreateOperation) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(BaseResponse.builder()
+                .message("Node calendar created successfully!")
+                .payload(nodeCalendarResponse)
+                .build());
+      } else {
+        return ResponseEntity.ok(
+            BaseResponse.builder()
+                .message("Node calendar updated successfully!")
+                .payload(nodeCalendarResponse)
+                .build());
+      }
     } catch (Exception e) {
       logger.error("Error in handleCreateNodeCalendar()");
       throw e;
