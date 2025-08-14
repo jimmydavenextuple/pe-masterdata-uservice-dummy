@@ -43,8 +43,28 @@ class NodeCalendarControllerTest {
   }
 
   @Test
-  void handleCreateNodeCalendarTest()
+  void handleCreateNodeCalendarTest_CreateOperation()
       throws CalendarDomainException, DateException, CommonServiceException {
+    when(nodeCalendarService.isCreateOperation(any())).thenReturn(true);
+    when(nodeCalendarService.processCreateNodeCalendar(any()))
+        .thenReturn(testUtil.getNodeCalendarResponse());
+
+    ResponseEntity<BaseResponse<NodeCalendarResponse>> resp =
+        nodeCalendarController.handleCreateNodeCalendar(testUtil.getNodeCalendarRequest());
+
+    Assertions.assertEquals(HttpStatus.CREATED, resp.getStatusCode());
+    Assertions.assertEquals("Node calendar created successfully!", 
+        Objects.requireNonNull(resp.getBody()).getMessage());
+    Assertions.assertEquals(
+        TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.getBody()).getPayload().getCalendarId());
+    verify(nodeCalendarService, times(1)).isCreateOperation(any());
+    verify(nodeCalendarService, times(1)).processCreateNodeCalendar(any());
+  }
+
+  @Test
+  void handleCreateNodeCalendarTest_UpdateOperation()
+      throws CalendarDomainException, DateException, CommonServiceException {
+    when(nodeCalendarService.isCreateOperation(any())).thenReturn(false);
     when(nodeCalendarService.processCreateNodeCalendar(any()))
         .thenReturn(testUtil.getNodeCalendarResponse());
 
@@ -52,8 +72,11 @@ class NodeCalendarControllerTest {
         nodeCalendarController.handleCreateNodeCalendar(testUtil.getNodeCalendarRequest());
 
     Assertions.assertEquals(HttpStatus.OK, resp.getStatusCode());
+    Assertions.assertEquals("Node calendar updated successfully!", 
+        Objects.requireNonNull(resp.getBody()).getMessage());
     Assertions.assertEquals(
         TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.getBody()).getPayload().getCalendarId());
+    verify(nodeCalendarService, times(1)).isCreateOperation(any());
     verify(nodeCalendarService, times(1)).processCreateNodeCalendar(any());
   }
 

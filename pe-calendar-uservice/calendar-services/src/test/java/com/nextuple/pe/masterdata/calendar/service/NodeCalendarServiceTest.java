@@ -73,25 +73,33 @@ class NodeCalendarServiceTest {
   }
 
   @Test
-  @DisplayName("When node calendar to be created already exists")
-  void createNodeCalendarTestException() throws CalendarDomainException, CommonServiceException {
+  @DisplayName("When node calendar to be created already exists - should update")
+  void processCreateNodeCalendarUpdateTest() throws CalendarDomainException, CommonServiceException, DateException {
     NodeCalendarRequest nodeCalendarRequest = testUtil.getNodeCalendarRequest();
+    NodeCalendarDomainDto existingDto = testUtil.getNodeCalendarDomainDto();
+    NodeCalendarDomainDto updatedDto = testUtil.getNodeCalendarDomainDto();
+    updatedDto.setDescription(nodeCalendarRequest.getDescription());
+    
     when(calendarPersistenceService.getCalendar(any(), any()))
         .thenReturn(testUtil.getCalendarDomainDto());
     when(dateValidation.validateDate(any())).thenReturn(Boolean.TRUE);
     when(nodeCalendarPersistenceService.findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(
             any(), any(), any(), any()))
-        .thenReturn(Optional.of(testUtil.getNodeCalendarDomainDto()));
+        .thenReturn(Optional.of(existingDto));
+    when(nodeCalendarPersistenceService.saveNodeCalendar(any()))
+        .thenReturn(updatedDto);
 
-    Exception ex =
-        Assertions.assertThrows(
-            CommonServiceException.class,
-            () -> nodeCalendarService.processCreateNodeCalendar(nodeCalendarRequest));
+    NodeCalendarResponse resp = nodeCalendarService.processCreateNodeCalendar(nodeCalendarRequest);
 
-    Assertions.assertEquals("Node Calendar already exists for the given details", ex.getMessage());
+    Assertions.assertEquals(TestUtil.CALENDAR_ID, Objects.requireNonNull(resp.getCalendarId()));
+    Assertions.assertEquals(TestUtil.ORG_ID, Objects.requireNonNull(resp.getOrgId()));
+    Assertions.assertEquals(TestUtil.NODE_ID, Objects.requireNonNull(resp.getNodeId()));
+    Assertions.assertEquals(TestUtil.EFFECTIVE_DATE, Objects.requireNonNull(resp.getEffectiveDate()));
+    Assertions.assertEquals(TestUtil.DESCRIPTION, Objects.requireNonNull(resp.getDescription()));
+    
     verify(nodeCalendarPersistenceService, times(1))
         .findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(any(), any(), any(), any());
-    verify(nodeCalendarPersistenceService, times(0)).saveNodeCalendar(any());
+    verify(nodeCalendarPersistenceService, times(1)).saveNodeCalendar(any());
   }
 
   @Test
@@ -176,5 +184,33 @@ class NodeCalendarServiceTest {
     Assertions.assertEquals(TestUtil.ORG_ID, Objects.requireNonNull(response.get(0).getOrgId()));
     verify(nodeCalendarPersistenceService, times(1))
         .getNodeServiceCalendarByOrgIdAndCalendarId(any(), any());
+  }
+
+  @Test
+  void isCreateOperationTest_WhenRecordExists_ReturnsFalse() {
+    NodeCalendarRequest nodeCalendarRequest = testUtil.getNodeCalendarRequest();
+    when(nodeCalendarPersistenceService.findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(
+            any(), any(), any(), any()))
+        .thenReturn(Optional.of(testUtil.getNodeCalendarDomainDto()));
+
+    boolean result = nodeCalendarService.isCreateOperation(nodeCalendarRequest);
+
+    Assertions.assertFalse(result);
+    verify(nodeCalendarPersistenceService, times(1))
+        .findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(any(), any(), any(), any());
+  }
+
+  @Test
+  void isCreateOperationTest_WhenRecordDoesNotExist_ReturnsTrue() {
+    NodeCalendarRequest nodeCalendarRequest = testUtil.getNodeCalendarRequest();
+    when(nodeCalendarPersistenceService.findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(
+            any(), any(), any(), any()))
+        .thenReturn(Optional.empty());
+
+    boolean result = nodeCalendarService.isCreateOperation(nodeCalendarRequest);
+
+    Assertions.assertTrue(result);
+    verify(nodeCalendarPersistenceService, times(1))
+        .findByCalendarIdAndNodeIdAndOrgIdAndEffectiveDate(any(), any(), any(), any());
   }
 }
